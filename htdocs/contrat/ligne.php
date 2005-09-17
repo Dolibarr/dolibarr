@@ -115,6 +115,7 @@ if ($id > 0)
         $author->id = $contrat->user_author_id;
         $author->fetch();
 
+/* Remplacé par fonctions des contacts de contrat
         $commercial_signature = new User($db);
         $commercial_signature->id = $contrat->commercial_signature_id;
         $commercial_signature->fetch();
@@ -122,7 +123,7 @@ if ($id > 0)
         $commercial_suivi = new User($db);
         $commercial_suivi->id = $contrat->commercial_suivi_id;
         $commercial_suivi->fetch();
-
+*/
         $h = 0;
         $head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
         $head[$h][1] = $langs->trans("ContractCard");
@@ -144,15 +145,36 @@ if ($id > 0)
         dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->id);
 
 
+        /*
+         * Confirmation de la validation activation
+         */
+        if ($_GET["action"] == 'active' && $user->rights->contrat->activer)
+        {
+            $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+            $dateactend   = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+            $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",strftime("%A %d %B %Y", $dateactstart)),"confirm_active");
+            print '<br />';
+        }
 
         /*
-        *   Contrat
-        */
+         * Confirmation de la validation fermeture
+         */
+        if ($_GET["action"] == 'close' && $user->rights->contrat->activer)
+        {
+            $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+            $dateactend   = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+            $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",strftime("%A %d %B %Y", $dateactstart)),"confirm_close");
+            print '<br />';
+        }
 
+
+        /*
+         *   Contrat
+         */
         print '<table class="border" width="100%">';
 
         // Reference du contrat
-        print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
+        print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
         print $contrat->ref;
         print "</td></tr>";
 
@@ -168,25 +190,25 @@ if ($id > 0)
 
         // Date
         print '<tr><td>'.$langs->trans("Date").'</td>';
-            print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"%A %d %B %Y")."</td></tr>\n";
+        print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"%A %d %B %Y")."</td></tr>\n";
 
             // Factures associées
             /*
             TODO
             */
 
-            // Projet
+        // Projet
         if ($conf->projet->enabled)
         {
             $langs->load("projects");
-                print '<tr><td>';
-                print '<table width="100%" class="nobordernopadding"><tr><td>';
-                print $langs->trans("Project");
-                print '</td>';
-                if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'&amp;ligne='.$_GET["ligne"].'">'.img_edit($langs->trans("SetProject")).'</a></td>';
-                print '</tr></table>';
-                print '</td><td colspan="3">';
-                if ($_GET["action"] == "classer")
+            print '<tr><td>';
+            print '<table width="100%" class="nobordernopadding"><tr><td>';
+            print $langs->trans("Project");
+            print '</td>';
+            if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'&amp;ligne='.$_GET["ligne"].'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="3">';
+            if ($_GET["action"] == "classer")
             {
                     $html->form_project($_SERVER["PHP_SELF"]."?id=$id&amp;ligne=".$_GET["ligne"],$contrat->fk_soc,$contrat->fk_projet,"projetid");
             }
@@ -197,32 +219,12 @@ if ($id > 0)
             print "</td></tr>";
         }
 
+/* Fonction remplacé par les contacts de contrat
+        // Commerciaux
         print '<tr><td width="25%">'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>'.$commercial_suivi->fullname.'</td>';
         print '<td width="25%">'.$langs->trans("SalesRepresentativeSignature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
+*/
         print "</table>";
-
-
-        /*
-         * Confirmation de la validation activation
-         */
-        if ($_GET["action"] == 'active' && $user->rights->contrat->activer)
-        {
-            print '<br />';
-            $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-            $dateactend   = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-            $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",strftime("%A %d %B %Y", $dateactstart)),"confirm_active");
-        }
-
-        /*
-         * Confirmation de la validation fermeture
-         */
-        if ($_GET["action"] == 'close' && $user->rights->contrat->activer)
-        {
-            print '<br />';
-            $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-            $dateactend   = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-            $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",strftime("%A %d %B %Y", $dateactstart)),"confirm_close");
-        }
 
 
         /*
@@ -232,10 +234,12 @@ if ($id > 0)
 
         $sql = "SELECT cd.statut, cd.label, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid, cd.tva_tx, cd.remise_percent, cd.subprice,";
         $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
-        $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle";
+        $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle,";
+        $sql.= " p.ref, p.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
         $sql.= " WHERE cd.fk_contrat = ".$id;
-        $sql.= " AND rowid = ".$_GET["ligne"];
+        $sql.= " AND cd.rowid = ".$_GET["ligne"];
         $sql.= " ORDER BY cd.rowid";
 
         $result = $db->query($sql);
@@ -253,7 +257,6 @@ if ($id > 0)
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
                 print '<td width="16">&nbsp;</td>';
-                print '<td width="16">&nbsp;</td>';
                 print '<td width="30" align="center">'.$langs->trans("Status").'</td>';
                 print "</tr>\n";
             }
@@ -265,22 +268,22 @@ if ($id > 0)
                 $var=!$var;
                 print "<tr $bc[$var] valign=\"top\">\n";
 
-                // Libell
-                if ($objp->fk_product > 0)
-                {
-                    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a>';
-
-                    if ($objp->description)
+                    // Libelle
+                    if ($objp->fk_product > 0)
                     {
-                        print '<br />'.stripslashes(nl2br($objp->description));
+                        print '<td>';
+                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                        print img_object($langs->trans("ShowService"),"service").' '.$objp->ref.'</a>';
+                        print $objp->label?' - '.$objp->label:'';
+                        if ($objp->description) print '<br />'.stripslashes(nl2br($objp->description));
+                        print '</td>';
+                    }
+                    else
+                    {
+                        print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
                     }
 
-                    print '</td>';
-                }
-                else
-                {
-                    print '<td>'.stripslashes(nl2br($objp->description))."</td>\n";
-                }
+                // TVA
                 print '<td align="center">'.$objp->tva_tx.'%</td>';
 
                 print '<td align="right">'.price($objp->subprice)."</td>\n";
@@ -296,7 +299,7 @@ if ($id > 0)
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td>&nbsp;</td><td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
 
                 // Statut
                 print '<td align="center">'.img_statut($objp->statut,$langs->trans("ServiceStatusInitial")).'</td>';
@@ -306,49 +309,50 @@ if ($id > 0)
                 if ($objp->date_debut) $dateactstart=$objp->date_debut;
                 if ($objp->date_fin) $dateactend=$objp->date_fin;
 
-                // Dates mise en service
-                print '<tr '.$bc[$var].'>';
-                print '<td colspan="7">';
-                        // Si pas encore activé
-                if (! $objp->date_debut_reelle) {
+                    // Dates de en service prévues et effectives
+                    
+                    print '<tr '.$bc[$var].'>';
+                    print '<td colspan="7">';
+
+                    // Date prévues
                     print $langs->trans("DateStartPlanned").': ';
-                    if ($objp->date_debut) print dolibarr_print_date($objp->date_debut);
+                    if ($objp->date_debut) {
+                        print dolibarr_print_date($objp->date_debut);
+                        // Warning si date prevu passée et pas en service
+                        if ($objp->statut == 0 && $objp->date_debut < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
+                    }
                     else print $langs->trans("Unknown");
-                }
-                        // Si activé
-                if ($objp->date_debut_reelle) {
-                    print $langs->trans("DateStartReal").': ';
-                    if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
-                    else print $langs->trans("ContractStatusNotRunning");
-                }
-
-                print ' &nbsp;-&nbsp; ';
-
-                // Si pas encore activé
-                if (! $objp->date_debut_reelle) {
+                    print ' &nbsp;-&nbsp; ';
                     print $langs->trans("DateEndPlanned").': ';
                     if ($objp->date_fin) {
                         print dolibarr_print_date($objp->date_fin);
+                        if ($objp->statut == 4 && $objp->date_fin < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
                     }
                     else print $langs->trans("Unknown");
-                }
-                // Si activé
-                if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
-                    print $langs->trans("DateEndPlanned").': ';
-                    if ($objp->date_fin) {
-                        print dolibarr_print_date($objp->date_fin);
-                        if ($objp->date_fin < time()) { print " ".img_warning($langs->trans("Late")); }
+
+                    print '<br>';
+
+                    // Si pas encore activé
+                    if (! $objp->date_debut_reelle) {
+                        print $langs->trans("DateStartReal").': ';
+                        if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
+                        else print $langs->trans("ContractStatusNotRunning");
                     }
-                    else print $langs->trans("Unknown");
-                }
-                // Si désactivé
-                if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
-                    print $langs->trans("DateEndReal").': ';
-                    print dolibarr_print_date($objp->date_fin_reelle);
-                }
-                print '</td>';
-                print '<td>&nbsp;</td>';
-                print '</tr>';
+                    // Si activé et en cours
+                    if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
+                        print $langs->trans("DateStartReal").': ';
+                        print dolibarr_print_date($objp->date_debut_reelle);
+                    }
+                    // Si désactivé
+                    if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
+                        print $langs->trans("DateStartReal").': ';
+                        print dolibarr_print_date($objp->date_debut_reelle);
+                        print ' &nbsp;-&nbsp; ';
+                        print $langs->trans("DateEndReal").': ';
+                        print dolibarr_print_date($objp->date_fin_reelle);
+                    }
+                    print '</td>';
+                    print '</tr>';  
 
 
                 $i++;
@@ -402,7 +406,7 @@ if ($id > 0)
 
             print '</tr>';
 
-            print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="70" type="text" name="commentaire" value="'.$_POST["commentaire"].'"></td></tr>';
+            print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="80" type="text" name="commentaire" value="'.$_POST["commentaire"].'"></td></tr>';
 
             print '</table>';
 

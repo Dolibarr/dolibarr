@@ -81,18 +81,13 @@ if ($_POST["action"] == 'add')
 
     $contrat->soc_id         = $_POST["soc_id"];
     $contrat->date_contrat   = $datecontrat;
-    $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
-    $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
+// Remplacé par la fonction des contacts non limités d'un contrat
+//    $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
+//    $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
     $contrat->note           = $_POST["note"];
     $contrat->projetid       = $_POST["projetid"];
     $contrat->remise_percent = $_POST["remise_percent"];
 
-    /*
-    $contrat->add_product($_POST["idprod1"],$_POST["qty1"],$_POST["remise_percent1"]);
-    $contrat->add_product($_POST["idprod2"],$_POST["qty2"],$_POST["remise_percent2"]);
-    $contrat->add_product($_POST["idprod3"],$_POST["qty3"],$_POST["remise_percent3"]);
-    $contrat->add_product($_POST["idprod4"],$_POST["qty4"],$_POST["remise_percent4"]);
-    */
     $result = $contrat->create($user,$langs,$conf);
     if ($result > 0)
     {
@@ -270,6 +265,7 @@ if ($_GET["action"] == 'create')
             print '<tr><td>'.$langs->trans("Customer").':</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$obj->nom.'</a></td></tr>';
 
             // Commercial suivi
+/* Remplacé par fonction des contacts d'un contrat
             print '<tr><td width="20%" nowrap>'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>';
             print '<select name="commercial_suivi_id">';
             print '<option value="-1">&nbsp;</option>';
@@ -319,7 +315,7 @@ if ($_GET["action"] == 'create')
 
             }
             print '</select></td></tr>';
-
+*/
             print '<tr><td>'.$langs->trans("Date").' :</td><td>';
             $html->select_date();
             print "</td></tr>";
@@ -331,50 +327,7 @@ if ($_GET["action"] == 'create')
                 $html->select_array("projetid",$proj->liste_array($soc->id),0,1);
                 print "</td></tr>";
             }
-
-            /*
-            *
-            * Liste des elements
-            *
-            *
-            print '<tr><td colspan="3">'.$langs->trans("Services").'/'.$langs->trans("Products").'</td></tr>';
-            print '<tr><td colspan="3">';
-
-            $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
-            $sql .= " WHERE envente = 1";
-            $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
-            if ( $db->query($sql) )
-            {
-            $opt = "<option value=\"0\" selected=\"true\"></option>";
-            if ($result)
-            {
-            $num = $db->num_rows();	$i = 0;
-            while ($i < $num)
-            {
-            $objp = $db->fetch_object();
-            $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
-            $i++;
-            }
-            }
-            $db->free();
-            }
-            else
-            {
-            print $db->error();
-            }
-
-            print '<table class="noborder" cellspacing="0">';
-            print '<tr><td>20 Produits les plus vendus</td><td>Quan.</td><td>Remise</td></tr>';
-            for ($i = 1 ; $i < 5 ; $i++)
-            {
-            print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
-            print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-            print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td></tr>';
-            }
-
-            print '</table>';
-            print '</td></tr>';
-            */
+ 
             print '<tr><td>'.$langs->trans("Comment").'</td><td valign="top">';
             print '<textarea name="note" wrap="soft" cols="60" rows="3"></textarea></td></tr>';
 
@@ -586,8 +539,11 @@ else
             print "</td></tr>";
         }
 
+/* Remplacer par fonction des contacts de contrat
+        // Commerciaux
         print '<tr><td width="25%">'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>'.$commercial_suivi->fullname.'</td>';
         print '<td width="25%">'.$langs->trans("SalesRepresentativeSignature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
+*/
         print "</table>";
 
         if ($contrat->brouillon == 1 && $user->rights->contrat->creer)
@@ -638,6 +594,7 @@ else
                 {
 
                     print '<tr '.$bc[$var].' valign="top">';
+                    // Libelle
                     if ($objp->fk_product > 0)
                     {
                         print '<td>';
@@ -695,43 +652,45 @@ else
 
                     print "</tr>\n";
 
-                    // Dates mise en service
+                    // Dates de en service prévues et effectives
+                    
                     print '<tr '.$bc[$var].'>';
                     print '<td colspan="7">';
+
+                    // Date prévues
+                    print $langs->trans("DateStartPlanned").': ';
+                    if ($objp->date_debut) {
+                        print dolibarr_print_date($objp->date_debut);
+                        // Warning si date prevu passée et pas en service
+                        if ($objp->statut == 0 && $objp->date_debut < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
+                    }
+                    else print $langs->trans("Unknown");
+                    print ' &nbsp;-&nbsp; ';
+                    print $langs->trans("DateEndPlanned").': ';
+                    if ($objp->date_fin) {
+                        print dolibarr_print_date($objp->date_fin);
+                        if ($objp->statut == 4 && $objp->date_fin < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
+                    }
+                    else print $langs->trans("Unknown");
+
+                    print '<br>';
+
                     // Si pas encore activé
                     if (! $objp->date_debut_reelle) {
-                        print $langs->trans("DateStartPlanned").': ';
-                        if ($objp->date_debut) print dolibarr_print_date($objp->date_debut);
-                        else print $langs->trans("Unknown");
-                    }
-                    // Si activé
-                    if ($objp->date_debut_reelle) {
                         print $langs->trans("DateStartReal").': ';
                         if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
                         else print $langs->trans("ContractStatusNotRunning");
                     }
-
-                    print ' &nbsp;-&nbsp; ';
-
-                    // Si pas encore activé
-                    if (! $objp->date_debut_reelle) {
-                        print $langs->trans("DateEndPlanned").': ';
-                        if ($objp->date_fin) {
-                            print dolibarr_print_date($objp->date_fin);
-                        }
-                        else print $langs->trans("Unknown");
-                    }
-                    // Si activé
+                    // Si activé et en cours
                     if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
-                        print $langs->trans("DateEndPlanned").': ';
-                        if ($objp->date_fin) {
-                            print dolibarr_print_date($objp->date_fin);
-                            if ($objp->date_fin < time()) { print " ".img_warning($langs->trans("Late")); }
-                        }
-                        else print $langs->trans("Unknown");
+                        print $langs->trans("DateStartReal").': ';
+                        print dolibarr_print_date($objp->date_debut_reelle);
                     }
                     // Si désactivé
                     if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
+                        print $langs->trans("DateStartReal").': ';
+                        print dolibarr_print_date($objp->date_debut_reelle);
+                        print ' &nbsp;-&nbsp; ';
                         print $langs->trans("DateEndReal").': ';
                         print dolibarr_print_date($objp->date_fin_reelle);
                     }
@@ -776,6 +735,18 @@ else
                     $html->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1));
                     print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
                     $html->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1));
+                    if ($objp->statut >= 4)
+                    {
+                        print '<br>';
+                        print $langs->trans("DateStartReal").' ';
+                        $html->select_date($objp->date_debut_reelle,"date_start_real_update",0,0,($objp->date_debut_reelle>0?0:1));
+                        print ' &nbsp; ';
+                        if ($objp->statut == 5)
+                        {
+                            print $langs->trans("DateEndReal").' ';
+                            $html->select_date($objp->date_fin_reelle,"date_end_real_update",0,0,($objp->date_fin_reelle>0?0:1));
+                        }
+                    }
                     print '</td>';
                     print '</tr>';
 
