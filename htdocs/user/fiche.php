@@ -531,12 +531,12 @@ else
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
 
-            if ($user->id == $_GET["id"] or $user->admin && $fuser->login)
+            if (($user->id != $_GET["id"] && $user->admin) && $fuser->login)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
             }
 
-            if (($user->id == $_GET["id"] or $user->admin) && $fuser->email && $fuser->login)
+            if (($user->id != $_GET["id"] && $user->admin) && $fuser->email && $fuser->login)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
             }
