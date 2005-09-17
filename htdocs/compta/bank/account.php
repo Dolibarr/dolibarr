@@ -307,7 +307,14 @@ if ($account > 0)
     $result = $db->query($sql);
     if ($result)
     {
-        _print_lines($db, $result, $sql, $acct);
+        $total = _print_lines($db, $result, $sql, $acct);
+        if ($page == 0) 
+        {
+            print '<tr class="liste_total"><td align="right" colspan="6">'.$langs->trans("Balance").'</td>';
+            print '<td align="right" nowrap>'.price($total).'</td>';
+            print '<td>&nbsp;</td>';
+            print '</tr>';
+        }
         $db->free($result);
     }
  
@@ -348,13 +355,21 @@ $db->close();
 llxFooter('$Date$ - $Revision$');
 
 
-/*
- *
+/**
+ *      \brief      Affiche ligne ecriture
+ *      \param      db          Handler d'accès base
+ *      \param      result      Resultset du select
+ *      \param      sql         Requete sql
+ *      \param      acct        Compte
+ *      \return     Renvoi total solde
  */
 function _print_lines($db,$result,$sql,$acct)
 {
     global $bc, $nbline, $viewline, $user, $page;
-    $var=True;
+    
+    $var=true;
+    $total=0;
+    
     $num = $db->num_rows($result);
     $i = 0; $total = 0; $sep = 0;
     
@@ -381,6 +396,7 @@ function _print_lines($db,$result,$sql,$acct)
             print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
             print "<td nowrap>&nbsp;".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
             print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
+
             /*
              * Ajout les liens
              */
@@ -451,5 +467,6 @@ function _print_lines($db,$result,$sql,$acct)
         $i++;
     }
 
+    return $total;
 }
 ?>
