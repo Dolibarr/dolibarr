@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
@@ -17,21 +18,64 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-require ("../../htdocs/master.inc.php");
+/**
+        \file       scripts/banque/graph-solde.php
+        \ingroup    banque
+        \brief      Script de génération des images des soldes des comptes
+*/
 
-include_once (JPGRAPH_DIR."jpgraph.php");
-include_once (JPGRAPH_DIR."jpgraph_line.php");
-include_once (JPGRAPH_DIR."jpgraph_bar.php");
-include_once (JPGRAPH_DIR."jpgraph_pie.php");
-include_once (JPGRAPH_DIR."jpgraph_error.php");
-include_once (JPGRAPH_DIR."jpgraph_canvas.php");
+
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+
+
+// Recupere root dolibarr
+$path=eregi_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
+
+require ($path."../../htdocs/master.inc.php");
+
+// Vérifie que chemin vers JPGRAHP est connu et defini $jpgraph
+if (! defined('JPGRAPH_DIR') && ! defined('JPGRAPH_PATH'))
+{
+    print 'Erreur: Définissez la constante JPGRAPH_PATH sur la valeur du répertoire contenant JPGraph';
+    exit;
+}    
+if (! defined('JPGRAPH_DIR')) define('JPGRAPH_DIR', JPGRAPH_PATH);
+$jpgraphdir=JPGRAPH_DIR;
+if (! eregi('[\\\/]$',$jpgraphdir)) $jpgraphdir.='/';
+
+
+include_once ($jpgraphdir."jpgraph.php");
+include_once ($jpgraphdir."jpgraph_line.php");
+include_once ($jpgraphdir."jpgraph_bar.php");
+include_once ($jpgraphdir."jpgraph_pie.php");
+include_once ($jpgraphdir."jpgraph_error.php");
+include_once ($jpgraphdir."jpgraph_canvas.php");
 
 $error = 0;
 
-$opt = getopt("m:y:");
+// Initialise opt, tableau des parametres
+if (function_exists("getopt"))
+{
+    // getopt existe sur ce PHP
+    $opt = getopt("m:y:");
+}
+else
+{
+    // getopt n'existe sur ce PHP
+    $opt=array('m'=>$argv[1]);
+}    
+
+
+// Crée répertoire accueil
+create_exdir($conf->banque->dir_images);
+
 
 $datetime = time();
 
@@ -191,7 +235,7 @@ foreach ($accounts as $account)
   $graph->Add($b2plot);
   $graph->img->SetImgFormat("png");
   
-  $file= DOL_DATA_ROOT."/graph/banque/solde.$account.$year.$month.png";
+  $file= $conf->banque->dir_images."/solde.$account.$year.$month.png";
   
   $graph->Stroke($file);
 }
@@ -311,7 +355,7 @@ foreach ($accounts as $account)
   $graph->Add($b2plot);
   $graph->img->SetImgFormat("png");
   
-  $file= DOL_DATA_ROOT."/graph/banque/solde.$account.$year.png";
+  $file= $conf->banque->dir_images."/solde.$account.$year.png";
   
   $graph->Stroke($file);
 }
@@ -415,7 +459,7 @@ foreach ($accounts as $account)
       $graph->Add($b2plot);
       $graph->img->SetImgFormat("png");
       
-      $file= DOL_DATA_ROOT."/graph/banque/solde.$account.png";
+      $file= $conf->banque->dir_images."/solde.$account.png";
       
       $graph->Stroke($file);
     }

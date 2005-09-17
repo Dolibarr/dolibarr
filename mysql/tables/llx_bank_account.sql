@@ -43,5 +43,6 @@ create table llx_bank_account
   adresse_proprio varchar(255),
   courant        smallint DEFAULT 0 NOT NULL,
   clos           smallint DEFAULT 0 NOT NULL,
+  rappro         smallint DEFAULT 1 integer,
   account_number varchar(8)
 )type=innodb;
