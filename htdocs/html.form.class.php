@@ -353,52 +353,95 @@ class Form
     }
   
   
-  /**
-   *    \brief      Retourne la liste déroulante des contacts d'une société donnée
-   *    \param      socid           Id de la société
-   *    \param      selected        Id contact pré-sélectionné
-   *    \param      htmlname        Nom champ formulaire
-   */
-  function select_contacts($socid,$selected='',$htmlname='contactid')
-  {
-    // On recherche les societes
-    $sql = "SELECT s.idp, s.name, s.firstname FROM ";
-    $sql .= MAIN_DB_PREFIX ."socpeople as s";
-    $sql .= " WHERE fk_soc=".$socid;
-    $sql .= " ORDER BY s.name ASC";
-
-    if ($this->db->query($sql))
-      {
-	print '<select class="flat" name="'.$htmlname.'">';
-	$num = $this->db->num_rows();
-	$i = 0;
-	if ($num)
-	  {
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object();
-
-		if ($selected && $selected == $obj->idp)
-		  {
-		    print '<option value="'.$obj->idp.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
-		  }
-		else
-		  {
-		    print '<option value="'.$obj->idp.'">'.$obj->name.' '.$obj->firstname.'</option>';
-		  }
-		$i++;
-	      }
-	  }
-	print '</select>';
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-      }
-  }
-  
-  
-	/**
+    /**
+     *    \brief      Retourne la liste déroulante des contacts d'une société donnée
+     *    \param      socid           Id de la société
+     *    \param      selected        Id contact pré-sélectionn
+     *    \param      htmlname        Nom champ formulaire
+     */
+    function select_contacts($socid,$selected='',$htmlname='contactid')
+    {
+        // On recherche les societes
+        $sql = "SELECT s.idp, s.name, s.firstname FROM ";
+        $sql .= MAIN_DB_PREFIX ."socpeople as s";
+        $sql .= " WHERE fk_soc=".$socid;
+        $sql .= " ORDER BY s.name ASC";
+    
+        if ($this->db->query($sql))
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows();
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object();
+    
+                    if ($selected && $selected == $obj->idp)
+                    {
+                        print '<option value="'.$obj->idp.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->idp.'">'.$obj->name.' '.$obj->firstname.'</option>';
+                    }
+                    $i++;
+                }
+            }
+            print '</select>';
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
+    
+    
+    /**
+     *    \brief      Retourne la liste déroulante des utilisateurs
+     *    \param      selected        Id contact pré-sélectionn
+     *    \param      htmlname        Nom champ formulaire
+     */
+    function select_users($selected='',$htmlname='userid')
+    {
+        // On recherche les societes
+        $sql = "SELECT u.rowid, u.name, u.firstname FROM ";
+        $sql .= MAIN_DB_PREFIX ."user as u";
+        $sql .= " ORDER BY u.name ASC";
+    
+        if ($this->db->query($sql))
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows();
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object();
+    
+                    if ($selected && $selected == $obj->rowid)
+                    {
+                        print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->rowid.'">'.$obj->name.' '.$obj->firstname.'</option>';
+                    }
+                    $i++;
+                }
+            }
+            print '</select>';
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
+    
+    
+    /**
 	 *      \brief      Affiche la liste déroulante des projets d'une société donnée
 	 *      \param      socid       Id société
 	 *      \param      selected    Id projet présélectionné

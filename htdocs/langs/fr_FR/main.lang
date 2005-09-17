@@ -280,6 +280,10 @@ DateFromTo=Du %s au %s
 DateFrom=A partir du %s
 DateUntil=Jusqu'au %s
 Check=Vérifier
+Internal=Interne
+External=Externe
+Internals=Internes
+Externals=Externes
 # Countries
 CountryFR=France
 CountryBE=Belgique

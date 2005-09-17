@@ -31,5 +31,5 @@
 
 
 ALTER TABLE llx_c_type_contact 
-	ADD UNIQUE INDEX idx_c_type_contact_uk (element, code);
+	ADD UNIQUE INDEX idx_c_type_contact_uk (element, source, code);
 

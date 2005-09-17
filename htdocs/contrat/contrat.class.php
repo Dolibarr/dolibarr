@@ -420,25 +420,47 @@ class Contrat
         $this->db->begin();
 
         // Insère contrat
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, fk_commercial_signature, fk_commercial_suivi, date_contrat)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat";
+//        $sql.= ", fk_commercial_signature, fk_commercial_suivi";
+        $sql.= ")";
         $sql.= " VALUES (now(),".$this->soc_id.",".$user->id;
-        $sql.= ",".($this->commercial_signature_id>=0?$this->commercial_signature_id:"null");
-        $sql.= ",".($this->commercial_suivi_id>=0?$this->commercial_suivi_id:"null");
-        $sql.= ",".$this->db->idate($this->date_contrat) .")";
+        $sql.= ",".$this->db->idate($this->date_contrat);
+//        $sql.= ",".($this->commercial_signature_id>=0?$this->commercial_signature_id:"null");
+//        $sql.= ",".($this->commercial_suivi_id>=0?$this->commercial_suivi_id:"null");
+        $sql.= ")";
         $resql=$this->db->query($sql);
         if ($resql)
         {
+            $error=0;
+            
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
     
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $interface->run_triggers('CONTRACT_CREATE',$this,$user,$lang,$conf);
-            // Fin appel triggers
-    
-            $this->db->commit();
+            // Insère contacts commerciaux ('SALESREPSIGN','contrat')
+            $result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
+            if ($result < 0) $error++;
+            
+            // Insère contacts commerciaux ('SALESREPFOLL','contrat')
+            $result=$this->add_contact($this->commercial_suivi_id,'SALESREPFOLL','internal');
+            if ($result < 0) $error++;
 
-            return $this->id;
+            if (! $error)
+            {
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $interface->run_triggers('CONTRACT_CREATE',$this,$user,$lang,$conf);
+                // Fin appel triggers
+        
+                $this->db->commit();
+    
+                return $this->id;
+            }
+            else
+            {
+                $this->db->rollback();
+
+                return -1;
+            }
         }
         else
         {
@@ -905,31 +927,30 @@ class Contrat
     /* gestion des contacts d'un contrat */
 
 	/**
-	 * 
 	 *      \brief      Ajoute un contact associé au contrat
-     *      \param      fk_socpeople    Id du contact a ajouter.
-     *      \param      nature          description du contact
-     *      \return     int             <0 si erreur, >0 si ok
+     *      \param      fk_socpeople        Id du contact a ajouter.
+     *      \param      type_contact        Type de contact
+     *      \param      source              extern=Contact externe (llx_socpeople), intern=Contact interne (llx_user)
+     *      \return     int                 <0 si erreur, >0 si ok
      */
-	 function add_contact($fk_socpeople, $nature)
-	 {
+	function add_contact($fk_socpeople, $type_contact, $source='extern')
+	{
+        dolibarr_syslog("Contrat::add_contact $fk_socpeople, $type_contact, $source");
+
+        if ($fk_socpeople <= 0) return -1;
+
+        // \todo si type_contact = texte, aller chercher code dans table llx_c_type_contact
+        if ($type_contact == 'SALESREPSIGN') $type_contact=11;
+        if ($type_contact == 'SALESREPFOLL') $type_contact=12;
         
-        if ($fk_socpeople <= 0 
-        	|| $this->societe->contact_get_email($fk_socpeople) == "" )
-        {
-        		// le contact n'existe pas ou est invalide
-        		return -1;
-        }
-        
-        $lNature = addslashes(trim($nature));
-        $datecreate = mktime();
+        $datecreate = time();
         
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
         $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
-		$sql.= $this->db->idate(time());
-		$sql.= ", 4, '". $lNature . "' ";
+		$sql.= $this->db->idate($datecreate);
+		$sql.= ", 4, '". $type_contact . "' ";
         $sql.= ");";
         
         // Retour
@@ -943,9 +964,9 @@ class Contrat
             $this->error=$this->db->error()." - $sql";
             return -1;
         }
-	 }    
-	 
-	 /**
+	}    
+
+    /**
 	 * 
 	 *      \brief      Misea jour du contact associé au contrat
      *      \param      rowid           La reference du lien contant contact.
@@ -953,8 +974,8 @@ class Contrat
      *      \param      nature          Description du contact
      *      \return     int             <0 si erreur, >0 si ok
      */
-	 function update_contact($rowid, $statut, $type_contact_id)
-	 {
+	function update_contact($rowid, $statut, $type_contact_id)
+	{
         // Insertion dans la base
         $sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set ";
         $sql.= " statut = $statut ,";
@@ -993,23 +1014,36 @@ class Contrat
 	 		
     /** 
      *    \brief      Récupère les lignes de contact du contrat
-     *    \param      statut      Statut des lignes detail à récupérer
-     *    \return     array       Tableau des rowid des contacts
+     *    \param      statut        Statut des lignes detail à récupérer
+     *    \param      source        Source du contact external (llx_socpeople) ou internal (llx_user)
+     *    \return     array         Tableau des rowid des contacts
      */
-    function liste_contact($statut=-1)
+    function liste_contact($statut=-1,$source='external')
     {
+        global $langs;
+        
         $tab=array();
      
-        $sql = "SELECT ec.rowid, tc.code";
-        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact ec, ".MAIN_DB_PREFIX."socpeople sp,";
+        $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id,";
+        if ($source == 'internal') $sql.=" '-1' as socid,";
+        if ($source == 'external') $sql.=" t.fk_soc as socid,";
+        if ($source == 'internal') $sql.=" t.name as nom,";
+        if ($source == 'external') $sql.=" t.name as nom,";
+        $sql.= "tc.code, tc.source, tc.libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact ec,";
+        if ($source == 'internal') $sql.=" ".MAIN_DB_PREFIX."user t,";
+        if ($source == 'external') $sql.=" ".MAIN_DB_PREFIX."socpeople t,";
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact tc";
         $sql.= " WHERE element_id =".$this->id;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element='contrat'";
+        if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
+        if ($source == 'external') $sql.= " AND tc.source = 'external'";
         $sql.= " AND tc.active=1";
-        $sql.= " AND ec.fk_socpeople = sp.idp";
+        if ($source == 'internal') $sql.= " AND ec.fk_socpeople = t.rowid";
+        if ($source == 'external') $sql.= " AND ec.fk_socpeople = t.idp";
         if ($statut >= 0) $sql.= " AND statut = '$statut'";
-        $sql.=" order by sp.name asc ;";
+        $sql.=" ORDER BY t.name ASC";
         
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1019,7 +1053,10 @@ class Contrat
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($resql);
-                $tab[$i]=$obj->rowid;
+                
+                $libelle_type=($langs->trans("TypeContact".$obj->code)!=$langs->trans("TypeContact".$obj->code) ? $langs->trans("TypeContact".$obj->code) : $obj->libelle);
+                $tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom,
+                               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
                 $i++;
             }
             return $tab;
@@ -1027,7 +1064,7 @@ class Contrat
         else
         {
             $this->error=$this->db->error();
-//            dolibarr_print_error($this->db);
+            dolibarr_print_error($this->db);
             return -1;
         }
     }
@@ -1063,16 +1100,18 @@ class Contrat
     }	
 
     /** 
-     *    \brief      La liste des valeurs possibles de type de contats
-     *    \return     array   La liste des natures
+     *      \brief      La liste des valeurs possibles de type de contacts
+     *      \param      source      internal ou externam
+     *      \return     array       La liste des natures
      */
- 	function liste_nature_contact()
+ 	function liste_type_contact($source)
     {
   		$tab = array();
   		
         $sql = "SELECT distinct tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE element='contrat'";
+        $sql.= " AND source='".$source."'";
         $sql.= " ORDER by tc.code";
 
         $resql=$this->db->query($sql);
