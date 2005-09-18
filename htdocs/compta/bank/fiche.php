@@ -174,10 +174,10 @@ if ($_GET["action"] == 'create')
   print '<input type="text" size="4" maxlength="4" name="reyear" value="'.strftime("%Y",$now).'">';
   print '</td></tr>';
   
-  print '<tr><td valign="top">&nbsp;</td>';
-  print '<td colspan="3"><input type="checkbox" name="norappro" value="'.$_POST["norappro"].'"> '.$langs->trans("DisableConciliation").'</td></tr>';
-
   print '<tr><td colspan="4"><b>'.$langs->trans("IfBankAccount").'...</b></td></tr>';
+
+  print '<tr><td valign="top">'.$langs->trans("Conciliation").'</td>';
+  print '<td colspan="3"><input type="checkbox" name="norappro" value="'.$_POST["norappro"].'"> '.$langs->trans("DisableConciliation").'</td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
   print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$_POST["bank"].'"></td></tr>';
