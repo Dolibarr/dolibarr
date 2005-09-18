@@ -255,7 +255,7 @@ if ($account > 0)
     print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
     print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
     print '<td align="center" width="60">';
-    if ($acct->type != 2 && $acct->rappro) print $langs->trans("AccountStatement");
+    if ($acct->type != 2 && $acct->rappro) print $langs->trans("AccountStatementShort");
     else print '&nbsp;';
     print '</td></tr>';
 

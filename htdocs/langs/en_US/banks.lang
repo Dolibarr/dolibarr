@@ -76,3 +76,4 @@ AccountIdShort=Number
 EditBankRecord=Edit record
 LineRecord=Transaction
 AddBankRecord=Add transaction
+AddBankRecordLong=Add transaction manually
