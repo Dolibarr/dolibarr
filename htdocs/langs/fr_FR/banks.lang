@@ -24,6 +24,7 @@ StandingOrder=Prélèvement
 Withdrawals=Retraits
 Withdrawal=Retrait
 AccountStatement=Relevé
+AccountStatementShort=Relevé
 AccountStatements=Relevés
 LastAccountStatements=Derniers relevés bancaires
 Rappro=Rappro

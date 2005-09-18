@@ -24,6 +24,7 @@ StandingOrder=Standing order
 Withdrawals=Withdrawals
 Withdrawal=Withdrawal
 AccountStatement=Account statement
+AccountStatementShort=Statement
 AccountStatements=Account statements
 LastAccountStatements=Last account statements
 Rappro=Rappro
