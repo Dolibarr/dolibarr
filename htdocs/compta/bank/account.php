@@ -216,11 +216,11 @@ if ($account > 0)
         print '<input type="hidden" name="account" value="' . $acct->id . '">';
    
         print '<tr>';
-        print '<td align="left" colspan="8"><b>Saisie d\'une écriture manuelle hors facture</b></td>';
+        print '<td align="left" colspan="8"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
         print '</tr>';
 
         print '<tr class="liste_titre">';
-        print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>'.$langs->trans("Description").'</td><td align=right>0000.00</td><td align=right>0000.00</td>';
+        print '<td><small>YYYY MMDD</small></td><td colspan="2">'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td><td align=right>'.$langs->trans("Debit").'</td><td align=right>'.$langs->trans("Credit").'</td>';
         print '<td colspan="2" align="center">&nbsp;';
         print '</td></tr>';
 
