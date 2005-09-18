@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -75,12 +74,10 @@ print '<a class="tab" href="info.php?id='.$_GET["id"].'">'.$langs->trans("Info")
 print '</div>';
 
 print '<div class="tabBar">';
-print '<br>';
 
 
 /*
  * Visualisation de la fiche
- *
  */
 
 $paiement = new Paiement($db);
