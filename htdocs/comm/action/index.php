@@ -64,9 +64,11 @@ llxHeader();
  *
  */
 
-$sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
-$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
+$sql = "SELECT s.nom as societe, s.idp as socidp, s.client,";
+$sql.= " a.id,".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.percent as percent,";
+$sql.= " c.code as acode, c.libelle, u.code, u.rowid as userid";
+$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
+$sql.= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
 if ($_GET["type"])
 {
   $sql .= " AND c.id = ".$_GET["type"];
@@ -146,6 +148,7 @@ if ($resql)
         print "<td width=\"20\">" .strftime("%d",$obj->da)."</td>\n";
         print "<td width=\"30\">" .strftime("%H:%M",$obj->da)."</td>\n";
 
+        // Status/Percent
         if ($obj->percent < 100) {
             print "<td align=\"center\">".$obj->percent."%</td>";
         }
@@ -153,13 +156,14 @@ if ($resql)
             print "<td align=\"center\">".$langs->trans("Done")."</td>";
         }
 
-        print '<td><a href="fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' ';
+        // Action
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' ';
         $transcode=$langs->trans("Action".$obj->acode);
         $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
         print dolibarr_trunc($libelle,16);
         print '</a></td>';
 
-        // Sociét
+        // Société
         print '<td>';
         if ($obj->client == 1) $url=DOL_URL_ROOT.'/comm/fiche.php?socid=';
         elseif ($obj->client == 2) $url=DOL_URL_ROOT.'/comm/prospect/fiche.php?id=';
@@ -184,7 +188,7 @@ if ($resql)
         print '<td>'.dolibarr_trunc($obj->note, 16).'</td>';
 
         // Auteur
-        print '<td align="center">'.$obj->code.'</td>';
+        print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
 
         print "</tr>\n";
         $i++;

@@ -724,7 +724,8 @@ if ($_socid > 0)
                 print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
                 print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
 
-                print '<td>&nbsp;</td>';
+                // Status/Percent
+                print '<td width="30">&nbsp;</td>';
 
                 if ($obj->propalrowid)
                 {
@@ -752,7 +753,7 @@ if ($_socid > 0)
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+                print '<td width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }
@@ -817,7 +818,8 @@ if ($_socid > 0)
                 print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
                 print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
 
-                print '<td>&nbsp;</td>';
+                // Statut/Percent
+                print '<td width="30">&nbsp;</td>';
 
                 if ($obj->propalrowid)
                 {
@@ -841,14 +843,14 @@ if ($_socid > 0)
                 {
                     $contact = new Contact($db);
                     $contact->fetch($obj->fk_contact);
-                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("Showcontact"),"contact").' '.$contact->fullname.'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
                 }
                 else
                 {
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+                print '<td width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }
