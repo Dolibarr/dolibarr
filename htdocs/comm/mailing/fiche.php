@@ -239,10 +239,11 @@ if ($_GET["action"] == 'create')
     print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
     print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
     print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
+    print '__ID__ = '.$langs->trans("IdRecord").'<br>';
     print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
     print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
     print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
-    print '</td>';
+    print '</i></td>';
     print '<td><textarea cols="70" rows="10" name="body"></textarea></td></tr>';
     print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></td></tr>';
     print '</table>';
@@ -333,7 +334,9 @@ else
 
             // Contenu du mail
             print '<tr><td>'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
-            print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3">';
+            print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
+
+            print '<td colspan="3">';
             print nl2br($mil->body).'</td></tr>';
 
             print '</table>';
@@ -420,7 +423,14 @@ else
             print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3"><input class="flat" type="text" size=40 name="titre" value="'.htmlentities($mil->titre).'"></td></tr>';
             print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.htmlentities($mil->email_from).'"></td></tr>';
             print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.htmlentities($mil->sujet).'"></td></tr>';
-            print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3"><textarea name="body" cols=70 rows=10>';
+            print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
+            print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
+            print '__ID__ = '.$langs->trans("IdRecord").'<br>';
+            print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
+            print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
+            print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
+            print '</i></td>';
+            print '<td colspan="3"><textarea name="body" cols=70 rows=10>';
             print $mil->body.'</textarea></td></tr>';
 
             print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';

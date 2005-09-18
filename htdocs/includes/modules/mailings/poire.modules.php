@@ -54,7 +54,7 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 class mailing_poire extends MailingTargets
 {
     var $name='ContactCompanies';                       // Identifiant du module mailing
-    var $desc='Contacts des sociétés';                  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Contacts avec emails des sociétés';      // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
     var $require_admin=0;                               // Module mailing actif pour user admin ou non
     var $picto='contact';
@@ -129,7 +129,7 @@ class mailing_poire extends MailingTargets
     function add_to_target($mailing_id,$filtersarray=array())
     {
         // La requete doit retourner: id, email, fk_contact, name, firstname
-        $sql = "SELECT s.idp as id, c.email as email, c.idp as fk_contact, c.name as name, c.firstname as firstname";
+        $sql = "SELECT c.idp as id, c.email as email, c.idp as fk_contact, c.name as name, c.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE s.idp = c.fk_soc";

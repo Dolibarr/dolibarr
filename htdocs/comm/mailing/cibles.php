@@ -167,19 +167,22 @@ if ($mil->fetch($_GET["id"]) == 0)
     
     if ($mesg) print "$mesg<br>\n";
 
+    $var=!$var;
+
     // Affiche les listes de sélection
     if ($mil->statut == 0)
     {
+        print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
+        print_titre($langs->trans("ToClearAllRecipientsClickHere").': &nbsp; <input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></form>');
+        print '<br>';
+                
+        print_titre($langs->trans("ToAddRecipientsChooseHere").':');
         print '<table class="noborder" width=\"100%\">';
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';
         print '<td align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
         print '<td align="center">'.$langs->trans("Parameters").'</td>';
-        print '<td align="center" width="120">';
-        if ($mil->statut == 0) {
-           print $langs->trans("Actions");
-        }
-        print '</td>';
+        print '<td align="center" width="120">&nbsp;</td>';
         print "</tr>\n";
         
         clearstatcache();
@@ -255,11 +258,6 @@ if ($mil->fetch($_GET["id"]) == 0)
             }
         }
         closedir($handle);
-
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
-        print '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></form></td>';
-        print '</tr>';
 
         print '</table><br>';
     }
