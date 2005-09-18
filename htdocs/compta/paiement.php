@@ -50,140 +50,142 @@ if ($_POST["action"] == 'add_paiement')
 {
     $error = 0;
 
-    if ($_POST["paiementid"] > 0)
+    $datepaye = $db->idate(mktime(12, 0 , 0,
+                        $_POST["remonth"],
+                        $_POST["reday"],
+                        $_POST["reyear"]));
+    $paiement_id = 0;
+    $total = 0;
+    // Génère tableau des montants amounts
+    $amounts = array();
+    foreach ($_POST as $key => $value)
     {
-        $datepaye = $db->idate(mktime(12, 0 , 0,
-        $_POST["remonth"],
-        $_POST["reday"],
-        $_POST["reyear"]));
-
-        $paiement_id = 0;
-        $total = 0;
-        $amounts = array();
-        foreach ($_POST as $key => $value)
+        if (substr($key,0,7) == 'amount_')
         {
-            if (substr($key,0,7) == 'amount_')
-            {
-                $other_facid = substr($key,7);
+            $other_facid = substr($key,7);
 
-                $amounts[$other_facid] = $_POST[$key];
-                $total = $total + $amounts[$other_facid];
-            }
+            $amounts[$other_facid] = $_POST[$key];
+            $total = $total + $amounts[$other_facid];
         }
+    }
 
-        if ($total > 0)
+    // Effectue les vérifications des parametres
+    if ($_POST["paiementid"] <= 0)
+    {
+        $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("PaymentMode")).'</div>';
+        $error++;
+    }
+
+    if ($conf->banque->enabled)
+    {
+        // Si module bank actif, un compte est obligatoire lors de la saisie
+        // d'un paiement
+        if (! $_POST["accountid"])
         {
+            $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("AccountToCredit")).'</div>';
+            $error++;   
+        }
+    }
 
-            $db->begin();
+    if ($total <= 0)
+    {
+        $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Amount")).'</div>';
+        $error++;
+    }
 
-            // Creation de la ligne paiement
-            $paiement = new Paiement($db);
-            $paiement->datepaye     = $datepaye;
-            $paiement->amounts      = $amounts;   // Tableau de montant
-            $paiement->paiementid   = $_POST["paiementid"];
-            $paiement->num_paiement = $_POST["num_paiement"];
-            $paiement->note         = $_POST["comment"];
+    if (! $error)
+    {
+        $db->begin();
 
-            $paiement_id = $paiement->create($user);
+        // Creation de la ligne paiement
+        $paiement = new Paiement($db);
+        $paiement->datepaye     = $datepaye;
+        $paiement->amounts      = $amounts;   // Tableau de montant
+        $paiement->paiementid   = $_POST["paiementid"];
+        $paiement->num_paiement = $_POST["num_paiement"];
+        $paiement->note         = $_POST["comment"];
 
-            if ($paiement_id > 0)
+        $paiement_id = $paiement->create($user);
+
+        if ($paiement_id > 0)
+        {
+            // On determine le montant total du paiement
+            $total=0;
+            foreach ($paiement->amounts as $key => $value)
             {
-                // On determine le montant total du paiement
-                $total=0;
-                foreach ($paiement->amounts as $key => $value)
+                $facid = $key;
+                $value = trim($value);
+                $amount = round(ereg_replace(",",".",$value), 2);
+                if (is_numeric($amount))
                 {
-                    $facid = $key;
-                    $value = trim($value);
-                    $amount = round(ereg_replace(",",".",$value), 2);
-                    if (is_numeric($amount))
-                    {
-                        $total += $amount;
-                    }
+                    $total += $amount;
                 }
+            }
 
-                if ($conf->banque->enabled)
+            if ($conf->banque->enabled)
+            {
+                // Insertion dans llx_bank
+                $label = "Règlement facture";
+                $acc = new Account($db, $_POST["accountid"]);
+                //paiementid contient "CHQ ou VIR par exemple"
+                $bank_line_id = $acc->addline($paiement->datepaye,
+                $paiement->paiementid,
+                $label,
+                $total,
+                $paiement->num_paiement,
+                '',
+                $user);
+
+                // Mise a jour fk_bank dans llx_paiement.
+                // On connait ainsi le paiement qui a généré l'écriture bancaire
+                if ($bank_line_id > 0)
                 {
-                    // Si module bank actif, un compte est obligatoire lors de la saisie
-                    // d'un paiement
-                    if (! $_POST["accountid"])
+                    $paiement->update_fk_bank($bank_line_id);
+
+                    // Mise a jour liens (pour chaque facture concernées par le paiement)
+                    foreach ($paiement->amounts as $key => $value)
                     {
-                        $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("AccountToCredit")).'</div>';
-                        $error++;   
+                        $facid = $key;
+                        $fac = new Facture($db);
+                        $fac->fetch($facid);
+                        $fac->fetch_client();
+                        $acc->add_url_line($bank_line_id,
+                        $paiement_id,
+                        DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
+                        "(paiement)",
+                        'payment');
+                        $acc->add_url_line($bank_line_id,
+                        $fac->client->id,
+                        DOL_URL_ROOT.'/compta/fiche.php?socid=',
+                        $fac->client->nom,
+                        'company');
                     }
-                    else
-                    {
-                        // Insertion dans llx_bank
-                        $label = "Règlement facture";
-                        $acc = new Account($db, $_POST["accountid"]);
-                        //paiementid contient "CHQ ou VIR par exemple"
-                        $bank_line_id = $acc->addline($paiement->datepaye,
-                        $paiement->paiementid,
-                        $label,
-                        $total,
-                        $paiement->num_paiement,
-                        '',
-                        $user);
-    
-    
-                        // Mise a jour fk_bank dans llx_paiement.
-                        // On connait ainsi le paiement qui a généré l'écriture bancaire
-                        if ($bank_line_id > 0)
-                        {
-                            $paiement->update_fk_bank($bank_line_id);
-    
-                            // Mise a jour liens (pour chaque facture concernées par le paiement)
-                            foreach ($paiement->amounts as $key => $value)
-                            {
-                                $facid = $key;
-                                $fac = new Facture($db);
-                                $fac->fetch($facid);
-                                $fac->fetch_client();
-                                $acc->add_url_line($bank_line_id,
-                                $paiement_id,
-                                DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
-                                "(paiement)",
-                                'payment');
-                                $acc->add_url_line($bank_line_id,
-                                $fac->client->id,
-                                DOL_URL_ROOT.'/compta/fiche.php?socid=',
-                                $fac->client->nom,
-                                'company');
-                            }
-    
-                        }
-                        else
-                        {
-                            $error++;
-                        }
-                    }
+
                 }
+                else
+                {
+                    $error++;
+                }
+            }
 
-            }
-            else
-            {
-                $error++;
-            }
-
-
-            if ($error == 0)
-            {
-                $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-                $db->commit();
-                Header("Location: $loc");
-            }
-            else
-            {
-                $db->rollback();
-            }
         }
         else
         {
-            $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Amount")).'</div>';
+            $this->error=$paiement->error;
+            $error++;
         }
-    }
-    else
-    {
-        $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("PaymentMode")).'</div>';
+
+
+        if ($error == 0)
+        {
+            $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+            $db->commit();
+            Header("Location: $loc");
+        }
+        else
+        {
+            $db->rollback();
+        }
     }
 }
 
