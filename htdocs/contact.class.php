@@ -653,47 +653,76 @@ class Contact
 	}
     }
   
-  /*
-   *    \brief      Charge les informations sur le contact, depuis la base
-   *    \param      id      id du contact à charger
-   */
-  function info($id) 
+    /*
+     *    \brief      Charge les informations sur le contact, depuis la base
+     *    \param      id      id du contact à charger
+     */
+    function info($id)
     {
-      $sql = "SELECT c.idp, ".$this->db->pdate("datec")." as datec, fk_user";
-      $sql .= ", ".$this->db->pdate("tms")." as tms, fk_user_modif";
-      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-      $sql .= " WHERE c.idp = $id";
-      if ($this->db->query($sql)) 
-	{
-	  if ($this->db->num_rows()) 
-	    {
-	      $obj = $this->db->fetch_object();
-
-	      $this->id                = $obj->idp;
-
-          if ($obj->fk_user) {
-            $cuser = new User($this->db, $obj->fk_user);
-            $cuser->fetch();
-            $this->user_creation     = $cuser;
-          }
-          
-	      if ($obj->fk_user_modif) {
-            $muser = new User($this->db, $obj->fk_user_modif);
-            $muser->fetch();
-            $this->user_modification = $muser;
-          }
-
-	      $this->date_creation     = $obj->datec;
-	      $this->date_modification = $obj->tms;
-
-	    }
-
-	  $this->db->free();
-	}
-      else
-	{
-	  print $this->db->error();
-	}
+        $sql = "SELECT c.idp, ".$this->db->pdate("datec")." as datec, fk_user";
+        $sql .= ", ".$this->db->pdate("tms")." as tms, fk_user_modif";
+        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+        $sql .= " WHERE c.idp = $id";
+        
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+    
+                $this->id                = $obj->idp;
+    
+                if ($obj->fk_user) {
+                    $cuser = new User($this->db, $obj->fk_user);
+                    $cuser->fetch();
+                    $this->user_creation     = $cuser;
+                }
+    
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db, $obj->fk_user_modif);
+                    $muser->fetch();
+                    $this->user_modification = $muser;
+                }
+    
+                $this->date_creation     = $obj->datec;
+                $this->date_modification = $obj->tms;
+    
+            }
+    
+            $this->db->free($resql);
+        }
+        else
+        {
+            print $this->db->error();
+        }
     }
+    
+    /*
+     *    \brief        Renvoi nombre d'emailings reçu par le contact avec son email
+     *    \return       int     Nombre d'emailings
+     */
+    function getNbOfEMailings()
+    {
+        $sql = "SELECT count(mc.email) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+        $sql.= " WHERE mc.email = '".$this->email."'";
+        $sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoyé, 1 envoyé avec succès
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            $nb=$obj->nb;
+             
+            $this->db->free($resql);
+            return $nb;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }    
+    
 }
 ?>

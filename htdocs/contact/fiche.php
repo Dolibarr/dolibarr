@@ -269,8 +269,8 @@ if ($_GET["action"] == 'create')
     print '<tr><td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
     print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-    print '<tr><td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80"></td>';
-    print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
+    print '<tr><td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
+    print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
 
     print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
@@ -339,7 +339,18 @@ elseif ($_GET["action"] == 'edit')
     print '<tr><td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
     print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
 
-    print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td>';
+    if ($conf->mailing->enabled)
+    {
+        $langs->load("mails");
+        print '<td nowrap>'.$langs->trans("NbOfEMailingsReceived").'</td>';
+        print '<td>'.$contact->getNbOfEMailings().'</td>';
+    }
+    else
+    {
+        print '<td colspan="2">&nbsp;</td>';
+    }
+    print '</tr>';
 
     print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
@@ -408,10 +419,10 @@ else
     print '<tr><td>Tel Pro</td><td>'.$contact->phone_pro.'</td>';
     print '<td>Tel Perso</td><td>'.$contact->phone_perso.'</td></tr>';
     
-    print '<td>Portable</td><td>'.$contact->phone_mobile.'</td>';
+    print '<tr><td>Portable</td><td>'.$contact->phone_mobile.'</td>';
     print '<td>'.$langs->trans("Fax").'</td><td>'.$contact->fax.'</td></tr>';
     
-    print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="3">';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td>';
     if ($contact->email && ! ValidEmail($contact->email))
     {
         print '<div class="error">'.$langs->trans("ErrorBadEMail",$contact->email)."</div>";
@@ -420,8 +431,19 @@ else
     {
         print $contact->email;
     }
-    print '</td></tr>';
-    
+    print '</td>';
+    if ($conf->mailing->enabled)
+    {
+        $langs->load("mails");
+        print '<td nowrap>'.$langs->trans("NbOfEMailingsReceived").'</td>';
+        print '<td>'.$contact->getNbOfEMailings().'</td>';
+    }
+    else
+    {
+        print '<td colspan="2">&nbsp;</td>';
+    }
+    print '</tr>';
+
     print '<tr><td>Jabberid</td><td colspan="3">'.$contact->jabberid.'</td></tr>';
     
     print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">';
@@ -460,26 +482,20 @@ else
     }
     
     
-    // Historique des actions vers ce contact
+    // Historique des actions sur ce contact
     print_titre ($langs->trans("TasksHistoryForThisContact"));
+    $histo=array();
+    $numaction = 0 ;
     
-    print '<table width="100%" class="noborder">';
-    
-    print "<tr class=\"liste_titre\">";
-    print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Actions")."</td>";
-    print "<td>".$langs->trans("CreatedBy")."</td></tr>";
-    
-    $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-    $sql .= " WHERE fk_contact = ".$contact->id;
-    $sql .= " AND u.rowid = a.fk_user_author";
-    $sql .= " AND c.id=a.fk_action ";
-    
-    if ($contactid)
-    {
-        $sql .= " AND fk_contact = $contactid";
-    }
-    $sql .= " ORDER BY a.datea DESC, a.id DESC";
+    // Recherche histo sur actioncomm
+    $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, a.note, a.percent as percent,";
+    $sql.= " c.code as acode, c.libelle,";
+    $sql.= " u.rowid as user_id, u.code";
+    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql.= " WHERE fk_contact = ".$contact->id;
+    $sql.= " AND u.rowid = a.fk_user_author";
+    $sql.= " AND c.id=a.fk_action";
+    $sql.= " ORDER BY a.datea DESC, a.id DESC";
     
     $resql=$db->query($sql);
     if ($resql)
@@ -490,21 +506,10 @@ else
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
-            print "<tr $bc[$var]>";
-    
-            print "<td>". strftime("%d %b %Y %H:%M", $obj->da) ."</td>";
-            if ($obj->propalrowid)
-            {
-                print "<td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->propalrowid."\">".$obj->libelle."</a></td>";
-            }
-            else
-            {
-                print "<td>$obj->libelle</td>";
-            }
-    
-            print "<td>$obj->code&nbsp;</td>";
-            print "</tr>\n";
+            $histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percent,
+                             'acode'=>$obj->acode,'libelle'=>$obj->libelle,
+                             'userid'=>$obj->user_id,'code'=>$obj->code);
+            $numaction++;
             $i++;
         }
     }
@@ -512,8 +517,101 @@ else
     {
         dolibarr_print_error($db);
     }
+
+    // Recherche histo sur mailing
+    $sql = "SELECT m.rowid as id, ".$db->pdate("mc.date_envoi")." as da, m.titre as note, '100' as percent,";
+    $sql.= " 'AC_EMAILING' as acode,";
+    $sql.= " u.rowid as user_id, u.code";
+    $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u ";
+    $sql.= " WHERE mc.email = '".$contact->email."'";
+    $sql.= " AND mc.statut = 1";
+    $sql.= " AND u.rowid = m.fk_user_valid";
+    $sql.= " AND mc.fk_mailing=m.rowid";
+    $sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
+
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $i = 0 ;
+        $num = $db->num_rows($resql);
+        $var=true;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            $histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percent,
+                             'acode'=>$obj->acode,'libelle'=>$obj->libelle,
+                             'userid'=>$obj->user_id,'code'=>$obj->code);
+            $numaction++;
+            $i++;
+        }
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
+
+    // Affichage actions sur contact
+    print '<table width="100%" class="noborder">';
+    
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Date").'</td>';
+    print '<td align="center">'.$langs->trans("Status").'</td>';
+    print '<td>'.$langs->trans("Actions").'</td>';
+    print '<td>'.$langs->trans("Comments").'</td>';
+    print '<td>'.$langs->trans("Author").'</td></tr>';
+
+    foreach ($histo as $key=>$value)
+    {
+        $var=!$var;
+        print "<tr $bc[$var]>";
+
+        // Date
+        print "<td>". dolibarr_print_date($histo[$key]['date'],"%d %b %Y %H:%M") ."</td>";
+
+        // Status/Percent
+        if ($histo[$key]['percent'] < 100) {
+            print "<td align=\"center\">".$histo[$key]['percent']."%</td>";
+        }
+        else {
+            print "<td align=\"center\">".$langs->trans("Done")."</td>";
+        }
+
+        // Action
+        print '<td>';
+        if ($histo[$key]['type']=='action')
+        {
+            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowTask"),"task").' ';
+            $transcode=$langs->trans("Action".$histo[$key]['acode']);
+            $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['libelle']);
+            print dolibarr_trunc($libelle,30);
+            print '</a>';
+        }
+        if ($histo[$key]['type']=='mailing')
+        {
+            print '<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
+            $transcode=$langs->trans("Action".$histo[$key]['acode']);
+            $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
+            print dolibarr_trunc($libelle,30);
+            print '</a>';
+        }
+        print '</td>';
+
+        // Note
+        print '<td>'.dolibarr_trunc($histo[$key]['note'], 30).'</td>';
+
+        // Author
+        print '<td>';
+        if ($histo[$key]['code'])
+        {
+            print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$histo[$key]['userid'].'">'.img_object($langs->trans("ShowUser"),'user').' '.$histo[$key]['code'].'</a>';
+        }
+        else print "&nbsp;";
+        print "</td>";
+        print "</tr>\n";
+    }
     print "</table>";
   
+    print '<br>';
 }
 
 $db->close();

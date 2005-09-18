@@ -54,7 +54,7 @@ $search_email=isset($_GET["search_email"])?$_GET["search_email"]:$_POST["search_
 $type = isset($_GET["type"])?$_GET["type"]:$_POST["type"];
 $view=isset($_GET["view"])?$_GET["view"]:$_POST["view"];
 
-$contactname=isset($_GET["contactname"])?$_GET["contactname"]:$_POST["contactname"];
+$sall=isset($_GET["contactname"])?$_GET["contactname"]:$_POST["contactname"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
@@ -72,11 +72,13 @@ if ($view == 'mail')   { $text="(Vue EMail)"; }
 if ($view == 'recent') { $text="(Récents)"; }
 $titre = $langs->trans("ListOfContacts")." $text";
 
-if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
+if ($_POST["button_removefilter"])
+{
     $search_nom="";
     $search_prenom="";
     $search_societe="";
     $search_email="";
+    $sall="";
 }
 
 
@@ -88,7 +90,6 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
 $sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax ";
 $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p ";
 $sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc) ";
-
 $sql .= "WHERE 1=1 ";
 
 if ($_GET["userid"])    // statut commercial
@@ -97,21 +98,20 @@ if ($_GET["userid"])    // statut commercial
 }
 if ($search_nom)        // filtre sur le nom
 {
-    $sql .= " AND upper(p.name) like '%".$search_nom."%'";
+    $sql .= " AND p.name like '%".$search_nom."%'";
 }
 if ($search_prenom)     // filtre sur le prenom
 {
-    $sql .= " AND upper(p.firstname) like '%".$search_prenom."%'";
+    $sql .= " AND p.firstname like '%".$search_prenom."%'";
 }
 if ($search_societe)    // filtre sur la societe
 {
-    $sql .= " AND upper(s.nom) like '%".$search_societe."%'";
+    $sql .= " AND s.nom like '%".$search_societe."%'";
 }
 if ($search_email)      // filtre sur l'email
 {
-    $sql .= " AND upper(p.email) like '%".$search_email."%'";
+    $sql .= " AND p.email like '%".$search_email."%'";
 }
-
 if ($type == "f")        // filtre sur type
 {
     $sql .= " AND fournisseur = 1";
@@ -120,12 +120,10 @@ if ($type == "c")        // filtre sur type
 {
     $sql .= " AND client = 1";
 }
-
-if ($contactname)
+if ($sall)
 {
-    $sql .= " AND (p.name like '%".$contactname."%' OR p.firstname like '%".$contactname."%') ";
+    $sql .= " AND (p.name like '%".$sall."%' OR p.firstname like '%".$sall."%' OR p.email like '%".$sall."%') ";
 }
-
 if ($socid)
 {
     $sql .= " AND s.idp = $socid";
@@ -144,7 +142,7 @@ $result = $db->query($sql);
 
 if ($result)
 {
-    $num = $db->num_rows();
+    $num = $db->num_rows($result);
     $i = 0;
 
     print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
@@ -152,9 +150,9 @@ if ($result)
 
     print '<table class="liste" width="100%">';
 
-    if ($contactname)
+    if ($sall)
     {
-        print $langs->trans("Filter")." (".$langs->trans("Lastname")." ".$langs->trans("or")." ".$langs->trans("Firstname")."): $contactname";
+        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
     }
 
     // Ligne des titres
@@ -212,8 +210,8 @@ if ($result)
     }
 
     print '<td class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
-    print '&nbsp; <input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
+    print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+    print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
     print '</td>';
     print '</tr>';
     print '</form>';
