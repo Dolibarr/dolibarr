@@ -61,6 +61,13 @@ textarea  {
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+textarea.flat
+{ 
+    font: helvetica, verdana, arial, sans-serif;
+    border: 1px solid #8C9C9B;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
 .button  {
     font: 12px helvetica, verdana, arial, sans-serif;
 	font-size: 100%;
@@ -284,16 +291,6 @@ div.help
     margin: 1px 0px 0px 0px;
 }
 
-
-
-.flat  {
-	font-family: arial,verdana,helvetica, sans-serif;
-	font-size: 100%;
-	font-weight: normal;
-	border: 1px solid #ccd7e0;
-	background-image : url(img/button_bg.png);
-	background-position : bottom;
-}
 
 td.barre { 
 	border-right: 1px solid #000000;
