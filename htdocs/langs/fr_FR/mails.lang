@@ -49,10 +49,12 @@ NoTargetYet=Aucun destinataire défini
 AddRecipients=Ajout de destinataires
 RemoveRecipient=Supprime destinataire
 CommonSubstitutions=Substitutions communes
+
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts avec e-mail des sociétés (prospects, clients, fournisseurs...)
 MailingModuleDescDolibarrUsers=Utilisateurs de Dolibarr ayant un e-mail
-MailingModuleDescFundationMembers=Adhérents ayant e-mail
+MailingModuleDescFundationMembers=Adhérents ayant un e-mail
+
 RecipientSelectionModules=Modules de sélection des destinataires
 MailSelectedRecipients=Destinataires sélectionnés
 MailingArea=Espace mailings
@@ -66,3 +68,7 @@ SendMail=Envoi mail
 SentBy=Envoyé par
 MailingNeedCommand=Pour des raisons de sécurité, l'envoi d'un mailing de masse ne peut être réalisé qu'en ligne de commande. Demandez à votre administrateur de lancer la commande suivante pour envoyer le mailing à tous les destinataires :
 TargetsReset=Vider liste
+ToClearAllRecipientsClickHere=Pour effacer la liste des destinataires de ce mailing, cliquer ici
+ToAddRecipientsChooseHere=Pour ajouter des destinataires, choisir dans les listes ci-dessous
+NbOfEMailingsReceived=Nb de mailings de masse reçus
+IdRecord=ID enregistrement
