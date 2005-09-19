@@ -56,7 +56,7 @@ function llxHeader($head = "") {
         $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
-    if ($conf->commercial->enabled  && $user->rights->societe->lire)
+    if ($conf->commercial->enabled  && $user->rights->commercial->lire)
     {
         $langs->load("commercial");
         $menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));
@@ -71,7 +71,7 @@ function llxHeader($head = "") {
         }
     }
 
-    if ($conf->compta->enabled  && $user->rights->societe->lire)
+    if ($conf->compta->enabled  && $user->rights->general->lire)
     {
         $langs->load("compta");
         $menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("Accountancy"));
@@ -168,7 +168,7 @@ function llxHeader($head = "") {
         $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }
 
-    if ($conf->bookmark->enabled && $user->rights->mailing->lire)
+    if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
     {
         $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
     }

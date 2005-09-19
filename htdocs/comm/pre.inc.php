@@ -76,31 +76,31 @@ function llxHeader($head = "", $title = "")
       $menu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"));
     }
 
-  if ($conf->contrat->enabled)
+  if ($conf->contrat->enabled && $user->rights->contrat->lire)
     {
       $langs->load("contracts");
       $menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
     }
 
-  if ($conf->commande->enabled ) 
+  if ($conf->commande->enabled && $user->rights->commande->lire) 
     {
       $langs->load("orders");
       $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
     }
 
-  if ($user->rights->mailing->lire)
+  if ($user->mailing->enabled && $user->rights->mailing->lire)
     {
       $langs->load("mails");
       $menu->add(DOL_URL_ROOT."/comm/mailing/", $langs->trans("EMailings"));
     }
 
-  if ($conf->fichinter->enabled ) 
+  if ($conf->fichinter->enabled  && $user->rights->ficheinter->lire) 
     {
       $langs->load("interventions");
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
     }
 
-  if ($conf->produit->enabled || $conf->service->enabled)
+  if (($conf->produit->enabled || $conf->service->enabled) && $user->rights->produit->lire)
     {
       $langs->load("products");
       $chaine="";
@@ -110,7 +110,7 @@ function llxHeader($head = "", $title = "")
       $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
     }
   
-  if ($conf->projet->enabled ) 
+  if ($conf->projet->enabled && $user->rights->projet->lire) 
     {
       $langs->load("projects");
       $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));

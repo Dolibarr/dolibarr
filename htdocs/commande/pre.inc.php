@@ -48,7 +48,8 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
   $menu->add_submenu(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
 
-  if ($conf->expedition->enabled) {
+  if ($conf->expedition->enabled && $user->rights->expedition->lire)
+  {
     $menu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
   }
   
