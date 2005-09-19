@@ -21,7 +21,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -34,161 +33,158 @@ require ("./main.inc.php");
 $user->getrights();
 
 function llxHeader($head = "") {
-  global $user, $conf, $langs;
+    global $user, $conf, $langs;
 
-  top_menu($head);
+    top_menu($head);
 
-  $menu = new Menu();
+    $menu = new Menu();
 
-  if ($conf->societe->enabled && $user->rights->societe->lire) 
+    if ($conf->societe->enabled && $user->rights->societe->lire)
     {
-      $langs->load("companies");
-      $menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"));
+        $langs->load("companies");
+        $menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"));
 
-      if ($user->rights->societe->creer)
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewCompany"));
-	}
-      
-      if(is_dir("societe/groupe"))
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("MenuSocGroup"));
-	}
-      $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
+        if ($user->rights->societe->creer)
+        {
+            $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewCompany"));
+        }
+
+        if(is_dir("societe/groupe"))
+        {
+            $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("MenuSocGroup"));
+        }
+        $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
-  if ($conf->commercial->enabled  && $user->rights->societe->lire) 
+    if ($conf->commercial->enabled  && $user->rights->societe->lire)
     {
-      $langs->load("commercial");
-      $menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));
+        $langs->load("commercial");
+        $menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));
 
-      $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php",$langs->trans("Customers"));
-      $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
-			
-      if ($user->rights->propale->lire)
-	{
-	  $langs->load("propal");
-	  $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-	}
+        $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php",$langs->trans("Customers"));
+        $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
+
+        if ($user->rights->propale->lire)
+        {
+            $langs->load("propal");
+            $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
+        }
     }
 
-  if ($conf->compta->enabled  && $user->rights->societe->lire) 
+    if ($conf->compta->enabled  && $user->rights->societe->lire)
     {
-      $langs->load("compta");
-      $menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("Accountancy"));
+        $langs->load("compta");
+        $menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("Accountancy"));
 
-      if ($user->rights->facture->lire) {
-        $langs->load("bills");
-    	$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", $langs->trans("Bills"));
-      }
+        if ($user->rights->facture->lire) {
+            $langs->load("bills");
+            $menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", $langs->trans("Bills"));
+        }
     }
 
-  if ($conf->fichinter->enabled  && $user->rights->ficheinter->lire) 
+    if ($conf->fichinter->enabled  && $user->rights->ficheinter->lire)
     {
-      $langs->trans("interventions");
-      $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
+        $langs->trans("interventions");
+        $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
     }
 
-  if (($conf->produit->enabled || $conf->service->enabled) && $user->rights->produit->lire)
+    if (($conf->produit->enabled || $conf->service->enabled) && $user->rights->produit->lire)
     {
-      $langs->load("products");
-      $chaine="";
-      if ($conf->produit->enabled) { $chaine.= $langs->trans("Products"); }
-      if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-      if ($conf->service->enabled) { $chaine.= $langs->trans("Services"); }
-      $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
+        $langs->load("products");
+        $chaine="";
+        if ($conf->produit->enabled) { $chaine.= $langs->trans("Products"); }
+        if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+        if ($conf->service->enabled) { $chaine.= $langs->trans("Services"); }
+        $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
 
-      if ($conf->boutique->enabled)
-	{
-	  if ($conf->boutique->livre->enabled)
-	    {
-	      $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/index.php", "Livres");
-	    }
-	  
-	  if ($conf->boutique->album->enabled)
-	    {
-	      $menu->add_submenu(DOL_URL_ROOT."/product/album/index.php", "Albums");
-	    }
-	}
+        if ($conf->boutique->enabled)
+        {
+            if ($conf->boutique->livre->enabled)
+            {
+                $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/index.php", "Livres");
+            }
+
+            if ($conf->boutique->album->enabled)
+            {
+                $menu->add_submenu(DOL_URL_ROOT."/product/album/index.php", "Albums");
+            }
+        }
     }
 
-  if ($conf->adherent->enabled ) 
+    if ($conf->adherent->enabled  && $user->rights->adherent->lire)
     {
-      $langs->load("members");
-      $menu->add(DOL_URL_ROOT."/adherents/index.php", $langs->trans("Members"));
+        $langs->load("members");
+        $menu->add(DOL_URL_ROOT."/adherents/index.php", $langs->trans("Members"));
     }
 
-  if ($conf->commande->enabled && $user->rights->commande->lire)
+    if ($conf->commande->enabled && $user->rights->commande->lire)
     {
-      $langs->load("orders");
-      $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
+        $langs->load("orders");
+        $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
     }
 
-  if ($conf->expedition->enabled && $user->rights->expedition->lire)
-	{
-      $langs->load("sendings");
-	  $menu->add(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
-	}
-
-  if ($conf->mailing->enabled && $user->rights->mailing->lire)
+    if ($conf->expedition->enabled && $user->rights->expedition->lire)
     {
-      $langs->load("mails");
-      $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("EMailings"));
+        $langs->load("sendings");
+        $menu->add(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
     }
 
-  if ($conf->telephonie->enabled)
+    if ($conf->mailing->enabled && $user->rights->mailing->lire)
     {
-      $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Téléphonie");
+        $langs->load("mails");
+        $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("EMailings"));
     }
 
-  if ($conf->don->enabled)
+    if ($conf->telephonie->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/dons/index.php", $langs->trans("Donations"));
+        $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Téléphonie");
     }
 
-  if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
+    if ($conf->don->enabled)
     {
-      $langs->load("suppliers");
-      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+        $menu->add(DOL_URL_ROOT."/compta/dons/index.php", $langs->trans("Donations"));
     }
 
-  if ($conf->voyage->enabled && $user->societe_id == 0) 
+    if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
     {
-      $menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php","Reduc");
+        $langs->load("suppliers");
+        $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
 
-  if ($conf->domaine->enabled)
+    if ($conf->voyage->enabled && $user->societe_id == 0)
     {
-      $menu->add(DOL_URL_ROOT."/domain/index.php", "Domaines");
+        $menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
+        $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
+        $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php","Reduc");
     }
 
-  if ($conf->postnuke->enabled)
+    if ($conf->domaine->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
+        $menu->add(DOL_URL_ROOT."/domain/index.php", "Domaines");
     }
 
-  if ($conf->bookmark->enabled)
+    if ($conf->postnuke->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
+        $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }
 
-  if ($user->rights->user->user->lire || $user->admin)
+    if ($conf->bookmark->enabled && $user->rights->mailing->lire)
     {
-      $langs->load("users");
-      $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
+        $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
+    }
+
+    if ($user->rights->user->user->lire || $user->admin)
+    {
+        $langs->load("users");
+        $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
+    }
+
+    if ($user->admin)
+    {
+        $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("Setup"));
     }
   
-  if ($user->admin)
-    {      
-      $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("Setup"));
-    }
-  
-  /*
-   *
-   */
-  
-  left_menu($menu->liste);  
+
+    left_menu($menu->liste);  
 }
 ?>
