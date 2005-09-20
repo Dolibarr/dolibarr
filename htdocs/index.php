@@ -268,6 +268,8 @@ if (MAIN_SHOW_WORKBOARD == 1)
   // Nbre propales ouvertes (expirées)
   if ($conf->propal->enabled && $user->rights->propale->lire)
     {
+      $langs->load("propal");
+      
       include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
       $board=new Propal($db);
       $board->load_board($user,"opened");
@@ -291,6 +293,8 @@ if (MAIN_SHOW_WORKBOARD == 1)
   // Nbre propales fermées signées (à facturer)
   if ($conf->propal->enabled && $user->rights->propale->lire)
     {
+      $langs->load("propal");
+
       include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
       $board=new Propal($db);
       $board->load_board($user,"signed");
