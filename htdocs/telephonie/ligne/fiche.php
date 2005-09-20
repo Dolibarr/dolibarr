@@ -202,30 +202,6 @@ if ($_GET["action"] == 'confirmresilier' && $user->rights->telephonie->ligne->cr
   $soc = new Societe($db);
   $soc->fetch($ligne->socid);
 
-  /* 
-   * Envoi mail au commercial responsable
-   *
-   */
-
-  $subject = "Résiliation de la ligne ".$ligne->numero;
-  $sendto = $comm->prenom . " " .$comm->nom . "<".$comm->email.">";
-  $from = $user->prenom . " " .$user->nom . "<".$user->email.">";
-
-  $message = "La ligne numéro ".$ligne->numero;
-  $message .= " de la société : ".$soc->nom;
-  $message .= ", a été désactivée le ".strftime("%d/%m/%Y",mktime($h, $m , $s, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]));
-  $message .= " pour la raison suivante : ".$_POST["commentaire"];
-  $message .= ".";
-  $message .= "\n\n--\n";
-  $message .= "Ceci est un message automatique envoyé par Dolibarr";
-
-  $mailfile = new DolibarrMail($subject,
-			       $sendto,
-			       $from,
-			       $message);
-  $mailfile->sendfile();
-
-
   if ( $ligne->set_statut($user, 6, $datea, $_POST["commentaire"]) == 0)
     {
       Header("Location: fiche.php?id=".$ligne->id);
@@ -622,8 +598,8 @@ else
 	      $client_facture = new Societe($db);
 	      $client_facture->fetch($ligne->client_facture_id);
 
-	      print '<tr><td width="20%">Client Facturé</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid=';
-	      print $client_facture->id.'">';
+	      print '<tr><td width="20%">Client Facturé</td><td>';
+	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_facture->id.'">';
 	      print $client_facture->nom.'</a><br />';
 	      print $client_facture->cp . " " .$client_facture->ville;
 
