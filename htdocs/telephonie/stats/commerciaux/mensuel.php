@@ -21,8 +21,8 @@
  */
 require("./pre.inc.php");
 
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
+if (!$user->rights->telephonie->lire) accessforbidden();
+if (!$user->rights->telephonie->stats->lire) accessforbidden();
 
 llxHeader('','Telephonie - Statistiques - Commerciaux');
 
@@ -47,7 +47,7 @@ dolibarr_fiche_head($head, $hselected, "Commerciaux");
 
 if (strlen($_GET["month"]) == 0)
 {
-  $month = '022005';
+  $month = strftime("%m%Y",time());
 }
 else
 {
@@ -57,7 +57,7 @@ else
 $month_prev = strftime("%m%Y", mktime(12,12,12,substr($month,0,2), 1, substr($month,-4)) - (20*3600*24));
 $month_next = strftime("%m%Y", mktime(12,12,12,substr($month,0,2), 25, substr($month,-4)) + (10*3600*24));
 
-print "Mois de : ".strftime("%B %Y", mktime(12,12,12,substr($month,0,2), 1, substr($month,-4)));
+print "<br />Mois de : ".strftime("%B %Y", mktime(12,12,12,substr($month,0,2), 1, substr($month,-4)));
 print '&nbsp;(<a href="mensuel.php?month='.$month_prev.'">'.strftime("%B %Y", mktime(12,12,12,substr($month_prev,0,2), 1, substr($month_prev,-4)));
 print '&nbsp;-&nbsp;<a href="mensuel.php?month='.$month_next.'">'.strftime("%B %Y", mktime(12,12,12,substr($month_next,0,2), 1, substr($month_next,-4))).")";
 print "<br /><br />";
