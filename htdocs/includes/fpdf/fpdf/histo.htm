@@ -1,0 +1,111 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Historique</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="fpdf.css">
+</HEAD>
+<BODY>
+<H2>Historique</H2>
+<B>v1.53</B> (31/12/2004)
+<BLOCKQUOTE>
+- Lorsque le sous-répertoire font se trouve dans le même répertoire que fpdf.php, il n'est maintenant plus nécessaire de définir la constante FPDF_FONTPATH.<BR>
+- Le tableau $HTTP_SERVER_VARS n'est plus utilisé. Cela pouvait poser des problèmes avec les configurations PHP 5 ayant désactivé l'option register_long_arrays.<BR>
+- L'incorporation des polices Type1 posait des problèmes avec certains processeurs de PDF.<BR>
+- Le nom du PDF envoyé au navigateur ne pouvait pas comporter d'espace.<BR>
+- La méthode Cell() ne pouvait pas imprimer le nombre 0 (seulement la chaîne '0').<BR>
+</BLOCKQUOTE>
+<B>v1.52</B> (30/12/2003)
+<BLOCKQUOTE>
+- Image() affiche maintenant l'image en 72 dpi si aucune dimension n'est indiquée.<BR>
+- Output() prend un second paramètre chaîne pour indiquer la destination.<BR>
+- Open() est maintenant appelé automatiquement par AddPage().<BR>
+- L'insertion d'image JPEG distante ne génère plus d'erreur.<BR>
+- Le séparateur décimal est forcé au point dans le constructeur.<BR>
+- Ajout de différents encodages (turc, thaïlandais, hébreu, ukrainien et vietnamien).<BR>
+- La dernière ligne d'un MultiCell() cadré à droite n'était pas bien alignée si elle se terminait par un retour-chariot.<BR>
+- Plus de message d'erreur sur les en-têtes déjà envoyés lorsque le PDF est généré sur la sortie standard en mode ligne de commande.<BR>
+- Le souligné allait trop loin lorsque le texte comportait les caractères \, ( ou ).<BR>
+- $HTTP_ENV_VARS a été remplacé par $HTTP_SERVER_VARS.<BR>
+</BLOCKQUOTE>
+<B>v1.51</B> (03/08/2002)
+<BLOCKQUOTE>
+- Support des polices Type1.<BR>
+- Ajout des encodages pour les pays baltes.<BR>
+- La classe travaille maintenant en interne en points avec l'origine en bas afin d'éviter deux bugs avec Acrobat 5 :<BR>&nbsp;&nbsp;* L'épaisseur des traits était trop importante lors des impressions sous Windows 98 SE et ME.<BR>&nbsp;&nbsp;* Les polices TrueType n'apparaissaient pas immédiatement dans le plug-in (une police de substitution était utilisée), il fallait provoquer un rafraîchissement de la fenêtre pour les voir apparaître.<BR>
+- La zone cliquable dans une cellule était toujours positionnée à gauche indépendamment de l'alignement du texte.<BR>
+- Les images JPEG en mode CMYK apparaissaient en couleurs inversées.<BR>
+- Les images PNG transparentes en niveaux de gris ou couleurs vraies étaient incorrectement traitées.<BR>
+- L'ajout de nouvelles polices fonctionne maintenant correctement même avec l'option magic_quotes_runtime à on.<BR>
+</BLOCKQUOTE>
+<B>v1.5</B> (28/05/2002)
+<BLOCKQUOTE>
+- Support des polices TrueType (AddFont()) et des encodages (Europe de l'Ouest, de l'Est, cyrillique et grec).<BR>
+- Ajout de la méthode Write().<BR>
+- Ajout du style souligné.<BR>
+- Support des liens internes et externes (AddLink(), SetLink(), Link()).<BR>
+- Gestion de la marge droite et ajout des méthodes SetRightMargin() et SetTopMargin().<BR>
+- Modification de SetDisplayMode() pour sélectionner un affichage continu ou en colonnes.<BR>
+- Le paramètre border de MultiCell() permet de choisir les bords à tracer comme Cell().<BR>
+- Lorsqu'un document ne contient aucune page, Close() appelle maintenant AddPage() au lieu de provoquer une erreur fatale.<BR>
+</BLOCKQUOTE>
+<B>v1.41</B> (13/03/2002)
+<BLOCKQUOTE>
+- Correction de SetDisplayMode() qui ne fonctionnait plus (le visualiseur PDF utilisait l'affichage par défaut).<BR>
+</BLOCKQUOTE>
+<B>v1.4</B> (02/03/2002)
+<BLOCKQUOTE>
+- PHP3 n'est plus supporté.<BR>
+- Compression des pages (SetCompression()).<BR>
+- Choix du format des pages et possibilité de changer l'orientation en cours de document.<BR>
+- Ajout de la méthode AcceptPageBreak().<BR>
+- Ajout de la méthode SetLeftMargin().<BR>
+- Possibilité d'imprimer le nombre total de pages (AliasNbPages()).<BR>
+- Choix des bords des cellules à tracer.<BR>
+- Nouveau mode pour la méthode Cell() : la position courante se déplace sous la cellule.<BR>
+- Possibilité d'inclure une image en n'indiquant que la hauteur (la largeur est déterminée automatiquement).<BR>
+- Correction d'un bug : lorsqu'une ligne justifiée provoquait un saut de page, le pied de page héritait de l'espacement inter-mot correspondant.<BR>
+</BLOCKQUOTE>
+<B>v1.31</B> (12/01/2002)
+<BLOCKQUOTE>
+- Correction d'un bug dans le tracé du cadre avec MultiCell() : la dernière ligne partait toujours de la marge gauche.<BR>
+- Suppression de l'en-tête HTTP Expires (pose des problèmes dans certains cas).<BR>
+- Ajout de l'en-tête HTTP Content-disposition (semble aider dans certains cas).<BR>
+</BLOCKQUOTE>
+<B>v1.3</B> (03/12/2001)
+<BLOCKQUOTE>
+- Gestion des sauts de ligne avec justification du texte (MultiCell()).<BR>
+- Ajout du support de la couleur (SetDrawColor(), SetFillColor(), SetTextColor()). Possibilité de dessiner des rectangles pleins et de colorer le fond des cellules.<BR>
+- Une cellule dont la largeur est déclarée nulle s'étend jusqu'à la marge droite de la page.<BR>
+- L'épaisseur des traits est maintenant conservée de page en page et vaut 0,2 mm par défaut.<BR>
+- Ajout de la méthode SetXY().<BR>
+- Correction d'un passage par référence effectué d'une manière obsolète en PHP4.<BR>
+</BLOCKQUOTE>
+<B>v1.2</B> (11/11/2001)
+<BLOCKQUOTE>
+- Ajout des fichiers de métrique des polices et de la méthode GetStringWidth().<BR>
+- Possibilité de centrer et d'aligner à droite le texte dans les cellules.<BR>
+- Réglage du mode d'affichage (SetDisplayMode()).<BR>
+- Ajout des méthodes de propriété du document (SetAuthor(), SetCreator(), SetKeywords(), SetSubject(), SetTitle()).<BR>
+- Possibilité de forcer le téléchargement du PDF.<BR>
+- Ajout des méthodes SetX() et GetX().<BR>
+- Lors du saut de page automatique, l'abscisse courante est maintenant conservée.<BR>
+</BLOCKQUOTE>
+<B>v1.11</B> (20/10/2001)
+<BLOCKQUOTE>
+- L'utilisation des PNG ne nécessite plus PHP4 et l'extension Zlib. Les données sont intégrées directement dans le document PDF sans étape de décompression/recompression.<BR>
+- L'insertion d'image fonctionne maintenant correctement même avec l'option magic_quotes_runtime à on.<BR>
+</BLOCKQUOTE>
+<B>v1.1</B> (07/10/2001)
+<BLOCKQUOTE>
+- Support des images JPEG et PNG.<BR>
+</BLOCKQUOTE>
+<B>v1.01</B> (03/10/2001)
+<BLOCKQUOTE>
+- Correction d'un bug lors du saut de page : dans le cas où la méthode Header() ne spécifiait pas de police, celle de la page précédente n'était pas restaurée et produisait un document incorrect.<BR>
+</BLOCKQUOTE>
+<B>v1.0</B> (17/09/2001)
+<BLOCKQUOTE>
+- Première version.<BR>
+</BLOCKQUOTE>
+</BODY>
+</HTML>

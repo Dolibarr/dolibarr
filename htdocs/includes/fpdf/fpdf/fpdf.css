@@ -1,0 +1,11 @@
+BODY {font-family:times new roman,serif}
+H2 {color:#4000A0}
+P.demo {text-align:center; margin-top:-10px}
+A.demo {text-decoration:none; font-weight:bold; color:#0000CC}
+A.demo:link {text-decoration:none; font-weight:bold; color:#0000CC}
+A.demo:hover {text-decoration:none; font-weight:bold; color:#0000FF}
+A.demo:active {text-decoration:none; font-weight:bold; color:#0000FF}
+.st {font-weight:bold; color:#900000}
+.kw {color:#000080; font-weight:bold}
+.str {color:#CC0000}
+.cmt {color:#008000}
