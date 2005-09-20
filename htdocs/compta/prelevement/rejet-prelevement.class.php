@@ -56,6 +56,7 @@ class RejetPrelevement
     $this->motifs[3] = "Pas de bon à payer";
     $this->motifs[4] = "Opposition sur compte";
     $this->motifs[5] = "RIB inexploitable";
+    $this->motifs[6] = "Compte soldé";
 
   }
 
