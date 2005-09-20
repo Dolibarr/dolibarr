@@ -206,10 +206,10 @@ if ($conf->societe->enabled)
     print '<td>'.$langs->trans("WebCalAddEventOnCreateActions").'</td>';
     print '<td>';
     print '<select name="phpwebcalendar_syncro" class="flat">';
-    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
-    print '<option value="yesbydefault"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault'?' selected':'').'>'.$langs->trans("WebCalYesByDefault").'</option>';
-    print '<option value="nobydefault"'.((! $conf->global->PHPWEBCALENDAR_SYNCRO || $conf->global->PHPWEBCALENDAR_SYNCRO=='nobydefault')?' selected':'').'>'.$langs->trans("WebCalNoByDefault").'</option>';
-    print '<option value="never"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='always'?' selected="true"':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="yesbydefault"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault'?' selected="true"':'').'>'.$langs->trans("WebCalYesByDefault").'</option>';
+    print '<option value="nobydefault"'.((! $conf->global->PHPWEBCALENDAR_SYNCRO || $conf->global->PHPWEBCALENDAR_SYNCRO=='nobydefault')?' selected="true"':'').'>'.$langs->trans("WebCalNoByDefault").'</option>';
+    print '<option value="never"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='never'?' selected="true"':'').'>'.$langs->trans("WebCalNever").'</option>';
     print '</select>';
     print '</td></tr>';
 }
@@ -220,8 +220,8 @@ if ($conf->societe->enabled)
     print '<td>'.$langs->trans("WebCalAddEventOnCreateCompany").'</td>';
     print '<td>';
     print '<select name="phpwebcalendar_companycreate" class="flat">';
-    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
-    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_COMPANYCREATE || $conf->global->PHPWEBCALENDAR_COMPANYCREATE=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?' selected="true"':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_COMPANYCREATE || $conf->global->PHPWEBCALENDAR_COMPANYCREATE=='never'?' selected="true"':'').'>'.$langs->trans("WebCalNever").'</option>';
     print '</select>';
     print '</td></tr>';
 }
@@ -232,8 +232,8 @@ if ($conf->contrat->enabled)
     print '<td>'.$langs->trans("WebCalAddEventOnStatusContract").'</td>';
     print '<td>';
     print '<select name="phpwebcalendar_contractstatus" class="flat">';
-    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
-    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_CONTRACTSTATUS || $conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_CONTRACTSTATUS || $conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("WebCalNever").'</option>';
     print '</select>';
     print '</td></tr>';
 }
@@ -244,8 +244,8 @@ if ($conf->facture->enabled)
     print '<td>'.$langs->trans("WebCalAddEventOnStatusBill").'</td>';
     print '<td>';
     print '<select name="phpwebcalendar_billstatus" class="flat">';
-    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
-    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_BILLSTATUS || $conf->global->PHPWEBCALENDAR_BILLSTATUS=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_BILLSTATUS || $conf->global->PHPWEBCALENDAR_BILLSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("WebCalNever").'</option>';
     print '</select>';
     print '</td></tr>';
     print '</table>';

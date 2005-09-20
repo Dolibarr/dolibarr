@@ -264,6 +264,8 @@ CompanyName=Nom/Enseigne de la société/association
 CompanyAddress=Adresse de la société/association
 CompanyCurrency=Devise de la société/association
 DoNotShow=Ne pas afficher
+ShowBugTrackLink=Afficher le lien "Signaler un bug"
+ShowWorkBoard=Affiche le tableau de bord de travail sur page accueil
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Générer mot de passe

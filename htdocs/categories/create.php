@@ -70,9 +70,9 @@ print '<tr><td valign="top" width="30%">';
 						echo "<option value='$i' ";//creation d'une valeur dans la liste
 							
 						if ($_REQUEST['choix'] == $i)
-								echo "selected='selected'"; // permet de rendre le choix toujours selectionne
+								echo 'selected="true"'; // permet de rendre le choix toujours selectionne
 						else if (!isset ($_REQUEST['choix']) && $i == $nbcats) // nombre de catégories mères par défaut.
-								echo "selected='selected'";
+								echo 'selected="true"';
 
 						echo ">$i</option>";
 						}
@@ -96,7 +96,7 @@ print '<tr><td valign="top" width="30%">';
 						echo "<option value='$id' id='$id'";
 						
 						if ($_REQUEST['catsMeres'][$i] == $id)
-							echo " selected='selected'";
+							echo ' selected="true"';
 						
 						echo ">".$cat->label."</option>\n";
 						}

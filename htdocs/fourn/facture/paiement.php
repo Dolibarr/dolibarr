@@ -178,7 +178,7 @@ if ($action == 'create')
 	      print '<option value="'.$objopt->rowid.'"';
 	      if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
 		{
-		  print ' selected';
+		  print ' selected="true"';
 		}
 	      print '>'.$objopt->label.'</option>';
 	      $i++;

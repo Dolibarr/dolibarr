@@ -147,7 +147,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="size_liste_limit" size="4" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
   
   $var=!$var;
-  print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugtrakLink").'</td><td>';
+  print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
   $html->selectyesnonum('bugtrack',MAIN_SHOW_BUGTRACK_LINK);
   print '</td></tr>';
   
@@ -220,7 +220,7 @@ else
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->SIZE_LISTE_LIMIT . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugtrakLink").'</td><td>';   
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';   
     print (MAIN_SHOW_BUGTRACK_LINK?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
 
     $var=!$var;

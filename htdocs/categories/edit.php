@@ -85,7 +85,7 @@ print '<tr><td valign="top" width="30%">';
 					echo "<option value='$i' ";//creation d'une valeur dans la liste
 						
 					if ($i == $nbcats)
-							echo "selected='selected'"; // permet de rendre le choix toujours selectionne
+							echo 'selected="true"'; // permet de rendre le choix toujours selectionne
 
 					echo ">$i</option>";
 					}
@@ -112,7 +112,7 @@ print '<tr><td valign="top" width="30%">';
 			echo "<option value='$id' id='$id'";
 			
 			if ($cats_meres[$i] == $id)
-				echo " selected='selected'";
+				echo ' selected="true"';
 			
 			echo ">".$cat->label."</option>\n";
 			}

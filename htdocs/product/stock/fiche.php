@@ -346,8 +346,8 @@ else
 
             print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
             print '<select name="statut">';
-            print '<option value="0" '.($entrepot->statut == 0?"selected":"").'>'.$langs->trans("WarehouseClosed").'</option>';
-            print '<option value="1" '.($entrepot->statut == 0?"":"selected").'>'.$langs->trans("WarehouseOpened").'</option>';
+            print '<option value="0" '.($entrepot->statut == 0?'selected="true"':'').'>'.$langs->trans("WarehouseClosed").'</option>';
+            print '<option value="1" '.($entrepot->statut == 0?'':'selected="true"').'>'.$langs->trans("WarehouseOpened").'</option>';
             print '</select>';
             print '</td></tr>';
 

@@ -240,9 +240,9 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
     
         // Client / Prospect
         print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
-        print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-        print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-        print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
+        print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
+        print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
+        print '<option value="0"'.($soc->client==0?' selected="true"':'').'>Ni client, ni prospect</option>';
         print '</select></td>';
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
         print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
@@ -459,9 +459,9 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         // Client / Prospect
         print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
-        print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-        print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-        print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
+        print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
+        print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
+        print '<option value="0"'.($soc->client==0?' selected="true"':'').'>Ni client, ni prospect</option>';
         print '</select></td>';
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
         if ($soc->codeclient_modifiable == 1)
