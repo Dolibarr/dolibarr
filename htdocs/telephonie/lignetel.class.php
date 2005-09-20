@@ -96,7 +96,7 @@ class LigneTel {
    *
    *
    */
-  function send_mail($user, $commentaire)
+  function send_mail($user, $commentaire, $statut)
   {
   /* 
    * Envoi mail au commercial responsable
@@ -109,18 +109,36 @@ class LigneTel {
     $soc = new Societe($this->db);
     $soc->fetch($this->socid);
 
-    $subject = "Résiliation de la ligne ".$this->numero;
+    $subject = "Evénement sur la ligne ".$this->numero;
     $sendto = $comm->prenom . " " .$comm->nom . "<".$comm->email.">";
-    $from = $user->prenom . " " .$user->nom . "<".$user->email.">";
+    $from = "Dolibarr <dolibarr@ibreizh.net>";
     
-    $message = "La ligne numéro ".$this->numero;
-    $message .= " de la société : ".$soc->nom;
-    $message .= ", a été désactivée";
-    $message .= " pour la raison suivante : ".$commentaire;
-    $message .= ".";
+    $message = "Bonjour,\n\n";
+    $message .= "Nous vous informons de l'événement suivant :\n\n";
+
+    $message .= "Ligne numéro : ".$this->numero."\n";
+    $message .= "Société      : ".$soc->nom."\n";
+
+    if ($statut == 6)
+      {
+	$message .= "Evénement    : Désactivation\n";
+      }
+
+    if ($statut == 3)
+      {
+	$message .= "Evénement    : Activation\n";
+
+      }
+
+    if (strlen($commentaire))
+      {
+	$message .= "Commentaire : ".$commentaire;
+      }
+
     $message .= "\n\n--\n";
-    $message .= "Ceci est un message automatique envoyé par Dolibarr";
-    
+    $message .= "Ceci est un message automatique envoyé par Dolibarr\n";
+    $message .= "Vous ne pouvez pas y répondre.";
+
     $mailfile = new DolibarrMail($subject,
 				 $sendto,
 				 $from,
@@ -459,9 +477,9 @@ class LigneTel {
   function set_statut($user, $statut, $datea='', $commentaire='')
   {
 
-    if ($statut == 6)
+    if ($statut == 6 || $statut == 3)
       {
-	$this->send_mail($user, $commentaire);
+	$this->send_mail($user, $commentaire, $statut);
       }
 
 
