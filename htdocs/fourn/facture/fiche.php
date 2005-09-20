@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +29,15 @@
         \version    $Revision$
 */
 
-require("./pre.inc.php");
-require("./paiementfourn.class.php");
+require('./pre.inc.php');
+require('./paiementfourn.class.php');
 
 if (!$user->rights->fournisseur->facture->lire)
   accessforbidden();
 
-$langs->load("bills");
-$langs->load("suppliers");
-$langs->load("companies");
+$langs->load('bills');
+$langs->load('suppliers');
+$langs->load('companies');
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -48,52 +49,52 @@ if ($user->societe_id > 0)
 
 $html = new Form($db);
 $mesg='';
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->fournisseur->facture->valider)
+if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == yes && $user->rights->fournisseur->facture->valider)
 {
   $facturefourn=new FactureFournisseur($db);
-  $facturefourn->fetch($_GET["facid"]);
+  $facturefourn->fetch($_GET['facid']);
   
   $facturefourn->set_valid($user->id);
 
-  Header("Location: fiche.php?facid=".$_GET["facid"]);
+  Header('Location: fiche.php?facid='.$_GET['facid']);
   exit;
 }
 
 
-if ($_GET["action"] == 'payed')
+if ($_GET['action'] == 'payed')
 {
   $facturefourn=new FactureFournisseur($db);
-  $facturefourn->fetch($_GET["facid"]);
+  $facturefourn->fetch($_GET['facid']);
   
   $facturefourn->set_payed($user->id);
 }
 
-if($_GET["action"] == 'deletepaiement')
+if($_GET['action'] == 'deletepaiement')
 {
   $facfou = new FactureFournisseur($db);
-  $facfou->fetch($_GET["facid"]);
+  $facfou->fetch($_GET['facid']);
   if ($facfou->statut == 1 && $facfou->paye == 0 && $user->societe_id == 0)
     {
       $paiementfourn = new PaiementFourn($db);
-      $paiementfourn->delete($_GET["paiement_id"]);
+      $paiementfourn->delete($_GET['paiement_id']);
     }
 }
 
-if ($_POST["action"] == 'modif_libelle')
+if ($_POST['action'] == 'modif_libelle')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set libelle = '$form_libelle' WHERE rowid = ".$_GET["facid"]." ;";
+  $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set libelle = \''.$form_libelle.'\' WHERE rowid = '.$_GET['facid'];
   $result = $db->query( $sql);
 }
 
 
-if ($_POST["action"] == 'update')
+if ($_POST['action'] == 'update')
 {
   $datefacture = $db->idate(mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"])); 
   $date_echeance = $db->idate(mktime(12,0,0,$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]));
 
-  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set ";
+  $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set ';
   $sql .= " facnumber='".trim($_POST["facnumber"])."'";
   $sql .= ", libelle='".trim($_POST["libelle"])."'";
   $sql .= ", note='".$_POST["note"]."'";
@@ -105,9 +106,9 @@ if ($_POST["action"] == 'update')
 /*
  * Action création
  */
-if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
+if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 {
-    if ($_POST["facnumber"])
+    if ($_POST['facnumber'])
     {
         $datefacture = mktime(12,0,0,
 			      $_POST["remonth"],
@@ -115,9 +116,9 @@ if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
 			      $_POST["reyear"]);
 
         $tva = 0;
-        $tva = ($_POST["tva_taux"] * $_POST["amount"]) / 100 ;
+        $tva = ($_POST['tva_taux'] * $_POST['amount']) / 100 ;
         $remise = 0;
-        $total = $tva + $_POST["amount"] ;
+        $total = $tva + $_POST['amount'];
 
         $db->begin();
 
@@ -138,21 +139,27 @@ if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
         {
             for ($i = 1 ; $i < 9 ; $i++)
             {
-                $label = "label$i";
-                $amount = "amount$i";
-                $amountttc = "amountttc$i";
-                $tauxtva = "tauxtva$i";
-                $qty = "qty$i";
+                $label = 'label'.$i;
+                $amount = 'amount'.$i;
+                $amountttc = 'amountttc'.$i;
+                $tauxtva = 'tauxtva'.$i;
+                $qty = 'qty'.$i;
 
                 if (strlen($_POST[$label]) > 0 && !empty($_POST[$amount]))
                 {
+					$ht = $_POST[$amount];
+					$ht = str_replace(' ', '', $ht);
+					$ht = str_replace(',', '.', $ht);
                     $atleastoneline=1;
                     $ret=$facfou->addline($_POST["$label"], $_POST["$amount"], $_POST["$tauxtva"], $_POST["$qty"], 1);
                     if ($ret < 0) $nberror++;
                 }
                 else if (strlen($_POST[$label]) > 0 && empty($_POST[$amount]))
                 {
-                    $ht = $_POST[$amountttc] / (1 + ($_POST[$tauxtva] / 100));
+					$ttc = $_POST[$amountttc];
+					$ttc = str_replace(' ', '', $ttc);
+					$ttc = str_replace(',', '.', $ttc);
+                    $ht = $ttc / (1 + ($_POST[$tauxtva] / 100));
                     $atleastoneline=1;
                     $ret=$facfou->addline($_POST[$label], $ht, $_POST[$tauxtva], $_POST[$qty], 1);
                     if ($ret < 0) $nberror++;
@@ -167,7 +174,7 @@ if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
             else 
             {
                 $db->commit();
-                header("Location: fiche.php?facid=$facid");
+                header('Location: fiche.php?facid='.$facid);
                 exit;
             }
         }
@@ -175,7 +182,7 @@ if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
         {
             $db->rollback();
             $mesg='<div class="error">'.$facfou->error.'</div>';
-            $_GET["action"]='create';
+            $_GET['action']='create';
         }
     }
     else
@@ -194,18 +201,26 @@ if ($_GET["action"] == 'del_ligne')
   $_GET["action"] = "edit";
 }
 
-if ($_GET["action"] == 'add_ligne')
+if ($_GET['action'] == 'add_ligne')
 {
-  $facfou = new FactureFournisseur($db,"", $_GET["facid"]);
+	$facfou = new FactureFournisseur($db, '', $_GET['facid']);
 
-  if (strlen($_POST["label"]) > 0 && $_POST["amount"] > 0)
-    $facfou->addline($_POST["label"], $_POST["amount"], $_POST["tauxtva"], $_POST["qty"]);
-  else
-  {
-    $ht = $_POST['amountttc'] / (1 + ($_POST['tauxtva'] / 100));
-    $facfou->addline($_POST["label"], $ht, $_POST["tauxtva"], $_POST["qty"]);
-  }
-  $_GET["action"] = "edit";
+	if (strlen($_POST['label']) > 0 && !empty($_POST['amount']))
+	{
+		$ht = $_POST['amount'];
+		$ht = str_replace(' ', '', $ht);
+		$ht = str_replace(',', '.', $ht);
+		$facfou->addline($_POST['label'], $ht, $_POST['tauxtva'], $_POST['qty']);
+	}
+	else
+	{
+		$ttc = $_POST['amountttc'];
+		$ttc = str_replace(' ', '', $ttc);
+		$ttc = str_replace(',', '.', $ttc);
+		$ht = $ttc / (1 + ($_POST['tauxtva'] / 100));
+		$facfou->addline($_POST['label'], $ht, $_POST['tauxtva'], $_POST['qty']);
+	}
+	$_GET['action'] = 'edit';
 }
 
 
