@@ -860,17 +860,20 @@ function loginfunction()
   
   print '<form id="login" method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
 
-print '
-<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">
-<tr class="vmenu"><td>Dolibarr '.DOL_VERSION.'</td></tr>';
+  print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">';
 
-if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
-{
-  print '<tr><td colspan="3" style="text-align:center;">';
-  print '<img src="/logo.png"></td></tr>';
-}
 
-print'</table>
+  if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
+    {
+      print '<tr><td colspan="3" style="text-align:center;">';
+      print '<img src="/logo.png"></td></tr>';
+    }
+  else
+    {
+      print '<tr class="vmenu"><td>Dolibarr '.DOL_VERSION.'</td></tr>';
+    }
+  
+  print'</table>
 
 <br>
 
