@@ -68,9 +68,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st"
 $sql .= " LEFT join ".MAIN_DB_PREFIX."c_departements as d on d.rowid = s.fk_departement";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=2";
 
-if (strlen($stcomm))
+if ($_GET["stcomm"])
 {
-  $sql .= " AND s.fk_stcomm=$stcomm";
+  $sql .= " AND s.fk_stcomm=".$_GET["stcomm"];
 }
 
 if ($user->societe_id)

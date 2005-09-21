@@ -48,7 +48,10 @@ function llxHeader($head = "", $urlp = "")
     
     $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("List"));
     
-    $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=0", $langs->trans("LastProspect"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=0", $langs->trans("LastProspectNeverContacted"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=1", $langs->trans("LastProspectToContact"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=2", $langs->trans("LastProspectContactInProcess"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=3", $langs->trans("LastProspectContactDone"));
     
     $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
     
