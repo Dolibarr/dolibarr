@@ -272,31 +272,33 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td>'.$langs->trans('Ref').' :</td><td>Provisoire</td>';
-			print '<td>'.$langs->trans('Comments').' :</td></tr>';
+			print '<tr><td>'.$langs->trans('Ref').'</td><td>Provisoire</td>';
+			print '<td>'.$langs->trans('Comments').'</td></tr>';
 
 			$nbrow=4;
 			if ($conf->projet->enabled) $nbrow++;
-			print '<tr><td>'.$langs->trans('Customer').' :</td><td>'.$soc->nom_url.'</td><td rowspan="'.$nbrow.'">';
-			print '<textarea name="note" wrap="soft" cols="50" rows="4"></textarea></td></tr>';
 
-			print '<tr><td>'.$langs->trans('Date').' :</td><td>';
+			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->nom_url.'</td>';
+			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" wrap="soft" cols="50" rows="4"></textarea></td>';
+			print '</tr>';
+
+			print '<tr><td>'.$langs->trans('RefCdeClient').'</td><td>';
+			print '<input type="text" name="ref_client" value=""></td>';
+			print '</tr>';
+
+			print '<tr><td>'.$langs->trans('Date').'</td><td>';
 			$html->select_date();
 			print '</td></tr>';
 
 			if ($conf->projet->enabled)
 			{
-				print '<tr><td>'.$langs->trans('Project').' :</td><td>';
+				print '<tr><td>'.$langs->trans('Project').'</td><td>';
 				$html->select_projects($soc->id,'','projetid');
 				print '</td></tr>';
 			}
 
-			print '<tr><td>'.$langs->trans('Source').' :</td><td>';
+			print '<tr><td>'.$langs->trans('Source').'</td><td>';
 			$html->select_array('source_id',$new_commande->sources,2);
-			print '</td></tr>';
-
-			print '<tr><td>'.$langs->trans('RefCdeClient').' :</td><td>';
-			print '<input type="text" name="ref_client" value="">';
 			print '</td></tr>';
 
 			if ($propalid > 0)
@@ -321,9 +323,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				*/
 				$NBLINES=8;
 
-				print '<tr><td colspan="3">'.$langs->trans('Services').'/'.$langs->trans('Products').'</td></tr>';
 				print '<tr><td colspan="3">';
-
 
 				print '<table class="noborder">';
 				print '<tr><td>'.$langs->trans('ProductsAndServices').'</td><td>'.$langs->trans('Qty').'</td><td>'.$langs->trans('Discount').'</td></tr>';
@@ -504,33 +504,56 @@ else
 			 *   Commande
 			 */
 			print '<table class="border" width="100%">';
+
+            // Ref
 			print '<tr><td width="15%">'.$langs->trans('Ref').'</td>';
 			print '<td colspan="2">'.$commande->ref.'</td>';
-			print '<td>'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
+			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
 			if ($commande->source == 0)
 			{
-				/* Propale */
+				// Si source = propal
 				$propal = new Propal($db);
 				$propal->fetch($commande->propale_id);
 				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 			}
 			print '</td></tr>';
 
+			// Société
 			print '<tr><td>'.$langs->trans('Customer').'</td>';
 			print '<td colspan="3">';
 			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
 			print '</tr>';
 
-			print '<tr><td>'.$langs->trans('Status').'</td>';
-			print '<td colspan="2">'.$commande->statuts[$commande->statut].'</td>';
-			$nbrow=6;
+			$nbrow=7;
 			if ($conf->projet->enabled) $nbrow++;
+
+			// Ref commande client
+			print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print $langs->trans('RefCdeClient').'</td><td align="left">';
+            print '</td>';
+            if ($_GET['action'] != 'refcdeclient') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="2">';
+			if ($user->rights->commande->creer && $_GET['action'] == 'refcdeclient')
+			{
+				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<input type="hidden" name="action" value="set_ref_client">';
+				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $commande->ref_client;
+			}
+			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
 			if ($commande->brouillon == 1 && $user->rights->commande->creer)
 			{
 				print '<form action="fiche.php?id='.$id.'" method="post">';
 				print '<input type="hidden" name="action" value="setnote">';
-				print '<textarea name="note" style="width:95%;height:80%">'.$commande->note.'</textarea><br>';
+				print '<textarea name="note" rows="5" style="width:95%;">'.$commande->note.'</textarea><br>';
 				print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
 				print '</form>';
 			}
@@ -538,7 +561,12 @@ else
 			{
 				print nl2br($commande->note);
 			}
-			print '</td></tr>';
+			print '</td>';
+			print '</tr>';
+
+			print '<tr><td>'.$langs->trans('Status').'</td>';
+			print '<td colspan="2">'.$commande->statuts[$commande->statut].'</td>';
+			print '</tr>';
 
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
@@ -570,45 +598,41 @@ else
                 print '<tr><td height="10">&nbsp;</td><td colspan="2">&nbsp;</td></tr>';
             }
 
-
-
 			// Lignes de 3 colonnes
-			print '<tr><td>'.$langs->trans('RefCdeClient').' :</td><td align="left">';
-			if ($commande->brouillon == 1 && $user->rights->commande->creer)
-			{
-				print '<form action="fiche.php?id='.$id.'" method="post">';
-				print '<input type="hidden" name="action" value="set_ref_client">';
-				print '<input type="text" class="flat" size="25" name="ref_client" value="'.$commande->ref_client.'">';
-				print '</td><td><input type="submit" class="button" value="'.$langs->trans('Save').'">';
-				print '</form>';
-			}
-			else
-			{
-				print $commande->ref_client.'</td><td>&nbsp;';
-			}
-			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-
-			print '<tr><td>'.$langs->trans('GlobalDiscount').'</td><td align="right">';
-			if ($commande->brouillon == 1 && $user->rights->commande->creer)
+			print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('GlobalDiscount').'</td><td align="right">';
+            print '</td>';
+            if ($_GET['action'] != 'setdiscount') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=setdiscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+            print '</tr></table>';
+            print '</td>';
+			if ($user->rights->commande->creer && $_GET['action'] == 'setdiscount')
 			{
+				print '<td align="right">';
 				print '<form action="fiche.php?id='.$id.'" method="post">';
 				print '<input type="hidden" name="action" value="setremise">';
 				print '<input type="text" class="flat" name="remise" size="3" value="'.$commande->remise_percent.'">%';
-				print '</td><td><input type="submit" class="button" value="'.$langs->trans('Save').'">';
+				print '</td><td><input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
+				print '</td>';
 			}
 			else
 			{
-				print $commande->remise_percent.'%</td><td>&nbsp;';
+				print '<td align="right">'.$commande->remise_percent.'</td><td>%</td>';
 			}
-			print '</td></tr>';
+			print '</tr>';
 
-			print '<tr><td>'.$langs->trans('VAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
+            // Total HT
+			print '<tr><td>'.$langs->trans('TotalHT').'</td>';
+			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+
+			// Total TVA
+			print '<tr><td>'.$langs->trans('TotalVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
+			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+			
+			// Total TTC
 			print '<tr><td>'.$langs->trans('TotalTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
@@ -803,6 +827,7 @@ else
 			if ($user->societe_id == 0 && $commande->statut < 3 && $_GET['action'] == '')
 			{
 				print '<div class="tabsAction">';
+
 				if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('Send').'</a>';

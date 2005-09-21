@@ -126,33 +126,50 @@ if ($_GET["id"] > 0)
 
         // Onglet expedition
         print '<table class="border" width="100%">';
-        print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-        print '<td width="30%">';
-        print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 
-        print '<td width="50%">';
-        print $commande->statuts[$commande->statut];
-        print "</td></tr>";
+            // Ref
+			print '<tr><td width="15%">'.$langs->trans('Ref').'</td>';
+			print '<td colspan="2">'.$commande->ref.'</td>';
+			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
+			if ($commande->source == 0)
+			{
+				// Si source = propal
+				$propal = new Propal($db);
+				$propal->fetch($commande->propale_id);
+				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+			}
+			print '</td></tr>';
 
-        print '<tr><td width="20%">'.$langs->trans("Date").'</td>';
-        print '<td width="30%">'.strftime("%A %d %B %Y",$commande->date)."</td>\n";
+			// Société
+			print '<tr><td>'.$langs->trans('Customer').'</td>';
+			print '<td colspan="3">';
+			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+			print '</tr>';
 
-        print '<td width="50%">Source : ' . $commande->sources[$commande->source] ;
-        if ($commande->source == 0)
-        {
-            /* Propale */
-            $propal = new Propal($db);
-            $propal->fetch($commande->propale_id);
-            print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
-        }
-        print "</td></tr>";
+			$nbrow=3;
 
-        if ($commande->note)
-        {
-            print '<tr><td>'.$langs->trans("Note").'</td></tr>';
-            print '<tr><td colspan="3">'.nl2br($commande->note)."</td></tr>";
-        }
+			// Ref commande client
+			print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print $langs->trans('RefCdeClient').'</td><td align="left">';
+            print '</td>';
+            print '</tr></table>';
+            print '</td><td colspan="2">';
+			print $commande->ref_client;
+			print '</td>';
+			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
+			print nl2br($commande->note);
+			print '</td>';
+			print '</tr>';
 
+			print '<tr><td>'.$langs->trans('Status').'</td>';
+			print '<td colspan="2">'.$commande->statuts[$commande->statut].'</td>';
+			print '</tr>';
+
+			print '<tr><td>'.$langs->trans('Date').'</td>';
+			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
+			print '</tr>';
+        
         print '</table>';
 
         /**
