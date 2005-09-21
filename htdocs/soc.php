@@ -33,10 +33,15 @@ require("pre.inc.php");
 $user->getrights('societe');
 $langs->load("companies");
  
+if (! $user->rights->societe->creer)
+{
+    if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
+    {
+        accessforbidden();
+    }
+}
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $_GET["action"] = '';
@@ -45,6 +50,8 @@ if ($user->societe_id > 0)
 }
 
 $soc = new Societe($db);
+
+
 
 /*
  * Actions
