@@ -28,7 +28,8 @@
 */
 
 
-/** \class Expedition
+/** 
+        \class      Expedition
 		\brief      Classe de gestion des expeditions
 */
 class Expedition 
@@ -37,6 +38,7 @@ class Expedition
   var $id ;
   var $brouillon;
   var $entrepot_id;
+
   /**
    * Initialisation
    *
@@ -222,58 +224,98 @@ class Expedition
     }
 
   /**
-   *        \brief      Valide l'expedition
+   *        \brief      Valide l'expedition, et met a jour le stock si stock géré
    *        \param      user        Objet de l'utilisateur qui valide
    *        \return     int
    */
     function valid($user)
     {
+        global $conf;
+        
         require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
     
-        $result = 0;
+        dolibarr_syslog("expedition.class.php::valid");
+
+        $this->db->begin();
+        
+        $error = 0;
+        
         if ($user->rights->expedition->valider)
         {
             $this->ref = "EXP".$this->id;
     
+            // \todo Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
+            //       de décrémenter 2 fois le stock.
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='".$this->ref."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
             $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
     
             if ($this->db->query($sql) )
             {
-                $result = 1;
-    
                 // Si module stock géré et que expedition faite depuis un entrepot
                 if ($conf->stock->enabled && $this->entrepot_id)
                 {
                     /*
                      * Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
                      */
+
+                    dolibarr_syslog("expedition.class.php::valid enregistrement des mouvements");
+
+                    $sql = "SELECT cd.fk_product, ed.qty ";
+                    $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."expeditiondet as ed";
+                    $sql.= " WHERE ed.fk_expedition = $this->id AND cd.rowid = ed.fk_commande_ligne";
         
-                    $sql = "SELECT cd.fk_product,  ed.qty ";
-                    $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
-                    $sql .= " WHERE ed.fk_expedition = $this->id AND cd.rowid = ed.fk_commande_ligne ";
-        
-                    if ($this->db->query($sql))
+                    $resql=$this->db->query($sql);
+                    if ($resql)
                     {
-                        $num = $this->db->num_rows();
+                        $num = $this->db->num_rows($resql);
                         $i=0;
                         while($i < $num)
                         {
+                            dolibarr_syslog("expedition.class.php::valid movment $i");
+
+                            $obj = $this->db->fetch_object($resql);
+
                             $mouvS = new MouvementStock($this->db);
-                            $obj = $this->db->fetch_object();
-                            $mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty, 0);
+                            $result=$mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty);
+                            if ($result < 0)
+                            {
+                                $this->db->rollback();
+                                $this->error=$this->db->error()." - sql=$sql";
+                                dolibarr_syslog("expedition.class.php::valid ".$this->error);
+                                return -3;
+                            }
                             $i++;
                         }
+                        
+                    }
+                    else
+                    {
+                        $this->db->rollback();
+                        $this->error=$this->db->error()." - sql=$sql";
+                        dolibarr_syslog("expedition.class.php::valid ".$this->error);
+                        return -2;
                     }
                 }
             }
             else
             {
-                $result = -1;
-                $this->error=$this->db->error()." - sql=".$sql;
+                $this->db->rollback();
+                $this->error=$this->db->error()." - sql=$sql";
+                dolibarr_syslog("expedition.class.php::valid ".$this->error);
+                return -1;
             }
         }
-        return $result ;
+        else
+        {
+            $this->error="Non autorise";
+            dolibarr_syslog("expedition.class.php::valid ".$this->error);
+            return -1;
+        }
+
+        $this->db->commit();
+        //dolibarr_syslog("expedition.class.php::valid commit");
+        return 1;
     }
 
 

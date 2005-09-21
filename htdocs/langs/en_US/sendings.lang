@@ -16,3 +16,4 @@ CreateSending=Create sending
 QtyOrdered=Qty ordered
 QtyShipped=Qty shipped
 KeepToShip=Keep to ship
+OtherSendingsForSameOrder=Other sendings already shipped

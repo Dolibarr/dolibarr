@@ -447,17 +447,17 @@ class Product
             $this->db->free();
     
             $sql = "SELECT reel, fk_entrepot";
-            $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = $id";
+            $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = ".$id;
             $result = $this->db->query($sql) ;
-            if ( $result )
+            if ($result)
             {
-                $num = $this->db->num_rows();
+                $num = $this->db->num_rows($result);
                 $i=0;
                 if ($num > 0)
                 {
                     while ($i < $num )
                     {
-                        $row = $this->db->fetch_row($i);
+                        $row = $this->db->fetch_row($result);
                         $this->stock_entrepot[$row[1]] = $row[0];
     
                         $this->stock_reel = $this->stock_reel + $row[0];
@@ -470,9 +470,14 @@ class Product
                 {
                     $this->no_stock = 1;
                 }
-                $this->db->free();
+                $this->db->free($result);
+                return 1;
             }
-            return 1;
+            else
+            {
+                $this->error=$this->db->error();
+                return -2;            
+            }
         }
         else
         {

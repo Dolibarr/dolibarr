@@ -16,3 +16,4 @@ CreateSending=Créer expedition
 QtyOrdered=Qté commandée
 QtyShipped=Qté expédiée
 KeepToShip=Reste à expédier
+OtherSendingsForSameOrder=Autres expéditions déjà envoyés

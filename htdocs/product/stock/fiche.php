@@ -134,19 +134,19 @@ if ($_GET["action"] == 'create')
     }
 
     print '<table class="border" width="100%">';
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="40" value=""></td></tr>';
-    print '<tr><td width="20%" valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="40" value=""></td></tr>';
+    print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
     print '<textarea name="desc" rows="4" cols="60">';
     print "</textarea></td></tr>";
 
-    print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
+    print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
 
     print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
     print $entrepot->address;
     print '</textarea></td></tr>';
 
-    print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$entrepot->cp.'"></td>';
-    print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
+    print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%"><input size="6" type="text" name="cp" value="'.$entrepot->cp.'"></td>';
+    print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%"><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
     
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
     $form->select_pays($entrepot->pays_id,$entrepot->pays_code);
@@ -198,17 +198,17 @@ else
             dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
 
             print '<table class="border" width="100%">';
-            print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
+            print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
 
-            print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
+            print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
             print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
             print $entrepot->address;
             print '</td></tr>';
 
-            print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$entrepot->cp.'</td>';
-            print '<td>'.$langs->trans('Town').'</td><td>'.$entrepot->ville.'</td></tr>';
+            print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->cp.'</td>';
+            print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
 
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
             $entrepot->pays;

@@ -55,6 +55,9 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'add') 
 {
+    $db->begin();
+    
+    // Creation de l'objet expedition
     $expedition = new Expedition($db);
     
     $expedition->date_expedition  = time();
@@ -62,12 +65,11 @@ if ($_POST["action"] == 'add')
     $expedition->commande_id      = $_POST["commande_id"];
     $expedition->entrepot_id      = $_POST["entrepot_id"];
     
+    // On boucle sur chaque ligne de commande pour compléter objet expedition
+    // avec qté à livrer
     $commande = new Commande($db);
     $commande->fetch($expedition->commande_id);
     $commande->fetch_lignes();
-    
-    $db->begin();
-    
     for ($i = 0 ; $i < sizeof($commande->lignes) ; $i++)
     {
         $qty = "qtyl".$i;
@@ -177,13 +179,13 @@ if ($_GET["action"] == 'create')
       print "<tr><td>".$langs->trans("Date")."</td>";
       print "<td>".strftime("%A %d %B %Y",$commande->date)."</td>\n";
       
-      print '<td colspan="2" width="50%">'.$langs->trans("Order").': ' . $commande->ref;
+      print '<td>'.$langs->trans("Order").'</td><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a>';
       print "</td></tr>\n";
       
       print '<tr><td>'.$langs->trans("Warehouse").'</td>';
       print '<td>';
       $ents = $entrepot->list_array();
-      print $ents[$_GET["entrepot_id"]];
+      print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
       print '</td>';
       print "<td>".$langs->trans("Author")."</td><td>$author->fullname</td>\n";
       
@@ -232,7 +234,9 @@ if ($_GET["action"] == 'create')
 	      $product->fetch($ligne->product_id);
 	      
 	      print '<td>';
-	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->product_id.'">'.nl2br($ligne->description).'</a></td>';
+	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+	      if ($ligne->description) print nl2br($ligne->description);
+	      print '</td>';
 	    }
 	  else
 	    {
@@ -247,36 +251,40 @@ if ($_GET["action"] == 'create')
 	  $quantite_livree = $commande->livraisons[$ligne->product_id];
 	  print $quantite_livree;;
 	  print '</td>';
-	  /*
-	   *
-	   */
-	  print '<td align="center">';	  
-	  print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
-	      
+
 	  $quantite_commandee = $ligne->qty;
 	  $quantite_a_livrer = $quantite_commandee - $quantite_livree;
 	      
-	  if ($conf->stock->enabled)
-	    {
-	      $stock = $product->stock_entrepot[$_POST["entrepot_id"]];
+        if ($conf->stock->enabled)
+        {
+            $stock = $product->stock_entrepot[$_GET["entrepot_id"]];
+            $stock+=0;  // Convertit en numérique
+            
+            // Quantité à livrer
+            print '<td align="center">';
+            print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
+            print '<input name="qtyl'.$i.'" type="text" size="6" value="'.min($quantite_a_livrer, $stock).'">';
+            print '</td>';
+        
+            // Stock
+            if ($stock < $quantite_a_livrer)
+            {
+                print '<td align="center" class="alerte">'.$stock.'</td>';
+            }
+            else
+            {
+                print '<td align="center">'.$stock.'</td>';
+            }
+        }
+        else
+        {
+            // Quantité à livrer
+            print '<td align="center">';
+            print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
+            print '<input name="qtyl'.$i.'" type="text" size="6" value="'.$quantite_a_livrer.'">';
+            print '</td>';
+        }
 
-	      print '<input name="qtyl'.$i.'" type="text" size="6" value="'.min($quantite_a_livrer, $stock).'">';	      
-	      print '</td>';
-	      
-	      if ($stock < $quantite_a_livrer)
-		{
-		  print '<td align="center" class="alerte">'.$stock.'</td>';
-		}
-	      else
-		{
-		  print '<td align="center">'.$stock.'</td>';
-		}
-	    }
-	  else
-	    {
-	      print '<input name="qtyl'.$i.'" type="text" size="6" value="'.$quantite_a_livrer.'">';
-	      print '</td>';
-	    }
 	  print "</tr>\n";
 	  
 	  $i++;
@@ -425,8 +433,13 @@ else
 		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
-		      print '<td>';
-		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+            	      $product = new Product($db);
+            	      $product->fetch($objp->fk_product);
+            	      
+            	      print '<td>';
+            	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+            	      if ($objp->description) print nl2br($objp->description);
+            	      print '</td>';
 		    }
 		  else
 		    {
@@ -495,10 +508,9 @@ else
 
 	  /*
 	   * Déjà livré
-	   *
 	   */
 	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
-	  $sql .= " , ed.qty as qty_livre, e.ref";
+	  $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
 	  $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 	  $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
@@ -509,47 +521,57 @@ else
 	  $sql .= " ORDER BY cd.fk_product";
 
 	  $resql = $db->query($sql);
-	  if ($resql)
-	    {
-	      $num = $db->num_rows($resql);
-	      $i = 0;
-	    
-	      if ($num)
-		{
-		  print '<br><table class="liste" cellpadding="3" width="100%"><tr>';
-		  print '<tr class="liste_titre">';
-		  print '<td width="54%">'.$langs->trans("Description").'</td>';
-		  print '<td align="center">Quan. livrée</td>';
-		  print '<td align="center">Expédition</td>';
-		  print '<td align="center">'.$langs->trans("Date").'</td>';
-		
-		  print "</tr>\n";
-		
-		  $var=True;
-		  while ($i < $num)
-		    {
-		      $objp = $db->fetch_object($resql);
-		      print "<TR $bc[$var]>";
-		      if ($objp->fk_product > 0)
-			{
-			  print '<td>';
-			  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
-			}
-		      else
-			{
-			  print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
-			}
-		      print '<td align="center">'.$objp->qty_livre.'</td>';
-		      print '<td align="center">'.$objp->ref.'</td>';
-		      print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
-		      $i++;
-		    }
-		
-		  print '</table>';
+    	if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+        
+            if ($num)
+            {
+                print '<br>';
+                
+                print_titre($langs->trans("OtherSendingsForSameOrder"));
+                print '<table class="liste" width="100%">';
+                print '<tr class="liste_titre">';
+                print '<td width="54%">'.$langs->trans("Description").'</td>';
+                print '<td align="center">Quan. livrée</td>';
+                print '<td align="center">'.$langs->trans("Sending").'</td>';
+                print '<td align="center">'.$langs->trans("Date").'</td>';
+                print "</tr>\n";
+        
+                $var=True;
+                while ($i < $num)
+                {
+                    $var=!$var;
+                    $objp = $db->fetch_object($resql);
+                    print "<tr $bc[$var]>";
+                    if ($objp->fk_product > 0)
+                    {
+            	      $product = new Product($db);
+            	      $product->fetch($objp->fk_product);
+            	      
+            	      print '<td>';
+            	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+            	      if ($objp->description) print nl2br($objp->description);
+            	      print '</td>';
+                    }
+                    else
+                    {
+                        print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
+                    }
+                    print '<td align="center">'.$objp->qty_livre.'</td>';
+                    print '<td align="center"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+                    print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
+                    $i++;
+                }
+        
+                print '</table>';
+            }
+            $db->free($resql);
+        }
+        else {
+            dolibarr_print_error($db);
 		}
-	      $db->free($resql);
-	    }
-
 	       
 	  /*
 	   * Documents générés

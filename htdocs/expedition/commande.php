@@ -189,7 +189,7 @@ if ($_GET["id"] > 0)
         if ($resql)
         {
             $num = $db->num_rows($resql);
-            $i = 0; $total = 0;
+            $i = 0;
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Description").'</td>';
@@ -371,49 +371,63 @@ if ($_GET["id"] > 0)
         }
 
         /*
-         * Déjà livr
+         * Déjà livré
          */
-        $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre, e.ref, e.rowid as expedition_id";
-        $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-        $sql .= " WHERE cd.fk_commande = ".$commande->id." AND cd.rowid = ed.fk_commande_ligne AND ed.fk_expedition = e.rowid";
-        $sql .= " ORDER BY e.rowid DESC, cd.fk_product";
+	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
+	  $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
+	  $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+	  $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
+	  $sql .= " WHERE cd.fk_commande = $commande->id";
+	  $sql .= " AND cd.rowid = ed.fk_commande_ligne";
+	  $sql .= " AND ed.fk_expedition = e.rowid";
+	  $sql .= " ORDER BY cd.fk_product";
+
         $resql = $db->query($sql);
         if ($resql)
         {
             $num = $db->num_rows($resql);
-            $i = 0; $total = 0;
+	      $i = 0;
 
             if ($num)
             {
-                print '<br><table class="liste" width="100%"><tr>';
+                print '<br><table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td width="54%">'.$langs->trans("Description").'</td>';
                 print '<td align="center">Quan. livrée</td>';
-                print '<td align="center">Expédition</td>';
-
+                print '<td align="center">'.$langs->trans("Sending").'</td>';
+                print '<td align="center">'.$langs->trans("Date").'</td>';
                 print "</tr>\n";
 
                 $var=True;
                 while ($i < $num)
                 {
-                    $objp = $db->fetch_object($resql);
+                    $var=!$var;
+					$objp = $db->fetch_object($resql);
                     print "<tr $bc[$var]>";
                     if ($objp->fk_product > 0)
                     {
-                        print '<td>';
-                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+            	      $product = new Product($db);
+            	      $product->fetch($objp->fk_product);
+            	      
+            	      print '<td>';
+            	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+            	      if ($objp->description) print nl2br($objp->description);
+            	      print '</td>';
                     }
                     else
                     {
-                        print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+                        print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
                     }
                     print '<td align="center">'.$objp->qty_livre.'</td>';
-                    print '<td align="center"><a href="fiche.php?id='.$objp->expedition_id.'">'.$objp->ref.'</a></td>';
+                    print '<td align="center"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+                    print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
                     $i++;
                 }
 
                 print '</table>';
             }
+	      $db->free($resql);
         }
         else {
             dolibarr_print_error($db);
