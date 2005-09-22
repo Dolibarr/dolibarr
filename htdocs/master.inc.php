@@ -32,12 +32,15 @@
 
 define('DOL_VERSION','2.0.0-alpha2');
 
-define_syslog_variables();
 clearstatcache();
 
-// Forcage du paramétrage PHP
-//error_reporting(E_ALL);               // Dolibarr n'est pas utilisable en mode error E_ALL
-error_reporting(E_ALL ^ E_NOTICE);      // Dolibarr n'est pas utilisable en mode error E_ALL
+// Forcage du paramétrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
+if (function_exists("define_syslog_variables"))
+{
+    define_syslog_variables();
+}
+//error_reporting(E_ALL);
+error_reporting(E_ALL ^ E_NOTICE);
 
 // Test si install ok
 if (! @include_once("conf/conf.php"))
