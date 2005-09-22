@@ -93,13 +93,17 @@ function pFooter($nonext=0,$addlang=1)
 
 function dolibarr_syslog($message)
 {
-// \todo    Désactiver sous Windows (gros problème mémoire et faute de protections)
-//  if (1 == 2) {
-      define_syslog_variables();
-      openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les php
-      syslog(LOG_WARNING, $message);
-      closelog();
-//  }
+    // Les fonctions syslog ne sont pas toujours installés ou autorisées chez les hébergeurs
+    if (function_exists("define_syslog_variables"))
+    {
+        // \todo    Désactiver sous Windows (gros problème mémoire et faute de protections)
+        //  if (1 == 2) {
+              define_syslog_variables();
+              openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les php
+              syslog(LOG_WARNING, $message);
+              closelog();
+        //  }
+    }
 }
 
 ?>
