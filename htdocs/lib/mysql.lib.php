@@ -91,7 +91,7 @@ class DoliDb
 
         //print "Name DB: $host,$user,$pass,$name<br>";
 
-        if (! function_exists(mysql_connect))
+        if (! function_exists("mysql_connect"))
         {
         	$this->connected = 0;
         	$this->ok = 0;
