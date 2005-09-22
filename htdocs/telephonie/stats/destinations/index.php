@@ -40,7 +40,7 @@ if ($user->societe_id > 0)
 
 $h = 0;
 
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/communications/rentabilite.php';
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/destinations/index.php';
 $head[$h][1] = "Destinations";
 $hselected = $h;
 $h++;
