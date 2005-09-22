@@ -20,11 +20,17 @@
  * $Source$
  */
 
+/**
+        \file       htdocs/admin/update/checkrepair.php
+        \ingroup    core
+        \brief      Page correction/mise a jour de la base
+        \version    $Revision$
+*/
 
 require("./pre.inc.php");
 
 if (!$user->admin)
-    access_forbidden();
+    accessforbidden();
 
 
 llxHeader();
@@ -320,5 +326,5 @@ else print "Pas ou plus de contrats à réouvrir.<br>\n";
 print "<br>";
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>
