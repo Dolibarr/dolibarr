@@ -123,7 +123,7 @@ if ($_GET["id"] > 0)
 
         print '<tr><td width="15%">'.$langs->trans("Ref")."</td>";
         print '<td colspan="2">'.$commande->ref.'</td>';
-        print '<td>'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
+        print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
         if ($commande->source == 0)
         {
             /* Propale */
@@ -139,25 +139,38 @@ if ($_GET["id"] > 0)
         print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
         print '</tr>';
 
+        $nbrow=7;
+        if ($conf->projet->enabled) $nbrow++;
+
+        // Ref cde client
+			print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print $langs->trans('RefCdeClient').'</td><td align="left">';
+            print '</td>';
+            print '</tr></table>';
+            print '</td><td colspan="2">';
+			print $commande->ref_client;
+			print '</td>';
+			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
+            if ($commande->brouillon == 1 && $user->rights->commande->creer)
+            {
+                print '<form action="fiche.php?id='.$id.'" method="post">';
+                print '<input type="hidden" name="action" value="setnote">';
+                print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
+                print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+                print '</form>';
+            }
+            else
+            {
+                print nl2br($commande->note);
+            }
+			print '</td>';
+			print '</tr>';
+
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td>';
         print "<td colspan=\"2\">".$commande->statuts[$commande->statut]."</td>\n";
-        $nbrow=6;
-        if ($conf->projet->enabled) $nbrow++;
-        print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans("Note").' :<br>';
-        if ($commande->brouillon == 1 && $user->rights->commande->creer)
-        {
-            print '<form action="fiche.php?id='.$id.'" method="post">';
-            print '<input type="hidden" name="action" value="setnote">';
-            print '<textarea name="note" style="width:95%;height:"80%">'.$commande->note.'</textarea><br>';
-            print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
-            print '</form>';
-        }
-        else
-        {
-            print nl2br($commande->note);
-        }
-        print '</td></tr>';
+        print '</tr>';
 
         // Date
         print '<tr><td>'.$langs->trans("Date").'</td>';
@@ -193,25 +206,31 @@ if ($_GET["id"] > 0)
         print '</tr>';
         
         // Lignes de 3 colonnes
-        print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-        print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
+        
+        // Discount
         print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
         print $commande->remise_percent.'%</td><td>&nbsp;';
         print '</td></tr>';
 
-        print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
+        // Total HT
+        print '<tr><td>'.$langs->trans("TotalHT").'</td>';
+        print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
         print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+        // Total VAT
+        print '<tr><td>'.$langs->trans("TotalVAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
+        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        
+        // Total TTC
         print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
         print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-        print '</table><br>';
+        print '</table>';
 
         /*
-        * Lignes de commandes
-        *
-        */
+         * Lignes de commandes
+         *
+         */
         $sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
         $sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
         $sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
@@ -225,6 +244,7 @@ if ($_GET["id"] > 0)
             $num = $db->num_rows($resql);
             $i = 0; $total = 0;
 
+            if ($num) print '<br>';
             print '<table class="noborder" width="100%">';
             if ($num)
             {

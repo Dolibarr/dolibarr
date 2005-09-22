@@ -49,7 +49,7 @@ ComptaCard=Fiche compta
 DraftOrders=Commandes brouillons
 RelatedOrders=Commandes rattachées
 OnProcessOrders=Commandes en cours de traitement
-RefCdeClient=Ref. commande client
+RefCdeClient=Réf. commande client
 # Sources
 OrderSource0=Proposition commerciale
 OrderSource1=Internet
