@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +19,47 @@
  * $Id$
  * $Source$
  */
+
+/**
+        \file       htdocs/admin/update/pre.inc.php
+		\brief      Fichier gestionnaire du menu de gauche de l'espace mise a jour données
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 
-function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
-
-  /*
-   *
-   *
-   */
-  top_menu($head);
-
-  $menu = new Menu();
-
-  $menu->add("index.php", "Configuration");
+$langs->load("admin");
 
 
-  left_menu($menu->liste);
+function llxHeader($head = "", $title="", $help_url='')
+{
+    global $user, $langs;
+
+    top_menu($head);
+
+    $menu = new Menu();
+    $langs->load("admin");
+    $langs->load("users");
+
+    $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("GlobalSetup"));
+
+    $menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
+
+    $menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
+
+    $menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
+
+    $menu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
+
+    $menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("DefaultRights"));
+
+    $menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
+
+    $menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
+
+    $menu->add(DOL_URL_ROOT."/admin/system/", $langs->trans("System"));
+
+    left_menu($menu->liste, $help_url);
 }
 
 ?>
