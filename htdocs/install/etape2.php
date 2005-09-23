@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -31,8 +30,11 @@ include_once("./inc.php");
 
 
 // Cette page peut etre longue. On augmente le délai par défaut de 30 à 60.
-set_time_limit(60);    // Ne fonctionne que si on est pas en safe_mode
-
+// Ne fonctionne que si on est pas en safe_mode.
+$err=error_reporting();
+error_reporting(0);
+set_time_limit(60);         
+error_reporting($err);
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
 $langs->defaultlang=$setuplang;
