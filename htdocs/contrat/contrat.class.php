@@ -939,9 +939,31 @@ class Contrat
 
         if ($fk_socpeople <= 0) return -1;
 
-        // \todo si type_contact = texte, aller chercher code dans table llx_c_type_contact
-        if ($type_contact == 'SALESREPSIGN') $type_contact=11;
-        if ($type_contact == 'SALESREPFOLL') $type_contact=12;
+        // Si type_contact = texte, aller chercher code dans table llx_c_type_contact
+        if ($type_contact == 'SALESREPSIGN' || $type_contact == 'SALESREPFOLL')
+        {
+            $sql.="SELECT rowid from ".MAIN_DB_PREFIX."c_type_contact";
+            $sql.=" WHERE element='contrat' AND source='internal'";
+            $sql.=" AND code='".$type_contact."'";
+            if ( $this->db->query($sql) )
+            {
+                $obj = $this->db->fetch_object($resql);   
+                if ($obj) $type_contact=$obj->rowid;
+            }
+            else
+            {
+                dolibarr_print_error($this->db);
+                $this->error=$this->db->error()." - $sql";
+                return -2;   
+            }
+        }
+        
+        // Verifie type_contact
+        if (! $type_contact) 
+        {
+            $this->error="Valeur pour type_contact incorrect";
+            return -3;  
+        }
         
         $datecreate = time();
         
