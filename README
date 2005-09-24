@@ -14,15 +14,16 @@ I - DOLIBARR INSTALL
 
 To install Dolibarr:
 - Copy directory 'dolibarr' and all its files inside your web server root,
-  or set up your web server to use dolibarr/htdocs as root for a new
-  web server virtual host (need to be web server administrator).
+  or set up your web server to use dolibarr/htdocs as root for a new web
+  server virtual host (second choice need to be web server administrator).
 - Create an empty mysql database (postgresql support is experimental).
-- Set permissions on directory conf to write for your web server user.
+- Set write permissions on directory 'dolibarr/htdocs/conf' for your web
+  server user (write permissions will be removed once install is finished).
 - From your browser, call the dolibarr install page. Url depends on choice
   made on first step:
-  http://localhost/dolibarr/htdocs/install/install.php
+   http://localhost/dolibarr/htdocs/install/install.php
   or
-  http://yourvirtualhost/install/install.php
+   http://yourvirtualhost/install/install.php
 - Follow instructions provided by installer...
 
 
@@ -33,7 +34,7 @@ To upgrade Dolibarr from an old version to this one:
 - Copy all files into old directories (old files will be replaced).
 - Run the migrate script available inside /mysql/migration/ to upgrade
   your database.
-  Note: Script is built to be runned safely severly times.
+  Note: Script is built to be runned safely several times.
   Just ignore errors if it's not the first run.
   
 
@@ -61,7 +62,7 @@ III - WHAT'S NEW
   * Module emailing:  To send emailings
   * Module members:   To manage members of a fundation
   * Module suppliers: Provide orders to suppliers
-  * Module contracts: Manage contracts
+  * Module contracts: Manage contracts and their contacts
   * Module stock:     To manage warehouses and stocks
   * Module standing orders: To manage french standing orders
   * Module bookmark:  To manage your own bookmarks and add them on man page
