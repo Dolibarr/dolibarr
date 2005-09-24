@@ -41,6 +41,11 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",stripslashes($_POST["address"]));
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",stripslashes($_POST["pays_id"]));
     dolibarr_set_const($db, "MAIN_MONNAIE",stripslashes($_POST["currency"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",stripslashes($_POST["tel"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",stripslashes($_POST["fax"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",stripslashes($_POST["mail"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",stripslashes($_POST["web"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",stripslashes($_POST["logo"]));
 
     dolibarr_set_const($db, "MAIN_INFO_CAPITAL",stripslashes($_POST["capital"]));
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",stripslashes($_POST["forme_juridique_code"]));
@@ -49,6 +54,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_INFO_APE",stripslashes($_POST["ape"]));
     dolibarr_set_const($db, "MAIN_INFO_RCS",stripslashes($_POST["rcs"]));
     dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",stripslashes($_POST["tva"]));
+
     dolibarr_set_const($db, "FACTURE_TVAOPTION",stripslashes($_POST["optiontva"]));
 
     if ($_POST['action'] != 'updateedit')
@@ -112,6 +118,31 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCurrency").'</td><td>';
     $form->select_currency($conf->global->MAIN_MONNAIE,"currency");
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Tel").'</td><td>';
+    print '<input name="tel" value="'. $conf->global->MAIN_INFO_SOCIETE_TEL . '"></td></tr>';
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Fax").'</td><td>';
+    print '<input name="fax" value="'. $conf->global->MAIN_INFO_SOCIETE_FAX . '"></td></tr>';
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Mail").'</td><td>';
+    print '<input name="mail" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Web").'</td><td>';
+    print '<input name="web" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").'</td><td>';
+    print '<input name="logo" value="'. $conf->global->MAIN_INFO_SOCIETE_LOGO . '"></td></tr>';
     print '</td></tr>';
 
     print '</table>';
@@ -303,6 +334,21 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
     print $form->currency_name($conf->global->MAIN_MONNAIE,1);
     print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Tel").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_TEL . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Fax").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_FAX . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Mail").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_WEB . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_LOGO . '</td></tr>';
 
     print '</table>';
 
