@@ -220,7 +220,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
   // Nbre actions à faire (en retard)
   if (($conf->commercial->enabled || $conf->compta->enabled)  && $user->rights->actions->lire)
     {
-      include_once("./actioncomm.class.php");
+      include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
       $board=new ActionComm($db);
       $board->load_board($user);
       $board->warning_delay=$conf->actions->warning_delay/60/60/24;

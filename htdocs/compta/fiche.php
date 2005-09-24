@@ -29,8 +29,8 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require("../actioncomm.class.php");
-include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
@@ -206,22 +206,24 @@ if ($socid > 0)
     print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
     print '</td>';
     
-    if ($societe->client) {
-    print '<tr>';
-    print '<td nowrap width="100">'.$langs->trans("CustomerCode"). '</td><td colspan="3">'. $societe->code_client . '</td>';
-    print '</tr>';
-    print '<tr>';
-    print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
-    print '</tr>';
+    if ($societe->client)
+    {
+        print '<tr>';
+        print '<td nowrap width="100">'.$langs->trans("CustomerCode"). '</td><td colspan="3">'. $societe->code_client . '</td>';
+        print '</tr>';
+        print '<tr>';
+        print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
+        print '</tr>';
     }
     
-    if ($societe->fournisseur) {
-    print '<tr>';
-    print '<td nowrap>'.$langs->trans("SupplierCode"). '</td><td colspan="3">'. $societe->code_fournisseur . '</td>';
-    print '</tr>';
-    print '<tr>';
-    print '<td nowrap>'.$langs->trans("SupplierAccountancyCode").'</td><td colspan="3">'.$societe->code_compta_fournisseur.'</td>';
-    print '</tr>';
+    if ($societe->fournisseur)
+    {
+        print '<tr>';
+        print '<td nowrap>'.$langs->trans("SupplierCode"). '</td><td colspan="3">'. $societe->code_fournisseur . '</td>';
+        print '</tr>';
+        print '<tr>';
+        print '<td nowrap>'.$langs->trans("SupplierAccountancyCode").'</td><td colspan="3">'.$societe->code_compta_fournisseur.'</td>';
+        print '</tr>';
     }
     
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
@@ -246,40 +248,43 @@ if ($socid > 0)
     $societe->typent= $arr[$societe->typent_id];
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$societe->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$societe->effectif.'</td></tr>';
 
-    // Remise permanente
-    print '<tr><td nowrap>';
-    print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-    print $langs->trans("CustomerRelativeDiscount");
-    print '<td><td align="right">';
-    print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-    print '</td></tr></table>';
-    print '</td><td colspan="3">'.$societe->remise_client."&nbsp;%</td>";
-    print '</tr>';
-    
-    // Remise avoirs
-    print '<tr><td nowrap>';
-    print '<table width="100%" class="nobordernopadding">';
-    print '<tr><td nowrap>';
-    print $langs->trans("CustomerAbsoluteDiscount");
-    print '<td><td align="right">';
-    print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-    print '</td></tr></table>';
-    print '</td>';
-    print '<td colspan="3">';
-    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-    $sql .= " WHERE rc.fk_soc =". $societe->id;
-    $sql .= " AND rc.fk_user = ".$user->id." AND fk_facture IS NULL";
-    $resql=$db->query($sql);
-    if ($resql)
+    if ($societe->client == 1)
     {
-        $obj = $db->fetch_object($resql);
-        if ($obj->amount_ht) print $obj->amount_ht.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
-        else print $langs->trans("None");
+        // Remise permanente
+        print '<tr><td nowrap>';
+        print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+        print $langs->trans("CustomerRelativeDiscount");
+        print '<td><td align="right">';
+        print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+        print '</td></tr></table>';
+        print '</td><td colspan="3">'.$societe->remise_client."&nbsp;%</td>";
+        print '</tr>';
+        
+        // Remise avoirs
+        print '<tr><td nowrap>';
+        print '<table width="100%" class="nobordernopadding">';
+        print '<tr><td nowrap>';
+        print $langs->trans("CustomerAbsoluteDiscount");
+        print '<td><td align="right">';
+        print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+        print '</td></tr></table>';
+        print '</td>';
+        print '<td colspan="3">';
+        $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+        $sql .= " WHERE rc.fk_soc =". $societe->id;
+        $sql .= " AND rc.fk_user = ".$user->id." AND fk_facture IS NULL";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $obj = $db->fetch_object($resql);
+            if ($obj->amount_ht) print $obj->amount_ht.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
+            else print $langs->trans("None");
+        }
+        print '</td>';
+        print '</tr>';
     }
-    print '</td>';
-    print '</tr>';
-
+    
     print "</table>";
 
     print "</td>\n";
@@ -291,7 +296,7 @@ if ($socid > 0)
     $MAXLIST=5;
     $tableaushown=0;
 
-    /*
+    /**
      *   Dernieres factures
      */
     if ($conf->facture->enabled && $user->rights->facture->lire)
@@ -338,7 +343,7 @@ if ($socid > 0)
                 print "</tr>\n";
                 $i++;
             }
-            $db->free();
+            $db->free($resql);
         }
         else
         {

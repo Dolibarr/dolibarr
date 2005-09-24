@@ -31,7 +31,7 @@
  
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once("../../actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 $langs->load("companies");
 

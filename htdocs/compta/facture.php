@@ -498,7 +498,7 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 
 					// Insertion action
 					require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
-					include_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
+					require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 					$actioncomm = new ActionComm($db);
 					$actioncomm->type_id     = $actiontypeid;
 					$actioncomm->label       = $actionmsg2;
