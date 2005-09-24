@@ -41,10 +41,22 @@ $user->getrights('contrat');
 if (! $user->rights->contrat->lire)
 accessforbidden();
 
+// Param si create
 $date_start='';
 $date_end='';
+if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
+{
+    $date_start=mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+}
+if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
+{
+    $date_end=mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+}
+// Param si updateligne
 $date_start_update='';
 $date_end_update='';
+$date_start_real_update='';
+$date_end_real_update='';
 if ($_POST["date_start_updatemonth"] && $_POST["date_start_updateday"] && $_POST["date_start_updateyear"])
 {
     $date_start_update=mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
@@ -53,13 +65,13 @@ if ($_POST["date_end_updatemonth"] && $_POST["date_end_updateday"] && $_POST["da
 {
     $date_end_update=mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
 }
-if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
+if ($_POST["date_start_real_updatemonth"] && $_POST["date_start_real_updateday"] && $_POST["date_start_real_updateyear"])
 {
-    $date_start=mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+    $date_start_real_update=mktime(12, 0 , 0, $_POST["date_start_real_updatemonth"], $_POST["date_start_real_updateday"], $_POST["date_start_real_updateyear"]);
 }
-if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
+if ($_POST["date_end_real_updatemonth"] && $_POST["date_end_real_updateday"] && $_POST["date_end_real_updateyear"])
 {
-    $date_end=mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+    $date_end_real_update=mktime(12, 0 , 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
 }
 
 // Sécurité accés client
@@ -157,8 +169,11 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && $_POST
             $_POST["elremise_percent"],
             $date_start_update,
             $date_end_update,
-            $_POST["eltva_tx"]
-        );
+            $_POST["eltva_tx"],
+            $date_start_real_update,
+            $date_end_real_update
+            );
+            
         if ($result > 0)
         {
             $db->commit();

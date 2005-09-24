@@ -584,73 +584,72 @@ class Contrat
      *      \param     datestart        Date de debut prévue
      *      \param     dateend          Date de fin prévue
      *      \param     tvatx            Taux TVA
+     *      \param     date_debut_reel  Date de debut réelle
+     *      \param     date_fin_reel    Date de fin réelle
      *      \return    int              < 0 si erreur, > 0 si ok
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='', $tvatx)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0,
+         $datestart='', $dateend='', $tvatx,
+         $date_debut_reel='', $date_fin_reel='')
     {
-// On doit pouvoir modifier datestart et dateend meme si non brouillon
-//        if ($this->statut == 0)
-//        {
-            // Nettoyage parametres
-            $qty=trim($qty);
-            $desc=trim($desc);
-            $desc=trim($desc);
-            $price = ereg_replace(",",".",$pu);
-            $tvatx = ereg_replace(",",".",$tvatx);
-            $subprice = $price;
-            $remise = 0;
-            if (strlen($remise_percent) > 0)
-            {
-                $remise = round(($pu * $remise_percent / 100), 2);
-                $price = $pu - $remise;
-            }
-            else
-            {
-                $remise_percent=0;
-            }
+        // Nettoyage parametres
+        $qty=trim($qty);
+        $desc=trim($desc);
+        $desc=trim($desc);
+        $price = ereg_replace(",",".",$pu);
+        $tvatx = ereg_replace(",",".",$tvatx);
+        $subprice = $price;
+        $remise = 0;
+        if (strlen($remise_percent) > 0)
+        {
+            $remise = round(($pu * $remise_percent / 100), 2);
+            $price = $pu - $remise;
+        }
+        else
+        {
+            $remise_percent=0;
+        }
+
+        dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend, $tvatx");
     
-            dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend, $tvatx");
+        $this->db->begin();
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".addslashes($desc)."'";
+        $sql .= ",price_ht='" .     ereg_replace(",",".",$price)."'";
+        $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
+        $sql .= ",remise='" .       ereg_replace(",",".",$remise)."'";
+        $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
+        $sql .= ",qty='$qty'";
+        $sql .= ",tva_tx='".        ereg_replace(",",".",$tvatx)."'";
+
+        if ($datestart > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($datestart); }
+        else { $sql.=",date_ouverture_prevue=null"; }
+        if ($dateend > 0) { $sql.= ",date_fin_validite=".$this->db->idate($dateend); }
+        else { $sql.=",date_fin_validite=null"; }
+        if ($date_debut_reel > 0) { $sql.= ",date_ouverture=".$this->db->idate($date_debut_reel); }
+        else { $sql.=",date_ouverture=null"; }
+        if ($date_fin_reel > 0) { $sql.= ",date_cloture=".$this->db->idate($date_fin_reel); }
+        else { $sql.=",date_cloture=null"; }
         
-            $this->db->begin();
-    
-            $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".addslashes($desc)."'";
-            $sql .= ",price_ht='" .     ereg_replace(",",".",$price)."'";
-            $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
-            $sql .= ",remise='" .       ereg_replace(",",".",$remise)."'";
-            $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
-            $sql .= ",qty='$qty'";
-            $sql .= ",tva_tx='".        ereg_replace(",",".",$tvatx)."'";
-    
-            if ($datestart > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($datestart); }
-            else { $sql.=",date_ouverture_prevue=null"; }
-            if ($dateend > 0) { $sql.= ",date_fin_validite=".$this->db->idate($dateend); }
-            else { $sql.=",date_fin_validite=null"; }
-    
-            $sql .= " WHERE rowid = $rowid ;";
-    
-            $result = $this->db->query($sql);
-            if ($result)
-            {
-                $this->update_price();
-    
-                $this->db->commit();
-    
-                return 1;
-            }
-            else
-            {
-                $this->db->rollback();
-                $this->error=$this->db->error();
-                dolibarr_syslog("Contrat::UpdateLigne Erreur -1");
-    
-                return -1;
-            }
-//        }
-//        else
-//        {
-//            dolibarr_syslog("Contrat::UpdateLigne Erreur -2 Contrat en mode incompatible pour cette action");
-//            return -2;
-//        }
+        $sql .= " WHERE rowid = $rowid ;";
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $this->update_price();
+
+            $this->db->commit();
+
+            return 1;
+        }
+        else
+        {
+            $this->db->rollback();
+            $this->error=$this->db->error();
+            dolibarr_syslog("Contrat::UpdateLigne Erreur -1");
+
+            return -1;
+        }
     }
     
     /**
