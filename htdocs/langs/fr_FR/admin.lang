@@ -7,6 +7,7 @@ DolibarrSetup=Installation de Dolibarr
 GlobalSetup=Général
 GUISetup=Interface
 DictionnarySetup=Dictionnaires
+DisableJavascript=Désactiver les fonctions javascript
 NextValue=Prochaine valeur
 ComptaSetup=Configuration du module Comptabilité
 UserSetup=Configuration gestion des utilisateurs

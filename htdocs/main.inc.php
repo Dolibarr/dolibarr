@@ -133,6 +133,10 @@ if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
     $conf->theme=$user->conf->MAIN_THEME;
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 }
+if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAVASCRIPT)
+{
+    $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
+}
 
 
 

@@ -306,6 +306,10 @@ $conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
 $conf->use_preview_tabs=1;
 if (isset($conf->global->MAIN_USE_PREVIEW_TABS)) $conf->use_preview_tabs=$conf->global->MAIN_USE_PREVIEW_TABS;
 
+// conf->use_javascript
+$conf->use_javascript=1;
+if (isset($conf->global->MAIN_DISABLE_JAVASCRIPT)) $conf->use_javascript=! $conf->global->MAIN_DISABLE_JAVASCRIPT;
+
 // conf->monnaie
 if (! $conf->global->MAIN_MONNAIE) $conf->global->MAIN_MONNAIE='EUR';	
 $conf->monnaie=$conf->global->MAIN_MONNAIE;

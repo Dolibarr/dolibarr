@@ -269,14 +269,14 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '</textarea></td></tr>';
 
         print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="PopupPostalCode(cp.value,ville)"';
+        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="PopupPostalCode(cp.value,ville)"';
         print '>';
-        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
+        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
         print '</td>';
         print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($soc->pays_id,'pays_id',' onChange="save_refresh()"');
+        $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="save_refresh()"':'');
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
@@ -374,25 +374,12 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
     if ($_GET["socid"])
     {
-
-        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP)
+        // Si javascript autorisé
+        if ($conf->use_javascript)
         {
             include("./soc.js.php");
         }
-
-        print '
-        <script language="javascript" type="text/javascript">
-        <!--
-        function save_refresh()
-        {
-        	document.formsoc.action.value="edit";
-        	document.formsoc.submit();
-        //	location.href = "index.php?action=updateedit";
-        }
-        -->
-        </script>
-        ';
-
+        
         if ($reload || ! $_POST["nom"])
         {
             $soc = new Societe($db);
@@ -502,15 +489,15 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '</textarea></td></tr>';
 
         print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="PopupPostalCode(cp.value,ville)"';
+        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="PopupPostalCode(cp.value,ville)"';
         print '>';
-        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
+        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
         print '</td>';
 
         print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($soc->pays_id,'pays_id',' onChange="save_refresh()"');
+        $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="save_refresh()"':'');
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';

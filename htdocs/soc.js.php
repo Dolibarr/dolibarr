@@ -10,8 +10,20 @@ $js_OpenPopupWindow = "function PopupPostalCode(postalcode,objectville)
 }
 ";
 
-print '<script language="javascript">'."\n";
+print '<script language="javascript" type="text/javascript">'."\n";
+print "<!--\n";
+print "\n";
+
 print $js_OpenPopupWindow;
-print "\n</script>\n";
+
+print "function save_refresh()\n";
+print "{\n";
+print "document.formsoc.action.value=\"edit\";\n";
+print "document.formsoc.submit();\n";
+print "}\n";
+
+print "\n";
+print "-->\n";
+print "</script>\n";
 
 ?>

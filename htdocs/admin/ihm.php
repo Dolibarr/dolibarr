@@ -49,20 +49,21 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
-  dolibarr_set_const($db, "MAIN_LANG_DEFAULT",      $_POST["main_lang_default"]);
-  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",     $_POST["main_menu_barretop"]);
-  dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",    $_POST["main_menu_barreleft"]);
-  dolibarr_set_const($db, "SIZE_LISTE_LIMIT",       $_POST["size_liste_limit"]);
+  dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"]);
+  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
+  dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
+  dolibarr_set_const($db, "SIZE_LISTE_LIMIT",        $_POST["size_liste_limit"]);
+  dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["disable_javascript"]);
   
+  dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
+  dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD", $_POST["workboard"]);
+
   dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
   
   dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
   dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
   dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
   
-  dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
-  dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD", $_POST["workboard"]);
-
   dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
   
   $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
@@ -148,12 +149,18 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   
   $var=!$var;
   print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-  $html->selectyesnonum('bugtrack',MAIN_SHOW_BUGTRACK_LINK);
+  $html->selectyesnonum('bugtrack',$conf->global->MAIN_SHOW_BUGTRACK_LINK);
   print '</td></tr>';
   
   $var=!$var;
   print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
-  $html->selectyesnonum('workboard',MAIN_SHOW_WORKBOARD);
+  $html->selectyesnonum('workboard',$conf->global->MAIN_SHOW_WORKBOARD);
+  print '</td></tr>';
+
+  // Désactiver javascript
+  $var=!$var;
+  print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
+  $html->selectyesnonum('disable_javascript',$conf->global->MAIN_DISABLE_JAVASCRIPT);
   print '</td></tr>';
 
   print '</table><br>';
@@ -221,13 +228,18 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';   
-    print (MAIN_SHOW_BUGTRACK_LINK?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
+    print ($conf->global->MAIN_SHOW_BUGTRACK_LINK?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
 
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';   
-    print (MAIN_SHOW_WORKBOARD?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
-    print '</table><br>';
+    print ($conf->global->MAIN_SHOW_WORKBOARD?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
 
+    // Disable javascript
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
+    print ($conf->global->MAIN_DISABLE_JAVASCRIPT?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
+
+    print '</table><br>';
 
     // Skin
     show_theme(0);
