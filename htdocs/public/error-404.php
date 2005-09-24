@@ -7,16 +7,17 @@
   <body>
     <h2>Erreur 404</h2>
 
-<p>La page demandée n'existe pas :
+    <br>
+    La page demandée n'existe pas :
 
-<p>Vous venez de ! <?PHP print $HTTP_VARS["Referrer"] ?>
-
+    <br>
+    Vous venez de <?php print $_SERVER["HTTP_REFERER"] ?>.
 
     <hr>
-    <address><a href="mailto:rodo@lager.lolix.net"></a></address>
-<!-- Created: Mon Jun 24 13:51:43 CEST 2002 -->
-<!-- hhmts start -->
-Last modified: Mon Jun 24 13:51:51 CEST 2002
-<!-- hhmts end -->
+    <!-- Created: Mon Jun 24 13:51:43 CEST 2002 -->
+    <!-- hhmts start -->
+    Last modified: Mon Jun 24 13:51:51 CEST 2002
+    <!-- hhmts end -->
+
   </body>
 </html>
