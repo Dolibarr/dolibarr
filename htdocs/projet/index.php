@@ -64,7 +64,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 //$sql.= " WHERE t.fk_projet = p.rowid";
 if ($socidp)
 { 
-  $sql .= " AND s.idp = $socidp"; 
+  $sql .= " AND p.fk_soc = ".$socidp; 
 }
 $sql.= " GROUP BY p.rowid";
 
