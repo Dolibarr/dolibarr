@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -102,8 +101,21 @@ class InterfaceDemo
         // Mettre ici le code à exécuter en réaction de l'action
         // Les données de l'action sont stockées dans $object
     
+        // Users
+        if     ($action == 'USER_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
+        elseif ($action == 'USER_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
+        elseif ($action == 'USER_DISABLE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
         // Companies
-        if     ($action == 'COMPANY_CREATE')
+        elseif     ($action == 'COMPANY_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }

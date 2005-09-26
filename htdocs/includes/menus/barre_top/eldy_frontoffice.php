@@ -40,8 +40,8 @@
 
 class MenuTop {
 
-    var $require_left=array("eldy");    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-    var $atarget="";                    // Valeur du target a utiliser dans les liens
+    var $require_left=array("eldy_frontoffice");    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
+    var $atarget="";                                // Valeur du target a utiliser dans les liens
 
     
     /**

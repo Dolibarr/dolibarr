@@ -98,7 +98,7 @@ class box_bookmarks extends ModeleBoxes {
                 {
                     if ($num==0 && $i==$num)
                     {
-                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedBookmarks"));
+                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedBookmarks",DOL_URL_ROOT.'/bookmarks/liste.php'));
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                     } else {
                         $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');

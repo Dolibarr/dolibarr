@@ -40,7 +40,7 @@
 
 class MenuLeft {
 
-    var $require_top=array("eldy");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
+    var $require_top=array("eldy_frontoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
 
     
     /**
@@ -107,7 +107,10 @@ class MenuLeft {
             /*
              * Menu HOME
              */
-            if ($mainmenu == 'home') {
+            if ($mainmenu == 'home')
+            {
+                $newmenu->add(DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'&amp;leftmenu=home', $langs->trans("MyAccount"));
+
                 if($user->admin)
                 {
                   $langs->load("admin");
@@ -137,12 +140,6 @@ class MenuLeft {
                   if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables-contraintes.php", $langs->trans("Constraints"),2);
                 }
 
-                $langs->load("users");
-                $newmenu->add(DOL_URL_ROOT."/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
-                if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"));
-                if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"),2);
-                if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/index.php", $langs->trans("Groups"));
-                if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"),2);
             }
         
             /*

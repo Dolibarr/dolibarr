@@ -70,5 +70,5 @@ MailingNeedCommand=Pour des raisons de sécurité, l'envoi d'un mailing de masse n
 TargetsReset=Vider liste
 ToClearAllRecipientsClickHere=Pour effacer la liste des destinataires de ce mailing, cliquer ici
 ToAddRecipientsChooseHere=Pour ajouter des destinataires, choisir dans les listes ci-dessous
-NbOfEMailingsReceived=Nb de mailings de masse reçus
+NbOfEMailingsReceived=Mailings de masse reçus&nbsp;
 IdRecord=ID enregistrement

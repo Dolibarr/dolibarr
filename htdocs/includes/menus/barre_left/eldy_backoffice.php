@@ -40,7 +40,7 @@
 
 class MenuLeft {
 
-    var $require_top=array("eldy");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
+    var $require_top=array("eldy_backoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
 
     
     /**

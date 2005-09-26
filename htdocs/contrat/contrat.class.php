@@ -448,26 +448,39 @@ class Contrat
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
-                $interface->run_triggers('CONTRACT_CREATE',$this,$user,$lang,$conf);
+                $result=$interface->run_triggers('CONTRACT_CREATE',$this,$user,$lang,$conf);
+                if ($result < 0) $error++;
                 // Fin appel triggers
         
-                $this->db->commit();
-    
-                return $this->id;
+                if (! $error)
+                {
+                    $this->db->commit();
+                    return $this->id;
+                }
+                else
+                {
+                    $this->error=$interface->error;
+                    dolibarr_syslog("Contrat::create - 30 - ".$this->error);
+
+                    $this->db->rollback();
+                    return -3;
+                }
             }
             else
             {
-                $this->db->rollback();
+                $this->error="Failed to add contact";
+                dolibarr_syslog("Contrat::create - 20 - ".$this->error);
 
-                return -1;
+                $this->db->rollback();
+                return -2;
             }
         }
         else
         {
-            $this->db->rollback();
-
-            dolibarr_syslog("Contrat::create - 10");
             $this->error=$lang->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
+            dolibarr_syslog("Contrat::create - 10 - ".$this->error);
+
+            $this->db->rollback();
             return -1;
         }
     }

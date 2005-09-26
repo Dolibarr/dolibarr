@@ -483,24 +483,44 @@ class User
     }
 
 
-  /**
-   *    \brief      Désactive un utilisateur
-   */
-	 
+    /**
+     *      \brief      Désactive un utilisateur
+     *      \return     int     <0 si ko, >0 si ok
+     */
     function disable()
     {
+        $error=0;
+        
         // Désactive utilisateur
         $sql = "UPDATE ".MAIN_DB_PREFIX."user";
         $sql.= " SET login = NULL";
         $sql.= " WHERE rowid = ".$this->id;
         $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('USER_DISABLE',$this,$user,$lang,$conf);
+            if ($result < 0) $error++;
+            // Fin appel triggers
+        }
+
+        if ($error)
+        {
+            return -$error;
+        }
+        else
+        {
+            return 1;
+        }
     }
   
   
-  /**
-   *    \brief      Supprime complètement un utilisateur
-   */
-	 
+    /**
+     *    \brief      Supprime complètement un utilisateur
+     */
     function delete()
     {
         // Supprime droits
@@ -526,22 +546,23 @@ class User
     }
   
 
-  /**
-   *        \brief      Crée un utilisateur en base
-   *        \return     si erreur <0, si ok renvoie id compte créé
-   */
-	 
-  function create()
+    /**
+     *      \brief      Crée un utilisateur en base
+     *      \return     int         si erreur <0, si ok renvoie id compte créé
+     */
+    function create()
     {
         global $langs;
-        
+    
+        $this->db->begin();
+
         $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='".$this->login."';";
-        $result=$this->db->query($sql);
-        if ($result)
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
-            $num = $this->db->num_rows($result);
-            $this->db->free($result);
-        
+            $num = $this->db->num_rows($resql);
+            $this->db->free($resql);
+    
             if ($num)
             {
                 $this->error = $langs->trans("ErrorLoginAlreadyExists");
@@ -549,94 +570,139 @@ class User
             }
             else
             {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,email) VALUES(now(),'$this->login','$this->email');";
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login) VALUES(now(),'$this->login');";
                 $result=$this->db->query($sql);
-
+    
                 if ($result)
                 {
                     $table =  "".MAIN_DB_PREFIX."user";
                     $this->id = $this->db->last_insert_id($table);
-
-                    if ($this->set_default_rights() < 0) return -4;
-
-                    if ($this->update() < 0) return -3;
-
-                    return $this->id;
+    
+                    // Set default rights
+                    if ($this->set_default_rights() < 0) 
+                    {
+                        $this->db->rollback();
+        
+                        $this->error=$this->db->error();
+                        return -4;
+                    }
+                    
+                    // Update minor fields
+                    if ($this->update() < 0)
+                    {
+                        $this->db->rollback();
+        
+                        $this->error=$this->db->error();
+                        return -5;
+                    }
+    
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
+                    if ($result < 0) $error++;
+                    // Fin appel triggers
+    
+                    if (! $error)
+                    {
+                        $this->db->commit();
+        
+                        return $this->id;
+                    }
+                    else
+                    {
+                        $this->db->rollback();
+        
+                        $this->error=$interface->error;
+                        return -3;
+                    }
                 }
                 else
                 {
-                    dolibarr_print_error($this->db);
+                    $this->db->rollback();
+                    $this->error=$this->db->error();
                     return -2;
                 }
             }
         }
         else
         {
-            dolibarr_print_error($this->db);
+            $this->db->rollback();
+            $this->error=$this->db->error();
             return -1;
         }
     }
 
-  /**
-   * \brief     Créé en base un utilisateur depuis l'objetc contact
-   * \param     contact      Objet du contact source
-   *
-   */
-	 
-  function create_from_contact($contact)
+
+    /**
+     *      \brief      Créé en base un utilisateur depuis l'objet contact
+     *      \param      contact     Objet du contact source
+     *      \return     int         si erreur <0, si ok renvoie id compte créé
+     */
+    function create_from_contact($contact)
     {
         global $langs;
+    
+        // Positionne paramètres
+        $this->nom = $contact->nom;
+        $this->prenom = $contact->prenom;
+
+        $this->login = strtolower(substr($contact->prenom, 0, 3)) . strtolower(substr($contact->nom, 0, 3));
+        $this->admin = 0;
+
+        $this->email = $contact->email;
+    
+        $this->db->begin();
+    
+        // Crée et positionne $this->id
+        $result=$this->create();
         
-      $this->nom = $contact->nom;
-      $this->prenom = $contact->prenom;
-      $this->email = $contact->email;
+        if ($result > 0)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+            $sql.= " SET fk_socpeople=".$contact->id.", fk_societe=".$contact->societeid;
+            $sql.= " WHERE rowid=".$this->id;
+            $resql=$this->db->query($sql);
 
-      $this->login = strtolower(substr($contact->prenom, 0, 3)) . strtolower(substr($contact->nom, 0, 3));
+            if ($resql)
+            {
+                $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
+                $sql.= " SET fk_user = ".$this->id;
+                $sql.= " WHERE idp = ".$contact->id;
+                $resql=$this->db->query($sql);
+        
+                if ($resql)
+                {
+                    $this->db->commit();
+                    return $this->id;
+                }
+                else
+                {
+                    $this->error=$this->db->error()." - $sql";
+                    dolibarr_syslog("User::create_from_contact - 20 - ".$this->error);
 
-      $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login'";
+                    $this->db->rollback();
+                    return -2;
+                }                        
+            }
+            else
+            {
+                $this->error=$this->db->error()." - $sql";
+                dolibarr_syslog("User::create_from_contact - 10 - ".$this->error);
 
-      if ($this->db->query($sql)) 
-	{
-	  $num = $this->db->num_rows();
-	  $this->db->free();
+                $this->db->rollback();
+                return -1;
+            }
+        }
+        else
+        {
+            // $this->error deja positionné
+            dolibarr_syslog("User::create_from_contact - 0");
 
-	  if ($num) 
-	    {
-	      $this->error = $langs->trans("ErrorLoginAlreadyExists");
-	      return 0;
-	    }
-	  else
-	    {            
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login, fk_socpeople, fk_societe)";
-	      $sql .= " VALUES (now(),'$this->login',$contact->id, $contact->societeid);";
-	      if ($this->db->query($sql))
-		{
-		  if ($this->db->affected_rows()) 
-		    {
-              $table =  "".MAIN_DB_PREFIX."user";
-		      $this->id = $this->db->last_insert_id($table);
-		      $this->admin = 0;
-		      $this->update();
-		      
-		      $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = $this->id WHERE idp = $contact->id";
-		      $this->db->query($sql);
-
-		      $this->set_default_rights();
-
-		      return $this->id;
-		    }
-		}
-	      else
-		{
-		  dolibarr_print_error($this->db);
-		}
-	    }
-	}
-      else
-	{
-    	  dolibarr_print_error($this->db);
-	}
-      
+            $this->db->rollback();
+            return $result;
+        }
+    
     }
 
   /**
@@ -679,11 +745,14 @@ class User
 
   /**
    *    \brief      Mise à jour en base d'un utilisateur
-   *    \return     <0 si echec, >=0 si ok
+   *    \param      create      1 si update durant le create, 0 sinon
+   *    \return     int         <0 si echec, >=0 si ok
    */
-  function update()
+  function update($create=0)
     {
         global $langs;
+        
+        $error=0;
         
         if (!strlen($this->code)) $this->code = $this->login;
 
@@ -707,6 +776,16 @@ class User
         {
             if ($this->db->affected_rows())
             {
+                if (! $create)
+                {
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('USER_MODIFY',$this,$user,$lang,$conf);
+                    if ($result < 0) $error++;
+                    // Fin appel triggers
+                }
+                
                 return 1;
             }
             return 0;
