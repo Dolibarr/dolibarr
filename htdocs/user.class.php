@@ -691,11 +691,12 @@ class User
         $sql .= " name = '$this->nom'";
         $sql .= ", firstname = '$this->prenom'";
         $sql .= ", login = '$this->login'";
+        if ($this->pass) $sql .= ", pass = '$this->pass'";
+        $sql .= ", admin = $this->admin";
         $sql .= ", office_phone = '$this->office_phone'";
         $sql .= ", office_fax = '$this->office_fax'";
         $sql .= ", user_mobile = '$this->user_mobile'";
         $sql .= ", email = '$this->email'";
-        $sql .= ", admin = $this->admin";
         $sql .= ", webcal_login = '$this->webcal_login'";
         $sql .= ", code = '$this->code'";
         $sql .= ", note = '$this->note'";
