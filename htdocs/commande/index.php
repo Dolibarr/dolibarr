@@ -33,6 +33,17 @@ if (!$user->rights->commande->lire) accessforbidden();
 
 $langs->load("orders");
 
+// Sécurité accés client
+$socidp='';
+if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
+
+
+
 llxHeader("",$langs->trans("Orders"),"Commande");
 
 print_fiche_titre($langs->trans("OrdersArea"));
@@ -60,10 +71,7 @@ print "</form></table><br>\n";
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
-if ($socidp)
-{
-  $sql .= " AND c.fk_soc = $socidp";
-}
+if ($socidp) $sql .= " AND c.fk_soc = ".$socidp;
 
 if ( $db->query($sql) )
 {
@@ -93,28 +101,31 @@ if ( $db->query($sql) )
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
+if ($socidp) $sql .= " AND c.fk_soc = ".$socidp;
 $sql .= " ORDER BY c.rowid DESC";
 
 if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  if ($num)
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
+
+    $num = $db->num_rows();
+    if ($num)
     {
-      $i = 0;
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
-      $var = True;
-      while ($i < $num)
-	{
-	  $var=!$var;
-	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td nowrap><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td></tr>';
-	  $i++;
-	}
-      print "</table><br>";
+        $i = 0;
+        $var = True;
+        while ($i < $num)
+        {
+            $var=!$var;
+            $obj = $db->fetch_object();
+            print "<tr $bc[$var]><td nowrap><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td></tr>';
+            $i++;
+        }
     }
+
+    print "</table><br>";
 }
 
 
@@ -126,32 +137,31 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2 ";
-if ($socidp)
-{
-  $sql .= " AND c.fk_soc = $socidp";
-}
+if ($socidp) $sql .= " AND c.fk_soc = ".$socidp;
 $sql .= " ORDER BY c.rowid DESC";
+
 if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  if ($num)
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
+
+    $num = $db->num_rows();
+    if ($num)
     {
-      $i = 0;
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
-      $var = True;
-      while ($i < $num)
-	{
-	  $var=!$var;
-	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' ';
-	  print $obj->ref.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	  $i++;
-	}
-      print "</table><br>";
+        $i = 0;
+        $var = True;
+        while ($i < $num)
+        {
+            $var=!$var;
+            $obj = $db->fetch_object();
+            print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' ';
+            print $obj->ref.'</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+            $i++;
+        }
     }
+    print "</table><br>";
 }
 
 /*
@@ -163,34 +173,35 @@ $sql = "SELECT c.rowid, c.ref, s.nom, s.idp,";
 $sql.= " ".$db->pdate("date_cloture")." as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE c.fk_soc = s.idp and c.fk_statut > 2";
-if ($socidp) $sql .= " AND c.fk_soc = $socidp";
+if ($socidp) $sql .= " AND c.fk_soc = ".$socidp;
 $sql.= " ORDER BY c.tms DESC";
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  if ($num)
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="3">'.$langs->trans("LastClosedOrders",$max).'</td></tr>';
+
+    $num = $db->num_rows($resql);
+    if ($num)
     {
-      $i = 0;
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="3">'.$langs->trans("LastClosedOrders",$max).'</td></tr>';
-      $var = True;
-      while ($i < $num)
-	{
-	  $var=!$var;
-	  $obj = $db->fetch_object($resql);
-	  print "<tr $bc[$var]><td><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrders"),"order").' ';
-	  print $obj->ref.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-	  print '<td>'.dolibarr_print_date($obj->datec).'</td>';
-	  print '</tr>';
-	  $i++;
-	}
-      print "</table><br>";
+        $i = 0;
+        $var = True;
+        while ($i < $num)
+        {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr $bc[$var]><td><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrders"),"order").' ';
+            print $obj->ref.'</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+            print '<td>'.dolibarr_print_date($obj->datec).'</td>';
+            print '</tr>';
+            $i++;
+        }
     }
+    print "</table><br>";
 }
 
 

@@ -41,14 +41,14 @@ $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
-$socid=$_GET["socid"];
-
 
 // Sécurité accés client
+$socidp='';
+if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socid = $user->societe_id;
+  $socidp = $user->societe_id;
 }
 
 print_fiche_titre($langs->trans("ContractsArea"));
@@ -102,7 +102,7 @@ $sql.= " c.rowid as cid, c.datec, c.statut, s.nom, s.idp as sidp";
 $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.idp ";
-if ($socid > 0) $sql .= " AND s.idp = $socid";
+if ($socidp > 0) $sql .= " AND s.idp = ".$socidp;
 $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
 $sql.= " ORDER BY c.datec DESC";
 $sql.= " LIMIT $max";
@@ -163,7 +163,7 @@ $sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE c.statut=1 AND cd.statut = 0";
 $sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
-if ($user->societe_id > 0) $sql.= " AND s.idp = ".$user->societe_id;
+if ($socidp > 0) $sql.= " AND s.idp = ".$socidp;
 $sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
@@ -210,7 +210,7 @@ $max=5;
 $sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
-if ($user->societe_id > 0) $sql.= " AND s.idp = ".$user->societe_id;
+if ($socidp > 0) $sql.= " AND s.idp = ".$socidp;
 $sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
