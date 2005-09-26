@@ -128,10 +128,12 @@ class MenuTop {
             if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
             if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
         
+/*
             if ($user->rights->produit->lire)
                 print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a>';
             else
                 print '<font class="tmenudisabled">'.$chaine.'</font>';
+*/
         }
 
         // Supplier
@@ -149,7 +151,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a>';
+//            print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a>';
         }
 
         // Commercial
@@ -204,7 +206,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a>';
+//            print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a>';
         }
 
         // Tools
@@ -241,7 +243,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php?mainmenu=webcal&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a>';
+//            print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php?mainmenu=webcal&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a>';
         }
        
     }
