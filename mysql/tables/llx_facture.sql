@@ -22,7 +22,8 @@
 create table llx_facture
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
-  facnumber           varchar(50)        NOT NULL,
+  facnumber           varchar(30)        NOT NULL,
+  ref_client          varchar(30),
   increment           varchar(10),
   fk_soc              integer            NOT NULL,
   datec               datetime,  -- date de creation de la facture
