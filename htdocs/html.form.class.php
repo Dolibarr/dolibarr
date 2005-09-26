@@ -245,11 +245,10 @@ class Form
    *    \param      selected        Langue présélectionnée
    *    \param      htmlname        Nom de la zone select
    */
-	 
   function select_lang($selected='',$htmlname='lang_id')
   {
     global $langs;
-    
+
     $langs_available=$langs->get_available_languages();
     
     print '<select class="flat" name="'.$htmlname.'">';
@@ -273,6 +272,38 @@ class Form
     print '</select>';
   }
 
+
+    /**
+     *    \brief      Retourne la liste déroulante des menus disponibles
+     *    \param      selected        Menu pré-sélectionnée
+     *    \param      htmlname        Nom de la zone select
+     *    \param      dirmenu         Repértoire à scanner
+     */
+    function select_menu($selected='',$htmlname,$dirmenu)
+    {
+        global $langs;
+    
+        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilité
+        
+        print '<select class="flat" name="'.$htmlname.'">';
+        $handle=opendir($dirmenu);
+        while (($file = readdir($handle))!==false)
+        {
+            if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+            {
+                $filelib=eregi_replace('\.php$','',$file);
+                if ($file == $selected)
+                {
+                    print '<option value="'.$file.'" selected="true">'.$filelib.'</option>';
+                }
+                else
+                {
+                    print '<option value="'.$file.'">'.$filelib.'</option>';
+                }
+            }
+        }
+        print '</select>';
+    }
 
   /**
    *    \brief      Retourne la liste des types de comptes financiers

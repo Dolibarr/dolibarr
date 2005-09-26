@@ -147,12 +147,13 @@ if ($result)
 $db->free($result);
 
 /*
- * Positionne les gestionnaires de menu
+ * Nettoyage variables des gestionnaires de menu
+ * conf->menu_top et conf->menu_left sont définis dans main.inc.php (selon user)
  */
 if (! $conf->global->MAIN_MENU_BARRETOP) $conf->global->MAIN_MENU_BARRETOP="default.php";
+if (! $conf->global->MAIN_MENUFRONT_BARRETOP) $conf->global->MAIN_MENUFRONT_BARRETOP="default.php";
 if (! $conf->global->MAIN_MENU_BARRELEFT) $conf->global->MAIN_MENU_BARRELEFT="default.php";
-$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
-$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
+if (! $conf->global->MAIN_MENUFRONT_BARRELEFT) $conf->global->MAIN_MENUFRONT_BARRELEFT="default.php";
 
 /*
  * Positionne le langage global et localisation dans $conf->langage

@@ -138,7 +138,20 @@ if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAV
     $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
-
+// Défini gestionnaire de manu à utiliser
+if (! $user->societe_id)    // Si utilisateur interne
+{
+    $conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
+    $conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
+    // Pour compatibilité
+    if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_frontoffice.php';
+    if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_frontoffice.php';
+}
+else                        // Si utilisateur externe
+{
+    $conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
+    $conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
+}
 
 // Si le login n'a pu être récupéré, on est identifié avec un compte qui n'existe pas.
 // Tentative de hacking ?
