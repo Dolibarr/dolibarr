@@ -116,7 +116,7 @@ if ($resql)
         {
             print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
         }
-        else print '&nbsp;';
+        else print $langs->trans("InternalUser");
         print '</td>';
         print "<td width=\"80\" align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
         print '</tr>';

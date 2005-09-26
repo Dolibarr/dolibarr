@@ -51,14 +51,17 @@ llxHeader();
 
 print_titre($langs->trans("ListOfUsers"));
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.code, u.login, ".$db->pdate("u.datec")." as datec";
-$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE 1=1";
-if ($_POST["search_user"]) {
-    $sql .= " AND (u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.code, u.fk_societe, u.login, ".$db->pdate("u.datec")." as datec,";
+$sql.= " s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.idp";
+$sql.= " WHERE 1=1";
+if ($_POST["search_user"])
+{
+    $sql.= " AND (u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
 }
 if ($sall) $sql.= " AND (u.login like '%".$sall."%' OR u.name like '%".$sall."%' OR u.firstname like '%".$sall."%' OR u.code like '%".$sall."%' OR u.email like '%".$sall."%' OR u.note like '%".$sall."%')";
-if ($sortfield) { $sql.=" ORDER BY $sortfield $sortorder"; }
+if ($sortfield) $sql.=" ORDER BY $sortfield $sortorder";
 
 $result = $db->query($sql);
 if ($result)
@@ -75,6 +78,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Lastname"),"index.php","u.name",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Firstname"),"index.php","u.firstname",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Code"),"index.php","u.code",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"","",$sortfield);
     print "</tr>\n";
     $var=True;
@@ -105,6 +109,13 @@ if ($result)
         print '<td>'.ucfirst($obj->name).'</td>';
         print '<td>'.ucfirst($obj->firstname).'</td>';
         print '<td>'.$obj->code.'</td>';
+        print "<td>";
+        if ($obj->fk_societe)
+        {
+            print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+        }
+        else print $langs->trans("InternalUser");
+        print '</td>';
         print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
         print "</tr>\n";
         $i++;

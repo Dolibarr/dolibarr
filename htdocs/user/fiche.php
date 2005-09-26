@@ -30,12 +30,13 @@
         \version    $Revision$
 */
 
-
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+
 
 if ($user->id <> $_GET["id"])
 {
-  if (! $user->rights->user->user->lire && !$user->admin)
+  if (! $user->rights->user->user->lire && ! $user->admin)
     {
       accessforbidden();
     }
@@ -105,15 +106,15 @@ if ($_POST["action"] == 'add' && $user->admin)
         $edituser = new User($db,0);
 
         $edituser->nom           = trim($_POST["nom"]);
-        $edituser->note          = trim($_POST["note"]);
         $edituser->prenom        = trim($_POST["prenom"]);
         $edituser->login         = trim($_POST["login"]);
+        $edituser->admin         = trim($_POST["admin"]);
  		$edituser->office_phone  = trim($_POST["office_phone"]);
  		$edituser->office_fax    = trim($_POST["office_fax"]);
  		$edituser->user_mobile   = trim($_POST["user_mobile"]);
         $edituser->email         = trim($_POST["email"]);
-        $edituser->admin         = trim($_POST["admin"]);
         $edituser->webcal_login  = trim($_POST["webcal_login"]);
+        $edituser->note          = trim($_POST["note"]);
 
         $db->begin();
 
@@ -174,14 +175,15 @@ if ($_POST["action"] == 'update' && $user->admin)
     $edituser->fetch();
 
     $edituser->nom           = $_POST["nom"];
-    $edituser->note          = $_POST["note"];
     $edituser->prenom        = $_POST["prenom"];
     $edituser->login         = $_POST["login"];
+    $edituser->pass          = $_POST["pass"];
+    $edituser->admin         = $_POST["admin"];
     $edituser->office_phone  = $_POST["office_phone"];
  	$edituser->office_fax    = $_POST["office_fax"];
  	$edituser->user_mobile   = $_POST["user_mobile"];
     $edituser->email         = $_POST["email"];
-    $edituser->admin         = $_POST["admin"];
+    $edituser->note          = $_POST["note"];
     $edituser->webcal_login  = $_POST["webcal_login"];
 
     $ret=$edituser->update();
@@ -298,6 +300,11 @@ if ($action == 'create')
     print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
     print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
 
+    print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
+    print '<td class="valeur">';
+    $form->selectyesnonum('admin',0);
+    print "</td></tr>\n";
+
     print '<tr><td valign="top">'.$langs->trans("Phone").'</td>';
     print '<td class="valeur"><input size="20" type="text" name="office_phone" value=""></td></tr>';
 
@@ -310,13 +317,8 @@ if ($action == 'create')
     print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
     print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
 
-    print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
-    print '<td class="valeur">';
-    $form->selectyesnonum('admin',0);
-    print "</td></tr>\n";
-
     print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-    print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
+    print "<textarea name=\"note\" rows=\"6\" cols=\"40\">";
     print "</textarea></td></tr>\n";
 
     // Autres caractéristiques issus des autres modules
@@ -430,7 +432,7 @@ else
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td width="50%" class="valeur">'.$fuser->nom.'</td>';
-            print '<td align="center" valign="middle" width="25%" rowspan="11">';
+            print '<td align="center" valign="middle" width="25%" rowspan="13">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
                 print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
@@ -455,6 +457,54 @@ else
             	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisable").'</td></tr>';
             }
 
+            // Password
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
+            print '<td width="50%" class="valeur">'.eregi_replace('.','*',$fuser->pass).'</td>';
+            print "</tr>\n";
+
+            // Administrateur
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
+            print '<td class="valeur">'.yn($fuser->admin);
+            if ($fuser->admin) print ' '.img_picto($langs->trans("Administrator"),"star");
+            print '</td>';
+            print "</tr>\n";
+
+            // Source
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Source").'</td>';
+            print '<td class="valeur">';
+            if ($fuser->societe_id)
+            {
+                print $langs->trans("External");
+            }
+            else
+            {
+                print $langs->trans("Internal");
+            }
+            print '</td></tr>';
+
+            // Company / Contact
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
+            print '<td class="valeur">';
+            if ($fuser->societe_id > 0)
+            {
+                $societe = new Societe($db);
+                $societe->fetch($fuser->societe_id);
+                print '<a href="'.DOL_URL_ROOT.'/soc.php?id='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
+                if ($fuser->contact_id)
+                {
+                    $contact = new Contact($db);
+                    $contact->fetch($fuser->contact_id);
+                    print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->fullname,32).'</a>';
+                }
+            }            
+            else
+            {
+                print $langs->trans("ThisUserIsNot");
+            }
+            print '</td>';
+            print "</tr>\n";
+
+            // Tel, fax, portable
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Phone").'</td>';
  			print '<td width="50%" class="valeur">'.$fuser->office_phone.'</td>';
  			print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
@@ -466,12 +516,6 @@ else
             print '<td width="50%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
             print "</tr>\n";
 
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
-            print '<td class="valeur">'.yn($fuser->admin);
-            if ($fuser->admin) print ' '.img_picto($langs->trans("Administrator"),"star");
-            print '</td>';
-            print "</tr>\n";
-
             print '<tr><td width="25%" valign="top">'.$langs->trans("DateCreation").'</td>';
             print '<td class="valeur">'.dolibarr_print_date($fuser->datec).'</td>';
             print "</tr>\n";
@@ -479,28 +523,6 @@ else
             print '<tr><td width="25%" valign="top">'.$langs->trans("DateModification").'</td>';
             print '<td class="valeur">'.dolibarr_print_date($fuser->datem).'</td>';
             print "</tr>\n";
-
-            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("ContactCard").'</td>';
-            print '<td class="valeur">';
-            if ($fuser->contact_id)
-            {
-                print '<a href="../contact/fiche.php?id='.$fuser->contact_id.'">'.$langs->trans("ContactCard").'</a>';
-            }
-            else
-            {
-                print $langs->trans("ThisUserIsNot");
-            }
-            print '</td>';
-            print "</tr>\n";
-
-            if ($fuser->societe_id > 0)
-            {
-                $societe = new Societe($db);
-                $societe->fetch($fuser->societe_id);
-                print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Company").'</td>';
-                print '<td colspan="2">'.$societe->nom.'&nbsp;</td>';
-                print "</tr>\n";
-            }
 
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td colspan="2" class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
@@ -526,7 +548,7 @@ else
              */
             print '<div class="tabsAction">';
 
-            if ($user->admin)
+            if ($user->admin || ($user->id == $fuser->id))
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
@@ -672,16 +694,19 @@ else
         /*
          * Fiche en mode edition
          */
-        if ($_GET["action"] == 'edit' && $user->admin)
+        if ($_GET["action"] == 'edit' && ($user->admin || ($user->id == $fuser->id)))
         {
 
             print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="action" value="update">';
             print '<table width="100%" class="border">';
 
+            $rowspan=11;
+            if ($conf->global->USER_ALLOW_PASSWORD_CHANGE) $rowspan++;
+
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td width="50%" class="valeur"><input class="flat" size="30" type="text" name="nom" value="'.$fuser->nom.'"></td>';
-            print '<td align="center" valign="middle" width="25%" rowspan="9">';
+            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
                 print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
@@ -696,21 +721,21 @@ else
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td><input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
 
+            // Login
             print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
-            print '<td><input size="12" maxlength="8" type="text" class="flat" name="login" value="'.$fuser->login.'"></td></tr>';
+            print '<td>';
+            if ($user->admin) print '<input size="12" maxlength="8" type="text" class="flat" name="login" value="'.$fuser->login.'">';
+            else print $fuser->login.'<input type="hidden" name="login" value="'.$fuser->login.'">';
+            print '</td></tr>';
 
- 			print "<tr>".'<td valign="top">'.$langs->trans("Phone").'</td>';
-			print '<td><input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'"></td></tr>';
-			
-			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
- 			print '<td><input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'"></td></tr>';
-			
-			print "<tr>".'<td valign="top">'.$langs->trans("Mobile").'</td>';
-			print '<td><input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'"></td></tr>';
-
-            print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td><input size="30" type="text" name="email" class="flat" value="'.$fuser->email.'"></td></tr>';
-
+            // Pass
+            if ($conf->global->USER_ALLOW_PASSWORD_CHANGE) 
+            {
+                print "<tr>".'<td valign="top">'.$langs->trans("Password").'</td>';
+                print '<td><input size="12" maxlength="8" type="password" class="flat" name="pass" value="'.$fuser->pass.'"></td></tr>';
+            }
+            
+            // Administrateur
             print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
             if ($fuser->societe_id > 0)
             {
@@ -725,8 +750,56 @@ else
                 print '</td></tr>';
             }
 
+            // Source
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Source").'</td>';
+            print '<td class="valeur">';
+            if ($fuser->societe_id)
+            {
+                print $langs->trans("External");
+            }
+            else
+            {
+                print $langs->trans("Internal");
+            }
+            print '</td></tr>';
+
+            // Company / Contact
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
+            print '<td class="valeur">';
+            if ($fuser->societe_id > 0)
+            {
+                $societe = new Societe($db);
+                $societe->fetch($fuser->societe_id);
+                print '<a href="'.DOL_URL_ROOT.'/soc.php?id='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
+                if ($fuser->contact_id)
+                {
+                    $contact = new Contact($db);
+                    $contact->fetch($fuser->contact_id);
+                    print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->fullname,32).'</a>';
+                }
+            }            
+            else
+            {
+                print $langs->trans("ThisUserIsNot");
+            }
+            print '</td>';
+            print "</tr>\n";
+
+            // Tel, fax, portable
+ 			print "<tr>".'<td valign="top">'.$langs->trans("Phone").'</td>';
+			print '<td><input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'"></td></tr>';
+			
+			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
+ 			print '<td><input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'"></td></tr>';
+			
+			print "<tr>".'<td valign="top">'.$langs->trans("Mobile").'</td>';
+			print '<td><input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'"></td></tr>';
+
+            print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
+            print '<td><input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'"></td></tr>';
+
             print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-            print '<textarea class="flat" name="note" rows="6" cols="40">';
+            print '<textarea class="flat" name="note" rows="4" cols="40">';
             print $fuser->note;
             print "</textarea></td></tr>";
 
@@ -737,10 +810,11 @@ else
             
             print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" class="button" type="submit"></td></tr>';
 
-            print '</table><br>';
+            print '</table>';
             print '</form>';
         }
 
+        print '</div>';
     }
 }
 
