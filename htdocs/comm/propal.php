@@ -1108,10 +1108,7 @@ else
       $sql .= " AND p.price='".$_GET['search_montant_ht']."'";
     }
   if ($sall) $sql.= " AND (s.nom like '%".$sall."%' OR p.note like '%".$sall."%' OR pd.description like '%".$sall."%')";
-  if ($_GET['socidp'])
-    { 
-      $sql .= ' AND s.idp = '.$_GET['socidp']; 
-    }
+  if ($socidp) $sql .= ' AND s.idp = '.$socidp; 
   if ($_GET['viewstatut'] <> '')
     {
       $sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')'; 
