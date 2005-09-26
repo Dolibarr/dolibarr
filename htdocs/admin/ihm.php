@@ -50,13 +50,17 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
   dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"]);
-  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
-  dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
   dolibarr_set_const($db, "SIZE_LISTE_LIMIT",        $_POST["size_liste_limit"]);
   dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["disable_javascript"]);
   
   dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
   dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD", $_POST["workboard"]);
+
+  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
+  dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
+
+  dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP",      $_POST["main_menufront_barretop"]);
+  dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",     $_POST["main_menufront_barreleft"]);
 
   dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
   
@@ -80,126 +84,114 @@ print "<br>\n";
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
-  print '<form method="post" action="ihm.php">';
-  print '<input type="hidden" name="action" value="update">';
-  
-  clearstatcache();
-  $var=true;
-    
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-  
-  // Langue par defaut
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
-  $html=new Form($db);
-  $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default');
-  print '</td></tr>';
-  
-  // Menu top
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
-  print '<td><select class="flat" name="main_menu_barretop">';
-  $handle=opendir($dirtop);
-  while (($file = readdir($handle))!==false)
+    print '<form method="post" action="ihm.php">';
+    print '<input type="hidden" name="action" value="update">';
+
+    clearstatcache();
+    $var=true;
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+    // Langue par defaut
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
+    $html=new Form($db);
+    $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default');
+    print '</td></tr>';
+
+
+    // Taille max des listes
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="size_liste_limit" size="4" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
+    $html->selectyesnonum('bugtrack',$conf->global->MAIN_SHOW_BUGTRACK_LINK);
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
+    $html->selectyesnonum('workboard',$conf->global->MAIN_SHOW_WORKBOARD);
+    print '</td></tr>';
+
+    // Désactiver javascript
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
+    $html->selectyesnonum('disable_javascript',$conf->global->MAIN_DISABLE_JAVASCRIPT);
+    print '</td></tr>';
+
+    print '</table><br>';
+
+
+    // Gestionnaires de menu
+    $var=true;
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
+    print '<td>'.$langs->trans("InternalUsers").'</td>';
+    print '<td>'.$langs->trans("ExternalUsers").'</td>';
+    print '</tr>';
+
+    // Menu top
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
+    print '<td>';
+    print $html->select_menu($conf->global->MAIN_MENU_BARRETOP,'main_menu_barretop',$dirtop);
+    print '</td>';
+    print '<td>';
+    print $html->select_menu($conf->global->MAIN_MENUFRONT_BARRETOP,'main_menufront_barretop',$dirtop);
+    print '</td>';
+    print '</tr>';
+
+    // Menu left
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
+    print '<td>';
+    print $html->select_menu($conf->global->MAIN_MENU_BARRELEFT,'main_menu_barreleft',$dirleft);
+    print '</td>';
+    print '<td>';
+    print $html->select_menu($conf->global->MAIN_MENUFRONT_BARRELEFT,'main_menufront_barreleft',$dirleft);
+    print '</td>';
+    print '</tr>';
+
+    print '</table><br>';
+
+
+    // Themes
+    show_theme(1);
+    print '<br>';
+
+
+    // Liste des zone de recherche permanantes supportées
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
+    $var=True;
+    foreach ($searchform as $key => $value)
     {
-      if (is_file($dirtop."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-        {
-	  $filelib=eregi_replace('\.php$','',$file);
-	  if ($file == $conf->global->MAIN_MENU_BARRETOP)
-            {
-	      print '<option value="'.$file.'" selected="true">'.$filelib.'</option>';
-            }
-	  else
-            {
-	      print '<option value="'.$file.'">'.$filelib.'</option>';
-            }
-        }      
+        $var=!$var;
+        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>';
+        $html->selectyesnonum($searchform[$key],$searchformconst[$key]);
+        print '</td></tr>';
     }
-  print '</select>';
-  print '</td></tr>';
+    print '</table>';
+    print '<br>';
 
-  // Menu left
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
-  print '<td><select class="flat" name="main_menu_barreleft">';
-  $handle=opendir($dirleft);
-  while (($file = readdir($handle))!==false)
-    {
-      if (is_file($dirleft."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-        {
-	  $filelib=eregi_replace('\.php$','',$file);
-	  if ($file == $conf->global->MAIN_MENU_BARRELEFT)
-            {
-	      print '<option value="'.$file.'" selected="true">'.$filelib.'</option>';
-            }
-	  else
-            {
-	      print '<option value="'.$file.'">'.$filelib.'</option>';
-            }
-        }
-      
-    }
-  print '</select>';
-  print '</td></tr>';
-  
-  // Taille max des listes
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="size_liste_limit" size="4" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
-  
-  $var=!$var;
-  print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-  $html->selectyesnonum('bugtrack',$conf->global->MAIN_SHOW_BUGTRACK_LINK);
-  print '</td></tr>';
-  
-  $var=!$var;
-  print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
-  $html->selectyesnonum('workboard',$conf->global->MAIN_SHOW_WORKBOARD);
-  print '</td></tr>';
 
-  // Désactiver javascript
-  $var=!$var;
-  print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
-  $html->selectyesnonum('disable_javascript',$conf->global->MAIN_DISABLE_JAVASCRIPT);
-  print '</td></tr>';
+    // Message of the day
+    $var=true;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="60" rows="3" name="main_motd" size="20">' . stripslashes($conf->global->MAIN_MOTD) . '</textarea></td></tr>';
+    print '</table>';
 
-  print '</table><br>';
-  
-  
-  // Theme
-  show_theme(1);
-  print '<br>';
-  
-  
-  // Liste des zone de recherche permanantes supportées
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
-  $var=True;
-  foreach ($searchform as $key => $value)
-    {
-      $var=!$var;
-      print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>';
-      $html->selectyesnonum($searchform[$key],$searchformconst[$key]);
-      print '</td></tr>';
-    }
-  print '</table>';
-  print '<br>';
-  
-  
-  // Message of the day
-  $var=true;
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="60" rows="3" name="main_motd" size="20">' . stripslashes($conf->global->MAIN_MOTD) . '</textarea></td></tr>';
-  print '</table>';
+    print '<br><center>';
+    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '</center>';
 
-  print '<br><center>';
-  print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-  print '</center>';
-  
-  print '</form>';
-  print '<br>';
+    print '</form>';
+    print '<br>';
 }
 else
 {
@@ -210,18 +202,6 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>' . $conf->global->MAIN_LANG_DEFAULT . '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td><td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRETOP);
-    print $filelib;
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td><td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRELEFT);
-    print $filelib;
-    print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->SIZE_LISTE_LIMIT . '</td></tr>';
@@ -241,9 +221,48 @@ else
 
     print '</table><br>';
 
-    // Skin
+
+    // Gestionnaires de menu
+    $var=true;
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
+    print '<td>'.$langs->trans("InternalUsers").'</td>';
+    print '<td>'.$langs->trans("ExternalUsers").'</td>';
+    print '</tr>';
+    
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
+    print '<td>';
+    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRETOP);
+    print $filelib;
+    print '</td>';
+    print '<td>';
+    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENUFRONT_BARRETOP);
+    print $filelib;
+    print '</td>';
+    print '</tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
+    print '<td>';
+    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRELEFT);
+    print $filelib;
+    print '</td>';
+    print '<td>';
+    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENUFRONT_BARRELEFT);
+    print $filelib;
+    print '</td>';
+    print '</tr>';
+
+    print '</table><br>';
+
+
+    // Themes
     show_theme(0);
     print '<br>';
+
 
     // Liste des zone de recherche permanantes supportées
     print '<table class="noborder" width="100%">';
