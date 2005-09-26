@@ -425,7 +425,7 @@ else
     print '<tr><td>'.$langs->trans("EMail").'</td><td>';
     if ($contact->email && ! ValidEmail($contact->email))
     {
-        print '<div class="error">'.$langs->trans("ErrorBadEMail",$contact->email)."</div>";
+        print '<font class="error">'.$langs->trans("ErrorBadEMail",$contact->email)."</font>";
     }
     else
     {
