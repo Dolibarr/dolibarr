@@ -418,7 +418,7 @@ if ($_socid > 0)
         
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, c.rowid as id, c.rowid as ref, c.statut, ".$db->pdate("c.datec")." as dc";
+        $sql = "SELECT s.nom, s.idp, c.rowid as id, c.ref as ref, c.statut, ".$db->pdate("c.datec")." as dc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
         $sql .= " WHERE c.fk_soc = s.idp ";
         $sql .= " AND s.idp = $objsoc->id";
@@ -442,9 +442,10 @@ if ($_socid > 0)
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$objp->ref."</a></td>\n";
+                print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowContract"),"contract").' '
+                .(!isset($objp->ref) ? $objp->id : $objp->ref) ."</a></td>\n";
                 print '<td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
-                print '<td width="120">&nbsp;</td>';
+                print '<td width="20">&nbsp;</td>';
                 print '<td align="center" width="100">'.$contratstatic->LibStatut($objp->statut)."</td>\n";
                 print '</tr>';
                 $i++;

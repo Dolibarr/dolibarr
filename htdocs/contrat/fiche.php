@@ -97,9 +97,10 @@ if ($_POST["action"] == 'add')
     $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
     $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
 
-    $contrat->note           = $_POST["note"];
-    $contrat->projetid       = $_POST["projetid"];
-    $contrat->remise_percent = $_POST["remise_percent"];
+    $contrat->note           = trim($_POST["note"]);
+    $contrat->projetid       = trim($_POST["projetid"]);
+    $contrat->remise_percent = trim($_POST["remise_percent"]);
+    $contrat->ref            = trim($_POST["ref"]);
 
     $result = $contrat->create($user,$langs,$conf);
     if ($result > 0)
@@ -278,10 +279,15 @@ if ($_GET["action"] == 'create')
 
             print '<table class="border" width="100%">';
 
+			// Ref
+			print '<tr><td>'.$langs->trans("Ref").':</td>';
+			print '<td><input type="text" maxlength="30" name="ref" size="20"></td></tr>';
+			
+            // Customer
             print '<tr><td>'.$langs->trans("Customer").':</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$obj->nom.'</a></td></tr>';
 
             // Commercial suivi
-            print '<tr><td width="20%" nowrap>'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>';
+            print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</td><td>';
             print '<select name="commercial_suivi_id">';
             print '<option value="-1">&nbsp;</option>';
 
@@ -307,7 +313,7 @@ if ($_GET["action"] == 'create')
             print '</select></td></tr>';
 
             // Commercial signature
-            print '<tr><td width="20%" nowrap>'.$langs->trans("SalesRepresentativeSignature").'</td><td>';
+            print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</td><td>';
             print '<select name="commercial_signature_id">';
             print '<option value="-1">&nbsp;</option>';
             $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
@@ -508,7 +514,7 @@ else
 
         print '<table class="border" width="100%">';
 
-        // Reference du contrat
+        // Ref du contrat
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
         print $contrat->ref;
         print "</td></tr>";

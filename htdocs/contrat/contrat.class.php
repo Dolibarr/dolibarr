@@ -50,7 +50,6 @@ class Contrat
     var $date_creation;
     var $date_validation;
     var $date_cloture;
-
     var $commercial_signature_id;
     var $commercial_suivi_id;
 
@@ -225,7 +224,7 @@ class Contrat
      */
     function fetch($id)
     {
-        $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise,";
+        $sql = "SELECT rowid, statut, ref, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise,";
         $sql.= " fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat,";
         $sql.= " fk_user_author,";
         $sql.= " fk_projet,";
@@ -241,7 +240,7 @@ class Contrat
             if ($result)
             {
                 $this->id                = $result["rowid"];
-                $this->ref               = $result["rowid"];
+                $this->ref               = (!isset($result["ref"])) ? $result["rowid"] : $result["ref"];
                 $this->statut            = $result["statut"];
                 $this->factureid         = $result["fk_facture"];
                 $this->facturedetid      = $result["fk_facturedet"];
@@ -422,11 +421,12 @@ class Contrat
         // Insère contrat
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat";
 //        $sql.= ", fk_commercial_signature, fk_commercial_suivi";
-        $sql.= ")";
+        $sql.= " , ref)";
         $sql.= " VALUES (now(),".$this->soc_id.",".$user->id;
         $sql.= ",".$this->db->idate($this->date_contrat);
 //        $sql.= ",".($this->commercial_signature_id>=0?$this->commercial_signature_id:"null");
 //        $sql.= ",".($this->commercial_suivi_id>=0?$this->commercial_suivi_id:"null");
+		$sql .= ", " . (strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
         $sql.= ")";
         $resql=$this->db->query($sql);
         if ($resql)
@@ -811,7 +811,7 @@ class Contrat
     */
     function info($id)
     {
-        $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("date_cloture")." as date_cloture,";
+        $sql = "SELECT c.rowid, c.ref, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("date_cloture")." as date_cloture,";
         $sql.= $this->db->pdate("c.tms")." as date_modification,";
         $sql.= " fk_user_author, fk_user_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
@@ -837,7 +837,7 @@ class Contrat
                     $cuser->fetch();
                     $this->user_cloture = $cuser;
                 }
-
+			    $this->ref			     = $obj->ref;
                 $this->date_creation     = $obj->datec;
                 $this->date_modification = $obj->date_modification;
                 $this->date_cloture      = $obj->date_cloture;
@@ -870,11 +870,11 @@ class Contrat
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $num=$this->db->num_rows($result);
+            $num=$this->db->num_rows($resql);
             $i=0;
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object($result);
+                $obj = $this->db->fetch_object($resql);
                 $tab[$i]=$obj->rowid;
                 $i++;
             }
@@ -957,7 +957,8 @@ class Contrat
             $sql.="SELECT rowid from ".MAIN_DB_PREFIX."c_type_contact";
             $sql.=" WHERE element='contrat' AND source='internal'";
             $sql.=" AND code='".$type_contact."'";
-            if ( $this->db->query($sql) )
+            $resql = $this->db->query($sql);
+            if ( $resql )
             {
                 $obj = $this->db->fetch_object($resql);   
                 if ($obj) $type_contact=$obj->rowid;
@@ -1003,7 +1004,7 @@ class Contrat
     /**
 	 * 
 	 *      \brief      Misea jour du contact associé au contrat
-     *      \param      rowid           La reference du lien contant contact.
+     *      \param      rowid           La reference du lien contrat-contact
      * 		\param		statut	        Le nouveau statut
      *      \param      nature          Description du contact
      *      \return     int             <0 si erreur, >0 si ok
@@ -1123,7 +1124,7 @@ class Contrat
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $obj = $this->db->fetch_object($result);
+            $obj = $this->db->fetch_object($resql);
             return $obj;
         }
         else
@@ -1156,11 +1157,11 @@ class Contrat
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $num=$this->db->num_rows($result);
+            $num=$this->db->num_rows($resql);
             $i=0;
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object($result);
+                $obj = $this->db->fetch_object($resql);
 
                 $transkey="TypeContact_".$element."_".$source."_".$obj->code;
                 $libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);

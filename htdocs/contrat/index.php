@@ -98,7 +98,7 @@ $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > sysdate()",1,0).') as nb_running,';
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= sysdate())",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
-$sql.= " c.rowid as cid, c.datec, c.statut, s.nom, s.idp as sidp";
+$sql.= " c.rowid as cid, c.ref, c.datec, c.statut, s.nom, s.idp as sidp";
 $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.idp ";
@@ -133,7 +133,8 @@ if ($result)
     
         print "<tr $bc[$var]>";
         print "<td><a href=\"fiche.php?id=$obj->cid\">";
-        print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a>';
+        print img_object($langs->trans("ShowContract"),"contract").' '
+        . (isset($obj->ref) ? $obj->ref : $obj->cid).'</a>';
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
@@ -159,7 +160,7 @@ print '<br>';
 
 
 // Not activated services
-$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
+$sql = "SELECT cd.rowid as cid, c.ref, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE c.statut=1 AND cd.statut = 0";
 $sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
@@ -183,7 +184,8 @@ if ( $db->query($sql) )
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        print '<td width="50"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
+        print '<td width="50"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '
+        	.(isset($obj->ref) ? $obj->ref : $obj->fk_contrat).'</a></td>';
         print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
         if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
         else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
@@ -207,7 +209,7 @@ print '<br>';
 // Last modified services
 $max=5;
 
-$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
+$sql = "SELECT cd.rowid as cid, c.ref, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
 if ($socidp > 0) $sql.= " AND s.idp = ".$socidp;
@@ -229,8 +231,9 @@ if ( $db->query($sql) )
         $obj = $db->fetch_object();
         $var=!$var;
         print "<tr $bc[$var]>";
-
-        print '<td width="50" nowrap><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a>';
+// width="50" nowrap
+        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '
+        .(isset($obj->ref) ? $obj->ref : $obj->fk_contrat).'</a>';
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");

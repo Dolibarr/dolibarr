@@ -370,6 +370,8 @@ alter table llx_contrat add   fk_projet         integer after fk_soc;
 alter table llx_contrat add   fk_commercial_signature integer NOT NULL after fk_projet;
 alter table llx_contrat add   fk_commercial_suivi     integer NOT NULL after fk_commercial_signature;
 alter table llx_contrat add   facture           smallint(6) default 0;
+alter table llx_contrat add   ref         	    varchar(30) after rowid;
+
   
 alter table llx_facturedet add date_start date;
 alter table llx_facturedet add date_end   date;
