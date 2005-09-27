@@ -61,3 +61,4 @@ BarCode=Barcode
 Pack=Pack
 Packs=Packs
 NoteNotVisibleOnBill=Note (not visible on invoices, proposals...)
+CreateCopy=Create copy
