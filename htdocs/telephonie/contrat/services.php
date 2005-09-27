@@ -24,7 +24,7 @@ require "./pre.inc.php";
 
 $mesg = '';
 
-if ($_POST["action"] == 'addservice' && $user->rights->telephonie->ligne->creer)
+if ($_POST["action"] == 'addservice' && $user->rights->telephonie->service->affecter)
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id= $_GET["id"];
@@ -35,7 +35,7 @@ if ($_POST["action"] == 'addservice' && $user->rights->telephonie->ligne->creer)
     }
 }
 
-if ($_GET["action"] == 'rmservice' && $user->rights->telephonie->ligne->creer)
+if ($_GET["action"] == 'rmservice' && $user->rights->telephonie->service->affecter)
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id= $_GET["id"];
@@ -134,132 +134,125 @@ if ($_GET["id"])
 	  $commercial_suiv = new User($db, $contrat->commercial_suiv_id);
 	  $commercial_suiv->fetch();
 	  
-	      print '<tr><td width="20%">Commercial Suivi</td>';
-	      print '<td colspan="2">'.$commercial_suiv->fullname.'</td></tr>';
+	  print '<tr><td width="20%">Commercial Suivi</td>';
+	  print '<td colspan="2">'.$commercial_suiv->fullname.'</td></tr>';
 
-	      /* Contacts */
-	      print '<tr><td valign="top" width="20%">Contact facture</td>';
-	      print '<td valign="top" colspan="2">';
+	  /* Contacts */
+	  print '<tr><td valign="top" width="20%">Contact facture</td>';
+	  print '<td valign="top" colspan="2">';
 
-	      $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
-	      $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
-	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
-	      $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
-	      if ( $db->query( $sql) )
+	  $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+	  $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
+	  $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
+	  $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
+	  if ( $db->query( $sql) )
+	    {
+	      $num = $db->num_rows();
+	      if ( $num > 0 )
 		{
-		  $num = $db->num_rows();
-		  if ( $num > 0 )
+		  $i = 0;
+		  while ($i < $num)
 		    {
-		      $i = 0;
-		      while ($i < $num)
-			{
-			  $row = $db->fetch_row($i);
+		      $row = $db->fetch_row($i);
 
-			  print $row[1] . " " . $row[2] . " &lt;".$row[3]."&gt;<br />";
-			  $i++;
-			}
+		      print $row[1] . " " . $row[2] . " &lt;".$row[3]."&gt;<br />";
+		      $i++;
 		    }
-		  $db->free();     
-
 		}
-	      else
-		{
-		  print $sql;
-		}
-	      print '</td></tr>';
-	      /* Fin Contacts */
+	      $db->free();     
 
-	      print "</table><br />";
+	    }
+	  else
+	    {
+	      print $sql;
+	    }
+	  print '</td></tr>';
+	  /* Fin Contacts */
+
+	  print "</table><br />";
 
 
-	      /* Services */
+	  /* Services */
 	     
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      
-	      $sql = "SELECT s.libelle, s.statut";
-	      $sql .= " , cs.rowid as serid, s.montant, cs.montant as montant_fac";
-	      $sql .= " , ".$db->pdate("cs.date_creat") . " as date_creat";
-	      $sql .= " , u.name, u.firstname";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service as cs";
-	      $sql .= " , ".MAIN_DB_PREFIX."telephonie_service as s";
-	      $sql .= " , ".MAIN_DB_PREFIX."user as u";
+	  $sql = "SELECT s.libelle, s.statut";
+	  $sql .= " , cs.rowid as serid, s.montant, cs.montant as montant_fac";
+	  $sql .= " , ".$db->pdate("cs.date_creat") . " as date_creat";
+	  $sql .= " , u.name, u.firstname";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service as cs";
+	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_service as s";
+	  $sql .= " , ".MAIN_DB_PREFIX."user as u";
 
-	      $sql .= " WHERE cs.fk_service = s.rowid";
-	      $sql .= " AND cs.fk_user_creat = u.rowid";
-	      $sql .= " AND cs.fk_contrat = ".$contrat->id;
+	  $sql .= " WHERE cs.fk_service = s.rowid";
+	  $sql .= " AND cs.fk_user_creat = u.rowid";
+	  $sql .= " AND cs.fk_contrat = ".$contrat->id;
 	      
-	      if ( $db->query( $sql) )
+	  if ( $db->query( $sql) )
+	    {
+	      $numlignes = $db->num_rows();
+	      if ( $numlignes > 0 )
 		{
-		  $numlignes = $db->num_rows();
-		  if ( $numlignes > 0 )
+		  $i = 0;		      
+		  $ligne = new LigneTel($db);
+		      
+		  print '<tr class="liste_titre"><td>Service</td>';
+		  print '<td align="right">Montant Facturé</td>';
+		  print '<td align="right">Montant du service</td>';
+		  if ($user->rights->telephonie->service->affecter)		
+		    print "<td>&nbsp;</td>\n";
+		  print '<td align="center">Ajouté par</td>';
+		  print '<td align="center">Ajouté le</td></tr>';
+		      
+		  while ($i < $numlignes)
 		    {
-		      $i = 0;		      
-		      $ligne = new LigneTel($db);
-		      
-		      print '<tr class="liste_titre"><td>Service</td>';
-		      print '<td align="right">Montant Facturé</td>';
-		      print '<td align="right">Montant du service</td>';
-		      if ($user->rights->telephonie->ligne->creer)		
-			print "<td>&nbsp;</td>\n";
-		      print '<td align="center">Ajouté par</td>';
-		      print '<td align="center">Ajouté le</td></tr>';
-		      
-		      while ($i < $numlignes)
-			{
-			  $obj = $db->fetch_object($i);	
-			  $var=!$var;
+		      $obj = $db->fetch_object($i);	
+		      $var=!$var;
 			  
-			  print "<tr $bc[$var]><td>";
+		      print "<tr $bc[$var]><td>";
 			  
-			  print '<img src="../graph'.$obj->statut.'.png">&nbsp;';
+		      print '<img src="../graph'.$obj->statut.'.png">&nbsp;';
 			  
 			  
-			  print '<a href="'.DOL_URL_ROOT.'/telephonie/service/fiche.php?id='.$obj->serid.'">'.$obj->libelle."</a></td>\n";
+		      print '<a href="'.DOL_URL_ROOT.'/telephonie/service/fiche.php?id='.$obj->serid.'">'.$obj->libelle."</a></td>\n";
 			  
-			  print '<td align="right">'.price($obj->montant_fac)." euros HT</td>\n";
-			  print '<td align="right">'.price($obj->montant)." euros HT</td>\n";
+		      print '<td align="right">'.price($obj->montant_fac)." euros HT</td>\n";
+		      print '<td align="right">'.price($obj->montant)." euros HT</td>\n";
 
-      if ($user->rights->telephonie->ligne->creer)
-	{
+		      if ($user->rights->telephonie->service->affecter)
+			{
 			  print '<td align="center"><a href="services.php?id='.$contrat->id.'&amp;action=rmservice&amp;service_id='.$obj->serid.'">';
 			  print img_delete();
 			  print "</a></td>";
-	}
-			  print '<td align="center">'.$obj->firstname.' '.$obj->name.'</td>';
-			  print '<td align="center">'.strftime("%d/%m/%y",$obj->date_creat).'</td>';
-			  print "</tr>\n";
-			  $i++;
 			}
+		      print '<td align="center">'.$obj->firstname.' '.$obj->name.'</td>';
+		      print '<td align="center">'.strftime("%d/%m/%y",$obj->date_creat).'</td>';
+		      print "</tr>\n";
+		      $i++;
 		    }
-		  $db->free();     
+		}
+	      $db->free();     
 		  
-		}
-	      else
-		{
-		  print $db->error();
-		  print $sql;
-		}
-	      
-	      print "</table>";
-
-
 	    }
-	  	  
-
-	  /*
-	   * Service
-	   *
-	   *
-	   */
-
-      if ($user->rights->telephonie->ligne->creer)
-	{
-
+	  else
+	    {
+	      print $db->error();
+	      print $sql;
+	    }
+	      
+	  print "</table>";
+	}	  	 
+      /*
+       * Service
+       *
+       *
+       */      
+      if ($user->rights->telephonie->service->affecter)
+	{	  
 	  print_fiche_titre('Ajouter un service', $mesg);
 	  
 	  print '<form action="services.php?id='.$contrat->id.'" method="post">';
-	  print '<input type="hidden" name="action" value="addservice">';
-	  
+	  print '<input type="hidden" name="action" value="addservice">';	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td valign="top" width="20%">Service</td><td valign="top" colspan="2">';
 	  
@@ -301,16 +294,16 @@ if ($_GET["id"])
 	  print '</table>';
 	  print '</form>';
 	} 
-	  /*
-	   *
-	   *
-	   *
-	   */
+      /*
+       *
+       *
+       *
+       */
 	  
-	  print '</div>';
+      print '</div>';
 	  
-	}
     }
+}
 else
 {
   print "Error";
