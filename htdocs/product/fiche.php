@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -44,7 +43,6 @@ if (!$user->rights->produit->lire) accessforbidden();
 
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
-
 
 /*
  *
@@ -103,7 +101,6 @@ if ($_POST["action"] == 'update' &&
   if ($product->fetch($_POST["id"]))
     {
       $product->ref                = $_POST["ref"];
-      $product->libelle            = $_POST["libelle"];
       $product->price              = $_POST["price"];
       $product->tva_tx             = $_POST["tva_tx"];
       $product->description        = $_POST["desc"];
@@ -136,19 +133,67 @@ if ($_POST["action"] == 'update' &&
     }
 }
 
+// clone d'un produit
+if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
+{
+    $db->begin();
+
+    $product = new Product($db);
+    $originalId = $_GET["id"];
+    if ($product->fetch($_GET["id"]) > 0)
+    {
+        $product->ref = "Clone ".$product->ref;
+        $product->envente = 0;
+        $product->id = null;
+
+        if ($product->check())
+        {
+            $id = $product->create($user);
+            if ($id > 0)
+            {
+                // $product->clone_fournisseurs($originalId, $id);
+
+                $db->commit();
+
+                Header("Location: fiche.php?id=$id");
+            }
+            else	if ($id == -3)
+            {
+                $db->rollback();
+                
+                $_error = 1;
+                $_GET["action"] = "";
+                dolibarr_print_error($product->db);
+            }
+            else
+            {
+                $db->rollback();
+                
+                dolibarr_print_error($product->db);
+            }
+        }
+    }
+    else 
+    {
+        $db->rollback();
+
+        dolibarr_print_error($product->db);
+    }
+}
 
 if ($_POST["action"] == 'addinpropal')
 {
-  $propal = New Propal($db);
-  $propal->fetch($_POST["propalid"]);
+    $propal = New Propal($db);
+    $propal->fetch($_POST["propalid"]);
 
-  $result =  $propal->insert_product($_GET["id"], $_POST["qty"], $_POST["remise_percent"]);
-  if ( $result < 0)
+    $result =  $propal->insert_product($_GET["id"], $_POST["qty"], $_POST["remise_percent"]);
+    if ( $result < 0)
     {
-      $mesg = $langs->trans("ErrorUnknown").": $result";
+        $mesg = $langs->trans("ErrorUnknown").": $result";
     }
 
-  Header("Location: ../comm/propal.php?propalid=".$propal->id);
+    Header("Location: ../comm/propal.php?propalid=".$propal->id);
+    exit;
 }
 
 /*
@@ -156,47 +201,48 @@ if ($_POST["action"] == 'addinpropal')
  */
 if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 {
-  $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);
+    $product = new Product($db);
+    $result = $product->fetch($_GET["id"]);
 
-  $facture = New Facture($db);
+    $facture = New Facture($db);
 
-  $facture->fetch($_POST["factureid"]);
+    $facture->fetch($_POST["factureid"]);
 
-  $facture->addline($_POST["factureid"], 
-		    addslashes($product->libelle), 
-		    $product->price,
-		    $_POST["qty"], 
-		    $product->tva_tx, 
-		    $product->id,
-		    $_POST["remise_percent"]);
+    $facture->addline($_POST["factureid"],
+    addslashes($product->libelle),
+    $product->price,
+    $_POST["qty"],
+    $product->tva_tx,
+    $product->id,
+    $_POST["remise_percent"]);
 
-  Header("Location: ../compta/facture.php?facid=".$facture->id);
-
+    Header("Location: ../compta/facture.php?facid=".$facture->id);
+    exit;
 }
 
 if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
 
-  $product = new Product($db);
-  if( $product->fetch($_GET["id"]) )
+    $product = new Product($db);
+    if( $product->fetch($_GET["id"]) )
     {
-      if ($product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]) > 0)
-	{
-	  $action = '';
-	  $mesg = $langs->trans("SupplierAdded");
-	}
-      else
-	{
-	  $action = '';
-	}
+        if ($product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]) > 0)
+        {
+            $action = '';
+            $mesg = $langs->trans("SupplierAdded");
+        }
+        else
+        {
+            $action = '';
+        }
     }
 }
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
-  $action = '';
-  Header("Location: fiche.php?id=".$_POST["id"]);
+    $action = '';
+    Header("Location: fiche.php?id=".$_POST["id"]);
+    exit;
 }
 
 
@@ -353,17 +399,18 @@ if ($_GET["id"])
             $head[$h][1] = $langs->trans('Statistics');
             $h++;
 
-	    //erics: pour créer des produits composés de x 'sous' produits
-	    $head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
-	    $head[$h][1] = $langs->trans('Packs');
-	    $h++;
+    	    //erics: pour créer des produits composés de x 'sous' produits
+    	    $head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
+    	    $head[$h][1] = $langs->trans('Packs');
+    	    $h++;
 
             $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
             $head[$h][1] = $langs->trans('Referers');
             $h++;
-		$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
-		$head[$h][1] = $langs->trans('Documents');
-		$h++;
+
+    		$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
+    		$head[$h][1] = $langs->trans('Documents');
+    		$h++;
 
             dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
@@ -561,6 +608,8 @@ if ($_GET["action"] == '')
     if ( $user->rights->produit->creer)
     {
         print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+
+        print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
     }
 
 }

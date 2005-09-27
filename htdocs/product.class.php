@@ -840,60 +840,118 @@ class Product
   }
 
 
-  /**
-   *    \brief  Supprime un tarif fournisseur
-   *    \param  user        utilisateur qui défait le lien
-   *    \param  id_fourn    id du fournisseur
-   *    \param  qty         quantité
-   *    \return int         < 0 si erreur, > 0 si ok
-   */
-	 
-  function remove_price($user, $id_fourn, $qty) 
+    /**
+     *    \brief  Supprime un tarif fournisseur
+     *    \param  user        utilisateur qui défait le lien
+     *    \param  id_fourn    id du fournisseur
+     *    \param  qty         quantit
+     *    \return int         < 0 si erreur, > 0 si ok
+     */
+    function remove_price($user, $id_fourn, $qty)
     {
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-      $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn and quantity = '".$qty."';";	
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;	      
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return -1;
-	}
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+        $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn and quantity = '".$qty."';";
+    
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
     }
     
-  /**
-   *    \brief  Délie un fournisseur au produit/service
-   *    \param  user        utilisateur qui défait le lien
-   *    \param  id_fourn    id du fournisseur
-   *    \return int         < 0 si erreur, > 0 si ok
-   */
-	 
-  function remove_fournisseur($user, $id_fourn) 
+    /**
+     *    \brief    Délie un fournisseur au produit/service
+     *    \param    user        utilisateur qui défait le lien
+     *    \param    id_fourn    id du fournisseur
+     *    \return   int         < 0 si erreur, > 0 si ok
+     */
+    function remove_fournisseur($user, $id_fourn)
     {
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
-      $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn;";	
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;	      
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return -1;
-	}
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
+        $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn;";
+    
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
     }
-
+        
+    /**
+     *    \brief    Recopie les prix d'un produit/service sur un autre
+     *    \param    fromId      Id produit source
+     *    \param    toId        Id produit cible
+     *    \return   int         < 0 si erreur, > 0 si ok
+     */
+    function clone_price($fromId, $toId)
+    {
+        global $db;
+    
+        $db->begin();
+    
+        // les prix
+        $sql = "insert "	.MAIN_DB_PREFIX."product_price ("
+        . " fk_product, date_price, price, tva_tx, fk_user_author, envente )"
+        . " select ".$toId . ", date_price, price, tva_tx, fk_user_author, envente "
+        . " from ".MAIN_DB_PREFIX."product_price "
+        . " where fk_product = ". $fromId . ";" ;
+        if ( ! $db->query($sql ) ) {
+            $db->rollback();
+            return -1;
+        }
+        $db->commit();
+        return 1;
+    }
+    
+    /**
+     *    \brief    Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
+     *    \param    fromId      Id produit source
+     *    \param    toId        Id produit cible
+     *    \return   int         < 0 si erreur, > 0 si ok
+     */
+    function clone_fournisseurs($fromId, $toId)
+    {
+        global $db;
+    
+        $db->begin();
+    
+        // les fournisseurs
+        $sql = "insert ".MAIN_DB_PREFIX."product_fournisseur ("
+        . " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
+        . " select now(), ".$toId.", fk_soc, ref_fourn, fk_user_author"
+        . " from ".MAIN_DB_PREFIX."product_fournisseur "
+        . " where fk_product = ".$fromId .";" ;
+        if ( ! $db->query($sql ) ) {
+            $db->rollback();
+            return -1;
+        }
+        // les prix de fournisseurs.
+        $sql = "insert ".MAIN_DB_PREFIX."product_fournisseur_price ("
+        . " datec, fk_product, fk_soc, price, quantity, fk_user )"
+        . " select now(), ".$toId. ", fk_soc, price, quantity, fk_user"
+        . " from ".MAIN_DB_PREFIX."product_fournisseur_price"
+        . " where fk_product = ".$fromId.";";
+        if ( ! $db->query($sql ) ) {
+            $db->rollback();
+            return -1;
+        }
+        $db->commit();
+        return 1;
+    }
 
   /**
    *    \brief  Entre un nombre de piece du produit en stock dans un entrepôt
    *    \param  id_entrepot     id de l'entrepot
    *    \param  nbpiece         nombre de pieces
    */
-	 
   function create_stock($id_entrepot, $nbpiece)
   {
     
@@ -920,7 +978,6 @@ class Product
    *    \param  nbpiece         nombre de pieces
    *    \param  mouvement       0 = ajout, 1 = suppression
    */
-	 
   function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
 
