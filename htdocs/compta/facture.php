@@ -1466,7 +1466,7 @@ else
 						}
 						print '<textarea name="desc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
 						print '<td align="right">';
-						print $html->select_tva("tva_tx",$objp->tva_taux);
+						print $html->select_tva('tva_tx',$objp->tva_taux);
 						print '</td>';
 						print '<td align="right"><input size="6" type="text" name="price" value="'.price($objp->subprice).'"></td>';
 						print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
@@ -1661,7 +1661,6 @@ else
 					$i = 0; $total = 0;
 					print '<br>';
 					print_titre($langs->trans('RelatedCommercialProposals'));
-
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans('Ref').'</td>';
@@ -1690,7 +1689,54 @@ else
 			{
 				dolibarr_print_error($db);
 			}
+			print '</td><td valign="top" width="50%">';
 
+			/*
+			 * Commandes rattachées
+			 */
+			if($conf->commande->enabled)
+			{
+				$sql = 'SELECT '.$db->pdate('c.date_commande').' as date_commande, c.total_ht, c.ref, c.ref_client, c.rowid as id';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'co_fa as co_fa WHERE co_fa.fk_commande = c.rowid AND co_fa.fk_facture = '.$fac->id;
+				$resql = $db->query($sql);
+				if ($resql)
+				{
+					$num = $db->num_rows($resql);
+					if ($num)
+					{
+						$i = 0; $total = 0;
+						print '<br>';
+						print_titre($langs->trans('RelatedOrders'));
+						print '<table class="noborder" width="100%">';
+						print '<tr class="liste_titre">';
+						print '<td>'.$langs->trans('Ref').'</td>';
+						print '<td>'.$langs->trans('RefCdeClient').'</td>';
+						print '<td align="center">'.$langs->trans('Date').'</td>';
+						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+						print '</tr>';
+						$var=true;
+						while ($i < $num)
+						{
+							$objp = $db->fetch_object($resql);
+							$var=!$var;
+							print '<tr '.$bc[$var].'><td>';
+							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
+							print '<td>'.$objp->ref_client.'</td>';
+							print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
+							print '<td align="right">'.price($objp->total_ht).'</td>';
+							print "</tr>\n";
+							$total = $total + $objp->total_ht;
+							$i++;
+						}
+						print '<tr class="liste_total"><td>&nbsp;</td><td>&nbsp;</td><td align="left">'.$langs->trans('TotalHT').'</td><td align="right">'.price($total).'</td></tr>';
+						print '</table>';
+					}
+				}
+				else
+				{
+					dolibarr_print_error($db);
+				}
+			}
 			print '</td><td valign="top" width="50%">';
 
 			/*
