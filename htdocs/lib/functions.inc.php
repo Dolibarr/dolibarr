@@ -885,7 +885,8 @@ function loginfunction()
 <td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>
 ';
 
-if (file_exists(DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+// Affiche logo du theme si existe, sinon logo commun
+if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
 {
     print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
 }
