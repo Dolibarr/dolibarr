@@ -101,6 +101,7 @@ if ($_POST["action"] == 'update' &&
   if ($product->fetch($_POST["id"]))
     {
       $product->ref                = $_POST["ref"];
+      $product->libelle            = $_POST["libelle"];
       $product->price              = $_POST["price"];
       $product->tva_tx             = $_POST["tva_tx"];
       $product->description        = $_POST["desc"];
