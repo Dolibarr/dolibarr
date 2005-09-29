@@ -240,7 +240,7 @@ class Contrat
             if ($result)
             {
                 $this->id                = $result["rowid"];
-                $this->ref               = (!isset($result["ref"])) ? $result["rowid"] : $result["ref"];
+                $this->ref               = (!isset($result["ref"]) || !$result["ref"]) ? $result["rowid"] : $result["ref"];
                 $this->statut            = $result["statut"];
                 $this->factureid         = $result["fk_facture"];
                 $this->facturedetid      = $result["fk_facturedet"];
@@ -837,7 +837,7 @@ class Contrat
                     $cuser->fetch();
                     $this->user_cloture = $cuser;
                 }
-			    $this->ref			     = $obj->ref;
+			    $this->ref			     = (! $obj->ref) ? $obj->rowid : $obj->ref;
                 $this->date_creation     = $obj->datec;
                 $this->date_modification = $obj->date_modification;
                 $this->date_cloture      = $obj->date_cloture;
