@@ -192,22 +192,25 @@ if ($_GET["propalid"] > 0) {
 
 
 				/*
-				* Documents
-				*
-				*/
+  				 * Documents
+ 				 */
 				$propalref = sanitize_string($propal->ref);
 				$file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
 				$filedetail = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . "-detail.pdf";
 				$relativepath = "${propalref}/${propalref}.pdf";
 				$relativepathdetail = "${propalref}/${propalref}-detail.pdf";
-				$relativepathimage = "${propalref}/${propalref}.pdf.png";
 
-				$fileimage = $file.".png";
+                // Chemin vers png aperçus
+				$relativepathimage = "${propalref}/${propalref}.pdf.png";
+				$relativepathimagebis = "${propalref}/${propalref}.pdf.png.0";
+				$fileimage = $file.".png";          // Si PDF d'1 page
+				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
 
 				$var=true;
 
 				// Si fichier PDF existe
-				if (file_exists($file)) {
+				if (file_exists($file))
+				{
 					$encfile = urlencode($file);
 					print_titre($langs->trans("Documents"));
 					print '<table class="border" width="100%">';
@@ -229,18 +232,23 @@ if ($_GET["propalid"] > 0) {
 						print '</tr>';
 					}
 					print "</table>\n";
+					
 					// Conversion du PDF en image png si fichier png non existant
-					if (!file_exists($fileimage)) {
-						if (function_exists(imagick_readimage)) {
+					if (! file_exists($fileimage) && ! file_exists($fileimagebis))
+					{
+						if (function_exists("imagick_readimage"))
+						{
 							$handle = imagick_readimage( $file ) ;
-							if ( imagick_iserror( $handle ) ) {
+							if ( imagick_iserror( $handle ) )
+							{
 								$reason      = imagick_failedreason( $handle ) ;
 								$description = imagick_faileddescription( $handle ) ;
 
 								print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
 							}
 							imagick_convert( $handle, "PNG" ) ;
-							if ( imagick_iserror( $handle ) ) {
+							if ( imagick_iserror( $handle ) )
+							{
 								$reason      = imagick_failedreason( $handle ) ;
 								$description = imagick_faileddescription( $handle ) ;
 								print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
@@ -248,7 +256,7 @@ if ($_GET["propalid"] > 0) {
 							imagick_writeimage( $handle, $file .".png");
 						} else {
 							$langs->load("other");
-							print $langs->trans("ErrorNoImagickReadimage");
+							print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
 						}
 					}
 				}
@@ -277,10 +285,18 @@ if ($_GET["propalid"] > 0) {
 	}
 }
 
+// Si fichier png PDF d'1 page trouvé
 if (file_exists($fileimage))
 	{
 	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimage).'">';
 	}
+// Si fichier png PDF de plus d'1 page trouvé
+elseif (file_exists($fileimagebis))
+	{
+	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimagebis).'">';
+	}
+
+
 print '</div>';
 
 $db->close();
