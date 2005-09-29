@@ -808,14 +808,16 @@ else
 
             print "<tr $bc[$var]>";
             print '<td colspan="3">';
-            $html->select_produits('','p_idprod','',0).'<br>';
-            print '<textarea name="desc" cols="50" rows="1"></textarea>';
+            $html->select_produits('','p_idprod','',0);
+            print '<br>';
+            print '<textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea>';
             print '</td>';
 
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
             print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
-            print '<td align="center" colspan="3" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-
+            print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+            print '</tr>'."\n";
+            
             print "<tr $bc[$var]>";
             print '<td colspan="8">';
             print $langs->trans("DateStartPlanned").' ';
@@ -836,7 +838,7 @@ else
             print '<input type="hidden" name="id" value="'.$id.'">';
 
             print "<tr $bc[$var]>";
-            print '<td><textarea name="desc" cols="50" rows="1"></textarea></td>';
+            print '<td><textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea></td>';
 
             print '<td>';
             $html->select_tva("tva_tx",$conf->defaulttx);
@@ -844,7 +846,7 @@ else
             print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
             print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
-            print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+            print '<td align="center" rowspan="2" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 
             print '</tr>'."\n";
 

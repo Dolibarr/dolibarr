@@ -31,6 +31,7 @@
 
 require("master.inc.php");
 
+
 // Verification du login.
 // Cette verification est faite pour chaque accès. Après l'authentification,
 // l'objet $user est initialisée. Notament $user->id, $user->login et $user->nom, $user->prenom
@@ -175,6 +176,20 @@ $langs->load("main");
 if (defined("MAIN_NOT_INSTALLED"))
 {
   Header("Location: ".DOL_URL_ROOT."/install/index.php");
+}
+
+// Constantes utilisées pour définir le nombre de lignes des textarea
+if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
+{
+    define('ROWS_1',1);
+    define('ROWS_2',2);
+    define('ROWS_3',3);
+}
+else
+{
+    define('ROWS_1',0);
+    define('ROWS_2',1);
+    define('ROWS_3',2);
 }
 
 
