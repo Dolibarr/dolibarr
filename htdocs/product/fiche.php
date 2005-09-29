@@ -248,7 +248,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 
 
 
-llxHeader("","",$langs->trans("CardProductService"));
+llxHeader("","",$langs->trans("ProductServiceCard"));
 
 
 /*
