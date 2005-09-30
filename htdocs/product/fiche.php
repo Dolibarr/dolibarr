@@ -59,36 +59,36 @@ if ($_GET["action"] == 'fastappro')
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
-  $product = new Product($db);
+    $product = new Product($db);
 
-  $product->ref            = $_POST["ref"];
-  $product->libelle        = $_POST["libelle"];
-  $product->price          = $_POST["price"];
-  $product->tva_tx         = $_POST["tva_tx"];
-  $product->type           = $_POST["type"];
-  $product->envente        = $_POST["statut"];
-  $product->description    = $_POST["desc"];
-  $product->note           = $_POST["note"];
-  $product->duration_value = $_POST["duration_value"];
-  $product->duration_unit  = $_POST["duration_unit"];
-  $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
- 
-  $e_product = $product;
+    $product->ref            = stripslashes($_POST["ref"]);
+    $product->libelle        = stripslashes($_POST["libelle"]);
+    $product->price          = stripslashes($_POST["price"]);
+    $product->tva_tx         = $_POST["tva_tx"];
+    $product->type           = $_POST["type"];
+    $product->envente        = $_POST["statut"];
+    $product->description    = stripslashes($_POST["desc"]);
+    $product->note           = stripslashes($_POST["note"]);
+    $product->duration_value = $_POST["duration_value"];
+    $product->duration_unit  = $_POST["duration_unit"];
+    $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 
-  $id = $product->create($user);
+    $e_product = $product;
 
-  if ($id > 0)
+    $id = $product->create($user);
+
+    if ($id > 0)
     {
-      Header("Location: fiche.php?id=$id");
+        Header("Location: fiche.php?id=$id");
     }
-  else
+    else
     {
-      if ($id == -3)
-	{
-	  $_error = 1;
-	  $_GET["action"] = "create";
-	  $_GET["type"] = $_POST["type"];
-	}
+        if ($id == -3)
+        {
+            $_error = 1;
+            $_GET["action"] = "create";
+            $_GET["type"] = $_POST["type"];
+        }
     }
 }
 
@@ -97,40 +97,40 @@ if ($_POST["action"] == 'update' &&
     $_POST["cancel"] <> $langs->trans("Cancel") && 
     $user->rights->produit->creer)
 {
-  $product = new Product($db);
-  if ($product->fetch($_POST["id"]))
+    $product = new Product($db);
+    if ($product->fetch($_POST["id"]))
     {
-      $product->ref                = $_POST["ref"];
-      $product->libelle            = $_POST["libelle"];
-      $product->price              = $_POST["price"];
-      $product->tva_tx             = $_POST["tva_tx"];
-      $product->description        = $_POST["desc"];
-      $product->note               = $_POST["note"];
-      $product->envente            = $_POST["statut"];
-      $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-      $product->duration_value = $_POST["duration_value"];
-      $product->duration_unit = $_POST["duration_unit"];
-      
-      if ($product->check())
-	{
-	  if ($product->update($product->id, $user) > 0)
-	    {
-	      $_GET["action"] = '';
-	      $_GET["id"] = $_POST["id"];
-	    }
-	  else
-	    {
-	      $_GET["action"] = 're-edit';
-	      $_GET["id"] = $_POST["id"];
-	      $mesg = $product->mesg_error;
-	    }
-	}
-      else
-	{
-	  $_GET["action"] = 're-edit';
-	  $_GET["id"] = $_POST["id"];
-	  $mesg = $langs->trans("ErrorProductBadRefOrLabel");
-	}
+        $product->ref                = stripslashes($_POST["ref"]);
+        $product->libelle            = stripslashes($_POST["libelle"]);
+        $product->price              = stripslashes($_POST["price"]);
+        $product->tva_tx             = $_POST["tva_tx"];
+        $product->description        = stripslashes($_POST["desc"]);
+        $product->note               = stripslashes($_POST["note"]);
+        $product->envente            = $_POST["statut"];
+        $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+        $product->duration_value     = $_POST["duration_value"];
+        $product->duration_unit      = $_POST["duration_unit"];
+
+        if ($product->check())
+        {
+            if ($product->update($product->id, $user) > 0)
+            {
+                $_GET["action"] = '';
+                $_GET["id"] = $_POST["id"];
+            }
+            else
+            {
+                $_GET["action"] = 're-edit';
+                $_GET["id"] = $_POST["id"];
+                $mesg = $product->mesg_error;
+            }
+        }
+        else
+        {
+            $_GET["action"] = 're-edit';
+            $_GET["id"] = $_POST["id"];
+            $mesg = $langs->trans("ErrorProductBadRefOrLabel");
+        }
     }
 }
 
