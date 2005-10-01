@@ -37,3 +37,4 @@ CreateBookmark=Create bookmark
 SetHereATitleForLink=Set here a title for bookmark
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external http URL or a relative Dolibarr URL
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if page opened by link must appear on current or new window
+NewCompanyToDolibarr=Company %s added into Dolibarr

@@ -542,8 +542,9 @@ function add_row_for_webcal_link()
     $nbtr=0;
     
     // Lien avec calendrier si module activé
-    if ($conf->webcal->enabled) {
-        if ($conf->webcal->syncro != 'never')
+    if ($conf->webcal->enabled)
+    {
+        if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
         {
             $langs->load("other");
             if (! $user->webcal_login)
@@ -557,14 +558,14 @@ function add_row_for_webcal_link()
             }
             else
             {
-                if ($conf->webcal->syncro == 'always')
+                if ($conf->global->PHPWEBCALENDAR_SYNCRO == 'always')
                 {
                     print '<input type="hidden" name="todo_webcal" value="on">';
                 }
                 else
                 {
                     print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
-                    print '<td><input type="checkbox" name="todo_webcal"'.(($conf->webcal->syncro=='always' || $conf->webcal->syncro=='yesbydefault')?' checked':'').'></td>';
+                    print '<td><input type="checkbox" name="todo_webcal"'.(($conf->global->PHPWEBCALENDAR_SYNCRO=='always' || $conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault')?' checked':'').'></td>';
                     print '</tr>';
                     $nbtr++;
                 }

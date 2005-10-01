@@ -146,10 +146,12 @@ class Societe {
     
                 if ($ret == 0)
                 {
+                    $this->use_webcal=($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?1:0);
+
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                     $interface=new Interfaces($this->db);
-                    $interface->run_triggers('COMPANY_CREATE',$this,$user,$lang,$conf);
+                    $result=$interface->run_triggers('COMPANY_CREATE',$this,$user,$langs,$conf);
                     // Fin appel triggers
                                         
                     dolibarr_syslog("Societe::Create success id=".$this->id);
@@ -375,7 +377,7 @@ class Societe {
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                     $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$lang,$conf);
+                    $result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$langs,$conf);
                     // Fin appel triggers
                 }
                     
@@ -572,117 +574,114 @@ class Societe {
         return $result;
     }
 
-  /**
-   *    \brief      Suppression d'une societe de la base avec ses dépendances (contacts, rib...)
-   *    \param      id      id de la societe à supprimer
-   */
-  function delete($id)
-  {
-    dolibarr_syslog("Societe::Delete");
-    $sqr = 0;
+    /**
+     *    \brief      Suppression d'une societe de la base avec ses dépendances (contacts, rib...)
+     *    \param      id      id de la societe à supprimer
+     */
+    function delete($id)
+    {
+        dolibarr_syslog("Societe::Delete");
+        $sqr = 0;
+    
+        if ( $this->db->begin())
+        {
+            $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople ";
+            $sql .= " WHERE fk_soc = " . $id .";";
+    
+            if ($this->db->query($sql))
+            {
+                $sqr++;
+            }
+            else
+            {
+                $this->error .= "Impossible de supprimer les contacts.\n";
+                dolibarr_syslog("Societe::Delete erreur -1");
+            }
+    
+            $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib ";
+            $sql .= " WHERE fk_soc = " . $id .";";
+    
+            if ($this->db->query($sql))
+            {
+                $sqr++;
+            }
+            else
+            {
+                $this->error .= "Impossible de supprimer le RIB.\n";
+                dolibarr_syslog("Societe::Delete erreur -2");
+            }
+    
+            $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
+            $sql .= " WHERE idp = " . $id .";";
+    
+            if ($this->db->query($sql))
+            {
+                $sqr++;
+            }
+            else
+            {
+                $this->error .= "Impossible de supprimer la société.\n";
+                dolibarr_syslog("Societe::Delete erreur -3");
+            }
+        
+            if ($sqr == 3)
+            {
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
+                // Fin appel triggers
+    
+                $this->db->commit();
+    
+                // Suppression du répertoire document
+                $docdir = $conf->societe->dir_output . "/" . $id;
+    
+                if (file_exists ($docdir))
+                {
+                    $this->deldir($docdir);
+                }
+    
+                return 0;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -1;
+            }
+        }
+    
+    }
 
-    if ( $this->db->begin())
-      {	  
-	$sql = "DELETE from ".MAIN_DB_PREFIX."socpeople ";
-	$sql .= " WHERE fk_soc = " . $id .";";
-	  
-	if ($this->db->query($sql))
-	  {
-	    $sqr++;
-	  }
-	else
-	  {
-	    $this->error .= "Impossible de supprimer les contacts.\n";
-	    dolibarr_syslog("Societe::Delete erreur -1");
-	  }
-
-	$sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib ";
-	$sql .= " WHERE fk_soc = " . $id .";";
-
-	if ($this->db->query($sql))
-	  {
-	    $sqr++;
-	  }
-	else
-	  {
-	    $this->error .= "Impossible de supprimer le RIB.\n";
-	    dolibarr_syslog("Societe::Delete erreur -2");
-	  }
-	  	  
-	$sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
-	$sql .= " WHERE idp = " . $id .";";
-	
-	if ($this->db->query($sql))
-	  {
-	    $sqr++;
-	  }
-	else
-	  {
-	    $this->error .= "Impossible de supprimer la société.\n";
-	    dolibarr_syslog("Societe::Delete erreur -3");
-	  }
-
-
-	if ($sqr == 3)
-	  {
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $interface->run_triggers('COMPANY_DELETE',$this,$user,$lang,$conf);
-        // Fin appel triggers
-
-	    $this->db->commit();
-
-	    // Suppression du répertoire document
-	    $docdir = $conf->societe->dir_output . "/" . $id;
-	      	      
-	    if (file_exists ($docdir))
-	      {
-		$this->deldir($docdir);
-	      }
-
-	    return 0;
-	  }
-	else
-	  {
-	    $this->db->rollback();
-	    return -1;
-	  }
-      }	  
-
-  }
-
-  /**
-   *    \brief      Cette fonction permet de supprimer le répertoire de la societe
-   *                et sous répertoire, meme s'ils contiennent des documents.
-   *    \param      dir     repertoire a supprimer
-   */
-   
-  function deldir($dir)
-  {
-    $current_dir = opendir($dir);
-
-    while($entryname = readdir($current_dir))
-      {
-	if(is_dir("$dir/$entryname") and ($entryname != "." and $entryname!=".."))
-	  {
-	    deldir("${dir}/${entryname}");
-	  }
-	elseif($entryname != "." and $entryname!="..")
-	  {
-	    unlink("${dir}/${entryname}");
-	  }
-      }
-    closedir($current_dir);
-    rmdir(${dir});
-  } 
+    /**
+     *    \brief      Cette fonction permet de supprimer le répertoire de la societe
+     *                et sous répertoire, meme s'ils contiennent des documents.
+     *    \param      dir     repertoire a supprimer
+     */
+    function deldir($dir)
+    {
+        $current_dir = opendir($dir);
+    
+        while($entryname = readdir($current_dir))
+        {
+            if(is_dir("$dir/$entryname") and ($entryname != "." and $entryname!=".."))
+            {
+                deldir("${dir}/${entryname}");
+            }
+            elseif($entryname != "." and $entryname!="..")
+            {
+                unlink("${dir}/${entryname}");
+            }
+        }
+        closedir($current_dir);
+        rmdir(${dir});
+    }
   
   /**
    *    \brief     Retournes les factures impayées de la société
    *    \return    array   tableau des id de factures impayées
    *
    */
-   
   function factures_impayes()
   {
     $facimp = array();
@@ -715,7 +714,6 @@ class Societe {
    *    \brief      Attribut le prefix de la société en base
    *
    */
-  
   function attribute_prefix()
   {
     $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '$this->id'";
@@ -771,7 +769,6 @@ class Societe {
    *    \param      mot         l'indice du mot à utiliser
    *
    */
-	 
   function genprefix($nom, $taille=4,$mot=0)
   {
     $retour = "";
@@ -800,7 +797,6 @@ class Societe {
    *    \brief     Définit la société comme un client
    *
    */
-	 
   function set_as_client()
   {
     if ($this->id)
@@ -817,9 +813,7 @@ class Societe {
    *    \brief      Définit la société comme un client
    *    \param      remise      montant de la remise
    *    \param      user        utilisateur qui place la remise
-   *
    */
-	 
   function set_remise_client($remise, $user)
   {
     if ($this->id)
@@ -841,13 +835,13 @@ class Societe {
 
       }
   }
+
   /**
    *    \brief      Définit la société comme un client
    *    \param      remise      montant de la remise
    *    \param      user        utilisateur qui place la remise
    *
    */
-	 
   function set_remise_except($remise, $user)
   {
     if ($this->id)
@@ -870,8 +864,8 @@ class Societe {
 
       }
   }
+
   /**
-   *
    *
    *
    */
@@ -895,6 +889,7 @@ class Societe {
 
       }
   }
+
   /**
    *
    *
@@ -914,12 +909,12 @@ class Societe {
 
       }
   }
+
   /**
    *    \brief      Renvoie le nom d'une societe a partir d'un id
    *    \param      id      id de la société recherchée
    *
    */
-	 
   function get_nom($id)
   {
 
@@ -946,7 +941,6 @@ class Societe {
    *    \brief      Renvoie la liste des contacts emails existant pour la société
    *    \return     array       tableau des contacts emails
    */
-	 
   function contact_email_array()
   {
     $contact_email = array();
@@ -981,7 +975,6 @@ class Societe {
    *    \brief      Renvoie la liste des contacts de cette société
    *    \return     array      tableau des contacts
    */
-
   function contact_array()
   {
     $contacts = array();
@@ -1012,37 +1005,37 @@ class Societe {
       
   }
   
-  /**
-   *    \brief      Renvoie l'email d'un contact par son id
-   *    \param      rowid       id du contact
-   *    \return     string      email du contact
-   */
-	 
-  function contact_get_email($rowid)
-  {
+    /**
+     *    \brief      Renvoie l'email d'un contact par son id
+     *    \param      rowid       id du contact
+     *    \return     string      email du contact
+     */
+    function contact_get_email($rowid)
+    {
+    
+        $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = '$rowid'";
+    
+        if ($this->db->query($sql) )
+        {
+            $nump = $this->db->num_rows();
+    
+            if ($nump)
+            {
+    
+                $obj = $this->db->fetch_object();
+    
+                $contact_email = "$obj->firstname $obj->name <$obj->email>";
+    
+            }
+            return $contact_email;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    
+    }
 
-    $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = '$rowid'";
-      
-    if ($this->db->query($sql) )
-      {
-	$nump = $this->db->num_rows();
-
-	if ($nump)
-	  {
-	      
-	    $obj = $this->db->fetch_object();
-	      
-	    $contact_email = "$obj->firstname $obj->name <$obj->email>";
-
-	  }
-	return $contact_email;
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-      }
-      
-  }
 
     /**
      *    \brief      Renvoie la liste des libellés traduits types actifs de sociétés
@@ -1134,10 +1127,10 @@ class Societe {
         return $fj;
     }
 
+
   /**
    *    \brief      Affiche le rib
    */  
-  
   function display_rib()
   {
     global $langs;
@@ -1182,7 +1175,6 @@ class Societe {
    *    \brief      Verifie code client
    *    \return     Renvoie 0 si ok, peut modifier le code client suivant le module utilisé
    */
-   
   function verif_codeclient()
   {
     if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
@@ -1300,11 +1292,11 @@ class Societe {
   }
   
   
-  /**
-   *    \brief      Défini la société mère pour les filiales
-   *    \param      id      id compagnie mère à positionner
-   *    \return     int     <0 si ko, >0 si ok
-   */
+    /**
+     *    \brief      Défini la société mère pour les filiales
+     *    \param      id      id compagnie mère à positionner
+     *    \return     int     <0 si ko, >0 si ok
+     */
     function set_parent($id)
     {
         if ($this->id)
@@ -1324,11 +1316,11 @@ class Societe {
         }
     }
 
-  /**
-   *    \brief      Supprime la société mère
-   *    \param      id      id compagnie mère à effacer
-   *    \return     int     <0 si ko, >0 si ok
-   */
+    /**
+     *    \brief      Supprime la société mère
+     *    \param      id      id compagnie mère à effacer
+     *    \return     int     <0 si ko, >0 si ok
+     */
     function remove_parent($id)
     {
         if ($this->id)

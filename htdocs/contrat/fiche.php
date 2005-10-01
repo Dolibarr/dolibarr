@@ -212,16 +212,14 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $soc = new Societe($db);
-    $soc->fetch($contrat->soc_id);
-    $result = $contrat->validate($user);
+    $result = $contrat->validate($user,$lang,$conf);
 }
 
 if ($_POST["action"] == 'confirm_close' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $result = $contrat->cloture($user);
+    $result = $contrat->cloture($user,$lang,$conf);
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')

@@ -96,14 +96,13 @@ class Contrat
         $sql.= " fk_user_ouverture = ".$user->id;
         $sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3) ";
     
-        $result = $this->db->query($sql) ;
-    
-        if ($result)
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$lang,$conf);
+            $result=$interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$langs,$conf);
             // Fin appel triggers
     
             return 1;
@@ -132,14 +131,13 @@ class Contrat
         $sql.= " fk_user_cloture = ".$user->id;
         $sql.= " WHERE rowid = ".$line_id . " AND statut = 4";
     
-        $result = $this->db->query($sql) ;
-    
-        if ($result)
+        $resql = $this->db->query($sql) ;
+        if ($resql)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $interface->run_triggers('CONTRACT_SERVICE_CLOSE',$this,$user,$lang,$conf);
+            $result=$interface->run_triggers('CONTRACT_SERVICE_CLOSE',$this,$user,$langs,$conf);
             // Fin appel triggers
     
             return 1;
@@ -155,66 +153,97 @@ class Contrat
     /**
      *    \brief      Cloture un contrat
      *    \param      user      Objet User qui cloture
-     *    \param      lang      Environnement langue de l'utilisateur
+     *    \param      langs     Environnement langue de l'utilisateur
      *    \param      conf      Environnement de configuration lors de l'opération
      *
      */
-    function cloture($user,$lang='',$conf='')
+    function cloture($user,$langs='',$conf='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 2";
         $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
         $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
     
-        $result = $this->db->query($sql) ;
+        $resql = $this->db->query($sql) ;
+        if ($resql)
+        {
+            $this->use_webcal=($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?1:0);
     
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $interface->run_triggers('CONTRACT_CLOSE',$this,$user,$lang,$conf);
-        // Fin appel triggers
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('CONTRACT_CLOSE',$this,$user,$langs,$conf);
+            // Fin appel triggers
 
-        return 1;
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
     }
     
     /**
      *    \brief      Valide un contrat
      *    \param      user      Objet User qui valide
-     *    \param      lang      Environnement langue de l'utilisateur
+     *    \param      langs     Environnement langue de l'utilisateur
      *    \param      conf      Environnement de configuration lors de l'opération
      */
-    function validate($user,$lang='',$conf='')
+    function validate($user,$langs='',$conf='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
         $sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
     
-        $result = $this->db->query($sql) ;
+        $resql = $this->db->query($sql) ;
+        if ($resql)
+        {
+            $this->use_webcal=($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?1:0);
     
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$lang,$conf);
-        // Fin appel triggers
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$langs,$conf);
+            // Fin appel triggers
+        
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
     }
 
     /**
      *    \brief      Annule un contrat
      *    \param      user      Objet User qui annule
-     *    \param      lang      Environnement langue de l'utilisateur
+     *    \param      langs     Environnement langue de l'utilisateur
      *    \param      conf      Environnement de configuration lors de l'opération
      */
-    function annule($user,$lang='',$conf='')
+    function annule($user,$langs='',$conf='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
         $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
         $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
     
-        $result = $this->db->query($sql) ;
+        $resql = $this->db->query($sql) ;
+        if ($resql)
+        {
+            $this->use_webcal=($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?1:0);
     
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $interface->run_triggers('CONTRACT_CANCEL',$this,$user,$lang,$conf);
-        // Fin appel triggers
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('CONTRACT_CANCEL',$this,$user,$langs,$conf);
+            // Fin appel triggers
+        
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
     }
     
     /**
@@ -448,7 +477,7 @@ class Contrat
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('CONTRACT_CREATE',$this,$user,$lang,$conf);
+                $result=$interface->run_triggers('CONTRACT_CREATE',$this,$user,$langs,$conf);
                 if ($result < 0) $error++;
                 // Fin appel triggers
         
@@ -477,7 +506,7 @@ class Contrat
         }
         else
         {
-            $this->error=$lang->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
+            $this->error=$langs->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
             dolibarr_syslog("Contrat::create - 10 - ".$this->error);
 
             $this->db->rollback();
@@ -489,26 +518,29 @@ class Contrat
     /**
      *      \brief      Supprime un contrat de la base
      *      \param      user        Utilisateur qui supprime
-     *      \param      lang        Environnement langue de l'utilisateur
+     *      \param      langs       Environnement langue de l'utilisateur
      *      \param      conf        Environnement de configuration lors de l'opération
      *      \return     int         < 0 si erreur, > 0 si ok
      */
-    function delete($user,$lang='',$conf='')
+    function delete($user,$langs='',$conf='')
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
         $sql.= " WHERE rowid=".$this->id;
-        if ($this->db->query($sql))
+        
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $interface->run_triggers('CONTRACT_DELETE',$this,$user,$lang,$conf);
+            $result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
             // Fin appel triggers
     
             return 1;
         }
         else
         {
+            $this->error=$this->db->error();
             return -1;
         }
     }

@@ -43,6 +43,10 @@ class InterfaceWebCal
     var $db;
     var $error;
     
+    var $date;
+    var $duree;
+    var $texte;
+    var $desc;
     
     /**
      *   \brief      Constructeur.
@@ -114,19 +118,7 @@ class InterfaceWebCal
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
 
-            // Crée objet webcal et connexion avec params $conf->webcal->db->xxx
-            $webcal = new Webcal();
-
-            if (! $webcal->localdb->ok)
-            {
-                // Si la creation de l'objet n'as pu se connecter
-                $error ="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user.").";
-                $error.=" L'option de mise a jour Webcalendar a été ignorée.";
-                $this->error=$error;
-                return -1;
-            }
-
-            // Initialisation donnees webcal
+            // Initialisation donnees (date,duree,nom_societe,libelle)
             if ($object->type_id == 5 && $object->contact->fullname)
             {
                 $libellecal =$langs->trans("TaskRDVWith",$object->contact->fullname)."\n";
@@ -142,14 +134,78 @@ class InterfaceWebCal
                 $libellecal.=($object->label!=$libellecal?$object->label."\n":"");
                 $libellecal.=($object->note?$object->note:"");
             }
-            $webcal->date=$object->date;
-            $webcal->duree=$object->duree;
-            $webcal->texte=$object->societe->nom;
-            $webcal->desc=$libellecal;
 
-            // Ajoute entrée dans webcal
+            $this->date=$object->date;
+            $this->duree=$object->duree;
+            $this->texte=$object->societe->nom;
+            $this->desc=$libellecal;
+        }
+
+        if ($action == 'COMPANY_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+
+            // Initialisation donnees (date,duree,nom_societe,libelle)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("NewCompanyToDolibarr",$object->nom);
+            $this->desc=$langs->trans("NewCompanyToDolibarr",$object->nom);
+            $this->desc.="\n".$langs->trans("Prefix").': '.$object->prefix;
+            //$this->desc.="\n".$langs->trans("Customer").': '.yn($object->client);
+            //$this->desc.="\n".$langs->trans("Supplier").': '.yn($object->fournisseur);
+            $this->desc.="\n".$langs->trans("CreatedBy").': '.$user->code;
+        }
+
+        if ($action == 'CONTRACT_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
+        if ($action == 'CONTRACT_CANCEL')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
+        if ($action == 'CONTRACT_CLOSE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
+
+        if ($action == 'BILL_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
+        if ($action == 'BILL_PAYED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
+        if ($action == 'BILL_CANCELED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
+
+        // Ajoute entrée dans webcal
+        if ($this->date)
+        {
+
+            // Crée objet webcal et connexion avec params $conf->webcal->db->xxx
+            $webcal = new Webcal();
+            if (! $webcal->localdb->ok)
+            {
+                // Si la creation de l'objet n'as pu se connecter
+                $error ="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user.").";
+                $error.=" L'option de mise a jour Webcalendar a été ignorée.";
+                $this->error=$error;
+    
+                dolibarr_syslog("interface_webcal.class.php: ".$this->error);
+                return -1;
+            }
+
+            $webcal->date=$this->date;
+            $webcal->duree=$this->duree;
+            $webcal->texte=$this->texte;
+            $webcal->desc=$this->desc;
+
             $result=$webcal->add($user);
-            if ($result)
+            if ($result > 0)
             {
                 return 1;
             }
@@ -159,7 +215,7 @@ class InterfaceWebCal
                 return -1;
             }
         }
-
+        
 		return 0;
     }
 

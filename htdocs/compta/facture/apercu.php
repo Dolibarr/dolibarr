@@ -29,6 +29,9 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+
 
 $user->getrights('facture');
 if (!$user->rights->facture->lire)
@@ -37,23 +40,13 @@ if (!$user->rights->facture->lire)
 $langs->load("bills");
 
 
-$warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
-
-
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-if ($conf->projet->enabled) {
-    require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-}
-
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
 
 llxHeader('',$langs->trans("Bill"),'Facture');
 
@@ -111,6 +104,7 @@ if ($_GET["facid"] > 0)
         *   Facture
         */
         print '<table class="border" width="100%">';
+		$rowspan=3;
         
         // Societe
         print '<tr><td>'.$langs->trans("Company").'</td>';
@@ -122,7 +116,7 @@ if ($_GET["facid"] > 0)
         print '<tr><td>'.$langs->trans("Date").'</td>';
         print '<td colspan="3">'.dolibarr_print_date($fac->date,"%A %d %B %Y").'</td>';
         print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
-        if ($fac->paye == 0 && $fac->date_lim_reglement < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
+        if ($fac->paye == 0 && $fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
         print "</td></tr>";
 
         // Conditions et modes de réglement
@@ -148,27 +142,32 @@ if ($_GET["facid"] > 0)
             {
                 print '&nbsp;';
             }
-            print "&nbsp;</td>";
         }
         else
         {
             print '<td>&nbsp;</td><td colspan="3">';
-            print "&nbsp;</td>";
         }
-        print '<td colspan="2" rowspan="4" valign="top" width="50%">';
+		print '</td>';
+
+		// partie Droite sur $rowspan lignes
+		print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
+
 
         /*
-        * Documents
-        *
-        */
+         * Documents
+         */
         $facref = sanitize_string($fac->ref);
         $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
         $filedetail = $conf->facture->dir_output . "/" . $facref . "/" . $facref . "-detail.pdf";
         $relativepath = "${facref}/${facref}.pdf";
         $relativepathdetail = "${facref}/${facref}-detail.pdf";
-        $relativepathimage = "${facref}/${facref}.pdf.png";
 
-        $fileimage = $file.".png";
+        // Chemin vers png aperçus
+		$relativepathimage = "${facref}/${facref}.pdf.png";
+		$relativepathimagebis = "${facref}/${facref}.pdf.png.0";
+		$fileimage = $file.".png";          // Si PDF d'1 page
+		$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
+
 
         $var=true;
 
@@ -200,9 +199,10 @@ if ($_GET["facid"] > 0)
             print "</table>\n";
 
             // Conversion du PDF en image png si fichier png non existant
-            if (!file_exists($fileimage))
+					if (! file_exists($fileimage) && ! file_exists($fileimagebis))
+					{
+						if (function_exists("imagick_readimage"))
             {
-                if (function_exists(imagick_readimage)) {
                     $handle = imagick_readimage( $file ) ;
                     if ( imagick_iserror( $handle ) )
                     {
@@ -224,22 +224,16 @@ if ($_GET["facid"] > 0)
 
                     imagick_writeimage( $handle, $file .".png");
                 }
-                else {
+                else
+				{
                     $langs->load("other");
-                    print $langs->trans("ErrorNoImagickReadimage");
+							print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
                 }
             }
 
         }
-
-        /*
-        *
-        *
-        */
-
         print "</td></tr>";
 
-        print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
 
         print '<tr><td nowrap>'.$langs->trans("GlobalDiscount").'</td>';
         print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
@@ -259,12 +253,19 @@ if ($_GET["facid"] > 0)
     }
 } 
 
+// Si fichier png PDF d'1 page trouvé
 if (file_exists($fileimage))
 {	  
   print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'">';
 }
-print '</div>';
+// Si fichier png PDF de plus d'1 page trouvé
+elseif (file_exists($fileimagebis))
+	{
+	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimagebis).'">';
+	}
 
+
+print '</div>';
 
 $db->close();
 

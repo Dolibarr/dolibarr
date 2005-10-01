@@ -213,13 +213,13 @@ class Facture
 				}
 			}
 
-            $result=$this->updateprice($this->id);
-            if ($result)
+            $resql=$this->updateprice($this->id);
+            if ($resql)
             {
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
-                $interface->run_triggers('BILL_CREATE',$this,$user,$lang,$conf);
+                $result=$interface->run_triggers('BILL_CREATE',$this,$user,$lang,$conf);
                 // Fin appel triggers
     
                 $this->db->commit();
@@ -603,7 +603,7 @@ class Facture
                                 // Appel des triggers
                                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                                 $interface=new Interfaces($this->db);
-                                $interface->run_triggers('BILL_DELETE',$this,$user,$lang,$conf);
+                                $result=$interface->run_triggers('BILL_DELETE',$this,$user,$lang,$conf);
                                 // Fin appel triggers
                 
                                 $this->db->commit();
@@ -688,7 +688,6 @@ class Facture
 		return $datelim;
 	}
 
-
 	/**
 	 *    \brief     Tag la facture comme payée complètement
 	 *    \param     rowid       id de la facture à modifier
@@ -696,19 +695,31 @@ class Facture
 	function set_payed($rowid)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture set paye=1 WHERE rowid = '.$rowid ;
-		$return = $this->db->query( $sql);
+		$resql = $this->db->query( $sql);
+
+        if ($resql)
+        {
+            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+    
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('BILL_PAYED',$this,$user,$lang,$conf);
+            // Fin appel triggers
+        }
 	}
+	
 	/**
-	*    \brief     Tag la facture comme payée complètement
+	*    \brief     Tag la facture comme non payée complètement
 	*    \param     rowid       id de la facture à modifier
 	*/
 	function set_unpayed($rowid)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture set paye=0 WHERE rowid = '.$rowid ;
-		$return = $this->db->query( $sql);
+		$resql = $this->db->query( $sql);
 	}
 	/**
-	*    \brief     Tag la facture comme paiement commencée
+	*    \brief     Tag la facture comme payer partiellement
 	*    \param     rowid       id de la facture à modifier
 	*/
 	function set_paiement_started($rowid)
@@ -718,17 +729,28 @@ class Facture
 	}
 
 	/**
-	*    \brief     Tag la facture comme abandonnée
+	*    \brief     Tag la facture comme abandonnée + appel trigger BILL_CANCEL
 	*    \param     rowid       id de la facture à modifier
 	*/
 	function set_canceled($rowid)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture set fk_statut=3 WHERE rowid = '.$rowid;
-		$return = $this->db->query( $sql);
+		$resql = $this->db->query( $sql);
+
+        if ($resql)
+        {
+            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('BILL_CANCEL',$this,$user,$lang,$conf);
+            // Fin appel triggers
+        }
 	}
 
 	/**
-	 *      \brief     Tag la facture comme validée et valide la facture
+	 *      \brief     Tag la facture comme validée + appel trigger BILL_VALIDATE
 	 *      \param     rowid        id de la facture à valider
 	 *      \param     user         utilisateur qui valide la facture
 	 *      \param     soc          societe
@@ -753,9 +775,11 @@ class Facture
             $this->db->begin();
             
 			/*
-			* Lecture de la remise exceptionnelle
-			*
-			*/
+			 * Affectation de la remise exceptionnelle
+			 *
+			 * \todo    Appliquer la remise avoir dans les lignes quand brouillon plutot
+			 *          qu'au moment de la validation
+			 */
 			$sql  = 'SELECT rowid, rc.amount_ht, fk_soc, fk_user';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
 			$sql .= ' WHERE rc.fk_soc ='. $this->socidp;
@@ -776,8 +800,6 @@ class Facture
 				dolibarr_syslog('Facture::Valide Erreur lecture Remise');
 				$error++;
 			}
-
-			/* Affectation de la remise exceptionnelle */
 			if ( $this->_affect_remise_exceptionnelle() <> 0)
 			{
 				$error++;
@@ -792,7 +814,7 @@ class Facture
 			$sql .= " SET facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
 
 			/* Si l'option est activée on force la date de facture */
-			if (defined('FAC_FORCE_DATE_VALIDATION') && FAC_FORCE_DATE_VALIDATION == '1')
+			if ($conf->global->FAC_FORCE_DATE_VALIDATION)
 			{
 				$this->date=time();
 				$datelim=$this->calculate_date_lim_reglement();
@@ -809,7 +831,8 @@ class Facture
             }
                 
             /*
-             * Update Stats
+             * Pour chaque produit, on met a jour indicateur nbvente
+             * On crée ici une dénormalisation des données pas forcément utilisée.
              */
 			$sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$this->id;
 			$sql .= ' AND fk_product > 0';
@@ -834,10 +857,12 @@ class Facture
 
             if ($error == 0)
             {
+                $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
-                $interface->run_triggers('BILL_VALIDATE',$this,$user,$lang,$conf);
+                $result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$lang,$conf);
                 // Fin appel triggers
 
                 $this->db->commit();
@@ -846,8 +871,7 @@ class Facture
                  * Notify
                  */
                 $facref = sanitize_string($this->ref);
-				$filepdf = FAC_OUTPUTDIR . '/' . $facref . '/' . $facref . '.pdf';
-
+				$filepdf = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
 				$mesg = 'La facture '.$this->ref." a été validée.\n";
 
                 $notify = New Notify($this->db);
