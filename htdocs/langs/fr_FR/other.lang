@@ -1,8 +1,5 @@
 # Dolibarr language file - fr_FR - other
 Calendar=Calendrier
-LoginWebcal=Login Webcalendar
-AddCalendarEntry=Ajouter entrée dans le calendrier
-ErrorWebcalLoginNotDefined=Le login Webcalendar associé à votre login Dolibarr <b>%s</b> n'est pas défini.
 ErrorPasswordDiffers=Les mots de passe ne sont pas identiques, veuillez les saisir à nouveau
 ErrorForbidden=Accès non autorisé.<br>Vous essayez d'accéder à une page, zone ou fonction sans être au sein d'une session authentifiée ou qui n'est pas autorisée pour votre compte utilisateur.
 ErrorForbidden2=Les permissions pour ce login peuvent être attribuées par l'administrateur Dolibarr via le menu %s -> %s.
@@ -37,4 +34,14 @@ CreateBookmark=Créer bookmark
 SetHereATitleForLink=Saisir ici un titre pour le marque page
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL http externe ou une URL Dolibarr relative
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
+##### Webcal #####
+LoginWebcal=Login Webcalendar
+AddCalendarEntry=Ajouter entrée dans le calendrier
+ErrorWebcalLoginNotDefined=Le login Webcalendar associé à votre login Dolibarr <b>%s</b> n'est pas défini.
 NewCompanyToDolibarr=Société %s ajoutée dans Dolibarr
+ContractValidatedInDolibarr=Contrat %s validé dans Dolibarr
+ContractCanceledInDolibarr=Contrat %s annulé dans Dolibarr
+ContractClosedInDolibarr=Contrat %s fermé dans Dolibarr
+InvoiceValidatedInDolibarr=Facture %s validé dans Dolibarr
+InvoicePayedInDolibarr=Facture %s passé à payé dans Dolibarr
+InvoiceCanceledInDolibarr=Facture %s annulée dans Dolibarr

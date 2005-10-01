@@ -1,8 +1,5 @@
 # Dolibarr language file - en_US - other
 Calendar=Calendar
-LoginWebcal=Login for Webcalendar
-AddCalendarEntry=Add entry in calendar
-ErrorWebcalLoginNotDefined=The Webcalendar login associated to your Dolibarr login <b>%s</b> is not defined.
 ErrorPasswordDiffers=Passwords differs, please type them again.
 ErrorForbidden=Access forbidden.<br>You try to access to a page, area or feature without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Permission for this login can be defined by your Dolibarr administrator from menu %s->%s.
@@ -37,4 +34,14 @@ CreateBookmark=Create bookmark
 SetHereATitleForLink=Set here a title for bookmark
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external http URL or a relative Dolibarr URL
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if page opened by link must appear on current or new window
+##### Webcal #####
+LoginWebcal=Login for Webcalendar
+AddCalendarEntry=Add entry in calendar
+ErrorWebcalLoginNotDefined=The Webcalendar login associated to your Dolibarr login <b>%s</b> is not defined.
 NewCompanyToDolibarr=Company %s added into Dolibarr
+ContractValidatedInDolibarr=Contract %s validated in Dolibarr
+ContractCanceledInDolibarr=Contract %s canceled in Dolibarr
+ContractClosedInDolibarr=Contract %s closed in Dolibarr
+InvoiceValidatedInDolibarr=Invoice %s validated in Dolibarr
+InvoicePayedInDolibarr=Invoice %s changed to payed in Dolibarr
+InvoiceCanceledInDolibarr=Invoice %s canceled in Dolibarr

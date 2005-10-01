@@ -117,8 +117,9 @@ class InterfaceWebCal
         if ($action == 'ACTION_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
 
-            // Initialisation donnees (date,duree,nom_societe,libelle)
+            // Initialisation donnees (date,duree,texte,desc)
             if ($object->type_id == 5 && $object->contact->fullname)
             {
                 $libellecal =$langs->trans("TaskRDVWith",$object->contact->fullname)."\n";
@@ -144,8 +145,9 @@ class InterfaceWebCal
         if ($action == 'COMPANY_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
-
-            // Initialisation donnees (date,duree,nom_societe,libelle)
+            $langs->load("other");
+            
+            // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
             $this->texte=$langs->trans("NewCompanyToDolibarr",$object->nom);
@@ -159,27 +161,70 @@ class InterfaceWebCal
         if ($action == 'CONTRACT_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("ContractValidatedInDolibarr",$object->ref);
+            $this->desc=$langs->trans("ContractValidatedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->trans("ValidatedBy").': '.$user->code;
         }
         if ($action == 'CONTRACT_CANCEL')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("ContractCanceledInDolibarr",$object->ref);
+            $this->desc=$langs->trans("ContractCanceledInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->trans("CanceledBy").': '.$user->code;
         }
         if ($action == 'CONTRACT_CLOSE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("ContractClosedInDolibarr",$object->ref);
+            $this->desc=$langs->trans("ContractClosedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->trans("ClosedBy").': '.$user->code;
         }
 
         if ($action == 'BILL_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("InvoiceValidatedInDolibarr",$object->number);
+            $this->desc=$langs->trans("InvoiceValidatedInDolibarr",$object->number);
+            $this->desc.="\n".$langs->trans("ValidatedBy").': '.$user->code;
         }
         if ($action == 'BILL_PAYED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("InvoicePayedInDolibarr",$object->number);
+            $this->desc=$langs->trans("InvoicePayedInDolibarr",$object->number);
+            $this->desc.="\n".$langs->trans("EditedBy").': '.$user->code;
         }
         if ($action == 'BILL_CANCELED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("InvoiceCanceledInDolibarr",$object->number);
+            $this->desc=$langs->trans("InvoiceCanceledInDolibarr",$object->number);
+            $this->desc.="\n".$langs->trans("CanceledBy").': '.$user->code;
         }
 
         // Ajoute entrée dans webcal
