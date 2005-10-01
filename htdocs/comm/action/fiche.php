@@ -144,10 +144,11 @@ if ($_POST["action"] == 'add_action')
  */
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-  $actioncomm = new ActionComm($db);
-  $actioncomm->delete($_GET["id"]);
-
-  Header("Location: index.php");
+    $actioncomm = new ActionComm($db);
+    $actioncomm->delete($_GET["id"]);
+    
+    Header("Location: index.php");
+    exit;
 }
 
 /*
@@ -156,14 +157,18 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
  */
 if ($_POST["action"] == 'update')
 {
-  $action = new Actioncomm($db);
-  $action->fetch($_POST["id"]);
-  $action->percent     = $_POST["percent"];
-  $action->contact->id = $_POST["contactid"];
-  $action->note        = $_POST["note"];
-  $action->update();
-
-  Header("Location: ".$_POST["from"]);
+    if (! $_POST["cancel"])
+    {
+        $action = new Actioncomm($db);
+        $action->fetch($_POST["id"]);
+        $action->percent     = $_POST["percent"];
+        $action->contact->id = $_POST["contactid"];
+        $action->note        = $_POST["note"];
+        $action->update();
+    }
+        
+    Header("Location: ".$_POST["from"]);
+    exit;
 }
 
 
@@ -385,7 +390,8 @@ if ($_GET["action"] == 'create')
  */
 if ($_GET["id"])
 {
-    if ($error) { 
+    if ($error)
+    {
         print '<div class="error">'.$error.'</div><br>';
     }
 
@@ -406,57 +412,65 @@ if ($_GET["id"])
     $hselected=$h;
     $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans('Documents');
-	//$hselected=$h;
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans('Documents');
+    //$hselected=$h;
+    $h++;
 
     dolibarr_fiche_head($head, $hselected, $langs->trans("Ref")." ".$act->id);
 
 
-  // Confirmation suppression action
-  if ($_GET["action"] == 'delete')
+    // Confirmation suppression action
+    if ($_GET["action"] == 'delete')
     {
-      $html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
-      print '<br>';
+        $html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
+        print '<br>';
     }
-  
-  if ($_GET["action"] == 'edit')
+
+    if ($_GET["action"] == 'edit')
     {
-      // Fiche action en mode edition
-      print '<form action="fiche.php" method="post">';
-      print '<input type="hidden" name="action" value="update">';
-      print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
-      print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
+        // Fiche action en mode edition
+        print '<form action="fiche.php" method="post">';
+        print '<input type="hidden" name="action" value="update">';
+        print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+        print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
 
-      print '<table class="border" width="100%">';
-      print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Company").'</td>';
-      print '<td><a href="../fiche.php?socid='.$act->societe->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom.'</a></td>';
-      
-      print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-      $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
-      print '</td></tr>';
-      print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
-      print '<td>'.$langs->trans("Author").'</td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
-      print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
-      if ($act->objet_url)
-	{
-	  print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-	  print '<td colspan="3">'.$act->objet_url.'</td></tr>';
-	}
-      
-      // Note
-	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-      print '<textarea cols="60" rows="6" name="note">'.nl2br($act->note).'</textarea></td></tr>';
+        print '<table class="border" width="100%">';
+        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td>';
+        print '<td><a href="../fiche.php?socid='.$act->societe->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom.'</a></td>';
 
-      print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"</td></tr>';
-      print '</table></form>';
+        print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
+        $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
+        print '</td></tr>';
+
+        // Auteur
+        print '<tr><td>'.$langs->trans("Author").'</td>';
+        print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
+
+        // Date
+        print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
+
+        print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
+        if ($act->objet_url)
+        {
+            print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
+            print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+        }
+
+        // Note
+        print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
+        print '<textarea cols="60" rows="6" name="note">'.nl2br($act->note).'</textarea></td></tr>';
+
+        print '<tr><td align="center" colspan="4"><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+        print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</td></tr>';
+
+        print '</table></form>';
     }
-  else
+    else
     {
         // Affichage fiche action en mode visu
         print '<table class="border" width="100%"';
@@ -465,49 +479,51 @@ if ($_GET["id"])
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
         print '<tr><td>'.$langs->trans("Company").'</td>';
         print '<td>'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom_url.'</td>';
-    
+
         print '<td>'.$langs->trans("Contact").'</td>';
         print '<td>';
         if ($act->contact->id) print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.$act->contact->fullname.'</a>';
         else print $langs->trans("None");
         print '</td></tr>';
-        print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
-        print '<td>'.$langs->trans("Author").'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
+
+        // Auteur
+        print '<tr><td>'.$langs->trans("Author").'</td>';
+        print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
+
+        // Date
+        print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
+
         print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
             print '<td colspan="3">'.$act->objet_url.'</td></tr>';
         }
-    
+
         // Note
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
         print nl2br($act->note).'</td></tr>';
-    
+
         print '</table>';
     }
-    
+
     print "</div>\n";
 
 
     /**
-     * Barre d'actions
-     *
-     */
+    * Barre d'actions
+    *
+    */
 
     print '<div class="tabsAction">';
-    
-    if ($_GET["action"] == 'edit')
+
+    if ($_GET["action"] != 'edit')
     {
-      print '<a class="butAction" href="fiche.php?id='.$act->id.'">'.$langs->trans("Cancel").'</a>';
+        print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
+
+        print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
     }
-    else
-    {
-      print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
-    }
-    
-    print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
+
     print '</div>';
 }
 
