@@ -42,8 +42,6 @@ llxHeader();
 $contrat = new Contrat($db);
 $contrat->fetch($_GET["id"]);
 $contrat->info($_GET["id"]);
-$soc = new Societe($db, $contrat->socidp);
-$soc->fetch($contrat->socidp);
 
 $h = 0;
 
