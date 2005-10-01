@@ -133,6 +133,8 @@ if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 {
     $conf->theme=$user->conf->MAIN_THEME;
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+    // Si feuille de style en php existe
+    if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 }
 if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAVASCRIPT)
 {
@@ -237,7 +239,8 @@ function top_htmlhead($head, $title="", $target="")
     print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
 
     // Definition en alternate style sheet des feuilles de styles les plus maintenues
-    print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css">'."\n";
+    // Les navigateurs qui supportent sont rares.
+    print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
     print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css">'."\n";
     print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
 

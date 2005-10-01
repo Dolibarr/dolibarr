@@ -1,3 +1,4 @@
+<?php
 /* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,6 +19,11 @@
  * $Source$
  */
 
+header('Content-type: text/css');
+
+require("../../conf/conf.php");
+
+?>
 
 /***** Style du fond *****/
 body {
@@ -72,7 +78,7 @@ textarea.flat
     font: 12px helvetica, verdana, arial, sans-serif;
 	font-size: 100%;
 	border: 1px solid #ccd7e0;
-	background-image : url(/theme/eldy/img/button_bg.png);
+	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
 	background-position : bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
