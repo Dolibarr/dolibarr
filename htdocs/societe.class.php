@@ -62,6 +62,7 @@ class Societe {
   var $remise_client;
   
   var $client;
+  var $prospect;
   var $fournisseur;
 
   var $code_client;
@@ -88,6 +89,7 @@ class Societe {
 
     $this->id = $id;
     $this->client = 0;
+    $this->prospect = 0;
     $this->fournisseur = 0;
     $this->typent_id  = 0;
     $this->effectif_id  = 0;
@@ -140,7 +142,7 @@ class Societe {
     
                 $this->creation_bit = 1;
     
-                $ret = $this->update($this->id);
+                $ret = $this->update($this->id,$user,0);
     
                 if ($ret == 0)
                 {
@@ -237,12 +239,13 @@ class Societe {
   }
 
     /**
-     *    \brief      Mise a jour des paramètres de la sociét
-     *    \param      id      id societe
-     *    \param      user    Utilisateur qui demande la mise à jour
-     *    \return     0 si ok, < 0 si erreur
+     *      \brief      Mise a jour des paramètres de la sociét
+     *      \param      id              id societe
+     *      \param      user            Utilisateur qui demande la mise à jour
+     *      \param      call_trigger    0=non, 1=oui
+     *      \return     int             0 si ok, < 0 si erreur
      */
-    function update($id, $user='')
+    function update($id, $user='', $call_trigger=1)
     {
         global $langs;
     
@@ -367,12 +370,15 @@ class Societe {
     
             if ($this->db->query($sql))
             {
-                // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                $interface=new Interfaces($this->db);
-                $interface->run_triggers('COMPANY_MODIFY',$this,$user,$lang,$conf);
-                // Fin appel triggers
-    
+                if ($call_trigger)
+                {
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$lang,$conf);
+                    // Fin appel triggers
+                }
+                    
                 $result = 0;
             }
             else
