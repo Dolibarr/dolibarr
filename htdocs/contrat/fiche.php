@@ -278,11 +278,11 @@ if ($_GET["action"] == 'create')
             print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td>'.$langs->trans("Ref").':</td>';
+			print '<tr><td>'.$langs->trans("Ref").'</td>';
 			print '<td><input type="text" maxlength="30" name="ref" size="20"></td></tr>';
 			
             // Customer
-            print '<tr><td>'.$langs->trans("Customer").':</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$obj->nom.'</a></td></tr>';
+            print '<tr><td>'.$langs->trans("Customer").'</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$obj->nom.'</a></td></tr>';
 
             // Commercial suivi
             print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</td><td>';
@@ -335,13 +335,13 @@ if ($_GET["action"] == 'create')
             }
             print '</select></td></tr>';
 
-            print '<tr><td>'.$langs->trans("Date").' :</td><td>';
+            print '<tr><td>'.$langs->trans("Date").'</td><td>';
             $html->select_date();
             print "</td></tr>";
 
             if ($conf->projet->enabled)
             {
-                print '<tr><td>'.$langs->trans("Project").' :</td><td>';
+                print '<tr><td>'.$langs->trans("Project").'</td><td>';
                 $proj = new Project($db);
                 $html->select_array("projetid",$proj->liste_array($soc->id),0,1);
                 print "</td></tr>";
