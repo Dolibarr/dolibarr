@@ -30,15 +30,19 @@
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 $langs->load('propal');
 $langs->load('compta');
 
 $user->getrights('propale');
-if (!$user->rights->propale->lire)
+if (! $user->rights->propale->lire)
 	accessforbidden();
 
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if (! $_GET['propalid'])
+{
+	accessforbidden();
+}
 
 
 /*
@@ -48,55 +52,56 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 llxHeader();
 
-if ($_GET['propalid'])
+$propal = new Propal($db);
+$propal->fetch($_GET['propalid']);
+
+$societe = new Societe($db);
+$societe->fetch($propal->soc_id);
+$h=0;
+
+$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+$head[$h][1] = $langs->trans('CommercialCard');
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
+$head[$h][1] = $langs->trans('AccountancyCard');
+$h++;
+
+if ($conf->use_preview_tabs)
 {
-	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
-
-	$societe = new Societe($db);
-	$societe->fetch($propal->soc_id);
-	$h=0;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-	$head[$h][1] = $langs->trans('CommercialCard');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans("Preview");
 	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
-	$head[$h][1] = $langs->trans('AccountancyCard');
-	$h++;
-
-	if ($conf->use_preview_tabs)
-	{
-    	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
-    	$head[$h][1] = $langs->trans("Preview");
-    	$h++;
-    }
-    
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-	$head[$h][1] = $langs->trans('Note');
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-	$head[$h][1] = $langs->trans('Info');
-	$hselected=$h;
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
-	$head[$h][1] = $langs->trans('Documents');
-	$h++;
-
-	dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
-
-	$propal->info($propal->id);
-
-	print '<table width="100%"><tr><td>';
-	dolibarr_print_object_info($propal);
-	print '</td></tr></table>';
-
-	print '</div>';
- 
-	$db->close();
 }
+
+$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
+$head[$h][1] = $langs->trans('Note');
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
+$head[$h][1] = $langs->trans('Info');
+$hselected=$h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
+$head[$h][1] = $langs->trans('Documents');
+$h++;
+
+dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
+
+$propal->info($propal->id);
+
+print '<table width="100%"><tr><td>';
+dolibarr_print_object_info($propal);
+print '</td></tr></table>';
+
+print '</div>';
+ 
+// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+print '<div class="tabsAction">';
+print '</div>';
+
+$db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

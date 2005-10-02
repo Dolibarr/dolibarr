@@ -272,7 +272,7 @@ if ($id > 0)
 			print '<td>'.$langs->trans("Company").'</td>';
 			print '<td>'.$langs->trans("Contacts").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
-			print '<td colspan="2">&nbsp;</td>';
+			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
 
 			$var = false;

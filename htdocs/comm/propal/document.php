@@ -135,7 +135,7 @@ if ($propalid > 0)
 		print '<form name="userfile" action="document.php?propalid='.$propal->id.'" enctype="multipart/form-data" method="POST">';
 		print '<input type="hidden" name="max_file_size" value="2000000">';
 		print '<input type="file"   name="userfile" size="40" maxlength="80" class="flat"><br>';
-		print '<input type="submit" value="'.$langs->trans('Upload').'" name="sendit" class="button">';
+		print '<input type="submit" value="'.$langs->trans('Upload').'" name="sendit" class="button"> &nbsp; ';
 		print '<input type="submit" value="'.$langs->trans('Cancel').'" name="cancelit" class="button"><br>';
 		print '</form><br>';
 
