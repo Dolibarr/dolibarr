@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,9 +285,7 @@ if ($_POST['action'] == 'add')
 	}
 }
 
-/*
- *
- */
+// Classe à "validée"
 if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->rights->facture->valider)
 {
 	$fac = new Facture($db);
@@ -301,7 +299,8 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	}
 }
 
-if ($_GET['action'] == 'payed' && $user->rights->facture->paiement)
+// Classe à "payée"
+if ($_POST['action'] == 'confirm_payed' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
 	$result = $fac->set_payed($_GET['facid']);
@@ -1137,23 +1136,30 @@ else
 			}
 
 			/*
-			* Confirmation du classement abandonn
-			*
-			*/
-			if ($_GET['action'] == 'canceled')
-			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill'),'confirm_canceled');
-				print '<br />';
-			}
-
-			/*
-			* Confirmation de la validation
-			*
-			*/
+ 			 * Confirmation de la validation
+ 			 */
 			if ($_GET['action'] == 'valid')
 			{
 				$numfa = facture_get_num($soc);
 				$html->form_confirm('facture.php?facid='.$fac->id,$langs->trans('ValidateBill'),$langs->trans('ConfirmValidateBill',$numfa),'confirm_valid');
+				print '<br />';
+			}
+
+			/*
+ 			 * Confirmation du classement payé
+ 			 */
+			if ($_GET['action'] == 'payed')
+			{
+				$html->form_confirm('facture.php?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
+				print '<br />';
+			}
+
+			/*
+			 * Confirmation du classement abandonn
+			 */
+			if ($_GET['action'] == 'canceled')
+			{
+				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled');
 				print '<br />';
 			}
 
