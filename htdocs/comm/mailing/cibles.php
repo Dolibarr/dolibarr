@@ -177,7 +177,7 @@ if ($mil->fetch($_GET["id"]) == 0)
         print '<br>';
                 
         print_titre($langs->trans("ToAddRecipientsChooseHere").':');
-        print '<table class="noborder" width=\"100%\">';
+        print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';
         print '<td align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
