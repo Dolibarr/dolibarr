@@ -645,20 +645,24 @@ border-left: 1px solid #000000;
 .pair	{ 
 background: #e6ebed; 
 font: helvetica, verdana, arial, sans-serif;
+border: 0px;
 }
 /*
 .pair:hover { 
 background: #c0c4c7;
+border: 0px;
 }
 */
 
 .impair { 
 background: #d0d4d7;
 font: helvetica, verdana, arial, sans-serif;
+border: 0px;
 }
 /*
 .impair:hover { 
 background: #c0c4c7;
+border: 0px;
 }
 */
 
