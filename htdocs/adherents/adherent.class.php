@@ -488,6 +488,7 @@ class Adherent
                 $this->date           = $obj->datedon;
                 $this->prenom         = stripslashes($obj->prenom);
                 $this->nom            = stripslashes($obj->nom);
+                $this->fullname       = $obj->nom.($obj->nom&&$obj->prenom?' ':'').$obj->prenom;
                 $this->societe        = stripslashes($obj->societe);
                 $this->adresse        = stripslashes($obj->adresse);
                 $this->cp             = stripslashes($obj->cp);
