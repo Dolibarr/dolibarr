@@ -129,13 +129,16 @@ if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
         $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
     }
 }
+
+// Remplace conf->css par valeur personnalisée
 if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 {
     $conf->theme=$user->conf->MAIN_THEME;
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
-    // Si feuille de style en php existe
-    if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 }
+// Si feuille de style en php existe
+if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
+
 if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAVASCRIPT)
 {
     $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
