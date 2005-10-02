@@ -74,6 +74,7 @@ $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;      
 
+
 dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
 
@@ -81,6 +82,10 @@ print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($fac);
 print '</td></tr></table>';
 
+print '</div>';
+
+// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+print '<div class="tabsAction">';
 print '</div>';
 
 $db->close();

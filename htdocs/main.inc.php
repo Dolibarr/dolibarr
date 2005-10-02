@@ -328,9 +328,10 @@ function left_menu($menu_array, $help_url='', $form_search='')
     global $user, $conf, $langs, $db;
 
     print '<div class="vmenuplusfiche">'."\n";
+    print "\n";
 
     // Colonne de gauche
-    print "\n<!-- Debut left vertical menu -->\n";
+    print '<!-- Debut left vertical menu -->'."\n";
     print '<div class="vmenu">'."\n";
 
 
@@ -395,24 +396,27 @@ function left_menu($menu_array, $help_url='', $form_search='')
     }
 
     if (MAIN_SHOW_BUGTRACK_LINK == 1)
-      {
-	// Lien vers le bugtrack
-	$bugbaseurl='http://savannah.nongnu.org/bugs/?';
-	$bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
-	$bugbaseurl.="&details=";
-	$bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
-	$bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
-	$bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
-	$bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
-	print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
-      }
+    {
+        // Lien vers le bugtrack
+        $bugbaseurl='http://savannah.nongnu.org/bugs/?';
+        $bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
+        $bugbaseurl.="&details=";
+        $bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
+        $bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
+        $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
+        $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
+        print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
+    }
     print "\n";
-    print "</div>\n";
     print "</div>\n";
     print "<!-- Fin left vertical menu -->\n";
 
+    print "\n";
+    print '</div>'."\n";
     print '<div class="vmenuplusfiche">'."\n";
-
+    print "\n";
+    
+    print '<!-- fiche -->'."\n";
     print '<div class="fiche">'."\n";
 
 }
@@ -450,9 +454,9 @@ function llxFooter($foot='')
 {
   global $dolibarr_auto_user;
 
-  print "\n".'</div><!-- div class="fiche" -->'."\n";
-  print "\n".'</div><!-- div class="vmenuplusfiche" -->';
-  print "\n".'</div><!-- div class="body" -->'."\n";
+  print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
+  print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->';
+  print "\n</div>\n".'<!-- end div class="body" -->'."\n";
 
   print "</body>\n</html>\n";
 }

@@ -1217,11 +1217,15 @@ else
 			{
 				$langs->load('projects');
 				print '<td>';
+				
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($_GET['action'] != 'classer') print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+				if ($_GET['action'] != 'classer') print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">';
+				print img_edit($langs->trans('SetProject'));
+				print '</a></td>';
 				print '</tr></table>';
+				
 				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'classer')
 				{
@@ -1653,7 +1657,7 @@ else
 			$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed);
 
 			/*
-			 *   Propales
+			 *   Propales rattachées
 			 */
 			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.price, p.ref, p.rowid as propalid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = '.$fac->id;
@@ -1695,7 +1699,6 @@ else
 			{
 				dolibarr_print_error($db);
 			}
-			print '</td><td valign="top" width="50%">';
 
 			/*
 			 * Commandes rattachées
@@ -1743,6 +1746,7 @@ else
 					dolibarr_print_error($db);
 				}
 			}
+
 			print '</td><td valign="top" width="50%">';
 
 			/*

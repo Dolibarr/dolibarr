@@ -675,7 +675,7 @@ class MenuLeft {
             }
             
             if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
-                print '</div>';
+                print "</div>\n";
             }
         }
 

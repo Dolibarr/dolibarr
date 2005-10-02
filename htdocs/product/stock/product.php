@@ -222,7 +222,7 @@ if ($_GET["id"])
         * Contenu des stocks
         *
         */
-        print '<br><table class="border" width="100%">';
+        print '<br><table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td><td width="60%">Valeur du stock</td></tr>';
         $sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
         $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = ".$product->id;
@@ -241,7 +241,7 @@ if ($_GET["id"])
                 $i++;
             }
         }
-        print '<tr><td align="right">'.$langs->trans("Total").':</td><td>'.$total."</td></tr></table>";
+        print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td><td class="liste_total">'.$total."</td></tr></table>";
 
     }
     print '</div>';

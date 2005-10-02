@@ -202,7 +202,7 @@ class FormMail
         print "<tr>";
         print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
         print "<td>";
-        print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
+        print "<input type=\"file\" class=\"flat\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
         print "</td></tr>\n";
     }
 
@@ -236,7 +236,7 @@ class FormMail
         print "</td></tr>\n";
     }
     	
-    print "<tr><td align=center colspan=2><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("SendMail")."\"></center></td></tr>\n";
+    print "<tr><td align=center colspan=2><center><input class=\"button\" type=\"submit\" value=\"".$langs->trans("SendMail")."\"></center></td></tr>\n";
     print "</table>\n";
 
     print "</form>\n";	

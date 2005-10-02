@@ -272,12 +272,12 @@ class MenuLeft {
                     if ($conf->facture->enabled)
                     {
                         $langs->load("bills");
-                        $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),1,$user->rights->facture->lire);
+                        $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),1,$user->rights->fournisseur->facture->lire);
                         if ($user->societe_id == 0) 
                         {
-                          if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+                          if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),2,$user->rights->fournisseur->facture->creer);
                         }
-                        if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),2,$user->rights->facture->lire);
+                        if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),2,$user->rights->fournisseur->facture->lire);
                     }
                 }        
         
@@ -492,14 +492,14 @@ class MenuLeft {
               if ($conf->facture->enabled)
                 {
                   $langs->load("bills");
-                  $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"), 0, $user->rights->facture->lire);
+                  $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"), 0, $user->rights->fournisseur->facture->lire);
                   
                   if ($user->societe_id == 0) 
             	{
-            	  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"), 1, $user->rights->facture->creer);
+            	  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"), 1, $user->rights->fournisseur->facture->creer);
             	}
                   
-                  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"), 1, $user->rights->facture->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"), 1, $user->rights->fournisseur->facture->lire);
                 }
               
               if ($conf->commande->enabled)
@@ -661,7 +661,7 @@ class MenuLeft {
             }
             
             if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
-                print '</div>';
+                print "</div>\n";
             }
         }
 

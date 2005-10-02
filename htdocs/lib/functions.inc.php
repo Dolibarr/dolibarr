@@ -177,7 +177,7 @@ function dolibarr_syslog($message, $level=LOG_ERR)
 */
 function dolibarr_fiche_head($links, $active=0, $title='')
 {
-    print "<!-- fiche --><div class=\"tabs\">\n";
+    print '<div class="tabs">'."\n";
 
     if (strlen($title))
     {
@@ -206,7 +206,7 @@ function dolibarr_fiche_head($links, $active=0, $title='')
     }
 
     print "</div>\n";
-    print "<div class=\"tabBar\">\n\n";
+    print '<div class="tabBar">'."\n\n";
 }
 
 /**
@@ -626,7 +626,8 @@ function img_edit($alt = "default")
 {
   global $conf,$langs;
   if ($alt=="default") $alt=$langs->trans("Modify");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+//  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" style="float: right">';
 }
 
 /**
@@ -819,61 +820,66 @@ function img_allow($allow)
 */
 function loginfunction()
 {
-  global $langs,$conf;
-  $langs->load("main");
-  
-  print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-  print "\n<html><head><title>Dolibarr Authentification</title>\n";
-  print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.css">';
-
-
-
-  print '<style type="text/css">';
-  print '<!--';
-  print '#login {';
-  print '  margin-top: 70px;';
-  print '  margin-bottom: 50px;';
-  print '  text-align: center;';
-  print '  font: 12px arial,helvetica;';
-  print '}';
-  print '#login table {';
-  print '  border: 1px solid #C0C0C0;';
-  if (file_exists(DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
-  {
+    global $langs,$conf;
+    $langs->load("main");
+    
+    $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+    // Si feuille de style en php existe
+    if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
+    
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    print "\n<html><head><title>Dolibarr Authentification</title>\n";
+    
+    print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+    
+    
+    
+    print '<style type="text/css">'."\n";
+    print '<!--'."\n";
+    print '#login {';
+    print '  margin-top: 70px;';
+    print '  margin-bottom: 50px;';
+    print '  text-align: center;';
+    print '  font: 12px arial,helvetica;';
+    print '}'."\n";
+    print '#login table {';
+    print '  border: 1px solid #C0C0C0;';
+    if (file_exists(DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
+    {
       print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;';
-  }
-  else
-  {
+    }
+    else
+    {
       print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/login_background.png) repeat-x;';
-  }
-  print 'font-size: 12px;';
-  print '}';
-  print '-->';
-  print '</style>';
-  print '<script type="text/javascript">';
-  print "function donnefocus() {\n";
-  print "document.getElementsByTagName('INPUT')[0].focus();";
-  print "}\n";
-  print '</script>';
-  print '</head>';
-  print '<body onload="donnefocus();">';
-  
-  print '<form id="login" method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
-
-  print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">';
-
-
-  if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
+    }
+    print 'font-size: 12px;';
+    print '}'."\n";
+    print '-->'."\n";
+    print '</style>'."\n";
+    print '<script type="text/javascript">'."\n";
+    print "function donnefocus() {\n";
+    print "document.getElementsByTagName('INPUT')[0].focus();";
+    print "}\n";
+    print '</script>'."\n";
+    print '</head>'."\n";
+    print '<body class="body" onload="donnefocus();">';
+    
+    print '<form id="login" method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
+    
+    print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">';
+    
+    
+    if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
     {
       print '<tr><td colspan="3" style="text-align:center;">';
       print '<img src="/logo.png"></td></tr>';
     }
-  else
+    else
     {
       print '<tr class="vmenu"><td>Dolibarr '.DOL_VERSION.'</td></tr>';
     }
-  
-  print'</table>
+    
+    print'</table>
 
 <br>
 
@@ -885,17 +891,17 @@ function loginfunction()
 <td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>
 ';
 
-// Affiche logo du theme si existe, sinon logo commun
-if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
-{
-    print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
-}
-else 
-{
-    print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
-}
+    // Affiche logo du theme si existe, sinon logo commun
+    if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+    {
+        print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
+    }
+    else 
+    {
+        print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
+    }
 
-print '
+    print '
 </tr>
 
 <tr><td align="left"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </a></td>
@@ -906,12 +912,12 @@ print '
 <input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />
 </td></tr>
 ';
-print '
+    print '
 </table>
 <input type="hidden" name="loginfunction" value="loginfunction" />
 ';
 
-  print '</form>';
+    print '</form>';
 
 }
 

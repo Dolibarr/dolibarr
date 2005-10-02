@@ -27,7 +27,7 @@ require("../../conf/conf.php");
 
 /***** Style du fond *****/
 body {
-    background-color: #F1F1F1;
+    background-color: #F4F4F4;
 	font: 12px helvetica, verdana, arial, sans-serif;
     margin-top: 0;
     margin-bottom: 0;
@@ -35,7 +35,7 @@ body {
     margin-left: 0;
 }
 .body {
-    background-color: #F1F1F1;
+    background-color: #F4F4F4;
 	color: #101010;
 	font: 12px helvetica, verdana, arial, sans-serif;
 }
@@ -55,9 +55,9 @@ input
 }
 input.flat
 { 
-    font: helvetica, verdana, arial, sans-serif;
+    font: 12px helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
-    border: 1px solid #8C9C9B;
+    border: 1px solid #9CACAB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
@@ -77,7 +77,7 @@ textarea.flat
 .button  {
     font: 12px helvetica, verdana, arial, sans-serif;
 	font-size: 100%;
-	border: 1px solid #ccd7e0;
+	border: 0px;
 	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
 	background-position : bottom;
     padding: 0px 0px 0px 0px;
@@ -117,13 +117,13 @@ div.tmenu
 
 div.vmenuplusfiche
 {
-    float: left;
+    float: left; 
     margin-right: 6px;
 }
 
 div.vmenu
 {
-    display:block;
+    display: block;
     float: left;
     margin-right: 2px;
     padding: 0px;
@@ -314,7 +314,7 @@ td.barre_select {
 }
 
 td.photo {
-	background: #FCFCFC; 
+	background: #F4F4F4; 
 	color: #000000;
     border: 1px solid #b3c5cc;
 }
@@ -345,23 +345,22 @@ div.formsearch
 /*
  *   Barre onglets
  */
+div.tabs {
+    top: 20px;
+    margin: 1px 0px 0px 0px;
+    padding: 0px 6px 0px 0px;
+    text-align: left;
+}
+
 div.tabBar {
     color: #234046;
     background: #dee7ec;
-    padding-top: 14px;
-    padding-left: 14px;
-    padding-right: 14px;
-    padding-bottom: 14px;
+    padding-top: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 12px;
     margin: 0px 0px 10px 0px;
     border: 1px solid #8CACBB;
-    border-top: 1px solid #8CACBB;
-}
-
-div.tabs {
-    top: 20px;
-    margin: 1px 0em 0em 0em;
-    padding: 0em 0.5em;
-    text-align: left;
 }
 
 div.tabsAction {
@@ -369,6 +368,7 @@ div.tabsAction {
     padding: 0em 0em;
     text-align: right;
 }
+
 
 a.tabTitle {
     background: #436976;
@@ -402,10 +402,16 @@ a.tab:visited {
 a.tab#active {
     background: #dee7ec;
     border-bottom: #dee7ec 1px solid;
+    color: #436976;
+    padding: 0px 6px;
+    margin: 0em 0.2em;
     text-decoration: none;
 }
 a.tab:hover {
     background: #dee7ec;
+    color: #436976;
+    padding: 0px 6px;
+    margin: 0em 0.2em;
     text-decoration: none;
 }
 
@@ -532,16 +538,16 @@ margin: 0px 0px;
 }
 
 table.border {
-border: 1px solid #6C7C8B;
-border-color: #6C7C8B;
+border: 1px solid #8C9CAB;
+border-color: #8C9CAB;
 border-width: 1px;
 border-collapse: collapse;
 }
 
 table.border td {
 padding: 1px 2px;
-border: 1px solid #6C7C8B;
-border-color: #6C7C8B;
+border: 1px solid #8C9CAB;
+border-color: #8C9CAB;
 border-width: 1px;
 border-collapse: collapse;
 }
@@ -576,43 +582,43 @@ width: 100%;
  *  Tableaux
  */ 
 
-input.liste_titre { 
-background: #7699A9;
-}
-
 tr.liste_titre { 
 background: #7699A9;
+background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
 font: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
+border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 td.liste_titre { 
 background: #7699A9;
+background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
 font: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
+border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
-
-.liste_titre_sel
+td.liste_titre_sel
 { 
 background: #7699A9;
-color: #f0f0ff; 
+background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+color: #F5FFFF; 
 font: helvetica, verdana, arial, sans-serif;
 font-weight: bold; 
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
+border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
+}
+input.liste_titre { 
+background: #7699A9;
+background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+border: 0px;
 }
 
 tr.liste_total td { 
 border-top: 1px solid #888888;
-background: #F0F0F0;
+background: #F4F4F4;
 font-weight: bold;
 white-space: nowrap;
 }
@@ -662,11 +668,11 @@ background: #c0c4c7;
  */
 tr.box_titre { 
 background: #7699A9;
+background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
 font: 12px helvetica, verdana, arial, sans-serif;
 font-weight: bold;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
+border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 
@@ -706,7 +712,7 @@ div.error {
   color: #550000; font-weight: bold; 
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #6C7C8B;
+  border: 1px solid #8C9CAB;
 }
 
 
