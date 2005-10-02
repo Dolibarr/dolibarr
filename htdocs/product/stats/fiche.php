@@ -280,8 +280,13 @@ if ($_GET["id"])
         print '</table>';
         print '</div>';
         
-        print '<table class="border" width="100%">';
+        
+        // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+        print '<div class="tabsAction">';
+        print '</div>';
 
+
+        print '<table class="border" width="100%">';
 
         // Ligne de graph
         print '<tr class="liste_titre"><td width="50%" colspan="2" align="center">Nombre de propositions commerciales<br>sur les 12 derniers mois</td>';
