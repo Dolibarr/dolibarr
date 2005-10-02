@@ -70,7 +70,7 @@ class mailing_fraise extends MailingTargets
         $this->db=$DB;
 
         // Liste des tableaux des stats espace mailing
-        $this->statssql[0]="SELECT '".$langs->trans("FundationMembers")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
+        $this->statssql[0]="SELECT '".addslashes($langs->trans("FundationMembers"))."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
     }
     
     function getNbOfRecipients()
@@ -78,7 +78,7 @@ class mailing_fraise extends MailingTargets
         // La requete doit retourner: nb
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql .= " WHERE a.email IS NOT NULL and statut=1";
+        $sql .= " WHERE a.email IS NOT NULL";
 
         return parent::getNbOfRecipients($sql); 
     }
