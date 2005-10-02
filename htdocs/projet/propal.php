@@ -110,11 +110,15 @@ if (sizeof($propales)>0 && is_array($propales))
         $total = $total + $propale->price;
     }
     
-    print '<tr><td colspan="2">'.$i.' '.$langs->trans("Proposal").'</td>';
+    print '<tr class="liste_total"><td colspan="2">'.$i.' '.$langs->trans("Proposal").'</td>';
     print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
     print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr></table>';
 }
 
+print '</div>';
+
+// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+print '<div class="tabsAction">';
 print '</div>';
 
 $db->close();

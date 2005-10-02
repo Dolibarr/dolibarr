@@ -18,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/projet/fiche.php
-   \ingroup    projet
-   \brief      Fiche projet
-   \version    $Revision$
+        \file       htdocs/projet/fiche.php
+        \ingroup    projet
+        \brief      Fiche projet
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -210,9 +209,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   /*
    * Boutons actions
    */
+  print '<div class="tabsAction">';
+
   if ($user->rights->projet->creer == 1)
     {
-      print '<div class="tabsAction">';
 
       if ($_GET["action"] != "edit")
 	{
@@ -220,8 +220,9 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<a class="butActionDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	}
 
-      print "</div>";
     }
+
+  print "</div>";
 
 }
 

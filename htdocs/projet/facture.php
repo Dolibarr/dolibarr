@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -116,12 +115,16 @@ if (sizeof($factures)>0 && is_array($factures))
         $total = $total + $facture->total_ht;
     }
 
-    print '<tr><td colspan="2">'.$i.' '.$langs->trans("Bills").'</td>';
+    print '<tr class="liste_total"><td colspan="2">'.$i.' '.$langs->trans("Bills").'</td>';
     print '<td align="right">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
     print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     print "</table>";
 }
 
+print '</div>';
+
+// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+print '<div class="tabsAction">';
 print '</div>';
 
 $db->close();
