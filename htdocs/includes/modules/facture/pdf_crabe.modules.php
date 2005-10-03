@@ -80,7 +80,7 @@ class pdf_crabe extends ModelePDFFactures
         // Defini position des colonnes
         $this->posxdesc=11;
         $this->posxtva=121;
-        $this->posxup=133;
+        $this->posxup=132;
         $this->posxqty=151;
         $this->posxdiscount=162;
         $this->postotalht=177;
@@ -200,7 +200,7 @@ class pdf_crabe extends ModelePDFFactures
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
-                    $pdf->MultiCell(17, 4, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+                    $pdf->MultiCell(18, 4, price($fac->lignes[$i]->subprice), 0, 'R', 0);
 
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
