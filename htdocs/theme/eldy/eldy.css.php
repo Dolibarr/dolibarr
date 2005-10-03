@@ -674,7 +674,7 @@ tr.box_titre {
 background: #7699A9;
 background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
-font: 12px helvetica, verdana, arial, sans-serif;
+font: 12px arial, helvetica, verdana, sans-serif;
 font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -682,12 +682,12 @@ white-space: nowrap;
 
 tr.box_impair { 
 background: #e6ebed;
-font: 12px helvetica, verdana, arial, sans-serif;
+font: 12px arial, helvetica, verdana, sans-serif;
 }
 
 tr.box_pair { 
 background: #d0d4d7;
-font: 12px helvetica, verdana, arial, sans-serif;
+font: 12px arial, helvetica, verdana, sans-serif;
 }
 
 tr.fiche { 
