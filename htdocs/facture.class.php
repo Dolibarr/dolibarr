@@ -219,7 +219,7 @@ class Facture
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('BILL_CREATE',$this,$user,$lang,$conf);
+                $result=$interface->run_triggers('BILL_CREATE',$this,$user,$langs,$conf);
                 // Fin appel triggers
     
                 $this->db->commit();
@@ -603,7 +603,7 @@ class Facture
                                 // Appel des triggers
                                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                                 $interface=new Interfaces($this->db);
-                                $result=$interface->run_triggers('BILL_DELETE',$this,$user,$lang,$conf);
+                                $result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
                                 // Fin appel triggers
                 
                                 $this->db->commit();
@@ -704,7 +704,7 @@ class Facture
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('BILL_PAYED',$this,$user,$lang,$conf);
+            $result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
             // Fin appel triggers
         }
 	}
@@ -744,7 +744,7 @@ class Facture
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('BILL_CANCEL',$this,$user,$lang,$conf);
+            $result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
             // Fin appel triggers
         }
 	}
@@ -758,7 +758,8 @@ class Facture
 	 */
 	function set_valid($rowid, $user, $soc, $force_number='')
 	{
-		global $conf;
+		global $conf,$langs;
+		
 		$error = 0;
 		if ($this->brouillon)
 		{
@@ -862,7 +863,7 @@ class Facture
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$lang,$conf);
+                $result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
                 // Fin appel triggers
 
                 $this->db->commit();
