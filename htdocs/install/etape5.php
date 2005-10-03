@@ -51,23 +51,35 @@ else
 require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
 
-if ($_POST["action"] == "set")
+if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 {
-    if ($_POST["pass"] <> $_POST["pass_verif"])
+    // If install, check pass and pass_verif used to create admin account
+    if ($_POST["action"] == "set")
     {
-        Header("Location: etape4.php?error=1&selectlang=$setuplang");
+        if ($_POST["pass"] <> $_POST["pass_verif"])
+        {
+            Header("Location: etape4.php?error=1&selectlang=$setuplang");
+            exit;
+        }
+    
+        if (strlen(trim($_POST["pass"])) == 0)
+        {
+            Header("Location: etape4.php?error=2&selectlang=$setuplang");
+            exit;
+        }
+    
+        if (strlen(trim($_POST["login"])) == 0)
+        {
+            Header("Location: etape4.php?error=3&selectlang=$setuplang");
+            exit;
+        }
     }
-
-    if (strlen(trim($_POST["pass"])) == 0)
+    
+    // If upgrade
+    if ($_POST["action"] == "upgrade")
     {
-        Header("Location: etape4.php?error=2&selectlang=$setuplang");
-    }
 
-    if (strlen(trim($_POST["login"])) == 0)
-    {
-        Header("Location: etape4.php?error=3&selectlang=$setuplang");
     }
-
 
     pHeader($langs->trans("SetupEnd"),"etape5");
 
@@ -83,45 +95,50 @@ if ($_POST["action"] == "set")
 
     $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
     $ok = 0;
-    if ($db->connected == 1)
-    {
-        $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
-        $sql .= ",'".$_POST["login"]."'";
-        $sql .= ",'".$_POST["pass"]."'";
-        $sql .= ",1,'Administrateur','ADM')";
-    }
 
-    $resql=$db->query($sql);
-
-    if ($resql)
+    // If first install
+    if ($_POST["action"] == "set")
     {
-        print $langs->trans("AdminLoginCreatedSuccessfuly")."<br>";
-        $success = 1;
-    }
-    else
-    {
-        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        if ($db->connected == 1)
         {
-            print $langs->trans("AdminLoginAlreadyExists",$_POST["login"])."<br>";
+            $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
+            $sql .= ",'".$_POST["login"]."'";
+            $sql .= ",'".$_POST["pass"]."'";
+            $sql .= ",1,'Administrateur','ADM')";
+        }
+    
+        $resql=$db->query($sql);
+    
+        if ($resql)
+        {
+            print $langs->trans("AdminLoginCreatedSuccessfuly")."<br>";
             $success = 1;
         }
-        else {
-            print $langs->trans("FailedToCreateAdminLogin")."<br>";
-        }
-    }
-
-    if ($success)
-    {
-        $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
-    
-        // Si install non Français, on configure pour fonctionner en mode internationnal
-        if ($langs->defaultlang != "fr_FR")
+        else
         {
-            $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRETOP';");
-            $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRELEFT';");
+            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+            {
+                print $langs->trans("AdminLoginAlreadyExists",$_POST["login"])."<br>";
+                $success = 1;
+            }
+            else {
+                print $langs->trans("FailedToCreateAdminLogin")."<br>";
+            }
+        }
+    
+        if ($success)
+        {
+            $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
+        
+            // Si install non Français, on configure pour fonctionner en mode internationnal
+            if ($langs->defaultlang != "fr_FR")
+            {
+                $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRETOP';");
+                $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRELEFT';");
+            }
         }
     }
-        
+            
     print '</table>';
 
     $db->close();
@@ -129,14 +146,30 @@ if ($_POST["action"] == "set")
 
 print "<br>";
 
-// Fin install
-print $langs->trans("SystemIsInstalled")."<br>";
-print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 
-print "<br>";
+// If first install
+if ($_POST["action"] == "set")
+{
+    // Fin install
+    print $langs->trans("SystemIsInstalled")."<br>";
+    print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+    
+    print "<br>";
+    
+    print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
+}
 
-// Lien vers setup
-print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
+// If upgrade
+if ($_POST["action"] == "upgrade")
+{
+    // Fin install
+    print $langs->trans("SystemIsUpgraded")."<br>";
+    print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+    
+    print "<br>";
+}
+
+
 print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup">';
 print $langs->trans("GoToSetupArea");
 print '</a>';

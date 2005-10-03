@@ -22,12 +22,15 @@
  */
 
 /**
-   \file       htdocs/install/check.php
-   \ingroup    install
-   \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
-   \version    $Revision$
+        \file       htdocs/install/check.php
+        \ingroup    install
+        \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
+        \version    $Revision$
 */
+
 $err = 0;
+$allowinstall = 0;
+$allowupgrade = 0;
 
 include_once("./inc.php");
 
@@ -35,28 +38,36 @@ $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["select
 $langs->defaultlang=$setuplang;
 $langs->load("install");
 
-pHeader($langs->trans("DolibarrWelcome"), "licence");   // Etape suivante = license
+
+pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
 
 print $langs->trans("InstallEasy")."<br>";
 
 // Si fichier présent et lisible
 if (is_readable($conffile))
 {
-  $confexists=1;
-  include_once($conffile);
+    $confexists=1;
+    include_once($conffile);
+    
+    // Deja installé, on peut upgrader
+    // \todo Test if database ok
+    $allowupgrade=1;
 }
 else
 {
-  // Si non on le crée        
-  $confexists=0;
-  $fp = @fopen("$conffile", "w");
-  if($fp)
+    // Si non on le crée        
+    $confexists=0;
+    $fp = @fopen("$conffile", "w");
+    if($fp)
     {
-      @fwrite($fp, '<?php');
-      @fputs($fp,"\n");
-      @fputs($fp,"?>");
-      fclose($fp);
+        @fwrite($fp, '<?php');
+        @fputs($fp,"\n");
+        @fputs($fp,"?>");
+        fclose($fp);
     }
+    
+    // First install, on ne peut pas upgrader
+    $allowupgrade=0;
 }
 
 // Si fichier absent et n'a pu etre créé
@@ -74,7 +85,7 @@ if (!file_exists($conffile))
 }
 else
 {
-    print "<br /><br />";
+    print "<br />\n";
     // Si ficiher présent mais ne peut etre modifié
     if (!is_writable($conffile))
     {
@@ -88,7 +99,7 @@ else
         print $langs->trans("ConfFileIsNotWritable");
         print "<br />";
     
-        $err++;
+        $allowinstall=0;
     }
     // Si fichier présent et peut etre modifié
     else
@@ -101,13 +112,59 @@ else
         }
         print "<br />";
         print $langs->trans("ConfFileIsWritable");
-        print "<br /><br />";
-        print $langs->trans("YouCanContinue");
+        print "<br />";
     
+        $allowinstall=1;
     }
+    print "<br />\n";
+    print "<br />\n";
+
+    // Si pas d'erreur, on affiche le bouton pour passer à l'étape suivante
+
+    
+    print $langs->trans("ChooseYourSetupMode");
+
+    print '<table width="100%" cellspacing="0" cellpadding="4" border="1">';
+    
+    print '<tr><td nowrap><b>'.$langs->trans("FreshInstall").'</b></td><td>';
+    print $langs->trans("FreshInstallDesc").'</td>';
+    print '<td align="center">';
+    if ($allowinstall)
+    {
+        print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+    }
+    else
+    {
+        print $langs->trans("InstallNotAllowed");   
+    }
+    print '</td>';
+    print '</tr>';
+
+    print '<tr><td nowrap><b>'.$langs->trans("Upgrade").'</b></td><td>';
+    print $langs->trans("UpgradeDesc").'</td>';
+    print '<td align="center">';
+    if ($allowupgrade)
+    {
+        print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+    }
+    else
+    {
+        print $langs->trans("NotAvailable");   
+    }
+    print '</td>';
+    print '</tr>';
+    
+    print '</table>';
+    print "\n";
+
 }
 
-// Si pas d'erreur, on affiche le bouton pour passer à l'étape suivante
-if ($err == 0) pFooter();
+print '</div>';
+print '</div>';
+print '</form>';
+
+
+print '</body>';
+print '</html>';
 
 ?>

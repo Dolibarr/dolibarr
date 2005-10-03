@@ -46,7 +46,7 @@ $langs = new Translate("../langs", $langcode);
 
 
 
-function pHeader($soutitre,$next)
+function pHeader($soutitre,$next,$action='set')
 {
     global $langs;
     $langs->load("main");
@@ -62,7 +62,8 @@ function pHeader($soutitre,$next)
 
     print '<span class="titre"><a class="titre" href="index.php">'.$langs->trans("DolibarrSetup").'</a></span>';
 
-    print '<form action="'.$next.'.php" method="POST"><input type="hidden" name="action" value="set">';
+    print '<form action="'.$next.'.php" method="POST">';
+    print '<input type="hidden" name="action" value="'.$action.'">';
     print '<div class="main">';
     if ($soutitre) {
         print '<div class="soustitre">'.$soutitre.'</div>';

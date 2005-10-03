@@ -28,6 +28,10 @@
 
 include_once("./inc.php");
 
+$grant_query='';
+$etape = 2;
+$ok = 0;
+
 
 // Cette page peut etre longue. On augmente le délai par défaut de 30 à 60.
 // Ne fonctionne que si on est pas en safe_mode.
@@ -44,8 +48,6 @@ $langs->load("install");
 
 pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
 
-$grant_query='';
-$etape = 2;
 
 if (file_exists($conffile))
 {
@@ -66,6 +68,7 @@ else
 
 require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
+
 if ($_POST["action"] == "set")
 {
     print '<h2>'.$langs->trans("Database").'</h2>';
@@ -81,7 +84,6 @@ if ($_POST["action"] == "set")
     $conf->db->pass = $dolibarr_main_db_pass;
 
     $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
-    $ok = 0;
     if ($db->connected == 1)
     {
         print "<tr><td>";
