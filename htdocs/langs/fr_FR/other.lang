@@ -34,6 +34,8 @@ CreateBookmark=Créer bookmark
 SetHereATitleForLink=Saisir ici un titre pour le marque page
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL http externe ou une URL Dolibarr relative
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
+BookmarksManagement=Gestion des marque-pages
+ListOfBookmarks=Liste des marque-pages
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier
