@@ -139,13 +139,13 @@ if ($result)
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?id=$objp->rowid\">";
+	  print '<td nowrap="nowrap"><a href="fiche.php?id='.$objp->rowid.'">';
 	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
 	  else print img_object($langs->trans("ShowProduct"),"product");
 	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print "<td>$objp->label</td>";
 	  print "<td>".$typeprodser[$objp->fk_product_type]."</td>";
-	  print '<td align="center">'.($objp->envente?$langs->trans("OnSell"):$langs->trans("NotOnSell"))."</td>";
+	  print '<td align="center" nowrap="nowrap">'.($objp->envente?$langs->trans("OnSell"):$langs->trans("NotOnSell"))."</td>";
 	  print "</tr>\n";
 	  $i++;
 	}
