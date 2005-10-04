@@ -88,6 +88,8 @@ class Contrat
      */
     function active_line($user, $line_id, $date, $dateend='')
     {
+        global $langs;
+        
         // statut actif : 4
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
@@ -124,6 +126,8 @@ class Contrat
      */
     function close_line($user, $line_id, $dateend)
     {
+        global $langs;
+        
         // statut actif : 4
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 5,";
