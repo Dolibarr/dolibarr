@@ -579,7 +579,7 @@ class Form
         dolibarr_syslog('html.form.class.php::load_cache_conditions_paiements');
         $sql = "SELECT rowid, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
-        $sql.= " WHERE actif=1";
+        $sql.= " WHERE active=1";
         $sql.= " ORDER BY sortorder";
         $resql = $this->db->query($sql);
         if ($resql)
