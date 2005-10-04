@@ -260,7 +260,13 @@ alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
 
 alter table llx_facture add fk_mode_reglement integer after fk_cond_reglement ;
 
+alter table llx_cond_reglement change column actif active tinyint(4);
 alter table llx_cond_reglement add code varchar(16) after rowid;
+update llx_cond_reglement set code='RECEP' where libelle='A réception' and code IS NULL;
+update llx_cond_reglement set code='30D' where libelle='30 jours' and code IS NULL;
+update llx_cond_reglement set code='30DENDMONTH' where libelle='30 jours fin de mois' and code IS NULL;
+update llx_cond_reglement set code='60D' where libelle='60 jours' and code IS NULL;
+update llx_cond_reglement set code='60DENDMONTH' where libelle='60 jours fin de mois' and code IS NULL;
  
 alter table llx_socpeople add cp varchar(25) after address;
 alter table llx_socpeople add ville varchar(255) after cp;
