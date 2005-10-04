@@ -210,6 +210,7 @@ DictionnaryCivility=Civility title
 DictionnaryActions=Actions list
 DictionnarySocialContributions=Social contributions types
 DictionnaryVAT=VAT Rates
+DictionnaryPaymentConditions=Payments conditions
 DictionnaryTypeContact=Contacts types
 VATReceivedOnly=Special rate not billed
 VATManagement=VAT Management
@@ -220,6 +221,9 @@ VATIsNotUsedDesc=Le taux de TVA proposé par défaut est 0. C'est le cas d'associa
 VATIsUsedExampleFR=En France, il s'agit des sociétés ou organismes ayant choisi un régime fiscale réel (Réel simplifié ou Réel normal), régime dans lequel la TVA est déclarée.
 VATIsNotUsedExampleFR=En France, il s'agit des associations ne déclarant pas de TVA ou sociétés, organismes ou professions libérales ayant choisi le régime fiscal micro entreprise (TVA en franchise) et payant une TVA en franchise sans faire de déclaration de TVA. Ce choix fait apparaitre la mention "TVA non applicable - art-293B du CGI" sur les factures.
 LabelUsedByDefault=Label used by default if no translation can be found for code
+LabelOnDocuments=Label on documents
+NbOfDays=Nb of days
+AtEndOfMonth=At end of month
 AlwaysActive=Always active
 UpdateRequired=Your system need to be updated. For this click on <a href="%s">Update now</a>.
 WebServer=Web server

@@ -50,7 +50,7 @@ $active = 1;
 // Mettre ici tous les caractéristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(4,3,2,0,9,0,1,8,0,5,11, 0,6,0,7,0,10);
+$taborder=array(9,0,4,3,2,0,1,8,0,5,11,0,6,0,10,12,0,7);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -64,6 +64,7 @@ $tabname[8] = MAIN_DB_PREFIX."c_typent";
 $tabname[9] = MAIN_DB_PREFIX."c_currencies";
 $tabname[10]= MAIN_DB_PREFIX."c_tva";
 $tabname[11]= MAIN_DB_PREFIX."c_type_contact";
+$tabname[12]= MAIN_DB_PREFIX."cond_reglement";
 
 // Libellé des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -77,6 +78,7 @@ $tablib[8] = $langs->trans("DictionnaryCompanyType");
 $tablib[9] = $langs->trans("DictionnaryCurrency");
 $tablib[10]= $langs->trans("DictionnaryVAT");
 $tablib[11]= $langs->trans("DictionnaryTypeContact");
+$tablib[12]= $langs->trans("DictionnaryPaymentConditions");
 
 // Requete pour extraction des données des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -90,6 +92,7 @@ $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[9] = "SELECT code    as rowid, code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
+$tabsql[12]= "SELECT rowid   as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
 
 // Tri par defaut
 $tabsqlsort[1] ="pays, code ASC";
@@ -103,6 +106,7 @@ $tabsqlsort[8] ="libelle ASC";
 $tabsqlsort[9] ="code ASC";
 $tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC";
 $tabsqlsort[11]="element ASC, source ASC, code ASC";
+$tabsqlsort[12]="sortorder ASC, code ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -116,6 +120,7 @@ $tabfield[8] = "code,libelle";
 $tabfield[9] = "code,code_iso,libelle";
 $tabfield[10]= "pays,taux,recuperableonly,note";
 $tabfield[11]= "element,source,code,libelle";
+$tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -129,6 +134,7 @@ $tabfieldinsert[8] = "code,libelle";
 $tabfieldinsert[9] = "code,code_iso,libelle";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
+$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -142,6 +148,7 @@ $tabrowid[8] = "id";
 $tabrowid[9] = "code";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
+$tabrowid[12]= "rowid";
 
 
 $msg='';
@@ -339,8 +346,11 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='type')            $valuetoshow=$langs->trans("Type");
             if ($fieldlist[$field]=='code')            $valuetoshow=$langs->trans("Code");
             if ($fieldlist[$field]=='libelle')         $valuetoshow=$langs->trans("Label")."*"; 
+            if ($fieldlist[$field]=='libelle_facture') $valuetoshow=$langs->trans("LabelOnDocuments")."*"; 
             if ($fieldlist[$field]=='pays')            $valuetoshow=$langs->trans("Country");
             if ($fieldlist[$field]=='recuperableonly') $valuetoshow=$langs->trans("VATReceivedOnly");
+            if ($fieldlist[$field]=='nbjour')          $valuetoshow=$langs->trans("NbOfDays");
+            if ($fieldlist[$field]=='fdm')             $valuetoshow=$langs->trans("AtEndOfMonth");
             print '<td>';
             print $valuetoshow;
             print '</td>';
@@ -405,6 +415,14 @@ if ($_GET["id"])
                 $html->selectyesno('recuperableonly','',1);
                 print '</td>';
             }
+            elseif ($fieldlist[$field] == 'nbjour') {
+                print '<td><input type="text" class="flat" value="" size="3" name="'.$fieldlist[$field].'"></td>';
+            }
+            elseif ($fieldlist[$field] == 'fdm') {
+                print '<td>';
+                $html->selectyesno('fdm','',1);
+                print '</td>';
+            }
             else {
                 print '<td><input type="text" class="flat" value="" name="'.$fieldlist[$field].'"></td>';
             }
@@ -440,8 +458,11 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='type')            $valuetoshow=$langs->trans("Type");
                 if ($fieldlist[$field]=='code')            $valuetoshow=$langs->trans("Code");
                 if ($fieldlist[$field]=='libelle')         $valuetoshow=$langs->trans("Label")."*"; 
+                if ($fieldlist[$field]=='libelle_facture') $valuetoshow=$langs->trans("LabelOnDocuments")."*"; 
                 if ($fieldlist[$field]=='pays')            $valuetoshow=$langs->trans("Country");
                 if ($fieldlist[$field]=='recuperableonly') $valuetoshow=$langs->trans("VATReceivedOnly");
+                if ($fieldlist[$field]=='nbjour')          $valuetoshow=$langs->trans("NbOfDays");
+                if ($fieldlist[$field]=='fdm')             $valuetoshow=$langs->trans("AtEndOfMonth");
                 // Affiche nom du champ
                 print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield);
             }
@@ -463,6 +484,9 @@ if ($_GET["id"])
                         $valuetoshow=$langs->trans('All');
                     }
                     if ($fieldlist[$field]=='recuperableonly') {
+                        $valuetoshow=yn($valuetoshow);
+                    }
+                    if ($fieldlist[$field]=='fdm') {
                         $valuetoshow=yn($valuetoshow);
                     }
                     print '<td>'.$valuetoshow.'</td>';
