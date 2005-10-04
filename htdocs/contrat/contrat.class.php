@@ -193,7 +193,7 @@ class Contrat
      *    \param      langs     Environnement langue de l'utilisateur
      *    \param      conf      Environnement de configuration lors de l'opération
      */
-    function validate($user,$langs='',$conf='')
+    function validate($user,$langs,$conf)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
         $sql .= " WHERE rowid = ".$this->id . " AND statut = 0";

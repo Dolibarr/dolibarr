@@ -212,14 +212,14 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $result = $contrat->validate($user,$lang,$conf);
+    $result = $contrat->validate($user,$langs,$conf);
 }
 
 if ($_POST["action"] == 'confirm_close' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $result = $contrat->cloture($user,$lang,$conf);
+    $result = $contrat->cloture($user,$langs,$conf);
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
@@ -228,7 +228,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     {
         $contrat = new Contrat($db);
         $contrat->id = $_GET["id"];
-        $contrat->delete($user,$lang,$conf);
+        $contrat->delete($user,$langs,$conf);
         Header("Location: index.php");
         return;
     }
