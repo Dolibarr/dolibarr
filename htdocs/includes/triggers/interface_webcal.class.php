@@ -200,8 +200,8 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("InvoiceValidatedInDolibarr",$object->number);
-            $this->desc=$langs->trans("InvoiceValidatedInDolibarr",$object->number);
+            $this->texte=$langs->trans("InvoiceValidatedInDolibarr",$object->ref);
+            $this->desc=$langs->trans("InvoiceValidatedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("ValidatedBy").': '.$user->code;
         }
         if ($action == 'BILL_PAYED')
@@ -211,8 +211,8 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("InvoicePayedInDolibarr",$object->number);
-            $this->desc=$langs->trans("InvoicePayedInDolibarr",$object->number);
+            $this->texte=$langs->trans("InvoicePayedInDolibarr",$object->ref);
+            $this->desc=$langs->trans("InvoicePayedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("EditedBy").': '.$user->code;
         }
         if ($action == 'BILL_CANCELED')
@@ -222,8 +222,8 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("InvoiceCanceledInDolibarr",$object->number);
-            $this->desc=$langs->trans("InvoiceCanceledInDolibarr",$object->number);
+            $this->texte=$langs->trans("InvoiceCanceledInDolibarr",$object->ref);
+            $this->desc=$langs->trans("InvoiceCanceledInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("CanceledBy").': '.$user->code;
         }
 
