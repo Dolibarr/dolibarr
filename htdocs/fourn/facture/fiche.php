@@ -231,116 +231,119 @@ if ($_GET['action'] == 'add_ligne')
  *
  */
 
-if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
+if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 {
+	llxHeader();
 
-    llxHeader();
+	print_titre($langs->trans('NewBill'));
 
-    print_titre($langs->trans("NewBill"));
+	if ($mesg) { print $mesg.'<br>'; }
 
-    if ($mesg) { print "$mesg<br>"; }
+	if ($_GET['action'] == 'copy')
+	{
+		$fac_ori = new FactureFournisseur($db);
+		$fac_ori->fetch($_GET['facid']);
+	}
 
-    if ($_GET["action"] == 'copy')
-    {
-        $fac_ori = new FactureFournisseur($db);
-        $fac_ori->fetch($_GET["facid"]);
-    }
+	print '<form action="fiche.php" method="post">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<table class="border" width="100%">';
+	print '<tr><td>'.$langs->trans('Company').'</td>';
 
-    print '<form action="fiche.php" method="post">';
-    print '<input type="hidden" name="action" value="add">';
-    print '<table class="border" width="100%">';
-    print '<tr><td>'.$langs->trans("Company").'</td>';
+	print '<td>';
+	$html->select_societes(empty($_GET['socid'])?'':$_GET['socid'],'socidp','s.fournisseur = 1');
+/*
+	print '<td><select name="socidp">';
 
-    print '<td><select name="socidp">';
+	$sql = 'SELECT s.nom, s.prefix_comm, s.idp';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+	$sql .= ' WHERE s.fournisseur = 1';
+	if ($_GET['socid'] > 0 )
+	{
+		$sql .= ' AND s.idp ='.$_GET['socid'];
+	}
+	$sql .= ' ORDER BY s.nom ASC';
 
-    $sql = "SELECT s.nom, s.prefix_comm, s.idp";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-    $sql .= " WHERE s.fournisseur = 1";
-    if ($_GET["socid"] > 0 )
-    {
-        $sql .= " AND s.idp =".$_GET["socid"];
-    }
-    $sql .= " ORDER BY s.nom ASC";
+	if ( $db->query($sql) )
+	{
+		$num = $db->num_rows();
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object();
+			print '<option value="'.$obj->idp;
 
-    if ( $db->query($sql) )
-    {
-        $num = $db->num_rows();
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object();
-            print '<option value="'.$obj->idp;
+			if ($_GET['socid'] == $obj->idp)
+			{
+				print '" selected="true">'.$obj->nom.'</option>';
+			}
+			else
+			{
+				print '">'.$obj->nom.'</option>';
+			}
+			$i++;
+		}
+	}
+	print '</select></td>';
+*/
+	print '</td>';
+	print '<td>'.$langs->trans('Comments').'</td></tr>';
 
-            if ($_GET["socid"] == $obj->idp)
-            {
-                print '" selected="true">'.$obj->nom.'</option>';
-            }
-            else
-            {
-                print '">'.$obj->nom.'</option>';
-            }
-            $i++;
-        }
-    }
-    print '</select></td>';
-    print '<td>'.$langs->trans("Comments").'</td></tr>';
+	print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" type="text"></td>';
 
-    print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="facnumber" type="text"></td>';
+	print '<td rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
+	if ($_GET['action'] == 'copy')
+	{
+		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
+	}
+	else
+	{
+		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" type="text"></td></tr>';
+	}
+	print '<tr><td>'.$langs->trans('Date').'</td><td>';
+	$html->select_date();
+	print '</td></tr>';
 
-    print '<td rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
-    if ($_GET["action"] == 'copy')
-    {
-        print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="libelle" type="text"></td></tr>';
-    }
-    print '<tr><td>'.$langs->trans("Date").'</td><td>';
-    $html->select_date();
-    print '</td></tr>';
+	print '<tr><td>'.$langs->trans('DateEcheance').'</td><td>';
+	$html->select_date('','ech');
+	print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans("DateEcheance").'</td><td>';
-    $html->select_date('','ech');
-    print '</td></tr>';
+	print '</table><br>';
 
-    print "</table><br>";
+	print '<table class="border" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
+	print '<td align="center">'.$langs->trans('PriceUHT').'</td>';
+	print '<td align="center">'.$langs->trans('Qty').'</td>';
+	print '<td align="center">'.$langs->trans('VATRate').'</td>';
+	print '<td align="center">'.$langs->trans('PriceUTTC').'</td>';
+	print '</tr>';
 
-    print '<table class="border" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td>&nbsp;</td><td>'.$langs->trans("Label").'</td>';
-    print '<td align="center">'.$langs->trans("PriceUHT").'</td>';
-    print '<td align="center">'.$langs->trans("Qty").'</td>';
-    print '<td align="center">'.$langs->trans("VATRate").'</td>';
-    print '<td align="center">'.$langs->trans("PriceUTTC").'</td>';
-    print '</tr>';
+	for ($i = 1 ; $i < 9 ; $i++)
+	{
+		if ($_GET['action'] == 'copy')
+		{
+			$value_label = $fac_ori->lignes[$i-1][0];
+			$value_pu = $fac_ori->lignes[$i-1][1];
+			$value_qty = $fac_ori->lignes[$i-1][3];
+		}
+		else
+		{
+			$value_qty = '1';
+		}
+		print '<tr><td>'.$i.'</td>';
+		print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
+		print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
+		print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
+		print '<td align="center">';
+		$html->select_tva('tauxtva'.$i);
+		print '</td>';
+		print '<td align="center"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
+	}
 
-    for ($i = 1 ; $i < 9 ; $i++)
-    {
-        if ($_GET["action"] == 'copy')
-        {
-            $value_label = $fac_ori->lignes[$i-1][0];
-            $value_pu = $fac_ori->lignes[$i-1][1];
-            $value_qty = $fac_ori->lignes[$i-1][3];
-        }
-        else
-        {
-            $value_qty = "1";
-        }
-        print '<tr><td>'.$i.'</td>';
-        print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
-        print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
-        print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
-        print '<td align="center">';
-        $html->select_tva("tauxtva".$i);
-        print '</td>';
-        print '<td align="center"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
-    }
-
-    print "</table>";
-    print '<p align="center"><input type="submit" value="'.$langs->trans("Save").'"></p>';
-    print "</form>";
-
+	print '</table>';
+	print '<p align="center"><input type="submit" value="'.$langs->trans('Save').'"></p>';
+	print '</form>';
 }
 else
 {
@@ -487,13 +490,13 @@ else
             * Confirmation de la validation
             *
             */
-            if ($_GET["action"] == 'valid')
+            if ($_GET['action'] == 'valid')
             {
-                $html->form_confirm("fiche.php?facid=$fac->id",$langs->trans("ValidateBill"),$langs->trans("ConfirmValidateBill"),"confirm_valid");
+                $html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid');
                 print '<br />';
             }
 
-            print "<table border=\"0\" width=\"100%\">";
+            print '<table border="0" width="100%">';
             print '<tr><td width="50%" valign="top">';
 
             /*
