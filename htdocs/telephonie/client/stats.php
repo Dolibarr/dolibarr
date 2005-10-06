@@ -82,11 +82,7 @@ if ($_GET["id"])
 	  
 
 	  print '</table><br />';
-
-
 	  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-	  print '<tr><td width="50%" align="center">Chiffre d\'affaire</td>';
-	  print '<td width="50%" align="center">Gain</td></tr>';
 
 	  print '<tr><td width="50%" valign="top" align="center">';
 
@@ -118,10 +114,6 @@ if ($_GET["id"])
 	    }
 
 	  print '</td></tr>';
-
-
-	  print '<tr><td width="50%" align="center">Appels</td>';
-	  print '<td width="50%" align="center">Communications</td></tr>';
 
 	  print '<tr><td width="50%" valign="top" align="center">';
 
