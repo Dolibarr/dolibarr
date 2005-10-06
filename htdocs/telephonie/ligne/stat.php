@@ -36,7 +36,6 @@ if ($_GET["id"] or $_GET["numero"])
       $result = $ligne->fetch($_GET["numero"]);
     }
   
-  
   if ($result == 1)
     {
       $client_comm = new Societe($db);
@@ -116,8 +115,6 @@ if ($_GET["id"] or $_GET["numero"])
 	   */
 
 	  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-	  print '<tr><td width="50%" align="center">Chiffre d\'affaire</td>';
-	  print '<td width="50%" align="center">Gain</td></tr>';
 
 	  print '<tr><td width="50%" valign="top" align="center">';
 
@@ -150,9 +147,6 @@ if ($_GET["id"] or $_GET["numero"])
 
 	  print '</td></tr>';
 
-	  print '<tr><td width="50%" align="center">Appels</td>';
-	  print '<td width="50%" align="center">-</td></tr>';
-
 	  print '<tr><td width="50%" valign="top" align="center">';
 
 	  $file = $img_root.$ligne->id."/graphappelsdureemoyenne.png";
@@ -167,14 +161,8 @@ if ($_GET["id"] or $_GET["numero"])
 	    }
 
 	  print '</td><td width="50%" valign="top" align="center">';
-
 	  print "&nbsp;";
-
 	  print '</td></tr>';
-
-	  print '<tr><td width="50%" align="center">Communications</td>';
-	  print '<td width="50%" align="center">Minutes</td></tr>';
-
 	  print '<tr><td width="50%" valign="top" align="center">';
 
 	  $file = $img_root.$ligne->id."/nb-comm-mensuel.png";
