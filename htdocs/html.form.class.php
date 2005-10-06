@@ -1187,22 +1187,44 @@ class Form
 
     /**
      *      \brief      Selection du taux de tva
-     *      \param      name            Nom champ html
-     *      \param      defaulttx       Taux tva présélectionné
-     *      \param      default         Proposer ligne "Defaut"
+     *      \param      name                Nom champ html
+     *      \param      defaulttx           Taux tva présélectionné (deprecated)
+     *      \param      societe_vendeuse    Objet société vendeuse
+     *      \param      societe_acheteuse   Objet société acheteuse
+     *      \param      taux_produit        Taux produit vendue
+     *      \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
+     *                  Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
+     *                  Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
+     *                  Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
+     *                  Sinon la TVA proposée par défaut=0. Fin de règle.
      */
-    function select_tva($name='tauxtva', $defaulttx='', $default=0)
+    function select_tva($name='tauxtva', $defaulttx='', $societe_vendeuse, $societe_acheteuse, $taux_produit)
     {
         global $langs,$conf;
 
-        if (! $conf->global->MAIN_INFO_SOCIETE_PAYS)
+        // \todo Si pays vendeur non défini
+        if (1 == 2)
         {
-            print '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+            // \todo si pays vendeur = soi-même
+            if (1 == 1)
+            {
+                print '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+            }
+            else
+            {
+                print '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
+            }
         }
+        
+        // \todo Initialiser code_pays avec code_pays vendeur
+        $code_pays=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+
+        // \todo Ecraser defaulttx par valeur en fonction de la règle en remarks de la fonction
+        // $defaulttx=...
         
         $sql  = "SELECT t.taux,t.recuperableonly";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_tva AS t";
-        $sql .= " WHERE t.fk_pays = '".$conf->global->MAIN_INFO_SOCIETE_PAYS."'";
+        $sql .= " WHERE t.fk_pays = '".$code_pays."'";
         $sql .= " AND t.active = 1";
         $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
@@ -1216,17 +1238,8 @@ class Form
                 $libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
             }
         }
-        else
-        {
-            $txtva[0] = '19.6';
-            $libtva[0] = '19.6%';
-            $txtva[1] = '5.5';
-            $libtva[1] = '5.5%';
-            $txtva[2] = '0';
-            $libtva[2] = '0%';
-        }
 
-        if ($defaulttx == '')
+        if ($defaulttx == '')   // Si taux par defaut n'a pu etre trouvé
         {
             $defaulttx = $txtva[0];
         }
