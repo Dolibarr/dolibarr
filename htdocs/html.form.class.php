@@ -1198,7 +1198,7 @@ class Form
      *                  Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
      *                  Sinon la TVA proposée par défaut=0. Fin de règle.
      */
-    function select_tva($name='tauxtva', $defaulttx='', $societe_vendeuse, $societe_acheteuse, $taux_produit)
+    function select_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
     {
         global $langs,$conf;
 
