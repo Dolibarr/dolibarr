@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -68,7 +67,7 @@ class mod_facture_lune extends ModeleNumRefFactures
       $date = strftime("%y%m", $fac->date);
       $num=0;
       
-      $sql = "SELECT max(0+substring(facnumber,8)) FROM ".MAIN_DB_PREFIX."facture";
+      $sql = "SELECT max(0+substring(facnumber,6,8)) FROM ".MAIN_DB_PREFIX."facture";
       $sql .= " WHERE facnumber like '$prefix".$date."%'";
     
       if ( $db->query($sql) ) 
