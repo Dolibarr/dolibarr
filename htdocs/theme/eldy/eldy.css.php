@@ -47,7 +47,7 @@ a:active  { font: verdana, arial, helvetica, sans-serif; font-weight: bold; colo
 a:hover   { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
 { 
-    font: helvetica, verdana, arial, sans-serif; 
+    font: 12px helvetica, verdana, arial, sans-serif; 
     background: #FDFDFD;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
@@ -62,17 +62,21 @@ input.flat
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-    font: helvetica, verdana, arial, sans-serif;
+    font: 12px helvetica, verdana, arial, sans-serif;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
 { 
-    font: helvetica, verdana, arial, sans-serif;
+    font: 12px helvetica, verdana, arial, sans-serif;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+select.flat
+{
+    font: 12px helvetica, verdana, arial, sans-serif;
 }
 .button  {
     font: 12px helvetica, verdana, arial, sans-serif;

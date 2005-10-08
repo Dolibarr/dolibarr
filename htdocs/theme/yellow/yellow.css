@@ -40,8 +40,30 @@ a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; colo
 a:visited { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:active  { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
-input     { font: helvetica, verdana, arial, sans-serif; }
-textarea  { font: helvetica, verdana, arial, sans-serif; }
+input {
+    font: helvetica, verdana, arial, sans-serif; 
+    border: 1px solid #ccd7e0;
+}
+input.flat {
+    font: helvetica, verdana, arial, sans-serif; 
+    border: 1px solid #ccd7e0;
+}
+.flat  {
+	font-family: arial,verdana,helvetica, sans-serif;
+	font-size: 100%;
+	font-weight: normal;
+	border: 1px solid #ccd7e0;
+	background-image : url(img/button_bg.png);
+	background-position : bottom;
+}
+textarea  {
+    font: helvetica, verdana, arial, sans-serif;
+    border: 1px solid #ccd7e0;
+}
+textarea.flat  {
+    font: helvetica, verdana, arial, sans-serif;
+    border: 1px solid #ccd7e0;
+}
 .button  {
 	font-family: arial,verdana,helvetica, sans-serif;
 	font-size: 100%;
@@ -263,16 +285,6 @@ div.help
 	text-decoration: none;
     padding: 3px;
     margin: 1px 0px 0px 0px;
-}
-
-
-.flat  {
-	font-family: arial,verdana,helvetica, sans-serif;
-	font-size: 100%;
-	font-weight: normal;
-	border: 1px solid #ccd7e0;
-	background-image : url(img/button_bg.png);
-	background-position : bottom;
 }
 
 td.barre { 
@@ -670,11 +682,6 @@ tr.fiche {
 /*
  * Widgets standard
  */
-
-input.flat
-{ 
-  border: 0
- }
 
 td.delete { 
             background: red;
