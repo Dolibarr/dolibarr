@@ -864,7 +864,10 @@ function loginfunction()
     print '</head>'."\n";
     print '<body class="body" onload="donnefocus();">';
     
-    print '<form id="login" method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
+    print '<form id="login" method="post" action="';
+    print $_SERVER['PHP_SELF'];
+    print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
+    print '" name="identification">';
     
     print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">';
     
