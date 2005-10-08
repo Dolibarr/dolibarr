@@ -411,4 +411,5 @@ $bc[1]="class=\"pair\"";
 $yesno[0]="no";
 $yesno[1]="yes";
 
+if ( ! defined('MENTION_NPR') ) define('MENTION_NPR','(npr)');
 ?>
