@@ -161,9 +161,9 @@ if ($_POST["action"] == 'update')
     {
         $action = new Actioncomm($db);
         $action->fetch($_POST["id"]);
-        $action->percent     = $_POST["percent"];
-        $action->contact->id = $_POST["contactid"];
-        $action->note        = $_POST["note"];
+        $action->percent     = stripslashes($_POST["percent"]);
+        $action->contact->id = stripslashes($_POST["contactid"]);
+        $action->note        = stripslashes($_POST["note"]);
         $action->update();
     }
         
@@ -462,7 +462,7 @@ if ($_GET["id"])
 
         // Note
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-        print '<textarea cols="60" rows="6" name="note">'.nl2br($act->note).'</textarea></td></tr>';
+        print '<textarea cols="60" rows="6" name="note">'.$act->note.'</textarea></td></tr>';
 
         print '<tr><td align="center" colspan="4"><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
         print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
