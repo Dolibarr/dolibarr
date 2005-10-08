@@ -26,4 +26,4 @@
 DELETE llx_user_rights FROM llx_user_rights LEFT JOIN llx_user ON llx_user_rights.fk_user = llx_user.rowid WHERE llx_user.rowid IS NULL;
 
 
-ALTER TABLE llx_user_rights ADD FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
+ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);

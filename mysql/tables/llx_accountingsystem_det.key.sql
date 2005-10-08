@@ -25,4 +25,4 @@
 ALTER TABLE llx_accountingsystem_det ADD INDEX idx_accountingsystem_det_fk_pcg_version (fk_pcg_version);
 
 
-ALTER TABLE llx_accountingsystem_det ADD FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accountingsystem (pcg_version);
+ALTER TABLE llx_accountingsystem_det ADD CONSTRAINT fk_accountingsystem_det_fk_pcg_version  FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accountingsystem (pcg_version);
