@@ -348,7 +348,7 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='libelle')         $valuetoshow=$langs->trans("Label")."*"; 
             if ($fieldlist[$field]=='libelle_facture') $valuetoshow=$langs->trans("LabelOnDocuments")."*"; 
             if ($fieldlist[$field]=='pays')            $valuetoshow=$langs->trans("Country");
-            if ($fieldlist[$field]=='recuperableonly') $valuetoshow=$langs->trans("VATReceivedOnly");
+            if ($fieldlist[$field]=='recuperableonly') $valuetoshow=MENTION_NPR;
             if ($fieldlist[$field]=='nbjour')          $valuetoshow=$langs->trans("NbOfDays");
             if ($fieldlist[$field]=='fdm')             $valuetoshow=$langs->trans("AtEndOfMonth");
             print '<td>';
@@ -460,7 +460,7 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='libelle')         $valuetoshow=$langs->trans("Label")."*"; 
                 if ($fieldlist[$field]=='libelle_facture') $valuetoshow=$langs->trans("LabelOnDocuments")."*"; 
                 if ($fieldlist[$field]=='pays')            $valuetoshow=$langs->trans("Country");
-                if ($fieldlist[$field]=='recuperableonly') $valuetoshow=$langs->trans("VATReceivedOnly");
+                if ($fieldlist[$field]=='recuperableonly') $valuetoshow=MENTION_NPR;
                 if ($fieldlist[$field]=='nbjour')          $valuetoshow=$langs->trans("NbOfDays");
                 if ($fieldlist[$field]=='fdm')             $valuetoshow=$langs->trans("AtEndOfMonth");
                 // Affiche nom du champ

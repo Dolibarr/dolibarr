@@ -65,12 +65,13 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if ($type == "f") { $text.=$langs->trans("Suppliers"); }
-if ($type == "c") { $text.=$langs->trans("Customers"); }
+$titre=$langs->trans("ListOfContacts");
+if ($type == "c") { $titre=$langs->trans("ListOfCustomersContacts"); }
+if ($type == "f") { $titre=$langs->trans("ListOfSuppliersContacts"); }
 if ($view == 'phone')  { $text="(Vue Téléphones)"; }
 if ($view == 'mail')   { $text="(Vue EMail)"; }
 if ($view == 'recent') { $text="(Récents)"; }
-$titre = $langs->trans("ListOfContacts")." $text";
+$titre = $titre." $text";
 
 if ($_POST["button_removefilter"])
 {

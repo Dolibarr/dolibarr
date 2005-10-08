@@ -137,7 +137,8 @@ if ($user->rights->facture->lire)
 	  $soc->fetch($socidp);
         }
       
-      print_barre_liste($langs->trans("BillsCustomersUnpayed")." ".($socidp?" $soc->nom":""),$page,"impayees.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      $titre=($socidp?$langs->trans("BillsCustomersUnpayedForCompany",$soc->nom):$langs->trans("BillsCustomersUnpayed"));
+      print_barre_liste($titre,$page,"impayees.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
       $i = 0;
       print '<table class="liste" width="100%">';
       print '<tr class="liste_titre">';

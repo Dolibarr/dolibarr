@@ -29,12 +29,19 @@
 
 require("./pre.inc.php");
 
+$user->getrights("facture");
 
-/*
- * Sécurité accés
- */
-if (!$user->admin && $user->societe_id > 0)
+
+// Sécurité accés
+if (! $user->rights->facture->lire)
   accessforbidden();
+
+$socidp=0;
+if ($user->societe_id > 0) 
+{
+    $action = '';
+    $socidp = $user->societe_id;
+}
 
 
 
@@ -64,7 +71,8 @@ llxHeader();
  * Affichage liste des paiements
  *
  */
-print_titre("Rapport paiements".($year?" $year":""));
+$titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
+print_titre($titre);
 
 // Formulaire de génération
 print '<br><form method="post" action="rapport.php?year='.$year.'">';

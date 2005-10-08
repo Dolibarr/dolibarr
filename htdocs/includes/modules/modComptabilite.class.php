@@ -87,55 +87,63 @@ class modComptabilite extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'compta';
+    $r=0;
+    
+    $r++;
+    $this->rights[$r][0] = 91;
+    $this->rights[$r][1] = 'Lire les charges';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 1;
+    $this->rights[$r][4] = 'charges';
+    $this->rights[$r][5] = 'lire';
 
-    $this->rights[1][0] = 91;
-    $this->rights[1][1] = 'Lire les charges';
-    $this->rights[1][2] = 'r';
-    $this->rights[1][3] = 1;
-    $this->rights[1][4] = 'charges';
-    $this->rights[1][5] = 'lire';
+    $r++;
+    $this->rights[$r][0] = 92;
+    $this->rights[$r][1] = 'Créer modifier les charges';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'charges';
+    $this->rights[$r][5] = 'creer';
 
-    $this->rights[2][0] = 92;
-    $this->rights[2][1] = 'Créer modifier les charges';
-    $this->rights[2][2] = 'w';
-    $this->rights[2][3] = 0;
-    $this->rights[2][4] = 'charges';
-    $this->rights[2][5] = 'creer';
+    $r++;
+    $this->rights[$r][0] = 93;
+    $this->rights[$r][1] = 'Supprimer les charges';
+    $this->rights[$r][2] = 'd';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'charges';
+    $this->rights[$r][5] = 'supprimer';
 
-    $this->rights[3][0] = 93;
-    $this->rights[3][1] = 'Supprimer les charges';
-    $this->rights[3][2] = 'd';
-    $this->rights[3][3] = 0;
-    $this->rights[3][4] = 'charges';
-    $this->rights[3][5] = 'supprimer';
+    $r++;
+    $this->rights[$r][0] = 95;
+    $this->rights[$r][1] = 'Lire CA, bilans, résultats';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 1;
+    $this->rights[$r][4] = 'resultat';
+    $this->rights[$r][5] = 'lire';
 
-    $this->rights[4][0] = 95;
-    $this->rights[4][1] = 'Lire CA, bilans, résultats';
-    $this->rights[4][2] = 'r';
-    $this->rights[4][3] = 1;
-    $this->rights[4][4] = 'resultat';
-    $this->rights[4][5] = 'lire';
+    $r++;
+    $this->rights[$r][0] = 96;
+    $this->rights[$r][1] = 'Paramétrer la ventilation';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'ventilation';
+    $this->rights[$r][5] = 'parametrer';
 
-    $this->rights[5][0] = 96;
-    $this->rights[5][1] = 'Paramétrer la ventilation';
-    $this->rights[5][2] = 'r';
-    $this->rights[5][3] = 0;
-    $this->rights[5][4] = 'ventilation';
-    $this->rights[5][5] = 'parametrer';
+    $r++;
+    $this->rights[$r][0] = 97;
+    $this->rights[$r][1] = 'Ventiler les lignes de facture';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'ventilation';
+    $this->rights[$r][5] = 'creer';
 
-    $this->rights[6][0] = 97;
-    $this->rights[6][1] = 'Ventiler les lignes de facture';
-    $this->rights[6][2] = 'r';
-    $this->rights[6][3] = 0;
-    $this->rights[6][4] = 'ventilation';
-    $this->rights[6][5] = 'creer';
-
-    $this->rights[7][0] = 98;
-    $this->rights[7][1] = "Accès à l'espace compta/tréso";
-    $this->rights[7][2] = 'r';
-    $this->rights[7][3] = 0;
-    $this->rights[7][4] = 'general';
-    $this->rights[7][5] = 'lire';
+    $r++;
+    $this->rights[$r][0] = 98;
+    $this->rights[$r][1] = "Accès à l'espace compta/tréso";
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'general';
+    $this->rights[$r][5] = 'lire';
 
   }
 

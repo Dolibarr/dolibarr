@@ -18,26 +18,31 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
-   \file       htdocs/compta/paiement/avalider.php
-   \ingroup    compta
-   \brief      Page liste des paiements a valider des factures clients
-   \version    $Revision$
+        \file       htdocs/compta/paiement/avalider.php
+        \ingroup    compta
+        \brief      Page liste des paiements a valider des factures clients
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
 
-/*
- * Sécurité accés client
- */
+$user->getrights("facture");
+
+
+// Sécurité accés client
+if (! $user->rights->facture->lire)
+  accessforbidden();
+
+$socidp=0;
 if ($user->societe_id > 0) 
 {
-  $action = '';
-  $socidp = $user->societe_id;
+    $action = '';
+    $socidp = $user->societe_id;
 }
+
 
 /*
  * Affichage
@@ -48,67 +53,72 @@ llxHeader();
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-
-if ($page == -1)
-  $page = 0 ;
-  
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
+if ($page == -1) $page = 0 ;
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
   
 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount, p.statut";
 $sql .=", c.libelle as paiement_type, p.num_paiement";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
+if ($socidp)
+{
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
+}
 $sql .= " WHERE p.fk_paiement = c.id";
+if ($socidp)
+{
+    $sql.= " AND f.fk_soc = ".$socidp;
+}
 $sql .= " AND p.statut = 0";
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit( $limit +1 ,$offset);
-$result = $db->query($sql);
+$resql = $db->query($sql);
 
-if ($result)
+if ($resql)
 {
-  $num = $db->num_rows();
-  $i = 0; 
-  $var=True;
-  
-  print_barre_liste("Paiements clients a valider", $page, "avalider.php","",$sortfield,$sortorder,'',$num);
-  
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"avalider.php","p.rowid","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"avalider.php","dp","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Type"),"avalider.php","c.libelle","","","",$sortfield);
-  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-  print "<td>&nbsp;</td>";
-  print "</tr>\n";
-  
-  while ($i < min($num,$limit))
+    $num = $db->num_rows($resql);
+    $i = 0;
+    $var=True;
+
+    print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, "avalider.php","",$sortfield,$sortorder,'',$num);
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),"avalider.php","p.rowid","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Date"),"avalider.php","dp","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Type"),"avalider.php","c.libelle","","","",$sortfield);
+    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+    print "<td>&nbsp;</td>";
+    print "</tr>\n";
+
+    while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td>'.'<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
-      print '<td>'.dolibarr_print_date($objp->dp)."</td>\n";
-      print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-      print '<td align="right">'.price($objp->amount).'</td>';
-      print '<td align="center">';
+        $objp = $db->fetch_object($resql);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td>'.'<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
+        print '<td>'.dolibarr_print_date($objp->dp)."</td>\n";
+        print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+        print '<td align="right">'.price($objp->amount).'</td>';
+        print '<td align="center">';
 
-      if ($objp->statut == 0)
-	{
-	  print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">A valider</a>';
-	}
-      else
-	{
-	  print "-";
-	}
+        if ($objp->statut == 0)
+        {
+            print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("ToValid").'</a>';
+        }
+        else
+        {
+            print "-";
+        }
 
-      print '</td>';	
-      print "</tr>";
-      $i++;
+        print '</td>';
+        print "</tr>";
+        $i++;
     }
-  print "</table>";
+    print "</table>";
 }
 
 $db->close();

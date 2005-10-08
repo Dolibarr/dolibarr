@@ -31,8 +31,13 @@ require("./pre.inc.php");
 
 $langs->load("bills");
 
+$user->getrights("facture");
 
 // Sécurité accés client
+if (! $user->rights->facture->lire)
+  accessforbidden();
+
+$socidp=0;
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -63,8 +68,16 @@ $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
 $sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+if ($socidp)
+{
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
+}
 $sql.= " WHERE p.fk_paiement = c.id";
-
+if ($socidp)
+{
+    $sql.= " AND f.fk_soc = ".$socidp;
+}
 if ($_GET["search_montant"])
 {
   $sql .=" AND p.amount=".ereg_replace(",",".",$_GET["search_montant"]);
@@ -90,67 +103,67 @@ $resql = $db->query($sql);
 
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0; 
-  $var=True;
-  
-  $paramlist=($_GET["orphelins"]?"&orphelins=1":"");
-  print_barre_liste($langs->trans("ReceivedPayments"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
-  
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
-  print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield);
-  print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="center"',$sortfield);
-  print "</tr>\n";
-  
+    $num = $db->num_rows($resql);
+    $i = 0;
+    $var=True;
 
-  // Lignes des champs de filtre
-  print '<form method="get" action="liste.php">';
-  print '<tr class="liste_titre">';
-  print '<td colspan="4">&nbsp;</td>';
+    $paramlist=($_GET["orphelins"]?"&orphelins=1":"");
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
 
-  print '<td align="right">';
-  print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
-
-  print '</td><td align="center">';
-  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-  print '</td>';
-  print "</tr>\n";
-  print '</form>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
+    print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
+    print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield);
+    print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="center"',$sortfield);
+    print "</tr>\n";
 
 
-  while ($i < min($num,$limit))
+    // Lignes des champs de filtre
+    print '<form method="get" action="liste.php">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="4">&nbsp;</td>';
+
+    print '<td align="right">';
+    print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
+
+    print '</td><td align="right">';
+    print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+    print '</td>';
+    print "</tr>\n";
+    print '</form>';
+
+
+    while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object($resql);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td width="40"><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").'</a>';
+        $objp = $db->fetch_object($resql);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td width="40"><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").'</a>';
 
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
+        print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
 
-      print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
-      print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.$objp->label.'</a></td>';
-      print '<td align="right">'.price($objp->amount).'</td>';
-      print '<td align="center">';
+        print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
+        print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.$objp->label.'</a></td>';
+        print '<td align="right">'.price($objp->amount).'</td>';
+        print '<td align="center">';
 
-      if ($objp->statut == 0)
-	{
-	  print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("ToValidate").'</a>';
-	}
-      else
-	{
-	  print img_tick();
-	}
+        if ($objp->statut == 0)
+        {
+            print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("ToValidate").'</a>';
+        }
+        else
+        {
+            print img_tick();
+        }
 
-      print '</td></tr>';
-      $i++;
+        print '</td></tr>';
+        $i++;
     }
-  print "</table>";
+    print "</table>";
 }
 else
 {
