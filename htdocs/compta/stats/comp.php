@@ -212,7 +212,7 @@ function pt ($db, $sql, $year) {
     if ($num) {
       $beg = $obj->dm;
     } else {
-      $beg = 1 ;
+      $beg = 0 ;
     }
 
     if ($beg <= 12 ) {

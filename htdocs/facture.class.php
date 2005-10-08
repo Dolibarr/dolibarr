@@ -130,8 +130,9 @@ class Facture
 		if (! $this->projetid) $this->projetid = 'NULL';
 
 		$totalht = ($amount - $remise);
-		$tva = tva($totalht);
-		$total = $totalht + $tva;
+// NE ME SEMBLE PLUS JUSTIFIE ICI
+// 		$tva = tva($totalht);
+// 		$total = $totalht + $tva;
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture (facnumber, fk_soc, datec, amount, remise, remise_percent';
 		$sql .= ', datef, note, fk_user_author, fk_projet';
@@ -934,10 +935,17 @@ class Facture
 		{
 			// Nettoyage paramètres
 			if (strlen(trim($qty))==0) $qty=1;
-			$remise = 0;
+
+            if ($fk_product && ! $pu)
+            {
+                $prod = new Product($this->db, $fk_product);
+                $prod->fetch($fk_product);
+                $pu=$prod->price;    
+            }
 			$_price = $pu;
 			$subprice = $pu;
 
+			$remise = 0;
 			$remise_percent = trim($remise_percent);
 
 			if ($this->socidp)
@@ -972,14 +980,17 @@ class Facture
 			$subprice  = ereg_replace(',','.',$subprice);
 
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet ';
-			$sql .= ' (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
-			$sql .= " VALUES ($facid, '".addslashes($desc)."','$_price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
-			if ($datestart) { $sql.= "'$datestart', "; }
-			else { $sql.=' null, '; }
-			if ($dateend) { $sql.= "'$dateend' "; }
-			else { $sql.=' null '; }
-			$sql .= ','.$ventil;
-			$sql .=','.($rangmax + 1).')';
+			$sql.= ' (fk_facture, description, price, qty, tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
+			$sql.= " VALUES ($facid, '".addslashes($desc)."','$_price','$qty','$txtva',";
+			if ($fk_product) { $sql.= "'$fk_product',"; }
+			else { $sql.='0,'; }
+			$sql.= " '$remise_percent','$subprice','$remise',";
+			if ($datestart) { $sql.= "'$datestart',"; }
+			else { $sql.='null,'; }
+			if ($dateend) { $sql.= "'$dateend'"; }
+			else { $sql.='null'; }
+			$sql.= ','.$ventil;
+			$sql.= ','.($rangmax + 1).')';
 			if ( $this->db->query( $sql) )
 			{
 				$this->updateprice($facid);

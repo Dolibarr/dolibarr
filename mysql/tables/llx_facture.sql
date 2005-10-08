@@ -28,13 +28,14 @@ create table llx_facture
   fk_soc              integer            NOT NULL,
   datec               datetime,  -- date de creation de la facture
   datef               date,      -- date de la facture
+  date_valid          date,      -- date de validation
   paye                smallint DEFAULT 0 NOT NULL,
   amount              real     DEFAULT 0 NOT NULL,
+  remise_percent      real     DEFAULT 0,   -- remise globale en pourcent
   remise              real     DEFAULT 0,
-  remise_percent      real     DEFAULT 0,
-  tva                 real     DEFAULT 0,
-  total               real     DEFAULT 0,
-  total_ttc           real     DEFAULT 0,
+  tva                 real     DEFAULT 0,   -- montant tva apres remise globale
+  total               real     DEFAULT 0,   -- montant total ht apres remise globale
+  total_ttc           real     DEFAULT 0,   -- montant total ttc apres remise globale
 
   fk_statut           smallint DEFAULT 0 NOT NULL,
 
@@ -43,11 +44,12 @@ create table llx_facture
 
   fk_projet           integer,   -- projet auquel est associée la facture
 
-  fk_cond_reglement   integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
-  fk_mode_reglement   integer,   -- mode de reglement (Virement, Prélèvement)
-  date_lim_reglement  date,      -- date limite de reglement
+  fk_cond_reglement   integer  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
+  fk_mode_reglement   integer,                      -- mode de reglement (Virement, Prélèvement)
+  date_lim_reglement  date,                         -- date limite de reglement
 
   note                text,
+  model               varchar(50),
 
   UNIQUE INDEX (facnumber)
 )type=innodb;

@@ -417,6 +417,8 @@ alter table llx_paiement add fk_user_creat integer;
 alter table llx_paiement add fk_user_modif integer;
 
 alter table llx_propal add fin_validite datetime ;
+alter table llx_propal add fk_cond_reglement integer after total;
+alter table llx_propal add fk_mode_reglement integer after total;
 
 alter table llx_entrepot add statut  tinyint default 1;
 alter table llx_entrepot add lieu    varchar(64);
@@ -1375,6 +1377,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'54','Socié
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'55','Société anonyme à conseil d\'administration');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'56','Société anonyme à directoire');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'57','Société par actions simplifiée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'58','Entreprise Unipersonnelle à Responsabilité Limitée (EURL)');
                                                                      
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'61','Caisse d\'épargne et de prévoyance');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Groupement d\'intérêt économique');
@@ -1848,7 +1851,9 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
                                                                                                     
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'projet',  'internal', 'PROJECTLEADER', 'Chef de Projet', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (81, 'projet',  'external', 'PROJECTLEADER', 'Chef de Projet', 1);
-	
+
 	
 alter table llx_commande add ref_client varchar(30) after ref;
 alter table llx_facture add ref_client varchar(30) after facnumber;
+alter table llx_facture add date_valid date after datef;
+alter table llx_facture add model varchar(50) after note;

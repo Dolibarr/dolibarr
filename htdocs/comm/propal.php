@@ -423,7 +423,7 @@ if ($_GET['propalid'] > 0)
    */
   if ($_GET['action'] == 'validate')
     {
-      $html->form_confirm('propal.php?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmvalidateProp'), 'confirm_validate');
+      $html->form_confirm('propal.php?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
       print '<br>';
     }
 
@@ -739,7 +739,7 @@ if ($_GET['propalid'] > 0)
                             print ' - '.stripslashes(nl2br($objp->product));
                             print '<br>';
                         }
-                        print '<textarea name="desc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
+                        print '<textarea name="desc" cols="50" rows="'.ROWS_2.'">'.stripslashes($objp->description).'</textarea></td>';
                         print '<td align="right">';
                         print $html->select_tva("tva_tx",$objp->tva_tx);
                         print '</td>';
@@ -798,9 +798,9 @@ if ($_GET['propalid'] > 0)
     
                 $var=true;
                 print '<tr '.$bc[$var].">\n";
-                print '  <td><textarea cols="50" name="np_desc" rows="1"></textarea></td>';
+                print '  <td><textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
                 print '  <td align="center">';
-                print $html->select_tva('np_tva_tx', $conf->defaulttx) . "</td>\n";
+                $html->select_tva('np_tva_tx', $conf->defaulttx) . "</td>\n";
                 print '  <td align="right"><input type="text" size="5" name="np_price"></td>';
                 print '  <td align="right"><input type="text" size="2" value="1" name="np_qty"></td>';
                 print '  <td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';
@@ -810,24 +810,27 @@ if ($_GET['propalid'] > 0)
                 print '</form>';
     
                 // Ajout de produits/services prédéfinis
-                print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-                print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
-                print '<input type="hidden" name="action" value="addligne">';
-    
-                $var=!$var;
-                print '<tr '.$bc[$var].'>';
-                print '<td colspan="2">';
-                $html->select_produits('','idprod','',20);
-                print '<br>';
-                print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
-                print '</td>';
-                print '<td>&nbsp;</td>';
-                print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-                print '<td align="right" nowrap><input type="text" size="2" name="remise" value="'.$societe->remise_client.'">%</td>';
-                print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne"></td>';
-                print "</tr>\n";
-    
-                print '</form>';
+                if ($conf->produit->enabled)
+                {
+                    print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+                    print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+                    print '<input type="hidden" name="action" value="addligne">';
+        
+                    $var=!$var;
+                    print '<tr '.$bc[$var].'>';
+                    print '<td colspan="2">';
+                    $html->select_produits('','idprod','',$conf->produit->limit_size);
+                    print '<br>';
+                    print '<textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+                    print '</td>';
+                    print '<td>&nbsp;</td>';
+                    print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
+                    print '<td align="right" nowrap><input type="text" size="2" name="remise" value="'.$societe->remise_client.'">%</td>';
+                    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne"></td>';
+                    print "</tr>\n";
+        
+                    print '</form>';
+                }
             }
     
             print '</table>';
@@ -848,7 +851,7 @@ if ($_GET['propalid'] > 0)
     {
       print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
       print '<table class="border" width="100%">';
-      print '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="60" rows="2" wrap="soft" name="note">';
+      print '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="60" rows="'.ROWS_3.'" wrap="soft" name="note">';
       print $propal->note;
       print '</textarea></td></tr>';
       print '<tr><td>'.$langs->trans("CloseAs").'</td><td>';

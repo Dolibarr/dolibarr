@@ -98,8 +98,9 @@ class FactureFournisseur
         
         if (! $remise) $remise = 0 ;
         $totalht = ($amount - $remise);
-        $tva = tva($totalht);
-        $total = $totalht + $tva;
+// NE ME SEMBLE PLUS JUSTIFIE ICI
+//        $tva = tva($totalht);
+//        $total = $totalht + $tva;
     
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ";
         $sql .= " VALUES ('".$number."','".addslashes($this->libelle)."',";
@@ -414,16 +415,10 @@ class FactureFournisseur
                 $total_tva = $row[1];
                 $total_ttc = $row[2];
     
-                if ($total_ht == '')
-                $total_ht = 0;
-    
-                if ($total_tva == '')
-                $total_tva = 0;
-    
-                if ($total_ttc == '')
-                $total_ttc = 0;
-    
             }
+            $total_ht  = $total_ht  != '' ? $total_ht  : 0;
+            $total_tva = $total_tva != '' ? $total_tva : 0;
+            $total_ttc = $total_ttc != '' ? $total_ttc : 0;
     
             $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
             $sql .= " total_ht = ". ereg_replace(",",".",$total_ht);

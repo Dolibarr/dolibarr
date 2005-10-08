@@ -335,7 +335,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->facture->creer)
 			$_POST['pu'],
 			$_POST['qty'],
 			$_POST['tva_tx'],
-			0,
+			$_POST['idprod'],
 			$_POST['remise_percent'],
 			$datestart,
 			$dateend
@@ -651,8 +651,10 @@ if ($_GET['action'] == 'create')
 	print '</td>';
 
 	// Notes
-	print '<td rowspan="5" valign="top">';
-	print '<textarea name="note" wrap="soft" cols="50" rows="4">';
+	$nbrows=4;
+    if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
+	print '<td rowspan="'.$nbrows.'" valign="top">';
+	print '<textarea name="note" wrap="soft" cols="50" rows="'.ROWS_5.'">';
 	if (is_object($propal))
 	{
 		print $propal->note;
@@ -691,10 +693,19 @@ if ($_GET['action'] == 'create')
 		print '<tr><td colspan="2">&nbsp;</td></tr>';
 	}
 
-	print '<tr><td>'.$langs->trans('RefCdeClient').'</td><td>';
-	print '<input type="text" name="ref_client" value="'.$ref_client.'">';
-	print '</td></tr>';
-
+    /*
+      \todo
+      L'info "Reference commande client" est une carac de la commande et non de la facture.
+      Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
+      Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF à 1.
+    */
+    if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+    {
+    	print '<tr><td>'.$langs->trans('RefCdeClient').'</td><td>';
+    	print '<input type="text" name="ref_client" value="'.$ref_client.'">';
+    	print '</td></tr>';
+    }
+    
 	if ($_GET['propalid'] > 0)
 	{
 		print '<input type="hidden" name="amount"         value="'.$propal->price.'">'."\n";
@@ -707,7 +718,7 @@ if ($_GET['action'] == 'create')
 		print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2">'.$propal->ref.'</td></tr>';
 		print '<tr><td>'.$langs->trans('GlobalDiscount').'</td><td colspan="2">'.$propal->remise_percent.'%</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($propal->price).'</td></tr>';
-		print '<tr><td>'.$langs->trans('VAT').'</td><td colspan="2">'.price($propal->tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($propal->tva)."</td></tr>";
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($propal->total)."</td></tr>";
 	}
 	elseif ($_GET['commandeid'] > 0)
@@ -718,7 +729,7 @@ if ($_GET['action'] == 'create')
 
 		print '<tr><td>'.$langs->trans('Order').'</td><td colspan="2">'.$commande->ref.'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('VAT').'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
 	}
 	elseif ($_GET['contratid'] > 0)
@@ -737,7 +748,7 @@ if ($_GET['action'] == 'create')
 
 		print '<tr><td>'.$langs->trans('Contract').'</td><td colspan="2">'.$contrat->ref.'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($contrat->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('VAT').'</td><td colspan="2">'.price($contrat->total_tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($contrat->total_tva)."</td></tr>";
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($contrat->total_ttc)."</td></tr>";
 	}
 	else
@@ -754,15 +765,15 @@ if ($_GET['action'] == 'create')
 		for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
 			print '<tr><td>';
-			$html->select_produits('','idprod'.$i);
+			$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
 			print '</td>';
 			print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-			print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
+			print '<td nowrap="nowrap"><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
 			print '<td>&nbsp;</td>';
 			// Si le module service est actif, on propose des dates de début et fin à la ligne
 			if ($conf->service->enabled)
 			{
-				print '<td>';
+				print '<td nowrap="nowrap">';
 				print 'Du ';
 				print $html->select_date('','date_start'.$i,0,0,1);
 				print '<br>au ';
@@ -1221,9 +1232,12 @@ else
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($_GET['action'] != 'classer') print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">';
-				print img_edit($langs->trans('SetProject'));
-				print '</a></td>';
+				if ($_GET['action'] != 'classer')
+				{
+				    print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">';
+				    print img_edit($langs->trans('SetProject'));
+				    print '</a></td>';
+				}
 				print '</tr></table>';
 				
 				print '</td><td colspan="3">';
@@ -1242,7 +1256,9 @@ else
 				print '<td>&nbsp;</td><td colspan="3">&nbsp;</td>';
 			}
 
-			print '<td rowspan="9" colspan="2" valign="top">';
+            $nbrows=8;
+            if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
+			print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
 			/*
 			 * Paiements
@@ -1316,25 +1332,35 @@ else
 			}
 			print '</tr>';
 
-			print '<tr><td>'.$langs->trans('RefCdeClient').'</td>';
-			if ($fac->brouillon == 1 && $user->rights->facture->creer)
-			{
-					print '<form action="facture.php?facid='.$fac->id.'" method="post">';
-					print '<input type="hidden" name="action" value="set_ref_client">';
-					print '<td colspan="3"><input type="text" name="ref_client" size="20" value="'.$fac->ref_client.'">';
-					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
-					print '</form>';
-			}
-			else
-			{
-				print '<td colspan="3">'.$fac->ref_client.'</td>';
-			}
+            /*
+              \todo
+              L'info "Reference commande client" est une carac de la commande et non de la facture.
+              Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
+              Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF à 1.
+            */
+            if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+            {
+			    print '<tr><td>'.$langs->trans('RefCdeClient').'</td>';
+
+    			if ($fac->brouillon == 1 && $user->rights->facture->creer)
+    			{
+    					print '<form action="facture.php?facid='.$fac->id.'" method="post">';
+    					print '<input type="hidden" name="action" value="set_ref_client">';
+    					print '<td colspan="3"><input type="text" name="ref_client" size="20" value="'.$fac->ref_client.'">';
+    					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
+    					print '</form>';
+    			}
+    			else
+    			{
+    				print '<td colspan="3">'.$fac->ref_client.'</td>';
+    			}
+            }
 
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right" colspan="2" nowrap><b>'.price($fac->total_ht).'</b></td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
-			print '<tr><td>'.$langs->trans('VAT').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_tva).'</td>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_tva).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
@@ -1474,7 +1500,7 @@ else
 							print ' - '.stripslashes(nl2br($objp->product));
 							print '<br>';
 						}
-						print '<textarea name="desc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
+						print '<textarea name="desc" cols="50" rows="'.ROWS_2.'">'.stripslashes($objp->description).'</textarea></td>';
 						print '<td align="right">';
 						print $html->select_tva('tva_tx',$objp->tva_taux);
 						print '</td>';
@@ -1513,7 +1539,6 @@ else
 			 */
 			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid')
 			{
-				print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans('Description').'</td>';
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
@@ -1524,16 +1549,18 @@ else
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
-				print '</tr>';
+				print "</tr>\n";
+
+                // Ajout produit produits/services personalisés
+				print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
 
-				$var=!$var;
-
+                $var=true;
 				print '<tr '.$bc[$var].'>';
-				print '<td><textarea name="desc" cols="50" rows="1"></textarea></td>';
+				print '<td><textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea></td>';
 				print '<td align="right">';
-				print $html->select_tva('tva_tx',$conf->defaulttx);
+				$html->select_tva('tva_tx',$conf->defaulttx);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
@@ -1551,9 +1578,39 @@ else
 					print '</tr>';
 				}
 				print '</form>';
+
+                // Ajout de produits/services prédéfinis
+                if ($conf->produit->enabled)
+                {
+    				print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
+    				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+    				print '<input type="hidden" name="action" value="addligne">';
+    
+                    $var=! $var;
+    				print '<tr '.$bc[$var].'>';
+    				print '<td colspan="2">';
+                    $html->select_produits('','idprod','',$conf->produit->limit_size);
+                    print '<br>';
+                    print '<textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea></td>';
+                    print '<td>&nbsp;</td>';
+    				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+    				print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
+    				print '<td align="center" valign="middle" rowspan="2" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+    				print '</tr>';
+    				if ($conf->service->enabled)
+    				{
+    					print '<tr '.$bc[$var].'>';
+    					print '<td colspan="5">Si produit de type service à durée limitée: Du ';
+    					print $html->select_date('','date_start',0,0,1);
+    					print ' au ';
+    					print $html->select_date('','date_end',0,0,1);
+    					print '</td>';
+    					print '</tr>';
+    				}
+    				print '</form>';
+                }
 			}
 			print "</table>\n";
-
 
 			print "</div>\n";
 
@@ -1719,7 +1776,10 @@ else
 						print '<table class="noborder" width="100%">';
 						print '<tr class="liste_titre">';
 						print '<td>'.$langs->trans('Ref').'</td>';
-						print '<td>'.$langs->trans('RefCdeClient').'</td>';
+                        if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+                        {
+            			    print '<td>'.$langs->trans('RefCdeClient').'</td>';
+                        }
 						print '<td align="center">'.$langs->trans('Date').'</td>';
 						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 						print '</tr>';

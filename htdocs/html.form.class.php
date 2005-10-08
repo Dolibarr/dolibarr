@@ -525,7 +525,7 @@ class Form
    *    \param      selected        Produit présélectionné
    *    \param      htmlname        Nom de la zone select
    *    \param      filtretype      Pour filtre sur type de produit
-   *    \param      limit           Limite sur le nombre de lignes retourné
+   *    \param      limit           Limite sur le nombre de lignes retournées
    */
     function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
     {

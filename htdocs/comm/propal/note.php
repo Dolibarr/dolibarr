@@ -106,30 +106,38 @@ if ($_GET['propalid'])
 
 			dolibarr_fiche_head($head, $hselected, $langs->trans("Proposal").": $propal->ref");
 
-			print '<table class="border" width="100%">';
+            print '<table class="border" width="100%">';
 
-			print '<tr><td>'.$langs->trans('Company').'</td><td>';
-			if ($societe->client == 1)
-			{
-				$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-			}
-			else
-			{
-				$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
-			}
-			print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-			print '<td>'.$langs->trans('Status').'</td><td align="left">'.$propal->statut_libelle.'</td></tr>';
-			print '<tr><td>'.$langs->trans('Date').'</td><td>';
-			print dolibarr_print_date($propal->date);
-			if ($propal->fin_validite)
-			{
-				print ' ('.dolibarr_print_date($propal->fin_validite).')';
-			}
-			print '</td>';
-			print '<td>'.$langs->trans('Author').'</td><td>';
-			$author = new User($db, $propal->user_author_id);
-			$author->fetch('');
-			print $author->fullname.'</td></tr>';
+            print '<tr><td>'.$langs->trans('Company').'</td><td>';
+            if ($societe->client == 1)
+            {
+                $url ='fiche.php?socid='.$societe->id;
+            }
+            else
+            {
+                $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
+            }
+            print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
+            print '<td align="left" width="25%">Conditions de réglement</td>';
+            print '<td width="25%">'.'&nbsp;'.'</td>';
+            print '</tr>';
+    
+            print '<tr><td>'.$langs->trans('Date').'</td><td>';
+            print dolibarr_print_date($propal->date,'%a %d %B %Y');
+            print '</td>';
+    
+            print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
+            if ($propal->fin_validite)
+            {
+                print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
+                if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+            }
+            else
+            {
+                print $langs->trans("Unknown");
+            }
+            print '</td>';
+            print '</tr>';
 
 			print '<tr><td valign="top" colspan="4">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
 

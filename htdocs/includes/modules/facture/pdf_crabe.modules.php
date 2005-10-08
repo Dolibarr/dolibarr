@@ -706,28 +706,31 @@ class pdf_crabe extends ModelePDFFactures
         }
 
         // Caractéristiques emetteur
-        $pdf->SetFont('Arial','',9);
+        $carac_emetteur = '';
         if (defined("FAC_PDF_ADRESSE"))
         {
-            $pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
+            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
         }
-        $pdf->MultiCell(80, 4, "\n");
+        $carac_emetteur .= "\n";
         if (defined("FAC_PDF_TEL") && FAC_PDF_TEL)
         {
-            $pdf->MultiCell(80, 4, $langs->trans("Phone").": ".FAC_PDF_TEL);
+            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".FAC_PDF_TEL;
         }
         if (defined("FAC_PDF_FAX") && FAC_PDF_FAX)
         {
-            $pdf->MultiCell(80, 4, $langs->trans("Fax").": ".FAC_PDF_FAX);
+            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".FAC_PDF_FAX;
         }
 		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL)
 		{
-			$pdf->MultiCell(80, 4, $langs->trans("Email").": ".FAC_PDF_MEL);
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".FAC_PDF_MEL;
 		}
 		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW)
 		{
-			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".FAC_PDF_WWW;
 		}
+        $pdf->SetFont('Arial','',9);
+        $pdf->SetXY(12,$posy+8);
+        $pdf->MultiCell(80,4, $carac_emetteur);
 
         // Client destinataire
         $posy=42;
