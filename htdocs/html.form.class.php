@@ -520,14 +520,15 @@ class Form
 		}
 	}
 
-  /**
-   *    \brief      Retourne la liste des produits
-   *    \param      selected        Produit présélectionné
-   *    \param      htmlname        Nom de la zone select
-   *    \param      filtretype      Pour filtre sur type de produit
-   *    \param      limit           Limite sur le nombre de lignes retournées
-   */
-    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
+    /**
+    *    \brief      Retourne la liste des produits
+    *    \param      selected        Produit présélectionné
+    *    \param      htmlname        Nom de la zone select
+    *    \param      filtretype      Pour filtre sur type de produit
+    *    \param      limit           Limite sur le nombre de lignes retournées
+    *    \param      filtre          Pour filtre
+    */
+    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$filtre)
     {
         global $langs,$conf;
     
@@ -535,6 +536,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
         $sql.= " WHERE p.envente = 1";
         if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+        if ($filtre) $sql.="$filtre";
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
     
@@ -565,6 +567,54 @@ class Form
         }
     }
   
+
+    /**
+    *    \brief      Retourne la liste des produits fournisseurs
+    *    \param      selected        Produit présélectionné
+    *    \param      htmlname        Nom de la zone select
+    *    \param      filtretype      Pour filtre sur type de produit
+    *    \param      limit           Limite sur le nombre de lignes retournées
+    *    \param      filtre          Pour filtre
+    */
+    function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
+    {
+        global $langs,$conf;
+    
+        $sql = "SELECT p.rowid, p.label, p.ref, p.price, (pf.price / pf.quantity) as priceunit, p.duration";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+        $sql .= " , ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
+        $sql.= " WHERE p.rowid = pf.fk_product AND pf.fk_soc = ".$socid;
+        if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+        if ($filtre) $sql.="$filtre";
+        $sql.= " ORDER BY p.ref DESC";
+    
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
+    
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $objp = $this->db->fetch_object($result);
+                $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label - ".round($objp->priceunit,4)." ".$langs->trans("Currency".$conf->monnaie)." / ".$langs->trans("Unit");
+                if ($objp->duration) $opt .= " - ".$objp->duration;
+                $opt .= "</option>\n";
+                print $opt;
+                $i++;
+            }
+            print '</select>';
+    
+            $this->db->free($result);
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+    }
+
 
     /**
      *      \brief      Charge dans cache la liste des conditions de paiements possibles
