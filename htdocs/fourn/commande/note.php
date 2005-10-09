@@ -76,7 +76,7 @@ if ($_GET["id"] > 0)
       
       $h = 0;
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("Order").": $commande->ref";
+      $head[$h][1] = $langs->trans("OrderCard");
       $h++;
 
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
@@ -85,10 +85,11 @@ if ($_GET["id"] > 0)
       $h++;
 
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("History");
+      $head[$h][1] = $langs->trans("OrderFollow");
       $h++;
 
-      dolibarr_fiche_head($head, $a, $soc->nom);	  
+      $title=$langs->trans("Order").": $commande->ref";
+      dolibarr_fiche_head($head, $a, $title);	  
       
 
       /*
@@ -98,11 +99,14 @@ if ($_GET["id"] > 0)
       print '<input type="hidden" name="action" value="updatenote">';
 
       print '<table class="border" width="100%">';
-      print "<tr><td>".$langs->trans("Supplier")."</td>";
-      print '<td colspan="2">';
+      print '<tr><td width="20%">'.$langs->trans("Supplier").'</td>';
+      print '<td colspan="3">';
       print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+      print '</tr>';
 	  
-      print '<td width="50%">';
+      print '<tr>';
+      print '<td>'.$langs->trans("Status").'</td>';
+      print '<td colspan="3">';
       print '<img src="statut'.$commande->statut.'.png">&nbsp;';
       print $commande->statuts[$commande->statut];
       print "</td></tr>";
@@ -124,8 +128,10 @@ if ($_GET["id"] > 0)
 	    }
 	  print "</td></tr>";
 	}
+      
+      // Auteur
       print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';	
-      print '<td>';
+      print '<td width="50%">';
       print "&nbsp;</td></tr>";
   
       // Ligne de 3 colonnes
@@ -134,15 +140,15 @@ if ($_GET["id"] > 0)
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
       print '<td valign="top">&nbsp;</td></tr>';
 
-      print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
+      print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
-      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
+      print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
 
 
       if ($user->rights->fournisseur->commande->creer)
 	{
-	  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3"><textarea cols="60" rows="10" name="note">'.nl2br($commande->note)."</textarea></td></tr>";
+	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3"><textarea cols="60" rows="10" name="note">'.nl2br($commande->note)."</textarea></td></tr>";
 	  print '<tr><td colspan="4" align="center"><input type="submit" class="button"></td></tr>';
 	}
       else

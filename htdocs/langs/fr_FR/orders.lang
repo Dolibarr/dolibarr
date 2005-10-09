@@ -2,6 +2,7 @@
 OrdersArea=Espace commandes
 Order=Commande
 Orders=Commandes
+OrderFollow=Suivi
 OrderDate=Date commande
 NewOrder=Nouvelle commande
 SupplierOrder=Commande fournisseur

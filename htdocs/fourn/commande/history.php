@@ -64,7 +64,7 @@ if ($_GET["id"] > 0)
       
       $h = 0;
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("Order").": $commande->ref";
+      $head[$h][1] = $langs->trans("OrderCard");
       $h++;
 
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
@@ -72,12 +72,13 @@ if ($_GET["id"] > 0)
       $h++;
 
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("History");
+      $head[$h][1] = $langs->trans("OrderFollow");
       $a = $h;
 
       $h++;
 
-      dolibarr_fiche_head($head, $a, $soc->nom);	  
+      $title=$langs->trans("Order").": $commande->ref";
+      dolibarr_fiche_head($head, $a, $title);	  
 
       
       /*
@@ -85,11 +86,12 @@ if ($_GET["id"] > 0)
        */
 
       print '<table class="border" width="100%">';
-      print "<tr><td>".$langs->trans("Supplier")."</td>";
-      print '<td colspan="2">';
+      print '<tr><td width="20%">'.$langs->trans("Supplier")."</td>";
+      print '<td colspan="3">';
       print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+	  print '</tr>';
 	  
-      print '<td width="50%">';
+      print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
       print '<img src="statut'.$commande->statut.'.png">&nbsp;';
       print $commande->statuts[$commande->statut];
       print "</td></tr>";
@@ -102,9 +104,9 @@ if ($_GET["id"] > 0)
 	  print "</td></tr>";
 	}
 
+      // Auteur
       print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
-	
-      print '<td>&nbsp;</td></tr>';  
+	  print '<td width="50%">&nbsp;</td></tr>';  
       print "</table>\n";
 
 	  
@@ -133,7 +135,7 @@ if ($_GET["id"] > 0)
                 $obj = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
         
-                print '<td width="20%">'.strftime("%a %d %B %Y %H:%M:%S",$obj->dl)."</td>\n";
+                print '<td width="20%">'.dolibarr_print_date($obj->dl,"%a %d %b %Y %H:%M:%S")."</td>\n";
         
                 print '<td width="10%"><img src="statut'.$obj->fk_statut.'.png">&nbsp;';
         

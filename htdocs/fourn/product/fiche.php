@@ -143,7 +143,6 @@ if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> $langs->trans("Cancel
       if ($product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]) > 0)
 	{
 	  $action = '';
-	  $mesg = $langs->trans("SupplierAdded");
 	}
       else
 	{
@@ -425,7 +424,6 @@ else
 		  print '</td></tr>';
 		}
 	      print "</table><br>\n";
-	      	      
 
           // Liste des fournisseurs
 	      print '<table class="noborder" width="100%">';
@@ -466,10 +464,10 @@ else
 		      print '<td align="center">'.$objp->quantity.'</td></tr>';
 		      $i++;
 		    }
-		  $db->free();
-		}
+		    $db->free();
+		    }
 	      print '</table>';
-	      print "<br></div>\n";
+	      print "</div>\n";
 
 
 	      /*
@@ -515,9 +513,7 @@ else
 	    }
      
 	  /*
-	   *
 	   * Fiche en mode edition
-	   *
 	   */
 	  if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
 	    {
@@ -525,7 +521,7 @@ else
 	      print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, "");
 	      
 	      if ($mesg) {
-		print '<br><div class="error">'.$mesg.'</div><br>';
+        		print '<br><div class="error">'.$mesg.'</div><br>';
 	      }
 	      
 	      print "<form action=\"fiche.php\" method=\"post\">\n";
@@ -536,7 +532,7 @@ else
 	      print '<td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 	      
 	      
-	      if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
+	      if ($product->type == 0 && $conf->stock->enabled)
 		{
 		  print "<tr>".'<td>Seuil stock</td><td colspan="2">';
 		  print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
@@ -571,6 +567,8 @@ else
 	      print '</table>';
 	      print '</form>';
 	    }
+	  
+	  
 	  
 	  
 	  /* ************************************************************************** */
@@ -619,5 +617,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
