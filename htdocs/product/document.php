@@ -142,13 +142,15 @@ if ($productid > 0)
     $h++;
 
     //erics: pour créer des produits composés de x 'sous' produits
+    /*
     $head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
     $head[$h][1] = $langs->trans('Packs');
     $h++;
+    */
 
-        $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
-        $head[$h][1] = $langs->trans('Referers');
-        $h++;
+    $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+    $head[$h][1] = $langs->trans('Referers');
+    $h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
 	$head[$h][1] = $langs->trans('Documents');
