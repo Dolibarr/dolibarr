@@ -642,13 +642,14 @@ alter table llx_mailing_cibles ADD UNIQUE uk_mailing_cibles (fk_mailing, email);
 --  tms             timestamp,
 --  datem           datetime,
 --  fk_product      integer NOT NULL,
---  fk_entrepot     integer NOT NULL,
 --  value           integer,
 --  type_mouvement  smallint,
 --  fk_user_author  integer,
 --  key(fk_product),
 --  key(fk_entrepot)
 --)type=innodb;
+
+alter table llx_stock_mouvement ADD fk_entrepot     integer NOT NULL after fk_product;
 
 
 create table llx_birthday_alert
