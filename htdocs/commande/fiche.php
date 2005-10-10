@@ -330,7 +330,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				for ($i = 1 ; $i <= $NBLINES ; $i++)
 				{
 					print '<tr><td>';
-					print $html->select_produits('','idprod'.$i);
+					print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
 					print '</td>';
 					print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 					print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="0">%</td></tr>';
@@ -806,7 +806,7 @@ else
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td colspan="2">';
-				$html->select_produits('','p_idprod','',20);
+				$html->select_produits('','p_idprod','',$conf->produit->limit_size);
 				print '<br>';
 				print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
 				print '</td>';

@@ -654,7 +654,7 @@ if ($_GET['action'] == 'create')
 	$nbrows=4;
     if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 	print '<td rowspan="'.$nbrows.'" valign="top">';
-	print '<textarea name="note" wrap="soft" cols="50" rows="'.ROWS_5.'">';
+	print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_5.'">';
 	if (is_object($propal))
 	{
 		print $propal->note;
@@ -1500,7 +1500,7 @@ else
 							print ' - '.stripslashes(nl2br($objp->product));
 							print '<br>';
 						}
-						print '<textarea name="desc" cols="50" rows="'.ROWS_2.'">'.stripslashes($objp->description).'</textarea></td>';
+						print '<textarea name="desc" cols="70" rows="'.ROWS_2.'">'.stripslashes($objp->description).'</textarea></td>';
 						print '<td align="right">';
 						print $html->select_tva('tva_tx',$objp->tva_taux);
 						print '</td>';
@@ -1558,7 +1558,7 @@ else
 
                 $var=true;
 				print '<tr '.$bc[$var].'>';
-				print '<td><textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea></td>';
+				print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 				print '<td align="right">';
 				$html->select_tva('tva_tx',$conf->defaulttx);
 				print '</td>';
@@ -1591,7 +1591,7 @@ else
     				print '<td colspan="2">';
                     $html->select_produits('','idprod','',$conf->produit->limit_size);
                     print '<br>';
-                    print '<textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea></td>';
+                    print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
                     print '<td>&nbsp;</td>';
     				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
     				print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
@@ -1790,14 +1790,24 @@ else
 							$var=!$var;
 							print '<tr '.$bc[$var].'><td>';
 							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
-							print '<td>'.$objp->ref_client.'</td>';
+                            if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+                            {
+    							print '<td>'.$objp->ref_client.'</td>';
+	                        }
 							print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
 							print '<td align="right">'.price($objp->total_ht).'</td>';
 							print "</tr>\n";
 							$total = $total + $objp->total_ht;
 							$i++;
 						}
-						print '<tr class="liste_total"><td>&nbsp;</td><td>&nbsp;</td><td align="left">'.$langs->trans('TotalHT').'</td><td align="right">'.price($total).'</td></tr>';
+						print '<tr class="liste_total">';
+						print '<td align="left">'.$langs->trans('TotalHT').'</td>';
+                        if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+                        {
+    						print '<td>&nbsp;</td>';
+	                    }
+   						print '<td>&nbsp;</td>';
+						print '<td align="right">'.price($total).'</td></tr>';
 						print '</table>';
 					}
 				}

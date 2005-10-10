@@ -806,7 +806,7 @@ else
 
             print "<tr $bc[$var]>";
             print '<td colspan="3">';
-            $html->select_produits('','p_idprod','',0);
+            $html->select_produits('','p_idprod','',$conf->produit->limit_size);
             print '<br>';
             print '<textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea>';
             print '</td>';

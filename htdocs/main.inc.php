@@ -130,6 +130,12 @@ if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
     }
 }
 
+$conf->produit->limit_size=50;
+if (isset($user->conf->PRODUIT_LIMIT_SIZE))
+{
+    $conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
+}
+
 // Remplace conf->css par valeur personnalisée
 if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 {
@@ -144,7 +150,7 @@ if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAV
     $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
-// Défini gestionnaire de manu à utiliser
+// Défini gestionnaire de menu à utiliser
 if (! $user->societe_id)    // Si utilisateur interne
 {
     $conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
