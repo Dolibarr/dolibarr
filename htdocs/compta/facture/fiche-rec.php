@@ -446,11 +446,9 @@ else
 
 		print "<tr $bc[$var]>";
 
-		$class = "normal";
-
-		print '<td><a class="'.$class.'" href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
+		print '<td><a href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 		print "</a></td>\n";
-		print '<td><a class="'.$class.'" href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		print '<td><a href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
 		print "<td align=\"right\">".price($objp->total)."</td>\n";
 		
