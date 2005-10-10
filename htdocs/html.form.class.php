@@ -526,9 +526,8 @@ class Form
     *    \param      htmlname        Nom de la zone select
     *    \param      filtretype      Pour filtre sur type de produit
     *    \param      limit           Limite sur le nombre de lignes retournées
-    *    \param      filtre          Pour filtre
     */
-    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$filtre)
+    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
     {
         global $langs,$conf;
     
@@ -536,7 +535,6 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
         $sql.= " WHERE p.envente = 1";
         if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-        if ($filtre) $sql.="$filtre";
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
     
