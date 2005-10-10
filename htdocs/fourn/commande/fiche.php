@@ -29,18 +29,20 @@
 */
 
 require("./pre.inc.php");
-
-if (!$user->rights->fournisseur->commande->lire) accessforbidden();
-
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
+if (!$user->rights->fournisseur->commande->lire) accessforbidden();
+
+
 // Sécurité accés client
+$socidp=0;
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
 
 /*
  *
@@ -74,28 +76,29 @@ if ($_POST["action"] == 'setremise' && $user->rights->commande->creer)
  */
 if ($_POST["action"] == 'addligne' && $user->rights->fournisseur->commande->creer) 
 {
-  $comf = new CommandeFournisseur($db);
-  $comf->fetch($_GET["id"]);
+    $comf = new CommandeFournisseur($db);
+    $comf->fetch($_GET["id"]);
 
-  if ($_POST["p_idprod"] > 0)
+    if ($_POST["p_idprod"] > 0)
     {
-      $result = $comf->addline("DESC",
-			       $_POST["pu"],
-			       $_POST["pqty"],
-			       $_POST["tva_tx"],
-			       $_POST["p_idprod"],
-			       $_POST["premise"]);
+        $result = $comf->addline($_POST["desc"],
+        $_POST["pu"],
+        $_POST["pqty"],
+        $_POST["tva_tx"],
+        $_POST["p_idprod"],
+        $_POST["premise"]);
     }
-  else
+    else
     {
-      $result = $comf->addline($_POST["desc"],
-			       $_POST["pu"],
-			       $_POST["qty"],
-			       $_POST["tva_tx"],
-			       0,
-			       $_POST["remise_percent"]);
+        $result = $comf->addline($_POST["desc"],
+        $_POST["pu"],
+        $_POST["qty"],
+        $_POST["tva_tx"],
+        0,
+        $_POST["remise_percent"]);
     }
     Header("Location: fiche.php?id=".$_GET["id"]);
+    exit;
 }
 
 if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer) 
@@ -122,25 +125,27 @@ if ($_GET["action"] == 'deleteline' && $user->rights->fournisseur->commande->cre
   $result = $comf->delete_line($_GET["lineid"]);
 }
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->fournisseur->commande->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->fournisseur->commande->valider)
 {
-  $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
-  $soc = new Societe($db);
-  $soc->fetch($commande->soc_id);
-  $result = $commande->valid($user);
-  Header("Location: fiche.php?id=".$_GET["id"]);
+    $commande = new CommandeFournisseur($db);
+    $commande->fetch($_GET["id"]);
+    $soc = new Societe($db);
+    $soc->fetch($commande->soc_id);
+    $result = $commande->valid($user);
+    Header("Location: fiche.php?id=".$_GET["id"]);
+    exit;
 }
 
-if ($_POST["action"] == 'confirm_approve' && $_POST["confirm"] == yes && $user->rights->fournisseur->commande->approuver)
+if ($_POST["action"] == 'confirm_approve' && $_POST["confirm"] == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
-  $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
-  $result = $commande->approve($user);
-  Header("Location: fiche.php?id=".$_GET["id"]);
+    $commande = new CommandeFournisseur($db);
+    $commande->fetch($_GET["id"]);
+    $result = $commande->approve($user);
+    Header("Location: fiche.php?id=".$_GET["id"]);
+    exit;    
 }
 
-if ($_POST["action"] == 'confirm_refuse' && $_POST["confirm"] == yes && $user->rights->fournisseur->commande->approuver)
+if ($_POST["action"] == 'confirm_refuse' && $_POST["confirm"] == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
   $commande = new CommandeFournisseur($db);
   $commande->fetch($_GET["id"]);
@@ -148,56 +153,66 @@ if ($_POST["action"] == 'confirm_refuse' && $_POST["confirm"] == yes && $user->r
   Header("Location: fiche.php?id=".$_GET["id"]);
 }
 
-if ($_POST["action"] == 'confirm_commande' && $_POST["confirm"] == yes && $user->rights->fournisseur->commande->commander)
+if ($_POST["action"] == 'confirm_commande' && $_POST["confirm"] == 'yes' && $user->rights->fournisseur->commande->commander)
 {
-  $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
-  $result = $commande->commande($user, $_GET["datecommande"], $_GET["methode"]);
-  Header("Location: fiche.php?id=".$_GET["id"]);
+    $commande = new CommandeFournisseur($db);
+    $commande->fetch($_GET["id"]);
+    $result = $commande->commande($user, $_GET["datecommande"], $_GET["methode"]);
+    Header("Location: fiche.php?id=".$_GET["id"]);
+    exit;
 }
 
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes && $user->rights->fournisseur->commande->creer )
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->fournisseur->commande->creer )
 {
-  $commande = new CommandeFournisseur($db);
-  $commande->id = $_GET["id"];
-  $commande->delete();
-  Header("Location: index.php");
+    $commande = new CommandeFournisseur($db);
+    $commande->id = $_GET["id"];
+    $commande->delete();
+    Header("Location: index.php");
+    exit;
 }
 
 if ($_POST["action"] == 'livraison' && $user->rights->fournisseur->commande->receptionner)
 {
-  $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
-
-  $date_liv = mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-
-  $result = $commande->Livraison($user, $date_liv, $_POST["type"]);
-  Header("Location: fiche.php?id=".$_GET["id"]);
+    $commande = new CommandeFournisseur($db);
+    $commande->fetch($_GET["id"]);
+    
+    $date_liv = mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+    
+    $result = $commande->Livraison($user, $date_liv, $_POST["type"]);
+    Header("Location: fiche.php?id=".$_GET["id"]);
+    exit;
 }
 
 
 if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == yes && $user->rights->fournisseur->commande->annuler)
 {
-  $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
-  $result = $commande->cancel($user);
-  Header("Location: fiche.php?id=".$_GET["id"]);
+    $commande = new CommandeFournisseur($db);
+    $commande->fetch($_GET["id"]);
+    $result = $commande->cancel($user);
+    Header("Location: fiche.php?id=".$_GET["id"]);
+    exit;
 }
 
 /*
  * Créé une commande
  */
-if ($_GET["action"] == 'create') 
+if ($_GET["action"] == 'create')
 {
 
-  $fourn = new Fournisseur($db);
-  $fourn->fetch($_GET["socid"]);
+    $fourn = new Fournisseur($db);
+    $fourn->fetch($_GET["socid"]);
 
-  if ($fourn->create_commande($user) == 0)
+    if ($fourn->create_commande($user) > 0)
     {
-      $idc = $fourn->single_open_commande;
-      Header("Location:fiche.php?id=".$idc);
+        $idc = $fourn->single_open_commande;
+        Header("Location:fiche.php?id=".$idc);
+        exit;
+    }
+    else
+    {
+        $mesg=$fourn->error;
+        print "x $mesg x";
     }
 }
 
@@ -305,7 +320,8 @@ if ($_GET["id"] > 0)
         print '<table class="border" width="100%">';
         print '<tr><td width="20%">'.$langs->trans("Supplier")."</td>";
         print '<td colspan="5">';
-        print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+        print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">';
+        print img_object($langs->trans("ShowSupplier"),'company').' '.$soc->nom.'</a></b></td>';
         print '</tr>';
         
         print '<tr>';
@@ -387,7 +403,7 @@ if ($_GET["id"] > 0)
             {
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
-                print "<td>".$objp->ref."</td>\n";
+                print '<td><a href="'.DOL_URL_ROOT.'/fourn/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</td>';
                 if ($objp->fk_product > 0)
                 {
                     print '<td>';
@@ -465,7 +481,7 @@ if ($_GET["id"] > 0)
             $html->select_produits_fournisseurs($commande->fourn_id,'','p_idprod',$filtre);
             print '</td>';
             print '<td align="center"><input type="text" size="2" name="pqty" value="1"></td>';
-            print '<td align="right"><input type="text" size="4" name="premise" value="0"> %</td>';
+            print '<td align="right"><input type="text" size="3" name="premise" value="0">%</td>';
             print '<td>&nbsp;</td>';
             print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
             print "</tr>\n";
@@ -476,54 +492,54 @@ if ($_GET["id"] > 0)
         print "</table>";
         print '</div>';
 
-        /*
+        /**
          * Boutons actions
          */
-      if ($user->societe_id == 0 && $commande->statut < 3 && $_GET["action"] <> 'valid')
-	{
-	  print '<div class="tabsAction">';
-	
-	  if ($commande->statut == 0 && $num_lignes > 0) 
-	    {
-	      if ($user->rights->fournisseur->commande->valider)
-		{
-		  print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
-		}
-	    }
-	    
-	  if ($commande->statut == 1) 
-	    {
-	      if ($user->rights->fournisseur->commande->annuler)
-		{
-		  print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-		}
-
-	      if ($user->rights->fournisseur->commande->approuver)
-		{
-		  print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
-
-		  print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
-		}
-	    }
-
-	  if ($commande->statut == 2) 
-	    {
-	      if ($user->rights->fournisseur->commande->approuver)
-		{
-		  print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
-		}
-	    }
-
-	  if ($commande->statut == 0) 
-	    {
-	      if ($user->rights->fournisseur->commande->creer)
-		{
-		  print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-		}
-	    }
-	    
-	  print "</div>";
-	}
+        if ($user->societe_id == 0 && $commande->statut < 3 && $_GET["action"] <> 'valid')
+        {
+            print '<div class="tabsAction">';
+        
+            if ($commande->statut == 0 && $num_lignes > 0)
+            {
+                if ($user->rights->fournisseur->commande->valider)
+                {
+                    print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+                }
+            }
+        
+            if ($commande->statut == 1)
+            {
+                if ($user->rights->fournisseur->commande->annuler)
+                {
+                    print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+                }
+        
+                if ($user->rights->fournisseur->commande->approuver)
+                {
+                    print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+        
+                    print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+                }
+            }
+        
+            if ($commande->statut == 2)
+            {
+                if ($user->rights->fournisseur->commande->approuver)
+                {
+                    print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+                }
+            }
+        
+            if ($commande->statut == 0)
+            {
+                if ($user->rights->fournisseur->commande->creer)
+                {
+                    print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                }
+            }
+        
+            print "</div>";
+        }
 
         /*
          * Documents générés

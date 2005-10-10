@@ -103,29 +103,32 @@ class Fournisseur extends Societe {
 
   }
 
-  function create_commande($user)
-  {
-    $result = -1;
-    dolibarr_syslog("Fournisseur::Create_Commande");
-    $comm = new CommandeFournisseur($this->db);
-    $comm->soc_id = $this->id;
 
-    if ( $comm->create($user) == 0 )
-      {
-	dolibarr_syslog("Fournisseur::Create_Commande : Success");
+    /**
+     *      \brief      Créé la commande au statut brouillon
+     *      \param      user        Utilisateur qui crée
+     *      \return     int         <0 si ko, id de la commande créée si ok
+     */
+    function create_commande($user)
+    {
+        dolibarr_syslog("Fournisseur::Create_Commande");
+        $comm = new CommandeFournisseur($this->db);
+        $comm->soc_id = $this->id;
+    
+        if ($comm->create($user) > 0)
+        {
+            dolibarr_syslog("Fournisseur::Create_Commande : Success");
+            $this->single_open_commande = $comm->id;
+    
+            return $comm->id;
+        }
+        else
+        {
+            dolibarr_syslog("Fournisseur::Create_Commande : Failed");
+            return -1;
+        }
+    }
 
-	$this->single_open_commande = $comm->id;
-
-	$result = 0;
-      }
-    else
-      {
-	dolibarr_syslog("Fournisseur::Create_Commande : Failed");
-	$result = -2;
-      }
-
-    return $result;
-  }
 
   function ProductCommande($user, $product_id)
   {

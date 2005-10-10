@@ -104,26 +104,26 @@ if ($_GET["id"] > 0)
 	  print "</td></tr>";
 	}
 
-      // Auteur
-      print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
-	  print '<td width="50%">&nbsp;</td></tr>';  
       print "</table>\n";
-
+      print "<br>";
 	  
-      /*
-       * Historique
-       *
-       */
-        echo '<br><table class="border" width="100%">';	  
+        /*
+         * Suivi historique
+         * Date - Statut - Auteur
+         */
+        print '<table class="noborder" width="100%">';	  
 
-        $sql = "SELECT l.fk_statut, ".$db->pdate("l.datelog") ."as dl, u.firstname, u.name";
+        print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td>';
+        print '<td>'.$langs->trans("Status").'</td><td>'.$langs->trans("Author").'</td>';
+        print '</tr>';
+
+        $sql = "SELECT l.fk_statut, ".$db->pdate("l.datelog") ."as dl, u.rowid, u.code, u.firstname, u.name";
         $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l ";
         $sql .= " , ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE l.fk_commande = ".$commande->id." AND u.rowid = l.fk_user";
         $sql .= " ORDER BY l.rowid DESC";
         
         $resql = $db->query($sql);
-
         if ($resql)
         {
             $num = $db->num_rows($resql);
@@ -132,22 +132,22 @@ if ($_GET["id"] > 0)
             $var=True;
             while ($i < $num)
             {
+                $var=!$var;
+
                 $obj = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
         
                 print '<td width="20%">'.dolibarr_print_date($obj->dl,"%a %d %b %Y %H:%M:%S")."</td>\n";
         
-                print '<td width="10%"><img src="statut'.$obj->fk_statut.'.png">&nbsp;';
+                print '<td width="100px"><img src="statut'.$obj->fk_statut.'.png">&nbsp;';
         
                 print $commande->statuts[$obj->fk_statut]."</td>\n";
         
-                print '<td width="70%">'.$obj->firstname. " " . $obj->name.'</td>';
-        
-                print "</tr>";
-        
+                print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+                print img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</td>';
+                print '</tr>';
         
                 $i++;
-                $var=!$var;
             }
             $db->free($resql);
         }
@@ -155,8 +155,8 @@ if ($_GET["id"] > 0)
         {
             dolibarr_print_error($db);
         }
-        
         print "</table>";
+        
         print '</div>';
     }
   else

@@ -123,20 +123,29 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
       return $result ;
 
     }
-  /**
-   * Log
-   *
-   */
-  function log($user, $statut, $datelog)
-    {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_log (datelog, fk_commande, fk_statut, fk_user)";
-      $sql .= " VALUES (".$this->db->idate($datelog).",".$this->id.", $statut, ".$user->id.")";
 
-      if ( $this->db->query($sql) )
-	{
-	  return 0;
-	}
+    /**
+     *      \brief      Insère ligne de log
+     *      \param      user        Utilisateur qui modifie la commande
+     *      \param      statut      Statut de la commande
+     *      \param      datelog     Date de modification
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function log($user, $statut, $datelog)
+    {
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_log (datelog, fk_commande, fk_statut, fk_user)";
+        $sql.= " VALUES (".$this->db->idate($datelog).",".$this->id.", $statut, ".$user->id.")";
+        
+        if ( $this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
     }
+
   /**
    * Valide la commande
    *
@@ -395,102 +404,123 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	}
       return $result ;
     }
-  /**
-   * Créé la commande
-   *
-   */
-  function create($user)
-    {
-      dolibarr_syslog("CommandeFournisseur::Create");
-      dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->soc_id);
-      /* On positionne en mode brouillon la commande */
-      $this->brouillon = 1;
-      
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (fk_soc, date_creation, fk_user_author, fk_statut) ";
-      $sql .= " VALUES (".$this->soc_id.", now(), ".$user->id.",0)";
-      
-      if ( $this->db->query($sql) )
-	{
-	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-	  if ($this->db->query($sql))
-	    {
-   
-	      /*
-	       *
-	       *
-	       */
-	      dolibarr_syslog("CommandeFournisseur::Create : Success");
-	      return 0;
-	    }
-	  else
-	    {
-	      dolibarr_syslog("CommandeFournisseur::Create : Failed 2");
-	      return -2;
-	    }
-	}
-      else
-	{
-	  dolibarr_syslog("CommandeFournisseur::Create : Failed 1");
-	  dolibarr_syslog("CommandeFournisseur::Create : ".$this->db->error());
-	  dolibarr_syslog("CommandeFournisseur::Create : ".$sql);
-	  return -1;
-	}
+    /**
+     *      \brief      Créé la commande au statut brouillon
+     *      \param      user        Utilisateur qui crée
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function create($user)
+    {
+        dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->soc_id);
+
+        $this->db->begin();
+        
+        /* On positionne en mode brouillon la commande */
+        $this->brouillon = 1;
+    
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (fk_soc, date_creation, fk_user_author, fk_statut) ";
+        $sql .= " VALUES (".$this->soc_id.", now(), ".$user->id.",0)";
+    
+        if ( $this->db->query($sql) )
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+            $sql.= " SET ref='(PROV".$this->id.")'";
+            $sql.= " WHERE rowid=".$this->id;
+            if ($this->db->query($sql))
+            {
+                // On logue creation pour historique   
+                $this->log($user, 0, time());
+                
+                dolibarr_syslog("CommandeFournisseur::Create : Success");
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error()." - ".$sql;
+                dolibarr_syslog("CommandeFournisseur::Create: Failed -2 - ".$this->error);
+                $this->db->rollback();
+                return -2;
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error()." - ".$sql;
+            dolibarr_syslog("CommandeFournisseur::Create: Failed -1 - ".$this->error);
+            $this->db->rollback();
+            return -1;
+        }
     }
-  /**
-   * Ajoute une ligne de commande
-   *
-   */
-  function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+
+    /**
+     *      \brief      Ajoute une ligne de commande
+     *      \param      desc            Description
+     *      \param      pu              Prix unitaire
+     *      \param      qty             Quantité
+     *      \param      txtva           Taux tva
+     *      \param      fk_product      Id produit
+     *      \param      remise_percent  Remise
+     *      \param      int             <0 si ko, >0 si ok
+     */
+    function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
-      $qty = ereg_replace(",",".",$qty);
-      $pu = ereg_replace(",",".",$pu);
+        $qty = ereg_replace(",",".",$qty);
+        $pu = ereg_replace(",",".",$pu);
+        $desc=trim($desc);
 
-      if ($this->brouillon && strlen(trim($desc)))
-	{
-	  if (strlen(trim($qty))==0)
-	    {
-	      $qty=1;
-	    }
+        dolibarr_syslog("Fournisseur_Commande.class.php::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+    
+        if ($this->brouillon)
+        {
+            $this->db->begin();
+            
+            if (strlen(trim($qty))==0)
+            {
+                $qty=1;
+            }
+    
+            if ($fk_product > 0)
+            {
+                $prod = new Product($this->db, $fk_product);
+                if ($prod->fetch($fk_product) > 0)
+                {
+                    $prod->get_buyprice($this->fourn_id,$qty);
 
-	  if ($fk_product > 0)
-	    {
-	      $prod = new Product($this->db, $fk_product);
-	      if ($prod->fetch($fk_product) > 0)
-		{
-		  $desc  = $prod->libelle;
-		  $txtva = $prod->tva_tx;
+                    $desc  = $prod->libelle;
+                    $txtva = $prod->tva_tx;
+                    $pu    = $prod->buyprice/$qty;
+                    $ref   = $prod->ref;
+                }
+            }
+    
+            $remise = 0;
+            $price = round(ereg_replace(",",".",$pu), 2);
+            $subprice = $price;
+            if (trim(strlen($remise_percent)) > 0)
+            {
+                $remise = round(($pu * $remise_percent / 100), 2);
+                $price = $pu - $remise;
+            }
+    
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
+            $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."','".$ref."') ;";
+    
+            if ( $this->db->query( $sql) )
+            {
+                $this->update_price();
 
-		  $prod->get_buyprice($this->fourn_id,$qty);
-
-		  $pu    = $prod->buyprice/$qty;
-		}
-	    }
-
-	  $remise = 0;
-	  $price = round(ereg_replace(",",".",$pu), 2);
-	  $subprice = $price;
-	  if (trim(strlen($remise_percent)) > 0)
-	    {
-	      $remise = round(($pu * $remise_percent / 100), 2);
-	      $price = $pu - $remise;
-	    }
-
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise, ref)";
-	  $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."','".$ref."') ;";
-
-	  if ( $this->db->query( $sql) )
-	    {
-	      $this->update_price();
-	      return 0;
-	    }
-	  else
-	    {
-
-	      return -1;
-	    }
-	}
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -1;
+            }
+        }
     }
 
   /**
