@@ -35,6 +35,37 @@ body
   
 }
 
+/***** Styles par défaut *****/
+input
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
+    background: #FDFDFD;
+    border: 1px solid #9CACAB;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+input.flat
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
+    background: #FDFDFD;
+    border: 1px solid #9CACAB;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+textarea  {
+    font: 12px helvetica, verdana, arial, sans-serif;
+    border: 1px solid #8C9C9B;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+textarea.flat
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
+    border: 1px solid #8C9C9B;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+
 /*
  * Onglets
  */
@@ -462,12 +493,6 @@ tr.fiche {
 /*
  * Widgets standard
  */
-input.flat
-{ 
-  border: 0
- }
-
-
 td.delete { 
             background: red;
             font-weight: bold; }

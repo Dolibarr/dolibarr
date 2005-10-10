@@ -41,7 +41,7 @@ a:active  { font: helvetica, verdana, arial, sans-serif; font-weight: bold; colo
 a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
 { 
-    font: helvetica, verdana, arial, sans-serif; 
+    font: 12px helvetica, verdana, arial, sans-serif; 
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0em 0em;
@@ -49,33 +49,31 @@ input
 }
 input.flat
 { 
-    font: helvetica, verdana, arial, sans-serif; 
+    font: 12px helvetica, verdana, arial, sans-serif; 
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0em 0em;
     margin: 0em 0em 0em 0em;
 }
 textarea  {
-    font: helvetica, verdana, arial, sans-serif;
+    font: 12px helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0em 0em;
     margin: 0em 0em 0em 0em;
 }
 textarea.flat  {
-    font: helvetica, verdana, arial, sans-serif;
+    font: 12px helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0em 0em;
     margin: 0em 0em 0em 0em;
 }
-.flat  {
-	font-family: arial,verdana,helvetica, sans-serif;
-	font-size: 100%;
-	font-weight: normal;
-	border: 1px solid #ccd7e0;
-	background-position : bottom;
+select.flat
+{
+    font: 12px helvetica, verdana, arial, sans-serif;
 }
+
 .button  {
 	font: 10px arial,verdana,helvetica, sans-serif;
 	font-size: 100%;

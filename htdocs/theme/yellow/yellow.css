@@ -41,29 +41,26 @@ a:visited { font: helvetica, verdana, arial, sans-serif; font-weight: bold; colo
 a:active  { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input {
-    font: helvetica, verdana, arial, sans-serif; 
-    border: 1px solid #ccd7e0;
+    font: 12px helvetica, verdana, arial, sans-serif; 
+    border: 1px solid #cccccc;
 }
 input.flat {
-    font: helvetica, verdana, arial, sans-serif; 
-    border: 1px solid #ccd7e0;
-}
-.flat  {
-	font-family: arial,verdana,helvetica, sans-serif;
-	font-size: 100%;
-	font-weight: normal;
-	border: 1px solid #ccd7e0;
-	background-image : url(img/button_bg.png);
-	background-position : bottom;
+    font: 12px helvetica, verdana, arial, sans-serif; 
+    border: 1px solid #cccccc;
 }
 textarea  {
-    font: helvetica, verdana, arial, sans-serif;
-    border: 1px solid #ccd7e0;
+    font: 12px helvetica, verdana, arial, sans-serif;
+    border: 1px solid #cccccc;
 }
 textarea.flat  {
-    font: helvetica, verdana, arial, sans-serif;
-    border: 1px solid #ccd7e0;
+    font: 12px helvetica, verdana, arial, sans-serif;
+    border: 1px solid #cccccc;
 }
+select.flat
+{
+    font: 12px helvetica, verdana, arial, sans-serif;
+}
+
 .button  {
 	font-family: arial,verdana,helvetica, sans-serif;
 	font-size: 100%;

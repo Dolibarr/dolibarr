@@ -28,6 +28,35 @@ body {
 }
 
 /***** Styles par défaut *****/
+textarea  {
+    font: 12px helvetica, verdana, arial, sans-serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+textarea.flat
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+input
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif; 
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+input.flat
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+select.flat
+{
+    font: 12px helvetica, verdana, arial, sans-serif;
+}
+
+
 div.body
 {
     margin-top: 1px;

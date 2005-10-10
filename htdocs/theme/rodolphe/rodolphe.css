@@ -40,8 +40,36 @@ a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; colo
 a:visited { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:active  { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
-input     { font: helvetica, verdana, arial, sans-serif; }
-textarea  { font: helvetica, verdana, arial, sans-serif; }
+textarea  {
+    font: 12px helvetica, verdana, arial, sans-serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+textarea.flat
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    border: 0px;
+}
+input
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif; 
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+input.flat
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    border: 0px;
+}
+select.flat
+{
+    font: 12px helvetica, verdana, arial, sans-serif;
+}
+
 .button  {
 	font-family: arial,verdana,helvetica, sans-serif;
 	font-size: 100%;
@@ -264,15 +292,6 @@ div.help
     margin: 1px 0px 0px 0px;
 }
 
-
-.flat  {
-	font-family: arial,verdana,helvetica, sans-serif;
-	font-size: 100%;
-	font-weight: normal;
-	border: 1px solid #ccd7e0;
-	background-image : url(img/button_bg.png);
-	background-position : bottom;
-}
 
 td.barre { 
 	border-right: 1px solid #000000;
@@ -664,11 +683,6 @@ tr.fiche {
 /*
  * Widgets standard
  */
-
-input.flat
-{ 
-  border: 0
- }
 
 td.delete { 
             background: red;
