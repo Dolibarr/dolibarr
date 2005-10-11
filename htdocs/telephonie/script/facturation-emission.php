@@ -727,6 +727,12 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 
 	      $message .= "\nEgalement joint à ce mail le détails de vos communications.\n\n";
 
+	      // Ajout demandé par MJ
+	      $message .= "*Votre téléphone et votre bureau dans votre poche *\n";
+	      $message .= "*ibreizh* vous propose une solution de totale mobilité,   votre bureau de poche - accédez à vos applications métiers comme au bureau, vos mails en temps réel, mais aussi un *GPS* dans votre poche, une offre d'exception pour vous !...\n";
+	      $message .= "Information produit en Pièce Jointe, pour plus d'infos  Tel 0811 602 313\n\n";
+	      //
+
 	      $message .= TELEPHONIE_MAIL_FACTURATION_SIGNATURE;
 	      
 	      
@@ -742,6 +748,13 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	      $arr_mime = array();
 
 	      $facfile = FAC_OUTPUTDIR . "/" . $fact->ref . "/" . $fact->ref . ".pdf";
+
+	      /*
+	       * Joint le fichier commercial supplémentaire
+	       */
+	      array_push($arr_file, "/home/www/dolibarr/documents/hp65152.pdf");
+	      array_push($arr_mime, "application/pdf");
+	      array_push($arr_name, "hp65152.pdf");
 
 	      /*
 	       * Join la facture
