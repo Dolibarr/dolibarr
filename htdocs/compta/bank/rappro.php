@@ -216,28 +216,28 @@ if ($resql)
         }
       else
         {
-	  // Si pas encore rapproché
-	  if ($user->rights->banque->modifier)
+            // Si pas encore rapproch
+            if ($user->rights->banque->modifier)
             {
-	      print '<td align="center" width="30">';
-	      
-	      print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
-	      print img_edit();
-	      print '</a>&nbsp; &nbsp;';
-	      
-	      if ($objp->do <= mktime() ) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
-		print img_delete();
-		print "</a>";
-	      }
-	      else {
-		print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'après la date passée et que l'écriture apparaissent bien sur le compte.
-	      }
-	      print "</td>";
+                print '<td align="center" width="30">';
+            
+                print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
+                print img_edit();
+                print '</a>&nbsp; &nbsp;';
+            
+                if ($objp->do <= mktime() ) {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
+                    print img_delete();
+                    print '</a>';
+                }
+                else {
+                    print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'après la date passée et que l'écriture apparaissent bien sur le compte.
+                }
+                print "</td>";
             }
-	  else
+            else
             {
-	      print "<td align=\"center\">&nbsp;</td>";
+                print "<td align=\"center\">&nbsp;</td>";
             }
         }
       

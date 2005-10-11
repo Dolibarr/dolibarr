@@ -1193,7 +1193,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditions');
 			print '</td>';
-			if ($_GET['action'] != 'editconditions' && $fac->brouillon) print '<td align="right"><a href="facture.php?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions')).'</a></td>';
+			if ($_GET['action'] != 'editconditions' && $fac->brouillon) print '<td align="right"><a href="facture.php?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editconditions')
@@ -1209,7 +1209,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
-			if ($_GET['action'] != 'editmode' && $fac->brouillon) print '<td align="right"><a href="facture.php?action=editmode&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetMode')).'</a></td>';
+			if ($_GET['action'] != 'editmode' && $fac->brouillon) print '<td align="right"><a href="facture.php?action=editmode&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td width="25%">';
 			if ($_GET['action'] == 'editmode')
@@ -1235,7 +1235,7 @@ else
 				if ($_GET['action'] != 'classer')
 				{
 				    print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">';
-				    print img_edit($langs->trans('SetProject'));
+				    print img_edit($langs->trans('SetProject'),1);
 				    print '</a></td>';
 				}
 				print '</tr></table>';

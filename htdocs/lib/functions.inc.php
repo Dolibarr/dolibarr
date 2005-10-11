@@ -620,14 +620,17 @@ function img_edit_remove($alt = "default")
 /**
         \brief      Affiche logo editer/modifier fiche
         \param      alt         Texte sur le alt de l'image
+        \param      float       Si il faut y mettre le style "float: right"
         \return     string      Retourne tag img
 */
-function img_edit($alt = "default")
+function img_edit($alt = "default",$float=0)
 {
-  global $conf,$langs;
-  if ($alt=="default") $alt=$langs->trans("Modify");
-//  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" style="float: right">';
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Modify");
+    $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'"';
+    if ($float) $img.=' style="float: right"';
+    $img.='>';
+    return $img;
 }
 
 /**
@@ -670,13 +673,18 @@ function img_info($alt = "default")
 /**
         \brief      Affiche logo warning
         \param      alt         Texte sur le alt de l'image
+        \param      float       Si il faut afficher le style "float: right"
         \return     string      Retourne tag img
 */
-function img_warning($alt = "default")
+function img_warning($alt = "default",$float=0)
 {
-  global $conf,$langs;
-  if ($alt=="default") $alt=$langs->trans("Warning");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Warning");
+    $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'"';
+    if ($float) $img.=' style="float: right"';
+    $img.='>';
+    
+    return $img;
 }
 
 /**
