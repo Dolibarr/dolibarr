@@ -365,7 +365,7 @@ llxFooter('$Date$ - $Revision$');
  */
 function _print_lines($db,$result,$sql,$acct)
 {
-    global $bc, $nbline, $viewline, $user, $page;
+    global $langs, $bc, $nbline, $viewline, $user, $page;
     
     $var=true;
     $total=0;
@@ -395,18 +395,19 @@ function _print_lines($db,$result,$sql,$acct)
             print "<td nowrap>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
             print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
             print "<td nowrap>&nbsp;".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
-            print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
+            print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">'.$objp->label.'</a>';
 
             /*
              * Ajout les liens
              */
-            $urls_line = $acct->get_url($objp->rowid);
-            $numurl = sizeof($urls_line);
-            $k = 0;
-            while ($k < $numurl)
+            $links = $acct->get_url($objp->rowid);
+            foreach($links as $key=>$val)
             {
-                print ' <a href="'.$urls_line[$k][0].$urls_line[$k][1].'">'.$urls_line[$k][2].'</a>';
-                $k++;
+                print ' - ';
+                print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                // if ($links[$key]['type']=='payment') { print img_object($langs->trans('ShowPayment'),'payment').' '; }
+                // if ($links[$key]['type']=='company') { print img_object($langs->trans('ShowCustomer'),'company').' '; }
+                print $links[$key]['label'].'</a>';
             }
             print '</td>';
     

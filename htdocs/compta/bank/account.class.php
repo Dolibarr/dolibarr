@@ -121,25 +121,37 @@ class Account
         }
     }
 
-    /*
-     *
+    /**
+     *      \brief      Renvoi tableau des liens
+     *      \param      line_id         Id ligne écriture
+     *      \retuen     array           Tableau des liens
      */
     function get_url($line_id)
     {
         $lines = array();
-        $sql = "SELECT fk_bank, url_id, url, label FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank = $line_id";
+        $sql = "SELECT url_id, url, label, type";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank_url";
+        $sql.= " WHERE fk_bank = ".$line_id;
+        $sql.= " ORDER BY type, label";
+        
         $result = $this->db->query($sql);
-
         if ($result)
         {
             $i = 0;
-            $num = $this->db->num_rows();
+            $num = $this->db->num_rows($result);
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
+                // Anciens liens (pour compatibilité)
                 $lines[$i][0] = $obj->url;
                 $lines[$i][1] = $obj->url_id;
                 $lines[$i][2] = $obj->label;
+                $lines[$i][3] = $obj->type;
+                // Nouveaux liens
+                $lines[$i]['url'] = $obj->url;
+                $lines[$i]['url_id'] = $obj->url_id;
+                $lines[$i]['label'] = $obj->label;
+                $lines[$i]['type'] = $obj->type;
                 $i++;
             }
             return $lines;

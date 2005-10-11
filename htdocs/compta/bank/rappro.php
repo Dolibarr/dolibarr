@@ -122,109 +122,123 @@ $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, ".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rappro=0 AND fk_account=".$_GET["account"];
-$sql .= " ORDER BY dateo";
-$sql .= " ASC LIMIT ".$conf->liste_limit;
+$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql.= " WHERE rappro=0 AND fk_account=".$_GET["account"];
+$sql.= " ORDER BY dateo";
+$sql.= " ASC LIMIT ".$conf->liste_limit;
 
 $resql = $db->query($sql);
 if ($resql)
 {
-  $var=True;
-  $num = $db->num_rows($resql);
+    $var=True;
+    $num = $db->num_rows($resql);
 
-  print_titre('Rapprochement compte bancaire : <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
-  print '<br>';
-  
-  if ($msg) {
-    print "$msg<br><br>";
-  }
-  
-  // Affiche nom des derniers relevés
-  $nbmax=5;
-  $liste="";
-  
-  $sql = "SELECT distinct num_releve FROM ".MAIN_DB_PREFIX."bank";
-  $sql.= " WHERE fk_account=".$_GET["account"];
-  $sql.= " ORDER BY num_releve DESC";
-  $sql.= " LIMIT ".($nbmax+1);
-  print $langs->trans("LastAccountStatements").' : ';
-  $resqlr=$db->query($sql);
-  if ($resqlr)
-    {
-      $numr=$db->num_rows($resqlr);
-      $i=0;
-      while (($i < $numr) && ($i < $nbmax))
-	{
-	  $objr = $db->fetch_object($resqlr);
-	  $last_releve = $objr->num_releve;
-	  $i++;
-	  $liste='<a href="releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
-	}
-      if ($num >= $nbmax) $liste="... &nbsp; ".$liste;
-      print "$liste";
-      if ($num > 0) print '<br><br>';
-      else print $langs->trans("None").'<br><br>';
-        }
-  else
-    {
-      dolibarr_print_error($db);
+    print_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
+    print '<br>';
+
+    if ($msg) {
+        print "$msg<br><br>";
     }
-  
-  print '<table class="noborder" width="100%">';
-  print "<tr class=\"liste_titre\">\n";
-  print '<td>'.$langs->trans("Date").'</td>';
-  print '<td>'.$langs->trans("DateValue").'</td>';
-  print '<td>'.$langs->trans("Type").'</td>';
-  print '<td>'.$langs->trans("Description").'</td>';
-  print '<td align="right">'.$langs->trans("Debit").'</td>';
-  print '<td align="right">'.$langs->trans("Credit").'</td>';
-  print '<td align="center" width="60">'.$langs->trans("Action").'</td>';
-  print '<td align="center" width="100" colspan="2">'.$langs->trans("AccountStatement").' (Ex: YYYYMM)</td>';
-  print "</tr>\n";
-  
-  
-  $i = 0;
-  while ($i < $num)
+
+    // Affiche nom des derniers relevés
+    $nbmax=5;
+    $liste="";
+
+    $sql = "SELECT distinct num_releve FROM ".MAIN_DB_PREFIX."bank";
+    $sql.= " WHERE fk_account=".$_GET["account"];
+    $sql.= " ORDER BY num_releve DESC";
+    $sql.= " LIMIT ".($nbmax+1);
+    print $langs->trans("LastAccountStatements").' : ';
+    $resqlr=$db->query($sql);
+    if ($resqlr)
     {
-      $objp = $db->fetch_object($resql);
-      
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
-      print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
-      print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
-      print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
-      
-      print '<td nowrap>'.dolibarr_print_date($objp->do).'</td>';
-      print '<td nowrap>'.dolibarr_print_date($objp->dv).'</td>';
-      print '<td nowrap>'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
-      print '<td>'.$objp->label.'</td>';
-      
-      if ($objp->amount < 0)
+        $numr=$db->num_rows($resqlr);
+        $i=0;
+        while (($i < $numr) && ($i < $nbmax))
         {
-	  print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+            $objr = $db->fetch_object($resqlr);
+            $last_releve = $objr->num_releve;
+            $i++;
+            $liste='<a href="releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
-      else
+        if ($num >= $nbmax) $liste="... &nbsp; ".$liste;
+        print "$liste";
+        if ($num > 0) print '<br><br>';
+        else print $langs->trans("None").'<br><br>';
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
+
+    print '<table class="noborder" width="100%">';
+    print "<tr class=\"liste_titre\">\n";
+    print '<td>'.$langs->trans("Date").'</td>';
+    print '<td>'.$langs->trans("DateValue").'</td>';
+    print '<td>'.$langs->trans("Type").'</td>';
+    print '<td>'.$langs->trans("Description").'</td>';
+    print '<td align="right">'.$langs->trans("Debit").'</td>';
+    print '<td align="right">'.$langs->trans("Credit").'</td>';
+    print '<td align="center" width="60">'.$langs->trans("Action").'</td>';
+    print '<td align="center" width="100" colspan="2">'.$langs->trans("AccountStatement").' (Ex: YYYYMM)</td>';
+    print "</tr>\n";
+
+
+    $i = 0;
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($resql);
+
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
+        print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
+        print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
+        print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
+
+        print '<td nowrap>'.dolibarr_print_date($objp->do).'</td>';
+        print '<td nowrap>'.dolibarr_print_date($objp->dv).'</td>';
+        print '<td nowrap>'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
+        print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">'.$objp->label.'</a>';
+        /*
+         * Ajout les liens
+         */
+        $links = $acct->get_url($objp->rowid);
+        foreach($links as $key=>$val)
         {
-	  print "<td>&nbsp;</td><td align=\"right\" nowrap>".price($objp->amount)."</td>\n";
+            print ' - ';
+            print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+            // if ($links[$key]['type']=='payment') { print img_object($langs->trans('ShowPayment'),'payment').' '; }
+            // if ($links[$key]['type']=='company') { print img_object($langs->trans('ShowCustomer'),'company').' '; }
+            print $links[$key]['label'].'</a>';
         }
-      
-      if ($objp->rappro)
+        print '</td>';
+
+        if ($objp->amount < 0)
         {
-	  // Si ligne déjà rapprochée, on affiche relevé.
-	  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
+            print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
         }
-      else
+        else
         {
-            // Si pas encore rapproch
+            print "<td>&nbsp;</td><td align=\"right\" nowrap>".price($objp->amount)."</td>\n";
+        }
+
+        if ($objp->rappro)
+        {
+            // Si ligne déjà rapprochée, on affiche relevé.
+            print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
+        }
+        else
+        {
+            // Si pas encore rapprochée
             if ($user->rights->banque->modifier)
             {
                 print '<td align="center" width="30">';
-            
+
                 print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
                 print img_edit();
                 print '</a>&nbsp; &nbsp;';
-            
+
                 if ($objp->do <= mktime() ) {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
                     print img_delete();
@@ -240,39 +254,39 @@ if ($resql)
                 print "<td align=\"center\">&nbsp;</td>";
             }
         }
-      
-      
-      // Affiche bouton "Rapprocher"
-      if ($objp->do <= mktime() ) {
-	print "<td align=\"center\">";
-	print "<input class=\"flat\" name=\"num_releve\" type=\"text\" value=\"\" size=\"8\">";
-	if ($options)
-	  {
-	    print "<br><select name=\"cat1\">$options";
-	    print "</select>";
-	  }
-	print "</td>";
-	print "<td align=\"center\"><input class=\"button\" type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
-	print "</td>";
-      }
-      else
-	{
-	  print "<td align=\"left\" colspan=\"2\">";
-	  print "Ecriture future. Ne peut pas encore être rapprochée.";
-	  print "</td>";
-	}
-      
-      print "</tr>\n";      
-      print "</form>\n";
-      $i++;
+
+
+        // Affiche bouton "Rapprocher"
+        if ($objp->do <= mktime() ) {
+            print "<td align=\"center\">";
+            print "<input class=\"flat\" name=\"num_releve\" type=\"text\" value=\"\" size=\"8\">";
+            if ($options)
+            {
+                print "<br><select name=\"cat1\">$options";
+                print "</select>";
+            }
+            print "</td>";
+            print "<td align=\"center\"><input class=\"button\" type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
+            print "</td>";
+        }
+        else
+        {
+            print "<td align=\"left\" colspan=\"2\">";
+            print "Ecriture future. Ne peut pas encore être rapprochée.";
+            print "</td>";
+        }
+
+        print "</tr>\n";
+        print "</form>\n";
+        $i++;
     }
-  $db->free($resql);
-  
-  if ($num != 0)
+    $db->free($resql);
+
+    if ($num != 0)
     {
-      print "</table>\n";
+        print "</table><br>\n";
     }
-  
+
 }
 else
 {
