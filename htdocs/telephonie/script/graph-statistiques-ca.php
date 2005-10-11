@@ -18,10 +18,7 @@
  * $Id$
  * $Source$
  *
- *
  * Generation de graphiques
- *
- *
  *
  */
 require ("../../master.inc.php");
@@ -77,7 +74,7 @@ $sql .= " WHERE graph IN ('factures.facture_moyenne','factures.ca_mensuel','fact
 $resql = $db->query($sql);
 
 
-$sql = "SELECT date_format(tf.date,'%m'), sum(tf.cout_vente), sum(tf.cout_achat), sum(tf.gain), count(tf.cout_vente)";
+$sql = "SELECT date_format(tf.date,'%Y%m'), sum(tf.cout_vente), sum(tf.cout_achat), sum(tf.gain), count(tf.cout_vente)";
 
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
 $sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ";
@@ -179,15 +176,12 @@ $graph->GraphDraw($file, $nb_factures, $labels);
 
 
 
-
-
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
 $sql .= " WHERE graph IN ('factures.ca_mensuel_preleve','factures.ca_mensuel_autre')";
 $resql = $db->query($sql);
 
 
-
-$sql = "SELECT date_format(tf.date,'%m'), sum(tf.cout_vente)";
+$sql = "SELECT date_format(tf.date,'%Y%m'), sum(tf.cout_vente)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
 $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE tf.fk_facture = f.rowid";
@@ -221,7 +215,7 @@ else
   print $db->error();
 }
 
-$sql = "SELECT date_format(tf.date,'%m'), sum(tf.cout_vente)";
+$sql = "SELECT date_format(tf.date,'%Y%m'), sum(tf.cout_vente)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
 $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE tf.fk_facture = f.rowid";
@@ -255,7 +249,7 @@ else
   print $db->error();
 }
 
-$sql = "SELECT date_format(tf.date,'%m'), sum(tf.fourn_montant)";
+$sql = "SELECT date_format(tf.date,'%Y%m'), sum(tf.fourn_montant)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as tf";
 $sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ";
 
