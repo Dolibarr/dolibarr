@@ -282,6 +282,7 @@ foreach ($labels as $labl)
   $cout_vente_prelev[$i] = $cvp[$labl];
   $cout_vente_autre[$i] = $cva[$labl];
   $cout_achat[$i] = $cvc[$labl];
+  $labels[$i] = substr($labl, -2);
   $i++;
 }
 
