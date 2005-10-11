@@ -93,18 +93,29 @@ if ($_POST["action"] == "update")
 		if ($objp->rappro)
 			die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
 	}
-	if (!empty($_POST['amount']))
-	{
-		$amount = str_replace(' ','',$_POST['amount']);
-		$dateop = $_POST["reyear"].'-'.$_POST["remonth"].'-'.$_POST["reday"]; 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."', dateo = '".$dateop."', amount='$amount' WHERE rowid = $rowid;";
-	}
-	else
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."', dateo = '".$dateop."' WHERE rowid = $rowid;";
+
+    $db->begin();
+    
+	$amount = str_replace(' ','',$_POST['amount']);
+	$amount = str_replace(',','.',$amount);
+
+	$dateop = $_POST["doyear"].'-'.$_POST["domonth"].'-'.$_POST["doday"];
+	$dateval= $_POST["dvyear"].'-'.$_POST["dvmonth"].'-'.$_POST["dvday"];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+	$sql.= " SET label='".$_POST["label"]."',";
+	if (isset($_POST['amount'])) $sql.=" amount='$amount',";
+	$sql.= " dateo = '".$dateop."', datev = '".$dateval."',";
+	$sql.= " fk_account = ".$_POST['accountid'];
+	$sql.= " WHERE rowid = $rowid;";
 
 	$result = $db->query($sql);
-	if (! $result)
+	if ($result)
 	{
+        $db->commit();
+    }
+    else
+    {    
+        $db->rollback();
 		dolibarr_print_error($db);
 	}
 }
@@ -155,7 +166,7 @@ $head[$h][1] = $langs->trans('Card');
 $hselected=$h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans('LineRecord').' : '.$_GET["rowid"]);
+dolibarr_fiche_head($head, $hselected, $langs->trans('LineRecord').': '.$_GET["rowid"]);
 
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro,";
@@ -186,87 +197,106 @@ if ($result)
         $acct->fetch($objp->fk_account);
         $account = $acct->id;
 
-        // Account
-        print "<tr><td>".$langs->trans("Account")."</td><td colspan=\"3\"><a href=\"account.php?account=$account\">".$acct->label."</a></td></tr>";
-
-        print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-        print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-
-        // Date
-        if (! $objp->rappro)
+        // Author
+        print "<tr><td>".$langs->trans("Author")."</td>";
+        if ($objp->fk_user_author) 
         {
-            print "<tr><td>".$langs->trans("Date")."</td><td colspan=\"3\">";
-            $html->select_date($objp->do);
-            print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
-            print "</tr>";
+            $author=new User($db,$objp->fk_user_author);
+            $author->fetch();
+            print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php.id='.$author->id.'">';
+            print img_object($langs->trans("ShowUser"),'user').' '.$author->fullname.'</td>';
         }
+        else
+        {
+            print "<td colspan=\"3\">&nbsp;</td>";
+        }
+        print "</tr>";
+        
+        $i++;
+    }
 
-        // Value date
-        print "<tr>";
-        print '<td colspan="2">'.$langs->trans("DateValue").'</td><td colspan="2">'.strftime("%d %b %Y",$objp->dv)." &nbsp; ";
+    print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+
+    // Account
+    print "<tr><td>".$langs->trans("Account")."</td><td colspan=\"3\">";
+    if (! $objp->rappro)
+    {
+        $html->select_comptes($acct->id,'accountid',0);
+        print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
+    }
+    else
+    {
+        print "<a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>";
+    }
+    print "</td></tr>";
+    
+    // Date ope
+    if (! $objp->rappro)
+    {
+        print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"3\">";
+        $html->select_date($objp->do,'do');
+        print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
+        print '</tr>';
+    }
+
+    // Value date
+    if (! $objp->rappro)
+    {
+        print "<tr><td>".$langs->trans("DateValue")."</td><td colspan=\"3\">";
+        $html->select_date($objp->dv,'dv');
+        print ' &nbsp; ';
         print '<a href="ligne.php?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
         print img_edit_remove() . "</a> ";
         print '<a href="ligne.php?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
-        print img_edit_add() ."</a></td>";
+        print img_edit_add() ."</a>";
+        print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
         print '</tr>';
-
-        // Description
-        print "<tr><td>".$langs->trans("Label")."</td><td colspan=\"3\">";
-        print '<input name="label" class="flat" value="'.$objp->label.'" size="50">';
-        print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
-        print "</tr>";
-
-        // Amount
-        if (! $objp->rappro)
-        {
-            print "<tr><td>".$langs->trans("Amount")."</td><td colspan=\"3\">";
-            print '<input name="amount" class="flat" value="'.price($objp->amount).'">';
-            print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
-            print "</tr>";
-        }
-
-        print "</form>";
-
-        // Type paiement
-        print "<tr><td>".$langs->trans("Type")."</td><td colspan=\"3\">";
-        print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-        print '<input type="hidden" name="action" value="type">';
-        print $html->select_types_paiements($objp->fk_type,"value",'',2);
-        print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
-        print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'">';
-        print "</form>";
-        print "</td></tr>";
-
-        // Author
-        print "<tr><td>".$langs->trans("Author")."</td>";
-        if ($objp->fk_user_author) {
-            $author=new User($db,$objp->fk_user_author);
-            $author->fetch();
-            print "<td colspan=\"3\">".$author->fullname."</td>";
-            } else {
-                print "<td colspan=\"3\">&nbsp;</td>";
-            }
-            print "</tr>";
-
-            $i++;
-        }
-
-        // Releve rappro
-        if ($acct->rappro)
-        {
-            print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-            print '<input type="hidden" name="action" value="num_releve">';
-            print "<tr><td>".$langs->trans("Conciliation")."</td><td colspan=\"3\">";
-            print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'">';
-            print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
-            print "</tr>";
-            print "</form>";
-        }
-
-        print "</table>";
-
-        $db->free($result);
     }
+    
+    // Description
+    print "<tr><td>".$langs->trans("Label")."</td><td colspan=\"3\">";
+    print '<input name="label" class="flat" value="'.$objp->label.'" size="50">';
+    print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
+    print '</tr>';
+
+    // Amount
+    if (! $objp->rappro)
+    {
+        print "<tr><td>".$langs->trans("Amount")."</td><td colspan=\"3\">";
+        print '<input name="amount" class="flat" value="'.price($objp->amount).'">';
+        print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
+        print '</tr>';
+    }
+
+    print "</form>";
+
+    // Type paiement
+    print "<tr><td>".$langs->trans("Type")."</td><td colspan=\"3\">";
+    print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+    print '<input type="hidden" name="action" value="type">';
+    print $html->select_types_paiements($objp->fk_type,"value",'',2);
+    print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
+    print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
+    print "</form>";
+    print "</td></tr>";
+
+    // Releve rappro
+    if ($acct->rappro)
+    {
+        print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+        print '<input type="hidden" name="action" value="num_releve">';
+        print "<tr><td>".$langs->trans("Conciliation")."</td><td colspan=\"3\">";
+        print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'">';
+        print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
+        print '</tr>';
+        print '</form>';
+    }
+
+    print "</table>";
+
+    $db->free($result);
+}
 print '</div>';
 
 print '<br>';
