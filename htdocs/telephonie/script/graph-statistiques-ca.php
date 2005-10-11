@@ -290,8 +290,8 @@ foreach ($labels as $labl)
 $file = $img_root . "/factures/ca_mensuel_preleve.png";
 $graph = new GraphBarAccumul ($db, $file);
 $graph->titre = "Chiffre d'affaire par méthode de réglement";
-$graph->width = 440;
-$graph->height = 360;
+$graph->width = 640;
+$graph->height = 480;
 $graph->barcolor = "yellow";
 
 $xdatas[0] = array($cout_vente_prelev, $cout_vente_autre);
