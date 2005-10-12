@@ -25,7 +25,7 @@ create table llx_user
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   datec             datetime,
   tms               timestamp,
-  login             varchar(8),
+  login             varchar(24),
   pass              varchar(32),
   name              varchar(50),
   firstname         varchar(50),

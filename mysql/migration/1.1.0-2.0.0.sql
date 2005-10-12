@@ -252,6 +252,7 @@ alter table llx_user add datelastaccess datetime;
 alter table llx_user add office_phone varchar(20);
 alter table llx_user add office_fax varchar(20);
 alter table llx_user add user_mobile varchar(20);
+alter table llx_user modify login varchar(24);
 
 alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
 
