@@ -421,6 +421,7 @@ class Commande
 			$obj = $this->db->fetch_object();
 			$this->id              = $obj->rowid;
 			$this->ref             = $obj->ref;
+			$this->ref_client      = $obj->ref_client;
 			$this->soc_id          = $obj->fk_soc;
 			$this->statut          = $obj->fk_statut;
 			$this->user_author_id  = $obj->fk_user_author;
@@ -432,7 +433,6 @@ class Commande
 			$this->source          = $obj->source;
 			$this->facturee        = $obj->facture;
 			$this->note            = $obj->note;
-			$this->ref_client      = $obj->ref_client;
 			$this->projet_id       = $obj->fk_projet;
 			$this->db->free();
 			if ($this->statut == 0)
@@ -591,16 +591,20 @@ class Commande
 		}
 	}
 
-  /**
-   *
-   *
-   */
+    /**
+     *      \brief      Positionne numero reference commande client
+     *      \param      user            Utilisateur qui modifie
+     *      \param      ref_client      Reference commande client
+     *      \return     int             <0 si ko, >0 si ok
+     */
 	function set_ref_client($user, $ref_client)
 	{
 		if ($user->rights->commande->creer)
 		{
+    		dolibarr_syslog('Commande::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+			$sql.= ' WHERE rowid = '.$this->id;
 			if ($this->db->query($sql) )
 			{
 				$this->ref_client = $ref_client;
@@ -608,10 +612,17 @@ class Commande
 			}
 			else
 			{
-				dolibarr_syslog('Commande::set_ref_client Erreur SQL');
+                $this->error=$this->db->error();
+				dolibarr_syslog('Commande::set_ref_client Erreur '.$this->error.' - '.$sql);
+			    return -2;
 			}
 		}
+		else
+		{
+		    return -1;
+		}
 	}
+
 	/**
 	 *
 	 *

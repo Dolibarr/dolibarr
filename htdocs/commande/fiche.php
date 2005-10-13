@@ -46,6 +46,7 @@ require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
 // Sécurité accés client
+$socidp=0;
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -56,15 +57,16 @@ if ($user->societe_id > 0)
 /*
  * Actions
  */
+
+// Categorisation dans projet
 if ($_POST['action'] == 'classin' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$commande->classin($_POST['projetid']);
 }
-/*
- *
- */
+
+// Ajout commande
 if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 {
 	$datecommande = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -95,6 +97,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$action = '';
 }
 
+// Positionne ref commande client
 if ($_POST['action'] == 'set_ref_client' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
