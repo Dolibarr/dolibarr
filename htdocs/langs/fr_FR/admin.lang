@@ -276,6 +276,8 @@ CompanyCurrency=Devise de la société/association
 DoNotShow=Ne pas afficher
 ShowBugTrackLink=Afficher le lien "Signaler un bug"
 ShowWorkBoard=Affiche le tableau de bord de travail sur page accueil
+Delays=Délais
+DelayBeforeWarning=Délai avant alerte
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Générer mot de passe

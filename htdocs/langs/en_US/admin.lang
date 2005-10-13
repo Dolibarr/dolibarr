@@ -276,6 +276,8 @@ CompanyCurrency=Company/foundation currency
 DoNotShow=Do not show
 ShowBugTrackLink=Show link "Report a bug"
 ShowWorkBoard=Show "work board" on home page
+Delays=Delays
+DelayBeforeWarning=Delay before warning
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Générer mot de passe
