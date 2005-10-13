@@ -41,8 +41,9 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'nbprod')
 {
-    dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$value);
+    dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"]);
     Header("Location: propale.php");
+    exit;
 }
 if ($_GET["action"] == 'set')
 {
@@ -296,8 +297,8 @@ print "  <td align=\"left\">".$langs->trans("Value")."</td>\n";
 print "  <td>&nbsp;</td>\n";
 print "</tr><tr ".$bc[false].">";
 print '<td>'.$langs->trans("NumberOfProductLines").'</td>';
-print "<td align=\"left\"><input size=\"3\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\"></td>";
-print '<td><input type="submit" value="'.$langs->trans("Modify").'"></td>';
+print "<td align=\"left\"><input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\"></td>";
+print '<td><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';

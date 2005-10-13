@@ -119,6 +119,10 @@ if (isset($user->conf->SIZE_LISTE_LIMIT) && $user->conf->SIZE_LISTE_LIMIT > 0)
 {
     $conf->liste_limit = $user->conf->SIZE_LISTE_LIMIT;
 }
+if (isset($user->conf->PRODUIT_LIMIT_SIZE))
+{
+    $conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
+}
 if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
 {
     if ($conf->langage != $user->conf->MAIN_LANG_DEFAULT)
@@ -128,12 +132,6 @@ if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
     
         $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
     }
-}
-
-$conf->produit->limit_size=50;
-if (isset($user->conf->PRODUIT_LIMIT_SIZE))
-{
-    $conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
 }
 
 // Remplace conf->css par valeur personnalisée

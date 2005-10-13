@@ -335,6 +335,10 @@ else {
 if (! $conf->global->SIZE_LISTE_LIMIT) $conf->global->SIZE_LISTE_LIMIT=20;
 $conf->liste_limit=$conf->global->SIZE_LISTE_LIMIT;
 
+// $conf->produit->limit_size = constante de taille maximale des select de produit
+if (! isset($conf->global->PRODUIT_LIMIT_SIZE)) $conf->global->PRODUIT_LIMIT_SIZE=50;
+$conf->produit->limit_size=$conf->global->PRODUIT_LIMIT_SIZE;
+
 // $conf->theme et $conf->css
 if (! $conf->global->MAIN_THEME) $conf->global->MAIN_THEME="eldy";
 $conf->theme=$conf->global->MAIN_THEME;

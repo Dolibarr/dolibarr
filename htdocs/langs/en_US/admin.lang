@@ -351,6 +351,9 @@ DNContactActiveExample=Desactivated synchronization
 DNContact=Contacts' DN
 DNContactExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
 TypeExample=OpenLdap, Egroupware or Active Directory
+##### Products #####
+ProductSetup=Products module setup
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
 ##### Sendings #####
 SendingsSetup=Sending module setup
 SendingsReceiptModel=Sending receipt model
