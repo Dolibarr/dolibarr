@@ -51,6 +51,7 @@ DraftOrders=Draft orders
 RelatedOrders=Related orders
 OnProcessOrders=On process orders
 RefCdeClient=Ref. customer order
+RefCdeClientShort=Ref. cust. order
 # Sources
 OrderSource0=Commercial proposal
 OrderSource1=Internet

@@ -51,6 +51,7 @@ DraftOrders=Commandes brouillons
 RelatedOrders=Commandes rattachées
 OnProcessOrders=Commandes en cours de traitement
 RefCdeClient=Réf. commande client
+RefCdeClientShort=Réf. com. client
 # Sources
 OrderSource0=Proposition commerciale
 OrderSource1=Internet

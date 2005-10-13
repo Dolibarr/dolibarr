@@ -1776,10 +1776,7 @@ else
 						print '<table class="noborder" width="100%">';
 						print '<tr class="liste_titre">';
 						print '<td>'.$langs->trans('Ref').'</td>';
-                        if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
-                        {
-            			    print '<td>'.$langs->trans('RefCdeClient').'</td>';
-                        }
+           			    print '<td>'.$langs->trans('RefCdeClientShort').'</td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
 						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 						print '</tr>';
@@ -1790,10 +1787,7 @@ else
 							$var=!$var;
 							print '<tr '.$bc[$var].'><td>';
 							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
-                            if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
-                            {
-    							print '<td>'.$objp->ref_client.'</td>';
-	                        }
+   							print '<td>'.$objp->ref_client.'</td>';
 							print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
 							print '<td align="right">'.price($objp->total_ht).'</td>';
 							print "</tr>\n";
@@ -1802,10 +1796,7 @@ else
 						}
 						print '<tr class="liste_total">';
 						print '<td align="left">'.$langs->trans('TotalHT').'</td>';
-                        if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
-                        {
-    						print '<td>&nbsp;</td>';
-	                    }
+   						print '<td>&nbsp;</td>';
    						print '<td>&nbsp;</td>';
 						print '<td align="right">'.price($total).'</td></tr>';
 						print '</table>';
