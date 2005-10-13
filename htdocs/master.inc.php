@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005 	   Simon Tosser  <simon@kornog-computing.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ define('DOL_VERSION','2.0.0-alpha2');
 
 clearstatcache();
 
-// Forcage du paramétrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
+// Forcage du param?trage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
 if (function_exists("define_syslog_variables"))
 {
     define_syslog_variables();
@@ -59,10 +60,10 @@ else
 
 if (! isset($dolibarr_main_db_type))
 {	
-  $dolibarr_main_db_type='mysql';   // Pour compatibilité avec anciennes configs, si non défini, on prend 'mysql'
+  $dolibarr_main_db_type='mysql';   // Pour compatibilit? avec anciennes configs, si non d?fini, on prend 'mysql'
 }
 if (! $dolibarr_main_data_root) {
-    // Si le répertoire documents non défini, on utilise celui par défaut
+    // Si le r?pertoire documents non d?fini, on utilise celui par d?faut
     $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
     $dolibarr_main_data_root.="/documents";
 }
@@ -100,8 +101,8 @@ if (!strlen(getenv("LLX_DBNAME")))
   $conf->db->pass = $dolibarr_main_db_pass;
   $conf->db->type = $dolibarr_main_db_type;
 }
-if (! $conf->db->type) { $conf->db->type = 'mysql'; }   // Pour compatibilité avec anciennes configs, si non défini, on prend 'mysql'
-define('MAIN_DB_PREFIX','llx_');                        // A terme cette constante sera définie dans $conf
+if (! $conf->db->type) { $conf->db->type = 'mysql'; }   // Pour compatibilit? avec anciennes configs, si non d?fini, on prend 'mysql'
+define('MAIN_DB_PREFIX','llx_');                        // A terme cette constante sera d?finie dans $conf
 
 /*
  * Chargement des includes principaux
@@ -148,7 +149,7 @@ $db->free($result);
 
 /*
  * Nettoyage variables des gestionnaires de menu
- * conf->menu_top et conf->menu_left sont définis dans main.inc.php (selon user)
+ * conf->menu_top et conf->menu_left sont d?finis dans main.inc.php (selon user)
  */
 if (! $conf->global->MAIN_MENU_BARRETOP) $conf->global->MAIN_MENU_BARRETOP="default.php";
 if (! $conf->global->MAIN_MENUFRONT_BARRETOP) $conf->global->MAIN_MENUFRONT_BARRETOP="default.php";
@@ -168,7 +169,7 @@ $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
 
 /*
  * Pour utiliser d'autres versions des librairies externes que les
- * versions embarquées dans Dolibarr, définir les constantes adequates:
+ * versions embarqu?es dans Dolibarr, d?finir les constantes adequates:
  * Pour FPDF:           FPDF_PATH
  * Pour PEAR:           PEAR_PATH
  * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
@@ -192,13 +193,13 @@ require_once(FPDF_PATH . "fpdf.php");
 
 
 /*
- * Autres paramètres globaux de configurations
+ * Autres param?tres globaux de configurations
  */
 $conf->users->dir_output=DOL_DATA_ROOT."/users";
 
 /*
- * Utilisé dans tous les upload de fichier
- * nécessaire pour désactiver dans la démo
+ * Utilis? dans tous les upload de fichier
+ * n?cessaire pour d?sactiver dans la d?mo
  */
 if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 {
@@ -210,7 +211,7 @@ else
 }
 
 /*
- * Définition des paramètres d'activation de module et dépendants des modules
+ * D?finition des param?tres d'activation de module et d?pendants des modules
  * Chargement d'include selon etat activation des modules
  */
 $conf->bookmark4u->enabled=defined('MAIN_MODULE_BOOKMARK4U')?MAIN_MODULE_BOOKMARK4U:0;
@@ -228,7 +229,7 @@ $conf->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
 if ($conf->societe->enabled) require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
 $conf->societe->dir_images=DOL_DATA_ROOT."/societe/images";
-if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par d?faut
 $conf->commercial->enabled=defined("MAIN_MODULE_COMMERCIAL")?MAIN_MODULE_COMMERCIAL:0;
 $conf->commercial->dir_output=DOL_DATA_ROOT."/rapport";
 $conf->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
@@ -248,7 +249,7 @@ $conf->fichinter->enabled=defined("MAIN_MODULE_FICHEINTER")?MAIN_MODULE_FICHEINT
 if ($conf->fichinter->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 $conf->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
 $conf->fichinter->dir_images=DOL_DATA_ROOT."/ficheinter/images";
-if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par d?faut
 $conf->adherent->enabled=defined("MAIN_MODULE_ADHERENT")?MAIN_MODULE_ADHERENT:0;
 $conf->adherent->dir_output=DOL_DATA_ROOT."/adherent";
 $conf->produit->enabled=defined("MAIN_MODULE_PRODUIT")?MAIN_MODULE_PRODUIT:0;
@@ -288,13 +289,13 @@ $conf->facture->enabled=defined("MAIN_MODULE_FACTURE")?MAIN_MODULE_FACTURE:0;
 if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 $conf->facture->dir_output=DOL_DATA_ROOT."/facture";
 $conf->facture->dir_images=DOL_DATA_ROOT."/facture/images";
-if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par défaut
+if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par d?faut
 $conf->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 if (!defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
 $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
 $conf->propal->dir_images=DOL_DATA_ROOT."/propale/images";
-if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par d?faut
 $conf->domaine->enabled=0;
 $conf->voyage->enabled=0;
 $conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
@@ -316,7 +317,7 @@ if (! $conf->global->MAIN_MONNAIE) $conf->global->MAIN_MONNAIE='EUR';
 $conf->monnaie=$conf->global->MAIN_MONNAIE;
 
 // $conf->compta->mode = Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
-$conf->compta->mode = 'RECETTES-DEPENSES';  // Par défaut
+$conf->compta->mode = 'RECETTES-DEPENSES';  // Par d?faut
 if (defined('COMPTA_MODE') && COMPTA_MODE) {
 	// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
     $conf->compta->mode = COMPTA_MODE;
@@ -324,10 +325,10 @@ if (defined('COMPTA_MODE') && COMPTA_MODE) {
 
 // $conf->defaulttx
 if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise') {
-	$conf->defaulttx='0';		// Taux par défaut des factures clients
+	$conf->defaulttx='0';		// Taux par d?faut des factures clients
 }
 else {
-	$conf->defaulttx='';		// Pas de taux par défaut des factures clients, le premier sera pris
+	$conf->defaulttx='';		// Pas de taux par d?faut des factures clients, le premier sera pris
 }
 
 // $conf->liste_limit = constante de taille maximale des listes
@@ -386,23 +387,25 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
   $conf->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
 }
 
-/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
- * (pour particuliers ou libéraux en franchise)
- * En attendant, valeur forcée à 1
+/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de d?sactiver la fonction TVA
+ * (pour particuliers ou lib?raux en franchise)
+ * En attendant, valeur forc?e ? 1
  */
 $conf->compta->tva=1;
 
 // Delai de tolerance des alertes
-$conf->actions->warning_delay=7*24*60*60;   // 1 semaine
-$conf->commande->traitement->warning_delay=2*24*60*60;
-$conf->propal->cloture->warning_delay=31*24*60*60;
-$conf->propal->facturation->warning_delay=7*24*60*60;
-$conf->facture->fournisseur->warning_delay=2*24*60*60;
-$conf->facture->client->warning_delay=31*24*60*60;   // 1 mois
-$conf->contrat->services->inactifs->warning_delay=0*24*60*60;
-$conf->contrat->services->expires->warning_delay=0*24*60*60;
-$conf->adherent->cotisation->warning_delay=31*24*60*60;   // 1 mois
-$conf->bank->rappro->warning_delay=2*31*24*60*60;   // 2 mois
+$conf->actions->warning_delay=MAIN_DELAY_ACTIONS_TODO*24*60*60;
+$conf->commande->traitement->warning_delay=MAIN_DELAY_ORDERS_TO_PROCESS*24*60*60;
+$conf->propal->cloture->warning_delay=MAIN_DELAY_PROPALS_TO_CLOSE*24*60*60;
+$conf->propal->facturation->warning_delay=MAIN_DELAY_PROPALS_TO_BILL*24*60*60;
+$conf->facture->fournisseur->warning_delay=MAIN_DELAY_SUPPLIER_BILLS_TO_PAY*24*60*60;
+$conf->facture->client->warning_delay=MAIN_DELAY_CUSTOMER_BILLS_UNPAYED*24*60*60;
+$conf->contrat->services->inactifs->warning_delay=MAIN_DELAY_NOT_ACTIVATED_SERVICES*24*60*60;
+$conf->contrat->services->expires->warning_delay=MAIN_DELAY_RUNNING_SERVICES*24*60*60;
+$conf->adherent->cotisation->warning_delay=MAIN_DELAY_MEMBERS*24*60*60;
+$conf->bank->rappro->warning_delay=MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE*24*60*60;
+
+
 
 /*
  */

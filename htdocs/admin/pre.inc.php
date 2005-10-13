@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Simon Tosser  <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,8 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
 
   $menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
+  
+  $menu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("D&eacute;lais"));
 
   $menu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
 
