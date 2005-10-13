@@ -50,7 +50,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
   
-  $menu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("D&eacute;lais"));
+  $menu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("DelaysBeforeWarning"));
 
   $menu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
 
