@@ -284,6 +284,8 @@ Internal=Interne
 External=Externe
 Internals=Internes
 Externals=Externes
+Warning=Alerte
+Warnings=Alertes
 # Countries
 CountryFR=France
 CountryBE=Belgique
