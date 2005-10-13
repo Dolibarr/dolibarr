@@ -397,18 +397,17 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
  */
 $conf->compta->tva=1;
 
-// Delai de tolerance des alertes
-$conf->actions->warning_delay=MAIN_DELAY_ACTIONS_TODO*24*60*60;
-$conf->commande->traitement->warning_delay=MAIN_DELAY_ORDERS_TO_PROCESS*24*60*60;
-$conf->propal->cloture->warning_delay=MAIN_DELAY_PROPALS_TO_CLOSE*24*60*60;
-$conf->propal->facturation->warning_delay=MAIN_DELAY_PROPALS_TO_BILL*24*60*60;
-$conf->facture->fournisseur->warning_delay=MAIN_DELAY_SUPPLIER_BILLS_TO_PAY*24*60*60;
-$conf->facture->client->warning_delay=MAIN_DELAY_CUSTOMER_BILLS_UNPAYED*24*60*60;
-$conf->contrat->services->inactifs->warning_delay=MAIN_DELAY_NOT_ACTIVATED_SERVICES*24*60*60;
-$conf->contrat->services->expires->warning_delay=MAIN_DELAY_RUNNING_SERVICES*24*60*60;
-$conf->adherent->cotisation->warning_delay=MAIN_DELAY_MEMBERS*24*60*60;
-$conf->bank->rappro->warning_delay=MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE*24*60*60;
-
+// Delais de tolerance des alertes
+$conf->actions->warning_delay=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+$conf->commande->traitement->warning_delay=$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS*24*60*60;
+$conf->propal->cloture->warning_delay=$conf->global->MAIN_DELAY_PROPALS_TO_CLOSE*24*60*60;
+$conf->propal->facturation->warning_delay=$conf->global->MAIN_DELAY_PROPALS_TO_BILL*24*60*60;
+$conf->facture->fournisseur->warning_delay=$conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY*24*60*60;
+$conf->facture->client->warning_delay=$conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED*24*60*60;
+$conf->contrat->services->inactifs->warning_delay=$conf->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES*24*60*60;
+$conf->contrat->services->expires->warning_delay=$conf->global->MAIN_DELAY_RUNNING_SERVICES*24*60*60;
+$conf->adherent->cotisation->warning_delay=$conf->global->MAIN_DELAY_MEMBERS*24*60*60;
+$conf->bank->rappro->warning_delay=$conf->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE*24*60*60;
 
 
 /*
