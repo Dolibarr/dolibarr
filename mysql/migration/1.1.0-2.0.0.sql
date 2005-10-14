@@ -627,13 +627,14 @@ create table llx_mailing_cibles
   nom                varchar(160),
   prenom             varchar(160),
   email              varchar(160) NOT NULL,
-  statut             smallint NOT NULL DEFAULT 0,
-  date_envoi         datetime
+--  statut             smallint NOT NULL DEFAULT 0,
+--  date_envoi         datetime
 
 )type=innodb;
-
-alter table llx_mailing_cibles ADD url varchar(160);
-
+-- Ajout des champs statut, url et date_envoi
+alter table `llx_mailing_cibles` ADD `statut` SMALLINT DEFAULT '0' NOT NULL AFTER `email` ;
+alter table llx_mailing_cibles ADD url varchar(160) AFTER 'statut';
+alter table `llx_mailing_cibles` ADD `date_envoi` DATETIME NOT NULL AFTER 'url';
 alter table llx_mailing_cibles ADD UNIQUE uk_mailing_cibles (fk_mailing, email);
 
 --
