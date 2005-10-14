@@ -446,7 +446,7 @@ if ($_GET["id"] > 0)
                     print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></td>';
                     print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
                     print '<td align="right"><input size="8" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-                    print '<td align="right" colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td>';
+                    print '<td align="right" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
                     print '</tr>' . "\n";
                     print "</form>\n";
                 }
@@ -581,7 +581,7 @@ if ($_GET["id"] > 0)
 	  $html->select_array("projetid",$proj->liste_array($commande->soc_id));
 	    
 	  print "</td></tr>";
-	  print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form>';
+	  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Send").'"></td></tr></table></form>';
 	}
       /*
        *
@@ -609,7 +609,7 @@ if ($_GET["id"] > 0)
 
 	  print '</td></tr>';
 	  print '<tr><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
-	  print '<tr><td align="center" colspan="2"><input type="submit" name="Activer"></td></tr>';
+	  print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
 	  print '</table>';
 	  print '</form>';	  
 	}
@@ -641,7 +641,7 @@ if ($_GET["id"] > 0)
 
 	  print '</td></tr>';
 	  print '<tr><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
-	  print '<tr><td align="center" colspan="2"><input type="submit" name="Activer"></td></tr>';
+	  print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
 	  print "</table>\n";
 	  print "</form>\n";	  
 	}

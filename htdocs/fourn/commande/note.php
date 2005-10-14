@@ -101,7 +101,7 @@ if ($_GET["id"] > 0)
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Supplier").'</td>';
       print '<td colspan="3">';
-      print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+      print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.img_object($langs->trans("ShowSupplier"),'company').' '.$soc->nom.'</a></b></td>';
       print '</tr>';
 	  
       print '<tr>';
