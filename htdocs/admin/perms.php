@@ -37,23 +37,23 @@ if (!$user->admin)
 
 if ($_GET["action"] == 'add')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1 WHERE id =".$_GET["pid"];
-  $db->query($sql);
+    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1 WHERE id =".$_GET["pid"];
+    $db->query($sql);
 }
 
 if ($_GET["action"] == 'remove')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0 WHERE id =".$_GET["pid"];
-  $db->query($sql);
+    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0 WHERE id =".$_GET["pid"];
+    $db->query($sql);
 }
 
 
 
 llxHeader();
 
-print_titre($langs->trans("DefaultRights"));
+print_fiche_titre($langs->trans("DefaultRights"));
 
-print "<br>".$langs->trans("DefaultRightsDesc")."<br><br>\n";
+print $langs->trans("DefaultRightsDesc")."<br><br>\n";
 
 
 print '<table class="noborder" width="100%">';

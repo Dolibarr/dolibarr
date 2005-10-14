@@ -21,9 +21,9 @@
  */
 
 /**
-   \file       htdocs/admin/boxes.php
-   \brief      Page d'administration/configuration des boites
-   \version    $Revision$
+        \file       htdocs/admin/boxes.php
+        \brief      Page d'administration/configuration des boites
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -43,28 +43,20 @@ $boxes = array();
 
 if ($_POST["action"] == 'add')
 {
-  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes WHERE box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
-  $result = $db->query($sql);
-  
-  $num = $db->num_rows($result);
-  if ($num == 0)
+    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes WHERE box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
+    $result = $db->query($sql);
+    
+    $num = $db->num_rows($result);
+    if ($num == 0)
     {
-      // Si la boite n'est pas deja active
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["boxid"].",".$_POST["pos"].");";
-      $result = $db->query($sql);
+        // Si la boite n'est pas deja active
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["boxid"].",".$_POST["pos"].");";
+        $result = $db->query($sql);
     }
-
-  Header("Location: boxes.php");
+    
+    Header("Location: boxes.php");
+    exit;
 }
-
-
-llxHeader();
-
-print_titre($langs->trans("Boxes"));
-
-print "<br>".$langs->trans("BoxesDesc")."<br>\n";
-
-
 
 if ($_GET["action"] == 'delete')
 {
@@ -74,51 +66,58 @@ if ($_GET["action"] == 'delete')
 
 if ($_GET["action"] == 'switch')
 {
-  // On permute les valeur du champ box_order des 2 lignes de la table boxes
-  $db->begin();
+    // On permute les valeur du champ box_order des 2 lignes de la table boxes
+    $db->begin();
 
-  $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchfrom"];
-  $resultfrom = $db->query($sql);
-  if ($resultfrom)
+    $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchfrom"];
+    $resultfrom = $db->query($sql);
+    if ($resultfrom)
     {
-      $objfrom = $db->fetch_object($resultfrom);
+        $objfrom = $db->fetch_object($resultfrom);
     }
-  else
+    else
     {
-      dolibarr_print_error($db);
-    }
-  
-  $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchto"];
-  $resultto = $db->query($sql);
-
-  if ($resultto)
-    {
-      $objto = $db->fetch_object($resultto);
-    }
-  else
-    {
-      dolibarr_print_error($db);
+        dolibarr_print_error($db);
     }
 
-  if ($objfrom && $objto) {
-    $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objto->box_order." WHERE rowid=".$_GET["switchfrom"];
-    $resultupdatefrom = $db->query($sql);
-    if (! $resultupdatefrom) { dolibarr_print_error($db); }
-    $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objfrom->box_order." WHERE rowid=".$_GET["switchto"];
-    $resultupdateto = $db->query($sql);
-    if (! $resultupdateto) { dolibarr_print_error($db); }
-  }
+    $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchto"];
+    $resultto = $db->query($sql);
 
-  if ($resultupdatefrom && $resultupdateto)
+    if ($resultto)
     {
-      $db->commit();
+        $objto = $db->fetch_object($resultto);
     }
-  else
+    else
     {
-      $db->rollback();
+        dolibarr_print_error($db);
+    }
+
+    if ($objfrom && $objto) {
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objto->box_order." WHERE rowid=".$_GET["switchfrom"];
+        $resultupdatefrom = $db->query($sql);
+        if (! $resultupdatefrom) { dolibarr_print_error($db); }
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objfrom->box_order." WHERE rowid=".$_GET["switchto"];
+        $resultupdateto = $db->query($sql);
+        if (! $resultupdateto) { dolibarr_print_error($db); }
+    }
+
+    if ($resultupdatefrom && $resultupdateto)
+    {
+        $db->commit();
+    }
+    else
+    {
+        $db->rollback();
     }
 
 }
+
+
+llxHeader();
+
+print_fiche_titre($langs->trans("Boxes"));
+
+print $langs->trans("BoxesDesc")."<br>\n";
 
 /*
  * Recherche des boites actives par position possible

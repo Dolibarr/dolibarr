@@ -327,5 +327,11 @@ foreach ($orders as $key => $value)
 }
 print "</table></div>\n";
 
+
+// Pour eviter bug mise en page IE
+print '<div class="tabsAction">';
+print '</div>';
+
+
 llxFooter('$Date$ - $Revision$');
 ?>

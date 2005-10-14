@@ -26,6 +26,7 @@
 		\brief      Page d'administration des d?lais de retard
 		\version    $Revision$
 */
+
 require("./pre.inc.php");
 
 $langs->load("admin");
@@ -65,9 +66,9 @@ $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
 
-print_titre($langs->trans("DelaysOfToleranceBeforeWarning"));
+print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"));
 
-print "<br>".$langs->transnoentities("DelaysOfToleranceDesc",img_warning())."<br>\n";
+print $langs->transnoentities("DelaysOfToleranceDesc",img_warning())."<br>\n";
 
 print "<br>\n";
 

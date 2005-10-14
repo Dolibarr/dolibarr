@@ -35,14 +35,6 @@ if (!$user->admin)
   accessforbidden();
 
 
-llxHeader();
-
-
-print_titre($langs->trans("OtherSetup"));
-
-//print_r(get_defined_constants());
-print "<br>\n";
-
 
 $typeconst=array('yesno','texte','chaine');
 
@@ -63,6 +55,9 @@ if ($_GET["action"] == 'delete')
 }
 
 
+llxHeader();
+
+print_fiche_titre($langs->trans("OtherSetup"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

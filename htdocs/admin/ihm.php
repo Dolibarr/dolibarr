@@ -78,9 +78,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 llxHeader();
 
-print_titre($langs->trans("GUISetup"));
+print_fiche_titre($langs->trans("GUISetup"));
 
-print "<br>\n";
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {

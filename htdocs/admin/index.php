@@ -71,30 +71,31 @@ $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
 
-print_titre($langs->trans("GlobalSetup"));
+print_fiche_titre($langs->trans("GlobalSetup"));
 
-
-print "<br>\n";
 
 if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
  || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-    /*
+    /**
      * Edition des paramètres
      */
-    print '
-    <script language="javascript" type="text/javascript">
-    <!--
-    function save_refresh()
+    if ($conf->use_javascript)
     {
-    	document.form_index.action.value="updateedit";
-    	document.form_index.submit();
-    //	location.href = "index.php?action=updateedit";
+        print '
+        <script language="javascript" type="text/javascript">
+        <!--
+        function save_refresh()
+        {
+        	document.form_index.action.value="updateedit";
+        	document.form_index.submit();
+        //	location.href = "index.php?action=updateedit";
+        }
+        -->
+        </script>
+        ';
     }
-    -->
-    </script>
-    ';
-
+    
     print '<form method="post" action="index.php" name="form_index">';
     print '<input type="hidden" name="action" value="update">';
     $var=true;
@@ -112,7 +113,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
-    $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',' onChange="save_refresh()"');
+    $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript?' onChange="save_refresh()"':''));
     print '</td></tr>';
 
     $var=!$var;
@@ -486,7 +487,8 @@ else
     print '<div class="tabsAction">';
     print '<a class="tabAction" href="index.php?action=edit">'.$langs->trans("Edit").'</a>';
     print '</div>';
-
+    
+    print '<br>';
 }
 
 
