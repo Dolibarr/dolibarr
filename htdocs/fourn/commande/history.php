@@ -99,7 +99,7 @@ if ($_GET["id"] > 0)
       if ($commande->methode_commande_id > 0) 
 	{	  
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
-	  print '<td colspan="2">'.dolibarr_print_date($commande->date_commande,"%A %e %B %Y")."</td>\n";
+	  print '<td colspan="2">'.dolibarr_print_date($commande->date_commande,"%A %d %B %Y")."</td>\n";
 	  print '<td width="50%">&nbsp;';
 	  print "</td></tr>";
 	}
