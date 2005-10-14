@@ -300,8 +300,7 @@ llxHeader();
  */
 if ($_GET["id"])
 {
-    print_titre($langs->trans("DictionnarySetup").' - '.$tablib[$_GET["id"]]);
-    print '<br>';
+    print_fiche_titre($langs->trans("DictionnarySetup").' - '.$tablib[$_GET["id"]]);
 
     if ($msg) {
         print $msg.'<br>';
@@ -526,7 +525,7 @@ else
     /*
      * Affichage de la liste des dictionnaires
      */
-    print_titre($langs->trans("DictionnarySetup"));
+    print_fiche_titre($langs->trans("DictionnarySetup"));
 
     $var=true;
     print '<table class="noborder" width="100%">';
@@ -544,6 +543,7 @@ else
             print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td></tr>';
         }
     }
+    print '</table>';
 }
 
 print '<br>';

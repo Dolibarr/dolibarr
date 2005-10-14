@@ -106,8 +106,7 @@ function UnActivate($value)
 llxHeader("","");
 
 
-print_titre($langs->trans("TriggersAvailable"));
-print '<br>';
+print_fiche_titre($langs->trans("TriggersAvailable"));
 
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";
@@ -210,7 +209,7 @@ foreach ($orders as $key => $value)
         print "</tr>\n";
     
 }
-print "</table></div>\n";
+print "</table>\n";
 
 
 llxFooter('$Date$ - $Revision$');
