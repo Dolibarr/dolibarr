@@ -34,6 +34,8 @@ require("./pre.inc.php");
 if (!$user->rights->banque->lire)
     accessforbidden();
 
+$langs->load("bills");
+
 
 $account=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
