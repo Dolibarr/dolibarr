@@ -112,7 +112,7 @@ if($_GET["id"])
 
 	  print '<tr><td width="20%">Ligne</td>';
 	  print '<td>'.stripslashes(nl2br($objp->description)).'</td></tr>';
-	  print '<tr><td width="20%">Email de commande</td><td>';
+	  print '<tr><td width="20%">Ventiler dans le compte :</td><td>';
 
 	  if($objp->fk_code_ventilation == 0)
 	    {
