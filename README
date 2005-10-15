@@ -121,3 +121,4 @@ This is feature Dolibarr does not support completely yet:
 - "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
   called "Non Perçue Récupérable")
 - Accountancy
+- Dolibarr can manage only one currency.
