@@ -35,6 +35,7 @@ if (!$user->rights->banque->modifier)
   accessforbidden();
 
 $langs->load("banks");
+$langs->load("bills");
 
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
@@ -226,7 +227,7 @@ if ($result)
             $author=new User($db,$objp->fk_user_author);
             $author->fetch();
             print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$author->id.'">';
-            print img_object($langs->trans("ShowUser"),'user').' '.$author->fullname.'</td>';
+            print img_object($langs->trans("ShowUser"),'user').' '.$author->fullname.'</a></td>';
         }
         else
         {
