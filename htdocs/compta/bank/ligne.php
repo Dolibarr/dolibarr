@@ -262,7 +262,7 @@ if ($result)
         {
 */
             print '<td colspan="4">';
-            print '<a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>';
+            print '<a href="account.php?account='.$acct->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$acct->label.'</a>';
             print '<input type="hidden" name="accountid" value="'.$acct->id.'">';
             print '</td>';
 /*
