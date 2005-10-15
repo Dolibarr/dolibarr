@@ -71,8 +71,9 @@ class Facture
 	function Facture($DB, $soc_idp='', $facid='')
 	{
 		$this->db = $DB ;
+
+		$this->id = $facid;
 		$this->socidp = $soc_idp;
-		$this->products = array();        // Tableau de lignes de factures
 
 		$this->amount = 0;
 		$this->remise = 0;
@@ -81,9 +82,10 @@ class Facture
 		$this->total = 0;
 		$this->propalid = 0;
 		$this->projetid = 0;
-		$this->id = $facid;
 		$this->prefixe_facture = '';      // utilisé dans le module de numérotation saturne
 		$this->remise_exceptionnelle = 0;
+
+		$this->products = array();        // Tableau de lignes de factures
 	}
 
 	/**
@@ -716,9 +718,11 @@ class Facture
 	*/
 	function set_unpayed($rowid)
 	{
+	    dolibarr_syslog("Facture.class.php::set_unpayed rowid=".$rowid);
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture set paye=0 WHERE rowid = '.$rowid ;
 		$resql = $this->db->query( $sql);
 	}
+	
 	/**
 	*    \brief     Tag la facture comme payer partiellement
 	*    \param     rowid       id de la facture à modifier

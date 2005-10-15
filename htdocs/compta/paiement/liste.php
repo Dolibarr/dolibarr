@@ -147,7 +147,10 @@ if ($resql)
 
         print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
         print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.$objp->label.'</a></td>';
+        print '<td>';
+        if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
+        else print '&nbsp;';
+        print '</td>';
         print '<td align="right">'.price($objp->amount).'</td>';
         print '<td align="center">';
 

@@ -78,23 +78,39 @@ class Account
         return 1;
     }
 
-    /*
-     * Efface une entree dans la table ".MAIN_DB_PREFIX."bank
+    /**
+     *      \brief      Efface une entree dans la table ".MAIN_DB_PREFIX."bank
+     *      \param      rowid       Id de l'ecriture a effacer
+     *      \return     int         <0 si ko, >0 si ok
      */
     function deleteline($rowid)
     {
+        $nbko=0;
+        
         $this->db->begin();
         
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".$rowid;
         $result = $this->db->query($sql);
+        if (! $result) $nbko++;
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$rowid;
         $result = $this->db->query($sql);
+        if (! $result) $nbko++;
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=$rowid";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$rowid;
         $result = $this->db->query($sql);
+        if (! $result) $nbko++;
 
-        $this->db->commit();
+        if (! $nbko) 
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -$nbko;
+        }
     }
 
     /**

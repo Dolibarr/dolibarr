@@ -77,3 +77,4 @@ AddBankRecord=Add transaction
 AddBankRecordLong=Add transaction manually
 ConciliatedBy=Conciliated by
 DateConciliating=Conciliate date
+BankLineConciliated=Transaction conciliated

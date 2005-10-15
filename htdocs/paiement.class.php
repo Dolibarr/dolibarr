@@ -209,40 +209,98 @@ class Paiement
 		$form->select($name, $sql, $id);
 	}
 
-  /**
-   *
-   *
-   *
-   */
-
+    /**
+     *      \brief      Supprime un paiement ainsi que les lignes qu'il a généré dans comptes
+     *                  Si le paiement porte sur un écriture compte qui est rapprochée, on refuse
+     *                  Si le paiement porte sur au moins une facture à "payée", on refuse
+     *      \return     int     <0 si ko, >0 si ok
+     */
 	function delete()
 	{
+      	$bank_line_id = $this->bank_line;
+
 		$this->db->begin();
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture WHERE fk_paiement = '.$this->id;
+
+        // Vérifier si paiement porte pas sur une facture à l'état payée
+        // Si c'est le cas, on refuse la suppression
+        $billsarray=$this->getBillsArray('paye=1');
+        if (is_array($billsarray))
+        {
+            if (sizeof($billsarray))
+            {
+                $this->error="Impossible de supprimer un paiement portant sur au moins une facture à l'état payé";
+                $this->db->rollback();
+                return -1;
+            }
+        }
+        else
+        {
+            $this->db->rollback();
+            return -2;
+        }       
+
+      	// Vérifier si paiement ne porte pas sur ecriture bancaire rapprochée
+      	// Si c'est le cas, on refuse le paiement
+		if ($bank_line_id)
+		{
+			$accline = new AccountLine($this->db,$bank_line_id);
+            $accline->fetch($bank_line_id);
+            if ($accline->rappro)
+            {
+                $this->error="Impossible de supprimer un paiement qui a généré une écriture qui a été rapprochée";
+                $this->db->rollback();
+                return -3;
+            }            
+        }
+
+        // Efface la ligne de paiement (dans paiement_facture et paiement)
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
+		$sql.= ' WHERE fk_paiement = '.$this->id;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement WHERE rowid = '.$this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement';
+			$sql.= ' WHERE rowid = '.$this->id;
 			$result = $this->db->query($sql);
-			$this->db->commit();
-			return 1;
+            if (! $result)
+            {
+        		$this->error=$this->db->error();
+                $this->db->rollback();
+    			return -3;
+    	    }
+
+    		// Supprimer l'écriture bancaire si paiement lié à écriture
+    		if ($bank_line_id)
+    		{
+    			$acc = new Account($this->db);
+    			$result=$acc->deleteline($bank_line_id);
+    			if ($result < 0)
+    			{
+                    $this->error=$acc->error;
+                    $this->db->rollback();
+    	    		return -4;
+    		    }
+    		}
+
+            $this->db->commit();
+            return 1;
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			$this->error=$this->db->error;
 			$this->db->rollback();
-			return 0;
+			return -5;
 		}
 	}
 
-  /*
-   * Mise a jour du lien entre le paiement et la ligne générée dans llx_bank
-   *
-   */
-
+    /**
+     *      \brief      Mise a jour du lien entre le paiement et la ligne générée dans llx_bank
+     *      \param      id_bank     Id compte bancaire
+     */
 	function update_fk_bank($id_bank)
 	{
-		$sql = 'UPDATE llx_paiement set fk_bank = '.$id_bank.' where rowid = '.$this->id;
+		$sql = 'UPDATE llx_paiement set fk_bank = '.$id_bank;
+		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -255,9 +313,10 @@ class Paiement
 		}
 	}
 
-  /**
-   *    \brief      Valide le paiement
-   */
+    /**
+     *    \brief      Valide le paiement
+     *    \return     int     <0 si ko, >0 si ok
+     */
 	function valide()
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiement SET statut = 1 WHERE rowid = '.$this->id;
@@ -273,12 +332,11 @@ class Paiement
 		}
 	}
 
-  /*
-   *    \brief      Information sur l'objet
-   *    \param      id      id du paiement dont il faut afficher les infos
-   */
-
-	function info($id)
+    /*
+     *    \brief      Information sur l'objet
+     *    \param      id      id du paiement dont il faut afficher les infos
+     */
+    function info($id)
 	{
 		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec, fk_user_creat, fk_user_modif';
 		$sql .= ', '.$this->db->pdate('tms').' as tms';
@@ -313,5 +371,41 @@ class Paiement
 			dolibarr_print_error($this->db);
 		}
 	}
+	
+    /**
+     *      \brief      Retourne la liste des factures sur lesquels porte le paiement
+     *      \param      filter          Critere de filtre
+     *      \return     array           Tableau des id de factures
+     */
+	function getBillsArray($filter='')
+	{
+		$sql = 'SELECT fk_facture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';
+		$sql.= ' WHERE pf.fk_facture = f.rowid AND fk_paiement = '.$this->id;
+		if ($filter) $sql.= ' AND '.$filter;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+            $i=0;
+			$num=$this->db->num_rows($resql);
+            $billsarray=array();
+
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+                $billsarray[$i]=$obj->fk_facture;
+                $i++;
+            }
+
+			return $billsarray;
+		}
+		else
+		{
+            $this->error=$this->db->error();
+			dolibarr_syslog('Paiement::getBillsArray Error '.$this->error.' - sql='.$sql);
+			return -1;
+		}
+	}
+
 }
 ?>

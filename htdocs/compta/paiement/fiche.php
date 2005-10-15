@@ -38,46 +38,51 @@ $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
 
+$mesg='';
 
+
+/*
+ * Actions
+ */
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
 {
+	$db->begin();
+	
 	$paiement = new Paiement($db);
 	$paiement->fetch($_GET['id']);
-	$bank_line_id = $paiement->bank_line;
-	$deleted = $paiement->delete();
-	if ($deleted)
+	$result = $paiement->delete();
+	if ($result > 0)
 	{
-		// Supprimer l'écriture bancaire
-		if (!empty($bank_line_id))
-		{
-			$acc = new Account($db);
-			$acc->deleteline($bank_line_id);
-			Header('Location: liste.php');
-		}
-		else
-		{
-			print 'bank_line_id='.$bank_line_id;
-			exit;
-		}
+        $db->commit();
+        Header("Location: liste.php");
+        exit;
 	}
 	else
 	{
-		print 'deleted='.$deleted;
-		exit;
+		$mesg='<div class="error">'.$paiement->error.'</div>';
+        $db->rollback();
 	}
 }
 
 if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
 {
+	$db->begin();
+
 	$paiement = new Paiement($db);
 	$paiement->id = $_GET['id'];
 	if ( $paiement->valide() == 0 )
 	{
+        $db->commit();
 		Header('Location: fiche.php?id='.$paiement->id);
+        exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$paiement->error.'</div>';
+        $db->rollback();
 	}
 }
-
 
 
 /*
@@ -123,27 +128,39 @@ if ($_GET['action'] == 'valide')
 	print '<br>';
 }
 
+
+if ($mesg) print $mesg.'<br>';
+
+
 print '<table class="border" width="100%">';
 
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td>'.$paiement->id.'</td></tr>';
-if ($paiement->bank_account) 
+print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+if ($conf->banque->enabled)
 {
-	// Si compte renseigné, on affiche libelle
-	$bank=new Account($db);
-	$bank->fetch($paiement->bank_account);
-
-	print '<tr>';
-	print '<td valign="top" width="140">'.$langs->trans('BankAccount').'</td>';
-	print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$bank->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$bank->label.'</a></td></tr>';
+    if ($paiement->bank_account) 
+    {
+    	// Si compte renseigné, on affiche libelle
+    	$bank=new Account($db);
+    	$bank->fetch($paiement->bank_account);
+    
+    	$bankline=new AccountLine($db);
+    	$bankline->fetch($paiement->bank_line);
+    
+    	print '<tr>';
+    	print '<td valign="top" width="140">'.$langs->trans('BankAccount').'</td>';
+    	print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$bank->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$bank->label.'</a></td>';
+    	print '<td>'.$langs->trans("BankLineConciliated").'</td><td>'.yn($bankline->rappro).'</td>';
+    	print '</tr>';
+    }
 }
-print '<tr><td valign="top" width="140">'.$langs->trans('Date').'</td><td>'.dolibarr_print_date($paiement->date).'</td></tr>';
-print '<tr><td valign="top">'.$langs->trans('Type').'</td><td>'.$paiement->type_libelle.'</td></tr>';
+print '<tr><td valign="top" width="140">'.$langs->trans('Date').'</td><td colspan="3">'.dolibarr_print_date($paiement->date).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Type').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
 if ($paiement->numero)
 {
-	print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td>'.$paiement->numero.'</td></tr>';
+	print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->numero.'</td></tr>';
 }
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td>'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-print '<tr><td valign="top">'.$langs->trans('Note').'</td><td>'.nl2br($paiement->note).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
 print '</table>';
 
 
