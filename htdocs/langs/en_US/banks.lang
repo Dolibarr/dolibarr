@@ -75,3 +75,5 @@ EditBankRecord=Edit record
 LineRecord=Transaction
 AddBankRecord=Add transaction
 AddBankRecordLong=Add transaction manually
+ConciliatedBy=Conciliated by
+DateConciliating=Conciliate date

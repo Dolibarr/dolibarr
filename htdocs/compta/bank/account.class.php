@@ -55,7 +55,9 @@ class Account
     var $adresse_proprio;
     var $type_lib=array();
 
-
+    /**
+     *  Constructeur
+     */
     function Account($DB, $rowid=0)
     {
         global $langs;
@@ -327,7 +329,8 @@ class Account
     }
 
     /*
-     *    \brief      Charge en memoire depuis la base le compte
+     *      \brief      Charge en memoire depuis la base le compte
+     *      \param      id      Id du compte à récupérer
      */
     function fetch($id)
     {
@@ -529,6 +532,115 @@ class Account
         }
     }
 
+}
+
+
+class AccountLine
+{
+    var $db;
+    
+    /**
+     *  Constructeur
+     */
+    function AccountLine($DB, $rowid=0)
+    {
+        global $langs;
+
+        $this->db = $DB;
+        $this->rowid = $rowid;
+
+        return 1;
+    }
+
+    /**
+     *      \brief      Charge en memoire depuis la base, une ecriture sur le compte
+     *      \param      id      Id de la ligne écriture à récupérer
+     */
+    function fetch($rowid)
+    {
+        $sql = "SELECT datec, datev, dateo, amount, label, fk_user_author, fk_user_rappro,";
+        $sql.= " fk_type, num_releve, num_chq, rappro, note";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank";
+        $sql.= " WHERE rowid  = ".$rowid;
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->rowid         = $rowid;
+                $this->ref           = $rowid;
+
+                $this->datec         = $obj->datec;
+                $this->datev         = $obj->datev;
+                $this->dateo         = $obj->dateo;
+                $this->amount        = $obj->amount;
+                $this->label         = $obj->label;
+                $this->note          = $obj->note;
+
+                $this->fk_user_author = $obj->fk_user_author;
+                $this->fk_user_rappro = $obj->fk_user_rappro;
+
+                $this->fk_type        = $obj->fk_type;
+                $this->num_releve     = $obj->num_releve;
+                $this->num_chq        = $obj->num_chq;
+
+                $this->rappro        = $obj->rappro;
+            }
+            $this->db->free($result);
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
+
+
+	/**
+	 *      \brief     Charge les informations d'ordre info dans l'objet facture
+	 *      \param     id       Id de la facture a charger
+	 */
+	function info($rowid)
+	{
+		$sql = 'SELECT b.rowid, '.$this->db->pdate('datec').' as datec,';
+		$sql.= ' fk_user_author, fk_user_rappro';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'bank as b';
+		$sql.= ' WHERE b.rowid = '.$rowid;
+
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db, $obj->fk_user_author);
+					$cuser->fetch();
+					$this->user_creation     = $cuser;
+				}
+				if ($obj->fk_user_rappro)
+				{
+					$ruser = new User($this->db, $obj->fk_user_rappro);
+					$ruser->fetch();
+					$this->user_rappro = $ruser;
+				}
+
+				$this->date_creation     = $obj->datec;
+				//$this->date_rappro       = $obj->daterappro;    // \todo pas encore gérée
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+	
 }
 
 ?>

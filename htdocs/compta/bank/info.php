@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +20,16 @@
  */
 
 /**
-    	\file       htdocs/compta/paiement/info.php
-		\ingroup    facture
-		\brief      Onglet info d'un paiement
+    	\file       htdocs/compta/bank/info.php
+		\ingroup    banque
+		\brief      Onglet info d'une ecriture bancaire
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-$langs->load("bills");
+$langs->load("banks");
 $langs->load("companies");
 
 
@@ -41,27 +40,27 @@ $langs->load("companies");
 
 llxHeader();
 
-$paiement = new Paiement($db);
-$paiement->fetch($_GET["id"], $user);
-$paiement->info($_GET["id"]);
+$line = new AccountLine($db);
+$line->fetch($_GET["rowid"], $user);
+$line->info($_GET["rowid"]);
 
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$_GET["rowid"];
 $head[$h][1] = $langs->trans("Card");
 $h++;      
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$_GET["rowid"];
 $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;      
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$paiement->ref);
+dolibarr_fiche_head($head, $hselected, $langs->trans("LineRecord").": ".$line->ref);
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($paiement);
+dolibarr_print_object_info($line);
 print '</td></tr></table>';
 
 print '</div>';

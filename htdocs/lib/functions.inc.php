@@ -436,6 +436,12 @@ function dolibarr_print_object_info($object)
 
     if (isset($object->date_cloture))
         print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_cloture,"%A %d %B %Y %H:%M:%S") . '<br>';
+
+    if (isset($object->user_rappro) && $object->user_rappro->fullname )
+        print $langs->trans("ConciliatedBy")." : " . $object->user_rappro->fullname . '<br>';
+
+    if (isset($object->date_rappro))
+        print $langs->trans("DateConciliating")." : " . dolibarr_print_date($object->date_rappro,"%A %d %B %Y %H:%M:%S") . '<br>';
 }
 
 /**

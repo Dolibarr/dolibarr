@@ -79,29 +79,31 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 }
 
 
-/*
- *
- *
- */
-
-llxHeader();
-
-
-print '<div class="tabs">';
-print '<a href="fiche.php?id='.$_GET['id'].'" id="active" class="tab">'.$langs->trans('Payment').'</a>';
-print '<a class="tab" href="info.php?id='.$_GET['id'].'">'.$langs->trans('Info').'</a>';
-print '</div>';
-
-print '<div class="tabBar">';
-
 
 /*
  * Visualisation de la fiche
  */
 
+llxHeader();
+
 $paiement = new Paiement($db);
 $paiement->fetch($_GET['id']);
+
 $html = new Form($db);
+
+$h=0;
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Card");
+$hselected = $h;
+$h++;      
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Info");
+$h++;      
+
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$paiement->ref);
 
 /*
  * Confirmation de la suppression du paiement
@@ -127,10 +129,12 @@ print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td>'.$paie
 if ($paiement->bank_account) 
 {
 	// Si compte renseigné, on affiche libelle
-	print '<tr><td valign="top" width="140">';
 	$bank=new Account($db);
 	$bank->fetch($paiement->bank_account);
-	print $langs->trans('BankAccount').'</td><td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$bank->id.'">'.$bank->label.'</a></td></tr>';
+
+	print '<tr>';
+	print '<td valign="top" width="140">'.$langs->trans('BankAccount').'</td>';
+	print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$bank->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$bank->label.'</a></td></tr>';
 }
 print '<tr><td valign="top" width="140">'.$langs->trans('Date').'</td><td>'.dolibarr_print_date($paiement->date).'</td></tr>';
 print '<tr><td valign="top">'.$langs->trans('Type').'</td><td>'.$paiement->type_libelle.'</td></tr>';
@@ -152,10 +156,10 @@ $sql = 'SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql .= ' WHERE pf.fk_facture = f.rowid AND f.fk_soc = s.idp';
 $sql .= ' AND pf.fk_paiement = '.$paiement->id;
- 			
-if ($db->query($sql))
+$resql=$db->query($sql); 			
+if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
   
 	$i = 0;
 	$total = 0;
@@ -171,7 +175,7 @@ if ($db->query($sql))
       
 		while ($i < $num)
 		{
-			$objp = $db->fetch_object();
+			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
@@ -193,7 +197,7 @@ if ($db->query($sql))
 	$var=!$var;
 
 	print "</table>\n";
-	$db->free();	
+	$db->free($resql);	
 }
 else
 {

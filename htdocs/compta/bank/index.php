@@ -105,7 +105,7 @@ foreach ($accounts as $key=>$type)
       $solde = $acc->solde();
       
       print '<tr '.$bc[$var].'><td width="30%">';
-      print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
+      print '<a href="account.php?account='.$acc->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$acc->label.'</a>';
       print '</td><td>'.$acc->bank."</td><td>$acc->number</td>";
       print '<td align="center">'.yn($acc->rappro).'</td>';
       print '<td align="center">'.$acc->status[$acc->clos].'</td>';
@@ -147,7 +147,7 @@ foreach ($accounts as $key=>$type)
       $solde = $acc->solde();
   
       print "<tr ".$bc[$var]."><td>";
-      print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
+      print '<a href="account.php?account='.$acc->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$acc->label.'</a>';
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
       print '<td align="center">'.yn($acc->rappro).'</td>';
       print '<td align="center">'.$acc->status[$acc->clos].'</td>';
@@ -189,7 +189,7 @@ foreach ($accounts as $key=>$type)
         $solde = $acc->solde();
 
         print "<tr ".$bc[$var]."><td>";
-        print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
+        print '<a href="account.php?account='.$acc->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$acc->label.'</a>';
         print '</td><td>'.$acc->bank.'</td>';
         print '<td>&nbsp;</td>';
         print '<td>&nbsp;</td>';

@@ -180,6 +180,10 @@ $head[$h][1] = $langs->trans('Card');
 $hselected=$h;
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$_GET["rowid"];
+$head[$h][1] = $langs->trans("Info");
+$h++;   
+
 dolibarr_fiche_head($head, $hselected, $langs->trans('LineRecord').': '.$_GET["rowid"]);
 
 
@@ -329,9 +333,16 @@ if ($result)
             {
                 if ($key) print '<br>';
                 print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-                if ($links[$key]['type']=='payment') { print img_object($langs->trans('ShowPayment'),'payment').' '; }
-                if ($links[$key]['type']=='company') { print img_object($langs->trans('ShowCustomer'),'company').' '; }
-                print $links[$key]['label'].'</a>';
+                if ($links[$key]['type']=='payment') {
+                    print img_object($langs->trans('ShowPayment'),'payment').' ';
+                    print $langs->trans("Payment");
+                }
+                else if ($links[$key]['type']=='company') {
+                    print img_object($langs->trans('ShowCustomer'),'company').' ';
+                    print $links[$key]['label'];
+                }
+                else print $links[$key]['label'];
+                print '</a>';
             }
             print '</td><td>&nbsp;</td></tr>';
         }
@@ -419,8 +430,9 @@ print "</tr>";
 print "</form>";
 
 $sql = "SELECT c.label, c.rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c WHERE a.lineid=$rowid AND a.fk_categ = c.rowid ";
-$sql .= " ORDER BY c.label";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
+$sql.= " WHERE a.lineid=".$rowid." AND a.fk_categ = c.rowid";
+$sql.= " ORDER BY c.label";
 $result = $db->query($sql);
 if ($result)
 {

@@ -32,7 +32,7 @@
 require("./pre.inc.php");
 
 if (!$user->rights->banque->lire)
-  accessforbidden();
+    accessforbidden();
 
 
 $account=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
@@ -41,51 +41,45 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
 
 if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]))
-{    
-
-  if ($_POST["credit"] > 0)
+{
+    if ($_POST["credit"] > 0)
     {
-      $amount = $_POST["credit"];
+        $amount = $_POST["credit"];
     }
-  else
+    else
     {
-      $amount = - $_POST["debit"];
+        $amount = - $_POST["debit"];
     }
-  
-  $dateop = $_POST["dateoy"].$_POST["dateo"];
-  $operation=$_POST["operation"];
-  $label=$_POST["label"];
-  $operation=$_POST["operation"];
-  $num_chq=$_POST["num_chq"];
-  $cat1=$_POST["cat1"];
 
-  $acct=new Account($db,$account);
+    $dateop = $_POST["dateoy"].$_POST["dateo"];
+    $operation=$_POST["operation"];
+    $label=$_POST["label"];
+    $operation=$_POST["operation"];
+    $num_chq=$_POST["num_chq"];
+    $cat1=$_POST["cat1"];
 
-  $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1);
+    $acct=new Account($db,$account);
 
-  if ($insertid)
+    $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1);
+
+    if ($insertid)
     {
         Header("Location: account.php?account=" . $account);
     }
-  else
+    else
     {
         dolibarr_print_error($db);
     }
 }
 if ($_GET["action"] == 'del' && $account && $user->rights->banque->modifier)
 {
-  $acct=new Account($db,$account);
-  $acct->deleteline($_GET["rowid"]);
+    $acct=new Account($db,$account);
+    $acct->deleteline($_GET["rowid"]);
 }
 
 
-/***********************************************************************************
- *
- *
- */
 
 llxHeader();
-
 
 if ($account > 0)
 {
@@ -177,21 +171,21 @@ if ($account > 0)
       $limitsql = $nbline;
     }
 
-  /*
-   * Formulaire de recherche
-   *
-   */  
-  $mesg='';
-  
-  $nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
-  if ($limitsql > $viewline)
+    /**
+     * Formulaire de recherche
+     *
+     */
+    $mesg='';
+    
+    $nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
+    if ($limitsql > $viewline)
     {
-      $mesg.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'">'.img_previous().'</a>';
+        $mesg.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'">'.img_previous().'</a>';
     }
-  $mesg.= ' Page '.($nbpage-$page).'/'.$nbpage.' ';
-  if ($total_lines > $limitsql )
+    $mesg.= ' Page '.($nbpage-$page).'/'.$nbpage.' ';
+    if ($total_lines > $limitsql )
     {
-      $mesg.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
+        $mesg.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
     }
 
   
@@ -249,7 +243,7 @@ if ($account > 0)
         print "<tr class=\"noborder\"><td colspan=\"8\">&nbsp;</td></tr>\n";
     }
     
-    // Ligne de titre
+    // Ligne de titre tableau des acritures
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
     print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
@@ -279,16 +273,11 @@ if ($account > 0)
     */
 
     $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-    $sql .= " FROM ".MAIN_DB_PREFIX."bank as b ";
-    $sql .= " WHERE fk_account=".$acct->id;
-
-    if ($req_debit)
-    {
-        $sql .= " AND b.amount = -".$req_debit;
-    }
-    
-    $sql .= $sql_rech;
-    
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+    $sql.= " WHERE fk_account=".$acct->id;
+    if ($req_debit)  $sql .= " AND b.amount = -".$req_debit;
+    if ($req_credit) $sql .= " AND b.amount = ".$req_credit;
+    $sql.= $sql_rech;
     if ($vue)
     {
         if ($vue == 'credit')
@@ -300,9 +289,8 @@ if ($account > 0)
             $sql .= " AND b.amount < 0 ";
         }
     }
-    
-    $sql .= " ORDER BY b.datev ASC";
-    $sql .= $db->plimit($limitsql, 0);
+    $sql.= " ORDER BY b.datev ASC";
+    $sql.= $db->plimit($limitsql, 0);
     
     $result = $db->query($sql);
     if ($result)
@@ -405,9 +393,16 @@ function _print_lines($db,$result,$sql,$acct)
             {
                 print ' - ';
                 print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-                // if ($links[$key]['type']=='payment') { print img_object($langs->trans('ShowPayment'),'payment').' '; }
-                // if ($links[$key]['type']=='company') { print img_object($langs->trans('ShowCustomer'),'company').' '; }
-                print $links[$key]['label'].'</a>';
+                if ($links[$key]['type']=='payment') {
+                    //print img_object($langs->trans('ShowPayment'),'payment').' ';
+                    print $langs->trans("Payment");
+                }
+                else if ($links[$key]['type']=='company') {
+                    //print img_object($langs->trans('ShowCustomer'),'company').' ';
+                    print $links[$key]['label'];
+                }
+                else print $links[$key]['label'];
+                print '</a>';
             }
             print '</td>';
     

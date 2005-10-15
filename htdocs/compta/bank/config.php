@@ -38,8 +38,8 @@ llxHeader();
 print_titre($langs->trans("AccountSetup"));
 print '<br>';
 print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td>'.$langs->trans("Ref")."</td><td>".$langs->trans("Label")."</td><td>".$langs->trans("Type")."</td><td>".$langs->trans("Bank").'</td>';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Ref")."</td><td>".$langs->trans("Type")."</td><td>".$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("AccountIdShort").'</a></td>';
 print '<td align="center">'.$langs->trans("Conciliable").'</a></td>';
 print '<td align="center">'.$langs->trans("Status").'</a></td>';
@@ -65,7 +65,7 @@ if ($result)
     $objp = $db->fetch_object($result);
 
     $var=!$var;
-    print "<tr $bc[$var]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td>";
+    print '<tr '.$bc[$var].'><td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</td>';
     print '<td>'.$account->type_lib[$objp->type].'</td>';
     print '<td>'.$objp->bank.'&nbsp;</td><td>'.$objp->number.'&nbsp;</td>';
     print '<td align="center">'.yn($objp->rappro).'</td>';

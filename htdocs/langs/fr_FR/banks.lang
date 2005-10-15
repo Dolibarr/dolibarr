@@ -75,3 +75,5 @@ EditBankRecord=Editer écriture
 LineRecord=Ecriture
 AddBankRecord=Ajouter écriture
 AddBankRecordLong=Saisie d'une écriture manuelle hors facture
+ConciliatedBy=Rapproché par
+DateConciliating=Date rapprochement

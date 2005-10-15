@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -37,7 +36,7 @@
 class Paiement
 {
 	var $id;
-	var $db;
+	var $ref;
 	var $facid;
 	var $datepaye;
 	var $amount;
@@ -52,6 +51,7 @@ class Paiement
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
+	var $db;
 
   /**
    *    \brief  Constructeur de la classe
@@ -64,12 +64,12 @@ class Paiement
 		$this->db = $DB ;
 	}
 
-  /**
-   *    \brief      Récupère l'objet paiement
-   *    \param      id       id du paiement a récupérer
-   */
-
-	function fetch($id)
+    /**
+     *    \brief      Récupère l'objet paiement
+     *    \param      id      id du paiement a récupérer
+     *    \return     int     <0 si ko, >0 si ok
+     */
+    function fetch($id)
 	{
 		$sql = 'SELECT p.rowid,'.$this->db->pdate('p.datep').' as dp, p.amount, p.statut, p.fk_bank';
 		$sql .=', c.libelle as paiement_type';
@@ -85,6 +85,7 @@ class Paiement
 			{
 				$obj = $this->db->fetch_object();
 				$this->id             = $obj->rowid;
+				$this->ref            = $obj->rowid;
 				$this->date           = $obj->dp;
 				$this->numero         = $obj->num_paiement;
 				$this->bank_account   = $obj->fk_account;
@@ -97,14 +98,14 @@ class Paiement
 			}
 			else
 			{
-				return 0;
+				return -2;
 			}
 			$this->db->free();
 		}
 		else
 		{
 			dolibarr_print_error($this->db);
-			return 0;
+			return -1;
 		}
 	}
 
