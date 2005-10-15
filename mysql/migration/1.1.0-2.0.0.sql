@@ -782,7 +782,8 @@ update llx_chargesociales set periode=date_ech where periode is null or periode 
 -- pour virer les doublons de llx_bank_url (dus à un ancien bug)
 alter ignore table llx_bank_url add unique index(fk_bank,url_id);
 alter table llx_bank_url add type enum("company","payment","member","donation","charge");
-  
+update llx_bank_url set type = 'payment' where label='(paiement)' and type is null;
+
 create table llx_societe_remise
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
