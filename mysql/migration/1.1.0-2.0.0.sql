@@ -451,6 +451,18 @@ alter table llx_socpeople add jabberid varchar(255) after email ;
 alter table llx_socpeople add birthday date after address ;
 alter table llx_socpeople add tms timestamp after datec ;
 
+
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_soc (fk_soc);
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_user_author (fk_user_author);
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_projet (fk_projet);
+
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_valid     FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+
+
 alter table llx_facture_fourn drop index facnumber ;
 alter table llx_facture_fourn add unique index (facnumber, fk_soc) ;
 
@@ -463,15 +475,12 @@ ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_user_author (fk_use
 ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_user_valid (fk_user_valid);
 ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_projet (fk_projet);
 
-ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
-ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
-ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
-ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_user_valid     FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
 
-ALTER TABLE llx_facture ADD INDEX idx_facture_fk_projet (fk_projet);
-
-ALTER TABLE llx_facture ADD FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
-
+update llx_facture_fourn set date_lim_reglement = datef where fk_cond_reglement = 1;
 
 alter table llx_bank_account modify bank varchar(60);
 alter table llx_bank_account modify domiciliation varchar(255);
@@ -631,15 +640,14 @@ create table llx_mailing_cibles
   fk_contact         integer NOT NULL,
   nom                varchar(160),
   prenom             varchar(160),
-  email              varchar(160) NOT NULL,
---  statut             smallint NOT NULL DEFAULT 0,
---  date_envoi         datetime
+  email              varchar(160) NOT NULL
 
 )type=innodb;
+
 -- Ajout des champs statut, url et date_envoi
-alter table `llx_mailing_cibles` ADD `statut` SMALLINT DEFAULT '0' NOT NULL AFTER `email` ;
-alter table llx_mailing_cibles ADD url varchar(160) AFTER 'statut';
-alter table `llx_mailing_cibles` ADD `date_envoi` DATETIME NOT NULL AFTER 'url';
+alter table llx_mailing_cibles ADD statut SMALLINT DEFAULT 0 NOT NULL AFTER email;
+alter table llx_mailing_cibles ADD url varchar(160) AFTER statut;
+alter table llx_mailing_cibles ADD date_envoi DATETIME NOT NULL AFTER url;
 alter table llx_mailing_cibles ADD UNIQUE uk_mailing_cibles (fk_mailing, email);
 
 --
