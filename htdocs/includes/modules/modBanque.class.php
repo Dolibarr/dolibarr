@@ -60,6 +60,7 @@ class modBanque extends DolibarrModules
 
     $this->const_name = "MAIN_MODULE_BANQUE";
     $this->const_config = MAIN_MODULE_BANQUE;
+    $this->picto='account';
 
     // Dépendances
     $this->depends = array();
