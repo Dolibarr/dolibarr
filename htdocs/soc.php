@@ -692,7 +692,7 @@ else
     print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
 
     print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
-    if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
+    if ($soc->url) { print '<a href="http://'.$soc->url.'" target="_blank">http://'.$soc->url.'</a>'; }
     print '</td></tr>';
 
     // ProfId1
