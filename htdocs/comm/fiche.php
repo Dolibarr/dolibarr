@@ -256,7 +256,7 @@ if ($_socid > 0)
 
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\" target=\"_blank\">".$objsoc->url."</a>&nbsp;</td></tr>";
 
-    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$objsoc->siren."\" target="_blank">".$objsoc->siren."</a>&nbsp;</td>";
+    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$objsoc->siren."\" target=\"_blank\">".$objsoc->siren."</a>&nbsp;</td>";
     print '<td>'.$langs->transcountry('ProfId2',$objsoc->pays_code).'</td><td>'.$objsoc->siret.'</td></tr>';
 
     print '<tr><td>'.$langs->transcountry('ProfId3',$objsoc->pays_code).'</td><td>'.$objsoc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
