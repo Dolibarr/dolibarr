@@ -23,28 +23,28 @@
  */
 
 /**
-	    \file       htdocs/includes/modules/facture/pdf_adytek.modules.php
+	    \file       htdocs/includes/modules/facture/pdf_huitre.modules.php
 		\ingroup    facture
-		\brief      Fichier de la classe permettant de générer les factures au modèle Adytek
+		\brief      Fichier de la classe permettant de générer les factures au modèle Huitre
 		\author	    Laurent Destailleur
 		\version    $Revision$
 */
 
 
 /**
-	    \class      pdf_adytek
-		\brief      Classe permettant de générer les factures au modèle Adytek
+	    \class      pdf_huitre
+		\brief      Classe permettant de générer les factures au modèle Huitre
 */
 
-class pdf_adytek extends ModelePDFFactures {
+class pdf_huitre extends ModelePDFFactures {
 
     /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
-    function pdf_adytek($db)
+    function pdf_huitre($db)
     {
       $this->db = $db;
-      $this->description = "Modèle de facture avec remise et infos réglement à la mode de chez nous";
+      $this->description = "Modèle de facture avec remise et infos réglement";
     }
 
    function write_pdf_file($facid)
@@ -75,7 +75,7 @@ class pdf_adytek extends ModelePDFFactures {
 
 	  if (file_exists($dir))
 	    {
-                // Initialisation facture vierge
+          // Initialisation facture vierge
 	      $pdf=new FPDF('P','mm','A4');
 	      $pdf->Open();
 	      $pdf->AddPage();
@@ -83,11 +83,11 @@ class pdf_adytek extends ModelePDFFactures {
 	      $this->_pagehead($pdf, $fac);
 
 	      $pdf->SetTitle($fac->ref);
-                $pdf->SetSubject($langs->trans("Bill"));
-                $pdf->SetCreator("ADYTEK Dolibarr ".DOL_VERSION);
+          $pdf->SetSubject($langs->trans("Bill"));
+          $pdf->SetCreator("Dolibarr (By ADYTEK)".DOL_VERSION);
 	      $pdf->SetAuthor($user->fullname);
-              $pdf->SetMargins(10, 10, 10);
-              $pdf->SetAutoPageBreak(1,0);
+          $pdf->SetMargins(10, 10, 10);
+          $pdf->SetAutoPageBreak(1,0);
 	      $tab_top = 100;
 	      $tab_height = 110;
 
