@@ -172,43 +172,44 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
  */
 if ($conf->commande->enabled)
 {
-  $langs->load("orders");
-  $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-  $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
-  if ($socidp)
+    $langs->load("orders");
+    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
+    $sql.= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
+    if ($socidp)
     {
-      $sql .= " AND c.fk_soc = $socidp";
+        $sql .= " AND c.fk_soc = $socidp";
     }
-  
-  $resql = $db->query($sql);
-  if ($resql)
+
+    $resql = $db->query($sql);
+    if ($resql)
     {
-      $total = 0;
-      $num = $db->num_rows($resql);
-      if ($num)
+        $total = 0;
+        $num = $db->num_rows($resql);
+        if ($num)
         {
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre">';
-	  print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
-	  
-	  $i = 0;
-	  $var = true;
-	  while ($i < $num)
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
+
+            $i = 0;
+            $var = true;
+            while ($i < $num)
             {
-	      $var=!$var;
-	      $obj = $db->fetch_object($resql);
-	      print "<tr $bc[$var]><td nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
-	      print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
-	      $i++;
-	      $total += $obj->total_ttc;
+                $var=!$var;
+                $obj = $db->fetch_object($resql);
+                print "<tr $bc[$var]><td nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
+                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+                print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
+                $i++;
+                $total += $obj->total_ttc;
             }
-	  if ($total>0)
-	    {
-	      $var=!$var;
-	      print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
-	    }
-	  print "</table><br>";
+            if ($total>0)
+            {
+                $var=!$var;
+                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+            }
+            print "</table><br>";
         }
     }
 }

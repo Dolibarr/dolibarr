@@ -1433,7 +1433,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
     }
     else
     {
-        print '<tr><td><div class="titre">'.$titre.'</div></td>';
+        print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.'</div></td>';
     }
 
     if ($center)
