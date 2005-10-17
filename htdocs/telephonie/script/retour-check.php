@@ -133,8 +133,10 @@ Function check_file($db,$dir,$file)
      
   fclose($hf);
 
-  return $error;
-
   print "ok      : $ok\n";
   print "erreurs : $nok\n";
+  print "$lignes : $line\n";
+  return $error;
+
+
 }
