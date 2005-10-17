@@ -233,4 +233,8 @@ for ($i = 0 ; $i < $n ; $i++)
        *
        */
     }
+  else
+    {
+      print "Ligne inconnue : $numero\n";
+    }
 }
