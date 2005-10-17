@@ -120,7 +120,9 @@ function dolibarr_syslog($message, $level=LOG_ERR)
     if ($conf->syslog->enabled)
     {
         // Ajout user a la log
-        $message=sprintf("%-8s",($user->id?$user->login:'???')).' '.$message;
+        $login='???';
+        if (is_object($user) && $user->id) $login=$user->login;
+        $message=sprintf("%-8s",$login)." ".$message;
 
         if (defined("SYSLOG_FILE") && SYSLOG_FILE)
         {
