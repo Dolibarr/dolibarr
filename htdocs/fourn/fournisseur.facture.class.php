@@ -454,12 +454,34 @@ class FactureFournisseur
 		return $this->LibStatut($this->paye,$this->statut);
     }
 
-  /**
-   *    \brief      Renvoi le libellé long d'un statut donné
-   *    \param      paye        etat paye
-   *    \param      statut      id statut
-   *    \return     string      Libellé long du statut
-   */
+    /**
+     *    \brief      Renvoi le libellé court d'un statut donné
+     *    \param      paye        etat paye
+     *    \param      statut      id statut
+     *    \return     string      Libellé long du statut
+     */
+    function LibStatutShort($paye,$statut)
+    {
+        global $langs;
+        $langs->load("bills");
+        if (! $paye)
+        {
+            if ($statut == 0) return $langs->trans("BillShortStatusDraft");
+            if ($statut == 3) return $langs->trans("BillShortStatusCanceled");
+            return $langs->trans("BillShortValidated");
+        }
+        else
+        {
+            return $langs->trans("BillShortStatusPayed");
+        }
+    }
+
+    /**
+     *    \brief      Renvoi le libellé long d'un statut donné
+     *    \param      paye        etat paye
+     *    \param      statut      id statut
+     *    \return     string      Libellé long du statut
+     */
     function LibStatut($paye,$statut)
     {
         global $langs;
@@ -475,7 +497,7 @@ class FactureFournisseur
             return $langs->trans("BillStatusPayed");
         }
     }
-
+    
     /**
      *    \brief      Renvoi le libellé court d'un statut donné
      *    \param      paye        etat paye

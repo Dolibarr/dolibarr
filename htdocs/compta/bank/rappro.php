@@ -262,7 +262,7 @@ if ($resql)
             print "<input class=\"flat\" name=\"num_releve\" type=\"text\" value=\"\" size=\"8\">";
             if ($options)
             {
-                print "<br><select name=\"cat1\">$options";
+                print "<br><select class=\"flat\" name=\"cat1\">$options";
                 print "</select>";
             }
             print "</td>";
