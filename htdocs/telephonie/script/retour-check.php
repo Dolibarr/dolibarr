@@ -96,6 +96,9 @@ Function check_file($db,$dir,$file)
   $line = 0;
   $hf = fopen ($dir.$file, "r");
 
+  $ok = 0;
+  $nok = 0;
+
   while (!feof($hf))
     {
       $cont = fgets($hf, 1024);
@@ -135,7 +138,7 @@ Function check_file($db,$dir,$file)
 
   print "ok      : $ok\n";
   print "erreurs : $nok\n";
-  print "$lignes : $line\n";
+  print "lignes : $line\n";
   return $error;
 
 
