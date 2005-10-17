@@ -39,22 +39,25 @@ $langs->load("companies");
 
 
 /*
- *
+ * Visualisation de la fiche
  *
  */
 
 llxHeader();
+$h=0;
 
-print '<div class="tabs">';
-print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">'.$langs->trans("Payment").'</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'">'.$langs->trans("Info").'</a>';
-print '</div>';
+$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Card");
+$hselected = $h;
+$h++;      
 
-print '<div class="tabBar">';
-/*
- * Visualisation de la fiche
- *
- */
+$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/info.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Info");
+$h++;      
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$_GET["id"]);
+
+
 $facture = new FactureFournisseur($db);
 $paiement = new PaiementFourn($db);
 
@@ -70,7 +73,6 @@ if ($paiement->fetch($_GET["id"], $user) == 0)
    */
   if ($_GET["action"] == 'delete')
     {
-      print '<br>';
       $html->form_confirm("fiche.php?id=$paiement->id","Supprimer le paiement","Etes-vous sûr de vouloir supprimer ce paiement ?","confirm_delete");
       print '<br>';
       
@@ -78,13 +80,10 @@ if ($paiement->fetch($_GET["id"], $user) == 0)
   
   if ($_GET["action"] == 'valide')
     {
-      print '<br>';
       $html->form_confirm("fiche.php?id=$paiement->id","Valider le paiement","Etes-vous sûr de vouloir valider ce paiment, auncune modification n'est possible une fois le paiement validé ?","confirm_valide");
       print '<br>';
       
     }
-  
-  print '<br>';
   
   print '<table class="noborder" width="100%">';
   

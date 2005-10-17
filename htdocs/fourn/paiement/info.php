@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!	\file htdocs/compta/paiement/info.php
+/**
+    	\file       htdocs/fourn/paiement/info.php
 		\ingroup    facture
-		\brief      Onglet info d'un paiement
+		\brief      Onglet info d'un paiement fournisseur
 		\version    $Revision$
 */
 
@@ -34,12 +34,19 @@ $langs->load("bills");
 $langs->load("companies");
 
 llxHeader();
+$h=0;
 
-print '<div class="tabs">';
-print '<a class="tab" href="fiche.php?id='.$_GET["id"].'">'.$langs->trans("Payment").'</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'" id="active">'.$langs->trans("Info").'</a>';
-print '</div>';
-print '<div class="tabBar">';
+$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Card");
+$h++;      
+
+$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/info.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Info");
+$hselected = $h;
+$h++;      
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$_GET["id"]);
+
 
 /*
  * Visualisation de la fiche
@@ -54,7 +61,13 @@ print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($paiement);
 print '</td></tr></table>';
 
+print '</div>';
+
+// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+print '<div class="tabsAction">';
+print '</div>';
+
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
