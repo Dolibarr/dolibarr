@@ -118,13 +118,14 @@ Function check_file($db,$dir,$file)
 	      $ligne = new LigneTel($db);
 	      if ($ligne->fetch($numero) == 1)
 		{
-
+		  print "Ligne : $numero OK\n";
+		  $ok++;
 		}
 	      else
 		{
-		  print "Ligne inconnue : $numero\n";
-		}
-      
+		  print "Ligne : $numero ERREUR\n";
+		  $nok++;
+		}      
 	    }      
 	}
       $line++;
@@ -133,4 +134,7 @@ Function check_file($db,$dir,$file)
   fclose($hf);
 
   return $error;
+
+  print "ok      : $ok\n";
+  print "erreurs : $nok\n";
 }
