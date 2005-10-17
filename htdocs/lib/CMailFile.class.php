@@ -216,6 +216,7 @@ class CMailFile
     */
     function write_body($msgtext, $filename_list)
     {
+        $out='';
         if (count($filename_list))
         {
             $out = "--" . $this->mime_boundary . "\n";
@@ -257,9 +258,9 @@ class CMailFile
         $out .= "Return-path: <$this->addr_from_email>\n";
         $out .= "From: $this->addr_from_name <".$this->addr_from_email.">\n";
 
-        if ($this->addr_cc)  $out .= "Cc: ".$this->addr_cc."\n";
-        if ($this->addr_bcc) $out .= "Bcc: ".$this->addr_bcc."\n";
-        if ($this->reply_to) $out .= "Reply-To: ".$this->reply_to."\n";
+        if (isset($this->addr_cc)  && $this->addr_cc)  $out .= "Cc: ".$this->addr_cc."\n";
+        if (isset($this->addr_bcc) && $this->addr_bcc) $out .= "Bcc: ".$this->addr_bcc."\n";
+        if (isset($this->reply_to) && $this->reply_to) $out .= "Reply-To: ".$this->reply_to."\n";
         //    if($this->errors_to != "")
         //$out = $out . "Errors-to: ".$this->errors_to."\n";
 
