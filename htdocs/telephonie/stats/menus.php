@@ -35,12 +35,13 @@ $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
 $menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/clients/", "Clients");
 $menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/contrats/", "Contrats");
-$menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/lignes/", "Lignes");
 $menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/commerciaux/", "Commerciaux");
-$menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/distributeurs/", "Distributeurs");
 $menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/communications/", "Communications");
 $menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/destinations/", "Destinations");
+$menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/distributeurs/", "Distributeurs");
 $menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/factures/", "Factures");
+$menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/fournisseurs/", "Fournisseurs");
+$menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/lignes/", "Lignes");
 
 $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
