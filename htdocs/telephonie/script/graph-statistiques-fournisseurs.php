@@ -109,7 +109,7 @@ foreach($graphs as $graph)
       $j = 0;
       foreach($Tdate as $date)
 	{
-	  $datas[$key][$j] = ($value[$date]/60);
+	  $datas[$key][$j] = ($value[$date]/60000);
 	  $j++;
 	}
       
@@ -137,7 +137,7 @@ foreach($graphs as $graph)
 
   $ObjectGraph->Add($gbplot);
   
-  $ObjectGraph->title->Set("Nombre de minutes ".$titres[$graph]." par fournisseurs");
+  $ObjectGraph->title->Set("Nombre de minutes ".$titres[$graph]." par fournisseurs (en milliers)");
   $ObjectGraph->xaxis->SetTickLabels($Tdate);
   
   $ObjectGraph->img->SetImgFormat("png");
