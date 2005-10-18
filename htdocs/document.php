@@ -101,6 +101,17 @@ if ($modulepart)
         }
       $original_file=$conf->compta->dir_output.'/'.$original_file;
     }
+    
+  // Wrapping pour les exports de compta
+  if ($modulepart == 'export_compta')
+    {
+      $user->getrights('compta');
+      if ($user->rights->compta->ventilation->creer)
+        {
+	  $accessallowed=1;
+        }
+      $original_file=$conf->compta->dir_output.'/'.$original_file;
+    }    
   
   // Wrapping pour les societe
   if ($modulepart == 'societe')

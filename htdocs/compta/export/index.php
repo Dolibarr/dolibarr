@@ -113,7 +113,7 @@ while (($file = readdir($handle))!==false)
 {
   if (is_readable($dir.$file) && is_file($dir.$file))
     {
-      print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?file='.$dir.$file.'&amp;type=text/plain">'.$file.'</a><td>';
+      print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=export_compta&file=export/'.$file.'&amp;type=text/plain">'.$file.'</a><td>';
 
       print '</tr>';
     }
