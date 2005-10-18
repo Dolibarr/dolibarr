@@ -67,6 +67,8 @@ $resql = $db->query($sql);
 
 if ($resql)
 {
+  $Ttotal = array();
+  $Tglobal = array();
   $Tinter = array();
   $Tnatio = array();
   $Tmobil = array();
@@ -91,6 +93,8 @@ if ($resql)
 	  $Tnatio[$row[0]][$row[1]] += $row[2];
 	}
 
+      $Ttotal[$row[0]][$row[1]] += $row[2];
+      $Tglobal[$row[1]] += $row[2];
       $i++;
     }
 }
@@ -104,6 +108,7 @@ $colors = array("yellow","red","blue","pink","orange","green");
 foreach($graphs as $graph)
 {
   $datas = array();
+  $globals = array();
 
   $tab = "T".$graph;
   foreach ($$tab as $key => $value)
@@ -112,18 +117,19 @@ foreach($graphs as $graph)
       foreach($Tdate as $date)
 	{
 	  $datas[$key][$j] = ($value[$date]/60000);
+	  $globals[$j] = ($value[$date]/60000);
 	  $j++;
 	}
       
     }
   $file = $img_root . "communications/fourn_".$graph.".png";
 
-  $ObjectGraph = new Graph(640,480,"auto");    
+  $ObjectGraph = new Graph(640,320,"auto");    
   $ObjectGraph->SetScale("textlin");
   $ObjectGraph->yaxis->scale->SetGrace(20);
   $ObjectGraph->xaxis->scale->SetGrace(20);  
   $ObjectGraph->img->SetMargin(40,20,20,40);
-  $ObjectGraph->legend->Pos(0.10,0.12,"left","center");
+  $ObjectGraph->legend->Pos(0.10,0.12,"left","top");
   $i=0;
   $plots = array();
   foreach ($$tab as $key => $value)
@@ -145,5 +151,37 @@ foreach($graphs as $graph)
   $ObjectGraph->img->SetImgFormat("png");
   $ObjectGraph->Stroke($file);
 }
+
+/*
+ * Sum
+ */
+
+$file = $img_root . "communications/duree.png";
+
+$ObjectGraph = new Graph(640,200,"auto");
+$ObjectGraph->SetScale("textlin");
+$ObjectGraph->yaxis->scale->SetGrace(20);
+$ObjectGraph->xaxis->scale->SetGrace(20);  
+$ObjectGraph->img->SetMargin(40,20,20,40);
+
+$i=0;
+$plots = array();
+
+$bplot = new BarPlot($globals);
+$bplot->SetFillColor("green");
+
+array_push($plots, $bplot);
+
+$gbplot = new GroupBarPlot($plots);
+
+$ObjectGraph->Add($gbplot);
+
+$ObjectGraph->title->Set("Nombre de minutes (en milliers)");
+$ObjectGraph->xaxis->SetTickLabels($Tlegends);
+
+$ObjectGraph->img->SetImgFormat("png");
+$ObjectGraph->Stroke($file);
+
+
 print strftime("%H:%M:%S",time())."\n";
 ?>
