@@ -60,6 +60,11 @@ print '</table></form>';
 
 print '<br />';
 
+
+
+
+print '</td><td width="30%" valign="top">';
+
 $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
@@ -101,6 +106,12 @@ else
   print $db->error() . ' ' . $sql;
 }
 
+print '</td><td width="40%" valign="top">';
+
+print '</td></tr>';
+
+print '<tr><td colspan="3">';
+
 if ($user->rights->telephonie->fournisseur->lire)
 {
   print '<br />';
@@ -109,7 +120,23 @@ if ($user->rights->telephonie->fournisseur->lire)
    * Fournisseurs
    *
    */
-  
+  $statuts = array();
+  $sql = "SELECT count(*), l.fk_fournisseur, l.statut";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+  $sql .= " ,".MAIN_DB_PREFIX."societe_perms as sp";
+  $sql .= " WHERE l.fk_client_comm = sp.fk_soc";
+  $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
+  $sql .= " GROUP BY l.fk_fournisseur, l.statut";
+  $resql = $db->query($sql);
+
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  $statuts[$row[1]][$row[2]] = $row[0];
+	}
+    }
+
   $sql = "SELECT distinct f.nom as fournisseur, f.rowid, count(*) as cc";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
   $sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -129,18 +156,28 @@ if ($user->rights->telephonie->fournisseur->lire)
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre"><td>Fournisseur</td><td align="center">Nb lignes</td>';
+      for ($j = -1 ; $j < 8 ; $j++)
+	{
+	  print '<td align="center"><img border="0" src="./ligne/graph'.$j.'.png"></td>';
+	}
       print "</tr>\n";
       $var=True;
       
       while ($i < min($num,$conf->liste_limit))
 	{
-	  $obj = $db->fetch_object($resql);	
+	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?fournisseur='.$obj->rowid.'">';
 	  print $obj->fournisseur.'</a></td>';
 	  print '<td align="center">'.$obj->cc."</td>\n";
+	  
+	  for ($k = -1 ; $k < 8 ; $k++)
+	    {
+	      print '<td align="center">'.$statuts[$obj->rowid][$k].'</td>';
+	    }
+
 	  print "</tr>\n";
 	  $i++;
 	}
@@ -152,7 +189,6 @@ if ($user->rights->telephonie->fournisseur->lire)
       print $db->error() . ' ' . $sql;
     }
 }
-print '</td><td width="70%" valign="top">';
 
 print '</td></tr>';
 print '</table>';
