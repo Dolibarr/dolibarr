@@ -134,11 +134,15 @@ class Propal
         dolibarr_syslog("propal.class.php::insert_product $idproduct, $qty, $remise_percent, $p_desc");
         if ($this->statut == 0)
         {
+            // Nettoyage parametres
+            $remise_percent=price2num($remise_percent);
+            $qty=price2num($qty);
+            
             $prod = new Product($this->db, $idproduct);
             if ($prod->fetch($idproduct) > 0)
             {
-                $price = $prod->price;
-                $subprice = $prod->price;
+                $price = price2num($prod->price);
+                $subprice = price2num($prod->price);
     
                 if ($remise_percent > 0)
                 {
@@ -147,7 +151,7 @@ class Propal
                 }
     
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-                $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". ereg_replace(",",".",$price)."','".$prod->tva_tx."','".addslashes($p_desc?$p_desc:$prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
+                $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$prod->tva_tx."','".addslashes($p_desc?$p_desc:$prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
     
                 if ($this->db->query($sql) )
                 {
@@ -243,7 +247,12 @@ class Propal
     {
         if ($this->statut == 0)
         {
+            // Nettoyage paramètres
+            $subprice=price2num($subprice);
             $price = $subprice;
+            $remise_percent=price2num($remise_percent);
+            $tva_tx=price2num($tva_tx);
+            
             if ($remise_percent > 0)
             {
                 $remise = round(($subprice * $remise_percent / 100), 2);
@@ -252,10 +261,10 @@ class Propal
     
             $sql = "UPDATE ".MAIN_DB_PREFIX."propaldet ";
             $sql.= " SET qty='".$qty."'";
-            $sql.= " , price='". ereg_replace(",",".",$price)."'";
-            $sql.= " , remise_percent='".ereg_replace(",",".",$remise_percent)."'";
-            $sql.= " , subprice='".ereg_replace(",",".",$subprice)."'";
-            $sql.= " , tva_tx='".ereg_replace(",",".",$tva_tx)."'";
+            $sql.= " , price='". $price."'";
+            $sql.= " , remise_percent='".$remise_percent."'";
+            $sql.= " , subprice='".$subprice."'";
+            $sql.= " , tva_tx='".$tva_tx."'";
             $sql.= " , description='".addslashes($desc)."'";
             $sql.= " WHERE rowid = '".$id."';";
     
