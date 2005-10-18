@@ -24,7 +24,7 @@ require("./pre.inc.php");
 if (!$user->rights->telephonie->lire) accessforbidden();
 if (!$user->rights->telephonie->stats->lire) accessforbidden();
 
-llxHeader('','Telephonie - Statistiques');
+llxHeader('','Telephonie - Statistiques - Fournisseurs');
 /*
  * Sécurité accés client
  */
@@ -51,9 +51,26 @@ print '<tr><td width="50%" valign="top">'."\n";
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree.png" alt="Duree Moyenne"><br /><br />'."\n";
 
-print '</td><td valign="top" width="50%">'."\n";
+print '</td></tr>';
 
+print '</table>';
 
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">'."\n";
+
+print '<tr><td valign="top">'."\n";
+
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/fourn_natio.png" alt="Communications nationales"><br /><br />'."\n";
+
+print '</td></tr>';
+
+print '<tr><td valign="top">'."\n";
+
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/fourn_mobil.png" alt="Communications mobiles"><br /><br />'."\n";
+
+print '</td></tr>';
+print '<tr><td valign="top">'."\n";
+
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/fourn_inter.png" alt="Communications internationales"><br /><br />'."\n";
 
 print '</td></tr>';
 
