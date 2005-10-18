@@ -19,17 +19,14 @@
  * $Id$
  * $Source$
  *
- *
  * Script de prelevement
- *
  */
 
-require ("../htdocs/master.inc.php");
-
-require_once (DOL_DOCUMENT_ROOT."/bon-prelevement.class.php");
-require_once (DOL_DOCUMENT_ROOT."/facture.class.php");
-require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
-require_once (DOL_DOCUMENT_ROOT."/paiement.class.php");
+require_once("../htdocs/master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/bon-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
 $error = 0;
 

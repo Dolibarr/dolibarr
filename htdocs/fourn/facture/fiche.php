@@ -473,17 +473,19 @@ else
         }
         else
         {
+
             /*
             *
             */
             $h=0;
 
             $head[$h][0] = "fiche.php?facid=".$fac->id;
-            $head[$h][1] = $langs->trans("SupplierBill").': '.$fac->ref;
+            $head[$h][1] = $langs->trans("Card");
             $hselected = $h;
             $h++;
 
-            dolibarr_fiche_head($head, $hselected);
+            $titre=$langs->trans("SupplierBill").': '.$fac->ref;
+            dolibarr_fiche_head($head, $hselected, $titre);
 
 
             /*
@@ -524,9 +526,9 @@ else
             print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$authorfullname</td>";
             print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 
-            print '<tr><td>'.$langs->trans("TotalHT").'</td><td align="center"><b>'.price($fac->total_ht)."</b></td>";
-            print '<td align="right">'.$langs->trans("VAT").'</td><td align="center">'.price($fac->total_tva)."</td></tr>";
-            print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
+            print '<tr><td>'.$langs->trans("AmountHT").'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+            print '<tr><td>'.$langs->trans("AmountVAT").'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+            print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($fac->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
             if (strlen($fac->note))
             {
                 print '<tr><td>'.$langs->trans("Comments").'</td><td colspan="3">';
@@ -580,7 +582,7 @@ else
                     $objp = $db->fetch_object($result);
                     $var=!$var;
                     print "<tr $bc[$var]>";
-                    print "<td nowrap>".img_object($langs->trans("Payment"),"payment").' '.dolibarr_print_date($objp->dp)."</td>\n";
+                    print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").'</a> '.dolibarr_print_date($objp->dp)."</td>\n";
                     print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
                     print "<td align=\"right\">".price($objp->amount)."</td><td>".$langs->trans("Currency".$conf->monnaie)."</td>\n";
 

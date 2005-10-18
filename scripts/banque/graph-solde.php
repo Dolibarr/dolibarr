@@ -38,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 // Recupere root dolibarr
 $path=eregi_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
 
-require ($path."../../htdocs/master.inc.php");
+require_once($path."../../htdocs/master.inc.php");
 
 // Vérifie que chemin vers JPGRAHP est connu et defini $jpgraph
 if (! defined('JPGRAPH_DIR') && ! defined('JPGRAPH_PATH'))
@@ -51,12 +51,12 @@ $jpgraphdir=JPGRAPH_DIR;
 if (! eregi('[\\\/]$',$jpgraphdir)) $jpgraphdir.='/';
 
 
-include_once ($jpgraphdir."jpgraph.php");
-include_once ($jpgraphdir."jpgraph_line.php");
-include_once ($jpgraphdir."jpgraph_bar.php");
-include_once ($jpgraphdir."jpgraph_pie.php");
-include_once ($jpgraphdir."jpgraph_error.php");
-include_once ($jpgraphdir."jpgraph_canvas.php");
+include_once($jpgraphdir."jpgraph.php");
+include_once($jpgraphdir."jpgraph_line.php");
+include_once($jpgraphdir."jpgraph_bar.php");
+include_once($jpgraphdir."jpgraph_pie.php");
+include_once($jpgraphdir."jpgraph_error.php");
+include_once($jpgraphdir."jpgraph_canvas.php");
 
 $error = 0;
 

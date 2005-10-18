@@ -42,7 +42,7 @@ $conf->db->pass = $dolibarr_main_db_pass;
 // travail avec mysql
 if (! $conf->db->type) { $conf->db->type = 'mysql'; }
 
-require (DOL_DOCUMENT_ROOT ."/lib/".$dolibarr_main_db_type.".lib.php");
+require_once(DOL_DOCUMENT_ROOT ."/lib/".$dolibarr_main_db_type.".lib.php");
 
 $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
 

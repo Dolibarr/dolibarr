@@ -21,9 +21,9 @@
  * Mets à jour tous les contacts dans LDAP à partir de la base sql
  */
 
-require ("../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once (DOL_DOCUMENT_ROOT."/user.class.php");
+require_once("../htdocs/master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 
 $error = 0;
 

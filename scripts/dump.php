@@ -17,10 +17,9 @@
  *
  * $Id$
  * $Source$
- *
- *
  */
-require ("../htdocs/master.inc.php");
+
+require_once("../htdocs/master.inc.php");
 
 $fname = '/tmp/dump.sh';
 

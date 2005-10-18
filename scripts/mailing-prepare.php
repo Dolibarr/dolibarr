@@ -42,7 +42,7 @@
         \brief      Script pour préparer les destinataires d'un mailing
 */
 
-require ("../htdocs/master.inc.php");
+require_once("../htdocs/master.inc.php");
 
 $error = 0;
 
@@ -62,7 +62,7 @@ if ( $db->query($sql) )
       dolibarr_syslog("mailing-prepare: mailing $row[0]");
       dolibarr_syslog("mailing-prepare: mailing module $row[1]");
 
-      require DOL_DOCUMENT_ROOT.'/includes/modules/mailings/'.$row[1].'.modules.php';
+      require_once(DOL_DOCUMENT_ROOT.'/includes/modules/mailings/'.$row[1].'.modules.php');
 
       $classname = "mailing_".$row[1];
 

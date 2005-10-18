@@ -17,20 +17,19 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-require ("../../htdocs/master.inc.php");
+require_once("../../htdocs/master.inc.php");
 
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieCompteur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieGroupe.class.php");
 
-include_once (JPGRAPH_DIR."jpgraph.php");
-include_once (JPGRAPH_DIR."jpgraph_line.php");
-include_once (JPGRAPH_DIR."jpgraph_bar.php");
-include_once (JPGRAPH_DIR."jpgraph_pie.php");
-include_once (JPGRAPH_DIR."jpgraph_error.php");
-include_once (JPGRAPH_DIR."jpgraph_canvas.php");
+include_once(JPGRAPH_DIR."jpgraph.php");
+include_once(JPGRAPH_DIR."jpgraph_line.php");
+include_once(JPGRAPH_DIR."jpgraph_bar.php");
+include_once(JPGRAPH_DIR."jpgraph_pie.php");
+include_once(JPGRAPH_DIR."jpgraph_error.php");
+include_once(JPGRAPH_DIR."jpgraph_canvas.php");
 
 $error = 0;
 

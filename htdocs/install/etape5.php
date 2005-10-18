@@ -44,11 +44,11 @@ if (file_exists($conffile))
 
 
 if($dolibarr_main_db_type == "mysql")
-    require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
+    require_once($dolibarr_main_document_root . "/lib/mysql.lib.php");
 else
-    require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
+    require_once($dolibarr_main_document_root . "/lib/pgsql.lib.php");
 
-require ($dolibarr_main_document_root . "/conf/conf.class.php");
+require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 
 if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")

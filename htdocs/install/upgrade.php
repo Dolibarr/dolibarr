@@ -56,17 +56,17 @@ if (file_exists($conffile))
 
 if($dolibarr_main_db_type == "mysql")
 {
-    require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
+    require_once($dolibarr_main_document_root . "/lib/mysql.lib.php");
     $choix=1;
 }
 else
 {
-    require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-    require ($dolibarr_main_document_root . "/lib/grant.postgres.php");
+    require_once($dolibarr_main_document_root . "/lib/pgsql.lib.php");
+    require_once($dolibarr_main_document_root . "/lib/grant.postgres.php");
     $choix=2;
 }
 
-require ($dolibarr_main_document_root . "/conf/conf.class.php");
+require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 
 if (isset($_GET["action"]) && $_GET["action"] == "upgrade")

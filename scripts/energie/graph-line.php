@@ -20,13 +20,13 @@
  *
  */
 
-require ("../../htdocs/master.inc.php");
+require_once("../../htdocs/master.inc.php");
 
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieCompteur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieGroupe.class.php");
 
-include_once (JPGRAPH_DIR."jpgraph.php");
-include_once (JPGRAPH_DIR."jpgraph_line.php");
+include_once(JPGRAPH_DIR."jpgraph.php");
+include_once(JPGRAPH_DIR."jpgraph_line.php");
 
 $error = 0;
 
