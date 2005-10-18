@@ -52,9 +52,11 @@ $resql = $db->query($sql);
 if ($resql)
 {
   $Tdate = array();
+  $Tlegends = array();
   while ($row = $db->fetch_row($resql))
     {
       array_push($Tdate, $row[0]);
+      array_push($Tlegends, substr($row[0],0,2));
     }
 }
 
@@ -138,7 +140,7 @@ foreach($graphs as $graph)
   $ObjectGraph->Add($gbplot);
   
   $ObjectGraph->title->Set("Nombre de minutes ".$titres[$graph]." par fournisseurs (en milliers)");
-  $ObjectGraph->xaxis->SetTickLabels($Tdate);
+  $ObjectGraph->xaxis->SetTickLabels($Tlegends);
   
   $ObjectGraph->img->SetImgFormat("png");
   $ObjectGraph->Stroke($file);
