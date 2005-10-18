@@ -11,6 +11,7 @@ InternalUsers=Utilisateurs internes
 ExternalUsers=Utilisateurs externes
 GlobalSetup=Général
 GUISetup=Interface
+ErrorModuleRequirePHPVersion=Erreur, ce module requiert une version %s ou supérieure de PHP
 DictionnarySetup=Dictionnaires
 DisableJavascript=Désactiver les fonctions javascript
 NextValue=Prochaine valeur

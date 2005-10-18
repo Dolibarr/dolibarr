@@ -40,6 +40,44 @@
 
 
 /**
+		\brief      Renvoi une version en chaine depuis une version en tableau
+		\param	    versionarray        Tableau de version (vermajeur,vermineur,autre)
+        \return     string              Chaine version
+*/
+function versiontostring($versionarray)
+{
+    $string='?';
+    if (isset($versionarray[0])) $string=$versionarray[0];
+    if (isset($versionarray[1])) $string.='.'.$versionarray[1];
+    if (isset($versionarray[2])) $string.='.'.$versionarray[2];
+    return $string;
+}
+
+/**
+		\brief      Compare 2 versions
+		\param	    versionarray1       Tableau de version (vermajeur,vermineur,autre)
+		\param	    versionarray2       Tableau de version (vermajeur,vermineur,autre)
+        \return     int                 <0 si versionarray1>versionarray2, 0 si =, >0 si versionarray1>versionarray2
+*/
+function versioncompare($versionarray1,$versionarray2)
+{
+    // \todo
+    
+    return 0;
+}
+
+
+/**
+		\brief      Compare 2 versions
+        \return     array               Tableau de version (vermajeur,vermineur,autre)
+*/
+function versionphp()
+{
+    return split('\.',PHP_VERSION);
+}
+
+
+/**
 		\brief      Renvoi vrai si l'email est syntaxiquement valide
 		\param	    address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
         \return     boolean     true si email valide, false sinon

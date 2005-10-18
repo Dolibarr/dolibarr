@@ -33,20 +33,24 @@ require("./pre.inc.php");
 if (!$user->admin)
     accessforbidden();
 
-
+/*
+ * Actions
+ */
 
 if ($_GET["action"] == 'set' && $user->admin)
 {
-    Activate($_GET["value"]);
-
-    Header("Location: modules.php?spe=".$_GET["spe"]);
+    $result=Activate($_GET["value"]);
+    $mesg='';
+    if ($result) $mesg=$result;
+    Header("Location: modules.php?spe=".$_GET["spe"]."&mesg=".urlencode($mesg));
 }
 
 if ($_GET["action"] == 'reset' && $user->admin)
 {
-    UnActivate($_GET["value"]);
-
-    Header("Location: modules.php?spe=".$_GET["spe"]);
+    $result=UnActivate($_GET["value"]);
+    $mesg='';
+    if ($result) $mesg=$result;
+    Header("Location: modules.php?spe=".$_GET["spe"]."&mesg=".urlencode($mesg));
 }
 
 
@@ -55,7 +59,7 @@ if ($_GET["action"] == 'reset' && $user->admin)
 */
 function Activate($value)
 {
-    global $db, $modules;
+    global $db, $modules, $langs;
 
     $modName = $value;
 
@@ -65,6 +69,15 @@ function Activate($value)
         $file = $modName . ".class.php";
         include_once("../includes/modules/$file");
         $objMod = new $modName($db);
+
+        // Test si version PHP ok
+        $verphp=versionphp();
+        $vermin=$objMod->phpmin;
+        if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
+        {
+            return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
+        }
+
         $objMod->init();
     }
 
@@ -80,6 +93,7 @@ function Activate($value)
         UnActivate($objMod->conflictwith[$i],0);
     }
 
+    return 0;
 }
 
 
@@ -111,30 +125,26 @@ function UnActivate($value,$requiredby=1)
         }
     }
     
-    Header("Location: modules.php");
+    return 0;
 }
 
 
-
+/*
+ * Affichage page
+ */
+ 
 llxHeader("","");
 
-if (!$_GET["spe"])
-{
-    $hselected = 0;
-}
-else
-{
-    $hselected = 1;
-}
-
 $h = 0;
+
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?spe=0";
 $head[$h][1] = $langs->trans("ModulesCommon");
-
+if (!$_GET["spe"]) $hselected=$h;
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?spe=1";
 $head[$h][1] = $langs->trans("ModulesSpecial");
+if ($_GET["spe"]) $hselected=$h;
 $h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("Modules"));
@@ -149,7 +159,11 @@ else
     print $langs->trans("ModulesSpecialDesc")."<br>\n";
 }
 
-
+if ($_GET["mesg"]) 
+{
+    $mesg=urldecode($_GET["mesg"]);
+    print '<div class="error">'.$mesg.'</div>';
+}
 
 print "<br>\n";
 print "<table class=\"noborder\" width=\"100%\">\n";

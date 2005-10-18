@@ -11,6 +11,7 @@ InternalUsers=Internal users
 ExternalUsers=External users
 GlobalSetup=Global setup
 GUISetup=GUI setup
+ErrorModuleRequirePHPVersion=Error, this module require PHP version %s or higher
 DictionnarySetup=Dictionnary setup
 DisableJavascript=Disable javascript functions
 NextValue=Next value
