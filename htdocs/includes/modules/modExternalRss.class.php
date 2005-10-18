@@ -67,6 +67,8 @@ class modExternalRss extends DolibarrModules
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
+    $this->phpmin = array(4,2,0);
+    $this->phpmax = array();
 
     // Constantes
     $this->const = array();
