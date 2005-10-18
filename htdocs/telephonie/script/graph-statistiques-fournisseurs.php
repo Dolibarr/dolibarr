@@ -117,7 +117,6 @@ foreach($graphs as $graph)
       foreach($Tdate as $date)
 	{
 	  $datas[$key][$j] = ($value[$date]/60000);
-	  $globals[$j] = ($value[$date]/60000);
 	  $j++;
 	}
       
@@ -155,6 +154,12 @@ foreach($graphs as $graph)
 /*
  * Sum
  */
+$j = 0;
+foreach($Tdate as $date)
+{
+  $globals[$j] = ($Tglobal[$date]/60000);
+  $j++;
+}
 
 $file = $img_root . "communications/duree.png";
 
