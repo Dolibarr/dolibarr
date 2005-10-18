@@ -92,6 +92,10 @@ if ($resql)
       $i++;
     }
 }
+$titres = array();
+$titres["inter"] = "internationales";
+$titres["natio"] = "nationales";
+$titres["mobil"] = "mobiles";
 
 $graphs = array("inter","natio","mobil");
 $colors = array("yellow","red","blue","pink","orange","green");
@@ -102,7 +106,6 @@ foreach($graphs as $graph)
   $tab = "T".$graph;
   foreach ($$tab as $key => $value)
     {
-
       $j = 0;
       foreach($Tdate as $date)
 	{
@@ -113,12 +116,12 @@ foreach($graphs as $graph)
     }
   $file = $img_root . "communications/fourn_".$graph.".png";
 
-  $graph = new Graph(640,480,"auto");    
-  $graph->SetScale("textlin");
-  $graph->yaxis->scale->SetGrace(20);
-  $graph->xaxis->scale->SetGrace(20);  
-  $graph->img->SetMargin(40,20,20,40);
-  $graph->legend->Pos(0.10,0.12,"left","center");
+  $ObjectGraph = new Graph(640,480,"auto");    
+  $ObjectGraph->SetScale("textlin");
+  $ObjectGraph->yaxis->scale->SetGrace(20);
+  $ObjectGraph->xaxis->scale->SetGrace(20);  
+  $ObjectGraph->img->SetMargin(40,20,20,40);
+  $ObjectGraph->legend->Pos(0.10,0.12,"left","center");
   $i=0;
   $plots = array();
   foreach ($$tab as $key => $value)
@@ -130,15 +133,15 @@ foreach($graphs as $graph)
       $i++;
     }
    
-    $gbplot = new GroupBarPlot($plots);
+  $gbplot = new GroupBarPlot($plots);
 
-    $graph->Add($gbplot);
-    
-    $graph->title->Set("Nombre de minutes par fournisseurs");
-    $graph->xaxis->SetTickLabels($Tdate);
-    
-    $graph->img->SetImgFormat("png");
-    $graph->Stroke($file);
+  $ObjectGraph->Add($gbplot);
+  
+  $ObjectGraph->title->Set("Nombre de minutes ".$titres[$graph]." par fournisseurs");
+  $ObjectGraph->xaxis->SetTickLabels($Tdate);
+  
+  $ObjectGraph->img->SetImgFormat("png");
+  $ObjectGraph->Stroke($file);
 }
 print strftime("%H:%M:%S",time())."\n";
 ?>
