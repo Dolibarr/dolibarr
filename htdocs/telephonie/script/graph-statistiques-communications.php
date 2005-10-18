@@ -32,68 +32,29 @@ $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
 $nbval = 14;
 
-$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
-$sql .= " WHERE graph = 'communications.duree'";
-
-$resql = $db->query($sql);
-
-$sql = "SELECT date_format(date, '%m'), sum(duree), count(duree)";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-$sql .= " GROUP BY date_format(date, '%Y%m') ASC";
-
-$resql = $db->query($sql);
-
-
-_deal($resql, $db, "communications.duree", $kilomindurees, $labels);
-
 /*
-if ($resql)
-{
-  $durees = array();
-  $kilomindurees = array();
-  $durees_moyenne = array();
-  $nombres = array();
-  $labels = array();
+ * Remplacé par ...statistiques-fournisseurs.php
+ *
+ $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
+ $sql .= " WHERE graph = 'communications.duree'";
 
-  $num = $db->num_rows($resql);
-  $lim = ($num - $nbval);
-  $i = 0;
-  $j = 0;
+ $resql = $db->query($sql);
 
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($resql);
+ $sql = "SELECT date_format(date, '%m'), sum(duree), count(duree)";
+ $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+ $sql .= " GROUP BY date_format(date, '%Y%m') ASC"; 
+ $resql = $db->query($sql);
 
-      if ($i >= $lim )
-	{
-	  $labels[$j] = $row[0];
-	  $durees[$j] = $row[1];
-	  $kilomindurees[$j] = ($row[1]/60000);
-	  $durees_moyenne[$j] = ($row[1] / $row[2]);
-	  $nombres[$j] = $row[2];
-	  
-	  $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
-	  $sqli .= " (graph, ord, legend, valeur) VALUES (";
-	  $sqli .= "'communications.duree','".$j."','".$row[0]."','".($row[1]/60)."')";
-	  
-	  if (!$resqli = $db->query($sqli))
-	    {
-	      print $db->error();
-	    }
-	  $j++;
-	}
-      $i++;
-    }
-}
+ _deal($db, $resql, "communications.duree", $kilomindurees, $labels);
+
+ $file = $img_root . "communications/duree.png";
+ $graphgain = new GraphBar ($db, $file);
+ $graphgain->show_console = 0 ;
+ $graphgain->width = 480 ;
+ $graphgain->titre = "Nb minutes (milliers)";
+ print $graphgain->titre."\n";
+ $graphgain->GraphDraw($file, $kilomindurees, $labels);
 */
-
-$file = $img_root . "communications/duree.png";
-$graphgain = new GraphBar ($db, $file);
-$graphgain->show_console = 0 ;
-$graphgain->width = 480 ;
-$graphgain->titre = "Nb minutes (milliers)";
-print $graphgain->titre."\n";
-$graphgain->GraphDraw($file, $kilomindurees, $labels);
 
 /*
  *
@@ -154,46 +115,38 @@ $graphgain->titre = "Nb minutes -> portables (milliers)";
 print $graphgain->titre."\n";
 $graphgain->GraphDraw($file, $kilomindurees_mob, $labels);
 
-
-
-
-
 function _deal($db, $resql, $graph, &$data, &$labels)
 {
   global $nbval;
 
-if ($resql)
-{
-
-  $num = $db->num_rows($resql);
-  $lim = ($num - $nbval);
-  $i = 0;
-  $j = 0;
-
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($resql);
-
-      if ($i >= $lim )
+  if ($resql)
+    {      
+      $num = $db->num_rows($resql);
+      $lim = ($num - $nbval);
+      $i = 0;
+      $j = 0;
+      
+      while ($i < $num)
 	{
-	  $labels[$j] = $row[0];
-	  $data[$j] = ($row[1]/60000);
-  
-	  $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
-	  $sqli .= " (graph, ord, legend, valeur) VALUES (";
-	  $sqli .= "'".$graph."','".$j."','".$row[0]."','".($row[1]/60)."')";
+	  $row = $db->fetch_row($resql);
 	  
-	  if (!$resqli = $db->query($sqli))
+	  if ($i >= $lim )
 	    {
-	      print $db->error();
+	      $labels[$j] = $row[0];
+	      $data[$j] = ($row[1]/60000);
+	      
+	      $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+	      $sqli .= " (graph, ord, legend, valeur) VALUES (";
+	      $sqli .= "'".$graph."','".$j."','".$row[0]."','".($row[1]/60)."')";
+	      
+	      if (!$resqli = $db->query($sqli))
+		{
+		  print $db->error();
+		}
+	      $j++;
 	    }
-	  $j++;
+	  $i++;
 	}
-      $i++;
-    }
+    }   
 }
-
-
-}
-
 ?>
