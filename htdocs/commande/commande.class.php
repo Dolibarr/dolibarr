@@ -19,12 +19,14 @@
  * $Id$
  * $Source$
  */
+ 
 /**
         \file       htdocs/commande/commande.class.php
         \ingroup    commande
         \brief      Fichier des classes de commandes
         \version    $Revision$
 */
+
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 /**
@@ -734,18 +736,19 @@ class Commande
 	 */
 	function update_line($rowid, $desc, $pu, $qty, $remise_percent=0, $tva_tx)
 	{
-		dolibarr_syslog('Commande::UpdateLine');
+		dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent=0, $tva_tx");
 		if ($this->brouillon)
 		{
 			$this->db->begin();
-			if (strlen(trim($qty))==0)
-			{
-				$qty=1;
-			}
+			
+            // Nettoyage paramètres
+			$pu=price2num($pu);
+			if (strlen(trim($qty))==0) $qty=1;
 			$remise = 0;
-			$price = ereg_replace(',','.',$pu);
+			$price = $pu;
 			$subprice = $price;
-			if (trim(strlen($remise_percent)) > 0)
+			$remise_percent=trim($remise_percent);
+			if ($remise_percent > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
@@ -756,7 +759,7 @@ class Commande
 			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commandedet';
-			$sql.= " SET description='".addslashes($desc)."',price=$price,subprice=$subprice,";
+			$sql.= " SET description='".addslashes($desc)."',price='$price',subprice='$subprice',";
 			$sql.= " remise=$remise,remise_percent=$remise_percent,qty=$qty,tva_tx='".$tva_tx."'";
 			$sql.= ' WHERE rowid = '.$rowid;
 

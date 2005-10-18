@@ -1524,10 +1524,10 @@ function print_duree_select($prefix)
 
 
 /**
-		\brief  Fonction qui retourne un montant monétaire formaté
-		\param	amount		montant a formater
-		\param	html		formatage html ou pas (0 par defaut)
-		\remarks fonction utilisée dans les pdf et les pages html
+		\brief      Fonction qui retourne un montant monétaire formaté
+		\remarks    Fonction utilisée dans les pdf et les pages html
+		\param	    amount		montant a formater
+		\param	    html		formatage html ou pas (0 par defaut)
 
 */
 function price($amount, $html=0)
@@ -1545,6 +1545,19 @@ function price($amount, $html=0)
     }
 
 }
+
+/**
+		\brief      Fonction qui retourne un numérique depuis un montant formaté
+		\remarks    Fonction à appeler sur montants saisi avant un insert
+		\param	    amount		montant a formater
+*/
+function price2num($amount)
+{
+    $amount=ereg_replace(',','.',$amount);
+    $amount=ereg_replace(' ','',$amount);
+    return $amount;
+}
+
 
 /**
 		\brief  Fonction qui convertit des euros en francs
