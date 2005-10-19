@@ -147,7 +147,7 @@ if ($_GET["action"] == 'edit')
     }
     print '</tr>';
 
-    print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+    print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'"></td></tr>';
     print "</table>";
 
     print "</form>";
