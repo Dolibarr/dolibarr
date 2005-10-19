@@ -156,7 +156,7 @@ if ($user->rights->telephonie->fournisseur->lire)
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre"><td>Fournisseur</td><td align="center">Nb lignes</td>';
-      for ($j = -1 ; $j < 8 ; $j++)
+      for ($j = -1 ; $j < 10 ; $j++)
 	{
 	  print '<td align="center"><img border="0" src="./ligne/graph'.$j.'.png"></td>';
 	}
@@ -173,7 +173,7 @@ if ($user->rights->telephonie->fournisseur->lire)
 	  print $obj->fournisseur.'</a></td>';
 	  print '<td align="center">'.$obj->cc."</td>\n";
 	  
-	  for ($k = -1 ; $k < 8 ; $k++)
+	  for ($k = -1 ; $k < 10 ; $k++)
 	    {
 	      print '<td align="center">'.$statuts[$obj->rowid][$k].'</td>';
 	    }
