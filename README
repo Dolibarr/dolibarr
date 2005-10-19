@@ -72,6 +72,7 @@ III - WHAT'S NEW
   workflow, with no risk to break Dolibarr.
 - Bug fixes and a lot of duplicate code removed.
 - A lot of other changes to enhance interface.
+- Support for PHP5
 
 
 IV - WHAT DOLIBARR CAN DO
