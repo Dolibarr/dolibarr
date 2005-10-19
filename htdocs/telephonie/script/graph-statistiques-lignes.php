@@ -23,22 +23,19 @@
  *
  *
  */
-print strftime("%H:%M:%S",time())."\n";
 require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphLignes.class.php");
-
-var_dump( $GLOBALS['argv']);
 
 $graph_all = 0;
 
 //loop through our arguments and see what the user selected
-for ($i = 1; $i < $GLOBALS["argv"]; $i++)
+for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
 {
   switch($GLOBALS["argv"][$i])
     {
     case "-v":
     case "--version":
-      echo  $GLOBALS['argv'][0]." $Version:$";
+      echo  $GLOBALS['argv'][0]." $Revision$\n";
       exit;
       break;
     case "--all":
@@ -46,13 +43,8 @@ for ($i = 1; $i < $GLOBALS["argv"]; $i++)
       break;
     }
 }
-      
-exit ;
 
-$opt = getopt("a:");
-
-$limit = $opt['l'];
-$optcontrat = $opt['c'];
+print strftime("%H:%M:%S",time())."\n";
 
 $datetime = time();
 $month = strftime("%m", $datetime);
@@ -70,7 +62,10 @@ else
 
 $sql = "SELECT distinct(fk_ligne)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-$sql .= " WHERE date_format(date,'%m%Y') = '".$month.$year."'";
+if ($graph_all == 0)
+{
+  $sql .= " WHERE date_format(date,'%m%Y') = '".$month.$year."'";
+}
 
 $resql = $db->query($sql);
 
