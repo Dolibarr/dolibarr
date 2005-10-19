@@ -26,6 +26,7 @@ create table llx_telephonie_societe_fournid (
   fk_soc     integer NOT NULL,
   fourn_id   integer NOT NULL,
   fk_fourn   integer NOT NULL,
+  datec      datetime,
 
   unique (fk_soc, fk_fourn)
 )type=innodb;
