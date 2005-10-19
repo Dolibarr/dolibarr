@@ -47,3 +47,9 @@ ContractClosedInDolibarr=Contrat %s fermé dans Dolibarr
 InvoiceValidatedInDolibarr=Facture %s validée dans Dolibarr
 InvoicePayedInDolibarr=Facture %s passée à payée dans Dolibarr
 InvoiceCanceledInDolibarr=Facture %s annulée dans Dolibarr
+##### Export #####
+ExportsArea=Espace exports
+AvailableFormats=Formats disponibles
+LibraryUsed=Librairie utilisée
+LibraryVersion=Version
+ExportableDatas=Données exportables
