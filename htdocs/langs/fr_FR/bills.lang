@@ -97,6 +97,7 @@ RelatedCommercialProposals=Propositions commerciales associées
 MenuToValid=A valider
 DateClosing=Date limite réglement
 DateEcheance=Date échéance
+DateBill=Date facturation
 ClassifyBill=Classer la facture
 NoSupplierBillsUnpayed=Aucune facture fournisseur impayée
 SupplierBillsToPay=Factures fournisseurs à payer

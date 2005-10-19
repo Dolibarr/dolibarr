@@ -36,111 +36,109 @@
 
 class FactureFournisseur
 {
-  var $id;
-  var $db;
-  var $socid;
-  var $number;
-  var $statut;
-  var $paye;
-  var $author;
-  var $libelle;
-  var $date;
-  var $date_echeance;
-  var $ref;
-  var $amount;
-  var $remise;
-  var $tva;
-  var $total_ht;
-  var $total_tva;
-  var $total_ttc;
-  var $note;
-  var $db_table;
-  var $propalid;
-  var $lignes;
+    var $id;
+    var $db;
+    var $socid;
+    var $number;
+    var $statut;
+    var $paye;
+    var $author;
+    var $libelle;
+    var $date;
+    var $date_echeance;
+    var $ref;
+    var $amount;
+    var $remise;
+    var $tva;
+    var $total_ht;
+    var $total_tva;
+    var $total_ttc;
+    var $note;
+    var $db_table;
+    var $propalid;
+    var $lignes;
+    
+    /**
+     *    \brief  Constructeur de la classe
+     *    \param  DB          handler accès base de données
+     *    \param  soc_idp     id societe ("" par defaut)
+     *    \param  facid       id facture ("" par defaut)
+     */
+    function FactureFournisseur($DB, $soc_idp="", $facid="")
+    {
+        $this->db = $DB ;
+        $this->socidp = $soc_idp;
+        $this->products = array();
+        $this->db_table = MAIN_DB_PREFIX."facture";
+        $this->amount = 0;
+        $this->remise = 0;
+        $this->tva = 0;
+        $this->total = 0;
+        $this->propalid = 0;
+        $this->id = $facid;
+    
+        $this->lignes = array();
+    }
 
-  /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
-   *    \param  soc_idp     id societe ("" par defaut)
-   *    \param  facid       id facture ("" par defaut)
-   */
-  function FactureFournisseur($DB, $soc_idp="", $facid="")
-  {
-    $this->db = $DB ;
-    $this->socidp = $soc_idp;
-    $this->products = array();
-    $this->db_table = MAIN_DB_PREFIX."facture";
-    $this->amount = 0;
-    $this->remise = 0;
-    $this->tva = 0;
-    $this->total = 0;
-    $this->propalid = 0;
-    $this->id = $facid;
-
-    $this->lignes = array();
-  }
-
-  /**
-   *    \brief      Création de la facture en base
-   *    \param      user        object utilisateur qui crée
-   *    \return     int         id facture si ok, < 0 si erreur
-   */
+    /**
+     *    \brief      Création de la facture en base
+     *    \param      user        object utilisateur qui crée
+     *    \return     int         id facture si ok, < 0 si erreur
+     */
     function create($user)
     {
         global $langs;
     
+        // Nettoyage parametres
         $socid = $this->socidp;
-        $number = sanitize_string(strtoupper($this->number));
+        $number = strtoupper($this->number);
         $amount = $this->amount;
         $remise = $this->remise;
-        
+    
         $this->db->begin();
-        
+    
         if (! $remise) $remise = 0 ;
         $totalht = ($amount - $remise);
-// NE ME SEMBLE PLUS JUSTIFIE ICI
-//        $tva = tva($totalht);
-//        $total = $totalht + $tva;
     
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ";
-        $sql .= " VALUES ('".$number."','".addslashes($this->libelle)."',";
+        $sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
         $sql .= $this->socid.", now(),'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
     
         $resql=$this->db->query($sql);
-
+    
         if ($resql)
         {
-	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
-	  
-	  for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
+    
+            for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
             {
-	      
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
-	      $sql .= " VALUES ($this->id);";
-	      if ($this->db->query($sql))
+    
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
+                $sql .= " VALUES ($this->id);";
+                if ($this->db->query($sql))
                 {
-		  $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
-		  
-		  $this->updateline($idligne,
-				    $this->lignes[$i][0],
-				    $this->lignes[$i][1],
-				    $this->lignes[$i][2],
-				    $this->lignes[$i][3]);
+                    $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
+    
+                    $this->updateline($idligne,
+                    $this->lignes[$i][0],
+                    $this->lignes[$i][1],
+                    $this->lignes[$i][2],
+                    $this->lignes[$i][3]);
                 }
             }
-	  
-	  // Mise à jour prix
-	  if ($this->updateprice($this->id) > 0)
+    
+            // Mise à jour prix
+            if ($this->updateprice($this->id) > 0)
             {
-	      $this->db->commit();
-	      return $this->id;
+                $this->db->commit();
+                return $this->id;
             }
-	  else
-	    {
-	      $this->error=$langs->trans("FailedToUpdatePrice");
-	      $this->db->rollback();
-	      return -3;
-	    }        
+            else
+            {
+                $this->error=$langs->trans("FailedToUpdatePrice");
+                $this->db->rollback();
+                return -3;
+            }
         }
         else
         {
@@ -149,14 +147,14 @@ class FactureFournisseur
                 $this->error=$langs->trans("ErrorBillRefAlreadyExists");
                 $this->db->rollback();
                 return -1;
-	      }
+            }
             else
-	      {
+            {
                 $this->error=$this->db->error();
                 $this->db->rollback();
                 return -2;
-	      }
-	  }
+            }
+        }
     }
   
   /**

@@ -97,6 +97,7 @@ RelatedCommercialProposals=Related commercial proposals
 MenuToValid=To valid
 DateClosing=Closing date
 DateEcheance=Due date limit
+DateBill=Bill date
 ClassifyBill=Classify invoice
 NoSupplierBillsUnpayed=No suppliers invoices unpayed
 SupplierBillsToPay=Suppliers invoices to pay
