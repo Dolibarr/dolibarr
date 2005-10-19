@@ -23,42 +23,46 @@
  *
  *
  */
+print strftime("%H:%M:%S",time())."\n";
 require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphLignes.class.php");
 
-$childrenTotal = 4;
-$childrenNow = 0;
-$clientPerChild = 0;
+$datetime = time();
+$month = strftime("%m", $datetime);
+$year = strftime("%Y", $datetime);
 
-$sql = "SELECT max(rowid)";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-
-if ($db->query($sql))
+if ($month == 1)
 {
-  $row = $db->fetch_row();
-  $clientPerChild =  ceil($row[0] / $childrenTotal);
-  $db->free();
+  $month = "12";
+  $year = $year - 1;
+}
+else
+{
+  $month = substr("00".($month - 1), -2) ;
 }
 
-while ( $childrenNow < $childrenTotal )
-{
-  $pid = pcntl_fork();
-  
-  if ( $pid == -1 )
-    {
-      die( "error\n" );
-    }
-  elseif ( $pid == 0 )
-    {
-      $childrenNow++;
-    }
-  else
-    {
-      $process = new ProcessGraphLignes( $childrenNow, $clientPerChild );
-      $process->go();
-      die();
-    }
+$sql = "SELECT distinct(fk_ligne)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+$sql .= " WHERE date_format(date,'%m%Y') = '".$month.$year."'";
 
-  usleep(100000);
+$resql = $db->query($sql);
+
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+
+  print "$num lignes\n";
+
+  while ($i < $num)
+    {
+      print substr("0000".($i+1), -4) . "/".substr("0000".$num, -4)."\n";
+      $row = $db->fetch_row($resql);
+
+      $gr = new ProcessGraphLignes($db);
+      $gr->go($row[0]);
+
+      $i++;
+    }
 }
 ?>
