@@ -91,6 +91,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 if ($conf->facture->enabled)
 {
   print '<form method="post" action="facture.php">';
+  
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
   print '<td colspan="3">'.$langs->trans("SearchABill").'</td></tr>';

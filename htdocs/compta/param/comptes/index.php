@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!
+/**
         \file       htdocs/compta/param/comptes/index.php
         \ingroup    compta
 		\brief      Page acceuil zone parametrages
@@ -33,6 +32,7 @@ require("./pre.inc.php");
 $user->getrights('banque');
 
 $langs->load("compta");
+$langs->load("bills");
 
 /*
  * Sécurité accés client
@@ -49,26 +49,27 @@ llxHeader("","Accueil Compta");
  * Affichage page
  *
  */
-print_titre("Paramétrage comptabilité");
+print_fiche_titre($langs->trans("AccountancySetup"));
 
-print '<table border="0" width="100%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
  * Zone recherche facture
  */
 print '<form method="post" action="facture.php">';
+
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print '<td colspan="2">'.$langs->trans("SearchABill").'</td></tr>';
-print "<tr $bc[0]><td>";
-print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<td colspan="3">'.$langs->trans("SearchABill").'</td></tr>';
+print "<tr $bc[0]>";
+print '<td>'.$langs->trans("Ref").':</td><td><input type="text" class="flat" size="18" name="sf_ref"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>";
 
 
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleft">';
 
 
 
@@ -78,5 +79,5 @@ print '</table>';
 
 $db->close();
  
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

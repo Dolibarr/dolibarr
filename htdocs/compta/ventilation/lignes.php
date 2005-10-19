@@ -17,14 +17,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!
-   \file       htdocs/compta/ventilation/lignes.php
-   \ingroup    facture
-   \brief      Page de detail des lignes de ventilation d'une facture
-   \version    $Revision$
+/**
+        \file       htdocs/compta/ventilation/lignes.php
+        \ingroup    facture
+        \brief      Page de detail des lignes de ventilation d'une facture
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -85,10 +84,12 @@ if ($result)
   print "</tr>\n";
   
   print '<tr class="liste_titre"><td><input name="search_facture" size="8" value="'.$_GET["search_facture"].'"></td>';
-  print '<td><input type="submit"></td>';
+  print '<td>&nbsp;</td>';
   print '<td align="right">&nbsp;</td>';
   print '<td align="center">&nbsp;</td>';
-  print '<td align="center">&nbsp;</td>';
+  print '<td align="right">';
+  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+  print '</td>';
   print "</tr>\n";
 
   $var=True;
@@ -118,5 +119,5 @@ print "</table></form>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

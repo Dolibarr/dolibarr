@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,10 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
 require("./pre.inc.php");
+
 
 llxHeader('','Compta - Liste des comptes');
 
@@ -74,16 +76,18 @@ if ($resql)
 
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("N° compte","liste.php","cg.numero");
-  print_liste_field_titre("Intitulé compte","liste.php","cg.intitule");
-  print '<td align="right">Date création</td>';
+  print_liste_field_titre($langs->trans("AccountNumberShort"),"liste.php","cg.numero");
+  print_liste_field_titre($langs->trans("Label"),"liste.php","cg.intitule");
+  print_liste_field_titre($langs->trans("DateCreation"),"liste.php","cg.date_creation");
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
   print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_numero" value="'.$_GET["search_numero"].'"></td>';
-  print '<td><input type="text" name="search_intitule" value="'.$_GET["search_intitule"].'"><input type="submit"></td>';
-  print '<td>&nbsp;</td>';
+  print '<td><input type="text" name="search_intitule" value="'.$_GET["search_intitule"].'"></td>';
+  print '<td align="right">';
+  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+  print '</td>';
   print '</form>';
   print '</tr>';
 

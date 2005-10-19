@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -28,6 +28,9 @@
 */
 
 require("./pre.inc.php");
+
+$langs->load("bills");
+
 
 $mesg = '';
 
@@ -79,72 +82,72 @@ $form = new Form($db);
 
 if($_GET["id"])
 {
-  $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice, ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end, l.fk_code_ventilation ";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
-  $sql .= " , ".MAIN_DB_PREFIX."facture as f";
-  $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND l.rowid = ".$_GET["id"];
-   
-  $result = $db->query($sql);
+    $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice, ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end, l.fk_code_ventilation ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
+    $sql .= " , ".MAIN_DB_PREFIX."facture as f";
+    $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND l.rowid = ".$_GET["id"];
 
-  if ($result)
+    $result = $db->query($sql);
+
+    if ($result)
     {
-      $num_lignes = $db->num_rows($result);
-      $i = 0; 
-      
-      if ($num_lignes)
-	{
-	  
-	  $objp = $db->fetch_object($result);
+        $num_lignes = $db->num_rows($result);
+        $i = 0;
+
+        if ($num_lignes)
+        {
+
+            $objp = $db->fetch_object($result);
 
 
-	  if($objp->fk_code_ventilation == 0)
-	    {
-	      print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
-	      print '<input type="hidden" name="action" value="ventil">';
-	    }
+            if($objp->fk_code_ventilation == 0)
+            {
+                print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
+                print '<input type="hidden" name="action" value="ventil">';
+            }
 
-	  
-	  print_titre("Ventilation");
-	  
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<tr><td>Facture</td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td></tr>';
 
-	  print '<tr><td width="20%">Ligne</td>';
-	  print '<td>'.stripslashes(nl2br($objp->description)).'</td></tr>';
-	  print '<tr><td width="20%">Ventiler dans le compte :</td><td>';
+            print_titre("Ventilation");
 
-	  if($objp->fk_code_ventilation == 0)
-	    {
-	      print $form->select_array("codeventil",$cgs, $objp->fk_code_ventilation);
-	    }
-	  else
-	    {
-	      print $cgs[$objp->fk_code_ventilation];
-	    }
+            print '<table class="border" width="100%">';
+            print '<tr><td>'.$langs->trans("Bill").'</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td></tr>';
 
-	  print '</td></tr>';
-	  
-	  if($objp->fk_code_ventilation == 0)
-	    {
-	      print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Ventiler").'"></td></tr>';
-	    }
-	  print '</table>';
-	  print '</form>';
-	}
-      else
-	{
-	  print "Error";
-	}
+            print '<tr><td width="20%">Ligne</td>';
+            print '<td>'.stripslashes(nl2br($objp->description)).'</td></tr>';
+            print '<tr><td width="20%">Ventiler dans le compte :</td><td>';
+
+            if($objp->fk_code_ventilation == 0)
+            {
+                print $form->select_array("codeventil",$cgs, $objp->fk_code_ventilation);
+            }
+            else
+            {
+                print $cgs[$objp->fk_code_ventilation];
+            }
+
+            print '</td></tr>';
+
+            if($objp->fk_code_ventilation == 0)
+            {
+                print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Ventiler").'"></td></tr>';
+            }
+            print '</table>';
+            print '</form>';
+        }
+        else
+        {
+            print "Error";
+        }
     }
-  else
+    else
     {
-      print "Error";
+        print "Error";
     }
 }
 else
 {
-  print "Error ID incorrect";
+    print "Error ID incorrect";
 }
 
 $db->close();

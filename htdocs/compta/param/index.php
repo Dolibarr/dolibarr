@@ -50,11 +50,11 @@ llxHeader("",$langs->trans("AccountancySetup"));
  * Affichage page
  *
  */
-print_titre($langs->trans("AccountancySetup"));
+print_fiche_titre($langs->trans("AccountancySetup"));
 
-print '<table border="0" width="100%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
  * Zone recherche facture
@@ -62,14 +62,14 @@ print '<tr><td valign="top" width="30%">';
 print '<form method="post" action="facture.php">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print '<td colspan="2">'.$langs->trans("SearchABill").'</td></tr>';
+print '<td colspan="3">'.$langs->trans("SearchABill").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").'</td><td><input type="text" class="button" name="sf_ref">&nbsp;<input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form><br>";
 
 
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleft">';
 
 
 

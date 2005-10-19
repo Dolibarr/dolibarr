@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,14 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 
-/*!
-  \file       htdocs/product/fiche.php
-  \ingroup    product
-  \brief      Page de la fiche produit
-  \version    $Revision$
-
+/**
+        \file       htdocs/compta/param/comptes/fiche.php
+        \ingroup    compta
+        \brief      Page de la fiche des comptes comptables
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -66,7 +64,7 @@ if ($_POST["action"] == 'add' && $user->rights->compta->ventilation->parametrer)
     }
 }
 
-llxHeader("","Comptes Généraux");
+llxHeader("","Nouveau compte");
 
 /*
  * Création d'un compte
@@ -74,35 +72,35 @@ llxHeader("","Comptes Généraux");
  */
 if ($_GET["action"] == 'create' && $user->rights->compta->ventilation->parametrer)
 {
-  $html = new Form($db);
-  $nbligne=0;
+    $html = new Form($db);
+    $nbligne=0;
 
-  print_fiche_titre('Comptes Généraux');
+    print_fiche_titre($langs->trans("NewAccount"));
 
-  print '<form action="fiche.php" method="post">';
-  print '<input type="hidden" name="action" value="add">';
-  print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
-      
-  print '<table class="border" width="100%">';
-  print '<tr>';
-  print '<td>Numéro de compte</td><td><input name="numero" size="20" value="'.$compte->numero.'">';
-  if ($_error == 1)
+    print '<form action="fiche.php" method="post">';
+    print '<input type="hidden" name="action" value="add">';
+    print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
+
+    print '<table class="border" width="100%">';
+    print '<tr>';
+    print '<td>'.$langs->trans("AccountNumber").'</td><td><input name="numero" size="20" value="'.$compte->numero.'">';
+    if ($_error == 1)
     {
-      print "Ce numéro de compte existe déjà";
+        print "Ce numéro de compte existe déjà";
     }
-  if ($_error == 2)
+    if ($_error == 2)
     {
-      print "Valeur(s) manquante(s)";
+        print "Valeur(s) manquante(s)";
     }
-  print '</td></tr>';
-  print '<tr><td>Intitulé</td><td><input name="intitule" size="40" value="'.$compte->intitule.'"></td></tr>';
+    print '</td></tr>';
+    print '<tr><td>'.$langs->trans("Label").'</td><td><input name="intitule" size="40" value="'.$compte->intitule.'"></td></tr>';
 
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
-  print '</table>';
-  print '</form>';      
+    print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+    print '</table>';
+    print '</form>';
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
