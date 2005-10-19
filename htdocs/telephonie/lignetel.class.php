@@ -40,6 +40,7 @@ class LigneTel {
     $this->statuts[6] = "Résiliée";
     $this->statuts[7] = "Rejetée";
     $this->statuts[8] = "En transfert";
+    $this->statuts[9] = "Commande en cours";
 
     return 1;
   }
