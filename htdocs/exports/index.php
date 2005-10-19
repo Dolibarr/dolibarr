@@ -33,7 +33,7 @@ $langs->load("orders");
 
 $user->getrights();
 
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
+if (! $user->societe_id == 0)
   accessforbidden();
 	  
 
@@ -42,6 +42,7 @@ $dir=DOL_DOCUMENT_ROOT."/includes/modules";
 $handle=opendir($dir);
 
 // Recherche des exports disponibles
+$array_export_code=array();
 $var=True;
 $i=0;
 while (($file = readdir($handle))!==false)
@@ -104,12 +105,18 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("AvilableFormats").'</td>';
-print '<td>'.$langs->trans("LibraryUsed").'</td></tr>';
+print '<td>'.$langs->trans("AvailableFormats").'</td>';
+print '<td>'.$langs->trans("LibraryUsed").'</td>';
+print '<td>'.$langs->trans("LibraryVersion").'</td>';
+print '</tr>';
 $var=!$var;
-print '<tr '.$bc[$var].'><td>Excel</td><td>Php_WriteExcel</td></tr>';
+print '<tr '.$bc[$var].'><td>Excel</td><td>Php_WriteExcel</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
 $var=!$var;
-print '<tr '.$bc[$var].'><td>Csv</td><td>Dolibarr</td></tr>';
+print '<tr '.$bc[$var].'><td>Csv</td><td>Dolibarr</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
 print '</table>';
 
 
