@@ -1886,3 +1886,7 @@ alter table llx_commande add ref_client varchar(30) after ref;
 alter table llx_facture add ref_client varchar(30) after facnumber;
 alter table llx_facture add date_valid date after datef;
 alter table llx_facture add model varchar(50) after note;
+
+alter table llx_facturedet modify fk_product      integer NULL;
+alter table llx_contratdet modify fk_product      integer NULL;
+update llx_facturedet set fk_product = null where fk_product=0;

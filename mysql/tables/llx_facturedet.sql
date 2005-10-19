@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ create table llx_facturedet
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture      integer NOT NULL,
-  fk_product      integer DEFAULT 0 NOT NULL,
+  fk_product      integer NULL,      -- doit pouvoir etre nul pour ligne detail sans produits
   description     text,
   tva_taux        real DEFAULT 19.6, -- taux tva
   qty             real,              -- quantité

@@ -26,7 +26,7 @@ create table llx_contratdet
   tms                   timestamp,
 
   fk_contrat            integer NOT NULL,
-  fk_product            integer NOT NULL,
+  fk_product            integer NULL,   -- doit pouvoir etre nul pour ligne detail sans produits
 
   statut                smallint DEFAULT 0,
 
