@@ -136,7 +136,6 @@ class ProcessGraphLignes
     $graphx->GraphDraw($file, $this->nbminutes, $this->labels);    
   }
 
-
   Function GetDatas()
   {
     $sql = "SELECT date_format(td.date,'%m'), sum(duree), count(*), sum(cout_vente), sum(fourn_montant)";
@@ -170,6 +169,5 @@ class ProcessGraphLignes
 	dolibarr_syslog("Error");
       }
   }
-
 }
 ?>
