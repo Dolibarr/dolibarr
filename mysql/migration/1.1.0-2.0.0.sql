@@ -480,6 +480,9 @@ ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_user_author    
 ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_user_valid     FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
 ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
 
+ALTER TABLE llx_facture_fourn_det ADD fk_export_compta INT( 11 ) NOT NULL AFTER total_ttc;
+ALTER TABLE llx_facture_fourn_det ADD fk_code_ventilation INT( 11 ) NOT NULL AFTER fk_export_compta ; 
+
 update llx_facture_fourn set date_lim_reglement = datef where fk_cond_reglement = 1;
 
 alter table llx_bank_account modify bank varchar(60);
