@@ -93,7 +93,7 @@ class GraphGain extends GraphBrouzouf{
 	    
 	    $g[$i] = $row[1];
 
-	    $labels[$i] = substr($row[0],5,2)."/".substr($row[0],2,2);
+	    $labels[$i] = substr($row[0],5,2);
 	    
 	    $this->total_gain += $row[1];
 	    $this->total_ca += $row[2];
