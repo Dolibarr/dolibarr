@@ -37,7 +37,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/joursemaine.class.php")
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camoyen.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
-
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbminutes.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
 
 /*
@@ -92,12 +92,16 @@ class ProcessGraphClients
 	
 	while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object($resql);
-	    
-	    $clients[$i] = $obj->socidp;
-	    
+	    $obj = $this->db->fetch_object($resql);	   
+	    $clients[$i] = $obj->socidp;	    
 	    $i++;
 	  }
+	$this->db->free($resql);
+      }
+    else
+      {
+	print $sql;
+	exit("Erreur recuperation des clients");
       }
 
     if (sizeof($clients))
@@ -105,12 +109,12 @@ class ProcessGraphClients
 	foreach ($clients as $client)
 	  {
 	    $img_root = DOL_DATA_ROOT."/graph/".substr($client,-1)."/telephonie/client/";
-
+	    
 	    $file = $img_root . $client."/graphca.png";
 	    $graphca = new GraphCa($this->db, $file);
 	    $graphca->client = $client;
 	    $graphca->GraphDraw();
-
+	    
 	    $file = $img_root . $client."/graphgain.png";
 
 	    $graphgain = new GraphGain ($this->db, $file);
@@ -150,7 +154,15 @@ class ProcessGraphClients
 	    $graphx->client = $client;
 	    $graphx->show_console = 0 ;
 	    $graphx->Graph();
-
+	    
+	    
+	    $file = $img_root . $client."/nb-minutes-mensuel.png";
+	    
+	    $graphx = new GraphCommNbMinutes ($this->db, $file);
+	    $graphx->client = $client;
+	    $graphx->show_console = 0 ;
+	    $graphx->Graph();
+	    
 	  }       
       }
 
