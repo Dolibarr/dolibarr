@@ -62,25 +62,10 @@ class GraphBrouzouf {
     
     $graph->xaxis->scale->SetGrace(20);
     //$graph->xaxis->SetLabelAlign('center','bottom');
-
-
-
-    $LabelAngle = 45;
-    if ($this->LabelAngle <> $LabelAngle && $this->LabelAngle > 0)
-      $LabelAngle = $this->LabelAngle;
-
-    $graph->xaxis->SetLabelAngle($LabelAngle);
-
-    //$graph->xaxis->SetLabelFormat('%d');
-    $graph->xaxis->SetFont(FF_VERDANA,FS_NORMAL,8);
     
     $graph->Add($b2plot);
     
-    $graph->title->Set($this->titre);
-    
-    $graph->title->SetFont(FF_VERDANA,FS_NORMAL);
-    $graph->yaxis->title->SetFont(FF_VERDANA,FS_NORMAL);
-    $graph->xaxis->title->SetFont(FF_VERDANA,FS_NORMAL);
+    $graph->title->Set($this->titre);   
     
     $graph->xaxis->SetTickLabels($labels);
     
