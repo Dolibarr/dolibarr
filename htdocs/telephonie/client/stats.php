@@ -114,10 +114,9 @@ if ($_GET["id"])
 	    }
 
 	  print '</td></tr>';
-
 	  print '<tr><td width="50%" valign="top" align="center">';
 
-	  $file = $img_root.$soc->id."/graphappelsdureemoyenne.png";
+	  $file = $img_root.$soc->id."/nb-minutes-mensuel.png";
 
 	  if (file_exists($file)) 
 	    {
@@ -140,7 +139,32 @@ if ($_GET["id"])
 	    {
 	      print $mesg_no_graph;
 	    }
+	  print '</td></tr>';
+	  print '<tr><td width="50%" valign="top" align="center">';
 
+	  $file = $img_root.$soc->id."/graphappelsdureemoyenne.png";
+
+	  if (file_exists($file)) 
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="Duree moyenne">';
+	    }
+	  else
+	    {
+	      print $mesg_no_graph;
+	    }
+
+	  print '</td><td width="50%" valign="top" align="center">';
+
+	  $file = $img_root.$soc->id."/nb-comm-menTOTOsuel.png";
+
+	  if (file_exists($file)) 
+	    {
+	      //print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	    }
+	  else
+	    {
+	      //print $mesg_no_graph;
+	    }
 	  print '</td></tr></table>';
 	}
     }
