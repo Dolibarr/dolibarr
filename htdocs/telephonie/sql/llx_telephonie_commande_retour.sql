@@ -31,6 +31,7 @@ create table llx_telephonie_commande_retour (
   commentaire       text NOT NULL,
   fichier           varchar(255) NOT NULL,
   traite            smallint DEFAULT 0,
-  date_traitement   datetime
+  date_traitement   datetime,
+  fk_fournisseur    integer NOT NULL
 
 )type=innodb;
