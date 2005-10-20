@@ -211,7 +211,7 @@ llxHeader("","","Historique Ligne");
 	  print_titre("Retours Fournisseurs");
 	  $sql = "SELECT ";
 	  $sql .= " cli,mode,situation,date_mise_service,date_resiliation,motif_resiliation,commentaire,fichier, traite ";
-	  
+	  $sql .= ",".$db->pdate("date_traitement")." as dt, fk_fournisseur";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
 	  $sql .= " WHERE cli = ".$ligne->numero;
 	  $sql .= " ORDER BY rowid DESC " . $db->plimit($conf->liste_limit+1, $offset);
@@ -221,7 +221,7 @@ llxHeader("","","Historique Ligne");
 	    {
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr class="liste_titre"><td>Mode</td><td>Resultat</td>';
-	      print '<td align="center">Date MeS</td><td>Résil</td></td><td>Commentaire</td><td>Fichier</td>';
+	      print '<td align="center">Date MeS</td><td>Résil</td></td><td>Commentaire</td><td align="center">D.T. / Fichier</td>';
 	      print "</tr>\n";
 	      $var=True;
 	      
@@ -230,12 +230,19 @@ llxHeader("","","Historique Ligne");
 		  $var=!$var;
 		  
 		  print "<tr $bc[$var]>";
-		  print '<td>'.$obj->mode."</td>\n";
+		  print '<td>'.$obj->fk_fournisseur." ".$obj->mode."</td>\n";
 		  print '<td>'.$obj->situation."</td>\n";
 		  print '<td align="center">'.$obj->date_mise_service."</td>\n";
 		  print '<td align="center">'.$obj->date_resiliation."</td>\n";
 		  print '<td>'.$obj->commentaire."</td>\n";
-		  print '<td>'.$obj->fichier."</td>\n";
+		  if ($obj->fichier)
+		    {
+		      print '<td align="center">'.$obj->fichier."</td>\n";
+		    }
+		  else
+		    {
+		      print '<td align="center">'.strftime("%d/%m/%y %H:%M",$obj->dt)."</td>\n";
+		    }
 		  print "</tr>\n";
 		}
 	      print "</table>";
