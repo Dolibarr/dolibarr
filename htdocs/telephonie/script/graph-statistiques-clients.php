@@ -46,6 +46,10 @@ if ($db->query($sql))
   $clientPerChild =  ceil($row[0] / $childrenTotal);
   $db->free();
 }
+else
+{
+  exit("Erreur selection des clients");
+}
 
 while ( $childrenNow < $childrenTotal )
 {
@@ -55,7 +59,7 @@ while ( $childrenNow < $childrenTotal )
     {
       die( "error\n" );
     }
-  elseif ( $pid == 0 )
+  elseif ( $pid )
     {
       $childrenNow++;
     }
