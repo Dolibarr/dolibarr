@@ -31,7 +31,7 @@ $host          = CMD_PRESEL_WEB_HOST;
 $user_login    = CMD_PRESEL_WEB_USER;
 $user_passwd   = CMD_PRESEL_WEB_PASS;
 
-dolibarr_syslog($GLOBALS["argv"][0]." Lecture des lignes");
+_log($GLOBALS["argv"][0]." Lecture des lignes", LOG_NOTICE);
 
 $sql = "SELECT rowid,ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
@@ -50,13 +50,13 @@ if ($resql)
 }
 else
 {
-  dolibarr_syslog($GLOBALS["argv"][0]." Erreur lecture liste des lignes");
+  _log($GLOBALS["argv"][0]." Erreur lecture liste des lignes", LOG_ERR);
   exit(1);
 }
 
 if (sizeof($ids) == 0)
 {
-  dolibarr_syslog($GLOBALS["argv"][0]. " Aucune lignes à traiter - fin");
+  _log($GLOBALS["argv"][0]. " Aucune lignes à traiter - fin", LOG_NOTICE);
   exit(0);
 }
 
@@ -106,13 +106,19 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 {  
   foreach($ids as $cli)
     {
-      $fp = fsockopen($host, 80, $errno, $errstr, 30);
+      _log("$cli Debut Traitement ligne", LOG_NOTICE);
+
+      $fp = @fsockopen($host, 80, $errno, $errstr, 30);
       if (!$fp)
 	{
-	  dolibarr_syslog("$errstr ($errno)");
+	  _log("Impossible de se connecter au server $errstr ($errno)", LOG_ERR);
 	}
       else
 	{
+	  $ligne_numero = "";
+	  $ligne_service = "";
+	  $ligne_presel = "";
+
 	  //GetPreselection_byRef  
 	  $url = "/AzurApp_websvc_b3gdb/account.asmx/GetPreselection_byRef?";
 
@@ -147,63 +153,96 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		  preg_match('/PreSelection_Statut="([\S]*)"/i', $line, $array);
 		  $ligne_presel = $array[1];
 		  
-		  dolibarr_syslog(print $ligne_numero." ".$ligne_service." / ".$ligne_presel);
-		}	      	      
+		  _log($ligne_numero." ".$ligne_service." / ".$ligne_presel,LOG_NOTICE);
+		}
+
+	      if (preg_match("/<Error .* \/>/",$line))
+		{	      
+		  $array = array();
+		  preg_match('/libelle="(.*)" xmlns:d4p1/', $line, $array);
+		  _log($cli . " ErreurAPI ".$array[1], LOG_ERR);
+		}
 	    }
 	  fclose($fp);
 
-	  $situation_key = "$ligne_service / $ligne_presel";
-
-	  $sql = "SELECT max(date_traitement), situation";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
-	  $sql .= " WHERE fk_fournisseur = 4";
-	  $sql .= " AND cli = '".$ligne_numero."'";
-	  $sql .= " GROUP BY cli;";
-
-	  $resql = $db->query($sql);
-
-	  if ($resql)
+	  if ($ligne_numero && $ligne_service && $ligne_presel)
 	    {
-	      $num = $db->num_rows($resql);
-	      $insert = 0;
-	      if ($num == 0)
+
+	      $situation_key = "$ligne_service / $ligne_presel";
+	  
+	      $sql = "SELECT max(date_traitement), situation";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
+	      $sql .= " WHERE fk_fournisseur = 4";
+	      $sql .= " AND cli = '".$ligne_numero."'";
+	      $sql .= " GROUP BY cli;";
+	      
+	      $resql = $db->query($sql);
+	      
+	      if ($resql)
 		{
-		  $insert = 1;
+		  $num = $db->num_rows($resql);
+		  $insert = 0;
+		  if ($num == 0)
+		    {
+		      $insert = 1;
+		    }
+		  else
+		    {
+		      $row = $db->fetch_row($resql);
+		      if ($row[1] <> $situation_key)
+			{
+			  $insert = 1;
+			}
+		    }
 		}
 	      else
 		{
-		  $row = $db->fetch_row($resql);
-		  if ($row[1] <> $situation_key)
+		  _log("$cli lecture etat de ligne ERREUR", LOG_ERR);
+		}
+	      
+	      if ($insert == 1)
+		{
+		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande_retour";
+		  $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur) ";
+		  $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4);";
+		  
+		  $resql = $db->query($sql);
+		  
+		  _log("$cli log etat de la ligne", LOG_NOTICE);
+		  
+		  if ($resql)
 		    {
-		      $insert = 1;
+		      _log("$cli log etat de la ligne SUCCESS", LOG_NOTICE);
+		    }
+		  else
+		    {
+		      _log("$cli log etat de la ligne ERREUR", LOG_ERR);
 		    }
 		}
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Erreur lecture etat de ligne");
+	      _log("$cli ERREUR impossible de récupérer les infos", LOG_ERR);
 	    }
-
-	  if ($insert == 1)
-	    {
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande_retour";
-	      $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur) ";
-	      $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4);";
-
-	      $resql = $db->query($sql);
-
-	      if ($resql)
-		{
-		  
-		}
-	      else
-		{
-		  dolibarr_syslog("Error 43");
-		}
-	    }
-
+	  _log("$cli Fin Traitement ligne", LOG_NOTICE);
 	}
     }
+}
+
+function _log($message, $level)
+{
+
+  if ($level == LOG_ERR)
+    {
+      openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_LOCAL3);
+    }
+  else
+    {
+      openlog("dolibarr", LOG_PID, LOG_LOCAL3);
+    }
+  syslog($level, $message);
+
+  closelog();
 }
 
 ?>
