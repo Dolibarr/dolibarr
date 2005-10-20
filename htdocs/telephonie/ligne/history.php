@@ -188,8 +188,7 @@ llxHeader("","","Historique Ligne");
 			      print '<br />'.$row[5];
 			    }
 
-			  print '</td><td>';
-			  print $ff[$row[6]];
+			  print '</td><td>('.$row[6].') '.$ff[$row[6]];
 			  print '</td><td>'.$row[4] . " " . $row[3] . "</td></tr>";
 			  $i++;
 			}
@@ -230,7 +229,7 @@ llxHeader("","","Historique Ligne");
 		  $var=!$var;
 		  
 		  print "<tr $bc[$var]>";
-		  print '<td>'.$obj->fk_fournisseur." ".$obj->mode."</td>\n";
+		  print '<td>('.$obj->fk_fournisseur.") ".$obj->mode."</td>\n";
 		  print '<td>'.$obj->situation."</td>\n";
 		  print '<td align="center">'.$obj->date_mise_service."</td>\n";
 		  print '<td align="center">'.$obj->date_resiliation."</td>\n";
