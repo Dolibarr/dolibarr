@@ -167,14 +167,13 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 
 	  if ($ligne_numero && $ligne_service && $ligne_presel)
 	    {
-
 	      $situation_key = "$ligne_service / $ligne_presel";
 	  
-	      $sql = "SELECT max(date_traitement), situation";
+	      $sql = "SELECT date_traitement, situation";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
 	      $sql .= " WHERE fk_fournisseur = 4";
 	      $sql .= " AND cli = '".$ligne_numero."'";
-	      $sql .= " GROUP BY cli;";
+	      $sql .= " ORDER BY date_traitement DESC LIMIT 1;";
 	      
 	      $resql = $db->query($sql);
 	      
@@ -200,16 +199,29 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		  _log("$cli lecture etat de ligne ERREUR", LOG_ERR);
 		}
 	      
+	      _log("$cli log etat de la ligne", LOG_NOTICE);
 	      if ($insert == 1)
 		{
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande_retour";
-		  $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur) ";
-		  $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4);";
-		  
+
+		  if ($situation_key == 'TRAITE_OK / EN_COURS')
+		    {
+		      $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur,traite) ";
+		      $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4,1);";
+		    }
+		  elseif ($situation_key == 'ATTENTE / EN_COURS')
+		    {
+		      $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur,traite) ";
+		      $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4,1);";
+		    }
+		  else
+		    {
+		      $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur) ";
+		      $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4);";
+		    }
+
 		  $resql = $db->query($sql);
-		  
-		  _log("$cli log etat de la ligne", LOG_NOTICE);
-		  
+		  		  
 		  if ($resql)
 		    {
 		      _log("$cli log etat de la ligne SUCCESS", LOG_NOTICE);
@@ -218,6 +230,10 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		    {
 		      _log("$cli log etat de la ligne ERREUR", LOG_ERR);
 		    }
+		}
+	      else
+		{
+		  _log("$cli log etat de la ligne IDENTIQUE", LOG_NOTICE);
 		}
 	    }
 	  else
