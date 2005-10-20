@@ -40,14 +40,13 @@ class GraphBrouzouf {
 
     if ($this->width <> $width && $this->width > 0)
       $width = $this->width;
-      
 
     $graph = new Graph($width, $height,"auto");    
     $graph->SetScale("textlin");
     $graph->yaxis->scale->SetGrace(20);
     
     
-    $graph->img->SetMargin(40,20,20,40);
+    $graph->img->SetMargin(60,20,20,40);
     
     if ($this->type == 'LinePlot')
       {
