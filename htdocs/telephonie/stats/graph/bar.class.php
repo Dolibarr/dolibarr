@@ -56,7 +56,7 @@ class GraphBar extends DolibarrGraph {
 
 	$graph->SetFrame($this->showframe);
     
-	$graph->img->SetMargin(40,20,20,35);
+	$graph->img->SetMargin(50,20,20,35);
     
 	if ($this->type == 'LinePlot')
 	  {
@@ -70,7 +70,7 @@ class GraphBar extends DolibarrGraph {
 	$b2plot->SetFillColor($this->barcolor);
     
 	$graph->xaxis->scale->SetGrace(20);
-
+	/*
 	$LabelAngle = 0;
 
 	if ($this->LabelAngle <> $LabelAngle && strlen($this->LabelAngle) > 0)
@@ -81,7 +81,7 @@ class GraphBar extends DolibarrGraph {
 	    $graph->xaxis->SetLabelAngle($LabelAngle);
 	    $graph->xaxis->SetFont(FF_VERDANA,FS_NORMAL,7);
 	  }
-      
+	*/
 	$graph->title->Set($this->titre);
     
 	//$graph->title->SetFont(FF_VERDANA,FS_NORMAL);
@@ -112,7 +112,7 @@ class GraphBar extends DolibarrGraph {
 	// Draw a text box in the middle
 	$txt = "Données manquantes !";
 	$t = new Text($txt,ceil($width / 2),ceil($height/2));
-	$t->SetFont(FF_VERDANA, FS_BOLD, 10);
+	//$t->SetFont(FF_VERDANA, FS_BOLD, 10);
 	
 	// How should the text box interpret the coordinates?
 	$t->Align('center','top');

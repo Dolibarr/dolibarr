@@ -46,7 +46,7 @@ class GraphBrouzouf {
     $graph->yaxis->scale->SetGrace(20);
     
     
-    $graph->img->SetMargin(60,20,20,40);
+    $graph->img->SetMargin(50,20,20,40);
     
     if ($this->type == 'LinePlot')
       {
