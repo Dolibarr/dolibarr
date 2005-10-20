@@ -46,7 +46,7 @@ class GraphCommNbMinutes extends GraphBar{
   Function Graph($datas='', $labels='')
   {    
     $this->GetDatas();
-
+    $this->width = 360;
     if (sizeof($this->datas))
       {
 	$this->GraphDraw($this->file, $this->datas, $this->labels);
@@ -87,7 +87,6 @@ class GraphCommNbMinutes extends GraphBar{
 
 	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
       }    
-
 
     if ($this->db->query($sql))
       {
