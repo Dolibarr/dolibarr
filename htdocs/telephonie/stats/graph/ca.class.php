@@ -88,7 +88,7 @@ class GraphCa extends GraphBrouzouf
 	    $cf[$i] = $row[3];
 	    $cv[$i] = $row[2];
 	    $g[$i]  = $row[1];
-	    $labels[$i] = substr($row[0],5,2)."/".substr($row[0],2,2);
+	    $labels[$i] = substr($row[0],5,2);
 	    
 	    $i++;
 	  }
