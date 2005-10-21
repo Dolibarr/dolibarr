@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   banque     Module banque
@@ -84,7 +83,7 @@ class modBanque extends DolibarrModules
     $this->rights[1][0] = 111; // id de la permission
     $this->rights[1][1] = 'Lire les comptes bancaires'; // libelle de la permission
     $this->rights[1][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 112; // id de la permission
