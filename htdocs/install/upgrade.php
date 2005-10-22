@@ -52,6 +52,8 @@ pHeader($langs->trans("MigrateScript"),"etape5","upgrade");
 if (file_exists($conffile))
 {
     include_once($conffile);
+    if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+    define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 }
 
 if($dolibarr_main_db_type == "mysql")

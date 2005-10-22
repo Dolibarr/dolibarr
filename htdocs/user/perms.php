@@ -38,17 +38,21 @@ $form = new Form($db);
 
 $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
+// Defini si peux modifier utilisateurs et permisssions
+$caneditperms=($user->admin || $user->rights->user->user->creer);
+
+
 
 /**
  * Actions
  */
-if ($_GET["action"] == 'addrights' && $user->admin)
+if ($_GET["action"] == 'addrights' && $caneditperms)
 {
     $edituser = new User($db,$_GET["id"]);
     $edituser->addrights($_GET["rights"],$module);
 }
 
-if ($_GET["action"] == 'delrights' && $user->admin)
+if ($_GET["action"] == 'delrights' && $caneditperms)
 {
     $edituser = new User($db,$_GET["id"]);
     $edituser->delrights($_GET["rights"],$module);
@@ -196,7 +200,7 @@ if ($_GET["id"])
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
-    if ($user->admin) print '<td width="24">&nbsp</td>';
+    if ($caneditperms) print '<td width="24">&nbsp</td>';
     print '<td align="center" width="24">&nbsp;</td>';
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
@@ -232,16 +236,20 @@ if ($_GET["id"])
                 $objMod=$modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
 
-                print '<tr '. $bc[$var].'>';
-                print '<td>'.img_object('',$picto).' '.$objMod->getName();
-                print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
-                print '<td align="center" nowrap>';
-                print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
-                print '/';
-                print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
-                print '</td>';
-                print '<td colspan="2">&nbsp;</td>';
-                print '</tr>';
+                if ($caneditperms && ($obj->module != 'user' || ! $user->admin))
+                {
+                    // On affiche ligne pour modifier droits
+                    print '<tr '. $bc[$var].'>';
+                    print '<td>'.img_object('',$picto).' '.$objMod->getName();
+                    print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
+                    print '<td align="center" nowrap>';
+                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
+                    print '/';
+                    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
+                    print '</td>';
+                    print '<td colspan="2">&nbsp;</td>';
+                    print '</tr>';
+                }
             }
 
             print '<tr '. $bc[$var].'>';
@@ -249,10 +257,21 @@ if ($_GET["id"])
             print '<td>'.img_object('',$picto).' '.$objMod->getName();
             print '</td>';    
 
-            if (in_array($obj->id, $permsuser))
+            if ($fuser->admin && $obj->module == 'user')
             {
-                // Own permission by user
-                if ($user->admin)
+                // Permission own because admin
+                if ($caneditperms)
+                {
+                    print '<td align="center">'.img_picto($langs->trans("Administrator"),'star').'</td>';
+                }
+                print '<td align="center" nowrap>';
+                print img_tick();
+                print '</td>';
+            }
+            else if (in_array($obj->id, $permsuser))
+            {
+                // Permission own by user
+                if ($caneditperms)
                 {
                     print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
                 }
@@ -261,19 +280,19 @@ if ($_GET["id"])
                 print '</td>';
             }
             else if (in_array($obj->id, $permsgroup)) {
-                // Own permission by group
-                if ($user->admin) 
+                // Permission own by group
+                if ($caneditperms) 
                 {
                     print '<td align="center">'.$langs->trans("Group").'</td>';
                 }
-                print '<td align="left" nowrap>';
+                print '<td align="center" nowrap>';
                 print img_tick();
                 print '</td>';
             }
             else
             {
                 // Do not own permission
-                if ($user->admin)
+                if ($caneditperms)
                 {
                     print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
                 }

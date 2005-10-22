@@ -34,11 +34,16 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 
+// Defini si peux lire/modifier utilisateurs et permisssions
+$canreadperms=($user->admin || $user->rights->user->user->lire);
+$caneditperms=($user->admin || $user->rights->user->user->creer);
+$candisableperms=($user->admin || $user->rights->user->user->supprimer);
+
 if ($user->id <> $_GET["id"])
 {
-  if (! $user->rights->user->user->lire && ! $user->admin)
+    if (! $canreadperms)
     {
-      accessforbidden();
+        accessforbidden();
     }
 }
 
@@ -54,13 +59,13 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 /**
  * Actions
  */
-if ($_GET["subaction"] == 'addrights' && $user->admin)
+if ($_GET["subaction"] == 'addrights' && $caneditperms)
 {
     $edituser = new User($db,$_GET["id"]);
     $edituser->addrights($_GET["rights"]);
 }
 
-if ($_GET["subaction"] == 'delrights' && $user->admin)
+if ($_GET["subaction"] == 'delrights' && $caneditperms)
 {
     $edituser = new User($db,$_GET["id"]);
     $edituser->delrights($_GET["rights"]);
@@ -74,6 +79,7 @@ if ($_POST["action"] == 'confirm_disable' && $_POST["confirm"] == "yes")
         $edituser->fetch($_GET["id"]);
         $edituser->disable();
         Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
+        exit;
     }
 }
 
@@ -85,11 +91,12 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
         $edituser->fetch($_GET["id"]);
         $edituser->delete();
         Header("Location: index.php");
+        exit;
     }
 }
 
 // Action ajout user
-if ($_POST["action"] == 'add' && $user->admin)
+if ($_POST["action"] == 'add' && $caneditperms)
 {
     $message="";
     if (! $_POST["nom"]) {
@@ -130,6 +137,7 @@ if ($_POST["action"] == 'add' && $user->admin)
             $db->commit();
 
             Header("Location: fiche.php?id=$id");
+            exit;
         }
         else
         {
@@ -143,7 +151,7 @@ if ($_POST["action"] == 'add' && $user->admin)
 }
 
 // Action ajout groupe utilisateur
-if ($_POST["action"] == 'addgroup' && $user->admin)
+if ($_POST["action"] == 'addgroup' && $caneditperms)
 {
     if ($_POST["group"])
     {
@@ -151,10 +159,11 @@ if ($_POST["action"] == 'addgroup' && $user->admin)
         $edituser->SetInGroup($_POST["group"]);
 
         Header("Location: fiche.php?id=".$_GET["id"]);
+        exit;
     }
 }
 
-if ($_GET["action"] == 'removegroup' && $user->admin)
+if ($_GET["action"] == 'removegroup' && $caneditperms)
 {
     if ($_GET["group"])
     {
@@ -162,10 +171,11 @@ if ($_GET["action"] == 'removegroup' && $user->admin)
         $edituser->RemoveFromGroup($_GET["group"]);
 
         Header("Location: fiche.php?id=".$_GET["id"]);
+        exit;
     }
 }
 
-if ($_POST["action"] == 'update' && $user->admin)
+if ($_POST["action"] == 'update' && $caneditperms)
 {
     $message="";
 
@@ -201,18 +211,21 @@ if ($_POST["action"] == 'update' && $user->admin)
     if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
     {
         $ret=$edituser->password($user,$password,$conf->password_encrypted);
-        if ($ret < 0) {
+        if ($ret < 0)
+        {
             $message.='<div class="error">'.$edituser->error.'</div>';
         }
     }
 
-    if ($_FILES['photo']['tmp_name']) {
+    if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+    {
         // Si une photo est fournie avec le formulaire
         if (! is_dir($conf->users->dir_output))
         {
             create_exdir($conf->users->dir_output);
         }
-        if (is_dir($conf->users->dir_output)) {
+        if (is_dir($conf->users->dir_output))
+        {
             $newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
             if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
             {
@@ -221,10 +234,12 @@ if ($_POST["action"] == 'update' && $user->admin)
         }
     }
 
-    if ($ret >= 0) {
+    if ($ret >= 0)
+    {
         $message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
         $db->commit();
-    } else {
+    } else
+    {
         $db->rollback;
     }
 
@@ -232,7 +247,7 @@ if ($_POST["action"] == 'update' && $user->admin)
 
 // Action modif mot de passe
 if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
-      || $_GET["action"] == 'confirm_passwordsend') && $user->admin)
+      || $_GET["action"] == 'confirm_passwordsend') && $caneditperms)
 {
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
@@ -346,6 +361,9 @@ else
         $fuser->fetch();
         $fuser->getrights();
 
+        $caneditpassword=( (($user->id == $fuser->id) && $user->rights->user->self->password)
+                        || (($user->id != $fuser->id) && $user->rights->user->user->password) );
+
         /*
          * Affichage onglets
          */
@@ -432,7 +450,7 @@ else
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td width="50%" class="valeur">'.$fuser->nom.'</td>';
-            print '<td align="center" valign="middle" width="25%" rowspan="13">';
+            print '<td align="center" valign="middle" width="25%" rowspan="14">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
                 print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
@@ -525,7 +543,7 @@ else
             print "</tr>\n";
 
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-            print '<td colspan="2" class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
+            print '<td class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
             print "</tr>\n";
 
             // Autres caractéristiques issus des autres modules
@@ -548,27 +566,27 @@ else
              */
             print '<div class="tabsAction">';
 
-            if ($user->admin || ($user->id == $fuser->id))
+            if ($caneditperms || ($user->id == $fuser->id))
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
 
-            if (($user->id != $_GET["id"] && $user->admin) && $fuser->login)
+            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
             }
 
-            if (($user->id != $_GET["id"] && $user->admin) && $fuser->email && $fuser->login)
+            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
             }
 
-            if ($user->id <> $_GET["id"] && $user->admin && $fuser->login)
+            if ($user->id <> $_GET["id"] && $candisableperms && $fuser->login)
             {
                 print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
 
-            if ($user->id <> $_GET["id"] && $user->admin)
+            if ($user->id <> $_GET["id"] && $candisableperms)
             {
                 print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
             }
@@ -611,7 +629,7 @@ else
                 dolibarr_print_error($db);
             }
 
-            if ($user->admin)
+            if ($caneditperms)
             {
                 $form = new Form($db);
                 print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
@@ -663,7 +681,7 @@ else
                         print '</td>';
                         print '<td>';
 
-                        if ($user->admin)
+                        if ($caneditperms)
                         {
 
                             print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$obj->rowid.'">';
@@ -694,15 +712,14 @@ else
         /*
          * Fiche en mode edition
          */
-        if ($_GET["action"] == 'edit' && ($user->admin || ($user->id == $fuser->id)))
+        if ($_GET["action"] == 'edit' && ($caneditperms || ($user->id == $fuser->id)))
         {
 
             print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="action" value="update">';
             print '<table width="100%" class="border">';
-
-            $rowspan=11;
-            if ($conf->global->USER_ALLOW_PASSWORD_CHANGE) $rowspan++;
+            
+            $rowspan=12;
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td width="50%" class="valeur"><input class="flat" size="30" type="text" name="nom" value="'.$fuser->nom.'"></td>';
@@ -729,10 +746,16 @@ else
             print '</td></tr>';
 
             // Pass
-            if ($conf->global->USER_ALLOW_PASSWORD_CHANGE) 
+            if ($caneditpassword) 
             {
                 print "<tr>".'<td valign="top">'.$langs->trans("Password").'</td>';
                 print '<td><input size="12" maxlength="8" type="password" class="flat" name="pass" value="'.$fuser->pass.'"></td></tr>';
+            }
+            else
+            {
+                print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
+                print '<td width="50%" class="valeur">'.eregi_replace('.','*',$fuser->pass).'</td>';
+                print "</tr>\n";
             }
             
             // Administrateur
@@ -799,7 +822,7 @@ else
             print '<td><input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'"></td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-            print '<textarea class="flat" name="note" rows="4" cols="40">';
+            print '<textarea class="flat" name="note" rows="'.ROWS_3.'" cols="70">';
             print $fuser->note;
             print "</textarea></td></tr>";
 

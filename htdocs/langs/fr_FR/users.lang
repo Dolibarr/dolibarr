@@ -69,3 +69,4 @@ LoginAccountDisable=Le compte est désactivé, mettre un nouveau login pour l'acti
 UsePersonalValue=Utiliser valeur personalisée
 ErrorFailedToSaveFile=Erreur - l'enregistrement du fichier a échoué
 GuiLanguage=Langage de l'interface
+InternalUser=Utilisateur interne

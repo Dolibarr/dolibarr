@@ -69,3 +69,4 @@ LoginAccountDisable=Account disabled, put a new login to activate it.
 UsePersonalValue=Use personal value
 ErrorFailedToSaveFile=Error - Failed to save file
 GuiLanguage=Interface language
+InternalUser=Internal user

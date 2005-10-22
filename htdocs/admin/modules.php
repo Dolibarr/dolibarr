@@ -55,9 +55,10 @@ if ($_GET["action"] == 'reset' && $user->admin)
 
 
 /**     \brief      Active un module
-        \param      value   Nom du module a activer
+        \param      value       Nom du module a activer
+        \param      withdeps    Active/désactive aussi les dépendances
 */
-function Activate($value)
+function Activate($value,$withdeps=1)
 {
     global $db, $modules, $langs;
 
@@ -67,7 +68,7 @@ function Activate($value)
     if ($modName)
     {
         $file = $modName . ".class.php";
-        include_once("../includes/modules/$file");
+        include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
         $objMod = new $modName($db);
 
         // Test si version PHP ok
@@ -81,18 +82,21 @@ function Activate($value)
         $objMod->init();
     }
 
-    // Activation des modules dont le module dépend
-    for ($i = 0; $i < sizeof($objMod->depends); $i++)
+    if ($withdeps)
     {
-        Activate($objMod->depends[$i]);
+        // Activation des modules dont le module dépend
+        for ($i = 0; $i < sizeof($objMod->depends); $i++)
+        {
+            Activate($objMod->depends[$i]);
+        }
+    
+        // Desactivation des modules qui entrent en conflit
+        for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+        {
+            UnActivate($objMod->conflictwith[$i],0);
+        }
     }
-
-    // Desactivation des modules qui entrent en conflit
-    for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
-    {
-        UnActivate($objMod->conflictwith[$i],0);
-    }
-
+    
     return 0;
 }
 
@@ -111,7 +115,7 @@ function UnActivate($value,$requiredby=1)
     if ($modName)
     {
         $file = $modName . ".class.php";
-        include_once("../includes/modules/$file");
+        include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
         $objMod = new $modName($db);
         $objMod->remove();
     }
@@ -181,6 +185,7 @@ print "</tr>\n";
 
 $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
 
+// Charge tableaux modules, nom, numero, orders depuis répertoire dir
 $handle=opendir($dir);
 $modules = array();
 $orders = array();
@@ -209,7 +214,6 @@ while (($file = readdir($handle))!==false)
             $modules[$i] = $objMod;
 
             $nom[$i]     = $modName;
-            $numero[$i]  = $j;
             $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
             $j++;
             $i++;
@@ -221,7 +225,7 @@ asort($orders);
 $var=True;
 
 $familylib=array(
-'base'=>$langs->trans("ModuleBase"),
+'base'=>$langs->trans("ModuleFamilyBase"),
 'crm'=>$langs->trans("ModuleFamilyCrm"),
 'products'=>$langs->trans("ModuleFamilyProducts"),
 'hr'=>$langs->trans("ModuleFamilyHr"),
@@ -295,8 +299,8 @@ foreach ($orders as $key => $value)
         if ($conf->global->$const_name == 1)
         {
             // Module actif
-            print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
-
+            if ($family == 'base') print $langs->trans("Required");
+            else print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
 
             if ($objMod->config_page_url)
             {
@@ -331,6 +335,11 @@ foreach ($orders as $key => $value)
         }
         else
         {
+            if ($family == 'base')
+            {
+                // Ne devrait pas arriver.
+            }
+
             // Module non actif
             print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
         }

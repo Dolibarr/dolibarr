@@ -28,7 +28,9 @@
 
 require("./pre.inc.php");
 
-if (! $user->rights->user->user->lire && !$user->admin) accessforbidden();
+$user->getrights();
+
+if (! $user->rights->user->user->lire && ! $user->admin) accessforbidden();
 
 $langs->load("users");
 
@@ -37,7 +39,6 @@ $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-$page = $_GET["page"];
 if ($page < 0) $page = 0;
 
 $limit = $conf->liste_limit;

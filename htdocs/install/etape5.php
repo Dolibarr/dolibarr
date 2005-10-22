@@ -24,7 +24,7 @@
 
 /**
         \file       htdocs/install/etape5.php
-        \brief      Page de fin d'installation
+        \brief      Page de fin d'installation ou de migration
         \version    $Revision$
 */
 
@@ -40,6 +40,8 @@ $success=0;
 if (file_exists($conffile))
 {
     include($conffile);
+    if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+    define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 }
 
 
@@ -96,6 +98,13 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
     $ok = 0;
 
+    // Active module user
+    $modName='modUser';
+    $file = $modName . ".class.php";
+    include_once("../includes/modules/$file");
+    $objMod = new $modName($db);
+    $objMod->init();
+    
     // If first install
     if ($_POST["action"] == "set")
     {
