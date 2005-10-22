@@ -93,16 +93,17 @@ define('DOL_URL_ROOT', $pos);
  */
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 $conf = new Conf();
-if (!strlen(getenv("LLX_DBNAME")))
-{
-  $conf->db->host = $dolibarr_main_db_host;
-  $conf->db->name = $dolibarr_main_db_name;
-  $conf->db->user = $dolibarr_main_db_user;
-  $conf->db->pass = $dolibarr_main_db_pass;
-  $conf->db->type = $dolibarr_main_db_type;
-}
-if (! $conf->db->type) { $conf->db->type = 'mysql'; }   // Pour compatibilit? avec anciennes configs, si non d?fini, on prend 'mysql'
-define('MAIN_DB_PREFIX','llx_');                        // A terme cette constante sera d?finie dans $conf
+$conf->db->host   = $dolibarr_main_db_host;
+$conf->db->name   = $dolibarr_main_db_name;
+$conf->db->user   = $dolibarr_main_db_user;
+$conf->db->pass   = $dolibarr_main_db_pass;
+$conf->db->type   = $dolibarr_main_db_type;
+if (! $conf->db->type) { $conf->db->type = 'mysql'; }   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+// Defini prefix
+if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+$conf->db->prefix = $dolibarr_main_db_prefix;
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 
 /*
  * Chargement des includes principaux
