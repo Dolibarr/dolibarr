@@ -60,8 +60,7 @@ class modComptabilite extends DolibarrModules
     $this->revision = explode(" ","$Revision$");
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_COMPTABILITE";
-    $this->const_config = MAIN_MODULE_COMPTABILITE;
+    $this->const_name = 'MAIN_MODULE_COMPTABILITE';
 
     // Config pages
     $this->config_page_url = "compta.php";

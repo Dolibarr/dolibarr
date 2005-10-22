@@ -60,8 +60,7 @@ class modPrelevement extends DolibarrModules
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_PRELEVEMENT";
-    $this->const_config = MAIN_MODULE_PRELEVEMENT;
+    $this->const_name = 'MAIN_MODULE_PRELEVEMENT';
     $this->special = 0;
 
     // Dir

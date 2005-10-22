@@ -51,8 +51,7 @@ class modCategorie extends DolibarrModules
     $this->name = "Catégorie";
     $this->description = "Gestion des catégories";
     $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
-    $this->const_name = "MAIN_MODULE_CATEGORIE";
-    $this->const_config = MAIN_MODULE_CATEGORIE;
+    $this->const_name = 'MAIN_MODULE_CATEGORIE';
     $this->special = 0;
     $this->picto = '';
 

@@ -57,8 +57,7 @@ class modAdherent extends DolibarrModules
         $this->name = "Adhérents";
         $this->description = "Gestion des adhérents d'une association";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-        $this->const_name = "MAIN_MODULE_ADHERENT";
-        $this->const_config = MAIN_MODULE_ADHERENT;
+        $this->const_name = 'MAIN_MODULE_ADHERENT';
         $this->special = 1;
         $this->picto='user';
     

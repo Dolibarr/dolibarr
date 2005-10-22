@@ -57,11 +57,10 @@ class modSociete extends DolibarrModules
     $this->name = "Module societe";
     $this->description = "Gestion des sociétés et contacts";
 
-    $this->revision = explode(" ","$Revision$");
+    $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_SOCIETE";
-    $this->const_config = MAIN_MODULE_SOCIETE;
+    $this->const_name = 'MAIN_MODULE_SOCIETE';
     $this->special = 0;
     $this->config_page_url = "societe.php";
     $this->picto='company';

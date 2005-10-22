@@ -58,12 +58,11 @@ class modComptabiliteExpert extends DolibarrModules
     $this->name = "ComptabiliteExpert";
     $this->description = "Gestion expert de comptabilité (doubles parties)";
 
-//    $this->revision = explode(" ","$Revision$");
+//    $this->revision = explode(' ','$Revision$');
 //    $this->version = $this->revision[1];
     $this->version = "development";
 
-    $this->const_name = "MAIN_MODULE_COMPTABILITE_EXPERT";
-    $this->const_config = MAIN_MODULE_COMPTABILITE_EXPERT;
+    $this->const_name = 'MAIN_MODULE_COMPTABILITE_EXPERT';
 
     // Config pages
     $this->config_page_url = "comptaexpert.php";

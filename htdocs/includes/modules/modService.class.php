@@ -59,8 +59,7 @@ class modService extends DolibarrModules
     $this->revision = explode(" ","$Revision$");
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_SERVICE";
-    $this->const_config = MAIN_MODULE_SERVICE;
+    $this->const_name = 'MAIN_MODULE_SERVICE';
     $this->picto='service';
 
     // Dépendances

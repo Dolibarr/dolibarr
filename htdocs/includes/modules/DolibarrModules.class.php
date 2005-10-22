@@ -21,7 +21,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -64,7 +63,8 @@ class DolibarrModules
     function _init($array_sql)
     {
         global $langs;
-
+        $err='';
+        
         // Insère une entrée dans llx_dolibarr_modules
         $err+=$this->_dbactive();
 

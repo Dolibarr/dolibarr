@@ -54,15 +54,17 @@ class modUser extends DolibarrModules
     $this->name = "User";
     $this->description = "Gestion des utilisateurs (requis)";
 
-    $this->revision = explode(" ","$Revision$");
+    $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_USER";
-    $this->const_config = MAIN_MODULE_USER;
+    $this->const_name = 'MAIN_MODULE_USER';
     $this->picto='group';
 
     // Dir
     $this->dirs = array();
+
+    // Config pages
+    $this->config_page_url = "/user/admin/index.php";
 
     // Dépendances
     $this->depends = array();
@@ -75,32 +77,75 @@ class modUser extends DolibarrModules
     $this->boxes = array();
 
     // Permissions
-    $this->rights = array();
+    $this->rights = array();            // L'admin bénéficie toujours des droits de ce module, actif ou non
     $this->rights_class = 'user';
+    $r=0;
+    
+    $r++;
+    $this->rights[$r][0] = 251;
+    $this->rights[$r][1] = 'Consulter les autres utilisateurs, leurs groupes et permissions';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 1;
+    $this->rights[$r][4] = 'user';
+    $this->rights[$r][5] = 'lire';
+
+    $r++;
+    $this->rights[$r][0] = 252;
+    $this->rights[$r][1] = 'Créer/modifier les autres utilisateurs, leurs groupes et permissions';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'user';
+    $this->rights[$r][5] = 'creer';
+
+    $r++;
+    $this->rights[$r][0] = 253;
+    $this->rights[$r][1] = 'Modifier mot de passe des autres utilisateurs';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'user';
+    $this->rights[$r][5] = 'password';
+
+    $r++;
+    $this->rights[$r][0] = 254;
+    $this->rights[$r][1] = 'Supprimer ou désactiver les autres utilisateurs';
+    $this->rights[$r][2] = 'd';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'user';
+    $this->rights[$r][5] = 'supprimer';
+
+    $r++;
+    $this->rights[$r][0] = 255;
+    $this->rights[$r][1] = 'Créer/modifier ses propres infos utilisateur';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 1;
+    $this->rights[$r][4] = 'self';
+    $this->rights[$r][5] = 'supprimer';
+
+    $r++;
+    $this->rights[$r][0] = 256;
+    $this->rights[$r][1] = 'Modifier son propre mot de passe';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 1;
+    $this->rights[$r][4] = 'self';
+    $this->rights[$r][5] = 'password';
   }
+
 
    /**
     *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
-  function init()
-  {
-    global $conf;
+    function init()
+    {
+        global $conf;
 
-    // Permissions
-    $this->remove();
-    $r = 1;
+        // Permissions
+        $this->remove();
 
-    $this->rights[$r][0] = 251;
-    $this->rights[$r][1] = 'Consulter les utilisateurs';
-    $this->rights[$r][2] = 'w';
-    $this->rights[$r][3] = 1;
-    $this->rights[$r][4] = 'user';
-    $this->rights[$r][5] = 'lire';
-    $r++;
-
-    return $this->_init($sql);
-  }
+        $sql = array();
+    
+        return $this->_init($sql);
+    }
 
   /**
     \brief      Fonction appelée lors de la désactivation d'un module.

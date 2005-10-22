@@ -54,11 +54,10 @@ class modEnergie extends DolibarrModules
     $this->name = "Energie";
     $this->description = "Suivi de la consommation des energies";
 
-    $this->revision = explode(" ","$Revision$");
+    $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_ENERGIE";
-    $this->const_config = MAIN_MODULE_ENERGIE;
+    $this->const_name = 'MAIN_MODULE_ENERGIE';
     $this->special = 1;
     $this->picto='energie';
 

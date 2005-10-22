@@ -56,11 +56,10 @@ class modContrat extends DolibarrModules
         $this->name = "Contrats";
         $this->description = "Gestion des contrats de services";
 
-        $this->revision = explode(" ","$Revision$");
+        $this->revision = explode(' ','$Revision$');
         $this->version = $this->revision[1];
 
-        $this->const_name = "MAIN_MODULE_CONTRAT";
-        $this->const_config = MAIN_MODULE_CONTRAT;
+        $this->const_name = 'MAIN_MODULE_CONTRAT';
         $this->special = 0;
         $this->picto='contract';
 

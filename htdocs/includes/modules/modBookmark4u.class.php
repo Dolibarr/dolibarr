@@ -55,8 +55,7 @@ class modBookmark4u extends DolibarrModules
     $this->name = "Bookmark4u";
     $this->description = "Ajoute fonction pour générer un compte Bookmark4u depuis un compte Dolibarr";
     $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
-    $this->const_name = "MAIN_MODULE_BOOKMARK4U";
-    $this->const_config = MAIN_MODULE_BOOKMARK4U;
+    $this->const_name = 'MAIN_MODULE_BOOKMARK4U';
     $this->special = 1;
     $this->picto='user';
 

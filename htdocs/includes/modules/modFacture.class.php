@@ -56,11 +56,10 @@ class modFacture extends DolibarrModules
     $this->name = "Factures";
     $this->description = "Gestion des factures";
 
-    $this->revision = explode(" ","$Revision$");
+    $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_FACTURE";
-    $this->const_config = MAIN_MODULE_FACTURE;
+    $this->const_name = 'MAIN_MODULE_FACTURE';
     $this->special = 0;
     $this->picto='bill';
 

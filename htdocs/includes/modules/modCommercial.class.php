@@ -55,11 +55,10 @@ class modCommercial extends DolibarrModules
         $this->name = "Commercial";
         $this->description = "Gestion commercial";
         
-        $this->revision = explode(" ","$Revision$");
+        $this->revision = explode(' ','$Revision$');
         $this->version = $this->revision[1];
         
-        $this->const_name = "MAIN_MODULE_COMMERCIAL";
-        $this->const_config = MAIN_MODULE_COMMERCIAL;
+        $this->const_name = 'MAIN_MODULE_COMMERCIAL';
         $this->special = 0;
         $this->picto='commercial';
         

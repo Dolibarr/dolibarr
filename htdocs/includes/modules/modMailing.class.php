@@ -55,8 +55,7 @@ class modMailing extends DolibarrModules
     $this->name = "Mailings";
     $this->description = "Gestion des Mailings";
     $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-    $this->const_name = "MAIN_MODULE_MAILING";
-    $this->const_config = MAIN_MODULE_MAILING;
+    $this->const_name = 'MAIN_MODULE_MAILING';
     $this->special = 1;
     $this->picto='email';
 

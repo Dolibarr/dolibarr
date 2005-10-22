@@ -56,12 +56,11 @@ class modBarcode extends DolibarrModules
     $this->name = "Codes barres";
     $this->description = "Gestion des codes barres des produits";
 
-    //$this->revision = explode(" ","$Revision$");
+    //$this->revision = explode(' ','$Revision$');
     //$this->version = $this->revision[1];
     $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
 
-    $this->const_name = "MAIN_MODULE_BARCODE";
-    $this->const_config = MAIN_MODULE_BARCODE;
+    $this->const_name = 'MAIN_MODULE_BARCODE';
     $this->special = 0;
     $this->picto='barcode';
 

@@ -57,8 +57,7 @@ class modProjet extends DolibarrModules
     $this->revision = explode(" ","$Revision$");
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_PROJET";
-    $this->const_config = MAIN_MODULE_PROJET;
+    $this->const_name = 'MAIN_MODULE_PROJET';
 
     // Dépendances
     $this->depends = array();

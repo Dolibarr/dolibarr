@@ -54,11 +54,10 @@ class modBanque extends DolibarrModules
     $this->name = "Banque";
     $this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
 
-    $this->revision = explode(" ","$Revision$");
+    $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
-    $this->const_name = "MAIN_MODULE_BANQUE";
-    $this->const_config = MAIN_MODULE_BANQUE;
+    $this->const_name = 'MAIN_MODULE_BANQUE';
     $this->picto='account';
 
     // Dépendances
@@ -79,25 +78,28 @@ class modBanque extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'banque';
+    $r=0;
+    
+    $r++;
+    $this->rights[$r][0] = 111; // id de la permission
+    $this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
+    $this->rights[$r][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'lire';
 
-    $this->rights[1][0] = 111; // id de la permission
-    $this->rights[1][1] = 'Lire les comptes bancaires'; // libelle de la permission
-    $this->rights[1][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
-    $this->rights[1][4] = 'lire';
+    $r++;
+    $this->rights[$r][0] = 112; // id de la permission
+    $this->rights[$r][1] = 'Créer modifier rapprocher transactions'; // libelle de la permission
+    $this->rights[$r][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'modifier';
 
-    $this->rights[2][0] = 112; // id de la permission
-    $this->rights[2][1] = 'Créer modifier rapprocher transactions'; // libelle de la permission
-    $this->rights[2][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[2][4] = 'modifier';
-
-    $this->rights[3][0] = 113; // id de la permission
-    $this->rights[3][1] = 'Configurer les comptes bancaires (créer, gérer catégories)'; // libelle de la permission
-    $this->rights[3][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[3][4] = 'configurer';
-
+    $r++;
+    $this->rights[$r][0] = 113; // id de la permission
+    $this->rights[$r][1] = 'Configurer les comptes bancaires (créer, gérer catégories)'; // libelle de la permission
+    $this->rights[$r][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'configurer';
   }
 
 
@@ -105,19 +107,20 @@ class modBanque extends DolibarrModules
     *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
-  function init()
-  {
-    // Permissions
-    $this->remove();
-
-    $sql = array();
+    function init()
+    {
+        global $conf;
     
-    $this->dirs[0] = DOL_DATA_ROOT.'/graph/';
-    $this->dirs[1] = DOL_DATA_ROOT.'/graph/banque/';
-
-
-    return $this->_init($sql);
-  }
+        // Permissions
+        $this->remove();
+    
+        $sql = array();
+    
+        $this->dirs[0] = DOL_DATA_ROOT.'/graph/';
+        $this->dirs[1] = DOL_DATA_ROOT.'/graph/banque/';
+    
+        return $this->_init($sql);
+    }
 
   /**
    *    \brief      Fonction appelée lors de la désactivation d'un module.

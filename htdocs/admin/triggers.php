@@ -164,33 +164,33 @@ foreach ($orders as $key => $value)
     }
 
     $const_name = $objMod->const_name;
-    $const_value = $objMod->const_config;
 
-        $var=!$var;
-        
-        print "<tr $bc[$var]>\n";
-	
-        print '<td valign="top" width="14" align="center">';
-        print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
-        print '</td><td valign="top">'.$files[$key];
-        print "</td>\n  <td valign=\"top\">";
-        print $objMod->getDesc();
-        print "</td>\n  <td valign=\"top\" align=\"center\">";
-        print $objMod->getVersion();
-        print "</td>\n  <td valign=\"top\" align=\"center\">";
-
-        $const_value=1;
-
-        if ($const_value == 1)
-	  {
-    	    print img_tick();
-	  }
-        else
-	  {
-            print "&nbsp;";
-	  }
-	
-        print "</td>\n";
+    $var=!$var;
+    
+    print "<tr $bc[$var]>\n";
+    
+    print '<td valign="top" width="14" align="center">';
+    print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
+    print '</td><td valign="top">'.$files[$key];
+    print "</td>\n  <td valign=\"top\">";
+    print $objMod->getDesc();
+    print "</td>\n  <td valign=\"top\" align=\"center\">";
+    print $objMod->getVersion();
+    print "</td>\n  <td valign=\"top\" align=\"center\">";
+    
+    // \todo Activation trigger
+    $statut_trigger=1;
+    
+    if ($statut_trigger == 1)
+    {
+        print img_tick();
+    }
+    else
+    {
+        print "&nbsp;";
+    }
+    
+    print "</td>\n";
 	
 /*
         print "<td valign=\"top\" align=\"center\">";
@@ -205,8 +205,8 @@ foreach ($orders as $key => $value)
             print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n";
 	  }
 */
-        print "<td>&nbsp;</td>\n";	
-        print "</tr>\n";
+    print "<td>&nbsp;</td>\n";	
+    print "</tr>\n";
     
 }
 print "</table>\n";

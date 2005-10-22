@@ -55,8 +55,7 @@ class modDon  extends DolibarrModules
     $this->name = "Don";
     $this->description = "Gestion des dons";
     $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-    $this->const_name = "MAIN_MODULE_DON";
-    $this->const_config = MAIN_MODULE_DON;
+    $this->const_name = 'MAIN_MODULE_DON';
     $this->special = 1;
 
     // Dir
