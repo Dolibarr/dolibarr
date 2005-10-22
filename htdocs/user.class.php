@@ -221,6 +221,7 @@ class User
 	 
     function addrights($rid,$allmodule='',$allperms='')
     {
+        dolibarr_syslog("User::addrights $rid, $allmodule, $allperms");
         $err=0;
         $whereforadd='';
         
