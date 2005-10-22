@@ -61,9 +61,17 @@ function versiontostring($versionarray)
 */
 function versioncompare($versionarray1,$versionarray2)
 {
-    // \todo
-    
-    return 0;
+    $ret=0;
+    $i=0;
+    while ($i < max(sizeof($versionarray1),sizeof($versionarray1)))
+    {
+        $operande1=isset($versionarray1[$i])?$versionarray1[$i]:0;
+        $operande2=isset($versionarray2[$i])?$versionarray2[$i]:0;
+        if ($operande1 < $operande2) { $ret = -1; break; }
+        if ($operande1 > $operande2) { $ret =  1; break; }
+        $i++;
+    }    
+    return $ret;
 }
 
 
