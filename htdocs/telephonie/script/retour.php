@@ -121,9 +121,9 @@ Function import_file($db,$dir,$file)
 		  
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande_retour ";
 		  
-		  $sql .= " (cli,mode,situation,date_mise_service,date_resiliation,motif_resiliation,commentaire,fichier) ";
+		  $sql .= " (cli,mode,situation,date_mise_service,date_resiliation,motif_resiliation,commentaire,fichier,fk_fournisseur) ";
 		  $sql .= " VALUES (";
-		  $sql .= "'$numero','$mode','$situation','$date_mise_service','$date_resiliation','$motif_resiliation','$commentaire','$fichier')";
+		  $sql .= "'$numero','$mode','$situation','$date_mise_service','$date_resiliation','$motif_resiliation','$commentaire','$fichier',1)";
 		  
 		  if (! $db->query($sql))
 		    {
