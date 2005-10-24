@@ -50,7 +50,7 @@ if ($user->societe_id > 0)
 }
 
 
-llxHeader();
+// llxHeader();
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
@@ -91,6 +91,8 @@ if ($mode == 'search')
 	{
 	  $obj = $db->fetch_object($result);
 	  $socid = $obj->idp;
+	  print header("location: soc.php?socid=$socid");
+	  exit;
 	}
       $db->free($result);
     }
@@ -104,6 +106,8 @@ if ($mode == 'search')
       $socid = $user->societe_id;
     }  
 }
+
+llxHeader();
 
 // As-t-on cliqué sur purge des criètres de recherche
 if (isset($_POST["button_removefilter_x"]))
