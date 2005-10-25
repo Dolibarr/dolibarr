@@ -101,7 +101,7 @@ if ($_GET["id"])
 
 
 
-  $sql = "SELECT u.rowid, u.firstname, u.name";
+  $sql = "SELECT u.rowid, u.firstname, u.name, u.email";
   $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";  
   $sql .= " WHERE u.rowid = dc.fk_user ";
@@ -123,7 +123,12 @@ if ($_GET["id"])
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      print '<td><a href="./comm/commercial.php?id='.$row[0].'&amp;did='.$_GET["id"].'">';;
-	      print $row[1].' '.$row[2].'</a></td>';
+	      print $row[1].' '.$row[2].'</a>';
+	      if ($row[3])
+		{
+		  print " <$row[3]>";
+		}
+	      print '</td>';
 	    }
 	  
 	  print '</table><br />';
