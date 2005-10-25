@@ -126,7 +126,7 @@ if ($_GET["id"])
 	      print $row[1].' '.$row[2].'</a>';
 	      if ($row[3] && $user->distributeur_id == 0)
 		{
-		  print " &lt;$row&gt;>";
+		  print " &lt;".$row[3]."&gt;";
 		}
 	      print '</td>';
 	    }
