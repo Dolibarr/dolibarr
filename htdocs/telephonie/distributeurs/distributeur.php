@@ -124,9 +124,9 @@ if ($_GET["id"])
 	      print "<tr $bc[$var]>";
 	      print '<td><a href="./comm/commercial.php?id='.$row[0].'&amp;did='.$_GET["id"].'">';;
 	      print $row[1].' '.$row[2].'</a>';
-	      if ($row[3])
+	      if ($row[3] && $user->distributeur_id == 0)
 		{
-		  print " <$row[3]>";
+		  print " &lt;$row&gt;>";
 		}
 	      print '</td>';
 	    }
