@@ -39,18 +39,14 @@ $langs->load("customers");
 $langs->load("suppliers");
 
 
-/*
- * Sécurité accés client
- */
- 
+// Sécurité accés client
+$socid=0; 
 if ($user->societe_id > 0) 
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 
-
-// llxHeader();
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
@@ -71,41 +67,41 @@ $pagenext = $page + 1;
 
 
 /*
- * Recherche
+ * Actions
  *
  */
+ 
+// Recherche
 $mode=isset($_GET["mode"])?$_GET["mode"]:$_POST["mode"];
 $modesearch=isset($_GET["mode-search"])?$_GET["mode-search"]:$_POST["mode-search"];
 
 if ($mode == 'search')
 {
-  $_POST["search_nom"]="$socname";
+    $_POST["search_nom"]="$socname";
 
-  $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-  $sql .= " WHERE s.nom like '%".$socname."%'";
-  
-  $result=$db->query($sql);
-  if ($result)
+    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
+    $sql .= " WHERE s.nom like '%".$socname."%'";
+
+    $result=$db->query($sql);
+    if ($result)
     {
-      if ($db->num_rows($result) == 1)
-	{
-	  $obj = $db->fetch_object($result);
-	  $socid = $obj->idp;
-	  print header("location: soc.php?socid=$socid");
-	  exit;
-	}
-      $db->free($result);
+        if ($db->num_rows($result) == 1)
+        {
+            $obj = $db->fetch_object($result);
+            $socid = $obj->idp;
+            header("location: soc.php?socid=$socid");
+            exit;
+        }
+        $db->free($result);
     }
-
-  /*
-   * Sécurité accés client
-   */
-  if ($user->societe_id > 0) 
+    // Sécurité accès client
+    if ($user->societe_id > 0) 
     {
-      $action = '';
-      $socid = $user->societe_id;
-    }  
+        $action = '';
+        $socid = $user->societe_id;
+    }
 }
+
 
 llxHeader();
 
@@ -126,11 +122,10 @@ if (isset($_POST["button_removefilter_x"]))
 $title=$langs->trans("ListOfCompanies");
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur";
-$sql .= ", s.siren";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-$sql .= " WHERE s.fk_stcomm = st.id";
-
+$sql.= ", s.siren";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql.= " WHERE s.fk_stcomm = st.id";
 if ($user->societe_id > 0)
 {
   $sql .= " AND s.idp = " . $user->societe_id;
