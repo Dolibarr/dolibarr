@@ -84,70 +84,8 @@ print_fiche_titre($langs->trans("CommercialArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="100%" class="notopnoleft">';
-
-/*
- * Actions commerciales a faire
- *
- */
-
-$sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
-$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
-if ($socidp)
-{ 
-  $sql .= " AND s.idp = $socidp"; 
-}
-$sql .= " ORDER BY a.datea ASC";
-
-$resql=$db->query($sql);
-if ($resql) 
-{
-  $num = $db->num_rows($resql);
-  if ($num > 0)
-    { 
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ActionsToDo").'</td></tr>';
-      $var = true;
-      $i = 0;
-      
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($resql);
-	  $var=!$var;
-	  
-	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
-      $transcode=$langs->trans("Action".$obj->code);
-      $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-      print $libelle;
-	  print '</a></td>';
-	  print "<td>".$obj->label."</td>";
-	  print '<td>'. dolibarr_print_date($obj->da);
-          if (date("U",$obj->da) < time())
-          {
-	    print img_warning("Late");
-          }
-	  print "</td>";
-
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
-	  $i++;
-	}
-      // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
-      // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
-      print "</table><br>";
-    }
-  $db->free($resql);
-} 
-else
-{
-  dolibarr_print_error($db);
-}
-
-print '</td></tr></table>';
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
+      
 
 /*
  * Recherche Propal
@@ -324,6 +262,65 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
+ * Actions commerciales a faire
+ *
+ */
+
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
+if ($socidp)
+{
+    $sql .= " AND s.idp = $socidp";
+}
+$sql .= " ORDER BY a.datea ASC";
+
+$resql=$db->query($sql);
+if ($resql)
+{
+    $num = $db->num_rows($resql);
+    if ($num > 0)
+    {
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ActionsToDo").'</td></tr>';
+        $var = true;
+        $i = 0;
+
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            $var=!$var;
+
+            print "<tr $bc[$var]>";
+            print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
+            $transcode=$langs->trans("Action".$obj->code);
+            $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+            print $libelle;
+            print '</a></td>';
+
+            print '<td>'. dolibarr_print_date($obj->da);
+            if (date("U",$obj->da) < time())
+            {
+                print img_warning("Late");
+            }
+            print "</td>";
+
+            print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
+            $i++;
+        }
+        // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
+        // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
+        print "</table><br>";
+    }
+    $db->free($resql);
+}
+else
+{
+    dolibarr_print_error($db);
+}
+
+
+/*
  * Derniers clients enregistrés
  */
 if ($user->rights->societe->lire)
@@ -369,6 +366,7 @@ if ($user->rights->societe->lire)
         }
     }
 }
+
 
 /*
  * Dernières actions commerciales effectuées
@@ -420,6 +418,7 @@ else
 {
   dolibarr_print_error($db);
 }
+
 
 /*
  * Derniers contrat
