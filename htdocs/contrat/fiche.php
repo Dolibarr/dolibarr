@@ -348,7 +348,7 @@ if ($_GET["action"] == 'create')
             }
  
             print '<tr><td>'.$langs->trans("Comment").'</td><td valign="top">';
-            print '<textarea name="note" wrap="soft" cols="60" rows="3"></textarea></td></tr>';
+            print '<textarea name="note" wrap="soft" cols="70" rows="3"></textarea></td></tr>';
 
             print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
             print "</form>\n";
@@ -737,7 +737,7 @@ else
                     {
                         print $objp->label?$objp->label.'<br>':'';
                     }
-                    print '<textarea name="eldesc" cols="60" rows="1">'.$objp->description.'</textarea></td>';
+                    print '<textarea name="eldesc" cols="70" rows="1">'.$objp->description.'</textarea></td>';
                     print '<td align="right">';
                     print $html->select_tva("eltva_tx",$objp->tva_tx);
                     print '</td>';
@@ -808,7 +808,7 @@ else
             print '<td colspan="3">';
             $html->select_produits('','p_idprod','',$conf->produit->limit_size);
             print '<br>';
-            print '<textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea>';
+            print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea>';
             print '</td>';
 
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
@@ -836,7 +836,7 @@ else
             print '<input type="hidden" name="id" value="'.$id.'">';
 
             print "<tr $bc[$var]>";
-            print '<td><textarea name="desc" cols="50" rows="'.ROWS_2.'"></textarea></td>';
+            print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 
             print '<td>';
             $html->select_tva("tva_tx",$conf->defaulttx);

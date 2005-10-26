@@ -318,11 +318,10 @@ class Contrat
      */
     function fetch_lignes()
     {
+        dolibarr_syslog("Contrat.class.php::fetch_lignes");
         $this->lignes = array();
     
-        /*
-         * Lignes contrats liées à un produit
-         */
+        // Selectionne les lignes contrats liées à un produit
         $sql = "SELECT p.rowid, p.label, p.description as product_desc, p.ref,";
         $sql.= " d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
         $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
@@ -372,15 +371,14 @@ class Contrat
             return -3;
         }
         
-        /*
-         * Lignes contrat liées à aucun produit
-         */
+        // Selectionne les lignes contrat liées à aucun produit
         $sql = "SELECT d.qty, d.description, d.price_ht, d.subprice, d.tva_tx, d.rowid, d.remise_percent,";
         $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
         $sql.= " d.date_fin_validite, d.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d";
-        $sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = 0";
-        
+        $sql.= " WHERE d.fk_contrat = ".$this->id;
+        $sql.= " AND (d.fk_product IS NULL OR d.fk_product = 0)";   // fk_product = 0 gardé pour compatibilité
+
         $result = $this->db->query($sql);
         if ($result)
         {
