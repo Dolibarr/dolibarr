@@ -30,7 +30,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
-$sql = "SELECT date_format(date, '%m'), duree, numero";
+$sql = "SELECT SQL_BIG_RESULT date_format(date, '%m'), duree, numero";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
 $sql .= " ORDER BY fk_ligne";
 
