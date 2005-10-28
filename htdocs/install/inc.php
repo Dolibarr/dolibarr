@@ -44,7 +44,8 @@ else $langcode=$langpart[0]."_".strtoupper($langpart[0]);
 require_once("../translate.class.php");
 $langs = new Translate("../langs", $langcode);
 
-
+$tab[0]=' class="bg1"';
+$tab[1]=' class="bg2"';
 
 function pHeader($soutitre,$next,$action='set')
 {

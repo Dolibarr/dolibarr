@@ -46,7 +46,7 @@ $langs->load("admin");
 $langs->load("install");
 
 
-pHeader($langs->trans("MigrateScript"),"etape5","upgrade");
+pHeader($langs->trans("DatabaseMigration"),"upgrade2","upgrade");
 
 
 if (file_exists($conffile))
@@ -73,7 +73,7 @@ require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
 {
-    print '<h2>'.$langs->trans("Database").'</h2>';
+    print '<h2>'.$langs->trans("DatabaseMigration").'</h2>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
     $error=0;
@@ -130,7 +130,7 @@ if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
             if (eregi($migfile,$file))
             {
                 print '<tr><td nowrap>';
-                print $langs->trans("MigrateScript").' :</td><td align="right">'.$file.'</td></tr>';
+                print $langs->trans("ChooseMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
 
                 $name = substr($file, 0, strlen($file) - 4);
                 $buffer = '';
@@ -213,6 +213,6 @@ else
     print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 
-pFooter(!$ok);
+pFooter(! $ok);
 
 ?>
