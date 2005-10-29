@@ -240,9 +240,10 @@ if ($_POST['action'] == 'add')
 				if ($facid)
 				{
 					$contrat = New Contrat($db);
-					if ( $contrat->fetch($_POST['contratid']) )
+					if ($contrat->fetch($_POST['contratid']) > 0)
 					{
 						$lines = $contrat->fetch_lignes();
+
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
 							$liblignefac=($contrat->lignes[$i]->desc?$contrat->lignes[$i]->desc:$contrat->lignes[$i]->libelle);
