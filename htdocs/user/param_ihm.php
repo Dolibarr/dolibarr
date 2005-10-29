@@ -142,23 +142,23 @@ if ($_GET["action"] == 'edit')
     $var=true;
     
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+    print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Langue par defaut
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
-    print '<td>'.$conf->global->MAIN_LANG_DEFAULT.'</td>';
-    print '<td align="left"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT).'</td>';
+    print '<td align="left" nowrap="nowrap" width="20%"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $html=new Form($db);
-    $html->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default');
+    $html->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default',1);
     print '</td></tr>';
 
     // Taille max des listes
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="left"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" nowrap="nowrap" width="20%"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="size_liste_limit" size="4" value="' . $fuser->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
 
     print '</table><br>';
@@ -182,18 +182,18 @@ else
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+    print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
-    print '<td>'.$conf->global->MAIN_LANG_DEFAULT.'</td>';
-    print '<td align="left"><input type="checkbox" disabled '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td>' . $fuser->conf->MAIN_LANG_DEFAULT . '</td></tr>';
+    print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT).'</td>';
+    print '<td align="left" nowrap="nowrap" width="20%"><input type="checkbox" disabled '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>'.($fuser->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$fuser->conf->MAIN_LANG_DEFAULT).'</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="left"><input type="checkbox" disabled '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" nowrap="nowrap" width="20%"><input type="checkbox" disabled '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . $fuser->conf->SIZE_LISTE_LIMIT . '</td></tr>';
 
     print '</table><br>';
@@ -225,13 +225,13 @@ function show_theme($fuser,$edit=0)
     $thumbsbyrow=6;
     
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td colspan="2">&nbsp;</td></tr>';
+    print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td colspan="2">&nbsp;</td></tr>';
 
     $var=false;
 
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultSkin").'</td>';
     print '<td>'.$conf->global->MAIN_THEME.'</td>';
-    print '<td '.$bc[$var].' align="left"><input name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($fuser->conf->MAIN_THEME?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td '.$bc[$var].' align="left" nowrap="nowrap" width="20%"><input name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($fuser->conf->MAIN_THEME?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td '.$bc[$var].'>&nbsp;</td></tr>';
 
     $var=!$var;

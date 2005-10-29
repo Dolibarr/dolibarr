@@ -96,7 +96,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     $html=new Form($db);
-    $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default');
+    $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default',1);
     print '</td></tr>';
 
 
@@ -200,7 +200,7 @@ else
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>' . $conf->global->MAIN_LANG_DEFAULT . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>' . ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT) . '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->SIZE_LISTE_LIMIT . '</td></tr>';
@@ -279,7 +279,7 @@ else
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>' . stripslashes(nl2br($conf->global->MAIN_MOTD)) . '</td></tr>';
-    print '</table><br>';
+    print '</table>';
 
     print '<div class="tabsAction">';
     print '<a class="tabAction" href="ihm.php?action=edit">'.$langs->trans("Edit").'</a>';

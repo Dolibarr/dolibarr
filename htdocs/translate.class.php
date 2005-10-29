@@ -42,22 +42,27 @@ class Translate {
 
     /**
      *  \brief      Constructeur de la classe
-     *  \param      dir             repertoire racine des fichiers de traduction
-     *  \param      defaultlang     langue par defaut à utiliser
+     *  \param      dir             Repertoire racine des fichiers de traduction
+     *  \param      defaultlang     Langue par defaut à utiliser
      */
-		
-    function Translate($dir = "", $defaultlang = "") {
+    function Translate($dir = "", $defaultlang = "")
+    {
         $this->dir=$dir;
-        $this->defaultlang=$defaultlang;
+        if ($defaultlang == 'auto')
+        {
+            $listlang=split('[,;]',$_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+            $defaultlang=ereg_replace('-','_',$listlang[0]);
+        }
+        if (strlen($defaultlang) <= 3) $defaultlang=$defaultlang."_".$defaultlang;
+        $this->defaultlang=strtolower($defaultlang);
     }
 
     /**
 	 *  \brief      Charge en mémoire le tableau de traduction pour un domaine particulier
      *              Si le domaine est deja chargé, la fonction ne fait rien
      *  \param      domain      Nom du domain (fichier lang) à charger
-     *  \param      alt         Charge le fichier alternatif meme si fichier dans la langue est trouvé
+     *  \param      alt         Utilise le fichier alternatif meme si fichier dans la langue est trouvée
      */
-		
     function Load($domain,$alt=0)
     {
         if (isset($this->tab_loaded[$domain]) && $this->tab_loaded[$domain]) { return; }    // Le fichier de ce domaine est deja chargé
@@ -65,47 +70,52 @@ class Translate {
         // Repertoire de traduction
         $scandir = $this->dir."/".$this->defaultlang;
         $file_lang =  $scandir . "/$domain.lang";
+        $filelangexists=is_file($file_lang);
 
-        if ($alt || ! is_file($file_lang)) {
+        if ($alt || ! $filelangexists)
+        {
             // Repertoire de la langue alternative
             if ($this->defaultlang != "en_US") $scandiralt = $this->dir."/en_US";   
             else $scandiralt = $this->dir."/fr_FR";
             $file_lang = $scandiralt . "/$domain.lang";
+            $filelangexists=is_file($file_lang);
             $alt=1;
         }
         
-        $i = 0;
-        if(is_file($file_lang)) {
-            if($fp = @fopen($file_lang,"rt")){
+        if ($filelangexists)
+        {
+            if($fp = @fopen($file_lang,"rt"))
+            {
                 $finded = 0;
-                while (($ligne = fgets($fp,4096)) && ($finded == 0)){
-                    if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#") {
+                while (($ligne = fgets($fp,4096)) && ($finded == 0))
+                {
+                    if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
+                    {
                         $tab=split('=',$ligne,2);
                         //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-                        if (! isset($this->tab_translate[$tab[0]])) $this->tab_translate[$tab[0]]=trim($tab[1]);
+                        if (! isset($this->tab_translate[$tab[0]])) $this->tab_translate[$tab[0]]=trim(isset($tab[1])?$tab[1]:'');
                     }
                 }
                 fclose($fp);
 
                 // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
-                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US") {
+                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
+                {
                     dolibarr_syslog("translate::load loading alternate translation file");
                     $this->load($domain,1);
                 }
 
                 $this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargé
             }
-        
         }
-        
    }
 
     /**     
      *	\brief      Retourne la liste des domaines chargées en memoire
      *  \return     array       Tableau des domaines chargées
      */
-		
-    function list_domainloaded() {
+    function list_domainloaded()
+    {
         return join(",",array_keys($this->tab_loaded));
     }
     
@@ -120,8 +130,8 @@ class Translate {
      *  \param       param3      chaine de param1
      *  \return      string      chaine traduite
      */
-		 
-    function trans($str, $param1='', $param2='', $param3='') {
+    function trans($str, $param1='', $param2='', $param3='')
+    {
         return $this->transnoentities($str,htmlentities($param1),htmlentities($param2),htmlentities($param3));
     }
 
