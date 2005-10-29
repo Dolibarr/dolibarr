@@ -62,6 +62,9 @@ AdminLoginAlreadyExists=Compte administrateur Dolibarr '%s' déjà existant.
 WarningRemoveInstallDir=Attention, pour des raisons de sécurité, une fois l'installation terminé, il est nécessaire de supprimer le répertoire install.
 ThisPHPDoesNotSupportTypeBase=Le système PHP ne supporta pas les interfaces d'accès pour les base %s
 MigrateScript=Script de migration
+ChooseMigrateScript=Choix du script de migration
+DatabaseMigration=Migration du format de la base de données
+DataMigration=Migration des données
 ProcessMigrateScript=Exécution du script
 ChooseYourSetupMode=Choisissez votre mode d'installation et cliquez sur "Démarrer"...
 FreshInstall=Première installation
@@ -71,3 +74,4 @@ UpgradeDesc=Utilisez ce mode si vous venez de remplacer les vieux fichiers de Do
 Start=Démarrer
 InstallNotAllowed=Installation non autorisée par les permissions du fichier <b>conf.php</b>
 NotAvailable=Non disponible
+
