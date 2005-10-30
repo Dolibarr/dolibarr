@@ -74,7 +74,7 @@ class Paiement
 		$sql = 'SELECT p.rowid,'.$this->db->pdate('p.datep').' as dp, p.amount, p.statut, p.fk_bank';
 		$sql .=', c.libelle as paiement_type';
 		$sql .= ', p.num_paiement, p.note, b.fk_account';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c ';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql .= ' WHERE p.fk_paiement = c.id';
 		$sql .= ' AND p.rowid = '.$id;
