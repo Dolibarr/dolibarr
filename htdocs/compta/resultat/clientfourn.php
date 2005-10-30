@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -293,6 +292,7 @@ if ($modecompta == 'CREANCES-DETTES')
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
+
     // TVA à récupérer
     $amount=0;
     $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
@@ -361,6 +361,7 @@ else
             $i++;
           }
         }
+        $db->free($result);
     } else {
         dolibarr_print_error($db);
     }
@@ -369,6 +370,7 @@ else
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
+
     // TVA récupérée
     $amount=0;
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
@@ -397,13 +399,14 @@ else
             $i++;
           }
         }
+        $db->free($result);
     } else {
         dolibarr_print_error($db);
     }
     print "<tr $bc[$var]><td>&nbsp</td>";
     print "<td>".$langs->trans("VATCollected")."</td>\n";
-    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($obj->amount)."</td>\n";
-    print "<td align=\"right\">".price($obj->amount)."</td>\n";
+    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
+    print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
 }
 print '<tr class="liste_total">';
