@@ -81,7 +81,7 @@ print '<form action="syslog.php" method="post">';
 print '<input type="hidden" name="action" value="set">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Parameter").'</td>';
-print '<td align="right"><input type="submit" value="'.$langs->trans("Modify").'"></td>';
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=true;
 $var=!$var;
