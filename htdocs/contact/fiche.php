@@ -47,51 +47,53 @@ if ($_GET["action"] == 'create_user' && $user->admin)
   
   // Creation user
   $nuser = new User($db);
-  $nuser->nom = $contact->nom;
-  $nuser->prenom = $contact->prenom;
+  $nuser->nom = $contact->name;
+  $nuser->prenom = $contact->firstname;
   $nuser->create_from_contact($contact);
 }
 
 if ($_POST["action"] == 'add')
 {
+    $contact = new Contact($db);
+
+    $contact->socid        = $_POST["socid"];
+
+    $contact->name         = $_POST["name"];
+    $contact->firstname    = $_POST["firstname"];
+    $contact->civilite_id  = $_POST["civilite_id"];
+    $contact->poste        = $_POST["poste"];
+    $contact->address      = $_POST["address"];
+    $contact->cp           = $_POST["cp"];
+    $contact->ville        = $_POST["ville"];
+    $contact->fk_pays      = $_POST["pays_id"];
+    $contact->email        = $_POST["email"];
+    $contact->phone_pro    = $_POST["phone_pro"];
+    $contact->phone_perso  = $_POST["phone_perso"];
+    $contact->phone_mobile = $_POST["phone_mobile"];
+    $contact->fax          = $_POST["fax"];
+    $contact->jabberid     = $_POST["jabberid"];
+
+    $contact->note         = $_POST["note"];
+
     if (! $_POST["name"])
     {
         array_push($error,$langs->trans("ErrorFieldRequired",$langs->trans("Lastname")));
         $_GET["action"]="create";
     }
+/*
     if (! $_POST["firstname"])
     {
         array_push($error,$langs->trans("ErrorFieldRequired",$langs->trans("Firstname")));
         $_GET["action"]="create";
     }
-
+*/
     if ($_POST["name"] && $_POST["firstname"])
     {
-        $contact = new Contact($db);
-
-        $contact->socid        = $_POST["socid"];
-
-        $contact->name         = $_POST["name"];
-        $contact->firstname    = $_POST["firstname"];
-        $contact->civilite_id  = $_POST["civilite_id"];
-        $contact->poste        = $_POST["poste"];
-        $contact->address      = $_POST["address"];
-        $contact->cp           = $_POST["cp"];
-        $contact->ville        = $_POST["ville"];
-        $contact->fk_pays      = $_POST["pays_id"];
-        $contact->email        = $_POST["email"];
-        $contact->phone_pro    = $_POST["phone_pro"];
-        $contact->phone_perso  = $_POST["phone_perso"];
-        $contact->phone_mobile = $_POST["phone_mobile"];
-        $contact->fax          = $_POST["fax"];
-        $contact->jabberid     = $_POST["jabberid"];
-
-        $contact->note         = $_POST["note"];
-
         $id =  $contact->create($user);
         if ($id > 0)
         {
               Header("Location: fiche.php?id=".$id);
+              exit;
         }
 
         $error=array($contact->error);
@@ -108,6 +110,7 @@ if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes')
     $result = $contact->delete($_GET["id"]);
     
     Header("Location: index.php");
+    exit;
 }
 
 
@@ -121,7 +124,7 @@ if ($_POST["action"] == 'update')
     $contact->socid         = $_POST["socid"];
     $contact->name          = $_POST["name"];
     $contact->firstname     = $_POST["firstname"];
-    $contact->civilite_id	  = $_POST["civilite_id"];
+    $contact->civilite_id   = $_POST["civilite_id"];
     $contact->poste         = $_POST["poste"];
     
     $contact->address       = $_POST["address"];
@@ -157,16 +160,8 @@ $form = new Form($db);
 
 if ($socid)
 {
-  $objsoc = new Societe($db);
-  $objsoc->fetch($socid);
-}
-
-// Affiche les erreurs
-if (sizeof($error))
-{
-    print "<div class='error'>";
-    print join("<br>",$error);
-    print "</div>\n";
+    $objsoc = new Societe($db);
+    $objsoc->fetch($socid);
 }
 
 
@@ -175,33 +170,33 @@ if (sizeof($error))
  */
 if ($_GET["id"] > 0)
 {
-  // Si edition contact deja existant
-
-  $contact = new Contact($db);
-  $return=$contact->fetch($_GET["id"], $user);
-  if ($return < 0) {
-      dolibarr_print_error('',$contact->error);
-  }
-  
-  $h=0;
-  $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
-  $head[$h][1] = $langs->trans("General");
-  $hselected=$h;
-  $h++;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
-  $head[$h][1] = $langs->trans("PersonalInformations");
-  $h++;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
-  $head[$h][1] = $langs->trans("ExportImport");
-  $h++;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
-  $head[$h][1] = $langs->trans("Info");
-  $h++;
-  
-  dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
+    // Si edition contact deja existant
+    $contact = new Contact($db);
+    $return=$contact->fetch($_GET["id"], $user);
+    if ($return < 0)
+    {
+        dolibarr_print_error('',$contact->error);
+    }
+    
+    $h=0;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("General");
+    $hselected=$h;
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("PersonalInformations");
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("ExportImport");
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("Info");
+    $h++;
+    
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 }
 
 
@@ -211,8 +206,8 @@ if ($_GET["id"] > 0)
  */
 if ($_GET["action"] == 'delete')
 {
-  $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
-  print '<br>';
+    $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
+    print '<br>';
 }
 
 if ($_GET["action"] == 'create')
@@ -222,8 +217,16 @@ if ($_GET["action"] == 'create')
      *
      */
     print_fiche_titre($langs->trans("AddContact"));
-    print '<br>';
 
+    // Affiche les erreurs
+    if (sizeof($error))
+    {
+        print "<div class='error'>";
+        print join("<br>",$error);
+        print "</div>\n";
+    }
+
+    print '<br>';
     print '<form method="post" action="fiche.php">';
     print '<input type="hidden" name="action" value="add">';
     print '<table class="border" width="100%">';
@@ -248,16 +251,16 @@ if ($_GET["action"] == 'create')
         print '</td></tr>';
     }
 
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-    print $form->select_civilite($obj->civilite);
+    print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+    print $form->select_civilite($contact->civilite_id);
     print '</td></tr>';
 
-    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%"><input name="name" type="text" size="20" maxlength="80" value="'.$contact->nom.'"></td>';
-    print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->prenom.'"></td></tr>';
+    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
+    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
     print '<tr><td>Poste/Fonction</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
 
-    print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80"></td>';
+    print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
 
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
     print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td></tr>';
@@ -270,13 +273,13 @@ if ($_GET["action"] == 'create')
     print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
     print '<tr><td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
-    print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
+    print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
 
     print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
     print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
-    print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
+    print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3" valign="note"><textarea name="note" cols="70" rows="'.ROWS_3.'">'.$contact->note.'</textarea></td></tr>';
 
     print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
     print $form->selectyesno("facturation",$contact->facturation);
@@ -287,12 +290,20 @@ if ($_GET["action"] == 'create')
 
     print "</form>";
 }
-elseif ($_GET["action"] == 'edit')
+elseif ($_GET["action"] == 'edit' && $_GET["id"])
 {
     /*
      * Fiche en mode edition
      *
      */
+
+    // Affiche les erreurs
+    if (sizeof($error))
+    {
+        print "<div class='error'>";
+        print join("<br>",$error);
+        print "</div>\n";
+    }
 
     print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
     print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
@@ -307,11 +318,11 @@ elseif ($_GET["action"] == 'edit')
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
+        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
     }
     else
     {
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
         print $langs->trans("ContactNotLinkedToCompany");
         print '</td></tr>';
     }
@@ -319,8 +330,8 @@ elseif ($_GET["action"] == 'edit')
     print $form->select_civilite($contact->civilite_id);
     print '</td></tr>';
 
-    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%"><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
-    print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
+    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
+    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="20" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
     print '<tr><td>Poste/Fonction</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td></tr>';
 
@@ -339,7 +350,7 @@ elseif ($_GET["action"] == 'edit')
     print '<tr><td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
     print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
 
-    print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td>';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="40" maxlength="80" value="'.$contact->email.'"></td>';
     if ($conf->mailing->enabled)
     {
         $langs->load("mails");
@@ -352,10 +363,10 @@ elseif ($_GET["action"] == 'edit')
     }
     print '</tr>';
 
-    print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
+    print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="40" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
-    print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">';
-    print '<textarea name="note" cols="60" rows="3">';
+    print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
+    print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
     print $contact->note;
     print '</textarea></td></tr>';
 
@@ -373,7 +384,7 @@ elseif ($_GET["action"] == 'edit')
 
     print "</form>";
 }
-else
+elseif ($_GET["id"])
 {
     /*
      * Fiche en mode visualisation
@@ -396,14 +407,12 @@ else
         print '</td></tr>';
     }
     
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-    //TODO Aller chercher le libellé de la civilite a partir de l'id $contact->civilite_id
-    //print '<tr><td valign="top">Titre : '.$contact->civilite."<br>";
-    print $contact->civilite_id;
+    print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+    print $form->civilite_name($contact->civilite_id);
     print '</td></tr>';
     
-    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->name.'</td>';
-    print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->firstname.'</td></tr>';
+    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
     
     print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';
     
@@ -446,7 +455,7 @@ else
 
     print '<tr><td>Jabberid</td><td colspan="3">'.$contact->jabberid.'</td></tr>';
     
-    print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">';
+    print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
     print nl2br($contact->note);
     print '</td></tr>';
     
