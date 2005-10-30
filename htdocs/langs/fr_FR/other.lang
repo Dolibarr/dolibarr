@@ -36,6 +36,9 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL http externe ou une U
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
 BookmarksManagement=Gestion des marque-pages
 ListOfBookmarks=Liste des marque-pages
+NoExportableData=Pas de données exportables (pas de modules avec données exportables chargés, ou manque de permissions)
+ToExport=Exporter
+NewExport=Nouvel export
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier

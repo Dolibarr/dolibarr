@@ -36,6 +36,9 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external http URL or a relati
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if page opened by link must appear on current or new window
 BookmarksManagement=Bookmarks management
 ListOfBookmarks=List of bookmarks
+NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions)
+ToExport=Export
+NewExport=New export
 ##### Webcal #####
 LoginWebcal=Login for Webcalendar
 AddCalendarEntry=Add entry in calendar

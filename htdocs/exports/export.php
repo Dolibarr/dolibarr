@@ -20,27 +20,40 @@
  */
 
 /**
-        \file       htdocs/exports/pre.inc.php
+        \file       htdocs/exports/export.php
         \ingroup    core
-        \brief      Fichier de gestion du menu gauche de l'espace exports
+        \brief      Page d'edition d'un export
         \version    $Revision$
 */
+ 
+require("./pre.inc.php");
 
-require("../main.inc.php");
+$langs->load("commercial");
+$langs->load("orders");
+
+$user->getrights();
+
+if (! $user->societe_id == 0)
+  accessforbidden();
 
 
-function llxHeader($head = "", $title = "")
-{
-    global $user, $conf, $langs;
-    
-    top_menu($head, $title);
-    
-    $menu = new Menu();
-    
-    $menu->add(DOL_URL_ROOT."/exports/index.php", $langs->trans("Exports"));
-    $menu->add_submenu(DOL_URL_ROOT."/exports/export.php", $langs->trans("NewExport"));
-    
-    left_menu($menu->liste);
-}
+
+
+
+ 
+llxHeader('',$langs->trans("NewExport"));
+
+print_fiche_titre($langs->trans("NewExport"));
+
+print '<table class="notopnoleftnoright" width="100%">';
+
+
+
+print '</table>';
+
+$db->close();
+
+
+llxFooter('$Date$ - $Revision$');
 
 ?>

@@ -147,6 +147,7 @@ Permission71=Read members
 Permission72=Create/modify members
 Permission74=Delete members
 Permission75=Setup types and attributes for members
+Permission76=Export datas
 Permission78=Read subscriptions
 Permission79=Create/modify subscriptions
 Permission81=Read customers orders

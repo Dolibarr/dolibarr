@@ -158,6 +158,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."export as e";
 $result=$db->query($sql);
 if ($result) 
 {
+    print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("ExportProfiles").'</td>';
@@ -181,8 +182,9 @@ if ($result)
             $i++;
         }
     }
+
+    print "</table>";
 }
-print "</table><br>";
 
 
 print '</td></tr>';

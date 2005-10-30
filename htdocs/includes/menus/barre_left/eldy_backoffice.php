@@ -562,6 +562,7 @@ class MenuLeft {
                 }
                 
                 $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Exports"),0,1);
+                $newmenu->add_submenu(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("NewExport"),1,1);
             }
         
             /*
