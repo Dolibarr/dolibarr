@@ -21,7 +21,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -36,8 +35,10 @@ include_once("./inc.php");
 $err=0;
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
-$langs->defaultlang=$setuplang;
+$langs->setDefaultLang($setuplang);
+
 $langs->load("install");
+
 
 pHeader($langs->trans("ConfigurationFile"),"etape1");
 
@@ -268,6 +269,6 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 
 <?php
 
-pFooter($err);
+pFooter($err,$setuplang);
 
 ?>

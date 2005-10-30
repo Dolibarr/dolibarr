@@ -41,7 +41,8 @@ set_time_limit(60);
 error_reporting($err);
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
-$langs->defaultlang=$setuplang;
+$langs->setDefaultLang($setuplang);
+
 $langs->load("admin");
 $langs->load("install");
 
@@ -213,6 +214,6 @@ else
     print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 
-pFooter(! $ok);
+pFooter(! $ok,$setuplang);
 
 ?>

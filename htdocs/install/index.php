@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -36,7 +35,7 @@ $err = 0;
 
 // Si fichier conf existe deja, on est pas sur une premiere install,
 // on ne passe donc pas par la page de choix de langue
-if (file_exists($conffile))
+if (!file_exists($conffile))
 {
     header("Location: check.php");
     exit;
@@ -65,6 +64,6 @@ print '</tr></table>';
 
 
 // Si pas d'erreur, on affiche le bouton pour passer à l'étape suivante
-if ($err == 0) pFooter(0,0);
+if ($err == 0) pFooter(0);
 
 ?>

@@ -16,7 +16,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 body {
@@ -56,20 +55,16 @@ border-right: 1px solid #8CACBB;
 text-align: right;
 }
 
-table {
-font-size: 13px;
-}
-
 div.main {
 background: #dcdcd3;
 text-align: left;
-border:  1px solid #8CACBB;
+border: 1px solid #8CACBB;
 }
 
 div.main-inside {
 padding-left: 20px;
-padding-right: 50px;
-margin-bottom: 50px;
+padding-right: 20px;
+margin-bottom: 40px;
 margin-top: 10px;
 }
 
@@ -166,3 +161,12 @@ font-size: 13px;
 border-bottom: 1px solid #8CACBB;
 }
 
+table {
+font-size: 13px;
+}
+
+.install
+{
+border: 1px solid #8CACBB;
+padding: 4px 4px 4px 4px;
+}

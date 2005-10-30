@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -33,15 +32,17 @@
 include_once("./inc.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
-$langs->defaultlang=$setuplang;
+$langs->setDefaultLang($setuplang);
+
 $langs->load("admin");
 $langs->load("install");
+
 
 pHeader($langs->trans("AdminAccountCreation"),"etape5");
 
 if (file_exists($conffile))
 {
-  include_once($conffile);
+    include_once($conffile);
 }
 
 if($dolibarr_main_db_type == "mysql")
@@ -101,6 +102,6 @@ if ($db->ok == 1)
 
 $db->close();
 
-pFooter($err);
+pFooter($err,$setuplang);
 
 ?>

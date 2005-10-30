@@ -48,15 +48,30 @@ class Translate {
     function Translate($dir = "", $defaultlang = "")
     {
         $this->dir=$dir;
+        $this->setDefaultLang($defaultlang);
+    }
+
+
+    /**
+     *  \brief      Accesseur de this->defaultlang
+     *  \param      defaultlang     Langue par defaut à utiliser
+     */
+    function setDefaultLang($defaultlang)
+    {
         if ($defaultlang == 'auto')
         {
-            $listlang=split('[,;]',$_SERVER["HTTP_ACCEPT_LANGUAGE"]);
-            $defaultlang=ereg_replace('-','_',$listlang[0]);
+            $langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            $langpref=eregi_replace(";[^,]*","",$langpref);
+            $langpref=eregi_replace("-","_",$langpref);
+            $listlang=split('[,;]',$langpref);
+            $defaultlang=$listlang[0];
         }
         if (strlen($defaultlang) <= 3) $defaultlang=$defaultlang."_".$defaultlang;
+
         $this->defaultlang=strtolower($defaultlang);
     }
 
+    
     /**
 	 *  \brief      Charge en mémoire le tableau de traduction pour un domaine particulier
      *              Si le domaine est deja chargé, la fonction ne fait rien
@@ -108,7 +123,8 @@ class Translate {
                 $this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargé
             }
         }
-   }
+    }
+
 
     /**     
      *	\brief      Retourne la liste des domaines chargées en memoire
@@ -135,6 +151,7 @@ class Translate {
         return $this->transnoentities($str,htmlentities($param1),htmlentities($param2),htmlentities($param3));
     }
 
+
     /**
      *  \brief       Retourne la version traduite du texte passé en paramètre
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
@@ -145,14 +162,16 @@ class Translate {
      *  \param       param3      chaine de param1
      *  \return      string      chaine traduite
      */
-		 
-    function transnoentities($str, $param1='', $param2='', $param3='') {
-        if (isset($this->tab_translate[$str]) && $this->tab_translate[$str]) {
+    function transnoentities($str, $param1='', $param2='', $param3='')
+    {
+        if (isset($this->tab_translate[$str]) && $this->tab_translate[$str])
+        {
             // Si la traduction est disponible
             return sprintf($this->tab_translate[$str],$param1,$param2,$param3);
         }
         return $str;
     }
+
 
     /**
      *  \brief       Retourne la version traduite du texte passé en paramètre complété du code pays
@@ -160,8 +179,8 @@ class Translate {
      *  \param       countrycode    code pays (FR, ...)
      *  \return      string         chaine traduite
      */
-
-    function transcountry($str, $countrycode) {
+    function transcountry($str, $countrycode)
+    {
         if ($this->tab_translate["$str$countrycode"]) return $this->trans("$str$countrycode");
         else return $this->trans("$str");
     }
@@ -171,7 +190,6 @@ class Translate {
      *  \brief       Retourne la liste des langues disponibles
      *  \return      array     list of languages
      */
-		
     function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
     {
       // On parcour le répertoire langs pour détecter les langues disponibles
@@ -211,8 +229,8 @@ class Translate {
      *  \return     boolean         true si existe, false sinon
      */
 		 
-    function file_exists($filename,$searchalt=0) {
-
+    function file_exists($filename,$searchalt=0)
+    {
         // Test si fichier dans répertoire de la langue
         $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
         if (is_readable($htmlfile)) return true;
@@ -233,12 +251,12 @@ class Translate {
      *  \param      filename        nom du fichier à rechercher
      *  \param      searchalt       cherche aussi dans langue alternative
      */
-		 
-    function print_file($filename,$searchalt=0) {
-
+    function print_file($filename,$searchalt=0)
+    {
         // Test si fichier dans répertoire de la langue
         $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
-        if (is_readable($htmlfile)) {
+        if (is_readable($htmlfile))
+        {
             include $htmlfile;
             return true;
         }
@@ -247,7 +265,8 @@ class Translate {
             // Test si fichier dans répertoire de la langue alternative
             if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
             else $htmlfilealt = $this->dir."/fr_FR/".$filename;
-            if (is_readable($htmlfilealt)) {
+            if (is_readable($htmlfilealt))
+            {
                 include $htmlfilealt;
                 return true;
             }
@@ -255,7 +274,6 @@ class Translate {
         
         return false;
     }
-
 
 }
 

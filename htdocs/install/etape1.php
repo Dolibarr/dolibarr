@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -32,9 +31,11 @@
 include_once("./inc.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
-$langs->defaultlang=$setuplang;
+$langs->setDefaultLang($setuplang);
+
 $langs->load("admin");
 $langs->load("install");
+
 
 pHeader($langs->trans("ConfigurationFile"),"etape2");
 
@@ -505,6 +506,6 @@ if ($_POST["action"] == "set")
     print '</table>';
 }
 
-pFooter($error);
+pFooter($error,$setuplang);
 
 ?>

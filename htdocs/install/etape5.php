@@ -31,7 +31,8 @@
 include_once("./inc.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
-$langs->defaultlang=$setuplang;
+$langs->setDefaultLang($setuplang);
+
 $langs->load("admin");
 $langs->load("install");
 
@@ -142,11 +143,17 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
             // Si install non Français, on configure pour fonctionner en mode internationnal
             if ($langs->defaultlang != "fr_FR")
             {
-                $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRETOP';");
-                $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRELEFT';");
+                $db->query("UPDATE llx_const set value='eldy_backoffice.php' WHERE name='MAIN_MENU_BARRETOP';");
+                $db->query("UPDATE llx_const set value='eldy_backoffice.php' WHERE name='MAIN_MENU_BARRELEFT';");
+
+                $db->query("UPDATE llx_const set value='eldy_frontoffice.php' WHERE name='MAIN_MENUFRONT_BARRETOP';");
+                $db->query("UPDATE llx_const set value='eldy_frontoffice.php' WHERE name='MAIN_MENUFRONT_BARRELEFT';");
             }
+
         }
     }
+
+    $db->query("UPDATE llx_const set value='".$setuplang."' WHERE name='MAIN_LANG_DEFAULT';");
             
     print '</table>';
 
@@ -184,5 +191,6 @@ print $langs->trans("GoToSetupArea");
 print '</a>';
 
 
-pFooter(1);
+pFooter(1,$setuplang);
+
 ?>

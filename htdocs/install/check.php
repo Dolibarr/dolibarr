@@ -35,7 +35,8 @@ $allowupgrade = 0;
 include_once("./inc.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
-$langs->defaultlang=$setuplang;
+$langs->setDefaultLang($setuplang);
+
 $langs->load("install");
 
 
@@ -124,9 +125,9 @@ else
     
     print $langs->trans("ChooseYourSetupMode");
 
-    print '<table width="100%" cellspacing="0" cellpadding="4" border="1">';
+    print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
     
-    print '<tr><td nowrap><b>'.$langs->trans("FreshInstall").'</b></td><td>';
+    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("FreshInstall").'</b></td><td>';
     print $langs->trans("FreshInstallDesc").'</td>';
     print '<td align="center">';
     if ($allowinstall)
@@ -140,7 +141,7 @@ else
     print '</td>';
     print '</tr>';
 
-    print '<tr><td nowrap><b>'.$langs->trans("Upgrade").'</b></td><td>';
+    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").'</b></td><td>';
     print $langs->trans("UpgradeDesc").'</td>';
     print '<td align="center">';
     if ($allowupgrade)

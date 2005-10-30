@@ -32,17 +32,11 @@ $docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 $conffile = "../conf/conf.php";
 
 
-// Récupère langues du navigateur et defini langcode
-$langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
-$langpref=eregi_replace(";[^,]*","",$langpref);
-$langpref=eregi_replace("-","_",$langpref);
-$langlist=split("[;,]",$langpref);
-$langpart=split("_",$langlist[0]);
-if ($langpart[1]) $langcode=$langpart[0]."_".strtoupper($langpart[1]);
-else $langcode=$langpart[0]."_".strtoupper($langpart[0]);
 // Defini objet langs
 require_once("../translate.class.php");
+$langcode='auto';
 $langs = new Translate("../langs", $langcode);
+
 
 $tab[0]=' class="bg1"';
 $tab[1]=' class="bg2"';
@@ -53,6 +47,7 @@ function pHeader($soutitre,$next,$action='set')
     $langs->load("main");
     $langs->load("admin");
 
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
     print '<html>';
     print '<head>';
     print '<meta http-equiv="content-type" content="text/html; charset='.$langs->trans("charset").'">';
@@ -73,7 +68,7 @@ function pHeader($soutitre,$next,$action='set')
 }
 
 
-function pFooter($nonext=0,$addlang=1)
+function pFooter($nonext=0,$setuplang='')
 {
     global $langs;
     $langs->load("main");
@@ -81,11 +76,12 @@ function pFooter($nonext=0,$addlang=1)
     
     print '</div></div>';
     if (! $nonext)
-      {
+    {
         print '<div class="barrebottom"><input type="submit" value="'.$langs->trans("NextStep").' ->"></div>';
-      }
-    if ($addlang) {
-        print '<input type="hidden" name="selectlang" value="'.$langs->defaultlang.'">';
+    }
+    if ($setuplang)
+    {
+        print '<input type="hidden" name="selectlang" value="'.$setuplang.'">';
     }
     print '</form>';
     print '</body>';

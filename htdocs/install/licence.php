@@ -31,8 +31,10 @@
 include_once("./inc.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
-$langs->defaultlang=$setuplang;
+$langs->setDefaultLang($setuplang);
+
 $langs->load("install");
+
 
 pHeader($langs->trans("License"),"fileconf");
 
@@ -40,6 +42,6 @@ print '<pre>';
 $langs->print_file("html/gpl.txt",1);
 print "</pre>";
 
-pFooter();
+pFooter(0,$setuplang);
 
 ?>
