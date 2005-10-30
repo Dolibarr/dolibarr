@@ -53,22 +53,22 @@ $action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
 
 if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == yes && $user->rights->fournisseur->facture->valider)
 {
-  $facturefourn=new FactureFournisseur($db);
-  $facturefourn->fetch($_GET['facid']);
-  
-  $facturefourn->set_valid($user->id);
-
-  Header('Location: fiche.php?facid='.$_GET['facid']);
-  exit;
+    $facturefourn=new FactureFournisseur($db);
+    $facturefourn->fetch($_GET['facid']);
+    
+    $facturefourn->set_valid($user->id);
+    
+    Header('Location: fiche.php?facid='.$_GET['facid']);
+    exit;
 }
 
 
 if ($_GET['action'] == 'payed')
 {
-  $facturefourn=new FactureFournisseur($db);
-  $facturefourn->fetch($_GET['facid']);
-  
-  $facturefourn->set_payed($user->id);
+    $facturefourn=new FactureFournisseur($db);
+    $facturefourn->fetch($_GET['facid']);
+    
+    $facturefourn->set_payed($user);
 }
 
 if($_GET['action'] == 'deletepaiement')

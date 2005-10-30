@@ -268,30 +268,39 @@ class FactureFournisseur
 	}
     }
 
-  /**
-   * \brief     Tag la facture comme payée complètement
-   * \param     userid        utilisateur qui modifie l'état
-   */
-  function set_payed($userid)
+    /**
+     *      \brief      Tag la facture comme payée complètement
+     *      \param      user        Objet utilisateur qui modifie
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function set_payed($user)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set paye = 1 WHERE rowid = ".$this->id;
-      $result = $this->db->query( $sql);
-      if (! $result) {
-    	  dolibarr_print_error($this->db);
-      }
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
+        $sql.= " SET paye = 1";
+        $sql.= " WHERE rowid = ".$this->id;
+        $result = $this->db->query($sql);
+        if (! $result)
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+        return 1;
     }
-
-  /**
-   * \brief     Tag la facture comme validée et valide la facture
-   * \param     userid        utilisateur qui valide la facture
-   */
-  function set_valid($userid)
+    
+    /**
+     *      \brief      Tag la facture comme validée et valide la facture
+     *      \param      user         Objet utilisateur qui modifie
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function set_valid($user)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set fk_statut = 1, fk_user_valid = $userid WHERE rowid = ".$this->id;
-      $result = $this->db->query( $sql);
-      if (! $result) {
-    	  dolibarr_print_error($this->db);
-      }
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
+        $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
+        $sql.= " WHERE rowid = ".$this->id;
+        $result = $this->db->query( $sql);
+        if (! $result) {
+            dolibarr_print_error($this->db);
+        }
     }
 
 

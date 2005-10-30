@@ -255,6 +255,8 @@ class BonPrelevement
      */
     function set_credite()
     {
+        global $user;
+        
         $error == 0;
 
         if ($this->db->begin())
@@ -277,11 +279,11 @@ class BonPrelevement
 
                 for ($i = 0 ; $i < sizeof($facs) ; $i++)
                 {
-                    $fac = new Facture($this->db);
-
                     /* Tag la facture comme impayée */
                     dolibarr_syslog("BonPrelevement::set_credite set_payed fac ".$facs[$i]);
-                    $fac->set_payed($facs[$i]);
+                    $fac = new Facture($this->db);
+                    $fac->fetch($facs[$i]);
+                    $result = $fac->set_payed($user);
                 }
             }
 

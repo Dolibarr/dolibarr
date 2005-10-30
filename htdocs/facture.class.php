@@ -692,13 +692,18 @@ class Facture
 	}
 
 	/**
-	 *    \brief     Tag la facture comme payée complètement
-	 *    \param     rowid       id de la facture à modifier
+	 *      \brief      Tag la facture comme payée complètement + appel trigger BILL_PAYED
+     *      \param      user        Objet utilisateur qui modifie 
+ 	 *      \return     int         <0 si ok, >0 si ok
 	 */
-	function set_payed($rowid)
+	function set_payed($user)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture set paye=1 WHERE rowid = '.$rowid ;
-		$resql = $this->db->query( $sql);
+		global $conf,$langs;
+	    
+	    dolibarr_syslog("Facture.class.php::set_payed rowid=".$this->id);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' SET paye=1 WHERE rowid = '.$this->id ;
+		$resql = $this->db->query($sql);
 
         if ($resql)
         {
@@ -710,17 +715,36 @@ class Facture
             $result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
             // Fin appel triggers
         }
+        
+        return 1;
 	}
 	
 	/**
-	*    \brief     Tag la facture comme non payée complètement
-	*    \param     rowid       id de la facture à modifier
-	*/
-	function set_unpayed($rowid)
+	 *      \brief      Tag la facture comme non payée complètement + appel trigger BILL_UNPAYED
+     *      \param      user        Objet utilisateur qui modifie 
+ 	 *      \return     int         <0 si ok, >0 si ok
+ 	 */
+	function set_unpayed($user)
 	{
-	    dolibarr_syslog("Facture.class.php::set_unpayed rowid=".$rowid);
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture set paye=0 WHERE rowid = '.$rowid ;
-		$resql = $this->db->query( $sql);
+		global $conf,$langs;
+
+	    dolibarr_syslog("Facture.class.php::set_unpayed rowid=".$this->id);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' SET paye=0 WHERE rowid = '.$this->id;
+		$resql = $this->db->query($sql);
+
+        if ($resql)
+        {
+            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+    
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('BILL_UNPAYED',$this,$user,$langs,$conf);
+            // Fin appel triggers
+        }
+        
+        return 1;
 	}
 	
 	/**
@@ -734,12 +758,17 @@ class Facture
 	}
 
 	/**
-	*    \brief     Tag la facture comme abandonnée + appel trigger BILL_CANCEL
-	*    \param     rowid       id de la facture à modifier
-	*/
-	function set_canceled($rowid)
+ 	 *      \brief      Tag la facture comme abandonnée + appel trigger BILL_CANCEL
+     *      \param      user        Objet utilisateur qui modifie 
+ 	 *      \return     int         <0 si ok, >0 si ok
+	 */
+	function set_canceled($user)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture set fk_statut=3 WHERE rowid = '.$rowid;
+		global $conf,$langs;
+
+	    dolibarr_syslog("Facture.class.php::set_canceled rowid=".$this->id);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' SET fk_statut=3 WHERE rowid = '.$this->id;
 		$resql = $this->db->query( $sql);
 
         if ($resql)
@@ -752,14 +781,16 @@ class Facture
             $result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
             // Fin appel triggers
         }
+
+        return 1;
 	}
 
 	/**
 	 *      \brief     Tag la facture comme validée + appel trigger BILL_VALIDATE
-	 *      \param     rowid        id de la facture à valider
-	 *      \param     user         utilisateur qui valide la facture
-	 *      \param     soc          societe
-	 *      \param     force_number force le numéro de facture
+	 *      \param     rowid            Id de la facture à valider
+	 *      \param     user             Utilisateur qui valide la facture
+	 *      \param     soc              Objet societe
+	 *      \param     force_number     Référence à forcer de la facture
 	 */
 	function set_valid($rowid, $user, $soc, $force_number='')
 	{
@@ -817,7 +848,7 @@ class Facture
 
 			/* Validation de la facture */
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
-			$sql .= " SET facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
+			$sql.= " SET facnumber='".$numfa."', fk_statut = 1, fk_user_valid = ".$user->id;
 
 			/* Si l'option est activée on force la date de facture */
 			if ($conf->global->FAC_FORCE_DATE_VALIDATION)
@@ -829,7 +860,11 @@ class Facture
 			}
 			$sql .= ' WHERE rowid = '.$rowid;
 			$resql = $this->db->query($sql);
-            if (! $resql)
+            if ($resql)
+            {
+                $this->facnumber=$numfa;
+            }
+            else
             {
                 dolibarr_syslog("Facture::set_valid() Echec - 10");
                 dolibarr_print_error($this->db);

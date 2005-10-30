@@ -304,15 +304,15 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 if ($_POST['action'] == 'confirm_payed' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
-	$result = $fac->set_payed($_GET['facid']);
+	$fac->fetch($_GET['facid']);
+	$result = $fac->set_payed($user);
 }
 
 if ($_POST['action'] == 'setremise' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
-
-	$fac->set_remise($user, $_POST['remise']);
+	$result = $fac->set_remise($user, $_POST['remise']);
 }
 
 if ($_POST['action'] == 'addligne' && $user->rights->facture->creer)
@@ -391,7 +391,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	if ($user->rights->facture->supprimer )
 	{
 		$fac = new Facture($db);
-		$fac->delete($_GET['facid']);
+		$result = $fac->delete($_GET['facid']);
 		$_GET['facid'] = 0 ;
 		Header('Location: facture.php');
 		exit;
@@ -403,7 +403,8 @@ if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
 	if ($user->rights->facture->supprimer )
 	{
 		$fac = new Facture($db);
-		$result = $fac->set_canceled($_GET['facid']);
+    	$fac->fetch($_GET['facid']);
+		$result = $fac->set_canceled();
 		$_GET['facid'] = 0 ;
 		Header('Location: facture.php');
 		exit;
