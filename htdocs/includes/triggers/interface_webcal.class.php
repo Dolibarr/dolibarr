@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -155,7 +154,7 @@ class InterfaceWebCal
             $this->desc.="\n".$langs->trans("Prefix").': '.$object->prefix;
             //$this->desc.="\n".$langs->trans("Customer").': '.yn($object->client);
             //$this->desc.="\n".$langs->trans("Supplier").': '.yn($object->fournisseur);
-            $this->desc.="\n".$langs->trans("CreatedBy").': '.$user->code;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
 
         if ($action == 'CONTRACT_VALIDATE')
@@ -168,7 +167,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->trans("ContractValidatedInDolibarr",$object->ref);
             $this->desc=$langs->trans("ContractValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("ValidatedBy").': '.$user->code;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
         if ($action == 'CONTRACT_CANCEL')
         {
@@ -179,7 +178,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->trans("ContractCanceledInDolibarr",$object->ref);
             $this->desc=$langs->trans("ContractCanceledInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("CanceledBy").': '.$user->code;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
         if ($action == 'CONTRACT_CLOSE')
         {
@@ -190,7 +189,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->trans("ContractClosedInDolibarr",$object->ref);
             $this->desc=$langs->trans("ContractClosedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("ClosedBy").': '.$user->code;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
 
         if ($action == 'BILL_VALIDATE')
@@ -202,7 +201,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->trans("InvoiceValidatedInDolibarr",$object->ref);
             $this->desc=$langs->trans("InvoiceValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("ValidatedBy").': '.$user->code;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
         if ($action == 'BILL_PAYED')
         {
@@ -213,7 +212,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->trans("InvoicePayedInDolibarr",$object->ref);
             $this->desc=$langs->trans("InvoicePayedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("EditedBy").': '.$user->code;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
         if ($action == 'BILL_CANCELED')
         {
@@ -224,7 +223,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->trans("InvoiceCanceledInDolibarr",$object->ref);
             $this->desc=$langs->trans("InvoiceCanceledInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("CanceledBy").': '.$user->code;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
 
         // Ajoute entrée dans webcal

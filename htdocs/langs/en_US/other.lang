@@ -39,6 +39,11 @@ ListOfBookmarks=List of bookmarks
 NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions)
 ToExport=Export
 NewExport=New export
+CreatedBy=Created by %s
+ModifiedBy=Modified by %s
+ValidatedBy=Validated by %s
+CanceledBy=Canceled by %s
+ClosedBy=Closed by %s
 ##### Webcal #####
 LoginWebcal=Login for Webcalendar
 AddCalendarEntry=Add entry in calendar
