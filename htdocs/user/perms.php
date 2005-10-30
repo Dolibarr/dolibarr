@@ -236,7 +236,7 @@ if ($_GET["id"])
                 $objMod=$modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
 
-                if ($caneditperms && ($obj->module != 'user' || ! $user->admin))
+                if ($caneditperms && ($obj->module != 'user' || ! $fuser->admin))
                 {
                     // On affiche ligne pour modifier droits
                     print '<tr '. $bc[$var].'>';
