@@ -23,10 +23,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 ***************************************************************************/
 
-/*!	\file htdocs/lib/vcard/vcard.class.php
-		\brief Classe permettant de créer un fichier vcard.
-		\author Kai Blankenhorn.
-		\version 2.0
+/**
+        \file       htdocs/lib/vcard/vcard.class.php
+		\brief      Classe permettant de créer un fichier vcard.
+		\author     Kai Blankenhorn.
+		\version    2.0
 
 		Ensemble des fonctions permettant de créer un fichier vcard.
 */
@@ -74,7 +75,7 @@ function quoted_printable_encode($input, $line_max = 76) {
 	return trim($output);
 }
 
-/*! \class vCard
+/** \class vCard
 		\brief Classe permettant de créer un fichier vcard
 
 		Ensemble des fonctions permettant de créer un fichier vcard
@@ -84,7 +85,7 @@ class vCard {
 	var $properties;
 	var $filename;
 
-/*!
+/**
 		\brief mise en forme du numéro de télephone
 		\param	number		numéro de téléphone
 		\param	type
@@ -98,7 +99,7 @@ class vCard {
 		$this->properties[$key] = quoted_printable_encode($number);
 	}
 
-/*!
+/**
 		\brief mise en forme de la photo
 		\param	type
 		\param	photo
@@ -110,7 +111,7 @@ class vCard {
 		$this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
 	}
 
-/*!
+/**
 		\brief mise en forme du nom formaté
 		\param	name
 */
@@ -119,7 +120,7 @@ class vCard {
 		$this->properties["FN"] = quoted_printable_encode($name);
 	}
 
-/*!
+/**
 		\brief mise en forme du nom complet
 		\param	family
 		\param	first
@@ -134,7 +135,7 @@ class vCard {
 		if ($this->properties["FN"]=="") $this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
 	}
 
-/*!
+/**
 		\brief mise en forme de l'anniversaire
 		\param	date
 */
@@ -143,7 +144,7 @@ class vCard {
 		$this->properties["BDAY"] = $date;
 	}
 
-/*!
+/**
 		\brief mise en forme de l'adresse
 		\param	postoffice
 		\param	extended
@@ -167,7 +168,7 @@ class vCard {
 		}
 	}
 
-/*!
+/**
 		\brief mise en forme du label
 		\param	postoffice
 		\param	extended
@@ -192,7 +193,7 @@ class vCard {
 		$this->properties["LABEL;$type;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($label);
 	}
 
-/*!
+/**
 		\brief mise en forme de l'email
 		\param	address
 */
@@ -201,7 +202,7 @@ class vCard {
 		$this->properties["EMAIL;INTERNET"] = $address;
 	}
 
-/*!
+/**
 		\brief mise en forme de la note
 		\param	note
 */
@@ -210,7 +211,7 @@ class vCard {
 		$this->properties["NOTE;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($note);
 	}
 
-/*!
+/**
 		\brief mise en forme de l'url
 		\param	url
 		\param	type
@@ -223,7 +224,7 @@ class vCard {
 		$this->properties[$key] = $url;
 	}
 
-/*!
+/**
 		\brief permet d'obtenir une vcard
 */
 
@@ -239,7 +240,7 @@ class vCard {
 		return $text;
 	}
 
-/*!
+/**
 		\brief permet d'obtenir le nom de fichier
 */
 
