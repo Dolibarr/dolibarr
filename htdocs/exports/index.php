@@ -49,7 +49,7 @@ while (($file = readdir($handle))!==false)
 {
     if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-        if (eregi("(.*)\.class\.php",$file,$reg))
+        if (eregi("^(mod.*)\.class\.php",$file,$reg))
         {
             $modulename=$reg[1];
 
@@ -63,6 +63,7 @@ while (($file = readdir($handle))!==false)
             {
                 foreach($module->export_code as $r => $value)
                 {
+                    dolibarr_syslog("Exports trouvés pour le module ".$modulename);
                     $perm=$module->export_permission[$r][0];
                     if (strlen($perms[2]) > 0)
                     {
@@ -130,16 +131,23 @@ print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ExportableDatas").'</td>';
 print '</tr>';
 $val=true;
-foreach ($array_export_code as $key => $value)
+if (sizeof($array_export_code))
 {
-    $val=!$val;
-    print '<tr '.$bc[$val].'><td>';
-    print img_object($array_export_module[$key]->getName(),$array_export_module[$key]->picto).' ';
-    print $array_export_module[$key]->getName();
-    print '</td><td>';
-    print $array_export_label[$key];
-    print '</td></tr>';
-
+    foreach ($array_export_code as $key => $value)
+    {
+        $val=!$val;
+        print '<tr '.$bc[$val].'><td>';
+        print img_object($array_export_module[$key]->getName(),$array_export_module[$key]->picto).' ';
+        print $array_export_module[$key]->getName();
+        print '</td><td>';
+        print $array_export_label[$key];
+        print '</td></tr>';
+    
+    }
+}
+else
+{
+    print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoExportableData").'</td></tr>';
 }
 print '</table>';    
 
