@@ -70,5 +70,5 @@ MailingNeedCommand=For securities reason, sending an emailing can only be perfor
 TargetsReset=Clear list
 ToClearAllRecipientsClickHere=To clear recipients' list for this emailing, click here
 ToAddRecipientsChooseHere=To add recipients, choose in those lists
-NbOfEMailingsReceived=Nb of mass emailings received
+NbOfEMailingsReceived=Mass emailings received
 IdRecord=ID record

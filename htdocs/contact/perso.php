@@ -109,21 +109,21 @@ if ($_GET["action"] == 'edit')
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td>';
+        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td>';
     }
     else
     {
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
         print $langs->trans("ContactNotLinkedToCompany");
         print '</td></tr>';
     }
     
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-    print $contact->civilite_id;
+    print $form->civilite_name($contact->civilite_id);
     print '</td></tr>';
     
-    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->nom.'</td>';
-    print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->prenom.'</td>';
+    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->nom.'</td>';
+    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->prenom.'</td>';
     
 
     print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
@@ -164,22 +164,22 @@ else
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
+        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
     }
 
     else
     {
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
         print $langs->trans("ContactNotLinkedToCompany");
         print '</td></tr>';
     }
     
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-    print $contact->civilite_id;
+    print $form->civilite_name($contact->civilite_id);
     print '</td></tr>';
     
-    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->name.'</td>';
-    print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->firstname.'</td></tr>';
+    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
     if ($contact->birthday && $contact->birthday > 0) {
         print '<tr><td>'.$langs->trans("Birthdate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday);

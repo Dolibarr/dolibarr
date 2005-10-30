@@ -77,21 +77,21 @@ if ($contact->socid > 0)
     $objsoc = new Societe($db);
     $objsoc->fetch($contact->socid);
 
-    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
+    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
 }
 else
 {
-    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
     print $langs->trans("ContactNotLinkedToCompany");
     print '</td></tr>';
 }
 
 print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-print $contact->civilite_id;
+print $form->civilite_name($contact->civilite_id);
 print '</td></tr>';
 
-print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->name.'</td>';
-print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->firstname.'</td></tr>';
+print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 print '</table>';
 

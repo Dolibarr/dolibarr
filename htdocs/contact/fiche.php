@@ -80,14 +80,8 @@ if ($_POST["action"] == 'add')
         array_push($error,$langs->trans("ErrorFieldRequired",$langs->trans("Lastname")));
         $_GET["action"]="create";
     }
-/*
-    if (! $_POST["firstname"])
-    {
-        array_push($error,$langs->trans("ErrorFieldRequired",$langs->trans("Firstname")));
-        $_GET["action"]="create";
-    }
-*/
-    if ($_POST["name"] && $_POST["firstname"])
+
+    if ($_POST["name"])
     {
         $id =  $contact->create($user);
         if ($id > 0)

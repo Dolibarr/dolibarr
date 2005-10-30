@@ -827,99 +827,30 @@ class Form
     }
 
 
-  /**
-   *    \brief      Retourne la liste déroulante des civilite actives
-   *    \param      selected    civilite pré-sélectionnée
-   */
-
-  function select_civilite($selected='')
-  {
-    global $conf,$langs;
-    $langs->load("dict");
-    
-    $sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
-    $sql .= " WHERE active = 1";
-    
-    if ($this->db->query($sql))
-      {
-        print '<select class="flat" name="civilite_id">';
-        print '<option value="">&nbsp;</option>';
-        $num = $this->db->num_rows();
-        $i = 0;
-        if ($num)
-	  {
-            while ($i < $num)
-	      {
-                $obj = $this->db->fetch_object();
-                if ($selected == $obj->code)
-		  {
-                    print '<option value="'.$obj->code.'" selected="true">';
-		  }
-                else
-		  {
-                    print '<option value="'.$obj->code.'">';
-		  }
-                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                print ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->civilite!='-'?$obj->civilite:''));
-                print '</option>';
-                $i++;
-	      }
-	  }
-        print '</select>';
-      }
-    else {
-      dolibarr_print_error($this->db);
-    }
-    
-  }
-
-
-  /**
-   *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondus ou pour un pays donné.
-   *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
-   *    \param      selected        Code forme juridique a présélectionné
-   *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
-   */
-	 
-  function select_forme_juridique($selected='',$pays_code=0)
-  {
-    global $conf,$langs;
-    $langs->load("dict");
-    
-    // On recherche les formes juridiques actives des pays actifs
-    $sql  = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays";
-    $sql .= " FROM llx_c_forme_juridique as f, llx_c_pays as p";
-    $sql .= " WHERE f.fk_pays=p.rowid";
-    $sql .= " AND f.active = 1 AND p.active = 1";
-    if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
-    $sql .= " ORDER BY p.code, f.code";
-    
-    $result=$this->db->query($sql);
-    if ($result)
+    /**
+     *    \brief      Retourne la liste déroulante des civilite actives
+     *    \param      selected    civilite pré-sélectionnée
+     */
+    function select_civilite($selected='')
     {
-        print '<select class="flat" name="forme_juridique_code">';
-        if ($pays_code) print '<option value="0">&nbsp;</option>';
-        $num = $this->db->num_rows($result);
-        $i = 0;
-        if ($num)
-        {
-            $pays='';
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-                if ($obj->code == 0) {
-                    print '<option value="0">&nbsp;</option>';
-                }
-                else {
-                    if (! $pays || $pays != $obj->libelle_pays) {
-                        // Affiche la rupture si on est en mode liste multipays
-                        if (! $pays_code && $obj->code_pays) {
-                            print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
-                            $pays=$obj->libelle_pays;
-                        }
-                    }
+        global $conf,$langs;
+        $langs->load("dict");
     
-                    if ($selected > 0 && $selected == $obj->code)
+        $sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
+        $sql .= " WHERE active = 1";
+    
+        if ($this->db->query($sql))
+        {
+            print '<select class="flat" name="civilite_id">';
+            print '<option value="">&nbsp;</option>';
+            $num = $this->db->num_rows();
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object();
+                    if ($selected == $obj->code)
                     {
                         print '<option value="'.$obj->code.'" selected="true">';
                     }
@@ -928,25 +859,106 @@ class Form
                         print '<option value="'.$obj->code.'">';
                     }
                     // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                    print $obj->code . ' - ' .($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                    print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
                     print '</option>';
+                    $i++;
                 }
-                $i++;
             }
+            print '</select>';
         }
-        print '</select>';
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
     }
-    else {
-        dolibarr_print_error($this->db);
+
+
+    /**
+     *    \brief      Retourne le nom traduit de la civilité
+     *    \param      code        Code de la civilité
+     *    \return     string      Nom traduit de la civilité
+     */
+    function civilite_name($code)
+    {
+        global $langs;
+        $langs->load("dict");
+        return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;           
     }
-  }
+
+
+    /**
+     *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondus ou pour un pays donné.
+     *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
+     *    \param      selected        Code forme juridique a présélectionn
+     *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
+     */
+    function select_forme_juridique($selected='',$pays_code=0)
+    {
+        global $conf,$langs;
+        $langs->load("dict");
+    
+        // On recherche les formes juridiques actives des pays actifs
+        $sql  = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays";
+        $sql .= " FROM llx_c_forme_juridique as f, llx_c_pays as p";
+        $sql .= " WHERE f.fk_pays=p.rowid";
+        $sql .= " AND f.active = 1 AND p.active = 1";
+        if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
+        $sql .= " ORDER BY p.code, f.code";
+    
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            print '<select class="flat" name="forme_juridique_code">';
+            if ($pays_code) print '<option value="0">&nbsp;</option>';
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            if ($num)
+            {
+                $pays='';
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    if ($obj->code == 0) {
+                        print '<option value="0">&nbsp;</option>';
+                    }
+                    else {
+                        if (! $pays || $pays != $obj->libelle_pays) {
+                            // Affiche la rupture si on est en mode liste multipays
+                            if (! $pays_code && $obj->code_pays) {
+                                print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
+                                $pays=$obj->libelle_pays;
+                            }
+                        }
+    
+                        if ($selected > 0 && $selected == $obj->code)
+                        {
+                            print '<option value="'.$obj->code.'" selected="true">';
+                        }
+                        else
+                        {
+                            print '<option value="'.$obj->code.'">';
+                        }
+                        // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                        print $obj->code . ' - ' .($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                        print '</option>';
+                    }
+                    $i++;
+                }
+            }
+            print '</select>';
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
   
 
-  /**
-   *    \brief      Retourne le nom traduit de la forme juridique
-   *    \param      code        Code de la forme juridique
-   *    \return     string      Nom traduit du pays
-   */
+    /**
+     *    \brief      Retourne le nom traduit de la forme juridique
+     *    \param      code        Code de la forme juridique
+     *    \return     string      Nom traduit du pays
+     */
     function forme_juridique_name($code)
     {
         global $langs;

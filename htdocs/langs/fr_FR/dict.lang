@@ -23,3 +23,8 @@ CountryCI=Côte-d'Ivoire
 CountrySN=Sénégal
 CountryAR=Argentine
 CountryCM=Cameroun
+##### Civilities #####
+CivilityMME=Madame
+CivilityMR=Monsieur
+CivilityMLE=Mademoiselle
+CivilityMTRE=Maître

@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -47,7 +46,6 @@ $v->setPhoneNumber($contact->phone_perso, "PREF;HOME;VOICE");
 
 if ($contact->birthday) $v->setBirthday($contact->birthday);
 
-// TODO finir le support des adresses dans les contacts
 $v->setAddress("", "", $contact->address, $contact->ville, "", $contact->cp, $contact->pays);
 
 $v->setEmail($contact->email);
@@ -59,15 +57,18 @@ $v->setEmail($contact->email);
 $db->close();
 
 
-// Renvoi VCard au navigateur
+// Renvoi la VCard au navigateur
 
 $output = $v->getVCard();
 
-$filename = sanitize_string(ereg_replace('^%20','',$v->getFileName()));
-Header("Content-Disposition: attachment; filename=$filename");
+$filename =trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
+$filenameurlencoded = sanitize_string(urlencode($filename));
+//$filename = sanitize_string($filename);
+
+Header("Content-Disposition: attachment; filename=\"$filename\"");
 Header("Content-Length: ".strlen($output));
 Header("Connection: close");
-Header("Content-Type: text/x-vCard; name=$filename");
+Header("Content-Type: text/x-vCard; name=\"$filename\"");
 
 print $output;
 
