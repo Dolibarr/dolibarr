@@ -115,7 +115,7 @@ class ModeleBoxes
                             print img_object($langs->trans("Show"),$logo);
                             print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'"';
                             print ' title="'.$textewithnotags.'"';
-                            print ' alt="'.$textewithnotags.'"';
+                            //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
                             print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
                             print '>';
                         }
