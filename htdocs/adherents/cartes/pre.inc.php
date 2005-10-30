@@ -39,15 +39,18 @@ function llxHeader($head = "") {
 
   $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Members"));
   $menu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php",$langs->trans("List"));
   $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersUpToDate"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersValidated"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"));
   $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"));
 
   $menu->add(DOL_URL_ROOT."/public/adherents/","Espace adherents public");
 
-  $menu->add(DOL_URL_ROOT."/adherents/index.php","Export");
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php","Format htpasswd");
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php","Cartes d'adhérents");
+  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Exports"));
+  $menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php",$langs->trans("Filehtpasswd"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php",$langs->trans("MembersCards"));
   $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php","Etiquettes d'adhérents");
 
   $langs->load("compta");

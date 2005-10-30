@@ -139,8 +139,9 @@ print "</table>\n";
 
 print '<br>';
 
-
 print '</td></tr>';
+
+
 print '<tr><td width="30%" class="notopnoleft" valign="top">';
 
 
@@ -163,7 +164,8 @@ print '</td></tr>';
 print "</table></form>";
 
 
-print '</td><td class="notopnoleftnoright">';
+print '</td><td class="notopnoleftnoright" valign="top">';
+
 
 $sql = "SELECT c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";

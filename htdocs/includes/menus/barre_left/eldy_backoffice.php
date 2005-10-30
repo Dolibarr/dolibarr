@@ -590,7 +590,7 @@ class MenuLeft {
                   $langs->load("banks");
                   $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
                 
-                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->export);
+                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Exports"),0,$user->rights->adherent->export);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export);
