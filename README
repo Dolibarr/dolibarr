@@ -22,9 +22,9 @@ To install Dolibarr:
   server user (write permissions will be removed once install is finished).
 - From your browser, call the dolibarr install page. Url depends on choice
   made on first step:
-   http://localhost/dolibarr/htdocs/install/install.php
+   http://localhost/dolibarr/htdocs/install/index.php
   or
-   http://yourvirtualhost/install/install.php
+   http://yourdolibarrhost/install/index.php
 - Follow instructions provided by installer...
 
 
@@ -32,11 +32,14 @@ II - DOLIBARR UPGRADE
 ---------------------
 
 To upgrade Dolibarr from an old version to this one:
-- Copy all files into old directories (old files will be replaced).
-- Run the migrate script available inside /mysql/migration/ to upgrade
-  your database.
-  Note: Script is built to be runned safely several times.
-  Just ignore errors if it's not the first run.
+- Overwrite all old files inside old 'dolibarr' directory by files
+  provided into new version package.
+- From your browser, call the dolibarr install page:
+   http://localhost/dolibarr/htdocs/install/index.php
+  or
+   http://yourdolibarrhost/install/index.php
+  and choose the "migrate" option.
+  Note: Migrate process can ben runned safely several times.
   
 
 III - WHAT'S NEW
