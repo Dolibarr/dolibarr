@@ -189,18 +189,20 @@ define('MAGPIE_DIR', MAGPIERSS_PATH);
 // \todo Ajouter la ligne
 // require_once(FPDF_PATH . "fpdf.php");
 // dans le fichier pdfdetail_standard_modeles du module telephonie afin de pouvoir
-// supprimer celle qui suit.
-require_once(FPDF_PATH . "fpdf.php");
-
+// supprimer celles qui suivent.
+if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) 
+{
+    require_once(FPDF_PATH . "fpdf.php");
+}
 
 /*
- * Autres param?tres globaux de configurations
+ * Autres parametres globaux de configurations
  */
 $conf->users->dir_output=DOL_DATA_ROOT."/users";
 
 /*
- * Utilis? dans tous les upload de fichier
- * n?cessaire pour d?sactiver dans la d?mo
+ * Utilise dans tous les upload de fichier
+ * necessaire pour desactiver dans la demo
  */
 if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 {
