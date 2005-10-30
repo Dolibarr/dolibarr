@@ -301,8 +301,8 @@ DelaysOfToleranceNotActivatedServices=Tolérance de retard avant alerte (en jours
 DelaysOfToleranceRunningServices=Tolérance de retard avant alerte (en jours) sur factures client impayées
 DelaysOfToleranceSupplierBillsToPay=Tolérance de retard avant alerte (en jours) sur services à activer
 DelaysOfToleranceCustomerBillsUnpayed=Tolérance de retard avant alerte (en jours) sur services expirés
-DelaysOfToleranceTransactionsToConciliate=Tolérance de retard avant alerte (en jours) sur cotisations adhérent en retard
-DelaysOfToleranceMembers=Tolérance de retard avant alerte (en jours) sur rapprochements bancaires à faire
+DelaysOfToleranceTransactionsToConciliate=Tolérance de retard avant alerte (en jours) sur rapprochements bancaires à faire
+DelaysOfToleranceMembers=Tolérance de retard avant alerte (en jours) sur cotisations adhérents en retard
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Générer mot de passe
