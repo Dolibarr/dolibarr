@@ -72,7 +72,7 @@ class Translate {
             else $defaultlang=$langpart[0]."_".strtoupper($langpart[0]);
         }
 
-        $this->defaultlang=strtolower($defaultlang);
+        $this->defaultlang=$defaultlang;
     }
 
     
