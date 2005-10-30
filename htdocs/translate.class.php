@@ -63,10 +63,14 @@ class Translate {
             $langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
             $langpref=eregi_replace(";[^,]*","",$langpref);
             $langpref=eregi_replace("-","_",$langpref);
-            $listlang=split('[,;]',$langpref);
-            $defaultlang=$listlang[0];
+
+            $langlist=split("[;,]",$langpref);
+
+            $langpart=split("_",$langlist[0]);
+
+            if (isset($langpart[1])) $defaultlang=$langpart[0]."_".strtoupper($langpart[1]);
+            else $defaultlang=$langpart[0]."_".strtoupper($langpart[0]);
         }
-        if (strlen($defaultlang) <= 3) $defaultlang=$defaultlang."_".$defaultlang;
 
         $this->defaultlang=strtolower($defaultlang);
     }
