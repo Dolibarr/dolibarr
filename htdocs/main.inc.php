@@ -266,6 +266,11 @@ function top_htmlhead($head, $title="", $target="")
     print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
     print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.com/dev.fr.html">'."\n";
 
+    if ($conf->use_javascript)
+    {
+        print '<script language="javaScript" src="'.DOL_URL_ROOT.'/lib/lib.js"></script>';
+    }
+    
     print "</head>\n";
 }
   

@@ -394,6 +394,12 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
   $conf->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
 }
 
+// Format de la date
+// \todo Mettre format dans fichier langue
+$conf->format_date_text_short="%d %b %Y";
+$conf->format_date_short="%d/%m/%Y";
+
+
 /* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de d?sactiver la fonction TVA
  * (pour particuliers ou lib?raux en franchise)
  * En attendant, valeur forc?e ? 1
