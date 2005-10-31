@@ -66,12 +66,21 @@ if ($_GET["id"])
 	  $head[$h][1] = $langs->trans("Stats");
 	  $hselected = $h;
 	  $h++;
-	  	
+
+	  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."telephonie_tarif_client";
+	  $sql .= " WHERE fk_client = '".$soc->id."';";
+	  $resql = $db->query($sql);
+
+	  if ($resql)
+	    {
+	      $row = $db->fetch_row($resql);
+	      $db->free($resql);
+	    }
+
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/tarifs.php?id=".$soc->id;
-	  $head[$h][1] = $langs->trans("Tarifs");
+	  $head[$h][1] = $langs->trans("Tarifs (".$row[0].")");	       
 	  $h++;
-
-
+	  	
 	  dolibarr_fiche_head($head, $hselected, 'Client : '.$soc->nom);
 
 	  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
