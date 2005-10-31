@@ -419,23 +419,29 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 /**
 		\brief      Formattage de la date en fonction de la langue $conf->langage
 		\param	    time        Date 'timestamp' ou format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-		\param	    format      Format d'affichage de la date "%d %b %Y"
-		\return     string      Date formatée ou "?" si time nul
+		\param	    format      Format d'affichage de la date ("%d %b %Y", "%d/%m/%Y", ...)
+		\return     string      Date formatée ou '?' si time null
 */
-function dolibarr_print_date($time,$format="%d %b %Y")
+function dolibarr_print_date($time,$format='')
 {
-    // Si date non défini, on renvoie vide
-    if (! $time) return "?";
+    global $conf;
+    
+    // Si format non défini, on prend $conf->format_date_text_short
+    if (! $format) $format=$conf->format_date_text_short;
+
+    // Si date non définie, on renvoie '?'
+    if (! $time) return '?';
 
     // Analyse de la date
-    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$time,$reg)) {
-        // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$time,$reg))
+    {
+        // Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
         $syear = $reg[1];
         $smonth = $reg[2];
         $sday = $reg[3];
         $shour = $reg[4];
         $smin = $reg[5];
-        if ($syear < 1970 && $_SERVER["WINDIR"])
+        if ($syear < 1970 && isset($_SERVER["WINDIR"]))
         {
             // Le formatage ne peut etre appliqué car windows ne supporte pas la fonction
             // mktime si l'année est inférieur à 1970. On retourne un format fixe
@@ -446,7 +452,8 @@ function dolibarr_print_date($time,$format="%d %b %Y")
             return strftime($format,mktime($shour,$smin,0,$smonth,$sday,$syear));
         }
     }
-    else {
+    else
+    {
         // Date est un timestamps
         return strftime($format,$time);
     }
