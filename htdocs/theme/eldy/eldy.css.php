@@ -49,7 +49,7 @@ input
 { 
     font: 12px helvetica, verdana, arial, sans-serif; 
     background: #FDFDFD;
-    border: 1px solid #8C9C9B;
+    border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
@@ -57,20 +57,20 @@ input.flat
 { 
     font: 12px helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
-    border: 1px solid #9CACAB;
+    border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea  {
     font: 12px helvetica, verdana, arial, sans-serif;
-    border: 1px solid #8C9C9B;
+    border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
 { 
     font: 12px helvetica, verdana, arial, sans-serif;
-    border: 1px solid #8C9C9B;
+    border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
@@ -774,28 +774,75 @@ tr.nonpayed {
 
 
 
+/* ============================================================================== */
+/* Calendar                                                                       */
+/* ============================================================================== */
+.bodyline { 
+	-moz-border-radius:8px;
+	border: 1px #E4ECEC outset; 
+	padding:0px;
+	margin-bottom:5px;
+}
+table.dp { 
+    width: 180px;
+    background-color: #FFFFFF;
+    border-top: solid 2px #DDDDDD;
+    border-left: solid 2px #DDDDDD;
+    border-right: solid 1px #222222;
+    border-bottom: solid 1px #222222;
+}
+.dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
+.dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
+	font-weight:bold;
+	background-color:#b3c5cc;
+	color:white; 
+	font-size:11px;
+	cursor:auto;
+}
+.dpButtons,.tpButtons {
+	text-align:center;
+	background-color:#617389;color:#FFFFFF; font-weight:bold; 
+	border: 1px outset black;
+	cursor:pointer;	
+}
+.dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
+.dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
+.dpExplanation{ font-weight:normal; font-size:11px;}
+.dpWeek td{text-align:center}
+
+.dpToday,.dpReg,.dpSelected{
+	cursor:pointer;
+}
+.dpToday{font-weight:bold; color:black; background-color:#DDDDDD;}
+.dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
+.dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
+
+.tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
+.tpHour td {border-left:1px solid #DDDDDD; border-bottom:1px solid #DDDDDD; cursor:pointer;}
+.tpHour td:Hover {background-color:black;color:white;}
+
+.tpMinute {margin-top:5px;}
+.tpMinute td:Hover {background-color:black; color:white; }
+.tpMinute td {background-color:#D9DBE1; text-align:center; cursor:pointer;}
+	
+.dpInvisibleButtons
+{
+border-style:none;
+background-color:transparent;
+padding:0px;
+font-size:9px;
+border-width:0px;
+color:#0B63A2;
+vertical-align:middle;
+cursor: pointer; 
+cursor: hand;
+}
+
+
+
 /*
  *  Objets debug
  */
-
-p#powered-by-dolibarr {
-	position: fixed;
-	margin: 0;
-	padding: 0;
-	bottom: 2px;
-	font-size: 10px;
-	left: 0px;
-	z-index: 2;
-}
-
-p#powered-by-dolibarr a {
-	border: 1px solid black;
-	text-decoration: none;
-	color: black;
-	font-size: 10px;
-	padding-right: 5px;
-	padding-left: 5px;
-}
 
 
 #corpForm fieldset {	/*** Mise en forme des cadres ***/
@@ -804,8 +851,6 @@ p#powered-by-dolibarr a {
 	padding: 0 1em 1em;
 	font-size: 12px;
 }
-
-
 
 #corpForm .focus {	/*** Mise en avant des champs en cours d'utilisation ***/
 	background: beige;
