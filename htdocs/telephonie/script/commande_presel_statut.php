@@ -24,6 +24,8 @@
  */
 require ("../../master.inc.php");
 require_once DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php";
+require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+
 
 set_time_limit(0);
 
@@ -104,6 +106,10 @@ while ( $childrenNow < $childrenTotal )
 
 function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 {  
+
+  $user = new User($db);
+  $user->id = 1;
+
   foreach($ids as $cli)
     {
       _log("$cli Debut Traitement ligne", LOG_NOTICE);
@@ -214,6 +220,11 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		      $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur,traite) ";
 		      $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4,1);";
 		    }
+		  elseif ($situation_key == 'TRAITE_OK / TRAITE_OK')
+		    {
+		      $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur,traite) ";
+		      $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4,1);";
+		    }
 		  else
 		    {
 		      $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur) ";
@@ -225,6 +236,32 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		  if ($resql)
 		    {
 		      _log("$cli log etat de la ligne SUCCESS", LOG_NOTICE);
+
+		      if ($situation_key == 'TRAITE_OK / TRAITE_OK')
+			{
+			  $ligne = new LigneTel($db);
+  
+			  if ($ligne->fetch($cli) == 1)
+			    {
+			      if ($ligne->statut == 2)
+				{
+				  $statut = 3;
+				  $date_mise_service = strftime(time());
+				  $datea = $db->idate($date_mise_service);
+				  
+				  if ($ligne->set_statut($user, $statut, $datea) <> 0)
+				    {
+				      $error++;
+				      print "ERROR\n";
+				    }
+				}
+			    }
+			  else
+			    {
+			      print "Erreur de lecture\n";
+			    }
+			}
+
 		    }
 		  else
 		    {
