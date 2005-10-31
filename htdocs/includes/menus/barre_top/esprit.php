@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -64,14 +63,18 @@ class MenuTop {
         $langs->load("commercial");
         $langs->load("other");
         
+        print '<table class="tmenu"><tr class="tmenu">';
+
         // Entrée home
-        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a>';
+        print '<td class="tmenu"><a class="tmenu" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
 
         // Autres entrées
-        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/boutique/livre/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Books").'</a>';
-        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/boutique/client/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Customers").'</a>';
-        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/product/critiques/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Criticals").'</a>';
-        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/product/categorie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Categories").'</a>';
+        print '<td class="menu"><a class="tmenu" href="'.DOL_URL_ROOT.'/boutique/livre/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Books").'</a></td>';
+        print '<td class="menu"><a class="tmenu" href="'.DOL_URL_ROOT.'/boutique/client/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Customers").'</a></td>';
+        print '<td class="menu"><a class="tmenu" href="'.DOL_URL_ROOT.'/product/critiques/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Criticals").'</a></td>';
+        print '<td class="menu"><a class="tmenu" href="'.DOL_URL_ROOT.'/product/categorie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Categories").'</a></td>';
+
+        print '</tr></table>';
     }
 
 }
