@@ -506,6 +506,12 @@ if (sizeof($boxes))
 }
 
 
+// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+print '<div class="tabsAction">';
+print '&nbsp;';
+print '</div>';
+
+
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
