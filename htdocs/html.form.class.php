@@ -1345,12 +1345,9 @@ class Form
      */
     function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
     {
-        global $langs;
+        global $conf,$langs;
     
-        if (! $set_time && $empty == 0)
-        {
-            $set_time = time();
-        }
+        if (! $set_time && $empty == 0) $set_time = time();
     
         $strmonth[1]  = $langs->trans("January");
         $strmonth[2]  = $langs->trans("February");
@@ -1390,81 +1387,106 @@ class Form
             $shour = '';
             $smin = '';
         }
-    
-        // Jour
-        print '<select class="flat" name="'.$prefix.'day">';
-    
-        if ($empty || $set_time == -1)
+
+        $conf->use_popup_date=0;    // Mettre 1 pour avoir date en popup (experimental)
+
+        /*
+         * Affiche date en popup
+         */
+        if ($conf->use_javascript && $conf->use_popup_date)
         {
-            $sday = 0;
-            $smonth = 0;
-            $syear = 0;
-            $shour = 0;
-            $smin = 0;
-    
-            print '<option value="0" selected="true">&nbsp;</option>';
+            $timearray=getDate($set_time);
+            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"> <button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons" onClick="showDP(\''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/\',\''.$prefix.'\',\''.$conf->format_date_short.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
+            print '<input type="hidden" name="'.$prefix.'day" value="'.$timearray['mday'].'">'."\n";
+            print '<input type="hidden" name="'.$prefix.'month" value="'.$timearray['mon'].'">'."\n";
+            print '<input type="hidden" name="'.$prefix.'year" value="'.$timearray['year'].'">'."\n";
         }
-    
-        for ($day = 1 ; $day <= 31; $day++)
+
+        /*
+         * Affiche date en select
+         */
+        if (! $conf->use_javascript || ! $conf->use_popup_date)
         {
-            if ($day == $sday)
+
+            // Jour
+            print '<select class="flat" name="'.$prefix.'day">';
+        
+            if ($empty || $set_time == -1)
             {
-                print "<option value=\"$day\" selected=\"true\">$day";
+                $sday = 0;
+                $smonth = 0;
+                $syear = 0;
+                $shour = 0;
+                $smin = 0;
+        
+                print '<option value="0" selected="true">&nbsp;</option>';
             }
-            else
+        
+            for ($day = 1 ; $day <= 31; $day++)
             {
-                print "<option value=\"$day\">$day";
-            }
-            print "</option>";
-        }
-    
-        print "</select>";
-    
-        print '<select class="flat" name="'.$prefix.'month">';
-        if ($empty || $set_time == -1)
-        {
-            print '<option value="0" selected="true">&nbsp;</option>';
-        }
-    
-        // Mois
-        for ($month = 1 ; $month <= 12 ; $month++)
-        {
-            if ($month == $smonth)
-            {
-                print "<option value=\"$month\" selected=\"true\">" . $strmonth[$month];
-            }
-            else
-            {
-                print "<option value=\"$month\">" . $strmonth[$month];
-            }
-            print "</option>";
-        }
-        print "</select>";
-    
-        // Année
-        if ($empty || $set_time == -1)
-        {
-            print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year">';
-        }
-        else
-        {
-            print '<select class="flat" name="'.$prefix.'year">';
-    
-            for ($year = $syear - 3; $year < $syear + 5 ; $year++)
-            {
-                if ($year == $syear)
+                if ($day == $sday)
                 {
-                    print "<option value=\"$year\" selected=\"true\">$year";
+                    print "<option value=\"$day\" selected=\"true\">$day";
                 }
                 else
                 {
-                    print "<option value=\"$year\">$year";
+                    print "<option value=\"$day\">$day";
                 }
                 print "</option>";
             }
-            print "</select>\n";
+        
+            print "</select>";
+        
+            print '<select class="flat" name="'.$prefix.'month">';
+            if ($empty || $set_time == -1)
+            {
+                print '<option value="0" selected="true">&nbsp;</option>';
+            }
+        
+            // Mois
+            for ($month = 1 ; $month <= 12 ; $month++)
+            {
+                if ($month == $smonth)
+                {
+                    print "<option value=\"$month\" selected=\"true\">" . $strmonth[$month];
+                }
+                else
+                {
+                    print "<option value=\"$month\">" . $strmonth[$month];
+                }
+                print "</option>";
+            }
+            print "</select>";
+        
+            // Année
+            if ($empty || $set_time == -1)
+            {
+                print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year">';
+            }
+            else
+            {
+                print '<select class="flat" name="'.$prefix.'year">';
+        
+                for ($year = $syear - 3; $year < $syear + 5 ; $year++)
+                {
+                    if ($year == $syear)
+                    {
+                        print "<option value=\"$year\" selected=\"true\">$year";
+                    }
+                    else
+                    {
+                        print "<option value=\"$year\">$year";
+                    }
+                    print "</option>";
+                }
+                print "</select>\n";
+            }
         }
-    
+
+        /*
+         * Affiche heure en select
+         */
         if ($h)
         {
             print '<select class="flat" name="'.$prefix.'hour">';
@@ -1511,6 +1533,7 @@ class Form
             }
     
         }
+
     }
 	
     /**
