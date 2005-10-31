@@ -121,7 +121,7 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
         Header("Location: fiche.php?socid=".$obj->idp);
-        exit:
+        exit;
     }
     else
     {
