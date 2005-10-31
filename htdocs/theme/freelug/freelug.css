@@ -75,13 +75,30 @@ select.flat
 }
 
 .button  {
-	font: 10px arial,verdana,helvetica, sans-serif;
-	font-size: 100%;
-	border: 1px solid #dee7ec;
-	background-image : url(/theme/freelug/img/button_bg.png);
-	background-position : bottom;
-    padding: 0em 0em;
-    margin: 0em 0em; 
+	font: 11px arial,verdana,heletica, sans-serif;
+    padding: 0px 2px 0px 2px;
+    margin: 0px 0px 0px 0px; 
+	border-collapse: nocollapse;
+	border-left: 1px solid #cccccc;
+	border-right: 1px solid #aaaaaa;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #aaaaaa;
+	background-image: url(/theme/freelug/img/button_bg.png);
+	background-position: bottom;
+	background-repeat: repeat-x;
+}
+.button:focus  {
+	font: 11px arial,verdana,heletica, sans-serif;
+    padding: 0px 2px 0px 2px;
+    margin: 0px 0px 0px 0px; 
+	border-collapse: nocollapse;
+	border-left: 1px solid #aaaaaa;
+	border-right: 1px solid #cccccc;
+	border-top: 1px solid #aaaaaa;
+	border-bottom: 1px solid #ffffff;
+	background-image: url(/theme/freelug/img/button_bg.png);
+	background-position: bottom;
+	background-repeat: repeat-x;
 }
 
 
@@ -97,24 +114,6 @@ div.body
     font-size:12px;
 }
 
-div.tmenu
-{
-    float: top;
-    display:block;
-    white-space: nowrap;
-    border:0;
-    border-right: 1px solid #000000;
-    border-bottom: 1px solid #000000;
-    padding: 3px 1em 0em;
-    margin: 0em 0em 0.2em 0em;
-    font-weight:bold;
-    font-size:12px;
-    height: 18px;
-    background: #dddddd; 
-    color: #000000; 
-    text-decoration: none;
-}
-
 div.vmenuplusfiche
 {
     float: left;
@@ -125,6 +124,7 @@ div.vmenu
 {
     display:block;
     float: left;
+    margin-top: 2px;
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
@@ -145,9 +145,28 @@ div.fiche
  *   Menu superieur et 1ere ligne tableau
  */
 
-table.topbarre
-{ 
-	cell-spacing: 0;
+div.tmenu
+{
+    float: top;
+    display:block;
+    white-space: nowrap;
+    border:0;
+    border-right: 0px solid #555555;
+    border-bottom: 1px solid #8B9999;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 2px 0px;
+    font-weight:bold;
+    font-size:12px;
+    height: 20px;
+    background: #dddddd; 
+    color: #000000; 
+    text-decoration: none;
+}
+
+table.tmenu
+{
+    padding: 0px 0px 10px 0px;
+    margin: 0px 0px 0px 10px;
 }
 
 .menu 
@@ -261,8 +280,8 @@ a.help:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; f
 
 div.blockvmenupair
 { 
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
+	border-right: 1px solid #555555;
+	border-bottom: 1px solid #555555;
 	background: #dddddd;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #202020; 
@@ -274,8 +293,8 @@ div.blockvmenupair
 
 div.blockvmenuimpair
 {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
+	border-right: 1px solid #555555;
+	border-bottom: 1px solid #555555;
 	background: #dddddd;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #202020; 
@@ -608,7 +627,7 @@ div.error {
   color: #550000; font-weight: bold; 
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #000000;
+  border: 1px solid #969090;
 }
 
 
@@ -646,6 +665,7 @@ div.titre {
  */ 
 input.liste_titre { 
     background: #777799;
+    border: 0px;
 }
 
 tr.liste_titre { 
@@ -681,7 +701,7 @@ td.liste_titre {
     white-space: nowrap;
 }
 
-tr.liste_total {
+tr.liste_total td {
     background: #F0F0F0;
     font-weight: bold;
     white-space: nowrap;
@@ -702,18 +722,18 @@ th {
 }
 
 
-
-tr.pair { 
+.pair { 
     background: #eeeedd; 
     font-size: 1.0em; 
     }
-tr.impair { 
+
+.impair { 
     background: #dcdcd0;           
     font-size: 1.0em; 
     }
 
 /*
- *
+ *  Boxes
  */
 tr.box_titre { 
                color: #FFFFFF;

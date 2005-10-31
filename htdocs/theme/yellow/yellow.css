@@ -40,25 +40,38 @@ a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; colo
 a:visited { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:active  { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
-input {
+input
+{ 
     font: 12px helvetica, verdana, arial, sans-serif; 
     border: 1px solid #cccccc;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
-input.flat {
-    font: 12px helvetica, verdana, arial, sans-serif; 
+input.flat
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
     border: 1px solid #cccccc;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 textarea  {
     font: 12px helvetica, verdana, arial, sans-serif;
     border: 1px solid #cccccc;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 textarea.flat  {
     font: 12px helvetica, verdana, arial, sans-serif;
     border: 1px solid #cccccc;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 select.flat
 {
     font: 12px helvetica, verdana, arial, sans-serif;
+    border: 1px solid #cccccc;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 
 .button  {
@@ -81,24 +94,6 @@ div.body
     padding:0px;
     font-family:arial,tahoma,verdana,helvetica;
     font-size:12px;
-}
-
-div.tmenu
-{
-    float: top;
-    display:block;
-    white-space: nowrap;
-    border:0;
-    border-right: 1px solid #000000;
-    border-bottom: 1px solid #000000;
-    padding: 3px 1em 0em;
-    margin: 0em 0em 0.2em 0em;
-    font-weight:bold;
-    font-size:12px;
-    height: 18px;
-    background: #dcdcb3; 
-    color: #000000; 
-    text-decoration: none;
 }
 
 div.vmenuplusfiche
@@ -131,9 +126,28 @@ div.fiche
  *   Menu superieur et 1ere ligne tableau
  */
 
-table.topbarre
-{ 
-	cell-spacing: 0;
+div.tmenu
+{
+    float: top;
+    display: block;
+    white-space: nowrap;
+    border: 0px;
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 2px 0px;
+    font-weight:bold;
+    font-size:12px;
+    height: 20px;
+    background: #dcdcb3; 
+    color: #000000; 
+    text-decoration: none;
+}
+
+table.tmenu
+{
+    padding: 0px 0px 10px 0px;
+    margin: 0px 0px 0px 10px;
 }
 
 .menu
@@ -148,8 +162,7 @@ table.topbarre
 a.tmenu:link
 {
   color: #234046;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
+  padding: 0px 8px;
   border: 1px solid #dcdcb3;
   font-weight:bold;
   font-size:12px;
@@ -157,8 +170,7 @@ a.tmenu:link
 a.tmenu:visited
 {
   color: #234046;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
+  padding: 0px 8px;
   border: 1px solid #dcdcb3;
   font-weight:bold;
   font-size:12px;
@@ -167,16 +179,14 @@ a.tmenu#sel
 { 
   color: #234046;
   background: #eeeecc;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
+  padding: 0px 8px;
   border: 1px solid #eeeecc;
 }
 a.tmenu:hover
 {
   color: #234046;
   background: #eeeecc;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
+  padding: 0px 8px;
   border: 1px solid #eeeecc;
   text-decoration: none;
 }
@@ -184,8 +194,7 @@ a.tmenu:hover
 font.tmenudisabled
 {
   color: #93a5aa;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
+  padding: 0px 8px;
   border: 1px solid #b3c5cc;
   font-weight:bold;
   font-size:12px;
@@ -247,8 +256,8 @@ a.help:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; f
 
 div.blockvmenupair
 {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
+	border-right: 1px solid #555555;
+	border-bottom: 1px solid #555555;
 	background: #dcdcb3;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #000000; 
@@ -260,8 +269,8 @@ div.blockvmenupair
 
 div.blockvmenuimpair
 {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
+	border-right: 1px solid #555555;
+	border-bottom: 1px solid #555555;
 	background: #dcdcb3;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #000000; 
@@ -597,6 +606,7 @@ div.titre {
 
 input.liste_titre { 
     background: #BBBB88;
+    border: 0px;
 }
 
 tr.liste_titre { 
@@ -627,7 +637,7 @@ td.liste_titre {
     white-space: nowrap;
 }
 
-tr.liste_total { 
+tr.liste_total td { 
     background: #F0F0F0;
     font-weight: bold;
     white-space: nowrap;
@@ -646,17 +656,19 @@ th {
     font-size: 1.0em;
 }
 
-tr.pair { 
+.pair { 
     background: #eeeecc; 
     font-size: 1.0em; 
 }
-tr.impair { 
+
+.impair { 
     background: #dcdcb3;           
     font-size: 1.0em; 
 }
 
+
 /*
- *
+ *  Boxes
  */
 tr.box_titre { 
                background: #BBBB88;

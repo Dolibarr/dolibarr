@@ -20,8 +20,6 @@
  *
  */
 
-@import url("new.css");
-
 /***** Style du fond *****/
 body 
 {
@@ -34,6 +32,239 @@ body
     margin-left: 0;
   
 }
+
+div.body
+{
+  display:block;
+  padding:0px;
+  border-top:1px solid black;
+  font-family:arial,tahoma,verdana,helvetica;
+  font-size:12px;
+  background: #dee7ec; 
+}
+
+div.fiche
+{
+  display: block;
+  position: absolute;
+  background: #dee7ec; 
+  top: 28px;
+  margin-right: 6px;
+}
+
+div.vmenuplusfiche
+{
+    float: left; 
+    margin-right: 6px;
+}
+
+div.vmenu
+{
+  float: left;
+  display: block;
+  margin-right: 2px;
+  padding: 0px;
+  padding-bottom: 6px;
+  width: 160px;
+}
+
+a
+{ 
+  text-decoration: none;
+ }
+
+div.tmenu
+{
+  float: top;
+  display: block;
+  background: #dcdad5; 
+  white-space: nowrap;
+  margin: 0px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-bottom: 0px;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom:1px solid #9d9da1;
+  height: 20px;	
+}
+
+table.tmenu
+{
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    height: 24px;
+}
+
+a.tmenu
+{
+  margin-right: 3px;
+  text-decoration: none;
+  color:gray;
+  font-weight:bold;
+  font-size:11px;
+}
+
+a.tmenu#sel
+{ 
+  border-bottom:4px solid #9d9da1;	
+  color:black;
+}
+
+a.tmenu:hover
+{
+  border-color:gray;
+  border-bottom:4px solid #9d9da1;	
+  color:black;
+}
+
+a.login
+{
+  position: absolute;
+  right: 27px;
+  top: 6px;
+  margin-right: 3px;
+  
+  padding: 0px;
+  text-decoration: none;
+  color:gray;
+  font-weight:bold;
+  font-size:11px;
+}
+
+img.login
+{
+  position: absolute;
+  right: 9px;
+  top: 3px;
+  padding:3px;
+  text-decoration:none;
+  color:gray;
+  font-weight:bold;
+  font-size:11px;
+}
+
+a.login:hover
+{
+  border-color:gray;
+  border-bottom:4px solid #9d9da1;	
+  color:black;
+}
+
+img {vertical-align:text-top}
+
+
+
+div.blockvmenupair
+{
+  padding: 3px;
+  border-bottom: thin solid #6495ed;
+}
+
+div.blockvmenuimpair
+{
+
+  padding: 3px;
+  border-bottom: thin solid #6495ed;
+}
+
+a.vmenu
+{
+  padding-bottom:3px;
+  text-decoration:none;
+  color:gray;
+  font-weight:bold;
+  font-size:11px;
+  }
+
+a.vsmenu
+{
+  margin-left: 8px;
+  padding-bottom:3px;
+  text-decoration:none;
+  color:gray;
+  font-weight:bold;
+  font-size:11px;
+  }
+
+a.vmenu:hover
+{
+  border-color:gray;
+  text-decoration: none;
+  color:black;
+  }
+
+a.vsmenu:hover
+{
+  border-color:gray;
+  color:black;
+  }
+
+
+
+table.liste
+{
+  border: blue small solid #000000;
+  border-collapse: collapse;
+  width: 100%;
+  }
+
+table.liste tr
+{ 
+  background: #dfdfdf;
+  }
+
+
+table.liste tr:hover
+{ 
+  background: white;
+  }
+
+
+table.liste th
+{
+  border: 1px solid #6495ed;
+
+  width: 50%;
+  font-size:12px;
+  text-align: left;
+  padding: 2px;
+}
+
+table.liste th:hover
+{
+  background: #dfdfdf; 
+}
+
+table.liste td
+{
+  border-bottom: 1px solid #6495ed;
+  font-size: 10px;
+}
+
+
+div.formsearch
+{
+  display: block;
+  float: none;
+  clear: right;
+  background: #dee7ec;
+  top: 0px;
+  left: 130px;
+  padding: 4px; 
+  vertical-align: center;
+}
+
+.flat  {
+	font-family: arial,verdana,helvetica, sans-serif;
+	font-size: 100%;
+	font-weight: normal;
+	border: 1px solid #ccd7e0;
+	background-image : url(img/button_bg.gif);
+	background-position : bottom;
+}
+
 
 /***** Styles par défaut *****/
 input
@@ -94,11 +325,6 @@ div.tabBar
 /*
  *   Menu superieur et 1ere ligne tableau
  */
-
-table.topbarre
-{ 
-                 cell-spacing: 0;
-}
 
 a.tabTitle {
  background: #436976;
@@ -379,7 +605,7 @@ div.leftmenu {
                border-right: 1px solid #000000;
                border-bottom: 1px solid #000000;
                cell-spacing: 0;
-               margin: 0em 10px 10px 2px;
+               margin: 0px 10px 10px 2px;
                }
 
 
@@ -424,6 +650,7 @@ div.titre {
 
 input.liste_titre { 
     background: #cacaca;
+    border: 0px;
 }
 
 tr.liste_titre { 
@@ -451,40 +678,47 @@ td.liste_titre {
     white-space: nowrap
 }
 
-tr.liste_total { 
+tr.liste_total td { 
     background: #F0F0F0;
     font-weight: bold;
     white-space: nowrap;
 }
 
-tr.pair	{ 
+.pair	{ 
     background: #dfdfdf; 
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid #666666;
     text-decoration: none
 }
 
-tr.impair { 
-    background: #dfdfdf; 
-    border-bottom: 1px solid #000000;
+.impair { 
+    background: #e4e4e4; 
+    border-bottom: 1px solid #666666;
     text-decoration: none
 }
 
 /*
- *
+ *  Boxes
  */
+ 
 tr.box_titre { 
-    font-weight: bold; }
+    background: #cacaca; 
+    font-weight: bold;
+    text-decoration: none;
+    border-top: 1px solid #888888;
+    white-space: nowrap
+}
     
 tr.box_pair { 
     background: #dfdfdf; 
-    border-bottom: 1px solid #000000;
-    font-size: 10px;
-    }
+    border-bottom: 1px solid #666666;
+    font: 12px arial, helvetica, verdana, sans-serif;
+}
     
 tr.box_impair {
-    border-bottom: 1px solid #000000;
-    font-size: 10px;
-    }
+    background: #e4e4e4; 
+    border-bottom: 1px solid #666666;
+    font: 12px arial, helvetica, verdana, sans-serif;
+}
 
 tr.fiche { 
            font-family: Helvetica, Verdana;

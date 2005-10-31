@@ -77,6 +77,9 @@ textarea.flat
 select.flat
 {
     font: 12px helvetica, verdana, arial, sans-serif;
+    border: 1px solid #ACBCBB;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 .button  {
     font: 12px helvetica, verdana, arial, sans-serif;
@@ -91,39 +94,21 @@ select.flat
 
 div.body
 {
-    margin-top: 1px;
+    margin-top: 0px;
     margin-bottom: 0;
-    margin-right: 3px;
-    margin-left: 3px;
-    display:block;
-    padding:0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    display: block;
+    padding: 0px;
     font-family:arial,tahoma,verdana,helvetica;
     font-size:12px;
-}
-
-div.tmenu
-{
-    float: top;
-    display:block;
-    white-space: nowrap;
-    border:0;
-    border-right: 1px solid #555555;
-    border-bottom: 1px solid #555555;
-    padding: 3px 0px 0px 10px;
-    margin: 0px 0px 2px 0px;
-    font-weight:bold;
-    font-size: 12px;
-    height: 18px;
-    background: #b3c5cc; 
-//    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
-    color: #000000; 
-    text-decoration: none;
 }
 
 div.vmenuplusfiche
 {
     float: left; 
     margin-right: 6px;
+    margin-left: 1px;
 }
 
 div.vmenu
@@ -150,62 +135,76 @@ div.fiche
  *   Menu superieur et 1ere ligne tableau
  */
 
-table.topbarre
-{ 
-	cell-spacing: 0;
-}
-
-.menu
-{ 
+div.tmenu
+{
+    float: top;
+    display: block;
+    white-space: nowrap;
+    border-top: 1px solid #D3E5EC;
+    border-left: 0px;
+    border-right: 0px solid #555555;
+    border-bottom: 1px solid #8B9999;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 2px 0px;
+    font-weight:bold;
+    font-size: 12px;
+    height: 19px;
     background: #b3c5cc; 
+    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
     color: #000000; 
     text-decoration: none;
+}
+
+table.tmenu
+{
+    padding: 0px 0px 10px 0px;
+    margin: 0px 0px 0px 10px;
 }
 
 a.tmenu:link
 {
   color: #234046;
-  padding: 0em 1em;
+  padding: 0px 8px;
   margin: 0em 0em 1.5em 0em;
-  border: 1px solid #b3c5cc;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
 }
 a.tmenu:visited
 {
   color: #234046;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
-  border: 1px solid #b3c5cc;
+  padding: 0px 8px;
+  border: 0px solid #b3c5cc;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
 }
 a.tmenu#sel
 { 
   color: #234046;
-  background: #dee7ec;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
-  border: 1px solid #8CACBB;
+  padding: 0px 8px;
+  margin: 0px 0px 1.5px 0px;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
+  background: #dee7ec;
+    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>);
+  border-right: 1px solid #555555;
+  border-top: 1px solid #D8D8D8;
+  border-left: 1px solid #D8D8D8;
 }
 a.tmenu:hover
 {
   color: #234046;
-  background: #dee7ec;
-  padding: 0em 1em;
+  padding: 0px 8px;
   margin: 0em 0em 1.5em 0em;
-  border: 1px solid #8CACBB;
   text-decoration: none;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
+  background: #dee7ec;
 }
 
 font.tmenudisabled
 {
   color: #93a5aa;
-  padding: 0em 1em;
+  padding: 0px 8px;
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #b3c5cc;
   font-weight:bold;
@@ -218,12 +217,11 @@ a.login
 {
   position: absolute;
   right: 24px;
-  top: 3px;
+  top: 4px;
 
   color: #234046;
   padding: 0em 1em;
   margin: 0em 0em 1.5em 0em;
-  border: 1px solid #b3c5cc;
   font-weight:bold;
   font-size:12px;
 }
@@ -235,10 +233,9 @@ a.login:hover
 img.login
 {
   position: absolute;
-  right: 9px;
+  right: 8px;
   top: 3px;
 
-  padding:2px;
   text-decoration:none;
   color:white;
   font-weight:bold;
@@ -270,27 +267,32 @@ div.blockvmenupair
 {
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
-	background: #b3c5cc;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #000000; 
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
     margin: 1px 0px 0px 0px;
-
+	background: #A3BCC6;
+    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-position:top;
+    background-repeat:repeat-x;
 }
 
 div.blockvmenuimpair
 {
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
-	background: #b3c5cc;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #000000; 
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
     margin: 1px 0px 0px 0px;
+	background: #A3BCC6;
+    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-position:top;
+    background-repeat:repeat-x;
 }
 
 div.help
@@ -377,7 +379,6 @@ div.tabBar {
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-//    border: 1px solid #8CACBB;
 }
 
 div.tabsAction {
@@ -403,7 +404,6 @@ a.tabTitle {
 
 a.tab:link {
     background: white;
-//    border: 1px solid #8CACBB;
     color: #436976;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -418,7 +418,6 @@ a.tab:link {
 }
 a.tab:visited {
     background: white;
-//    border: 1px solid #8CACBB;
     color: #436976;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -617,7 +616,6 @@ padding: 0px 0px;
 
 table.liste {
 border-collapse: collapse;
-//border: 0px;
 width: 100%;
 }
 
@@ -712,7 +710,7 @@ border: 0px;
 
 
 /*
- *   Boxes
+ *  Boxes
  */
 tr.box_titre { 
 background: #7699A9;
@@ -745,7 +743,7 @@ font: helvetica, verdana, arial, sans-serif;
  *   Ok, Warning, Error
  */
 .ok      { color: #114466; }
-.warning { color: #777711; }
+.warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
 
 div.ok {
@@ -753,7 +751,7 @@ div.ok {
 }
 
 div.warning {
-  color: #777711;
+  color: #997711;
 }
 
 div.error {
