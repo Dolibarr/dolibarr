@@ -2,7 +2,7 @@
 // Pour la fonction de saisi auto des villes
 // *****************************************
 
-function PopupPostalCode(postalcode,objectville)
+function autofilltownfromzip_PopupPostalCode(postalcode,objectville)
 {
     var url = 'searchpostalcode.php?cp=' + postalcode + '&targetobject=window.opener.document.formsoc.' + objectville.name;
     //  alert(url);
@@ -10,9 +10,15 @@ function PopupPostalCode(postalcode,objectville)
     if((document.window != null) && (!hWnd.opener)) hWnd.opener = document.window;
 }
 
-function save_refresh()
+function autofilltownfromzip_save_refresh_edit()
 {
     document.formsoc.action.value="edit";
+    document.formsoc.submit();
+}
+
+function autofilltownfromzip_save_refresh_create()
+{
+    document.formsoc.action.value="create";
     document.formsoc.submit();
 }
 

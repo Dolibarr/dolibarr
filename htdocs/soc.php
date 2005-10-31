@@ -216,24 +216,6 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             print '</div>';
         }
     
-        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP)
-        {
-            include("./soc.js.php");
-        }
-
-        print '
-        <script language="javascript" type="text/javascript">
-        <!--
-        function save_refresh()
-        {
-        	document.formsoc.action.value="create";
-        	document.formsoc.submit();
-        //	location.href = "index.php?action=updateedit";
-        }
-        -->
-        </script>
-        ';
-   
         print '<form action="soc.php" method="post" name="formsoc">';
     
         print '<input type="hidden" name="action" value="add">';
@@ -269,14 +251,14 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '</textarea></td></tr>';
 
         print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="PopupPostalCode(cp.value,ville)"';
+        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="autofilltownfromzip_PopupPostalCode(cp.value,ville)"';
         print '>';
-        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
+        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville)">';
         print '</td>';
         print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="save_refresh()"':'');
+        $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="autofilltownfromzip_save_refresh_create()"':'');
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
@@ -489,15 +471,15 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '</textarea></td></tr>';
 
         print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="PopupPostalCode(cp.value,ville)"';
+        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="autofilltownfromzip_PopupPostalCode(cp.value,ville)"';
         print '>';
-        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
+        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville)">';
         print '</td>';
 
         print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="save_refresh()"':'');
+        $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="autofilltownfromzip_save_refresh_edit()"':'');
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
