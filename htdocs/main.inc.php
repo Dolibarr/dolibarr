@@ -268,7 +268,7 @@ function top_htmlhead($head, $title="", $target="")
 
     if ($conf->use_javascript)
     {
-        print '<script language="javaScript" src="'.DOL_URL_ROOT.'/lib/lib.js"></script>';
+        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib.js"></script>';
     }
     
     print "</head>\n";
