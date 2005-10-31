@@ -271,6 +271,7 @@ if ($_GET["action"] == 'create')
             $soc->fetch($obj->idp);
 
             print '<form action="fiche.php" method="post">';
+
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="soc_id" value="'.$soc->id.'">'."\n";
             print '<input type="hidden" name="remise_percent" value="0">';
@@ -351,8 +352,10 @@ if ($_GET["action"] == 'create')
             print '<textarea name="note" wrap="soft" cols="70" rows="3"></textarea></td></tr>';
 
             print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-            print "</form>\n";
+
             print "</table>\n";
+
+            print "</form>\n";
 
             if ($propalid)
             {

@@ -68,7 +68,7 @@ $sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > sysdate()",1,0
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= sysdate())",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.statut, s.nom, s.idp as sidp";
-$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.idp ";
 if ($search_nom)      $sql.= " AND s.nom like '%".$search_nom."%'";
