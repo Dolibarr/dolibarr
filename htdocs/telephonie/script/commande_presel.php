@@ -110,7 +110,7 @@ if ($resql)
 
 function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person)
 {  
-  dolibarr_syslog("Appel de CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person)");
+  dolibarr_syslog("Appel de CreatePreselection($host, $user_login, ****, $ligne, $id_person)");
 
   $url = "/AzurApp_websvc_b3gdb/account.asmx/CreatePreselection?";
 
@@ -137,6 +137,8 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
       
       $parse = 0;
       $result = "error";
+
+      $fresult = "";
       
       while (!feof($fp))
 	{
@@ -155,6 +157,9 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
 	    {
 	      $parse = 1;
 	    }
+
+	  $fresult .= $line;
+
 	}
       fclose($fp);
     }
@@ -167,6 +172,14 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
   else
     {
       dolibarr_syslog("Presel échouée ligne ".$ligne." id client ".$id_person." $result\n");
+
+      $fp = fopen("/tmp/$ligne.presel","w");
+      if ($fp)
+	{
+	  fwrite($fp, $fresult);
+	  fclose($fp);
+	}
+
       return -1;
     }
 }
