@@ -151,9 +151,107 @@ if ($_POST["action"] == 'add')
 
   if (strlen(trim($_POST["cli"])) <> 9 && $verif == 'ok')
     {
-      $mesg = "Numéro de ligne incorrecte";
+      $mesg = "Numéro de ligne #1 (0".$_POST["cli"].") incorrect";
       $verif = "nok";
     }
+  
+  $p = array("1","2","3","4","5");
+
+  if (!in_array(substr(trim($_POST["cli"]),0,1), $p) && $verif == 'ok')
+    {
+      $mesg = "Numéro de ligne #1 (0".$_POST["cli"].") incorrect";
+      $verif = "nok";
+    }
+
+  /* Ligne #2 */
+
+  if (strlen(trim($_POST["cli2"])) > 0 && $verif == 'ok')
+    {
+      if (strlen(trim($_POST["cli2"])) <> 9 && $verif == 'ok')
+	{
+	  $mesg = "Numéro de ligne #2 (0".$_POST["cli2"].") incorrect";
+	  $verif = "nok";
+	}
+      
+      if (!in_array(substr(trim($_POST["cli2"]),0,1), $p) && $verif == 'ok')
+	{
+	  $mesg = "Numéro de ligne #2 (0".$_POST["cli2"].") incorrect";
+	  $verif = "nok";
+	}
+    }
+  /* Ligne #3 */
+
+  if (strlen(trim($_POST["cli3"])) > 0 && $verif == 'ok')
+    {
+      if (strlen(trim($_POST["cli3"])) <> 9 && $verif == 'ok')
+	{
+	  $mesg = "Numéro de ligne #3 (0".$_POST["cli3"].") incorrect";
+	  $verif = "nok";
+	}
+      
+      if (!in_array(substr(trim($_POST["cli3"]),0,1), $p) && $verif == 'ok')
+	{
+	  $mesg = "Numéro de ligne #3 (0".$_POST["cli3"].") incorrect";
+	  $verif = "nok";
+	}
+    }
+
+  /* Verif Tarif */
+  if (strlen(trim($_POST["france"])) > 0 && $verif == "ok")
+    {      
+      $temporel = ereg_replace(",",".",trim($_POST["france"]));
+  
+      if(! is_numeric($temporel))
+	{
+	  $error++;
+	  $verif = "nok";
+	  $mesg .= "Tarif France Invalide";
+	}
+      else
+	{
+	  if ($temporel > 0.04 )
+	    {
+	      $error++;
+	      $verif = "nok";
+	      $mesg .= "Tarif France Invalide : $temporel > 0.04 !";
+	    }
+	  
+	  if ($temporel < 0.016 )
+	    {
+	      $error++;
+	      $verif = "nok";
+	      $mesg .= "Tarif France Invalide : $temporel <  0.016 !";
+	    }
+	}
+    }      
+  if (strlen(trim($_POST["mobil"])) > 0 && $verif == "ok")
+    {      
+      $temporel = ereg_replace(",",".",trim($_POST["mobil"]));
+  
+      if(! is_numeric($temporel))
+	{
+	  $error++;
+	  $verif = "nok";
+	  $mesg .= "Tarif Mobile Invalide";
+	}
+      else
+	{      
+	  if ($temporel > 0.40 )
+	    {
+	      $error++;
+	      $verif = "nok";
+	      $mesg .= "Tarif Mobile Invalide : $temporel > 0.40 !";
+	    }
+	  if ($temporel <  0.16 )
+	    {
+	      $error++;
+	      $verif = "nok";
+	      $mesg .= "Tarif Mobile Invalide : $temporel <  0.16 !";
+	    }
+	}
+    }      
+
+  /* Fin Verif Tarif */
 
   $soc->nom                   = stripslashes($_POST["nom"]);
   $soc->adresse               = stripslashes($_POST["adresse"]);
@@ -261,7 +359,6 @@ if ($_POST["action"] == 'add')
     {
       if (strlen(trim($_POST["cli"])) == 9)
 	{
-
 	  
 	  if ( $ligne->create($user) == 0)
 	    {
@@ -270,11 +367,158 @@ if ($_POST["action"] == 'add')
 	  else
 	    {
 	      $error++;
-	      $msg.= "Impossible de créer la ligne";
+	      $mesg.= "Impossible de créer la ligne #1 0".$_POST["cli"];
 	    }
 	}
     }
   
+  /* Ligne 2 */
+
+  $ligne = new LigneTel($db);
+  $ligne->contrat         = $contrat->id;
+  $ligne->numero          = "0".$_POST["cli2"];
+  $ligne->client_comm     = $soc->id;
+  $ligne->client          = $soc->id;
+  $ligne->client_facture  = $soc->id;
+  $ligne->fournisseur     = $_POST["fournisseur"];
+  $ligne->commercial_sign = $_POST["commercial_sign"];
+  $ligne->commercial_suiv = $_POST["commercial_sign"];
+  $ligne->concurrent      = $_POST["concurrent"];
+  $ligne->remise          = "0";
+  $ligne->note            = $_POST["note"];
+  
+  if(!$error && $verif == "ok")
+    {
+      if (strlen(trim($_POST["cli2"])) == 9)
+	{
+	  
+	  if ( $ligne->create($user) == 0)
+	    {
+	      
+	    }
+	  else
+	    {
+	      //$error++;
+	      $mesg.= "Impossible de créer la ligne #2 0".$_POST["cli2"];
+	    }
+	}
+    }
+
+  /* Ligne 3 */
+  $ligne = new LigneTel($db);
+  $ligne->contrat         = $contrat->id;
+  $ligne->numero          = "0".$_POST["cli3"];
+  $ligne->client_comm     = $soc->id;
+  $ligne->client          = $soc->id;
+  $ligne->client_facture  = $soc->id;
+  $ligne->fournisseur     = $_POST["fournisseur"];
+  $ligne->commercial_sign = $_POST["commercial_sign"];
+  $ligne->commercial_suiv = $_POST["commercial_sign"];
+  $ligne->concurrent      = $_POST["concurrent"];
+  $ligne->remise          = "0";
+  $ligne->note            = $_POST["note"];
+  
+  if(!$error && $verif == "ok")
+    {
+      if (strlen(trim($_POST["cli3"])) == 9)
+	{
+	  
+	  if ( $ligne->create($user) == 0)
+	    {
+	      
+	    }
+	  else
+	    {
+	      //$error++;
+	      $mesg.= "Impossible de créer la ligne #3 0".$_POST["cli3"];
+	    }
+	}
+    }
+
+  /* DEBUT TARIFS */
+  if (strlen(trim($_POST["france"])) > 0 && $verif == "ok")
+    {      
+      $temporel = ereg_replace(",",".",trim($_POST["france"]));
+  
+      if (!$error)
+	{
+	  $db->begin();
+	  
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."telephonie_tarif_client";
+	  $sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user) VALUES ";
+	  $sql .= " (1293,".$soc->id.",'".$temporel."','0',".$user->id.")";
+	  
+	  if (! $db->query($sql) )
+	    {
+	      $error++;
+	    }
+	  
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_client_log";
+	  $sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user, datec) VALUES ";
+	  $sql .= " (1293,".$soc->id.",'".$temporel."','0',".$user->id.",now())";
+	  
+	  if (! $db->query($sql) )
+	    {
+	      $error++;
+	    }
+	  
+	  if ( $error == 0 )
+	    {
+	      $db->commit();
+	    }
+	  else
+	    {
+	      $db->rollback();
+	      $mesg = "Erreur tarifs !";
+	    }
+	}
+    }
+
+  /* mobiles */
+  if (strlen(trim($_POST["mobil"])) > 0 && $verif == "ok")
+    {      
+      $mobil_ids = array(1289,1290,1291,1292);
+      foreach ($mobil_ids as $mobil_id)
+	{
+	  $temporel = ereg_replace(",",".",trim($_POST["mobil"]));
+	  
+	  if (!$error)
+	    {
+	      $db->begin();
+	      
+	      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."telephonie_tarif_client";
+	      $sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user) VALUES ";
+	      $sql .= " (".$mobil_id.",".$soc->id.",'".$temporel."','0',".$user->id.")";
+	  
+	      if (! $db->query($sql) )
+		{
+		  $error++;
+		}
+	      
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_client_log";
+	      $sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user, datec) VALUES ";
+	      $sql .= " (".$mobil_id.",".$soc->id.",'".$temporel."','0',".$user->id.",now())";
+	  
+	      if (! $db->query($sql) )
+		{
+		  $error++;
+		}
+	      
+	      if ( $error == 0 )
+		{
+		  $db->commit();
+		}
+	      else
+		{
+		  $db->rollback();
+		  $mesg = "Erreur tarifs !";
+		}
+	    }
+	}
+    }
+
+  /* FIN TARIFS */
+
   if (!$error && $verif == "ok")
     {
       Header("Location: ".DOL_URL_ROOT."/telephonie/contrat/fiche.php?id=".$contrat->id);
@@ -307,7 +551,7 @@ if ($user->rights->telephonie->ligne->creer)
     }
   else
     {
-  print "<p>Attention ce formulaire n'est a utiliser uniquement pour les nouveaux clients. Il créé automatiquement un client, ses informations bancaires, son contrat (en mode paiement prélèvement) et la première ligne téléphonie, si il y a plusieurs ligne il suffit de les ajouter au contrat ultérieurement</p>";
+
     }
 
   $focus = " onfocus=\"this.className='focus';\" onblur=\"this.className='normal';\" ";   
@@ -324,9 +568,11 @@ if ($user->rights->telephonie->ligne->creer)
 
   print '<table class="noborder" width="100%">';
   
-  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">';
+  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>';
   print '<input type="text" size="30" name="nom" ';
-  print $focus .' value="'.$soc->nom.'"></td></tr>';
+  print $focus .' value="'.$soc->nom.'"></td><td>';
+
+  print "Attention ce formulaire n'est a utiliser uniquement pour les nouveaux clients.</td></tr>";
   
   // On positionne pays_id, pays_code et libelle du pays choisi
   $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:'');
@@ -390,8 +636,8 @@ if ($user->rights->telephonie->ligne->creer)
   print "<legend>Contact</legend>\n";
   print '<table class="noborder" width="100%">';
   
-  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td><input type="text" size="30" '.$focus.' name="cnom" value="'.$contact->name.'"></td></tr>';
-  print '<tr><td width="20%">'.$langs->trans('Firstname').'</td><td><input type="text" size="20" '.$focus.' name="cprenom" value="'.$contact->firstname.'"></td></tr>';
+  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td><input type="text" size="30" '.$focus.' name="cnom" value="'.$contact->name.'"></td>';
+  print '<td width="20%">'.$langs->trans('Firstname').'</td><td><input type="text" size="20" '.$focus.' name="cprenom" value="'.$contact->firstname.'"></td></tr>';
   print '<tr><td>'.$langs->trans('Mail').'</td><td><input type="text" size="40" '.$focus.' name="cmail" value="'.$contact->email.'"></td></tr>';
   
   print "</table>\n";
@@ -433,13 +679,17 @@ if ($user->rights->telephonie->ligne->creer)
     print "</fieldset><br />\n";
 
     print '<fieldset id="ligne">';
-    print "<legend>Ligne téléphonique à présélectionner</legend>\n";
+    print "<legend>Lignes téléphoniques à présélectionner</legend>\n";
   
     print '<table class="noborder" width="100%">';
     
     print '<tr><td width="20%">Ligne téléphonique #1</td><td>0<input type="text" size="10" maxlength="9" '.$focus.' name="cli" value="'.$_POST["cli"].'"></td>';
     print '<td colspan="2">Si le client a plusieurs lignes vous pourrez les ajouter au contrat ultérieuremnt</td></tr>';
     
+    print '<tr><td width="20%">Ligne téléphonique #2</td><td>0<input type="text" size="10" maxlength="9" '.$focus.' name="cli2" value="'.$_POST["cli2"].'"></td></tr>';
+
+    print '<tr><td width="20%">Ligne téléphonique #3</td><td>0<input type="text" size="10" maxlength="9" '.$focus.' name="cli3" value="'.$_POST["cli3"].'"></td></tr>';
+
     print '<tr><td width="20%">Fournisseur</td><td>';
     $ff = array();
     $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
@@ -456,9 +706,9 @@ if ($user->rights->telephonie->ligne->creer)
     $def =$ligne->fournisseur?$ligne->fournisseur:TELEPHONIE_FOURNISSEUR_DEFAUT_ID;
 
     $form->select_array("fournisseur",$ff,$def);
-    print '</td></tr>';
+    print '</td>';
     
-    print '<tr><td width="20%">Fournisseur précédent</td><td colspan="3">';
+    print '<td width="20%">Fournisseur précédent</td><td>';
     $ff = array();
     $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY rowid ";
     $resql =  $db->query( $sql) ;
@@ -481,6 +731,28 @@ if ($user->rights->telephonie->ligne->creer)
     print "</table>\n";
     print "</fieldset><br />\n";
         
+    /* DEBUT TARIFS */
+
+    print '<fieldset id="ligne">';
+    print "<legend>Tarifs</legend>\n";
+    if ($user->rights->telephonie->tarif->client_modifier)
+      {
+	print '<table class="noborder" width="100%">';
+    
+	print '<tr><td width="20%">France</td><td><input type="text" size="10" maxlength="9" '.$focus.' name="france" value="'.$_POST["france"].'"></td><td>Laissez vide si tarifs par défaut</tr>';
+	
+	print '<tr><td width="20%">Mobiles</td><td><input type="text" size="10" maxlength="9" '.$focus.' name="mobil" value="'.$_POST["mobil"].'"></td><td>Tous réseaux confondus</td></tr>';
+	
+	print "</table>\n";
+      }
+    else
+      {
+	print "Vous n'avez pas les droits pour modifier les tarifs";
+      }
+    print "</fieldset><br />\n";
+
+    /* FIN TARIFS */
+
     print '<input type="submit" value="'.$langs->trans('Save').'">'."\n";
     
     print '</form>'."\n";
