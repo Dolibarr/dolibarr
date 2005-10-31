@@ -293,13 +293,13 @@ function top_menu($head, $title="", $target="")
      * Si la constante MAIN_NEED_UPDATE est définie (par le script de migration sql en général), c'est que
      * les données ont besoin d'un remaniement. Il faut passer le update.php
      */
-    if (defined("MAIN_NEED_UPDATE") && MAIN_NEED_UPDATE)
+    if ($conf->global->MAIN_NEED_UPDATE)
     {
         $langs->load("admin");
         print '<div class="fiche">'."\n";
         print '<table class="noborder" width="100%">';
         print '<tr><td>';
-        print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/admin/system/update.php');
+        print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/install/index.php');
         print '</td></tr>';
         print "</table>";
         llxFooter();
@@ -376,19 +376,22 @@ function left_menu($menu_array, $help_url='', $form_search='')
         if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
         {
             $langs->load("companies");
-            printSearchForm(DOL_URL_ROOT.'/societe.php',DOL_URL_ROOT.'/societe.php',$langs->trans("Companies"),'soc','socname');
+            printSearchForm(DOL_URL_ROOT.'/societe.php',DOL_URL_ROOT.'/societe.php',
+                img_object($langs->trans("List"),'company').' '.$langs->trans("Companies"),'soc','socname');
         }
 
         if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
         {
             $langs->load("companies");
-            printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',$langs->trans("Contacts"),'contact','contactname');
+            printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',
+                img_object($langs->trans("List"),'contact').' '.$langs->trans("Contacts"),'contact','contactname','contact');
         }
 
         if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
         {
             $langs->load("products");
-            printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/index.php',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
+            printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/index.php',
+                img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"),'products','sall','product');
         }
 
         /*
@@ -446,24 +449,25 @@ function left_menu($menu_array, $help_url='', $form_search='')
 
 
 /**
- * \brief   Affiche une zone de recherche
- * \param   urlaction       url du post
- * \param   urlobject       url du lien sur titre de la zone de recherche
- * \param   title           titre de la zone de recherche
- * \param   htmlmodesearch  'search'
- * \param   htmlinputname   nom du champ input du formulaire
+ *  \brief   Affiche une zone de recherche
+ *  \param   urlaction          Url du post
+ *  \param   urlobject          Url du lien sur titre de la zone de recherche
+ *  \param   title              Titre de la zone de recherche
+ *  \param   htmlmodesearch     'search'
+ *  \param   htmlinputname      Nom du champ input du formulaire
  */
  
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
-  global $langs;
-  print '<form action="'.$urlaction.'" method="post">';
-  print '<a class="vmenu" href="'.$urlobject.'">'.$title.'</a><br>';
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-  print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
-  print '<input type="submit" class="button" value="'.$langs->trans("Go").'">';
-  print "</form>";
+    global $langs;
+    print '<form action="'.$urlaction.'" method="post">';
+    print '<a class="vmenu" href="'.$urlobject.'">';
+    print $title.'</a><br>';
+    print '<input type="hidden" name="mode" value="search">';
+    print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
+    print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
+    print '<input type="submit" class="button" value="'.$langs->trans("Go").'">';
+    print "</form>";
 }
 
 

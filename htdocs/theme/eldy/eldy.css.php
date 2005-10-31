@@ -107,14 +107,15 @@ div.tmenu
     display:block;
     white-space: nowrap;
     border:0;
-    border-right: 1px solid #000000;
-    border-bottom: 1px solid #000000;
-    padding: 3px 1em 0em;
-    margin: 0em 0em 0.2em 0em;
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
+    padding: 3px 0px 0px 10px;
+    margin: 0px 0px 2px 0px;
     font-weight:bold;
-    font-size:12px;
+    font-size: 12px;
     height: 18px;
     background: #b3c5cc; 
+//    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
     color: #000000; 
     text-decoration: none;
 }
@@ -157,7 +158,6 @@ table.topbarre
 .menu
 { 
     background: #b3c5cc; 
-    font-size: 12px; 
     color: #000000; 
     text-decoration: none;
 }
@@ -168,8 +168,8 @@ a.tmenu:link
   padding: 0em 1em;
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #b3c5cc;
-  font-weight:bold;
-  font-size:12px;
+  font: 12px helvetica, verdana, arial, sans-serif;
+  font-weight: bold;
 }
 a.tmenu:visited
 {
@@ -177,8 +177,8 @@ a.tmenu:visited
   padding: 0em 1em;
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #b3c5cc;
-  font-weight:bold;
-  font-size:12px;
+  font: 12px helvetica, verdana, arial, sans-serif;
+  font-weight: bold;
 }
 a.tmenu#sel
 { 
@@ -187,6 +187,8 @@ a.tmenu#sel
   padding: 0em 1em;
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #8CACBB;
+  font: 12px helvetica, verdana, arial, sans-serif;
+  font-weight: bold;
 }
 a.tmenu:hover
 {
@@ -196,6 +198,8 @@ a.tmenu:hover
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #8CACBB;
   text-decoration: none;
+  font: 12px helvetica, verdana, arial, sans-serif;
+  font-weight: bold;
 }
 
 font.tmenudisabled
@@ -264,8 +268,8 @@ a.help:hover        { font-size:11px; font: helvetica, verdana, arial, sans-seri
 
 div.blockvmenupair
 {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
 	background: #b3c5cc;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #000000; 
@@ -273,12 +277,13 @@ div.blockvmenupair
 	text-decoration: none;
     padding: 3px;
     margin: 1px 0px 0px 0px;
+
 }
 
 div.blockvmenuimpair
 {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
 	background: #b3c5cc;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #000000; 
@@ -364,7 +369,15 @@ div.tabBar {
     padding-right: 12px;
     padding-bottom: 12px;
     margin: 0px 0px 10px 0px;
-    border: 1px solid #8CACBB;
+    -moz-border-radius-topleft:6px;
+    -moz-border-radius-topright:6px;
+    -moz-border-radius-bottomleft:6px;
+    -moz-border-radius-bottomright:6px;
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
+    border-left: 1px solid #D0D0D0;
+    border-top: 1px solid #D8D8D8;
+//    border: 1px solid #8CACBB;
 }
 
 div.tabsAction {
@@ -376,32 +389,47 @@ div.tabsAction {
 
 a.tabTitle {
     background: #436976;
-    border: 1px solid #8CACBB;
     color: white;
     font-weight: normal;
     padding: 0px 6px;
     margin: 0em 0.5em;
     text-decoration: none;
     white-space: nowrap;
+
+    border-right: 1px solid #555555;
+    border-left: 1px solid #D8D8D8;
+    border-top: 1px solid #D8D8D8;
 }
 
 a.tab:link {
     background: white;
-    border: 1px solid #8CACBB;
+//    border: 1px solid #8CACBB;
     color: #436976;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
+    -moz-border-radius-topleft:4px;
+    -moz-border-radius-topright:4px;
+
+    border-right: 1px solid #555555;
+    border-left: 1px solid #D8D8D8;
+    border-top: 1px solid #D8D8D8;
 }
 a.tab:visited {
     background: white;
-    border: 1px solid #8CACBB;
+//    border: 1px solid #8CACBB;
     color: #436976;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
+    -moz-border-radius-topleft:4px;
+    -moz-border-radius-topright:4px;
+
+    border-right: 1px solid #555555;
+    border-left: 1px solid #D8D8D8;
+    border-top: 1px solid #D8D8D8;
 }
 a.tab#active {
     background: #dee7ec;
@@ -410,6 +438,12 @@ a.tab#active {
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
+    -moz-border-radius-topleft:4px;
+    -moz-border-radius-topright:4px;
+
+    border-right: 1px solid #555555;
+    border-left: 1px solid #D8D8D8;
+    border-top: 1px solid #D8D8D8;
 }
 a.tab:hover {
     background: #dee7ec;
@@ -417,6 +451,12 @@ a.tab:hover {
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
+    -moz-border-radius-topleft:4px;
+    -moz-border-radius-topright:4px;
+
+    border-right: 1px solid #555555;
+    border-left: 1px solid #D8D8D8;
+    border-top: 1px solid #D8D8D8;
 }
 
 a.tabimage {
