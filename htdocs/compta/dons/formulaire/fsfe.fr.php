@@ -17,17 +17,19 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!
+/**
 			\file       htdocs/compta/dons/formulaire/fsfe.fr.php
 			\ingroup    don
 			\brief      Formulaire de don
 			\version    $Revision$
 */
 
-require("../../../main.inc.php");
+require("../../../master.inc.php");
+require("../../../projetdon.class.php");
+require("../../../don.class.php");
+
 
 echo '
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
@@ -40,12 +42,6 @@ echo '
   <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" marginheight="0" marginwidth="0">
 ';
 
-
-
-require("../../../projetdon.class.php");
-require("../../../don.class.php");
-
-setlocale(LC_ALL,$conf->langage);
 
 $don = new Don($db);
 $don->id = $_GET["rowid"];

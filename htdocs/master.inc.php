@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
- * Copyright (C) 2005 	   Simon Tosser  <simon@kornog-computing.com> 
+ * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,14 +158,14 @@ if (! $conf->global->MAIN_MENU_BARRELEFT) $conf->global->MAIN_MENU_BARRELEFT="de
 if (! $conf->global->MAIN_MENUFRONT_BARRELEFT) $conf->global->MAIN_MENUFRONT_BARRELEFT="default.php";
 
 /*
- * Positionne le langage global et localisation dans $conf->langage
- * et charge l'objet de traduction
+ * Charge l'objet de traduction et positionne langage courant global 
  */
 if (! $conf->global->MAIN_LANG_DEFAULT) $conf->global->MAIN_LANG_DEFAULT="fr_FR";
-$conf->langage=dolibarr_set_php_lang($conf->global->MAIN_LANG_DEFAULT);
 
 require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
-$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
+$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
+$langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
 
 
 /*

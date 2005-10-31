@@ -29,7 +29,7 @@
         \version    $Revision$
 */
 
-require("master.inc.php");
+require_once("master.inc.php");
 
 
 // Verification du login.
@@ -135,12 +135,11 @@ if (isset($user->conf->PRODUIT_LIMIT_SIZE))
 }
 if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
 {
-    if ($conf->langage != $user->conf->MAIN_LANG_DEFAULT)
+    if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
     {
-        // Si on a un langage perso différent du langage global
-        $conf->langage=dolibarr_set_php_lang($user->conf->MAIN_LANG_DEFAULT);
-    
-        $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
+        // Si on a un langage perso différent du langage courant global
+        $langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+        $langs->setPhpLang($user->conf->MAIN_LANG_DEFAULT);
     }
 }
 

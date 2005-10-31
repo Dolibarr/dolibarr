@@ -43,12 +43,10 @@ class Translate {
     /**
      *  \brief      Constructeur de la classe
      *  \param      dir             Repertoire racine des fichiers de traduction
-     *  \param      defaultlang     Langue par defaut à utiliser
      */
-    function Translate($dir = "", $defaultlang = "")
+    function Translate($dir = "")
     {
         $this->dir=$dir;
-        $this->setDefaultLang($defaultlang);
     }
 
 
@@ -68,14 +66,45 @@ class Translate {
 
             $langpart=split("_",$langlist[0]);
 
-            if (isset($langpart[1])) $defaultlang=$langpart[0]."_".strtoupper($langpart[1]);
-            else $defaultlang=$langpart[0]."_".strtoupper($langpart[0]);
+            if (isset($langpart[1])) $defaultlang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
+            else $defaultlang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
         }
 
         $this->defaultlang=$defaultlang;
     }
 
     
+    /**
+     *  \brief      Accesseur de this->defaultlang
+     *  \return     string      Langue utilisée
+     */
+    function getDefaultLang()
+    {
+        return $this->defaultlang;
+    }
+
+    
+    /**
+    		\brief      Positionne environnement PHP en fonction du langage
+    		\remarks    Le code langue long (fr_FR, en_US, ...) doit être positionné
+    		\return     int             >0 si ok, <0 so ko
+    */
+    function setPhpLang()
+    {
+        //dolibarr_syslog("Translate::set_php_lang: code_lang=$code_lang code_lang_tirer=$code_lang_tiret");
+       
+        $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
+        setlocale(LC_ALL, $this->defaultlang);    // Compenser pb de locale avec windows
+        setlocale(LC_ALL, $code_lang_tiret);
+        if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL);
+        if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME) setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME);
+        if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC) setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC);
+        if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY") && MAIN_FORCE_SETLOCALE_LC_MONETARY) setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY);
+    
+        return 1;
+    }
+
+
     /**
 	 *  \brief      Charge en mémoire le tableau de traduction pour un domaine particulier
      *              Si le domaine est deja chargé, la fonction ne fait rien

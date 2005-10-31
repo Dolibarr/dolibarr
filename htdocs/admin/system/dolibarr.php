@@ -44,12 +44,21 @@ print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".DOL_V
 print '</table>';
 print '<br>';
 
+$var=true;
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("Language")." (LC_ALL)</td><td>".setlocale(LC_ALL,0)."</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Language")." (LC_NUMERIC)</td><td>".setlocale(LC_NUMERIC,0)."</td></tr>\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("Language")." (LC_TIME)</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Language")." (LC_MONETARY)</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("LanguageDolibarrParameter").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE")."</td><td>".$_SERVER["HTTP_ACCEPT_LANGUAGE"]."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_ALL")."</td><td>".setlocale(LC_ALL,0)."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_NUMERIC")."</td><td>".setlocale(LC_NUMERIC,0)."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_TIME")."</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentDolibarrLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
 print '</table>';
 print '<br>';
 

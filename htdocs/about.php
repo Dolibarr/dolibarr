@@ -81,7 +81,7 @@ print '</ul>';
 
 
 // \todo Faut-il inviter l'utilisateur à aller sur le site en français si sa langue n'est pas le français ?
-//if (eregi('^fr_',$conf->langage)
+//if (eregi('^fr_',$langs->getDefaultLang())
 //{
     print '<p>';
     print 'Vente / Support';

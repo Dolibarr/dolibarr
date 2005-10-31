@@ -33,9 +33,10 @@ $conffile = "../conf/conf.php";
 
 
 // Defini objet langs
-require_once("../translate.class.php");
-$langcode='auto';
-$langs = new Translate("../langs", $langcode);
+require_once('../translate.class.php');
+$langs = new Translate('../langs');
+$langs->setDefaultLang('auto');
+$langs->setPhpLang();
 
 
 $tab[0]=' class="bg1"';

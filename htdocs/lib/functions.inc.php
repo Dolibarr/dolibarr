@@ -282,34 +282,6 @@ function dolibarr_get_const($db, $name)
 
 
 /**
-		\brief      Positionne environnement PHP en fonction du langage
-		\param	    code_lang       Code langue concerné (fr_FR, en_US, ...)
-		\return     string          Code langue validé
-*/
-function dolibarr_set_php_lang($code_lang)
-{
-    $code_lang_tiret=ereg_replace('_','-',$code_lang);
-
-    //dolibarr_syslog("dolibarr_set_php_lang: code_lang=$code_lang code_lang_tirer=$code_lang_tiret");
-   
-    setlocale(LC_ALL, $code_lang);    // Compenser pb de locale avec windows
-    setlocale(LC_ALL, $code_lang_tiret);
-    if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL);
-    if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME) setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME);
-    if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC) setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC);
-    if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY") && MAIN_FORCE_SETLOCALE_LC_MONETARY) setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY);
-
-    // On corrige $code_lang si il ne vaut pas le code long: fr -> fr_FR par exemple
-    if (strlen($code_lang) <= 3)
-    {
-        $code_lang = strtolower($code_lang)."_".strtoupper($code_lang);
-    }
-
-    return $code_lang;
-}
-
-
-/**
 		\brief      Insertion d'une constante dans la base de données.
 		\see        dolibarr_del_const, dolibarr_get_const
 		\param	    db          Handler d'accès base
