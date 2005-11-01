@@ -29,6 +29,10 @@
         \version    $Revision$
 */
 
+// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
+// est positionnée. A appeler avant tout.
+if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=microtime(true);
+
 require_once("master.inc.php");
 
 
@@ -477,12 +481,18 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
  
 function llxFooter($foot='') 
 {
-  global $dolibarr_auto_user;
-
-  print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
-  print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->';
-  print "\n</div>\n".'<!-- end div class="body" -->'."\n";
-
-  print "</body>\n</html>\n";
+    global $dolibarr_auto_user, $micro_start_time;
+    
+    print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
+    print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->';
+    print "\n</div>\n".'<!-- end div class="body" -->'."\n";
+    
+    if (isset($_SERVER['DOL_TUNING']))
+    {
+        print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*(microtime(true)-$micro_start_time)).' ms"</script>';
+        print "\n";
+    } 
+    
+    print "</body>\n</html>\n";
 }
 ?>
