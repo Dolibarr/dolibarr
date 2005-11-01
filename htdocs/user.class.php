@@ -807,12 +807,16 @@ class User
   function update_last_login_date()
     {
         dolibarr_syslog ("Mise a jour date derniere connexion pour user->id=".$this->id);
+
+        $now=time();
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-        $sql.= " SET datelastaccess = sysdate()";
+        $sql.= " SET datelastaccess = ".$this->db->idate($now);
         $sql.= " WHERE rowid = ".$this->id;
         $resql = $this->db->query($sql);
         if ($resql)
         {
+            $this->datelastaccess=$now;
             return 1;
         }
         else
