@@ -1,6 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
 -- $Source$
@@ -21,11 +20,7 @@
 --
 -- ========================================================================
 
-create table llx_c_pays
-(
-  rowid    integer            PRIMARY KEY,
-  code     varchar(2)         NOT NULL,
-  code_iso varchar(3)         ,
-  libelle  varchar(25)        NOT NULL,
-  active   tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_code (code);
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_code_iso (code_iso);
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_libelle (libelle);

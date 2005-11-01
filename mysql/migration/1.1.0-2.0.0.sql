@@ -12,21 +12,66 @@ create table llx_c_tva
 (
   rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_pays           integer NOT NULL,
-  taux              double NOT NULL,
-  recuperableonly   integer DEFAULT 0,
+  taux              double  NOT NULL,
+  recuperableonly   integer NOT NULL DEFAULT 0,
   note              varchar(128),
   active            tinyint DEFAULT 1 NOT NULL
 
 )type=innodb;
 
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1,1,   '0','0','Taux TVA non applicable (France, TOM)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2,1, '5.5','0','Taux à 5.5 (France hors DOM-TOM)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (3,1, '8.5','0','Taux à 8.5 (DOM sauf Guyane et Saint-Martin)',0);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (4,1, '8.5','1','Taux à 8.5 (DOM sauf Guyane et Saint-Martin), non perçu par le vendeur mais récupérable par l\'acheteur',0);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (5,1,'19.6','0','Taux à 19.6 (France hors DOM-TOM)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (6,2,   '0','0','Taux TVA non applicable',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (7,2,   '6','0','Taux à 6',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (8,2,  '21','0','Taux à 21',1);
+-- ALLEMAGNE (id 5)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 51, 5,  '16','0','VAT Rate 16',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 52, 5,   '7','0','VAT Rate 7',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 53, 5,   '0','0','VAT Rate 0',1);
+
+-- BELGIQUE (id 2)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 21, 2,  '21','0','VAT Rate 21',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 22, 2,   '6','0','VAT Rate 6',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 23, 2,   '0','0','VAT Rate 0 ou non applicable',1);
+
+-- CANADA (id 14)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (141,14,   '7','0','VAT Rate 7',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (142,14,   '0','0','VAT Rate 0',1);
+
+-- ESPAGNE (id 4)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 41, 4,  '16','0','VAT Rate 16',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 42, 4,   '7','0','VAT Rate 7',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 43, 4,   '4','0','VAT Rate 4',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 44, 4,   '0','0','VAT Rate 0',1);
+
+-- ITALY (id 3)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 31, 3,  '20','0','VAT Rate 20',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 32, 3,  '10','0','VAT Rate 10',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 33, 3,   '4','0','VAT Rate 4',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 34, 3,   '0','0','VAT Rate 0',1);
+
+-- FRANCE (id 1)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 11, 1,'19.6','0','VAT Rate 19.6 (France hors DOM-TOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 12, 1, '8.5','0','VAT Rate 8.5 (DOM sauf Guyane et Saint-Martin)',0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 13, 1, '8.5','1','VAT Rate 8.5 (DOM sauf Guyane et Saint-Martin), non perçu par le vendeur mais récupérable par l\'acheteur',0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 14, 1, '5.5','0','VAT Rate 5.5 (France hors DOM-TOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 15, 1,   '0','0','VAT Rate 0 ou non applicable (France, TOM)',1);
+
+-- PAYS-BAS (id 17)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (171,17,  '19','0','VAT Rate 19',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (172,17,   '6','0','VAT Rate 6',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (173,17,   '0','0','VAT Rate 0',1);
+
+-- PORTUGAL (id 26)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (261,26,  '17','0','VAT Rate 17',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (262,26,  '12','0','VAT Rate 12',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (263,26,   '0','0','VAT Rate 0',1);
+
+-- ROYAUME UNI (id 7)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 71, 7,'17.5','0','VAT Rate 17.5',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 72, 7,   '5','0','VAT Rate 5',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 73, 7,   '0','0','VAT Rate 0',1);
+
+-- SUISSE (id 6)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 61, 6, '7.6','0','VAT Rate 7.6',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 62, 6, '3.6','0','VAT Rate 3.6',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 63, 6, '2.4','0','VAT Rate 2.4',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 64, 6,   '0','0','VAT Rate 0',1);
 
 
 create table llx_user_clicktodial
@@ -1471,11 +1516,18 @@ drop table if exists llx_c_pays;
 
 create table llx_c_pays
 (
-  rowid    integer     PRIMARY KEY,
-  code     varchar(6)  UNIQUE NOT NULL,
+  rowid    integer            PRIMARY KEY,
+  code     varchar(2)         NOT NULL,
   libelle  varchar(25)        NOT NULL,
-  active   tinyint default 1  NOT NULL
+  active   tinyint DEFAULT 1  NOT NULL
 )type=innodb;
+
+alter table llx_c_pays modify code varchar(2) NOT NULL;
+alter table llx_c_pays add code_iso varchar(3) after code;
+
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_code (code);
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_code_iso (code_iso);
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_libelle (libelle);
 
 delete from llx_c_pays;
 insert into llx_c_pays (rowid,code,libelle) values (0,  ''  , '-'              );
@@ -1503,6 +1555,7 @@ insert into llx_c_pays (rowid,code,libelle) values (21, 'CI', 'Côte d\'Ivoire' )
 insert into llx_c_pays (rowid,code,libelle) values (23, 'SN', 'Sénégal'        );
 insert into llx_c_pays (rowid,code,libelle) values (24, 'AR', 'Argentine'      );
 insert into llx_c_pays (rowid,code,libelle) values (25, 'CM', 'Cameroun'       );
+insert into llx_c_pays (rowid,code,libelle) values (26, 'PT', 'Portugal'       );
 
 drop table if exists llx_c_propalst;
 

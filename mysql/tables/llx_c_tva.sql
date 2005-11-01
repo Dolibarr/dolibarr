@@ -24,8 +24,8 @@ create table llx_c_tva
 (
   rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_pays           integer NOT NULL,
-  taux              double NOT NULL,
-  recuperableonly   integer DEFAULT 0,
+  taux              double  NOT NULL,
+  recuperableonly   integer NOT NULL DEFAULT 0,
   note              varchar(128),
   active            tinyint DEFAULT 1 NOT NULL
 
