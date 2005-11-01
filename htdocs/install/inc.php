@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**	    \file       htdocs/install/inc.php

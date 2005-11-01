@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -34,7 +33,7 @@ $allowupgrade = 0;
 
 include_once("./inc.php");
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langs->getDefaultLang());
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
