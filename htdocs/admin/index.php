@@ -60,6 +60,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     if ($_POST['action'] != 'updateedit')
     {
         Header("Location: index.php");
+        exit;
     }
 }
 
@@ -280,7 +281,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td>".$langs->trans("VATIsUsedDesc")."</td></tr>";
-    print "<td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+    print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
     print "</table>";
     print "</td></tr>\n";
     
@@ -297,7 +298,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td>".$langs->trans("VATIsNotUsedDesc")."</td></tr>";
-    print "<td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+    print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
     print "</table>";
     print "</td></tr>\n";
     
@@ -459,7 +460,7 @@ else
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td>".$langs->trans("VATIsUsedDesc")."</td></tr>";
-    print "<td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+    print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
     print "</table>";
     print "</td></tr>\n";
     
@@ -476,7 +477,7 @@ else
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td>".$langs->trans("VATIsNotUsedDesc")."</td></tr>";
-    print "<td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+    print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
     print "</table>";
     print "</td></tr>\n";
     
