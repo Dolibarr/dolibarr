@@ -51,12 +51,12 @@ $html = new Form($db);
 $mesg='';
 $action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
 
-if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == yes && $user->rights->fournisseur->facture->valider)
+if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->valider)
 {
     $facturefourn=new FactureFournisseur($db);
     $facturefourn->fetch($_GET['facid']);
     
-    $facturefourn->set_valid($user->id);
+    $facturefourn->set_valid($user);
     
     Header('Location: fiche.php?facid='.$_GET['facid']);
     exit;
