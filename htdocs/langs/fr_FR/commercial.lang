@@ -46,6 +46,7 @@ StatusActionToDo=À faire
 StatusActionDone=Réalisé
 StatusActionInProcess=En cours
 TasksHistoryForThisContact=Historique des actions pour ce contact
+LastProspectDoNotContact=A ne pas contacter
 LastProspectNeverContacted=Non contactés
 LastProspectToContact=A contacter
 LastProspectContactInProcess=Contact en cours
