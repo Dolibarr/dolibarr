@@ -33,10 +33,10 @@
 
 define('DOL_VERSION','2.0.0-alpha2');
 
-// La fonction clearstatcache ne doit pas etre appelé de manière globale car ralenti
-// fortement. Elle doit etre appelée uniquement par les pages qui ont besoin d'absence
-// de cache, comme par exemple document.php
-clearstatcache();     
+// La fonction clearstatcache ne doit pas etre appelé de manière globale car ralenti.
+// Elle doit etre appelée uniquement par les pages qui ont besoin d'absence de cache,
+// comme par exemple document.php
+//clearstatcache();     
 
 // Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
 if (function_exists("define_syslog_variables"))
@@ -73,22 +73,17 @@ if (! $dolibarr_main_data_root) {
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);
 
-
 if (strtolower(substr($dolibarr_main_url_root, 0, 7)) == 'http://')
 {
-  $uri = substr($dolibarr_main_url_root, 7);
+    $uri = substr($dolibarr_main_url_root, 7);
 }
-if (strtolower(substr($dolibarr_main_url_root, 0, 7)) == 'https:/')
+if (strtolower(substr($dolibarr_main_url_root, 0, 8)) == 'https://')
 {
-  $uri = substr($dolibarr_main_url_root, 8);
+    $uri = substr($dolibarr_main_url_root, 8);
 }
-$pos = strstr ($uri, '/');
-if ($pos == '/')
-{
-  $pos = '';
-}
+$pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
+if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);
-//define('DOL_URL_ROOT', $dolibarr_main_url_root);
 
 
 /*

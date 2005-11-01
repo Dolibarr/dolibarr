@@ -39,26 +39,71 @@ require_once("master.inc.php");
 // Verification du login.
 // Cette verification est faite pour chaque accès. Après l'authentification,
 // l'objet $user est initialisée. Notament $user->id, $user->login et $user->nom, $user->prenom
-// \todo : Stocker les infos de $user en session persistente php et ajouter recup dans le fetch
-//         depuis la sessions pour ne pas avoir a acceder a la base a chaque acces de page.
-// \todo : Utiliser $user->id pour stocker l'id de l'auteur dans les tables plutot que $_SERVER["REMOTE_USER"]
+// \todo Stocker les infos de $user en session persistente php et ajouter recup dans le fetch
+//       depuis la sessions pour ne pas avoir a acceder a la base a chaque acces de page.
 
-if (!empty ($_SERVER["REMOTE_USER"]))
+// MODE 1: Pas d'identification car forcé
+if (! empty($dolibarr_auto_user))
 {
-    // Authentification Apache OK, on va chercher les infos du user
-    $user->fetch($_SERVER["REMOTE_USER"]);
-    dolibarr_syslog ("Authentification ok (en mode Basic)");
+    // Mode forcé sur un utilisateur (pour debug, demo, ...), on initialise la session
+    if (! session_id()) {
+        session_name("DOLSESSID_".$dolibarr_main_db_name);
+        session_start();
+    }
 
-    //exit;
+    $user->fetch($dolibarr_auto_user);
+    dolibarr_syslog ("Authentification ok (en mode force)");
 }
+// MODE 2: Identification HTTP Basic
+elseif (! empty($_SERVER["REMOTE_USER"]))
+{
+    // Authentification Apache OK, on initialise la session
+    if (! session_id()) {
+        session_name("DOLSESSID_".$dolibarr_main_db_name);
+        session_start();
+    }
+
+    if (isset($_SESSION["dol_user"]))
+    {
+        // Session existante pour ce login
+        $user->fetch($_SERVER["REMOTE_USER"]);
+//        $user=$_SESSION["session_user"];
+        dolibarr_syslog ("Authentification ok (en mode Basic)");
+    }
+    else
+    {
+        // Nouvelle session pour ce login
+        $user->fetch($_SERVER["REMOTE_USER"]);
+        dolibarr_syslog ("Authentification ok (en mode Basic) - nouvelle session");
+        $user->update_last_login_date();
+        $_SESSION["dol_user"]=$user;
+    }
+}
+// MODE 3: Identification depuis base de donnée
 else
 {
-    // Authentification Apache KO ou non active
-    if (!empty ($dolibarr_auto_user))
+    // Authentification Apache KO ou non active, pas de mode forcé, on demande le login
+    require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
+
+    $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
+
+    $params = array(
+    "dsn" =>$pear,
+    "table" => MAIN_DB_PREFIX."user",
+    "usernamecol" => "login",
+    "passwordcol" => "pass",
+    "cryptType" => "none",
+    );
+
+    $aDol = new DOLIAuth("DB", $params, "loginfunction");
+    $aDol->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
+    $aDol->start();
+    $result = $aDol->getAuth();
+    if ($result)
     {
-        // Mode forcé sur un utilisateur (pour debug, demo, ...)
-        $user->fetch($dolibarr_auto_user);
-        dolibarr_syslog ("Authentification ok (en mode force)");
+        // Authentification Auth OK, on va chercher les infos du user
+        $user->fetch($aDol->getUsername());
+        dolibarr_syslog ("Authentification ok (en mode Pear)");
         if (isset($_POST["loginfunction"]))
         {
             // Si phase de login initial
@@ -67,50 +112,19 @@ else
     }
     else
     {
-        // Pas d'authentification Apache ni de mode forcé, on demande le login
-        require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php";
-
-        $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
-
-        $params = array(
-        "dsn" =>$pear,
-        "table" => MAIN_DB_PREFIX."user",
-        "usernamecol" => "login",
-        "passwordcol" => "pass",
-        "cryptType" => "none",
-        );
-
-        $aDol = new DOLIAuth("DB", $params, "loginfunction");
-        $aDol->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
-        $aDol->start();
-        $result = $aDol->getAuth();
-        if ($result)
+        if (isset($_POST["loginfunction"]))
         {
-            // Authentification Auth OK, on va chercher les infos du user
-            $user->fetch($aDol->getUsername());
-            dolibarr_syslog ("Authentification ok (en mode Pear)");
-            if (isset($_POST["loginfunction"]))
-            {
-                // Si phase de login initial
-                $user->update_last_login_date();
-            }
+            // Echec authentification
+            dolibarr_syslog("Authentification ko (en mode Pear) pour '".$_POST["username"]."'");
         }
-        else
+        else 
         {
-            if (isset($_POST["loginfunction"]))
-            {
-                // Echec authentification
-                dolibarr_syslog("Authentification ko (en mode Pear) pour '".$_POST["username"]."'");
-            }
-            else 
-            {
-                // Non authentifié
-                dolibarr_syslog("Authentification non réalisé");
-            }
-            // Le début de la page a été affiché par loginfunction. On ferme juste la page
-            print "</div>\n</div>\n</body>\n</html>";
-            exit;
+            // Non authentifié
+            dolibarr_syslog("Authentification non réalisé");
         }
+        // Le début de la page a été affiché par loginfunction. On ferme juste la page
+        print "</div>\n</div>\n</body>\n</html>";
+        exit;
     }
 }
 
@@ -197,7 +211,8 @@ $langs->load("main");
  */
 if (defined("MAIN_NOT_INSTALLED"))
 {
-  Header("Location: ".DOL_URL_ROOT."/install/index.php");
+    Header("Location: ".DOL_URL_ROOT."/install/index.php");
+    exit;
 }
 
 // Constantes utilisées pour définir le nombre de lignes des textarea

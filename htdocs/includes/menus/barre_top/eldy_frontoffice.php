@@ -58,9 +58,12 @@ class MenuTop {
      */
     function showmenu()
     {
-        global $user, $conf, $langs;
+        global $user,$conf,$langs,$dolibarr_main_db_name;;
         
-        if (! session_id()) session_start();    // En mode authentification PEAR, la session a déjà été ouverte
+        if (! session_id()) {
+            session_name("DOLSESSID_".$dolibarr_main_db_name);
+            session_start();    // En mode authentification PEAR, la session a déjà été ouverte
+        }
         
         $user->getrights("");
         
