@@ -114,15 +114,15 @@ class User
         }
         else
         {
-            $sql .= " WHERE u.rowid = $this->id";
+            $sql .= " WHERE u.rowid = ".$this->id;
         }
         
         $result = $this->db->query($sql);
         if ($result)
         {
-            if ($this->db->num_rows($result))
+            $obj = $this->db->fetch_object($result);
+            if ($obj)
             {
-                $obj = $this->db->fetch_object($result);
                 $this->id = $obj->rowid;
                 $this->nom = stripslashes($obj->name);
                 $this->prenom = stripslashes($obj->firstname);
