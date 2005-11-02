@@ -25,6 +25,26 @@
 require ("../../master.inc.php");
 require_once DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php";
 
+
+$verbose = 0;
+
+for ($i = 1 ; $i < sizeof($argv) ; $i++)
+{
+  if ($argv[$i] == "-v")
+    {
+      $verbose = 1;
+    }
+  if ($argv[$i] == "-vv")
+    {
+      $verbose = 2;
+    }
+  if ($argv[$i] == "-vvv")
+    {
+      $verbose = 3;
+    }
+}
+
+
 $user = new User($db);
 $user->id = 1; // C'est sale je sais !
 
@@ -110,6 +130,7 @@ if ($resql)
 
 function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person)
 {  
+  global $verbose;
   dolibarr_syslog("Appel de CreatePreselection($host, $user_login, ****, $ligne, $id_person)");
 
   $url = "/AzurApp_websvc_b3gdb/account.asmx/CreatePreselection?";
@@ -121,6 +142,8 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
   $url .= "&okCollecte=true";
   $url .= "&okPreselection=true";
 
+  if ($verbose > 2)
+    dolibarr_syslog("$url");
 
   $fp = fsockopen($host, 80, $errno, $errstr, 30);
   if (!$fp)
@@ -144,6 +167,9 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
 	{
 	  $line = fgets($fp, 1024);
 	  
+	  if ($verbose > 2)
+	    dolibarr_syslog($line);
+
 	  if ($parse == 1)
 	    {
 	      preg_match('/^<string xmlns=".*">(.*)<\/string>$/', $line, $results);
@@ -164,6 +190,9 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
       fclose($fp);
     }
   
+  if ($verbose > 1)
+    dolibarr_syslog("result = ".$result);
+
   if (substr($result,0,2) == "OK")
     {
       dolibarr_syslog("Presel réussie ligne ".$ligne." id client ".$id_person." $result\n");
