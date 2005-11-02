@@ -143,6 +143,9 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
   $url .= "&okPreselection=true";
 
   if ($verbose > 2)
+    dolibarr_syslog("$host");
+
+  if ($verbose > 2)
     dolibarr_syslog("$url");
 
   $fp = fsockopen($host, 80, $errno, $errstr, 30);
@@ -152,6 +155,9 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
     }
   else
     {
+      if ($verbose > 2)
+	dolibarr_syslog("Socket Opened send data");
+
       $out = "GET $url HTTP/1.1\r\n";
       $out .= "Host: $host\r\n";
       $out .= "Connection: Close\r\n\r\n";
