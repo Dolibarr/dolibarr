@@ -52,7 +52,7 @@ if (!$login_result)
 
 $date = time() - (24 * 3600); 
 
-$file = "daily_report_".strftime("%d-%m-%Y", $date).".zip";
+$file = "daily_report_".strftime("%Y%m%d", $date).".zip";
 
 $remote_file = 'cdr/'.$file;
 $local_file = DOL_DATA_ROOT.'/telephonie/CDR/atraiter/'.$file;
