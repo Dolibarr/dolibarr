@@ -54,26 +54,27 @@ print "</td>";
 
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-  // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
-  // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
-  if (eregi('php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"])) {
-    $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
-
-    if (! eregi('\/dolibarr/htdocs$',$dolibarr_main_document_root))
-      {
-	$dolibarr_main_document_root.="/dolibarr/htdocs";
-      }
-  }
-  else
+    // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
+    // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
+    if (eregi('php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"]))
     {
-      $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])- 21 );
-      // Nettoyage du path proposé
-      // Gere les chemins windows avec double "\"
-      $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);
-      
-      // Supprime le slash ou antislash final
-      $dolibarr_main_document_root = ereg_replace('[\\\\\/]$','',$dolibarr_main_document_root);	
-												  }
+        $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
+
+        if (! eregi('[\/\\]dolibarr[\/\\]htdocs$',$dolibarr_main_document_root))
+        {
+            $dolibarr_main_document_root.="/dolibarr/htdocs";
+        }
+    }
+    else
+    {
+        $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"]) - 21);
+        // Nettoyage du path propose
+        // Gere les chemins windows avec double "\"
+        $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);
+
+        // Supprime les slash ou antislash de fins
+        $dolibarr_main_document_root = ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
+    }
 }
 
 ?>
@@ -162,8 +163,8 @@ $dolibarr_main_db_host = "localhost";
 </td>
 
 <td class="label"><select name='db_type'>
-<option value='mysql'<?php echo (!$dolibarr_main_db_type||$dolibarr_main_db_type=='mysql')?" selected":"" ?>>MySql</option>
-<option value='pgsql'<?php echo ($dolibarr_main_db_type=='pgsql')?" selected":"" ?>>PostgreSQL <?php echo $langs->trans("Experimental"); ?></option>
+<option value='mysql'<?php echo (! isset($dolibarr_main_db_type) || $dolibarr_main_db_type=='mysql')?" selected":"" ?>>MySql</option>
+<option value='pgsql'<?php echo (isset($dolibarr_main_db_type) && $dolibarr_main_db_type=='pgsql')?" selected":"" ?>>PostgreSQL <?php echo $langs->trans("Experimental"); ?></option>
 </select>
 &nbsp;
 </td>
@@ -178,8 +179,8 @@ $dolibarr_main_db_host = "localhost";
 <td valign="top" class="label">
 <?php echo $langs->trans("Server"); ?>
 </td>
-<td valign="top" class="label"><input type="text" name="db_host" value="<?php print $dolibarr_main_db_host ?>">
-<input type="hidden" name="base" value="<?php print $test_base?>">
+<td valign="top" class="label"><input type="text" name="db_host" value="<?php print isset($dolibarr_main_db_host)?$dolibarr_main_db_host:''; ?>">
+<input type="hidden" name="base" value="">
 </td>
 <td class="comment">
 Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web
@@ -192,7 +193,7 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 <?php echo $langs->trans("DatabaseName"); ?>
 </td>
 
-<td class="label" valign="top"><input type="text" name="db_name" value="<?php echo $dolibarr_main_db_name ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_name" value="<?php echo isset($dolibarr_main_db_name)?$dolibarr_main_db_name:''; ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("DatabaseName"); ?>
 </td>
@@ -213,7 +214,7 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 <td class="label" valign="top">
 <?php echo $langs->trans("Login"); ?>
 </td>
-<td class="label" valign="top"><input type="text" name="db_user" value="<?php print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:'' ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_user" value="<?php print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:''; ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("AdminLogin"); ?>
 </td>
@@ -223,7 +224,7 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 <td class="label" valign="top">
 <?php echo $langs->trans("Password"); ?>
 </td>
-<td class="label" valign="top"><input type="text" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:'' ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:''; ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("AdminPassword"); ?>
 </td>
@@ -249,7 +250,7 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 <td class="label" valign="top">
 <?php echo $langs->trans("Login"); ?>
 </td>
-<td class="label" valign="top"><input type="text" name="db_user_root" value="<?php if(isset($db_user_root)) print $db_user_root; ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_user_root" value="<?php if (isset($db_user_root)) print $db_user_root; ?>"></td>
 <td class="label"><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si votre base est déjà créée (comme lorsque vous êtes chez un hébergeur). Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
@@ -258,7 +259,7 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 <td class="label" valign="top">
 <?php echo $langs->trans("Password"); ?>
 </td>
-<td class="label" valign="top"><input type="text" name="db_pass_root" value="<?php if(isset($db_pass_root)) print $db_pass_root; ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_pass_root" value="<?php if (isset($db_pass_root)) print $db_pass_root; ?>"></td>
 <td class="label"><div class="comment">
 <?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
 </div>
