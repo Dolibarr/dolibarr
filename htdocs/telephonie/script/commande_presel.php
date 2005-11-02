@@ -164,6 +164,9 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
       
       fwrite($fp, $out);
       
+      if ($verbose > 2)
+	dolibarr_syslog("Data sent, waiting for response");
+
       $parse = 0;
       $result = "error";
 
