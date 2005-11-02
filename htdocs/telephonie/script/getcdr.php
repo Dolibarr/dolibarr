@@ -79,10 +79,15 @@ $date = time() - (24 * 3600 * $nbdays);
 $file = "daily_report_".strftime("%Y%m%d", $date).".zip";
 
 $remote_file = 'cdr/'.$file;
+
+$remote_size = ftp_size($conn_id, $remote_file);
+if ($verbose)
+  echo "Récupération de ".$remote_size." Ko\n";
+
 $local_file = DOL_DATA_ROOT.'/telephonie/CDR/temp/'.$file;
 $handle = fopen($local_file, 'w');
 
-if (ftp_fget($conn_id, $handle, $remote_file, FTP_ASCII, 0))
+if (ftp_fget($conn_id, $handle, $remote_file, FTP_BINARY, 0))
 {
   if ($verbose)
     echo "Le chargement a réussi dans ".$local_file."\n";
@@ -95,46 +100,57 @@ else
 // Fermeture du flux FTP
 ftp_close($conn_id);
 
-// Dezippage du fichier
+$local_size = filesize($local_file);
 
-$zip = zip_open($local_file);
-
-if ($zip) {
-
-   while ($zip_entry = zip_read($zip))
-     {
-       if ($verbose)	
-	 {
-	   echo "Nom du fichier    : " . zip_entry_name($zip_entry) . "\n";
-	   echo "Taille réelle     : " . zip_entry_filesize($zip_entry) . "\n";
-	   echo "Taille compressée : " . zip_entry_compressedsize($zip_entry) . "\n";
-	   echo "Méthode           : " . zip_entry_compressionmethod($zip_entry) . "\n";
-	 }
-       
-       if (zip_entry_open($zip, $zip_entry, "r"))
-	 {
-	   if ($verbose)
-	     echo "Decompression dans ".DOL_DATA_ROOT.'/telephonie/CDR/atraiter/'.zip_entry_name($zip_entry)."\n";
-
-	   $fp = fopen(DOL_DATA_ROOT.'/telephonie/CDR/atraiter/'.zip_entry_name($zip_entry),"w");
-
-	     if ($fp)
-	       {
-		 $buf = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
-
-		 if (fwrite($fp, $buf) === FALSE)
-		   {
-		     echo "Erreur d'ecriture\n";
-		   }
-		 fclose($fp);
-	       }
-	   zip_entry_close($zip_entry);
-	 }
-   }
-   zip_close($zip);
+if (file_exists($local_file) && $local_size === $remote_size && $local_size > 0)
+{
+  // Dezippage du fichier
+  $zip = zip_open($local_file);
+  
+  if ($zip) {
+    
+    while ($zip_entry = zip_read($zip))
+      {
+	if ($verbose)	
+	  {
+	    echo "Nom du fichier    : " . zip_entry_name($zip_entry) . "\n";
+	    echo "Taille réelle     : " . zip_entry_filesize($zip_entry) . "\n";
+	    echo "Taille compressée : " . zip_entry_compressedsize($zip_entry) . "\n";
+	    echo "Méthode           : " . zip_entry_compressionmethod($zip_entry) . "\n";
+	  }
+	
+	if (zip_entry_open($zip, $zip_entry, "r"))
+	  {
+	    if ($verbose)
+	      echo "Decompression dans ".DOL_DATA_ROOT.'/telephonie/CDR/atraiter/'.zip_entry_name($zip_entry)."\n";
+	    
+	    $fp = fopen(DOL_DATA_ROOT.'/telephonie/CDR/atraiter/'.zip_entry_name($zip_entry),"w");
+	    
+	    if ($fp)
+	      {
+		$buf = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
+		
+		if (fwrite($fp, $buf) === FALSE)
+		  {
+		    echo "Erreur d'ecriture\n";
+		  }
+		fclose($fp);
+	      }
+	    zip_entry_close($zip_entry);
+	  }
+      }
+    zip_close($zip);
+  }
+  
+  // Archivage du fichier
+    
 }
-
-// Archivage du fichier
+else
+{
+  print "Erreur de récupération du fichier ".$local_file."\n";
+  print "Remote size ".$remote_size."\n";
+  print "Local  size ".$local_size."\n";
+}
 
 if (!file_exists(DOL_DATA_ROOT.'/telephonie/CDR/archive/'))
 {
