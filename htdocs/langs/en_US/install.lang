@@ -1,10 +1,11 @@
 # Dolibarr language file - en_US - install
 InstallEasy=We tried to make Dolibarr setup as easy as possible. Just follow instructions step by step.
 DolibarrWelcome=Welcome on Dolibarr
-ConfFileExists=Configuration file <b>conf.php</b> exists.
-ConfFileCouldBeCreated=Configuration file <b>conf.php</b> could be created.
-ConfFileIsNotWritable=Configuration file <b>conf.php</b> is not writable. Check permissions for first install, your web server must be granted to be able to write into this file during configuration process ("chmod 666" for example on Unix like OS).
-ConfFileIsWritable=Configuration file <b>conf.php</b> is writable.
+ConfFileExists=Configuration file <b>%s</b> exists.
+ConfFileCouldBeCreated=Configuration file <b>%s</b> could be created.
+ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions for first install, your web server must be granted to be able to write into this file during configuration process ("chmod 666" for example on Unix like OS).
+ConfFileIsWritable=Configuration file <b>%s</b> is writable.
+ConfFileDoesNotExists=Configuration file <b>%s</b> does not exist !
 ErrorDirDoesNotExists=Directory %s does not exists.
 ErrorGoBackAndCorrectParameters=Go backward and correct wrong parameters.
 YouCanContinue=You can continue...
@@ -74,3 +75,5 @@ UpgradeDesc=Use this mode if you had replaced old Dolibarr files with files of a
 Start=Start
 InstallNotAllowed=Setup not allowed by <b>conf.php</b> permissions
 NotAvailable=Not available
+YouMustCreateWithPermission=You must create file %s and set write permissions on it for web server during install process.
+CorrectProblemAndReloadPage=Correct problem and <a href="index.php">reload page</a> (Press F5 key).
