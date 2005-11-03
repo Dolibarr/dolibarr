@@ -490,6 +490,7 @@ class LigneTel {
     if ($fourn > 0)
       {
 	$sql .= " AND fk_fournisseur =".$fourn;
+	$this->fournisseur_id = $fourn;
       }
 
     $this->db->query($sql);
