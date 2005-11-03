@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,546 +22,551 @@
  * $Source$
  */
 
-/**	
-        \file       htdocs/fourn/fournisseur.facture.class.php
-        \ingroup    fournisseur
-        \brief      Fichier de la classe des factures fournisseurs
-        \version    $Revision$
+/**
+		\file       htdocs/fourn/fournisseur.facture.class.php
+		\ingroup    fournisseur,facture
+		\brief      Fichier de la classe des factures fournisseurs
+		\version    $Revision$
 */
 
 
 /**
-        \class      FactureFournisseur
-        \brief      Classe permettant la gestion des factures fournisseurs
+		\class      FactureFournisseur
+		\brief      Classe permettant la gestion des factures fournisseurs
 */
 
 class FactureFournisseur
 {
-    var $id;
-    var $db;
-    var $socid;
-    var $number;
-    var $statut;
-    var $paye;
-    var $author;
-    var $libelle;
-    var $date;
-    var $date_echeance;
-    var $ref;
-    var $amount;
-    var $remise;
-    var $tva;
-    var $total_ht;
-    var $total_tva;
-    var $total_ttc;
-    var $note;
-    var $db_table;
-    var $propalid;
-    var $lignes;
-    
-    /**
-     *    \brief  Constructeur de la classe
-     *    \param  DB          handler accès base de données
-     *    \param  soc_idp     id societe ("" par defaut)
-     *    \param  facid       id facture ("" par defaut)
-     */
-    function FactureFournisseur($DB, $soc_idp="", $facid="")
-    {
-        $this->db = $DB ;
-        $this->socidp = $soc_idp;
-        $this->products = array();
-        $this->db_table = MAIN_DB_PREFIX."facture";
-        $this->amount = 0;
-        $this->remise = 0;
-        $this->tva = 0;
-        $this->total = 0;
-        $this->propalid = 0;
-        $this->id = $facid;
-    
-        $this->lignes = array();
-    }
+	var $id;
+	var $db;
+	var $socidp;
+	var $statut;
+	var $paye;
+	var $author;
+	var $libelle;
+	var $date;
+	var $date_echeance;
+	var $ref;
+	var $amount;
+	var $remise;
+	var $tva;
+	var $total_ht;
+	var $total_tva;
+	var $total_ttc;
+	var $note;
+	var $propalid;
+	var $lignes;
+	var $fournisseur;
 
-    /**
-     *    \brief      Création de la facture en base
-     *    \param      user        object utilisateur qui crée
-     *    \return     int         id facture si ok, < 0 si erreur
-     */
-    function create($user)
-    {
-        global $langs;
-    
-        // Nettoyage parametres
-        $socid = $this->socidp;
-        $number = strtoupper($this->number);
-        $amount = $this->amount;
-        $remise = $this->remise;
-    
-        $this->db->begin();
-    
-        if (! $remise) $remise = 0 ;
-        $totalht = ($amount - $remise);
-    
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ";
-        $sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
-        $sql .= $this->socid.", now(),'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
-    
-        $resql=$this->db->query($sql);
-    
-        if ($resql)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
-    
-            for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-            {
-    
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
-                $sql .= " VALUES ($this->id);";
-                if ($this->db->query($sql))
-                {
-                    $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
-    
-                    $this->updateline($idligne,
-                    $this->lignes[$i][0],
-                    $this->lignes[$i][1],
-                    $this->lignes[$i][2],
-                    $this->lignes[$i][3]);
-                }
-            }
-    
-            // Mise à jour prix
-            if ($this->updateprice($this->id) > 0)
-            {
-                $this->db->commit();
-                return $this->id;
-            }
-            else
-            {
-                $this->error=$langs->trans("FailedToUpdatePrice");
-                $this->db->rollback();
-                return -3;
-            }
-        }
-        else
-        {
-            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-            {
-                $this->error=$langs->trans("ErrorBillRefAlreadyExists");
-                $this->db->rollback();
-                return -1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                $this->db->rollback();
-                return -2;
-            }
-        }
-    }
-  
-  /**
-   *    \brief      Recupére l'objet facture et ses lignes de factures
-   *    \param      rowid       id de la facture a récupérer
-   */
-  function fetch($rowid)
-  {
-    $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
-    $sql .= ", total_ht, total_tva, total_ttc, fk_user_author";
-    $sql .= ", fk_statut, paye, f.note,".$this->db->pdate(date_lim_reglement)."as de";
-    $sql .= ", s.nom as socnom, s.idp as socidp";
-    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."societe as s";
-    $sql .= " WHERE f.rowid=$rowid AND f.fk_soc = s.idp ;";
-    
-    if ($this->db->query($sql) )
+	/**
+	 *    \brief  Constructeur de la classe
+	 *    \param  DB          handler accès base de données
+	 *    \param  soc_idp     id societe ('' par defaut)
+	 *    \param  facid       id facture ('' par defaut)
+	 */
+	function FactureFournisseur($DB, $soc_idp='', $facid='')
 	{
-	  if ($this->db->num_rows())
-	    {
-	      $obj = $this->db->fetch_object();
-	      
-	      $this->id            = $rowid;
-	      $this->datep         = $obj->df;
-	      $this->date_echeance = $obj->de;
-	      $this->ref           = $obj->facnumber;
-	      $this->libelle       = $obj->libelle;
+		$this->db = $DB ;
+		$this->socidp = $soc_idp;
+		$this->products = array();
+		$this->amount = 0;
+		$this->remise = 0;
+		$this->tva = 0;
+		$this->total_ht = 0;
+		$this->total_tva = 0;
+		$this->total_ttc = 0;
+		$this->propalid = 0;
+		$this->id = $facid;
 
-	      $this->remise        = $obj->remise;
-	      $this->socidp        = $obj->fk_soc;
+		$this->lignes = array();
+	}
 
-	      $this->total_ht  = $obj->total_ht;
-	      $this->total_tva = $obj->total_tva;
-	      $this->total_ttc = $obj->total_ttc;
+	/**
+	 *    \brief      Création de la facture en base
+	 *    \param      user        object utilisateur qui crée
+	 *    \return     int         id facture si ok, < 0 si erreur
+	 */
+	function create($user)
+	{
+		global $langs;
 
-	      $this->author    = $obj->fk_user_author;
+		$socidp = $this->socidp;
+		$number = $this->ref;
+		$amount = $this->amount;
+		$remise = $this->remise;
 
-	      $this->statut = $obj->fk_statut;
-	      $this->paye   = $obj->paye;
+		$this->db->begin();
 
-	      $this->socidp = $obj->socidp;
-	      $this->socnom = $obj->socnom;
-	      $this->note = $obj->note;
-	      $this->db->free();
+		if (! $remise) $remise = 0 ;
+		$totalht = ($amount - $remise);
+// NE ME SEMBLE PLUS JUSTIFIE ICI
+//        $tva = tva($totalht);
+//        $total = $totalht + $tva;
 
-	      /* 
-	       * Lignes
-	       */
-	      $sql = "SELECT rowid,description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn=".$this->id;
-      
-	      if ($this->db->query($sql) )
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ';
+		$sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
+		$sql .= $this->socidp.", now(),'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-		  $num = $this->db->num_rows();
-		  $i = 0;
-		  if ($num)
-		    {
-		      while ($i < $num)
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn');
+			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 			{
-			  $obj = $this->db->fetch_object();
-			  $this->lignes[$i][0] = stripslashes($obj->description);
-			  $this->lignes[$i][1] = $obj->pu_ht;
-			  $this->lignes[$i][2] = $obj->tva_taux;
-			  $this->lignes[$i][3] = $obj->qty;
-			  $this->lignes[$i][4] = $obj->total_ht;
-			  $this->lignes[$i][5] = $obj->tva;
-			  $this->lignes[$i][6] = $obj->total_ttc;
-			  $this->lignes[$i][7] = $obj->rowid;
-			  $i++;
+				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
+				$sql .= ' VALUES ('.$this->id.');';
+				$resql_insert=$this->db->query($sql);
+				if ($resql_insert)
+				{
+					$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
+					$this->updateline($idligne,
+					$this->lignes[$i][0],
+					$this->lignes[$i][1],
+					$this->lignes[$i][2],
+					$this->lignes[$i][3]);
+				}
 			}
-		    }
+			// Mise à jour prix
+			if ($this->updateprice($this->id) > 0)
+			{
+				$this->db->commit();
+				return $this->id;
+			}
+			else
+			{
+				$this->error=$langs->trans('FailedToUpdatePrice');
+				$this->db->rollback();
+				return -3;
+			}
 		}
-	      else
+		else
 		{
-    	  dolibarr_print_error($this->db);
+			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$this->error=$langs->trans('ErrorBillRefAlreadyExists');
+				$this->db->rollback();
+				return -1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				$this->db->rollback();
+				return -2;
+			}
 		}
-	    }
 	}
-      else
+
+	/**
+	 *    \brief      Recupére l'objet facture et ses lignes de factures
+	 *    \param      rowid       id de la facture a récupérer
+	 */
+	function fetch($rowid)
 	{
-    	  dolibarr_print_error($this->db);
-	}
-    }
-
-  /**
-   * \brief     Supprime la facture
-   * \param     rowid      id de la facture à supprimer
-   */
-  function delete($rowid)
-    {
-
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn WHERE rowid = $rowid AND fk_statut = 0";
-
-      if ( $this->db->query( $sql) )
-	{
-	  if ( $this->db->affected_rows() )
-	    {
-	      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn = $rowid;";
-
-	      if ($this->db->query( $sql) )
+		$sql = 'SELECT libelle, facnumber, amount, remise, '.$this->db->pdate(datef).'as df';
+		$sql .= ', total_ht, total_tva, total_ttc, fk_user_author';
+		$sql .= ', fk_statut, paye, f.note,'.$this->db->pdate('date_lim_reglement').'as de';
+		$sql .= ', s.nom as socnom, s.idp as socidp';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
+		$sql .= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.idp ;';
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-		  return 1;
-		}
-	      else
-		{
-    	  dolibarr_print_error($this->db);
-		}
-	    }
-	}
-      else
-	{
-    	  dolibarr_print_error($this->db);
-	}
-    }
+			$num=$this->db->num_rows($resql);
+			if ($num)
+			{
+				$obj = $this->db->fetch_object();
 
-    /**
-     *      \brief      Tag la facture comme payée complètement
-     *      \param      user        Objet utilisateur qui modifie
+				$this->id            = $rowid;
+				$this->datep         = $obj->df;
+				$this->date_echeance = $obj->de;
+				$this->ref           = $obj->facnumber;
+				$this->libelle       = $obj->libelle;
+
+				$this->remise        = $obj->remise;
+				$this->socidp        = $obj->socidp;
+
+				$this->total_ht  = $obj->total_ht;
+				$this->total_tva = $obj->total_tva;
+				$this->total_ttc = $obj->total_ttc;
+
+				$this->author    = $obj->fk_user_author;
+
+				$this->statut = $obj->fk_statut;
+				$this->paye   = $obj->paye;
+
+				$this->socnom = $obj->socnom;
+				$this->note = $obj->note;
+				$this->db->free($resql);
+
+				/*
+				* Lignes
+				*/
+				$sql = 'SELECT rowid,description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det';
+				$sql .= ' WHERE fk_facture_fourn='.$this->id;
+				$resql_rows = $this->db->query($sql);
+				if ($resql_rows)
+				{
+					$num_rows = $this->db->num_rows($resql_rows);
+					$i = 0;
+					if ($num_rows)
+					{
+						while ($i < $num_rows)
+						{
+							$obj = $this->db->fetch_object();
+							$this->lignes[$i][0] = stripslashes($obj->description);
+							$this->lignes[$i][1] = $obj->pu_ht;
+							$this->lignes[$i][2] = $obj->tva_taux;
+							$this->lignes[$i][3] = $obj->qty;
+							$this->lignes[$i][4] = $obj->total_ht;
+							$this->lignes[$i][5] = $obj->tva;
+							$this->lignes[$i][6] = $obj->total_ttc;
+							$this->lignes[$i][7] = $obj->rowid;
+							$i++;
+						}
+					}
+					$this->db->free($resql_rows);
+				}
+				else
+				{
+					dolibarr_print_error($this->db);
+				}
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+
+	/**
+	 * \brief     Recupére l'objet fournisseur lié à la facture
+	 *
+	 */
+	function fetch_fournisseur()
+	{
+		$fournisseur = new Fournisseur($this->db);
+		$fournisseur->fetch($this->socidp);
+		$this->fournisseur = $fournisseur;
+	}
+
+	/**
+	 * \brief     Supprime la facture
+	 * \param     rowid      id de la facture à supprimer
+	 */
+	function delete($rowid)
+	{
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid.' AND fk_statut = 0;';
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->affected_rows($resql);
+			if ($num)
+			{
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
+				$resql2 = $this->db->query($sql);
+				if ($resql2)
+				{
+					return 1;
+				}
+				else
+				{
+					dolibarr_print_error($this->db);
+				}
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+
+	/**
+	 * \brief     Tag la facture comme payée complètement
+	 * \param     userid        utilisateur qui modifie l'état
      *      \return     int         <0 si ko, >0 si ok
-     */
+	 */
     function set_payed($user)
-    {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-        $sql.= " SET paye = 1";
-        $sql.= " WHERE rowid = ".$this->id;
-        $result = $this->db->query($sql);
-        if (! $result)
-        {
-            dolibarr_print_error($this->db);
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set paye = 1 WHERE rowid = '.$this->id.';';
+		$resql = $this->db->query($sql);
+		if (! $resql)
+		{
+			dolibarr_print_error($this->db);
             return -1;
-        }
+		}
         return 1;
-    }
-    
-    /**
-     *      \brief      Tag la facture comme validée et valide la facture
-     *      \param      user         Objet utilisateur qui modifie
-     *      \return     int         <0 si ko, >0 si ok
-     */
-    function set_valid($user)
-    {
+	}
+
+	/**
+	 * \brief     Tag la facture comme validée et valide la facture
+	 * \param     userid        utilisateur qui valide la facture
+	 */
+	function set_valid($userid)
+	{
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
         $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
-        $result = $this->db->query( $sql);
-        if (! $result) {
-            dolibarr_print_error($this->db);
-        }
-    }
+		$resql = $this->db->query($sql);
+		if (! $resql)
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
 
 
-  /**
-   * \brief     Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
-   * \param     desc            description de la ligne
-   * \param     pu              prix unitaire
-   * \param     tauxtva         taux de tva
-   * \param     qty             quantité
-   */
-  function addline($desc, $pu, $tauxtva, $qty)
-  {
-    
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
-    $sql .= " VALUES ($this->id);";
-    if ($this->db->query($sql) ) 
-      {
-	$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
-	
-	$this->updateline($idligne, $desc, $pu, $tauxtva, $qty);
-      }
-    else
-      {
-    	  dolibarr_print_error($this->db);
-      }
-    
-    // Mise a jour prix facture
-    $this->updateprice($this->id);
-    
-  }
+	/**
+	 * \brief     Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
+	 * \param     desc            description de la ligne
+	 * \param     pu              prix unitaire
+	 * \param     tauxtva         taux de tva
+	 * \param     qty             quantité
+	 */
+	function addline($desc, $pu, $tauxtva, $qty)
+	{
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
+		$sql .= ' VALUES ('.$this->id.');';
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
+			$this->updateline($idligne, $desc, $pu, $tauxtva, $qty);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+		// Mise a jour prix facture
+		$this->updateprice($this->id);
+	}
 
-  /**
-   * \brief     Mets à jour une ligne de facture
-   * \param     id              id de la ligne de facture
-   * \param     label           description de la ligne
-   * \param     puht            prix unitaire
-   * \param     tauxtva         taux tva
-   * \param     qty             quantité
-   * \return    int             <0 si ko, >0 si ok
-   */
-  function updateline($id, $label, $puht, $tauxtva, $qty=1)
-  {
-    $puht = ereg_replace(",",".",$puht);
-    $qty  = ereg_replace(",",".",$qty);
-    
-    if (is_numeric($puht) && is_numeric($qty))
-    {
-        $totalht  = ($puht * $qty);
-        $tva      = ($totalht * $tauxtva /  100);
-        $totalttc = $totalht + $tva;
-    
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
-        $sql .= "SET description ='".addslashes($label)."'";
-        $sql .= ", pu_ht = "  .ereg_replace(",",".",$puht);
-        $sql .= ", qty ="     .ereg_replace(",",".",$qty);
-        $sql .= ", total_ht=" .ereg_replace(",",".",$totalht);
-        $sql .= ", tva="      .ereg_replace(",",".",$tva);
-        $sql .= ", tva_taux=" .ereg_replace(",",".",$tauxtva);
-        $sql .= ", total_ttc=".ereg_replace(",",".",$totalttc);
-        $sql .= " WHERE rowid = ".$id;
-    
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            // Mise a jour prix facture
-            return $this->updateprice($this->id);
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
-  }
+	/**
+	 * \brief     Mets à jour une ligne de facture
+	 * \param     id              id de la ligne de facture
+	 * \param     label           description de la ligne
+	 * \param     puht            prix unitaire
+	 * \param     tauxtva         taux tva
+	 * \param     qty             quantité
+	 * \return    int             <0 si ko, >0 si ok
+	 */
+	function updateline($id, $label, $puht, $tauxtva, $qty=1)
+	{
+		$puht = price2num($puht);
+		$qty  = price2num($qty);
 
-  /**
-   * \brief     Supprime une ligne facture de la base
-   * \param     rowid      id de la ligne de facture a supprimer
-   */
-  function deleteline($rowid)
-  {
-    // Supprime ligne
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det ";
-    $sql .= " WHERE rowid = $rowid";
-    
-    if (! $this->db->query($sql) ) 
-      {
-    	  dolibarr_print_error($this->db);
-      }
-    
-    // Mise a jour prix facture
-    $this->updateprice($this->id);
-    
-    return 1;
-  }
+		if (is_numeric($puht) && is_numeric($qty))
+		{
+			$totalht  = ($puht * $qty);
+			$tva      = ($totalht * $tauxtva /  100);
+			$totalttc = $totalht + $tva;
 
-   /**
-    *    \brief      Mise à jour des sommes de la facture
-    *    \param      facid       id de la facture a modifier
-    *    \return     int         <0 si ko, >0 si ok
-    */
-    function updateprice($facid)
-    {
-        $total_ht  = 0;
-        $total_tva = 0;
-        $total_ttc = 0;
-    
-        $sql = "SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
-        $sql .= " WHERE fk_facture_fourn = $facid;";
-    
-        $result = $this->db->query($sql);
-    
-        if ($result)
-        {
-            if ($this->db->num_rows() )
-            {
-                $row = $this->db->fetch_row();
-                $total_ht  = $row[0];
-                $total_tva = $row[1];
-                $total_ttc = $row[2];
-    
-            }
-            $total_ht  = $total_ht  != '' ? $total_ht  : 0;
-            $total_tva = $total_tva != '' ? $total_tva : 0;
-            $total_ttc = $total_ttc != '' ? $total_ttc : 0;
-    
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
-            $sql .= " total_ht = ". ereg_replace(",",".",$total_ht);
-            $sql .= ",total_tva = ".ereg_replace(",",".",$total_tva);
-            $sql .= ",total_ttc = ".ereg_replace(",",".",$total_ttc);
-            $sql .= " WHERE rowid = $facid ;";
-    
-            $result = $this->db->query($sql);
-            if ($result) 
-            {
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                return -2;
-            }
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-            return -1;
-        }
-    }
-  
-  
-  /**
-   *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-   *    \return     string      Libellé
-   */
-    function getLibStatut()
-    {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
+			$sql .= 'SET ';
+			$sql .= 'description =\''.addslashes($label).'\'';
+			$sql .= ', pu_ht = '  .$puht;
+			$sql .= ', qty ='     .$qty;
+			$sql .= ', total_ht=' .price2num($totalht);
+			$sql .= ', tva='      .price2num($tva);
+			$sql .= ', tva_taux=' .price2num($tauxtva);
+			$sql .= ', total_ttc='.price2num($totalttc);
+			$sql .= ' WHERE rowid = '.$id.';';
+
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				// Mise a jour prix facture
+				return $this->updateprice($this->id);
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+	}
+
+	/**
+	 * \brief     Supprime une ligne facture de la base
+	 * \param     rowid      id de la ligne de facture a supprimer
+	 */
+	function deleteline($rowid)
+	{
+		// Supprime ligne
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
+		$sql .= ' WHERE rowid = '.$rowid.';';
+		$resql = $this->db->query($sql);
+		if (! $resql)
+		{
+			dolibarr_print_error($this->db);
+		}
+		// Mise a jour prix facture
+		$this->updateprice($this->id);
+		return 1;
+	}
+
+	/**
+	 *    \brief      Mise à jour des sommes de la facture
+	 *    \param      facid       id de la facture a modifier
+	 *    \return     int         <0 si ko, >0 si ok
+	 */
+	function updateprice($facid)
+	{
+		$total_ht  = 0;
+		$total_tva = 0;
+		$total_ttc = 0;
+
+		$sql = 'SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM '.MAIN_DB_PREFIX.'facture_fourn_det';
+		$sql .= ' WHERE fk_facture_fourn = '.$facid.';';
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				$row = $this->db->fetch_row();
+				$total_ht  = $row[0];
+				$total_tva = $row[1];
+				$total_ttc = $row[2];
+			}
+			$this->db->free($resql);
+
+			$total_ht  = $total_ht  != '' ? $total_ht  : 0;
+			$total_tva = $total_tva != '' ? $total_tva : 0;
+			$total_ttc = $total_ttc != '' ? $total_ttc : 0;
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET';
+			$sql .= ' total_ht = '. price2num($total_ht);
+			$sql .= ',total_tva = '.price2num($total_tva);
+			$sql .= ',total_ttc = '.price2num($total_ttc);
+			$sql .= ' WHERE rowid = '.$facid.';';
+			$resql2 = $this->db->query($sql);
+			if ($resql2)
+			{
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -2;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
+
+
+	/**
+	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	 *    \return     string      Libellé
+	 */
+	function getLibStatut()
+	{
 		return $this->LibStatut($this->paye,$this->statut);
-    }
+	}
 
-    /**
-     *    \brief      Renvoi le libellé court d'un statut donné
-     *    \param      paye        etat paye
-     *    \param      statut      id statut
-     *    \return     string      Libellé long du statut
-     */
-    function LibStatutShort($paye,$statut)
-    {
-        global $langs;
-        $langs->load("bills");
-        if (! $paye)
-        {
-            if ($statut == 0) return $langs->trans("BillShortStatusDraft");
-            if ($statut == 3) return $langs->trans("BillShortStatusCanceled");
-            return $langs->trans("BillShortValidated");
-        }
-        else
-        {
-            return $langs->trans("BillShortStatusPayed");
-        }
-    }
+	/**
+	 *    \brief      Renvoi le libellé court d'un statut donné
+	 *    \param      paye        etat paye
+	 *    \param      statut      id statut
+	 *    \return     string      Libellé long du statut
+	 */
+	function LibStatutShort($paye,$statut)
+	{
+		global $langs;
+		$langs->load('bills');
+		if (! $paye)
+		{
+			if ($statut == 0) return $langs->trans('BillShortStatusDraft');
+			if ($statut == 3) return $langs->trans('BillShortStatusCanceled');
+			return $langs->trans('BillShortValidated');
+		}
+		else
+		{
+			return $langs->trans('BillShortStatusPayed');
+		}
+	}
 
-    /**
-     *    \brief      Renvoi le libellé long d'un statut donné
-     *    \param      paye        etat paye
-     *    \param      statut      id statut
-     *    \return     string      Libellé long du statut
-     */
-    function LibStatut($paye,$statut)
-    {
-        global $langs;
-        $langs->load("bills");
-        if (! $paye)
-        {
-            if ($statut == 0) return $langs->trans("BillStatusDraft");
-            if ($statut == 3) return $langs->trans("BillStatusCanceled");
-            return $langs->trans("BillStatusValidated");
-        }
-        else
-        {
-            return $langs->trans("BillStatusPayed");
-        }
-    }
-    
-    /**
-     *    \brief      Renvoi le libellé court d'un statut donné
-     *    \param      paye        etat paye
-     *    \param      statut      id statut
-     *    \param      amount      amount already payed
-     *    \return     string      Libellé court du statut
-     */
-    function PayedLibStatut($paye,$statut,$amount=0)
-    {
-        global $langs;
-        $langs->load("bills");
-        if (! $paye)
-        {
-            if ($statut == 0) return $langs->trans("BillShortStatusDraft");
-            if ($statut == 3) return $langs->trans("BillStatusCanceled");
-            if ($amount) return $langs->trans("BillStatusStarted");
-            return $langs->trans("BillStatusNotPayed");
-        }
-        else
-        {
-            return $langs->trans("BillStatusPayed");
-        }
-    }
+	/**
+	 *    \brief      Renvoi le libellé long d'un statut donné
+	 *    \param      paye        etat paye
+	 *    \param      statut      id statut
+	 *    \return     string      Libellé long du statut
+	 */
+	function LibStatut($paye,$statut)
+	{
+		global $langs;
+		$langs->load('bills');
+		if (! $paye)
+		{
+			if ($statut == 0) return $langs->trans('BillStatusDraft');
+			if ($statut == 3) return $langs->trans('BillStatusCanceled');
+			return $langs->trans('BillStatusValidated');
+		}
+		else
+		{
+			return $langs->trans('BillStatusPayed');
+		}
+	}
+
+	/**
+	 *    \brief      Renvoi le libellé court d'un statut donné
+	 *    \param      paye        etat paye
+	 *    \param      statut      id statut
+	 *    \param      amount      amount already payed
+	 *    \return     string      Libellé court du statut
+	 */
+	function PayedLibStatut($paye,$statut,$amount=0)
+	{
+		global $langs;
+		$langs->load('bills');
+		if (! $paye)
+		{
+			if ($statut == 0) return $langs->trans('BillShortStatusDraft');
+			if ($statut == 3) return $langs->trans('BillStatusCanceled');
+			if ($amount) return $langs->trans('BillStatusStarted');
+			return $langs->trans('BillStatusNotPayed');
+		}
+		else
+		{
+			return $langs->trans('BillStatusPayed');
+		}
+	}
 
 
-    /**
-     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
-     *      \param      user        Objet user
-     *      \return     int         <0 si ko, >0 si ok
-     */
-    function load_board($user)
-    {
-        global $conf;
-        
-        $this->nbtodo=$this->nbtodolate=0;
-        $sql = "SELECT ff.rowid,".$this->db->pdate("ff.date_lim_reglement")." as datefin";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
-        $sql.= " WHERE ff.paye=0";
-        if ($user->societe_id) $sql.=" AND fk_soc = ".$user->societe_id;
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            while ($obj=$this->db->fetch_object($resql))
-            {
-                $this->nbtodo++;
-                if ($obj->datefin < (time() - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
-            }
-            return 1;
-        }
-        else 
-        {
-            dolibarr_print_error($this->db);
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
+	/**
+	 *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+	 *      \param      user        Objet user
+	 *      \return     int         <0 si ko, >0 si ok
+	 */
+	function load_board($user)
+	{
+		global $conf;
+
+		$this->nbtodo=$this->nbtodolate=0;
+		$sql = 'SELECT ff.rowid,'.$this->db->pdate('ff.date_lim_reglement').' as datefin';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
+		$sql.= ' WHERE ff.paye=0;';
+		if ($user->societe_id) $sql.=' AND fk_soc = '.$user->societe_id;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nbtodo++;
+				if ($obj->datefin < (time() - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 
 }
 ?>

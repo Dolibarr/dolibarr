@@ -28,15 +28,15 @@
         \version    $Revision$
 */
 
-require("./pre.inc.php");
+require('./pre.inc.php');
 
-$langs->load("suppliers");
-$langs->load("products");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("companies");
+$langs->load('suppliers');
+$langs->load('products');
+$langs->load('bills');
+$langs->load('orders');
+$langs->load('companies');
 
-$socid = $_GET["socid"];
+$socid = $_GET['socid'];
 /*
  * Sécurité accés client
  */
@@ -57,7 +57,7 @@ if ( $societe->fetch($socid) )
   $addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
   $addons[0][1] = $societe->nom;
 
-  llxHeader('',$langs->trans("SupplierCard").' : '.$societe->nom, $addons);
+  llxHeader('',$langs->trans('SupplierCard').' : '.$societe->nom, $addons);
 
   /*
    * Affichage onglets
@@ -65,49 +65,49 @@ if ( $societe->fetch($socid) )
   $h = 0;
 
   $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
-  $head[$h][1] = $langs->trans("Company");
+  $head[$h][1] = $langs->trans('Company');
   $h++;
 
   if ($societe->client==1)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
-      $head[$h][1] = $langs->trans("Customer");
+      $head[$h][1] = $langs->trans('Customer');
       $h++;
     }
   if ($societe->client==2)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
-      $head[$h][1] = $langs->trans("Prospect");
+      $head[$h][1] = $langs->trans('Prospect');
       $h++;
     }
   if ($societe->fournisseur)
     {
       $hselected=$h;
       $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-      $head[$h][1] = $langs->trans("Supplier");
+      $head[$h][1] = $langs->trans('Supplier');
       $h++;
     }
 
   if ($conf->compta->enabled) {
-    $langs->load("compta");
+    $langs->load('compta');
     $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid;
-    $head[$h][1] = $langs->trans("Accountancy");
+    $head[$h][1] = $langs->trans('Accountancy');
     $h++;
   }
 
   $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-  $head[$h][1] = $langs->trans("Note");
+  $head[$h][1] = $langs->trans('Note');
   $h++;
 
   if ($user->societe_id == 0)
     {
       $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-      $head[$h][1] = $langs->trans("Documents");
+      $head[$h][1] = $langs->trans('Documents');
       $h++;
     }
 
   $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-  $head[$h][1] = $langs->trans("Notifications");
+  $head[$h][1] = $langs->trans('Notifications');
   $h++;
         
   dolibarr_fiche_head($head, $hselected, $societe->nom);

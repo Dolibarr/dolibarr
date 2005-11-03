@@ -22,7 +22,7 @@
 
 /**
   \file       htdocs/fourn/fournisseur.class.php
-  \ingroup    societe
+  \ingroup    fournisseur,societe
   \brief      Fichier de la classe des fournisseurs
   \version    $Revision$
 */

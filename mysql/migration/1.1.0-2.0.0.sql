@@ -1948,3 +1948,16 @@ alter table llx_facture add model varchar(50) after note;
 alter table llx_facturedet modify fk_product      integer NULL;
 alter table llx_contratdet modify fk_product      integer NULL;
 update llx_facturedet set fk_product = null where fk_product=0;
+
+CREATE TABLE IF NOT EXISTS `llx_paiementfourn_facturefourn`
+(
+  `rowid` int(11) NOT NULL auto_increment,
+  `fk_paiementfourn` int(11) default NULL,
+  `fk_facturefourn` int(11) default NULL,
+  `amount` double default '0',
+  PRIMARY KEY  (`rowid`),
+  KEY `idx_fk_facture` (`fk_facturefourn`),
+  KEY `idx_fk_paiement` (`fk_paiementfourn`)
+) TYPE=innodb;
+
+ALTER TABLE `llx_paiementfourn` ADD `statut` SMALLINT( 6 ) NOT NULL ;
