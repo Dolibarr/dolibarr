@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005 Marc Barilley / Océbo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,8 @@ pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
 print $langs->trans("InstallEasy")."<br>";
 
 // Si fichier présent et lisible et renseigné
-if (is_readable($conffile) && sizeof($conffile) > 8)
+clearstatcache();
+if (is_readable($conffile) && filesize($conffile) > 8)
 {
     $confexists=1;
     include_once($conffile);
@@ -57,7 +59,7 @@ else
 {
     // Si non on le crée        
     $confexists=0;
-    $fp = @fopen("$conffile", "w");
+    $fp = @fopen($conffile, "w");
     if($fp)
     {
         @fwrite($fp, '<?php');

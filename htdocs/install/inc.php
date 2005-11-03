@@ -20,33 +20,24 @@
  * $Id$
  * $Source$
  */
-
 /**	    \file       htdocs/install/inc.php
 		\brief      Fichier include du programme d'installation
 		\version    $Revision$
 */
-
-
 $docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 $conffile = "../conf/conf.php";
-
-
 // Defini objet langs
 require_once('../translate.class.php');
 $langs = new Translate('../langs');
 $langs->setDefaultLang('auto');
 $langs->setPhpLang();
-
-
 $tab[0]=' class="bg1"';
 $tab[1]=' class="bg2"';
-
 function pHeader($soutitre,$next,$action='set')
 {
     global $langs;
     $langs->load("main");
     $langs->load("admin");
-
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
     print '<html>';
     print '<head>';
@@ -55,9 +46,7 @@ function pHeader($soutitre,$next,$action='set')
     print '<title>'.$langs->trans("DolibarrSetup").'</title>';
     print '</head>';
     print '<body>';
-
     print '<span class="titre"><a class="titre" href="index.php">'.$langs->trans("DolibarrSetup").'</a></span>';
-
     print '<form action="'.$next.'.php" method="POST">';
     print '<input type="hidden" name="action" value="'.$action.'">';
     print '<div class="main">';
@@ -66,8 +55,6 @@ function pHeader($soutitre,$next,$action='set')
     }
     print '<div class="main-inside">';
 }
-
-
 function pFooter($nonext=0,$setuplang='')
 {
     global $langs;
@@ -87,8 +74,6 @@ function pFooter($nonext=0,$setuplang='')
     print '</body>';
     print '</html>';
 }
-
-
 function dolibarr_syslog($message)
 {
     // Les fonctions syslog ne sont pas toujours installés ou autorisées chez les hébergeurs
@@ -103,5 +88,4 @@ function dolibarr_syslog($message)
         //  }
     }
 }
-
 ?>
