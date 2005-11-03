@@ -29,6 +29,7 @@ create table llx_prelevement_rejet
   motif                 integer,
   date_creation         datetime,
   fk_user_creation      integer,
-  note                  text
-
+  note                  text,
+  afacturer             tinyint default 0,
+  fk_facture            integer
 )type=innodb;
