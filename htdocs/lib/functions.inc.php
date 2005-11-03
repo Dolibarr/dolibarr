@@ -1585,14 +1585,26 @@ function price2num($amount)
 
 
 /**
-		\brief  Fonction qui convertit des euros en francs
-		\param	euros   	somme en euro à convertir
-		\return price       prix converti et formaté    
-*/
-function francs($euros)
+ *		\brief      Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
+ *      \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
+ *                  Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
+ *                  Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
+ *                  Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
+ *                  Sinon la TVA proposée par défaut=0. Fin de règle.
+ *      \param      societe_vendeuse    Objet société vendeuse
+ *      \param      societe_acheteuse   Objet société acheteuse
+ *      \param      taux_produit        Taux par defaut du produit vendu
+ *      \return     float               Taux de tva de la ligne
+ */
+function get_default_tva($societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
 {
-  return price($euros * 6.55957);
+    $tva=$taux_produit;
+
+    // \todo       fonction a ecrire
+
+    return '';
 }
+
 
 /**
 		\brief  Fonction qui calcule la tva
