@@ -66,14 +66,10 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-
       dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
 
-
       print '<table class="border" width="100%">';
-
       print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
-
       print '</table><br />';
     }
   else
@@ -83,7 +79,7 @@ if ($_GET["id"])
 }
 
 $page = $_GET["page"];
-
+$rej = new RejetPrelevement($db, $user);
 /*
  * Liste des factures
  *
@@ -91,13 +87,16 @@ $page = $_GET["page"];
  */
 $sql = "SELECT pl.rowid, pl.amount, pl.statut";
 $sql .= " , s.idp, s.nom";
+$sql .= " , pr.motif, pr.afacturer, pr.fk_facture";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 $sql .= " WHERE p.rowid=".$prev_id;
 $sql .= " AND pl.fk_prelevement_bons = p.rowid";
 $sql .= " AND pl.fk_soc = s.idp";
 $sql .= " AND pl.statut = 3 ";
+$sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
 
 if ($_GET["socid"])
 {
@@ -106,25 +105,24 @@ if ($_GET["socid"])
 
 $sql .= " ORDER BY pl.amount DESC";
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print_barre_liste("Lignes de prélèvement rejetées", $page, "fiche-rejet.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>Ligne</td><td>Société</td><td align="right">Montant</td></tr>';
+  print '<td>Ligne</td><td>Société</td><td align="right">Montant</td><td>Motif</td><td align="center">A Facturer</td><td align="center">Facture</td></tr>';
 
   $var=True;
-
   $total = 0;
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($resql);	
 
       print "<tr $bc[$var]><td>";
       print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
@@ -135,15 +133,23 @@ if ($result)
       print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom)."</a></td>\n";
 
       print '<td align="right">'.price($obj->amount)."</td>\n";
+      print '<td>'.$rej->motifs[$obj->motif].'</td>';
+
+      print '<td align="center">'.$langs->trans($yesno[$obj->afacturer]).'</td>';
+      print '<td align="center">'.$obj->fk_facture.'</td>';
       print "</tr>\n";
 
-      $total += $obj->total_ttc;
+      $total += $obj->amount;
       $var=!$var;
       $i++;
     }
 
-  print "</table>";
-  $db->free($result);
+  print "<tr $bc[$var]><td>&nbsp;</td>";
+  print "<td>Total</td>\n";
+  print '<td align="right">'.price($total)."</td>\n";
+  print '<td>&nbsp;</td>';
+  print "</tr>\n</table>\n";
+  $db->free($resql);
 }
 else 
 {
