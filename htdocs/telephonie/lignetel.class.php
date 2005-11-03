@@ -475,9 +475,8 @@ class LigneTel {
    * Change le statut de la ligne
    *
    */
-  function set_statut($user, $statut, $datea='', $commentaire='')
+  function set_statut($user, $statut, $datea='', $commentaire='', $fourn=0)
   {
-
     if ($statut == 6 || $statut == 3)
       {
 	$this->send_mail($user, $commentaire, $statut);
@@ -488,24 +487,27 @@ class LigneTel {
     $sql .= " SET statut = ".$statut ;
     $sql .= " WHERE rowid =".$this->id;
     
+    if ($fourn > 0)
+      {
+	$sql .= " AND fk_fournisseur =".$fourn;
+      }
+
     $this->db->query($sql);
     
     if ($statut == 2)
       {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-	$sql .= " SET statut = ".$statut ;
-	$sql .= " WHERE rowid =".$this->id;
-
-	$this->db->query($sql);
-
 	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
 	$sql .= " SET date_commande = now()";
 	$sql .= ", fk_user_commande=".$user->id; 
 	$sql .= " WHERE rowid =".$this->id;
 	$sql .= " AND date_commande IS NULL";    
 
-	$this->db->query($sql);
+	if ($fourn > 0)
+	  {
+	    $sql .= " AND fk_fournisseur =".$fourn;
+	  }
 
+	$this->db->query($sql);
       }
 
     if ($datea)
@@ -532,7 +534,6 @@ class LigneTel {
 	$sql .= " AND dates >= '".$datea ."'";
 
 	$this->db->query($sql);
-
       }
     else
       {
