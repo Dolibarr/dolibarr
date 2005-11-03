@@ -635,6 +635,8 @@ create table llx_prelevement_rejet
 
 )type=innodb;
 
+alter table llx_prelevement_rejet add afacturer tinyint default 0;
+alter table llx_prelevement_rejet add fk_facture integer;
 
 ALTER TABLE llx_prelevement_facture ADD INDEX (fk_prelevement_lignes);
 ALTER TABLE llx_prelevement_facture ADD FOREIGN KEY (fk_prelevement_lignes) REFERENCES llx_prelevement_lignes (rowid);
