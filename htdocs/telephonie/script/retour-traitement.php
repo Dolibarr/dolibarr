@@ -92,7 +92,7 @@ for ($i = 0 ; $i < $n ; $i++)
 		{
 		  $error = 0;
 		  
-		  if ($ligne->set_statut($user, $statut, $datea) <> 0)
+		  if ($ligne->set_statut($user, $statut, $datea,'',1) <> 0)
 		    {
 		      $error++;
 		    }
@@ -148,7 +148,7 @@ for ($i = 0 ; $i < $n ; $i++)
 		{
 		  $error = 0;
 		  
-		  if ($ligne->set_statut($user, $statut, $datea) <> 0)
+		  if ($ligne->set_statut($user, $statut, $datea,'',1) <> 0)
 		    {
 		      $error++;
 		    }
