@@ -72,6 +72,16 @@ class DoliDb
         $this->transaction_opened=0;
     
         //print "Name DB: $host,$user,$pass,$name<br>";
+
+        if (! function_exists("pg_connect"))
+        {
+        	$this->connected = 0;
+        	$this->ok = 0;
+            $this->error="Pgsql PHP functions are not available in this version of PHP";
+        	dolibarr_syslog("DoliDB::DoliDB : Pgsql PHP functions are not available in this version of PHP");
+            return $this->ok;
+        }
+
         if (! $host)
         {
         	$this->connected = 0;
@@ -149,7 +159,7 @@ class DoliDb
     */
     function connect($host, $login, $passwd, $name)
     {
-        $con_string = "host=$host dbname=$name user=$login password=$passwd ";
+        $con_string = "host=$host dbname=$name user=$login password=$passwd";
         $this->db = pg_connect($con_string);
         return $this->db;
     }

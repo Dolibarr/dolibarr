@@ -40,9 +40,8 @@ $langs->load("install");
 pHeader($langs->trans("ConfigurationFile"),"etape2");
 
 
-$ok=0;
 $error = 0;
-$etape = 1;
+
 
 // Répertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
@@ -77,7 +76,7 @@ if ($_POST["action"] == "set")
     print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
 
     // Verification validite parametre main_dir
-    if ($error == 0)
+    if (! $error)
     {
         if (! is_dir($main_dir))
         {
@@ -95,7 +94,7 @@ if ($_POST["action"] == "set")
     }
 
     // Sauvegarde fichier configuration
-    if ($error == 0)
+    if (! $error)
     {
         $fp = fopen("$conffile", "w");
     
@@ -165,7 +164,7 @@ if ($_POST["action"] == "set")
     ***************************************************************************/
 
     // Creation des sous-répertoires main_data_dir
-    if ($error == 0)
+    if (! $error)
     {
         dolibarr_syslog ("Le dossier '".$main_dir."' existe");
 
@@ -177,7 +176,7 @@ if ($_POST["action"] == "set")
 
         if (! is_dir($main_data_dir))
         {
-            print "<tr><td>Le dossier '$main_data_dir' n'existe pas ! ";
+            print "<tr><td>".$langs->trans("DirDoesNotExists",$main_data_dir);
             print "Vous devez créer ce dossier et permettre au serveur web d'écrire dans celui-ci";
             print '</td><td>';
             print $langs->trans("Error");
@@ -229,7 +228,7 @@ if ($_POST["action"] == "set")
      * Base de données
      *
      */
-    if ($error == 0)
+    if (! $error)
     {
         include_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
@@ -254,102 +253,70 @@ if ($_POST["action"] == "set")
             if ($choix == 1)     //choix 1=mysql
             {
                 //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass;
+
+                // Creation handler de base, verification du support et connexion
                 $db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,'mysql');
-
-                if ($db->connected)
+                if ($db->error)
                 {
-                    $sql = "INSERT INTO user ";
-                    $sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
-                    $sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass')";
-                    $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
-
-                    //print "$sql<br>\n";
-
-                    $db->query($sql);
-
-                    $sql = "INSERT INTO db ";
-                    $sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
-                    $sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
-                    $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
-
-                    //print "$sql<br>\n";
-
-                    if ($db->query($sql))
+                    print $langs->trans("ThisPHPDoesNotSupportTypeBase",'mysql');
+                    $error++;
+                }
+                
+                if (! $error)
+                {
+                    if ($db->connected)
                     {
-                        dolibarr_syslog("flush privileges");
-                        $db->query("FLUSH Privileges;");
-
-                        print '<tr><td>';
-                        print $langs->trans("UserCreation").' : ';
-                        print $dolibarr_main_db_user;
-                        print '</td>';
-                        print '<td>'.$langs->trans("OK").'</td></tr>';
-                    }
-                    else
-                    {
-                        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                        $sql = "INSERT INTO user ";
+                        $sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+                        $sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass')";
+                        $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
+    
+                        //print "$sql<br>\n";
+    
+                        $db->query($sql);
+    
+                        $sql = "INSERT INTO db ";
+                        $sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+                        $sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
+                        $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
+    
+                        //print "$sql<br>\n";
+    
+                        $resql=$db->query($sql);
+                        if ($resql)
                         {
-                            dolibarr_syslog("Utilisateur deja existant");
+                            dolibarr_syslog("flush privileges");
+                            $db->query("FLUSH Privileges;");
+    
                             print '<tr><td>';
                             print $langs->trans("UserCreation").' : ';
                             print $dolibarr_main_db_user;
                             print '</td>';
-                            print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+                            print '<td>'.$langs->trans("OK").'</td></tr>';
                         }
                         else
                         {
-                            dolibarr_syslog("impossible de creer l'utilisateur");
-                            print '<tr><td>';
-                            print $langs->trans("UserCreation").' : ';
-                            print $dolibarr_main_db_user;
-                            print '</td>';
-                            print '<td>'.$langs->trans("Error").' '.$db->error()."</td></tr>";
+                            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                            {
+                                dolibarr_syslog("Utilisateur deja existant");
+                                print '<tr><td>';
+                                print $langs->trans("UserCreation").' : ';
+                                print $dolibarr_main_db_user;
+                                print '</td>';
+                                print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+                            }
+                            else
+                            {
+                                dolibarr_syslog("impossible de creer l'utilisateur");
+                                print '<tr><td>';
+                                print $langs->trans("UserCreation").' : ';
+                                print $dolibarr_main_db_user;
+                                print '</td>';
+                                print '<td>'.$langs->trans("Error").' '.$db->error()."</td></tr>";
+                            }
                         }
-                    }
-
-                    $db->close();
-                }
-                else {
-                    print '<tr><td>';
-                    print $langs->trans("UserCreation").' : ';
-                    print $dolibarr_main_db_user;
-                    print '</td>';
-                    print '<td>'.$langs->trans("Error").'</td>';
-                    print '</tr>';
-
-                    // Affiche aide diagnostique
-                    print '<tr><td colspan="2"><br>Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
-                    print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>", mot de passe "<b>'.$passroot.'</b>".<br>';
-                    print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
-                    print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
-                    print '</td></tr>';
-
-                    $ok=-1;
-                }
-            }
-            else        //choix 2=postgresql
-            {
-                if (! function_exists("pg_connect")) {
-                    print $langs->trans("ThisPHPDoesNotSupportTypeBase",'pgsql');
-                    $ok=0;
-                }
-
-                if ($ok)
-                {
-                    $nom = $dolibarr_main_db_user;
-                    $con=pg_connect("host=".$dolibarr_main_db_host." dbname=".$dolibarr_main_db_name." user=postgres");
-                    $query_str = "create user \"".$nom."\" with password '".$dolibarr_main_db_pass."';";
-                    //print $query_str;
-                    $ret = pg_query($con,$query_str);
-
-                    if ($ret)
-                    {
-                        print '<tr><td>';
-                        print $langs->trans("UserCreation").' : ';
-                        print $dolibarr_main_db_user;
-                        print '</td>';
-                        print '<td>'.$langs->trans("OK").'</td>';
-                        print '</tr>';
+    
+                        $db->close();
                     }
                     else
                     {
@@ -359,6 +326,86 @@ if ($_POST["action"] == "set")
                         print '</td>';
                         print '<td>'.$langs->trans("Error").'</td>';
                         print '</tr>';
+    
+                        // Affiche aide diagnostique
+                        print '<tr><td colspan="2"><br>Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
+                        print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>", mot de passe "<b>'.$passroot.'</b>".<br>';
+                        print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
+                        print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
+                        print '</td></tr>';
+    
+                        $error++;
+                    }
+                }
+            }
+            else        //choix 2=postgresql
+            {
+                //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass;
+
+                // Creation handler de base, verification du support et connexion
+                $db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$conf->db->name);
+                if ($db->error)
+                {
+                    print $langs->trans("ThisPHPDoesNotSupportTypeBase",'mysql');
+                    $error++;
+                }
+
+                if (! $error)
+                {
+                    if ($db->connected)
+                    {
+                        $nom = $dolibarr_main_db_user;
+                        $sql = "create user \"".$nom."\" with password '".$dolibarr_main_db_pass."';";
+                        //print $query_str;
+                        $resql = $db->query($sql);
+                        if ($resql)
+                        {
+                            print '<tr><td>';
+                            print $langs->trans("UserCreation").' : ';
+                            print $dolibarr_main_db_user;
+                            print '</td>';
+                            print '<td>'.$langs->trans("OK").'</td>';
+                            print '</tr>';
+                        }
+                        else
+                        {
+                            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                            {
+                                dolibarr_syslog("Utilisateur deja existant");
+                                print '<tr><td>';
+                                print $langs->trans("UserCreation").' : ';
+                                print $dolibarr_main_db_user;
+                                print '</td>';
+                                print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+                            }
+                            else
+                            {
+                                dolibarr_syslog("impossible de creer l'utilisateur");
+                                print '<tr><td>';
+                                print $langs->trans("UserCreation").' : ';
+                                print $dolibarr_main_db_user;
+                                print '</td>';
+                                print '<td>'.$langs->trans("Error").' '.$db->error()."</td></tr>";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        print '<tr><td>';
+                        print $langs->trans("UserCreation").' : ';
+                        print $dolibarr_main_db_user;
+                        print '</td>';
+                        print '<td>'.$langs->trans("Error").'</td>';
+                        print '</tr>';
+    
+                        // Affiche aide diagnostique
+                        print '<tr><td colspan="2"><br>Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
+                        print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>", mot de passe "<b>'.$passroot.'</b>".<br>';
+                        print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
+                        print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
+                        print '</td></tr>';
+    
+                        $error++;
                     }
                 }
             }
@@ -369,7 +416,7 @@ if ($_POST["action"] == "set")
         /*
         * Si creation database demandée, on la crée
         */
-        if (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on")
+        if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
         {
             dolibarr_syslog ("Creation de la base : ".$dolibarr_main_db_name);
 
@@ -398,7 +445,7 @@ if ($_POST["action"] == "set")
                     print 'Si la base existe déjà, revenez en arrière et désactiver l\'option "Créer la base de donnée".<br>';
                     print '</td></tr>';
 
-                    $ok=-1;
+                    $error++;
                 }
                 $db->close();
             }
@@ -417,15 +464,15 @@ if ($_POST["action"] == "set")
                 print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
                 print '</td></tr>';
 
-                $ok=-1;
+                $error++;
             }
         }   // Fin si "creation database"
 
 
         /*
-        * On essaie l'accès par le user admin dolibarr
-        */
-        if ($ok == 0)
+         * On test maintenant l'accès par le user admin dolibarr
+         */
+        if (! $error)
         {
             dolibarr_syslog("connexion de type=".$conf->db->type." sur host=".$conf->db->host." user=".$conf->db->user." name=".$conf->db->name);
             //print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." user=".$conf->db->user." name=".$conf->db->name;
@@ -453,7 +500,7 @@ if ($_POST["action"] == "set")
                     print $langs->trans("OK");
                     print "</td></tr>";
 
-                    $ok = 1;
+                    $error = 0;
                 }
                 else
                 {
@@ -479,7 +526,7 @@ if ($_POST["action"] == "set")
                     print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
                     print '</td></tr>';
 
-                    $ok = -1;
+                    $error++;
                 }
             }
             else
@@ -498,7 +545,7 @@ if ($_POST["action"] == "set")
                 print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
                 print '</td></tr>';
 
-                $ok = -1;
+                $error++;
             }
         }
     }
