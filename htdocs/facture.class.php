@@ -979,7 +979,8 @@ class Facture
             {
                 $prod = new Product($this->db, $fk_product);
                 $prod->fetch($fk_product);
-                $pu=$prod->price;    
+                $pu=$prod->price;
+                $txtva=$prod->tva_tx;
             }
 			$_price = $pu;
 			$subprice = $pu;
@@ -1015,8 +1016,8 @@ class Facture
 			}
 
 			// Formatage des prix
-			$_price    = ereg_replace(',','.',$_price);
-			$subprice  = ereg_replace(',','.',$subprice);
+			$_price    = price2num($_price);
+			$subprice  = price2num($subprice);
 
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet ';
 			$sql.= ' (fk_facture, description, price, qty, tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
