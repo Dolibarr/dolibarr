@@ -1607,16 +1607,6 @@ function tva($euros, $taux=19.6)
 }
 
 /**
-		\brief  Fonction qui calcule le montant tva incluse
-		\param	euros			somme en euro
-		\param	taux			taux de tva
-*/
-function inctva($euros, $taux=1.196)
-{
-  return sprintf("%01.2f",($euros * $taux));
-}
-
-/**
 		\brief  Renvoie oui ou non dans la langue choisie
 		\param	yesno			variable pour test si oui ou non
 		\param	case			Oui/Non ou oui/non
