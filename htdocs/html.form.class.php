@@ -1264,7 +1264,7 @@ class Form
      *      \param      defaulttx           Taux tva présélectionné (deprecated)
      *      \param      societe_vendeuse    Objet société vendeuse
      *      \param      societe_acheteuse   Objet société acheteuse
-     *      \param      taux_produit        Taux produit vendue
+     *      \param      taux_produit        Taux par defaut du produit vendu
      *      \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
      *                  Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
@@ -1287,14 +1287,14 @@ class Form
             {
                 print '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
             }
+            return;
         }
-        
-        // \todo Initialiser code_pays avec code_pays vendeur
-        $code_pays=$conf->global->MAIN_INFO_SOCIETE_PAYS;
 
-        // \todo Ecraser defaulttx par valeur en fonction de la règle en remarks de la fonction
-        // $defaulttx=...
-        
+        // \todo Ecraser defaulttx par valeur en fonction de la règle de gestion TVA
+        //$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+
+        // \todo Initialiser code_pays avec code_pays société vendeuse
+        $code_pays=$conf->global->MAIN_INFO_SOCIETE_PAYS;
         $sql  = "SELECT t.taux,t.recuperableonly";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_tva AS t";
         $sql .= " WHERE t.fk_pays = '".$code_pays."'";
@@ -1312,10 +1312,9 @@ class Form
             }
         }
 
-        if ($defaulttx == '')   // Si taux par defaut n'a pu etre trouvé
-        {
-            $defaulttx = $txtva[0];
-        }
+        // Si taux par defaut n'a pu etre trouvé, on prend dernier.
+        // Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
+        if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
 
         $taille = sizeof($txtva);
 
