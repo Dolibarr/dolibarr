@@ -1813,25 +1813,6 @@ create table llx_energie_groupe
   note            text
 )type=innodb;
 
-create table llx_contrat_service
-(
-  rowid                   integer AUTO_INCREMENT PRIMARY KEY,
-  tms                     timestamp,
-  enservice               smallint default 0,
-  mise_en_service         datetime,
-  fin_validite            datetime,
-  date_cloture            datetime,
-  fk_contrat              integer NOT NULL,
-  fk_product              integer NOT NULL,
-
-  fk_facture              integer NOT NULL default 0,
-  fk_facturedet           integer NOT NULL default 0,
-
-  fk_user_mise_en_service integer,
-  fk_user_cloture         integer
-
-)type=innodb;
-
 create table llx_projet_task
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
