@@ -467,6 +467,8 @@ function migrate_contracts_open($db,$langs,$conf)
  */
 function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 {
+	global $bc;
+	
 	$error = 0;
     $nb=0;
 	$select_sql  = 'SELECT rowid, fk_facture_fourn, amount ';
@@ -477,7 +479,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 	{
 		$select_num = $db->num_rows($select_resql);
 		$i=0;
-		$var = 0;
+		$var = true;
         
 		// Pour chaque paiement fournisseur, on insère une ligne dans paiementfourn_facturefourn
 		while ($i < $select_num && ! $error)
