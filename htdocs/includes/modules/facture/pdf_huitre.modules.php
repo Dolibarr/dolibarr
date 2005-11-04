@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -43,8 +42,13 @@ class pdf_huitre extends ModelePDFFactures {
     */
     function pdf_huitre($db)
     {
-      $this->db = $db;
-      $this->description = "Modèle de facture avec remise et infos réglement";
+        $this->db = $db;
+        $this->description = "Modèle de facture avec remise et infos réglement";
+
+        // Dimension page pour format A4
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
     }
 
    function write_pdf_file($facid)

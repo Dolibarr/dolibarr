@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /** 
@@ -43,10 +42,16 @@ class pdf_propale_rouge extends ModelePDFPropales
   */
   function pdf_propale_rouge($db=0)
     { 
-      $this->db = $db;
-      $this->name = "rouge";
-      $this->description = "Modèle de propale par défaut";
-      $this->error = "";
+        $this->db = $db;
+        $this->name = "rouge";
+        $this->description = "Modèle de propale par défaut";
+
+        // Dimension page pour format A4
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
+
+        $this->error = "";
     }
   
 
@@ -98,7 +103,7 @@ class pdf_propale_rouge extends ModelePDFPropales
 	  if (file_exists($dir))
 	    {
 
-	      $pdf=new FPDF('P','mm','A4');
+	      $pdf=new FPDF('P','mm',$this->format);
 	      $pdf->Open();
 	      $pdf->AddPage();
 

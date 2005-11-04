@@ -50,7 +50,11 @@ class pdf_crabe extends ModelePDFFactures
         $this->db = $db;
         $this->name = "crabe";
 		$this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
-        $this->format="A4";
+
+        // Dimension page pour format A4
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
 
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
@@ -135,7 +139,7 @@ class pdf_crabe extends ModelePDFFactures
             if (file_exists($dir))
             {
                 // Initialisation facture vierge
-                $pdf=new FPDF('P','mm','A4');
+                $pdf=new FPDF('P','mm',$this->format);
                 $pdf->Open();
                 $pdf->AddPage();
 
@@ -146,7 +150,7 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
 
-                $pdf->SetMargins(10, 10, 10);
+                $pdf->SetMargins(10, 8, 10);   // Top, Bottom, Left
                 $pdf->SetAutoPageBreak(1,0);
 
                 $this->_pagehead($pdf, $fac);
@@ -345,7 +349,7 @@ class pdf_crabe extends ModelePDFFactures
                 /*
                  * Pied de page
                  */
-                $this->_pagefoot($pdf, $fac);
+                $this->_pagefoot($pdf);
                 $pdf->AliasNbPages();
                 
                 $pdf->Close();
@@ -646,36 +650,38 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
 
-        $pdf->SetXY(10,6);
+        $posy=10;   // La marge Top est de 10, on commence donc a 10
+
+        $pdf->SetXY(10,$posy);
 
 		// Logo
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
-            if (file_exists(FAC_PDF_LOGO))
+            if (is_readable(FAC_PDF_LOGO))
 			{
-                $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24);
+                $pdf->Image(FAC_PDF_LOGO, 10, $posy, 0, 24);
             }
             else
 			{
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
-                $pdf->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
+                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
+                $pdf->MultiCell(100, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
             }
         }
         else if (defined("FAC_PDF_INTITULE"))
         {
-            $pdf->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
+            $pdf->MultiCell(100, 4, FAC_PDF_INTITULE, 0, 'L');
         }
 
         $pdf->SetFont('Arial','B',13);
-        $pdf->SetXY(100,5);
+        $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 10, $langs->trans("Bill")." ".$fac->ref, '' , 'R');
+        $pdf->MultiCell(100, 4, $langs->trans("Bill")." ".$fac->ref, '' , 'R');
         $pdf->SetFont('Arial','',12);
-        $pdf->SetXY(100,11);
+        $pdf->SetXY(100,$posy+6);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 10, $langs->trans("Date")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
 
         // Emetteur
         $posy=42;
@@ -764,11 +770,10 @@ class pdf_crabe extends ModelePDFFactures
     }
 
     /*
-    *   \brief      Affiche le pied de page de la facture
-    *   \param      pdf     objet PDF
-    *   \param      fac     objet facture
-    */
-   function _pagefoot(&$pdf, $fac)
+     *   \brief      Affiche le pied de page
+     *   \param      pdf     objet PDF
+     */
+    function _pagefoot(&$pdf)
     {
         global $langs, $conf;
         $langs->load("main");
@@ -777,62 +782,64 @@ class pdf_crabe extends ModelePDFFactures
         
         $html=new Form($this->db);
         
-        $footy=14;
-        $pdf->SetY(-$footy);
-        $pdf->SetDrawColor(224,224,224);
-        $pdf->line(10, 282, 200, 282);
-        
-        $footy=13;
-        $pdf->SetFont('Arial','',8);
-
         // Premiere ligne d'info réglementaires
-        $ligne="";
+        $ligne1="";
         if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
         {
-            $ligne.=($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
-            $ligne.=($ligne?" - ":"").$langs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne1.=($ligne1?" - ":"").$langs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$langs->trans("Currency".$conf->monnaie);
         }
         if ($conf->global->MAIN_INFO_SIRET)
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
+            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
         }
         if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->code_pays != 'FR'))
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
+            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
         }
         if ($conf->global->MAIN_INFO_APE)
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
+            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
         }
 
-        if ($ligne)
-        {
-            $pdf->SetXY(8,-$footy);
-            $pdf->MultiCell(200, 2, $ligne, 0, 'C', 0);
-        }
-        
         // Deuxieme ligne d'info réglementaires
-        $ligne="";
+        $ligne2="";
         if ($conf->global->MAIN_INFO_RCS)
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
+            $ligne2.=($ligne2?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
         }
         if ($conf->global->MAIN_INFO_TVAINTRA != '')
         {
-            $ligne.=($ligne?" - ":"").$langs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
+            $ligne2.=($ligne2?" - ":"").$langs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
         }
+
+        $pdf->SetFont('Arial','',8);
+        $pdf->SetDrawColor(224,224,224);
+
+        // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
+        $posy=11 + ($ligne1?3:0) + ($ligne2?3:0);
+
+        $pdf->SetY(-$posy);
+        $pdf->line(10, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
+        $posy--;
         
-        if ($ligne)
+        if ($ligne1)
         {
-            $footy-=3;
-            $pdf->SetXY(8,-$footy);
-            $pdf->MultiCell(200, 2, $ligne , 0, 'C', 0);
+            $pdf->SetXY(8,-$posy);
+            $pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
+        }
+
+        if ($ligne2)
+        {
+            $posy-=3;
+            $pdf->SetXY(8,-$posy);
+            $pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
         }
         
-        $pdf->SetXY(-20,-$footy);
+        $pdf->SetXY(-20,-$posy);
         $pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
     }
 

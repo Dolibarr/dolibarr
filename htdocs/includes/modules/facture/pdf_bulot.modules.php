@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**    	\file       htdocs/includes/modules/facture/pdf_bulot.modules.php
@@ -41,8 +40,13 @@ class pdf_bulot extends ModelePDFFactures {
     */
   function pdf_bulot($db)
     { 
-      $this->db = $db;
-      $this->description = "Modèle de facture avec remise et infos réglement";
+        $this->db = $db;
+        $this->description = "Modèle de facture avec remise et infos réglement";
+
+        // Dimension page pour format A4
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
     }
 
 

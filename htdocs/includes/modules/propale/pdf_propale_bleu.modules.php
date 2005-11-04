@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**	    \file       htdocs/includes/modules/propale/pdf_propale_bleu.modules.php
@@ -41,10 +40,16 @@ class pdf_propale_bleu extends ModelePDFPropales
     */
   function pdf_propale_bleu($db=0)
     { 
-      $this->db = $db;
-      $this->name = "bleu";
-      $this->description = "Modèle de propale sans remise.";
-      $this->error = "";
+        $this->db = $db;
+        $this->name = "bleu";
+        $this->description = "Modèle de propale sans remise.";
+
+        // Dimension page pour format A4
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
+
+        $this->error = "";
     }
 
 
@@ -96,7 +101,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 	  if (file_exists($dir))
 	    {
 
-	      $pdf=new FPDF('P','mm','A4');
+	      $pdf=new FPDF('P','mm',$this->format);
 	      $pdf->Open();
 	      $pdf->AddPage();
 

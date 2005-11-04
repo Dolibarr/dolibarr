@@ -19,7 +19,6 @@
 *
 * $Id$
 * $Source$
-*
 */
 
 /**
@@ -40,40 +39,46 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 class pdf_oursin extends ModelePDFFactures
 {
-  var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
-
+    var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
     
-  /**
-  		\brief  Constructeur
+    
+    /**
+    	\brief  Constructeur
         \param	db		handler accès base de donnée
-  */
-  function pdf_oursin($db)
-  {
-    $this->db = $db;
-    $this->description = "Modèle de facture complet (basé sur crabe, gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, les remises, le nom du projet, la reference propal, logo...)";
-    $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
-    $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-    $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
-    $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
-    $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
-    $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
-    if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
-      $this->franchise=1;
+    */
+    function pdf_oursin($db)
+    {
+        $this->db = $db;
+        $this->description = "Modèle de facture complet (basé sur crabe, gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, les remises, le nom du projet, la reference propal, logo...)";
 
-    // Recupere code pays
-    $this->code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
-    $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-    $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
-    $result=$this->db->query($sql);
-    if ($result) {
-        $obj = $this->db->fetch_object($result);
-        if ($obj->code) $this->code_pays=$obj->code;
+        // Dimension page pour format A4
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
+
+        $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
+        $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
+        $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+        $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
+        $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
+        $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
+        if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
+        $this->franchise=1;
+        
+        // Recupere code pays
+        $this->code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+        $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+        $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
+        $result=$this->db->query($sql);
+        if ($result) {
+            $obj = $this->db->fetch_object($result);
+            if ($obj->code) $this->code_pays=$obj->code;
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+        $this->db->free($result);
     }
-    else {
-        dolibarr_print_error($this->db);
-    }
-    $this->db->free($result);
-  }
 
 
   /**

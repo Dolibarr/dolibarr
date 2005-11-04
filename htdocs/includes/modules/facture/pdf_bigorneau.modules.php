@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**    	\file       htdocs/includes/modules/facture/pdf_bigorneau.modules.php
@@ -38,8 +37,13 @@ class pdf_bigorneau extends ModelePDFFactures {
 
   function pdf_bigorneau($db=0)
     { 
-      $this->db = $db;
-      $this->description = "Modèle de facture sans boite info réglement";
+        $this->db = $db;
+        $this->description = "Modèle de facture sans boite info réglement";
+
+        // Dimension page pour format A4
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
     }
 
   function write_pdf_file($facid)
