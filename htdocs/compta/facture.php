@@ -1154,7 +1154,7 @@ else
 			if ($_GET['action'] == 'valid')
 			{
 				$numfa = facture_get_num($soc);
-				$html->form_confirm('facture.php?facid='.$fac->id,$langs->trans('ValidateBill'),$langs->trans('ConfirmValidateBill',$numfa),'confirm_valid');
+				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$langs->trans('ConfirmValidateBill',$numfa),'confirm_valid');
 				print '<br />';
 			}
 
@@ -1163,7 +1163,7 @@ else
  			 */
 			if ($_GET['action'] == 'payed')
 			{
-				$html->form_confirm('facture.php?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
+				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
 				print '<br />';
 			}
 
@@ -1180,10 +1180,14 @@ else
 			*   Facture
 			*/
 			print '<table class="border" width="100%">';
+			
+			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="5">';
 			print '<a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+			print '</tr>';
 
+			// Dates
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="3">'.dolibarr_print_date($fac->date,'%A %d %B %Y').'</td>';
 			print '<td>'.$langs->trans('DateClosing').'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,'%A %d %B %Y');
@@ -1195,7 +1199,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditions');
 			print '</td>';
-			if ($_GET['action'] != 'editconditions' && $fac->brouillon) print '<td align="right"><a href="facture.php?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			if ($_GET['action'] != 'editconditions' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editconditions')
@@ -1211,7 +1215,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
-			if ($_GET['action'] != 'editmode' && $fac->brouillon) print '<td align="right"><a href="facture.php?action=editmode&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			if ($_GET['action'] != 'editmode' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td width="25%">';
 			if ($_GET['action'] == 'editmode')

@@ -87,15 +87,17 @@ if ( $action == 'delete' )
 
 llxHeader();
 
-$form = new Form($db);
+$html = new Form($db);
 
 /*
  *
  * Mode fiche
  *
  */
-if ($_GET["propalid"])
+if ($_GET["propalid"] > 0)
 {
+  	if ($msg) print "$msg<br>";
+
     $propal = new Propal($db);
     $propal->fetch($_GET["propalid"]);
     $h=0;
@@ -153,7 +155,9 @@ if ($_GET["propalid"])
     
             print '<table class="border" width="100%">';
             $rowspan=6;
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
+            
+            // Société
+            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
             if ($societe->client == 1)
             {
                 $url ='fiche.php?socid='.$societe->id;
@@ -163,10 +167,9 @@ if ($_GET["propalid"])
                 $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
             }
             print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-            print '<td align="left">Conditions de réglement</td>';
-            print '<td>'.'&nbsp;'.'</td>';
             print '</tr>';
     
+            // Dates
             print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
             print dolibarr_print_date($propal->date,'%a %d %B %Y');
             print '</td>';
@@ -184,6 +187,40 @@ if ($_GET["propalid"])
             print '</td>';
             print '</tr>';
     
+			// Conditions et modes de réglement
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('PaymentConditions');
+			print '</td>';
+			if ($_GET['action'] != 'editconditions' && $prop->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$prop->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($_GET['action'] == 'editconditions')
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->cond_reglement_id,'cond_reglement_id');
+			}
+			else
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->cond_reglement_id,'none');
+			}
+			print '</td>';
+			print '<td width="25%">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('PaymentMode');
+			print '</td>';
+			if ($_GET['action'] != 'editmode' && $prop->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$prop->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td width="25%">';
+			if ($_GET['action'] == 'editmode')
+			{
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->mode_reglement_id,'mode_reglement_id');
+			}
+			else
+			{
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->mode_reglement_id,'none');
+			}
+			print '</td></tr>';
+
             // Destinataire
             $langs->load('mails');
             print '<tr>';
@@ -205,7 +242,7 @@ if ($_GET["propalid"])
                     print '<td colspan="2">';
                     print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
                     print '<input type="hidden" name="action" value="set_contact">';
-                    $form->select_contacts($societe->id, $propal->contactid, 'contactidp');
+                    $html->select_contacts($societe->id, $propal->contactid, 'contactidp');
                     print '</td><td>';
                     print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                     print '</form>';
@@ -469,7 +506,7 @@ if ($_GET["propalid"])
     
     $var=true;
     
-    $form->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+    $html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
     
 
   /*

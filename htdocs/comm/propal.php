@@ -80,6 +80,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
         $brouillon = 1;
     }
     Header('Location: propal.php');
+    exit;
 }
 
 if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
@@ -88,17 +89,26 @@ if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
     {
         $propal = new Propal($db);
         $propal->fetch($_GET['propalid']);
-        $propal->update_price($_GET['propalid']);
+        $result=$propal->update_price($_GET['propalid']);
         propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
-        $propal->valid($user);
+        $result=$propal->valid($user);
     }
     Header ('Location: propal.php?propalid='.$_GET['propalid']);
+    exit;
+}
+
+if ($_POST['action'] == 'setecheance')
+{
+	$propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+	$result=$propal->set_echeance($user,mktime(12, 1, 1, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
+	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 
 if ($_POST['action'] == 'add') 
 {
     $propal = new Propal($db, $_GET['socidp']);
-    $propal->datep = mktime(12, 1 , 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+    $propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
     $propal->duree_validite = $_POST['duree_validite'];
 
@@ -138,24 +148,23 @@ if ($_POST['action'] == 'add')
 
 if ($_GET['action'] == 'pdf')
 {
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+    $propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+    propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
 
+/*
+ *  Cloture de la propale
+ */
 if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer) 
 {
-  /*
-   *  Cloture de la propale
-   */
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->cloture($user, $_POST['statut'], $_POST['note']);
+    $propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+    $propal->cloture($user, $_POST['statut'], $_POST['note']);
 }
 
 /*
  * Envoi de la propale par mail
- *
  */
 if ($_POST['action'] == 'send')
 {
@@ -362,6 +371,7 @@ if ($_POST['action'] == 'set_contact')
 
 llxHeader();
 
+$html = new Form($db);
 
 /*
  * Affichage fiche propal en mode visu
@@ -370,7 +380,6 @@ llxHeader();
 if ($_GET['propalid'] > 0)
 {
   if ($msg) print "$msg<br>";
-  $html = new Form($db);
 
   $propal = new Propal($db);
   $propal->fetch($_GET['propalid']);
@@ -450,7 +459,9 @@ if ($_GET['propalid'] > 0)
     
             print '<table class="border" width="100%">';
             $rowspan=6;
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
+            
+            // Société
+            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
             if ($societe->client == 1)
             {
                 $url ='fiche.php?socid='.$societe->id;
@@ -460,27 +471,77 @@ if ($_GET['propalid'] > 0)
                 $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
             }
             print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-            print '<td align="left">Conditions de réglement</td>';
-            print '<td>'.'&nbsp;'.'</td>';
             print '</tr>';
     
+            // Dates
             print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
             print dolibarr_print_date($propal->date,'%a %d %B %Y');
             print '</td>';
     
-            print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
-            if ($propal->fin_validite)
+			print '<td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DateEndPropal');
+			print '</td>';
+			if ($_GET['action'] != 'editecheance' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			print '</tr></table>';
+            print '<td>';
+            if ($propal->brouillon && $_GET['action'] == 'editecheance')
             {
-                print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
-                if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+                print '<input type="hidden" name="action" value="setecheance">';
+                $html->select_date($propal->fin_validite,'ech');
+                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+                print '</form>';
             }
             else
             {
-                print $langs->trans("Unknown");
+                if ($propal->fin_validite)
+                {
+                    print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
+                    if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                }
+                else
+                {
+                    print $langs->trans("Unknown");
+                }
             }
             print '</td>';
             print '</tr>';
     
+			// Conditions et modes de réglement
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('PaymentConditions');
+			print '</td>';
+//			if ($_GET['action'] != 'editconditions' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($_GET['action'] == 'editconditions')
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
+			}
+			else
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
+			}
+			print '</td>';
+			print '<td width="25%">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('PaymentMode');
+			print '</td>';
+//			if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td width="25%">';
+			if ($_GET['action'] == 'editmode')
+			{
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
+			}
+			else
+			{
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'none');
+			}
+			print '</td></tr>';
+
             // Destinataire
             $langs->load('mails');
             print '<tr>';
@@ -502,7 +563,7 @@ if ($_GET['propalid'] > 0)
                     print '<td colspan="2">';
                     print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
                     print '<input type="hidden" name="action" value="set_contact">';
-                    $form->select_contacts($societe->id, $propal->contactid, 'contactidp');
+                    $html->select_contacts($societe->id, $propal->contactid, 'contactidp');
                     print '</td><td>';
                     print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                     print '</form>';
@@ -513,7 +574,7 @@ if ($_GET['propalid'] > 0)
                     if (!empty($propal->contactid))
                     {
                         print '<td colspan="3">';
-                        include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+                        require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
                         $contact=new Contact($db);
                         $contact->fetch($propal->contactid);
                         print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
@@ -952,7 +1013,7 @@ if ($_GET['propalid'] > 0)
     
     $var=true;
     
-    $form->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
+    $html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 
 
   /*
@@ -1168,56 +1229,56 @@ else
       $var=true;
 
       while ($i < min($num,$limit))
-	{
-	  $objp = $db->fetch_object($result);
-	  $now = time();
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'>';
-	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref."</a></td>\n";
-
-	  if ($objp->client == 1)
-	    {
-	      $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp;
-	    }
-	  else
-	    {
-	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp;
-	    }
-	  print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
-
-	  // Date propale
-	  print '<td align="center">';
-	  $y = strftime('%Y',$objp->dp);
-	  $m = strftime('%m',$objp->dp);
-
-	  print strftime('%d',$objp->dp)."\n";
-	  print ' <a href="propal.php?year='.$y.'&amp;month='.$m.'">';
-	  print dolibarr_print_date($objp->dp,'%b')."</a>\n";
-	  print ' <a href="propal.php?year='.$y.'">';
-	  print strftime('%Y',$objp->dp)."</a></td>\n";      
-
-	  // Date fin validite
-	  if ( $now > $objp->dfv && $objp->dfv > 0 )
-	    {
-	      print '<td align="center">'.dolibarr_print_date($objp->dfv);
-		  if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-	      print '</td>';
-	    }
-	  else
-	    {
-	      print '<td>&nbsp;</td>';
-	    }
-
-	  print '<td align="right">'.price($objp->price)."</td>\n";
-	  $propal=New Propal($db);
-	  print '<td align="center">'.$propal->LibStatut($objp->fk_statut,0)."</td>\n";
-	  print "</tr>\n";
-
-	  $total = $total + $objp->price;
-	  $subtotal = $subtotal + $objp->price;
-
-	  $i++;
-	}
+        {
+            $objp = $db->fetch_object($result);
+            $now = time();
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref."</a></td>\n";
+        
+            if ($objp->client == 1)
+            {
+                $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp;
+            }
+            else
+            {
+                $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp;
+            }
+            print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+        
+            // Date propale
+            print '<td align="center">';
+            $y = strftime('%Y',$objp->dp);
+            $m = strftime('%m',$objp->dp);
+        
+            print strftime('%d',$objp->dp)."\n";
+            print ' <a href="propal.php?year='.$y.'&amp;month='.$m.'">';
+            print dolibarr_print_date($objp->dp,'%b')."</a>\n";
+            print ' <a href="propal.php?year='.$y.'">';
+            print strftime('%Y',$objp->dp)."</a></td>\n";
+        
+            // Date fin validite
+            if ($objp->dfv)
+            {
+                print '<td align="center">'.dolibarr_print_date($objp->dfv);
+                if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                print '</td>';
+            }
+            else
+            {
+                print '<td>&nbsp;</td>';
+            }
+        
+            print '<td align="right">'.price($objp->price)."</td>\n";
+            $propal=New Propal($db);
+            print '<td align="center">'.$propal->LibStatut($objp->fk_statut,0)."</td>\n";
+            print "</tr>\n";
+        
+            $total = $total + $objp->price;
+            $subtotal = $subtotal + $objp->price;
+        
+            $i++;
+        }
       print '</table>';
       $db->free($result);
     }
