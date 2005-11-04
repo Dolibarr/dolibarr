@@ -480,7 +480,7 @@ class FactureFournisseur
 		{
 			if ($statut == 0) return $langs->trans('BillShortStatusDraft');
 			if ($statut == 3) return $langs->trans('BillShortStatusCanceled');
-			return $langs->trans('BillShortValidated');
+			return $langs->trans('BillShortStatusValidated');
 		}
 		else
 		{
