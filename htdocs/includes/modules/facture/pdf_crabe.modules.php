@@ -55,6 +55,8 @@ class pdf_crabe extends ModelePDFFactures
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
+        $this->marge_haute=10;
+        $this->marge_basse=10;
 
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
@@ -94,7 +96,7 @@ class pdf_crabe extends ModelePDFFactures
 
     /**
     		\brief      Fonction générant la facture sur le disque
-    		\param	    facid	id de la facture à générer
+    		\param	    id		Id de la facture à générer
     		\return	    int     1=ok, 0=ko
             \remarks    Variables utilisées
     		\remarks    MAIN_INFO_SOCIETE_NOM
@@ -110,7 +112,7 @@ class pdf_crabe extends ModelePDFFactures
     		\remarks    FAC_PDF_TEL
     		\remarks    FAC_PDF_ADRESSE
     */
-    function write_pdf_file($facid)
+    function write_pdf_file($id)
     {
         global $user,$langs,$conf;
 
@@ -120,8 +122,8 @@ class pdf_crabe extends ModelePDFFactures
 
         if ($conf->facture->dir_output)
         {
-            $fac = new Facture($this->db,"",$facid);
-            $ret=$fac->fetch($facid);
+            $fac = new Facture($this->db,"",$id);
+            $ret=$fac->fetch($id);
 
 			$facref = sanitize_string($fac->ref);
 			$dir = $conf->facture->dir_output . "/" . $facref;
@@ -138,7 +140,7 @@ class pdf_crabe extends ModelePDFFactures
 
             if (file_exists($dir))
             {
-                // Initialisation facture vierge
+                // Initialisation document vierge
                 $pdf=new FPDF('P','mm',$this->format);
                 $pdf->Open();
                 $pdf->AddPage();
@@ -150,7 +152,7 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
 
-                $pdf->SetMargins(10, 8, 10);   // Top, Bottom, Left
+                $pdf->SetMargins($this->marge_haute, $this->marge_basse, 10);   // Top, Bottom, Left
                 $pdf->SetAutoPageBreak(1,0);
 
                 $this->_pagehead($pdf, $fac);
@@ -650,7 +652,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
 
-        $posy=10;   // La marge Top est de 10, on commence donc a 10
+        $posy=$this->marge_haute;   // La marge Top est de 10, on commence donc a 10
 
         $pdf->SetXY(10,$posy);
 
@@ -820,7 +822,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetDrawColor(224,224,224);
 
         // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-        $posy=11 + ($ligne1?3:0) + ($ligne2?3:0);
+        $posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
 
         $pdf->SetY(-$posy);
         $pdf->line(10, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);

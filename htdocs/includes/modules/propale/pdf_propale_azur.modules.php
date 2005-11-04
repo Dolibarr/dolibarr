@@ -55,6 +55,8 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
+        $this->marge_haute=10;
+        $this->marge_basse=10;
  
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
@@ -88,6 +90,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->posxqty=151;
         $this->posxdiscount=162;
         $this->postotalht=177;
+       
 	}
 
     /**
@@ -129,7 +132,7 @@ class pdf_propale_azur extends ModelePDFPropales
         if ($conf->propal->dir_output)
         {
             $prop = new Propal($this->db,"",$id);
-            $prop->fetch($id);
+            $ret=$prop->fetch($id);
 
 			$propref = sanitize_string($prop->ref);
 			$dir = $conf->propal->dir_output . "/" . $propref;
@@ -146,7 +149,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
             if (file_exists($dir))
             {
-                // Initialisation propale vierge
+                // Initialisation document vierge
                 $pdf=new FPDF('P','mm',$this->format);
                 $pdf->Open();
                 $pdf->AddPage();
@@ -158,7 +161,7 @@ class pdf_propale_azur extends ModelePDFPropales
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
 
-                $pdf->SetMargins(10, 8, 10);
+                $pdf->SetMargins($this->marge_haute, $this->marge_basse, 10);   // Top, Bottom, Left
                 $pdf->SetAutoPageBreak(1,0);
 
                 $this->_pagehead($pdf, $prop);
@@ -566,14 +569,14 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
 
-        $posy=10;   // La marge est de 10, on commence donc a 10
+        $posy=$this->marge_haute;   // La marge Top est de 10, on commence donc a 10
         
         $pdf->SetXY(10,$posy);
 
 		// Logo
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
-            if (file_exists(FAC_PDF_LOGO))
+            if (is_readable(FAC_PDF_LOGO))
             {
                 $pdf->Image(FAC_PDF_LOGO, 10, $posy, 0, 24);
             }
@@ -737,7 +740,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetDrawColor(224,224,224);
 
         // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-        $posy=11 + ($ligne1?3:0) + ($ligne2?3:0);
+        $posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
 
         $pdf->SetY(-$posy);
         $pdf->line(10, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
