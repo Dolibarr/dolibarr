@@ -55,6 +55,7 @@ class Propal
     var $note;
     var $price;
     var $status;
+    var $fin_validite;
     
     var $labelstatut=array();
     var $labelstatut_short=array();
@@ -138,36 +139,42 @@ class Propal
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
             
-            $prod = new Product($this->db, $idproduct);
-            if ($prod->fetch($idproduct) > 0)
+            if ($idproduct)
             {
-                $price = price2num($prod->price);
-                $subprice = price2num($prod->price);
-    
-                if ($remise_percent > 0)
+                $prod = new Product($this->db, $idproduct);
+                if ($prod->fetch($idproduct) > 0)
                 {
-                    $remise = round(($prod->price * $remise_percent / 100), 2);
-                    $price = $prod->price - $remise;
-                }
-    
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-                $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$prod->tva_tx."','".addslashes($p_desc?$p_desc:$prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
-    
-                if ($this->db->query($sql) )
-                {
-                    $this->update_price();
-                    return 1;
+                    $txtva = $prod->tva_tx;
+                    $price = price2num($prod->price);
+                    $subprice = price2num($prod->price);
+                    
+                    // Calcul remise et nouveau prix
+        			$remise = 0;
+                    if ($remise_percent > 0)
+                    {
+                        $remise = round(($prod->price * $remise_percent / 100), 2);
+                        $price = $prod->price - $remise;
+                    }
+        
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+                    $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$txtva."','".addslashes($p_desc?$p_desc:$prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
+        
+                    if ($this->db->query($sql) )
+                    {
+                        $this->update_price();
+                        return 1;
+                    }
+                    else
+                    {
+                        $this->error=$this->db->error();
+                        return -1;
+                    }
                 }
                 else
                 {
                     $this->error=$this->db->error();
-                    return -1;
+                    return -2;
                 }
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                return -2;
             }
         }
         else
@@ -192,13 +199,12 @@ class Propal
         dolibarr_syslog("propal.class.php::insert_product_generic $p_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent");
         if ($this->statut == 0)
         {
-            if (strlen(trim($p_qty)) == 0)
-            {
-                $p_qty = 1;
-            }
-    
-            $p_price = ereg_replace(",",".",$p_price);
-    
+			// Nettoyage paramètres
+            $remise_percent=price2num($remise_percent);
+            $p_qty=price2num($p_qty);
+			if (strlen(trim($p_qty))==0) $p_qty=1;
+            $p_price = price2num($p_price);
+
             $price = $p_price;
             $subprice = $p_price;
     
@@ -210,7 +216,6 @@ class Propal
     
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
             $sql .= " (".$this->id.", 0,'". $p_qty."','". ereg_replace(",",".",$price)."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '".ereg_replace(",",".",$subprice)."') ; ";
-    
     
             if ($this->db->query($sql) )
             {
@@ -629,40 +634,71 @@ class Propal
 	}
   }
 	
-  /**
-   * \brief  Définit une remise globale sur la proposition
-   *
-   *
-   */
-	 
-  function set_remise($user, $remise)
-  {
-    if ($user->rights->propale->creer)
-      {
-	$remise = ereg_replace(",",".",$remise);
-	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".$remise;
-	$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-	
-	if ($this->db->query($sql) )
-	  {
-	    $this->remise_percent = $remise;
-	    $this->update_price();
-	    return 1;
-	  }
-	else
-	  {
-	    dolibarr_syslog("Propal::set_remise Erreur SQL");
-	  }
-      }
-  }
+
+    /**
+     *      \brief      Définit une remise globale sur la proposition
+     *      \param      user        Objet utilisateur qui modifie
+     *      \param      remise      Montant remise    
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function set_echeance($user, $date_fin_validite)
+    {
+        if ($user->rights->propale->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".$this->db->idate($date_fin_validite);
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->fin_validite = $date_fin_validite;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dolibarr_syslog("Propal::set_echeance Erreur SQL");
+                return -1;
+            }
+        }
+    }
+
+
+    /**
+     *      \brief      Définit une remise globale sur la proposition
+     *      \param      user        Objet utilisateur qui modifie
+     *      \param      remise      Montant remise    
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function set_remise($user, $remise)
+    {
+        if ($user->rights->propale->creer)
+        {
+            $remise = price2num($remise);
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".$remise;
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->remise_percent = $remise;
+                $this->update_price();
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dolibarr_syslog("Propal::set_remise Erreur SQL");
+                return -1;
+            }
+        }
+    }
+
   
   /*
    *
    *
    *
    */
-
   function set_project($user, $project_id)
   {
     if ($user->rights->propale->creer)

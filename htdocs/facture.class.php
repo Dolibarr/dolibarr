@@ -955,7 +955,7 @@ class Facture
 	}
 
 	/**
-	* \brief     Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
+	* \brief     Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)
 	* \param     facid           id de la facture
 	* \param     desc            description de la ligne
 	* \param     pu              prix unitaire
@@ -973,6 +973,8 @@ class Facture
 		if ($this->brouillon)
 		{
 			// Nettoyage paramètres
+            $remise_percent=price2num($remise_percent);
+            $qty=price2num($qty);
 			if (strlen(trim($qty))==0) $qty=1;
 
             if ($fk_product && ! $pu)
@@ -982,12 +984,11 @@ class Facture
                 $pu=$prod->price;
                 $txtva=$prod->tva_tx;
             }
-			$_price = $pu;
+			$price = $pu;
 			$subprice = $pu;
 
+            // Calcul remise et nouveau prix
 			$remise = 0;
-			$remise_percent = trim($remise_percent);
-
 			if ($this->socidp)
 			{
 				$soc = new Societe($this->db);
@@ -1001,11 +1002,11 @@ class Facture
 
 			if ($remise_percent > 0)
 			{
-				$remise = ($pu * $remise_percent / 100);
-				$_price = ($pu - $remise);
+				$remise = round(($pu * $remise_percent / 100),2);
+				$price = ($pu - $remise);
 			}
 
-			// Lecture du rang max de la facture
+			// Stockage du rang max de la facture dans rangmax
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'facturedet';
 			$sql .= ' WHERE fk_facture ='.$facid;
 			$resql = $this->db->query($sql);
@@ -1016,12 +1017,12 @@ class Facture
 			}
 
 			// Formatage des prix
-			$_price    = price2num($_price);
+			$price    = price2num($price);
 			$subprice  = price2num($subprice);
 
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet ';
 			$sql.= ' (fk_facture, description, price, qty, tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
-			$sql.= " VALUES ($facid, '".addslashes($desc)."','$_price','$qty','$txtva',";
+			$sql.= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',";
 			if ($fk_product) { $sql.= "'$fk_product',"; }
 			else { $sql.='0,'; }
 			$sql.= " '$remise_percent','$subprice','$remise',";
