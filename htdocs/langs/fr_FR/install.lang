@@ -77,3 +77,4 @@ InstallNotAllowed=Installation non autorisée par les permissions du fichier <b>c
 NotAvailable=Non disponible
 YouMustCreateWithPermission=Vous devez créer un fichier %s et donner les droits d'écriture dans celui-ci au serveur web durant le processus d'installation.
 CorrectProblemAndReloadPage=Corrigez le problème et <a href="index.php">rechargez la page</a> (Touche F5).
+AlreadyDone=Déjà migré

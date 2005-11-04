@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
+ * Copyright (C) 2005      Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -500,7 +501,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
             		    print '<tr><td>fk_paiementfourn</td><td>fk_facturefourn</td><td>'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
                     }
                     
-    				print '<tr '.$tab[$var].'>';
+    				print '<tr '.$bc[$var].'>';
     				print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
 
 					$insert_sql  = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
@@ -534,7 +535,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 	}
 	if (! $nb && ! $error) 
 	{
-   		print '<tr><td colspan="3" nowrap="nowrap"><b>'.$langs->trans('SuppliersInvoices').'</b></td><td align="right">'.$langs->trans("Done").'</td></tr>';
+   		print '<tr><td colspan="3" nowrap="nowrap"><b>'.$langs->trans('SuppliersInvoices').'</b></td><td align="right">'.$langs->trans("AlreadyDone").'</td></tr>';
     }
 	if ($error) 
 	{
