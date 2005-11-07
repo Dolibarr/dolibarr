@@ -225,45 +225,46 @@ foreach ($files as $xfile)
 			      
 			      if ($ligneids[$ligne] > 0 && $duree_secondes > 0)
 				{
-				  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
-				  
-				  $sql .= "(idx,fk_ligne,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
-				  $sql .= ", fichier, fk_fournisseur)";
-				  
-				  $sql .= " VALUES (";
-				  $sql .= "$index";
-				  $sql .= ",'".$ligneids[$ligne]."'";
-				  $sql .= ",'".$ligne."'";
-				  $sql .= ",'".ereg_replace('"','',$date)."'";
-				  $sql .= ",'".ereg_replace('"','',$heure)."'";
-				  $sql .= ",'".ereg_replace('"','',$numero)."'";
-				  $sql .= ",'".addslashes(ereg_replace('"','',$tarif))."'";
-				  $sql .= ",'".ereg_replace('"','',$duree_text)."'";
-				  $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
-				  $sql .= ",".ereg_replace(',','.',$montant);
-				  $sql .= ",".$duree_secondes;
-				  $sql .= ",'".basename($xfile)."'";
-				  $sql .= " ,".$id_fourn;
-				  $sql .= ")";
-				  
-				  if(ereg("^[0-9]+$", $duree_secondes))
+				  if ($duree_secondes > 0)
 				    {
-				      if ($db->query($sql))
+				      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
+				      $sql .= "(idx,fk_ligne,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
+				      $sql .= ", fichier, fk_fournisseur)";			  
+				      $sql .= " VALUES (";
+				      $sql .= "$index";
+				      $sql .= ",'".$ligneids[$ligne]."'";
+				      $sql .= ",'".$ligne."'";
+				      $sql .= ",'".ereg_replace('"','',$date)."'";
+				      $sql .= ",'".ereg_replace('"','',$heure)."'";
+				      $sql .= ",'".ereg_replace('"','',$numero)."'";
+				      $sql .= ",'".addslashes(ereg_replace('"','',$tarif))."'";
+				      $sql .= ",'".ereg_replace('"','',$duree_text)."'";
+				      $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
+				      $sql .= ",".ereg_replace(',','.',$montant);
+				      $sql .= ",".$duree_secondes;
+				      $sql .= ",'".basename($xfile)."'";
+				      $sql .= " ,".$id_fourn;
+				      $sql .= ")";
+				      
+				      if(ereg("^[0-9]+$", $duree_secondes))
 					{
-					  $line_inserted++;
+					  if ($db->query($sql))
+					    {
+					      $line_inserted++;
+					    }
+					  else
+					    {
+					      dolibarr_syslog("Erreur de traitement de ligne $index");
+					      dolibarr_syslog($db->error());
+					      dolibarr_syslog($sql);
+					      $error++;
+					    }
 					}
 				      else
 					{
-					  dolibarr_syslog("Erreur de traitement de ligne $index");
-					  dolibarr_syslog($db->error());
-					  dolibarr_syslog($sql);
+					  print "Ligne : $cont ignorée\n";
 					  $error++;
 					}
-				    }
-				  else
-				    {
-				      print "Ligne : $cont ignorée\n";
-				      $error++;
 				    }				  
 				}
 			      else
