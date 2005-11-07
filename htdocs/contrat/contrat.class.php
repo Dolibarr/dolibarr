@@ -388,7 +388,7 @@ class Contrat
             while ($j < $num)
             {
                 $objp                  = $this->db->fetch_object($result);
-                $ligne                 = new PropaleLigne();
+                $ligne                 = new ContratLigne();
                 $ligne->libelle        = stripslashes($objp->description);
                 $ligne->desc           = stripslashes($objp->description);
                 $ligne->qty            = $objp->qty;
@@ -768,26 +768,6 @@ class Contrat
         $this->total_ht       = $calculs[0];
         $this->total_tva      = $calculs[1];
         $this->total_ttc      = $calculs[2];
-
-        /*
-        // Met a jour en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
-        $sql .= " price='".  ereg_replace(",",".",$this->total_ht)."'";
-        $sql .= ", tva='".   ereg_replace(",",".",$this->total_tva)."'";
-        $sql .= ", total='". ereg_replace(",",".",$this->total_ttc)."'";
-        $sql .= ", remise='".ereg_replace(",",".",$this->remise)."'";
-        $sql .=" WHERE rowid = $this->id";
-    
-        if ( $this->db->query($sql) )
-        {
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-        */
     }
     
 
