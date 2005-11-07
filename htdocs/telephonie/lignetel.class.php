@@ -236,6 +236,15 @@ class LigneTel {
 
 	    $this->DefineClientOption();
 
+	    if ($this->techno == 'voip' && $this->id)
+	      {
+		$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+		$sql .= " SET statut = 3, techno='voip'";
+		$sql .= " WHERE rowid=".$this->id;
+		$this->db->query($sql);
+	      }
+
+
 	    return 0;
 	  }
 	else

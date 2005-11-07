@@ -577,7 +577,7 @@ else
 	     
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      
-	      $sql = "SELECT l.ligne, l.statut, l.rowid, l.remise, f.nom as fournisseur";
+	      $sql = "SELECT l.ligne, l.statut, l.rowid, l.remise, l.techno, f.nom as fournisseur";
 	      $sql .= ", ss.code_client, ss.nom as agence";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	      $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
@@ -622,7 +622,8 @@ else
 			  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 			  
 			  print '<td align="center">'.$obj->remise." %</td>\n";
-			  print "<td>".$obj->fournisseur."</td>\n";
+			  print "<td>".$obj->fournisseur." - \n";
+			  print $obj->techno."</td>\n";
 			  print "</tr>\n";
 			  $i++;
 			}

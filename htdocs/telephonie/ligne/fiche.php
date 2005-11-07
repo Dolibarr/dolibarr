@@ -46,6 +46,7 @@ if ($_POST["action"] == 'add' && $user->rights->telephonie->ligne->creer)
   $ligne->concurrent      = $_POST["concurrent"];
   $ligne->remise          = $_POST["remise"];
   $ligne->note            = $_POST["note"];
+  $ligne->techno          = $_POST["techno"];
 
   if ( $ligne->create($user) == 0)
     {
@@ -375,7 +376,7 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	  print '</td></tr>';
 	  
 	  
-	  print '<tr><td width="20%">Numéro</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
+	  print '<tr><td width="20%">Numéro</td><td><input name="numero" size="11" maxlength="10" value="'.$ligne->numero.'"></td></tr>';
 	  
 	  $client = new Societe($db, $contrat->client_id);
 	  $client->fetch($contrat->client_id);
@@ -417,6 +418,13 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	      
 	    }
 	  $form->select_array("fournisseur",$ff,$ligne->fournisseur);
+
+	  $tech = array();
+	  $tech["presel"] = "Présélection";
+	  $tech["voip"] = "VoIP";
+	  print "&nbsp;Technologie&nbsp;:&nbsp;";
+	  $form->select_array("techno",$tech,"presel");
+
 	  print '</td></tr>';
 	  
 	  /*
