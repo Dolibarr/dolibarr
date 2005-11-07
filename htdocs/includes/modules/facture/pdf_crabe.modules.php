@@ -55,6 +55,8 @@ class pdf_crabe extends ModelePDFFactures
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
+        $this->marge_gauche=10;
+        $this->marge_droite=10;
         $this->marge_haute=10;
         $this->marge_basse=10;
 
@@ -84,13 +86,15 @@ class pdf_crabe extends ModelePDFFactures
         $this->tva=array();
         
         // Defini position des colonnes
-        $this->posxdesc=11;
+        $this->posxdesc=$this->marge_gauche+1;
         $this->posxtva=121;
         $this->posxup=132;
         $this->posxqty=151;
         $this->posxdiscount=162;
         $this->postotalht=177;
-       
+
+        $this->atleastoneratenotnull=0;
+        $this->atleastonediscount=0;
     }
 
 
@@ -124,6 +128,7 @@ class pdf_crabe extends ModelePDFFactures
         {
             $fac = new Facture($this->db,"",$id);
             $ret=$fac->fetch($id);
+            $nblignes = sizeof($fac->lignes);
 
 			$facref = sanitize_string($fac->ref);
 			$dir = $conf->facture->dir_output . "/" . $facref;
@@ -152,8 +157,17 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
 
-                $pdf->SetMargins($this->marge_haute, $this->marge_basse, 10);   // Top, Bottom, Left
+                $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
                 $pdf->SetAutoPageBreak(1,0);
+
+                // Positionne $this->atleastonediscount si on a au moins une remise
+                for ($i = 0 ; $i < $nblignes ; $i++)
+                {
+                    if ($fac->lignes[$i]->remise_percent)
+                    {
+                        $this->atleastonediscount++;
+                    }
+                }
 
                 $this->_pagehead($pdf, $fac);
 
@@ -165,7 +179,6 @@ class pdf_crabe extends ModelePDFFactures
                 $iniY = $tab_top + 8;
                 $curY = $tab_top + 8;
                 $nexY = $tab_top + 8;
-                $nblignes = sizeof($fac->lignes);
 
                 // Boucle sur les lignes
                 for ($i = 0 ; $i < $nblignes ; $i++)
@@ -256,8 +269,9 @@ class pdf_crabe extends ModelePDFFactures
                 /*
                  * Mode de règlement
                  */
-                if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER)) {
-                    $pdf->SetXY (10, 228);
+                if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
+				{
+                    $pdf->SetXY($this->marge_gauche, 228);
                     $pdf->SetTextColor(200,0,0);
                     $pdf->SetFont('Arial','B',8);
                     $pdf->MultiCell(90, 3, $langs->trans("ErrorNoPaiementModeConfigured"),0,'L',0);
@@ -275,10 +289,10 @@ class pdf_crabe extends ModelePDFFactures
                         $account = new Account($this->db);
                         $account->fetch(FACTURE_CHQ_NUMBER);
 
-                        $pdf->SetXY (10, 227);
+                        $pdf->SetXY($this->marge_gauche, 227);
                         $pdf->SetFont('Arial','B',8);
                         $pdf->MultiCell(90, 3, "Règlement par chèque à l'ordre de ".$account->proprio." envoyé à:",0,'L',0);
-                        $pdf->SetXY (10, 231);
+                        $pdf->SetXY($this->marge_gauche, 231);
                         $pdf->SetFont('Arial','',8);
                         $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
                     }
@@ -294,7 +308,7 @@ class pdf_crabe extends ModelePDFFactures
                         $account = new Account($this->db);
                         $account->fetch(FACTURE_RIB_NUMBER);
 
-                        $this->marges['g']=10;
+                        $this->marges['g']=$this->marge_gauche;
                         
                         $cury=242;
                         $pdf->SetXY ($this->marges['g'], $cury);
@@ -340,7 +354,7 @@ class pdf_crabe extends ModelePDFFactures
                  * Conditions de règlements
                  */
                 $pdf->SetFont('Arial','B',10);
-                $pdf->SetXY(10, 217);
+                $pdf->SetXY($this->marge_gauche, 217);
                 $titre = "Conditions de réglement:";
                 $pdf->MultiCell(80, 5, $titre, 0, 'L');
                 $pdf->SetFont('Arial','',10);
@@ -485,7 +499,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetFont('Arial','', 9);
 
         // Affiche la mention TVA non applicable selon option
-        $pdf->SetXY (10, $tab2_top + 0);
+        $pdf->SetXY($this->marge_gauche, $tab2_top + 0);
     	if ($this->franchise==1)
       	{
             $pdf->MultiCell(100, $tab2_hl, "* TVA non applicable art-293B du CGI", 0, 'L', 0);
@@ -525,13 +539,12 @@ class pdf_crabe extends ModelePDFFactures
         }
 
         // Affichage des totaux de TVA par taux (conformément à réglementation)
-        $atleastoneratenotnull=0;
         $pdf->SetFillColor(248,248,248);
         foreach( $this->tva as $tvakey => $tvaval )
         {
             if ($tvakey)    // On affiche pas taux 0
             {
-                $atleastoneratenotnull++;
+                $this->atleastoneratenotnull++;
                 
                 $index++;
             	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
@@ -542,14 +555,14 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval * (float)$tvakey / 100 ), 0, 'R', 1);
             }
         }
-        if (! $atleastoneratenotnull)
+        if (! $this->atleastoneratenotnull)
         {
             $index++;
         	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($largcol2, $tab2_hl, price(0), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_tva), 0, 'R', 1);
         }
 
         $useborder=0;
@@ -606,8 +619,10 @@ class pdf_crabe extends ModelePDFFactures
         $langs->load("main");
         $langs->load("bills");
         
-        $pdf->Rect( 10, $tab_top, 190, $tab_height);
-        $pdf->line( 10, $tab_top+6, 200, $tab_top+6 );
+        // Rect prend une longueur en 3eme param
+        $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
+        // line prend une position y en 3eme param
+        $pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 
         $pdf->SetFont('Arial','',10);
 
@@ -627,10 +642,16 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->MultiCell(11,2, $langs->trans("Qty"),'','C');
 
         $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-        $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-        $pdf->MultiCell(16,2, $langs->trans("Discount"),'','C');
-
-        $pdf->line($this->postotalht-1, $tab_top, $this->postotalht-1, $tab_top + $tab_height);
+        if ($this->atleastonediscount)
+        {
+            $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
+            $pdf->MultiCell(16,2, $langs->trans("Discount"),'','C');
+        }
+        
+        if ($this->atleastonediscount)
+        {
+            $pdf->line($this->postotalht-1, $tab_top, $this->postotalht-1, $tab_top + $tab_height);
+        }
         $pdf->SetXY ($this->postotalht-1, $tab_top+2);
         $pdf->MultiCell(23,2, $langs->trans("TotalHT"),'','C');
 
@@ -652,16 +673,16 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
 
-        $posy=$this->marge_haute;   // La marge Top est de 10, on commence donc a 10
+        $posy=$this->marge_haute;
 
-        $pdf->SetXY(10,$posy);
+        $pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
             if (is_readable(FAC_PDF_LOGO))
 			{
-                $pdf->Image(FAC_PDF_LOGO, 10, $posy, 0, 24);
+                $pdf->Image(FAC_PDF_LOGO, $this->marge_gauche, $posy, 0, 24);
             }
             else
 			{
@@ -690,16 +711,16 @@ class pdf_crabe extends ModelePDFFactures
         $hautcadre=40;
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
-        $pdf->SetXY(10,$posy-5);
+        $pdf->SetXY($this->marge_gauche,$posy-5);
         $pdf->MultiCell(66,5, $langs->trans("BillFrom").":");
 
 
-        $pdf->SetXY(10,$posy);
+        $pdf->SetXY($this->marge_gauche,$posy);
         $pdf->SetFillColor(230,230,230);
         $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
 
-        $pdf->SetXY(10,$posy+3);
+        $pdf->SetXY($this->marge_gauche,$posy+3);
 
         // Nom emetteur
         $pdf->SetTextColor(0,0,60);
@@ -737,7 +758,7 @@ class pdf_crabe extends ModelePDFFactures
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".FAC_PDF_WWW;
 		}
         $pdf->SetFont('Arial','',9);
-        $pdf->SetXY(12,$posy+8);
+        $pdf->SetXY($this->marge_gauche+2,$posy+8);
         $pdf->MultiCell(80,4, $carac_emetteur);
 
         // Client destinataire
@@ -825,19 +846,19 @@ class pdf_crabe extends ModelePDFFactures
         $posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
 
         $pdf->SetY(-$posy);
-        $pdf->line(10, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
+        $pdf->line($this->marge_gauche, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
         $posy--;
         
         if ($ligne1)
         {
-            $pdf->SetXY(8,-$posy);
+            $pdf->SetXY($this->marge_gauche,-$posy);
             $pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
         }
 
         if ($ligne2)
         {
             $posy-=3;
-            $pdf->SetXY(8,-$posy);
+            $pdf->SetXY($this->marge_gauche,-$posy);
             $pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
         }
         
