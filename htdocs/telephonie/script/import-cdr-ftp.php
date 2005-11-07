@@ -223,7 +223,7 @@ foreach ($files as $xfile)
 			      $montant           = trim($tabline[15]);
 			      $duree_secondes    = trim($tabline[13]);
 			      
-			      if ($ligneids[$ligne] > 0 && $duree_secondes > 0)
+			      if ($ligneids[$ligne] > 0)
 				{
 				  if ($duree_secondes > 0)
 				    {
