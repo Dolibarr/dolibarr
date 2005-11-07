@@ -88,7 +88,7 @@ class Contrat
      */
     function active_line($user, $line_id, $date, $dateend='')
     {
-        global $langs;
+        global $langs,$conf;
         
         // statut actif : 4
     
@@ -126,7 +126,7 @@ class Contrat
      */
     function close_line($user, $line_id, $dateend)
     {
-        global $langs;
+        global $langs,$conf;
         
         // statut actif : 4
     
