@@ -701,6 +701,9 @@ else
 			}
 		      $db->free();	      
 		    }
+
+		  print " - ".$ligne->techno;
+
 		}
 	      else
 		{
@@ -1174,7 +1177,7 @@ if ( $user->rights->telephonie->ligne_commander && $ligne->statut == 3 )
       $db->free();      
     }
 
-  if (sizeof($ff) > 0)
+  if (sizeof($ff) > 0 && $ligne->techno == 'presel')
     {
       /**
        * Transférer chez un autre fournisseur
@@ -1198,7 +1201,7 @@ if ( $user->rights->telephonie->ligne_commander && $ligne->statut == 3 )
 
 
 
-if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 2)
+if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 2 && $ligne->techno == 'presel')
 {
   $form = new Form($db);
 
@@ -1229,7 +1232,7 @@ if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 2)
   print '</form></td></tr></table>';
 }
 
-if ( $user->rights->telephonie->ligne_activer && ( $ligne->statut == 5 || $ligne->statut == 3))
+if ( $user->rights->telephonie->ligne_activer && ( $ligne->statut == 5 || $ligne->statut == 3) && $ligne->techno == 'presel')
 {
   /**
    * Résiliation demandée
@@ -1254,7 +1257,7 @@ if ( $user->rights->telephonie->ligne_activer && ( $ligne->statut == 5 || $ligne
 }
 
 
-if ( $user->rights->telephonie->ligne->creer && $ligne->statut == 6)
+if ( $user->rights->telephonie->ligne->creer && $ligne->statut == 6 && $ligne->techno == 'presel')
 {
   /**
    * A commander
@@ -1289,12 +1292,12 @@ print "\n<br>\n<div class=\"tabsAction\">\n";
 if ($_GET["action"] == '' && $result == 1 && $client_comm->perm_read)
 {
 
-  if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 3)
+  if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 3 && $ligne->techno == 'presel')
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=resilier&amp;id=$ligne->id\">".$langs->trans("Demander la résiliation")."</a>";
     }
 
-  if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 4)
+  if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 4 && $ligne->techno == 'presel')
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
     }
@@ -1327,8 +1330,6 @@ if ($_GET["action"] == '' && $result == 1 && $client_comm->perm_read)
 }
 
 print "</div>";
-
-
 
 $db->close();
 

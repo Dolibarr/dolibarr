@@ -329,7 +329,7 @@ class LigneTel {
       $sql .= " , fk_user_creat, fk_user_commande";
       $sql .= " , fk_contrat ";
       $sql .= " , fk_commercial_suiv, fk_commercial_sign";
-      $sql .= " , pdfdetail";
+      $sql .= " , pdfdetail, techno";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as tl";
 
       if ($id > 0)
@@ -365,7 +365,7 @@ class LigneTel {
 	      $this->statut             = $obj->statut;
 	      $this->mode_paiement      = $obj->mode_paiement;
 	      $this->code_analytique    = $obj->code_analytique;
-
+	      $this->techno             = $obj->techno;
 	      $this->user_creat         = $obj->fk_user_creat;
 	      $this->user_commande      = $obj->fk_user_commande;
 
