@@ -86,6 +86,7 @@ $sql .= ",".MAIN_DB_PREFIX."societe as sf";
 $sql .= " WHERE l.fk_soc = s.idp ";
 $sql .= " AND l.fk_fournisseur = f.rowid ";
 $sql .= " AND l.statut IN (-1,1,4) ";
+$sql .= " AND l.techno = 'presel'";
 $sql .= " AND l.fk_soc_facture = sf.idp";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
