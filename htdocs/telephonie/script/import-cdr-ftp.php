@@ -185,6 +185,8 @@ foreach ($files as $xfile)
 			      $index             = $line;
 			      $ligne             = "0".$tabline[11];
 			      $date              = substr($tabline[12],0,10);
+			      $date              = substr($date, 8,2)."/".substr($date, 5,2)."/".substr($date, 0,4);
+
 			      $heure             = substr($tabline[12],11,8);
 			      if ($tabline[8] == "3")
 				{
