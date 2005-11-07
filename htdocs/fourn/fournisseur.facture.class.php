@@ -301,7 +301,7 @@ class FactureFournisseur
 	 * \brief     Tag la facture comme validée et valide la facture
 	 * \param     userid        utilisateur qui valide la facture
 	 */
-	function set_valid($userid)
+	function set_valid($user)
 	{
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
         $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
