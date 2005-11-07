@@ -39,6 +39,7 @@ function llxHeader() { }
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 $type = urldecode($_GET["type"]);
+if (! $type) $type='application/pdf';
 
 //Suppression de la chaine de caractère ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
@@ -190,17 +191,17 @@ if (! file_exists($original_file))
     exit;
 }
 
-// Les drois sont ok et fichier trouvé
-if ($type)
-{
-    header('Content-type: '.$type);
-}
-else
-{
-    header('Content-type: application/pdf');
-}
+
+// Les drois sont ok et fichier trouvé, on l'envoie
+dolibarr_syslog("document.php download $filename content-type=$type");
+
+header('Content-type: '.$type);
 header('Content-Disposition: attachment; filename="'.$filename.'"');
 
+// Ajout directives pour résoudre bug IE
+header('Cache-Control: Public, must-revalidate');
+header('Pragma: public');
+ 
 readfile($original_file);
 
 ?>
