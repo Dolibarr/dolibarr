@@ -84,19 +84,27 @@ if ( $resql )
 	}	  
 
       /* Recherche du tarif */
-      
-      if (! $tarif_achat->cout($numero, $x, $y, $z))
-	{
-	  print "\nTarif achat manquant pour $numero\n";
-	  exit(1);
-	}
-      
-      if (! $tarif_vente->cout($numero, $x, $y, $z))
-	{
-	  print "\nTarif vente manquant pour $numero\n";
-	  exit(1);
-	}
 
+      /* Numéros spéciaux */
+      if (substr($numero,4,1) == 8)
+	{
+
+	}
+      else
+	{
+	  if (! $tarif_achat->cout($numero, $x, $y, $z))
+	    {
+	      print "\nTarif achat manquant pour $numero\n";
+	      exit(1);
+	    }
+	  
+	  if (! $tarif_vente->cout($numero, $x, $y, $z))
+	    {
+	      print "\nTarif vente manquant pour $numero\n";
+	      exit(1);
+	    }
+	}
+      
       print ".";
       $i++;
     }
