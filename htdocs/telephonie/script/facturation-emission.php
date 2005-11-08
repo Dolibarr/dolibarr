@@ -731,7 +731,7 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	      // Ajout demandé par GH
 	      $message .= "Votre image de marque et votre N° de téléphone associés !\n";
 	      $message .= "ibreizh vous propose son offre N° d'appel Gratuit (offre concurrente au N° vert de l'opérateur historique) pour vos prospects et clients, Offrez un nouveau service + à vos clients...\n";
-	      $message .= "Favorisez les appels entrants des nouveaux clients...\n";
+	      $message .= "Favorisez les appels entrants des nouveaux clients...\n\n";
 	      //
 
 	      $message .= TELEPHONIE_MAIL_FACTURATION_SIGNATURE;
@@ -753,9 +753,9 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	      /*
 	       * Joint le fichier commercial supplémentaire
 	       */
-	      array_push($arr_file, "/home/www/dolibarr/documents/hp65152.pdf");
-	      array_push($arr_mime, "application/pdf");
-	      array_push($arr_name, "hp65152.pdf");
+	      //array_push($arr_file, "/home/www/dolibarr/documents/hp65152.pdf");
+	      //array_push($arr_mime, "application/pdf");
+	      //array_push($arr_name, "hp65152.pdf");
 
 	      /*
 	       * Join la facture
