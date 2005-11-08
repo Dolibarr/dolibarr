@@ -421,7 +421,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 
   if (!$error)
     {
-
       $sql = "SELECT s.libelle_facture, sc.montant";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service as sc";
       $sql .= " , ".MAIN_DB_PREFIX."telephonie_service as s";
@@ -449,7 +448,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 				      0,
 				      0,
 				      0);
-
 	      $is++;
 	    }            
 	  $db->free();
@@ -493,7 +491,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 
   if (!$error && !$cancel_facture)
     {
-
       foreach ($factel_ids as $factel_id)
 	{
 	  /* Lecture de la facture téléphonique */
@@ -604,6 +601,10 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  $message .= $fac->client->bank_account->number;
 	}
       
+      $message .= "Votre image de marque et votre N° de téléphone associés !\n";
+      $message .= "ibreizh vous propose son offre N° d'appel Gratuit (offre concurrente au N° vert de l'opérateur historique) pour vos prospects et clients, Offrez un nouveau service + à vos clients...\n";
+      $message .= "Favorisez les appels entrants des nouveaux clients...\n";
+
       if ($verbose) dolibarr_syslog("Création du pdf facture : $facid");
       
       if (! facture_pdf_create($db, $facid, $message))
