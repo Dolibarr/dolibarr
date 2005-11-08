@@ -32,7 +32,6 @@
  * consommation. L'application du principe du consentement préalable en 
  * droit français résulte de la transposition de l'article 13 de la Directive 
  * européenne du 12 juillet 2002 « Vie privée et communications électroniques ». 
- *
  */
 
 /**

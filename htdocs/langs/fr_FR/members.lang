@@ -26,6 +26,7 @@ MembersTypes=Types d'adhérents
 MembersAttributes=Attributs adhérents
 SearchAMember=Rechercher un membre
 MemberStatusDraft=Brouillon (à valider)
+MemberStatusShortDraft=A valider
 MemberStatusActive=Validé
 MemberStatusResiliated=Résilié
 MembersStatusToValid=Adhérent à valider

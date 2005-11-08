@@ -32,8 +32,7 @@
  * code des postes et des télécommunications et L. 121-20-5 du code de la 
  * consommation. L'application du principe du consentement préalable en 
  * droit français résulte de la transposition de l'article 13 de la Directive 
- * européenne du 12 juillet 2002 « Vie privée et communications électroniques ». 
- *
+ * européenne du 12 juillet 2002 « Vie privée et communications électroniques ».
  */
 
 /**
@@ -96,12 +95,13 @@ class mailing_poire extends MailingTargets
     function formFilter()
     {
         global $langs;
+        $langs->load("companies");
         $langs->load("commercial");
         $langs->load("suppliers");
         
         $s='';
         $s.='<select name="filter" class="flat">';
-        $s.='<option value="all">'.$langs->trans("All").'</option>';
+        $s.='<option value="all">'.$langs->trans("ContactsAllShort").'</option>';
         $s.='<option value="prospects">'.$langs->trans("Prospects").'</option>';
         $s.='<option value="customers">'.$langs->trans("Customers").'</option>';
         $s.='<option value="suppliers">'.$langs->trans("Suppliers").'</option>';

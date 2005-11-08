@@ -83,6 +83,7 @@ ListOfSuppliersContacts=Liste des contacts fournisseurs
 ListOfCompanies=Liste des sociétés
 ShowCompany=Afficher société
 ShowContact=Afficher contact
+ContactsAllShort=Tous
 ContactType=Type de contact
 NewContact=Nouveau contact
 LastContacts=Derniers contacts

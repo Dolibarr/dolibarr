@@ -26,6 +26,7 @@ MembersTypes=Members types
 MembersAttributes=Members attributes
 SearchAMember=Search a member
 MemberStatusDraft=Draft (need to be validated)
+MemberStatusShortDraft=To validate
 MemberStatusActive=Validated
 MemberStatusResiliated=Resiliated
 MembersStatusToValid=Members to valid

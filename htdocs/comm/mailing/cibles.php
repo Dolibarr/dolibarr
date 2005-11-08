@@ -173,10 +173,10 @@ if ($mil->fetch($_GET["id"]) == 0)
     if ($mil->statut == 0)
     {
         print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
-        print_titre($langs->trans("ToClearAllRecipientsClickHere").': &nbsp; <input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></form>');
+        print_titre($langs->trans("ToClearAllRecipientsClickHere").' &nbsp; <input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></form>');
         print '<br>';
                 
-        print_titre($langs->trans("ToAddRecipientsChooseHere").':');
+        print_titre($langs->trans("ToAddRecipientsChooseHere"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';

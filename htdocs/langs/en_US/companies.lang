@@ -83,6 +83,7 @@ ListOfSuppliersContacts=List of supplier contacts
 ListOfCompanies=List of companies
 ShowCompany=Show company
 ShowContact=Show contact
+ContactsAllShort=All
 ContactType=Contact type
 NewContact=New contact
 LastContacts=Last contacts

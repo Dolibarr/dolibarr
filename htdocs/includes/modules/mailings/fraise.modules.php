@@ -91,11 +91,13 @@ class mailing_fraise extends MailingTargets
     function formFilter()
     {
         global $langs;
+        $langs->load("members");
+        
         $s='';
         $s.='<select name="filter" class="flat">';
-        $s.='<option value="-1">'.$langs->trans("ToValidate").'</option>';
-        $s.='<option value="1" selected="true">'.$langs->trans("Validated").'</option>';
-        $s.='<option value="0">'.$langs->trans("Resiliated").'</option>';
+        $s.='<option value="-1">'.$langs->trans("MemberStatusShortDraft").'</option>';
+        $s.='<option value="1" selected="true">'.$langs->trans("MemberStatusActive").'</option>';
+        $s.='<option value="0">'.$langs->trans("MemberStatusResiliated").'</option>';
         $s.='</select>';
         return $s;
     }
