@@ -23,14 +23,14 @@
 
 require ("../../master.inc.php");
 
-$opt = getopt("f:i:");
+$opt = getopt("f:");
 
 $file = $opt['f'];
-$id_fourn = $opt['i'];
+$id_fourn = 2;
 
-if (strlen($file) == 0 || strlen($id_fourn) == 0)
+if (strlen($file) == 0)
 {
-  print "Usage :\n php import-cdr-bt.php -f <filename> -i <id_fournisseur>\n";
+  print "Usage :\n php import-cdr-bt.php -f <filename>\n";
   exit;
 }
 
@@ -52,15 +52,18 @@ if (is_dir($file))
       
       while (($xfile = readdir($handle))!==false)
 	{
-	  if (is_file($file.$xfile) && substr($xfile, -4) == ".csv")
+	  if (is_file($file.$xfile) )
 	    {
-	      $files[$i] = $file.$xfile;
-	      dolibarr_syslog($file.$xfile." ajouté");
-	      $i++;
-	    }
-	  else
-	    {
-	      dolibarr_syslog($file.$xfile." ignoré");
+	      if (substr($xfile, -4) == ".csv")
+		{
+		  $files[$i] = $file.$xfile;
+		  dolibarr_syslog($file.$xfile." ajouté");
+		  $i++;
+		}
+	      else
+		{
+		  dolibarr_syslog($file.$xfile." ignoré");
+		}
 	    }
 	}
       
@@ -82,7 +85,52 @@ else
   exit ;
 }
 
+/*
+ * Renommage des fichiers
+ *
+ */
+$datetime = time();
+$month = strftime("%m", $datetime);
+$year = strftime("%y", $datetime);
 
+if ($month == 1)
+{
+  $month = "12";
+  $year = substr("00".($year - 1), -2) ;
+}
+else
+{
+  $month = substr("00".($month - 1), -2) ;
+}
+$newfiles = array();
+$j = 0;
+foreach ($files as $xfile)
+{
+  if (is_readable($xfile))
+    {
+      dolibarr_syslog("Traitement de ".basename($xfile));
+      $newname = str_replace(".csv","-$month$year.csv",$xfile);
+      if (substr($xfile,-9) <> "-$month$year.csv")
+	{
+	  if (rename($xfile, $newname))
+	    {
+	      dolibarr_syslog("Renomme en ".$newname);
+	      $newfiles[$j] = $newname;
+	      $j++;
+	    }
+	  else
+	    {
+	      print "Erreur de renommage de $xfile\n";
+	      exit;
+	    }
+	}
+      else
+	{
+	  $newfiles[$j] = $xfile;
+	  $j++;
+	}
+    }
+}
 
 /*
  * Vérification du fournisseur
@@ -148,12 +196,13 @@ else
 }
 
 
-
-foreach ($files as $xfile)
+$line_inserted_total = 0;
+foreach ($newfiles as $xfile)
 {
   if (is_readable($xfile))
     {
-      if ( _verif($db, $xfile) == 0)
+      //      if ( _verif($db, $xfile) == 0)
+      if (true)
 	{
       
 	  dolibarr_syslog("Lecture du fichier $xfile");
@@ -244,6 +293,7 @@ foreach ($files as $xfile)
 				  if ($db->query($sql))
 				    {
 				      $line_inserted++;
+				      $line_inserted_total++;
 				    }
 				  else
 				    {
@@ -257,15 +307,13 @@ foreach ($files as $xfile)
 				{
 				  print "Ligne : $cont ignorée\n";
 				  $error++;
-				}
-			  
+				}			  
 			    }
 			  else
 			    {
 			      dolibarr_syslog("Ligne : $ligne ignorée!");
 			      $error++;
 			    }
-		      
 			}
 		      else
 			{
@@ -276,23 +324,21 @@ foreach ($files as $xfile)
 		    }
 		  $line++;
 		}
-	  
-	      dolibarr_syslog($line." lignes traitées dans le fichier");
-	      dolibarr_syslog($line_inserted." insert effectués");
+	      if ($line <> $line_inserted)
+		{
+		  dolibarr_syslog($line."/".$line_inserted." lignes traitées/insert effectués");
+		}
 	  
 	      if ($error == 0)
 		{	  
 		  $db->query("COMMIT");
-		  dolibarr_syslog("COMMIT");
 		}
 	      else
 		{
 		  $db->query("ROLLBACK");
 		  dolibarr_syslog("ROLLBACK");
-		}
-	  
-	    }
-      
+		}	  
+	    }      
 	  fclose($hf);
 	}
     }
@@ -303,6 +349,12 @@ foreach ($files as $xfile)
     }
 }
 
+dolibarr_syslog($line_inserted_total." insert effectués total");
+
+/*
+ * Fin
+ *
+ */
 
 function _verif($db, $file)
 {

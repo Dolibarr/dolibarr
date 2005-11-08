@@ -539,7 +539,7 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
     {
       $comm = $comms[$ii];
 
-      $error = $error + $comm->cout($tarif_achat, $tarif_vente, $ligne);
+      $error = $error + $comm->cout($tarif_achat, $tarif_vente, $ligne, $db);
 
       $total_cout_fourn = $total_cout_fourn + $comm->montant;
       $total_cout_achat = $total_cout_achat + $comm->cout_achat;
