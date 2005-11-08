@@ -601,9 +601,9 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  $message .= $fac->client->bank_account->number;
 	}
       
-      $message .= "Votre image de marque et votre N° de téléphone associés !\n";
-      $message .= "ibreizh vous propose son offre N° d'appel Gratuit (offre concurrente au N° vert de l'opérateur historique) pour vos prospects et clients, Offrez un nouveau service + à vos clients...\n";
-      $message .= "Favorisez les appels entrants des nouveaux clients...\n";
+      $message .= "\nVotre image de marque et votre N° de téléphone associés !\n";
+      $message .= "ibreizh vous propose son offre N° d'appel Gratuit (offre concurrente au N° vert de l'opérateur historique) pour vos prospects et clients\nOffrez un nouveau service + à vos clients...\n";
+      //$message .= "Favorisez les appels entrants des nouveaux clients...\n";
 
       if ($verbose) dolibarr_syslog("Création du pdf facture : $facid");
       
@@ -728,10 +728,10 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 
 	      $message .= "\nEgalement joint à ce mail le détails de vos communications.\n\n";
 
-	      // Ajout demandé par MJ
-	      $message .= "*Votre téléphone et votre bureau dans votre poche *\n";
-	      $message .= "*ibreizh* vous propose une solution de totale mobilité,   votre bureau de poche - accédez à vos applications métiers comme au bureau, vos mails en temps réel, mais aussi un *GPS* dans votre poche, une offre d'exception pour vous !...\n";
-	      $message .= "Information produit en Pièce Jointe, pour plus d'infos  Tel 0811 602 313\n\n";
+	      // Ajout demandé par GH
+	      $message .= "Votre image de marque et votre N° de téléphone associés !\n";
+	      $message .= "ibreizh vous propose son offre N° d'appel Gratuit (offre concurrente au N° vert de l'opérateur historique) pour vos prospects et clients, Offrez un nouveau service + à vos clients...\n";
+	      $message .= "Favorisez les appels entrants des nouveaux clients...\n";
 	      //
 
 	      $message .= TELEPHONIE_MAIL_FACTURATION_SIGNATURE;
