@@ -43,7 +43,7 @@ class CommunicationTelephonique {
    * Calcul le coût de la communication
    *
    */
-  function cout($tarif_achat, $tarif_vente, $ligne)
+  function cout($tarif_achat, $tarif_vente, $ligne, $_db)
   {
     $error = 0;
 
@@ -66,15 +66,15 @@ class CommunicationTelephonique {
 
 	$this->remise = $ligne->remise;
       }
-    elseif (substr($this->numero,0,4) == substr($objp->client,0,4) ) /* Tarif Local */
+    /* Tarif Local */
+    /*
+    elseif (substr($this->numero,0,4) == substr($objp->client,0,4) )
       {
 	$dureenat += $objp->duree;
-	$nbnat++;
-	
+	$nbnat++;	
 	$num = "0033999".substr($this->numero, 1);
-
 	$this->remise = $ligne->remise;
-      }
+      }*/
     else
       {
 	$dureenat += $objp->duree;
@@ -88,22 +88,52 @@ class CommunicationTelephonique {
     /*
      *
      *
-     */
-    
-    if (! $tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat))
+     */    
+    /* Numéros spéciaux */
+    if (substr($num,4,1) == 8)
       {
-	print "3- Tarif achat manquant pour $num\n";
-	dolibarr_syslog("CommunicationTelephonique::Cout Tarif achat manquant pour $num");
-	$error++;
+	$this->remise = 0;
+	$this->cout_temp_vente = 0;
+	$this->tarif_libelle_vente = "Numéros spéciaux";
+	$this->cout_fixe_vente = ereg_replace(",",".", $this->montant);
       }
-    
-    if (! $tarif_vente->cout($num, $this->cout_temp_vente, $this->cout_fixe_vente, $this->tarif_libelle_vente))
+    else
       {
-	print "3- Tarif vente manquant pour $num\n";
-	dolibarr_syslog("CommunicationTelephonique::Cout Tarif vente manquant pour $num");
-	$error++;
+	/* Fin Numéros spéciaux */
+	if (! $tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat))
+	  {
+	    print "3- Tarif achat manquant pour $num\n";
+	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif achat manquant pour $num");
+	    $error++;
+	  }
+	
+	if (! $tarif_vente->cout($num, $this->cout_temp_vente, $this->cout_fixe_vente, $this->tarif_libelle_vente))
+	  {
+	    print "3- Tarif vente manquant pour $num\n";
+	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif vente manquant pour $num");
+	    $error++;
+	  }
       }
+    /* Specification VoIP */
+    if ($ligne->techno == 'voip')
+      {
+	if (substr($num,4,1) < 6)
+	  {
+	    $lignedest = new LigneTel($_db);
 
+	    if ($lignedest->fetch("0".substr($num, -9)) == 1)
+	      {
+		if ($lignedest->techno == 'voip' && ($ligne->client_comm_id == $lignedest->client_comm_id))
+		  {
+		    $this->remise = 0;
+		    $this->cout_fixe_vente = 0;
+		    $this->cout_temp_vente = 0;
+		    $this->tarif_libelle_vente = "Appel Interne VoIP";
+		  }
+	      }
+	  }
+      }
+    /* Fin VoIP */
 
     $this->cout_achat = ( ($this->duree * $this->cout_temp_achat / 60) + $this->cout_fixe_achat);
     
@@ -136,7 +166,7 @@ class CommunicationTelephonique {
     $this->cout_achat = ereg_replace(",",".", $this->cout_achat);
     $this->cout_vente = ereg_replace(",",".", $this->cout_vente);
     $this->remise     = ereg_replace(",",".", $this->remise);
-    $this->montant     = ereg_replace(",",".", $this->montant);
+    $this->montant    = ereg_replace(",",".", $this->montant);
 
     $this->dateheure = mktime(substr($this->heure, 0,2),
 			      substr($this->heure, 3,2),
