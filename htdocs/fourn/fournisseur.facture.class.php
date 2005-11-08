@@ -280,26 +280,32 @@ class FactureFournisseur
 		}
 	}
 
+
 	/**
-	 * \brief     Tag la facture comme payée complètement
-	 * \param     userid        utilisateur qui modifie l'état
+	 *      \brief      Tag la facture comme payée complètement
+	 *      \param      user        Objet utilisateur qui modifie l'état
      *      \return     int         <0 si ko, >0 si ok
 	 */
     function set_payed($user)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set paye = 1 WHERE rowid = '.$this->id.';';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
+		$sql.= ' SET paye = 1';
+		$sql.= ' WHERE rowid = '.$this->id;
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
+			$this->error=$this->db->error();
 			dolibarr_print_error($this->db);
             return -1;
 		}
         return 1;
 	}
 
+
 	/**
-	 * \brief     Tag la facture comme validée et valide la facture
-	 * \param     userid        utilisateur qui valide la facture
+	 *      \brief      Tag la facture comme validée
+	 *      \param      user        Objet utilisateur qui valide la facture
+     *      \return     int         <0 si ko, >0 si ok
 	 */
 	function set_valid($user)
 	{
@@ -309,8 +315,11 @@ class FactureFournisseur
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
+			$this->error=$this->db->error();
 			dolibarr_print_error($this->db);
+            return -1;
 		}
+        return 1;
 	}
 
 
