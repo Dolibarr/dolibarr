@@ -201,10 +201,8 @@ foreach ($newfiles as $xfile)
 {
   if (is_readable($xfile))
     {
-      //      if ( _verif($db, $xfile) == 0)
-      if (true)
+      if ( _verif($db, $xfile) == 0)
 	{
-      
 	  dolibarr_syslog("Lecture du fichier $xfile");
       
 	  $error = 0;
