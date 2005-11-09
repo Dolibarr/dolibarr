@@ -43,9 +43,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.ph
 $error = 0;
 
 $datetime = time();
-
 $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
-
 $month = strftime("%m", $datetime);
 $year = strftime("%Y", $datetime);
 
@@ -74,7 +72,7 @@ $sql .= " WHERE graph IN ('factures.facture_moyenne','factures.ca_mensuel','fact
 $resql = $db->query($sql);
 
 
-$sql = "SELECT date_format(tf.date,'%m'), sum(tf.cout_vente), sum(tf.cout_achat), sum(tf.gain), count(tf.cout_vente)";
+$sql = "SELECT date_format(tf.date,'%Y%m'), sum(tf.cout_vente), sum(tf.cout_achat), sum(tf.gain), count(tf.cout_vente)";
 
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
 $sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ";
@@ -95,7 +93,6 @@ if ($resql)
   $gain_moyen = array();
 
   $num = $db->num_rows($resql);
-
   $i = 0;
 
   while ($i < $num)
@@ -118,6 +115,7 @@ if ($resql)
       $cout_vente_moyen[$i] = ($row[1]/$row[4]);
       $nb_factures[$i] = $row[4];
       $labels[$i] = $row[0];
+      $short_labels[$i] = substr($row[0],-2);
 
       $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
       $sqli .= " (graph, ord, legend, valeur) VALUES (";
@@ -142,38 +140,42 @@ else
   print $db->error();
 }
 $file = $img_root . "/factures/ca_mensuel.png";
+print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Chiffre d'affaire par mois en euros HT";
 $graph->width = 440;
-$graph->GraphDraw($file, $cout_vente, $labels);
+$graph->GraphDraw($file, $cout_vente, $short_labels);
 
 $file = $img_root . "/factures/facture_moyenne.png";
+print "Graph $file\n";
 $graph = new GraphBar ($db, $file, $labels);
 $graph->titre = "Facture moyenne";
 $graph->barcolor = "blue";
 $graph->width = 440;
-$graph->GraphDraw($file, $cout_vente_moyen, $labels);
+$graph->GraphDraw($file, $cout_vente_moyen, $short_labels);
 
 $file = $img_root . "/factures/gain_mensuel.png";
+print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain par mois en euros HT";
 $graph->width = 440;
-$graph->GraphDraw($file, $gain, $labels);
+$graph->GraphDraw($file, $gain, $short_labels);
 
 $file = $img_root . "/factures/gain_moyen.png";
+print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain moyen par facture par mois";
 $graph->width = 440;
 $graph->barcolor = "blue";
-$graph->GraphDraw($file, $gain_moyen, $labels);
+$graph->GraphDraw($file, $gain_moyen, $short_labels);
 
 $file = $img_root . "/factures/nb_facture.png";
+print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Nb de facture mois";
 $graph->width = 440;
 $graph->barcolor = "yellow";
-$graph->GraphDraw($file, $nb_factures, $labels);
-
+$graph->GraphDraw($file, $nb_factures, $short_labels);
 
 
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
@@ -264,7 +266,6 @@ if ($resql)
   while ($i < $num)
     {
       $row = $db->fetch_row($resql);	
-
       $cvc[$row[0]] = $row[1];
 
       $i++;
@@ -280,14 +281,15 @@ $i = 0;
 foreach ($labels as $labl)
 {
   $cout_vente_prelev[$i] = $cvp[$labl];
-  $cout_vente_autre[$i] = $cva[$labl];
-  $cout_achat[$i] = $cvc[$labl];
+  $cout_vente_autre[$i]  = $cva[$labl];
+  $cout_achat[$i]        = $cvc[$labl];
   $labels[$i] = substr($labl, -2);
   $i++;
 }
 
 
 $file = $img_root . "/factures/ca_mensuel_preleve.png";
+print "Graph $file\n";
 $graph = new GraphBarAccumul ($db, $file);
 $graph->titre = "Chiffre d'affaire par méthode de réglement";
 $graph->width = 640;
@@ -296,7 +298,7 @@ $graph->barcolor = "yellow";
 
 $xdatas[0] = array($cout_vente_prelev, $cout_vente_autre);
 $xdatas[1] = array($cout_achat);
-
+print_r($xdatas);
 $graph->legend[0][0] = "Factures prélevées";
 $graph->legend[0][1] = "Factures non-prélevées";
 $graph->legend[1][0] = "Coût fournisseur";
