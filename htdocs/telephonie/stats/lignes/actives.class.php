@@ -19,12 +19,9 @@
  * $Source$
  *
  */
-
-
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/line.class.php");
 
 class GraphLignesActives extends GraphLine {
-
 
   Function GraphLignesActives($DB, $file)
   {
@@ -99,4 +96,83 @@ class GraphLignesActives extends GraphLine {
     $this->GraphDraw($this->file, $active, $labels);
   }
 }
+
+
+class GraphLignesCommandees extends GraphLine {
+
+  Function GraphLignesCommandees($DB, $file)
+  {
+    $this->db = $DB;
+    $this->file = $file;
+
+    $this->client = 0;
+    $this->titre = "Lignes en commandes";
+
+    $this->barcolor = "green";
+    $this->showframe = true;
+  }
+
+
+  Function GraphMakeGraph()
+  {
+    $num = 0;
+
+    $sql = "SELECT dates, statut,nb";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_ligne_statistique";
+    $sql .= " WHERE statut = 2";
+    $sql .= " ORDER BY dates ASC";
+    
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	$i = 0;
+	$j = -1;
+	$attente = array();
+	$acommander = array();
+	$commandee = array();
+	$active = array();
+	$last = 0;
+	
+	while ($i < $num)
+	  {
+	    $row = $this->db->fetch_row($resql);	
+
+	    $j++;
+	    $labels[$j] = substr($row[0],5,2)."/".substr($row[0],2,2);
+	    $attente[$j]    = 0;
+	    $acommander[$j] = 0;
+	    $commandee[$j]  = 0;
+	    $active[$j]     = 0;
+	    $last = substr($row[0],5,2)."/".substr($row[0],2,2);
+	    
+	    if ($row[1] == 2)
+	      {
+		$active[$j] = $row[2];
+	      }
+	    
+	    $i++;
+	  }
+	
+	$this->db->free();
+      }
+    else 
+      {
+	print $this->db->error() . ' ' . $sql;
+      }
+    
+    $this->LabelInterval = 1;
+
+    $a = round($num / 20,0);
+
+    if ($a > 1)
+      {
+	$this->LabelInterval = $a;
+      }
+
+    $this->GraphDraw($this->file, $active, $labels);
+  }
+}
+
+
 ?>
