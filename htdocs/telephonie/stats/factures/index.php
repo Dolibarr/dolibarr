@@ -63,7 +63,7 @@ print '<tr><td valign="top" width="50%">';
 print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/ca_mensuel.png" alt="ca_mensuel">';
 
 print '</td><td align="left" valign="top">';
-_legend($db, "factures.ca_mensuel");
+_legend($db, "factures.ca_mensuel", "%11.2f");
 
 print '</td></tr>';
 
@@ -72,7 +72,7 @@ print '<tr><td valign="top" width="50%">';
 print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/facture_moyenne.png" alt="facture_moyenne">';
 
 print '</td><td align="left" valign="top">';
-_legend($db, "factures.facture_moyenne");
+_legend($db, "factures.facture_moyenne","%01.1f");
 
 print '</td></tr>';
 print '<tr><td valign="top" width="50%">';
@@ -80,7 +80,7 @@ print '<tr><td valign="top" width="50%">';
 print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/nb_facture.png" alt="nb_facture">';
 
 print '</td><td align="left" valign="top">';
-_legend($db, "factures.nb_mensuel");
+_legend($db, "factures.nb_mensuel","%01.0f");
 
 print '</td></tr>';
 
@@ -89,9 +89,8 @@ print '</table>';
 $db->close();
 
 
-function _legend($db, $graph)
+function _legend($db, $graph, $format)
 {
-
   print '<table class="noborder" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
   print '<td colspan="2">Légende</td></tr>';
@@ -104,25 +103,17 @@ function _legend($db, $graph)
   
   if ($resql)
     {
-      $num = $db->num_rows($resql);
-      $i = 0;
-      
-      while ($i < $num)
+      while ($row = $db->fetch_row($resql))
 	{
-	  $row = $db->fetch_row($resql);
 	  $var = !$var;
 	  print "<tr $bc[$var]>";
-	  print '<td>'.$row[0].'</td><td align="right">'.ceil($row[1]).'</td></tr>';
-	  
-	  $i++;
+	  print '<td>'.$row[0].'</td><td align="right">';
+	  print sprintf($format ,$row[1]);
+	  print '</td></tr>';
 	}
     }
   print '</table>';
 }
-
-
-
-
 
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
