@@ -48,8 +48,8 @@ $head[$h][1] = "Gain";
 $hselected = $h;
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/lastmonth.php';
-$head[$h][1] = "3 derniers mois";
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/type.php';
+$head[$h][1] = "Méthode de paiement";
 $h++;
 
 dolibarr_fiche_head($head, $hselected, "Satistiques Factures");
