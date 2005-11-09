@@ -23,7 +23,7 @@
 --
 create table llx_telephonie_stats (
   graph            varchar(255),
-  ord              varchar(255),
+  ord              smallint,
   legend           varchar(255),
   valeur           varchar(255),
 
