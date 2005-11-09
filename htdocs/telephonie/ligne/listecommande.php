@@ -47,7 +47,7 @@ if ($sortorder == "") {
   $sortorder="ASC";
 }
 if ($sortfield == "") {
-  $sortfield="l.date_commande";
+  $sortfield="l.date_commande_last";
 }
 
 /*
@@ -69,8 +69,9 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT s.idp as socidp, l.date_commande, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql = "SELECT s.idp as socidp, l.date_commande_last, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " WHERE l.statut = 2 AND l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
 
@@ -90,10 +91,10 @@ if ($_GET["search_client"])
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print_barre_liste("Lignes", $page, "listecommande.php", "", $sortfield, $sortorder, '', $num);
@@ -101,13 +102,9 @@ if ($result)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
   print_liste_field_titre("Ligne","listecommande.php","l.ligne");
-
   print_liste_field_titre("Client (Agence/Filiale)","listecommande.php","s.nom");
 
-  print '<td align="center">Statut</td>';
-
-  print_liste_field_titre("Remise LMN","listecommande.php","l.remise",'','',' align="center"');
-
+  print '<td align="center">Date</td>';
   print '<td>Fournisseur</td>';
 
   print "</tr>\n";
@@ -120,7 +117,6 @@ if ($result)
 
   print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';
-
   print '</form>';
   print '</tr>';
 
@@ -131,7 +127,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object();	
+      $obj = $db->fetch_object($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
@@ -145,9 +141,8 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.$obj->nom.'</a></td>';
-      print '<td align="center">'.$obj->date_commande."</td>\n";
+      print '<td align="center">'.$obj->date_commande_last."</td>\n";
 
-      print '<td align="center">'.$obj->remise." %</td>\n";
       print "<td>".$obj->fournisseur."</td>\n";
       print "</tr>\n";
       $i++;
