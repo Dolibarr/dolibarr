@@ -45,6 +45,7 @@ create table llx_telephonie_societe_ligne (
   fk_concurrent      integer DEFAULT 1 NOT NULL,
   fk_user_creat      integer,
   date_commande      datetime,
+  date_commande_last datetime,
   fk_user_commande   integer,
   isfacturable       enum('oui','non') DEFAULT 'oui',
   mode_paiement      enum('vir','pre') DEFAULT 'pre',
