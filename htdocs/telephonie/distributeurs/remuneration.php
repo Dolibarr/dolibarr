@@ -198,8 +198,8 @@ if ($_GET["id"])
 	  $total += $obj->montant;
 	  $i++;
 	}
-      print "<tr $bc[$var]>";	  
-      print '<td>Total</td>\n";
+      print "<tr $bc[$var]>\n";	  
+      print '<td>Total</td>';
       print '<td align="right">'.sprintf("%01.2f",$total)."</td>\n";	  
       print "</tr>\n";
       print "</table>";
