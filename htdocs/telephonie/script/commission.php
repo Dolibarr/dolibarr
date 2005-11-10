@@ -198,7 +198,7 @@ $sql .= " AND date_format(p.datepo, '%Y%m') <= '".$year_prev.$month_prev."'";
 $sql .= " AND fk_distributeur > 0";
 
 $resql = $db->query($sql);
-print $sql;
+//print $sql;
 if ( $resql )
 {
   $num = $db->num_rows($resql);
@@ -318,7 +318,7 @@ foreach ($distri_av as $distributeur_id)
       while ($ia < $numa)
 	{
 	  $rowa = $db->fetch_row($resqla);
- 	  dolibarr_syslog("* Régul des avances de la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
+ 	  dolibarr_syslog("* Regul des avances de la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
 	  $ia++;
 
 	  /* Calcul des sommes avancées */
@@ -334,8 +334,8 @@ foreach ($distri_av as $distributeur_id)
 	  if ( $resql )
 	    {
 	      $num = $db->num_rows($resql);
-	      $i = 0;
-	      
+	      dolibarr_syslog("* Regul des avances de la po ".$rowa[0]." ".strftime("%Y%m",$rowa[1]).", $num avances");
+	      $i = 0;	      
 	      while ($i < $num)
 		{
 		  $row = $db->fetch_row($resql);
@@ -349,29 +349,21 @@ foreach ($distri_av as $distributeur_id)
 		  $datdo = strftime("%Y%m",$rowa[1]);
 		  if ($row[2] <> 6)
 		    {
+		      dolibarr_syslog("* Communications <= $datup >= $datdo ");
 		      $sqlc = "SELECT sum(montant)";
 		      $sqlc .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso";
-		  
-		      dolibarr_syslog("* Communications <= $datup >= $datdo ");
-
 		      $sqlc .= " WHERE fk_contrat = ". $row[1];
 		      $sqlc .= " AND date <= '".$datup."' AND date >= '".$datdo."'";
 		      
 		      $resqlc = $db->query($sqlc);
 		      
 		      if ( $resqlc )
-			{
-			  $numc = $db->num_rows($resqlc);
-			  $ic = 0;
-		      
-			  while ($ic < $numc)
+			{		      
+			  while ($rowc = $db->fetch_row($resqlc))
 			    {
-			      $rowc = $db->fetch_row($resqlc);
-			      
 			      $comm_regul[$distributeur_id] = $comm_regul[$distributeur_id] + $rowc[0];
 			      
 			      dolibarr_syslog("* Conso générée ".$rowc[0]);
-			      $ic++;
 			    }
 			  $db->free($resqlc);
 			}
