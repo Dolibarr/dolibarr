@@ -102,15 +102,9 @@ $resql = $db->query($sql);
   
 if ( $resql )
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-
-  while ($i < $num)
+  while ($row = $db->fetch_row($resql))
     {
-      $row = $db->fetch_row($resql);
-
       array_push($distributeurs, $row[0]);
-      $i++;
     }
   $db->free($resql);
 }
@@ -229,7 +223,7 @@ if ( $resql )
       $sqli .= ",".ereg_replace(",",".",$comm);
       $sqli .= ",".ereg_replace(",",".",$pourcent);
 
-      if ($date_regul < $year.$month)
+      if ($obj->date_regul < $year.$month)
 	{
 	  $sqli .= ",0)";
 	}
