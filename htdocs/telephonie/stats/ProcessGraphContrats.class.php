@@ -57,7 +57,7 @@ class ProcessGraphContrats
     $this->db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,1);
   }
   
-  function go($contrat_id = 0)
+  function go($contrat_id = 0, $verbose)
   {
     if ($contrat_id == 0)
       {
