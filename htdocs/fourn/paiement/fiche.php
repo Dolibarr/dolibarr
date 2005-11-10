@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -182,14 +181,17 @@ if ($resql)
 	$total = 0;
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Bill').'</td><td>'.$langs->trans('Company').'</td>';
-	print '<td align="right">'.$langs->trans('AmountTTC').'</td><td align="center">'.$langs->trans('Status').'</td>';
+	print '<td width="80">'.$langs->trans('Bill').'</td>';
+	print '<td width="80" align="center">'.$langs->trans('Status').'</td>';
+	print '<td>'.$langs->trans('Company').'</td>';
+	print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
 	{
 		$var=True;
 
+    	$fac_static=new FactureFournisseur($db);
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
@@ -198,10 +200,9 @@ if ($resql)
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 			print $objp->facnumber;
 			print "</a></td>\n";
+			print '<td align="center">'.$fac_static->LibStatut($objp->paye,$objp->fk_statut).'</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
-			$fac=new FactureFournisseur($db);
-			print '<td align="center">'.$fac->LibStatut($objp->paye,$objp->fk_statut).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)
 			{

@@ -15,6 +15,7 @@ SavingAccounts=Saving accounts
 ErrorBankLabelAlreadyExists=Financial account label already exists
 BankBalance=Balance
 InitialBankBalance=Initial balance
+EndBankBalance=End balance
 CurrentBalance=Current balance
 RIB=RIB
 IBAN=IBAN number

@@ -359,7 +359,7 @@ if ($result)
         if (! $objp->rappro)
         {
             print '<td colspan="3">';
-            print '<input name="amount" class="flat" size="10" value="'.price($objp->amount).'"> '.$conf->monnaie;
+            print '<input name="amount" class="flat" size="10" value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->monnaie);
             print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
         }
         else
@@ -372,7 +372,7 @@ if ($result)
         print "</form>";
     
         // Type paiement
-        print "<tr><td>".$langs->trans("Type")."</td><td colspan=\"3\">";
+        print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero")."</td><td colspan=\"3\">";
         print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
         print '<input type="hidden" name="action" value="type">';
         print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";

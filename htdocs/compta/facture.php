@@ -1267,7 +1267,7 @@ else
 			print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
 			/*
-			 * Paiements
+			 * Liste des paiements
 			 */
 			print $langs->trans('Payments').' :<br>';
 			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
@@ -1281,7 +1281,7 @@ else
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				$i = 0; $total = 0;
+				$i = 0; $totalpaye = 0;
 				print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre"><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Type').'</td>';
 				print '<td align="right">'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';

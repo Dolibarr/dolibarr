@@ -171,16 +171,16 @@ if ($resql)
         dolibarr_print_error($db);
     }
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="border" width="100%">';
     print "<tr class=\"liste_titre\">\n";
-    print '<td>'.$langs->trans("Date").'</td>';
-    print '<td>'.$langs->trans("DateValue").'</td>';
+    print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
+    print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
-    print '<td align="right">'.$langs->trans("Debit").'</td>';
-    print '<td align="right">'.$langs->trans("Credit").'</td>';
-    print '<td align="center" width="60">'.$langs->trans("Action").'</td>';
-    print '<td align="center" width="100" colspan="2">'.$langs->trans("AccountStatement").' (Ex: YYYYMM)</td>';
+    print '<td align="right" width="60" nowrap>'.$langs->trans("Debit").'</td>';
+    print '<td align="right" width="60" nowrap>'.$langs->trans("Credit").'</td>';
+    print '<td align="center" width="40">'.$langs->trans("Action").'</td>';
+    print '<td align="center">'.$langs->trans("AccountStatement").'<br>(Ex: YYYYMM)</td>';
     print "</tr>\n";
 
 
@@ -196,21 +196,40 @@ if ($resql)
         print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
 
-        print '<td nowrap>'.dolibarr_print_date($objp->do).'</td>';
-        print '<td nowrap>'.dolibarr_print_date($objp->dv).'</td>';
-        print '<td nowrap>'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
-        print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">'.$objp->label.'</a>';
+        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->do,"%d/%m/%Y").'</td>';
+        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->dv,"%d/%m/%Y").'</td>';
+        print '<td nowrap="nowrap">'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
+        print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">'.$objp->label.'</a>';
+        
         /*
-         * Ajout les liens
+         * Ajout les liens (societe, company...)
          */
+        $newline=1;
         $links = $acct->get_url($objp->rowid);
         foreach($links as $key=>$val)
         {
-            print ' - ';
-            print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-            // if ($links[$key]['type']=='payment') { print img_object($langs->trans('ShowPayment'),'payment').' '; }
-            // if ($links[$key]['type']=='company') { print img_object($langs->trans('ShowCustomer'),'company').' '; }
-            print $links[$key]['label'].'</a>';
+            if (! $newline) print ' - ';
+            else print '<br>';
+            if ($links[$key]['type']=='payment') {
+                print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                print img_object($langs->trans('ShowPayment'),'payment').' ';
+                print $langs->trans("Payment");
+                print '</a>';
+                $newline=0;
+            }
+            elseif ($links[$key]['type']=='company') {
+                print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                print img_object($langs->trans('ShowCustomer'),'company').' ';
+                print dolibarr_trunc($links[$key]['label'],24);
+                print '</a>';
+                $newline=0;
+            }
+            else {
+                print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                print $links[$key]['label'];
+                print '</a>';
+                $newline=0;
+            }
         }
         print '</td>';
 
@@ -226,18 +245,18 @@ if ($resql)
         if ($objp->rappro)
         {
             // Si ligne déjà rapprochée, on affiche relevé.
-            print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
+            print "<td align=\"center\" nowrap=\"nowrap\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
         }
         else
         {
             // Si pas encore rapprochée
             if ($user->rights->banque->modifier)
             {
-                print '<td align="center" width="30">';
+                print '<td align="center" width="30" nowrap="nowrap">';
 
                 print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
                 print img_edit();
-                print '</a>&nbsp; &nbsp;';
+                print '</a>&nbsp; ';
 
                 if ($objp->do <= mktime() ) {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
@@ -245,7 +264,7 @@ if ($resql)
                     print '</a>';
                 }
                 else {
-                    print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'après la date passée et que l'écriture apparaissent bien sur le compte.
+                    print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'après la date passée et que l'écriture apparaisse bien sur le compte.
                 }
                 print "</td>";
             }
@@ -256,24 +275,25 @@ if ($resql)
         }
 
 
-        // Affiche bouton "Rapprocher"
-        if ($objp->do <= mktime() ) {
-            print "<td align=\"center\">";
+        // Affiche zone saisie relevé + bouton "Rapprocher"
+        if ($objp->do <= mktime())
+        {
+            print '<td align="center" nowrap="nowrap">';
             print "<input class=\"flat\" name=\"num_releve\" type=\"text\" value=\"\" size=\"8\">";
+            print ' &nbsp; ';
+            print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
             if ($options)
             {
                 print "<br><select class=\"flat\" name=\"cat1\">$options";
                 print "</select>";
             }
             print "</td>";
-            print "<td align=\"center\"><input class=\"button\" type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
-            print "</td>";
         }
         else
         {
-            print "<td align=\"left\" colspan=\"2\">";
-            print "Ecriture future. Ne peut pas encore être rapprochée.";
-            print "</td>";
+            print '<td align="left">';
+            print 'Ecriture future. Ne peut pas encore être rapprochée.';
+            print '</td>';
         }
 
         print "</tr>\n";

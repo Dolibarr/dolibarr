@@ -15,6 +15,7 @@ SavingAccounts=Comptes épargnes/placements
 ErrorBankLabelAlreadyExists=Libellé de compte financier déjà existant
 BankBalance=Solde
 InitialBankBalance=Solde initial
+EndBankBalance=Solde final
 CurrentBalance=Solde actuel
 RIB=RIB
 IBAN=Identifiant IBAN
