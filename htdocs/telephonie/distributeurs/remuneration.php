@@ -126,14 +126,12 @@ if ($_GET["id"])
       print '<tr class="liste_titre"><td>Client</td>';
       print '<td align="right">Montant</td>';
       print "</tr>\n";
-      
+      $total = 0;
       $var=True;
       
       while ($i < min($num,$conf->liste_limit))
 	{
-	  $obj = $db->fetch_object($resql);
-	  $var=!$var;
-	  
+	  $obj = $db->fetch_object($resql);	 
 	  print "<tr $bc[$var]>";	  
 	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
 	  print img_file();
@@ -141,9 +139,14 @@ if ($_GET["id"])
 	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
+	  $total += $obj->montant;
 	  $i++;
+	  $var=!$var;
 	}
-      print "</table>";
+      print "<tr $bc[$var]>\n";	  
+      print '<td>Total</td>';
+      print '<td align="right">'.sprintf("%01.2f",$total)."</td>\n";	  
+      print "</tr>\n</table>\n";
       $db->free();
     }
   else 
@@ -186,7 +189,6 @@ if ($_GET["id"])
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object($resql);
-	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";	  
 	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
@@ -196,13 +198,13 @@ if ($_GET["id"])
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
 	  $total += $obj->montant;
+	  $var=!$var;
 	  $i++;
 	}
       print "<tr $bc[$var]>\n";	  
       print '<td>Total</td>';
       print '<td align="right">'.sprintf("%01.2f",$total)."</td>\n";	  
-      print "</tr>\n";
-      print "</table>";
+      print "</tr>\n</table>\n";
       $db->free();
     }
   else 
