@@ -43,6 +43,7 @@ class GraphDistributeurGain extends GraphBar {
     $sql = "SELECT date_format(f.date,'%Y%m'), sum(f.gain)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+    $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
     $sql .= " WHERE l.rowid = f.fk_ligne";
     $sql .= " AND l.fk_commercial_sign = dc.fk_user";
     $sql .= " AND dc.fk_distributeur = ".$distributeur;

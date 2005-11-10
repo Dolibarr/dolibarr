@@ -127,7 +127,7 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       /* Gain */
-            
+      require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.gain.class.php");
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
       $file = $dir."gain.mensuel.png";
