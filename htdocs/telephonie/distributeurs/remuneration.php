@@ -183,7 +183,7 @@ if ($_GET["id"])
       
       $var=True;
       
-      while ($i < min($num,$conf->liste_limit))
+      while ($i < $num)
 	{
 	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
