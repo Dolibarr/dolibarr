@@ -114,29 +114,7 @@ if ($resql)
       $i++;
     }
 }
-/*
- * Distributeurs
- *
- */
-$sql = "SELECT distinct fk_distributeur";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux";
 
-$resql = $db->query($sql);
-if ($resql)
-{
-  while ($row = $db->fetch_row($resql))
-    {
-      /* Gain */
-      require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.gain.class.php");
-      $dir = $img_root . "distributeurs/".$row[0]."/";
-      _cdir($dir);
-      $file = $dir."gain.mensuel.png";
-      if ($verbose) print "Graph : gain distributeur $file\n";
-      $graph = new GraphDistributeurGain($db, $file);
-      $graph->width = 400;
-      $graph->GraphMakeGraph($row[0]);
-    }
-}
 /*
  * Groupes
  *
