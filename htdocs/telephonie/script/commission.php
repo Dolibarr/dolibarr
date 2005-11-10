@@ -61,10 +61,30 @@ else
 $month_prev = substr("00".$month_prev, -2) ;
 
 
+$dir = DOL_DATA_ROOT.'/telephonie/log/';
+if (!file_exists($dir))
+  create_dir($dir);
+
+$dir = DOL_DATA_ROOT.'/telephonie/log/commission/';
+if (!file_exists($dir))
+  create_dir($dir);
+
+function create_dir($dir)
+{
+  if (! file_exists($dir))
+    {
+      umask(0);
+      if (! @mkdir($dir, 0755))
+	{
+	  die ("Erreur: Le répertoire ".$dir." n'existe pas et Dolibarr n'a pu le créer.");
+	}
+    }
+}
+
 if (! $db->begin()) die ;
 
-$fp = fopen("/tmp/$month.$year.log","w+");
-fputs($fp,"$month/$year\n");
+$fp = fopen($dir."/$month.$year.log","w+");
+fputs($fp,"Commissions $month/$year\n");
 /********************************************************
  *
  * Verification des données
@@ -110,7 +130,6 @@ dolibarr_syslog("Calcul avance");
 $sql = "SELECT rowid, fk_distributeur, fk_contrat, datepo, montant";
 $sql .= " , avance_pourcent, rem_pour_prev";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
-
 $sql .= " WHERE date_format(datepo, '%Y%m') = '".$year_prev.$month_prev."'";
 $sql .= " AND fk_distributeur > 0";
 
@@ -167,8 +186,11 @@ else
  *
  *********************************************************/
 
-$sql = "SELECT p.rowid, f.cout_vente, p.fk_contrat, l.rowid as ligne, p.fk_distributeur";
+$sql = "SELECT p.rowid,  p.fk_contrat,  p.fk_distributeur";
 $sql .= " , p.avance_pourcent, p.rem_pour_prev, p.rem_pour_autr";
+$sql .= " , p.avance_duree";
+$sql .= " , date_format(p.datepo + INTERVAL p.avance_duree MONTH, '%Y%m') as date_regul";
+$sql .= " , f.cout_vente,l.rowid as ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -182,7 +204,7 @@ $sql .= " AND date_format(p.datepo, '%Y%m') <= '".$year_prev.$month_prev."'";
 $sql .= " AND fk_distributeur > 0";
 
 $resql = $db->query($sql);
-
+print $sql;
 if ( $resql )
 {
   $num = $db->num_rows($resql);
@@ -201,12 +223,22 @@ if ( $resql )
       fputs($fp, " conso  : $comm\n");
       
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_conso";
-      $sqli .= " (date, fk_distributeur, fk_contrat, fk_ligne, montant, pourcentage)";
+      $sqli .= " (date, fk_distributeur, fk_contrat, fk_ligne, montant, pourcentage, avance)";
       $sqli .= " VALUES ('".$year.$month."'";
       $sqli .= ",".$obj->fk_distributeur.",".$obj->fk_contrat.",".$obj->ligne;
       $sqli .= ",".ereg_replace(",",".",$comm);
       $sqli .= ",".ereg_replace(",",".",$pourcent);
-      $sqli .= ")";
+
+      if ($date_regul < $year.$month)
+	{
+	  $sqli .= ",0)";
+	}
+      else
+	{
+	  $sqli .= ",1)";
+	}
+
+
       
       if (! $db->query($sqli))
 	{
@@ -292,7 +324,7 @@ foreach ($distri_av as $distributeur_id)
       while ($ia < $numa)
 	{
 	  $rowa = $db->fetch_row($resqla);
-	  dolibarr_syslog("* Régul des avances de la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
+ 	  dolibarr_syslog("* Régul des avances de la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
 	  $ia++;
 
 	  /* Calcul des sommes avancées */
