@@ -158,7 +158,7 @@ if ( $resql )
       
       if (! $db->query($sqli))
 	{
-	  $error++;
+	  $error = 2;
 	  dolibarr_syslog("Calcul avance Erreur ".$db->error());
 	}
       
@@ -168,7 +168,7 @@ if ( $resql )
 }
 else
 {
-  $error++;
+  $error = 3;
   dolibarr_syslog("Erreur ".$db->error());
 }
  
@@ -212,10 +212,7 @@ if ( $resql )
       
       $comm = round($obj->cout_vente * $pourcent * 0.01, 2) ;
 
-      fputs($fp, "DIS : ".$obj->fk_distributeur);
-      fputs($fp, " CON : ".$obj->fk_contrat);
-      fputs($fp, " conso  : $comm\n");
-      
+     
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_conso";
       $sqli .= " (date, fk_distributeur, fk_contrat, fk_ligne, montant, pourcentage, avance)";
       $sqli .= " VALUES ('".$year.$month."'";
@@ -226,17 +223,21 @@ if ( $resql )
       if ($obj->date_regul < $year.$month)
 	{
 	  $sqli .= ",0)";
+	  $avan = 0;
 	}
       else
 	{
 	  $sqli .= ",1)";
+	  $avan = 1;
 	}
 
-
+      fputs($fp, "DIS : ".$obj->fk_distributeur);
+      fputs($fp, " CON : ".$obj->fk_contrat);
+      fputs($fp, " conso  : $comm avance $avan\n");
       
       if (! $db->query($sqli))
 	{
-	  $error++;
+	  $error = 4;
 	  dolibarr_syslog("Calcul conso Erreur ".$db->error());
 	}
 
@@ -248,7 +249,7 @@ if ( $resql )
 }
 else
 {
-  $error = 9;
+  $error = 5;
   dolibarr_syslog("Erreur ".$db->error());
 }
 
@@ -291,7 +292,7 @@ if ( $resql )
 }
 else
 {
-  $error = 1;
+  $error = 6;
   dolibarr_syslog("Erreur regul avances ".$error);
 }
 
@@ -369,7 +370,7 @@ foreach ($distri_av as $distributeur_id)
 			}
 		      else
 			{
-			  $error = 1;
+			  $error = 10;
 			  dolibarr_syslog("Erreur regul avances conso ".$error);
 			}
 		    }
@@ -383,7 +384,7 @@ foreach ($distri_av as $distributeur_id)
 		      fputs($fp, " CON : ".$row[1] . " ANNULE\n");
 
 		      $sqlc = "UPDATE ".MAIN_DB_PREFIX."telephonie_commission_conso";
-		      $sqlc .= " SET annul = 1";
+		      $sqlc .= " SET annul = '".$year.$month."'";
 		      $sqlc .= " WHERE fk_contrat = ".$row[1];
 		      $sqlc .= " AND date <= '".$datup."' AND date >= '".$datdo."'";
 
@@ -391,7 +392,7 @@ foreach ($distri_av as $distributeur_id)
 
 		      if (! $resqlc )
 			{
-			  $error = 1;
+			  $error = 11;
 			  dolibarr_syslog("Erreur regul avances conso ".$error);
 			}
 		    }
@@ -402,14 +403,14 @@ foreach ($distri_av as $distributeur_id)
 	    }
 	  else
 	    {
-	      $error = 1;
+	      $error = 12;
 	      dolibarr_syslog("Erreur regul avances ".$db->error());
 	    }	  	  	  	 	  
 	}
     }
   else
     {
-      $error = 10;
+      $error = 13;
       dolibarr_syslog("Erreur regul avances aaaa".$db->error());
       dolibarr_syslog($sqla);
     }
@@ -446,7 +447,7 @@ if ( $resql )
 }
 else
 {
-  $error = 1;
+  $error = 14;
   dolibarr_syslog("Erreur calcul des commission sur conso ".$error);
 }
 
@@ -489,36 +490,33 @@ foreach ($distri_co as $distributeur_id)
 	  
 	  if ( $resqlc )
 	    {
-	      $numc = $db->num_rows($resqlc);
-	      $ic = 0;
-	      
-	      while ($ic < $numc)
+	      if ( $rowc = $db->fetch_row($resqlc) )
 		{
-		  $rowc = $db->fetch_row($resqlc);
-		  
 		  $comm_conso[$distributeur_id] = $comm_conso[$distributeur_id] + $rowc[0];
 		  
 		  dolibarr_syslog("** Conso générée ".$rowc[0]);
-		  $ic++;
+		}
+	      else
+		{
+		  $error = 151;
+		  dolibarr_syslog("Erreur regul conso");
 		}
 	      $db->free($resqlc);
 	    }
 	  else
 	    {
-	      $error = 1;
+	      $error = 15;
 	      dolibarr_syslog("Erreur regul conso");
 	    }
 	}	  		      
     }
   else
     {
-      $error = 10;
+      $error = 16;
       dolibarr_syslog("Erreur regul conso".$db->error());
       dolibarr_syslog($sqla);
     }
 }
-
-
 
 
 /********************************************************
@@ -540,12 +538,13 @@ foreach ($distributeurs as $distributeur_id)
   $amount = $amount - $avan_regul[$distributeur_id];
   $amount = $amount + $comm_conso[$distributeur_id];
 
+  $space = str_repeat(" ",8);
+
   fputs($fp, "DIS : ".$distributeur_id);
-  fputs($fp, " Comm Regul : ".$comm_regul[$distributeur_id]."\n");
+  fputs($fp, " Comm Regul : ".substr($space.$comm_regul[$distributeur_id],-8)."\n");
+
   fputs($fp, "DIS : ".$distributeur_id);
-  fputs($fp, " Avan Regul : ".$avan_regul[$distributeur_id]."\n");
-  fputs($fp, "DIS : ".$distributeur_id);
-  fputs($fp, " Comm Conso : ".$comm_conso[$distributeur_id]."\n");
+  fputs($fp, " Comm Conso : ".substr($space.$comm_conso[$distributeur_id],-8)."\n");
 
 
   /********************************************************
@@ -564,12 +563,13 @@ foreach ($distributeurs as $distributeur_id)
   
   if ( $resql )
     {
-      $num = $db->num_rows($resql);
-      $i = 0;
-      
-      while ($i < $num)
+      if ($row = $db->fetch_row($resql))
 	{
-	  $row = $db->fetch_row($resql);
+	  fputs($fp, "DIS : ".$distributeur_id);
+	  fputs($fp, " Avances    : ".substr($space.$row[0],-8)."\n");
+
+	  fputs($fp, "DIS : ".$distributeur_id);
+	  fputs($fp, " Avan Regul : ".substr($space."-".$avan_regul[$distributeur_id],-8)."\n");
 
 	  $amount = $amount + $row[0];
 	  
@@ -581,19 +581,25 @@ foreach ($distributeurs as $distributeur_id)
 
 	  if (! $db->query($sqli))
 	    {
-	      $error++;
+	      $error = 17;
 	      dolibarr_syslog("Erreur insertion Commission finale");
 	    }
 
 	  dolibarr_syslog("Commission finale ".$amount);
 
-	  $i++;
+	  fputs($fp, "DIS : ".$distributeur_id);
+	  fputs($fp, " Comm final : ".substr($space.$amount,-8)."\n");
+	}
+      else
+	{
+	  $error = 18;
+	  dolibarr_syslog("Erreur lecture avances");
 	}
       $db->free($resql);
     }
   else
     {
-      $error = 10;
+      $error = 19;
       dolibarr_syslog("Erreur ".$error);
     }
 }
