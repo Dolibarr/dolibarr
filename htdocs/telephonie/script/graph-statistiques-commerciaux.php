@@ -19,9 +19,7 @@
  * $Source$
  *
  *
- * Generation des graphiques
- *
- *
+ * Generation des graphiques relatifs aux commerciaux
  *
  */
 require ("../../master.inc.php");
@@ -48,6 +46,7 @@ $error = 0;
 $dirs[0] = DOL_DATA_ROOT."/graph/";
 $dirs[1] = DOL_DATA_ROOT."/graph/telephonie/";
 $dirs[2] = DOL_DATA_ROOT."/graph/telephonie/commercials/";
+$dirs[2] = DOL_DATA_ROOT."/graph/telephonie/distributeurs/";
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
@@ -116,6 +115,29 @@ if ($resql)
     }
 }
 /*
+ * Distributeurs
+ *
+ */
+$sql = "SELECT distinct fk_distributeur";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      /* Gain */
+            
+      $dir = $img_root . "distributeurs/".$row[0]."/";
+      _cdir($dir);
+      $file = $dir."gain.mensuel.png";
+      if ($verbose) print "Graph : gain distributeur $file\n";
+      $graph = new GraphDistributeurGain($db, $file);
+      $graph->width = 400;
+      $graph->GraphMakeGraph($row[0]);
+    }
+}
+/*
  * Groupes
  *
  */
@@ -148,12 +170,9 @@ if ($resql)
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
 
-
       $i++;
     }
 }
-
-
 
 /*
  * Contrats
@@ -209,4 +228,21 @@ if ($resql)
       $graph->GraphMakeGraph($value);
     }
 }
+
+function _cdir($dir)
+{
+  if (! file_exists($dir))
+    {
+      umask(0);
+      if (! @mkdir($dir, 0755))
+	{
+	  print  "Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+	}
+      else
+	{
+	  //print $dir ." créé\n";
+	}
+    }	
+}
+
 ?>
