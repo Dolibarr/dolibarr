@@ -40,6 +40,11 @@ class GraphDistributeurGain extends GraphBar {
   {
     $num = 0;
 
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
+    $sql .= " WHERE graph = distributeur.gain.mensuel".$disributeur;
+
+    $resql = $this->db->query($sql);
+
     $sql = "SELECT date_format(f.date,'%Y%m'), sum(f.gain)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -65,6 +70,13 @@ class GraphDistributeurGain extends GraphBar {
 	    	    
 	    $datas[$i] = $row[1];
 	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
+	    
+	    $sqli = "INSERT INTO  ".MAIN_DB_PREFIX."telephonie_stats";
+	    $sqli .= " (graph,ord,legend,valeur)";
+	    $sqli .= " VALUES ('distributeur.gain.mensuel".$disributeur."'";
+	    $sqli .= ",$i,".$labels[$i].",".$datas[$i].");";
+
+	    $resqli = $this->db->query($sqli);
 
 	    $i++;
 	  }
