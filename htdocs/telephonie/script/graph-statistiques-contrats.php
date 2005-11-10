@@ -26,9 +26,7 @@
 require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphContrats.class.php");
 
-$childrenTotal = 6;
-$childrenNow = 0;
-$clientPerChild = 0;
+$verbose = 0;
 
 $sql = "SELECT max(rowid)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat";
@@ -36,29 +34,44 @@ $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat";
 if ($db->query($sql))
 {
   $row = $db->fetch_row();
-  $clientPerChild =  ceil($row[0] / $childrenTotal);
+  $maxid = $row[0];
   $db->free();
 }
 
-while ( $childrenNow < $childrenTotal )
-{
- 
-  $pid = pcntl_fork();
-  
-  if ( $pid == -1 )
-    {
-      die( "error\n" );
-    }
-  elseif ( $pid == 0 )
-    {
-      $childrenNow++;
-    }
-  else
-    {
-      $process = new ProcessGraphContrats( $childrenNow, $clientPerChild );
-      $process->go();
-      die();
-    }  
-}
+$fork = 0;
 
+if ($fork == 0)
+{
+  $process = new ProcessGraphContrats( 0, $maxid, $verbose );
+  $process->go(0, $verbose);
+}
+else
+{
+  $childrenTotal = 6;
+  $childrenNow = 0;
+  $clientPerChild = 0;
+
+  $clientPerChild =  ceil($row[0] / $childrenTotal);
+
+  while ( $childrenNow < $childrenTotal )
+    {
+      
+      $pid = pcntl_fork();
+      
+      if ( $pid == -1 )
+	{
+	  die( "error\n" );
+	}
+      elseif ( $pid == 0 )
+	{
+	  $childrenNow++;
+	}
+      else
+	{
+	  $process = new ProcessGraphContrats( $childrenNow, $clientPerChild, $verbose );
+	  $process->go(0, $verbose);
+	  die();
+	}  
+    }
+}
 ?>
