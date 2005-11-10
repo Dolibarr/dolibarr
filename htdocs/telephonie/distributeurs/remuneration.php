@@ -182,7 +182,7 @@ if ($_GET["id"])
       print "</tr>\n";
       
       $var=True;
-      
+      $total = 0;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object($resql);
@@ -195,8 +195,13 @@ if ($_GET["id"])
 	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
+	  $total += $obj->montant;
 	  $i++;
 	}
+      print "<tr $bc[$var]>";	  
+      print '<td>Total</td>\n";
+      print '<td align="right">'.sprintf("%01.2f",$total)."</td>\n";	  
+      print "</tr>\n";
       print "</table>";
       $db->free();
     }
