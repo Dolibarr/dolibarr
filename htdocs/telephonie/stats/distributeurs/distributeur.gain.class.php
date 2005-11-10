@@ -71,10 +71,10 @@ class GraphDistributeurGain extends GraphBar {
 	    $datas[$i] = $row[1];
 	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
 	    
-	    $sqli = "INSERT INTO  ".MAIN_DB_PREFIX."telephonie_stats";
+	    $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
 	    $sqli .= " (graph,ord,legend,valeur)";
 	    $sqli .= " VALUES ('distributeur.gain.mensuel.".$disributeur."'";
-	    $sqli .= ",$i,".$labels[$i].",".$datas[$i].");";
+	    $sqli .= ",$i,'".$labels[$i]."','".$datas[$i]."');";
 
 	    $resqli = $this->db->query($sqli);
 
