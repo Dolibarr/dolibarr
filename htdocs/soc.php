@@ -557,7 +557,6 @@ else
     /*
      * Fiche société en mode visu
      */
-
     $soc = new Societe($db);
     $soc->id = $_GET["socid"];
     $result=$soc->fetch($_GET["socid"]);
@@ -569,8 +568,9 @@ else
 
     $h=0;
     
-    $head[$h][0] = 'soc.php?socid='.$soc->id;
+    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
     $head[$h][1] = $langs->trans("Company");
+    $hselected=$h;
     $h++;
 
     if ($soc->client==1)
@@ -612,8 +612,13 @@ else
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
     $head[$h][1] = $langs->trans("Notifications");
+    $h++;
 
-    dolibarr_fiche_head($head, 0, $soc->nom);
+    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Info");
+    $h++;
+
+    dolibarr_fiche_head($head, $hselected, $soc->nom);
 
 
     // Confirmation de la suppression de la facture

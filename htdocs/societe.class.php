@@ -1438,6 +1438,51 @@ class Societe {
         }
     }
 
+   /*
+    *       \brief     Charge les informations d'ordre info dans l'objet societe
+    *       \param     id     id de la societe a charger
+    */
+    function info($id)
+    {
+        $sql = "SELECT s.idp, s.nom, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("datea")." as datea,";
+        $sql.= " fk_user_creat, fk_user_modif";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.idp = ".$id;
+
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->id = $obj->idp;
+
+                if ($obj->fk_user_creat) {
+                    $cuser = new User($this->db, $obj->fk_user_creat);
+                    $cuser->fetch();
+                    $this->user_creation     = $cuser;
+                }
+
+                if ($obj->fk_user_modif) {
+                    $muser = new User($this->db, $obj->fk_user_modif);
+                    $muser->fetch();
+                    $this->user_modification = $muser;
+                }
+			    $this->ref			     = $obj->nom;
+                $this->date_creation     = $obj->datec;
+                $this->date_modification = $obj->datea;
+            }
+
+            $this->db->free($result);
+
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
+
 }
 
 ?>

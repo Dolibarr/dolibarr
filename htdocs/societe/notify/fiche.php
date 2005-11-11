@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -32,16 +31,12 @@ require("pre.inc.php");
 
 $langs->load("companies");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
+$socid = $_GET["socid"];
 if ($user->societe_id > 0) 
 {
-  //$socid = $user->societe_id;
-	$socid = $_GET["socid"];
+    $socid = $user->societe_id;
 }
-	
-$socid = $_GET["socid"];
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
@@ -151,6 +146,10 @@ if ( $soc->fetch($soc->id) )
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
     $head[$h][1] = $langs->trans("Notifications");
     $hselected=$h;
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Info");
     $h++;
     
     dolibarr_fiche_head($head, $hselected, $soc->nom);

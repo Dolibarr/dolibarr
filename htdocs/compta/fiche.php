@@ -36,27 +36,22 @@ $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
 if ($conf->projet->enabled) $langs->load("projects");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 $socid = $_GET["socid"];
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 
 $user->getrights('facture');
 
 
 
-llxHeader();
-
-
 if ($action == 'recontact')
 {
-  $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $user->login ."')";
+    $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $user->login ."')";
     $result = $db->query($sql);
 }
 
@@ -122,10 +117,11 @@ if ($mode == 'search')
 
 }
 
+
+llxHeader();
+
 /*
- *
  * Mode fiche
- *
  */
 if ($socid > 0)
 {
@@ -181,6 +177,10 @@ if ($socid > 0)
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
     $head[$h][1] = $langs->trans("Notifications");
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$societe->id;
+    $head[$h][1] = $langs->trans("Info");
     $h++;
 
     if ($user->societe_id == 0)

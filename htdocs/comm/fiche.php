@@ -194,6 +194,10 @@ if ($_socid > 0)
     $head[$h][1] = $langs->trans("Notifications");
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Info");
+    $h++;
+
     if ($user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT."/bookmarks/fiche.php?action=add&amp;socid=".$objsoc->id."&amp;urlsource=".$_SERVER["PHP_SELF"]."?socid=".$objsoc->id;

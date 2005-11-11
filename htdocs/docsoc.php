@@ -134,7 +134,12 @@ if ($socid > 0)
 
         $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
         $head[$h][1] = $langs->trans("Notifications");
+        $h++;
 
+        $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$societe->id;
+        $head[$h][1] = $langs->trans("Info");
+        $h++;
+        
         dolibarr_fiche_head($head, $hselected, $societe->nom);
 
         // Construit liste des fichiers

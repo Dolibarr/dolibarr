@@ -123,17 +123,17 @@ if($_GET["socid"])
     dolibarr_fiche_head($head, $hselected, $soc->nom);
     
     /*
-    * Fiche société en mode visu
-    */
+     * Fiche société en mode visu
+     */
     
     print '<table class="border" width="100%">';
     print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
     
-  print '<tr><td>';
-  print $langs->trans('CustomerCode').'</td><td width="20%">';
-  print $soc->code_client;
-  if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
-  print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
+    print '<tr><td>';
+    print $langs->trans('CustomerCode').'</td><td width="20%">';
+    print $soc->code_client;
+    if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+    print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
 
     print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
     
