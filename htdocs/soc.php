@@ -356,12 +356,6 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
     if ($_GET["socid"])
     {
-        // Si javascript autorisé
-        if ($conf->use_javascript)
-        {
-            include("./soc.js.php");
-        }
-        
         if ($reload || ! $_POST["nom"])
         {
             $soc = new Societe($db);
