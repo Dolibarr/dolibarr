@@ -55,6 +55,7 @@ class ModelePDFFactures extends FPDF
 
     /** 
      *      \brief      Renvoi la liste des modèles actifs
+     *      \param      db      Handler de base
      */
     function liste_modeles($db)
     {
@@ -83,8 +84,9 @@ class ModelePDFFactures extends FPDF
 }
 
 
-/**	\class ModeleNumRefFactures
-	\brief  Classe mère des modèles de numérotation des références de facture
+/**
+    	\class      ModeleNumRefFactures
+	    \brief      Classe mère des modèles de numérotation des références de facture
 */
 
 class ModeleNumRefFactures
@@ -140,52 +142,52 @@ class ModeleNumRefFactures
 */
 function facture_pdf_create($db, $facid, $message="")
 {
-  global $langs;
-  $langs->load("bills");
-  
-  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+    global $langs;
+    $langs->load("bills");
 
-  if (defined("FACTURE_ADDON_PDF") && FACTURE_ADDON_PDF)
+    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+
+    if (defined("FACTURE_ADDON_PDF") && FACTURE_ADDON_PDF)
     {
 
-      $file = "pdf_".FACTURE_ADDON_PDF.".modules.php";
+        $file = "pdf_".FACTURE_ADDON_PDF.".modules.php";
 
-      $classname = "pdf_".FACTURE_ADDON_PDF;
-      require_once($dir.$file);
+        $classname = "pdf_".FACTURE_ADDON_PDF;
+        require_once($dir.$file);
 
-      $obj = new $classname($db);
+        $obj = new $classname($db);
 
-      $obj->message = $message;
+        $obj->message = $message;
 
-      if ( $obj->write_pdf_file($facid) > 0)
-	{
-	  // Succès de la création de la facture. On génère le fichier meta
-	  facture_meta_create($db, $facid);
-	  
-	  // et on supprime l'image correspondant au preview
-    facture_delete_preview($db, $facid);
-    
-	  return 1;
-	}
-      else
-	{
-	  dolibarr_syslog("Erreur dans facture_pdf_create");
-	  dolibarr_print_error($db,$obj->pdferror());
-	  return 0;
-	}
+        if ( $obj->write_pdf_file($facid) > 0)
+        {
+            // Succès de la création de la facture. On génère le fichier meta
+            facture_meta_create($db, $facid);
+
+            // et on supprime l'image correspondant au preview
+            facture_delete_preview($db, $facid);
+
+            return 1;
+        }
+        else
+        {
+            dolibarr_syslog("Erreur dans facture_pdf_create");
+            dolibarr_print_error($db,$obj->pdferror());
+            return 0;
+        }
     }
-  else
+    else
     {
-      print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
-      return 0;
+        print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
+        return 0;
     }
 }
 
 /**
-   \brief      Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
-   \param	    db  		objet base de donnée
-   \param	    facid		id de la facture à créer
-   \param      message     message
+   \brief       Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
+   \param	    db  		Objet base de donnée
+   \param	    facid		Id de la facture à créer
+   \param       message     Message
 */
 function facture_meta_create($db, $facid, $message="")
 {
@@ -239,52 +241,7 @@ ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->
 
 
 /**
-   \brief      Renvoie la référence de facture suivante non utilisée en fonction du module 
-   de numérotation actif défini dans FACTURE_ADDON
-   \param	    soc  		            objet societe
-   \param      prefixe_additionnel     prefixe additionnel
-   \return     string                  reference libre pour la facture
-*/
-function facture_get_num($soc, $prefixe_additionnel='')
-{
-  global $db, $langs;
-  $langs->load("bills");
-  
-  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
-
-  if (defined("FACTURE_ADDON") && FACTURE_ADDON)
-    {
-
-      $file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
-
-      // Chargement de la classe de numérotation
-      $classname = "mod_facture_".FACTURE_ADDON;
-      require_once($dir.$file);
-
-      $obj = new $classname();
-
-      $numref = "";
-      $numref = $obj->getNumRef($soc, $prefixe_additionnel);
-
-      if ( $numref != "")
-	    {
-	       return $numref;
-	    }
-      else
-	    {
-	       dolibarr_print_error($db,"modules_facture::facture_get_num ".$obj->error);
-	       return "";
-	    }
-    }
-  else
-    {
-      print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_NotDefined");
-      return "";
-    }
-}
-
-/**
-   \brief      Supprime l'image de prévisualitation, pour le cas de régénération de facture
+   \brief       Supprime l'image de prévisualitation, pour le cas de régénération de facture
    \param	    db  		objet base de donnée
    \param	    facid		id de la facture à créer
 */
@@ -297,20 +254,20 @@ function facture_delete_preview($db, $facid)
 	$fac->fetch_client();
 
 	if ($conf->facture->dir_output)
-		{
+    {
 		$facref = sanitize_string($fac->ref); 
 		$dir = $conf->facture->dir_output . "/" . $facref ; 
 		$file = $dir . "/" . $facref . ".pdf.png";
 
 		if ( file_exists( $file ) && is_writable( $file ) )
-			{
+		{
 			if ( ! unlink($file) )
-				{
+			{
 				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
 				return 0;
-				}
 			}
 		}
+	}
 }
 
 ?>

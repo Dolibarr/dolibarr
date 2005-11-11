@@ -49,21 +49,22 @@ class mod_facture_saturne extends ModeleNumRefFactures
      */
     function getExample()
     {
-        return "PREFIX084";
+        return "FA123084";
     }
 
     /*!     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc                  Objet société
-     *      \param      prefixe_additionnel     Prefix additionnel
+     *      \param      objfac                  Objet facture
      *      \return     string                  Texte descripif
      */
-    function getNumRef($objsoc=0, $prefixe_additionnel)
+    function getNumRef($objsoc=0,$objfac)
     { 
+      $prefix='FA';
        
       $y = strftime("%y",time());
       $m = strftime("%m",time());
     
-      return  $prefixe_additionnel . $m . substr($y, -1);
+      return  $prefix.$objfac->id . $m . substr($y, -1);
     
     }    
 }

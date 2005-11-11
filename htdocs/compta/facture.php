@@ -1139,9 +1139,8 @@ else
 
 
 			/*
-			* Confirmation de la suppression de la facture
-			*
-			*/
+			 * Confirmation de la suppression de la facture
+ 			 */
 			if ($_GET['action'] == 'delete')
 			{
 				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('DeleteBill'),$langs->trans('ConfirmDeleteBill'),'confirm_delete');
@@ -1153,7 +1152,7 @@ else
  			 */
 			if ($_GET['action'] == 'valid')
 			{
-				$numfa = facture_get_num($soc);
+				$numfa = $fac->getNextNumRef($soc);
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$langs->trans('ConfirmValidateBill',$numfa),'confirm_valid');
 				print '<br />';
 			}

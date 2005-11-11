@@ -293,7 +293,7 @@ class FactureRec
         {
             $action_notify = 2; // ne pas modifier cette valeur
 
-            $numfa = facture_get_num($soc); // définit dans includes/modules/facture
+            $numfa = $this->getNextNumRef($soc);
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
             $result = $this->db->query( $sql);
@@ -342,6 +342,49 @@ class FactureRec
         }
     }
  
+     /**
+     *      \brief      Renvoie la référence de facture suivante non utilisée en fonction du module
+     *                  de numérotation actif défini dans FACTURE_ADDON
+     *      \param	    soc  		            objet societe
+     *      \return     string                  reference libre pour la facture
+     */
+    function getNextNumRef($soc)
+    {
+        global $db, $langs;
+        $langs->load("bills");
+    
+        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+    
+        if (defined("FACTURE_ADDON") && FACTURE_ADDON)
+        {
+            $file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
+    
+            // Chargement de la classe de numérotation
+            $classname = "mod_facture_".FACTURE_ADDON;
+            require_once($dir.$file);
+    
+            $obj = new $classname();
+    
+            $numref = "";
+            $numref = $obj->getNumRef($soc,$this);
+    
+            if ( $numref != "")
+            {
+                return $numref;
+            }
+            else
+            {
+                dolibarr_print_error($db,"modules_facture::getNextNumRef ".$obj->error);
+                return "";
+            }
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_NotDefined");
+            return "";
+        }
+    }
+    
     /**
      * Ajoute un produit dans la facture
      */

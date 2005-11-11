@@ -56,7 +56,6 @@ class Facture
 	var $paye;
 	var $propalid;
 	var $projetid;
-	var $prefixe_facture;
 	var $cond_reglement_id;
 	var $cond_reglement_code;
 	var $mode_reglement_id;
@@ -82,7 +81,6 @@ class Facture
 		$this->total = 0;
 		$this->propalid = 0;
 		$this->projetid = 0;
-		$this->prefixe_facture = '';      // utilisé dans le module de numérotation saturne
 		$this->remise_exceptionnelle = 0;
 
 		$this->products = array();        // Tableau de lignes de factures
@@ -806,7 +804,7 @@ class Facture
 			}
 			else
 			{
-				$numfa = facture_get_num($soc, $this->prefixe_facture); // définit dans includes/modules/facture
+				$numfa = $this->getNextNumRef($soc);
 			}
 
             $this->db->begin();
@@ -1346,11 +1344,54 @@ class Facture
 	}
 
 
+    /**
+     *      \brief      Renvoie la référence de facture suivante non utilisée en fonction du module
+     *                  de numérotation actif défini dans FACTURE_ADDON
+     *      \param	    soc  		            objet societe
+     *      \return     string                  reference libre pour la facture
+     */
+    function getNextNumRef($soc)
+    {
+        global $db, $langs;
+        $langs->load("bills");
+    
+        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+    
+        if (defined("FACTURE_ADDON") && FACTURE_ADDON)
+        {
+            $file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
+    
+            // Chargement de la classe de numérotation
+            $classname = "mod_facture_".FACTURE_ADDON;
+            require_once($dir.$file);
+    
+            $obj = new $classname();
+    
+            $numref = "";
+            $numref = $obj->getNumRef($soc,$this);
+    
+            if ( $numref != "")
+            {
+                return $numref;
+            }
+            else
+            {
+                dolibarr_print_error($db,"modules_facture::getNextNumRef ".$obj->error);
+                return "";
+            }
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_NotDefined");
+            return "";
+        }
+    }
+    
 	/**
-	*    \brief      Mets à jour les commentaires
-	*    \param      note        note
-	*    \return     int         <0 si erreur, >0 si ok
-	*/
+ 	 *    \brief      Mets à jour les commentaires
+	 *    \param      note        note
+	 *    \return     int         <0 si erreur, >0 si ok
+	 */
 	function update_note($note)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET note = '".addslashes($note)."'";
