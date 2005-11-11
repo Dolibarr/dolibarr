@@ -28,6 +28,8 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
+
 
 /**	    \class      pdf_propale_vert
 		\brief      Classe permettant de générer les propales au modèle Vert

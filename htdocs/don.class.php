@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -36,60 +35,67 @@
 
 class Don
 {
-  var $id;
-  var $db;
-  var $date;
-  var $amount;
-  var $prenom;
-  var $nom;
-  var $societe;
-  var $adresse;
-  var $cp;
-  var $ville;
-  var $pays;
-  var $email;
-  var $public;
-  var $projetid;
-  var $modepaiement;
-  var $modepaiementid;
-  var $commentaire;
-  var $statut;
-
-  var $projet;
-  var $errorstr;
-
-  /*
-   * Statut du don
-   * 0 : promesse non validée
-   * 1 : promesse validée
-   * 2 : don validé
-   * 3 : don payé
-   *
-   */
-
-  /*
-   *    \brief  Constructeur
-   *    \param  DB          handler d'accès base
-   *    \param  soc_idp     id société
-   */
-  function Don($DB, $soc_idp="") 
+    var $id;
+    var $db;
+    var $date;
+    var $amount;
+    var $prenom;
+    var $nom;
+    var $societe;
+    var $adresse;
+    var $cp;
+    var $ville;
+    var $pays;
+    var $email;
+    var $public;
+    var $projetid;
+    var $modepaiement;
+    var $modepaiementid;
+    var $commentaire;
+    var $statut;
+    
+    var $projet;
+    var $errorstr;
+    
+    /**
+     *    \brief  Constructeur
+     *    \param  DB          handler d'accès base
+     *    \param  soc_idp     id sociét
+     */
+    function Don($DB, $soc_idp="")
     {
-      $this->db = $DB ;
-      $this->modepaiementid = 0;
+        global $langs;
+        
+        $this->db = $DB ;
+        $this->modepaiementid = 0;
+    
+        $langs->load("donations");
+        $this->labelstatut[0]=$langs->trans("DonationStatusPromessNotValidated");
+        $this->labelstatut[1]=$langs->trans("DonationStatusPromessValidated");
+        $this->labelstatut[2]=$langs->trans("DonationStatusValidated");
+        $this->labelstatut[3]=$langs->trans("DonationStatusPayed");
     }
 
-
-  /*
-   *
-   */
-  function print_error_list()
-  {
+    /**
+     *    \brief      Retourne le libellé du statut d'une propale (brouillon, validée, ...)
+     *    \return     string      Libellé
+     */
+    function getLibStatut()
+    {
+        return $this->labelstatut[$this->statut];
+    }
+    
+    /*
+     *
+     */
+    function print_error_list()
+    {
     $num = sizeof($this->errorstr);
     for ($i = 0 ; $i < $num ; $i++)
       {
 	print "<li>" . $this->errorstr[$i];
       }
-  }
+    }
 
   /*
    *
@@ -277,53 +283,57 @@ class Don
       }    
   }
 
-  /*
-   *    \brief  Charge l'objet don en mémoire depuis la base de donnée
-   *    \param  rowid   id du don à charger
-   *
-   */
-  function fetch($rowid)
-  {
-    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datec")." as datec,";
-    $sql.= " ".$this->db->pdate("d.datedon")." as datedon,";
-    $sql.= " d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
-    $sql.= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."c_paiement as cp LEFT JOIN ".MAIN_DB_PREFIX."don_projet as p";
-    $sql.= " ON p.rowid = d.fk_don_projet WHERE cp.id = d.fk_paiement AND d.rowid = $rowid";
-
-    if ( $this->db->query( $sql) )
-      {
-	if ($this->db->num_rows())
-	  {
-
-	    $obj = $this->db->fetch_object();
-
-	    $this->id             = $obj->rowid;
-	    $this->datec          = $obj->datec;
-	    $this->date           = $obj->datedon;
-	    $this->prenom         = stripslashes($obj->prenom);
-	    $this->nom            = stripslashes($obj->nom);
-	    $this->societe        = stripslashes($obj->societe);
-	    $this->statut         = $obj->fk_statut;
-	    $this->adresse        = stripslashes($obj->adresse);
-	    $this->cp             = stripslashes($obj->cp);
-	    $this->ville          = stripslashes($obj->ville);
-	    $this->email          = stripslashes($obj->email);
-	    $this->pays           = stripslashes($obj->pays);
-	    $this->projet         = $obj->projet;
-	    $this->projetid       = $obj->fk_don_projet;
-	    $this->public         = $obj->public;
-	    $this->modepaiementid = $obj->fk_paiement;
-	    $this->modepaiement   = $obj->libelle;
-	    $this->amount         = $obj->amount;
-	    $this->commentaire    = stripslashes($obj->note);
-	  }
-      }
-    else
-      {
-      dolibarr_print_error($this->db);
-      }
+    /*
+     *      \brief      Charge l'objet don en mémoire depuis la base de donnée
+     *      \param      rowid       Id du don à charger
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function fetch($rowid)
+    {
+        $sql = "SELECT d.rowid, ".$this->db->pdate("d.datec")." as datec,";
+        $sql.= " ".$this->db->pdate("d.datedon")." as datedon,";
+        $sql.= " d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."don as d";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."don_projet as p";
+        $sql.= " ON p.rowid = d.fk_don_projet";
+        $sql.= " WHERE cp.id = d.fk_paiement AND d.rowid = ".$rowid;
     
-  }
+        if ( $this->db->query( $sql) )
+        {
+            if ($this->db->num_rows())
+            {
+    
+                $obj = $this->db->fetch_object();
+    
+                $this->id             = $obj->rowid;
+                $this->datec          = $obj->datec;
+                $this->date           = $obj->datedon;
+                $this->prenom         = stripslashes($obj->prenom);
+                $this->nom            = stripslashes($obj->nom);
+                $this->societe        = stripslashes($obj->societe);
+                $this->statut         = $obj->fk_statut;
+                $this->adresse        = stripslashes($obj->adresse);
+                $this->cp             = stripslashes($obj->cp);
+                $this->ville          = stripslashes($obj->ville);
+                $this->email          = stripslashes($obj->email);
+                $this->pays           = stripslashes($obj->pays);
+                $this->projet         = $obj->projet;
+                $this->projetid       = $obj->fk_don_projet;
+                $this->public         = $obj->public;
+                $this->modepaiementid = $obj->fk_paiement;
+                $this->modepaiement   = $obj->libelle;
+                $this->amount         = $obj->amount;
+                $this->commentaire    = stripslashes($obj->note);
+            }
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    
+    }
 
   /*
    *    \brief  Valide une promesse de don

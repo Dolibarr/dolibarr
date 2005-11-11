@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**	    
@@ -119,6 +118,15 @@ class ModeleNumRefPropales
         return true;
     }
 
+    /**     \brief      Renvoi prochaine valeur attribuée
+     *      \return     string      Valeur
+     */
+    function getNextValue()
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
+    
 }
 
 

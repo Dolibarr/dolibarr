@@ -28,11 +28,15 @@
 */
 
 require("./pre.inc.php");
+include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
+{
+    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
+}
 
 $langs->load("propal");
 $langs->load("projects");
 $langs->load("companies");
-
 
 $user->getrights('propale');
 $user->getrights('fichinter');
@@ -40,10 +44,6 @@ $user->getrights('commande');
 $user->getrights('projet');
 
 
-if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
-{
-  require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
-}
 
 llxHeader();
 
@@ -171,7 +171,6 @@ if ($_GET["action"] == 'create')
 
     print '<td>Modèle</td>';
     print '<td>';
-    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
     $model=new ModelePDFPropales();
     $liste=$model->liste_modeles($db);
     $form->select_array("modelpdf",$liste,$conf->global->PROPALE_ADDON_PDF);

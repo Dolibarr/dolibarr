@@ -767,7 +767,7 @@ class Facture
 	    dolibarr_syslog("Facture.class.php::set_canceled rowid=".$this->id);
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET fk_statut=3 WHERE rowid = '.$this->id;
-		$resql = $this->db->query( $sql);
+		$resql = $this->db->query($sql);
 
         if ($resql)
         {
@@ -1376,7 +1376,7 @@ class Facture
             }
             else
             {
-                dolibarr_print_error($db,"modules_facture::getNextNumRef ".$obj->error);
+                dolibarr_print_error($db,"Facture::getNextNumRef ".$obj->error);
                 return "";
             }
         }

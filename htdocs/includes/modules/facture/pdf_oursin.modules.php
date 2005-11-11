@@ -30,6 +30,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 
 /**

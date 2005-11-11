@@ -285,6 +285,10 @@ Internals=Internes
 Externals=Externes
 Warning=Alerte
 Warnings=Alertes
+BuildPDF=Générer le PDF
+RebuildPDF=Regénérer le PDF
+BuildDoc=Générer le doc
+RebuildDoc=Regénérer le doc
 # Countries
 CountryFR=France
 CountryBE=Belgique

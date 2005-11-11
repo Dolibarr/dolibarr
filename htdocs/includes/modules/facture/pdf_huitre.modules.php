@@ -29,6 +29,8 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+
 
 /**
 	    \class      pdf_huitre

@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -67,6 +66,7 @@ if ($_POST["action"] == 'update')
         if ($don->update($user) > 0)
         {
             Header("Location: fiche.php?rowid=".$don->id);
+            exit;
         }
     }
     else
@@ -80,7 +80,6 @@ if ($_POST["action"] == 'add')
 
     if ($_POST["amount"] > 0)
     {
-
         $don = new Don($db);
 
         $don->prenom      = $_POST["prenom"];
@@ -102,6 +101,7 @@ if ($_POST["action"] == 'add')
         if ($don->create($user) > 0)
         {
             Header("Location: index.php");
+            exit;
         }
     }
     else
@@ -116,6 +116,7 @@ if ($_GET["action"] == 'delete')
     $don = new Don($db);
     $don->delete($_GET["rowid"]);
     Header("Location: liste.php");
+    exit;
 }
 if ($_POST["action"] == 'commentaire')
 {
@@ -129,6 +130,7 @@ if ($_GET["action"] == 'valid_promesse')
     if ($don->valid_promesse($_GET["rowid"], $user->id))
     {
         Header("Location: liste.php");
+        exit;
     }
 }
 if ($_GET["action"] == 'set_payed')
@@ -137,6 +139,7 @@ if ($_GET["action"] == 'set_payed')
     if ($don->set_paye($_GET["rowid"], $modepaiement))
     {
         Header("Location: liste.php");
+        exit;
     }
 }
 if ($_GET["action"] == 'set_encaisse')
@@ -145,7 +148,17 @@ if ($_GET["action"] == 'set_encaisse')
     if ($don->set_encaisse($_GET["rowid"]))
     {
         Header("Location: liste.php");
+        exit;
     }
+}
+
+/*
+ * Générer ou regénérer le document
+ */
+if ($_GET['action'] == 'build')
+{
+    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/dons/modules_don.php");
+	don_create($db, $_GET['rowid']);
 }
 
 
@@ -161,56 +174,58 @@ $html=new Form($db);
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($_GET["action"] == 'create') {
-
-  print_titre($langs->trans("AddDonation"));
-
-  print '<form action="fiche.php" method="post">';
-  print '<table class="border" width="100%">';
-  
-  print '<input type="hidden" name="action" value="add">';
-  
-  print '<tr><td>'.$langs->trans("Date").'</td><td>';
-  $html->select_date();
-  print '</td>';
-  
-  print '<td rowspan="12" valign="top">'.$langs->trans("Comments").' :<br>';
-  print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
-  print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-  
-  $paiement = new Paiement($db);
-
-  $paiement->select("modepaiement","CRDT");
-
-  print "</td></tr>\n";
-
-  if ($conf->projet->enabled)
-  {
-      // Si module projet actif
-      print "<tr><td>".$langs->trans("Project")."</td><td>";
-      $html->select_projects('','','',"projetid");
-      print "</td></tr>\n";
-  }
-  
-  print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
-  $html=new Form($db);
-  $html->selectyesno("public",1,1);
-  print "</td></tr>\n";
-
-  $langs->load("companies");
-  print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-  print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-  print "</table>\n";
-  print "</form>\n";
-      
+if ($_GET["action"] == 'create')
+{
+    print_titre($langs->trans("AddDonation"));
+    
+    print '<form action="fiche.php" method="post">';
+    print '<table class="border" width="100%">';
+    
+    print '<input type="hidden" name="action" value="add">';
+    
+    print '<tr><td>'.$langs->trans("Date").'</td><td>';
+    $html->select_date();
+    print '</td>';
+    
+    $nbrows=11;
+    if ($conf->projet->enabled) $nbrows++;
+    
+    print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
+    print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
+    print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
+    
+    $paiement = new Paiement($db);
+    
+    $paiement->select("modepaiement","CRDT");
+    
+    print "</td></tr>\n";
+    
+    if ($conf->projet->enabled)
+    {
+        // Si module projet actif
+        print "<tr><td>".$langs->trans("Project")."</td><td>";
+        $html->select_projects('','','',"projetid");
+        print "</td></tr>\n";
+    }
+    
+    print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
+    $html=new Form($db);
+    $html->selectyesno("public",1,1);
+    print "</td></tr>\n";
+    
+    $langs->load("companies");
+    print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
+    print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print "<tr>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+    print "</table>\n";
+    print "</form>\n";
 } 
 
 
@@ -222,83 +237,88 @@ if ($_GET["action"] == 'create') {
 
 if ($_GET["rowid"] && $_GET["action"] == 'edit')
 {
-
-  $don = new Don($db);
-  $don->id = $_GET["rowid"];
-  $don->fetch($_GET["rowid"]);
-
-  $h=0;
-  $head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
-  $head[$h][1] = $langs->trans("Donation");
-  $hselected=$h;
-  $h++;
-  
-  dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
-
-  print '<form action="fiche.php" method="post">';
-  print '<table class="border" width="100%">';
-  
-  print '<input type="hidden" name="action" value="update">';
-  print '<input type="hidden" name="rowid" value="'.$don->id.'">';
-  
-  print "<tr>".'<td>'.$langs->trans("Date").'</td><td>';
-  $html->select_date($don->date);
-  print '</td>';
-  
-  print '<td rowspan="12" valign="top">'.$langs->trans("Comments").' :<br>';
-  print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">$don->commentaire</textarea></td></tr>";
-
-  if ($conf->projet->enabled) 
-  {
-      print "<tr><td>".$langs->trans("Project")."</td><td><select name=\"projetid\">\n";
-      $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."don_projet ORDER BY rowid";
-      if ($db->query($sql))
+    $don = new Don($db);
+    $don->id = $_GET["rowid"];
+    $don->fetch($_GET["rowid"]);
+    
+    $h=0;
+    $head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
+    $head[$h][1] = $langs->trans("Donation");
+    $hselected=$h;
+    $h++;
+    
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
+    
+    print '<form action="fiche.php" method="post">';
+    print '<table class="border" width="100%">';
+    
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="rowid" value="'.$don->id.'">';
+    
+    print "<tr>".'<td>'.$langs->trans("Date").'</td><td>';
+    $html->select_date($don->date);
+    print '</td>';
+    
+    $nbrows=12;
+    if ($conf->projet->enabled) $nbrows++;
+    
+    print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
+    print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">$don->commentaire</textarea></td></tr>";
+    
+    if ($conf->projet->enabled)
+    {
+        print "<tr><td>".$langs->trans("Project")."</td><td><select name=\"projetid\">\n";
+        $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."don_projet";
+        $sql.= " ORDER BY rowid";
+        if ($db->query($sql))
         {
-          $num = $db->num_rows();
-          $i = 0; 
-          while ($i < $num) 
-    	{
-    	  $objopt = $db->fetch_object();
-    	  print "<option value=\"$objopt->rowid\">$objopt->libelle</option>\n";
-    	  $i++;
-    	}    
+            $num = $db->num_rows();
+            $i = 0;
+            while ($i < $num)
+            {
+                $objopt = $db->fetch_object();
+                print "<option value=\"$objopt->rowid\">$objopt->libelle</option>\n";
+                $i++;
+            }
         }
-      else
+        else
         {
-          dolibarr_print_error($db);
+            dolibarr_print_error($db);
         }
-      print "</select><br>";
-      print "</td></tr>\n";
-  }
-  
-  print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
-  $html=new Form($db);
-  $html->selectyesno("public",1,1);
-  print "</td>";
-  print "</tr>\n";
+        print "</select><br>";
+        print "</td></tr>\n";
+    }
+    
+    print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
+    $html=new Form($db);
+    $html->selectyesno("public",1,1);
+    print "</td>";
+    print "</tr>\n";
+    
+    $langs->load("companies");
+    print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$don->societe.'"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.$don->prenom.'"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$don->nom.'"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
+    print '<textarea name="adresse" wrap="soft" cols="40" rows="'.ROWS_3.'">'.$don->adresse.'</textarea></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$don->cp.'"> <input type="text" name="ville" size="40" value="'.$don->ville.'"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    
+    print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
+    $paiement = new Paiement($db);
+    $paiement->select("modepaiement","CRDT");
+    print "</td></tr>\n";
 
-  $langs->load("companies");
-  print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$don->societe.'"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.$don->prenom.'"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$don->nom.'"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-  print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$don->adresse.'</textarea></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$don->cp.'"> <input type="text" name="ville" size="40" value="'.$don->ville.'"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
-  print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-  $paiement = new Paiement($db);
-  $paiement->select("modepaiement","CRDT");
-  print "</td></tr>\n";
-
-  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-
-  print "</table>\n";
-  print "</form>\n";
-
-  print "</div>\n";
+    print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut().'</td></tr>';
+    
+    print "<tr>".'<td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+    
+    print "</table>\n";
+    print "</form>\n";
+    
+    print "</div>\n";
 }
 
 
@@ -310,55 +330,60 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 /* ************************************************************ */
 if ($_GET["rowid"] && $_GET["action"] != 'edit')
 {
+    $don = new Don($db);
+    $don->id = $_GET["rowid"];
+    $don->fetch($_GET["rowid"]);
+    
+    
+    $h=0;
+    $head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
+    $head[$h][1] = $langs->trans("Donation");
+    $hselected=$h;
+    $h++;
+    
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
+    
+    print "<form action=\"fiche.php\" method=\"post\">";
+    print '<table class="border" width="100%">';
+    
+    print "<tr><td>".$langs->trans("Date")."</td><td>";
+    print dolibarr_print_date($don->date,"%d %B %Y");
+    print "</td>";
+    
+    $nbrows=12;
+    if ($conf->projet->enabled) $nbrows++;
+    
+    print '<td rowspan="'.$nbrows.'" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
+    print nl2br($don->commentaire).'</td></tr>';
+    
+    if ($conf->projet->enabled)
+    {
+        print "<tr>".'<td>'.$langs->trans("Project").'</td><td>'.$don->projet.'</td></tr>';
+    }
+    
+    print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
+    print $yn[$don->public];
+    print "</td></tr>\n";
+    
+    print "<tr>".'<td>'.$langs->trans("Company").'</td><td>'.$don->societe.'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td>'.$don->prenom.'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td>'.$don->nom.'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.nl2br($don->adresse).'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$don->cp.' '.$don->ville.'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Country").'</td><td>'.$don->pays.'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.$don->email.'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
+    print $don->modepaiement;
+    print "</td></tr>\n";
 
-  $don = new Don($db);
-  $don->id = $_GET["rowid"];
-  $don->fetch($_GET["rowid"]);
+    print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut().'</td></tr>';
+    
+    print "</table>\n";
+    print "</form>\n";
+    
+    print "</div>";
 
-
-  $h=0;
-  $head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
-  $head[$h][1] = $langs->trans("Donation");
-  $hselected=$h;
-  $h++;
-  
-  dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
-
-  print "<form action=\"fiche.php\" method=\"post\">";
-  print '<table class="border" width="100%">';
-  
-  print "<tr><td>".$langs->trans("Date")."</td><td>";
-  print dolibarr_print_date($don->date,"%d %B %Y");
-  print "</td>";
-  
-  print '<td rowspan="12" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
-  print nl2br($don->commentaire).'</td></tr>';
-
-  if ($conf->projet->enabled) {
-    print "<tr>".'<td>'.$langs->trans("Project").'</td><td>'.$don->projet.'</td></tr>';
-  }
-  
-  print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
-  print $yn[$don->public];
-  print "</td></tr>\n";
-
-  print "<tr>".'<td>'.$langs->trans("Company").'</td><td>'.$don->societe.'</td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td>'.$don->prenom.'</td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td>'.$don->nom.'</td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.nl2br($don->adresse).'</td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$don->cp.' '.$don->ville.'</td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Country").'</td><td>'.$don->pays.'</td></tr>';
-  print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.$don->email.'</td></tr>';
-  print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-  print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-  print $don->modepaiement;
-  print "</td></tr>\n";
-
-  print "</table>\n";
-  print "</form>\n";
-  
-  print "</div>";
-  
 
     /**
      * Barre d'actions
@@ -369,7 +394,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	
     if ($don->statut == 0)
     {
-      print '<a class="butAction" href="fiche.php?rowid='.$don->id.'&action=valid_promesse">'.$langs->trans("Valid").'</a>';
+      print '<a class="butAction" href="fiche.php?rowid='.$don->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a>';
     }
 
     // \todo Gérer action émettre paiement
@@ -385,7 +410,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
     if ($don->statut == 2 || $don->statut == 3)
     {
-      print "<a class=\"butAction\" href=\"formulaire/".DONS_FORM."?rowid=$don->id\">".$langs->trans("Form")."</a>";
+        print '  <a class="butAction" href="fiche.php?rowid='.$don->id.'&amp;action=build">'.$langs->trans('BuildDoc').'</a>';
     }
 
     if ($don->statut == 0) 
@@ -401,5 +426,6 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>

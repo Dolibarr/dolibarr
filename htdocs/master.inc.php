@@ -287,12 +287,18 @@ $conf->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
 $conf->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
 
 $conf->facture->enabled=defined("MAIN_MODULE_FACTURE")?MAIN_MODULE_FACTURE:0;
-if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+// \todo Ajouter la ligne
+// require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+// dans le fichier facturation-emission.php du module telephonie afin de pouvoir
+// supprimer celles qui suivent.
+if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) 
+{
+    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+}
 $conf->facture->dir_output=DOL_DATA_ROOT."/facture";
 $conf->facture->dir_images=DOL_DATA_ROOT."/facture/images";
 if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par d?faut
 $conf->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 if (!defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
 $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
 $conf->propal->dir_images=DOL_DATA_ROOT."/propale/images";

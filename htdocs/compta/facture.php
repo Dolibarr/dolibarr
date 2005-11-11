@@ -30,15 +30,7 @@
 */
 
 require('./pre.inc.php');
-
-$user->getrights('facture');
-$user->getrights('banque');
-
-if (!$user->rights->facture->lire)
-accessforbidden();
-
-$langs->load('bills');
-
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
@@ -47,6 +39,13 @@ if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT.'/propal.class.php'
 if ($conf->contrat->enabled)  require_once(DOL_DOCUMENT_ROOT.'/contrat/contrat.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
+$user->getrights('facture');
+$user->getrights('banque');
+
+if (!$user->rights->facture->lire)
+    accessforbidden();
+
+$langs->load('bills');
 
 $sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
 if (isset($_GET['msg'])) { $msg=urldecode($_GET['msg']); }
@@ -404,10 +403,7 @@ if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
 	{
 		$fac = new Facture($db);
     	$fac->fetch($_GET['facid']);
-		$result = $fac->set_canceled();
-		$_GET['facid'] = 0 ;
-		Header('Location: facture.php');
-		exit;
+		$result = $fac->set_canceled($user);
 	}
 }
 
@@ -552,8 +548,6 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
  */
 if ($_GET['action'] == 'pdf')
 {
-	// Generation de la facture définie dans /includes/modules/facture/modules_facture.php
-	// Génère également le fichier meta dans le meme répertoire (pour faciliter les recherches et indexation)
 	facture_pdf_create($db, $_GET['facid']);
 }
 

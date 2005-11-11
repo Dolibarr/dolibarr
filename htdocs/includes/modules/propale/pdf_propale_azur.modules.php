@@ -28,6 +28,7 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 

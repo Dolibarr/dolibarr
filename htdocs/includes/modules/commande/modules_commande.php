@@ -111,7 +111,24 @@ class ModeleNumRefCommandes
         return $langs->trans("NoExample");
     }
 
-}
+    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numérotation de fonctionner.
+     *      \return     boolean     false si conflit, true si ok
+     */
+    function canBeActivated()
+    {
+        return true;
+    }
 
+    /**     \brief      Renvoi prochaine valeur attribuée
+     *      \return     string      Valeur
+     */
+    function getNextValue()
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
+    
+}
 
 ?>
