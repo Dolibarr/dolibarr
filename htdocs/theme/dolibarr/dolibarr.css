@@ -28,17 +28,6 @@ body {
 }
 
 /***** Styles par défaut *****/
-textarea  {
-    font: 12px helvetica, verdana, arial, sans-serif;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
-textarea.flat
-{ 
-    font: 12px helvetica, verdana, arial, sans-serif;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
 input
 { 
     font: 12px helvetica, verdana, arial, sans-serif; 
@@ -46,6 +35,17 @@ input
     margin: 0px 0px 0px 0px;
 }
 input.flat
+{ 
+    font: 12px helvetica, verdana, arial, sans-serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+textarea  {
+    font: 12px helvetica, verdana, arial, sans-serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+textarea.flat
 { 
     font: 12px helvetica, verdana, arial, sans-serif;
     padding: 0px 0px 0px 0px;
@@ -139,12 +139,22 @@ a.tmenu#sel
 { 
   padding: 0em 1em;
   margin: 0em 0em 1em 0em;
+  font-size:12px;
 }
 a.tmenu:hover
 {
   padding: 0em 1em;
   margin: 0em 0em 1em 0em;
-  text-decoration: underline;
+  text-decoration: none;
+  font-size:12px;
+}
+
+font.tmenudisabled
+{
+  color: #93a5aa;
+  padding: 0em 1em;
+  margin: 0em 0em 1em 0em;
+  font-size:12px;
 }
 
 /* Login */
@@ -186,6 +196,7 @@ a.vmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; 
 a.vmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; text-decoration: underline; }
+font.vmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1em 1em 1em 1em; }
 
 a.vsmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
 a.vsmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
@@ -222,26 +233,65 @@ div.blockvmenuimpair
     margin: 1px 0px 0px 0px;
 }
 
+a.leftmenu {              
+             font-size: 0.9em; 
+             font-weight: bold; 
+             color: #202020; 
+             }
+
+td.barre { 
+           border-right: 1px solid #000000;
+           border-bottom: 1px solid #000000;
+           background: #b3cccc;
+           font-family: Helvetica, Verdana;
+           font-size: 0.9em; 
+           color: #000000; 
+           text-decoration: none;
+}
+
+td.barre_select { 
+                  background: #b3cccc; 
+                  color: #000000;
+                  }
+
+form {
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
+}
+/*
+ *   Barre recherche
+ */
+div.formsearch
+{
+  display: block;
+  float: none;
+  clear: right;
+  background: #d0d4d7;
+  top: 0px;
+  left: 130px;
+  padding: 4px; 
+  vertical-align: center;
+  margin-bottom: 10px;
+}
 
 /*
  *   Barre onglets
  */
+div.tabs {
+    top: 20px;
+    margin: 1px 0px 0px 0px;
+    padding: 0px 6px;
+    text-align: left;
+}
 div.tabBar {
   color: #436976;
   background: #dee7ec;
   padding-top: 14px;
-  padding-left: 14px;
-  padding-right: 14px;
+  padding-left: 12px;
+  padding-right: 12px;
   padding-bottom: 14px;
   margin: 0px 0px 10px 0px;
   border: 1px solid #8CACBB;
-}
-
-div.tabs {
-    top: 20px;
-    margin: 1px 0em 0em 0em;
-    padding: 0em 0.5em;
-  text-align: left;
 }
 
 div.tabsAction {
@@ -250,12 +300,27 @@ div.tabsAction {
   text-align: right;
 }
 
+
+a.tabTitle {
+    background: #436976;
+    color: white;
+    font-weight: normal;
+    padding: 0px 6px;
+    margin: 0em 0.5em;
+    text-decoration: none;
+    white-space: nowrap;
+
+    border-right: 1px solid #555555;
+    border-left: 1px solid #D8D8D8;
+    border-top: 1px solid #D8D8D8;
+}
+
 a.tab {
   background: white;
   border: 1px solid #8CACBB;
   color: #436976;
   font-weight: normal;
-  padding: 0em 1em;
+  padding: 0px 6px;
   margin: 0em 0.2em;
   text-decoration: none;
   white-space: nowrap;
@@ -276,6 +341,7 @@ a.tab:hover {
 
 /*
  *   Boutons actions
+ *   Nouvelle syntaxe à utiliser
  */
 
 a.butAction:link { background: white; border: 1px solid #8CACBB; color: #436976; font: 105% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
@@ -405,29 +471,74 @@ a.normal{ font-weight: normal }
 a.impayee { font-weight: bold }
 
 /*
- *   Barre de gauche
+ *  Boxes
+ */
+tr.box_titre {
+    background: #b3cccc;
+    font-family: Helvetica, Verdana;
+    font-weight: bold;
+    border-top: 1px solid #8CACBB;
+    white-space: nowrap;
+}
+
+tr.box_impair {
+    background: #b3cccc;
+    font-size: 0.8em;
+}
+
+tr.box_pair {
+    background: #cceeee;
+    font-size: 0.8em;
+}
+
+tr.fiche {
+font-size: 0.6em;
+}
+
+
+/*
+ *   Ok, Warning, Error
+ */
+.ok      { color: #114466; }
+.warning { color: #887711; }
+.error   { color: #550000; font-weight: bold; }
+
+div.ok {
+  color: #114466;
+}
+
+div.warning {
+  color: #997711;
+}
+
+div.error {
+  color: #550000; font-weight: bold; 
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  margin: 0.5em 0em 0.5em 0em;
+  border: 1px solid #8C9CAB;
+}
+
+
+/*
+ *   Liens Payes/Non payes
  */
 
-a.leftmenu {              
-             font-size: 0.9em; 
-             font-weight: bold; 
-             color: #202020; 
-             }
+a.normal:link { font-weight: normal } 
+a.normal:visited { font-weight: normal }
+a.normal:active { font-weight: normal }
+a.normal:hover { font-weight: normal }
 
-td.barre { 
-           border-right: 1px solid #000000;
-           border-bottom: 1px solid #000000;
-           background: #b3cccc;
-           font-family: Helvetica, Verdana;
-           font-size: 0.9em; 
-           color: #000000; 
-           text-decoration: none }
+a.impayee:link { font-weight: bold; color: #550000; }
+a.impayee:visited { font-weight: bold; color: #550000; }
+a.impayee:active { font-weight: bold; color: #550000; }
+a.impayee:hover { font-weight: bold; color: #550000; }
 
-td.barre_select { 
-                  background: #b3cccc; 
-                  color: #000000 
-                  }
 
+
+
+/*
+ *  Lignes titre espace
+ */
 div.titre { 
             font-family: Helvetica, Verdana;
             font-size: 0.9em; 
@@ -492,28 +603,7 @@ tr.liste_total td {
     font-size: 0.9em;
 }
 
-/*
- *  Boxes
- */
-tr.box_titre {
-    font-family: Helvetica, Verdana;
-    font-size: 0.9em;
-    font-weight: bold;
-}
 
-tr.box_pair {
-    background: #b3cccc;
-    font-size: 0.8em;
-}
-
-tr.box_impair {
-    background: #cceeee;
-    font-size: 0.8em;
-}
-
-tr.fiche {
-font-size: 0.6em;
-}
 
 /*
  *
@@ -536,22 +626,3 @@ td.small {
 tr.nonpayed { 
               font-size: 0.9em; font-weight: bold;
               }
-
-
-p#powered-by-dolibarr {
-	position: fixed;
-	margin: 0;
-	padding: 0;
-	bottom: 2px;
-	left: 0px;
-	z-index: 2;
-}
-
-p#powered-by-dolibarr a {
-	border: 1px solid black;
-	text-decoration: none;
-	color: black;
-	font-size: 0.9em;
-	padding-right: 5px;
-	padding-left: 5px;
-}

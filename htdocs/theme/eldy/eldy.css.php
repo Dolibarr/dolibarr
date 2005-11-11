@@ -316,12 +316,12 @@ td.barre {
 	font: helvetica, verdana, arial, sans-serif;
 	color: #000000; 
 	text-align:left;
-	text-decoration: none
+	text-decoration: none;
 }
 
 td.barre_select { 
 	background: #b3c5cc; 
-	color: #000000 
+	color: #000000;
 }
 
 td.photo {
@@ -879,7 +879,7 @@ cursor: hand;
 
 
 /*
- *  Objets debug
+ *  Autre
  */
 
 
