@@ -38,8 +38,10 @@ function llxHeader() { }
 
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
-$type = urldecode($_GET["type"]);
-if (! $type) $type='application/pdf';
+// Défini type et attachment
+$type = urldecode($_GET["type"]); $attachment = true;
+if (eregi('\.html',$original_file)) { $type='text/html'; $attachment = false; }
+if (eregi('\.pdf',$original_file))  { $type='application/pdf'; $attachment = true; }
 
 //Suppression de la chaine de caractère ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
@@ -171,6 +173,17 @@ if ($modulepart)
         $original_file=$conf->produit->dir_output.'/'.$original_file;
     }
 
+    // Wrapping pour les factures
+    if ($modulepart == 'don')
+    {
+        $user->getrights('don');
+        if ($user->rights->don->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->don->dir_output.'/'.$original_file;
+    }
+
 }
 
 // Limite accès si droits non corrects
@@ -195,8 +208,8 @@ if (! file_exists($original_file))
 // Les drois sont ok et fichier trouvé, on l'envoie
 dolibarr_syslog("document.php download $filename content-type=$type");
 
-header('Content-type: '.$type);
-header('Content-Disposition: attachment; filename="'.$filename.'"');
+if ($type) header('Content-type: '.$type);
+if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 
 // Ajout directives pour résoudre bug IE
 header('Cache-Control: Public, must-revalidate');

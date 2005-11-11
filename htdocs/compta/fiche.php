@@ -339,7 +339,7 @@ if ($socid > 0)
                 print "<td align=\"right\">".price($objp->total_ttc)."</td>\n";
 
                 $fac = new Facture($db);
-                print "<td align=\"center\">".($fac->LibStatut($objp->paye,$objp->statut))."</td>\n";
+                print "<td align=\"center\">".($fac->LibStatut($objp->paye,$objp->statut,1))."</td>\n";
                 print "</tr>\n";
                 $i++;
             }

@@ -1284,12 +1284,13 @@ class Facture
 	}
 
 	/**
-	*    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	*    \return     string      Libell
-	*/
-	function getLibStatut()
+	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	 *    \param      mode          0=libellé long, 1=libellé court
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->paye,$this->statut);
+		return $this->LibStatut($this->paye,$this->statut,$mode);
 	}
 
 	/**

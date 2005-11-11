@@ -1748,7 +1748,7 @@ class Form
     /**
      *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
      *      \param      modulepart          propal=propal, facture=facture, ...
-     *      \param      filename            Nom fichier
+     *      \param      filename            Nom fichier sans extension
      *      \param      filedir             Repertoire à scanner
      *      \param      urlsource           Url page origine
      *      \param      genallowed          Génération autorisée
@@ -1765,9 +1765,12 @@ class Form
         $var=true;
  
         $filename = sanitize_string($filename);
-        if ($modulepart != 'expedition') $relativepath = "${filename}/${filename}.pdf";
-        else $relativepath = get_exdir("${filename}")."${filename}.pdf";
-                    
+        // Par defaut
+        $extension = 'pdf'; $relativepath = "${filename}/${filename}.${extension}";
+        // Autre cas
+        if ($modulepart == 'expedition') { $extension='pdf'; $relativepath = get_exdir("${filename}")."${filename}.pdf"; }
+        if ($modulepart == 'don')        { $extension='html'; $relativepath = get_exdir("${filename}")."${filename}.html"; }
+
         $i=0;
         if (is_dir($filedir))
         {
@@ -1775,9 +1778,8 @@ class Form
             while (($file = readdir($handle))!==false)
             {
                 // Si fichier non lisible ou non .pdf, on passe au suivant
-                if (! is_readable($filedir."/".$file) || ! eregi('\.pdf$',$file)) continue;
+                if (! is_readable($filedir."/".$file) || ! eregi('\.'.$extension.'$',$file)) continue;
 
-                
                 if ($i==0)
                 {
                     // Affiche en-tete tableau
@@ -1818,9 +1820,11 @@ class Form
                 }
                 
                 print "<tr $bc[$var]>";
-                if (eregi('\-detail\.pdf',$file)) print '<td nowrap>PDF Détaillé</td>';
-                else print '<td nowrap>PDF</td>';
-                
+                $mimetype=strtoupper($extension);
+                if ($extension == 'pdf') $mimetype='PDF';
+                if ($extension == 'html') $mimetype='HTML';
+                if (eregi('\-detail\.pdf',$file)) $mimetype='PDF Détaillé';
+                print '<td nowrap>'.$mimetype.'</td>';
                 print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a></td>';
                 print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
                 print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';

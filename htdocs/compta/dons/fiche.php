@@ -418,7 +418,30 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
       print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$don->id&action=delete\">".$langs->trans("Delete")."</a>";
     }
 
-    print "</div><br>";
+    print "</div>";
+
+
+	print '<table width="100%"><tr><td width="50%" valign="top">';
+
+	/*
+	 * Documents générés
+	 */
+	$filename=sanitize_string($don->id);
+	$filedir=$conf->don->dir_output . '/' . get_exdir($filename);
+	$urlsource=$_SERVER['PHP_SELF'].'?rowid='.$don->id;
+//            $genallowed=($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer);
+//            $delallowed=$user->rights->facture->supprimer;
+	$genallowed=0;
+	$delallowed=0;
+
+	$var=true;
+
+	print '<br>';
+	$html->show_documents('don',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+
+    print '</td><td>&nbsp;</td>';
+
+    print '</tr></table>';
 
 }
 
