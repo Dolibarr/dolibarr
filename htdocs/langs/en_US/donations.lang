@@ -11,3 +11,6 @@ DonationsReceived=Donations received
 PublicDonation=Public donation
 DonationsNumber=Donation number
 DonationsArea=Donations area
+DonationStatusPromessNotValidated=Draft promess
+DonationStatusPromessNotValidated=Validated promess
+DonationStatusPayed=Donation received

@@ -72,8 +72,7 @@ class Don
         $langs->load("donations");
         $this->labelstatut[0]=$langs->trans("DonationStatusPromessNotValidated");
         $this->labelstatut[1]=$langs->trans("DonationStatusPromessValidated");
-        $this->labelstatut[2]=$langs->trans("DonationStatusValidated");
-        $this->labelstatut[3]=$langs->trans("DonationStatusPayed");
+        $this->labelstatut[2]=$langs->trans("DonationStatusPayed");
     }
 
     /**
@@ -364,39 +363,38 @@ class Don
       }    
   }
 
-  /*
-   *    \brief  Classe le don comme payé, le don a été recu
-   *    \param  rowid           id du don à modifier
-   *    \param  modepaiementd   mode de paiement
-   *
-   */
-  function set_paye($rowid, $modepaiement='')
-  {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
-
-    if ($modepaiement)
-      {
-	$sql .= ", fk_paiement=$modepaiement";
-      }
-    $sql .=  " WHERE rowid = $rowid AND fk_statut = 1;";
-
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-      dolibarr_print_error($this->db);
-	  return 0;
-      }    
-  }
+    /*
+     *    \brief  Classe le don comme payé, le don a été recu
+     *    \param  rowid           id du don à modifier
+     *    \param  modepaiementd   mode de paiement
+     */
+    function set_paye($rowid, $modepaiement='')
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
+    
+        if ($modepaiement)
+        {
+            $sql .= ", fk_paiement=$modepaiement";
+        }
+        $sql .=  " WHERE rowid = $rowid AND fk_statut = 1;";
+    
+        if ( $this->db->query( $sql) )
+        {
+            if ( $this->db->affected_rows() )
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return 0;
+        }
+    }
 
   /*
    *    \brief  Défini le commentaire

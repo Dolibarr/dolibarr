@@ -11,3 +11,6 @@ DonationsReceived=Dons encaissés
 PublicDonation=Don public
 DonationsNumber=Nombre de dons
 DonationsArea=Espace Dons
+DonationStatusPromessNotValidated=Promesse non validée
+DonationStatusPromessNotValidated=Promesse validée
+DonationStatusPayed=Don payé
