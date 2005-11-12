@@ -340,7 +340,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
   $sql.= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
   if ($socidp) $sql .= " AND f.fk_soc = $socidp";
   $sql.= " GROUP BY f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc";
-  $sql.= " ORDER BY f.datef ASC ";
+  $sql.= " ORDER BY f.datef ASC, f.facnumber ASC";
 
   $resql = $db->query($sql);
   if ($resql)

@@ -121,7 +121,7 @@ if ($user->rights->facture->lire)
     $sql.= " ORDER BY ";
     $listfield=split(',',$sortfield);
     foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
-    $sql.= " f.fk_soc ASC";
+    $sql.= " f.facnumber DESC";
 
     //$sql .= $db->plimit($limit+1,$offset);
 
