@@ -71,7 +71,7 @@ class html_cerfafr extends ModeleDon
     */
     function write_file($id)
     {
-        global $conf,$langs,$user;
+        global $conf,$langs,$user,$mysoc;
         
         $don = new Don($this->db);
         $don->fetch($id);
@@ -92,9 +92,20 @@ class html_cerfafr extends ModeleDon
         // Defini contenu
         $donmodel=DOL_DOCUMENT_ROOT ."/includes/modules/dons/html_cerfafr.html";
         $html = implode('', file($donmodel));
-        $html = eregi_replace('__REF__',$this->id,$html);
-        $html = eregi_replace('__DATE__',strftime("%d/%b/%Y %H:%m:%s",mktime()),$html);
+        $html = eregi_replace('__REF__',$id,$html);
+        $html = eregi_replace('__DATE__',dolibarr_print_date($don->date),$html);
         $html = eregi_replace('__IP__',$user->ip,$html);
+        $html = eregi_replace('__AMOUNT__',$don->amount,$html);
+        $html = eregi_replace('__CURRENCY__',$langs->trans("Currency".$conf->monnaie),$html);
+        $html = eregi_replace('__CURRENCYCODE__',$conf->monnaie,$html);
+        $html = eregi_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->nom,$html);
+        $html = eregi_replace('__MAIN_INFO_SOCIETE_ADRESSE__',$mysoc->adresse,$html);
+        $html = eregi_replace('__MAIN_INFO_SOCIETE_CP__',$mysoc->cp,$html);
+        $html = eregi_replace('__MAIN_INFO_SOCIETE_VILLE__',$mysoc->ville,$html);
+        $html = eregi_replace('__DONATOR_NAME__',$don->nom,$html);
+        $html = eregi_replace('__DONATOR_ADDRESS__',$don->adresse,$html);
+        $html = eregi_replace('__DONATOR_ZIP__',$don->cp,$html);
+        $html = eregi_replace('__DONATOR_TOWN__',$don->ville,$html);
         
         // Sauve fichier sur disque
         dolibarr_syslog("html_cerfafr::write_file $file");

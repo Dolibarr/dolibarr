@@ -103,7 +103,7 @@ class pdf_propale_azur extends ModelePDFPropales
     */
     function pdferror() 
     {
-      return $this->error;
+        return $this->error;
     }
 
     /**
@@ -112,17 +112,18 @@ class pdf_propale_azur extends ModelePDFPropales
     		\return	    int         1=ok, 0=ko
             \remarks    Variables utilisées
     		\remarks    MAIN_INFO_SOCIETE_NOM
+    		\remarks    MAIN_INFO_ADRESSE
+    		\remarks    MAIN_INFO_CP
+    		\remarks    MAIN_INFO_VILLE
+    		\remarks    MAIN_INFO_TEL
+    		\remarks    MAIN_INFO_FAX
+    		\remarks    MAIN_INFO_WEB
     		\remarks    MAIN_INFO_SIRET
     		\remarks    MAIN_INFO_SIREN
     		\remarks    MAIN_INFO_RCS
     		\remarks    MAIN_INFO_CAPITAL
     		\remarks    MAIN_INFO_TVAINTRA
-            \remarks    FAC_PDF_LOGO
-    		\remarks    FACTURE_CHQ_NUMBER
-    		\remarks    FACTURE_RIB_NUMBER
-    		\remarks    FAC_PDF_INTITULE
-    		\remarks    FAC_PDF_TEL
-    		\remarks    FAC_PDF_ADRESSE
+            \remarks    MAIN_INFO_LOGO
     */
     function write_pdf_file($id)
     {
@@ -570,7 +571,7 @@ class pdf_propale_azur extends ModelePDFPropales
     */
     function _pagehead(&$pdf, $prop)
     {
-        global $langs,$conf;
+        global $langs,$conf,$mysoc;
 
         $langs->load("main");
         $langs->load("bills");
@@ -585,17 +586,19 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
+        $logo=$mysoc->logo;
+        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=FAC_PDF_LOGO;
+        if ($logo)
         {
-            if (is_readable(FAC_PDF_LOGO))
+            if (is_readable($logo))
             {
-                $pdf->Image(FAC_PDF_LOGO, $this->marge_gauche, $posy, 0, 24);
+                $pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
             }
             else
             {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
+                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
                 $pdf->MultiCell(100, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
             }
         }
@@ -627,43 +630,35 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
 
-        $pdf->SetXY($this->marge_gauche,$posy+3);
+        $pdf->SetXY($this->marge_gauche+2,$posy+3);
 
         // Nom emetteur
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',11);
-        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)  // Prioritaire sur MAIN_INFO_SOCIETE_NOM
-        {
-            $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-        }
-        else                                                        // Par defaut
-        {
-            $pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
-        }
+        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
+        else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
 
         // Caractéristiques emetteur
         $carac_emetteur = '';
-        if (defined("FAC_PDF_ADRESSE"))
-        {
-            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
+        if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
+        else {
+            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
+            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
         }
         $carac_emetteur .= "\n";
-        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL)
-        {
-            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".FAC_PDF_TEL;
-        }
-        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX)
-        {
-            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".FAC_PDF_FAX;
-        }
-		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL)
-		{
-			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".FAC_PDF_MEL;
-		}
-		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW)
-		{
-			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".FAC_PDF_WWW;
-        }
+        // Tel
+        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".FAC_PDF_TEL;
+        elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".$mysoc->tel;
+        // Fax
+        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".FAC_PDF_FAX;
+        elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".$mysoc->fax;
+        // EMail
+		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".FAC_PDF_MEL;
+        elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".$mysoc->email;
+        // Web
+		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".FAC_PDF_WWW;
+        elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".$mysoc->url;
+
         $pdf->SetFont('Arial','',9);
         $pdf->SetXY($this->marge_gauche+2,$posy+8);
         $pdf->MultiCell(80,4, $carac_emetteur);
@@ -689,7 +684,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $carac_client.="\n".$prop->client->cp . " " . $prop->client->ville."\n";
 		if ($prop->client->tva_intra) $carac_client.="\n".$langs->trans("VATIntraShort").': '.$prop->client->tva_intra;
         $pdf->SetFont('Arial','',9);
-        $pdf->SetXY(102,$posy+7);
+        $pdf->SetXY(102,$posy+8);
         $pdf->MultiCell(86,4, $carac_client);
 
         // Montants exprimés en

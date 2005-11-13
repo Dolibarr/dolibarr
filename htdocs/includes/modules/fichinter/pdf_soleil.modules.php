@@ -29,6 +29,8 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
+
 
 /**
         \class      pdf_soleil
