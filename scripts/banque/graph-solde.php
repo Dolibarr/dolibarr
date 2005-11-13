@@ -464,4 +464,98 @@ foreach ($accounts as $account)
       $graph->Stroke($file);
     }
 }
+
+foreach ($accounts as $account)
+{
+  $labels = array();
+  $datas = array();
+  $amounts = array();
+  $credits = array();
+  $debits = array();
+
+  $sql = "SELECT date_format(datev,'%m'), sum(amount)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank";
+  $sql .= " WHERE fk_account = ".$account;
+  $sql .= " AND date_format(datev,'%Y') = '".$year."'";
+  $sql .= " AND amount > 0";
+  $sql .= " GROUP BY date_format(datev,'%m');";
+
+  $resql = $db->query($sql);
+  
+  $amounts = array();
+  
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);
+	  $credits[$row[0]] = $row[1];
+	  $i++;
+	}      
+    }
+  else
+    {
+      print $sql ;
+    }
+
+  $sql = "SELECT date_format(datev,'%m'), sum(amount)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank";
+  $sql .= " WHERE fk_account = ".$account;
+  $sql .= " AND date_format(datev,'%Y') = '".$year."'";
+  $sql .= " AND amount < 0";
+  $sql .= " GROUP BY date_format(datev,'%m');";
+
+  $resql = $db->query($sql);  
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  $debits[$row[0]] = abs($row[1]);
+	}      
+    }
+  else
+    {
+      print $sql ;
+    }
+
+  for ($i = 0 ; $i < 12 ; $i++)
+    {
+      $data_credit[$i] = $credits[substr("0".($i+1),-2)];
+      $data_debit[$i] = $debits[substr("0".($i+1),-2)];
+      $labels[$i] = $i+1;	  
+    }
+
+  $width = 750;
+  $height = 350;
+  
+  $graph = new Graph($width, $height,"auto");    
+  $graph->SetScale("textlin");
+  
+  $graph->yaxis->scale->SetGrace(2);
+  //$graph->SetFrame(1);
+  $graph->img->SetMargin(60,20,20,35);
+  
+  $bsplot = new BarPlot($data_debit);  
+  $bsplot->SetColor("red");
+  
+  $beplot = new BarPlot($data_credit);  
+  $beplot->SetColor("green");
+
+  $bg = new GroupBarPlot(array($beplot, $bsplot));
+
+  $graph->title->Set("Mouvements $year");
+  
+  $graph->xaxis->SetTickLabels($labels);   
+  
+  $graph->Add($bg);
+  $graph->img->SetImgFormat("png");
+  
+  $file= DOL_DATA_ROOT."/graph/banque/mouvement.$account.$year.png";
+  
+  $graph->Stroke($file);
+}
+
 ?>
