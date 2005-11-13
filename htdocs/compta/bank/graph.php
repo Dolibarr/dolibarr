@@ -37,6 +37,7 @@ $account = $_GET["id"];
 
 if ($account > 0)
 {
+
     $datetime = time();
     $month = strftime("%m", $datetime);
     $year = strftime("%Y", $datetime);
@@ -46,27 +47,35 @@ if ($account > 0)
     
     print_fiche_titre("Journal de trésorerie du compte : " .$acct->label,$mesg);
     
-    
     print '<table class="notopnoleftnoright" width="100%">';
-    
     print '<tr><td>';
-    
     $file = "solde.$account.$year.png";
+
+    /* Bug
     if (! file_exists($file))
-    {
-        print "Pour générer ou regénérer les graphiques, lancer le script scripts/banque/graph-solde.php en ligne de commande.<br>";
-        print '<br>';
-    }
+      {
+	print "Pour générer ou regénérer les graphiques, lancer le script scripts/banque/graph-solde.php en ligne de commande.<br>";
+      print '<br>';
+      }
     else
-    {
+      {
         print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
-    }
+      }
+    */
+    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+    print '</td></tr><tr><td>';
+    
+    $file = "mouvement.$account.$year.png";
+    
+    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+    
+
     print '</td></tr><tr><td>';
     
     $file = "solde.$account.png";
     
     print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     
-    print '</td></tr></table>';
+    print '</td></tr></table>';    
 }
 ?>
