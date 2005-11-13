@@ -39,6 +39,8 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",stripslashes($_POST["nom"]));
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",stripslashes($_POST["address"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",stripslashes($_POST["ville"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",stripslashes($_POST["cp"]));
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",stripslashes($_POST["pays_id"]));
     dolibarr_set_const($db, "MAIN_MONNAIE",stripslashes($_POST["currency"]));
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",stripslashes($_POST["tel"]));
@@ -110,7 +112,15 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyAddress").'</td><td>';
-    print '<textarea name="address" cols="50" rows="2">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
+    print '<textarea name="address" cols="50" rows="'.ROWS_2.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyZip").'</td><td>';
+    print '<input name="cp" value="'. $conf->global->MAIN_INFO_SOCIETE_CP . '"></td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyTown").'</td><td>';
+    print '<input name="ville" value="'. $conf->global->MAIN_INFO_SOCIETE_VILLE . '"></td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
@@ -328,7 +338,13 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyAddress").'</td><td>' . nl2br($conf->global->MAIN_INFO_SOCIETE_ADRESSE) . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyZip").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_CP . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyTown").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_VILLE . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCountry").'</td><td>';
     print $form->pays_name($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
     print '</td></tr>';
 

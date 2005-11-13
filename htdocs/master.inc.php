@@ -186,12 +186,8 @@ define('MAGPIE_DIR', MAGPIERSS_PATH);
 
 // \todo Ajouter la ligne
 // require_once(FPDF_PATH . "fpdf.php");
-// dans le fichier pdfdetail_standard_modeles du module telephonie afin de pouvoir
-// supprimer celles qui suivent.
-if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) 
-{
-    require_once(FPDF_PATH . "fpdf.php");
-}
+// dans le fichier pdfdetail_standard_modeles du module telephonie afin de pouvoir la suivante
+if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(FPDF_PATH . "fpdf.php");
 
 /*
  * Autres parametres globaux de configurations
@@ -211,103 +207,130 @@ else
   $conf->upload = 0;
 }
 
+
 /*
- * D?finition des param?tres d'activation de module et d?pendants des modules
+ * Definition des parametres d'activation de module et dependants des modules
  * Chargement d'include selon etat activation des modules
  */
+
+// Module bookmark4u
 $conf->bookmark4u->enabled=defined('MAIN_MODULE_BOOKMARK4U')?MAIN_MODULE_BOOKMARK4U:0;
 $conf->bookmark->enabled=defined('MAIN_MODULE_BOOKMARK')?MAIN_MODULE_BOOKMARK:0;
+// Module deplacement
 $conf->deplacement->enabled=defined("MAIN_MODULE_DEPLACEMENT")?MAIN_MODULE_DEPLACEMENT:0;
+// Module mailing
 $conf->mailing->enabled=defined("MAIN_MODULE_MAILING")?MAIN_MODULE_MAILING:0;
+// Module externalrss
 $conf->externalrss->enabled=defined("MAIN_MODULE_EXTERNALRSS")?MAIN_MODULE_EXTERNALRSS:0;
+// Module commande client
 $conf->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;
 $conf->commande->dir_output=DOL_DATA_ROOT."/commande";
 $conf->commande->dir_images=DOL_DATA_ROOT."/commande/images";
+// Module expeditions
 $conf->expedition->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
 $conf->expedition->dir_output=DOL_DATA_ROOT."/expedition";
 $conf->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
+// Module societe
 $conf->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
-if ($conf->societe->enabled) require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
 $conf->societe->dir_images=DOL_DATA_ROOT."/societe/images";
 if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par d?faut
+// Module commercial
 $conf->commercial->enabled=defined("MAIN_MODULE_COMMERCIAL")?MAIN_MODULE_COMMERCIAL:0;
 $conf->commercial->dir_output=DOL_DATA_ROOT."/rapport";
+// Module comptaexpert
 $conf->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
 $conf->comptaexpert->dir_output=DOL_DATA_ROOT."/comptaexpert";
 $conf->comptaexpert->dir_images=DOL_DATA_ROOT."/comptaexpert/images";
+// Module compta
 $conf->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
 $conf->compta->dir_output=DOL_DATA_ROOT."/compta";
 $conf->compta->dir_images=DOL_DATA_ROOT."/compta/images";
+// Module banque
 $conf->banque->enabled=defined("MAIN_MODULE_BANQUE")?MAIN_MODULE_BANQUE:0;
 $conf->banque->dir_output=DOL_DATA_ROOT."/banque";
 $conf->banque->dir_images=DOL_DATA_ROOT."/banque/images";
-$conf->caisse->enabled=defined("MAIN_MODULE_CAISSE")?MAIN_MODULE_CAISSE:0;
+// Module don
 $conf->don->enabled=defined("MAIN_MODULE_DON")?MAIN_MODULE_DON:0;
 $conf->don->dir_output=DOL_DATA_ROOT."/dons";
 $conf->don->dir_images=DOL_DATA_ROOT."/dons/images";
+// Module syslog
 $conf->syslog->enabled=defined("MAIN_MODULE_SYSLOG")?MAIN_MODULE_SYSLOG:0;
+// Module fournisseur
 $conf->fournisseur->enabled=defined("MAIN_MODULE_FOURNISSEUR")?MAIN_MODULE_FOURNISSEUR:0;
+// Module ficheinter
 $conf->fichinter->enabled=defined("MAIN_MODULE_FICHEINTER")?MAIN_MODULE_FICHEINTER:0;
-if ($conf->fichinter->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 $conf->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
 $conf->fichinter->dir_images=DOL_DATA_ROOT."/ficheinter/images";
-if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par d?faut
+if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
+// Module adherent
 $conf->adherent->enabled=defined("MAIN_MODULE_ADHERENT")?MAIN_MODULE_ADHERENT:0;
 $conf->adherent->dir_output=DOL_DATA_ROOT."/adherent";
+// Module produit
 $conf->produit->enabled=defined("MAIN_MODULE_PRODUIT")?MAIN_MODULE_PRODUIT:0;
 $conf->produit->dir_output=DOL_DATA_ROOT."/produit";
 $conf->produit->dir_images=DOL_DATA_ROOT."/produit/images";
-$conf->barcode->enabled=defined("MAIN_MODULE_BARCODE")?MAIN_MODULE_BARCODE:0;
-$conf->categorie->enabled=defined("MAIN_MODULE_CATEGORIE")?MAIN_MODULE_CATEGORIE:0;
+// Module service
 $conf->service->enabled=defined("MAIN_MODULE_SERVICE")?MAIN_MODULE_SERVICE:0;
-if ($conf->service->enabled) require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 $conf->service->dir_output=DOL_DATA_ROOT."/produit";
 $conf->service->dir_images=DOL_DATA_ROOT."/produit/images";
+// Module stock
 $conf->stock->enabled=defined("MAIN_MODULE_STOCK")?MAIN_MODULE_STOCK:0;
+// Module code barre
+$conf->barcode->enabled=defined("MAIN_MODULE_BARCODE")?MAIN_MODULE_BARCODE:0;
+// Module categorie
+$conf->categorie->enabled=defined("MAIN_MODULE_CATEGORIE")?MAIN_MODULE_CATEGORIE:0;
+// Module contrat
 $conf->contrat->enabled=defined("MAIN_MODULE_CONTRAT")?MAIN_MODULE_CONTRAT:0;
-$conf->boutique->enabled=defined("MAIN_MODULE_BOUTIQUE")?MAIN_MODULE_BOUTIQUE:0;
+// Module projet
 $conf->projet->enabled=defined("MAIN_MODULE_PROJET")?MAIN_MODULE_PROJET:0;
+// Module oscommerce
+$conf->boutique->enabled=defined("MAIN_MODULE_BOUTIQUE")?MAIN_MODULE_BOUTIQUE:0;
 $conf->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 $conf->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
+// Module postnuke
 $conf->postnuke->enabled=defined("MAIN_MODULE_POSTNUKE")?MAIN_MODULE_POSTNUKE:0;
+// Module clicktodial
 $conf->clicktodial->enabled=defined("MAIN_MODULE_CLICKTODIAL")?MAIN_MODULE_CLICKTODIAL:0;
-$conf->telephonie->enabled=defined("MAIN_MODULE_TELEPHONIE")?MAIN_MODULE_TELEPHONIE:0;
-$conf->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
-$conf->telephonie->dir_images=DOL_DATA_ROOT."/telephonie/images";
+// Module prelevement
 $conf->prelevement->enabled=defined("MAIN_MODULE_PRELEVEMENT")?MAIN_MODULE_PRELEVEMENT:0;
 $conf->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
 $conf->prelevement->dir_images=DOL_DATA_ROOT."/prelevement/images";
-
-$conf->energie->enabled=defined("MAIN_MODULE_ENERGIE")?MAIN_MODULE_ENERGIE:0;
-
+// Module webcal
 $conf->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 $conf->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'mysql';
 $conf->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
 $conf->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
 $conf->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
 $conf->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
-
+// Module facture
 $conf->facture->enabled=defined("MAIN_MODULE_FACTURE")?MAIN_MODULE_FACTURE:0;
 // \todo Ajouter la ligne
 // require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
-// dans le fichier facturation-emission.php du module telephonie afin de pouvoir
-// supprimer celles qui suivent.
-if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) 
-{
-    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
-}
+// dans le fichier facturation-emission.php du module telephonie afin de pouvoir supprimer la suivante
+if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 $conf->facture->dir_output=DOL_DATA_ROOT."/facture";
 $conf->facture->dir_images=DOL_DATA_ROOT."/facture/images";
-if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par d?faut
+if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par defaut
+// Module propal
 $conf->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
-if (!defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
+if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
 $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
 $conf->propal->dir_images=DOL_DATA_ROOT."/propale/images";
-if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par d?faut
+if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
+// Module telephonie
+$conf->telephonie->enabled=defined("MAIN_MODULE_TELEPHONIE")?MAIN_MODULE_TELEPHONIE:0;
+$conf->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
+$conf->telephonie->dir_images=DOL_DATA_ROOT."/telephonie/images";
+// Module energie
+$conf->energie->enabled=defined("MAIN_MODULE_ENERGIE")?MAIN_MODULE_ENERGIE:0;
+// Module domaine
 $conf->domaine->enabled=0;
+// Module voyage
 $conf->voyage->enabled=0;
+// Module actionscomm
 $conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
+
 
 /*
  * Modification de quelques variable de conf en fonction des Constantes
@@ -404,6 +427,31 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
 // \todo Mettre format dans fichier langue
 $conf->format_date_text_short="%d %b %Y";
 $conf->format_date_short="%d/%m/%Y";
+
+
+/* 
+ * Creation objet mysoc
+ * Objet Societe qui contient carac de l'institution gérée par Dolibarr.
+ */
+require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
+$mysoc=new Societe($db);
+$mysoc->id=0;
+$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM;
+$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
+$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP;
+$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE;
+$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL;
+$mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
+$mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;
+$mysoc->siren=$conf->global->MAIN_INFO_SIREN;
+$mysoc->siret=$conf->global->MAIN_INFO_SIRET;
+$mysoc->ape=$conf->global->MAIN_INFO_APE;
+$mysoc->rcs=$conf->global->MAIN_INFO_RCS;
+$mysoc->tvaintra=$conf->global->MAIN_INFO_TVAINTRA;
+$mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
+$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_FORME_JURIDIQUE;
+$mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
 
 
 /* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de d?sactiver la fonction TVA

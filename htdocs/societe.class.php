@@ -51,13 +51,17 @@ class Societe {
   var $fax;
   var $url;
   var $siren;
+  var $siret;
+  var $ape;
 
+  var $prefix_comm;
+
+  var $tva_intra;
+  var $capital;
   var $typent_id;
   var $effectif_id;
   var $forme_juridique_code;
   var $forme_juridique;
-
-  var $prefix_comm;
 
   var $remise_client;
 
