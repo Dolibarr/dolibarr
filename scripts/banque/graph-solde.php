@@ -72,6 +72,10 @@ else
     $opt=array('m'=>$argv[1]);
 }    
 
+if (!$conf->banque->dir_images)
+{
+  $conf->banque->dir_images = DOL_DATA_ROOT."/graph/banque/";
+}
 
 // Crée répertoire accueil
 create_exdir($conf->banque->dir_images);
