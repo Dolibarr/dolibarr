@@ -37,7 +37,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ga
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ca.class.php");
 
 $error = 0;
-
+$year = strftime("%Y",time());
 /*
  * Création des répertoires
  *
@@ -68,7 +68,9 @@ if (is_array($dirs))
 	}	
     }
 }
-
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.gain.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.commission.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.resultat.class.php");
 /*
  * Distributeurs
  *
@@ -82,39 +84,62 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       /* Gain */
-      require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.gain.class.php");
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
       $file = $dir."gain.mensuel.png";
       if ($verbose) print "Graph : gain distributeur $file\n";
       $graph = new GraphDistributeurGain($db, $file);
       $graph->width = 500;
-      $graph->height = 300;
+      $graph->height = 260;
       $graph->GraphMakeGraph($row[0]);
 
       /* Commission */
-      require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.commission.class.php");
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
       $file = $dir."commission.mensuel.png";
       if ($verbose) print "Graph : commission distributeur $file\n";
       $graph = new GraphDistributeurCommission($db, $file);
       $graph->width = 500;
-      $graph->height = 300;
+      $graph->height = 260;
       $graph->GraphMakeGraph($row[0]);
 
       /* Resultat */
-      require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.resultat.class.php");
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
       $file = $dir."resultat.mensuel.png";
       if ($verbose) print "Graph : resultat distributeur $file\n";
       $graph = new GraphDistributeurResultat($db, $file);
       $graph->width = 500;
-      $graph->height = 300;
+      $graph->height = 260;
       $graph->GraphMakeGraph($row[0]);
     }
 }
+
+/*
+ * Globaux
+ *
+ */
+/* Gain */
+$file = $img_root . "distributeurs/gain.mensuel.$year.png";
+if ($verbose) print "Graph : gain distributeur $file\n";
+$graph = new GraphDistributeurGain($db, $file);
+$graph->width = 500;
+$graph->height = 260;
+$graph->GraphMakeGraph(0);
+
+$file = $img_root . "distributeurs/commission.mensuel.$year.png";
+if ($verbose) print "Graph : commission distributeur $file\n";
+$graph = new GraphDistributeurCommission($db, $file);
+$graph->width = 500;
+$graph->height = 260;
+$graph->GraphMakeGraph(0);
+
+$file = $img_root . "distributeurs/resultat.mensuel.$year.png";
+if ($verbose) print "Graph : resultat distributeur $file\n";
+$graph = new GraphDistributeurResultat($db, $file);
+$graph->width = 500;
+$graph->height = 260;
+$graph->GraphMakeGraph(0);
 
 
 function _cdir($dir)
