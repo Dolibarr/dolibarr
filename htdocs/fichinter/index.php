@@ -38,11 +38,11 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id ;
 }
 
-
 llxHeader();
 
 $sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
+$socid=$_GET["socidp"]?$_GET["socidp"]:$_POST["socidp"];
 
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datei";
