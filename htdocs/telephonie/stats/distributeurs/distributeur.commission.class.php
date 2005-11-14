@@ -41,14 +41,26 @@ class GraphDistributeurCommission extends GraphBar {
     $num = 0;
     $this->no_xaxis_title=1;
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
-    $sql .= " WHERE graph='distributeur.commission.mensuel.".$distributeur."';";
+    if ($distributeur > 0) {
+      $sql .= " WHERE graph='distributeur.commission.mensuel.".$distributeur."';";
+    } else {
+      $sql .= " WHERE graph='distributeur.commission.mensuel';";
+    }
 
     $resql = $this->db->query($sql);
 
-    $sql = "SELECT date, montant";
-    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission";
-    $sql .= " WHERE fk_distributeur = ".$distributeur;
-    $sql .= " ORDER BY date ASC";
+
+    if ($distributeur > 0) {
+      $sql = "SELECT date, montant";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission";
+      $sql .= " WHERE fk_distributeur = ".$distributeur;
+      $sql .= " ORDER BY date ASC";
+    } else {
+      $sql = "SELECT legend, sum(valeur)";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
+      $sql .= " WHERE graph like 'distributeur.commission.mensuel.%'";
+      $sql .= " GROUP BY legend ORDER BY ord ASC";
+    }
 
     $resql = $this->db->query($sql);
 
@@ -70,7 +82,11 @@ class GraphDistributeurCommission extends GraphBar {
 	    
 	    $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
 	    $sqli .= " (graph,ord,legend,valeur)";
-	    $sqli .= " VALUES ('distributeur.commission.mensuel.".$distributeur."'";
+	    if ($distributeur > 0) {
+	      $sqli .= " VALUES ('distributeur.commission.mensuel.".$distributeur."'";
+	    } else {
+	      $sqli .= " VALUES ('distributeur.commission.mensuel'";
+	    }
 	    $sqli .= ",'$i','".$row[0]."','".$datas[$i]."');";
 	    $resqli = $this->db->query($sqli);
 

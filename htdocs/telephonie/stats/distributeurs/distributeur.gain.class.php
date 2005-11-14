@@ -30,7 +30,8 @@ class GraphDistributeurGain extends GraphBar {
     $this->file = $file;
 
     $this->client = 0;
-    $this->titre = "Gain mensuel ".strftime("%Y",time());
+    $this->year = strftime("%Y",time());
+    $this->titre = "Gain mensuel ".$this->year;
 
     $this->barcolor = "pink";
     $this->showframe = true;
@@ -42,18 +43,32 @@ class GraphDistributeurGain extends GraphBar {
     $year = strftime("%Y",time());
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
-    $sql .= " WHERE graph='distributeur.gain.mensuel.".$distributeur."';";
-
+    if ($distributeur > 0)
+      {
+	$sql .= " WHERE graph='distributeur.gain.mensuel.".$distributeur."';";
+      }
+    else
+      {
+	$sql .= " WHERE graph='distributeur.gain.mensuel'";
+      }
     $resql = $this->db->query($sql);
 
-    $sql = "SELECT date_format(f.date,'%Y%m'), sum(f.gain)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
-    $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-    $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
-    $sql .= " WHERE l.rowid = f.fk_ligne";
-    $sql .= " AND l.fk_commercial_sign = dc.fk_user";
-    $sql .= " AND dc.fk_distributeur = ".$distributeur;
-    $sql .= " GROUP BY date_format(f.date,'%Y%m') ASC";
+
+    if ($distributeur > 0) {
+      $sql = "SELECT date_format(f.date,'%Y%m'), sum(f.gain)";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
+      $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+      $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
+      $sql .= " WHERE l.rowid = f.fk_ligne";
+      $sql .= " AND l.fk_commercial_sign = dc.fk_user";
+      $sql .= " AND dc.fk_distributeur = ".$distributeur;
+      $sql .= " GROUP BY date_format(f.date,'%Y%m') ASC";     
+    } else {
+      $sql = "SELECT legend, sum(valeur)";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
+      $sql .= " WHERE graph like 'distributeur.gain.mensuel.%'";
+      $sql .= " GROUP BY legend ORDER BY ord ASC";
+    }
 
     $resql = $this->db->query($sql);
 
@@ -76,7 +91,12 @@ class GraphDistributeurGain extends GraphBar {
 	    
 	    $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
 	    $sqli .= " (graph,ord,legend,valeur)";
-	    $sqli .= " VALUES ('distributeur.gain.mensuel.".$distributeur."'";
+	    if ($distributeur > 0) {
+	      $sqli .= " VALUES ('distributeur.gain.mensuel.".$distributeur."'";
+	    }
+	    else {
+	      $sqli .= " VALUES ('distributeur.gain.mensuel'";
+	    }
 	    $sqli .= ",'$i','".$row[0]."','".$datas[$i]."');";
 
 	    $resqli = $this->db->query($sqli);

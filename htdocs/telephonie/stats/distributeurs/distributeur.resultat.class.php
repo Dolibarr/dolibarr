@@ -43,13 +43,22 @@ class GraphDistributeurResultat extends GraphBar {
     $this->no_xaxis_title=1;
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
-    $sql .= " WHERE graph='distributeur.resultat.mensuel.".$distributeur."';";
+    if ($distributeur > 0 ){
+      $sql .= " WHERE graph='distributeur.resultat.mensuel.".$distributeur."';";
+    } else {
+      $sql .= " WHERE graph='distributeur.resultat.mensuel'";
+    }
     $sql .= " AND legend like '".$this->year."%';";
+
     $resql = $this->db->query($sql);
 
     $sql = "SELECT legend, valeur";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
-    $sql .= " WHERE graph = 'distributeur.gain.mensuel.".$distributeur."'";
+    if ($distributeur > 0 ){
+      $sql .= " WHERE graph = 'distributeur.gain.mensuel.".$distributeur."'";
+    } else {
+      $sql .= " WHERE graph = 'distributeur.gain.mensuel'";
+    }
     $sql .= " ORDER BY ord ASC";
     $resql = $this->db->query($sql);
 
@@ -63,7 +72,11 @@ class GraphDistributeurResultat extends GraphBar {
 
     $sql = "SELECT legend, valeur";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
-    $sql .= " WHERE graph = 'distributeur.commission.mensuel.".$distributeur."'";
+    if ($distributeur > 0 ){
+      $sql .= " WHERE graph = 'distributeur.commission.mensuel.".$distributeur."'";
+    } else {
+      $sql .= " WHERE graph = 'distributeur.commission.mensuel'";
+    }
     $sql .= " ORDER BY ord ASC";
     $resql = $this->db->query($sql);
 
@@ -84,11 +97,20 @@ class GraphDistributeurResultat extends GraphBar {
 	$datas[$i-1] = $gains[$idx] - $comms[$idx];
 	$labels[$i-1] = $i;
 
-	$sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
-	$sqli .= " (graph,ord,legend,valeur)";
-	$sqli .= " VALUES ('distributeur.resultat.mensuel.".$distributeur."'";
-	$sqli .= ",'$i','".$idx."','".$datas[$i-1]."');";	
-	$resqli = $this->db->query($sqli);
+	if ($distributeur > 0 ){
+	  $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+	  $sqli .= " (graph,ord,legend,valeur)";
+	  $sqli .= " VALUES ('distributeur.resultat.mensuel.".$distributeur."'";
+	  $sqli .= ",'$i','".$idx."','".$datas[$i-1]."');";	
+	  $resqli = $this->db->query($sqli);
+	} else {
+	  $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+	  $sqli .= " (graph,ord,legend,valeur)";
+	  $sqli .= " VALUES ('distributeur.resultat.mensuel'";
+	  $sqli .= ",'$i','".$idx."','".$datas[$i-1]."');";	
+	  $resqli = $this->db->query($sqli);
+	}
+
       }
 
     if (sizeof($datas))
