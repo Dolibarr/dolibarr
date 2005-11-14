@@ -44,6 +44,7 @@ function llxHeader($head = "", $urlp = "")
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php", $langs->trans("MenuServices"));
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=0", $langs->trans("MenuInactiveServices"), 2 , true);
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4", $langs->trans("MenuRunningServices"), 2 , true);
+  $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4&filter=expired", $langs->trans("MenuExpiredServices"), 2 , true);
   $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=5", $langs->trans("MenuClosedServices"), 2 , true);
 
   left_menu($menu->liste);

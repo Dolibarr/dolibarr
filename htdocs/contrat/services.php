@@ -44,6 +44,7 @@ $offset = $limit * $page ;
 if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="ASC";
 
+$filter=isset($_GET["filter"])?$_GET["filter"]:$_POST["filter"];
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_contract=isset($_GET["search_contract"])?$_GET["search_contract"]:$_POST["search_contract"];
 $search_service=isset($_GET["search_service"])?$_GET["search_service"]:$_POST["search_service"];
@@ -75,8 +76,7 @@ $sql.= " AND c.fk_soc = s.idp AND cd.fk_product = p.rowid";
 if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
-// \todo filtre sur services expirés
-//if ($mode == "expired") $sql.= " AND cd.statut = 1";
+if ($filter == "expired") $sql.= " AND date_fin_validite < sysdate()";
 if ($search_nom)      $sql.= " AND s.nom like '%".$search_nom."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$search_contract."'";
 if ($search_service)  $sql.= " AND (p.ref like '%".$search_service."%' OR p.label like '%".$search_service."%')";
@@ -95,6 +95,7 @@ if ($resql)
     if ($search_nom)      $param.='&amp;search_nom='.urlencode($search_nom);
     if ($search_service)  $param.='&amp;search_service='.urlencode($search_service);
     if ($mode)            $param.='&amp;mode='.$mode;
+    if ($filter)          $param.='&amp;filter='.$filter;
 
     print_barre_liste($langs->trans("ListOfServices"), $page, "services.php", $param, $sortfield, $sortorder,'',$num);
 
@@ -116,6 +117,8 @@ if ($resql)
     print '<form method="POST" action="services.php">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
+    print '<input type="hidden" name="filter" value="'.$filter.'">';
+    print '<input type="hidden" name="mode" value="'.$mode.'">';
     print '<input type="text" class="flat" size="3" name="search_contract" value="'.stripslashes($search_contract).'">';
     print '</td>';
     print '<td class="liste_titre">';

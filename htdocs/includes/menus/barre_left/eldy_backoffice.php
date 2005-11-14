@@ -236,7 +236,7 @@ class MenuLeft {
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts", $langs->trans("MenuServices"), 1 ,$user->rights->contrat->lire);
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=0", $langs->trans("MenuInactiveServices"), 2 ,$user->rights->contrat->lire);
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=4", $langs->trans("MenuRunningServices"), 2 ,$user->rights->contrat->lire);
-                  //if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=4", $langs->trans("MenuExpiredServices"), 2 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=4&filter=expired", $langs->trans("MenuExpiredServices"), 2 ,$user->rights->contrat->lire);
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=5", $langs->trans("MenuClosedServices"), 2 ,$user->rights->contrat->lire);
                 }
                 
