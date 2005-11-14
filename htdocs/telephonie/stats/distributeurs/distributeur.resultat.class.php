@@ -90,11 +90,25 @@ class GraphDistributeurResultat extends GraphBar {
     $datas = array();
     $labels = array();
 
+    $month = array();
+    $month[1] = 'J';
+    $month[2] = 'F';
+    $month[3] = 'M';
+    $month[4] = 'A';
+    $month[5] = 'M';
+    $month[6] = 'J';
+    $month[7] = 'J';
+    $month[8] = 'A';
+    $month[9] = 'S';
+    $month[10] = 'O';
+    $month[11] = 'N';
+    $month[12] = 'D';
+
     for ($i = 1 ; $i < 13 ; $i++)
       {
 	$idx = $this->year.substr('0'.$i,-2);
 	$datas[$i-1] = $gains[$idx] - $comms[$idx];
-	$labels[$i-1] = $i;
+	$labels[$i-1] = $month[$i];
 
 	if ($distributeur > 0 ){
 	  $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
