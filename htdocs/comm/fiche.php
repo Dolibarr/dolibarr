@@ -252,23 +252,28 @@ if ($_socid > 0)
 
     print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";
     print '<td>'.$langs->trans('Town').'</td><td>'.$objsoc->ville."</td></tr>";
-    
-    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td>';
+    if ($objsoc->pays) {
+    	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td></tr>';
+    }
 
     print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($objsoc->tel,$objsoc->pays_code).'</td>';
     print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($objsoc->fax,$objsoc->pays_code).'</td></tr>';
 
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\" target=\"_blank\">".$objsoc->url."</a>&nbsp;</td></tr>";
-
-    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$objsoc->siren."\" target=\"_blank\">".$objsoc->siren."</a>&nbsp;</td>";
+	if ($objsoc->siren || $objsoc->siret) {
+    	print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$objsoc->siren."\" target=\"_blank\">".$objsoc->siren."</a>&nbsp;</td>";
     print '<td>'.$langs->transcountry('ProfId2',$objsoc->pays_code).'</td><td>'.$objsoc->siret.'</td></tr>';
-
-    print '<tr><td>'.$langs->transcountry('ProfId3',$objsoc->pays_code).'</td><td>'.$objsoc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+    }
+	if ($objsoc->ape) {
+    	print '<tr><td>'.$langs->transcountry('ProfId3',$objsoc->pays_code).'</td><td>'.$objsoc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+    }
 
     // Type + Staff
     $arr = $objsoc->typent_array($objsoc->typent_id);
     $objsoc->typent= $arr[$objsoc->typent_id];
-    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td nowrap>'.$objsoc->effectif.'</td></tr>';
+    if ($objsoc->typent || $objsoc->effectif) {
+    	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td nowrap>'.$objsoc->effectif.'</td></tr>';
+    }
 
     // Remise permanente
     print '<tr><td nowrap>';
@@ -683,9 +688,9 @@ if ($_socid > 0)
          *
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="7"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
+        print '<tr class="liste_titre"><td colspan="9"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
 
-        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE a.fk_soc = $objsoc->id ";
         $sql .= " AND u.rowid = a.fk_user_author";
@@ -708,7 +713,7 @@ if ($_socid > 0)
 
                 if ($oldyear == strftime("%Y",$obj->da) )
                 {
-                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">|</td>';
                 }
                 else
                 {
@@ -718,7 +723,7 @@ if ($_socid > 0)
 
                 if ($oldmonth == strftime("%Y%b",$obj->da) )
                 {
-                    print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">|</td>';
                 }
                 else
                 {
@@ -728,6 +733,10 @@ if ($_socid > 0)
 
                 print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
                 print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
+				if (date("U",$obj->da) < time())
+				{
+					print "<td>".img_warning("Late")."</td>";
+				}
 
                 // Status/Percent
                 print '<td width="30">&nbsp;</td>';
@@ -748,7 +757,8 @@ if ($_socid > 0)
                       print $libelle;
                     print '</a></td>';
                 }
-                
+                print "<td>$obj->label</td>";
+
                 // Contact pour cette action
                 if ($obj->fk_contact) {
                     $contact = new Contact($db);
@@ -775,9 +785,9 @@ if ($_socid > 0)
          *      Listes des actions effectuees
          */
         print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td colspan="8"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
+        print '<tr class="liste_titre"><td colspan="10"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 
-        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE a.fk_soc = $objsoc->id ";
         $sql .= " AND u.rowid = a.fk_user_author";
@@ -822,6 +832,10 @@ if ($_socid > 0)
                 }
                 print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
                 print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
+				if (date("U",$obj->da) < time())
+				{
+					print "<td> </td>";
+				}
 
                 // Statut/Percent
                 print '<td width="30">&nbsp;</td>';
@@ -843,6 +857,7 @@ if ($_socid > 0)
                     print '</a></td>';
                 }
 
+                print "<td>$obj->label</td>";
                 // Contact pour cette action
                 if ($obj->fk_contact)
                 {
