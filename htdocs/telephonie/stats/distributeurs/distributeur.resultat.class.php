@@ -44,12 +44,11 @@ class GraphDistributeurResultat extends GraphBar {
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
     if ($distributeur > 0 ){
-      $sql .= " WHERE graph='distributeur.resultat.mensuel.".$distributeur."';";
+      $sql .= " WHERE graph='distributeur.resultat.mensuel.".$distributeur."'";
     } else {
       $sql .= " WHERE graph='distributeur.resultat.mensuel'";
     }
     $sql .= " AND legend like '".$this->year."%';";
-
     $resql = $this->db->query($sql);
 
     $sql = "SELECT legend, valeur";
@@ -59,7 +58,7 @@ class GraphDistributeurResultat extends GraphBar {
     } else {
       $sql .= " WHERE graph = 'distributeur.gain.mensuel'";
     }
-    $sql .= " ORDER BY ord ASC";
+    $sql .= " ORDER BY ord ASC;";
     $resql = $this->db->query($sql);
 
     if ($resql)
