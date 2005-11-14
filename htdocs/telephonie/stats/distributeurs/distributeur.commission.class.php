@@ -28,9 +28,9 @@ class GraphDistributeurCommission extends GraphBar {
   {
     $this->db = $DB;
     $this->file = $file;
-
+    $this->year = strftime("%Y",time());
     $this->client = 0;
-    $this->titre = "Commission mensuelle";
+    $this->titre = "Commission mensuelle ".$this->year;
 
     $this->barcolor = "orange";
     $this->showframe = true;
@@ -65,24 +65,30 @@ class GraphDistributeurCommission extends GraphBar {
 	    $row = $this->db->fetch_row($resql);	
 	    	    
 	    $datas[$i] = $row[1];
+	    $comms[$row[0]] = $row[1];
 	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
 	    
 	    $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
 	    $sqli .= " (graph,ord,legend,valeur)";
 	    $sqli .= " VALUES ('distributeur.commission.mensuel.".$distributeur."'";
 	    $sqli .= ",'$i','".$row[0]."','".$datas[$i]."');";
-
 	    $resqli = $this->db->query($sqli);
 
 	    $i++;
-	  }
-	
+	  }	
 	$this->db->free($resql);
       }
     else 
       {
 	print $this->db->error() . ' ' . $sql;
       }                  
+
+    for ($i = 1 ; $i < 13 ; $i++)
+      {
+	$idx = $this->year.substr('0'.$i,-2);
+	$datas[$i-1] = $comms[$idx];
+	$labels[$i-1] = $i;
+      }
 
     if (sizeof($datas))
       {

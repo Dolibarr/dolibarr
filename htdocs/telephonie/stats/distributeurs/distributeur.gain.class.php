@@ -30,7 +30,7 @@ class GraphDistributeurGain extends GraphBar {
     $this->file = $file;
 
     $this->client = 0;
-    $this->titre = "Gain mensuel";
+    $this->titre = "Gain mensuel ".strftime("%Y",time());
 
     $this->barcolor = "pink";
     $this->showframe = true;
@@ -39,6 +39,7 @@ class GraphDistributeurGain extends GraphBar {
   Function GraphMakeGraph($distributeur=0)
   {
     $num = 0;
+    $year = strftime("%Y",time());
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
     $sql .= " WHERE graph='distributeur.gain.mensuel.".$distributeur."';";
@@ -62,6 +63,7 @@ class GraphDistributeurGain extends GraphBar {
 	$i = 0;
 	$j = -1;
 	$datas = array();
+	$gains = array();
 	$labels = array();
 	
 	while ($i < $num)
@@ -69,6 +71,7 @@ class GraphDistributeurGain extends GraphBar {
 	    $row = $this->db->fetch_row($resql);	
 	    	    
 	    $datas[$i] = $row[1];
+	    $gains[$row[0]] = $row[1];
 	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
 	    
 	    $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
@@ -87,6 +90,13 @@ class GraphDistributeurGain extends GraphBar {
       {
 	print $this->db->error() . ' ' . $sql;
       }                  
+
+    for ($i = 1 ; $i < 13 ; $i++)
+      {
+	$idx = $year.substr('0'.$i,-2);
+	$datas[$i-1] = $gains[$idx];
+	$labels[$i-1] = $i;
+      }
 
     if (sizeof($datas))
       {
