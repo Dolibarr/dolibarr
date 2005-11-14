@@ -29,6 +29,7 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
 /**	    \class      mod_propale_ivoire
 		\brief      Classe du modèle de numérotation de référence de propale Ivoire
