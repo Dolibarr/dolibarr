@@ -31,7 +31,6 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
-
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/commercial.ca.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/commercial.gain.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.gain.class.php");
@@ -90,6 +89,7 @@ if ($resql)
       if ($verbose) print "Graph : gain distributeur $file\n";
       $graph = new GraphDistributeurGain($db, $file);
       $graph->width = 500;
+      $graph->height = 300;
       $graph->GraphMakeGraph($row[0]);
 
       /* Commission */
@@ -100,8 +100,19 @@ if ($resql)
       if ($verbose) print "Graph : commission distributeur $file\n";
       $graph = new GraphDistributeurCommission($db, $file);
       $graph->width = 500;
+      $graph->height = 300;
       $graph->GraphMakeGraph($row[0]);
 
+      /* Resultat */
+      require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.resultat.class.php");
+      $dir = $img_root . "distributeurs/".$row[0]."/";
+      _cdir($dir);
+      $file = $dir."resultat.mensuel.png";
+      if ($verbose) print "Graph : resultat distributeur $file\n";
+      $graph = new GraphDistributeurResultat($db, $file);
+      $graph->width = 500;
+      $graph->height = 300;
+      $graph->GraphMakeGraph($row[0]);
     }
 }
 
