@@ -83,12 +83,13 @@ class GraphBar extends DolibarrGraph {
 	  }
 	*/
 	$graph->title->Set($this->titre);
-    
+    	$graph->xaxis->SetTickLabels($labels);
 	//$graph->title->SetFont(FF_VERDANA,FS_NORMAL);
 
-    
-	$graph->xaxis->SetTickLabels($labels);   
+	if (!$this->no_xaxis_title)
+	  {
 	$graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
+	  }
 
 	$graph->Add($b2plot);
 
