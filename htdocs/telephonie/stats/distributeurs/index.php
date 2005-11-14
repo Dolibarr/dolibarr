@@ -38,7 +38,9 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/index.php';
 $head[$h][1] = "Prise d'ordre";
 $hselected = $h;
 $h++;
-
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/resultats.php';
+$head[$h][1] = "Résultats";
+$h++;
 dolibarr_fiche_head($head, $hselected, "Distributeurs");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
