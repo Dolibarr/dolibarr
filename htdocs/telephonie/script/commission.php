@@ -27,7 +27,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/distributeurtel.class.php");
 $error = 0;
 $nbcommit = 0;
 $datetime = time();
-
+$space = str_repeat(" ",28);
 $user = new User($db, 1);
 $user->login = "Rodo";
 
@@ -146,7 +146,8 @@ if ( $resql )
       $avance = round($avance  * 0.0001, 2);
 
       fputs($fp, "DIS : ".$obj->fk_distributeur);
-      fputs($fp, " avance : $avance\n");
+      fputs($fp, " av avance po ".substr($space.$obj->rowid,-4));
+      fputs($fp, " : ".substr($space.$avance,-8)."\n");
 
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_avance";
       $sqli .= " (date, fk_distributeur, fk_po,fk_contrat, montant, pourcentage, avance)";
@@ -343,6 +344,10 @@ foreach ($distri_av as $distributeur_id)
 		  
 		  $avan_regul[$distributeur_id] = $avan_regul[$distributeur_id] + $row[0];
 		  
+		  fputs($fp, "DIS : ".$distributeur_id);
+		  fputs($fp, " av regul  po ".substr($space.$rowa[0],-4));
+		  fputs($fp, " : ".substr($space.$row[0],-8)."\n");
+
 		  dolibarr_syslog("* Avance ".$row[0] . " statut : ".$row[2]);
 		  
 		  /* Communications relatives */
@@ -538,13 +543,14 @@ foreach ($distributeurs as $distributeur_id)
   $amount = $amount - $avan_regul[$distributeur_id];
   $amount = $amount + $comm_conso[$distributeur_id];
 
-  $space = str_repeat(" ",8);
+  fputs($fp, "DIS : ".$distributeur_id);
+  fputs($fp, " ".str_repeat("-",35)."\n");
 
   fputs($fp, "DIS : ".$distributeur_id);
-  fputs($fp, " Comm Regul : ".substr($space.$comm_regul[$distributeur_id],-8)."\n");
+  fputs($fp, " Comm Regul : ".substr($space.$comm_regul[$distributeur_id],-15)."\n");
 
   fputs($fp, "DIS : ".$distributeur_id);
-  fputs($fp, " Comm Conso : ".substr($space.$comm_conso[$distributeur_id],-8)."\n");
+  fputs($fp, " Comm Conso : ".substr($space.$comm_conso[$distributeur_id],-15)."\n");
 
 
   /********************************************************
@@ -566,16 +572,16 @@ foreach ($distributeurs as $distributeur_id)
       if ($row = $db->fetch_row($resql))
 	{
 	  fputs($fp, "DIS : ".$distributeur_id);
-	  fputs($fp, " Avances    : ".substr($space.$row[0],-8)."\n");
+	  fputs($fp, " Avances    : ".substr($space.$row[0],-15)."\n");
 
 	  fputs($fp, "DIS : ".$distributeur_id);
-	  fputs($fp, " Avan Regul : ".substr($space."-".$avan_regul[$distributeur_id],-8)."\n");
+	  fputs($fp, " Avan Regul : ".substr($space."-".$avan_regul[$distributeur_id],-15)."\n");
 
 	  $amount = $amount + $row[0];
 	  
 	  $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission";
 	  $sqli .= " (date, fk_distributeur, montant)";
-	  $sqli .= " VALUES ('".$year.$month."'";
+	  $sqli .= " VALUES ('".$year_prev.$month_prev."'";
 	  $sqli .= ",".$distributeur->id;
 	  $sqli .= ",".ereg_replace(",",".",$amount).")";
 
@@ -588,7 +594,7 @@ foreach ($distributeurs as $distributeur_id)
 	  dolibarr_syslog("Commission finale ".$amount);
 
 	  fputs($fp, "DIS : ".$distributeur_id);
-	  fputs($fp, " Comm final : ".substr($space.$amount,-8)."\n");
+	  fputs($fp, " Comm final : ".substr($space.$amount,-15)."\n");
 	}
       else
 	{
