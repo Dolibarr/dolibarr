@@ -39,7 +39,7 @@ class GraphDistributeurCommission extends GraphBar {
   Function GraphMakeGraph($distributeur=0)
   {
     $num = 0;
-
+    $this->no_xaxis_title=1;
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
     $sql .= " WHERE graph='distributeur.commission.mensuel.".$distributeur."';";
 
