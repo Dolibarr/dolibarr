@@ -41,7 +41,7 @@ $h++;
 
 if ($_GET["id"])
 {
-
+  $year = strftime("%Y",time());
   $distri = new DistributeurTelephonie($db);
   $distri->fetch($_GET["id"]);
 
@@ -54,18 +54,20 @@ if ($_GET["id"])
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td width="30%" valign="top">';
+  print '<tr><td width="70%" valign="top">';
+
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/po.month.png" alt="Prise d\'ordre" title="Prise d\'ordre"><br /><br />'."\n";
+
+  print '</td><td valign="top" width="30%">';
   
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
   print '<td>Mois</td><td align="right">Prise d\'ordre</td></tr>';
   
   $sql = "SELECT sum(p.montant), date_format(datepo, '%m-%Y')";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
-  
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";  
   $sql .= " WHERE p.fk_distributeur = ".$_GET["id"];
-  $sql .= " GROUP BY date_format(p.datepo, '%Y%m') DESC";
-  
+  $sql .= " GROUP BY date_format(p.datepo, '%Y%m') DESC";  
   $resql = $db->query($sql);
   
   if ($resql)
@@ -74,18 +76,11 @@ if ($_GET["id"])
       $i = 0;
       $total = 0;
       
-      while ($i < $num)
+      while ($row = $db->fetch_row($resql))
 	{
-	  $row = $db->fetch_row($i);	
-	  
-	  $var=!$var;
-	  
-	  print "<tr $bc[$var]>";
-	  
-	  print '<td>'.$row[1].'</td>';
-	  
+	  $var=!$var;	  
+	  print "<tr $bc[$var]><td>".$row[1].'</td>';  
 	  print '<td align="right">'.price($row[0]).'</td></tr>';
-	  $i++;
 	}
       $db->free();
     }
@@ -93,21 +88,96 @@ if ($_GET["id"])
     {
       print $db->error() . ' ' . $sql;
     }
-  print '</table><br />';
+  print '</table>';
 
- 
-  print '</td><td valign="top" width="70%">';
-
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/po.month.png" alt="Prise d\'ordre" title="Prise d\'ordre"><br /><br />'."\n";
-
+  print '</td></tr><tr><td valign="top" width="70%">';
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/clients.hebdomadaire.png" alt="Nouveaux clients" title="Nouveaux clients"><br /><br />'."\n";
-  
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/resultat.mensuel.png" alt="Commission mensuelle" title="Commission mensuelle"><br /><br />'."\n";
+  print '</td><td>';
 
+  print '</td></tr><tr><td valign="top" width="70%">';
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/resultat.mensuel.png" alt="Resultat" title="Resultat"><br /><br />'."\n";
+  print '</td><td valign="top" width="30%">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Mois</td><td align="right">Resultat</td></tr>';
+  
+  $sql = "SELECT valeur,legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
+  $sql .= " WHERE graph = 'distributeur.resultat.mensuel.".$_GET["id"]."'";
+  $sql .= " ORDER BY legend DESC";  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  $var=!$var;	  
+	  print "<tr $bc[$var]><td>".$row[1].'</td>';  
+	  print '<td align="right">'.price($row[0]).'</td></tr>';
+	}
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table>';
+
+  print '</td></tr><tr><td valign="top" width="70%">';
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/gain.mensuel.png" alt="Gain mensuel" title="Gain mensuel"><br /><br />'."\n";
-
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/commission.mensuel.png" alt="Commission mensuelle" title="Commission mensuelle"><br /><br />'."\n";
+  print '</td><td valign="top" width="30%">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Mois</td><td align="right">Gain</td></tr>';
   
+  $sql = "SELECT valeur,legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
+  $sql .= " WHERE graph = 'distributeur.gain.mensuel.".$_GET["id"]."'";
+  $sql .= " ORDER BY legend DESC";  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  $var=!$var;	  
+	  print "<tr $bc[$var]><td>".$row[1].'</td>';  
+	  print '<td align="right">'.price($row[0]).'</td></tr>';
+	}
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table>';
+
+  print '</td></tr><tr><td valign="top" width="70%">';
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/commission.mensuel.png" alt="Commission mensuelle" title="Commission mensuelle"><br /><br />'."\n";
+
+  print '</td><td valign="top" width="30%">';
+  
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Mois</td><td align="right">Commission</td></tr>';
+  
+  $sql = "SELECT valeur,legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
+  $sql .= " WHERE graph = 'distributeur.commission.mensuel.".$_GET["id"]."'";
+  $sql .= " ORDER BY legend DESC";  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  $var=!$var;	  
+	  print "<tr $bc[$var]><td>".$row[1].'</td>';  
+	  print '<td align="right">'.price($row[0]).'</td></tr>';
+	}
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table>';
+
+
   print '</td></tr>';
   print '</table>';
  
