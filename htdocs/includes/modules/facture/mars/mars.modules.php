@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 /**	\class mod_facture_mars
 		\brief      Classe du modèle de numérotation de référence de facture Mars
