@@ -140,14 +140,14 @@ else
   print $db->error();
 }
 $file = $img_root . "/factures/ca_mensuel.png";
-print "Graph $file\n";
+if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Chiffre d'affaire par mois en euros HT";
 $graph->width = 440;
 $graph->GraphDraw($file, $cout_vente, $short_labels);
 
 $file = $img_root . "/factures/facture_moyenne.png";
-print "Graph $file\n";
+if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file, $labels);
 $graph->titre = "Facture moyenne";
 $graph->barcolor = "blue";
@@ -155,14 +155,14 @@ $graph->width = 440;
 $graph->GraphDraw($file, $cout_vente_moyen, $short_labels);
 
 $file = $img_root . "/factures/gain_mensuel.png";
-print "Graph $file\n";
+if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain par mois en euros HT";
 $graph->width = 440;
 $graph->GraphDraw($file, $gain, $short_labels);
 
 $file = $img_root . "/factures/gain_moyen.png";
-print "Graph $file\n";
+if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain moyen par facture par mois";
 $graph->width = 440;
@@ -170,7 +170,7 @@ $graph->barcolor = "blue";
 $graph->GraphDraw($file, $gain_moyen, $short_labels);
 
 $file = $img_root . "/factures/nb_facture.png";
-print "Graph $file\n";
+if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Nb de facture mois";
 $graph->width = 440;
@@ -276,7 +276,6 @@ else
   print $db->error();
 }
 
-
 $i = 0;
 foreach ($labels as $labl)
 {
@@ -288,8 +287,8 @@ foreach ($labels as $labl)
 }
 
 
-$file = $img_root . "/factures/ca_mensuel_preleve.png";
-print "Graph $file\n";
+$file = $img_root . "factures/ca_mensuel_preleve.png";
+
 $graph = new GraphBarAccumul ($db, $file);
 $graph->titre = "Chiffre d'affaire par méthode de réglement";
 $graph->width = 640;
@@ -298,7 +297,7 @@ $graph->barcolor = "yellow";
 
 $xdatas[0] = array($cout_vente_prelev, $cout_vente_autre);
 $xdatas[1] = array($cout_achat);
-print_r($xdatas);
+
 $graph->legend[0][0] = "Factures prélevées";
 $graph->legend[0][1] = "Factures non-prélevées";
 $graph->legend[1][0] = "Coût fournisseur";
