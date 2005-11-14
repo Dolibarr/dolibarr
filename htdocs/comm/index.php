@@ -266,14 +266,14 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  *
  */
 
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
 if ($socidp)
 {
     $sql .= " AND s.idp = $socidp";
 }
-$sql .= " ORDER BY a.datea ASC";
+$sql .= " ORDER BY a.datea DESC, a.id DESC";
 
 $resql=$db->query($sql);
 if ($resql)
@@ -282,7 +282,7 @@ if ($resql)
     if ($num > 0)
     {
         print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ActionsToDo").'</td></tr>';
+        print '<tr class="liste_titre"><td colspan="9">'.$langs->trans("ActionsToDo").'</td></tr>';
         $var = true;
         $i = 0;
 
@@ -292,18 +292,37 @@ if ($resql)
             $var=!$var;
 
             print "<tr $bc[$var]>";
+                if ($oldyear == strftime("%Y",$obj->da) )
+                {
+                    print '<td width="30" align="center">|</td>';
+                }
+                else
+                {
+                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
+                    $oldyear = strftime("%Y",$obj->da);
+                }
+
+                if ($oldmonth == strftime("%Y%b",$obj->da) )
+                {
+                    print '<td width="30" align="center">|</td>';
+                }
+                else
+                {
+                    print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
+                    $oldmonth = strftime("%Y%b",$obj->da);
+                }
+
+                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
+				if (date("U",$obj->da) < time())
+				{
+					print "<td>".img_warning("Late")."</td>";
+				}
             print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
             $transcode=$langs->trans("Action".$obj->code);
             $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
             print $libelle;
             print '</a></td>';
-
-            print '<td>'. dolibarr_print_date($obj->da);
-            if (date("U",$obj->da) < time())
-            {
-                print img_warning("Late");
-            }
-            print "</td>";
+            print "<td>$obj->label</td>";
 
             print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
             $i++;
