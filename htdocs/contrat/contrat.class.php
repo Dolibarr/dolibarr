@@ -323,7 +323,7 @@ class Contrat
     
         // Selectionne les lignes contrats liées à un produit
         $sql = "SELECT p.rowid, p.label, p.description as product_desc, p.ref,";
-        $sql.= " d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
+        $sql.= " d.description, d.statut, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
         $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
         $sql.= " d.date_fin_validite, d.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."product as p";
@@ -349,6 +349,7 @@ class Contrat
                 $ligne->ref            = $objp->ref;
                 $ligne->tva_tx         = $objp->tva_tx;
                 $ligne->subprice       = $objp->subprice;
+                $ligne->statut 		= $objp->statut;
                 $ligne->remise_percent = $objp->remise_percent;
                 $ligne->price          = $objp->price;
                 $ligne->product_id     = $objp->rowid;
@@ -372,7 +373,7 @@ class Contrat
         }
         
         // Selectionne les lignes contrat liées à aucun produit
-        $sql = "SELECT d.qty, d.description, d.price_ht, d.subprice, d.tva_tx, d.rowid, d.remise_percent,";
+        $sql = "SELECT d.rowid, d.statut, d.qty, d.description, d.price_ht, d.subprice, d.tva_tx, d.rowid, d.remise_percent,";
         $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
         $sql.= " d.date_fin_validite, d.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d";
@@ -389,9 +390,11 @@ class Contrat
             {
                 $objp                  = $this->db->fetch_object($result);
                 $ligne                 = new ContratLigne();
+                $ligne->id 			= $objp->rowid;
                 $ligne->libelle        = stripslashes($objp->description);
                 $ligne->desc           = stripslashes($objp->description);
                 $ligne->qty            = $objp->qty;
+                $ligne->statut 		 = $objp->statut;
                 $ligne->ref            = $objp->ref;
                 $ligne->tva_tx         = $objp->tva_tx;
                 $ligne->subprice       = $objp->subprice;
@@ -1213,7 +1216,8 @@ class ContratLigne
     var $remise_percent;
     var $price;
     var $product_id;
-                  
+                
+    var $statut;  
     var $date_debut_prevue;
     var $date_debut_reel;
     var $date_fin_prevue;
@@ -1221,6 +1225,11 @@ class ContratLigne
 
     function ContratLigne()
     {
+    }
+    
+    function is_activated()
+    {
+    		return $this->statut == 4 ;
     }
 }
 
