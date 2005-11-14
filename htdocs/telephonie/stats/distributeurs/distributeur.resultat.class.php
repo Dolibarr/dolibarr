@@ -30,7 +30,7 @@ class GraphDistributeurResultat extends GraphBar {
     $this->file = $file;
     $this->client = 0;
     $this->titre = "Resultat mensuel";
-
+    $this->year = strftime("%Y",time());
     $this->barcolor = "green";
     $this->showframe = true;
   }
@@ -40,8 +40,12 @@ class GraphDistributeurResultat extends GraphBar {
     $comms = array();
     $gains = array();
     $num = 0;
-
     $this->no_xaxis_title=1;
+
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
+    $sql .= " WHERE graph='distributeur.resultat.mensuel.".$distributeur."';";
+    $sql .= " AND legend like '".$this->year."%';";
+    $resql = $this->db->query($sql);
 
     $sql = "SELECT legend, valeur";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
@@ -73,12 +77,18 @@ class GraphDistributeurResultat extends GraphBar {
 
     $datas = array();
     $labels = array();
-    $year = strftime("%Y",time());
+
     for ($i = 1 ; $i < 13 ; $i++)
       {
-	$idx = $year.substr('0'.$i,-2);
+	$idx = $this->year.substr('0'.$i,-2);
 	$datas[$i-1] = $gains[$idx] - $comms[$idx];
 	$labels[$i-1] = $i;
+
+	$sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+	$sqli .= " (graph,ord,legend,valeur)";
+	$sqli .= " VALUES ('distributeur.resultat.mensuel.".$distributeur."'";
+	$sqli .= ",'$i','".$idx."','".$datas[$i-1]."');";	
+	$resqli = $this->db->query($sqli);
       }
 
     if (sizeof($datas))
