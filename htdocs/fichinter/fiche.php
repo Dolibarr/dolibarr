@@ -28,7 +28,8 @@
 */
 
 require("./pre.inc.php");
-require("./fichinter.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
 // Sécurité accés client
