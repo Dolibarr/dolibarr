@@ -123,7 +123,7 @@ class Fichinter
          */
         $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
         $sql .= " datei = $this->date";
-        $sql .= ", note  = '".mysql_real_escape_string($this->note)."'";
+        $sql .= ", note  = '".addslashes($this->note)."'";
         $sql .= ", duree = $this->duree";
         $sql .= ", fk_projet = $this->projet_id";
         $sql .= " WHERE rowid = $id";
