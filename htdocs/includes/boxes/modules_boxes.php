@@ -98,44 +98,42 @@ class ModeleBoxes
                     if (isset($contents[$i][$j]['colspan'])) $tdparam.=' colspan="'. $contents[$i][$j]['colspan'].'"';
                     if (isset($contents[$i][$j]['class'])) $tdparam.=' class="'. $contents[$i][$j]['class'].'"';
         
-                    if ($contents[$i][$j]['text']) {
-                        $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
-                        $textewithnotags=eregi_replace('<[^>]+>','',$texte);
-                        $texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
-                        $texte2withnotags=eregi_replace('<[^>]+>','',$texte2);
-                        //print "xxx $textewithnotags y";
+                    if (!$contents[$i][$j]['text']) $contents[$i][$j]['text']="";
+                    $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
+                    $textewithnotags=eregi_replace('<[^>]+>','',$texte);
+                    $texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
+                    $texte2withnotags=eregi_replace('<[^>]+>','',$texte2);
+                    //print "xxx $textewithnotags y";
+
+                    if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
+                    else print '<td '.$tdparam.'>';
     
-                        if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
-                        else print '<td '.$tdparam.'>';
-        
-                        if (isset($contents[$i][$j]['url'])) print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'">';
-                        if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo'])
-                        {
-                            $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
-                            print img_object($langs->trans("Show"),$logo);
-                            print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'"';
-                            print ' title="'.$textewithnotags.'"';
-                            //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
-                            print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
-                            print '>';
-                        }
-                        $maxlength=$this->MAXLENGTHBOX;
-                        if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
-                                            
-                        if ($maxlength && strlen($textewithnotags) > $maxlength)
-                        {
-                            $texte=substr($texte,0,$maxlength)."...";
-                        }
-                        if ($maxlength && strlen($texte2withnotags) > $maxlength)
-                        {
-                            $texte2=substr($texte2,0,$maxlength)."...";
-                        }
-                        print $texte;
-                        if ($contents[$i][$j]['url']) print '</a>';
-                        print $texte2;
-        
-                        print "</td>";
+                    if (isset($contents[$i][$j]['url'])) print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'">';
+                    if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo'])
+                    {
+                        $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
+                        print img_object($langs->trans("Show"),$logo);
+                        print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'"';
+                        print ' title="'.$textewithnotags.'"';
+                        //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
+                        print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+                        print '>';
                     }
+                    $maxlength=$this->MAXLENGTHBOX;
+                    if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
+                                        
+                    if ($maxlength && strlen($textewithnotags) > $maxlength)
+                    {
+                        $texte=substr($texte,0,$maxlength)."...";
+                    }
+                    if ($maxlength && strlen($texte2withnotags) > $maxlength)
+                    {
+                        $texte2=substr($texte2,0,$maxlength)."...";
+                    }
+                    print $texte;
+                    if ($contents[$i][$j]['url']) print '</a>';
+                    print $texte2;
+                    print "</td>";
                 }
     
                 if (sizeof($contents[$i])) print '</tr>';

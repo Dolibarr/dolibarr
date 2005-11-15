@@ -27,6 +27,7 @@
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 
 class box_comptes extends ModeleBoxes {
