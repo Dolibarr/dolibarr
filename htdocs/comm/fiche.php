@@ -41,6 +41,7 @@ require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 $langs->load("companies");
 $langs->load("orders");
 $langs->load("contracts");
+if ($conf->fichinter->enabled) $langs->load("interventions");
 
 llxHeader('',$langs->trans('CustomerCard'));
 
