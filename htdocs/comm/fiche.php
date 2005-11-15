@@ -113,11 +113,9 @@ if ($mode == 'search') {
         $db->free();
     }
 }
-$_socid = $_GET["socid"];
 
-/*
- * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
- */
+// Protection quand utilisateur externe
+$_socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id > 0)
 {
     $_socid = $user->societe_id;
