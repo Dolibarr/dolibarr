@@ -132,7 +132,7 @@ if ($_GET["id"])
 		{
 		  $i = !$i;
 		  print "<tr ".$bc[$i]."><td>".$way."</td>";
-		  print "<td><a href= '".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
+		  print "<td><a href= '".DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
 		
 		}
 	    
