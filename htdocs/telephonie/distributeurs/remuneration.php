@@ -179,7 +179,6 @@ if ($_GET["id"])
   print '<td align="right">Montant</td>';
   print "</tr>\n";
   
-  $var=True;
   $total = 0;
 
   $sql = "SELECT s.idp, s.nom, a.fk_contrat,c.statut,sum(a.montant) as montant";
