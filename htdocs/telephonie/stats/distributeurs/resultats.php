@@ -62,10 +62,10 @@ if ($resql)
 {
   while ($row = $db->fetch_row($resql))
     {
-      $var=!$var;	  
       print "<tr $bc[$var]><td>".$row[1].'</td>';  
       print '<td align="right">'.price($row[0]).'</td></tr>';
       $total += $row[0];
+      $var=!$var;
     }
   $db->free();
 }
