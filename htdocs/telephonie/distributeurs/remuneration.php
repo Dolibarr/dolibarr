@@ -240,6 +240,7 @@ if ($_GET["id"])
 	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
 	  print img_file();
 	  print '</a>&nbsp;';
+	  print '<img src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
 	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
