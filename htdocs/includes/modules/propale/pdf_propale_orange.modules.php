@@ -21,30 +21,30 @@
  * $Source$
  */
 
-/**	    \file       htdocs/includes/modules/propale/pdf_propale_adytek.modules.php
+/**	    \file       htdocs/includes/modules/propale/pdf_propale_Orange.modules.php
 		\ingroup    propale
-		\brief      Fichier de la classe permettant de générer les propales au modèle Adytek
+		\brief      Fichier de la classe permettant de générer les propales au modèle Orange
 		\version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
 
-/**	    \class      pdf_propale_adytek
-		\brief      Classe permettant de générer les propales au modèle Adytek
+/**	    \class      pdf_propale_Orange
+		\brief      Classe permettant de générer les propales au modèle orange
 */
 
-class pdf_propale_adytek extends ModelePDFPropales
+class pdf_propale_orange extends ModelePDFPropales
 {
 
     /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
-  function pdf_propale_adytek($db=0)
+  function pdf_propale_orange($db=0)
     {
         $this->db = $db;
-        $this->name = "Adytek";
-        $this->description = "Modèle de proposition Adytek";
+        $this->name = "orange";
+        $this->description = "Modèle de proposition Orange ancien Adytek";
 
         // Dimension page pour format A4
         $this->page_largeur = 210;
@@ -108,7 +108,7 @@ class pdf_propale_adytek extends ModelePDFPropales
 
 	      $pdf->SetTitle($fac->ref);
 	      $pdf->SetSubject("Proposition commerciale");
-	      $pdf->SetCreator("ADYTEK Dolibarr ".DOL_VERSION);
+	      $pdf->SetCreator("Orange Dolibarr ".DOL_VERSION);
 	      $pdf->SetAuthor($user->fullname);
 
 
@@ -144,7 +144,7 @@ class pdf_propale_adytek extends ModelePDFPropales
 		  $total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
 
 		  $pdf->SetXY (30, $curY );
-		  $pdf->MultiCell(102, 5, $propale->lignes[$i]->desc, 0, 'J', 0);
+		  $pdf->MultiCell(102, 5, $propale->lignes[$i]->libelle, 0, 'J', 0);
 
                   $pdf->SetFont('Arial','', 8);
 		  $nexY = $pdf->GetY();
