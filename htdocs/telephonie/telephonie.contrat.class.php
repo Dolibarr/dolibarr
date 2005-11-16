@@ -496,20 +496,20 @@ class TelephonieContrat {
 		  }
 		$this->db->free($resql);
 	      }
-	    
-	    
-	    
+	    	    	    
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
 	    $sql .= " (fk_contrat, datepo, montant, fk_commercial, fk_distributeur, fk_user";
-	    $sql .= " , avance_pourcent, avance_duree, rem_pour_prev, rem_pour_autr)";
+	    $sql .= " , avance_pourcent, avance_duree, rem_pour_prev, rem_pour_autr";
+	    $sql .= ", mode_paiement)";
 	    $sql .= " VALUES (".$this->id.",now(), ".$montant;
 	    $sql .= ",".$this->commercial_sign_id.",".$did.",".$user->id;
-	    $sql .= ",".$pour[0].",".$pour[1].",".$pour[2].",".$pour[3].")";
+	    $sql .= ",".$pour[0].",".$pour[1].",".$pour[2].",".$pour[3];
+	    $sql .= ",'".$this->mode_paiement."');";
 	    
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	      {
-		
+
 	      }
 	    else
 	      {
@@ -520,11 +520,11 @@ class TelephonieContrat {
 	  {
 	
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
-	    $sql .= " (fk_contrat, datepo, montant, fk_commercial, fk_distributeur, fk_user)";
+	    $sql .= " (fk_contrat, datepo, montant, fk_commercial, fk_distributeur, fk_user";
+	    $sql .= ", mode_paiement)";
 	    $sql .= " VALUES (".$this->id.",now(), ".$montant;
-	    $sql .= ",".$this->commercial_sign_id.",".$did.",".$user->id.")";
-	    
-	    
+	    $sql .= ",".$this->commercial_sign_id.",".$did.",".$user->id;
+    	    $sql .= ",'".$this->mode_paiement."');";
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	      {
