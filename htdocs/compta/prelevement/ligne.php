@@ -44,7 +44,7 @@ if ($_POST["action"] == 'confirm_rejet')
 	    {
 	      $rej = new RejetPrelevement($db, $user);
 	      
-	      $rej->create($user, $_GET["id"], $_POST["motif"], $daterej, $lipre->bon_rowid);
+	      $rej->create($user, $_GET["id"], $_POST["motif"], $daterej, $lipre->bon_rowid, $_POST["facturer"]);
 	      
 	      Header("Location: ligne.php?id=".$_GET["id"]);
 	    }
@@ -165,8 +165,14 @@ if ($_GET["id"])
       print '<td class="valid" align="center">';
       print '<input type="submit" value="Confirmer"></td></tr>';
 
+      print '<tr><td class="valid">Facturation du rejet</td>';
+      print '<td class="valid" colspan="2">';
+      print '<select name="facturer">';
+      print '<option value="0">Ne Pas Facturer le rejet</option>';
+      print '<option value="1">Facturer le rejet au client</option>';
+      print '</select>';
+      print '</td>';
       print '</table></form>';
-
     }
 
   $page = $_GET["page"];
