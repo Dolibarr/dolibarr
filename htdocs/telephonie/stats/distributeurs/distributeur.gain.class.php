@@ -31,7 +31,7 @@ class GraphDistributeurGain extends GraphBar {
 
     $this->client = 0;
     $this->year = strftime("%Y",time());
-    $this->titre = "Marge effectuées sur les lignes ".$this->year;
+    $this->titre = "Marges effectuées sur les lignes ".$this->year;
 
     $this->barcolor = "pink";
     $this->showframe = true;
