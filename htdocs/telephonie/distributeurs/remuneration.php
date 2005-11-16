@@ -33,7 +33,6 @@ if ($user->distributeur_id)
 
 llxHeader();
 
-
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
@@ -91,18 +90,33 @@ if ($_GET["id"])
   if ($_GET["month"] > 0)
     {
       $datetime = mktime(12,12,12,substr($_GET["month"], -2), 1 , substr($_GET["month"],0,4));
+      $month = substr("00".strftime("%m", $datetime), -2);
+      $year = strftime("%Y", $datetime);      
+      $monthprev = $month;
+      $yearprev = $year;
     }
   else
     {
       $datetime = time();
+      $month = substr("00".strftime("%m", $datetime), -2);
+      $year = strftime("%Y", $datetime);      
+      
+      if ($month == 1)
+	{
+	  $monthprev = "12";
+	  $yearprev = $year - 1;
+	}
+      else
+	{
+	  $monthprev = substr("00".($month - 1), -2) ;
+	  $yearprev = $year;
+	}
     }
 
-  $month = substr("00".strftime("%m", $datetime), -2);
-  $year = strftime("%Y", $datetime);      
-  $mois = strftime("%B %Y", $datetime);
+  $mois = strftime("%B %Y", mktime(12,0,0,$monthprev,1,$yearprev));
 
-  $sql = "SELECT s.idp, s.nom, a.fk_contrat, sum(a.montant) as montant";
 
+  $sql = "SELECT s.idp, s.nom, a.fk_contrat, c.statut, sum(a.montant) as montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_avance as a";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
@@ -110,7 +124,7 @@ if ($_GET["id"])
   $sql .= " WHERE a.fk_distributeur =".$distri->id;
   $sql .= " AND a.fk_contrat = c.rowid"; 
   $sql .= " AND c.fk_soc = s.idp";
-  $sql .= " AND a.date ='".$year.$month."'";
+  $sql .= " AND a.date ='".$yearprev.$monthprev."'";
   $sql .= " GROUP BY s.idp";
   $sql .= " ORDER BY s.nom ASC";
   
@@ -135,7 +149,8 @@ if ($_GET["id"])
 	  print "<tr $bc[$var]>";	  
 	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
 	  print img_file();
-	  print '</a>&nbsp;';      
+	  print '</a>&nbsp;';
+	  print '<img src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
 	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
@@ -157,8 +172,49 @@ if ($_GET["id"])
 
   print '</td><td width="40%" valign="top">';
 
-  $sql = "SELECT s.idp, s.nom, a.fk_contrat, sum(a.montant) as montant";
+  print_barre_liste("Rémunération sur CA pour $mois", $page, "po.php", "", $sortfield, $sortorder, '', $num);
+  
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Client</td>';
+  print '<td align="right">Montant</td>';
+  print "</tr>\n";
+  
+  $var=True;
+  $total = 0;
 
+  $sql = "SELECT s.idp, s.nom, a.fk_contrat,c.statut,sum(a.montant) as montant";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_regul as a";
+  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
+  $sql .= " , ".MAIN_DB_PREFIX."societe as s";
+
+  $sql .= " WHERE a.fk_distributeur =".$distri->id;
+  $sql .= " AND a.fk_contrat = c.rowid"; 
+  $sql .= " AND c.fk_soc = s.idp";
+  $sql .= " AND a.date ='".$yearprev.$monthprev."'";
+
+  $sql .= " GROUP BY s.idp";
+  $sql .= " ORDER BY s.nom ASC";
+
+  $resql = $db->query($sql);
+
+  if ($resql)
+    {
+      while ($obj = $db->fetch_object($resql))
+	{
+	  print "<tr $bc[$var]>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
+	  print img_file();
+	  print '</a>&nbsp;';
+	  print '<img src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
+	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
+	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
+	  print "</tr>\n";
+
+	  $total += $obj->montant;
+	}
+    }
+
+  $sql = "SELECT s.idp, s.nom, a.fk_contrat, sum(a.montant) as montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as a";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
@@ -166,34 +222,25 @@ if ($_GET["id"])
   $sql .= " WHERE a.fk_distributeur =".$distri->id;
   $sql .= " AND a.fk_contrat = c.rowid"; 
   $sql .= " AND c.fk_soc = s.idp";
-  $sql .= " AND a.date ='".$year.$month."'";
+  $sql .= " AND a.date ='".$yearprev.$monthprev."'";
   $sql .= " AND a.avance = 0";
   $sql .= " GROUP BY s.idp";
   $sql .= " ORDER BY s.nom ASC";
-  
+
   $resql = $db->query($sql);
   if ($resql)
     {
       $num = $db->num_rows($resql);
       $i = 0;
       
-      print_barre_liste("Rémunération sur CA pour $mois", $page, "po.php", "", $sortfield, $sortorder, '', $num);
-      
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-      print '<tr class="liste_titre"><td>Client</td>';
-      print '<td align="right">Montant</td>';
-      print "</tr>\n";
-      
-      $var=True;
-      $total = 0;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object($resql);
 	  
-	  print "<tr $bc[$var]>";	  
+	  print "<tr $bc[$var]>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
 	  print img_file();
-	  print '</a>&nbsp;';      
+	  print '</a>&nbsp;';
 	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
@@ -204,18 +251,19 @@ if ($_GET["id"])
       print "<tr $bc[$var]>\n";	  
       print '<td>Total</td>';
       print '<td align="right">'.sprintf("%01.2f",$total)."</td>\n";	  
-      print "</tr>\n</table>\n";
+      print "</tr>\n";
       $db->free();
     }
   else 
     {
       print $db->error() . ' ' . $sql;
     }
-
+  print "</table>\n";
 
 
   print '</td><td width="20%" valign="top">';
-
+  
+  print_barre_liste("Curseur", $page, "po.php", "", $sortfield, $sortorder, '', $num);
 
   $sql = "SELECT distinct(a.date)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as a";
