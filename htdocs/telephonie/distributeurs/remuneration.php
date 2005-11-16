@@ -213,7 +213,7 @@ if ($_GET["id"])
 	}
     }
 
-  $sql = "SELECT s.idp, s.nom, a.fk_contrat, sum(a.montant) as montant";
+  $sql = "SELECT s.idp, s.nom, a.fk_contrat, sum(a.montant) as montant, c.statut";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as a";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
