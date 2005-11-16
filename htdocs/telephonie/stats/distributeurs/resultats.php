@@ -43,6 +43,7 @@ $h++;
 
 $year = strftime("%Y",time());
 $total = 0;
+$var = True;
 dolibarr_fiche_head($head, $hselected, "Distributeurs");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -88,14 +89,15 @@ $sql = "SELECT sum(valeur),legend FROM ".MAIN_DB_PREFIX."telephonie_stats";
 $sql .= " WHERE graph = 'distributeur.gain.mensuel'";
 $sql .= " GROUP BY legend DESC";  
 $resql = $db->query($sql);
-  
+$total = 0;
 if ($resql)
 {
   while ($row = $db->fetch_row($resql))
     {
-      $var=!$var;	  
       print "<tr $bc[$var]><td>".$row[1].'</td>';  
       print '<td align="right">'.price($row[0]).'</td></tr>';
+      $total += $row[0];
+      $var=!$var;
     }
   $db->free();
 }
@@ -103,6 +105,8 @@ else
 {
   print $db->error() . ' ' . $sql;
 }
+print "<tr $bc[$var]><td>Total</td>";
+print '<td align="right">'.price($total).'</td></tr>';
 print '</table>';
 
 print '</td></tr><tr><td valign="top" width="70%">';
@@ -117,28 +121,31 @@ $sql = "SELECT valeur,legend FROM ".MAIN_DB_PREFIX."telephonie_stats";
 $sql .= " WHERE graph = 'distributeur.commission.mensuel'";
 $sql .= " GROUP BY legend DESC";  
 $resql = $db->query($sql);
-  
-  if ($resql)
+$total = 0;  
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
     {
-      while ($row = $db->fetch_row($resql))
-	{
-	  $var=!$var;	  
-	  print "<tr $bc[$var]><td>".$row[1].'</td>';  
-	  print '<td align="right">'.price($row[0]).'</td></tr>';
-	}
-      $db->free();
+      print "<tr $bc[$var]><td>".$row[1].'</td>';  
+      print '<td align="right">'.price($row[0]).'</td></tr>';
+      $total += $row[0];
+      $var=!$var;
     }
-  else 
-    {
-      print $db->error() . ' ' . $sql;
-    }
-  print '</table>';
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+print "<tr $bc[$var]><td>Total</td>";
+print '<td align="right">'.price($total).'</td></tr>';
+print '</table>';
 
 
-  print '</td></tr>';
-  print '</table>';
- 
- $db->close();
+print '</td></tr>';
+print '</table>';
+
+$db->close();
 
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
