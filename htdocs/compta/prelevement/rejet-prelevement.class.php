@@ -60,7 +60,7 @@ class RejetPrelevement
 
   }
 
-  function create($user, $id, $motif, $date_rejet, $bonid, facturation=0)
+  function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)
   {
     $error = 0;
     $this->id = $id;
@@ -77,10 +77,10 @@ class RejetPrelevement
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_rejet ";
     $sql .= " (fk_prelevement_lignes, date_rejet";
-    $sql .= " , motif , fk_user_creation, date_creation)";
+    $sql .= " , motif , fk_user_creation, date_creation, afacturer)";
     $sql .= " VALUES (".$id;
     $sql .= " ,'".$this->db->idate($date_rejet)."'";
-    $sql .= " ,".$motif.",". $user->id.", now())";
+    $sql .= " ,".$motif.",". $user->id.", now(),".$facturation.");";
     
     $result=$this->db->query($sql);
     
