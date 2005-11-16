@@ -42,7 +42,7 @@ $hselected = $h;
 $h++;
 
 $year = strftime("%Y",time());
-
+$total = 0;
 dolibarr_fiche_head($head, $hselected, "Distributeurs");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -65,6 +65,7 @@ if ($resql)
       $var=!$var;	  
       print "<tr $bc[$var]><td>".$row[1].'</td>';  
       print '<td align="right">'.price($row[0]).'</td></tr>';
+      $total += $row[0];
     }
   $db->free();
 }
@@ -72,6 +73,8 @@ else
 {
   print $db->error() . ' ' . $sql;
 }
+print "<tr $bc[$var]><td>Total</td>";
+print '<td align="right">'.price($total).'</td></tr>';
 print '</table>';
 
 print '</td></tr><tr><td valign="top" width="70%">';
