@@ -208,7 +208,7 @@ if ($_GET["id"])
 	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
-
+	  $var=!$var;
 	  $total += $obj->montant;
 	}
     }
