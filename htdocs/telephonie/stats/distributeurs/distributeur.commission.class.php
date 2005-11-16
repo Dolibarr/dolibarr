@@ -30,7 +30,7 @@ class GraphDistributeurCommission extends GraphBar {
     $this->file = $file;
     $this->year = strftime("%Y",time());
     $this->client = 0;
-    $this->titre = "Commission mensuelle ".$this->year;
+    $this->titre = "Commissions mensuelles reversées ".$this->year;
 
     $this->barcolor = "orange";
     $this->showframe = true;

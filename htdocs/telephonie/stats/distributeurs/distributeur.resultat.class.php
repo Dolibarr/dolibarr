@@ -29,7 +29,8 @@ class GraphDistributeurResultat extends GraphBar {
     $this->db = $DB;
     $this->file = $file;
     $this->client = 0;
-    $this->titre = "Resultat mensuel";
+    $this->year = strftime("%Y",time());
+    $this->titre = "Resultat mensuel ".$this->year." (marges - commissions)";
     $this->year = strftime("%Y",time());
     $this->barcolor = "green";
     $this->showframe = true;
