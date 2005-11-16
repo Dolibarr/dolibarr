@@ -26,6 +26,6 @@ create table llx_telephonie_commission_regul (
   fk_distributeur     integer NOT NULL,
   fk_contrat          integer NOT NULL,
   fk_ligne            integer NOT NULL,
-  montant             real
-
+  montant             real,
+  type                varchar(4)
 )type=innodb;
