@@ -60,7 +60,7 @@ class RejetPrelevement
 
   }
 
-  function create($user, $id, $motif, $date_rejet, $bonid)
+  function create($user, $id, $motif, $date_rejet, $bonid, facturation=0)
   {
     $error = 0;
     $this->id = $id;
