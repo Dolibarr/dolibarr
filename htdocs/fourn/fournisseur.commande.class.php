@@ -491,7 +491,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 
                     $desc  = $prod->libelle;
                     $txtva = $prod->tva_tx;
-                    $pu    = $prod->buyprice/$qty;
+                    $pu    = $prod->buyprice;
                     $ref   = $prod->ref;
                 }
             }
