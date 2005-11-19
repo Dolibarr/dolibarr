@@ -98,7 +98,6 @@ div.body
     margin-bottom: 0;
     margin-right: 0px;
     margin-left: 0px;
-    display: block;
     padding: 0px;
     font-family:arial,tahoma,verdana,helvetica;
     font-size:12px;
@@ -106,15 +105,18 @@ div.body
 
 div.vmenuplusfiche
 {
+    position: static;
     float: left; 
+    display: block;
     margin-right: 6px;
     margin-left: 1px;
 }
 
 div.vmenu
 {
+    position: relative;
+    float: top;
     display: block;
-    float: left;
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
@@ -124,6 +126,7 @@ div.vmenu
 div.fiche
 {
     position: absolute;
+    float: top;
     display: block;
     top: 28px;
     margin-right: 6px;
@@ -137,6 +140,7 @@ div.fiche
 
 div.tmenu
 {
+    position: relative;
     float: top;
     display: block;
     white-space: nowrap;
@@ -217,7 +221,7 @@ a.login
 {
   position: absolute;
   right: 24px;
-  top: 4px;
+  top: 3px;
 
   color: #234046;
   padding: 0em 1em;
@@ -342,7 +346,6 @@ form {
 div.formsearch
 {
   display: block;
-  float: none;
   clear: right;
   background: #d0d4d7;
   top: 0px;
