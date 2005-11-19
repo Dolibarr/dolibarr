@@ -1,0 +1,7 @@
+# Dolibarr language file - en_US - exports
+NewExport=New export
+ExportableDatas=Exportable dataset
+SelectExportDataSet=Choose dataset you want to export...
+SelectExportFields=Choose fields you want to export...
+ExportableFields=Exportable fields
+ExportedFields=Exported fields
