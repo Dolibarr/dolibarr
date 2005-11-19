@@ -31,6 +31,7 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $user->getrights('facture');
 
