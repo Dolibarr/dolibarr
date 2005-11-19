@@ -64,8 +64,8 @@ $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
 $sql.= " p.statut, p.num_paiement,";
 $sql.= " c.libelle as paiement_type,";
 $sql.= " ba.rowid as bid, ba.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
-$sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c,";
+$sql.= " ".MAIN_DB_PREFIX."paiement as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 if ($socidp)

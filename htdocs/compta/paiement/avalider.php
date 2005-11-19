@@ -31,6 +31,7 @@ require("./pre.inc.php");
 
 $user->getrights("facture");
 
+$langs->load("bills");
 
 // Sécurité accés client
 if (! $user->rights->facture->lire)
@@ -87,10 +88,10 @@ if ($resql)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),"avalider.php","p.rowid","","","",$sortfield);
-    print_liste_field_titre($langs->trans("Date"),"avalider.php","dp","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Ref"),"avalider.php","p.rowid","","",'width="60"',$sortfield);
+    print_liste_field_titre($langs->trans("Date"),"avalider.php","dp","","",'width="80" align="center"',$sortfield);
     print_liste_field_titre($langs->trans("Type"),"avalider.php","c.libelle","","","",$sortfield);
-    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+    print_liste_field_titre($langs->trans("AmountTTC"),"avalider.php","c.libelle","","",'align="right"',$sortfield);
     print "<td>&nbsp;</td>";
     print "</tr>\n";
 
@@ -100,14 +101,14 @@ if ($resql)
         $var=!$var;
         print "<tr $bc[$var]>";
         print '<td>'.'<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
-        print '<td>'.dolibarr_print_date($objp->dp)."</td>\n";
+        print '<td width="80" align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td align="right">'.price($objp->amount).'</td>';
         print '<td align="center">';
 
         if ($objp->statut == 0)
         {
-            print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("ToValid").'</a>';
+            print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
         }
         else
         {
@@ -123,5 +124,5 @@ if ($resql)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
