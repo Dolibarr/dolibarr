@@ -48,6 +48,7 @@ BillShortStatusCanceled=Abandonned
 BillShortStatusValidated=Validated
 BillShortStatusStarted=Started
 BillShortStatusNotPayed=Not payed
+PaymentStatusToValidShort=A valider
 ErrorVATIntraNotConfigured=Intracommunautary VAT number not yet defined
 ErrorNoPaiementModeConfigured=No paiment mode yet defined
 ErrorCreateBankAccount=Creat a bank account then go to Setup panel of Invoice module to define paiement modes
