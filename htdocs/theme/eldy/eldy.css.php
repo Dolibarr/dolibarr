@@ -105,6 +105,8 @@ div.body
 
 div.vmenuplusfiche
 {
+    top: auto;
+    left: auto;
     position: static;
     float: left; 
     display: block;
@@ -114,6 +116,8 @@ div.vmenuplusfiche
 
 div.vmenu
 {
+    top: auto;
+    left: auto;
     position: relative;
     float: top;
     display: block;
@@ -125,10 +129,11 @@ div.vmenu
 
 div.fiche
 {
+    top: 28px;
+    left: auto;
     position: absolute;
     float: top;
     display: block;
-    top: 28px;
     margin-right: 6px;
     margin-top: 0px;
 }
