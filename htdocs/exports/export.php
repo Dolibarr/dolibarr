@@ -26,10 +26,10 @@
         \version    $Revision$
 */
  
-require("./pre.inc.php");
+require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/exports/export.class.php");
 
-$langs->load("commercial");
-$langs->load("orders");
+$langs->load("exports");
 
 $user->getrights();
 
@@ -38,21 +38,88 @@ if (! $user->societe_id == 0)
 
 
 
+$export=new Export($db);
+$export->load_arrays($user,isset($datatoexport)?$datatoexport:'');
 
 
- 
-llxHeader('',$langs->trans("NewExport"));
+if (! isset($datatoexport))
+{
+    llxHeader('',$langs->trans("NewExport"));
+    
+    print_fiche_titre($langs->trans("NewExport"));
+    
+    print '<table class="notopnoleftnoright" width="100%">';
 
-print_fiche_titre($langs->trans("NewExport"));
+    print $langs->trans("SelectExportDataSet").'<br>';
+    print '<br>';
+    
+    // Affiche les modules d'exports
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td width="120">'.$langs->trans("Module").'</td>';
+    print '<td>'.$langs->trans("ExportableDatas").'</td>';
+    print '<td>&nbsp;</td>';
+    print '</tr>';
+    $val=true;
+    if (sizeof($export->array_export_code))
+    {
+        foreach ($export->array_export_code as $key => $value)
+        {
+            $val=!$val;
+            print '<tr '.$bc[$val].'><td>';
+            print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
+            print $export->array_export_module[$key]->getName();
+            print '</td><td>';
+            print $export->array_export_label[$key];
+            print '</td><td>';
+            print '<a href="'.DOL_URL_ROOT.'/exports/export.php?datatoexport='.$export->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+            print '</td></tr>';
+        }
+    }
+    else
+    {
+        print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoExportableData").'</td></tr>';
+    }
+    print '</table>';    
 
-print '<table class="notopnoleftnoright" width="100%">';
+    print '</table>';
+}
 
+if (isset($datatoexport))
+{
+    llxHeader('',$langs->trans("NewExport"));
+    
+    print_fiche_titre($langs->trans("NewExport")." - ".$export->array_export_label[0]);
+    
+    print '<table class="notopnoleftnoright" width="100%">';
 
+    print $langs->trans("SelectExportFields").'<br>';
+    print '<br>';
+    
+    print '<table>';
+    print '<tr><td>'.$langs->trans("ExportableFields").'</td>';
+    print '<td>&nbsp;</td>';
+    print '<td>'.$langs->trans("ExportedFields").'</td>';
+    print '</tr>';
 
-print '</table>';
+    print '<tr><td>';
+    
+    // Champs exportables
+    $fieldscode=split(',',$export->array_export_fields_code);
+    $fieldslib=split(',',$export->array_export_fields_lib);
+    foreach($fieldscode as $i=>$code)
+    {
+                
+        
+    }
+    
+    print '</td></tr>';
+
+    print '</table>';
+}
+
 
 $db->close();
-
 
 llxFooter('$Date$ - $Revision$');
 

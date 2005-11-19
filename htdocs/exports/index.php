@@ -26,71 +26,20 @@
         \version    $Revision$
 */
  
-require("./pre.inc.php");
+require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/exports/export.class.php");
 
-$langs->load("commercial");
-$langs->load("orders");
+$langs->load("exports");
 
 $user->getrights();
 
 if (! $user->societe_id == 0)
   accessforbidden();
+
 	  
 
-
-$dir=DOL_DOCUMENT_ROOT."/includes/modules";
-$handle=opendir($dir);
-
-// Recherche des exports disponibles
-$array_export_code=array();
-$var=True;
-$i=0;
-while (($file = readdir($handle))!==false)
-{
-    if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-    {
-        if (eregi("^(mod.*)\.class\.php",$file,$reg))
-        {
-            $modulename=$reg[1];
-
-            // Chargement de la classe
-            $file = $dir."/".$modulename.".class.php";
-            $classname = $modulename;
-            require_once($file);
-            $module = new $classname($db);
-            
-            if (is_array($module->export_code))
-            {
-                foreach($module->export_code as $r => $value)
-                {
-                    dolibarr_syslog("Exports trouvés pour le module ".$modulename);
-                    $perm=$module->export_permission[$r][0];
-                    if (strlen($perms[2]) > 0)
-                    {
-                        $bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
-                    }
-                    else
-                    {
-                        $bool=$user->rights->$perm[0]->$perm[1];
-                    }
-                    if ($bool)
-                    {
-                        $array_export_module[$i]=$module;
-                        $array_export_code[$i]=$module->export_code[$r];
-                        $array_export_label[$i]=$module->export_label[$r];
-                        $array_export_fields_code[$i]=$module->export_fields_code[$r];
-                        $array_export_fields_label[$i]=$module->export_fields_label[$r];
-                        $array_export_sql[$i]=$module->export_sql[$r];
-                        $i++;
-                    }
-                }            
-            }
-        }
-    }
-}
-closedir($handle);
-
-
+$export=new Export($db);
+$export->load_arrays($user);
 
  
 llxHeader('',$langs->trans("ExportsArea"));
@@ -127,22 +76,24 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 // Affiche les modules d'exports
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Module").'</td>';
+print '<td width="120">'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ExportableDatas").'</td>';
+print '<td>&nbsp;</td>';
 print '</tr>';
 $val=true;
-if (sizeof($array_export_code))
+if (sizeof($export->array_export_code))
 {
-    foreach ($array_export_code as $key => $value)
+    foreach ($export->array_export_code as $key => $value)
     {
         $val=!$val;
         print '<tr '.$bc[$val].'><td>';
-        print img_object($array_export_module[$key]->getName(),$array_export_module[$key]->picto).' ';
-        print $array_export_module[$key]->getName();
+        print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
+        print $export->array_export_module[$key]->getName();
         print '</td><td>';
-        print $array_export_label[$key];
+        print $export->array_export_label[$key];
+        print '</td><td>';
+        print '<a href="'.DOL_URL_ROOT.'/exports/export.php?datatoexport='.$export->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
         print '</td></tr>';
-    
     }
 }
 else
