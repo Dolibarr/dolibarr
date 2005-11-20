@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -57,11 +56,12 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     {
         $db->commit();
         Header ("Location: reglement.php");
+        exit;
     }
     else
     {
         $db->rollback();
-        $message=$langs->trans("Error");
+        $message='<div class="error">'.$tva->error.'</div>';
         $_GET["action"]="create";
     }
 }
@@ -80,7 +80,7 @@ if ($_GET["action"] == 'create')
     
     print_fiche_titre($langs->trans("NewVATPayment"));
       
-    if ($message) print '<br>'.$message.'</br>';
+    if ($message) print $message;
     
     print '<table class="border" width="100%">';
     
@@ -97,13 +97,16 @@ if ($_GET["action"] == 'create')
     $html->select_types_paiements($charge->paiementtype, "paiementtype");
     print "</td>\n";
    
-    print '<tr><td>Compte à créditer :</td><td>';
-    $html->select_comptes($charge->accountid, "accountid", 0, "courant=1");  // Affiche liste des comptes courant
-    print '</td></tr>';
-    
+    if ($conf->banque->enabled)
+    {
+        print '<tr><td>'.$langs->trans("Account").'</td><td>';
+        $html->select_comptes($charge->accountid,"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+        print '</td></tr>';
+    }
+        
     print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value=""></td></tr>';    
-    print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-    print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+    print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
     print '</table>';
     print '</form>';      
 }
