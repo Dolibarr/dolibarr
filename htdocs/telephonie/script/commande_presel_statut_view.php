@@ -51,7 +51,6 @@ else
   exit(1);
 }
 
-
 GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids);
 
 /*
@@ -89,44 +88,49 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 	  $out .= "Host: $host\r\n";
 	  $out .= "Connection: Close\r\n\r\n";
 	  
-	  fwrite($fp, $out);
-	  
-	  while (!feof($fp))
+	  if (fwrite($fp, $out) )
 	    {
-	      $line = fgets($fp, 1024);
-
-	      if (preg_match("/<Preselection .* \/>/",$line))
-		{	      
-		  $results = split(" ",trim($line));
-		  //print_r($results);
+	      while (!feof($fp))
+		{
+		  $line = fgets($fp, 1024);
 		  
-		  $array = array();
-		  preg_match('/telnum="([0123456789]*)"/', $line, $array);
-		  $ligne_numero = $array[1];
+		  if (preg_match("/<Preselection .* \/>/",$line))
+		    {	      
+		      $results = split(" ",trim($line));
+		      //print_r($results);
+		      
+		      $array = array();
+		      preg_match('/telnum="([0123456789]*)"/', $line, $array);
+		      $ligne_numero = $array[1];
+		      
+		      $array = array();
+		      preg_match('/Service_Statut="([\S]*)"/i', $line, $array);
+		      $ligne_service = $array[1];
+		      
+		      $array = array();
+		      preg_match('/PreSelection_Statut="([\S]*)"/i', $line, $array);
+		      $ligne_presel = $array[1];
+		      
+		      print "$i/$numcli ";
+		      print $ligne_numero." ";
+		      print substr($ligne_service.str_repeat(" ",20),0,20);
+		      print substr($ligne_presel.str_repeat(" ",20),0,20);
+		      print "\n";
+		    }
 		  
-		  $array = array();
-		  preg_match('/Service_Statut="([\S]*)"/i', $line, $array);
-		  $ligne_service = $array[1];
-		  
-		  $array = array();
-		  preg_match('/PreSelection_Statut="([\S]*)"/i', $line, $array);
-		  $ligne_presel = $array[1];
-		  
-		  print "$i/$numcli ";
-		  print $ligne_numero." ";
-		  print substr($ligne_service.str_repeat(" ",20),0,20);
-		  print substr($ligne_presel.str_repeat(" ",20),0,20);
-		  print "\n";
+		  if (preg_match("/<Error .* \/>/",$line))
+		    {	      
+		      $array = array();
+		      preg_match('/libelle="(.*)" xmlns:d4p1/', $line, $array);
+		      
+		      print "$i/$numcli ";
+		      print "$cli ErreurAPI ".$array[1]."\n";
+		    }
 		}
-
-	      if (preg_match("/<Error .* \/>/",$line))
-		{	      
-		  $array = array();
-		  preg_match('/libelle="(.*)" xmlns:d4p1/', $line, $array);
-
-		  print "$i/$numcli ";
-		  print "$cli ErreurAPI ".$array[1]."\n";
-		}
+	    }
+	  else
+	    {
+	      print "Impossible d'ecrire sur la socket";
 	    }
 	  fclose($fp);
 	}
