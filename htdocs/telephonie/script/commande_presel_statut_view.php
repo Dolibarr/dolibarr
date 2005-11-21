@@ -130,7 +130,9 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 	    }
 	  else
 	    {
-	      print "Impossible d'ecrire sur la socket";
+	      print "Impossible d'ecrire sur la socket\n";
+	      print "Host : $host\n";
+	      print "URL : $url\n";
 	    }
 	  fclose($fp);
 	}
