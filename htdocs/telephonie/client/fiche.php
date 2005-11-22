@@ -37,7 +37,7 @@ if ($cancel == $langs->trans("Cancel"))
 
 if ($_GET["id"])
 {
-  $soc = new Societe($db);
+  $soc = new TelephonieClient($db);
   $result = $soc->fetch($_GET["id"], $user);
 
   if (!$soc->perm_read)
@@ -47,6 +47,9 @@ if ($_GET["id"])
 
   if ( $result == 1 && $soc->perm_read)
     { 
+      $soc->log_consult($user,'r');
+
+
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
 	  /* Commentaires */
@@ -54,7 +57,6 @@ if ($_GET["id"])
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_commentaire as c";
 	  $sql .= " WHERE fk_soc = ".$soc->id;
 	  $sql .= " ORDER BY c.datec DESC";
-	  
 	  $resql = $db->query($sql);
 	  
 	  if ($resql)
