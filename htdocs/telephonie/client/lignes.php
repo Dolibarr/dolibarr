@@ -37,7 +37,7 @@ if ($cancel == $langs->trans("Cancel"))
 
 if ($_GET["id"])
 {
-  $soc = new Societe($db);
+  $soc = new TelephonieClient($db);
   $result = $soc->fetch($_GET["id"], $user);
 
   if (!$soc->perm_read)
@@ -82,6 +82,16 @@ if ($_GET["id"])
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/tarifs.php?id=".$soc->id;
 	  $head[$h][1] = $langs->trans("Tarifs (".$row[0].")");	       
 	  $h++;
+
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/commentaires.php?id=".$soc->id;
+	  $head[$h][1] = $langs->trans("Commentaires");
+	  $num_comments = $soc->count_comment();
+	  if ($num_comments > 0)
+	    {
+	      $head[$h][1] = $langs->trans("Commentaires ($num_comments)");
+	    }
+	  $h++;
+
 
 	  dolibarr_fiche_head($head, $hselected, 'Client : '.$soc->nom);
 
