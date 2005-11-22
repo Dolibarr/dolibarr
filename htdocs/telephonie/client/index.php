@@ -88,20 +88,58 @@ else
 
 print '<br />';
 
-print '</td><td valign="top" width="70%" rowspan="3">';
+/*
+ * Liste
+ *
+ */
+$sql = "SELECT s.idp as socidp, s.nom, max(sc.datec) as dam";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ",".MAIN_DB_PREFIX."societe_consult as sc";
+$sql .= " WHERE s.idp = sc.fk_soc";
+$sql .= " AND sc.fk_user = ".$user->id;
+$sql .= " GROUP BY s.idp";
+$sql .= " ORDER BY dam DESC LIMIT 10";
 
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>'.min(10,$num).' dernières fiches clients consultées</td></tr>';
+  $var=True;
+
+  while ($obj = $db->fetch_object($resql))
+    {
+      print "<tr $bc[$var]><td>";
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print img_file();      
+      print '</a>&nbsp;';
+
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+
+      print "</tr>\n";
+      $var=!$var;
+    }
+  print "</table>";
+  $db->free($resql);
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+
+
+print '</td><td valign="top" width="70%" rowspan="3">';
 
 /*
  * Liste
  *
  */
-
 $sql = "SELECT s.idp as socidp, s.nom, count(l.ligne) as ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
 $sql .= " WHERE l.fk_client_comm = s.idp ";
-
 $sql .= " AND s.idp = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 $sql .= " GROUP BY s.idp";
@@ -114,7 +152,7 @@ if ($resql)
   $i = 0;
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>'.min(15,$num).' derniers clients</td>';
+  print '<tr class="liste_titre"><td>'.min(15,$num).' derniers nouveaux clients</td>';
   print '<td width="25%" align="center">Nb Lignes';
   print "</td></tr>\n";
 
