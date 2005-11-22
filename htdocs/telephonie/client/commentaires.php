@@ -135,7 +135,7 @@ if ($_GET["id"])
       
       /* Commentaires */
       
-      $sql = "SELECT c.commentaire, u.firstname, u.name, u.code, c.rowid";
+      $sql = "SELECT c.commentaire, u.firstname, u.name, u.code, c.rowid, c.fk_user";
       $sql .= " , ".$db->pdate("c.datec") ." as datec";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_commentaire as c";
       $sql .= " , ".MAIN_DB_PREFIX."user as u";
@@ -148,7 +148,7 @@ if ($_GET["id"])
       if ($resql)
 	{
 	  print '<tr class="liste_titre"><td width="15%" valign="center">Date';
-	  print '</td><td>Commentaire</td><td align="center" colspan="2">Auteur</td>';
+	  print '</td><td>Commentaire</td><td align="center">Auteur</td><td>&nbsp;</td>';
 	  print "</tr>\n";
 	  
 	  while ($obj = $db->fetch_object($resql))
@@ -157,10 +157,13 @@ if ($_GET["id"])
 	      print "</td>\n";
 	      print '<td>'.nl2br(stripslashes($obj->commentaire))."</td>\n";
 	      print '<td align="center">'.$obj->code."</td>\n";
-	      print '<td align="right">';
-	      print '<a href="commentaires.php?id='.$soc->id.'&amp;commid='.$obj->rowid.'&amp;action=del">';
-	      print img_delete().'</a></td>';
-	      print "</tr>\n";
+	      print '<td align="center">&nbsp;';
+	      if ($obj->fk_user == $user->id)
+		{
+		  print '<a href="commentaires.php?id='.$soc->id.'&amp;commid='.$obj->rowid.'&amp;action=del">';
+		  print img_delete().'</a>';
+		}
+	      print "</td></tr>\n";
 	      $var=!$var;		  
 	    }
 	  $db->free($resql);	  
