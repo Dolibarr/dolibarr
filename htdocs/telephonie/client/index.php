@@ -114,8 +114,11 @@ if ($resql)
       print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
       print img_file();      
       print '</a>&nbsp;';
+      $nom = $obj->nom;
+      if (strlen($obj->nom) > 33)
+	$nom = substr($obj->nom,0,30)."...";
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($nom).'</a></td>';
 
       print "</tr>\n";
       $var=!$var;
