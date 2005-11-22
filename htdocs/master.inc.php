@@ -34,7 +34,7 @@
 define('DOL_VERSION','2.0.0-alpha2');
 
 // La fonction clearstatcache ne doit pas etre appelé de manière globale car ralenti.
-// Elle doit etre appelée uniquement par les pages qui ont besoin d'absence de cache,
+// Elle doit etre appelée uniquement par les pages qui ont besoin d'un cache fichier vidé,
 // comme par exemple document.php
 //clearstatcache();     
 
