@@ -22,7 +22,7 @@
 --
 --
 create table llx_telephonie_societe_commentaire (
-
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc      integer NOT NULL,
   fk_user     integer NOT NULL,
   datec       datetime,
