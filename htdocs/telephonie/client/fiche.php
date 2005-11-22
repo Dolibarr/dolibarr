@@ -49,6 +49,21 @@ if ($_GET["id"])
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
+	  /* Commentaires */
+	  $sql = "SELECT c.commentaire, ".$db->pdate("c.datec") ." as datec";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_commentaire as c";
+	  $sql .= " WHERE fk_soc = ".$soc->id;
+	  $sql .= " ORDER BY c.datec DESC";
+	  
+	  $resql = $db->query($sql);
+	  
+	  if ($resql)
+	    {
+	      $num_comments = $db->num_rows($resql);
+	      $db->free($resql);
+	    }
+	  /* Fin Commentaires */
+
 	  $h=0;
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/fiche.php?id=".$soc->id;
 	  $head[$h][1] = $langs->trans("Contrats");
@@ -79,6 +94,14 @@ if ($_GET["id"])
 
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/tarifs.php?id=".$soc->id;
 	  $head[$h][1] = $langs->trans("Tarifs (".$row[0].")");
+	  $h++;
+
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/commentaires.php?id=".$soc->id;
+	  $head[$h][1] = $langs->trans("Commentaires");
+	  if ($num_comments > 0)
+	    {
+	      $head[$h][1] = $langs->trans("Commentaires ($num_comments)");
+	    }
 	  $h++;
 
 	  if ($soc->perm_perms)
