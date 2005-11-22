@@ -107,6 +107,7 @@ class html_cerfafr extends ModeleDon
         $html = eregi_replace('__DONATOR_ZIP__',$don->cp,$html);
         $html = eregi_replace('__DONATOR_TOWN__',$don->ville,$html);
         $html = eregi_replace('__PAYMENTMODE_LIB__ ',$don->modepaiement,$html);
+        $html = eregi_replace('__NOW__',dolibarr_print_date(time()),$html);
         
         // Sauve fichier sur disque
         dolibarr_syslog("html_cerfafr::write_file $file");
