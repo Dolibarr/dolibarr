@@ -63,24 +63,17 @@ else
 
 if (! isset($dolibarr_main_db_type))
 {	
-  $dolibarr_main_db_type='mysql';   // Pour compatibilit? avec anciennes configs, si non d?fini, on prend 'mysql'
+  $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 }
 if (! $dolibarr_main_data_root) {
-    // Si le r?pertoire documents non d?fini, on utilise celui par d?faut
+    // Si repertoire documents non defini, on utilise celui par defaut
     $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
     $dolibarr_main_data_root.="/documents";
 }
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);
 
-if (strtolower(substr($dolibarr_main_url_root, 0, 7)) == 'http://')
-{
-    $uri = substr($dolibarr_main_url_root, 7);
-}
-if (strtolower(substr($dolibarr_main_url_root, 0, 8)) == 'https://')
-{
-    $uri = substr($dolibarr_main_url_root, 8);
-}
+$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);
@@ -138,7 +131,7 @@ if ($result)
     {
         $objp = $db->fetch_object($result);
         $key=$objp->name;
-        $value=stripslashes($objp->value);
+        $value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture base mais après POST quand get_magic_quotes_gpc()==1)
         define ("$key", $value);
         $conf->global->$key=$value;
         $i++;
