@@ -40,6 +40,13 @@ class TelephonieClient extends Societe {
    *
    *
    */
+  function log_consult($user,$mode)
+  {
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_consult (fk_soc,fk_user,action)";
+    $sql .= " VALUES (".$this->id.",".$user->id.",'".$mode."');";
+    $this->db->query($sql);
+  }
+
   function count_comment()
   {
     $num_comments = 0;
