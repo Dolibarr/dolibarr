@@ -46,7 +46,7 @@ $sql .= " GROUP BY u.rowid";
 $sql .= " ORDER BY dam DESC";
 $resql = $db->query($sql);
 print '<table class="border" width="100%">';
-print '<tr class="liste_titre"><td>Utilisateur</td><td align="center">Fiches client</td></tr>';
+print '<tr class="liste_titre"><td width="70%">Utilisateur</td><td width="30%" align="center">Fiches client</td></tr>';
 if ($resql)
 {
   while ($row = $db->fetch_row($resql))
@@ -55,7 +55,26 @@ if ($resql)
       print '<td align="center">'.$row[2].'</td></tr>';
     }
 }
-print '</table>';
+print '</table><br />';
+
+$sql = "SELECT u.name, u.firstname, count(distinct(sc.fk_contrat)) as dam";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_consult as sc";
+$sql .= " WHERE sc.fk_user = u.rowid";
+$sql .= " GROUP BY u.rowid";
+$sql .= " ORDER BY dam DESC";
+$resql = $db->query($sql);
+print '<table class="border" width="100%">';
+print '<tr class="liste_titre"><td width="70%">Utilisateur</td><td width="30%" align="center">Fiches contrat</td></tr>';
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      print '<tr><td>'.$row[1].' '.$row[0].'</td>';
+      print '<td align="center">'.$row[2].'</td></tr>';
+    }
+}
+print '</table><br />';
 
 print '</td><td valign="top" width="50%">';
 
