@@ -204,9 +204,7 @@ $resql = $db->query($sql);
 if ($resql)
 {
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>'.min(10,$num).' derniers commentaires</td>';
-  print '<td width="75%">Commentaire</td></tr>'."\n";
-  $var=True;
+  print '<tr class="liste_titre"><td colspan="2">'.min(10,$num).' derniers commentaires</td></tr>';
 
   while ($obj = $db->fetch_object($resql))
     {
