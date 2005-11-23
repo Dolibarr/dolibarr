@@ -42,6 +42,18 @@ $error = 0;
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
+/*****
+ *
+ *
+ *
+ */
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/commerciaux.po.class.php");
+$file = $img_root . "commerciaux/po.mensuel.png";
+
+$graph = new GraphCommerciauxPO($db, $file);
+$graph->width = 400;
+$graph->GraphMakeGraph();
+
 /***********************************************************************/
 /*
 /* Contrats
@@ -163,9 +175,7 @@ if ($db->query($sql))
 /* Prise ordre des distributeur
 /*
 /***********************************************************************/
-
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/contrats/modereglement.class.php");
-
 
 $sql = "SELECT distinct p.fk_distributeur, d.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
@@ -194,9 +204,9 @@ if ($resql)
 
 
 
- /*
-  *
-  */
+/*
+ *
+ */
 
 $sql = "SELECT rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur";
@@ -209,8 +219,6 @@ if ($resql)
   while ($i < $num)
     {
       $row = $db->fetch_row($resql);	
-
-
       $file = $img_root . "distributeurs/".$row[0]."/clients.hebdomadaire.png";
       if ($verbose) print "Graph : Lignes commandes$file\n";
       $graph = new GraphClientsWeek($db, $file);
@@ -220,7 +228,6 @@ if ($resql)
       $i++;
     }
 }
-
 
 /*****
  *
@@ -242,4 +249,5 @@ $file = $img_root . "lignes/rejets.hebdomadaire.png";
 $graph = new GraphLignesRejetWeek($db, $file);
 $graph->width = 400;
 $graph->GraphMakeGraph();
+
 ?>
