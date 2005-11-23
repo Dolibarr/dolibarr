@@ -819,6 +819,14 @@ tr.nonpayed {
            }
 
 
+div.version { 
+  background: #F4F4F4;
+  text-align: right;
+  font-size: 9px;
+ margin: 1px 0em 0em 0em;
+ padding: 2px;
+}
+
 
 /* ============================================================================== */
 /* Calendar                                                                       */
