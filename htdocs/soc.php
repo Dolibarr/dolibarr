@@ -56,39 +56,39 @@ $soc = new Societe($db);
 /*
  * Actions
  */
-if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
+if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 {
-    $soc->nom                   = stripslashes($_POST["nom"]);
-    $soc->adresse               = stripslashes($_POST["adresse"]);
-    $soc->cp                    = stripslashes($_POST["cp"]);
-    $soc->ville                 = stripslashes($_POST["ville"]);
-    $soc->pays_id               = stripslashes($_POST["pays_id"]);
-    $soc->departement_id        = stripslashes($_POST["departement_id"]);
-    $soc->tel                   = stripslashes($_POST["tel"]);
-    $soc->fax                   = stripslashes($_POST["fax"]);
+    $soc->nom                   = $_POST["nom"];
+    $soc->adresse               = $_POST["adresse"];
+    $soc->cp                    = $_POST["cp"];
+    $soc->ville                 = $_POST["ville"];
+    $soc->pays_id               = $_POST["pays_id"];
+    $soc->departement_id        = $_POST["departement_id"];
+    $soc->tel                   = $_POST["tel"];
+    $soc->fax                   = $_POST["fax"];
     $soc->url                   = ereg_replace( "http://", "", $_POST["url"] );
-    $soc->siren                 = stripslashes($_POST["siren"]);
-    $soc->siret                 = stripslashes($_POST["siret"]);
-    $soc->ape                   = stripslashes($_POST["ape"]);
-    $soc->prefix_comm           = stripslashes($_POST["prefix_comm"]);
-    $soc->code_client           = stripslashes($_POST["code_client"]);
-    $soc->code_fournisseur      = stripslashes($_POST["code_fournisseur"]);
-    $soc->codeclient_modifiable = stripslashes($_POST["codeclient_modifiable"]);
-    $soc->codefournisseur_modifiable = stripslashes($_POST["codefournisseur_modifiable"]);
-    $soc->capital               = stripslashes($_POST["capital"]);
-    $soc->tva_intra_code        = stripslashes($_POST["tva_intra_code"]);
-    $soc->tva_intra_num         = stripslashes($_POST["tva_intra_num"]);
-    $soc->tva_intra             = stripslashes($_POST["tva_intra_code"] . $_POST["tva_intra_num"]);
-    $soc->forme_juridique_code  = stripslashes($_POST["forme_juridique_code"]);
-    $soc->effectif_id           = stripslashes($_POST["effectif_id"]);
-    $soc->typent_id             = stripslashes($_POST["typent_id"]);
-    $soc->client                = stripslashes($_POST["client"]);
-    $soc->fournisseur           = stripslashes($_POST["fournisseur"]);
+    $soc->siren                 = $_POST["siren"];
+    $soc->siret                 = $_POST["siret"];
+    $soc->ape                   = $_POST["ape"];
+    $soc->prefix_comm           = $_POST["prefix_comm"];
+    $soc->code_client           = $_POST["code_client"];
+    $soc->code_fournisseur      = $_POST["code_fournisseur"];
+    $soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
+    $soc->codefournisseur_modifiable = $_POST["codefournisseur_modifiable"];
+    $soc->capital               = $_POST["capital"];
+    $soc->tva_intra_code        = $_POST["tva_intra_code"];
+    $soc->tva_intra_num         = $_POST["tva_intra_num"];
+    $soc->tva_intra             = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
+    $soc->forme_juridique_code  = $_POST["forme_juridique_code"];
+    $soc->effectif_id           = $_POST["effectif_id"];
+    $soc->typent_id             = $_POST["typent_id"];
+    $soc->client                = $_POST["client"];
+    $soc->fournisseur           = $_POST["fournisseur"];
     
     if ($_POST["action"] == 'update')
     {
         $result = $soc->update($_GET["socid"],$user);
-        if ($result <> 0)
+        if ($result <= 0)
         {
             $soc->id = $_GET["socid"];
             // doublon sur le prefix comm
@@ -108,7 +108,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
     {
         $result = $soc->create($user);
     
-        if ($result == 0)
+        if ($result >= 0)
         {
             Header("Location: soc.php?socid=".$soc->id);
             exit;

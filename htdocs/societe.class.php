@@ -312,16 +312,16 @@ class Societe {
             $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
 
-            $sql .= ",tel = ".($this->tel?"'".$this->tel."'":"null");
-            $sql .= ",fax = ".($this->fax?"'".$this->fax."'":"null");
-            $sql .= ",url = ".($this->url?"'".$this->url."'":"null");
+            $sql .= ",tel = ".($this->tel?"'".addslashes($this->tel)."'":"null");
+            $sql .= ",fax = ".($this->fax?"'".addslashes($this->fax)."'":"null");
+            $sql .= ",url = ".($this->url?"'".addslashes($this->url)."'":"null");
 
-            $sql .= ",siren = '". $this->siren ."'";
-            $sql .= ",siret = '". $this->siret ."'";
-            $sql .= ",ape   = '". $this->ape   ."'";
+            $sql .= ",siren = '". addslashes($this->siren) ."'";
+            $sql .= ",siret = '". addslashes($this->siret) ."'";
+            $sql .= ",ape   = '". addslashes($this->ape)   ."'";
 
-            $sql .= ",tva_intra = '" . $this->tva_intra ."'";
-            $sql .= ",capital = '" . $this->capital ."'";
+            $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
+            $sql .= ",capital = '" .   addslashes($this->capital) ."'";
 
             if ($this->prefix_comm) $sql .= ",prefix_comm = '" . $this->prefix_comm ."'";
 
@@ -367,14 +367,11 @@ class Societe {
 
                 $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".$this->code_compta_fournisseur."'":"null");
             }
-
-
-
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
-
             $sql .= " WHERE idp = '" . $id ."'";
 
-            if ($this->db->query($sql))
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
                 if ($call_trigger)
                 {
@@ -385,7 +382,7 @@ class Societe {
                     // Fin appel triggers
                 }
 
-                $result = 0;
+                $result = 1;
             }
             else
             {
@@ -397,6 +394,8 @@ class Societe {
                 }
                 else
                 {
+                    
+                    $this->error = $langs->trans("Error sql=$sql");
                     dolibarr_syslog("Societe::Update echec sql=$sql");
                     $result =  -2;
                 }
