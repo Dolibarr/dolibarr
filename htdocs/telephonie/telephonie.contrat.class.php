@@ -594,6 +594,16 @@ class TelephonieContrat {
 	dolibarr_syslog("Telephonie::Contrat Error". $sql);
       }
   }
+  /*
+   * Log des consultations
+   *
+   */
+  function log_consult($user,$mode)
+  {
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_consult (fk_contrat,fk_user,action)";
+    $sql .= " VALUES (".$this->id.",".$user->id.",'".$mode."');";
+    $this->db->query($sql);
+  }
 
 }
 ?>

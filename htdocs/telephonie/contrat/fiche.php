@@ -398,6 +398,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 }
 else
 {
+  /* Consultation */
   if ($_GET["id"])
     {
       if ($_GET["action"] <> 're-edit')
@@ -412,7 +413,7 @@ else
 
       if ($result == 1)
 	{
-	  $client_comm = new Societe($db);
+	  $client_comm = new TelephonieClient($db);
 	  $client_comm->fetch($contrat->client_comm_id, $user);
 	}
 
@@ -423,6 +424,9 @@ else
 
       if ( $result && $client_comm->perm_read)
 	{ 
+
+	  $contrat->log_consult($user,'r');
+
 	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
 
@@ -459,8 +463,8 @@ else
       
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	      $client_comm = new Societe($db);
-	      $client_comm->fetch($contrat->client_comm_id);
+	      //$client_comm = new Societe($db);
+	      //$client_comm->fetch($contrat->client_comm_id);
 
 	      print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
 	      print '<td>Facturé : '.$contrat->facturable.'</td><td align="right">';
@@ -523,12 +527,9 @@ else
 	      print '<tr><td width="20%">Commercial Suivi</td>';
 	      print '<td colspan="3">'.$commercial_suiv->fullname.'</td></tr>';
 
-
 	      /* Prise d'ordre */
 	      print '<tr><td width="20%">Prise d\'ordre mensuelle</td>';
-
 	      $po = $contrat->priseordre_totale();
-
 	      print '<td colspan="3">'.$po.' euros HT</td></tr>';
 
 	      /*
@@ -537,7 +538,6 @@ else
 	      print $contrat->statuts[$contrat->statut];
 	      print '</td></tr>';
 	      */
-
 
 	      /* Contacts */
 	      print '<tr><td valign="top" width="20%">Contact facture</td>';

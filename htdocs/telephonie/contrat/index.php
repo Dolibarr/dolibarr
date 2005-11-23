@@ -59,13 +59,59 @@ print '</table></form>';
 
 print '<br />';
 
+/* Consultations */
+
+$sql = "SELECT s.idp as socidp, s.nom, max(sc.datec) as dam, c.ref, c.rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_contrat as c";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_consult as sc";
+$sql .= " WHERE s.idp = c.fk_soc";
+$sql .= " AND c.rowid = sc.fk_contrat";
+$sql .= " AND sc.fk_user = ".$user->id;
+$sql .= " GROUP BY c.rowid";
+$sql .= " ORDER BY dam DESC LIMIT 10";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td colspan="2">'.min(10,$num).' dernières fiche contrat consultées</td></tr>';
+  $var=True;
+
+  while ($obj = $db->fetch_object($resql))
+    {
+      print "<tr $bc[$var]><td>";
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print img_file();      
+      print '</a>&nbsp;';
+      $nom = $obj->nom;
+      if (strlen($obj->nom) > 33)
+	$nom = substr($obj->nom,0,30)."...";
+
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($nom).'</a></td>';
+
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">'.$obj->ref.'</a></td>';
+
+      print "</tr>\n";
+      $var=!$var;
+    }
+  print "</table>";
+  $db->free($resql);
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+
+/* ===== */
+print '<br />';
+
 $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as l";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 $sql .= " WHERE l.fk_client_comm = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
-
-
 $sql .= " GROUP BY statut";
 
 if ($db->query($sql))
