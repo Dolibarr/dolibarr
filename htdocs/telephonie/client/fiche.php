@@ -130,10 +130,38 @@ if ($_GET["id"])
 	  
 	  print '</table><br />';
 
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  /* Commentaires */
+	  $sql = "SELECT c.commentaire";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_commentaire as c";
+	  $sql .= " WHERE c.fk_soc = ".$soc->id;
+	  $sql .= " ORDER BY c.datec DESC LIMIT 2";	  
+	  $resql = $db->query($sql);
+	  if ($resql)
+	    {
+	      $num = $db->num_rows($resql);
+	      if ($num > 0)
+		{
+		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		  print '<tr class="liste_titre"><td>2 Derniers commentaires</td></tr>';	      
+		  while ($obj = $db->fetch_object($resql))
+		    {
+		      $var=!$var;
+		      print "<tr $bc[$var]><td>";
+		      print stripslashes($obj->commentaire)."</td>\n";
+		      print "</tr>\n";
+		    }
+		  print "</table><br />";
+		}
+	      $db->free($resql);
+	    }
+	  else 
+	    {
+	      print $db->error() . ' ' . $sql;
+	    }
+	  
 	  
 	  /* Contrats */
-	     
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';	     
 	  $sql = "SELECT count(l.rowid) as cc, c.rowid, c.ref, c.statut";
 	  $sql .= ", ss.nom as agence, ss.code_client, ss.ville";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
