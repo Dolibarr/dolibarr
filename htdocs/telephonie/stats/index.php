@@ -31,6 +31,10 @@ llxHeader('','Telephonie - Statistiques');
  */
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
+print '<tr><td colspan="2">';
+
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commerciaux/po.mensuel.png" alt="PO mensuelle par commercial" title="PO mensuelle par commercial"><br /><br />'."\n";
+print '</td></tr>';
 print '<tr><td width="50%" valign="top">';
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/clients.hebdomadaire.png" alt="Nouveaux clients par semaines" title="Nouveaux clients par semaine"><br /><br />'."\n";
