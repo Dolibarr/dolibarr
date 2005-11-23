@@ -87,7 +87,7 @@ class GraphCommerciauxPO  {
 
 	for ($j = 0; $j < 12 ; $j++)
 	  {
-	    $datas[$j] = $xdatas[substr("00".$j,-2)];
+	    $datas[$j] = $xdatas[substr("00".($j+1),-2)];
 	  }
 
 	$bplot = new BarPlot($datas);
