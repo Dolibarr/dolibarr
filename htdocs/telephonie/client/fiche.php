@@ -228,10 +228,8 @@ else
 {
   print "Error";
 }
-
-
 print '</div>';
-
+print '<div id="version">$Revision$</div>';
 /* ************************************************************************** */
 /*                                                                            */ 
 /* Barre d'action                                                             */ 
