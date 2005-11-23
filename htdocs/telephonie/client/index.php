@@ -146,7 +146,7 @@ $sql .= " WHERE l.fk_client_comm = s.idp ";
 $sql .= " AND s.idp = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 $sql .= " GROUP BY s.idp";
-$sql .= " ORDER BY s.datec DESC LIMIT 15";
+$sql .= " ORDER BY s.datec DESC LIMIT 10";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -155,7 +155,7 @@ if ($resql)
   $i = 0;
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>'.min(15,$num).' derniers nouveaux clients</td>';
+  print '<tr class="liste_titre"><td>'.min(10,$num).' derniers nouveaux clients</td>';
   print '<td width="25%" align="center">Nb Lignes';
   print "</td></tr>\n";
 
@@ -188,13 +188,50 @@ else
   print $db->error() . ' ' . $sql;
 }
 
+print "<br />";
+/* Commentaires */
+
+$sql = "SELECT s.idp as socidp, s.nom, c.commentaire";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_commentaire as c";
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
+
+$sql .= " WHERE c.fk_soc = s.idp ";
+$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
+$sql .= " ORDER BY c.datec DESC LIMIT 10";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>'.min(10,$num).' derniers commentaires</td>';
+  print '<td width="75%">Commentaire</td></tr>'."\n";
+  $var=True;
+
+  while ($obj = $db->fetch_object($resql))
+    {
+      $var=!$var;
+      print "<tr $bc[$var]><td>";
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print img_file();      
+      print '</a>&nbsp;';
+      $nom = $obj->nom;
+      if (strlen($obj->nom) > 33)
+	$nom = substr($obj->nom,0,30)."...";
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($nom).'</a></td>';
+      print '<td>'.stripslashes($obj->commentaire)."</td>\n";
+      print "</tr>\n";
+    }
+  print "</table>";
+  $db->free($resql);
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
 
 print '</td></tr>';
-
-
 print '</table>';
-
-
 
 $db->close();
 
