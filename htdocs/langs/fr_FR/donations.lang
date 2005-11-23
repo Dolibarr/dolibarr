@@ -1,6 +1,8 @@
 # Dolibarr language file - fr_FR - donations
 Donation=Don
 Donations=Dons
+Donor=Donateur
+Donors=Donateurs
 AddDonation=Ajouter don
 NewDonation=Nouveau don
 DonationPromise=Promesse de don
@@ -15,3 +17,4 @@ DonationStatusPromessNotValidated=Promesse non validée
 DonationStatusPromessNotValidated=Promesse validée
 DonationStatusPayed=Don payé
 ValidPromess=Valider promesse
+BuildDonationReceipt=Créer reçu

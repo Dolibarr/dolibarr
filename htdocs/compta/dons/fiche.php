@@ -106,7 +106,7 @@ if ($_POST["action"] == 'add')
     }
     else
     {
-        $mesg="Montant non défini";
+        $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
         $_GET["action"] = "create";
     }
 }
@@ -129,7 +129,7 @@ if ($_GET["action"] == 'valid_promesse')
     $don = new Don($db);
     if ($don->valid_promesse($_GET["rowid"], $user->id))
     {
-        Header("Location: liste.php");
+        Header("Location: fiche.php?rowid=".$_GET["rowid"]);
         exit;
     }
 }
@@ -138,7 +138,7 @@ if ($_GET["action"] == 'set_payed')
     $don = new Don($db);
     if ($don->set_paye($_GET["rowid"], $modepaiement))
     {
-        Header("Location: liste.php");
+        Header("Location: fiche.php?rowid=".$_GET["rowid"]);
         exit;
     }
 }
@@ -410,7 +410,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
     if ($don->statut == 2 || $don->statut == 3)
     {
-        print '  <a class="butAction" href="fiche.php?rowid='.$don->id.'&amp;action=build">'.$langs->trans('BuildDoc').'</a>';
+        print '  <a class="butAction" href="fiche.php?rowid='.$don->id.'&amp;action=build">'.$langs->trans('BuildDonationReceipt').'</a>';
     }
 
     if ($don->statut == 0) 

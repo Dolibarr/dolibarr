@@ -190,11 +190,11 @@ class MenuLeft {
                 $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->lire);
 
                 // Actions
-                $newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions", $langs->trans("Actions"), 0);
-                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=actions", $langs->trans("NewAction"), 1, 1);
-                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;status=todo", $langs->trans("MenuToDoActions"), 1);
-                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;time=today", $langs->trans("Today"), 1);
-                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=actions", $langs->trans("Reportings"), 1);
+                $newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions", $langs->trans("Actions"), 0, $user->rights->societe->lire);
+                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=actions", $langs->trans("NewAction"), 1, $user->rights->societe->lire);
+                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;status=todo", $langs->trans("MenuToDoActions"), 1, $user->rights->societe->lire);
+                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;time=today", $langs->trans("Today"), 1, $user->rights->societe->lire);
+                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=actions", $langs->trans("Reportings"), 1, $user->rights->societe->lire);
         
                 // Propal
                 if ($conf->propal->enabled)

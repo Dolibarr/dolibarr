@@ -37,27 +37,27 @@ if (!$user->admin)
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
   || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",stripslashes($_POST["nom"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",stripslashes($_POST["address"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",stripslashes($_POST["ville"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",stripslashes($_POST["cp"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",stripslashes($_POST["pays_id"]));
-    dolibarr_set_const($db, "MAIN_MONNAIE",stripslashes($_POST["currency"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",stripslashes($_POST["tel"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",stripslashes($_POST["fax"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",stripslashes($_POST["mail"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",stripslashes($_POST["web"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",stripslashes($_POST["logo"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",$_POST["ville"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",$_POST["cp"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
+    dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",$_POST["tel"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$_POST["logo"]);
 
-    dolibarr_set_const($db, "MAIN_INFO_CAPITAL",stripslashes($_POST["capital"]));
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",stripslashes($_POST["forme_juridique_code"]));
-    dolibarr_set_const($db, "MAIN_INFO_SIREN",stripslashes($_POST["siren"]));
-    dolibarr_set_const($db, "MAIN_INFO_SIRET",stripslashes($_POST["siret"]));
-    dolibarr_set_const($db, "MAIN_INFO_APE",stripslashes($_POST["ape"]));
-    dolibarr_set_const($db, "MAIN_INFO_RCS",stripslashes($_POST["rcs"]));
-    dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",stripslashes($_POST["tva"]));
+    dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
+    dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
+    dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
+    dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
+    dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
+    dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
 
-    dolibarr_set_const($db, "FACTURE_TVAOPTION",stripslashes($_POST["optiontva"]));
+    dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"]);
 
     if ($_POST['action'] != 'updateedit')
     {

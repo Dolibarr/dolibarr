@@ -742,7 +742,7 @@ else
                     }
                     print '<textarea name="eldesc" cols="70" rows="1">'.$objp->description.'</textarea></td>';
                     print '<td align="right">';
-                    print $html->select_tva("eltva_tx",$objp->tva_tx);
+                    print $html->select_tva("eltva_tx",$objp->tva_tx,$mysoc,$contrat->societe);
                     print '</td>';
                     print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
@@ -842,7 +842,7 @@ else
             print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 
             print '<td>';
-            $html->select_tva("tva_tx",$conf->defaulttx);
+            $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,$contrat->societe);
             print '</td>';
             print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';

@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - donations
 Donation=Donation
 Donationss=Donations
+Donor=Donor
+Donors=Donors
 AddDonation=Add a donation
 NewDonation=New donation
 DonationPromise=Gift promise
@@ -15,3 +17,4 @@ DonationStatusPromessNotValidated=Draft promess
 DonationStatusPromessNotValidated=Validated promess
 DonationStatusPayed=Donation received
 ValidPromess=Validate promess
+BuildDonationReceipt=Build receipt

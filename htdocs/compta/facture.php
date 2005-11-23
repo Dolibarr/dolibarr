@@ -1501,7 +1501,7 @@ else
 						}
 						print '<textarea name="desc" cols="70" rows="'.ROWS_2.'">'.stripslashes($objp->description).'</textarea></td>';
 						print '<td align="right">';
-						print $html->select_tva('tva_tx',$objp->tva_taux);
+						print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
 						print '</td>';
 						print '<td align="right"><input size="6" type="text" name="price" value="'.price($objp->subprice).'"></td>';
 						print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
@@ -1559,7 +1559,7 @@ else
 				print '<tr '.$bc[$var].'>';
 				print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 				print '<td align="right">';
-				$html->select_tva('tva_tx',$conf->defaulttx);
+				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';

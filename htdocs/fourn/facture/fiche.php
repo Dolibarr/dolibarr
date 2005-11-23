@@ -289,7 +289,7 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
 		print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
 		print '<td align="center">';
-		$html->select_tva('tauxtva'.$i);
+		$html->select_tva('tauxtva'.$i,'', '',$mysoc);
 		print '</td>';
 		print '<td align="center"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
 	}
@@ -421,7 +421,7 @@ else
 			print '</td>';
 			print '<td align="center">-</td>';
 			print '<td align="center">';
-			$html->select_tva('tauxtva');
+			$html->select_tva('tauxtva','',$societe,$mysoc);
 			print '</td><td align="center" colspan="2">';
 			print '&nbsp;';
 			print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';

@@ -803,7 +803,7 @@ if ($_GET['propalid'] > 0)
                         }
                         print '<textarea name="desc" cols="50" rows="'.ROWS_2.'">'.stripslashes($objp->description).'</textarea></td>';
                         print '<td align="right">';
-                        print $html->select_tva("tva_tx",$objp->tva_tx);
+                        print $html->select_tva("tva_tx",$objp->tva_tx,$mysoc,$societe);
                         print '</td>';
                         print '<td align="right"><input size="6" type="text" name="subprice" value="'.price($objp->subprice).'"></td>';
                         print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
@@ -862,7 +862,7 @@ if ($_GET['propalid'] > 0)
                 print '<tr '.$bc[$var].">\n";
                 print '  <td><textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
                 print '  <td align="center">';
-                $html->select_tva('np_tva_tx', $conf->defaulttx) . "</td>\n";
+                $html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe) . "</td>\n";
                 print '  <td align="right"><input type="text" size="5" name="np_price"></td>';
                 print '  <td align="right"><input type="text" size="2" value="1" name="np_qty"></td>';
                 print '  <td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';

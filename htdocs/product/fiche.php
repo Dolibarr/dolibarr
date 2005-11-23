@@ -285,7 +285,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 
     $langs->load("bills");
     print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-    print $html->select_tva("tva_tx",$conf->defaulttx);
+    print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("Status").'</td><td>';
@@ -511,12 +511,12 @@ if ($_GET["id"])
     }
 
     /*
-    * Fiche en mode edition
-    */
+     * Fiche en mode edition
+     */
     if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
     {
 
-        print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, "");
+        print_fiche_titre($langs->trans('Edit').' '.$types[$product->type].' : '.$product->ref, "");
 
         if ($mesg) {
             print '<br><div class="error">'.$mesg.'</div><br>';
@@ -532,7 +532,7 @@ if ($_GET["id"])
         $langs->load("bills");
         print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
         $html = new Form($db);
-        print $html->select_tva("tva_tx", $product->tva_tx);
+        print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '');
         print '</td></tr>';
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
         print '<select name="statut">';

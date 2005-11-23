@@ -431,6 +431,7 @@ else
 		{
 			$soc = new Societe($db);
 			$soc->fetch($commande->soc_id);
+
 			$author = new User($db);
 			$author->id = $commande->user_author_id;
 			$author->fetch();
@@ -642,9 +643,8 @@ else
 			print '</table><br>';
 
 			/*
-			* Lignes de commandes
-			*
-			*/
+		 	 * Lignes de commandes
+			 */
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
@@ -745,7 +745,7 @@ else
 						}
 						print '<textarea name="eldesc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
 						print '<td align="right">';
-						print $html->select_tva('eltva_tx',$objp->tva_tx);
+						print $html->select_tva('eltva_tx',$objp->tva_tx,$mysoc,$soc);
 						print '</td>';
 						print '<td align="right"><input size="5" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
 						print '<td align="right"><input size="2" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
@@ -791,7 +791,7 @@ else
 				print '<tr '.$bc[$var].'>';
 				print '  <td><textarea cols="50" name="desc" rows="1"></textarea></td>';
 				print '<td align="center">';
-				print $html->select_tva('tva_tx',$conf->defaulttx);
+				print $html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="5"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
