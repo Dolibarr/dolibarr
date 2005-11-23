@@ -88,7 +88,7 @@ class Fichinter
             $sql .=  ",fk_projet";
         }
         $sql .= ") ";
-        $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note', $this->duree";
+        $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '".addslashes($this->note)."', $this->duree";
         if ($this->projet_id) {
             $sql .= ", $this->projet_id";
         }
