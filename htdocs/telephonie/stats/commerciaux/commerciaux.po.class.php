@@ -61,7 +61,7 @@ class GraphCommerciauxPO  {
 	    $comm_names[$row[0]]= $row[1];//." ".$row[2];
 	  }
       }
-    
+    $datetime = time();
     foreach ($this->commerciaux as $commercial)
       {
 	$datas = array();
@@ -69,6 +69,7 @@ class GraphCommerciauxPO  {
 	$sql = "SELECT date_format(datepo, '%m'), sum(montant)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
 	$sql .= " WHERE p.fk_commercial = ".$commercial;
+	$sql .= " AND date_format(datepo, '%Y') = '".strftime('%Y',$datetime)."'";
 	$sql .= " GROUP BY date_format(datepo, '%Y%m')";
 	$resql = $this->db->query($sql);
 	
