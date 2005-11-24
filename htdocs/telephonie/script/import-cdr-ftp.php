@@ -25,14 +25,17 @@ require ("../../master.inc.php");
 
 $opt = getopt("f:i:");
 
+/*
 $file = $opt['f'];
 $id_fourn = $opt['i'];
-
 if (strlen($file) == 0 || strlen($id_fourn) == 0)
 {
   print "Usage :\n php import-cdr-bt.php -f <filename> -i <id_fournisseur>\n";
   exit;
 }
+*/
+$file = DOL_DATA_ROOT."/telephonie/CDR/atraiter/";
+$id_fourn = 4;
 
 /*
  * Traitement
@@ -303,7 +306,6 @@ foreach ($files as $xfile)
 	      if ($error == 0)
 		{	  
 		  $db->query("COMMIT");
-		  dolibarr_syslog("COMMIT");
 		}
 	      else
 		{
