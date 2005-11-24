@@ -366,7 +366,6 @@ function _verif($db, $file, $fichiers)
    */
   if (in_array (basename($file), $fichiers))
     {
-      print "Trouvé Linux";
       dolibarr_syslog ("Fichier ".basename($file)." déjà chargé/traité");
       $result = -1;
     }
