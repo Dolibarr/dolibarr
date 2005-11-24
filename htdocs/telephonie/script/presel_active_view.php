@@ -18,14 +18,11 @@
  * $Id$
  * $Source$
  *
- *
  * Visualisation de l'etat des lignes preselectionnées
  *
  */
 require ("../../master.inc.php");
 require_once DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php";
-
-set_time_limit(0);
 
 $host          = CMD_PRESEL_WEB_HOST;
 $user_login    = CMD_PRESEL_WEB_USER;
@@ -35,7 +32,7 @@ $ids = array();
 
 if ($argv[1])
 {
-  $debug = 1;
+  $debug = 0;
   array_push($ids, $argv[1]);
 }
 else
@@ -64,7 +61,6 @@ else
     }
 }
 
-
 GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $debug);
 
 /*
@@ -76,7 +72,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $deb
 {  
   $numcli = sizeof($ids);
   $i = 0;
-  print "$numcli";
+  print "Nombre de lignes $numcli\n";
   foreach($ids as $cli)
     {
       $i++;
@@ -121,6 +117,14 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $deb
 		  $ligne_numero = $array[1];
 		  
 		  $array = array();
+		  preg_match('/ServiceActive="([\S]*)"/i', $line, $array);
+		  $service_active = $array[1];
+
+		  $array = array();
+		  preg_match('/PreSelectionActive="([\S]*)"/i', $line, $array);
+		  $presel_active = $array[1];
+
+		  $array = array();
 		  preg_match('/Service_Statut="([\S]*)"/i', $line, $array);
 		  $ligne_service = $array[1];
 		  
@@ -130,6 +134,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $deb
 		  
 		  print "$i/$numcli ";
 		  print $ligne_numero." ";
+		  print "$service_active/$presel_active ";
 		  print substr($ligne_service.str_repeat(" ",20),0,20);
 		  print substr($ligne_presel.str_repeat(" ",20),0,20);
 		  print "\n";
