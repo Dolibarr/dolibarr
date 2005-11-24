@@ -131,7 +131,7 @@ if ( $resql )
 
   $pdf->Close();	      
   $pdf->Output($file);
-
+  dolibarr_syslog("Ecriture de : ".$file);
   $db->free($resql);
 }
 else
@@ -142,17 +142,6 @@ else
 }
 
 $db->close();
-
-
-
-
-
-
-
-
-
-
-
 
 /*
  * Ancienne méthode
