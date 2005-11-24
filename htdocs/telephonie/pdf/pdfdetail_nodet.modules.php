@@ -451,7 +451,7 @@ class pdfdetail_nodet {
    * Header
    */
 
-  function Header(&$pdf)
+  function Header(&$pdf, $output)
   {
     $pdf->SetXY(10,5);
     
