@@ -134,7 +134,7 @@ class pdfdetail_nodet {
 	       */
 	      $pdf->FirstPage = 1;
 	      $pdf->AddPage();
-	      $this->Header($pdf);
+	      $this->Header($pdf, $output);
 
 	      $pdf->SetFillColor(230,230,230);
 	      /*
@@ -479,7 +479,10 @@ class pdfdetail_nodet {
     $pdf->MultiCell(89, 4, $libelle, 0);
 
     $pdf->SetX(11);
-    $pdf->MultiCell(80, 4, "Page : ". $pdf->PageNo() ."/{nb}", 0);
+    if ($output == 0)
+      {
+	$pdf->MultiCell(80, 4, "Page : ". $pdf->PageNo() ."/{nb}", 0);
+      }
 
     // Clients spéciaux
 
