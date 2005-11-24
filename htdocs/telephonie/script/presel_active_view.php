@@ -31,38 +31,52 @@ $host          = CMD_PRESEL_WEB_HOST;
 $user_login    = CMD_PRESEL_WEB_USER;
 $user_passwd   = CMD_PRESEL_WEB_PASS;
 
-$sql = "SELECT rowid,ligne";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-$sql .= " WHERE fk_fournisseur = 4";
-$sql .= " AND statut = 3;";
+$ids = array();
 
-$resql = $db->query($sql);
-
-if ($resql)
+if ($argv[1])
 {
-  $ids = array();
-  while ($row = $db->fetch_row($resql))
-    {
-      array_push($ids, $row[1]);
-    }
+  $debug = 1;
+  array_push($ids, $argv[1]);
 }
 else
 {
-  exit(1);
+  $sql = "SELECT rowid,ligne";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+  $sql .= " WHERE fk_fournisseur = 4";
+  $sql .= " AND statut = 3";
+  if ($debug)
+    {
+      $sql .= " LIMIT 1";
+    }
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {      
+      while ($row = $db->fetch_row($resql))
+	{
+	  array_push($ids, $row[1]);
+	}
+    }
+  else
+    {
+      print $db->error();
+      exit(1);
+    }
 }
 
-GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids);
+
+GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $debug);
 
 /*
  * Fonctions
  *
  */
 
-function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
+function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $debug)
 {  
   $numcli = sizeof($ids);
   $i = 0;
-
+  print "$numcli";
   foreach($ids as $cli)
     {
       $i++;
@@ -93,7 +107,10 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 	  while (!feof($fp))
 	    {
 	      $line = fgets($fp, 1024);
-
+	      if ($debug)
+		{
+		  print $line;
+		}
 	      if (preg_match("/<Preselection .* \/>/",$line))
 		{	      
 		  $results = split(" ",trim($line));
