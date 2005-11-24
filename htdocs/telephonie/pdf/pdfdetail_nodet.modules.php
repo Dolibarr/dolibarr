@@ -44,10 +44,14 @@ class pdfdetail_nodet {
    *
    *
    */
-
   function write_pdf_file($factel, $ligne)
-    {
+  {
+    $xpdf = 0;
+    $this->_write_pdf_file($factel, $ligne, $xpdf, 0);
+  }
 
+  function _write_pdf_file($factel, $ligne, &$pdf, $output)
+    {
       $fac = new Facture($this->db,"",$factel->fk_facture);
       $fac->fetch($factel->fk_facture);  
       $fac->fetch_client();
@@ -58,8 +62,7 @@ class pdfdetail_nodet {
 
       if (defined("FAC_OUTPUTDIR"))
 	{
-	  $dir = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
-
+	  $dir  = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
 	  $file = $dir . $fac->ref . "-$ligne-detail.pdf";
 
 	  if (strlen($objlignetel->code_analytique) > 0)
@@ -77,85 +80,86 @@ class pdfdetail_nodet {
 		}
 	    }
 
-	  if (file_exists($dir))
+	  if (file_exists($dir) OR $output)
 	    {
+	      if ($output == 0)
+		{
+		  $pdf = new pdfdetail_standard_modeles('P','mm','A4');
+		}
 
-	      $this->pdf = new pdfdetail_standard_modeles('P','mm','A4');
+	      $pdf->fac = $fac;
 
-	      $this->pdf->fac = $fac;
+	      $pdf->factel = $this->factel;
 
-	      $this->pdf->factel = $this->factel;
+	      $pdf->client_nom     = $fac->client->nom; 
+	      $pdf->client_adresse = $fac->client->adresse;
+	      $pdf->client_cp      = $fac->client->cp;
+	      $pdf->client_ville   = $fac->client->ville;
 
-	      $this->pdf->client_nom     = $fac->client->nom; 
-	      $this->pdf->client_adresse = $fac->client->adresse;
-	      $this->pdf->client_cp      = $fac->client->cp;
-	      $this->pdf->client_ville   = $fac->client->ville;
+	      $pdf->ligne = $ligne;
 
-	      $this->pdf->ligne = $ligne;
+	      $pdf->year  = $this->year;
+	      $pdf->month = $this->month;
 
-	      $this->pdf->year  = $this->year;
-	      $this->pdf->month = $this->month;
-
-	      $this->pdf->ligne_ville = '';
+	      $pdf->ligne_ville = '';
 	      if ($objlignetel->code_analytique)
 		{
 		  $soca = new Societe($this->db);
 		  $soca->fetch($objlignetel->client_id);
 
-		  $this->pdf->ligne = $ligne . " (".$objlignetel->code_analytique.")";
-		  $this->pdf->ligne_ville = $soca->ville;
+		  $pdf->ligne = $ligne . " (".$objlignetel->code_analytique.")";
+		  $pdf->ligne_ville = $soca->ville;
 		}
 
-	      $this->pdf->AliasNbPages();
-	      $this->pdf->Open();
+	      $pdf->AliasNbPages();
+	      if ($output == 0)
+		{
+		  $pdf->Open();
 
-	      $this->pdf->SetTitle($fac->ref);
-	      $this->pdf->SetSubject("Facture détaillée");
-	      $this->pdf->SetCreator("Dolibarr");
-	      $this->pdf->SetAuthor("");
+		  $pdf->SetTitle($fac->ref);
+		  $pdf->SetSubject("Facture détaillée");
+		  $pdf->SetCreator("Dolibarr");
+		  $pdf->SetAuthor("");
+		  
+		  $pdf->SetMargins(10, 10, 10);
+		}
+              $pdf->SetAutoPageBreak(1, 24);
+	      $pdf->SetLineWidth(0.1);
 
-              $this->pdf->SetMargins(10, 10, 10);
-
-              $this->pdf->SetAutoPageBreak(1, 24);
-
-	      $this->pdf->SetLineWidth(0.1);
-
-	      $this->pdf->tab_top = 53;
-	      $this->pdf->tab_height = 222;
+	      $pdf->tab_top = 53;
+	      $pdf->tab_height = 222;
 
 	      /*
 	       *
-	       *
 	       */
+	      $pdf->FirstPage = 1;
+	      $pdf->AddPage();
+	      $this->Header($pdf);
 
-	      $this->pdf->FirstPage = 1;
-	      $this->pdf->AddPage();
-
-	      $this->pdf->SetFillColor(230,230,230);
-
+	      $pdf->SetFillColor(230,230,230);
 	      /*
 	       * Détails des comm
 	       *
 	       */
 
-	      $this->pdf->SetFont('Arial','', 12);
+	      $pdf->SetFont('Arial','', 12);
 		  
-	      $Y = $this->pdf->tab_top + 4;
-	      $this->pdf->SetXY(10, $Y);
-	      $this->pdf->MultiCell(100, 4, "Détails de vos communications", 0,'L',0);
+	      $Y = $pdf->tab_top + 4;
+	      $pdf->SetXY(10, $Y);
+	      $pdf->MultiCell(100, 4, "Détails de vos communications", 0,'L',0);
 
-	      $this->pdf->SetFont('Arial','', 9);
+	      $pdf->SetFont('Arial','', 9);
 
-	      $Y = $this->pdf->GetY();
+	      $Y = $pdf->GetY();
 
-	      $this->pdf->SetXY(140, $Y);
-	      $this->pdf->MultiCell(20, 4, "Durée", 0,'R',0);
+	      $pdf->SetXY(140, $Y);
+	      $pdf->MultiCell(20, 4, "Durée", 0,'R',0);
 
-	      $this->pdf->SetXY(160, $Y);
-	      $this->pdf->MultiCell(20, 4, "Nb appels", 0,'R',0);
+	      $pdf->SetXY(160, $Y);
+	      $pdf->MultiCell(20, 4, "Nb appels", 0,'R',0);
 
-	      $this->pdf->SetXY(180, $Y);
-	      $this->pdf->MultiCell(20, 4, "Coût", 0,'R',0);
+	      $pdf->SetXY(180, $Y);
+	      $pdf->MultiCell(20, 4, "Coût", 0,'R',0);
 
 	      $sql = "SELECT count(*) as cc, sum(t.cout_vente) as cout_vente, sum(t.duree) as duree, t.dest";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as t ";
@@ -175,7 +179,7 @@ class pdfdetail_nodet {
 		  $num = $this->db->num_rows($resql);
 		  $i = 0;
 
-		  $this->pdf->SetFont('Arial','', 9);		  
+		  $pdf->SetFont('Arial','', 9);		  
 		  $var = 0;
 		  $line_height = 4;
 
@@ -188,13 +192,13 @@ class pdfdetail_nodet {
 		      $obj = $this->db->fetch_object($i);
 		      $var=!$var;
 		
-		      $Y = $this->pdf->GetY();
+		      $Y = $pdf->GetY();
       
-		      $this->pdf->SetXY(10, $Y);
-		      $this->pdf->MultiCell(100, $line_height, $obj->dest, 0,'L',$var);
+		      $pdf->SetXY(10, $Y);
+		      $pdf->MultiCell(100, $line_height, $obj->dest, 0,'L',$var);
 
-		      if ($Y > $this->pdf->GetY())
-			$Y = $this->pdf->GetY() - $line_height;
+		      if ($Y > $pdf->GetY())
+			$Y = $pdf->GetY() - $line_height;
 
 
 		      $h = floor($obj->duree / 3600);
@@ -217,14 +221,14 @@ class pdfdetail_nodet {
 			    }
 			}
 		      
-		      $this->pdf->SetXY(110, $Y);
-		      $this->pdf->MultiCell(50, $line_height,$dt, 0,'R',$var);
+		      $pdf->SetXY(110, $Y);
+		      $pdf->MultiCell(50, $line_height,$dt, 0,'R',$var);
 		      
-		      $this->pdf->SetXY(160, $Y);
-		      $this->pdf->MultiCell(20, $line_height,$obj->cc, 0,'R',$var);
+		      $pdf->SetXY(160, $Y);
+		      $pdf->MultiCell(20, $line_height,$obj->cc, 0,'R',$var);
 
-		      $this->pdf->SetXY(180, $Y);
-		      $this->pdf->MultiCell(20, $line_height,sprintf("%01.3f",$obj->cout_vente), 0,'R',$var);
+		      $pdf->SetXY(180, $Y);
+		      $pdf->MultiCell(20, $line_height,sprintf("%01.3f",$obj->cout_vente), 0,'R',$var);
 
 		      array_push($graph_values, $obj->cc);
 		      array_push($graph_values_duree, $obj->duree);
@@ -265,17 +269,17 @@ class pdfdetail_nodet {
 	      
 	      $var=!$var;
 
-	      $this->pdf->SetXY(10, $Y + $line_height);
-	      $this->pdf->MultiCell(100, $line_height,"Total : ", 0,'R',$var);
+	      $pdf->SetXY(10, $Y + $line_height);
+	      $pdf->MultiCell(100, $line_height,"Total : ", 0,'R',$var);
 
-	      $this->pdf->SetXY(110, $Y + $line_height);
-	      $this->pdf->MultiCell(50, $line_height,$dt, 0,'R',$var);
+	      $pdf->SetXY(110, $Y + $line_height);
+	      $pdf->MultiCell(50, $line_height,$dt, 0,'R',$var);
 
-	      $this->pdf->SetXY(160, $Y + $line_height);
-	      $this->pdf->MultiCell(20, $line_height,$total_nb, 0,'R',$var);
+	      $pdf->SetXY(160, $Y + $line_height);
+	      $pdf->MultiCell(20, $line_height,$total_nb, 0,'R',$var);
 	      
-	      $this->pdf->SetXY(180, $Y + $line_height);
-	      $this->pdf->MultiCell(20, $line_height,sprintf("%01.3f",$total_cout), 0,'R',$var);
+	      $pdf->SetXY(180, $Y + $line_height);
+	      $pdf->MultiCell(20, $line_height,sprintf("%01.3f",$total_cout), 0,'R',$var);
 
 
 	      /*
@@ -283,26 +287,26 @@ class pdfdetail_nodet {
 	       *
 	       */
 
-	      $this->pdf->SetFont('Arial','', 12);
+	      $pdf->SetFont('Arial','', 12);
 		  
-	      $Y = $this->pdf->GetY() + 10;
-	      $this->pdf->SetXY(10, $Y);
-	      $this->pdf->MultiCell(100, 4, "TOP 10 des numéros appelés en coût", 0,'L',0);
+	      $Y = $pdf->GetY() + 10;
+	      $pdf->SetXY(10, $Y);
+	      $pdf->MultiCell(100, 4, "TOP 10 des numéros appelés en coût", 0,'L',0);
 
-	      $this->pdf->SetFont('Arial','', 9);
+	      $pdf->SetFont('Arial','', 9);
 
-	      $Y = $this->pdf->GetY();
-	      $this->pdf->SetXY(10, $Y);
-	      $this->pdf->MultiCell(150, 4, "Destination", 0,'L',0);
+	      $Y = $pdf->GetY();
+	      $pdf->SetXY(10, $Y);
+	      $pdf->MultiCell(150, 4, "Destination", 0,'L',0);
 
-	      $this->pdf->SetXY(140, $Y);
-	      $this->pdf->MultiCell(20, 4, "Durée", 0,'R',0);
+	      $pdf->SetXY(140, $Y);
+	      $pdf->MultiCell(20, 4, "Durée", 0,'R',0);
 
-	      $this->pdf->SetXY(160, $Y);
-	      $this->pdf->MultiCell(20, 4, "Nb appels", 0,'R',0);
+	      $pdf->SetXY(160, $Y);
+	      $pdf->MultiCell(20, 4, "Nb appels", 0,'R',0);
 
-	      $this->pdf->SetXY(180, $Y);
-	      $this->pdf->MultiCell(20, 4, "Coût", 0,'R',0);
+	      $pdf->SetXY(180, $Y);
+	      $pdf->MultiCell(20, 4, "Coût", 0,'R',0);
 
 	      $sql = "SELECT count(*) as cc, sum(t.cout_vente) as cout_vente, sum(t.duree) as duree, t.numero, t.dest";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as t ";
@@ -315,7 +319,7 @@ class pdfdetail_nodet {
 		{
 		  $num = $this->db->num_rows();
 
-		  $this->pdf->SetFont('Arial','', 9);
+		  $pdf->SetFont('Arial','', 9);
 		  
 		  $i = 0;
 		  $var = 0;
@@ -326,16 +330,16 @@ class pdfdetail_nodet {
 		      $obj = $this->db->fetch_object($i);
 		      $var=!$var;
 		
-		      $Y = $this->pdf->GetY();
+		      $Y = $pdf->GetY();
       
-		      $this->pdf->SetXY(10, $Y);
-		      $this->pdf->MultiCell(80, $line_height, $obj->dest, 0,'L',$var);
+		      $pdf->SetXY(10, $Y);
+		      $pdf->MultiCell(80, $line_height, $obj->dest, 0,'L',$var);
 
-		      if ($Y > $this->pdf->GetY())
-			$Y = $this->pdf->GetY() - $line_height;
+		      if ($Y > $pdf->GetY())
+			$Y = $pdf->GetY() - $line_height;
 
-		      $this->pdf->SetXY(90, $Y);
-		      $this->pdf->MultiCell(30, $line_height, $obj->numero, 0,'L',$var);
+		      $pdf->SetXY(90, $Y);
+		      $pdf->MultiCell(30, $line_height, $obj->numero, 0,'L',$var);
 
 		      $h = floor($obj->duree / 3600);
 		      $m = floor(($obj->duree - ($h * 3600)) / 60);
@@ -357,14 +361,14 @@ class pdfdetail_nodet {
 			    }
 			}
 
-		      $this->pdf->SetXY(120, $Y);
-		      $this->pdf->MultiCell(40, $line_height,$dt, 0,'R',$var);
+		      $pdf->SetXY(120, $Y);
+		      $pdf->MultiCell(40, $line_height,$dt, 0,'R',$var);
 
-		      $this->pdf->SetXY(160, $Y);
-		      $this->pdf->MultiCell(20, $line_height,$obj->cc, 0,'R',$var);
+		      $pdf->SetXY(160, $Y);
+		      $pdf->MultiCell(20, $line_height,$obj->cc, 0,'R',$var);
 
-		      $this->pdf->SetXY(180, $Y);
-		      $this->pdf->MultiCell(20, $line_height,sprintf("%01.3f",$obj->cout_vente), 0,'R',$var);
+		      $pdf->SetXY(180, $Y);
+		      $pdf->MultiCell(20, $line_height,sprintf("%01.3f",$obj->cout_vente), 0,'R',$var);
 
 		      $i++;
 		    }
@@ -400,29 +404,31 @@ class pdfdetail_nodet {
 
 	      $handle = $graph->Stroke($file_graph);
 
-	      $this->pdf->Image($file_graph, 11, ($this->pdf->GetY() + 10), 0, 0, 'JPG');
+	      $pdf->Image($file_graph, 11, ($pdf->GetY() + 10), 0, 0, 'JPG');
 
 	      /*
 	       *
 	       */
-	     
-	      $this->pdf->Close();
-	      
-	      $this->pdf->Output($file);
+	      if ($output == 0)
+		{
+		  $pdf->Close();	      
+		  $pdf->Output($file);
+		  dolibarr_syslog("Write $file");
+		}
 	      $this->filename = $file;
 
-	      dolibarr_syslog("Write $file");
 
 	      if(file_exists($file_graph))
 		{
 		  unlink($file_graph);
 		}
 
-	      /* Génération du tableur */
-
-	      $xlsdet = new xlsdetail_nodet($this->db);
-	      $xlsdet->GenerateFile($objlignetel, $fac, $factel);
-
+	      if ($output == 0)
+		{
+		  /* Génération du tableur */
+		  $xlsdet = new xlsdetail_nodet($this->db);
+		  $xlsdet->GenerateFile($objlignetel, $fac, $factel);
+		}
 	      return 0;
 	    }
 	  else
@@ -437,5 +443,131 @@ class pdfdetail_nodet {
             return -2;
 	}
     }
+
+
+
+
+  /*
+   * Header
+   */
+
+  function Header(&$pdf)
+  {
+    $pdf->SetXY(10,5);
+    
+    // 400x186
+
+    $logo_file = DOL_DOCUMENT_ROOT."/../documents/logo.jpg";
+
+    if (file_exists($logo_file))
+    {
+      $pdf->Image($logo_file, 10, 5, 60, 27.9, 'JPG');
+    }
+
+    $pdf->SetTextColor(0,90,200);
+    $pdf->SetFont('Arial','',10);
+    $pdf->SetXY(11,31);
+    $pdf->MultiCell(89, 4, "Facture détaillée : ".$pdf->fac->ref);
+
+    $pdf->SetX(11);
+    $pdf->MultiCell(89, 4, "Ligne : " . $pdf->ligne);
+
+    $pdf->SetX(11);
+
+    $libelle = "Du ".strftime("%d/%m/%Y",$pdf->factel->get_comm_min_date($pdf->year.$pdf->month));
+    $libelle .= " au ".strftime("%d/%m/%Y",$pdf->factel->get_comm_max_date($pdf->year.$pdf->month));
+    $pdf->MultiCell(89, 4, $libelle, 0);
+
+    $pdf->SetX(11);
+    $pdf->MultiCell(80, 4, "Page : ". $pdf->PageNo() ."/{nb}", 0);
+
+    // Clients spéciaux
+
+    if ($pdf->ligne_ville)
+      {
+	$pdf->SetX(11);
+	$pdf->MultiCell(80, 4, "Agence : ". $pdf->ligne_ville, 0);
+      }
+
+    $pdf->rect(10, 30, 95, 23);
+    
+    $pdf->SetTextColor(0,0,0);
+    $pdf->SetFont('Arial','',10);
+
+    $pdf->SetXY(107, 31);
+
+    $pdf->MultiCell(66,4, $pdf->client_nom);
+
+    $pdf->SetX(107);
+    $pdf->MultiCell(86,4, $pdf->client_adresse . "\n" . $pdf->client_cp . " " . $pdf->client_ville);
+
+    $pdf->rect(105, 30, 95, 23);
+
+    /*
+     * On positionne le curseur pour la liste
+     */        
+    $pdf->SetXY(10,$pdf->tab_top + 6);
+    $pdf->colonne = 1;
+    $pdf->inc = 0;
+  }
+
+  /* 
+   * Footer
+   */
+
+  function Footer(&$pdf)
+  {
+
+    if ($pdf->FirstPage == 1)
+      {
+	$pdf->FirstPage = 0;
+      }
+    else
+      {
+
+	$pdf->SetFont('Arial','',8);
+    
+	$pdf->Text(11, $pdf->tab_top + 3,'Date');
+	$pdf->Text(106, $pdf->tab_top + 3,'Date');
+	
+	$w = 33;
+	
+	$pdf->Text($w+1, $pdf->tab_top + 3,'Numéro');
+	$pdf->Text($w+96, $pdf->tab_top + 3,'Numéro');
+	
+	$w = 47;
+	
+	$pdf->Text($w+1, $pdf->tab_top + 3,'Destination');
+	$pdf->Text($w+96, $pdf->tab_top + 3,'Destination');
+	
+	$w = 86;
+	
+	$pdf->Text($w+1, $pdf->tab_top + 3,'Durée');
+	$pdf->Text($w+96, $pdf->tab_top + 3,'Durée');
+	
+	$w = 98;
+	
+	$pdf->Text($w+1, $pdf->tab_top + 3,'HT');
+	$pdf->Text($w+96, $pdf->tab_top + 3,'HT');
+	
+	$pdf->line(10, $pdf->tab_top + 4, 200, $pdf->tab_top + 4 );
+
+	/* Ligne Médiane */
+
+	$pdf->line(105, $pdf->tab_top, 105, $pdf->tab_top + $pdf->tab_height);
+	
+      }
+
+    $pdf->Rect(10, $pdf->tab_top, 190, $pdf->tab_height);
+
+  }
+
+
+
+
+
+
+
+
 }
 ?>
