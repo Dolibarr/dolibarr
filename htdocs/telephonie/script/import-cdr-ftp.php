@@ -58,12 +58,12 @@ if (is_dir($file))
 	  if (is_file($file.$xfile) && substr($xfile, -4) == ".csv")
 	    {
 	      $files[$i] = $file.$xfile;
-	      dolibarr_syslog($file.$xfile." ajouté");
+	      dolibarr_syslog($xfile." ajouté");
 	      $i++;
 	    }
 	  else
 	    {
-	      dolibarr_syslog($file.$xfile." ignoré");
+	      dolibarr_syslog($xfile." ignoré");
 	    }
 	}
       
@@ -84,8 +84,6 @@ else
   dolibarr_syslog("Impossible de libre $file");
   exit ;
 }
-
-
 
 /*
  * Vérification du fournisseur
@@ -118,7 +116,40 @@ else
   exit ;
 }
 
-
+/*
+ * Vérification des fichiers traités
+ *
+ */
+$fichiers = array();
+$sql = "SELECT distinct(fichier_cdr)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+if ($db->query($sql))
+{  
+  while ($row = $db->fetch_row($resql))
+    {
+      array_push($fichiers, $row[0]);
+    }
+  $db->free($resql);
+}
+else
+{
+  dolibarr_syslog("Erreur recherche fournisseur");
+}
+$sql = "SELECT distinct(fichier)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
+if ($db->query($sql))
+{  
+  while ($row = $db->fetch_row($resql))
+    {
+      array_push($fichiers, $row[0]);
+    }
+  $db->free($resql);
+}
+else
+{
+  dolibarr_syslog("Erreur recherche fournisseur");
+  exit ;
+}
 /*
  * Charge les ID de lignes
  *
@@ -154,7 +185,7 @@ foreach ($files as $xfile)
 {
   if (is_readable($xfile))
     {
-      if ( _verif($db, $xfile) == 0)
+      if ( _verif($db, $xfile, $fichiers) == 0)
 	{      
 	  dolibarr_syslog("Lecture du fichier $xfile");
       
@@ -326,14 +357,22 @@ foreach ($files as $xfile)
 }
 
 
-function _verif($db, $file)
+function _verif($db, $file, $fichiers)
 {
   $result = 0;
   /*
    * Vérifie que le fichier n'a pas déjà été chargé
    *
    */
+  if (in_array (basename($file), $fichiers))
+    {
+      print "Trouvé Linux";
+      dolibarr_syslog ("Fichier ".basename($file)." déjà chargé/traité");
+      $result = -1;
+    }
 
+
+  /*
   $sql = "SELECT count(fichier)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
   $sql .= " WHERE fichier = '".basename($file)."'";
@@ -362,12 +401,7 @@ function _verif($db, $file)
       dolibarr_syslog("Erreur SQL vérification du fichier");
       $result = -1;
     }
-
-  /*
-   * Vérifie que le fichier n'a pas déjà été traité
-   *
-   */
-  
+ 
   $sql = "SELECT count(fichier_cdr)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
   $sql .= " WHERE fichier_cdr = '".basename($file)."'";
@@ -397,9 +431,8 @@ function _verif($db, $file)
       dolibarr_syslog($sql);
       $result = -1;
     } 
-
+  */
   return $result;
 }
-
 
 return $error;
