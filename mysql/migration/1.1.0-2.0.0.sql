@@ -1258,6 +1258,9 @@ insert into llx_c_civilite (rowid, code, civilite, active) values (1 , 'MME',  '
 insert into llx_c_civilite (rowid, code, civilite, active) values (3 , 'MR',   'Monsieur', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (5 , 'MLE',  'Mademoiselle', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', 'Maître', 1);
+insert into llx_c_civilite (rowid, code, civilite, active) values (11 , 'SIR', 'Sir', 1); 
+insert into llx_c_civilite (rowid, code, civilite, active) values (13 , 'MDM', 'Madam', 1); 
+insert into llx_c_civilite (rowid, code, civilite, active) values (15 , 'MIS', 'Miss', 1);
 
 
 drop table if exists llx_c_departements;
@@ -1492,6 +1495,10 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'107','SCA 
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'108','SNC  - Société en nom collectif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'109','GIE  - Groupement d\'intérêt économique');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'110','GEIE - Groupement européen d\'intérêt économique');
+
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '200', 'Sole Trader');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '201', 'Partnership');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '202', 'Private Limited Company by shares - (LTD)');
 
 drop table if exists llx_c_paiement;
 
