@@ -504,7 +504,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'102','SA  
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'103','SCRL - Société coopérative à responsabilité limitée');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'104','ASBL - Association sans but Lucratif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'105','SCRI - Société coopérative à responsabilité illimitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'106','SCS  - Société en comanndite simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'106','SCS  - Société en commandite simple');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'107','SCA  - Société en commandite par action');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'108','SNC  - Société en nom collectif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'109','GIE  - Groupement d\'intérêt économique');
