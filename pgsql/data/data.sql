@@ -517,6 +517,10 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'110','GEIE
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '200', 'Sole Trader');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '201', 'Partnership');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '202', 'Private Limited Company by shares - (LTD)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '203', 'Public Limited Company');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '204', 'Workers Cooperative');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '205', 'Limited Liability Partnership');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '206', 'Franchise');
 
 --
 -- Types paiement
