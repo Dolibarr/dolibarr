@@ -1258,9 +1258,6 @@ insert into llx_c_civilite (rowid, code, civilite, active) values (1 , 'MME',  '
 insert into llx_c_civilite (rowid, code, civilite, active) values (3 , 'MR',   'Monsieur', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (5 , 'MLE',  'Mademoiselle', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', 'Maître', 1);
-insert into llx_c_civilite (rowid, code, civilite, active) values (11 , 'SIR', 'Sir', 1); 
-insert into llx_c_civilite (rowid, code, civilite, active) values (13 , 'MDM', 'Madam', 1); 
-insert into llx_c_civilite (rowid, code, civilite, active) values (15 , 'MIS', 'Miss', 1);
 
 
 drop table if exists llx_c_departements;
