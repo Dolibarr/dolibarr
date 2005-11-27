@@ -1467,7 +1467,7 @@ class Form
             {
                 print '<select class="flat" name="'.$prefix.'year">';
         
-                for ($year = $syear - 3; $year < $syear + 5 ; $year++)
+                for ($year = $syear - 5; $year < $syear + 10 ; $year++)
                 {
                     if ($year == $syear)
                     {
