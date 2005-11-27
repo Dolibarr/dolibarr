@@ -48,6 +48,7 @@ class Product
     var $seuil_stock_alerte;
     var $duration_value;
     var $duration_unit;
+    var $status;
 
     var $stats_propale=array();
     var $stats_commande=array();
@@ -66,7 +67,8 @@ class Product
     {
       $this->db = $DB;
       $this->id   = $id ;
-      $this->envente = 0;
+      $this->envente = 0;   // deprecated
+      $this->status = 0;
       $this->seuil_stock_alerte = 0;
     }  
 
@@ -110,7 +112,8 @@ class Product
 
         if (strlen($this->tva_tx)==0) $this->tva_tx = 0;
         if (strlen($this->price)==0) $this->price = 0;
-        if (strlen($this->envente)==0) $this->envente = 0;
+        if (strlen($this->envente)==0) $this->envente = 0;  // deprecated
+        if (strlen($this->status)==0) $this->status = 0;
         $this->price = ereg_replace(",",".",$this->price);
 
         dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
@@ -425,7 +428,8 @@ class Product
             $this->tva_tx             = $result["tva_tx"];
             $this->type               = $result["fk_product_type"];
             $this->nbvente            = $result["nbvente"];
-            $this->envente            = $result["envente"];
+            $this->envente            = $result["envente"]; // deprecated
+            $this->status             = $result["envente"];
             $this->duration           = $result["duration"];
             $this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
             $this->duration_unit      = substr($result["duration"],-1);
@@ -947,6 +951,31 @@ class Product
         return 1;
     }
 
+	/**
+	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	 *    \param      mode          0=libellé long, 1=libellé court
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->status,$mode);
+	}
+
+	/**
+	 *    \brief      Renvoi le libellé d'un statut donne
+	 *    \param      status        Statut
+	 *    \param      mode          0=libellé long, 1=libellé court
+	 *    \return     string        Libellé du statut
+	 */
+	function LibStatut($status,$mode=0)
+	{
+		global $langs;
+		$langs->load('products');
+		if ($status == 0) return $langs->trans('ProductStatusNotOnSell'.($mode?'Short':''));
+		if ($status == 1) return $langs->trans('ProductStatusOnSell'.($mode?'Short':''));
+		return $langs->trans('Unknown');
+	}
+	
   /**
    *    \brief  Entre un nombre de piece du produit en stock dans un entrepôt
    *    \param  id_entrepot     id de l'entrepot
