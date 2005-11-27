@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,27 +21,6 @@
 --
 -- ============================================================================
 
-create table llx_product
-(
-  rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  datec              datetime,
-  tms                timestamp,
-  ref                varchar(16) NOT NULL,
-  label              varchar(128),
-  description        varchar(255),
-  note               text,
-  price              double,
-  tva_tx             double,
-  fk_user_author     integer,
-  envente            tinyint DEFAULT 1,
-  nbvente            integer DEFAULT 0,
-  fk_product_type    integer DEFAULT 0,
-  duration           varchar(6),
-  stock_propale      integer DEFAULT 0,
-  stock_commande     integer DEFAULT 0,
-  seuil_stock_alerte integer DEFAULT 0
 
-)type=innodb;
-
-
+ALTER TABLE llx_product ADD UNIQUE uk_product_ref (ref);
 
