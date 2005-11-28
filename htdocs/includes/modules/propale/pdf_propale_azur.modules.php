@@ -94,6 +94,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->posxdiscount=162;
         $this->postotalht=177;
        
+        $this->atleastoneratenotnull=0;
         $this->atleastonediscount=0;
 	}
 
@@ -170,13 +171,22 @@ class pdf_propale_azur extends ModelePDFPropales
                 $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
                 $pdf->SetAutoPageBreak(1,0);
 
+                // Positionne $this->atleastonediscount si on a au moins une remise
+                for ($i = 0 ; $i < $nblignes ; $i++)
+                {
+                    if ($prop->lignes[$i]->remise_percent)
+                    {
+                        $this->atleastonediscount++;
+                    }
+                }
+
                 $this->_pagehead($pdf, $prop);
 
-                $tab_top = 96;
+                $pagenb = 1;
+                $tab_top = 90;
+                $tab_top_newpage = 50;
                 $tab_height = 110;
 
-                $pdf->SetFont('Arial','', 9);
- 
                 $iniY = $tab_top + 8;
                 $curY = $tab_top + 8;
                 $nexY = $tab_top + 8;
@@ -210,6 +220,8 @@ class pdf_propale_azur extends ModelePDFPropales
                         // Affichage durée si il y en a une
                         $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($prop->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($prop->lignes[$i]->date_end).")";
                     }
+
+                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
                     $pdf->SetXY ($this->posxdesc-1, $curY);
                     $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
@@ -248,20 +260,41 @@ class pdf_propale_azur extends ModelePDFPropales
 
                     $nexY+=2;    // Passe espace entre les lignes
 
-                    if ($nexY > 200 && $i < $nblignes - 1)
+                    if ($nexY > 200 && $i < ($nblignes - 1))
                     {
-                        $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+                        $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
+						$this->_pagefoot($pdf);
+                        
+                        // Nouvelle page
                         $pdf->AddPage();
-                        $nexY = $iniY;
-                        $this->_pagehead($pdf, $prop);
+                        $pagenb++;
+                        $this->_pagehead($pdf, $prop, 0);
+
+						$nexY = $tab_top_newpage + 8;
                         $pdf->SetTextColor(0,0,0);
                         $pdf->SetFont('Arial','', 10);
                     }
 
                 }
-                $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+                // Affiche cadre tableau
+                if ($pagenb == 1)
+                {
+                	$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+                    $bottomlasttab=$tab_top + $tab_height + 1;
+                }
+                else 
+                {
+                    $this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY);
+                    $bottomlasttab=$tab_top_newpage + $tab_height + 1;
+                }
 
-                $posy=$this->_tableau_tot($pdf, $prop, "");
+				$deja_regle = "";
+
+                $posy=$this->_tableau_tot($pdf, $prop, $deja_regle, $bottomlasttab);
+ 
+                if ($deja_regle) {            
+                    $this->_tableau_versements($pdf, $fac, $posy);
+                }
 
                 /*
                 * Mode de règlement
@@ -399,13 +432,13 @@ class pdf_propale_azur extends ModelePDFPropales
      *   \param      deja_regle  	Montant deja regle
      *   \return     y              Position pour suite
     */
-    function _tableau_tot(&$pdf, $prop, $deja_regle)
+    function _tableau_tot(&$pdf, $prop, $deja_regle, $posy)
     {
         global $langs;
         $langs->load("main");
         $langs->load("bills");
 
-        $tab2_top = 207;
+        $tab2_top = $posy;
         $tab2_hl = 5;
         $tab2_height = $tab2_hl * 4;
         $pdf->SetFont('Arial','', 9);
@@ -522,10 +555,18 @@ class pdf_propale_azur extends ModelePDFPropales
     */
     function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
-        global $langs;
+        global $langs,$conf;
         $langs->load("main");
         $langs->load("bills");
         
+        // Montants exprimés en     (en tab_top - 1)
+        $pdf->SetTextColor(0,0,0);
+        $pdf->SetFont('Arial','',8);
+        $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+        $pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
+
+        $pdf->SetDrawColor(128,128,128);
+
         // Rect prend une longueur en 3eme param
         $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
         // line prend une position y en 3eme param
@@ -557,7 +598,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
         if ($this->atleastonediscount)
         {
-            $pdf->line($this->postotalht-1, $tab_top, $this->postotalht-1, $tab_top + $tab_height);
+            $pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
         }
         $pdf->SetXY ($this->postotalht-1, $tab_top+2);
         $pdf->MultiCell(23,2, $langs->trans("TotalHT"),'','C');
@@ -565,11 +606,12 @@ class pdf_propale_azur extends ModelePDFPropales
     }
 
     /*
-    *   \brief      Affiche en-tête propale
-    *   \param      pdf     objet PDF
-    *   \param      fac     objet propale
-    */
-    function _pagehead(&$pdf, $prop)
+     *   	\brief      Affiche en-tête propale
+     *   	\param      pdf     objet PDF
+     *   	\param      fac     objet propale
+     *      \param      showadress      0=non, 1=oui
+     */
+    function _pagehead(&$pdf, $prop, $showadress=1)
     {
         global $langs,$conf,$mysoc;
 
@@ -612,10 +654,14 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell(100, 4, $langs->trans("Proposal")." ".$prop->ref, '' , 'R');
         $pdf->SetFont('Arial','',12);
-        $pdf->SetXY(100,$posy+6);
+        
+        $posy+=6;
+        $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($prop->date,"%d %b %Y"), '', 'R');
 
+        if ($showadress)
+        {
         // Emetteur
         $posy=42;
         $hautcadre=40;
@@ -686,12 +732,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetFont('Arial','',9);
         $pdf->SetXY(102,$posy+8);
         $pdf->MultiCell(86,4, $carac_client);
-
-        // Montants exprimés en
-        $pdf->SetTextColor(0,0,0);
-        $pdf->SetFont('Arial','',10);
-        $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
-        $pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
+        }
 
     }
 
