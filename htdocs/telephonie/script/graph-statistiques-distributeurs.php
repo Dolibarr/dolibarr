@@ -69,6 +69,7 @@ if (is_array($dirs))
     }
 }
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.gain.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.ca.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.commission.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.resultat.class.php");
 /*
@@ -83,6 +84,16 @@ if ($resql)
 {
   while ($row = $db->fetch_row($resql))
     {
+      /* Ca */
+      $dir = $img_root . "distributeurs/".$row[0]."/";
+      _cdir($dir);
+      $file = $dir."ca.mensuel.png";
+      if ($verbose) print "Graph : ca distributeur $file\n";
+      $graph = new GraphDistributeurCa($db, $file);
+      $graph->width = 500;
+      $graph->height = 260;
+      $graph->GraphMakeGraph($row[0]);
+
       /* Gain */
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
@@ -123,6 +134,13 @@ if ($resql)
 $file = $img_root . "distributeurs/gain.mensuel.$year.png";
 if ($verbose) print "Graph : gain distributeur $file\n";
 $graph = new GraphDistributeurGain($db, $file);
+$graph->width = 500;
+$graph->height = 260;
+$graph->GraphMakeGraph(0);
+
+$file = $img_root . "distributeurs/ca.mensuel.$year.png";
+if ($verbose) print "Graph : ca distributeur $file\n";
+$graph = new GraphDistributeurCa($db, $file);
 $graph->width = 500;
 $graph->height = 260;
 $graph->GraphMakeGraph(0);
