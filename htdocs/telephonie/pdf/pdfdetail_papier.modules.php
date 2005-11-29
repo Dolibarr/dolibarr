@@ -125,7 +125,6 @@ class pdfdetail_papier {
 	       * Liste des appels
 	       *
 	       */
-
 	      $sql = "SELECT t.ligne, ".$this->db->pdate("t.date")." as pdate";
 	      $sql .= " , t.numero, t.dest, t.duree, t.cout_vente";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as t ";
@@ -137,7 +136,7 @@ class pdfdetail_papier {
 	      if ( $resql )
 		{
 		  $num = $this->db->num_rows($resql);
-		  print $num."\n";
+
 		  $pdf->AddPage();
 		  $this->ListHeader($pdf);
 		  $i = 0;
