@@ -118,12 +118,10 @@ class GraphCommerciauxPO  {
 	  {
 	    for ($j = 0; $j < 12 ; $j++)
 	      {
-		print $datas[$j]." ";
 		if ($x_dis_datas[substr("00".($j+1),-2)])
 		  {
 		    $datas[$j] = $datas[$j] + $x_dis_datas[substr("00".($j+1),-2)];
 		  }
-		print $datas[$j]."\n";
 	      }
 	  }
 
