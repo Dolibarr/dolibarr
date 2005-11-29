@@ -78,7 +78,7 @@ $sql .= " WHERE l.fk_contrat = cs.fk_contrat";
 $sql .= " AND f.fk_ligne = l.rowid";
 $sql .= " AND f.fk_facture = ff.rowid";
 $sql .= " AND date_format(f.date,'%m%Y') = '".$month.$year."'";
-$sql .= " LIMIT 1";
+
 $resql = $db->query($sql);
   
 dolibarr_syslog("Impression des factures de ".$month.$year);
