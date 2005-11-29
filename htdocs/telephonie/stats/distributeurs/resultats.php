@@ -110,7 +110,7 @@ print '<td align="right">'.price($total).'</td></tr>';
 print '</table>';
 
 print '</td></tr><tr><td valign="top" width="70%">';
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/commission.mensuel.'.$year.'.png" alt="Commission mensuelle" title="Commission mensuelle"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/commission.mensuel.'.$year.'.png" alt="Commission mensuelle" title="Commission mensuelle">'."\n";
 
 print '</td><td valign="top" width="30%">';
 
@@ -140,7 +140,6 @@ else
 print "<tr $bc[$var]><td>Total</td>";
 print '<td align="right">'.price($total).'</td></tr>';
 print '</table>';
-
 
 print '</td></tr><tr><td valign="top" width="70%">';
 
@@ -175,11 +174,8 @@ print '</table>';
 
 print '</td></tr>';
 
-
 print '</table>';
-
 $db->close();
-
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
