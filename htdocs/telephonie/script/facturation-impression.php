@@ -36,7 +36,7 @@ require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie.contrat.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_nodet.modules.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_papier.modules.php");
 require_once (DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
 require_once (DOL_DOCUMENT_ROOT."/includes/modules/facture/pdf_ibreizh.modules.php");
 
@@ -69,7 +69,6 @@ else
   $month = substr("00".($month - 1), -2) ;
 }
 
-
 $sql = "SELECT distinct(f.fk_facture), ff.facnumber ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service as cs";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_facture as f";
@@ -79,7 +78,7 @@ $sql .= " WHERE l.fk_contrat = cs.fk_contrat";
 $sql .= " AND f.fk_ligne = l.rowid";
 $sql .= " AND f.fk_facture = ff.rowid";
 $sql .= " AND date_format(f.date,'%m%Y') = '".$month.$year."'";
-
+$sql .= " LIMIT 1";
 $resql = $db->query($sql);
   
 dolibarr_syslog("Impression des factures de ".$month.$year);
@@ -96,8 +95,7 @@ if ( $resql )
 
   $pdf->SetMargins(10, 10, 10);
   $pdf->SetAutoPageBreak(1,0);
-  
-  $file = "/tmp/fac.pdf";
+  $file = "/tmp/$year-$month-fac.pdf";
 
   while ($i < $num)
     {
@@ -121,7 +119,7 @@ if ( $resql )
 	      $obj_factel = new FactureTel($db);
 	      $obj_factel->fetch($fow[0]);
 	      $ligne_id = $fow[1];
-	      $yy = new pdfdetail_nodet ($db, $ligne_id, $year, $month, $obj_factel);
+	      $yy = new pdfdetail_papier ($db, $ligne_id, $year, $month, $obj_factel);
 	      $yy->_write_pdf_file($obj_factel, $ligne_id, $pdf, 1);
 	    }
 	}
