@@ -142,7 +142,40 @@ print '<td align="right">'.price($total).'</td></tr>';
 print '</table>';
 
 
+print '</td></tr><tr><td valign="top" width="70%">';
+
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/ca.mensuel.'.$year.'.png" alt="Ca mensuel" title="Ca mensuel">'."\n";
+print '</td><td valign="top" width="30%">';
+print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td>Mois</td><td align="right">Ca</td></tr>';
+
+$sql = "SELECT sum(valeur),legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
+$sql .= " WHERE graph = 'distributeur.ca.mensuel'";
+$sql .= " GROUP BY legend DESC";  
+$resql = $db->query($sql);
+$total = 0;
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      print "<tr $bc[$var]><td>".$row[1].'</td>';  
+      print '<td align="right">'.price($row[0]).'</td></tr>';
+      $total += $row[0];
+      $var=!$var;
+    }
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+print "<tr $bc[$var]><td>Total</td>";
+print '<td align="right">'.price($total).'</td></tr>';
+print '</table>';
+
 print '</td></tr>';
+
+
 print '</table>';
 
 $db->close();
