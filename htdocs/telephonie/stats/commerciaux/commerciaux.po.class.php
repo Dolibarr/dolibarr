@@ -62,6 +62,28 @@ class GraphCommerciauxPO  {
 	  }
       }
     $datetime = time();
+
+
+    $sql = "SELECT date_format(datepo, '%m'), sum(montant)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
+    $sql .= " WHERE p.fk_distributeur  > 0";
+    $sql .= " AND date_format(datepo, '%Y') = '".strftime('%Y',$datetime)."'";
+    $sql .= " GROUP BY date_format(datepo, '%Y%m')";
+    $resql = $this->db->query($sql);
+    $x_dis_datas = array();
+    if ($resql)
+      {
+	while ($row = $this->db->fetch_row($resql))
+	  {
+	    $x_dis_datas[$row[0]]= $row[1];
+	  }
+      }
+    else
+      {
+	print $sql;
+      }
+
+
     foreach ($this->commerciaux as $commercial)
       {
 	$datas = array();
@@ -87,13 +109,32 @@ class GraphCommerciauxPO  {
 
 	for ($j = 0; $j < 12 ; $j++)
 	  {
-	    $datas[$j] = $xdatas[substr("00".($j+1),-2)];
+	    $datas[$j] = 0; // on pre-remplit de 0 sinon bug de jpgraph
+	    if ($xdatas[substr("00".($j+1),-2)])
+	      $datas[$j] = $xdatas[substr("00".($j+1),-2)];
+	  }
+
+	if ($commercial == 18)
+	  {
+	    for ($j = 0; $j < 12 ; $j++)
+	      {
+		print $datas[$j]." ";
+		if ($x_dis_datas[substr("00".($j+1),-2)])
+		  {
+		    $datas[$j] = $datas[$j] + $x_dis_datas[substr("00".($j+1),-2)];
+		  }
+		print $datas[$j]."\n";
+	      }
 	  }
 
 	$bplot = new BarPlot($datas);
 	$bplot->SetFillColor($this->barcolor[$i]);
 	$bplot->SetLegend($comm_names[$commercial]);
-	
+	//$bplot->value->Show();
+	//$bplot->value->SetFont(FF_ARIAL,FS_BOLD,10);
+	//$bplot->value->SetAngle(45);
+	//$bplot->value->SetFormat('%0.1f');
+
 	array_push($gbspl, $bplot);
 	$i++;
       }
@@ -115,13 +156,12 @@ class GraphCommerciauxPO  {
       }
 
 
-
     $graph->xaxis->SetTickLabels($labels);
     
-    // Display the graph
-    
+    // Display the graph   
     $graph->img->SetImgFormat("png");
-    $graph->Stroke($this->file);    
+    
+    print $graph->Stroke($this->file);    
   }
 }   
 
