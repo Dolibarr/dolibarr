@@ -130,6 +130,10 @@ class GraphCommerciauxPO  {
 	$bplot = new BarPlot($datas);
 	$bplot->SetFillColor($this->barcolor[$i]);
 	$bplot->SetLegend($comm_names[$commercial]);
+	if ($commercial == 18)
+	  {
+	    $bplot->SetLegend($comm_names[$commercial]."+DIS");
+	  }
 	//$bplot->value->Show();
 	//$bplot->value->SetFont(FF_ARIAL,FS_BOLD,10);
 	//$bplot->value->SetAngle(45);
