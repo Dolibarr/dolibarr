@@ -283,7 +283,7 @@ function CreateAbonne($host, $user_login, $user_passwd, $user_contract, $societe
   $url .= "&civilite=".   urlencode($civilite);
   $url .= "&id_contract=".$user_contract;
   $url .= "&firstname=".  urlencode("Societe");
-  $url .= "&lastname=".   urlencode($societe_nom);
+  $url .= "&lastname=".   urlencode(ereg_replace("'","",($societe_nom)));
   $url .= "&adresse=".    urlencode($societe_adresse);
   $url .= "&codepostal=". urlencode($societe_codepostal);
   $url .= "&ville=".      urlencode($societe_ville);
