@@ -325,9 +325,8 @@ if ($id > 0)
 			
 			print "</form>";
 
+            print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
-
-        print '<tr><td colspan="6">&nbsp;</td></tr>';
         
 		// Liste des contacts liés
 		print '<tr class="liste_titre">';

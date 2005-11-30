@@ -105,9 +105,10 @@ if ($_GET["facid"])
     $h++;
 */
 
-		$head = facture_prepare_head($fac);
-		$hselected = $conf->use_preview_tabs ? 
-				(($fac->mode_reglement_code == 'PRE') ?  4: 3): 2;
+	$head = facture_prepare_head($fac);
+    $hselected = 2;
+    if ($conf->use_preview_tabs) $hselected++;
+    if ($fac->mode_reglement_code == 'PRE') $hselected++;
     dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
 

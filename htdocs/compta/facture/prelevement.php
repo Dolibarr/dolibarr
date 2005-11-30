@@ -113,6 +113,10 @@ if ($_GET["facid"] > 0)
         $head[$h][1] = $langs->trans("CardBill");
         $h++;
 
+    	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$fac->id;
+    	$head[$h][1] = $langs->trans('Contact');
+    	$h++;
+
         if ($conf->use_preview_tabs)
         {
             $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
