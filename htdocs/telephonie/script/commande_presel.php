@@ -183,7 +183,7 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
 	      preg_match('/^<string xmlns=".*">(.*)<\/string>$/', $line, $results);
 	      
 	      $result = $results[1];
-	      dolibarr_syslog($line);
+	      //dolibarr_syslog($line);
 	      $parse = 0;
 	    }
 	  
@@ -223,7 +223,7 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
 
 function GetNumAbonne($db, $socid, $fournid)
 {
-  dolibarr_syslog("Appel de GetNumAbonne($socid, $fournid)");
+  //dolibarr_syslog("Appel de GetNumAbonne($socid, $fournid)");
 
   $sql = "SELECT fourn_id";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_fournid";
