@@ -19,12 +19,11 @@
  * $Source$
  *
  *
- * Recupération des fichiers CDR
+ * Commandes des lignes par API
  *
  */
 require ("../../master.inc.php");
 require_once DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php";
-
 
 $verbose = 0;
 
@@ -131,7 +130,7 @@ if ($resql)
 function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person)
 {  
   global $verbose;
-  dolibarr_syslog("Appel de CreatePreselection($host, $user_login, ****, $ligne, $id_person)");
+  //dolibarr_syslog("Appel de CreatePreselection($host, $user_login, ****, $ligne, $id_person)");
 
   $url = "/AzurApp_websvc_b3gdb/account.asmx/CreatePreselection?";
 
