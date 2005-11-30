@@ -555,9 +555,12 @@ class User
     {
         global $langs;
     
+        // Nettoyage parametres
+        $this->login = trim($this->login);
+        
         $this->db->begin();
 
-        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='".$this->login."';";
+        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='".addslashes($this->login)."'";
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -571,7 +574,7 @@ class User
             }
             else
             {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login) VALUES(now(),'$this->login');";
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login) VALUES(now(),'".addslashes($this->login)."')";
                 $result=$this->db->query($sql);
     
                 if ($result)
@@ -753,23 +756,31 @@ class User
     {
         global $langs;
         
+        // Nettoyage parametres
+        $this->nom=trim($this->nom);
+        $this->prenom=trim($this->prenom);
+        $this->login=trim($this->login);
+        $this->pass=trim($this->pass);
+        $this->email=trim($this->email);
+        $this->note=trim($this->note);
+        
         $error=0;
         
         if (!strlen($this->code)) $this->code = $this->login;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
-        $sql .= " name = '$this->nom'";
-        $sql .= ", firstname = '$this->prenom'";
-        $sql .= ", login = '$this->login'";
-        if ($this->pass) $sql .= ", pass = '$this->pass'";
+        $sql .= " name = '".addslashes($this->nom)."'";
+        $sql .= ", firstname = '".addslashes($this->prenom)."'";
+        $sql .= ", login = '".addslashes($this->login)."'";
+        if ($this->pass) $sql .= ", pass = '".addslashes($this->pass)."'";
         $sql .= ", admin = $this->admin";
         $sql .= ", office_phone = '$this->office_phone'";
         $sql .= ", office_fax = '$this->office_fax'";
         $sql .= ", user_mobile = '$this->user_mobile'";
-        $sql .= ", email = '$this->email'";
+        $sql .= ", email = '".addslashes($this->email)."'";
         $sql .= ", webcal_login = '$this->webcal_login'";
         $sql .= ", code = '$this->code'";
-        $sql .= ", note = '$this->note'";
+        $sql .= ", note = '".addslashes($this->note)."'";
         $sql .= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
@@ -853,8 +864,8 @@ class User
             $sqlpass = $password;
         }
         $this->pass=$password;
-        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".$sqlpass."'";
-        $sql.= " WHERE rowid = $this->id";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".addslashes($sqlpass)."'";
+        $sql.= " WHERE rowid = ".$this->id;
     
         $result = $this->db->query($sql);
         if ($result)
