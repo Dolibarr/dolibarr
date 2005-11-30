@@ -45,6 +45,7 @@ $fac->info($_GET["facid"]);
 $soc = new Societe($db, $fac->socidp);
 $soc->fetch($fac->socidp);
 
+/* //laissé pour test tache 4984
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
@@ -73,8 +74,11 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
 $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;      
+*/
 
-
+$head = facture_prepare_head($fac);
+$hselected = $conf->use_preview_tabs ? 
+			(($fac->mode_reglement_code == 'PRE') ?  5: 4): 3;
 dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
 

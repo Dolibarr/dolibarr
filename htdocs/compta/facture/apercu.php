@@ -69,6 +69,7 @@ if ($_GET["facid"] > 0)
         $author->id = $fac->user_author;
         $author->fetch();
 
+/* //modif tache 4984 laissé en commentaire pour test
         $h = 0;
 
         $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
@@ -96,7 +97,10 @@ if ($_GET["facid"] > 0)
         $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
         $head[$h][1] = $langs->trans("Info");
         $h++;
+*/
 
+				$head = facture_prepare_head($fac);
+				$hselected = $conf->use_preview_tabs ? 2 : false;
         dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
 

@@ -135,4 +135,43 @@ function llxHeader($head = "", $title="", $help_url='')
     left_menu($menu->liste, $help_url);
 }
 
+function facture_prepare_head($fac)
+{
+	global $langs, $conf;
+	$h = 0;
+	$head = array();
+	
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
+	$head[$h][1] = $langs->trans('CardBill');
+	$hselected = $h;
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$fac->id;
+	$head[$h][1] = $langs->trans('Contact');
+	$h++;
+
+	if ($conf->use_preview_tabs)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
+		$head[$h][1] = $langs->trans('Preview');
+		$h++;
+	}
+
+	if ($fac->mode_reglement_code == 'PRE')
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
+		$head[$h][1] = $langs->trans('StandingOrders');
+		$h++;
+	}
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
+	$head[$h][1] = $langs->trans('Note');
+	$h++;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
+	$head[$h][1] = $langs->trans('Info');
+	$h++;
+
+	return $head;
+}
+
 ?>

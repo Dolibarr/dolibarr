@@ -551,9 +551,6 @@ if ($_GET['action'] == 'pdf')
 	facture_pdf_create($db, $_GET['facid']);
 }
 
-
-
-
 /*********************************************************************
 *
 * Fonctions internes
@@ -1101,6 +1098,7 @@ else
 			$author->id = $fac->user_author;
 			$author->fetch();
 
+/* // modification tache 4984, je laisse en commentaire pour test
 			$h = 0;
 
 			$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
@@ -1130,7 +1128,11 @@ else
 			$h++;
 
 			dolibarr_fiche_head($head, $hselected, $langs->trans('Bill').' : '.$fac->ref);
+*/
 
+			$head = facture_prepare_head($fac);
+ 
+			dolibarr_fiche_head($head, 0, $langs->trans('Bill').' : '.$fac->ref);
 
 			/*
 			 * Confirmation de la suppression de la facture
