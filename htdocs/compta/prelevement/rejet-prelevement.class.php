@@ -139,7 +139,7 @@ class RejetPrelevement
 
 	/* Tag la facture comme impayée */
 	dolibarr_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
-	$fac->set_unpayed($user);
+	$fac->set_unpayed($fac->id, $user);
 
 	/* Envoi un email à l'emetteur de la demande de prev */
 	$this->_send_email($fac);
