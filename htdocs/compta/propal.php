@@ -292,7 +292,7 @@ if ($_GET["propalid"] > 0)
                         print '<td colspan="2">';
                         print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
                         print '<input type="hidden" name="action" value="set_project">';
-                        $form->select_projects($societe->id, $propal->projetidp, 'projetidp');
+                        $html->select_projects($societe->id, $propal->projetidp, 'projetidp');
                         print '</td><td>';
                         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                         print '</form>';
