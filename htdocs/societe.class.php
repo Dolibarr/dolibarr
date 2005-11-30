@@ -128,7 +128,10 @@ class Societe {
     {
         global $langs,$conf;
 
+        // Nettoyage paramètres
         $this->nom=trim($this->nom);
+
+        dolibarr_syslog("societe.class.php::create ".$this->nom);
 
         $this->db->begin();
 
@@ -148,7 +151,7 @@ class Societe {
 
                 $ret = $this->update($this->id,$user,0);
 
-                if ($ret == 0)
+                if ($ret > 0)
                 {
                     $this->use_webcal=($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?1:0);
 
@@ -173,7 +176,7 @@ class Societe {
             else
 
             {
-                if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
+                if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
 
                     $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
@@ -249,7 +252,7 @@ class Societe {
      *      \param      id              id societe
      *      \param      user            Utilisateur qui demande la mise à jour
      *      \param      call_trigger    0=non, 1=oui
-     *      \return     int             0 si ok, < 0 si erreur
+     *      \return     int             <0 si ko, >0 si erreur
      */
     function update($id, $user='', $call_trigger=1)
     {
