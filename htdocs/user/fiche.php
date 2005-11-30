@@ -741,7 +741,7 @@ else
             // Login
             print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
             print '<td>';
-            if ($user->admin) print '<input size="12" maxlength="8" type="text" class="flat" name="login" value="'.$fuser->login.'">';
+            if ($user->admin) print '<input size="12" maxlength="10" type="text" class="flat" name="login" value="'.$fuser->login.'">';
             else print $fuser->login.'<input type="hidden" name="login" value="'.$fuser->login.'">';
             print '</td></tr>';
 
@@ -749,7 +749,7 @@ else
             if ($caneditpassword) 
             {
                 print "<tr>".'<td valign="top">'.$langs->trans("Password").'</td>';
-                print '<td><input size="12" maxlength="8" type="password" class="flat" name="pass" value="'.$fuser->pass.'"></td></tr>';
+                print '<td><input size="12" maxlength="10" type="password" class="flat" name="pass" value="'.$fuser->pass.'"></td></tr>';
             }
             else
             {
