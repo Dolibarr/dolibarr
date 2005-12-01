@@ -507,7 +507,7 @@ else
             {
                 $societe = new Societe($db);
                 $societe->fetch($fuser->societe_id);
-                print '<a href="'.DOL_URL_ROOT.'/soc.php?id='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
+                print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
                 if ($fuser->contact_id)
                 {
                     $contact = new Contact($db);
