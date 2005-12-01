@@ -138,7 +138,7 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
   $url .= "user_login=".  $user_login;
   $url .= "&user_passwd=".$user_passwd;
   $url .= "&id_person=".$id_person;
-  $url .= "&telnum=".$lint->ligne;
+  $url .= "&telnum=".$lint->numero;
   $url .= "&okCollecte=true";
   if ($lint->support == 'sda')
     {
@@ -211,14 +211,14 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
 
   if (substr($result,0,2) == "OK")
     {
-      dolibarr_syslog("Presel réussie ligne ".$lint->ligne." id client ".$id_person." $result\n");
+      dolibarr_syslog("Presel réussie ligne ".$lint->numero." id client ".$id_person." $result\n");
       return 0;
     }
   else
     {
-      dolibarr_syslog("Presel échouée ligne ".$lint->ligne." id client ".$id_person." $result\n");
+      dolibarr_syslog("Presel échouée ligne ".$lint->numero." id client ".$id_person." $result\n");
 
-      $fp = fopen("/tmp/$ligne.presel","w");
+      $fp = fopen("/tmp/".$lint->numero.".presel","w");
       if ($fp)
 	{
 	  fwrite($fp, $fresult);
