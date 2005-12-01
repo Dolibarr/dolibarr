@@ -62,7 +62,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e ";
 $sql_add = " WHERE ";
 if ($socidp)
 { 
-  $sql .= $sql_add . " s.idp = $socidp"; 
+  $sql .= $sql_add . " ".MAIN_DB_PREFIX."societe.idp = $socidp"; 
   $sql_add = " AND ";
 }
 
