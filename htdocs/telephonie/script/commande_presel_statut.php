@@ -194,7 +194,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		  else
 		    {
 		      $row = $db->fetch_row($resql);
-		      if ($row[1] <> $situation_key)
+		      if (trim($row[1]) <> trim($situation_key))
 			{
 			  $insert = 1;
 			}
