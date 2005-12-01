@@ -211,12 +211,12 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
 
   if (substr($result,0,2) == "OK")
     {
-      dolibarr_syslog("Presel réussie ligne ".$lint->numero." id client ".$id_person." $result\n");
+      dolibarr_syslog("Presel OK  ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
       return 0;
     }
   else
     {
-      dolibarr_syslog("Presel échouée ligne ".$lint->numero." id client ".$id_person." $result\n");
+      dolibarr_syslog("Presel ERR ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
 
       $fp = fopen("/tmp/".$lint->numero.".presel","w");
       if ($fp)
