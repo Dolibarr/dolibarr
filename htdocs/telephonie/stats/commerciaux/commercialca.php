@@ -27,11 +27,7 @@ llxHeader('','Telephonie - Statistiques - Commerciaux');
 
 /*
  *
- *
- *
  */
-
-
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/index.php';
@@ -60,13 +56,45 @@ if ($_GET["commid"])
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td valign="top">';
-  
+  print '<tr><td valign="top" width="70%">';
 
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/gain.mensuel.png" alt="Gain mensuel" title="Gain mensuel"><br /><br />'."\n";
 
+  print '</td><td width="30%" valign="top">';
+
+  print '</td></tr><tr><td valign="top">';
+
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/ca.mensuel.png" alt="Chiffre d\'affaire mensuel" title="Chiffre d\'affaire mensuel"><br /><br />'."\n";
   
+  print '</td><td width="30%" valign="top">';
+
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td>Mois</td><td align="right">CA</td></tr>';
+  
+  $sql = "SELECT legend, valeur";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
+  $sql .= " WHERE graph  = 'commercial.ca.mensuel.".$_GET["commid"]."'";
+  $sql .= " ORDER BY legend ASC;";
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  $var=!$var;	  
+	  print "<tr $bc[$var]><td>".$row[0].'</td>';  
+	  print '<td align="right">'.price($row[1]).'</td></tr>';
+	}
+      $db->free($resql);
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table>';
+
+
   print '</td></tr>';
   print '</table>';
   
