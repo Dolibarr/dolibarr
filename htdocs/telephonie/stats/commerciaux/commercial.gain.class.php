@@ -80,7 +80,7 @@ class GraphCommercialGain extends GraphBar {
 	    $row = $this->db->fetch_row($resql);	
 	    	    
 	    $datas[$i] = $row[1];
-	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
+	    $labels[$i] = substr($row[0],-2);
 
 	    if ($commercial > 0)
 	      {
