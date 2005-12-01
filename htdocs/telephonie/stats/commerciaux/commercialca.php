@@ -30,6 +30,8 @@ llxHeader('','Telephonie - Statistiques - Commerciaux');
  */
 $h = 0;
 
+$year = strftime("%Y",time());
+
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/index.php';
 $head[$h][1] = "Global";
 $h++;
@@ -75,6 +77,7 @@ if ($_GET["commid"])
   $sql = "SELECT legend, valeur";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
   $sql .= " WHERE graph  = 'commercial.ca.mensuel.".$_GET["commid"]."'";
+  $sql .= " AND legend like '".$year."%'";
   $sql .= " ORDER BY legend ASC;";
   $resql = $db->query($sql);
   
