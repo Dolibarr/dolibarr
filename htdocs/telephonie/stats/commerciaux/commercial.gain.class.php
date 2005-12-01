@@ -33,7 +33,7 @@ class GraphCommercialGain extends GraphBar {
     $this->titre = "Marge mensuelle";
     if ($this->year > 0)
       {
-	$this->titre .= " ".$this->year;
+	$this->titre = " ".$this->year;
       }
     $this->barcolor = "pink";
     $this->showframe = true;
