@@ -86,17 +86,17 @@ if ($resql)
       
       /* Chiffre d'affaire mensuel */
             
-      $file = $img_root . "commercials/".$row[0]."/ca.mensuel.png";
+      $file = $img_root . "commercials/".$row[0]."/ca.mensuel.$year.png";
       if ($verbose) print "Graph : Lignes commandes$file\n";
-      $graph = new GraphCommercialChiffreAffaire($db, $file);
+      $graph = new GraphCommercialChiffreAffaire($db, $file, $year);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
 
       /* Gain */
             
-      $file = $img_root . "commercials/".$row[0]."/gain.mensuel.png";
+      $file = $img_root . "commercials/".$row[0]."/gain.mensuel.$year.png";
       if ($verbose) print "Graph : Lignes commandes$file\n";
-      $graph = new GraphCommercialGain($db, $file);
+      $graph = new GraphCommercialGain($db, $file, $year);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
 

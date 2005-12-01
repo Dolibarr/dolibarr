@@ -24,14 +24,17 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 
 class GraphCommercialGain extends GraphBar {
 
-  Function GraphCommercialGain($DB, $file)
+  Function GraphCommercialGain($DB, $file, $year=0)
   {
     $this->db = $DB;
     $this->file = $file;
-
+    $this->year = $year;
     $this->client = 0;
     $this->titre = "Gain mensuel";
-
+    if ($this->year > 0)
+      {
+	$this->titre = "Gain mensuel ".$this->year;
+      }
     $this->barcolor = "pink";
     $this->showframe = true;
   }
@@ -43,7 +46,11 @@ class GraphCommercialGain extends GraphBar {
     if ($commercial > 0)
       {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";     
-	$sql .= " WHERE graph='commercial.gain.mensuel.".$commercial."';";
+	$sql .= " WHERE graph='commercial.gain.mensuel.".$commercial."'";
+	if ($this->year > 0)
+	  {
+	    $sql .= " AND legend like '".$this->year."%'";
+	  }
 	$resql = $this->db->query($sql);
       }
 
@@ -52,6 +59,10 @@ class GraphCommercialGain extends GraphBar {
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sql .= " WHERE l.rowid = f.fk_ligne";
     $sql .= " AND l.fk_commercial_sign = ".$commercial;
+    if ($this->year > 0)
+      {
+	$sql .= " AND date_format(f.date,'%Y')='".$this->year."'";
+      }
     $sql .= " GROUP BY date_format(f.date,'%Y%m') ASC";
 
     $resql = $this->db->query($sql);

@@ -24,14 +24,17 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 
 class GraphCommercialChiffreAffaire extends GraphBar {
 
-  Function GraphCommercialChiffreAffaire($DB, $file)
+  Function GraphCommercialChiffreAffaire($DB, $file, $year=0)
   {
     $this->db = $DB;
     $this->file = $file;
-
+    $this->year = $year;
     $this->client = 0;
     $this->titre = "Chiffre d'affaire";
-
+    if ($this->year > 0)
+      {
+	$this->titre .= " ".$year;
+      }
     $this->barcolor = "blue";
     $this->showframe = true;
   }
@@ -44,6 +47,10 @@ class GraphCommercialChiffreAffaire extends GraphBar {
       {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";     
 	$sql .= " WHERE graph='commercial.ca.mensuel.".$commercial."';";
+	if ($this->year > 0)
+	  {
+	    $sql .= " AND legend like '".$this->year."%'";
+	  }
 	$resql = $this->db->query($sql);
       }
 
@@ -53,6 +60,10 @@ class GraphCommercialChiffreAffaire extends GraphBar {
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sql .= " WHERE l.rowid = f.fk_ligne";
     $sql .= " AND l.fk_commercial_sign = ".$commercial;
+    if ($this->year > 0)
+      {
+	$sql .= " AND date_format(f.date,'%Y')='".$this->year."'";
+      }
     $sql .= " GROUP BY date_format(f.date,'%Y%m') ASC";
 
     $resql = $this->db->query($sql);
@@ -70,7 +81,7 @@ class GraphCommercialChiffreAffaire extends GraphBar {
 	    $row = $this->db->fetch_row($resql);	
 	    	    
 	    $datas[$i] = $row[1];
-	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
+	    $labels[$i] = substr($row[0],-2);
 
 	    if ($commercial > 0)
 	      {
