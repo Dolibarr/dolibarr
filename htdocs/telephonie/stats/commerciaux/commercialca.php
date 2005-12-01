@@ -66,7 +66,7 @@ if ($_GET["commid"])
 
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>Mois</td><td align="right">Gain</td></tr>';
+  print '<td>Mois</td><td align="right">Marge</td></tr>';
   
   $sql = "SELECT legend, valeur";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
