@@ -63,7 +63,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-$sql .= " AND f.rowid = 4 AND l.statut = 9 ORDER BY s.idp ASC";
+$sql .= " AND f.rowid = 4 AND l.statut = 9 ORDER BY l.rowid DESC";
 
 $resql = $db->query($sql);
 $result = 1;
