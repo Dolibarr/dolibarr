@@ -102,6 +102,14 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		      $array = array();
 		      preg_match('/telnum="([0123456789]*)"/', $line, $array);
 		      $ligne_numero = $array[1];
+
+		      $array = array();
+		      preg_match('/ServiceActive="([\S]*)"/i', $line, $array);
+		      $service_active = $array[1];
+		      
+		      $array = array();
+		      preg_match('/PreSelectionActive="([\S]*)"/i', $line, $array);
+		      $presel_active = $array[1];
 		      
 		      $array = array();
 		      preg_match('/Service_Statut="([\S]*)"/i', $line, $array);
@@ -113,6 +121,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		      
 		      print "$i/$numcli ";
 		      print $ligne_numero." ";
+		      print "$service_active/$presel_active ";
 		      print substr($ligne_service.str_repeat(" ",20),0,20);
 		      print substr($ligne_presel.str_repeat(" ",20),0,20);
 		      print "\n";
