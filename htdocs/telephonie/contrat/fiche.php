@@ -578,7 +578,7 @@ else
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      
 	      $sql = "SELECT l.ligne, l.statut, l.rowid, l.remise, l.techno, f.nom as fournisseur";
-	      $sql .= ", ss.code_client, ss.nom as agence";
+	      $sql .= ", ss.code_client, ss.nom as agence, l.support";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	      $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
 	      $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
@@ -597,7 +597,7 @@ else
 		      $ligne = new LigneTel($db);
 		      
 		      print '<tr class="liste_titre"><td width="15%" valign="center">Ligne';
-		      print '</td><td>Agence/Filiale</td><td align="center">Statut</td><td align="center">Remise LMN';
+		      print '</td><td>Agence/Filiale</td><td align="center">Statut</td><td align="center">Support';
 		      print '</td><td>Fournisseur</td>';
 		      
 		      print "</tr>\n";
@@ -621,7 +621,7 @@ else
 			  print '<td>'.$obj->code_client."&nbsp;".$obj->agence."</td>\n";
 			  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 			  
-			  print '<td align="center">'.$obj->remise." %</td>\n";
+			  print '<td align="center">'.$obj->support."</td>\n";
 			  print "<td>".$obj->fournisseur." - \n";
 			  print $obj->techno."</td>\n";
 			  print "</tr>\n";
