@@ -92,7 +92,7 @@ function UpdatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
   global $verbose;
   dolibarr_syslog("UpdatePreselection($host, $user_login, ****, $ligne, $id_person)");
 
-  $url = "/AzurApp_websvc_b3gdb/account.asmx/CreatePreselection?";
+  $url = "/AzurApp_websvc_b3gdb/account.asmx/UpdatePreselection?";
 
   $url .= "user_login=".  $user_login;
   $url .= "&user_passwd=".$user_passwd;
