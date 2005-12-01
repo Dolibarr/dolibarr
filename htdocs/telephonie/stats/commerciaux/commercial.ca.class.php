@@ -46,7 +46,7 @@ class GraphCommercialChiffreAffaire extends GraphBar {
     if ($commercial > 0)
       {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";     
-	$sql .= " WHERE graph='commercial.ca.mensuel.".$commercial."';";
+	$sql .= " WHERE graph='commercial.ca.mensuel.".$commercial."'";
 	if ($this->year > 0)
 	  {
 	    $sql .= " AND legend like '".$this->year."%'";

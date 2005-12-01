@@ -56,7 +56,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td width="30%" valign="top">';
 
 $sql = "SELECT date_format(f.date,'%Y%m'), sum(f.cout_vente)";
-$sql .= ", c.name, c.firstname";
+$sql .= ", c.name, c.firstname, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."user as c";
@@ -67,7 +67,7 @@ $sql .= " GROUP BY date_format(f.date,'%Y%m') DESC, c.rowid DESC";
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td><td>&nbsp;</td></tr>';
+print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Date</td><td>&nbsp;</td></tr>';
 
 $resql = $db->query($sql);
 if ($resql)
@@ -86,7 +86,7 @@ if ($resql)
       print "<tr $bc[$var]>";
 
       print '<td width="50%" valign="top">';
-      print '<a href="commercial.php?commid='.$row[3];
+      print '<a href="commercial.php?commid='.$row[4];
       print '">'.$row[3]." ". $row[2].'</a></td><td align="center">'.$row[0].'</td>';
       print '<td align="right">'.price($row[1]).'</td></tr>';
       $total += $row[1];
