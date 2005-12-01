@@ -23,9 +23,9 @@
  *
  */
 require ("../../master.inc.php");
+_log($GLOBALS["argv"][0]." Start", LOG_NOTICE);
 require_once DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php";
 require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
-
 
 set_time_limit(0);
 
@@ -171,7 +171,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 	    }
 	  fclose($fp);
 
-	  if ($ligne_numero && $ligne_service && $ligne_presel)
+	  if ($ligne_numero)// && $ligne_service && $ligne_presel)
 	    {
 	      $situation_key = "$ligne_service / $ligne_presel";
 	  
