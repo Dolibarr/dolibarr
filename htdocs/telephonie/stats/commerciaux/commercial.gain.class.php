@@ -40,6 +40,13 @@ class GraphCommercialGain extends GraphBar {
   {
     $num = 0;
 
+    if ($commercial > 0)
+      {
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";     
+	$sql .= " WHERE graph='commercial.gain.mensuel.".$commercial."';";
+	$resql = $this->db->query($sql);
+      }
+
     $sql = "SELECT date_format(f.date,'%Y%m'), sum(f.gain)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -63,6 +70,15 @@ class GraphCommercialGain extends GraphBar {
 	    	    
 	    $datas[$i] = $row[1];
 	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
+
+	    if ($commercial > 0)
+	      {
+		$sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+		$sqli .= " (graph,ord,legend,valeur)";
+		$sqli .= " VALUES ('commercial.gain.mensuel.".$commercial."'";
+		$sqli .= ",'$i','".$row[0]."','".$datas[$i]."');";
+		$resqli = $this->db->query($sqli);
+	      }
 
 	    $i++;
 	  }
