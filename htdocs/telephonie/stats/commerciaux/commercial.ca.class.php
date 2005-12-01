@@ -40,6 +40,14 @@ class GraphCommercialChiffreAffaire extends GraphBar {
   {
     $num = 0;
 
+    if ($commercial > 0)
+      {
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";     
+	$sql .= " WHERE graph='commercial.ca.mensuel.".$commercial."';";
+	$resql = $this->db->query($sql);
+      }
+
+
     $sql = "SELECT date_format(f.date,'%Y%m'), sum(f.cout_vente)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -47,11 +55,11 @@ class GraphCommercialChiffreAffaire extends GraphBar {
     $sql .= " AND l.fk_commercial_sign = ".$commercial;
     $sql .= " GROUP BY date_format(f.date,'%Y%m') ASC";
 
-    $result = $this->db->query($sql);
+    $resql = $this->db->query($sql);
 
-    if ($result)
+    if ($resql)
       {
-	$num = $this->db->num_rows();
+	$num = $this->db->num_rows($resql);
 	$i = 0;
 	$j = -1;
 	$datas = array();
@@ -59,15 +67,23 @@ class GraphCommercialChiffreAffaire extends GraphBar {
 	
 	while ($i < $num)
 	  {
-	    $row = $this->db->fetch_row();	
+	    $row = $this->db->fetch_row($resql);	
 	    	    
 	    $datas[$i] = $row[1];
 	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
 
+	    if ($commercial > 0)
+	      {
+		$sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+		$sqli .= " (graph,ord,legend,valeur)";
+		$sqli .= " VALUES ('commercial.ca.mensuel.".$commercial."'";
+		$sqli .= ",'$i','".$row[0]."','".$datas[$i]."');";
+		$resqli = $this->db->query($sqli);
+	      }
 	    $i++;
 	  }
 	
-	$this->db->free();
+	$this->db->free($resql);
       }
     else 
       {
