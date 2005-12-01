@@ -82,14 +82,6 @@ if ($resql)
       $lint->fetch_by_id($obj->rowid);
 
       $result = UpdatePreselection($host, $user_login, $user_passwd, $lint, $num_abo);
-
-      if ($result == 0)
-	{
-	  if ($lint->statut == 9)
-	    {
-	      $lint->set_statut($user, 2);
-	    }
-	}
      
       $i++;
     }
@@ -150,7 +142,7 @@ function UpdatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
 	      preg_match('/^<string xmlns=".*">(.*)<\/string>$/', $line, $results);
 	      
 	      $result = $results[1];
-	      //dolibarr_syslog($line);
+	      dolibarr_syslog($line);
 	      $parse = 0;
 	    }
 	  
