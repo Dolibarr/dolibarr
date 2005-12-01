@@ -60,7 +60,7 @@ if ($_GET["commid"])
 
   print '<tr><td valign="top" width="70%">';
 
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/gain.mensuel.png" alt="Gain mensuel" title="Gain mensuel"><br /><br />'."\n";
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/gain.mensuel.'.$year.'.png" alt="Gain mensuel" title="Gain mensuel">'."\n";
 
   print '</td><td width="30%" valign="top">';
 
@@ -93,7 +93,7 @@ if ($_GET["commid"])
 
   print '</td></tr><tr><td valign="top">';
 
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/ca.mensuel.png" alt="Chiffre d\'affaire mensuel" title="Chiffre d\'affaire mensuel"><br /><br />'."\n";
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/ca.mensuel.'.$year.'.png" alt="Chiffre d\'affaire mensuel" title="Chiffre d\'affaire mensuel"><br /><br />'."\n";
   
   print '</td><td width="30%" valign="top">';
 
