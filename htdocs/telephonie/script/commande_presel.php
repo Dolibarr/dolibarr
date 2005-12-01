@@ -107,16 +107,17 @@ if ($resql)
 	{
 	  $result = 0;
 	}
+
+      $lint = new LigneTel($db);
+      $lint->fetch_by_id($obj->rowid);
      
       if ($result == 0)
 	{
-	  $result = CreatePreselection($host, $user_login, $user_passwd, $obj->ligne, $num_abo);
+	  $result = CreatePreselection($host, $user_login, $user_passwd, $lint, $num_abo);
 	}
 
       if ($result == 0)
 	{
-	  $lint = new LigneTel($db);
-	  $lint->fetch_by_id($obj->rowid);
 	  if ($lint->statut == 9)
 	    {
 	      $lint->set_statut($user, 2);
@@ -127,7 +128,7 @@ if ($resql)
     }
 }
 
-function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person)
+function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
 {  
   global $verbose;
   //dolibarr_syslog("Appel de CreatePreselection($host, $user_login, ****, $ligne, $id_person)");
@@ -137,9 +138,16 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
   $url .= "user_login=".  $user_login;
   $url .= "&user_passwd=".$user_passwd;
   $url .= "&id_person=".$id_person;
-  $url .= "&telnum=".$ligne;
+  $url .= "&telnum=".$lint->ligne;
   $url .= "&okCollecte=true";
-  $url .= "&okPreselection=true";
+  if ($lint->support == 'sda')
+    {
+      $url .= "&okPreselection=false";
+    }
+  else
+    {
+      $url .= "&okPreselection=true";
+    }
 
   if ($verbose > 2)
     dolibarr_syslog("$host");
@@ -203,12 +211,12 @@ function CreatePreselection($host, $user_login, $user_passwd, $ligne, $id_person
 
   if (substr($result,0,2) == "OK")
     {
-      dolibarr_syslog("Presel réussie ligne ".$ligne." id client ".$id_person." $result\n");
+      dolibarr_syslog("Presel réussie ligne ".$lint->ligne." id client ".$id_person." $result\n");
       return 0;
     }
   else
     {
-      dolibarr_syslog("Presel échouée ligne ".$ligne." id client ".$id_person." $result\n");
+      dolibarr_syslog("Presel échouée ligne ".$lint->ligne." id client ".$id_person." $result\n");
 
       $fp = fopen("/tmp/$ligne.presel","w");
       if ($fp)
