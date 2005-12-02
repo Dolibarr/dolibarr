@@ -30,28 +30,79 @@ require ("../../../master.inc.php");
 
 $title = "DEVEL TITLE";
 $desc = "Developpements en cours";
-$user_id = 587;
+$userlid = 1;
 
 if ($db->begin())
 {
-  $result = 1;
-  $sql = "UPDATE vtiger.crmentity_seq set id=LAST_INSERT_ID(id+1)";
-  $resql = $db->query($sql);
-  if ( $resql )
-    {
-      $result = 0;
-    }
-  else
-    {
-      print "Error 1\n";
-    }
+  $result = -1;
 
-  $sql = "SELECT id from vtiger.crmentity_seq;";
-  
-  if ($result == 0)
-    {
+
+  $sql = "SELECT vtiger_id from ".MAIN_DB_PREFIX."vtiger_users";
+  $sql .= " WHERE fk_user =".$userlid.";";
       $result = 1;
       $resql = $db->query($sql);  
+      if ( $resql )
+	{
+	  if ($row = $db->fetch_row($resql))
+	    {
+	      $user_id = $row[0];
+	      $result = 0;
+	    }
+	  else
+	    {
+	      print "Error user id missing\n";
+	    }
+	}
+      else
+	{
+	  print "Error 7\n";
+	}
+
+
+  if ($result == 0)
+    {
+      $sql = "UPDATE vtiger.crmentity_seq set id=LAST_INSERT_ID(id+1)";
+      $resql = $db->query($sql);
+      if ( $resql )
+	{
+	  $result = 0;
+	}
+      else
+	{
+	  print "Error 1\n";
+	}
+    }
+
+  if ($result == 0)
+    {
+      $sql = "SELECT user_name from vtiger.users where id =".$user_id.";";
+      $result = 1;
+      $resql = $db->query($sql);  
+      if ( $resql )
+	{
+	  if ($row = $db->fetch_row($resql))
+	    {
+	      $username = $row[0];
+	      $result = 0;
+	    }
+	  else
+	    {
+	      print "Error 4\n";
+	    }
+	}
+      else
+	{
+	  print "Error 5\n";
+	}
+    }
+
+
+  if ($result == 0)
+    {
+      $sql = "SELECT id from vtiger.crmentity_seq;";
+      $result = 1;
+      $resql = $db->query($sql);  
+      $tid = 0;
       if ( $resql )
 	{
 	  if ($row = $db->fetch_row($resql))
@@ -73,7 +124,9 @@ if ($db->begin())
   if ($result == 0 && $tid > 0)
     {
       $sql = "INSERT INTO vtiger.troubletickets (ticketid, parent_id, priority, product_id, severity, status, category, update_log, title, description, solution) values ";
-      $sql .= " (".$tid.", '', 'Low', '', 'Feature', 'Open', 'Big Problem', 'Friday 02nd December 2005 01:12:42 PM by rodo--//--Ticket created. Assigned to rodo--//--', '".$title."', '".$desc."', '')";
+      $sql .= " (".$tid.", '', 'High', '', 'Major', 'Open', 'Big Problem','";
+      $sql .= strftime("%E %d %B %Y %H:%M:%S", time())." by dolibarr--//--Ticket created. Assigned to $username--//--'";
+      $sql .= ", '".$title."', '".$desc."', '')";
       
       $result = 1;
       $resql = $db->query($sql);
@@ -88,12 +141,14 @@ if ($db->begin())
 	}
     }
 
-  $sql = "INSERT INTO vtiger.crmentity ";
-  $sql .= " (crmid,smcreatorid,smownerid,setype,description,createdtime,modifiedtime) ";
-  $sql .= " VALUES ('".$tid."','$user_id','$user_id','HelpDesk','".$desc."',now(),now())";
+
 
   if ($result == 0 && $tid > 0)
     {
+      $sql = "INSERT INTO vtiger.crmentity ";
+      $sql .= " (crmid,smcreatorid,smownerid,setype,description,createdtime,modifiedtime) ";
+      $sql .= " VALUES ('".$tid."','$user_id','$user_id','HelpDesk','".$desc."',now(),now())";
+      
       $resql = $db->query($sql);
       $result = 1;
       if ( $resql )
