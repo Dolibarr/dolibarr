@@ -1616,7 +1616,11 @@ insert into llx_c_typent (id,code,libelle) values (  0, 'TE_UNKNOWN', '-');
 insert into llx_c_typent (id,code,libelle) values (  1, 'TE_STARTUP', 'Start-up');
 insert into llx_c_typent (id,code,libelle) values (  2, 'TE_GROUP',   'Grand groupe');
 insert into llx_c_typent (id,code,libelle) values (  3, 'TE_MEDIUM',  'PME/PMI');
-insert into llx_c_typent (id,code,libelle) values (  4, 'TE_ADMIN',   'Administration');
+insert into llx_c_typent (id,code,libelle) values (  4, 'TE_SMALL',   'TPE');
+insert into llx_c_typent (id,code,libelle) values (  5, 'TE_ADMIN',   'Administration');
+insert into llx_c_typent (id,code,libelle) values (  6, 'TE_WHOLE',   'Grossiste');
+insert into llx_c_typent (id,code,libelle) values (  7, 'TE_RETAIL',  'Revendeur');
+insert into llx_c_typent (id,code,libelle) values (  8, 'TE_PRIVATE', 'Particulier');
 insert into llx_c_typent (id,code,libelle) values (100, 'TE_OTHER',   'Autres');
 
 drop table if exists llx_c_regions;
