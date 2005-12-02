@@ -32,6 +32,7 @@
 require("pre.inc.php");
 $user->getrights('societe');
 $langs->load("companies");
+$langs->load("commercial");
  
 if (! $user->rights->societe->creer)
 {
