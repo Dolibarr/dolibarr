@@ -2,7 +2,8 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -839,7 +840,7 @@ else
             print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
         }
 
-        if ($user->rights->societe->creer)
+        if ($user->rights->societe->contact->creer)
         {
             print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
         }
