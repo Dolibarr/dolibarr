@@ -127,6 +127,7 @@ if ( $soc->fetch($soc->id) )
     }
     
     if ($conf->compta->enabled) {
+    		$langs->load("compta");
         $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
         $head[$h][1] = $langs->trans("Accountancy");
         $h++;

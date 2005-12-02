@@ -99,6 +99,7 @@ print "</table>\n";
  * Tableau de bord d'états Dolibarr (statistiques)
  * Non affiché pour un utilisateur externe
  */
+$langs->load("other");
 if ($user->societe_id == 0)
 {
     print '<br>';

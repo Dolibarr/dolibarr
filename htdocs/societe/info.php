@@ -30,6 +30,7 @@ require("./pre.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 
 $langs->load("companies");
+$langs->load("other");
 
 llxHeader();
 
