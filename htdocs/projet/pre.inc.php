@@ -35,6 +35,8 @@ $langs->load("projects");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
+$langs->load("commercial");
+
 
 $user->getrights('projet');
 
