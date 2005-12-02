@@ -198,7 +198,7 @@ if ( $resqls )
 	  
 	  if ($result == 0 )
 	    {
-	      $sql = "DELETE from vtiger.tracker WHERE user_id='$user_id' and item_id='$tid'";
+	      $sql = "DELETE from vtiger.tracker WHERE user_id='".$user_id."' and item_id='".$tid".'";
 	      $resql = $db->query($sql);
 	      $result = 1;
 	      if ( $resql )
@@ -211,7 +211,7 @@ if ( $resqls )
 	    {
 	      $sql = "INSERT INTO vtiger.tracker ";
 	      $sql .= " (user_id, module_name, item_id, item_summary) values ";
-	      $sql .= " ('".$user_id."', 'HelpDesk', '".$tid."', 'Test pour dev')";
+	      $sql .= " ('".$user_id."', 'HelpDesk', '".$tid."', '".$title."')";
 	      
 	      $resql = $db->query($sql);
 	      $result = 1;
