@@ -471,15 +471,21 @@ elseif ($_GET["id"])
     if (! $user->societe_id)
     {
         print '<div class="tabsAction">';
-    
+    		
+    		if ($user->rights->societe->contact->creer)
+    		{
         print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+      	}
     
         if (! $contact->user_id && $user->admin)
         {
             print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
         }
-    
-        print '<a class="butDelete" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+    		
+    		if ($user->rights->societe->contact->supprimer)
+    		{
+        		print '<a class="butDelete" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+        }
     
         print "</div><br>";
     }

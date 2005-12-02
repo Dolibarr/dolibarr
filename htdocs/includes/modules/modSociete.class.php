@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +100,20 @@ class modSociete extends DolibarrModules
     $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[3][4] = 'supprimer';
+    
+    $this->rights[4][0] = 261; // id de la permission
+    $this->rights[4][1] = 'Créer modifier les contacts'; // libelle de la permission
+    $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[4][4] = 'contact';
+    $this->rights[4][5] = 'creer';
+    
+    $this->rights[5][0] = 262; // id de la permission
+    $this->rights[5][1] = 'Supprimer les contacts'; // libelle de la permission
+    $this->rights[5][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[5][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[5][4] = 'contact';
+    $this->rights[5][5] = 'supprimer';
 
 }
 
