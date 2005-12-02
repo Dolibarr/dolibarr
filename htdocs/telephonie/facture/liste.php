@@ -115,7 +115,7 @@ if ($result)
   if ($user->rights->telephonie->ligne->gain)
     {
       print '<td align="right">Coût fournisseur HT</td>';
-      print_liste_field_titre("Gain","liste.php","f.gain",'','','align="right"');
+      print_liste_field_titre("Marge","liste.php","f.gain",'','','align="right"');
     }
   print '<td align="center">Facture</td>';
   print "</tr>\n";
