@@ -112,6 +112,8 @@ class MenuLeft {
              */
             if ($mainmenu == 'home')
             {
+            	$langs->load("users");
+            	
                 $newmenu->add(DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'&amp;leftmenu=home', $langs->trans("MyInformations"));
 
                 if($user->admin)
