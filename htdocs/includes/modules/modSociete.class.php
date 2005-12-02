@@ -108,19 +108,19 @@ class modSociete extends DolibarrModules
     $this->rights[4][4] = 'contact';
     $this->rights[4][5] = 'lire';
     
-    $this->rights[4][0] = 282; // id de la permission
-    $this->rights[4][1] = 'Créer modifier les contacts'; // libelle de la permission
-    $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[4][4] = 'contact';
-    $this->rights[4][5] = 'creer';
-    
-    $this->rights[5][0] = 283; // id de la permission
-    $this->rights[5][1] = 'Supprimer les contacts'; // libelle de la permission
-    $this->rights[5][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[5][0] = 282; // id de la permission
+    $this->rights[5][1] = 'Créer modifier les contacts'; // libelle de la permission
+    $this->rights[5][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[5][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[5][4] = 'contact';
-    $this->rights[5][5] = 'supprimer';
+    $this->rights[5][5] = 'creer';
+    
+    $this->rights[6][0] = 283; // id de la permission
+    $this->rights[6][1] = 'Supprimer les contacts'; // libelle de la permission
+    $this->rights[6][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[6][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[6][4] = 'contact';
+    $this->rights[6][5] = 'supprimer';
 
 }
 
