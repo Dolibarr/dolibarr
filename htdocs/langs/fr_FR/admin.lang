@@ -204,6 +204,7 @@ Permission253=Modifier mot de passe des autres utilisateurs
 Permission254=Supprimer ou désactiver les autres utilisateurs
 Permission255=Créer/modifier ses propres infos utilisateur
 Permission256=Modifier son propre mot de passe
+Permission261=Consulter les contacts
 Permission262=Créer/modifier les contacts
 Permission263=Supprimer les contacts
 Permission300=Consulter les codes barres

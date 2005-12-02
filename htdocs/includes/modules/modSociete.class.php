@@ -101,6 +101,13 @@ class modSociete extends DolibarrModules
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[3][4] = 'supprimer';
     
+    $this->rights[4][0] = 261; // id de la permission
+    $this->rights[4][1] = 'Lire les contacts'; // libelle de la permission
+    $this->rights[4][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[4][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[4][4] = 'contact';
+    $this->rights[4][5] = 'lire';
+    
     $this->rights[4][0] = 262; // id de la permission
     $this->rights[4][1] = 'Créer modifier les contacts'; // libelle de la permission
     $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
