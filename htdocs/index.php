@@ -99,7 +99,7 @@ print "</table>\n";
  * Tableau de bord d'états Dolibarr (statistiques)
  * Non affiché pour un utilisateur externe
  */
-$langs->load("other");
+
 if ($user->societe_id == 0)
 {
     print '<br>';
@@ -184,6 +184,7 @@ if ($user->societe_id == 0)
             }
             else $board=$boardloaded[$classe];
             $var=!$var;
+            $langs->load("other");
             print '<tr '.$bc[$var].'><td width="16">'.img_object($titres[$key],$icons[$key]).'</td>';
             print '<td>'.$titres[$key].'</td>';
             print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
