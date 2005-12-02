@@ -39,7 +39,7 @@ if ($user->societe_id > 0)
 }
 
 if ($sortorder == "") {
-  $sortorder="DESC";
+  $sortorder="";
 }
 if ($sortfield == "") {
   $sortfield="f.date DESC, f.gain ASC";
