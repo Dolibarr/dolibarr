@@ -28,7 +28,7 @@
 
 require ("../../../master.inc.php");
 
-$month = "10";
+$month = "11";
 $year = "2005";
 
 
@@ -63,7 +63,7 @@ if ( $resqls )
 		}
 	      else
 		{
-		  print "Error user id missing\n";
+		  print "Error user id missing $userlid in llx_user  \n";
 		}
 	    }
 	  else
