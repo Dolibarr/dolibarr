@@ -174,7 +174,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $soc->fournisseur=$_POST["fournisseur"];
             $soc->code_fournisseur=$_POST["code_fournisseur"];
             $soc->adresse=$_POST["adresse"];
-            $soc->zip=$_POST["zip"];
+            $soc->cp=$_POST["cp"];
             $soc->ville=$_POST["ville"];
             $soc->departement_id=$_POST["departement_id"];
             $soc->tel=$_POST["tel"];
