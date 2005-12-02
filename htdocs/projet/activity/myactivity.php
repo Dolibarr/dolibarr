@@ -40,11 +40,13 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader("",$langs->trans("Myactivity"));
+$langs->load("projects");
+
+llxHeader("",$langs->trans("MyActivity"));
 
 $now = time();
 
-print_titre($langs->trans("Myactivity"));
+print_titre($langs->trans("MyActivity"));
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td width="30%" valign="top">';
