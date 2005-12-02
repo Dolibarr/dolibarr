@@ -34,7 +34,10 @@ function llxHeader($head = "", $urlp = "")
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/contact/index.php", $langs->trans("Contacts"));
-  $menu->add_submenu(DOL_URL_ROOT."/contact/fiche.php?action=create", $langs->trans("NewContact"));
+  if ($user->rights->societe->contact->creer)
+		{
+  		$menu->add_submenu(DOL_URL_ROOT."/contact/fiche.php?action=create", $langs->trans("NewContact"));
+		}
 
   $menu->add(DOL_URL_ROOT."/contact/index.php?userid=$user->id", $langs->trans("MyContacts"));
 

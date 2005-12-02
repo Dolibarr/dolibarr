@@ -504,10 +504,10 @@ if ($socid > 0)
         	if ($user->rights->societe->contact->creer)
     			{
         		print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+        	 	print img_edit();
         	}
-        	
-        	print img_edit();
-        	print '</a></td>';
+        		
+        		print '</a></td>';
 
             print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
             print img_object($langs->trans("Rendez-Vous"),"action");
