@@ -203,8 +203,11 @@ else
     if ($user->societe_id == 0)
     {
         print '<div class="tabsAction">';
-
-        print '<a class="butAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+				
+				if ($user->rights->societe->contact->creer)
+    		{
+        	print '<a class="butAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+        }
 
         print "</div>";
     }
