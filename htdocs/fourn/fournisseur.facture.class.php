@@ -556,7 +556,7 @@ class FactureFournisseur
 		$this->nbtodo=$this->nbtodolate=0;
 		$sql = 'SELECT ff.rowid,'.$this->db->pdate('ff.date_lim_reglement').' as datefin';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-		$sql.= ' WHERE ff.paye=0;';
+		$sql.= ' WHERE ff.paye=0';
 		if ($user->societe_id) $sql.=' AND fk_soc = '.$user->societe_id;
 		$resql=$this->db->query($sql);
 		if ($resql)
