@@ -137,7 +137,7 @@ if ( $resqls )
 	    {
 	      $sql = "INSERT INTO vtiger.troubletickets (ticketid, parent_id, priority, product_id, severity, status, category, update_log, title, description, solution) values ";
 	      $sql .= " (".$tid.", '', 'High', '', 'Major', 'Open', 'Big Problem','";
-	      $sql .= strftime("%E %d %B %Y %H:%M:%S", time())." by dolibarr--//--Ticket created. Assigned to $username--//--'";
+	      $sql .= strftime("%A %d %B %Y %H:%M:%S", time())." by dolibarr--//--Ticket created. Assigned to $username--//--'";
 	      $sql .= ", '".$title."', '".$desc."', '')";
 	      
 	      $result = 1;
