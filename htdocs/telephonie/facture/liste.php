@@ -42,7 +42,7 @@ if ($sortorder == "") {
   $sortorder="DESC";
 }
 if ($sortfield == "") {
-  $sortfield="f.date";
+  $sortfield="f.date DESC, f.gain ASC";
 }
 
 /*
@@ -134,7 +134,6 @@ if ($result)
       print '<td>&nbsp;</td>';
       print '<td>&nbsp;</td>';
     }
-
 
   print '<td align="center" ><input type="text" name="search_facture" size="8" maxlength="10" value="'.$_GET["search_facture"].'"></td>';
   print '</form>';
