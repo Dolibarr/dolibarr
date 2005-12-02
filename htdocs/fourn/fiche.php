@@ -347,7 +347,13 @@ if ( $societe->fetch($socid) )
   print '<tr class="liste_titre"><td><b>'.$langs->trans("Contact").'</b></td>';
   print '<td><b>Poste</b></td><td><b>'.$langs->trans("Tel").'</b></td>';
   print "<td><b>".$langs->trans("Fax")."</b></td><td><b>".$langs->trans("EMail")."</b></td>";
-  print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td></tr>";
+  
+  if ($user->rights->societe->contact->creer)
+  {
+  	print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
+  }
+  
+  print "</tr>";
     
   $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
   $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -373,15 +379,20 @@ if ( $societe->fetch($socid) )
       print ' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
       if ($obj->note)
-	{
-	  print "<br>".nl2br($obj->note);
-	}
+			{
+	  		print "<br>".nl2br($obj->note);
+			}
       print "</td>";
       print "<td>$obj->poste&nbsp;</td>";
       print '<td><a href="../comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
       print '<td><a href="../comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
       print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
-      print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">".img_edit()."</a></td>";
+      
+      if ($user->rights->societe->contact->creer)
+  		{
+      	print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">".img_edit()."</a></td>";
+    	}
+    	
       print "</tr>\n";
       $i++;
     }
