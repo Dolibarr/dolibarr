@@ -142,9 +142,8 @@ class CommunicationTelephonique {
 	$this->cout_vente = ( ($this->duree * $this->cout_temp_vente / 60));
 
 	$this->cout_vente = ( $this->cout_vente * ( 1 - ($this->remise / 100)));
-
-	$this->cout_vente = $this->cout_vente + $this->cout_fixe_vente;
-
+	/* Ajouté round le 2/12/05 */
+	$this->cout_vente = round(($this->cout_vente + $this->cout_fixe_vente), 3);
       }
     else
       {
