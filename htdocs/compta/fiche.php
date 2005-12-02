@@ -427,7 +427,10 @@ if ($socid > 0)
         }
       }
 
-    print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
+		if ($user->rights->societe->contact->creer)
+    {
+    	print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
+    }
 
     print '</div>';
     print "<br>\n";
@@ -497,7 +500,12 @@ if ($socid > 0)
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 
         	print '<td align="center">';
-        	print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+        	
+        	if ($user->rights->societe->contact->creer)
+    			{
+        		print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+        	}
+        	
         	print img_edit();
         	print '</a></td>';
 
