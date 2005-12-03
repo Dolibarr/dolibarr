@@ -1,6 +1,5 @@
 # Dolibarr language file - fr_FR - products
 ProductServiceCard=Fiche produit/service
-ProductCard=Fiche produit
 Products=Produits
 Services=Services
 Product=Produit
@@ -70,7 +69,6 @@ ListOfStockMovements=Liste des mouvements de stock
 NoPhotoYet=Pas de photo disponible pour l'instant
 BuiingPrice=Prix d'achat
 SupplierCard=Fiche fournisseur
-ProductCard=Fiche produit
 CommercialCard=Fiche commerciale
 AllWays=Chemin pour trouver votre produit dans le stock
 NoCat=Votre produit n'appartient à aucune catégorie

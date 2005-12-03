@@ -48,7 +48,7 @@ $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
 
-llxHeader("","",$langs->trans("ProductCard"));
+llxHeader("","",$langs->trans("CardProduct0"));
 
 if ($_POST["action"] == "create_stock")
 {
@@ -168,7 +168,7 @@ if ($_GET["id"] || $_GET["ref"])
         $head[$h][1] = $langs->trans('Documents');
         $h++;
 
-        dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+        dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type);
 
         print($mesg);
 
