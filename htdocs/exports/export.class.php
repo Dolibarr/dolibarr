@@ -58,7 +58,7 @@ class Export
      *    \param  user      Objet utilisateur qui exporte
      *    \param  filter    Code export pour charger un lot de données particulier
      */
-    function load_arrays($user,$filter)
+    function load_arrays($user,$filter='')
     {
         dolibarr_syslog("Export::load_arrays user=$user filter=$filter");
 

@@ -91,7 +91,7 @@ if (sizeof($export->array_export_code))
         print $export->array_export_module[$key]->getName();
         print '</td><td>';
         print $export->array_export_label[$key];
-        print '</td><td>';
+        print '</td><td width="24">';
         print '<a href="'.DOL_URL_ROOT.'/exports/export.php?datatoexport='.$export->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
         print '</td></tr>';
     }
