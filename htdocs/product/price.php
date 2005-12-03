@@ -222,7 +222,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 
 
 // Liste des evolutions du prix
-$sql = "SELECT p.rowid, p.price, ".$db->pdate("p.date_price")." as dp, u.login";
+$sql = "SELECT p.rowid, p.price, ".$db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
 $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, llx_user as u";
 $sql .= " WHERE fk_product = ".$product->id;
 $sql .= " AND p.fk_user_author = u.rowid ";
@@ -265,10 +265,15 @@ if ($result)
             $objp = $db->fetch_object($result);
             $var=!$var;
             print "<tr $bc[$var]>";
+        
+            // Date
             print "<td>".dolibarr_print_date($objp->dp,"%d %b %Y %H:%M:%S")."</td>";
+            
+            // Prix
             print "<td>".price($objp->price)."</td>";
-            print "<td>".$objp->login."</td>";
 
+            // User
+            print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
             print "</tr>\n";
             $i++;
         }
