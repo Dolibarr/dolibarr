@@ -114,6 +114,7 @@ class MenuLeft {
                 if($user->admin)
                 {
                   $langs->load("admin");
+                  $langs->load("users");
 
                   $newmenu->add(DOL_URL_ROOT."/admin/index.php?leftmenu=setup", $langs->trans("Setup"));
                   if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/index.php", $langs->trans("GlobalSetup"));
