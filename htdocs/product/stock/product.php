@@ -168,7 +168,8 @@ if ($_GET["id"] || $_GET["ref"])
         $head[$h][1] = $langs->trans('Documents');
         $h++;
 
-        dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type);
+        $titre=$langs->trans("CardProduct".$product->type);
+        dolibarr_fiche_head($head, $hselected, $titre);
 
         print($mesg);
 
