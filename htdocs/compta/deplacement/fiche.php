@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -63,6 +62,7 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
   if ($id)
     {
       Header ( "Location: fiche.php?id=".$id);
+      exit;
     }
   else
     {
@@ -87,6 +87,7 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
   if ($result > 0)
     {
       Header ( "Location: fiche.php?id=".$_POST["id"]);
+      exit;
     }
   else
     {
@@ -170,10 +171,10 @@ else
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Kilometers").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
 
-	      print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+	      print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
 	      print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
-	      print '</form><br>';
+	      print '</form>';
 	      
 	      print '</div>';
 	    } 
@@ -208,7 +209,7 @@ else
 	      print dolibarr_print_date($deplacement->date);
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Kilometers").'</td><td>'.$deplacement->km.'</td></tr>';    
-	      print "</table><br>";
+	      print "</table>";
 	      
 	      print '</div>';
 	    }

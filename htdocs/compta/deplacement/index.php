@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -52,9 +51,11 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT s.nom, s.idp, d.km,".$db->pdate("d.dated")." as dd, u.name, u.firstname, d.rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u ";
-$sql .= " WHERE d.fk_soc = s.idp AND d.fk_user = u.rowid";
+$sql = "SELECT s.nom, s.idp,";                                  // Ou
+$sql.= " d.rowid, ".$db->pdate("d.dated")." as dd, d.km, ";     // Comment
+$sql.= " u.name, u.firstname";                                  // Qui
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u ";
+$sql.= " WHERE d.fk_soc = s.idp AND d.fk_user = u.rowid";
 
 if ($user->societe_id > 0)
 {
@@ -77,6 +78,7 @@ if ($resql)
   print_liste_field_titre($langs->trans("Date"),"index.php","d.dated","","&socidp=$socidp",'',$sortfield);
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&socidp=$socidp",'',$sortfield);
   print_liste_field_titre($langs->trans("Person"),"index.php","u.name","","&socidp=$socidp",'',$sortfield);
+  print_liste_field_titre($langs->trans("Distance"),"index.php","d.km","","&socidp=$socidp",'align="right"',$sortfield);
   print "</tr>\n";
 
   $var=true;
@@ -91,6 +93,7 @@ if ($resql)
       print '<td>'.dolibarr_print_date($objp->dd).'</td>';
       print '<td>' . img_object($langs->trans("ShowCompany"),"company").' '.$soc->nom_url . '</a></td>';
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
+      print '<td align="right">'.$objp->km.'</td>';
       print "</tr>\n";
       
       $i++;
