@@ -697,6 +697,16 @@ function img_disable($alt = "default")
 
 
 /**
+        \brief      Affiche logo help avec curseur "?"
+        \return     string      Retourne tag img
+*/
+function img_help()
+{
+  global $conf,$langs;
+  return '<img style="cursor: help;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0" alt="" title="">';
+}
+
+/**
         \brief      Affiche logo info
         \param      alt         Texte sur le alt de l'image
         \return     string      Retourne tag img
@@ -705,7 +715,7 @@ function img_info($alt = "default")
 {
   global $conf,$langs;
   if ($alt=="default") $alt=$langs->trans("Informations");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img style="cursor: help;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**

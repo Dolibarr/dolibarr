@@ -255,6 +255,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 
 
 llxHeader("","",$langs->trans("ProductServiceCard"));
+$html = new Form($db);
 
 
 /*
@@ -262,7 +263,6 @@ llxHeader("","",$langs->trans("ProductServiceCard"));
  */
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
-    $html = new Form($db);
     $product = new Product($db);
     if ($_error == 1)
     {
@@ -547,7 +547,6 @@ if ($_GET["id"] || $_GET["ref"])
 
         $langs->load("bills");
         print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
-        $html = new Form($db);
         print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '');
         print '</td></tr>';
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
@@ -639,7 +638,6 @@ print "\n</div><br>\n";
 
 if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 {
-    $htmls = new Form($db);
     $propal = New Propal($db);
 
     print '<table width="100%" class="noborder">';
@@ -712,7 +710,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
             print '<table class="noborder" width="100%">'.$otherprop;
             print '<input type="hidden" name="action" value="addinpropal">';
             print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("OtherPropals").'</td><td>';
-            $htmls->select_array("propalid", $otherprop);
+            $html->select_array("propalid", $otherprop);
             print '</td></tr>';
             print '<tr '.$bc[$var].'><td>'. strftime("%d %b",$objp->dp)."</td><td nowrap>\n";
             print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");

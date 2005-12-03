@@ -829,9 +829,16 @@ padding: 2px;
 /* ============================================================================== */
 /* Tooltips                                                                       */
 /* ============================================================================== */
-div.tooltip {
-position:absolute; top: 0px; left: 0px; z-index: 2; width: 300px; visibility:hidden; font: 8pt 'MS Comic Sans','Arial',sans-serif; 
-background-color: #FFFFE6; padding: 8px; border: 1px solid black;
+
+#dhtmltooltip
+{
+position: absolute;
+width: 200px;
+border: 1px solid #444444;
+padding: 2px;
+background-color: lightyellow;
+visibility: hidden;
+z-index: 100;
 }
 
 
