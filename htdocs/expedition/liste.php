@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -58,17 +57,17 @@ $offset = $limit * $_GET["page"] ;
 llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut" ;
-$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e ";
+$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
 $sql_add = " WHERE ";
 if ($socidp)
 { 
-  $sql .= $sql_add . " s.idp = $socidp"; 
+  $sql.= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = ".$socidp; 
   $sql_add = " AND ";
 }
-
 if (strlen($_POST["sf_ref"]) > 0)
 {
-  $sql .= $sql_add . " e.ref like '%".$_POST["sf_ref"] . "%'";
+  $sql.= $sql_add . " e.ref like '%".$_POST["sf_ref"] . "%'";
 }
 
 $expedition = new Expedition($db);
