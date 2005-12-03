@@ -78,7 +78,6 @@ select.flat
 	font: 11px arial,verdana,heletica, sans-serif;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px; 
-	border-collapse: nocollapse;
 	border-left: 1px solid #cccccc;
 	border-right: 1px solid #aaaaaa;
 	border-top: 1px solid #dddddd;
@@ -91,7 +90,6 @@ select.flat
 	font: 11px arial,verdana,heletica, sans-serif;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px; 
-	border-collapse: nocollapse;
 	border-left: 1px solid #aaaaaa;
 	border-right: 1px solid #cccccc;
 	border-top: 1px solid #aaaaaa;
@@ -356,7 +354,7 @@ div.formsearch
   top: 0px;
   left: 130px;
   padding: 4px; 
-  vertical-align: center;
+  vertical-align: middle;
   margin-bottom: 10px;
 }
 

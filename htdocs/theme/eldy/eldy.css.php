@@ -364,7 +364,7 @@ div.formsearch
   top: 0px;
   left: 130px;
   padding: 4px; 
-  vertical-align: center;
+  vertical-align: middle;
   margin-bottom: 10px;
 }
 
@@ -896,13 +896,12 @@ border-width:0px;
 color:#0B63A2;
 vertical-align:middle;
 cursor: pointer; 
-cursor: hand;
 }
 
 
 
 /* ============================================================================== */
- *  Autre (telephonie)
+/*  Autre (telephonie)                                                            */
 /* ============================================================================== */
 
 #corpForm fieldset {	/*** Mise en forme des cadres ***/
