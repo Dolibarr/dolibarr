@@ -44,15 +44,17 @@ if (!$user->rights->produit->lire) accessforbidden();
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
+
 /*
  *
  */
 if ($_GET["action"] == 'fastappro')
 {
-  $product = new Product($db);
-  $product->fetch($_GET["id"]);
-  $result = $product->fastappro($user);
-  Header("Location: fiche.php?id=".$_GET["id"]);
+    $product = new Product($db);
+    $product->fetch($_GET["id"]);
+    $result = $product->fastappro($user);
+    Header("Location: fiche.php?id=".$_GET["id"]);
+    exit;
 }
 
 
@@ -80,6 +82,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     if ($id > 0)
     {
         Header("Location: fiche.php?id=$id");
+        exit;
     }
     else
     {
@@ -158,6 +161,8 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
                 $db->commit();
 
                 Header("Location: fiche.php?id=$id");
+                $db->close();
+                exit;
             }
             else	if ($id == -3)
             {
@@ -334,13 +339,14 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 /*
  * Fiche produit
  */
-if ($_GET["id"])
+if ($_GET["id"] || $_GET["ref"])
 {
 
     if ($_GET["action"] <> 're-edit')
     {
         $product = new Product($db);
-        $result = $product->fetch($_GET["id"]);
+        if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+        if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
     }
 
     if ( $result )
@@ -416,7 +422,10 @@ if ($_GET["id"])
     		$head[$h][1] = $langs->trans('Documents');
     		$h++;
 
-            dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+            
+            $titre=$langs->trans("CardProduct".$product->type);
+            dolibarr_fiche_head($head, $hselected, $titre);
+
 
             print($mesg);
             
@@ -429,8 +438,15 @@ if ($_GET["id"])
             if ($product->type == 1) $nblignes++;
 
             // Reference
-            print '<td width="15%">'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
-
+            print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+            $product->load_previous_next_ref();
+            $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+            $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+            if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+            if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+            print '</td>';
+            
             if ($product->is_photo_available($conf->produit->dir_output))
             {
                 // Photo
@@ -441,7 +457,7 @@ if ($_GET["id"])
             
             print '</tr>';
 
-            // Libellé
+            // Libelle
             print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
             print '</tr>';
 

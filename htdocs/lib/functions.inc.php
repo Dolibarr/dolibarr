@@ -219,21 +219,25 @@ function dolibarr_syslog($message, $level=LOG_ERR)
 
 /**
 		\brief      Affiche le header d'une fiche
-		\param	    links		liens
-		\param	    active      0 par défaut
-		\param      title       titre ("" par defaut)
+		\param	    links		Tableau de titre d'onglets
+		\param	    active      0=onglet non actif, 1=onglet actif
+		\param      title       Titre tabelau ("" par defaut)
 */
 function dolibarr_fiche_head($links, $active=0, $title='')
 {
     print '<div class="tabs">'."\n";
 
-    if (strlen($title))
+    // Affichage titre
+    if ($title)
     {
         $limittitle=30;
-        if (strlen($title) > $limittitle) print '<a class="tabTitle">'.substr($title,0,$limittitle).'...</a>';
-        else print '<a class="tabTitle">'.$title.'</a>';
+        print '<a class="tabTitle">';
+        if (strlen($title) > $limittitle) print substr($title,0,$limittitle).'...';
+        else print $title;
+        print '</a>';
     }
 
+    // Affichage onglets
     for ($i = 0 ; $i < sizeof($links) ; $i++)
     {
         if ($links[$i][2] == 'image')
@@ -254,6 +258,7 @@ function dolibarr_fiche_head($links, $active=0, $title='')
     }
 
     print "</div>\n";
+    
     print '<div class="tabBar">'."\n\n";
 }
 

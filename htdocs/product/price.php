@@ -80,7 +80,8 @@ if ($_POST["action"] == 'update_price' &&
 llxHeader("","",$langs->trans("Price"));
 
 $product = new Product($db);
-$result = $product->fetch($_GET["id"]);
+if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
 
 $h=0;
@@ -146,12 +147,24 @@ $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
 $head[$h][1] = $langs->trans('Documents');
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+$titre=$langs->trans("CardProduct".$product->type);
+dolibarr_fiche_head($head, $hselected, $titre);
 
 print '<table class="border" width="100%">';
+
+// Reference
 print '<tr>';
-print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">'.$product->ref.'</td>';
+print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
+$product->load_previous_next_ref();
+$previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+$next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+print '</td>';
 print '</tr>';
+
+// Libelle
 print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
 print '</tr>';
 

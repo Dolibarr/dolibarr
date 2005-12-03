@@ -38,20 +38,23 @@ $user->getrights('produit');
 if (!$user->rights->produit->lire)
 	accessforbidden();
 
-$productid=empty($_GET['id']) ? 0 : intVal($_GET['id']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
-if ($productid > 0)
+
+$product = new Product($db);
+if ($_GET['id'] || $_GET["ref"])
 {
-	$product = new Product($db);
-	if ($product->fetch($productid))
+    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+
     $prodref = sanitize_string($product->ref);
     $upload_dir = $conf->produit->dir_output.'/'.$prodref;
 }
 
+
 /*
  * Action envoie fichier
  */
-if ( $_POST["sendit"] && $conf->upload)
+if ($_POST["sendit"] && $conf->upload)
 {
     /*
      * Creation répertoire si n'existe pas
@@ -79,7 +82,7 @@ if ( $_POST["sendit"] && $conf->upload)
 llxHeader();
 
 
-if ($productid > 0)
+if ($product->id)
 {
 	if ( $error_msg )
 	{ 
@@ -157,7 +160,8 @@ if ($productid > 0)
 	$hselected=$h;
 	$h++;
 
-	dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+    $titre=$langs->trans("CardProduct".$product->type);
+    dolibarr_fiche_head($head, $hselected, $titre);
 
     // Construit liste des fichiers
     clearstatcache();
@@ -188,9 +192,23 @@ if ($productid > 0)
 //            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
     }
     
-    print '<table class="border"width="100%">';
-    print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$product->ref.'</td></tr>';
-    print '<tr><td width="30%">'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
+    print '<table class="border" width="100%">';
+
+    // Reference
+    print '<tr>';
+    print '<td width="28%">'.$langs->trans("Ref").'</td><td colspan="3">';
+    $product->load_previous_next_ref();
+    $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+    $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+    if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+    if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+    print '</td>';
+    print '</tr>';
+
+    // Libelle
+    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
+
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';
@@ -263,7 +281,6 @@ if ($productid > 0)
 	}
 	print '</table>';
 
-    print '</div>';
 }
 else
 {

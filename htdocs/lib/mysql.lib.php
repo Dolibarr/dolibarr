@@ -179,6 +179,31 @@ class DoliDb
         return $this->db;
     }
 
+
+    /**
+            \brief          Renvoie la version du serveur
+            \return	        string      Chaine version
+    */
+    function getVersion()
+    {
+        $resql=$this->query('SELECT VERSION()');
+        $row=$this->fetch_row($resql);
+        return $row[0];
+    }
+        
+        
+    /**
+            \brief          Renvoie l'id de la connection
+            \return	        string      Id connection
+    */
+    function getConnectId()
+    {
+        $resql=$this->query('SELECT CONNECTION_ID()');
+        $row=$this->fetch_row($resql);
+        return $row[0];
+    }
+        
+        
     /**
             \brief          Création d'une nouvelle base de donnée
             \param	        database		nom de la database à créer

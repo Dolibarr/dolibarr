@@ -52,7 +52,7 @@ $types[1] = $langs->trans("Service");
  * Actions
  */
 
-if ($_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+if ($_POST["sendit"] && $conf->global->MAIN_UPLOAD_DOC)
 {
     if ($_GET["id"])
     {
@@ -80,11 +80,12 @@ if ($_GET["action"] == 'delete' && $_GET["file"])
 llxHeader("","",$langs->trans("CardProduct0"));
 
 
-if ($_GET["id"])
+if ($_GET["id"] || $_GET["ref"])
 {
 
     $product = new Product($db);
-    $result = $product->fetch($_GET["id"]);
+    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
     if ($result)
     {
@@ -157,14 +158,26 @@ if ($_GET["id"])
 		$head[$h][1] = $langs->trans('Documents');
 		$h++;
 
-        dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+        $titre=$langs->trans("CardProduct".$product->type);
+        dolibarr_fiche_head($head, $hselected, $titre);
 
         print($mesg);
 
         print '<table class="border" width="100%">';
+
+        // Reference
         print '<tr>';
-        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">'.$product->ref.'</td>';
+        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
+        $product->load_previous_next_ref();
+        $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+        $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+        if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+        if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+        print '</td>';
         print '</tr>';
+
+        // Libelle
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
         print '</tr>';
 

@@ -98,12 +98,13 @@ if ($_POST["action"] == "transfert_stock" && $_POST["cancel"] <> $langs->trans("
  * Fiche stock
  *
  */
-if ($_GET["id"])
+if ($_GET["id"] || $_GET["ref"])
 {
-
     $product = new Product($db);
+    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-    if ( $product->fetch($_GET["id"]))
+    if ($result > 0)
     {
         $h=0;
 
@@ -175,9 +176,16 @@ if ($_GET["id"])
 
         // Reference
         print '<tr>';
-        print '<td width="15%">'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
+        print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+        $product->load_previous_next_ref();
+        $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+        $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+        if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+        if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+        print '</td>';
         print '</tr>';
-
+        
         // Libellé
         print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
         print '</tr>';
@@ -194,7 +202,7 @@ if ($_GET["id"])
 
         // TVA
         $langs->load("bills");
-        print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.' %</td></tr>';
+        print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
 
         // Stock
         if ($product->type == 0 && $conf->stock->enabled)
@@ -221,9 +229,8 @@ if ($_GET["id"])
         print "</table>";
 
         /*
-        * Contenu des stocks
-        *
-        */
+         * Contenu des stocks
+         */
         print '<br><table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td><td width="60%">Valeur du stock</td></tr>';
         $sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
@@ -249,9 +256,8 @@ if ($_GET["id"])
     print '</div>';
 
     /*
-    * Correction du stock
-    *
-    */
+     * Correction du stock
+     */
     if ($_GET["action"] == "correction")
     {
         print_titre ("Correction du stock");
@@ -288,10 +294,10 @@ if ($_GET["id"])
         print '</form>';
 
     }
+    
     /*
-    * Transfert de pièces
-    *
-    */
+     * Transfert de pièces
+     */
     if ($_GET["action"] == "transfert")
     {
         print_titre ("Transfert de stock");
@@ -344,13 +350,13 @@ if ($_GET["id"])
         print '</form>';
 
     }
+    
     /*
-    *
-    *
-    */
+     *
+     */
     if ($_GET["action"] == "definir")
     {
-        print_titre ("Créer un stock");
+        print_titre($langs->trans("SetStock"));
         print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
         print '<input type="hidden" name="action" value="create_stock">';
         print '<table class="border" width="100%"><tr>';

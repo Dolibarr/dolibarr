@@ -404,17 +404,29 @@ class Product
 
 
     /**
-     *    \brief  Charge le produit/service en mémoire
-     *    \param  id          id du produit/service à charger
+     *      \brief      Charge le produit/service en mémoire
+     *      \param      id      Id du produit/service à charger
+     *      \param      ref     Ref du produit/service à charger
+     *      \return     int     <0 si ko, >0 si ok
      */
-    function fetch ($id)
+    function fetch($id='',$ref='')
     {
+        global $langs;
+
+        // Verification parametres
+        if (! $id && ! $ref)
+        {
+            $this->error=$langs->trans('ErrorWrongParameters');
+            return -1;
+        }
+
         $sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
         $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product WHERE rowid = $id";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product";
+        if ($id) $sql.= " WHERE rowid = ".$id;
+        if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
     
         $result = $this->db->query($sql) ;
-    
         if ( $result )
         {
             $result = $this->db->fetch_array();
@@ -451,7 +463,7 @@ class Product
             $this->db->free();
     
             $sql = "SELECT reel, fk_entrepot";
-            $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = ".$id;
+            $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = ".$this->id;
             $result = $this->db->query($sql) ;
             if ($result)
             {
@@ -491,6 +503,43 @@ class Product
     }
 
 
+    /**
+     *      \brief      Charge les propriétés ref_previous et ref_next
+     *      \param      filter      filtre
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_previous_next_ref($filtre='')
+    {
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product";
+        $sql.= " WHERE ref < '".addslashes($this->ref)."'";
+        if ($filter) $sql.=" AND ".$filter;
+        $result = $this->db->query($sql) ;
+        if (! $result)
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+        $row = $this->db->fetch_row($result);
+        $this->ref_previous = $row[0];
+
+        $sql = "SELECT MIN(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product";
+        $sql.= " WHERE ref > '".addslashes($this->ref)."'";
+        if ($filter) $sql.=" AND ".$filter;
+        $result = $this->db->query($sql) ;
+        if (! $result)
+        {
+            $this->error=$this->db->error();
+            return -2;
+        }
+        $row = $this->db->fetch_row($result);
+        $this->ref_next = $row[0];
+        
+        return 1;
+    }
+    
+    
     /**
      *    \brief    Charge tableau des stats propale pour le produit/service
      *    \param    socid       Id societe
