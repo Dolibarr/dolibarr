@@ -33,6 +33,8 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
+$langs->load("others");
+
 $user->getrights('produit');
 
 if (!$user->rights->produit->lire)
