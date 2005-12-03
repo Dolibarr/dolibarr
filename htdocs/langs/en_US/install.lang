@@ -78,3 +78,4 @@ NotAvailable=Not available
 YouMustCreateWithPermission=You must create file %s and set write permissions on it for web server during install process.
 CorrectProblemAndReloadPage=Correct problem and <a href="index.php">reload page</a> (Press F5 key).
 AlreadyDone=Already migrated
+DatabaseVersion=Database version

@@ -11,6 +11,7 @@ BillsStatistics=Statistiques factures
 CardBill=Fiche facture
 SupplierBill=Facture fournisseur
 SupplierBills=Factures fournisseurs
+BillContacts=Contacts facture
 Payment=Paiement
 Payments=Paiements
 ReceivedPayments=Paiements reçus

@@ -11,6 +11,7 @@ BillsStatistics=Invoices statistics
 CardBill=Invoice card
 SupplierBill=Supplier invoice
 SupplierBills=suppliers invoices
+BillContacts=Invoice contacts
 Payment=Payment
 Payments=Payments
 ReceivedPayments=Received payments

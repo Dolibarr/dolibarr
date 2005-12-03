@@ -108,7 +108,15 @@ if ($_POST["action"] == "set")
     }
 
 
-    /***************************************************************************************
+    // Affiche version
+    if ($ok)
+    {
+        $version=$db->getVersion();
+        print '<tr><td>';
+        print $langs->trans("DatabaseVersion").'</td><td>'.$version.'</td></tr>';
+    }
+
+    /**************************************************************************************
     *
     * Chargement fichiers tables/*.sql (non *.key.sql)
     * A faire avant les fichiers *.key.sql
@@ -175,7 +183,7 @@ if ($_POST["action"] == "set")
         }
     }
 
-
+    
     /***************************************************************************************
     *
     * Chargement fichiers tables/*.key.sql
@@ -203,10 +211,19 @@ if ($_POST["action"] == "set")
                     while (!feof ($fp))
                     {
                         $buf = fgets($fp, 4096);
-                        if (substr($buf, 0, 2) <> '--')
+
+                        // Cas special de lignes autorisees pour certaines versions uniquement
+                        if (eregi('^-- V([0-9]+)',$buf,$reg))
                         {
-                            $buffer .= $buf;
+                            if ($reg[1] && $reg[1] <= $version)
+                            {
+                                $buf=eregi_replace('^-- V([0-9]+)','',$buf);
+                                //print $buf.'<br>';
+                            }                      
                         }
+
+                        // Ajout ligne si non commentaire
+                        if (! eregi('^--',$buf)) $buffer .= $buf;
                     }
                     fclose($fp);
                 }
@@ -260,7 +277,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // Droits sur les tables
-        $grant_query=$db->getGrantForUser($dolibarr_main_db_user);
+        $grant_query=$db->getGrantForUserQuery($dolibarr_main_db_user);
         
         if ($grant_query)   // Seules les bases qui en ont besoin le definisse
         {
