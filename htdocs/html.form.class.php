@@ -50,7 +50,6 @@ class Form
     	\brief     Constructeur
         \param     DB      handler d'accès base de donnée
     */
-    
     function Form($DB)
     {
         $this->db = $DB;
@@ -58,6 +57,40 @@ class Form
         return 1;
     }
   
+    /**
+    	\brief      Retourne propriétés pour affichae d'un tooltip
+        \param      htmltooltip     Contenu html du tooltip
+        \return     string          Chaine des propriétés de declenchement du tooltip
+    */
+    function tooltip_properties($htmltooltip='Text for tooltip')
+    {
+        global $conf;
+        $s ='';
+        if ($conf->use_javascript)
+        {
+            $s.=' onmouseover="showtip(\''.$htmltooltip.'\')"';
+            $s.=' onMouseout="hidetip()"';
+        }
+        return $s;
+    }
+
+    /**
+    	\brief      Efface champ alt et title pour permettre utiliser dans un tooltip
+        \param      string          Chaine a nettoyer
+        \return     string          Chaine nettoyé
+    */
+    function tooltip_sanitize($string)
+    {
+        global $conf;
+        if ($conf->use_javascript)
+        {
+            // Supprime alt et title de text pour eviter conflit avec tooltip
+            $string=eregi_replace('alt="[^"]+"','',$string);
+            $string=eregi_replace('title="[^"]+"','',$string);
+        }
+        return $string;
+    }
+
     /**
      *    \brief      Retourne la liste déroulante des départements/province/cantons tout pays confondu ou pour un pays donné.
      *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.

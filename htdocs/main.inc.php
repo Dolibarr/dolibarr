@@ -533,7 +533,7 @@ function llxFooter($foot='')
     }
 
     // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
-    print "\n".'<div class="tabsAction">nbsp;</div>'."\n";
+    print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
     
     print "</body>\n";
     print "</html>\n";
