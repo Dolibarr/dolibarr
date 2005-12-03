@@ -304,7 +304,7 @@ function top_htmlhead($head, $title="", $target="")
 
     if ($conf->use_javascript)
     {
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib.js"></script>';
+        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>';
     }
     
     print "</head>\n";
@@ -322,7 +322,7 @@ function top_menu($head, $title="", $target="")
 
     top_htmlhead($head, $title, $target);
 
-    print '<body>';
+    print '<body><div id="dhtmltooltip"></div>';
 
     /*
      * Si la constante MAIN_NEED_UPDATE est définie (par le script de migration sql en général), c'est que
@@ -366,7 +366,10 @@ function top_menu($head, $title="", $target="")
         print '<a href="'.DOL_URL_ROOT.'/user/logout.php"';
         print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
         print '>';
-        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';
+        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+        print ' alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"';
+        print '>';
+        print '</a>';
     }
 
     print "</div><!-- class=tmenu -->\n";
@@ -513,7 +516,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
  
 function llxFooter($foot='') 
 {
-    global $dolibarr_auto_user, $micro_start_time;
+    global $conf, $dolibarr_auto_user, $micro_start_time;
     
     print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
     print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->';
@@ -523,7 +526,16 @@ function llxFooter($foot='')
         print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*(microtime(true)-$micro_start_time)).' ms"</script>';
         print "\n";
     } 
+
+    if ($conf->use_javascript)
+    {
+        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>';
+    }
+
+    // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+    print "\n".'<div class="tabsAction">nbsp;</div>'."\n";
     
-    print "</body>\n</html>\n";
+    print "</body>\n";
+    print "</html>\n";
 }
 ?>
