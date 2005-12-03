@@ -565,6 +565,7 @@ insert into llx_c_pays (rowid,code,libelle) values (24, 'AR', 'Argentine'      )
 insert into llx_c_pays (rowid,code,libelle) values (25, 'CM', 'Cameroun'       );
 insert into llx_c_pays (rowid,code,libelle) values (26, 'PT', 'Portugal'       );
 insert into llx_c_pays (rowid,code,libelle) values (27, 'SA', 'Arabie Saoudite');
+insert into llx_c_pays (rowid,code,libelle) values (28, 'MC', 'Monaco'         );
 
 --
 -- Types etat propales
