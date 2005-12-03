@@ -403,7 +403,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 		print_liste_field_titre($langs->trans('Bill'),'paiement.php','facnumber','','','',$sortfield);
 		print_liste_field_titre($langs->trans('Company'),'paiement.php','s.nom','','','',$sortfield);
 		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield);
-		print_liste_field_titre($langs->trans('Type'),'paiement.php','libelle','','','',$sortfield);
+		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','','','',$sortfield);
 		print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','','','',$sortfield);
 		print_liste_field_titre($langs->trans('AmountTTC'),'paiement.php','fa_amount','','','align="right"',$sortfield);
 		print '<td>&nbsp;</td>';
