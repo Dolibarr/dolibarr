@@ -33,6 +33,7 @@ require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');

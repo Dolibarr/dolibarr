@@ -27,8 +27,9 @@
 		\version    $Revision$
 */
 
-
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
+
 
 $user->getrights('facture');
 if (!$user->rights->facture->lire)
@@ -74,10 +75,12 @@ if ($_GET["facid"])
 {
     $soc = new Societe($db, $fac->socidp);
     $soc->fetch($fac->socidp);
-		$head = facture_prepare_head($fac);
+
+    $head = facture_prepare_head($fac);
     $hselected = 2;
     if ($conf->use_preview_tabs) $hselected++;
     if ($fac->mode_reglement_code == 'PRE') $hselected++;
+
     dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
 

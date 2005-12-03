@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 
 $langs->load("bills");
 
