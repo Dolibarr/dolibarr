@@ -294,11 +294,6 @@ if ($_GET["id"] || $_GET["ref"])
         print '</div>';
         
         
-        // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
-        print '<div class="tabsAction">';
-        print '</div>';
-
-
         print '<table class="border" width="100%">';
 
         // Ligne de graph
@@ -360,8 +355,12 @@ if ($_GET["id"] || $_GET["ref"])
         print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td></tr>';
 
 
-
         print '</table>';
+
+
+        // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent en fin de page
+        print '<div class="tabsAction">';
+        print '</div>';
         
     }
 }
