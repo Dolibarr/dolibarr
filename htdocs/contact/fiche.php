@@ -276,10 +276,6 @@ if ($_GET["action"] == 'create')
 
     print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3" valign="note"><textarea name="note" cols="70" rows="'.ROWS_3.'">'.$contact->note.'</textarea></td></tr>';
 
-    print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
-    print $form->selectyesno("facturation",$contact->facturation);
-    print '</td></tr>';
-
     print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
     print "</table><br>";
 
@@ -365,10 +361,22 @@ elseif ($_GET["action"] == 'edit' && $_GET["id"])
     print $contact->note;
     print '</textarea></td></tr>';
 
-    print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
-    print $form->selectyesno("facturation",$contact->facturation);
-    print '</td></tr>';
-
+    $contact->load_ref_elements();
+    
+    if ($conf->facture->enabled)
+    {
+        print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
+        print $contact->ref_facturation?$contact->ref_facturation:$langs->trans("NoContactForAnyInvoice");
+        print '</td></tr>';
+    }
+    
+    if ($conf->contrat->enabled)
+    {
+        print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
+        print $contact->ref_contrat?$contact->ref_contrat:$langs->trans("NoContactForAnyContract");
+        print '</td></tr>';
+    }
+    
     print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
     if ($contact->user_id) print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">'.$contact->user_login.'</a>';
     else print $langs->trans("NoDolibarrAccess");
@@ -454,9 +462,21 @@ elseif ($_GET["id"])
     print nl2br($contact->note);
     print '</td></tr>';
     
-    print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
-    print yn($contact->facturation);
-    print '</td></tr>';
+    $contact->load_ref_elements();
+    
+    if ($conf->facture->enabled)
+    {
+        print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
+        print $contact->ref_facturation?$contact->ref_facturation:$langs->trans("NoContactForAnyInvoice");
+        print '</td></tr>';
+    }
+    
+    if ($conf->contrat->enabled)
+    {
+        print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
+        print $contact->ref_contrat?$contact->ref_contrat:$langs->trans("NoContactForAnyContract");
+        print '</td></tr>';
+    }
     
     print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
     if ($contact->user_id) print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">'.$contact->user_login.'</a>';

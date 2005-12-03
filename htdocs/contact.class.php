@@ -58,6 +58,11 @@ class Contact
     var $email;
     var $birthday;
 
+    var $ref_facturation;       // Nb de reference facture pour lequel il est contact
+    var $ref_contrat;           // Nb de reference contrat pour lequel il est contact
+    var $ref_commande;          // Nb de reference commande pour lequel il est contact
+    var $ref_propal;            // Nb de reference propal pour lequel il est contact
+
     /**
      *      \brief      Constructeur de l'objet contact
      *      \param      DB      Habler d'accès base
@@ -428,13 +433,13 @@ class Contact
     }
 
 
-  /*
-   *    \brief      Charge l'objet contact
-   *    \param      id          id du contact
-   *    \param      user        Utilisateur lié au contact pour une alerte
-   *    \return     int         1 si ok, -1 si erreur
-   */
-  function fetch($id, $user=0)
+    /*
+     *    \brief      Charge l'objet contact
+     *    \param      id          id du contact
+     *    \param      user        Utilisateur lié au contact pour une alerte
+     *    \return     int         1 si ok, -1 si erreur
+     */
+    function fetch($id, $user=0)
     {
         $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname,";
         $sql.= " c.address, c.cp, c.ville,";
@@ -494,6 +499,7 @@ class Contact
             $this->db->free($resql);
     
     
+            // Recherche le user Dolibarr lié à ce contact
             $sql = "SELECT u.rowid ";
             $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
             $sql .= " WHERE u.fk_socpeople = ". $id;
@@ -516,32 +522,7 @@ class Contact
                 return -1;
             }
     
-    
-            $sql = "SELECT count(*) as nb";
-            $sql .= " FROM ".MAIN_DB_PREFIX."contact_facture";
-            $sql .= " WHERE fk_contact = ". $id;
-    
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $obj=$this->db->fetch_object($resql);
-                if ($obj->nb)
-                {
-                    $this->facturation = 1;
-                }
-                else
-                {
-                    $this->facturation = 0;
-                }
-                $this->db->free($resql);
-            }
-            else
-            {
-                dolibarr_syslog("Error in Contact::fetch() selectcontactfacture sql=$sql");
-           	    $this->error="Error in Contact::fetch() selectcontactfacture - ".$this->db->error()." - ".$sql;
-                return -1;
-            }
-    
+            // Charge alertes du user
             if ($user)
             {
                 $sql = "SELECT fk_user";
@@ -577,6 +558,45 @@ class Contact
         }
     }
     
+    
+    /*
+     *    \brief        Charge le nombre d'elements auquel est lié ce contact
+     *                  ref_facturation
+     *                  ref_contrat
+     *                  ref_commande
+     *                  ref_propale
+     *    \return       int         1 si ok, -1 si erreur
+     */
+    function load_ref_elements()
+    {
+        // Compte les elements pour lesquels il est contact
+        $sql ="SELECT tc.element, count(ec.rowid) as nb";
+        $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
+        $sql.=" WHERE ec.fk_c_type_contact = tc.rowid";
+        $sql.=" AND element_id = ". $id;
+        $sql.=" GROUP BY tc.element";
+        
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+        $obj=$this->db->fetch_object($resql);
+        if ($obj->nb)
+        {
+            if ($obj->element=='facture')  $this->ref_facturation = $obj->nb;
+            if ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
+            if ($obj->element=='commande') $this->ref_commande = $obj->nb;
+            if ($obj->element=='propal')   $this->ref_propal = $obj->nb;
+        }
+        $this->db->free($resql);
+        }
+        else
+        {
+        dolibarr_syslog("Error in Contact::fetch() selectcontactfacture sql=$sql");
+        $this->error="Error in Contact::fetch() selectcontactfacture - ".$this->db->error()." - ".$sql;
+        return -1;
+        }
+            
+    }
 
   /*
    *    \brief      Efface le contact de la base et éventuellement de l'annuaire LDAP
