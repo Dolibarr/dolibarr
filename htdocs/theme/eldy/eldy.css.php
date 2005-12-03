@@ -416,8 +416,8 @@ a.tab:link {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius-topleft:4px;
-    -moz-border-radius-topright:4px;
+    -moz-border-radius-topleft:6px;
+    -moz-border-radius-topright:6px;
 
     border-right: 1px solid #555555;
     border-left: 1px solid #D8D8D8;
@@ -430,8 +430,8 @@ a.tab:visited {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius-topleft:4px;
-    -moz-border-radius-topright:4px;
+    -moz-border-radius-topleft:6px;
+    -moz-border-radius-topright:6px;
 
     border-right: 1px solid #555555;
     border-left: 1px solid #D8D8D8;
@@ -444,8 +444,8 @@ a.tab#active {
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
-    -moz-border-radius-topleft:4px;
-    -moz-border-radius-topright:4px;
+    -moz-border-radius-topleft:6px;
+    -moz-border-radius-topright:6px;
 
     border-right: 1px solid #555555;
     border-left: 1px solid #D8D8D8;
@@ -457,8 +457,8 @@ a.tab:hover {
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
-    -moz-border-radius-topleft:4px;
-    -moz-border-radius-topright:4px;
+    -moz-border-radius-topleft:6px;
+    -moz-border-radius-topright:6px;
 
     border-right: 1px solid #555555;
     border-left: 1px solid #D8D8D8;
@@ -588,16 +588,14 @@ margin: 0px 0px;
 }
 
 table.border {
-border: 1px solid #8C9CAB;
-border-color: #8C9CAB;
+border: 1px solid #9CACBB;
 border-width: 1px;
 border-collapse: collapse;
 }
 
 table.border td {
 padding: 1px 2px;
-border: 1px solid #8C9CAB;
-border-color: #8C9CAB;
+border: 1px solid #9CACBB;
 border-width: 1px;
 border-collapse: collapse;
 }
