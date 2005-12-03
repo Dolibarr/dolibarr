@@ -113,11 +113,15 @@ class ModeleBoxes
                     {
                         $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
                         print img_object($langs->trans("Show"),$logo);
-                        print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'"';
-                        print ' title="'.$textewithnotags.'"';
-                        //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
-                        print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
-                        print '>';
+                        if (isset($contents[$i][$j]['url'])) print '</a>';
+                        print '</td><td '.$tdparam.'>';
+                        if (isset($contents[$i][$j]['url']))
+                        {
+                            print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
+                            //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
+                            print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+                            print '>';
+                        }
                     }
                     $maxlength=$this->MAXLENGTHBOX;
                     if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
@@ -131,7 +135,7 @@ class ModeleBoxes
                         $texte2=substr($texte2,0,$maxlength)."...";
                     }
                     print $texte;
-                    if ($contents[$i][$j]['url']) print '</a>';
+                    if (isset($contents[$i][$j]['url'])) print '</a>';
                     print $texte2;
                     print "</td>";
                 }
