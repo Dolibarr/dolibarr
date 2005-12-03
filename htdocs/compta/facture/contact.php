@@ -93,7 +93,7 @@ function select_societes_for_newconcat($facture, $selected = '', $htmlname = 'ne
 function select_type_contact($facture, $defValue, $htmlname = 'type', $source)
 {
 	$lesTypes = $facture->liste_type_contact($source);
-	print '<select size="0" name="'.$htmlname.'">';
+	print '<select class="flat" name="'.$htmlname.'">';
 	foreach($lesTypes as $key=>$value)
 	{
 		print '<option value="'.$key.'">'.$value.'</option>';
@@ -232,7 +232,7 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 
 		// Reference du facture
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $facture->ref;
 		print "</td></tr>";
 
@@ -255,9 +255,8 @@ if ($id > 0)
 		/*
 		 * Ajouter une ligne de contact
 		 * Non affiché en mode modification de ligne
-		 * ou si facture validée.
 		 */
-		if ($facture->statut <= 0 && $_GET["action"] != 'editline' && $user->rights->facture->creer)
+		if ($_GET["action"] != 'editline' && $user->rights->facture->creer)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';

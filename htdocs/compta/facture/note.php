@@ -83,6 +83,9 @@ if ($_GET["facid"])
 
     print '<table class="border" width="100%">';
 
+    // Reference
+	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+
     print '<tr><td>'.$langs->trans("Company").'</td>';
     print '<td colspan="3">';
     print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';

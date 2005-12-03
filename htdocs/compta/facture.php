@@ -629,6 +629,8 @@ if ($_GET['action'] == 'create')
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 
 	print '<table class="border" width="100%">';
+
+    // Reference
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 	print '<input name="facnumber" type="hidden" value="provisoire">';
 
@@ -1144,6 +1146,9 @@ else
 			*/
 			print '<table class="border" width="100%">';
 			
+            // Reference
+        	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+
 			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="5">';
