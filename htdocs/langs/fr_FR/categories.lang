@@ -26,4 +26,4 @@ ErrSameCatSelected=Vous avez sélectionné la même catégorie plusieurs fois
 ErrForgotCat=Vous avez oublié de choisir la catégorie
 ErrForgotField=Vous avez oublié de renseigner le champs
 ErrCatAlreadyExists=Ce nom est déjà utilisé
-AddProductToCat=Ajouter ce produit à une catégorie&nbsp;?
+AddProductToCat=Ajouter ce produit à une catégorie ?
