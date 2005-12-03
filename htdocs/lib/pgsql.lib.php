@@ -164,6 +164,58 @@ class DoliDb
         return $this->db;
     }
     
+    
+    /**
+            \brief          Renvoie la version du serveur
+            \return	        string      Chaine version
+    */
+    function getVersion()
+    {
+        return '?';
+    }
+        
+        
+    /**
+            \brief          Renvoie l'id de la connection
+            \return	        string      Id connection
+    */
+    function getConnectId()
+    {
+        return '?';
+    }
+
+
+    /**
+            \brief          Renvoie la commande sql qui donne les droits à user sur les tables
+            \param          databaseuse     User à autoriser
+            \return	        string          Requete sql
+    */
+    function getGrantForUserQuery($databaseuser)
+    {
+        // Scan tables pour générer le grant
+        $dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
+        
+        $handle=opendir($dir);
+        $table_list="";
+        while (($file = readdir($handle))!==false)
+        {
+            if (! ereg("\.key\.sql",$file) && ereg("^(.*)\.sql",$file,$reg))
+            {
+                if ($table_list) {
+                    $table_list.=", ".$reg[0];
+                }
+                else {
+                    $table_list.=$reg[0];
+                }
+            }
+        }
+        
+        // Genere le grant_query
+        $grant_query = 'GRANT ALL ON '.$table_list.' TO "'.$databaseuser.'";';
+        return $grant_query;
+    }
+        
+      
     /**
             \brief          Création d'une nouvelle base de donnée
             \param	        database		nom de la database à créer

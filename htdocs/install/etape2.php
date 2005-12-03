@@ -28,7 +28,6 @@
 
 include_once("./inc.php");
 
-$grant_query='';
 $etape = 2;
 $ok = 0;
 
@@ -63,7 +62,6 @@ if($dolibarr_main_db_type == "mysql")
 else
 {
     require_once($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-    require_once($dolibarr_main_document_root . "/lib/grant.postgres.php");
     $choix=2;
 }
 
@@ -262,7 +260,10 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // Droits sur les tables
-        if ($grant_query) {     // Non null si postgresql
+        $grant_query=$db->getGrantForUserQuery($dolibarr_main_db_user);
+        
+        if ($grant_query)   // Seules les bases qui en ont besoin le definisse
+        {
             if ($db->query($grant_query))
             {
                 print "<tr><td>Grant User</td><td>".$langs->trans("OK")."</td></tr>";

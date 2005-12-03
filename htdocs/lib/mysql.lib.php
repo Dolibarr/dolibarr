@@ -202,6 +202,16 @@ class DoliDb
         $row=$this->fetch_row($resql);
         return $row[0];
     }
+
+
+    /**
+            \brief          Renvoie la commande sql qui donne les droits sur les tables
+            \return	        string      Requete sql
+    */
+    function getGrantForUserQuery($databaseuser)
+    {
+        return '';
+    }
         
         
     /**
