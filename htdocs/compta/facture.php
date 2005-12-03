@@ -1098,38 +1098,6 @@ else
 			$author->id = $fac->user_author;
 			$author->fetch();
 
-/* // modification tache 4984, je laisse en commentaire pour test
-			$h = 0;
-
-			$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
-			$head[$h][1] = $langs->trans('CardBill');
-			$hselected = $h;
-			$h++;
-
-			if ($conf->use_preview_tabs)
-			{
-				$head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
-				$head[$h][1] = $langs->trans('Preview');
-				$h++;
-			}
-
-			if ($fac->mode_reglement_code == 'PRE')
-			{
-				$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-				$head[$h][1] = $langs->trans('StandingOrders');
-				$h++;
-			}
-
-			$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
-			$head[$h][1] = $langs->trans('Note');
-			$h++;
-			$head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
-			$head[$h][1] = $langs->trans('Info');
-			$h++;
-
-			dolibarr_fiche_head($head, $hselected, $langs->trans('Bill').' : '.$fac->ref);
-*/
-
 			$head = facture_prepare_head($fac);
  
 			dolibarr_fiche_head($head, 0, $langs->trans('Bill').' : '.$fac->ref);

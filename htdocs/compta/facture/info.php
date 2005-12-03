@@ -44,38 +44,6 @@ $fac->fetch($_GET["facid"]);
 $fac->info($_GET["facid"]);
 $soc = new Societe($db, $fac->socidp);
 $soc->fetch($fac->socidp);
-
-/* //laissé pour test tache 4984
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
-$head[$h][1] = $langs->trans("CardBill");
-$h++;
-
-if ($conf->use_preview_tabs)
-{
-    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
-    $head[$h][1] = $langs->trans("Preview");
-    $h++;
-}
-
-if ($fac->mode_reglement_code == 'PRE')
-{
-    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-    $head[$h][1] = $langs->trans("StandingOrders");
-    $h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
-$head[$h][1] = $langs->trans("Note");
-$h++;      
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
-$head[$h][1] = $langs->trans("Info");
-$hselected = $h;
-$h++;      
-*/
-
 $head = facture_prepare_head($fac);
 $hselected = 3;
 if ($conf->use_preview_tabs) $hselected++;
