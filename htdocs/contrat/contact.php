@@ -95,7 +95,7 @@ function select_societes_for_newconcat($contrat, $selected = '', $htmlname = 'ne
 function select_type_contact($contrat, $defValue, $htmlname = 'type', $source)
 {
 	$lesTypes = $contrat->liste_type_contact($source);
-	print '<select size="0" name="'.$htmlname.'">';
+	print '<select class="flat" name="'.$htmlname.'">';
 	foreach($lesTypes as $key=>$value)
 	{
 		print '<option value="'.$key.'">'.$value.'</option>';

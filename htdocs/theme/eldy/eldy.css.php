@@ -25,26 +25,25 @@ require("../../conf/conf.php");
 
 ?>
 
-/***** Style du fond *****/
+/* ============================================================================== */
+/* Styles par défaut                                                              */
+/* ============================================================================== */
+
 body {
     background-color: #F4F4F4;
-	font: 12px helvetica, verdana, arial, sans-serif;
+	color: #101010;
+	font-size: 12px;
+    font-family: arial,tahoma,verdana,helvetica;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
     margin-left: 0;
 }
-.body {
-    background-color: #F4F4F4;
-	color: #101010;
-	font: 12px helvetica, verdana, arial, sans-serif;
-}
 
-/***** Styles par défaut *****/
 a:link    { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:visited { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:active  { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:hover   { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
+a:hover   { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 input
 { 
     font: 12px helvetica, verdana, arial, sans-serif; 
@@ -61,8 +60,13 @@ input.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+input:focus
+{ 
+    background: #F0ECEC;
+}
 textarea  {
     font: 12px helvetica, verdana, arial, sans-serif;
+    background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -70,9 +74,14 @@ textarea  {
 textarea.flat
 { 
     font: 12px helvetica, verdana, arial, sans-serif;
+    background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+textarea:focus
+{ 
+    background: #F0ECEC;
 }
 select.flat
 {
@@ -81,6 +90,11 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+select:focus
+{ 
+    background: #F0ECEC;
+}
+
 .button  {
     font: 12px helvetica, verdana, arial, sans-serif;
 	font-size: 100%;
@@ -92,16 +106,9 @@ select.flat
 }
 
 
-div.body
-{
-    margin-top: 0px;
-    margin-bottom: 0;
-    margin-right: 0px;
-    margin-left: 0px;
-    padding: 0px;
-    font-family:arial,tahoma,verdana,helvetica;
-    font-size:12px;
-}
+/* ============================================================================== */
+/* Styles de positionnement des zones                                             */
+/* ============================================================================== */
 
 div.vmenuplusfiche
 {
@@ -139,9 +146,9 @@ div.fiche
 }
 
 
-/*
- *   Menu superieur et 1ere ligne tableau
- */
+/* ============================================================================== */
+/* Menu superieur et 1ere ligne tableau                                           */
+/* ============================================================================== */
 
 div.tmenu
 {
@@ -195,7 +202,7 @@ a.tmenu#sel
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
   background: #dee7ec;
-    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>);
+  background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>);
   border-right: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
   border-left: 1px solid #D8D8D8;
@@ -251,9 +258,9 @@ img.login
 }
 
 
-/*
- *   Barre de gauche
- */
+/* ============================================================================== */
+/* Barre de gauche                                                                */
+/* ============================================================================== */
 
 a.vmenu:link        { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:visited     { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
@@ -345,9 +352,10 @@ form {
 }
 
 
-/*
- *   Barre recherche
- */
+/* ============================================================================== */
+/* Barre recherche                                                                */
+/* ============================================================================== */
+
 div.formsearch
 {
   display: block;
@@ -361,9 +369,10 @@ div.formsearch
 }
 
 
-/*
- *   Barre onglets
- */
+/* ============================================================================== */
+/* Onglets                                                                        */
+/* ============================================================================== */
+
 div.tabs {
     top: 20px;
     margin: 1px 0px 0px 0px;
@@ -472,10 +481,11 @@ a.tabimage {
 }
 
 
-/*
- *   Boutons actions
- *   Nouvelle syntaxe à utiliser
- */
+/* ============================================================================== */
+/* Boutons actions                                                                */
+/* ============================================================================== */
+
+/* Nouvelle syntaxe à utiliser */
 
 a.butAction:link    { font: 12px helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
@@ -548,10 +558,7 @@ a.butActionDelete:visited { font: 12px helvetica, verdana, arial, sans-serif; fo
 a.butActionDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
-/*
-* Historique
-* A supprimer quand remplace par butXxx
-*/
+/* Ancienne syntaxe. A supprimer quand remplace par butXxx */
 
 a.tabAction:link    { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.tabAction:visited { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
@@ -564,9 +571,9 @@ a.butDelete:visited { font: 12px helvetica, verdana, arial, sans-serif; font-wei
 a.butDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
                       
-/*
- *   Tables
- */
+/* ============================================================================== */
+/* Tables                                                                         */
+/* ============================================================================== */
 
 .notopnoleft {
 border-collapse: collapse;
@@ -623,11 +630,6 @@ table.liste {
 border-collapse: collapse;
 width: 100%;
 }
-
-
-/*
- *  Tableaux
- */ 
 
 tr.liste_titre { 
 background: #7699A9;
@@ -713,7 +715,6 @@ border: 0px;
 }
 */
 
-
 /*
  *  Boxes
  */
@@ -794,9 +795,9 @@ div.titre {
 	text-decoration: none }
 
 
-/*
+/* ============================================================================== */
  * Formulaire confirmation
- */
+/* ============================================================================== */
 
 td.validtitle { 
            font-weight: bold;
@@ -817,11 +818,20 @@ tr.nonpayed {
 
 
 div.version { 
-  background: #F4F4F4;
-  text-align: right;
-  font-size: 9px;
- margin: 1px 0em 0em 0em;
- padding: 2px;
+background: #F4F4F4;
+text-align: right;
+font-size: 9px;
+margin: 1px 0em 0em 0em;
+padding: 2px;
+}
+
+
+/* ============================================================================== */
+/* Tooltips                                                                       */
+/* ============================================================================== */
+div.tooltip {
+position:absolute; top: 0px; left: 0px; z-index: 2; width: 300px; visibility:hidden; font: 8pt 'MS Comic Sans','Arial',sans-serif; 
+background-color: #FFFFE6; padding: 8px; border: 1px solid black;
 }
 
 
@@ -891,10 +901,9 @@ cursor: hand;
 
 
 
-/*
- *  Autre
- */
-
+/* ============================================================================== */
+ *  Autre (telephonie)
+/* ============================================================================== */
 
 #corpForm fieldset {	/*** Mise en forme des cadres ***/
 	margin: 0;

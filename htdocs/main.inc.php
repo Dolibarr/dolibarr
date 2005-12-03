@@ -323,7 +323,6 @@ function top_menu($head, $title="", $target="")
     top_htmlhead($head, $title, $target);
 
     print '<body>';
-    print '<div class="body">';
 
     /*
      * Si la constante MAIN_NEED_UPDATE est définie (par le script de migration sql en général), c'est que
@@ -518,7 +517,6 @@ function llxFooter($foot='')
     
     print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
     print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->';
-    print "\n</div>\n".'<!-- end div class="body" -->'."\n";
     
     if (isset($_SERVER['DOL_TUNING']))
     {

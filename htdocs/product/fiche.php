@@ -294,7 +294,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("Status").'</td><td>';
-    print '<select name="statut">';
+    print '<select class="flat" name="statut">';
     print '<option value="1">'.$langs->trans("OnSell").'</option>';
     print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
     print '</td></tr>';
@@ -330,7 +330,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     print '<textarea name="note" rows="8" cols="50">';
     print "</textarea></td></tr>";
 
-    print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+    print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
     print '</table>';
     print '</form>';
 }
@@ -551,7 +551,7 @@ if ($_GET["id"] || $_GET["ref"])
         print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '');
         print '</td></tr>';
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-        print '<select name="statut">';
+        print '<select class="flat" name="statut">';
         if ($product->envente)
         {
             print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
