@@ -260,7 +260,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // Droits sur les tables
-        $grant_query=$db->getGrantForUserQuery($dolibarr_main_db_user);
+        $grant_query=$db->getGrantForUser($dolibarr_main_db_user);
         
         if ($grant_query)   // Seules les bases qui en ont besoin le definisse
         {
