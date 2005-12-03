@@ -33,7 +33,7 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
-$langs->load("others");
+$langs->load("other");
 
 $user->getrights('produit');
 
