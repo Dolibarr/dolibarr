@@ -256,55 +256,50 @@ if ( $societe->fetch($socid) )
     /*
      * Liste des factures associées
      */
-    $langs->load("bills");
-    
-    $max=5;
-    
-    $sql = "SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut,".$db->pdate("p.datef")." as df, total_ttc as amount, paye";
-    $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as p";
-    $sql.= " WHERE p.fk_soc = ".$societe->id;
-    $sql.= " ORDER BY p.datef DESC";
-    $sql.= " ".$db->plimit($max+1);
-    
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $i = 0 ;
-        $num = $db->num_rows($resql);
-        if ($num > 0)
-        {
-            print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre">';
-            print "<td colspan=\"4\">";
-            print "<table class=\"noborder\" width=\"100%\"><tr><td>".$langs->trans("LastSuppliersBills",min($num,$max))."</td><td align=\"right\"><a href=\"facture/index.php?socid=$societe->id\">".$langs->trans("AllBills")." (".$num.")</td></tr></table>";
-            print "</td></tr>";
-        }
-        $facturestatic = new FactureFournisseur($db);
-        while ($i < min($num,$max))
-        {
-            $obj = $db->fetch_object($resql);
-            $var=!$var;
-    
-            print "<tr $bc[$var]>";
-            print '<td>';
-            print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
-            print img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,14).'</td>';
-            print '<td align="right" width="80">'.dolibarr_print_date($obj->df).'</td>';
-            print '<td align="right">'.price($obj->amount).'</td>';
-            print '<td align="center">'.$facturestatic->LibStatutShort($obj->paye,$obj->fk_statut).'</td>';
-            print "</tr>";
-            $i++;
-        }
-        $db->free($resql);
-        if ($num > 0)
-        {
-            print "</table><br>";
-        }
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
+	$langs->load('bills');
+	$max=5;
+	$sql = 'SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut,'.$db->pdate('p.datef').' as df, total_ttc as amount, paye';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as p';
+	$sql.= ' WHERE p.fk_soc = '.$societe->id;
+	$sql.= ' ORDER BY p.datef DESC';
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$i = 0 ;
+		$num = $db->num_rows($resql);
+		if ($num > 0)
+		{
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td colspan="4">';
+			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',min($num,$max)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td></tr></table>';
+			print '</td></tr>';
+		}
+		$facturestatic = new FactureFournisseur($db);
+		while ($i < min($num,$max))
+		{
+			$obj = $db->fetch_object($resql);
+			$var=!$var;
+			print '<tr '.$bc[$var].'>';
+			print '<td>';
+			print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
+			print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,14).'</td>';
+			print '<td align="right" width="80">'.dolibarr_print_date($obj->df).'</td>';
+			print '<td align="right">'.price($obj->amount).'</td>';
+			print '<td align="center">'.$facturestatic->LibStatutShort($obj->paye,$obj->fk_statut).'</td>';
+			print '</tr>';
+			$i++;
+		}
+		$db->free($resql);
+		if ($num > 0)
+		{
+			print '</table><br>';
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
 
   /*
    *
