@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="yes" ?>
 <DBMODEL Version="4.0">
 <SETTINGS>
-<GLOBALSETTINGS ModelName="dolibarr_schema" IDModel="0" IDVersion="0" VersionStr="1.0.0.0" Comments="" UseVersionHistroy="1" AutoIncVersion="1" DatabaseType="MySQL" ZoomFac="66.67" XPos="1144" YPos="1036" DefaultDataType="5" DefaultTablePrefix="0" DefSaveDBConn="" DefSyncDBConn="" DefQueryDBConn="" Printer="" HPageCount="4.0" PageAspectRatio="1.440892512336408" PageOrientation="1" PageFormat="A4 (210x297 mm, 8.26x11.7 inches)" SelectedPages="" UsePositionGrid="0" PositionGridX="20" PositionGridY="20" TableNameInRefs="0" DefaultTableType="1" ActivateRefDefForNewRelations="1" FKPrefix="" FKPostfix="" CreateFKRefDefIndex="0" DBQuoteCharacter="`" CreateSQLforLinkedObjects="0" DefModelFont="Nimbus Sans L" CanvasWidth="4096" CanvasHeight="2842" />
+<GLOBALSETTINGS ModelName="dolibarr_schema" IDModel="0" IDVersion="0" VersionStr="1.0.0.0" Comments="" UseVersionHistroy="1" AutoIncVersion="1" DatabaseType="MySQL" ZoomFac="66.67" XPos="889" YPos="0" DefaultDataType="5" DefaultTablePrefix="0" DefSaveDBConn="" DefSyncDBConn="" DefQueryDBConn="" Printer="" HPageCount="4.0" PageAspectRatio="1.440892512336408" PageOrientation="1" PageFormat="A4 (210x297 mm, 8.26x11.7 inches)" SelectedPages="" UsePositionGrid="0" PositionGridX="20" PositionGridY="20" TableNameInRefs="0" DefaultTableType="1" ActivateRefDefForNewRelations="1" FKPrefix="" FKPostfix="" CreateFKRefDefIndex="0" DBQuoteCharacter="`" CreateSQLforLinkedObjects="0" DefModelFont="Nimbus Sans L" CanvasWidth="4096" CanvasHeight="2842" />
 <DATATYPEGROUPS>
 <DATATYPEGROUP Name="Numeric Types" Icon="1" />
 <DATATYPEGROUP Name="Date and Time Types" Icon="2" />
@@ -898,7 +898,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1011" Tablename="llx_auteur" PrevTableName="" XPos="3347" YPos="250" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="13" >
+<TABLE ID="1011" Tablename="llx_auteur" PrevTableName="" XPos="3382" YPos="481" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="13" >
 <COLUMNS>
 <COLUMN ID="1258" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -1556,7 +1556,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1026" Tablename="llx_c_currencies" PrevTableName="" XPos="3027" YPos="523" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="28" >
+<TABLE ID="1026" Tablename="llx_c_currencies" PrevTableName="" XPos="2952" YPos="751" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="28" >
 <COLUMNS>
 <COLUMN ID="1372" ColName="code" PrevColName="" Pos="1" idDatatype="19" DatatypeParams="(2)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -2052,7 +2052,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1037" Tablename="llx_c_type_contact" PrevTableName="" XPos="1900" YPos="483" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="39" >
+<TABLE ID="1037" Tablename="llx_c_type_contact" PrevTableName="" XPos="1891" YPos="564" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="39" >
 <COLUMNS>
 <COLUMN ID="1449" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -2146,7 +2146,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1039" Tablename="llx_categorie" PrevTableName="" XPos="2302" YPos="732" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="41" >
+<TABLE ID="1039" Tablename="llx_categorie" PrevTableName="" XPos="2323" YPos="798" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="41" >
 <COLUMNS>
 <COLUMN ID="1463" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -2177,7 +2177,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1040" Tablename="llx_categorie_association" PrevTableName="" XPos="2262" YPos="624" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="42" >
+<TABLE ID="1040" Tablename="llx_categorie_association" PrevTableName="" XPos="2325" YPos="603" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="42" >
 <COLUMNS>
 <COLUMN ID="1467" ColName="fk_categorie_mere" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -2209,7 +2209,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1041" Tablename="llx_categorie_product" PrevTableName="" XPos="2270" YPos="824" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="43" >
+<TABLE ID="1041" Tablename="llx_categorie_product" PrevTableName="" XPos="2251" YPos="880" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="43" >
 <COLUMNS>
 <COLUMN ID="1469" ColName="fk_categorie" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -3891,7 +3891,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1067" Tablename="llx_editeur" PrevTableName="" XPos="3343" YPos="468" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="69" >
+<TABLE ID="1067" Tablename="llx_editeur" PrevTableName="" XPos="3379" YPos="699" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="69" >
 <COLUMNS>
 <COLUMN ID="1756" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -4158,7 +4158,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1073" Tablename="llx_entrepot" PrevTableName="" XPos="2173" YPos="228" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="75" >
+<TABLE ID="1073" Tablename="llx_entrepot" PrevTableName="" XPos="2641" YPos="204" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="75" >
 <COLUMNS>
 <COLUMN ID="1794" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -4222,6 +4222,10 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_START>
+<RELATION_START ID="3539" />
+<RELATION_START ID="3554" />
+</RELATIONS_START>
 <INDICES>
 <INDEX ID="1806" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
@@ -4230,14 +4234,8 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1074" Tablename="llx_expedition" PrevTableName="" XPos="2164" YPos="169" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="76" >
+<TABLE ID="1074" Tablename="llx_expedition" PrevTableName="" XPos="2605" YPos="328" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="76" >
 <COLUMNS>
-<COLUMN ID="1807" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
 <COLUMN ID="1808" ColName="tms" PrevColName="" Pos="2" idDatatype="16" DatatypeParams="" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
@@ -4277,13 +4275,13 @@
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="1816" ColName="fk_entrepot" PrevColName="" Pos="10" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="1816" ColName="fk_entrepot" PrevColName="" Pos="10" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="1817" ColName="fk_expedition_methode" PrevColName="" Pos="11" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="1817" ColName="fk_expedition_methode" PrevColName="" Pos="11" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 <OPTIONSELECT Value="0" />
@@ -4305,12 +4303,11 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_END>
+<RELATION_END ID="3554" />
+<RELATION_END ID="3556" />
+</RELATIONS_END>
 <INDICES>
-<INDEX ID="1821" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1807" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
 <INDEX ID="1822" IndexName="ref" IndexKind="1" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="1809" LengthParam="0" />
@@ -4328,7 +4325,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1075" Tablename="llx_expedition_methode" PrevTableName="" XPos="2174" YPos="105" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="77" >
+<TABLE ID="1075" Tablename="llx_expedition_methode" PrevTableName="" XPos="2956" YPos="327" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="77" >
 <COLUMNS>
 <COLUMN ID="1825" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -4361,6 +4358,9 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_START>
+<RELATION_START ID="3556" />
+</RELATIONS_START>
 <INDICES>
 <INDEX ID="1831" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
@@ -4369,7 +4369,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1076" Tablename="llx_expeditiondet" PrevTableName="" XPos="2165" YPos="45" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="78" >
+<TABLE ID="1076" Tablename="llx_expeditiondet" PrevTableName="" XPos="2959" YPos="423" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="78" >
 <COLUMNS>
 <COLUMN ID="1832" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -5427,7 +5427,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1091" Tablename="llx_livre" PrevTableName="" XPos="3134" YPos="393" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="93" >
+<TABLE ID="1091" Tablename="llx_livre" PrevTableName="" XPos="3169" YPos="624" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="93" >
 <COLUMNS>
 <COLUMN ID="2014" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -5523,7 +5523,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1092" Tablename="llx_livre_to_auteur" PrevTableName="" XPos="3361" YPos="351" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="94" >
+<TABLE ID="1092" Tablename="llx_livre_to_auteur" PrevTableName="" XPos="3397" YPos="582" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="94" >
 <COLUMNS>
 <COLUMN ID="2029" ColName="fk_livre" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -6571,7 +6571,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1109" Tablename="llx_product" PrevTableName="" XPos="3420" YPos="2670" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="111" >
+<TABLE ID="1109" Tablename="llx_product" PrevTableName="" XPos="2103" YPos="195" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="111" >
 <COLUMNS>
 <COLUMN ID="2207" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -6663,6 +6663,14 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_START>
+<RELATION_START ID="3534" />
+<RELATION_START ID="3537" />
+<RELATION_START ID="3540" />
+<RELATION_START ID="3542" />
+<RELATION_START ID="3544" />
+<RELATION_START ID="3546" />
+</RELATIONS_START>
 <INDICES>
 <INDEX ID="2224" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
@@ -6686,7 +6694,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1110" Tablename="llx_product_fournisseur" PrevTableName="" XPos="3230" YPos="2476" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="112" >
+<TABLE ID="1110" Tablename="llx_product_fournisseur" PrevTableName="" XPos="1624" YPos="232" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="112" >
 <COLUMNS>
 <COLUMN ID="2228" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -6702,13 +6710,7 @@
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="2231" ColName="fk_product" PrevColName="" Pos="4" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="2232" ColName="fk_soc" PrevColName="" Pos="5" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="2232" ColName="fk_soc" PrevColName="" Pos="5" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 <OPTIONSELECT Value="0" />
@@ -6726,15 +6728,14 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_END>
+<RELATION_END ID="3546" />
+<RELATION_END ID="3548" />
+</RELATIONS_END>
 <INDICES>
 <INDEX ID="2235" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="2228" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="2236" IndexName="fk_product" IndexKind="1" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="2231" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
 <INDEX ID="2237" IndexName="fk_soc" IndexKind="1" FKRefDef_Obj_id="-1">
@@ -6744,7 +6745,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1111" Tablename="llx_product_fournisseur_price" PrevTableName="" XPos="3068" YPos="2476" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="113" >
+<TABLE ID="1111" Tablename="llx_product_fournisseur_price" PrevTableName="" XPos="1624" YPos="64" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="113" >
 <COLUMNS>
 <COLUMN ID="2238" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -6760,13 +6761,7 @@
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="2241" ColName="fk_product" PrevColName="" Pos="4" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="2242" ColName="fk_soc" PrevColName="" Pos="5" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="2242" ColName="fk_soc" PrevColName="" Pos="5" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 <OPTIONSELECT Value="0" />
@@ -6789,6 +6784,10 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_END>
+<RELATION_END ID="3542" />
+<RELATION_END ID="3552" />
+</RELATIONS_END>
 <INDICES>
 <INDEX ID="2246" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
@@ -6805,14 +6804,9 @@
 <INDEXCOLUMN idColumn="2242" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
-<INDEX ID="2249" IndexName="idx_fk_product" IndexKind="1" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="2241" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1112" Tablename="llx_product_fournisseur_price_log" PrevTableName="" XPos="3088" YPos="2664" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="114" >
+<TABLE ID="1112" Tablename="llx_product_fournisseur_price_log" PrevTableName="" XPos="1615" YPos="150" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="114" >
 <COLUMNS>
 <COLUMN ID="2250" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -6824,13 +6818,7 @@
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="2252" ColName="fk_product" PrevColName="" Pos="3" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="2253" ColName="fk_soc" PrevColName="" Pos="4" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="2253" ColName="fk_soc" PrevColName="" Pos="4" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 <OPTIONSELECT Value="0" />
@@ -6853,6 +6841,10 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_END>
+<RELATION_END ID="3544" />
+<RELATION_END ID="3550" />
+</RELATIONS_END>
 <INDICES>
 <INDEX ID="2257" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
@@ -6861,7 +6853,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1113" Tablename="llx_product_price" PrevTableName="" XPos="3390" YPos="2482" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="115" >
+<TABLE ID="1113" Tablename="llx_product_price" PrevTableName="" XPos="2376" YPos="517" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="115" >
 <COLUMNS>
 <COLUMN ID="2258" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -6871,12 +6863,6 @@
 </COLUMN>
 <COLUMN ID="2259" ColName="tms" PrevColName="" Pos="2" idDatatype="16" DatatypeParams="" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="">
 <OPTIONSELECTED>
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="2260" ColName="fk_product" PrevColName="" Pos="3" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
 <COLUMN ID="2261" ColName="date_price" PrevColName="" Pos="4" idDatatype="15" DatatypeParams="" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="0000-00-00 00:00:00" Comments="">
@@ -6906,6 +6892,9 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_END>
+<RELATION_END ID="3540" />
+</RELATIONS_END>
 <INDICES>
 <INDEX ID="2266" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
@@ -6914,25 +6903,13 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1114" Tablename="llx_product_stock" PrevTableName="" XPos="3272" YPos="2666" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="116" >
+<TABLE ID="1114" Tablename="llx_product_stock" PrevTableName="" XPos="2386" YPos="196" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="116" >
 <COLUMNS>
-<COLUMN ID="2267" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
 <COLUMN ID="2268" ColName="tms" PrevColName="" Pos="2" idDatatype="16" DatatypeParams="" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="CURRENT_TIMESTAMP" Comments="">
 <OPTIONSELECTED>
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="2269" ColName="fk_product" PrevColName="" Pos="3" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="2270" ColName="fk_entrepot" PrevColName="" Pos="4" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="2270" ColName="fk_entrepot" PrevColName="" Pos="4" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 <OPTIONSELECT Value="0" />
@@ -6945,17 +6922,11 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_END>
+<RELATION_END ID="3537" />
+<RELATION_END ID="3539" />
+</RELATIONS_END>
 <INDICES>
-<INDEX ID="2272" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="2267" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="2273" IndexName="fk_product" IndexKind="1" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="2269" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
 <INDEX ID="2274" IndexName="fk_entrepot" IndexKind="1" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="2270" LengthParam="0" />
@@ -7881,6 +7852,10 @@
 <RELATION_START ID="3393" />
 <RELATION_START ID="3395" />
 <RELATION_START ID="3422" />
+<RELATION_START ID="3525" />
+<RELATION_START ID="3548" />
+<RELATION_START ID="3550" />
+<RELATION_START ID="3552" />
 </RELATIONS_START>
 <RELATIONS_END>
 <RELATION_END ID="3265" />
@@ -8159,7 +8134,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1131" Tablename="llx_societe_rib" PrevTableName="" XPos="1212" YPos="302" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="133" >
+<TABLE ID="1131" Tablename="llx_societe_rib" PrevTableName="" XPos="1071" YPos="241" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="133" >
 <COLUMNS>
 <COLUMN ID="2452" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -8648,7 +8623,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1138" Tablename="llx_tva" PrevTableName="" XPos="1958" YPos="258" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="140" >
+<TABLE ID="1138" Tablename="llx_tva" PrevTableName="" XPos="1156" YPos="39" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="140" >
 <COLUMNS>
 <COLUMN ID="2533" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -9141,7 +9116,7 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1147" Tablename="llx_ventes" PrevTableName="" XPos="1867" YPos="383" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="149" >
+<TABLE ID="1147" Tablename="llx_ventes" PrevTableName="" XPos="1624" YPos="313" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="149" >
 <COLUMNS>
 <COLUMN ID="2599" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
 <OPTIONSELECTED>
@@ -9149,13 +9124,7 @@
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="2600" ColName="fk_soc" PrevColName="" Pos="2" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="2601" ColName="fk_product" PrevColName="" Pos="3" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
+<COLUMN ID="2600" ColName="fk_soc" PrevColName="" Pos="2" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 <OPTIONSELECT Value="0" />
@@ -9191,6 +9160,10 @@
 </OPTIONSELECTED>
 </COLUMN>
 </COLUMNS>
+<RELATIONS_END>
+<RELATION_END ID="3525" />
+<RELATION_END ID="3534" />
+</RELATIONS_END>
 <INDICES>
 <INDEX ID="2608" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
@@ -9339,7 +9312,7 @@
 </TABLE>
 </TABLES>
 <RELATIONS>
-<RELATION ID="3094" RelationName="Rel_07" Kind="2" SrcTable="1034" DestTable="1027" FKFields="" FKFieldsComments="" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3463" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="152" />
+<RELATION ID="3094" RelationName="Rel_07" Kind="2" SrcTable="1034" DestTable="1027" FKFields="" FKFieldsComments="" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="152" />
 <RELATION ID="3095" RelationName="Rel_08" Kind="2" SrcTable="1032" DestTable="1034" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3464" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="153" />
 <RELATION ID="3097" RelationName="Rel_09" Kind="2" SrcTable="1011" DestTable="1092" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3486" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="154" />
 <RELATION ID="3099" RelationName="Rel_10" Kind="2" SrcTable="1091" DestTable="1092" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3487" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="155" />
@@ -9402,6 +9375,19 @@
 <RELATION ID="3443" RelationName="fk_facture" Kind="2" SrcTable="1079" DestTable="1099" FKFields="rowid=fk_paiement\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="-1" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3488" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="212" />
 <RELATION ID="3448" RelationName="fk_facture" Kind="2" SrcTable="1084" DestTable="1083" FKFields="rowid=fk_facture\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3483" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="213" />
 <RELATION ID="3454" RelationName="Rel_64" Kind="1" SrcTable="1080" DestTable="1081" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="3482" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="213" />
+<RELATION ID="3525" RelationName="fk_soc" Kind="2" SrcTable="1126" DestTable="1147" FKFields="idp=fk_soc\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="214" />
+<RELATION ID="3534" RelationName="fk_product" Kind="2" SrcTable="1109" DestTable="1147" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="4" MidOffset="-30" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="215" />
+<RELATION ID="3537" RelationName="fk_product" Kind="2" SrcTable="1109" DestTable="1114" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="216" />
+<RELATION ID="3539" RelationName="fk_entrepot" Kind="2" SrcTable="1073" DestTable="1114" FKFields="rowid=fk_entrepot\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="217" />
+<RELATION ID="3540" RelationName="fk_product" Kind="2" SrcTable="1109" DestTable="1113" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="2" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="218" />
+<RELATION ID="3542" RelationName="fk_product" Kind="2" SrcTable="1109" DestTable="1111" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="4" MidOffset="93" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="-3" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="219" />
+<RELATION ID="3544" RelationName="fk_product" Kind="2" SrcTable="1109" DestTable="1112" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="4" MidOffset="54" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="220" />
+<RELATION ID="3546" RelationName="fk_product" Kind="2" SrcTable="1109" DestTable="1110" FKFields="rowid=rowid\n" FKFieldsComments="\n" relDirection="4" MidOffset="24" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="221" />
+<RELATION ID="3548" RelationName="fk_soc" Kind="2" SrcTable="1126" DestTable="1110" FKFields="idp=fk_soc\n" FKFieldsComments="\n" relDirection="1" MidOffset="-51" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="222" />
+<RELATION ID="3550" RelationName="fk_soc" Kind="2" SrcTable="1126" DestTable="1112" FKFields="idp=fk_soc\n" FKFieldsComments="\n" relDirection="1" MidOffset="-90" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="223" />
+<RELATION ID="3552" RelationName="fk_soc" Kind="2" SrcTable="1126" DestTable="1111" FKFields="idp=fk_soc\n" FKFieldsComments="\n" relDirection="1" MidOffset="-129" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="3" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="224" />
+<RELATION ID="3554" RelationName="fk_entrepot" Kind="2" SrcTable="1073" DestTable="1074" FKFields="rowid=fk_entrepot\n" FKFieldsComments="\n" relDirection="3" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="225" />
+<RELATION ID="3556" RelationName="fk_expedition_methode" Kind="2" SrcTable="1075" DestTable="1074" FKFields="rowid=fk_expedition_methode\n" FKFieldsComments="\n" relDirection="4" MidOffset="0" OptionalStart="0" OptionalEnd="0" CaptionOffsetX="0" CaptionOffsetY="0" StartIntervalOffsetX="0" StartIntervalOffsetY="0" EndIntervalOffsetX="0" EndIntervalOffsetY="0" CreateRefDef="1" Invisible="0" RefDef="Matching=0\nOnDelete=3\nOnUpdate=3\n" Comments="" FKRefDefIndex_Obj_id="-1" Splitted="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="226" />
 </RELATIONS>
 <NOTES>
 </NOTES>
