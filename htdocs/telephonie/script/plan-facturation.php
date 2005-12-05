@@ -31,14 +31,11 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/numero.class.php");
 require_once (DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_workbook.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksheet.inc.php");
 
-
 $error = 0;
 
 $datetime = time();
 
 $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
-
-
 
 $sql = "SELECT c.rowid, sl.ligne, sl.code_analytique";
 
@@ -47,16 +44,11 @@ $sql .= ", s.nom, c.ref, s.code_client, s.address, s.cp, s.ville";
 $sql .=" FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as sl";
 $sql .=" , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .=" , ".MAIN_DB_PREFIX."societe as s";
-
 $sql .= " WHERE sl.fk_contrat  = c.rowid";
 $sql .= " AND c.fk_client_comm = 52";
 $sql .= " AND sl.statut <> 7";
 $sql .= " AND c.fk_soc_facture = s.idp";
-
 $sql .= " ORDER BY c.rowid ASC, sl.code_analytique ASC";
-
-
-print $sql."\n";
 
 $resql = $db->query($sql);
 
@@ -74,8 +66,7 @@ if ($resql)
 	}
     }	
 
-
-  $fname = "/tmp/plan-facturation.xls";
+  $fname = "/tmp/plan-facturation-".strftime("%d-%m-%Y",$datetime).".xls";
 
   print "Open $fname\n";
 
