@@ -693,11 +693,9 @@ function _prelevements($db, $user, $factures_prev)
    * Emissions des demandes de prelevement                            *
    *                                                                  *
    *                                                                  *
-   ********************************************************************/
-  
-  dolibarr_syslog("[PR] Debut demande de prelevement");
-  dolibarr_syslog("[PR] Nombre de factures ".sizeof($factures_prev));
-  
+   ********************************************************************/  
+  //dolibarr_syslog("[PR] Debut demande de prelevement");
+  //dolibarr_syslog("[PR] Nombre de factures ".sizeof($factures_prev)); 
   if (sizeof($factures_prev) > 0)
     {
       foreach ($factures_prev as $fac)
@@ -708,8 +706,7 @@ function _prelevements($db, $user, $factures_prev)
 	  $fact->demande_prelevement($user);
 	}
     }
-
-  dolibarr_syslog("[PR] Fin demande de prelevement");
+  //dolibarr_syslog("[PR] Fin demande de prelevement");
 }
 
 
@@ -723,9 +720,6 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
    *                                                                  *
    *                                                                  *
    ********************************************************************/
-
-  dolibarr_syslog("[EM] Debut envoie de mail");
-
   if (sizeof($factures_a_mailer) > 0)
     {
       foreach ($factures_a_mailer as $fac)
