@@ -202,50 +202,39 @@ class Societe {
    *    \brief      Verification lors de la modification
    *    \return     0 si ok, < 0 en cas d'erreur
    */
-
-  function verify()
-  {
-    $this->nom=trim($this->nom);
-
-    $result = 0;
-
-    if (! $this->nom)
-      {
-	$this->error = "Le nom de la société ne peut être vide.\n";
-	$result = -2;
-      }
-
-    if ($this->codeclient_modifiable == 1)
-      {
-	// On ne vérifie le code client que si celui-ci est modifiable
-	// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
-
-	$rescode = $this->verif_codeclient();
-
-	if ($rescode <> 0)
-	  {
-	    if ($rescode == -1)
-	      {
-		$this->error .= "La syntaxe du code client est incorrecte.\n";
-	      }
-
-	    if ($rescode == -2)
-	      {
-		$this->error .= "Vous devez saisir un code client.\n";
-	      }
-
-	    if ($rescode == -3)
-	      {
-		$this->error .= "Ce code client est déjà utilisé.\n";
-	      }
-
-	    $result = -3;
-	  }
-
-    }
-
-    return $result;
-  }
+	function verify()
+	{
+		$this->nom=trim($this->nom);
+		$result = 0;
+		if (! $this->nom)
+		{
+			$this->error = "Le nom de la société ne peut être vide.\n";
+			$result = -2;
+		}
+		if ($this->client && $this->codeclient_modifiable == 1)
+		{
+			// On ne vérifie le code client que si la société est un client / prospect et que le code est modifiable
+			// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
+			$rescode = $this->verif_codeclient();
+			if ($rescode <> 0)
+			{
+				if ($rescode == -1)
+				{
+					$this->error .= "La syntaxe du code client est incorrecte.\n";
+				}
+				if ($rescode == -2)
+				{
+					$this->error .= "Vous devez saisir un code client.\n";
+				}
+				if ($rescode == -3)
+				{
+					$this->error .= "Ce code client est déjà utilisé.\n";
+				}
+				$result = -3;
+			}
+		}
+		return $result;
+	}
 
     /**
      *      \brief      Mise a jour des paramètres de la sociét
