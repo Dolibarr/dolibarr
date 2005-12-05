@@ -71,7 +71,7 @@ $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
 $sql .= " AND f.rowid = 4 AND l.statut = 9";
 if ($ligne > 0)
 {
-  $sql .= " AND l.numero ='".$ligne."'";
+  $sql .= " AND l.ligne='".$ligne."'";
 }
 $sql .= "  ORDER BY l.rowid DESC";
 $resql = $db->query($sql);
