@@ -284,7 +284,7 @@ if ( $societe->fetch($socid) )
 			print '<td>';
 			print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
 			print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,14).'</td>';
-			print '<td align="right" width="80">'.dolibarr_print_date($obj->df).'</td>';
+			print '<td align="center" width="80">'.dolibarr_print_date($obj->df).'</td>';
 			print '<td align="right">'.price($obj->amount).'</td>';
 			print '<td align="center">'.$facturestatic->LibStatutShort($obj->paye,$obj->fk_statut).'</td>';
 			print '</tr>';

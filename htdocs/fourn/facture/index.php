@@ -197,7 +197,7 @@ if ($resql)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print "<td nowrap><a href=\"fiche.php?facid=$obj->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber."</a></td>\n";
+        print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->facnumber.'">'.img_object($langs->trans("ShowBill"),"bill").' '.dolibarr_trunc($obj->facnumber,20)."</a></td>\n";
         print '<td align="center" nowrap>'.dolibarr_print_date($obj->date_echeance).'</td>';
         print '<td>'.dolibarr_trunc(stripslashes("$obj->libelle"),44).'</td>';
         print '<td>';
