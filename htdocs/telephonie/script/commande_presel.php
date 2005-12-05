@@ -41,6 +41,10 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
     {
       $verbose = 3;
     }
+  if (strlen($argv[$i]) == 10)
+    {
+      $ligne = $argv[$i];
+    }
 }
 
 
@@ -63,8 +67,12 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-$sql .= " AND f.rowid = 4 AND l.statut = 9 ORDER BY l.rowid DESC";
-
+$sql .= " AND f.rowid = 4 AND l.statut = 9";
+if ($ligne > 0)
+{
+  $sql .= " AND l.numero ='".$ligne."'";
+}
+$sql .= "  ORDER BY l.rowid DESC";
 $resql = $db->query($sql);
 $result = 1;
 if ($resql)
