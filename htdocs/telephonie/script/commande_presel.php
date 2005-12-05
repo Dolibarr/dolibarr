@@ -44,6 +44,7 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
   if (strlen($argv[$i]) == 10)
     {
       $ligne = $argv[$i];
+      print "Filtre sur la ligne ".$ligne."\n";
     }
 }
 
