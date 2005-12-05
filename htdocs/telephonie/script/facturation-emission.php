@@ -461,6 +461,51 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
      
   /*********************************/
   /*                               */	  
+  /* Ajout rejets de prelevements  */
+  /*                               */
+  /*********************************/
+  if (!$error)
+    {
+      $sql = "SELECT pr.rowid,".$db->pdate("pr.date_rejet");
+      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+      $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+      $sql .= " WHERE pl.fk_soc = ".$soc->id;
+      $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
+      $sql .= " AND afacturer = 1 LIMIT 1;";
+      $resql = $db->query($sql) ;
+      if ( $resql )
+	{
+	  while ($row = $db->fetch_row($resql))
+	    {
+	      $result = $fac->addline($facid,
+				      "Frais pour prélèvement rejeté du ".strftime("%d/%m/%Y",$row[1]),
+				      15,
+				      1,
+				      '0',
+				      0,
+				      0,
+				      0);
+
+	      $sqlu = "UPDATE ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+	      $sqlu .= " SET afacturer=0";
+	      $sqlu .= " ,fk_facture=".$facid;
+	      $sqlu .= " WHERE rowid=".$row[0].";";
+
+	      $resqlu = $db->query($sqlu);
+	    }            
+	  $db->free($resql);
+	}
+      else
+	{
+	  $error = 21;
+	  dolibarr_syslog($db->error());
+	  dolibarr_syslog("Erreur rejet prelevement");
+	}
+    }
+
+
+  /*********************************/
+  /*                               */	  
   /* Validation de la facture      */
   /*                               */
   /*********************************/
@@ -601,10 +646,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  $message .= $fac->client->bank_account->number;
 	}
       
-      $message .= "\nVotre image de marque et votre N° de téléphone associés !\n";
-      $message .= "ibreizh vous propose son offre N° d'appel Gratuit (offre concurrente au N° vert de l'opérateur historique) pour vos prospects et clients\nOffrez un nouveau service + à vos clients...\n";
-      //$message .= "Favorisez les appels entrants des nouveaux clients...\n";
-
       if ($verbose) dolibarr_syslog("Création du pdf facture : $facid");
       
       if (! facture_pdf_create($db, $facid, $message))
@@ -614,11 +655,9 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	}
     }
   
-  
   if (!$error && !$cancel_facture)
     {
-      $db->query("COMMIT");
-      
+      $db->query("COMMIT");      
       /* $soc
        * $ligne
        */
@@ -727,12 +766,6 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	      $message .= "Veuillez trouver ci-joint notre facture numéro $fact->ref du ".strftime("%d/%m/%Y",$fact->date).".";
 
 	      $message .= "\nEgalement joint à ce mail le détails de vos communications.\n\n";
-
-	      // Ajout demandé par GH
-	      $message .= "Votre image de marque et votre N° de téléphone associés !\n";
-	      $message .= "ibreizh vous propose son offre N° d'appel Gratuit (offre concurrente au N° vert de l'opérateur historique) pour vos prospects et clients, Offrez un nouveau service + à vos clients...\n";
-	      $message .= "Favorisez les appels entrants des nouveaux clients...\n\n";
-	      //
 
 	      $message .= TELEPHONIE_MAIL_FACTURATION_SIGNATURE;
 	      
