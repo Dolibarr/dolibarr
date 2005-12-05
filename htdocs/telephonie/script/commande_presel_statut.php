@@ -262,6 +262,31 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 			    }
 			}
 
+		      if ($situation_key == 'TRAITE_OK / ATTENTE')
+			{
+			  $ligne = new LigneTel($db);
+  
+			  if ($ligne->fetch($cli) == 1)
+			    {
+			      if ($ligne->statut == 2)
+				{
+				  $statut = 7;
+				  $date_mise_service = strftime(time());
+				  $datea = $db->idate($date_mise_service);
+				  
+				  if ($ligne->set_statut($user, $statut, $datea) <> 0)
+				    {
+				      $error++;
+				      print "ERROR\n";
+				    }
+				}
+			    }
+			  else
+			    {
+			      print "Erreur de lecture\n";
+			    }
+			}
+
 		    }
 		  else
 		    {
