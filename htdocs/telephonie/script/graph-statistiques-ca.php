@@ -23,6 +23,23 @@
  */
 require ("../../master.inc.php");
 
+$verbose = 0;
+for ($i = 1 ; $i < sizeof($argv) ; $i++)
+{
+  if ($argv[$i] == "-v")
+    {
+      $verbose = 1;
+    }
+  if ($argv[$i] == "-vv")
+    {
+      $verbose = 2;
+    }
+  if ($argv[$i] == "-vvv")
+    {
+      $verbose = 3;
+    }
+}
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
@@ -44,21 +61,23 @@ $error = 0;
 
 $datetime = time();
 $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
-$month = strftime("%m", $datetime);
 $year = strftime("%Y", $datetime);
 
-if ($month == 1)
-{
-  $month = "12";
-  $year = $year - 1;
-}
-else
-{
-  $month = substr("00".($month - 1), -2) ;
-}
+$img_root = DOL_DATA_ROOT."/graph/telephonie";
 
-
-$img_root = DOL_DATA_ROOT."/graph/telephonie/";
+$month = array();
+$month[1] = 'J';
+$month[2] = 'F';
+$month[3] = 'M';
+$month[4] = 'A';
+$month[5] = 'M';
+$month[6] = 'J';
+$month[7] = 'J';
+$month[8] = 'A';
+$month[9] = 'S';
+$month[10] = 'O';
+$month[11] = 'N';
+$month[12] = 'D';
 
 /**********************************************************************/
 /*
@@ -69,28 +88,30 @@ $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
 $sql .= " WHERE graph IN ('factures.facture_moyenne','factures.ca_mensuel','factures.nb_mensuel')";
+$sql .= " AND legend like '".$this->year."%';";
 $resql = $db->query($sql);
 
-
-$sql = "SELECT date_format(tf.date,'%Y%m'), sum(tf.cout_vente), sum(tf.cout_achat), sum(tf.gain), count(tf.cout_vente)";
-
+$sql = "SELECT date_format(tf.date,'%Y%m'), sum(tf.cout_vente)";
+$sql .= ", sum(tf.cout_achat), sum(tf.gain), count(tf.cout_vente)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
-$sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ";
+$sql .= " WHERE date_format(tf.date,'%Y') ='".$year."'";
+$sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ;";
 
 $resql = $db->query($sql);
 
 if ($resql)
 {
-  $cout_vente_type = array();
-  $cout_vente = array();
+  $cout_vente = array_pad(array(),12,0);
   $cout_vente_prev = array();
   $cout_vente_autr = array();
   $cout_vente_moyen = array();
-  $nb_factures = array();
+  $nb_factures = array_pad(array(),12,0);
   $jour_semaine_nb = array();
   $jour_semaine_duree = array();
-  $gain = array();
-  $gain_moyen = array();
+  $gain = array_pad(array(),12,0);
+  $gain_moyen = array_pad(array(),12,0);
+  $labels = array_pad(array(),12,0);
+  $short_labels = array_pad(array(),12,0);
 
   $num = $db->num_rows($resql);
   $i = 0;
@@ -115,7 +136,7 @@ if ($resql)
       $cout_vente_moyen[$i] = ($row[1]/$row[4]);
       $nb_factures[$i] = $row[4];
       $labels[$i] = $row[0];
-      $short_labels[$i] = substr($row[0],-2);
+      $short_labels[$i] = $month[(substr($row[0],-2)*1)];
 
       $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
       $sqli .= " (graph, ord, legend, valeur) VALUES (";
@@ -154,25 +175,25 @@ $graph->barcolor = "blue";
 $graph->width = 440;
 $graph->GraphDraw($file, $cout_vente_moyen, $short_labels);
 
-$file = $img_root . "/factures/gain_mensuel.png";
+$file = $img_root . "/factures/gain_mensuel.$year.png";
 if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
-$graph->titre = "Gain par mois en euros HT";
+$graph->titre = "Marge en euros HT $year";
 $graph->width = 440;
 $graph->GraphDraw($file, $gain, $short_labels);
 
-$file = $img_root . "/factures/gain_moyen.png";
+$file = $img_root . "/factures/gain_moyen.$year.png";
 if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
-$graph->titre = "Gain moyen par facture par mois";
+$graph->titre = "Marge moyenne par facture $year";
 $graph->width = 440;
 $graph->barcolor = "blue";
 $graph->GraphDraw($file, $gain_moyen, $short_labels);
 
-$file = $img_root . "/factures/nb_facture.png";
+$file = $img_root . "/factures/nb_facture.$year.png";
 if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
-$graph->titre = "Nb de facture mois";
+$graph->titre = "Nb de facture mois $year";
 $graph->width = 440;
 $graph->barcolor = "yellow";
 $graph->GraphDraw($file, $nb_factures, $short_labels);
