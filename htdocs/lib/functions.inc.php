@@ -232,8 +232,10 @@ function dolibarr_fiche_head($links, $active=0, $title='')
     {
         $limittitle=30;
         print '<a class="tabTitle">';
-        if (strlen($title) > $limittitle) print substr($title,0,$limittitle).'...';
-        else print $title;
+        print 
+			((!defined('MAIN_USE_SHORT_TITLE')) || (defined('MAIN_USE_SHORT_TITLE') &&  MAIN_USE_SHORT_TITLE))
+			? dolibarr_trunc($title,$limittitle)
+			: $title;
         print '</a>';
     }
 
@@ -519,8 +521,10 @@ function dolibarr_print_phone($phone,$country="FR")
 */
 function dolibarr_trunc($string,$size=40)
 {
-    if (strlen($string) > $size) return substr($string,0,$size).'...';
-    else return $string;  
+	if (strlen($string) > $size)
+		return substr($string,0,$size).'...';
+	else
+		return $string;
 }
 
 /**
