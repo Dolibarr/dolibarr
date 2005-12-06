@@ -38,12 +38,9 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-$year = strftime("%Y", time());
-$year = $_GET["year"];
-
+$year = defined($_GET["year"])?$_GET["year"]:strftime("%Y", time());
 
 $h = 0;
-
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/index.php';
 $head[$h][1] = "Global";
 $h++;
