@@ -431,7 +431,7 @@ a.onglet_inf {
 
     border-right: 1px solid #555555;
     border-left: 1px solid #D8D8D8;
-    border-bottom: 1px solid #D8D8D8;
+    border-bottom: 1px solid #555555;
 }
 
 a.tabTitle {
