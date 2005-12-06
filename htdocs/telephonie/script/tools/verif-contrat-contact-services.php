@@ -57,7 +57,20 @@ if ( $resql )
 		  $rows = $db->fetch_row($resqls);
 		  if ($rows[0] == 0)
 		    {
-		      print "Contrat ".$row[0]." sans contact ni envoi courrier\n";
+		      $sqll  = "SELECT count(*)";
+		      $sqll .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+		      $sqll .= " WHERE fk_contrat =".$row[0];
+		      $sqll .= " AND statut = 3;";
+		      
+		      $resqll = $db->query($sqll) ;
+		      if ( $resqll )
+			{
+			  $rowl = $db->fetch_row($resqll);
+			  if ($rowl[0] > 0)
+			    {
+			      print "Contrat ".$row[0]." sans contact ni envoi courrier\n";
+			    }
+			}
 		    }
 		}
 	    }
