@@ -38,7 +38,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-$year = defined($_GET["year"])?$_GET["year"]:strftime("%Y", time());
+$year = ($_GET["year"]>0)?$_GET["year"]:strftime("%Y", time());
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/index.php';
@@ -54,7 +54,7 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/type.php';
 $head[$h][1] = "Méthode de paiement";
 $h++;
 
-dolibarr_fiche_head($head, $hselected, "Satistiques Factures");
+dolibarr_fiche_head($head, $hselected, "Satistiques Factures $year");
 print '<div class="onglet_inf">';
 print '<a class="onglet_inf" href="marge.php?year=2004">2004</a>';
 print '<a class="onglet_inf" href="marge.php?year=2005">2005</a>';
