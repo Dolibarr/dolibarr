@@ -38,6 +38,8 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+$year = strftime("%Y", time());
+
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/index.php';
@@ -59,15 +61,15 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/gain_mensuel.png" alt="Marge mensuelle">';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/gain_mensuel.'.$year.'.png" alt="Marge mensuelle">';
 
 print '</td></tr><tr><td valign="top">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/gain_moyen.png" alt="Marge moyenne">';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/gain_moyen.'.$year.'.png" alt="Marge moyenne">';
 
 print '</td></tr><tr><td valign="top">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/nb_facture.png" alt="Nb de factures">';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/nb_facture.'.$year.'.png" alt="Nb de factures">';
 
 print '</td></tr>';
 
