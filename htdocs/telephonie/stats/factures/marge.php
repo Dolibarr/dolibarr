@@ -39,6 +39,8 @@ if ($user->societe_id > 0)
 }
 
 $year = strftime("%Y", time());
+$year = $_GET["year"];
+
 
 $h = 0;
 
@@ -56,6 +58,10 @@ $head[$h][1] = "Méthode de paiement";
 $h++;
 
 dolibarr_fiche_head($head, $hselected, "Satistiques Factures");
+print '<div class="onglet_inf">';
+print '<a class="onglet_inf" href="marge.php?year=2004">2004</a>';
+print '<a class="onglet_inf" href="marge.php?year=2005">2005</a>';
+print '<a class="onglet_inf" href="marge.php?year=2006">2006</a></div>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
