@@ -101,7 +101,7 @@ if ( $resql )
     {
       $row = $db->fetch_row($resql);
 
-      print "$i/$num ".$row[1]." ".$row[0]."\n";
+      //print "$i/$num ".$row[1]." ".$row[0]."\n";
 
       $xx = new pdf_ibreizh($db);
       $xx->_write_pdf_file($row[0], &$pdf, 1);
