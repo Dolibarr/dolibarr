@@ -195,7 +195,8 @@ if ( $resqls )
 		  $result = 0;
 		}
 	    }
-	  
+
+	  /*	  
 	  if ($result == 0 )
 	    {
 	      $sql = "DELETE from vtiger.tracker WHERE user_id='".$user_id."' and item_id='".$tid".'";
@@ -220,7 +221,7 @@ if ( $resqls )
 		  $result = 0;
 		}
 	    }
-	  
+	  */
 	  if ($result == 0)
 	    {
 	      $db->commit();
