@@ -42,10 +42,10 @@ $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/index.php';
 $head[$h][1] = "Global";
-
 $h++;
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/gain.php';
-$head[$h][1] = "Gain";
+
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/marge.php';
+$head[$h][1] = "Marge";
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/type.php';
