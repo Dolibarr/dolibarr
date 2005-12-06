@@ -347,7 +347,7 @@ class Propal
       $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf, fin_validite) ";
-      $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, '$this->note','$this->modelpdf',".$this->db->idate($this->fin_validite).")";
+      $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, '".addslashes($this->note)."','$this->modelpdf',".$this->db->idate($this->fin_validite).")";
       $sqlok = 0;
       
       if ( $this->db->query($sql) )
@@ -536,9 +536,9 @@ class Propal
                         $objp                  = $this->db->fetch_object($result);
     
                         $ligne                 = new PropaleLigne();
-                        $ligne->desc           = stripslashes($objp->description);  // Description ligne
-                        $ligne->libelle        = stripslashes($objp->label);        // Label produit
-                        $ligne->product_desc   = stripslashes($objp->product_desc); // Description produit
+                        $ligne->desc           = $objp->description;  // Description ligne
+                        $ligne->libelle        = $objp->label;        // Label produit
+                        $ligne->product_desc   = $objp->product_desc; // Description produit
                         $ligne->qty            = $objp->qty;
                         $ligne->ref            = $objp->ref;
                         $ligne->tva_tx         = $objp->tva_tx;
@@ -577,8 +577,8 @@ class Propal
                     {
                         $objp                  = $this->db->fetch_object($result);
                         $ligne                 = new PropaleLigne();
-                        $ligne->libelle        = stripslashes($objp->description);
-                        $ligne->desc           = stripslashes($objp->description);
+                        $ligne->libelle        = $objp->description;
+                        $ligne->desc           = $objp->description;
                         $ligne->qty            = $objp->qty;
                         $ligne->ref            = $objp->ref;
                         $ligne->tva_tx         = $objp->tva_tx;
@@ -1045,26 +1045,27 @@ class Propal
       }
   }
 	
-  /**
-   * \brief Mets à jour la note
-   *
-   */
-	 
-  function update_note($note)
-  {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET note = '$note'";
-    $sql .= " WHERE rowid = $this->id;";
+    /**
+     *      \brief      Mets à jour la note
+     *      \param      note        Note à mettre à jour
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function update_note($note)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+        $sql.= " SET note = '".addslashes($note)."'";
+        $sql.= " WHERE rowid = ".$this->id;
     
-    if ($this->db->query($sql) )
-      {
-	return 1;
-      }
-    else
-      {
+        if ($this->db->query($sql))
+        {
+            return 1;
+        }
+        else
+        {
             $this->error=$this->db->error();
-	return -1;
-      }
-  }
+            return -1;
+        }
+    }
   
   
   /**
