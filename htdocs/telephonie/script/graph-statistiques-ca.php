@@ -104,14 +104,14 @@ if ($resql)
   $cout_vente = array_pad(array(),12,0);
   $cout_vente_prev = array();
   $cout_vente_autr = array();
-  $cout_vente_moyen = array();
+  $cout_vente_moyen = array_pad(array(),12,0);
   $nb_factures = array_pad(array(),12,0);
   $jour_semaine_nb = array();
   $jour_semaine_duree = array();
   $gain = array_pad(array(),12,0);
   $gain_moyen = array_pad(array(),12,0);
   $labels = array_pad(array(),12,0);
-  $short_labels = array_pad(array(),12,0);
+  $short_labels = array(1,2,3,4,5,6,7,8,9,10,11,12);
 
   $num = $db->num_rows($resql);
   $i = 0;
@@ -308,7 +308,7 @@ foreach ($labels as $labl)
 }
 
 
-$file = $img_root . "factures/ca_mensuel_preleve.png";
+$file = $img_root . "/factures/ca_mensuel_preleve.png";
 
 $graph = new GraphBarAccumul ($db, $file);
 $graph->titre = "Chiffre d'affaire par méthode de réglement";
