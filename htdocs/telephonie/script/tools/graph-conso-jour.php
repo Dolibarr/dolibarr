@@ -74,8 +74,8 @@ if ($resql)
       $data[$i] = ($row[1]/60000);
       $total = $total + $data[$i];
       $labels[$i] = $row[0];
+      $moydata[$i] = $total / ($i+1);
       $i++;
-      $moydata[$i] = $total / $i;
     }
 }
 else
