@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -224,7 +223,7 @@ if ($_POST["action"] == 'add')
         $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Firstname"))."<br>\n";
     }
-    if (ADHERENT_MAIL_REQUIRED && ADHERENT_MAIL_REQUIRED == 1 && ! ValidEMail($email)) {
+    if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($email)) {
         $error++;
         $errmsg .= $langs->trans("ErrorBadEMail",$email)."<br>\n";
     }
@@ -452,9 +451,9 @@ if ($action == 'create')
     print '<textarea name="adresse" wrap="soft" cols="40" rows="2"></textarea></td></tr>';
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40" value="'.$adh->ville.'"></td></tr>';
     print '<tr><td>'.$langs->trans("Country").'</td><td>';
-    $htmls->select_pays($adh->pays?$adh->pays:MAIN_INFO_SOCIETE_PAYS,'pays');
+    $htmls->select_pays($adh->pays?$adh->pays:$mysoc->pays,'pays');
     print '</td></tr>';
-    print '<tr><td>'.$langs->trans("EMail").(ADHERENT_MAIL_REQUIRED&&ADHERENT_MAIL_REQUIRED==1?'*':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
     print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
     print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="40" value="'.$adh->password.'"></td></tr>';
     print '<tr><td>'.$langs->trans("Birthday").'</td><td><input type="text" name="naiss" size="10"> ('.$langs->trans("DateFormatYYYYMMDD").')</td></tr>';
