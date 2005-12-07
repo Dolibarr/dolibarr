@@ -54,7 +54,7 @@ $colors[11] = 'red';
 $months = array(10,11);
 
 $data = array();
-$xdata = array();
+$moydata = array();
 
 print "$month\n";
 $sql = "SELECT date_format(date,'%d'), sum(duree)";
@@ -63,7 +63,7 @@ $sql .= " WHERE date >= '2005-10-01'";
 $sql .= " GROUP BY date_format(date,'%Y%m%d') ASC ;";
 
 $resql = $db->query($sql);
-
+$total = 0;
 if ($resql)
 {
   $num = $db->num_rows($resql);
@@ -72,8 +72,10 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       $data[$i] = ($row[1]/60000);
+      $total = $total + $data[$i];
       $labels[$i] = $row[0];
       $i++;
+      $moydata[$i] = $total / $i;
     }
 }
 else
@@ -95,7 +97,12 @@ $graph->xaxis->SetTickLabels($labels);
 
 $b2plot = new LinePlot($data);    
 $b2plot->SetWeight(2);
+$b2plot->SetColor("red");
 $graph->Add($b2plot);
+
+$lineplot = new LinePlot($moydata);    
+$lineplot->SetColor("blue");
+$graph->Add($lineplot);
 
 $graph->img->SetImgFormat("png");
 $graph->Stroke($file);
