@@ -8,6 +8,7 @@ ConfFileIsWritable=Configuration file <b>%s</b> is writable.
 ConfFileDoesNotExists=Configuration file <b>%s</b> does not exist !
 ErrorDirDoesNotExists=Directory %s does not exists.
 ErrorGoBackAndCorrectParameters=Go backward and correct wrong parameters.
+ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
 YouCanContinue=You can continue...
 License=Using license
 ConfigurationFile=Configuration file
