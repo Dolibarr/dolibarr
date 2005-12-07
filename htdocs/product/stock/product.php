@@ -402,12 +402,12 @@ print "<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '' )
 {
-  if (!$user->rights->stock->mouvement->creer)
+  if ($user->rights->stock->mouvement->creer)
   {
   	print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=transfert">Transfert</a>';
   }
   
-  if (!$user->rights->stock->creer)
+  if ($user->rights->stock->creer)
   {
   	print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
   }

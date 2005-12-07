@@ -315,7 +315,7 @@ if ($_GET["id"] || $_GET["ref"])
         
         if ($_GET["action"] != 'add_price') {
 
-            if (!$user->rights->produit->creer)
+            if ($user->rights->produit->creer)
 						{
             	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
             	print $langs->trans("AddSupplier").'</a>';
