@@ -41,7 +41,7 @@ $dons_addon_var      = DON_ADDON;
 $typeconst=array('yesno','texte','chaine');
 
 
-if ($_GET["action"] == 'set')
+if ($_GET["action"] == 'setmodelbon')
 {
   if (dolibarr_set_const($db, "DON_ADDON",$_GET["value"]))
     $don_addon_var = $_GET["value"];
@@ -101,7 +101,7 @@ while (($file = readdir($handle))!==false)
         {
             print '&nbsp;';
             print '</td><td align="center">';
-            print '<a href="dons.php?action=setform&value='.$name.'">'.$langs->trans("Activate").'</a>';
+            print '<a href="dons.php?action=setmodelbon&value='.$name.'">'.$langs->trans("Activate").'</a>';
         }
         print "</td></tr>\n";
 
