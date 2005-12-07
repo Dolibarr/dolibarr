@@ -148,9 +148,21 @@ values ('02-11-YHGT',2,now(),'2002-11-01',1,1000,0,196,1196,1,NULL,NULL,'');
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
 values ('02-12-YHGT',2,now(),'2002-12-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'eldy_backoffice','chaine',1);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'eldy','chaine',1);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'eldy','chaine',1);
 
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_NOM','Barridol','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_ADRESSE','10 road street','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_CP','75000','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_VILLE','BigTown','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_PAYS','1','chaine',0);
+
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_TEL','01 02 03 04 05','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_FAX','01 02 03 04 06','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_WEB','dolibarr.jexiste.fr','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_MAIL','mycompany@mycompany.com','chaine',0);
+
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_TVAINTRA','12345679012345','chaine',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_CAPITAL','15000','chaine',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SIREN','123456789','chaine',0);
