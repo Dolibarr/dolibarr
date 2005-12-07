@@ -1485,7 +1485,7 @@ else
 						print '<td align="right"><input size="6" type="text" name="price" value="'.price($objp->subprice).'"></td>';
 						print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
 						print '<td align="right" nowrap><input size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
-						print '<td align="center" rowspan="2" colspan="4" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+						print '<td align="center" rowspan="1" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>' . "\n";
 						if ($conf->service->enabled)
