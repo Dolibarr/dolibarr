@@ -1266,8 +1266,8 @@ else
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 					print '<tr '.$bc[$var].'><td>';
-					print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').'</a>';
-					print '&nbsp;'.strftime('%d %B %Y',$objp->dp).'</td>';
+					print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
+					print dolibarr_print_date($objp->dp).'</td>';
 					print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 					print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
 					print '</tr>';
