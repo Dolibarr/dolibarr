@@ -24,11 +24,11 @@
  */
 
 /**
-	    \file       htdocs/includes/modules/facture/modules_facture.php
-		\ingroup    facture
-		\brief      Fichier contenant la classe mère de generation des factures en PDF
-		            et la classe mère de numérotation des factures
-		\version    $Revision$
+   \file       htdocs/includes/modules/facture/modules_facture.php
+   \ingroup    facture
+   \brief      Fichier contenant la classe mère de generation des factures en PDF
+   et la classe mère de numérotation des factures
+   \version    $Revision$
 */
 
 require_once(FPDF_PATH.'fpdf.php');
@@ -37,149 +37,147 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis ca
 
 
 /**
-	    \class      ModelePDFFactures
-		\brief      Classe mère des modèles de facture
+   \class      ModelePDFFactures
+   \brief      Classe mère des modèles de facture
 */
 
 class ModelePDFFactures extends FPDF
 {
-    var $error='';
+  var $error='';
 
-   /** 
-    *       \brief      Renvoi le dernier message d'erreur de création de facture
-    */
-    function pdferror()
-    {
-        return $this->error;
-    }
+  /** 
+   *       \brief      Renvoi le dernier message d'erreur de création de facture
+   */
+  function pdferror()
+  {
+    return $this->error;
+  }
 
-    /** 
-     *      \brief      Renvoi la liste des modèles actifs
-     *      \param      db      Handler de base
-     */
-    function liste_modeles($db)
-    {
-        $liste=array();
-        $sql ="";
+  /** 
+   *      \brief      Renvoi la liste des modèles actifs
+   *      \param      db      Handler de base
+   */
+  function liste_modeles($db)
+  {
+    $liste=array();
+    $sql ="";
         
-        $resql = $db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $db->fetch_row($resql);
-                $liste[$row[0]]=$row[1];
-                $i++;
-            }
-        }
-        else
-        {
-            return -1;
-        }
-        return $liste;
-    }
+    $resql = $db->query($sql);
+    if ($resql)
+      {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $row = $db->fetch_row($resql);
+	    $liste[$row[0]]=$row[1];
+	    $i++;
+	  }
+      }
+    else
+      {
+	return -1;
+      }
+    return $liste;
+  }
 
 }
 
-
 /**
-    	\class      ModeleNumRefFactures
-	    \brief      Classe mère des modèles de numérotation des références de facture
+   \class      ModeleNumRefFactures
+   \brief      Classe mère des modèles de numérotation des références de facture
 */
 
 class ModeleNumRefFactures
 {
-    var $error='';
+  var $error='';
 
-    /**     \brief      Renvoi la description par defaut du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-    function info()
-    {
-        global $langs;
-        $langs->load("bills");
-        return $langs->trans("NoDescription");
-    }
+  /**     \brief      Renvoi la description par defaut du modele de numérotation
+   *      \return     string      Texte descripif
+   */
+  function info()
+  {
+    global $langs;
+    $langs->load("bills");
+    return $langs->trans("NoDescription");
+  }
 
-    /**     \brief      Renvoi un exemple de numérotation
-     *      \return     string      Example
-     */
-    function getExample()
-    {
-        global $langs;
-        $langs->load("bills");
-        return $langs->trans("NoExample");
-    }
+  /**     \brief      Renvoi un exemple de numérotation
+   *      \return     string      Example
+   */
+  function getExample()
+  {
+    global $langs;
+    $langs->load("bills");
+    return $langs->trans("NoExample");
+  }
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
-     */
-    function canBeActivated()
-    {
-        return true;
-    }
+  /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
+   *                  de conflits qui empechera cette numérotation de fonctionner.
+   *      \return     boolean     false si conflit, true si ok
+   */
+  function canBeActivated()
+  {
+    return true;
+  }
 
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \return     string      Valeur
-     */
-    function getNextValue()
-    {
-        global $langs;
-        return $langs->trans("NotAvailable");
-    }
+  /**     \brief      Renvoi prochaine valeur attribuée
+   *      \return     string      Valeur
+   */
+  function getNextValue()
+  {
+    global $langs;
+    return $langs->trans("NotAvailable");
+  }
 }
 
 
 /**
-    \brief      Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
-    \param	    db  		objet base de donnée
-    \param	    facid		id de la facture à créer
-    \param	    message		message
-    \return     int         0 si KO, 1 si OK
+   \brief    Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
+   \param    db  		objet base de donnée
+   \param    facid		id de la facture à créer
+   \param    message		message
+   \return   int         0 si KO, 1 si OK
 */
 function facture_pdf_create($db, $facid, $message="")
 {
-    global $langs;
-    $langs->load("bills");
+  global $langs;
+  $langs->load("bills");
 
-    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
 
-    if (defined("FACTURE_ADDON_PDF") && FACTURE_ADDON_PDF)
+  if (defined("FACTURE_ADDON_PDF") && FACTURE_ADDON_PDF)
     {
+      $file = "pdf_".FACTURE_ADDON_PDF.".modules.php";
 
-        $file = "pdf_".FACTURE_ADDON_PDF.".modules.php";
+      $classname = "pdf_".FACTURE_ADDON_PDF;
+      require_once($dir.$file);
 
-        $classname = "pdf_".FACTURE_ADDON_PDF;
-        require_once($dir.$file);
+      $obj = new $classname($db);
+      $obj->message = $message;
 
-        $obj = new $classname($db);
+      if ( $obj->write_pdf_file($facid) > 0)
+	{
+	  // Succès de la création de la facture. On génère le fichier meta
+	  facture_meta_create($db, $facid);
+	  
+	  // et on supprime l'image correspondant au preview
+	  facture_delete_preview($db, $facid);
 
-        $obj->message = $message;
+	  return 1; //TODO A MODIFIER
+	}
+      else
+	{
+	  dolibarr_syslog("Erreur dans facture_pdf_create");
+	  dolibarr_print_error($db,$obj->pdferror());
+	  return 0;
+	}
 
-        if ( $obj->write_pdf_file($facid) > 0)
-        {
-            // Succès de la création de la facture. On génère le fichier meta
-            facture_meta_create($db, $facid);
-
-            // et on supprime l'image correspondant au preview
-            facture_delete_preview($db, $facid);
-
-            return 1;
-        }
-        else
-        {
-            dolibarr_syslog("Erreur dans facture_pdf_create");
-            dolibarr_print_error($db,$obj->pdferror());
-            return 0;
-        }
     }
-    else
+  else
     {
-        print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
-        return 0;
+      print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
+      return 0;
     }
 }
 
@@ -247,27 +245,27 @@ ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->
 */
 function facture_delete_preview($db, $facid)
 {
-	global $langs,$conf;
+  global $langs,$conf;
 
-	$fac = new Facture($db,"",$facid);
-	$fac->fetch($facid);  
-	$fac->fetch_client();
+  $fac = new Facture($db,"",$facid);
+  $fac->fetch($facid);  
+  $fac->fetch_client();
 
-	if ($conf->facture->dir_output)
+  if ($conf->facture->dir_output)
     {
-		$facref = sanitize_string($fac->ref); 
-		$dir = $conf->facture->dir_output . "/" . $facref ; 
-		$file = $dir . "/" . $facref . ".pdf.png";
+      $facref = sanitize_string($fac->ref); 
+      $dir = $conf->facture->dir_output . "/" . $facref ; 
+      $file = $dir . "/" . $facref . ".pdf.png";
 
-		if ( file_exists( $file ) && is_writable( $file ) )
-		{
-			if ( ! unlink($file) )
-			{
-				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-				return 0;
-			}
-		}
+      if ( file_exists( $file ) && is_writable( $file ) )
+	{
+	  if ( ! unlink($file) )
+	    {
+	      $this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+	      return 0;
+	    }
 	}
+    }
 }
 
 ?>
