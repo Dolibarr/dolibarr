@@ -85,7 +85,7 @@ if ($_GET["id"])
    */
   
   $sql = "SELECT s.idp, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
-  $sql .= ", p.rem_pour_prev, p.rem_pour_autr";
+  $sql .= ", p.rem_pour_prev, p.rem_pour_autr, p.mode_paiement";
   $sql .= " , ".$db->pdate("p.datepo") . " as datepo";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -111,7 +111,7 @@ if ($_GET["id"])
       print '<td align="center">Date</td>';
       print '<td align="right">Montant</td>';
       print '<td align="center">Avance Durée</td><td align="center">Avance %</td>';
-      print '<td align="center">Prev %</td><td align="center">Autr %</td>';
+      print '<td align="center">Rem %</td><td align="center">MdP</td>';
       print "</tr>\n";
       
       $var=True;
@@ -135,8 +135,15 @@ if ($_GET["id"])
 	  
 	  print '<td align="center">'.$obj->avance_duree."</td>\n";
 	  print '<td align="center">'.$obj->avance_pourcent." %</td>\n";
-	  print '<td align="center">'.$obj->rem_pour_prev." %</td>\n";
-	  print '<td align="center">'.$obj->rem_pour_autr." %</td>\n";
+	  if ($obj->mode_paiement == 'pre')
+	    {
+	      print '<td align="center">'.$obj->rem_pour_prev." %</td>\n";
+	    }
+	  else
+	    {
+	      print '<td align="center">'.$obj->rem_pour_autr." %</td>\n";
+	    }
+	  print '<td align="center">'.$obj->mode_paiement." %</td>\n";
 
 	  print "</tr>\n";
 	  $i++;
