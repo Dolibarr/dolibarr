@@ -117,14 +117,14 @@ values ('Travail Temporaire Boharssais',now(),'29820','Bohars','01 40 15 03 18',
 --
 -- Utilisateurs
 --
-insert into llx_user (rowid,name,firstname,code,login,pass,webcal_login,admin)
-values (1,'demo','demo','DEMO','demo','demo','demo',1);
+replace into llx_user (name,firstname,code,login,pass,webcal_login,datec,admin)
+values ('demo','demo','DEMO','demo','demo','demo',sysdate(),0);
 
-insert into llx_user (rowid,name,firstname,code,login,pass,webcal_login)
-values (2,'demo1','demo1','DM1','demo1','demo','demo1');
+replace into llx_user (name,firstname,code,login,pass,webcal_login,datec)
+values ('demo1','demo1','DM1','demo1','demo','demo1',sysdate());
 
-insert into llx_user (rowid,name,firstname,code,login,pass,webcal_login)
-values (3,'demo2','demo2','DM2','demo2','demo','demo2');
+replace into llx_user (name,firstname,code,login,pass,webcal_login,datec)
+values ('demo2','demo2','DM2','demo2','demo','demo2',sysdate());
 
 --
 -- Facture fournisseurs
