@@ -996,6 +996,8 @@ class Form
     {
         global $langs;
     
+        if (! $code) return '';
+        
         $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
         $sql.= " WHERE code='$code';";
     
