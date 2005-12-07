@@ -1538,7 +1538,7 @@ else
 				print '<tr '.$bc[$var].'>';
 				print '<td colspan="2">';
 				print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
-				print '<td align="right">';
+				print '<td align="left">';
 				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
