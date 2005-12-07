@@ -47,49 +47,39 @@ $error = 0;
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie";
 
-$data = array();
-$xdata = array();
+
 $colors = array();
 $colors[10] = 'yellow';
 $colors[11] = 'red';
 $months = array(10,11);
-foreach ($months as $month)
+
+$data = array();
+$xdata = array();
+
+print "$month\n";
+$sql = "SELECT date_format(date,'%d'), sum(duree)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+$sql .= " WHERE date >= '2005-10-01'";
+$sql .= " GROUP BY date_format(date,'%Y%m%d') ASC ;";
+
+$resql = $db->query($sql);
+
+if ($resql)
 {
-  print "$month\n";
-  $sql = "SELECT date_format(date,'%d'), sum(duree)";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-  $sql .= " WHERE date_format(date,'%Y%m') ='2005".$month."'";
-  $sql .= " GROUP BY date_format(date,'%Y%m%d') ASC ;";
+  $num = $db->num_rows($resql);
+  $i = 0;
   
-  $resql = $db->query($sql);
-  
-  if ($resql)
+  while ($row = $db->fetch_row($resql))
     {
-      $num = $db->num_rows($resql);
-      $i = 0;
-      
-      while ($row = $db->fetch_row($resql))
-	{
-	  $xdata[($row[0]*1)] = ($row[1]/60000);
-	  $labels[$i] = $row[0];
-	  $i++;
-	}
+      $data[$i] = ($row[1]/60000);
+      $labels[$i] = $row[0];
+      $i++;
     }
-  else
-    {
-      print $db->error();
-    }
-
-  for ($i = 1 ; $i < 32 ; $i++)
-    {
-      $data[$month][$i] = $xdata[$i];
-      $labels[$i] = $i;
-    }
-
 }
-
-
-
+else
+{
+  print $db->error();
+}
 
 $file = "/tmp/conso-jour.png";
 
@@ -103,15 +93,10 @@ $graph->xaxis->scale->SetGrace(20);
 $graph->title->Set("Nb minutes en kilos");
 $graph->xaxis->SetTickLabels($labels);    
 
-foreach ($months as $month)
-{
-  $b2plot = new LinePlot($data[$month]);    
-  $b2plot->SetColor($colors[$month]);
-  $lineplot->SetWeight(2);
-  $graph->Add($b2plot);
-}
+$b2plot = new LinePlot($data);    
+$b2plot->SetWeight(2);
+$graph->Add($b2plot);
+
 $graph->img->SetImgFormat("png");
 $graph->Stroke($file);
-
-
 ?>
