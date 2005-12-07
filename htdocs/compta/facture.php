@@ -1536,7 +1536,7 @@ else
 
                 $var=true;
 				print '<tr '.$bc[$var].'>';
-				print '<td colspan="3">';
+				print '<td colspan="1">';
 				print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 				print '<td align="right">';
 				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
@@ -1544,12 +1544,12 @@ else
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
 				print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
-				print '<td align="center" valign="middle" rowspan="2" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+				print '<td align="center" valign="middle" rowspan="1" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 				print '</tr>';
 				if ($conf->service->enabled)
 				{
 					print '<tr '.$bc[$var].'>';
-					print '<td colspan="5">Si produit de type service à durée limitée: Du ';
+					print '<td colspan="7">Si produit de type service à durée limitée: Du ';
 					print $html->select_date('','date_start',0,0,1);
 					print ' au ';
 					print $html->select_date('','date_end',0,0,1);
@@ -1574,7 +1574,7 @@ else
                     print '<td>&nbsp;</td>';
     				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
     				print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
-    				print '<td align="center" valign="middle" rowspan="2" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+    				print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
     				print '</tr>';
     				if ($conf->service->enabled)
     				{
