@@ -138,12 +138,12 @@ if ($_GET["id"])
 	  if ($obj->mode_paiement == 'pre')
 	    {
 	      print '<td align="center">'.$obj->rem_pour_prev." %</td>\n";
-	      print '<td align="center">Prelev</td>\n";
+	      print '<td align="center">Prelev</td>';
 	    }
 	  else
 	    {
 	      print '<td align="center">'.$obj->rem_pour_autr." %</td>\n";
-	      print '<td align="center">Autre</td>\n";
+	      print '<td align="center">Autre</td>';
 	    }
 
 
