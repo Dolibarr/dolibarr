@@ -251,7 +251,7 @@ if ($_GET["id"])
         $sql.= " AND d.fk_commande = c.rowid AND d.fk_product =".$product->id;
         if ($socid)
         {
-            $sql .= " AND f.fk_soc = $socid";
+            $sql .= " AND c.fk_soc = $socid";
         }
         $sql.= " ORDER BY $sortfield $sortorder ";
         $sql.= $db->plimit($conf->liste_limit +1, $offset);
