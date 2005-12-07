@@ -77,7 +77,7 @@ if ($_GET["id"] && $_GET["did"])
 
   print '<tr><td width="50%" valign="top">';
   
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/ca.mensuel.'.$year.'png" alt="CA" title="CA"><br /><br />'."\n";
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/ca.mensuel.'.$year.'.png" alt="CA" title="CA"><br /><br />'."\n";
 
   print '</td><td width="50%" valign="top"><br />';
 
