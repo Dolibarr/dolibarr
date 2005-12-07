@@ -23,6 +23,12 @@
  *
  */
 require ("../../master.inc.php");
+$verbose = 0;
+for ($i = 1 ; $i <= sizeof($argv) ; $i++)
+{
+  if ($argv[$i] == "-v")
+    $verbose = 1;
+}
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
@@ -88,7 +94,8 @@ if ($resql)
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
       $file = $dir."ca.mensuel.png";
-      if ($verbose) print "Graph : ca distributeur $file\n";
+      if ($verbose) print "Graph : ca distributeur ".$row[0]."\n";
+      if ($verbose==2) print "Graph : ca distributeur $file\n";
       $graph = new GraphDistributeurCa($db, $file);
       $graph->width = 500;
       $graph->height = 260;
@@ -98,7 +105,7 @@ if ($resql)
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
       $file = $dir."gain.mensuel.png";
-      if ($verbose) print "Graph : gain distributeur $file\n";
+      if ($verbose) print "Graph : gain distributeur ".$row[0]."\n";
       $graph = new GraphDistributeurGain($db, $file);
       $graph->width = 500;
       $graph->height = 260;
@@ -108,7 +115,7 @@ if ($resql)
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
       $file = $dir."commission.mensuel.png";
-      if ($verbose) print "Graph : commission distributeur $file\n";
+      if ($verbose) print "Graph : commission distributeur ".$row[0]."\n";
       $graph = new GraphDistributeurCommission($db, $file);
       $graph->width = 500;
       $graph->height = 260;
@@ -118,7 +125,7 @@ if ($resql)
       $dir = $img_root . "distributeurs/".$row[0]."/";
       _cdir($dir);
       $file = $dir."resultat.mensuel.png";
-      if ($verbose) print "Graph : resultat distributeur $file\n";
+      if ($verbose) print "Graph : resultat distributeur ".$row[0]."\n";
       $graph = new GraphDistributeurResultat($db, $file);
       $graph->width = 500;
       $graph->height = 260;
