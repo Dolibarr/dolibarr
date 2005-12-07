@@ -32,7 +32,6 @@ llxHeader('','Telephonie - Statistiques - Distributeur');
  *
  */
 
-
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/index.php';
@@ -176,6 +175,36 @@ if ($_GET["id"])
       print $db->error() . ' ' . $sql;
     }
   print '</table>';
+
+  print '</td></tr><tr><td valign="top" width="70%">';
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/ca.mensuel.png" alt="CA" title="CA"><br /><br />'."\n";
+
+  print '</td><td valign="top" width="30%">';
+  
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Mois</td><td align="right">CA</td></tr>';
+  
+  $sql = "SELECT valeur,legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
+  $sql .= " WHERE graph = 'distributeur.ca.mensuel.".$_GET["id"]."'";
+  $sql .= " ORDER BY legend DESC";  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  $var=!$var;	  
+	  print "<tr $bc[$var]><td>".$row[1].'</td>';  
+	  print '<td align="right">'.price($row[0]).'</td></tr>';
+	}
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table>';
+
 
 
   print '</td></tr>';
