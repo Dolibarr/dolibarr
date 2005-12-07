@@ -804,7 +804,9 @@ create table llx_paiementcharge
 )type=innodb;
 
 
-update llx_const set visible=0 where name like 'DONS_FORM';
+delete from llx_const where name like 'DONS_%';
+insert into llx_const (name, value, type, visible) values ('DON_ADDON','html_cerfafr','chaine',0);
+
 update llx_const set visible=0 where name like 'ADHERENT%';
 update llx_const set visible=0 where name like 'PROPALE_ADDON%';
 

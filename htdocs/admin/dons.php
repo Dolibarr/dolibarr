@@ -35,7 +35,7 @@ if (!$user->admin)
   accessforbidden();
 
 
-$dons_addon_var      = FACTURE_ADDON;
+$dons_addon_var      = DON_ADDON;
 
 
 $typeconst=array('yesno','texte','chaine');
@@ -43,13 +43,16 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($_GET["action"] == 'set')
 {
-  if (dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"]))
-    $facture_addon_var = $_GET["value"];
+  if (dolibarr_set_const($db, "DON_ADDON",$_GET["value"]))
+    $don_addon_var = $_GET["value"];
 }
 
 
+/*
+ * Affiche page
+ */
 
-$dir = "../compta/dons/formulaire";
+$dir = "../includes/modules/dons/";
 
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
@@ -78,27 +81,29 @@ $handle=opendir($dir);
 $var=True;
 while (($file = readdir($handle))!==false)
 {
-  if (substr($file, strlen($file) -4) == '.php')
+    if (eregi('\.modules\.php$',$file))
     {
-	  $var = !$var;
+        $var = !$var;
+        $name = substr($file, 0, strlen($file) -12);
+        $classname = substr($file, 0, strlen($file) -12);
 
-      print '<tr '.$bc[$var].'><td width=\"100\">';
-      echo "$file";
-      print '</td><td>&nbsp;</td><td align="center">';
+        print '<tr '.$bc[$var].'><td width=\"100\">';
+        echo "$file";
+        print '</td><td>&nbsp;</td><td align="center">';
 
-      if ($facture_addon_var_pdf == "$name")
-	{
-	  print img_tick();
-      print '</td><td align="center">';
-      print '&nbsp;';
-	}
-      else
-	{
-	  print '&nbsp;';
-      print '</td><td align="center">';
-      print '<a href="dons.php?action=setform&value='.$name.'">'.$langs->trans("Activate").'</a>';
-	}
-	print "</td></tr>\n";
+        if ($dons_addon_var == "$name")
+        {
+            print img_tick();
+            print '</td><td align="center">';
+            print '&nbsp;';
+        }
+        else
+        {
+            print '&nbsp;';
+            print '</td><td align="center">';
+            print '<a href="dons.php?action=setform&value='.$name.'">'.$langs->trans("Activate").'</a>';
+        }
+        print "</td></tr>\n";
 
     }
 }

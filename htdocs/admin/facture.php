@@ -184,36 +184,36 @@ $handle=opendir($dir);
 $var=True;
 while (($file = readdir($handle))!==false)
 {
-  if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
+    if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
     {
-	  $var = !$var;
-      $name = substr($file, 4, strlen($file) -16);
-      $classname = substr($file, 0, strlen($file) -12);
-
-      print '<tr '.$bc[$var].'><td width="100">';
-      echo "$name";
-      print "</td><td>\n";
-      require_once($dir.$file);
-      $obj = new $classname($db);
-      
-      print $obj->description;
-
-      print '</td><td align="center">';
-
-      if ($facture_addon_var_pdf == "$name")
-	{
-      print '&nbsp;';
-      print '</td><td align="center">';
-	  print img_tick();
-	}
-      else
-	{
-	  print '&nbsp;';
-      print '</td><td align="center">';
-      print '<a href="facture.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
-	}
-	print "</td></tr>\n";
-
+        $var = !$var;
+        $name = substr($file, 4, strlen($file) -16);
+        $classname = substr($file, 0, strlen($file) -12);
+    
+        print '<tr '.$bc[$var].'><td width="100">';
+        echo "$name";
+        print "</td><td>\n";
+        require_once($dir.$file);
+        $obj = new $classname($db);
+    
+        print $obj->description;
+    
+        print '</td><td align="center">';
+    
+        if ($facture_addon_var_pdf == "$name")
+        {
+            print '&nbsp;';
+            print '</td><td align="center">';
+            print img_tick();
+        }
+        else
+        {
+            print '&nbsp;';
+            print '</td><td align="center">';
+            print '<a href="facture.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
+        }
+        print "</td></tr>\n";
+    
     }
 }
 closedir($handle);

@@ -162,7 +162,7 @@ insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.
 --
 --
 --
-insert into llx_const (name, value, type, visible) values ('DON_ADDON',           'html_cerfafr','chaine',1);
+insert into llx_const (name, value, type, visible) values ('DON_ADDON',           'html_cerfafr','chaine',0);
 insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',       'mod_propale_marbre','chaine',0);
 insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON_PDF',   'azur','chaine',0);
 insert into llx_const (name, value, type, visible) values ('COMMANDE_ADDON',      'mod_commande_ivoire','chaine',0);
