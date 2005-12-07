@@ -33,7 +33,6 @@ if ($user->distributeur_id)
 
 llxHeader();
 
-
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
@@ -74,7 +73,6 @@ if ($_GET["id"])
 
   dolibarr_fiche_head($head, $hselected, "Distributeur");
   
-  
   if ($page == -1) { $page = 0 ; }
 
   $offset = $conf->liste_limit * $page ;
@@ -87,16 +85,15 @@ if ($_GET["id"])
    */
   
   $sql = "SELECT s.idp, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
+  $sql .= ", p.rem_pour_prev, p.rem_pour_autr";
   $sql .= " , ".$db->pdate("p.datepo") . " as datepo";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
   
   $sql .= " WHERE p.fk_distributeur =".$distri->id;
-  
   $sql .= " AND c.fk_soc = s.idp";
   $sql .= " AND p.fk_contrat = c.rowid";
-
   $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
   
   $resql = $db->query($sql);
@@ -114,6 +111,7 @@ if ($_GET["id"])
       print '<td align="center">Date</td>';
       print '<td align="right">Montant</td>';
       print '<td align="center">Avance Durée</td><td align="center">Avance %</td>';
+      print '<td align="center">Prev %</td><td align="center">Autr %</td>';
       print "</tr>\n";
       
       $var=True;
@@ -137,6 +135,8 @@ if ($_GET["id"])
 	  
 	  print '<td align="center">'.$obj->avance_duree."</td>\n";
 	  print '<td align="center">'.$obj->avance_pourcent." %</td>\n";
+	  print '<td align="center">'.$obj->rem_pour_prev." %</td>\n";
+	  print '<td align="center">'.$obj->rem_pour_autr." %</td>\n";
 
 	  print "</tr>\n";
 	  $i++;
