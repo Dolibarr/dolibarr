@@ -163,6 +163,7 @@ class Societe {
 
                     dolibarr_syslog("Societe::Create success id=".$this->id);
                     $this->db->commit();
+		    $ret = 0;
                 }
                 else
                 {
