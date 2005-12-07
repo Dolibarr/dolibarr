@@ -67,16 +67,20 @@ if ($_GET["facid"] > 0)
         $soc = new Societe($db, $fac->socidp);
         $soc->fetch($fac->socidp);
         $author = new User($db);
-        $author->id = $fac->user_author;
-        $author->fetch();
-				$head = facture_prepare_head($fac);
-				$hselected = $conf->use_preview_tabs ? 2 : false;
+        if ($fac->user_author)
+        {
+            $author->id = $fac->user_author;
+            $author->fetch();
+        }
+        
+		$head = facture_prepare_head($fac);
+		$hselected = $conf->use_preview_tabs ? 2 : false;
         dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
 
         /*
-        *   Facture
-        */
+         *   Facture
+         */
         print '<table class="border" width="100%">';
 		$rowspan=3;
         
