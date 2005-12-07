@@ -31,6 +31,8 @@ require("./pre.inc.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
+$langs->load('projects');
+
 Function PLines(&$inc, $parent, $lines, &$level, &$var)
 {
   $form = new Form($db); // $db est null ici mais inutile pour la fonction select_date()
