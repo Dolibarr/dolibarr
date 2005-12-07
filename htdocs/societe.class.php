@@ -121,7 +121,7 @@ class Societe {
   /**
    *    \brief      Crée la societe en base
    *    \param      user        Objet utilisateur qui demande la création
-   *    \return     0 si ok, < 0 si erreur
+   *    \return     int         0 si ok, < 0 si erreur
    */
 
     function create($user='')
@@ -151,7 +151,7 @@ class Societe {
 
                 $ret = $this->update($this->id,$user,0);
 
-                if ($ret > 0)
+                if ($ret >= 0)
                 {
                     $this->use_webcal=($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?1:0);
 
@@ -163,7 +163,7 @@ class Societe {
 
                     dolibarr_syslog("Societe::Create success id=".$this->id);
                     $this->db->commit();
-		    $ret = 0;
+		            return 0;
                 }
                 else
                 {
@@ -171,8 +171,6 @@ class Societe {
                     $this->db->rollback();
                     return -3;
                 }
-
-                return $ret;
             }
             else
 
@@ -242,7 +240,7 @@ class Societe {
      *      \param      id              id societe
      *      \param      user            Utilisateur qui demande la mise à jour
      *      \param      call_trigger    0=non, 1=oui
-     *      \return     int             <0 si ko, >0 si erreur
+     *      \return     int             <0 si ko, >=0 si ok
      */
     function update($id, $user='', $call_trigger=1)
     {
@@ -272,127 +270,127 @@ class Societe {
 
         $result = $this->verify();
 
-        if ($result == 0)
+        if ($result >= 0)
         {
             dolibarr_syslog("Societe::Update verify ok");
-
+        
             if (strlen($this->capital) == 0)
             {
                 $this->capital = 0;
             }
-
+        
             $this->tel = ereg_replace(" ","",$this->tel);
             $this->tel = ereg_replace("\.","",$this->tel);
             $this->fax = ereg_replace(" ","",$this->fax);
             $this->fax = ereg_replace("\.","",$this->fax);
-
+        
             /*
-             * Supression des if (trim(valeur)) pour construire la requete
-             * sinon il est impossible de vider les champs
-             */
-
+            * Supression des if (trim(valeur)) pour construire la requete
+            * sinon il est impossible de vider les champs
+            */
+        
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
             $sql .= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
-	    $sql .= ", datea = now()";
+            $sql .= ", datea = now()";
             $sql .= ",address = '" . addslashes($this->adresse) ."'";
-
+        
             if ($this->cp)
             { $sql .= ",cp = '" . $this->cp ."'"; }
-
+        
             if ($this->ville)
             { $sql .= ",ville = '" . addslashes($this->ville) ."'"; }
-
+        
             $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
-
+        
             $sql .= ",tel = ".($this->tel?"'".addslashes($this->tel)."'":"null");
             $sql .= ",fax = ".($this->fax?"'".addslashes($this->fax)."'":"null");
             $sql .= ",url = ".($this->url?"'".addslashes($this->url)."'":"null");
-
+        
             $sql .= ",siren = '". addslashes($this->siren) ."'";
             $sql .= ",siret = '". addslashes($this->siret) ."'";
             $sql .= ",ape   = '". addslashes($this->ape)   ."'";
-
+        
             $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
             $sql .= ",capital = '" .   addslashes($this->capital) ."'";
-
+        
             if ($this->prefix_comm) $sql .= ",prefix_comm = '" . $this->prefix_comm ."'";
-
+        
             if ($this->effectif_id) $sql .= ",fk_effectif = '" . $this->effectif_id ."'";
-
+        
             if ($this->typent_id)   $sql .= ",fk_typent = '" . $this->typent_id ."'";
-
+        
             if ($this->forme_juridique_code) $sql .= ",fk_forme_juridique = '".$this->forme_juridique_code."'";
-
+        
             $sql .= ",client = " . $this->client;
             $sql .= ",fournisseur = " . $this->fournisseur;
-
+        
             if ($this->creation_bit || $this->codeclient_modifiable)
             {
-	      // Attention check_codeclient peut modifier le code
-	      // suivant le module utilis
-
-	      $this->check_codeclient();
-
-	      $sql .= ", code_client = ".($this->code_client?"'".$this->code_client."'":"null");
-
-	      // Attention check_codecompta_client peut modifier le code
-	      // suivant le module utilis
-
-	      $this->check_codecompta_client();
-
-	      $sql .= ", code_compta = ".($this->code_compta?"'".$this->code_compta."'":"null");
+                // Attention check_codeclient peut modifier le code
+                // suivant le module utilis
+        
+                $this->check_codeclient();
+        
+                $sql .= ", code_client = ".($this->code_client?"'".$this->code_client."'":"null");
+        
+                // Attention check_codecompta_client peut modifier le code
+                // suivant le module utilis
+        
+                $this->check_codecompta_client();
+        
+                $sql .= ", code_compta = ".($this->code_compta?"'".$this->code_compta."'":"null");
             }
-
+        
             if ($this->creation_bit || $this->codefournisseur_modifiable)
             {
-	      // Attention check_codefournisseur peut modifier le code
-	      // suivant le module utilis
-	      
-	      $this->check_codefournisseur();
-	      
-	      $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".$this->code_fournisseur."'":"null");
-	      
-	      // Attention check_codecompta_fournisseur peut modifier le code
-	      // suivant le module utilis
-	      
-	      $this->check_codecompta_fournisseur();
-	      
-	      $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".$this->code_compta_fournisseur."'":"null");
+                // Attention check_codefournisseur peut modifier le code
+                // suivant le module utilis
+        
+                $this->check_codefournisseur();
+        
+                $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".$this->code_fournisseur."'":"null");
+        
+                // Attention check_codecompta_fournisseur peut modifier le code
+                // suivant le module utilis
+        
+                $this->check_codecompta_fournisseur();
+        
+                $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".$this->code_compta_fournisseur."'":"null");
             }
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
             $sql .= " WHERE idp = '" . $id ."'";
-	    
+        
             $resql=$this->db->query($sql);
             if ($resql)
-	      {
-		if ($call_trigger)
-		  {
-		    // Appel des triggers
-		    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		    $interface=new Interfaces($this->db);
-		    $result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$langs,$conf);
-		    // Fin appel triggers
-		  }
-		
-		$result = 1;
-	      }
+            {
+                if ($call_trigger)
+                {
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$langs,$conf);
+                    // Fin appel triggers
+                }
+        
+                $result = 1;
+            }
             else
-	      {
+            {
                 if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		  {
+                {
                     // Doublon
                     $this->error = $langs->trans("ErrorPrefixAlreadyExists",$this->prefix_comm);
                     $result =  -1;
-		  }
+                }
                 else
-		  {
-                    
+                {
+        
                     $this->error = $langs->trans("Error sql=$sql");
                     dolibarr_syslog("Societe::Update echec sql=$sql");
                     $result =  -2;
-		  }
-	      }
+                }
+            }
         }
 
         return $result;

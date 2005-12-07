@@ -55,21 +55,27 @@ class Product
     var $stats_contrat=array();
     var $stats_facture=array();
 
+    var $typeprodserv;
     var $error;
     
     
-  /**
-   *    \brief      Constructeur de la classe
-   *    \param      DB          Handler accès base de données
-   *    \param      id          Id produit (0 par defaut)
-   */
-  function Product($DB, $id=0)
+    /**
+     *    \brief      Constructeur de la classe
+     *    \param      DB          Handler accès base de données
+     *    \param      id          Id produit (0 par defaut)
+     */
+    function Product($DB, $id=0)
     {
-      $this->db = $DB;
-      $this->id   = $id ;
-      $this->envente = 0;   // deprecated
-      $this->status = 0;
-      $this->seuil_stock_alerte = 0;
+        global $langs;
+        
+        $this->db = $DB;
+        $this->id   = $id ;
+        $this->envente = 0;   // deprecated
+        $this->status = 0;
+        $this->seuil_stock_alerte = 0;
+        
+        $this->typeprodser[0]=$langs->trans("Product");
+        $this->typeprodser[1]=$langs->trans("Service");
     }  
 
 
