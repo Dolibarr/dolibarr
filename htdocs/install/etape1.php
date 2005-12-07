@@ -80,11 +80,11 @@ if ($_POST["action"] == "set")
     {
         if (! is_dir($main_dir))
         {
-            dolibarr_syslog ("Le dossier '".$main_dir."' n'existe pas");
+            dolibarr_syslog ("Repertoire '".$main_dir."' inexistant ou non accessible");
 
             print "<tr><td>";
-            print $langs->trans("ErrorDirDoesNotExists",$main_dir).'<br>';;
-            print "Vous avez saisie une mauvaise valeur pour le paramètre '".$langs->trans("WebPagesDirectory")."'.<br>";
+            print $langs->trans("ErrorDirDoesNotExists",$main_dir).'<br>';
+            print $langs->trans("ErrorWrongValueForParameter",$langs->trans("WebPagesDirectory")).'<br>';
             print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
             print '</td><td>';
             print $langs->trans("Error");

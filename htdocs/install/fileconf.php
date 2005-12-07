@@ -54,9 +54,11 @@ print "</td>";
 
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
+    //print "x".$_SERVER["SCRIPT_FILENAME"]." y".$_SERVER["DOCUMENT_ROOT"];
+
     // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
     // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
-    if (eregi('php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"]))
+    if (eregi('^php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('[\\\/]php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"]))
     {
         $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
 
