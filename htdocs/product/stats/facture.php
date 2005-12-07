@@ -146,7 +146,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Reference
         print '<tr>';
-        print '<td width="28%">'.$langs->trans("Ref").'</td><td colspan="3">';
+        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
         $product->load_previous_next_ref();
         $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
         $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
