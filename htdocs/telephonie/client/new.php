@@ -203,7 +203,7 @@ if ($_POST["action"] == 'add')
   
       if(! is_numeric($temporel))
 	{
-	  $error++;
+	  $error = 1030;
 	  $verif = "nok";
 	  $mesg .= "Tarif France Invalide";
 	}
@@ -211,14 +211,14 @@ if ($_POST["action"] == 'add')
 	{
 	  if ($temporel > 0.04 )
 	    {
-	      $error++;
+	      $error = 1031;
 	      $verif = "nok";
 	      $mesg .= "Tarif France Invalide : $temporel > 0.04 !";
 	    }
 	  
 	  if ($temporel < 0.016 )
 	    {
-	      $error++;
+	      $error = 1031;
 	      $verif = "nok";
 	      $mesg .= "Tarif France Invalide : $temporel <  0.016 !";
 	    }
@@ -238,13 +238,13 @@ if ($_POST["action"] == 'add')
 	{      
 	  if ($temporel > 0.40 )
 	    {
-	      $error++;
+	      $error = 1033;
 	      $verif = "nok";
 	      $mesg .= "Tarif Mobile Invalide : $temporel > 0.40 !";
 	    }
 	  if ($temporel <  0.16 )
 	    {
-	      $error++;
+	      $error = 1034;
 	      $verif = "nok";
 	      $mesg .= "Tarif Mobile Invalide : $temporel <  0.16 !";
 	    }
@@ -270,7 +270,7 @@ if ($_POST["action"] == 'add')
 
   if (!$error && $verif == "ok")
     {     
-      $soc->code_client           = $_POST["code_client"]."00";
+      $soc->code_client = $_POST["code_client"]."00";
       $result = $soc->create($user);
       
       if ($result == 0)
@@ -283,8 +283,8 @@ if ($_POST["action"] == 'add')
 	}
       else
 	{
-	  $mesg = nl2br($soc->error);
-	  $error++;
+	  $mesg = nl2br($soc->error) . " (result $result)\n";
+	  $error = 1035;
 	}
     }
   
@@ -298,7 +298,7 @@ if ($_POST["action"] == 'add')
 	}
       else
 	{
-	  $error++;
+	  $error = 1024;
 	}
     }
 
@@ -313,7 +313,7 @@ if ($_POST["action"] == 'add')
 	}
       else
 	{
-	  $error++;
+	  $error = 1025;
 	}
     }
 
@@ -326,13 +326,13 @@ if ($_POST["action"] == 'add')
       $contrat->client_facture  = $soc->id;
       $contrat->commercial_sign = $_POST["commercial_sign"];
       
-      if ( $contrat->create($user) == 0)
+      if ( $contrat->create($user,'oui',$_POST["mode_paiement"]) == 0)
 	{
 	  $contrat->add_contact_facture($contact->id);
 	}
       else
 	{
-	  $error++;
+	  $error = 1026;
 	}
     }
   
@@ -366,7 +366,7 @@ if ($_POST["action"] == 'add')
 	    }
 	  else
 	    {
-	      $error++;
+	      $error = 1027;
 	      $mesg.= "Impossible de créer la ligne #1 0".$_POST["cli"];
 	    }
 	}
@@ -399,6 +399,7 @@ if ($_POST["action"] == 'add')
 	  else
 	    {
 	      //$error++;
+	      $error = 1028;
 	      $mesg.= "Impossible de créer la ligne #2 0".$_POST["cli2"];
 	    }
 	}
@@ -430,6 +431,7 @@ if ($_POST["action"] == 'add')
 	  else
 	    {
 	      //$error++;
+	      $error = 1029;
 	      $mesg.= "Impossible de créer la ligne #3 0".$_POST["cli3"];
 	    }
 	}
@@ -522,7 +524,11 @@ if ($_POST["action"] == 'add')
   if (!$error && $verif == "ok")
     {
       Header("Location: ".DOL_URL_ROOT."/telephonie/contrat/fiche.php?id=".$contrat->id);
-    }	  
+    }
+  else
+    {
+      $mesg .= $error;
+    }
   
 }
 
@@ -629,6 +635,21 @@ if ($user->rights->telephonie->ligne->creer)
   print '<input type="text" size="4" maxlength="4" '.$focus.' name="rib_iban" value="'.$_POST["rib_iban"].'">';
   print '</td></tr>';
   
+  print '<tr><td width="20%">Règlement</td><td colspan="3">';
+  print '<select name="mode_paiement">';
+  if ($_POST["mode_paiement"] == 'vir')
+    {
+      print '<option value="pre">Prélèvement</option>';
+      print '<option value="vir" SELECTED>Virement</option>';
+    }
+  else
+    {
+      print '<option value="pre" SELECTED>Prélèvement</option>';
+      print '<option value="vir">Virement</option>';
+    }
+  print '</select>';
+  print '</td></tr>';
+
   print "</table>\n";
   print "</fieldset><br />\n";
   
