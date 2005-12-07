@@ -1098,8 +1098,11 @@ else
 			$soc->fetch($fac->socidp);
 
 			$author = new User($db);
-			$author->id = $fac->user_author;
-			$author->fetch();
+			if ($fac->user_author)
+			{
+			    $author->id = $fac->user_author;
+			    $author->fetch();
+			}
 
 			$head = facture_prepare_head($fac);
  
