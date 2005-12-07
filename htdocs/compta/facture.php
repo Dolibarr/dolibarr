@@ -1386,7 +1386,7 @@ else
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-					print '<td colspan="3">&nbsp;</td>';
+					print '<td width="16">&nbsp;</td><td width="16">&nbsp;</td><td width="16">&nbsp;</td>';
 					print "</tr>\n";
 				}
 				$var=true;
