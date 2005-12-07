@@ -67,3 +67,4 @@ Pack=Pack
 Packs=Packs
 NoteNotVisibleOnBill=Note (not visible on invoices, proposals...)
 CreateCopy=Create copy
+ServiceLimitedDuration=If produced of service type at limited duration:

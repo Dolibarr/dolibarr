@@ -47,6 +47,8 @@ if (!$user->rights->facture->lire)
     accessforbidden();
 
 $langs->load('bills');
+$langs->load('products');
+$langs->load('main');
 
 $sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
 if (isset($_GET['msg'])) { $msg=urldecode($_GET['msg']); }
@@ -1491,9 +1493,9 @@ else
 						if ($conf->service->enabled)
 						{
 							print '<tr '.$bc[$var].'>';
-							print '<td colspan="9">Si produit de type service à durée limitée: Du ';
+							print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 							print $html->select_date($objp->date_start,'date_start',0,0,$objp->date_start?0:1);
-							print ' au ';
+							print ' '.$langs->trans('to').' ';
 							print $html->select_date($objp->date_end,'date_end',0,0,$objp->date_end?0:1);
 							print '</td>';
 							print '</tr>';
@@ -1549,9 +1551,9 @@ else
 				if ($conf->service->enabled)
 				{
 					print '<tr '.$bc[$var].'>';
-					print '<td colspan="9">Si produit de type service à durée limitée: Du ';
+					print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 					print $html->select_date('','date_start',0,0,1);
-					print ' au ';
+					print ' '.$langs->trans('to').' ';
 					print $html->select_date('','date_end',0,0,1);
 					print '</td>';
 					print '</tr>';
@@ -1579,9 +1581,9 @@ else
     				if ($conf->service->enabled)
     				{
     					print '<tr '.$bc[$var].'>';
-    					print '<td colspan="5">Si produit de type service à durée limitée: Du ';
+    					print '<td colspan="5">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
     					print $html->select_date('','date_start',0,0,1);
-    					print ' au ';
+    					print ' '.$langs->trans('to').' ';
     					print $html->select_date('','date_end',0,0,1);
     					print '</td>';
     					print '</tr>';

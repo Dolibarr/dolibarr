@@ -80,3 +80,4 @@ Pack=Lot
 Packs=Lots
 NoteNotVisibleOnBill=Note (non visible sur les factures, propals...)
 CreateCopy=Créer copie
+ServiceLimitedDuration=Si produit de type service à durée limitée :
