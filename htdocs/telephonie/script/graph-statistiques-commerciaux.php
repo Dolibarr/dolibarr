@@ -23,6 +23,14 @@
  *
  */
 require ("../../master.inc.php");
+$verbose = 0;
+for ($i = 1 ; $i <= sizeof($argv) ; $i++)
+{
+  if ($argv[$i] == "-v")
+    $verbose = 1;
+  if ($argv[$i] == "-vv")
+    $verbose = 2;
+}
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
@@ -87,7 +95,7 @@ if ($resql)
       /* Chiffre d'affaire mensuel */
             
       $file = $img_root . "commercials/".$row[0]."/ca.mensuel.$year.png";
-      if ($verbose) print "Graph : Lignes commandes$file\n";
+      if ($verbose) print "CA ".$row[0]."\n";
       $graph = new GraphCommercialChiffreAffaire($db, $file, $year);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
@@ -95,7 +103,7 @@ if ($resql)
       /* Gain */
             
       $file = $img_root . "commercials/".$row[0]."/gain.mensuel.$year.png";
-      if ($verbose) print "Graph : Lignes commandes$file\n";
+      if ($verbose) print "Gain ".$row[0]."\n";
       $graph = new GraphCommercialGain($db, $file, $year);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
