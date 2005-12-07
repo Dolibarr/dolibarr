@@ -1491,7 +1491,7 @@ else
 						if ($conf->service->enabled)
 						{
 							print '<tr '.$bc[$var].'>';
-							print '<td colspan="5">Si produit de type service à durée limitée: Du ';
+							print '<td colspan="9">Si produit de type service à durée limitée: Du ';
 							print $html->select_date($objp->date_start,'date_start',0,0,$objp->date_start?0:1);
 							print ' au ';
 							print $html->select_date($objp->date_end,'date_end',0,0,$objp->date_end?0:1);
