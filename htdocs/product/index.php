@@ -28,9 +28,12 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 
 if (!$user->rights->produit->lire)
   accessforbidden();
+
+$staticproduct=new Product($db);
 
 
 /*
@@ -70,17 +73,18 @@ $prodser = array();
 $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
 $sql = "SELECT count(*), fk_product_type, envente FROM ".MAIN_DB_PREFIX."product as p GROUP BY fk_product_type, envente";
-if ($db->query($sql))
+$result=$db->query($sql);
+if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  while ($i < $num)
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num)
     {
-      $row = $db->fetch_row($i);
-      $prodser[$row[1]][$row[2]] = $row[0];
-      $i++;
+        $row = $db->fetch_row($result);
+        $prodser[$row[1]][$row[2]] = $row[0];
+        $i++;
     }
-  $db->free();
+    $db->free();
 }
 
 print '<table class="noborder" width="100%">';
@@ -120,13 +124,10 @@ $result = $db->query($sql) ;
 
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
 
   $i = 0;
 
-  $typeprodser[0]=$langs->trans("Product");
-  $typeprodser[1]=$langs->trans("Service");
-    
   if ($num > 0)
     {
       print '<table class="noborder" width="100%">';
@@ -136,7 +137,7 @@ if ($result)
       $var=True;
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print '<td nowrap="nowrap"><a href="fiche.php?id='.$objp->rowid.'">';
@@ -144,7 +145,7 @@ if ($result)
 	  else print img_object($langs->trans("ShowProduct"),"product");
 	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print "<td>$objp->label</td>";
-	  print "<td>".$typeprodser[$objp->fk_product_type]."</td>";
+	  print "<td>".$staticproduct->typeprodser[$objp->fk_product_type]."</td>";
 	  print '<td align="center" nowrap="nowrap">'.($objp->envente?$langs->trans("OnSell"):$langs->trans("NotOnSell"))."</td>";
 	  print "</tr>\n";
 	  $i++;
