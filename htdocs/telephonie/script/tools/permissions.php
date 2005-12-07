@@ -43,12 +43,17 @@ if ( $resql )
 
       $sqlu = "REPLACE INTO llx_societe_perms";
       $sqlu .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
-      $sqlu .= " VALUES (".$row[0].", 9,1,1,1)";
+      $sqlu .= " VALUES (".$row[0].",2,1,0,0)";
       $resqlu = $db->query($sqlu);
 
       $sqlu = "REPLACE INTO llx_societe_perms";
       $sqlu .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
       $sqlu .= " VALUES (".$row[0].", 5,1,1,1)";
+      $resqlu = $db->query($sqlu);
+
+      $sqlu = "REPLACE INTO llx_societe_perms";
+      $sqlu .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
+      $sqlu .= " VALUES (".$row[0].", 9,1,1,1)";
       $resqlu = $db->query($sqlu);
 
       $sqlu = "REPLACE INTO llx_societe_perms";
@@ -75,7 +80,6 @@ if ( $resql )
       $sqlu .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
       $sqlu .= " VALUES (".$row[0].",34,1,0,0)";
       $resqlu = $db->query($sqlu);
-
     }
   $db->free($resql);
 }
