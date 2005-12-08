@@ -23,10 +23,14 @@
  */
 require ("../../master.inc.php");
 require_once DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php";
+require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
 
 $host          = CMD_PRESEL_WEB_HOST;
 $user_login    = CMD_PRESEL_WEB_USER;
 $user_passwd   = CMD_PRESEL_WEB_PASS;
+
+$user = new User($db);
+$user->id = 1;
 
 $ids = array();
 
@@ -61,14 +65,14 @@ else
     }
 }
 
-GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $debug);
+GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $debug, $user);
 
 /*
  * Fonctions
  *
  */
 
-function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $debug)
+function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $debug, $user)
 {  
   $numcli = sizeof($ids);
   $i = 0;
@@ -141,6 +145,41 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $deb
 		      print substr($ligne_presel.str_repeat(" ",20),0,20);
 		      print "\n";
 		    }
+
+		  $situation_key = $ligne_service.' / '.$ligne_presel;
+
+		  if ($situation_key == 'TRAITE_OK / ATTENTE')
+		    {
+		      $ligne = new LigneTel($db);
+		      
+		      if ($ligne->fetch($ligne_numero) == 1)
+			{
+			  if ($ligne->statut == 3)
+			    {
+			      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande_retour";
+			      $sql .= " (cli,mode,date_traitement,situation,fk_fournisseur,traite)";
+			      $sql .= " VALUES ('$ligne_numero','PRESELECTION',now(),'$situation_key',4,1);";
+			      
+			      $resql = $db->query($sql);
+
+			      $statut = 6;
+			      $date_resiliation = time();
+			      $datea = $db->idate($date_resiliation);
+
+			      if ($ligne->set_statut($user, $statut, $datea,'',4) <> 0)
+				{
+				  $error++;
+				  print "ERROR\n";
+				}
+			    }
+			}
+		      else
+			{
+			  print "Erreur de lecture\n";
+			}
+		    }
+		  
+
 		}
 
 	      if (preg_match("/<Error .* \/>/",$line))
