@@ -88,9 +88,7 @@ if ($resql)
 	    {
 	      $jour = (substr($rowa[0],0,2) * 1);
 	      $data[$jour] = ($rowa[1]/60);
-	      $total = $total + $data[$jour];
 	      $i++;
-	      $moydata[$jour] = $total / $i;
 	    }
 	}
 
@@ -101,8 +99,10 @@ if ($resql)
 	  $moydatas[$i] = 0;
 	  if ($data[$j])
 	    $datas[$i] = $data[$j];
-	  if ($moydata[$j])
-	    $moydatas[$i] = $moydata[$j];
+
+	  $total = $total + $datas[$i];
+	  $moydatas[$i] = $total / $j;
+
 	  $labels[$i] = $j;
 	}
       
