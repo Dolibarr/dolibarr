@@ -121,7 +121,7 @@ if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
     {
         if ($choix==1) $dir = "../../mysql/migration/";
         else $dir = "../../pgsql/migration/";
-        $migfile='1.1.0-2.0.0.sql';
+        $migfile='^1.1.0-2.0.0.sql$';
         
         $i = 0;
         $ok = 0;
@@ -183,7 +183,7 @@ if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
                         else
                         {
                             print '<tr><td>'.$langs->trans("Request").' '.$i.'</td>';
-                            print '<td>'.$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td>";
+                            print '<td>'.$langs->trans("Error")." ".$db->errno()." ".$db->error()."<br>".$sql."</td>";
                             print '</tr>';
                             $error++;
                         }
