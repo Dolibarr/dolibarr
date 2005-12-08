@@ -18,13 +18,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-    \file       htdocs/compta/prelevement/pre.inc.php
-    \ingroup    prelevement
-    \brief      Fichier gestionnaire du menu prelevement
+        \file       htdocs/compta/prelevement/pre.inc.php
+        \ingroup    prelevement
+        \brief      Fichier gestionnaire du menu prelevement
 */
 
 require("../../main.inc.php");
@@ -35,6 +34,7 @@ $langs->load("withdrawals");
 $langs->load("bills");
 
 $user->getrights("prelevement");
+
 
 function llxHeader($head = "", $title="", $help_url='')
 {
@@ -65,7 +65,7 @@ function llxHeader($head = "", $title="", $help_url='')
 	  
 	  $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("Demandes"));
 	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));
-	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php",$langs->trans("StandingOrderProcessed"));
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php?statut=1",$langs->trans("StandingOrderProcessed"));
 	  
 	}      
     }

@@ -58,17 +58,19 @@ if (! $sortfield) $sortfield="f.facnumber";
 
 
 /*
- * Demandes en attente
+ * Liste de demandes
  *
  */
 
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
-$sql .= " , ".$db->pdate("pfd.date_demande")." as date_demande";
-$sql .= " , pfd.fk_user_demande";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-$sql .= " WHERE s.idp = f.fk_soc";
-$sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
+$sql= "SELECT f.facnumber, f.rowid, s.nom, s.idp";
+$sql.= " , ".$db->pdate("pfd.date_demande")." as date_demande";
+$sql.= " , pfd.fk_user_demande";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql.= " WHERE s.idp = f.fk_soc";
+if (! $statut) $sql.= " AND pfd.traite = 0";
+if ($statut) $sql.= " AND pfd.traite = ".$statut;
+$sql.= " AND pfd.fk_facture = f.rowid";
 if (strlen(trim($_GET["search_societe"])))
 {
   $sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";

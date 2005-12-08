@@ -40,6 +40,14 @@ if ($_GET["action"] == 'create')
 {
     $bprev = new BonPrelevement($db);
     $result=$bprev->create($_GET["banque"],$_GET["guichet"]);
+    if ($result < 0)
+    {
+        $mesg='<div class="error">'.$bprev->error.'</div>';
+    }
+    if ($result == 0)
+    {
+        $mesg='<div class="error">Aucune facture prélevable, prélevé avec succès</div>';
+    }
 }
 
 
@@ -57,7 +65,10 @@ $bprev = new BonPrelevement($db);
 $nb=$bprev->NbFactureAPrelever();
 $nb1=$bprev->NbFactureAPrelever(1);
 $nb11=$bprev->NbFactureAPrelever(1,1);
-
+if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
+{
+    dolibarr_print_error($bprev->error);
+}
 print '<table class="border" width="100%">';
 print '<tr><td>Nb de facture à prélever :</td>';
 print '<td align="right">';
@@ -78,6 +89,7 @@ print '</tr></table>';
 
 print '</div>';
 
+if ($mesg) print $mesg;
 
 if ($nb)
 {
