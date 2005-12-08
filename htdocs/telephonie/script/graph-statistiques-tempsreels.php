@@ -50,6 +50,9 @@ $colors[10] = 'yellow';
 $colors[11] = 'red';
 $months = array(10,11);
 
+$month = strftime("%m",time());
+$year = strftime("%Y",time());
+
 print "$month\n";
 
 $sql = "SELECT distinct ligne";
@@ -103,7 +106,16 @@ if ($resql)
 	  $total = $total + $datas[$i];
 	  $moydatas[$i] = $total / $j;
 
+
 	  $labels[$i] = $j;
+	  if (strftime('%u',mktime(12,12,12,$month,$j,$year)) == 6)
+	    {
+	      $labels[$i] = 'S';
+	    }
+	  if (strftime('%u',mktime(12,12,12,$month,$j,$year)) == 7)
+	    {
+	      $labels[$i] = 'D';
+	    }
 	}
       
       $img_root = DOL_DATA_ROOT."/graph/".substr($ligne->id,-1)."/telephonie/ligne/";
