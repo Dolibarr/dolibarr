@@ -32,42 +32,36 @@ $user->getrights('user');
 
 function llxHeader($head = "", $title = "")
 {
-  global $user,$langs;
+    global $user,$langs;
 
-  /*
-   *
-   *
-   */
-  top_menu($head, $title);
+    top_menu($head, $title);
 
-  $menu = new Menu();
+    $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("Users"));
-
-  if ($user->rights->user->user->lire || $user->admin)
-    {  
-      $menu->add_submenu(DOL_URL_ROOT."/user/", $langs->trans("List"));
-    }
-
-  if($user->admin)
+    if ($user->rights->user->user->lire || $user->admin)
     {
-      $menu->add_submenu(DOL_URL_ROOT."/user/fiche.php?&amp;action=create", $langs->trans("NewUser"));
+        $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("Users"));
+        $menu->add_submenu(DOL_URL_ROOT."/user/", $langs->trans("List"));
     }
 
-  $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("Groups"));
-
-  if ($user->rights->user->user->lire || $user->admin)
-    {  
-      $menu->add_submenu(DOL_URL_ROOT."/user/group/", $langs->trans("List"));
-    }
-
-  if($user->admin)
+    if($user->rights->user->user->creer || $user->admin)
     {
-      $menu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?&amp;action=create", $langs->trans("NewGroup"));
+        $menu->add_submenu(DOL_URL_ROOT."/user/fiche.php?&amp;action=create", $langs->trans("NewUser"));
+    }
+
+    if ($user->rights->user->user->lire || $user->admin)
+    {
+        $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("Groups"));
+        $menu->add_submenu(DOL_URL_ROOT."/user/group/", $langs->trans("List"));
+    }
+
+    if($user->rights->user->user->creer || $user->admin)
+    {
+        $menu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?&amp;action=create", $langs->trans("NewGroup"));
     }
 
 
-  left_menu($menu->liste);
+    left_menu($menu->liste);
 }
 
 ?>

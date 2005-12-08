@@ -315,11 +315,14 @@ if ($action == 'create')
     print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
     print '<td class="valeur"><input size="30" maxsize="32" type="text" name="password" value=""></td></tr>';
 
-    print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
-    print '<td class="valeur">';
-    $form->selectyesnonum('admin',0);
-    print "</td></tr>\n";
-
+    if ($user->admin)
+    {
+        print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
+        print '<td class="valeur">';
+        $form->selectyesnonum('admin',0);
+        print "</td></tr>\n";
+    }
+    
     print '<tr><td valign="top">'.$langs->trans("Phone").'</td>';
     print '<td class="valeur"><input size="20" type="text" name="office_phone" value=""></td></tr>';
 
@@ -486,7 +489,7 @@ else
             if ($fuser->admin) print ' '.img_picto($langs->trans("Administrator"),"star");
             print '</td>';
             print "</tr>\n";
-
+            
             // Source
             print '<tr><td width="25%" valign="top">'.$langs->trans("Source").'</td>';
             print '<td class="valeur">';
@@ -763,13 +766,20 @@ else
             if ($fuser->societe_id > 0)
             {
                 print '<td class="valeur">';
-                print '<input type="hidden" name="admin" value="0">'.$langs->trans("No");
+                print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
                 print '</td></tr>';
             }
             else
             {
                 print '<td class="valeur">';
-                $form->selectyesnonum('admin',$fuser->admin);
+                if ($user->admin)
+                {
+                    $form->selectyesnonum('admin',$fuser->admin);
+                }
+                else
+                {
+                    print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
+                }
                 print '</td></tr>';
             }
 
