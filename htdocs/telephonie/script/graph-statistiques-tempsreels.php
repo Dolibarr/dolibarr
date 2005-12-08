@@ -129,7 +129,7 @@ if ($resql)
       $graph->img->SetMargin(50,20,20,35);
       $graph->xaxis->scale->SetGrace(20);
       
-      $graph->title->Set("Consommation en cours");
+      $graph->title->Set("Consommation en cours (en minutes)");
       $graph->xaxis->SetTickLabels($labels);    
       
       $b2plot = new LinePlot($datas);
