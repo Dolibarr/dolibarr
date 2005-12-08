@@ -132,7 +132,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids, $deb
 		  preg_match('/PreSelection_Statut="([\S]*)"/i', $line, $array);
 		  $ligne_presel = $array[1];
 		  
-		  if ($ligne_service.$ligne_presel <> 'TRAITE_OK/TRAITE_OK')
+		  if ($ligne_service.$ligne_presel <> 'TRAITE_OKTRAITE_OK')
 		    {
 		      print "$i/$numcli ";
 		      print $ligne_numero." ";
