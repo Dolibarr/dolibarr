@@ -135,13 +135,18 @@ if ($resql)
       $b2plot = new LinePlot($datas);
       $b2plot->SetWeight(2);
       $b2plot->SetColor("red");
+      $b2plot->SetLegend("réel");
       $graph->Add($b2plot);
       
       $lineplot = new LinePlot($moydatas);    
       $lineplot->SetColor("blue");
+      $lineplot->SetLegend("moyenne");
       $graph->Add($lineplot);
       
       $graph->img->SetImgFormat("png");
+
+      $graph->legend->Pos(0.08,0.08,"left","top");
+
       $graph->Stroke($file);
     }
 }
