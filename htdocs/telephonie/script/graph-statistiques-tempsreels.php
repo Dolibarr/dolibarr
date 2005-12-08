@@ -70,6 +70,7 @@ if ($resql)
       $data = array();
       $datas = array();
       $moydata = array();
+      $moydatas = array();
       
       $sqla = "SELECT date, sum(duree)";
       $sqla .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
@@ -87,16 +88,21 @@ if ($resql)
 	    {
 	      $jour = (substr($rowa[0],0,2) * 1);
 	      $data[$jour] = ($rowa[1]/60);
-	      $total = $total + $data[$i];
-	      $moydata[$i] = $total / ($i+1);
+	      $total = $total + $data[$jour];
 	      $i++;
+	      $moydata[$jour] = $total / $i;
 	    }
 	}
 
       for ($i = 0 ; $i < 31 ; $i++)
 	{
 	  $j = $i + 1;
-	  $datas[$i] = $data[$j];
+	  $datas[$i] = 0;
+	  $moydatas[$i] = 0;
+	  if ($data[$j])
+	    $datas[$i] = $data[$j];
+	  if ($moydata[$j])
+	    $moydatas[$i] = $moydata[$j];
 	  $labels[$i] = $j;
 	}
       
@@ -119,14 +125,12 @@ if ($resql)
       $b2plot->SetColor("red");
       $graph->Add($b2plot);
       
-      $lineplot = new LinePlot($moydata);    
+      $lineplot = new LinePlot($moydatas);    
       $lineplot->SetColor("blue");
       $graph->Add($lineplot);
       
       $graph->img->SetImgFormat("png");
       $graph->Stroke($file);
-      
-
     }
 }
 else
