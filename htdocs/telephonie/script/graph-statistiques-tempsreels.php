@@ -24,77 +24,47 @@
 require ("../../master.inc.php");
 $verbose = 0;
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
-
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/baraccumul.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/ca.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/gain.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/heureappel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/joursemaine.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camoyen.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
 
 $error = 0;
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie";
 
-
-$colors = array();
-$colors[10] = 'yellow';
-$colors[11] = 'red';
-$months = array(10,11);
-
 $month = strftime("%m",time());
 $year = strftime("%Y",time());
-
-print "$month\n";
 
 $sql = "SELECT distinct ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
 
 $resql = $db->query($sql);
-$total = 0;
+
 if ($resql)
-{
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
+{  
   while ($row = $db->fetch_row($resql))
     {
       $ligne = new LigneTel($db);
       $ligne->fetch($row[0]);
 
       $data = array();
-      $datas = array();
-      $moydata = array();
-      $moydatas = array();
-      
+
       $sqla = "SELECT date, sum(duree)";
       $sqla .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
       $sqla .= " WHERE ligne = '".$ligne->numero."'";
       $sqla .= " GROUP BY date ASC;";
       
       $resqla = $db->query($sqla);
-      $total = 0;
+
       if ($resqla)
 	{
-	  $num = $db->num_rows($resqla);
-	  $i = 0;
-	  
 	  while ($rowa = $db->fetch_row($resqla))
 	    {
 	      $jour = (substr($rowa[0],0,2) * 1);
 	      $data[$jour] = ($rowa[1]/60);
-	      $i++;
 	    }
 	}
-
+      $total = 0;
+      $datas = array();
+      $moydatas = array();
       for ($i = 0 ; $i < 31 ; $i++)
 	{
 	  $j = $i + 1;
@@ -105,7 +75,6 @@ if ($resql)
 
 	  $total = $total + $datas[$i];
 	  $moydatas[$i] = $total / $j;
-
 
 	  $labels[$i] = $j;
 	  if (strftime('%u',mktime(12,12,12,$month,$j,$year)) == 6)
@@ -121,7 +90,7 @@ if ($resql)
       $img_root = DOL_DATA_ROOT."/graph/".substr($ligne->id,-1)."/telephonie/ligne/";
 
       $file = $img_root . $ligne->id."/conso.png";
-      print $ligne->id . " ".$ligne->numero."\n";
+      //print $ligne->id . " ".$ligne->numero."\n";
       $graph = new Graph(800, 400,"auto");    
       $graph->SetScale("textlin");
       $graph->yaxis->scale->SetGrace(20);
@@ -154,6 +123,5 @@ else
 {
   print $db->error();
 }
-
 
 ?>
