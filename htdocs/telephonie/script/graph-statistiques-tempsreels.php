@@ -110,11 +110,11 @@ if ($resql)
 	  $labels[$i] = $j;
 	  if (strftime('%u',mktime(12,12,12,$month,$j,$year)) == 6)
 	    {
-	      $labels[$i] = 'S';
+	      $labels[$i] = '(S';
 	    }
 	  if (strftime('%u',mktime(12,12,12,$month,$j,$year)) == 7)
 	    {
-	      $labels[$i] = 'D';
+	      $labels[$i] = 'D)';
 	    }
 	}
       
