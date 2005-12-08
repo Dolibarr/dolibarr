@@ -1886,7 +1886,6 @@ create table llx_societe_perms
 
 drop table if exists llx_contact_facture;
 
-drop table if exists llx_c_type_contact;
 
 create table llx_c_type_contact
 (

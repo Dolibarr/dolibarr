@@ -30,7 +30,7 @@ create table llx_bank_account
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   datec          datetime,
   tms            timestamp,
-  label          varchar(30) UNIQUE,
+  label          varchar(30),
   bank           varchar(60),
   code_banque    varchar(7),
   code_guichet   varchar(6),
