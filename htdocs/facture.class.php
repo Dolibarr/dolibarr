@@ -1524,18 +1524,18 @@ class Facture
 
 
    /**
-	* \brief     Créé une demande de prélèvement
+	*   \brief      Créé une demande de prélèvement
     *   \param      user        Utilisateur créant la demande
     *   \return     int         <0 si ko, >0 si ok 
 	*/
 	function demande_prelevement($user)
 	{
-        dolibarr_syslog("Facture::demande_prelevement");
+        dolibarr_syslog("Facture::demande_prelevement $this->statut $this->paye $this->mode_reglement_id");
 
 		$soc = new Societe($this->db);
 		$soc->id = $this->socidp;
 		$soc->rib();
-		if ($this->statut > 0 && $this->paye == 0 &&  $this->mode_reglement_id == 3)
+		if ($this->statut > 0 && $this->paye == 0 && $this->mode_reglement_id == 3)
 		{
 			$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 			$sql .= ' WHERE fk_facture='.$this->id;

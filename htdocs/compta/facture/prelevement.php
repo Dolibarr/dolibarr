@@ -29,6 +29,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $user->getrights('facture');
 if (!$user->rights->facture->lire)
@@ -37,8 +39,6 @@ if (!$user->rights->facture->lire)
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("withdrawals");
-
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -61,6 +61,7 @@ if ($_GET["action"] == "new")
         if ($result > 0)
         {
             Header("Location: prelevement.php?facid=".$fact->id);
+            exit;
         }
         else
         {
@@ -99,56 +100,34 @@ if ($_GET["facid"] > 0)
     $fac = New Facture($db);
     if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
     {
-
         if ($mesg) print $mesg.'<br>';
 
         $soc = new Societe($db, $fac->socidp);
         $soc->fetch($fac->socidp);
+
         $author = new User($db);
-        $author->id = $fac->user_author;
-        $author->fetch();
-
-        $h = 0;
-        $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
-        $head[$h][1] = $langs->trans("CardBill");
-        $h++;
-
-    	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$fac->id;
-    	$head[$h][1] = $langs->trans('Contact');
-    	$h++;
-
-        if ($conf->use_preview_tabs)
+        if ($fac->user_author)
         {
-            $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
-            $head[$h][1] = $langs->trans("Preview");
-            $h++;
-        }
-        
-        if ($fac->mode_reglement_code == 'PRE')
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-            $head[$h][1] = $langs->trans("StandingOrders");
-            $hselected = $h;
-            $h++;
+            $author->id = $fac->user_author;
+            $author->fetch();
         }
 
-        $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
-        $head[$h][1] = $langs->trans("Note");
-        $h++;
+		$head = facture_prepare_head($fac);
 
-        $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
-        $head[$h][1] = $langs->trans("Info");
-        $h++;
-
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
+		dolibarr_fiche_head($head, 2, $langs->trans('Bill').' : '.$fac->ref);
 
         /*
-        *   Facture
-        */
+         *   Facture
+         */
         print '<table class="border" width="100%">';
 
+		// Reference du facture
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print $fac->ref;
+		print "</td></tr>";
+
         // Societe
-        print '<tr><td>'.$langs->trans("Company").'</td>';
+        print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
         print '<td colspan="5">';
         print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
         print '</tr>';

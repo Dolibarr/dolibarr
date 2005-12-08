@@ -590,9 +590,11 @@ class BonPrelevement
         }
     }
 
-    /*
-     *
-     *
+    /**
+     *      \brief      Renvoi nombre de factures a prélever
+     *      \param      banque      bank
+     *      \param      agence      agence
+     *      \return     int         <O si erreur, sinon nbre de factures
      */
     function NbFactureAPrelever($banque=0,$agence=0)
     {
@@ -625,21 +627,21 @@ class BonPrelevement
         {
             $row = $this->db->fetch_row($resql);
 
-            return $row[0];
-
             $this->db->free($resql);
+
+            return $row[0];
         }
         else
         {
-            $error = 1;
-            dolibarr_syslog("BonPrelevement::SommeAPrelever Erreur -1");
-            dolibarr_syslog($this->db->error());
+            $this->error="BonPrelevement::SommeAPrelever Erreur -1 sql=".$this->db->error();
+            dolibarr_syslog($this->error);
+            return -1;
         }
     }
 
     /**
      *      \brief      Cree prelevement
-     *
+     *      \return     int     <0 si ko, nbre de facture prélevé sinon
      */
     function Create($banque=0, $guichet=0)
     {
@@ -666,8 +668,9 @@ class BonPrelevement
          */
         $factures = array();
         $factures_prev = array();
+        $factures_result = array();
 
-        if (!$error)
+        if (! $error)
         {
 
             $sql = "SELECT f.rowid, pfd.rowid as pfdrowid, f.fk_soc";
@@ -742,10 +745,10 @@ class BonPrelevement
                 {
                     $fact = new Facture($this->db);
 
-                    if ($fact->fetch($fac[0]) == 1)
+                    if ($fact->fetch($fac[0]) >= 0)
                     {
                         $soc = new Societe($this->db);
-                        if ($soc->fetch($fact->socidp) == 1)
+                        if ($soc->fetch($fact->socidp) >= 0)
                         {
                             if ($soc->verif_rib() == 1)
                             {
@@ -757,6 +760,7 @@ class BonPrelevement
                             else
                             {
                                 dolibarr_syslog("Erreur de RIB societe $fact->socidp $soc->nom");
+                                $facture_errors[$fac[0]]="Erreur de RIB societe $fact->socidp $soc->nom";
                             }
                         }
                         else
@@ -775,6 +779,7 @@ class BonPrelevement
                 dolibarr_syslog("Aucune factures a traiter");
             }
         }
+
 
         /*
          *
@@ -996,6 +1001,12 @@ class BonPrelevement
                 $this->db->rollback();
                 dolibarr_syslog("ROLLBACK");
             }
+
+            return sizeof($factures_prev);
+        }
+        else
+        {
+            return 0;
         }
     }
 
