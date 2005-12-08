@@ -149,6 +149,22 @@ if ($_GET["id"] or $_GET["numero"])
 
 	  print "</td></tr></table>";
 
+
+	  $img_root = DOL_DATA_ROOT."/graph/".substr($ligne->id,-1)."/telephonie/ligne/";
+
+	  $file = $img_root.$ligne->id."/conso.png";
+
+	  if (file_exists($file)) 
+	    {
+	      print '<br><img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="Conso">';
+	    }
+	  else
+	    {
+	      print $mesg_no_graph;
+	    }
+
+
+
 	}
     }
 }
