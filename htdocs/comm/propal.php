@@ -23,9 +23,9 @@
  */
 
 /**
-        \file       htdocs/comm/propal.php
-        \ingroup    propale
-        \brief      Page liste des propales (vision commercial)
+   \file       htdocs/comm/propal.php
+   \ingroup    propale
+   \brief      Page liste des propales (vision commercial)
 */
 
 require("./pre.inc.php");
@@ -73,29 +73,29 @@ $form=new Form($db);
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 {
-    if ($user->rights->propale->supprimer)
+  if ($user->rights->propale->supprimer)
     {
-        $propal = new Propal($db, 0, $_GET['propalid']);
-        $propal->delete($user);
-        $propalid = 0;
-        $brouillon = 1;
+      $propal = new Propal($db, 0, $_GET['propalid']);
+      $propal->delete($user);
+      $propalid = 0;
+      $brouillon = 1;
     }
-    Header('Location: propal.php');
-    exit;
+  Header('Location: propal.php');
+  exit;
 }
 
 if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
 {
-    if ($user->rights->propale->valider)
+  if ($user->rights->propale->valider)
     {
-        $propal = new Propal($db);
-        $propal->fetch($_GET['propalid']);
-        $result=$propal->update_price($_GET['propalid']);
-        propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
-        $result=$propal->valid($user);
+      $propal = new Propal($db);
+      $propal->fetch($_GET['propalid']);
+      $result=$propal->update_price($_GET['propalid']);
+      propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+      $result=$propal->valid($user);
     }
-    Header ('Location: propal.php?propalid='.$_GET['propalid']);
-    exit;
+  Header ('Location: propal.php?propalid='.$_GET['propalid']);
+  exit;
 }
 
 if ($_POST['action'] == 'setecheance')
@@ -159,9 +159,9 @@ if ($_GET['action'] == 'pdf')
  */
 if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer) 
 {
-    $propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
-    $propal->cloture($user, $_POST['statut'], $_POST['note']);
+  $propal = new Propal($db);
+  $propal->fetch($_GET['propalid']);
+  $propal->cloture($user, $_POST['statut'], addslashes($_POST['note']));
 }
 
 /*
