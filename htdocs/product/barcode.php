@@ -118,7 +118,8 @@ $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
 $head[$h][1] = $langs->trans('Documents');
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+$titre=$langs->trans("CardProduct".$product->type);
+dolibarr_fiche_head($head, $hselected, $titre);
 
 print '<table class="border" width="100%">';
 
