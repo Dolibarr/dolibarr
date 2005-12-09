@@ -159,9 +159,9 @@ if ($_GET['action'] == 'pdf')
  */
 if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer) 
 {
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->cloture($user, $_POST['statut'], addslashes($_POST['note']));
+    $propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+    $propal->cloture($user, $_POST['statut'], $_POST['note']);
 }
 
 /*

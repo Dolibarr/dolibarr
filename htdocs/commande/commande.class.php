@@ -72,10 +72,11 @@ class Commande
 		$this->sources[5] = $langs->trans('OrderSource5');
 		$this->products = array();
 	}
-  /**   \brief      Créé la facture depuis une propale existante
-        \param      user            Utilisateur qui crée
-        \param      propale_id      id de la propale qui sert de modèle
-   */
+
+    /**     \brief      Créé la commande depuis une propale existante
+            \param      user            Utilisateur qui crée
+            \param      propale_id      id de la propale qui sert de modèle
+    */
 	function create_from_propale($user, $propale_id)
 	{
 		$propal = new Propal($this->db);
@@ -103,6 +104,7 @@ class Commande
 		$soc->id = $this->soc_id;
 		$soc->set_as_client();
 		$this->propale_id = $propal->id;
+
 		return $this->create($user);
 	}
 

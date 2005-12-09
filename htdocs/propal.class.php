@@ -782,84 +782,111 @@ class Propal
 	}
   }
 	
-  /**
-   * \brief  Cloture de la proposition commerciale
-   *
-   */
-	 
-  function cloture($user, $statut, $note)
+    /**
+     *      \brief      Cloture de la proposition commerciale
+     *      \param      user        Utilisateur qui cloture
+     *      \param      statut      Statut
+     *      \param      note        Commentaire
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function cloture($user, $statut, $note)
     {
-      $this->statut = $statut;
+        $this->statut = $statut;
+    
+        $this->db->begin();
+        
+        $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+        $sql.= " SET fk_statut = $statut, note = '".addslashes($note)."', date_cloture=now(), fk_user_cloture=".$user->id;
+        $sql.= " WHERE rowid = ".$this->id;
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($statut == 2)
+            {
+                // Propale signée
+                include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
-      $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$user->id";
-      $sql .= " WHERE rowid = $this->id;";
-      
-      if ($this->db->query($sql))
-	{
-	  if ($statut == 2)
-	    {
-	      /* Propale signée */
-	      include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+                $result=$this->create_commande($user);
 
-	      $this->create_commande($user);
+                if ($result >= 0)
+                {
+                    // Classe la société rattachée comme client
+                    $soc=new Societe($this->db);
+                    $soc->id = $this->socidp;
+                    $result=$soc->set_as_client();
+                }
+                
+                if ($result < 0)
+                {
+                    $this->error=$this->db->error();
+                    $this->db->rollback();
+                    return -2;
+                }
+            }
+            
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('PROP_CLOSE',$this,$user,$langs,$conf);
+            // Fin appel triggers
 
-	      /* Classe la société rattachée comme client */
-
-	      $soc = new Societe($this->db);
-	      $soc->id = $this->socidp;
-	      $soc->set_as_client();
-
-
-	      return 1;
-	    }
-	  else
-	    {
-	      /* Propale non signée */
-	      return 1;
-	    }
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            $this->db->rollback();
+            return -1;
+        }
     }
-		
-  /**
-   * \brief Créée une commande à partir de la proposition commerciale
-   *
-   */
-	 
-  function create_commande($user)
+
+
+    /**
+     *      \brief      Crée une commande à partir de la proposition commerciale
+     *      \param      user        Utilisateur
+     *      \return     int         <0 si ko, >=0 si ok
+     */
+    function create_commande($user)
     {
-      if ($this->statut == 2)
-	{
-	  /* Propale signée */
-	  include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-	  $commande = new Commande($this->db);
-	  $commande->create_from_propale($user, $this->id);
-	  return 1;
-	}
+        global $conf;
+        
+        if ($conf->commande->enabled)
+        {
+            if ($this->statut == 2)
+            {
+                // Propale signée
+                include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+                $commande = new Commande($this->db);
+                $result=$commande->create_from_propale($user, $this->id);
+    
+                return $result;
+            }
+            else return 0;
+        }
+        else return 0;
     }
-		
-  /**
-   *
-   *
-   */
-	 
-  function reopen($userid)
+
+
+    /**
+    *
+    *
+    */
+    function reopen($userid)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
-      
-      $sql .= " WHERE rowid = $this->id;";
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}
+        $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
+    
+        $sql .= " WHERE rowid = $this->id;";
+    
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
     }
     
 		
