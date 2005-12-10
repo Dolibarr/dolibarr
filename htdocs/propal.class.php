@@ -823,14 +823,22 @@ class Propal
                     $this->db->rollback();
                     return -2;
                 }
+                
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('PROPAL_CLOSE_SIGNED',$this,$user,$langs,$conf);
+                // Fin appel triggers
+            }
+            else
+            {
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('PROPAL_CLOSE_REFUSED',$this,$user,$langs,$conf);
+                // Fin appel triggers
             }
             
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('PROP_CLOSE',$this,$user,$langs,$conf);
-            // Fin appel triggers
-
             $this->db->commit();
             return 1;
         }

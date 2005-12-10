@@ -127,6 +127,27 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }
+        // Proposals
+        elseif ($action == 'PROPAL_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'PROPAL_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'PROPAL_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'PROPAL_CLOSE_SIGNED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'PROPAL_CLOSE_REFUSED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
         // Contracts
         elseif ($action == 'CONTRACT_CREATE')
         {
