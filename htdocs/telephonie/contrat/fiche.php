@@ -457,10 +457,17 @@ else
 	      $head[$h][1] = $langs->trans("Infos");
 	      $h++;
 
+	      $contrat->load_previous_next_id();
+	      $previous_ref = $contrat->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->ref_previous.'">'.img_previous().'</a>':'';
+	      $next_ref     = $contrat->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->ref_next.'">'.img_next().'</a>':'';
 	      dolibarr_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
 
-	      print_fiche_titre('Fiche Contrat', $mesg);
-      
+	      //print_fiche_titre('Fiche Contrat', $mesg);
+
+	      print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">Fiche Contrat</td>';
+	      print '<td class="nobordernopadding"><a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+	      print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table><br />';
+
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
 	      //$client_comm = new Societe($db);
@@ -951,15 +958,10 @@ else
 	      print '</form>';
 	  
 	    }
-
 	  /*
 	   *
-	   *
-	   *
 	   */
-
 	  print '</div>';
-
 
 	  /* ************************************************************************** */
 	  /*                                                                            */ 
@@ -971,7 +973,6 @@ else
 	  
 	  if ($_GET["action"] == '')
 	    {  
-	      
 	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
 		{
 		  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?action=create&amp;contratid='.$contrat->id.'">Nouvelle ligne</a>';
