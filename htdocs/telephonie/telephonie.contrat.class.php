@@ -286,6 +286,46 @@ class TelephonieContrat {
    *
    *
    */
+  function load_previous_next_id($filtre='')
+  {
+    $sql = "SELECT rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."telephonie_contrat";
+    $sql.= " WHERE rowid > ".$this->id."";
+    $sql .= " ORDER BY rowid ASC LIMIT 1";
+
+    $resql = $this->db->query($sql) ;
+    if ($resql)
+      {
+	while ($row = $this->db->fetch_row($resql))
+	  {
+	    $this->ref_next = $row[0];
+	  }
+      }
+
+    $sql = "SELECT rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."telephonie_contrat";
+    $sql.= " WHERE rowid < ".$this->id."";
+    $sql .= " ORDER BY rowid DESC LIMIT 1";
+
+    $resql = $this->db->query($sql) ;
+    if ($resql)
+      {
+	while ($row = $this->db->fetch_row($resql))
+	  {
+	    $this->ref_previous = $row[0];
+	  }
+      }
+
+
+
+    
+    return 1;
+  }
+  /*
+   *
+   *
+   *
+   */
   function add_contact_facture($cid)
   {
 
