@@ -49,6 +49,8 @@ class TelephonieContrat {
    */
   function create($user, $isfacturable='oui', $mode_paiement='pre')
   {
+    $this->mode_paiement = $mode_paiement;
+
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat";
     $sql .= " (ref, fk_soc, fk_client_comm, fk_soc_facture, note";
     $sql .= " , fk_commercial_sign, fk_commercial_suiv, fk_user_creat, date_creat)";
