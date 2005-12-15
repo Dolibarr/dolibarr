@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
 
 /**
-        \file       htdocs/compta/ventilation/index.php
-        \ingroup    compta
-		\brief      Page accueil ventilation
-		\version    $Revision$
+   \file       htdocs/compta/ventilation/index.php
+   \ingroup    compta
+   \brief      Page accueil ventilation
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -77,9 +77,9 @@ print "</table>\n";
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>Type</td><td align="center">Nb de lignes</td></tr>';
+print '<tr class="liste_titre"><td>Type</td><td align="center">Nb de lignes</td><td align="center">Numero</td><td align="center">ID</td></tr>';
 
-$sql = "SELECT count(*), ccg.intitule FROM ".MAIN_DB_PREFIX."facturedet as fd";
+$sql = "SELECT count(*), ccg.intitule, ccg.rowid,ccg.numero FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql.= " ,".MAIN_DB_PREFIX."compta_compte_generaux as ccg";
 $sql.= " WHERE fd.fk_code_ventilation = ccg.rowid";
 $sql.= " GROUP BY ccg.rowid";
@@ -96,7 +96,8 @@ if ($resql)
 
         $row = $db->fetch_row($resql);
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$row[1].'</td><td align="center">'.$row[0].'</td></tr>';
+        print '<tr '.$bc[$var].'><td>'.$row[1].'</td><td align="center">'.$row[0].'</td>';
+        print '<td align="center">'.$row[3].'</td><td align="center">'.$row[2].'</td></tr>';
         $i++;
     }
     $db->free($resql);
