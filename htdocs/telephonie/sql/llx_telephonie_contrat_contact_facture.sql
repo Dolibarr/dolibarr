@@ -28,6 +28,7 @@ create table llx_telephonie_contrat_contact_facture (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_contact     integer NOT NULL,
   fk_contrat     integer NOT NULL,
+  tms            timestamp,
 
   UNIQUE (fk_contact, fk_contrat)
 )type=innodb;
