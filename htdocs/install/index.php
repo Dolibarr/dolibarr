@@ -45,22 +45,21 @@ if (file_exists($conffile))
 pHeader("", "check");   // Etape suivante = index2
 
 
-print '<center><img src="../theme/dolibarr_logo.png"></center>';
+print '<center><img src="../theme/dolibarr_logo_2.png"></center>';
 
 // Propose la langue d'installation
 $langs->load("admin");
 $langs_available=$langs->get_available_languages("..");
-$selected=$langs->defaultlang;
 
 define('DOL_DOCUMENT_ROOT','..');
 
-print '<br><br>';
+print '<br><br><center>';
 print '<table><tr>';
 print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';
 $html=new Form('');
-$html->select_lang($selected,'selectlang',1);
+$html->select_lang('auto','selectlang',1);
 print '</td>';
-print '</tr></table>';
+print '</tr></table></center>';
 
 
 // Si pas d'erreur, on affiche le bouton pour passer à l'étape suivante
