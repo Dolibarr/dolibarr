@@ -225,15 +225,17 @@ class Translate {
      */
     function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
     {
-      // On parcour le répertoire langs pour détecter les langues disponibles
-      $handle=opendir($langdir ."/langs");
-      $langs_available=array();
-      while ($file = trim(readdir($handle))){
-    	if($file != "." && $file != ".." && $file != "CVS") {
-          array_push($langs_available,$file);
+        // On parcour le répertoire langs pour détecter les langues disponibles
+        $handle=opendir($langdir ."/langs");
+        $langs_available=array();
+        while ($file = trim(readdir($handle)))
+        {
+            if (eregi('^[a-z]+_[A-Z]+',$file))
+            {
+                array_push($langs_available,$file);
+            }
         }
-      }
-      return $langs_available;
+        return $langs_available;
     }
     
     /**
