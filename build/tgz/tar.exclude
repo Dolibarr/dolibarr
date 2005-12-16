@@ -1,4 +1,8 @@
+build
+dev
 doc/dev/dolibarr-phpdoc
+document
+documents
 htdocs/document
 htdocs/documents
 CVS
