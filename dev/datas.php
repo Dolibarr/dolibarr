@@ -25,7 +25,7 @@ function DevelPrenomAleatoire()
   $prenoms = array(
 		   "Aïsha","Arianne",
 		   "Bachir","Boris","Bernard",		   
-		   "Constance","Claudine","Charles","Christobald"
+		   "Constance","Claudine","Charles","Christobald",
 		   "Daniel",
 		   "Edgar","Edouard",
 		   "François",
