@@ -21,7 +21,7 @@
 body {
 font-size:13px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-background-color: #fdfdfd;
+background-color: #F4F4F4;
 margin-left: 5%;
 margin-right: 5%;
 margin-top: 2em;
@@ -37,7 +37,7 @@ span.titre {
 font-size:1.1em;
 font-weight: bold;
 background: #dcdcd3;
-color: #990033;
+color: #4965B3;
 padding: 0.5em 0.5em 0.5em;
 margin: 0em 0em 0em 0em;
 border: 1px solid #8CACBB;
@@ -47,7 +47,7 @@ border: 1px solid #8CACBB;
 div.soustitre {
 font-size: 15px;
 font-weight: bold;
-color: #990033;
+color: #4965B3;
 padding: 0em 1.2em 0.5em 2em;
 margin: 1.2em 1.2em 1.2em 1.2em;
 border-bottom: 1px solid #8CACBB;
@@ -132,7 +132,7 @@ font-size: 13px;
 div.main-inside h2 {
 font-size:18px;
 font-weight: bold;
-color: #990033;
+color: #4965B3;
 }
 
 tr.bg1 {
@@ -145,7 +145,7 @@ background-color: #B5C5C5;
 
 td.label {
 background: #dcdcd3;
-color: #990033;
+color: #5945A3;
 padding: 0.5em 0.5em 0.5em;
 margin: 0em 0em 0em 0em;
 border-bottom: 1px solid #8CACBB;
