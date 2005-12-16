@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -87,7 +86,7 @@ class box_fournisseurs extends ModeleBoxes {
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
                     'text' => $objp->nom,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+                    'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->idp);
     
                     $i++;
                 }
