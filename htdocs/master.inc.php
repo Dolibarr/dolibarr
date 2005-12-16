@@ -323,6 +323,8 @@ $conf->domaine->enabled=0;
 $conf->voyage->enabled=0;
 // Module actionscomm
 $conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
+// Module export
+$conf->export->enabled=0;
 
 
 /*
