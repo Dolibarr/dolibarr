@@ -306,13 +306,20 @@ INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,229);
 -- Boites
 --
 
-insert into llx_boxes (box_id, position, box_order) VALUES (1,0,1);
-insert into llx_boxes (box_id, position, box_order) VALUES (2,0,2);
-insert into llx_boxes (box_id, position, box_order) VALUES (3,0,3);
-insert into llx_boxes (box_id, position, box_order) VALUES (4,0,4);
-insert into llx_boxes (box_id, position, box_order) VALUES (5,0,5);
-insert into llx_boxes (box_id, position, box_order) VALUES (6,0,6);
-insert into llx_boxes (box_id, position, box_order) VALUES (7,0,7);
+INSERT INTO `llx_boxes` VALUES (8, 1, 0, 1);
+INSERT INTO `llx_boxes` VALUES (9, 2, 0, 2);
+INSERT INTO `llx_boxes` VALUES (11, 4, 0, 4);
+INSERT INTO `llx_boxes` VALUES (12, 5, 0, 5);
+INSERT INTO `llx_boxes` VALUES (13, 6, 0, 6);
+INSERT INTO `llx_boxes` VALUES (14, 7, 0, 7);
+INSERT INTO `llx_boxes` VALUES (15, 14, 0, 4);
+INSERT INTO `llx_boxes` VALUES (17, 26, 0, 11);
+INSERT INTO `llx_boxes` VALUES (18, 22, 0, 8);
+INSERT INTO `llx_boxes` VALUES (19, 23, 0, 9);
+INSERT INTO `llx_boxes` VALUES (20, 24, 0, 10);
+INSERT INTO `llx_boxes` VALUES (21, 25, 0, 7);
+INSERT INTO `llx_boxes` VALUES (24, 20, 0, 1);
+INSERT INTO `llx_boxes` VALUES (25, 21, 0, 2);
 
 --
 -- Contact
