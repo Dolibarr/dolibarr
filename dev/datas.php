@@ -22,7 +22,27 @@
 
 function DevelPrenomAleatoire()
 {
-  $prenoms = array("Bernard","Michel","Daniel","José","Ibrahim","Manuel","Joséphine","Arianne","Jocelyne","Laure","Laurent","Zao","Mickaël","Sylvie","François","Bachir","Igor","Gaspard","Edgar","Edouard","Joseph","Claudine","Marwan","Hakim","Sylvain","Li","Yann","Boris","Guiseppe");
+  $prenoms = array(
+		   "Aïsha","Arianne",
+		   "Bachir","Boris","Bernard",		   
+		   "Constance","Claudine","Charles","Christobald"
+		   "Daniel",
+		   "Edgar","Edouard",
+		   "François",
+		   "Gaspard","Guiseppe",		   
+		   "Hakim","Hocine",
+		   "Igor","Ibrahim",
+		   "José","Joseph","Joséphine","Jocelyne",
+		   "Manuel",
+		   "Li","Laure","Laurent",		   
+		   "Mohamed","Michel","Marwan","Mickaël",
+		   "Paulo",		   
+		   "Olivier",		   
+		   "Raoul","Romuald",		   		   
+		   "Sylvain","Sylvie","Samir",
+		   "Victoire","Vincente",
+		   "Yann","Youssef",
+		   "Zao","Zora");
 
   $x = rand(0,sizeof($prenoms));
 
