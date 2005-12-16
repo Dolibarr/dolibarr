@@ -332,78 +332,82 @@ class Propal
             return -2;
         }
     }
+
 		
-  /**
-   *
-   *
-   *
-   */
-	 
-  function create()
+    /**
+     *      \brief      Crée une propal
+     *      \return     int     <0 si ko, >=0 si ok
+     */
+    function create()
     {
-      /*
-       *  Insertion dans la base
-       */
-      $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+		global $langs,$conf;
 
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf, fin_validite) ";
-      $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, '".addslashes($this->note)."','$this->modelpdf',".$this->db->idate($this->fin_validite).")";
-      $sqlok = 0;
-      
-      if ( $this->db->query($sql) )
-	{
+        // Définition paramètres
+        $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+    
+        $this->db->begin();
 
-	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal");
-	  
-	  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE ref='$this->ref';";
-	  if ( $this->db->query($sql) ) 
-	    { 
-	      /*
-	       *  Insertion du detail des produits dans la base
-	       */
-	      if ( $this->db->num_rows() )
-		{
-		  $propalid = $this->db->result( 0, 0);
-		  $this->db->free();
-		  
-		  for ($i = 0 ; $i < sizeof($this->products) ; $i++)
-		    {
-		      $prod = new Product($this->db, $this->products[$i]);
-		      $prod->fetch($this->products[$i]);
+        // Insertion dans la base
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf, fin_validite) ";
+        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, '".addslashes($this->note)."','$this->modelpdf',".$this->db->idate($this->fin_validite).")";
 
-		      $this->insert_product($this->products[$i], 
-					    $this->products_qty[$i], 
-					    $this->products_remise_percent[$i]);
-		    }
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal");
+    
+            if ($this->id)
+            {
+                /*
+                 *  Insertion du detail des produits dans la base
+                 */
+                for ($i = 0 ; $i < sizeof($this->products) ; $i++)
+                {
+                    $prod = new Product($this->db, $this->products[$i]);
+                    $result=$prod->fetch($this->products[$i]);
 
-		  /*
-		   *
-		   */
+                    $result=$this->insert_product($this->products[$i],
+                                        $this->products_qty[$i],
+                                        $this->products_remise_percent[$i]);
+                }
 
-		  $this->update_price();
+                // Affectation au projet
+                if ($this->projetidp)
+                {
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref'";
+                    $result=$this->db->query($sql);
+                }
 
-		  /*
-		   *  Affectation au projet
-		   */
-		  if ($this->projetidp)
-		    {
-		      $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref';";
-		      $this->db->query($sql);
-		    }
-		}	  
-	    }
-	  else
-	    {	      
-	      dolibarr_syslog("Propal::Create -2");
-	      return -2;
-	    }
-	}
-      else
-	{
-	  dolibarr_syslog("Propal::Create -1 $sql");
-	  return -1;
-	}
-      return $this->id;
+                $resql=$this->update_price();
+                if ($resql)
+                {
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
+                    // Fin appel triggers
+        
+                    $this->db->commit();
+                    return $this->id;
+                }
+                else
+                {
+                    $this->error=$this->db->error();
+                    dolibarr_syslog("Propal::Create -2 ".$this->error);
+                    $this->db->rollback();
+                    return -2;
+                }
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            dolibarr_syslog("Propal::Create -1 ".$this->error);
+            $this->db->rollback();
+            return -1;
+        }
+        
+        return $this->id;
     }
 		
     /**
@@ -610,29 +614,42 @@ class Propal
         }
     }
   
-  
-  /*
-   *
-   *
-   */
-  function valid($user)
+    /**
+     *      \brief      Passe au statut valider une propale
+     *      \param      user        Objet utilisateur qui valide
+     *      \return     int         <0 si ko, >=0 si ok
+     */
+    function valid($user)
     {
-      if ($user->rights->propale->valider)
-	{
-		
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-	  
-	  if ($this->db->query($sql) )
-	    {
-	      return 1;
-	    }
-	  else
-	    {
-	      return -1;
-	    }
-	}
-  }
+        global $conf,$langs;
+        
+        if ($user->rights->propale->valider)
+        {
+            $this->db->begin();
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+            $sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    
+            if ($this->db->query($sql))
+            {
+
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('PROPAL_VALIDATE',$this,$user,$langs,$conf);
+                // Fin appel triggers
+
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -1;
+            }
+        }
+    }
 	
 
     /**
