@@ -1764,7 +1764,7 @@ class Facture
 	}
 
 
-   /**
+    /**
   	 *      \brief      Ajoute un contact associé une facture
      *      \param      fk_socpeople        Id du contact a ajouter.
      *      \param      type_contact        Type de contact
@@ -1792,7 +1792,7 @@ class Facture
         $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
 				$sql.= $this->db->idate($datecreate);
 				$sql.= ", 4, '". $type_contact . "' ";
-        $sql.= ");";
+        $sql.= ")";
         
         // Retour
         if ( $this->db->query($sql) )
@@ -1801,27 +1801,25 @@ class Facture
         }
         else
         {
-//            dolibarr_print_error($this->db);
             $this->error=$this->db->error()." - $sql";
             return -1;
         }
 	}    
 
     /**
-		 * 
-		 *      \brief      Mise a jour du contact associé une facture
-     *      \param      rowid           La reference du lien facture-contact
-     * 		\param		statut	        Le nouveau statut
-     *      \param      type_contact_id   Description du type de contact
-     *      \return     int             <0 si erreur, >0 si ok
+	 *      \brief      Mise a jour du contact associé une facture
+     *      \param      rowid               La reference du lien facture-contact
+     * 		\param		statut	            Le nouveau statut
+     *      \param      type_contact_id     Description du type de contact
+     *      \return     int                 <0 si erreur, =0 si ok
      */
 	function update_contact($rowid, $statut, $type_contact_id)
 	{
         // Insertion dans la base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set ";
-        $sql.= " statut = $statut ,";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
+        $sql.= " statut = $statut,";
         $sql.= " fk_c_type_contact = '".$type_contact_id ."'";
-        $sql.= " where rowid = $rowid ;";
+        $sql.= " where rowid = ".$rowid;
         // Retour
         if (  $this->db->query($sql) )
         {
@@ -1833,16 +1831,17 @@ class Facture
             return -1;
         }
 	 }    
-	 
-		/** 
-     *    \brief      Supprime une ligne de contact de contrat
+
+	/** 
+     *    \brief      Supprime une ligne de contact
      *    \param      rowid		La reference du contact
      *    \return     statur        >0 si ok, <0 si ko
      */
     function delete_contact($rowid)
     {
     
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact WHERE rowid =".$rowid;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
+        $sql.= " WHERE rowid =".$rowid;
         if ($this->db->query($sql))
         {
             return 1;
@@ -1852,9 +1851,9 @@ class Facture
             return -1;
         }
     }
-	 		
+
     /** 
-     *    \brief      Récupère les lignes de contact du contrat
+     *    \brief      Récupère les lignes de contact de l'objet
      *    \param      statut        Statut des lignes detail à récupérer
      *    \param      source        Source du contact external (llx_socpeople) ou internal (llx_user)
      *    \return     array         Tableau des rowid des contacts
@@ -1863,6 +1862,8 @@ class Facture
     {
         global $langs;
         
+  		$element='facture';
+
         $tab=array();
      
         $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id,";
@@ -1877,7 +1878,7 @@ class Facture
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact tc";
         $sql.= " WHERE element_id =".$this->id;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
-        $sql.= " AND tc.element='facture'";
+        $sql.= " AND tc.element='".$element."'";
         if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
         if ($source == 'external') $sql.= " AND tc.source = 'external'";
         $sql.= " AND tc.active=1";
@@ -1911,13 +1912,15 @@ class Facture
         }
     }
 
-	 /** 
+    /** 
      *    \brief      Le détail d'un contact
      *    \param      rowid      L'identifiant du contact
      *    \return     object     L'objet construit par DoliDb.fetch_object
      */
  	function detail_contact($rowid)
     {
+  		$element='facture';
+
         $sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
         $sql.= " tc.code, tc.libelle, s.fk_soc";
         $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc, ";
@@ -1925,7 +1928,7 @@ class Facture
         $sql.= " WHERE ec.rowid =".$rowid;
         $sql.= " AND ec.fk_socpeople=s.idp";
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
-        $sql.= " AND tc.element = 'facture'";
+        $sql.= " AND tc.element = '".$element."'";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1942,9 +1945,9 @@ class Facture
     }	
 
     /** 
-     *      \brief      La liste des valeurs possibles de type de contacts
-     *      \param      source      internal ou external
-     *      \return     array       La liste des natures
+     *      \brief      Liste les valeurs possibles de type de contacts pour les factures
+     *      \param      source      'internal' ou 'external'
+     *      \return     array       Tableau des types de contacts
      */
  	function liste_type_contact($source)
     {
@@ -1979,11 +1982,68 @@ class Facture
         else
         {
             $this->error=$this->db->error();
-//            dolibarr_print_error($this->db);
             return null;
         }
     }		 			
-    
+
+    /**
+     *      \brief      Retourne id des contacts d'une source et d'un type donné
+     *                  Exemple: contact client de facturation ('external', 'BILLING')
+     *                  Exemple: contact client de livraison ('external', 'SHIPPING')
+     *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
+     *      \return     array       Liste des id contacts
+     */   
+    function getIdContact($source,$code)
+    {
+  		$element='facture';     // Contact sur la facture
+        
+        $result=array();
+        $i=0;
+        
+        $sql = "SELECT ec.fk_socpeople";
+        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
+        $sql.= " WHERE ec.element_id = ".$this->id;
+        $sql.= " AND ec.fk_c_type_contact=tc.rowid";
+        $sql.= " AND tc.element = '".$element."'";
+        $sql.= " AND tc.source = '".$source."'";
+        $sql.= " AND tc.code = '".$code."'";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj = $this->db->fetch_object($resql))
+            {
+                $result[$i]=$obj->fk_socpeople;
+                $i++;
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return null;
+        }
+        
+        return $result;
+    }    
+
+    /**
+     *      \brief      Retourne id des contacts clients de facturation
+     *      \return     array       Liste des id contacts facturation
+     */   
+    function getIdBillingContact()
+    {
+        return $this->getIdContact('external','BILLING');
+    }
+
+    /**
+     *      \brief      Retourne id des contacts clients de livraison
+     *      \return     array       Liste des id contacts livraison
+     */   
+    function getIdShippingContact()
+    {
+        return $this->getIdContact('external','SHIPPING');
+    }
+
 }
 
 
