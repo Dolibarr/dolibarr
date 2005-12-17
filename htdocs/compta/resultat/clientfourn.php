@@ -127,7 +127,7 @@ if ($result) {
     dolibarr_print_error($db);
 }
 
-// On ajoute les paiements anciennes version, non liés par paiement_facture
+// On ajoute les paiements clients anciennes version, non liés par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') { 
     $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
@@ -191,12 +191,12 @@ if ($modecompta == 'CREANCES-DETTES') {
     }
 } else {
 	$sql = "SELECT s.nom, s.idp, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f";
-	$sql .= " ON f.rowid = p.fk_facture_fourn";
+	$sql .= " ON f.rowid = pf.fk_facturefourn";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " ON f.fk_soc = s.idp";
-    $sql .= " WHERE 1=1";
+    $sql .= " WHERE p.rowid = pf.fk_paiementfourn ";
     if ($year) {
     	$sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
