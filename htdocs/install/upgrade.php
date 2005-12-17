@@ -182,8 +182,8 @@ if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
                         }
                         else
                         {
-                            print '<tr><td>'.$langs->trans("Request").' '.$i.'</td>';
-                            print '<td>'.$langs->trans("Error")." ".$db->errno()." ".$db->error()."<br>".$sql."</td>";
+                            print '<tr><td valign="top">'.$langs->trans("Request").' '.$i.'</td>';
+                            print '<td valign="top">'.$langs->trans("Error")." ".$db->errno()." ".$sql."<br>".$db->error()."</td>";
                             print '</tr>';
                             $error++;
                         }
