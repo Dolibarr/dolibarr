@@ -5,8 +5,10 @@ document
 documents
 htdocs/document
 htdocs/documents
+includes/jpgraph2
 CVS
 *~
+.#*
 dolibarr-*.tar.gz
 dolibarr-*.tgz
 dolibarr-*.exe
@@ -14,3 +16,15 @@ dolibarr-*.rpm
 dolibarr-*.deb
 dolibarr-*.zip
 cvschangelogbuilder_dolibarr*
+deneb
+janus
+jupiter
+lune
+mars
+mercure
+pluton
+saturne
+venus
+bigorneau
+tourteau
+bulot
