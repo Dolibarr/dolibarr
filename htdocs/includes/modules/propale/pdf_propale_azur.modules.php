@@ -629,7 +629,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		// Logo
         $logo=$mysoc->logo;
-        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=FAC_PDF_LOGO;
+        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
         if ($logo)
         {
             if (is_readable($logo))
