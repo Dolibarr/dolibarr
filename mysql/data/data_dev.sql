@@ -23,7 +23,7 @@
 -- de données, mieux on peut tester l'appli.
 -- ===========================================================================
 -- ;
-DELETE FROM llx_bank_account;
+delete from llx_bank_account;
 delete from llx_chargesociales;
 delete from llx_fichinter;
 delete from llx_actioncomm;
@@ -40,8 +40,8 @@ delete from llx_product;
 delete from llx_facture_fourn;
 delete from llx_socpeople;
 delete from llx_societe;
-delete FROM llx_boxes;
-DELETE FROM llx_user_rights;
+delete from llx_boxes;
+delete from llx_user_rights;
 delete from llx_user;
 delete from llx_tva;
 delete from llx_energie_compteur;
@@ -518,7 +518,7 @@ insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,pe
 -- MySQL dump 9.09
 --
 -- Host: localhost    Database: dolibarr
----------------------------------------------------------
+-- -------------------------------------------------------
 -- Server version	4.0.15-log
 
 --
@@ -562,7 +562,7 @@ VALUES (now(),'2002-03-13','2002-03-13',-10,'Liquide',1,1,NULL,'CB',NULL,NULL,0,
 -- MySQL dump 9.09
 --
 -- Host: localhost    Database: dolibarr
----------------------------------------------------------
+-- -------------------------------------------------------
 -- Server version	4.0.15-log
 
 --

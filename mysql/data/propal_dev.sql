@@ -1,7 +1,7 @@
 -- MySQL dump 8.21
 --
 -- Host: localhost    Database: dolibarr
----------------------------------------------------------
+-- -------------------------------------------------------
 -- Server version	3.23.49-log
 
 --
@@ -25,7 +25,7 @@ INSERT INTO llx_propal (rowid, fk_soc, fk_soc_contact, fk_projet, ref, datec, da
 -- MySQL dump 8.21
 --
 -- Host: localhost    Database: dolibarr
----------------------------------------------------------
+-- -------------------------------------------------------
 -- Server version	3.23.49-log
 
 --
