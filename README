@@ -111,18 +111,17 @@ Miscellanous:
 - Serveral menu managers (can be used by internal users, as a back-office,
   with a particular menu, or by external users, as a front-office, with
   another menu and permissions).
-- Very user friendly and easy to use
-- Several skins
-- Code is highly customizable (a lot of use of modules)
-- Works with Mysql databases 3.1 or higher, experimental support
-  for PostgreSql
-- Works with PHP 4.1 or higher
+- Very user friendly and easy to use.
+- Several skins.
+- Code is highly customizable (a lot of use of modules).
+- Works with Mysql 3.1 or higher, experimental support for PostgreSql.
+- Works with PHP 4.1 or higher.
 
 
 V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
 ------------------------------------------
 This is feature Dolibarr does not support completely yet:
 - "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
-  called "Non Perçue Récupérable")
-- Accountancy
+  called "Non Perçue Récupérable").
+- Accountancy.
 - Dolibarr can manage only one currency.

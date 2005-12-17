@@ -3,25 +3,125 @@ README (french)
 Documentation démarrage
 --------------------------------
 
-
-Mise à jour de la version 1.1.0 vers 2.0.0
-
-- un script de migration pour la base de donnée existe dans le 
-répertoire /mysql/migration/, pensez à sauvegarder votre base avant
-toute opération sur celle-ci.
-
-Mise à jour de la version 1.0.0 vers 1.1.0
-
-- avant de mettre votre système à jour, vous devez valider toutes vos
-factures, le système de numérotation à changé, désormais un numéro
-provisoire est affecté lors de la création et le numéro final est
-attribué à la validation. Migrer avec des factures en mode brouillon
-peut poser des problèmes.
+1) Installer Dolibarr
+2) Mettre à jour Dolibarr depuis une ancienne version
+3) Ce qui est nouveau dans cette version
+4) Que peux faire Dolibarr
+5) Que ne peux pas encore faire Dolibarr
 
 
-Mise à jour de la version 0.4.0 vers la version 0.5.0
+I - INSTALLER DOLIBARR
+----------------------
 
-- Lors de la mise à jour vers la version 0.5.0 vous devez désactiver
-et réactiver les modules que vous utilisez. La gestion des droits
-inclus des actions lors de l'activation des modules. Cette étape est
-indispensable au bon fonctionnement de Dolibarr.
+To install Dolibarr:
+- Copy directory 'dolibarr' and all its files inside your web server root,
+  or set up your web server to use dolibarr/htdocs as root for a new web
+  server virtual host (second choice need to be web server administrator).
+- Create an empty mysql database (postgresql support is experimental).
+- Set write permissions on directory 'dolibarr/htdocs/conf' for your web
+  server user (write permissions will be removed once install is finished).
+- From your browser, call the dolibarr install page. Url depends on choice
+  made on first step:
+   http://localhost/dolibarr/htdocs/install/index.php
+  or
+   http://yourdolibarrhost/install/index.php
+- Follow instructions provided by installer...
+
+
+II - DOLIBARR UPGRADE
+---------------------
+
+To upgrade Dolibarr from an old version to this one:
+- Overwrite all old files inside old 'dolibarr' directory by files
+  provided into new version package.
+- From your browser, call the dolibarr install page:
+   http://localhost/dolibarr/htdocs/install/index.php
+  or
+   http://yourdolibarrhost/install/index.php
+  and choose the "migrate" option.
+  Note: Migrate process can ben runned safely several times.
+  
+
+III - WHAT'S NEW
+----------------
+
+- Added an installer.
+- Support user and groups permissions.
+- Translation in english and support for several languages.
+- Experimental support for Postgresql.
+- New enhanced look and several new themes.
+- Small search boxes for each Dolibarr elements (invoices, contracts,
+  orders, proposals...)
+- Can attach documents on actions
+- Enhanced use of modules and their parameters:
+  * Module companies: Added more properties supported on companies (parent
+    company, rib, discounts, company type, capital, vat intra ...).
+  * Module bank: Support cash accounts
+  * Module LDAP: Can disable contact syncronizing
+  * Module products: Support attachments of pictures, add prices and logs
+  * Module external_rss: Support https links
+  * Module webcalendar: Better integration with webcalendar
+- Added new modules:
+  * Module syslog:    To add Dolibarr logs inside a file or syslog
+  * Module emailing:  To send emailings
+  * Module members:   To manage members of a fundation
+  * Module suppliers: Provide orders to suppliers
+  * Module contracts: Manage contracts and their contacts
+  * Module stock:     To manage warehouses and stocks
+  * Module standing orders: To manage french standing orders
+  * Module bookmark:  To manage your own bookmarks and add them on man page
+  * Module syslog:    To add debug informations in syslog or log files
+- Dolibarr triggers allow to add personalized PHP code inside
+  workflow, with no risk to break Dolibarr.
+- Bug fixes and a lot of duplicate code removed.
+- A lot of other changes to enhance interface.
+- Support for PHP5
+
+
+IV - WHAT DOLIBARR CAN DO
+-------------------------
+
+Main modules:
+- Products and services catalog
+- Stock management
+- Bank accounts management
+- Customers, Suppliers or Prospects directory
+- Contacts directory
+- Commercial actions management
+- Orders management
+- Commercial proposals management with PDF export
+- Contracts management
+- Invoices management with PDF export
+- Payments management
+- Standing orders management
+- Shipping management
+
+Other modules:
+- Management for fundation members
+- Bookmarks management
+- EMailing
+- Can reports Dolibarr events inside Webcalendar
+- Reporting
+- Data export tools
+- LDAP connectivity
+- Donations management
+
+Miscellanous:
+- Mutli-user, with several permissions levels for each feature.
+- Serveral menu managers (can be used by internal users, as a back-office,
+  with a particular menu, or by external users, as a front-office, with
+  another menu and permissions).
+- Very user friendly and easy to use.
+- Several skins.
+- Code is highly customizable (a lot of use of modules).
+- Works with Mysql 3.1 or higher, experimental support for PostgreSql.
+- Works with PHP 4.1 or higher.
+
+
+V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
+------------------------------------------
+This is feature Dolibarr does not support completely yet:
+- "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
+  called "Non Perçue Récupérable").
+- Accountancy.
+- Dolibarr can manage only one currency.
