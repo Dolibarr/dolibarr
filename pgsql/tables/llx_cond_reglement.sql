@@ -29,7 +29,7 @@ create table llx_cond_reglement
   rowid           integer PRIMARY KEY,
   "code"            varchar(16),
   "sortorder"       smallint,
-  "actif"           smallint DEFAULT 1,
+  "active"          smallint DEFAULT 1,
   "libelle"         varchar(255),
   "libelle_facture" text,
   "fdm"             smallint,    -- reglement fin de mois

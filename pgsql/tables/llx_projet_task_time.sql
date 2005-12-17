@@ -31,7 +31,7 @@ create table llx_projet_task_time
   rowid SERIAL PRIMARY KEY,
   "fk_task"          integer  NOT NULL,
   "task_date"        date,
-  "task_duration"    smallint,
+  "task_duration"    real UNSIGNED,
   "fk_user"          integer,
   "note"             text
 );

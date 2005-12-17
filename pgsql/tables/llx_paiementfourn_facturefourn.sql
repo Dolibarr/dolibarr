@@ -3,7 +3,8 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+-- Copyright (C) 2005 Marc Barilley / Océbo <marc@ocebo.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,31 +25,12 @@
 --
 -- ===========================================================================
 
-create table llx_user
-(
-  rowid SERIAL PRIMARY KEY,
-  "datec"             timestamp,
-  "tms"               timestamp,
-  "login"             varchar(24),
-  "pass"              varchar(32),
-  "name"              varchar(50),
-  "firstname"         varchar(50),
-  "code"              varchar(4),
-  "office_phone"      varchar(20),
-  "office_fax"        varchar(20),
-  "user_mobile"       varchar(20),
-  "email"             varchar(255),
-  "admin"             smallint DEFAULT 0,
-  "webcal_login"      varchar(25),
-  "module_comm"       smallint DEFAULT 1,
-  "module_compta"     smallint DEFAULT 1,
-  "fk_societe"        integer DEFAULT 0,
-  "fk_socpeople"      integer DEFAULT 0,
-  "note"              text,
-  "datelastaccess"    timestamp,
-  "egroupware_id"     integer,
-  
-  UNIQUE(login)
+CREATE TABLE IF NOT EXISTS `llx_paiementfourn_facturefourn` (
+   SERIAL PRIMARY KEY,
+  "`fk_paiementfourn`" int4 default NULL,
+  "`fk_facturefourn`" int4 default NULL,
+  "`amount`" real default '0',
+  PRIMARY KEY  (`rowid`),
+    "UNIQUE"  (`fk_facturefourn`),
+    "UNIQUE"  (`fk_paiementfourn`)
 );
-
-CREATE INDEX idx_llx_user_login ON llx_user (login);

@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005 patrick Rouillon <patrick@rouillon.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,29 +22,19 @@
 -- $Id$
 -- $Source$
 --
+-- Association de personnes/societes avec un element de la base (contrat, projet, propal).
+-- Permet de definir plusieur type d'intervenant sur un element.
+-- i.e. commercial, adresse de facturation, prestataire...
 -- ============================================================================
 
-
-create table llx_product
+create table llx_element_contact
 (
-  rowid SERIAL PRIMARY KEY,
-  "datec"              timestamp,
-  "tms"                timestamp,
-  "ref"                varchar(16) NOT NULL,
-  "label"              varchar(128),
-  "description"        varchar(255),
-  "note"               text,
-  "price"              real,
-  "tva_tx"             real,
-  "fk_user_author"     integer,
-  "envente"            smallint DEFAULT 1,
-  "nbvente"            integer DEFAULT 0,
-  "fk_product_type"    integer DEFAULT 0,
-  "duration"           varchar(6),
-  "stock_propale"      integer DEFAULT 0,
-  "stock_commande"     integer DEFAULT 0,
-  "seuil_stock_alerte" integer DEFAULT 0
+  rowid SERIAL PRIMARY KEY,  
+  "datecreate"      timestamp NULL, 			-- date de creation de l'enregistrement
+  "statut"          smallint DEFAULT 5, 		-- 5 inactif, 4 actif
+  
+  "element_id"		int NOT NULL, 		    -- la reference de l'element.
+  "fk_c_type_contact"	int NOT NULL,	        -- nature du contact.
+  "fk_socpeople"      integer NOT NULL
 );
-
-
 

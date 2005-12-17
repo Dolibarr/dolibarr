@@ -538,6 +538,8 @@ alter table llx_bank_account add account_number varchar(8) after clos ;
 alter table llx_bank_account add rappro smallint DEFAULT 1 after clos;
 alter table llx_bank_account modify label varchar(30) unique;
 update llx_bank_account set account_number = '51' where account_number is null;
+ALTER TABLE llx_bank_account drop index label;
+ALTER TABLE llx_bank_account ADD UNIQUE uk_bank_account_label (label);
 
 alter table llx_paiement add fk_bank integer NOT NULL after note ;
 alter table llx_paiementfourn add fk_bank integer NOT NULL after note ;
@@ -1681,6 +1683,10 @@ create table llx_c_currencies
   label       varchar(64),
   active      tinyint DEFAULT 1  NOT NULL
 )type=innodb;
+
+ALTER TABLE llx_c_currencies DROP INDEX code_iso;
+ALTER TABLE llx_c_currencies ADD UNIQUE uk_c_currencies_code_iso(code_iso);
+
 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'BT', 'THB', 1, 'Bath thailandais'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CD', 'DKK', 1, 'Couronnes dannoises'); 

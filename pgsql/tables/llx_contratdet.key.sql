@@ -32,5 +32,5 @@ ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_ouverture_prevue (date_
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_ouverture (date_ouverture);
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_fin_validite (date_fin_validite);
 
-ALTER TABLE llx_contratdet ADD FOREIGN KEY (fk_contrat) REFERENCES llx_contrat (rowid);
-ALTER TABLE llx_contratdet ADD FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_contratdet ADD CONSTRAINT fk_contratdet_fk_contrat FOREIGN KEY (fk_contrat) REFERENCES llx_contrat (rowid);
+ALTER TABLE llx_contratdet ADD CONSTRAINT fk_contratdet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);

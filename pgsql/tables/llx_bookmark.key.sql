@@ -2,11 +2,8 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ========================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
---
--- $Id$
--- $Source$
+-- ===================================================================
+-- Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,13 +19,11 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- ========================================================================
+-- $Id$
+-- $Source$
+--
+-- ===================================================================
 
-create table llx_c_currencies
-(
-  code        varchar(2)   PRIMARY KEY,
-  "code_iso"    varchar(3)   NOT NULL,
-  "label"       varchar(64),
-  "active"      smallint DEFAULT 1  NOT NULL
-);
 
+ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_url   (fk_user, url);
+ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_title (fk_user, title);

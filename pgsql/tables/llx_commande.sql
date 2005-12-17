@@ -31,7 +31,8 @@ create table llx_commande
   "fk_soc"           integer,
   "fk_soc_contact"   integer,
   "fk_projet"        integer DEFAULT 0,     -- projet auquel est rattache la commande
-  "ref"              varchar(30) NOT NULL,  -- propal number
+  "ref"              varchar(30) NOT NULL,  -- order number
+  "ref_client"       varchar(30),           -- customer order number
   "date_creation"    timestamp,              -- date de creation 
   "date_valid"       timestamp,              -- date de validation
   "date_cloture"     timestamp,              -- date de cloture

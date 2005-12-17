@@ -3,10 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ========================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
---
--- $Id$
--- $Source$
+-- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,13 +19,18 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id$
+-- $Source$
+--
 -- ========================================================================
-
-create table llx_c_currencies
+--
+-- Le type InnoDB n'est pas nécessaire pour cette table
+--
+create table llx_societe_consult
 (
-  code        varchar(2)   PRIMARY KEY,
-  "code_iso"    varchar(3)   NOT NULL,
-  "label"       varchar(64),
-  "active"      smallint DEFAULT 1  NOT NULL
+  "fk_soc"             integer,
+  "fk_user"            integer,
+  "datec"	             timestamp,
+  "action" varchar(1) CHECK (action IN ('w','r')) 
 );
 

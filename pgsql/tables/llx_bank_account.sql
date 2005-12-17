@@ -34,7 +34,7 @@ create table llx_bank_account
   rowid SERIAL PRIMARY KEY,
   "datec"          timestamp,
   "tms"            timestamp,
-  "label"          varchar(30) UNIQUE,
+  "label"          varchar(30),
   "bank"           varchar(60),
   "code_banque"    varchar(7),
   "code_guichet"   varchar(6),
@@ -47,5 +47,6 @@ create table llx_bank_account
   "adresse_proprio" varchar(255),
   "courant"        smallint DEFAULT 0 NOT NULL,
   "clos"           smallint DEFAULT 0 NOT NULL,
+  "rappro"         smallint DEFAULT 1,
   "account_number" varchar(8)
 );

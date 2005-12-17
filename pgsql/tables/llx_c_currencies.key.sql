@@ -24,11 +24,5 @@
 --
 -- ========================================================================
 
-create table llx_c_currencies
-(
-  code        varchar(2)   PRIMARY KEY,
-  "code_iso"    varchar(3)   NOT NULL,
-  "label"       varchar(64),
-  "active"      smallint DEFAULT 1  NOT NULL
-);
 
+ALTER TABLE llx_c_currencies ADD UNIQUE uk_c_currencies_code_iso(code_iso);

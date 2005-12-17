@@ -25,7 +25,6 @@
 --
 --
 
-
 create table llx_prelevement_rejet
 (
   rowid SERIAL PRIMARY KEY,
@@ -34,5 +33,7 @@ create table llx_prelevement_rejet
   "motif"                 integer,
   "date_creation"         timestamp,
   "fk_user_creation"      integer,
-  "note"                  text
+  "note"                  text,
+  "afacturer"             smallint default 0,
+  "fk_facture"            integer
 );

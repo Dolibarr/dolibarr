@@ -27,6 +27,7 @@
 
 
 -- Supprimme orhpelins pour permettre montée de la clé
+-- V4 DELETE llx_contratdet FROM llx_contratdet, llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.idp WHERE llx_contratdet.fk_contrat = llx_contrat.rowid AND llx_societe.idp IS NULL; 
 -- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.idp WHERE llx_societe.idp IS NULL;
 -- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_user ON llx_contrat.fk_user_author = llx_user.rowid WHERE llx_user.rowid IS NULL;
 

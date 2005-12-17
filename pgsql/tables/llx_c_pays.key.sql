@@ -24,11 +24,7 @@
 --
 -- ========================================================================
 
-create table llx_c_currencies
-(
-  code        varchar(2)   PRIMARY KEY,
-  "code_iso"    varchar(3)   NOT NULL,
-  "label"       varchar(64),
-  "active"      smallint DEFAULT 1  NOT NULL
-);
 
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_code (code);
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_code_iso (code_iso);
+ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_libelle (libelle);

@@ -29,8 +29,8 @@ create table llx_c_tva
 (
   rowid SERIAL PRIMARY KEY,
   "fk_pays"           integer NOT NULL,
-  "taux"              real NOT NULL,
-  "recuperableonly"   integer DEFAULT 0,
+  "taux"              real  NOT NULL,
+  "recuperableonly"   integer NOT NULL DEFAULT 0,
   "note"              varchar(128),
   "active"            smallint DEFAULT 1 NOT NULL
 );

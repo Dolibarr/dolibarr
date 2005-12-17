@@ -29,4 +29,4 @@
 
 
 ALTER TABLE llx_facture_tva_sum ADD INDEX idx_facture_tva_sum_fk_facture (fk_facture);
-ALTER TABLE llx_facture_tva_sum ADD CONSTRAINT facture_tva_sum_fk_facture_rowid FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
+ALTER TABLE llx_facture_tva_sum ADD CONSTRAINT fk_facture_tva_sum_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
