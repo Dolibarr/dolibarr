@@ -953,6 +953,7 @@ class Contrat
         }
     }
 
+
     /* gestion des contacts d'un contrat */
 
 	/**
@@ -1003,7 +1004,7 @@ class Contrat
         $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
 		$sql.= $this->db->idate($datecreate);
 		$sql.= ", 4, '". $type_contact . "' ";
-        $sql.= ");";
+        $sql.= ")";
         
         // Retour
         if ( $this->db->query($sql) )
@@ -1012,19 +1013,17 @@ class Contrat
         }
         else
         {
-//            dolibarr_print_error($this->db);
             $this->error=$this->db->error()." - $sql";
             return -1;
         }
 	}    
 
     /**
-	 * 
 	 *      \brief      Misea jour du contact associé au contrat
      *      \param      rowid           La reference du lien contrat-contact
      * 		\param		statut	        Le nouveau statut
      *      \param      nature          Description du contact
-     *      \return     int             <0 si erreur, >0 si ok
+     *      \return     int             <0 si erreur, =0 si ok
      */
 	function update_contact($rowid, $statut, $type_contact_id)
 	{
@@ -1032,7 +1031,7 @@ class Contrat
         $sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set ";
         $sql.= " statut = $statut ,";
         $sql.= " fk_c_type_contact = '".$type_contact_id ."'";
-        $sql.= " where rowid = $rowid ;";
+        $sql.= " where rowid = ".$rowid;
         // Retour
         if (  $this->db->query($sql) )
         {
@@ -1046,14 +1045,15 @@ class Contrat
 	 }    
 	 
 	/** 
-     *    \brief      Supprime une ligne de contact de contrat
+     *    \brief      Supprime une ligne de contact
      *    \param      idligne		La reference du contact
      *    \return     statur        >0 si ok, <0 si ko
      */
     function delete_contact($idligne)
     {
     
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact WHERE rowid =".$idligne;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
+        $sql.= " WHERE rowid =".$idligne;
         if ($this->db->query($sql))
         {
             return 1;
@@ -1065,7 +1065,7 @@ class Contrat
     }
 	 		
     /** 
-     *    \brief      Récupère les lignes de contact du contrat
+     *    \brief      Récupère les lignes de contact de l'objet
      *    \param      statut        Statut des lignes detail à récupérer
      *    \param      source        Source du contact external (llx_socpeople) ou internal (llx_user)
      *    \return     array         Tableau des rowid des contacts
@@ -1074,6 +1074,8 @@ class Contrat
     {
         global $langs;
         
+  		$element='contrat';     // Contact sur le contrat
+
         $tab=array();
      
         $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id,";
@@ -1088,7 +1090,7 @@ class Contrat
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact tc";
         $sql.= " WHERE element_id =".$this->id;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
-        $sql.= " AND tc.element='contrat'";
+        $sql.= " AND tc.element='".$element."'";
         if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
         if ($source == 'external') $sql.= " AND tc.source = 'external'";
         $sql.= " AND tc.active=1";
@@ -1129,6 +1131,8 @@ class Contrat
      */
  	function detail_contact($rowid)
     {
+  		$element='contrat';     // Contact sur le contrat
+
         $sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
         $sql.= " tc.code, tc.libelle, s.fk_soc";
         $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc, ";
@@ -1136,7 +1140,7 @@ class Contrat
         $sql.= " WHERE ec.rowid =".$rowid;
         $sql.= " AND ec.fk_socpeople=s.idp";
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
-        $sql.= " AND tc.element = 'contrat'";
+        $sql.= " AND tc.element = '".$element."'";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1161,7 +1165,7 @@ class Contrat
     {
         global $langs;
         
-  		$element='contrat';
+  		$element='contrat';     // Contact sur le contrat
   		
   		$tab = array();
   		
@@ -1194,6 +1198,64 @@ class Contrat
             return null;
         }
     }		 			
+    
+    /**
+     *      \brief      Retourne id des contacts d'une source et d'un type donné
+     *                  Exemple: contact client de facturation ('external', 'BILLING')
+     *                  Exemple: contact client de livraison ('external', 'SHIPPING')
+     *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
+     *      \return     array       Liste des id contacts
+     */   
+    function getIdContact($source,$code)
+    {
+  		$element='contrat';     // Contact sur le contrat
+        
+        $result=array();
+        $i=0;
+        
+        $sql = "SELECT ec.fk_socpeople";
+        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
+        $sql.= " WHERE ec.element_id = ".$this->id;
+        $sql.= " AND ec.fk_c_type_contact=tc.rowid";
+        $sql.= " AND tc.element = '".$element."'";
+        $sql.= " AND tc.source = '".$source."'";
+        $sql.= " AND tc.code = '".$code."'";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj = $this->db->fetch_object($resql))
+            {
+                $result[$i]=$obj->fk_socpeople;
+                $i++;
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return null;
+        }
+        
+        return $result;
+    }    
+
+    /**
+     *      \brief      Retourne id des contacts clients de facturation
+     *      \return     array       Liste des id contacts facturation
+     */   
+    function getIdBillingContact()
+    {
+        return $this->getIdContact('external','BILLING');
+    }
+
+    /**
+     *      \brief      Retourne id des contacts clients de prestation
+     *      \return     array       Liste des id contacts prestation
+     */   
+    function getIdServiceContact()
+    {
+        return $this->getIdContact('external','SERVICE');
+    }
     
 }
 
