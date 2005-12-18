@@ -295,16 +295,18 @@ class pdf_propale_orange extends ModelePDFPropales
       $tab4_sl = 4;
       $ligne = 2;
 
-        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
+        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+        if ($logo)
         {
             $pdf->SetXY(10,5);
-            if (file_exists(FAC_PDF_LOGO)) {
-                $pdf->Image(FAC_PDF_LOGO, 10, 5,45.0, 25.0, 'PNG');
+            if (is_readable($logo))
+            {
+                $pdf->Image($logo, 10, 5,45.0, 25.0, 'PNG');
             }
             else {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
+                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
                 $pdf->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
             }
         }

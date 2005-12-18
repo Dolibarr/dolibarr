@@ -431,16 +431,18 @@ class pdf_huitre extends ModelePDFFactures {
       $ligne = 2;
 
 		// Logo
-        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
+        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+        if ($logo)
         {
-            if (file_exists(FAC_PDF_LOGO)) {
+            if (is_readable($logo))
+            {
                 $pdf->SetXY(10,5);
-                $pdf->Image(FAC_PDF_LOGO, 10, 5,45.0, 25.0);
+                $pdf->Image($logo, 10, 5,45.0, 25.0);
             }
             else {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
+                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
                 $pdf->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
             }
         }
