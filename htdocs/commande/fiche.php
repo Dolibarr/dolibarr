@@ -267,6 +267,9 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$soc = new Societe($db);
 			$soc->fetch($obj->idp);
 
+			$nbrow=4;
+			if ($conf->projet->enabled) $nbrow++;
+
 			print '<form action="fiche.php" method="post">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="soc_id" value="'.$soc->id.'">' ."\n";
@@ -275,18 +278,18 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			print '<table class="border" width="100%">';
 
+			// Reference
 			print '<tr><td>'.$langs->trans('Ref').'</td><td>Provisoire</td>';
 			print '<td>'.$langs->trans('Comments').'</td></tr>';
 
-			$nbrow=4;
-			if ($conf->projet->enabled) $nbrow++;
-
-			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->nom_url.'</td>';
+			// Reference client
+			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
+			print '<input type="text" name="ref_client" value=""></td>';
 			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" wrap="soft" cols="50" rows="4"></textarea></td>';
 			print '</tr>';
 
-			print '<tr><td>'.$langs->trans('RefCdeClient').'</td><td>';
-			print '<input type="text" name="ref_client" value=""></td>';
+			// Client
+			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->nom_url.'</td>';
 			print '</tr>';
 
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
@@ -500,13 +503,16 @@ else
 			 */
 			if ($_GET['action'] == 'annuler')
 			{
-				$html->form_confirm('fiche.php?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancel'), 'confirm_cancel');
+				$html->form_confirm('fiche.php?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
 				print '<br />';
 			}
 
 			/*
 			 *   Commande
 			 */
+			$nbrow=8;
+			if ($conf->projet->enabled) $nbrow++;
+
 			print '<table class="border" width="100%">';
 
             // Ref
@@ -522,19 +528,10 @@ else
 			}
 			print '</td></tr>';
 
-			// Société
-			print '<tr><td>'.$langs->trans('Customer').'</td>';
-			print '<td colspan="3">';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
-			print '</tr>';
-
-			$nbrow=7;
-			if ($conf->projet->enabled) $nbrow++;
-
 			// Ref commande client
 			print '<tr><td>';
             print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-			print $langs->trans('RefCdeClient').'</td><td align="left">';
+			print $langs->trans('RefCustomer').'</td><td align="left">';
             print '</td>';
             if ($_GET['action'] != 'refcdeclient') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
             print '</tr></table>';
@@ -568,6 +565,12 @@ else
 			print '</td>';
 			print '</tr>';
 
+			// Société
+			print '<tr><td>'.$langs->trans('Customer').'</td>';
+			print '<td colspan="2">';
+			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+			print '</tr>';
+
 			print '<tr><td>'.$langs->trans('Status').'</td>';
 			print '<td colspan="2">'.$commande->statuts[$commande->statut].'</td>';
 			print '</tr>';
@@ -596,10 +599,6 @@ else
                     $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'none');
                 }
                 print '</td></tr>';
-            }
-			else
-			{
-                print '<tr><td height="10">&nbsp;</td><td colspan="2">&nbsp;</td></tr>';
             }
 
 			// Lignes de 3 colonnes

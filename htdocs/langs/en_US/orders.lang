@@ -50,6 +50,7 @@ ComptaCard=Accountancy card
 DraftOrders=Draft orders
 RelatedOrders=Related orders
 OnProcessOrders=On process orders
+RefCustomer=Ref. customer
 RefCdeClient=Ref. customer order
 RefCdeClientShort=Ref. cust. order
 # Sources

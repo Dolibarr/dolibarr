@@ -50,6 +50,7 @@ ComptaCard=Fiche compta
 DraftOrders=Commandes brouillons
 RelatedOrders=Commandes rattachées
 OnProcessOrders=Commandes en cours de traitement
+RefCustomer=Réf. client
 RefCdeClient=Réf. commande client
 RefCdeClientShort=Réf. com. client
 # Sources

@@ -119,53 +119,57 @@ if ($_GET["id"] > 0)
         /*
          *   Commande
          */
+
+        $nbrow=8;
+        if ($conf->projet->enabled) $nbrow++;
+
         print '<table class="border" width="100%">';
 
+        // Reference
         print '<tr><td width="15%">'.$langs->trans("Ref")."</td>";
         print '<td colspan="2">'.$commande->ref.'</td>';
         print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
         if ($commande->source == 0)
         {
-            /* Propale */
+            // Propale
             $propal = new Propal($db);
             $propal->fetch($commande->propale_id);
             print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
         }
         print "</td></tr>";
 
+        // Ref cde client
+		print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+		print $langs->trans('RefCustomer').'</td><td align="left">';
+        print '</td>';
+        print '</tr></table>';
+		print '</td>';
+        print '<td colspan="2">';
+		print $commande->ref_client;
+        print '</td>';
+		print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
+        if ($commande->brouillon == 1 && $user->rights->commande->creer)
+        {
+            print '<form action="fiche.php?id='.$id.'" method="post">';
+            print '<input type="hidden" name="action" value="setnote">';
+            print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
+            print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+            print '</form>';
+        }
+        else
+        {
+            print nl2br($commande->note);
+        }
+		print '</td>';
+		print '</tr>';
+
         // Client
         print "<tr><td>".$langs->trans("Customer")."</td>";
-        print '<td colspan="3">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+        print '<td colspan="2">';
+        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a>';
+        print '</td>';
         print '</tr>';
-
-        $nbrow=7;
-        if ($conf->projet->enabled) $nbrow++;
-
-        // Ref cde client
-			print '<tr><td>';
-            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-			print $langs->trans('RefCdeClient').'</td><td align="left">';
-            print '</td>';
-            print '</tr></table>';
-            print '</td><td colspan="2">';
-			print $commande->ref_client;
-			print '</td>';
-			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
-            if ($commande->brouillon == 1 && $user->rights->commande->creer)
-            {
-                print '<form action="fiche.php?id='.$id.'" method="post">';
-                print '<input type="hidden" name="action" value="setnote">';
-                print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
-                print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
-                print '</form>';
-            }
-            else
-            {
-                print nl2br($commande->note);
-            }
-			print '</td>';
-			print '</tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td>';
@@ -178,9 +182,9 @@ if ($_GET["id"] > 0)
         print '</tr>';
 
         // Projet
-        print '<tr>';
         if ($conf->projet->enabled)
         {
+            print '<tr>';
             $langs->load("projects");
             print '<td>';
             print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -198,12 +202,8 @@ if ($_GET["id"] > 0)
                 $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"none");
             }
             print "</td>";
+            print '</tr>';
         }
-        else
-        {
-            print '<td>&nbsp;</td><td colspan="2">&nbsp;</td>';
-        }
-        print '</tr>';
         
         // Lignes de 3 colonnes
         
