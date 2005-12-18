@@ -11,7 +11,7 @@ use Cwd;
 $PROJECT="dolibarr";
 $MAJOR="2";
 $MINOR="0";
-$BUILD="0-alpha2";
+$BUILD="0-beta1";
 $RPMSUBVERSION="1";
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE");   # Possible packages
