@@ -27,17 +27,19 @@ require_once (DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_works
 /*
  *
  */
-$sql  = "SELECT l.ligne,s.nom,f.date, f.cout_vente";
+$sql  = "SELECT l.ligne,s.nom,fc.datef, f.cout_vente";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " , ".MAIN_DB_PREFIX."facture as fc";
 
 $sql .= " WHERE date_format(f.date,'%Y') = '2005'";
 $sql .= " AND l.fk_contrat = c.rowid";
 $sql .= " AND c.fk_client_comm = 52";
 $sql .= " AND f.ligne = l.ligne";
 $sql .= " AND l.fk_soc_facture =s.idp";
+$sql .= " AND fc.rowid = f.fk_facture";
 $sql .= " ORDER BY f.date ASC, f.fk_ligne ASC";
 
 $resql = $db->query($sql);
