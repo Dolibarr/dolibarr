@@ -34,7 +34,7 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 
 $sql .= " WHERE date_format(f.date,'%Y') = '2005'";
-$sql .= " AND f.fk_contrat = c.rowid";
+$sql .= " AND l.fk_contrat = c.rowid";
 $sql .= " AND c.fk_client_comm = 52";
 $sql .= " AND f.ligne = l.ligne";
 $sql .= " AND l.fk_soc_facture =s.idp";
