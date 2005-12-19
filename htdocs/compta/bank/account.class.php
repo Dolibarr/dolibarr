@@ -322,7 +322,7 @@ class Account
         $sql .= ",cle_rib='".$this->cle_rib."'";
         $sql .= ",bic='".$this->bic."'";
         $sql .= ",iban_prefix = '".$this->iban_prefix."'";
-        $sql .= ",domiciliation='".$this->domiciliation."'";
+        $sql .= ",domiciliation='".addslashes($this->domiciliation)."'";
         $sql .= ",proprio = '".$this->proprio."'";
         $sql .= ",adresse_proprio = '".$this->adresse_proprio."'";
         $sql .= ",courant = ".$this->courant;
