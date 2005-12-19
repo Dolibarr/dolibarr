@@ -313,8 +313,8 @@ class Account
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
 
-        $sql .= " bank = '" .$this->bank ."'";
-        $sql .= ",label = '".$this->label ."'";
+        $sql .= " bank = '" .addslashes($this->bank)."'";
+        $sql .= ",label = '".addslashes($this->label)."'";
 
         $sql .= ",code_banque='".$this->code_banque."'";
         $sql .= ",code_guichet='".$this->code_guichet."'";
@@ -323,8 +323,8 @@ class Account
         $sql .= ",bic='".$this->bic."'";
         $sql .= ",iban_prefix = '".$this->iban_prefix."'";
         $sql .= ",domiciliation='".addslashes($this->domiciliation)."'";
-        $sql .= ",proprio = '".$this->proprio."'";
-        $sql .= ",adresse_proprio = '".$this->adresse_proprio."'";
+        $sql .= ",proprio = '".addslashes($this->proprio)."'";
+        $sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
         $sql .= ",courant = ".$this->courant;
         $sql .= ",clos = ".$this->clos;
         $sql .= ",rappro = ".$this->rappro;
