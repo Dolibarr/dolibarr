@@ -52,7 +52,7 @@ if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
 // Affiche warning répertoire install existe (si utilisateur admin)
 if ($user->admin && ! defined("MAIN_REMOVE_INSTALL_WARNING"))
 {
-    if (is_dir(DOL_DOCUMENT_ROOT."/install")) 
+    if (is_dir(DOL_DOCUMENT_ROOT."/install") && is_readable(DOL_DOCUMENT_ROOT."/install"))
     {
         $langs->load("other");
         print '<table width="100%"><tr><td>';
