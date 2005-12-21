@@ -33,7 +33,7 @@ $langs->load("companies");
 
 
 if ($_POST["action"] == 'add') {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$_POST["note"]."' WHERE idp=".$_POST["socid"];
+  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".addslashes($_POST["note"])."' WHERE idp=".$_POST["socid"];
   $result = $db->query($sql);
 
   $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
