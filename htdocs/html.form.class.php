@@ -589,9 +589,11 @@ class Form
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
-                $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label - $objp->price ".$langs->trans("Currency".$conf->monnaie);
-                if ($objp->duration) $opt .= " - ".$objp->duration;
-                $opt .= "</option>\n";
+                $opt = '<option value="'.$objp->rowid.'">['.$objp->ref.'] ';
+                $opt.= dolibarr_trunc($objp->label,40).' - ';
+                $opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
+                if ($objp->duration) $opt.= ' - '.$objp->duration;
+                $opt.= "</option>\n";
                 print $opt;
                 $i++;
             }
@@ -637,7 +639,8 @@ class Form
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
-                $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label - ";
+                $opt = '<option value="'.$objp->rowid.'">['.$objp->ref.'] ';
+                $opt.= $objp->label.' - ';
                 $opt.= $objp->price." ".$langs->trans("Currency".$conf->monnaie)." / ".$objp->quantity." ".$langs->trans("Units");
                 if ($objp->quantity > 1)
                 {
