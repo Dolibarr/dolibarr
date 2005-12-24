@@ -640,7 +640,7 @@ class Form
             {
                 $objp = $this->db->fetch_object($result);
                 $opt = '<option value="'.$objp->rowid.'">['.$objp->ref.'] ';
-                $opt.= $objp->label.' - ';
+                $opt.= dolibarr_trunc($objp->label,40).' - ';
                 $opt.= $objp->price." ".$langs->trans("Currency".$conf->monnaie)." / ".$objp->quantity." ".$langs->trans("Units");
                 if ($objp->quantity > 1)
                 {
