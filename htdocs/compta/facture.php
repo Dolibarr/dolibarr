@@ -766,7 +766,7 @@ if ($_GET['action'] == 'create')
 			$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
 			print '</td>';
 			print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-			print '<td nowrap="nowrap"><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
+			print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="0">%</td>';
 			print '<td>&nbsp;</td>';
 			// Si le module service est actif, on propose des dates de début et fin à la ligne
 			if ($conf->service->enabled)
@@ -1302,7 +1302,7 @@ else
 			{
 				print '<form action="facture.php?facid='.$fac->id.'" method="post">';
 				print '<input type="hidden" name="action" value="setremise">';
-				print '<td colspan="3"><input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">% ';
+				print '<td colspan="3"><input type="text" name="remise" size="1" value="'.$fac->remise_percent.'">% ';
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
 				print '</form>';
 			}
@@ -1545,7 +1545,7 @@ else
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-				print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
+				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="0">%</td>';
 				print '<td align="center" valign="middle" rowspan="1" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 				print '</tr>';
 				if ($conf->service->enabled)
@@ -2073,7 +2073,7 @@ else
 							}
 						}
 
-						print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').'</a> ';
+						print '<td nowrap="nowrap"><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').'</a> ';
 						print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
 						if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans('Late'));
 						print '</td>';
