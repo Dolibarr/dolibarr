@@ -59,14 +59,7 @@ function llxHeader($head = "", $title="", $help_url='',$addons='')
 
         if ($user->societe_id == 0 && $user->rights->produit->creer)
         {
-            if ($conf->categorie->enabled)
-            {
-                $menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0&amp;catid=".$_REQUEST['catid'], $langs->trans("NewProduct"));
-            }
-            else
-            {
-                $menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
-            }
+            $menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
         }
     }
 
@@ -77,7 +70,7 @@ function llxHeader($head = "", $title="", $help_url='',$addons='')
 
     $menu->add('liste.php','Top');
 
-    if (isset($_REQUEST['catid']) && $_REQUEST['catid'] != '')
+    if (isset($_REQUEST['catid']) && $_REQUEST['catid'])
     {
         $catid = $_REQUEST['catid'];
 
