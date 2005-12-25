@@ -1485,25 +1485,36 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'92','Assoc
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'93','Fondation');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'99','Autre personne morale de droit privé');
 
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'100','Indépendant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'101','SPRL - Société à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'102','SA   - Société Anonyme');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'103','SCRL - Société coopérative à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'104','ASBL - Association sans but Lucratif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'105','SCRI - Société coopérative à responsabilité illimitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'106','SCS  - Société en commandite simple');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'107','SCA  - Société en commandite par action');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'108','SNC  - Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'109','GIE  - Groupement d\'intérêt économique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'110','GEIE - Groupement européen d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '200', 'Indépendant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '201', 'SPRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '202', 'SA   - Société Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '203', 'SCRL - Société coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '204', 'ASBL - Association sans but Lucratif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '205', 'SCRI - Société coopérative à responsabilité illimitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '206', 'SCS  - Société en commandite simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '207', 'SCA  - Société en commandite par action');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '208', 'SNC  - Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GIE  - Groupement d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement européen d\'intérêt économique');
 
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '200', 'Sole Trader');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '201', 'Partnership');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '202', 'Private Limited Company by shares - (LTD)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '203', 'Public Limited Company');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '204', 'Workers Cooperative');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '205', 'Limited Liability Partnership');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '206', 'Franchise');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '600', 'Raison Individuelle');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '601', 'Société Simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '602', 'Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '603', 'Société en commandite');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '604', 'Société anonyme (SA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '605', 'Société en commandite par actions');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '606', 'Société à responsabilité limitées (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '607', 'Société coopérative');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '608', 'Association');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '609', 'Fondation');
+
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '700', 'Sole Trader');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '701', 'Partnership');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '702', 'Private Limited Company by shares - (LTD)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '703', 'Public Limited Company');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '704', 'Workers Cooperative');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '705', 'Limited Liability Partnership');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '706', 'Franchise');
 
 drop table if exists llx_c_paiement;
 
