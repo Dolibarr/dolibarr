@@ -43,9 +43,11 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+$mesg='';
+
 
 /*
- *
+ * Actions
  */	
 if ($_POST["action"] == 'classin') 
 {
@@ -97,8 +99,16 @@ if ($_POST["action"] == 'addligne' && $user->rights->fournisseur->commande->cree
         0,
         $_POST["remise_percent"]);
     }
-    Header("Location: fiche.php?id=".$_GET["id"]);
-    exit;
+
+    if ($result >= 0)
+    {
+        Header("Location: fiche.php?id=".$_GET["id"]);
+        exit;
+    }
+    else
+    {   
+        $mesg='<div class="error">'.$comf->error.'</div>';
+    }
 }
 
 if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer) 
@@ -212,7 +222,6 @@ if ($_GET["action"] == 'create')
     else
     {
         $mesg=$fourn->error;
-        print "x $mesg x";
     }
 }
 
@@ -227,11 +236,18 @@ $html = new Form($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-  
+
 if ($_GET["id"] > 0)
 {
-  $commande = new CommandeFournisseur($db);
-  if ( $commande->fetch($_GET["id"]) == 0)
+<<<<<<< fiche.php
+    if ($mesg) print $mesg;
+    
+    $commande = new CommandeFournisseur($db);
+    if ( $commande->fetch($_GET["id"]) == 0)
+=======
+    $commande = new CommandeFournisseur($db);
+    if ( $commande->fetch($_GET["id"]) == 0)
+>>>>>>> 1.29.2.1
     {	  
       $soc = new Societe($db);
       $soc->fetch($commande->soc_id);
@@ -302,17 +318,18 @@ if ($_GET["id"] > 0)
 	  $html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
 	  print '<br />';
 	}
+     
       /*
        * Confirmation de l'envoi de la commande
        *
        */
-      if ($_GET["action"] == 'commande')
-	{
+        if ($_GET["action"] == 'commande')
+	    {
 	  $date_com = mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	  $html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"],
 			      "Envoi de la commande","Etes-vous sûr de vouloir confirmer cette commande en date du ".strftime("%d/%m/%Y",$date_com)." ?","confirm_commande");
-	  print '<br />';
-	}
+    	  print '<br />';
+	    }
 
         /*
          *   Commande
@@ -370,10 +387,13 @@ if ($_GET["id"] > 0)
         
         print "</table>";
 
+        if ($mesg) print $mesg;
+        else print '<br>';
+        
         /*
          * Lignes de commandes
          */
-        print '<br><table class="noborder" width="100%">';	  
+        print '<table class="noborder" width="100%">';	  
         
         $sql = "SELECT l.ref, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
@@ -403,7 +423,7 @@ if ($_GET["id"] > 0)
             {
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
-                print '<td><a href="'.DOL_URL_ROOT.'/fourn/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</td>';
+                print '<td><a href="'.DOL_URL_ROOT.'/fourn/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a></td>';
                 if ($objp->fk_product > 0)
                 {
                     print '<td>';

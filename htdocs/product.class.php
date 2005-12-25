@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -193,62 +192,60 @@ class Product
     }
 
 
-  /**
-   *    \brief      Mise à jour du produit en base
-   *    \param      id          id du produit
-   *    \param      user        utilisateur qui effectue l'insertion
-   *    \return     int         1 si ok, -1 si ref deja existante, -2 autre erreur       
-   */
-	 
-  function update($id, $user)
-  {
-    global $langs;
-    $langs->load("main");
-    $langs->load("products");
-    
-    if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
-
-    $this->ref = trim(sanitize_string($this->ref));
-    $this->libelle = trim($this->libelle);
-    $this->description = trim($this->description);
-    $this->note = trim($this->note);
-    
-    $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-    $sql .= " SET label = '" . addslashes($this->libelle) ."'";
-    if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
-    $sql .= ",tva_tx = " . $this->tva_tx ;
-    $sql .= ",envente = " . $this->envente ;
-    $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
-    $sql .= ",description = '" . addslashes($this->description) ."'";
-    $sql .= ",note = '" . addslashes($this->note) ."'";
-    $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
-    $sql .= " WHERE rowid = " . $id;
-    
-    if ( $this->db->query($sql) )
+    /**
+     *    \brief      Mise à jour du produit en base
+     *    \param      id          id du produit
+     *    \param      user        utilisateur qui effectue l'insertion
+     *    \return     int         1 si ok, -1 si ref deja existante, -2 autre erreur
+     */
+    function update($id, $user)
     {
-        return 1;
-    }
-    else
-    {
-        if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        global $langs;
+        $langs->load("main");
+        $langs->load("products");
+    
+        if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
+    
+        $this->ref = trim(sanitize_string($this->ref));
+        $this->libelle = trim($this->libelle);
+        $this->description = trim($this->description);
+        $this->note = trim($this->note);
+    
+        $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
+        $sql .= " SET label = '" . addslashes($this->libelle) ."'";
+        if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
+        $sql .= ",tva_tx = " . $this->tva_tx ;
+        $sql .= ",envente = " . $this->envente ;
+        $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
+        $sql .= ",description = '" . addslashes($this->description) ."'";
+        $sql .= ",note = '" . addslashes($this->note) ."'";
+        $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
+        $sql .= " WHERE rowid = " . $id;
+    
+        if ( $this->db->query($sql) )
         {
-            $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
-            return -1;
+            return 1;
         }
         else
         {
-            $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
-    	    return -2;
+            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+            {
+                $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
+                return -1;
+            }
+            else
+            {
+                $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+                return -2;
+            }
         }
     }
-  }
 
 
-  /**
-   *    \brief  Ajoute un changement de prix en base dans l'historique des prix
-   *    \param  user        utilisateur qui modifie le prix
-   */
-	 
+    /**
+     *    \brief  Ajoute un changement de prix en base dans l'historique des prix
+     *    \param  user        utilisateur qui modifie le prix
+     */
     function _log_price($user) 
     {
         // On supprimme ligne existante au cas ou
@@ -278,28 +275,43 @@ class Product
     }
 
 
-  /**
-   *    \brief      Lit le prix d'achat pour un fournisseur
-   *    \param      fourn_id        Id du fournisseur
-   *    \param      qty             Quantite pour lequel le prix est valide
-   *    \return     int             Renvoi prix
-   */
-  function get_buyprice($fourn_id, $qty) 
+    /**
+     *    \brief      Lit le prix pratiqué par un fournisseur
+     *    \param      fourn_id        Id du fournisseur
+     *    \param      qty             Quantite pour lequel le prix est valide
+     *    \return     int             <0 si ko, 0 si ok mais rien trouvé, 1 si ok et trouvé
+     */
+    function get_buyprice($fourn_id, $qty) 
     {
         $result = 0;
-        $sql = "SELECT pf.price";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
+        $sql = "SELECT pf.price as price, pf.quantity as quantity";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf";
         $sql.= " WHERE pf.fk_soc = ".$fourn_id;
         $sql.= " AND pf.fk_product =" .$this->id;
         $sql.= " AND quantity <= ".$qty;
         $sql.= " ORDER BY quantity DESC";
         $sql.= " LIMIT 1";
         
+        dolibarr_syslog("Product::get_buyprice $fourn_id,$qty sql=$sql");
+        
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $row = $this->db->fetch_row($resql);
-            $this->buyprice = $row[0];
+            $obj = $this->db->fetch_object($resql);
+            if ($obj && $obj->quantity > 0)
+            {
+                $this->buyprice = $obj->price;                      // \deprecated
+                $this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            return -1;
         }
         return $result;
     }

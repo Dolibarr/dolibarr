@@ -62,66 +62,65 @@ class CommandeFournisseur
     }
 
 
-  /** 
-   * Lit une commande
-   *
-   */
-  function fetch ($id)
+    /**
+     * Lit une commande
+     */
+    function fetch ($id)
     {
-      $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
-      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande ";
-      $sql .= ", c.note";
+        $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
+        $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande ";
+        $sql .= ", c.note";
+    
+        $sql .= ", cm.libelle as methode_commande";
+    
+        $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
+    
+        $sql .= " WHERE c.rowid = ".$id;
 
-      $sql .= ", cm.libelle as methode_commande";
-
-      $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
-
-      $sql .= " WHERE c.rowid = ".$id;
-      $resql = $this->db->query($sql) ;
-      
-      if ( $resql )
-	{
-	  $obj = $this->db->fetch_object($resql);
-	  
-	  $this->id                  = $obj->rowid;
-	  $this->ref                 = $obj->ref;
-	  $this->soc_id              = $obj->fk_soc;
-	  $this->fourn_id            = $obj->fk_soc;
-	  $this->statut              = $obj->fk_statut;
-	  $this->user_author_id      = $obj->fk_user_author;
-	  $this->total_ht            = $obj->total_ht;
-	  $this->total_tva           = $obj->tva;
-	  $this->total_ttc           = $obj->total_ttc;
-	  $this->date_commande       = $obj->date_commande; // date à laquelle la commande a été transmise
-	  $this->remise_percent      = $obj->remise_percent;
-	  $this->methode_commande_id = $obj->fk_methode_commande;
-	  $this->methode_commande = $obj->methode_commande;
-
-	  $this->source              = $obj->source;
-	  $this->facturee            = $obj->facture;
-	  $this->projet_id           = $obj->fk_projet;
-	  $this->note                = stripslashes($obj->note);
-
-	  $this->db->free($resql);
-	  
-	  if ($this->statut == 0)
-	    {
-	      $this->brouillon = 1;
-	    }
-
-	  $result = 0;
-
-	}
-      else
-	{
-	  dolibarr_syslog("CommandeFournisseur::Fetch Error $sql");
-	  dolibarr_syslog("CommandeFournisseur::Fetch Error ".$this->db->error());
-	  $result = -1;
-	}
-
-      return $result ;
-
+        $resql = $this->db->query($sql) ;
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+    
+            $this->id                  = $obj->rowid;
+            $this->ref                 = $obj->ref;
+            $this->soc_id              = $obj->fk_soc;
+            $this->fourn_id            = $obj->fk_soc;
+            $this->statut              = $obj->fk_statut;
+            $this->user_author_id      = $obj->fk_user_author;
+            $this->total_ht            = $obj->total_ht;
+            $this->total_tva           = $obj->tva;
+            $this->total_ttc           = $obj->total_ttc;
+            $this->date_commande       = $obj->date_commande; // date à laquelle la commande a été transmise
+            $this->remise_percent      = $obj->remise_percent;
+            $this->methode_commande_id = $obj->fk_methode_commande;
+            $this->methode_commande = $obj->methode_commande;
+    
+            $this->source              = $obj->source;
+            $this->facturee            = $obj->facture;
+            $this->projet_id           = $obj->fk_projet;
+            $this->note                = stripslashes($obj->note);
+    
+            $this->db->free($resql);
+    
+            if ($this->statut == 0)
+            {
+                $this->brouillon = 1;
+            }
+    
+            $result = 0;
+    
+        }
+        else
+        {
+            dolibarr_syslog("CommandeFournisseur::Fetch Error $sql");
+            dolibarr_syslog("CommandeFournisseur::Fetch Error ".$this->db->error());
+            $result = -1;
+        }
+    
+        return $result ;
+    
     }
 
     /**
@@ -467,47 +466,59 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
      */
     function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
-        $qty = ereg_replace(",",".",$qty);
-        $pu = ereg_replace(",",".",$pu);
-        $desc=trim($desc);
-
+        global $langs;
+        
+        $qty  = price2num($qty);
+        $pu   = price2num($pu);
+        $desc = trim($desc);
+        $remise_percent = price2num($remise_percent);
+        
         dolibarr_syslog("Fournisseur_Commande.class.php::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+
+        if ($qty < 1 && ! $fk_product)
+        {
+            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Product"));
+            return -1;
+        }
     
         if ($this->brouillon)
         {
             $this->db->begin();
             
-            if (strlen(trim($qty))==0)
-            {
-                $qty=1;
-            }
-    
             if ($fk_product > 0)
             {
                 $prod = new Product($this->db, $fk_product);
                 if ($prod->fetch($fk_product) > 0)
                 {
-                    $prod->get_buyprice($this->fourn_id,$qty);
-
-                    $desc  = $prod->libelle;
-                    $txtva = $prod->tva_tx;
-                    $pu    = $prod->buyprice;
-                    $ref   = $prod->ref;
+                    $result=$prod->get_buyprice($this->fourn_id,$qty);
+                    if ($result)
+                    {
+                        $desc  = $prod->libelle;
+                        $txtva = $prod->tva_tx;
+                        $pu    = $prod->fourn_pu;
+                        $ref   = $prod->ref;
+                    }
+                    else
+                    {
+                        $this->error="Aucun tarif trouvé pour cette quantité. Quantité saisie insuffisante ?";
+                        $this->db->rollback();
+                        dolibarr_syslog($this->error);
+                        return -1;
+                    }
                 }
             }
     
             $remise = 0;
-            $price = round(ereg_replace(",",".",$pu), 2);
+            $price = price2num($pu);
             $subprice = $price;
-            if (trim(strlen($remise_percent)) > 0)
+            if ($remise_percent > 0)
             {
                 $remise = round(($pu * $remise_percent / 100), 2);
                 $price = $pu - $remise;
             }
     
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
-            $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."','".$ref."') ;";
-    
+            $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',".$fk_product.",".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num($remise)."','".$ref."') ;";
             if ( $this->db->query( $sql) )
             {
                 $this->update_price();

@@ -620,7 +620,7 @@ class Form
     {
         global $langs,$conf;
     
-        $sql = "SELECT p.rowid, p.label, p.ref, p.price, pf.quantity, p.duration";
+        $sql = "SELECT p.rowid, p.label, p.ref, p.price as price, pf.price as fprice, pf.quantity, p.duration";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
         $sql .= " , ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
         $sql.= " WHERE p.rowid = pf.fk_product AND pf.fk_soc = ".$socid;
@@ -641,11 +641,11 @@ class Form
                 $objp = $this->db->fetch_object($result);
                 $opt = '<option value="'.$objp->rowid.'">['.$objp->ref.'] ';
                 $opt.= dolibarr_trunc($objp->label,40).' - ';
-                $opt.= $objp->price." ".$langs->trans("Currency".$conf->monnaie)." / ".$objp->quantity." ".$langs->trans("Units");
+                $opt.= $objp->fprice." ".$langs->trans("Currency".$conf->monnaie)." / ".$objp->quantity." ".$langs->trans("Units");
                 if ($objp->quantity > 1)
                 {
                     $opt.=" - ";
-                    $opt.= round($objp->price/$objp->quantity,4)." ".$langs->trans("Currency".$conf->monnaie)." / ".$langs->trans("Unit");
+                    $opt.= round($objp->fprice/$objp->quantity,4)." ".$langs->trans("Currency".$conf->monnaie)." / ".$langs->trans("Unit");
                 }
                 if ($objp->duration) $opt .= " - ".$objp->duration;
                 $opt .= "</option>\n";
