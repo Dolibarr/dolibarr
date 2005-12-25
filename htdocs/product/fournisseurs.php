@@ -290,17 +290,17 @@ if ($_GET["id"] || $_GET["ref"])
       	        $html->select_societes('','id_fourn','fournisseur=1');
       	        print '</td></tr>';
       	        print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
-                print '<input name="ref_fourn" size="25" value="">';
+                print '<input class="flat" name="ref_fourn" size="25" value="">';
       	        print '</td></tr>';
             }
             			  
 		      print '<tr><td>'.$langs->trans("Qty").'</td>';
- 		      print '<td><input name="qty" size="5" value="'.$_GET["qty"].'"></td>';
+ 		      print '<td><input class="flat" name="qty" size="5" value="'.$_GET["qty"].'"></td>';
 		      print '<td>'.$langs->trans("Price").'</td>';
-		      print '<td><input name="price" size="8" value="'.price($_GET["price"]).'"></td></tr>';
+		      print '<td><input class="flat" name="price" size="8" value="'.price($_GET["price"]).'"></td></tr>';
 
-		      print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-		      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+		      print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+		      print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 		      print '</form>';
 		      print '</table>';
 		    }    
