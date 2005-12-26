@@ -872,6 +872,7 @@ class CommandeFournisseur
     $this->details_text = substr("Produit".$blank,0,50);
     $this->details_text .= substr("Qty".$blank,0,8);
     $this->details_text .= substr("Prix".$blank,0,8);
+    $this->details_text .= "\n";
     $this->details_text .= substr("-----------------------------------------------------------------------------------------------------------------------",0,66);
     $this->details_text .= "\n";
 
