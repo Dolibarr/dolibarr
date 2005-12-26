@@ -239,15 +239,10 @@ $html = new Form($db);
 
 if ($_GET["id"] > 0)
 {
-<<<<<<< fiche.php
     if ($mesg) print $mesg;
+    $commande = new CommandeFournisseur($db);
     
-    $commande = new CommandeFournisseur($db);
     if ( $commande->fetch($_GET["id"]) == 0)
-=======
-    $commande = new CommandeFournisseur($db);
-    if ( $commande->fetch($_GET["id"]) == 0)
->>>>>>> 1.29.2.1
     {	  
       $soc = new Societe($db);
       $soc->fetch($commande->soc_id);
