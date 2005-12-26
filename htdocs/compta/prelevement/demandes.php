@@ -88,11 +88,11 @@ if ( $db->query($sql) )
   
 if (! $statut)
 {  
-  print_barre_liste(.$langs->trans("RequestStandingOrderToTreat")., $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("RequestStandingOrderToTreat"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
 }
 else
 {
-	print_barre_liste(.$langs->trans("RequestStandingOrderTreated")., $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("RequestStandingOrderTreated"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
 }
   
   print '<table class="liste" width="100%">';
