@@ -105,16 +105,16 @@ class CompanyBankAccount
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET ";
     
-    $sql .= " bank = '" .$this->bank ."'";    
+    $sql .= " bank = '" .addslashes($this->bank)."'";    
     $sql .= ",code_banque='".$this->code_banque."'";
     $sql .= ",code_guichet='".$this->code_guichet."'";
     $sql .= ",number='".$this->number."'";
     $sql .= ",cle_rib='".$this->cle_rib."'";
     $sql .= ",bic='".$this->bic."'";
     $sql .= ",iban_prefix = '".$this->iban_prefix."'";
-    $sql .= ",domiciliation='".$this->domiciliation."'";
-    $sql .= ",proprio = '".$this->proprio."'";
-    $sql .= ",adresse_proprio = '".$this->adresse_proprio."'";
+    $sql .= ",domiciliation='".addslashes($this->domiciliation)."'";
+    $sql .= ",proprio = '".addslashes($this->proprio)."'";
+    $sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
     
     $sql .= " WHERE fk_soc = ".$this->soc_id;
     
