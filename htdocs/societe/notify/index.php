@@ -20,6 +20,8 @@
  * $Source$
  */
 require("./pre.inc.php");
+$langs->load("companies");
+$langs->load("banks");
 
 /*
  * Sécurité accés client
