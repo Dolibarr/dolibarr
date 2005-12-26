@@ -42,7 +42,7 @@ function llxHeader($head = "")
       
       $menu->add_submenu(DOL_URL_ROOT."/contact.php", $langs->trans("Contacts"));
 
-      $menu->add_submenu("notify/index.php", $langs->trans("Notifications"));
+      $menu->add_submenu("index.php", $langs->trans("Notifications"));
     }
 
   left_menu($menu->liste);
