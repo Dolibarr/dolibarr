@@ -11,3 +11,5 @@ WithdrawalReceiptShort=Receipt
 LastWithdrawalReceipts=Last %s withdrawal receipts
 WithdrawedBills=Withdrawed invoices
 WithdrawalsLines=Withdrawals lines
+RequestStandingOrderToTreat=Request for standing orders to treat
+RequestStandingOrderTreated=Request for standing orders treated

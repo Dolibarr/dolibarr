@@ -11,3 +11,5 @@ WithdrawalReceiptShort=Bon
 LastWithdrawalReceipts=Les %s derniers bons de traitement
 WithdrawedBills=Factures prélevées
 WithdrawalsLines=Lignes de prélèvements
+RequestStandingOrderToTreat=Demandes de prélèvements à traiter
+RequestStandingOrderTreated=Demandes de prélèvements traitées

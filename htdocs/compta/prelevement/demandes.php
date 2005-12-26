@@ -86,7 +86,14 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Demandes de prélèvements à traiter", $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+if (! $statut)
+{  
+  print_barre_liste(.$langs->trans("RequestStandingOrderToTreat")., $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+}
+else
+{
+	print_barre_liste(.$langs->trans("RequestStandingOrderTreated")., $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+}
   
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
