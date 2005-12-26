@@ -837,10 +837,12 @@ else
             print "</textarea></td></tr>";
 
             // Autres caractéristiques issus des autres modules
-            $langs->load("other");
-            print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-            print '<td class="valeur" colspan="2"><input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
-            
+            if ($conf->webcal->enabled)
+             {
+            		$langs->load("other");
+            		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
+            		print '<td class="valeur" colspan="2"><input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
+            	}
             print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" class="button" type="submit"></td></tr>';
 
             print '</table>';
