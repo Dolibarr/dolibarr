@@ -1,6 +1,6 @@
 # Dolibarr language file - fr_FR - install
 InstallEasy=Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.
-DolibarrWelcome=Bienvenu sur Dolibarr
+DolibarrWelcome=Bienvenue sur Dolibarr
 ConfFileExists=Le fichier de configuration <b>%s</b> existe.
 ConfFileDoesNotExists=Le fichier de configuration <b>%s</b> n'existe pas !
 ConfFileCouldBeCreated=Le fichier de configuration <b>%s</b> a pu être créé.
