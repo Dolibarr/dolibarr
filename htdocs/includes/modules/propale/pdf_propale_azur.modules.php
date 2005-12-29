@@ -198,10 +198,10 @@ class pdf_propale_azur extends ModelePDFPropales
 
                     // Description produit
                     $libelleproduitservice=$prop->lignes[$i]->libelle;
-                    if ($prop->lignes[$i]->desc&&$prop->lignes[$i]->desc!=$prop->lignes[$i]->libelle)
+                    if ($prop->lignes[$i]->product_desc&&$prop->lignes[$i]->product_desc!=$prop->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$prop->lignes[$i]->desc;
+                        $libelleproduitservice.=$prop->lignes[$i]->product_desc;
                     }
 
                     if ($prop->lignes[$i]->product_id)
