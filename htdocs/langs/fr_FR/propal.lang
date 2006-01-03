@@ -61,4 +61,4 @@ BuildBill=Créer facture
 RelatedBill=Facture associée
 RelatedBills=Factures associées
 ErrorPropalNotFound=Propal %s inexistante
-Estimate=Devis
+Estimate=Devis :
