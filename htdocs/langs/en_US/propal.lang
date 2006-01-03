@@ -60,3 +60,5 @@ ClassifyBilled=Classify billed
 BuildBill=Build invoice
 RelatedBill=Related invoice
 RelatedBills=Related invoices
+ErrorPropalNotFound=Propal %s not found
+Estimate=Estimate
