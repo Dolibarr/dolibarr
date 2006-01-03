@@ -316,6 +316,8 @@ if ($resql)
 				if (date("U",$obj->da) < time())
 				{
 					print "<td>".img_warning("Late")."</td>";
+				} else {
+					print "<td>&nbsp;</td>";	
 				}
             print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
             $transcode=$langs->trans("Action".$obj->code);
