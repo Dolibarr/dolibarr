@@ -34,7 +34,7 @@ include_once("./inc.php");
 
 $err=0;
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
@@ -226,7 +226,7 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 <td class="label" valign="top">
 <?php echo $langs->trans("Password"); ?>
 </td>
-<td class="label" valign="top"><input type="text" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:''; ?>"></td>
+<td class="label" valign="top"><input type="password" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:''; ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("AdminPassword"); ?>
 </td>
