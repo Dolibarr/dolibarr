@@ -822,7 +822,7 @@ class User
         $now=time();
         
         $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-        $sql.= " SET datelastaccess = ".$this->db->idate($now);
+        $sql.= " SET datelastaccess = ".$this->db->idate($now).",";
         $sql.= " tms = tms";    // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
         $sql.= " WHERE rowid = ".$this->id;
         $resql = $this->db->query($sql);
