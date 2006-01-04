@@ -189,24 +189,34 @@ class pdf_crabe extends ModelePDFFactures
                 {
                     $curY = $nexY;
 
-                    // Description produit
+                    // Description de la ligne produit
                     $libelleproduitservice=$fac->lignes[$i]->libelle;
                     if ($fac->lignes[$i]->product_desc&&$fac->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
                         $libelleproduitservice.=$fac->lignes[$i]->product_desc;
                     }
-                    
+                    // Si ligne associée à un code produit
                     if ($fac->lignes[$i]->produit_id)
                     {
-                        // Affiche code produit si ligne associée à un code produit
                         $prodser = new Product($this->db);
 
                         $prodser->fetch($fac->lignes[$i]->produit_id);
                         if ($prodser->ref) {
                             $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
                         }
+
+                        // Ajoute description du produit
+                        if ($conf->global->FAC_ADD_PROD_DESC)
+                        {
+                            if ($fac->lignes[$i]->product_desc&&$fac->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$fac->lignes[$i]->product_desc!=$fac->lignes[$i]->desc)
+                            {
+                                if ($libelleproduitservice) $libelleproduitservice.="\n";
+                                $libelleproduitservice.=$fac->lignes[$i]->product_desc;
+                            }
+                        }                    
                     }
+
                     if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
                         // Affichage durée si il y en a une
                         $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";

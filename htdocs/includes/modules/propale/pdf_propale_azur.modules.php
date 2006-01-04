@@ -26,6 +26,7 @@
 		\brief      Fichier de la classe permettant de générer les propales au modèle Azur
 		\author	    Laurent Destailleur
 		\version    $Revision$
+		\version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
@@ -196,17 +197,16 @@ class pdf_propale_azur extends ModelePDFPropales
                 {
                     $curY = $nexY;
 
-                    // Description produit
+                    // Description de la ligne produit
                     $libelleproduitservice=$prop->lignes[$i]->libelle;
                     if ($prop->lignes[$i]->product_desc&&$prop->lignes[$i]->product_desc!=$prop->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
                         $libelleproduitservice.=$prop->lignes[$i]->product_desc;
                     }
-
+                    // Si ligne associée à un code produit
                     if ($prop->lignes[$i]->product_id)
                     {
-                        // Affiche code produit si ligne associée à un code produit
                         $prodser = new Product($this->db);
 
                         $prodser->fetch($prop->lignes[$i]->product_id);
@@ -214,6 +214,16 @@ class pdf_propale_azur extends ModelePDFPropales
                         {
                             $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
                         }
+
+                        // Ajoute description du produit
+                        if ($conf->global->PROP_ADD_PROD_DESC)
+                        {
+                            if ($prop->lignes[$i]->product_desc&&$prop->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$prop->lignes[$i]->product_desc!=$prop->lignes[$i]->desc)
+                            {
+                                if ($libelleproduitservice) $libelleproduitservice.="\n";
+                                $libelleproduitservice.=$prop->lignes[$i]->product_desc;
+                            }
+                        }                    
                     }
                     if ($prop->lignes[$i]->date_start && $prop->lignes[$i]->date_end)
                     {
