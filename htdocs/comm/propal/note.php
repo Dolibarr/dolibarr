@@ -111,7 +111,7 @@ if ($_GET['propalid'])
             print '<tr><td>'.$langs->trans('Company').'</td><td>';
             if ($societe->client == 1)
             {
-                $url ='fiche.php?socid='.$societe->id;
+                $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
             }
             else
             {

@@ -133,9 +133,12 @@ if ($_GET["propalid"] > 0) {
 				// ligne 1
 				// partie Gauche
 				print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
-				if ($societe->client == 1) {
-					$url ='fiche.php?socid='.$societe->id;
-				} else {
+				if ($societe->client == 1)
+				{
+                    $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
+				}
+				else
+				{
 					$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 				}
 				print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
