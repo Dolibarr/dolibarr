@@ -122,6 +122,12 @@ class modFacture extends DolibarrModules
     $this->const[8][0] = "FAC_FORCE_DATE_VALIDATION";
     $this->const[8][1] = "yesno";
     $this->const[8][2] = "0";
+    
+    $this->const[9][0] = "FAC_ADD_PROD_DESC";
+    $this->const[9][1] = "chaine";
+    $this->const[9][2] = "0";
+    $this->const[9][3] = 1;
+    $this->const[9][4] = "Mettre à 1 pour voir la description d'un produit dans une facture";
 
     // Boites
     $this->boxes = array();
