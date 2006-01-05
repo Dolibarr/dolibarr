@@ -191,10 +191,10 @@ class pdf_crabe extends ModelePDFFactures
 
                     // Description de la ligne produit
                     $libelleproduitservice=$fac->lignes[$i]->libelle;
-                    if ($fac->lignes[$i]->product_desc&&$fac->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle)
+                    if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$fac->lignes[$i]->product_desc;
+                        $libelleproduitservice.=$fac->lignes[$i]->desc;
                     }
                     // Si ligne associée à un code produit
                     if ($fac->lignes[$i]->produit_id)
