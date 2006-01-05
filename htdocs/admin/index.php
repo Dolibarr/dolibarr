@@ -47,7 +47,18 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$_POST["logo"]);
+    if ($_FILES["logo"]["tmp_name"])
+    {
+        if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
+        {
+            $original_file=$reg[1];
+            dolibarr_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".DOL_DATA_ROOT.'/logo/'.$original_file);
+            if (move_uploaded_file($_FILES["logo"]["tmp_name"],DOL_DATA_ROOT.'/logo/'.$original_file))
+            {
+                dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
+            }
+        }
+    }
 
     dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
@@ -99,7 +110,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
         ';
     }
     
-    print '<form method="post" action="index.php" name="form_index">';
+    print '<form enctype="multipart/form-data" method="post" action="index.php" name="form_index">';
     print '<input type="hidden" name="action" value="update">';
     $var=true;
 
@@ -153,8 +164,8 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").'</td><td>';
-    print '<input name="logo" value="'. $conf->global->MAIN_INFO_SOCIETE_LOGO . '"></td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
+    print '<input type="file" class="flat" name="logo" size="30"></td></tr>';
     print '</td></tr>';
 
     print '</table>';
