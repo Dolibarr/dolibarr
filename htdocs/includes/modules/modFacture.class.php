@@ -126,8 +126,8 @@ class modFacture extends DolibarrModules
     $this->const[9][0] = "FAC_ADD_PROD_DESC";
     $this->const[9][1] = "chaine";
     $this->const[9][2] = "0";
-    $this->const[9][3] = 1;
-    $this->const[9][4] = "Mettre à 1 pour voir la description d'un produit dans une facture";
+    $this->const[9][3] = "Mettre à 1 pour voir la description d'un produit dans une facture";
+    $this->const[9][4] = 1;
 
     // Boites
     $this->boxes = array();
