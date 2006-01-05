@@ -1741,6 +1741,8 @@ function get_exdir($num)
  */
 function create_exdir($dir)
 {
+    dolibarr_syslog("functions.inc.php::create_exdir dir=$dir");
+
     $nberr=0;
     $nbcreated=0;
 
@@ -1753,7 +1755,7 @@ function create_exdir($dir)
         if (eregi("^.:$",$ccdir,$regs)) continue;     // Si chemin Windows incomplet, on poursuit par rep suivant
 
         //print "${ccdir}<br>\n";
-        if ($ccdir && ! file_exists($ccdir))
+        if ($ccdir && ! is_dir($ccdir))
         {
             umask(0);
             if (! @mkdir($ccdir, 0755))
@@ -1763,7 +1765,7 @@ function create_exdir($dir)
             }
             else
             {
-                dolibarr_syslog("functions.inc.php::create_exdir Répertoire '$ccdir' created");
+                dolibarr_syslog("functions.inc.php::create_exdir Directory '$ccdir' created");
                 $nbcreated++;
             }
         }
