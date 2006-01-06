@@ -28,5 +28,5 @@ create table llx_societe_consult
   fk_user            integer,
   datec	             timestamp,
   action             enum('w','r')
-)type=MyISAM;
+)type=innodb;
 
