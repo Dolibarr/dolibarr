@@ -260,7 +260,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 
   $sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc";
   $sql .= " ,s.nom, s.idp, p.rowid, p.ref, p.total_ht, p.total_ttc";
-  $sql .= " FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."commande AS p";
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid";
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid";
   $sql .= " WHERE p.fk_soc = s.idp";
