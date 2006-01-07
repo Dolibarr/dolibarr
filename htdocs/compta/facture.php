@@ -758,7 +758,7 @@ if ($_GET['action'] == 'create')
 		print '<tr><td>'.$langs->trans('ProductsAndServices').'</td><td>'.$langs->trans('Qty').'</td><td>'.$langs->trans('Discount').'</td><td> &nbsp; &nbsp; </td>';
 		if ($conf->service->enabled)
 		{
-			print '<td>Si produit de type service à durée limitée</td></tr>';
+			print '<td>'.$langs->trans('ServiceLimitedDuration').'</td></tr>';
 		}
 		for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
@@ -772,9 +772,9 @@ if ($_GET['action'] == 'create')
 			if ($conf->service->enabled)
 			{
 				print '<td nowrap="nowrap">';
-				print 'Du ';
+				print $langs->trans('From').' ';
 				print $html->select_date('','date_start'.$i,0,0,1);
-				print '<br>au ';
+				print '<br>'.$langs->trans('to').' ';
 				print $html->select_date('','date_end'.$i,0,0,1);
 				print '</td>';
 			}
@@ -799,7 +799,7 @@ if ($_GET['action'] == 'create')
 
 			if ($num > 0)
 			{
-				print '<tr><td colspan="3">Factures récurrentes : <select class="flat" name="fac_rec">';
+				print '<tr><td colspan="3">'.$langs->trans('ProductsAndServices').' : <select class="flat" name="fac_rec">';
 				print '<option value="0" selected="true"></option>';
 				while ($i < $num)
 				{
