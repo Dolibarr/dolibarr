@@ -799,7 +799,7 @@ if ($_GET['action'] == 'create')
 
 			if ($num > 0)
 			{
-				print '<tr><td colspan="3">'.$langs->trans('ProductsAndServices').' : <select class="flat" name="fac_rec">';
+				print '<tr><td colspan="3">'.$langs->trans('RecurringBills').' : <select class="flat" name="fac_rec">';
 				print '<option value="0" selected="true"></option>';
 				while ($i < $num)
 				{
