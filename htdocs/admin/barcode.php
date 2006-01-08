@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,9 @@ $var=true;
       print "EAN13";
       print "</td><td>\n";
       
-      print "information";
+      print "L'EAN se compose de 13 caractères, 12 chiffres plus une clé de contrôle. Il fonctionne de la même manière que l'UPC, avec lequel il est compatible.<br>";
+      print "L'utilisation des symbologies EAN8 et EAN13 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
+      print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
       print '</td>';
 
       // Affiche example
@@ -111,7 +113,8 @@ $var=true;
       print '<tr '.$bc[$var].'><td width="100">';
       print "UPC";
       print "</td><td>\n";
-      print "information";
+      print "L'UPC est l'équivalent de l'EAN8/13 pour des pays codificateurs autre que l'Europe.<br>";
+      print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
       print '</td>';
 
       // Affiche example
@@ -133,7 +136,7 @@ $var=true;
       print '<tr '.$bc[$var].'><td width="100">';
       print "ISBN";
       print "</td><td>\n";
-      print "information";
+      print "Le code ISBN est un code dédié au milieu de la presse écrite.";
       print '</td>';
 
       // Affiche example
@@ -155,7 +158,11 @@ $var=true;
       print '<tr '.$bc[$var].'><td width="100">';
       print "Code 39";
       print "</td><td>\n";
-      print "information";
+      print "Premier code alpha numérique utilisé massivement dans l'Industrie pour sa capacité d'encodage (chiffres et lettres)<br>";
+      print "ainsi que par son degré de sécurité à l'encodage (clef de contrôle).<br>";
+      print "Il met a disposition les 10 chiffres, les 26 lettres de l'alphabet et sept symboles.<br>";
+			print "l'astérisque (*) sert de caractère de bornage. La lecture est bidirectionnelle.<br>";
+			print "La longueur est variable mais en général ne dépasse pas 32 caractères.";
       print '</td>';
 
       // Affiche example
@@ -178,7 +185,11 @@ $var=true;
       print '<tr '.$bc[$var].'><td width="100">';
       print "Code 128";
       print "</td><td>\n";
-      print "information";
+      print "Ce code \"dernière génération\" alpha numérique est susceptible d'encoder les 128 caractères de la table ASCII ( chiffres + lettres + symboles ).<br>";
+			print "Le code 128 possède des algorithmes de cryptage sécurisés assez avancés.<br>";
+      print "C'est le plus complet des codes à barres, il propose 3 jeux de 128 caractères.<br>";
+			print "La lecture est bidirectionnelle.<br>";
+			print "La longueur est variable mais en général ne dépasse pas 20 caractères.";
       print '</td>';
 
       // Affiche example
