@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - exports
+ExportsArea=Espace exports
 NewExport=Nouvel export
 ExportableDatas=Lot de données exportables
 SelectExportDataSet=Choisissez le lot de données que vous désirez exporter...
@@ -12,3 +13,6 @@ FieldsOrder=Ordre des champs
 FieldsTitle=Titre champs
 ChooseExportFormat=Choisissez le format d'export
 NowClickToGenerateToBuildExportFile=Maintenant, cliquez sur "Générer" pour générer le fichier export
+AvailableFormats=Available formats
+LibraryUsed=Library used
+LibraryVersion=Version

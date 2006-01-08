@@ -111,12 +111,6 @@ function llxHeader($head = "") {
         }
     }
 
-    if ($conf->adherent->enabled  && $user->rights->adherent->lire)
-    {
-        $langs->load("members");
-        $menu->add(DOL_URL_ROOT."/adherents/index.php", $langs->trans("Members"));
-    }
-
     if ($conf->commande->enabled && $user->rights->commande->lire)
     {
         $langs->load("orders");
@@ -171,6 +165,12 @@ function llxHeader($head = "") {
     if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
     {
         $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
+    }
+
+    if ($conf->export->enabled)
+    {
+        $langs->load("exports");
+        $menu->add(DOL_URL_ROOT."/exports/index.php", $langs->trans("Exports"));
     }
 
     if ($user->rights->user->user->lire || $user->admin)

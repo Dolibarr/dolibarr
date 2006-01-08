@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - exports
+ExportsArea=Exports area
 NewExport=New export
 ExportableDatas=Exportable dataset
 SelectExportDataSet=Choose dataset you want to export...
@@ -12,3 +13,6 @@ FieldsOrder=Fields order
 FieldsTitle=Fields title
 ChooseExportFormat=Choose export format
 NowClickToGenerateToBuildExportFile=Now, click on "Generate" to build export file
+AvailableFormats=Formats disponibles
+LibraryUsed=Librairie
+LibraryVersion=Version
