@@ -83,6 +83,31 @@ print "</tr>\n";
 clearstatcache();
 $var=true;
 
+//EAN8
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td width="100">';
+      print "EAN8";
+      print "</td><td>\n";
+      
+      print "L'EAN se compose de 8 caractères, 7 chiffres plus une clé de contrôle.<br>";
+      print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
+      print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
+      print '</td>';
+
+      // Affiche example
+      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=1234567&encoding=EAN&scale=1"></td>';
+      
+      print '<td align="center">';
+      if ($barcode_encode_type_set == "EAN8")
+	    {
+	        print img_tick();
+	    }
+      else
+	    {
+          print '<a href="barcode.php?action=settype&amp;value=EAN8">'.$langs->trans("Default").'</a>';
+	    }
+	    print "</td></tr>\n";
+
 //EAN13
       $var=!$var;
       print '<tr '.$bc[$var].'><td width="100">';
@@ -90,7 +115,7 @@ $var=true;
       print "</td><td>\n";
       
       print "L'EAN se compose de 13 caractères, 12 chiffres plus une clé de contrôle. Il fonctionne de la même manière que l'UPC, avec lequel il est compatible.<br>";
-      print "L'utilisation des symbologies EAN8 et EAN13 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
+      print "L'utilisation des symbologies EAN13 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
       print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
       print '</td>';
 
@@ -114,6 +139,8 @@ $var=true;
       print "UPC";
       print "</td><td>\n";
       print "L'UPC est l'équivalent de l'EAN8/13 pour des pays codificateurs autre que l'Europe.<br>";
+      print "Il ne comporte que 11 chiffres plus la clé.<br>";
+      print "C'est en réalité un code EAN13 dont le premier chiffre serait zéro et dont la présentation serait légérement différente.<br>";
       print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
       print '</td>';
 
