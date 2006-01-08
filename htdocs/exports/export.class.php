@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -97,15 +96,22 @@ class Export
                             {
                                 $bool=$user->rights->$perm[0]->$perm[1];
                             }
-                            if ($bool)  // Permissions ok
+                            
+                            // Permissions ok
+                            if ($bool)
                             {
-                                dolibarr_syslog("Export chargé pour le module ".$modulename." en index ".$i);
+                                // Nom module
                                 $this->array_export_module[$i]=$module;
+                                // Code du dataset export
                                 $this->array_export_code[$i]=$module->export_code[$r];
+                                // Libellé du dataset export
                                 $this->array_export_label[$i]=$module->export_label[$r];
-                                $this->array_export_fields_code[$i]=$module->export_fields_code[$r];
-                                $this->array_export_fields_label[$i]=$module->export_fields_label[$r];
+                                // Tableau des champ à exporter (clé=champ, valeur=libellé)
+                                $this->array_export_fields[$i]=$module->export_fields_array[$r];
+                                // Requete sql du dataset
                                 $this->array_export_sql[$i]=$module->export_sql[$r];
+
+                                dolibarr_syslog("Export chargé pour le module ".$modulename." en index ".$i.", dataset=".$module->export_code[$r].", nbre de champs=".sizeof($module->export_fields_code[$r]));
                                 $i++;
                             }
                         }            

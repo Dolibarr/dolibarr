@@ -841,6 +841,33 @@ function img_up($alt = "default", $selected=1)
     else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/**
+        \brief      Affiche logo gauche
+        \param      alt         Texte sur le alt de l'image
+        \param      selected    Affiche version "selected" du logo
+        \return     string      Retourne tag img
+*/
+function img_left($alt = "default", $selected=1)
+{
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Left");
+    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
+        \brief      Affiche logo droite
+        \param      alt         Texte sur le alt de l'image
+        \param      selected    Affiche version "selected" du logo
+        \return     string      Retourne tag img
+*/
+function img_right($alt = "default", $selected=1)
+{
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Right");
+    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
 
 /**
         \brief      Affiche logo tick

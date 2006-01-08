@@ -328,7 +328,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
     propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
 
-if ($_POST['action'] == 'setpdfmodel' && $user->rights->propale->creer) 
+if ($_POST['action'] == 'builddoc' && $user->rights->propale->creer) 
 {
     $propal = new Propal($db, 0, $_GET['propalid']);
     $propal->set_pdf_model($user, $_POST['modelpdf']);

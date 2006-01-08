@@ -195,9 +195,8 @@ class modAdherent extends DolibarrModules
         $r++;
         $this->export_code[$r]=$this->numero.'_'.$r;
         $this->export_label[$r]='Adhérents et attributs';
-        $this->export_fields_code[$r]=array(0=>'a.nom',1=>'a.prenom',2=>'a.login',3=>'a.cp',4=>'a.ville',5=>'a.pays',6=>'a.email',7=>'a.login',8=>'a.naiss');
-        $this->export_fields_label[$r]=array(0=>"Lastname",1=>"Firstname",2=>"Address",3=>"Zip",4=>"Town",5=>"Country",6=>"Email",7=>"Login",8=>"Birthday");
-        $this->export_sql[$r]="select ".join(',',$this->export_fields_code[$r]).' from '.MAIN_DB_PREFIX.'adherent';
+        $this->export_fields_array[$r]=array('a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.address'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.email'=>"Email",'a.login'=>"Login",'a.naiss'=>"Birthday");
+        $this->export_sql[$r]="select ".join(',',array_keys($this->export_fields_array[$r])).' from '.MAIN_DB_PREFIX.'adherent as a';
         $this->export_permission[$r]=array(array("adherent","export"));
     }
 

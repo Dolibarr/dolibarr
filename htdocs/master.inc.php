@@ -324,7 +324,8 @@ $conf->voyage->enabled=0;
 // Module actionscomm
 $conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
 // Module export
-$conf->export->enabled=0;
+$conf->export->enabled=defined("MAIN_MODULE_EXPORT")?MAIN_MODULE_EXPORT:0;
+$conf->export->dir_ouput=DOL_DATA_ROOT."/export";
 
 
 /*

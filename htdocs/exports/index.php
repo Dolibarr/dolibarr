@@ -59,14 +59,17 @@ print '<td>'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryUsed").'</td>';
 print '<td>'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
-$var=!$var;
-print '<tr '.$bc[$var].'><td>Excel</td><td>Php_WriteExcel</td>';
-print '<td>&nbsp;</td>';
-print '</tr>';
-$var=!$var;
-print '<tr '.$bc[$var].'><td>Csv</td><td>Dolibarr</td>';
-print '<td>&nbsp;</td>';
-print '</tr>';
+
+include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+$model=new ModeleExports();
+$liste=$model->liste_modeles($db);
+
+foreach($liste as $key)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$model->getModelName($key).'</td><td>'.$model->getDriverName($key).'</td><td>'.$model->getDriverVersion($key).'</td></tr>';
+}
+
 print '</table>';
 
 
@@ -92,7 +95,7 @@ if (sizeof($export->array_export_code))
         print '</td><td>';
         print $export->array_export_label[$key];
         print '</td><td width="24">';
-        print '<a href="'.DOL_URL_ROOT.'/exports/export.php?datatoexport='.$export->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$export->array_export_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
         print '</td></tr>';
     }
 }
