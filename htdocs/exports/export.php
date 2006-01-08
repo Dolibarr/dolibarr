@@ -63,6 +63,7 @@ if ($action=='unselectfield')
 if ($step == 1 || $action == 'cleanselect')
 {
     $_SESSION["export_selected_fields"]=array();
+    $array_selected=array();
 }
 
 
@@ -191,11 +192,11 @@ if ($step == 2 && $datatoexport)
             // Champ sélectionné
             print '<td>&nbsp;</td>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&amp;datatoexport='.$datatoexport.'&amp;action=unselectfield&amp;field='.$code.'">'.img_left().'</a></td>';
-            print '<td>'.$label.' ('.$code.')</td>';
+            print '<td>'.$langs->trans($label).' ('.$code.')</td>';
         }
         else
         {
-            print '<td>'.$label.' ('.$code.')</td>';
+            print '<td>'.$langs->trans($label).' ('.$code.')</td>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&amp;datatoexport='.$datatoexport.'&amp;action=selectfield&amp;field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
         }
@@ -264,7 +265,7 @@ if ($step == 3 && $datatoexport)
     foreach($array_selected as $code=>$label)
     {
         $list.=($list?',':'');
-        $list.=$export->array_export_fields[0][$code];
+        $list.=$langs->trans($export->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
 
@@ -285,14 +286,14 @@ if ($step == 3 && $datatoexport)
         $var=!$var;
         print "<tr $bc[$var]>";
                     
-        print '<td>'.$export->array_export_fields[0][$code].' ('.$code.')</td>';
+        print '<td>'.$langs->trans($export->array_export_fields[0][$code]).' ('.$code.')</td>';
 
         print '<td>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&amp;datatoexport='.$datatoexport.'&amp;action=upfield&amp;field='.$field.'">'.img_up().'</a>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&amp;datatoexport='.$datatoexport.'&amp;action=downfield&amp;field='.$field.'">'.img_down().'</a>';
         print '</td>';
 
-        print '<td>'.$export->array_export_fields[0][$code].'</td>';
+        print '<td>'.$langs->trans($export->array_export_fields[0][$code]).'</td>';
 
         print '</tr>';
     }
@@ -363,7 +364,7 @@ if ($step == 4 && $datatoexport)
     foreach($array_selected as $code=>$label)
     {
         $list.=($list?',':'');
-        $list.=$export->array_export_fields[0][$code];
+        $list.=$langs->trans($export->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
 
