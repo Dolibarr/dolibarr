@@ -524,10 +524,11 @@ class Propal
                 /*
                 * Lignes propales liées à un produit
                 */
-                $sql = "SELECT d.description, p.rowid, p.label, p.description as product_desc, p.ref, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice";
-                $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."product as p";
-                $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid";
-                $sql .= " ORDER by d.rowid ASC";
+                $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
+                $sql.= " p.rowid, p.label, p.description as product_desc, p.ref";
+                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."product as p";
+                $sql.= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid";
+                $sql.= " ORDER by d.rowid ASC";
     
                 $result = $this->db->query($sql);
                 if ($result)
@@ -540,16 +541,18 @@ class Propal
                         $objp                  = $this->db->fetch_object($result);
     
                         $ligne                 = new PropaleLigne();
+
                         $ligne->desc           = $objp->description;  // Description ligne
-                        $ligne->libelle        = $objp->label;        // Label produit
-                        $ligne->product_desc   = $objp->product_desc; // Description produit
                         $ligne->qty            = $objp->qty;
-                        $ligne->ref            = $objp->ref;
                         $ligne->tva_tx         = $objp->tva_tx;
                         $ligne->subprice       = $objp->subprice;
                         $ligne->remise_percent = $objp->remise_percent;
                         $ligne->price          = $objp->price;
                         $ligne->product_id     = $objp->rowid;
+
+                        $ligne->libelle        = $objp->label;        // Label produit
+                        $ligne->product_desc   = $objp->product_desc; // Description produit
+                        $ligne->ref            = $objp->ref;
     
                         $this->lignes[$i]      = $ligne;
                         //dolibarr_syslog("1 ".$ligne->desc);
@@ -580,16 +583,20 @@ class Propal
                     while ($j < $num)
                     {
                         $objp                  = $this->db->fetch_object($result);
+
                         $ligne                 = new PropaleLigne();
-                        $ligne->libelle        = $objp->description;
+
                         $ligne->desc           = $objp->description;
                         $ligne->qty            = $objp->qty;
-                        $ligne->ref            = $objp->ref;
                         $ligne->tva_tx         = $objp->tva_tx;
                         $ligne->subprice       = $objp->subprice;
                         $ligne->remise_percent = $objp->remise_percent;
                         $ligne->price          = $objp->price;
                         $ligne->product_id     = 0;
+
+                        $ligne->libelle        = $objp->description;
+                        $ligne->product_desc   = '';
+                        $ligne->ref            = '';
     
                         $this->lignes[$i]      = $ligne;
                         $i++;
@@ -1243,6 +1250,20 @@ class Propal
 
 class PropaleLigne  
 {
+    // From llx_propaldet
+    var $qty;
+    var $tva_tx;
+    var $subprice;
+    var $remise_percent;
+    var $price;
+    var $product_id;
+    var $desc;          // Description ligne
+
+    // From llx_product
+    var $libelle;       // Label produit
+    var $product_desc;  // Description produit
+    var $ref;
+
     function PropaleLigne()
     {
     }

@@ -2055,8 +2055,19 @@ class Facture
 
 class FactureLigne
 {
-	var $subprice;  // Prix unitaire HT
-	var $price;     // Prix HT apres remise %
+    // From llx_facturedet
+	var $desc           = $objp->description;
+	var $qty            = $objp->qty;
+	var $price          = $objp->price;         // Prix HT apres remise %
+	var $price_ttc      = $objp->price_ttc;
+	var $subprice       = $objp->subprice;      // Prix unitaire HT
+	var $tva_taux       = $objp->tva_taux;
+	var $remise         = $objp->remise;
+	var $remise_percent = $objp->remise_percent;
+	var $produit_id     = $objp->fk_product;
+	var $date_start     = $objp->date_start;
+	var $date_end       = $objp->date_end;
+
 
 	/**
 	 *      \brief     Constructeur d'objets ligne de facture
