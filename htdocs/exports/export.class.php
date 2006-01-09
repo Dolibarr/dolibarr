@@ -96,6 +96,7 @@ class Export
                         {
                             $bool=$user->rights->$perm[0]->$perm[1];
                         }
+                        if ($perm[0]=='user' && $user->admin) $bool=true;
                         //print("$bool<br>");
                         
                         // Permissions ok

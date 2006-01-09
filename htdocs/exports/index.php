@@ -79,7 +79,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 // Affiche les modules d'exports
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="120">'.$langs->trans("Module").'</td>';
+print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ExportableDatas").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,6 +128,26 @@ class modUser extends DolibarrModules
     $this->rights[$r][3] = 1;
     $this->rights[$r][4] = 'self';
     $this->rights[$r][5] = 'password';
+
+    $r++;
+    $this->rights[$r][0] = 258;
+    $this->rights[$r][1] = 'Exporter les utilisateurs';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'user';
+    $this->rights[$r][5] = 'export';
+
+    // Exports
+    //--------
+    $r=0;
+
+    $r++;
+    $this->export_code[$r]=$this->numero.'_'.$r;
+    $this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
+    $this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.code'=>"Code",'u.login'=>"Login",'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.fk_socpeople'=>"IdContact",'u.note'=>"Note",'u.datelastaccess'=>'DateLastAccess');
+    $this->export_sql[$r]="select ".join(',',array_keys($this->export_fields_array[$r])).' from '.MAIN_DB_PREFIX.'user as u';
+    $this->export_permission[$r]=array(array("user","user","export"));
+
   }
 
 
