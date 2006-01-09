@@ -2056,17 +2056,17 @@ class Facture
 class FactureLigne
 {
     // From llx_facturedet
-	var $desc           = $objp->description;
-	var $qty            = $objp->qty;
-	var $price          = $objp->price;         // Prix HT apres remise %
-	var $price_ttc      = $objp->price_ttc;
-	var $subprice       = $objp->subprice;      // Prix unitaire HT
-	var $tva_taux       = $objp->tva_taux;
-	var $remise         = $objp->remise;
-	var $remise_percent = $objp->remise_percent;
-	var $produit_id     = $objp->fk_product;
-	var $date_start     = $objp->date_start;
-	var $date_end       = $objp->date_end;
+	var $desc;
+	var $qty;
+	var $price;         // Prix HT apres remise %
+	var $price_ttc;
+	var $subprice;      // Prix unitaire HT
+	var $tva_taux;
+	var $remise;
+	var $remise_percent;
+	var $produit_id;
+	var $date_start;
+	var $date_end;
 
 
 	/**
