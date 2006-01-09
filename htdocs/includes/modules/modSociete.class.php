@@ -82,45 +82,85 @@ class modSociete extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'societe';
-  
-    $this->rights[1][0] = 121; // id de la permission
-    $this->rights[1][1] = 'Lire les societes'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
-    $this->rights[1][4] = 'lire';
+    $r=0;
+    
+    $r++;
+    $this->rights[$r][0] = 121; // id de la permission
+    $this->rights[$r][1] = 'Lire les societes'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'lire';
 
-    $this->rights[2][0] = 122; // id de la permission
-    $this->rights[2][1] = 'Créer modifier les societes'; // libelle de la permission
-    $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[2][4] = 'creer';
+    $r++;
+    $this->rights[$r][0] = 122; // id de la permission
+    $this->rights[$r][1] = 'Créer modifier les societes'; // libelle de la permission
+    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'creer';
 
-    $this->rights[3][0] = 129; // id de la permission
-    $this->rights[3][1] = 'Supprimer les sociétés'; // libelle de la permission
-    $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[3][4] = 'supprimer';
+    $r++;
+    $this->rights[$r][0] = 125; // id de la permission
+    $this->rights[$r][1] = 'Supprimer les sociétés'; // libelle de la permission
+    $this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'supprimer';
+
+    $r++;
+    $this->rights[$r][0] = 126; // id de la permission
+    $this->rights[$r][1] = 'Exporter les sociétés'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'export';
     
-    $this->rights[4][0] = 281; // id de la permission
-    $this->rights[4][1] = 'Lire les contacts'; // libelle de la permission
-    $this->rights[4][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[4][3] = 1; // La permission est-elle une permission par défaut
-    $this->rights[4][4] = 'contact';
-    $this->rights[4][5] = 'lire';
+    $r++;
+    $this->rights[$r][0] = 281; // id de la permission
+    $this->rights[$r][1] = 'Lire les contacts'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'contact';
+    $this->rights[$r][5] = 'lire';
     
-    $this->rights[5][0] = 282; // id de la permission
-    $this->rights[5][1] = 'Créer modifier les contacts'; // libelle de la permission
-    $this->rights[5][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[5][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[5][4] = 'contact';
-    $this->rights[5][5] = 'creer';
+    $r++;
+    $this->rights[$r][0] = 282; // id de la permission
+    $this->rights[$r][1] = 'Créer modifier les contacts'; // libelle de la permission
+    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'contact';
+    $this->rights[$r][5] = 'creer';
     
-    $this->rights[6][0] = 283; // id de la permission
-    $this->rights[6][1] = 'Supprimer les contacts'; // libelle de la permission
-    $this->rights[6][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[6][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[6][4] = 'contact';
-    $this->rights[6][5] = 'supprimer';
+    $r++;
+    $this->rights[$r][0] = 283; // id de la permission
+    $this->rights[$r][1] = 'Supprimer les contacts'; // libelle de la permission
+    $this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'contact';
+    $this->rights[$r][5] = 'supprimer';
+
+    $r++;
+    $this->rights[$r][0] = 286; // id de la permission
+    $this->rights[$r][1] = 'Exporter les contacts'; // libelle de la permission
+    $this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'contact';
+    $this->rights[$r][5] = 'export';
+
+    // Exports
+    //--------
+    $r=0;
+
+    $r++;
+    $this->export_code[$r]=$this->numero.'_'.$r;
+    $this->export_label[$r]='Liste des societes et attributs';
+    $this->export_fields_array[$r]=array('s.idp'=>"Id",'s.nom'=>"Name",'s.prefix'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note");
+    $this->export_sql[$r]="select ".join(',',array_keys($this->export_fields_array[$r])).' from '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'c_pays as p where s.fk_pays = p.rowid';
+    $this->export_permission[$r]=array(array("societe","export"));
+
+    $r++;
+    $this->export_code[$r]=$this->numero.'_'.$r;
+    $this->export_label[$r]='Liste des contacts et attributs';
+    $this->export_fields_array[$r]=array('s.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.tel'=>"Phone",'s.fax'=>"Fax",'s.email'=>"EMail",'s.note'=>"Note",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.idp'=>"IdCompany",'s.nom'=>"CompanyName");
+    $this->export_sql[$r]="select ".join(',',array_keys($this->export_fields_array[$r])).' from '.MAIN_DB_PREFIX.'contact as c, '.MAIN_DB_PREFIX.'c_pays as p where c.fk_pays = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.idp';
+    $this->export_permission[$r]=array(array("societe","contact","export"));
 
 }
 
