@@ -31,6 +31,10 @@ llxHeader('','Telephonie - Statistiques - Commerciaux');
 $h = 0;
 
 $year = strftime("%Y",time());
+if (strftime("%m",time()) == 1)
+{
+  $year = $year -1;
+}
 
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/index.php';
 $head[$h][1] = "Global";
