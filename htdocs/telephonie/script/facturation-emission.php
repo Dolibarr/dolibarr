@@ -302,7 +302,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       $fac = new Facture($db, $soc->id);
       $cancel_facture = 1;
       $fac->date = $datetime;
-      $fac->cond_reglement = 1;
+      $fac->cond_reglement_id = 1;
       $fac->remise_percent = 0;
       
       $facid = $fac->create($user);
@@ -313,8 +313,8 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	}
       else
 	{
-	  dolibarr_syslog("Erreur création objet facture");
-	  $error = 4;
+	  dolibarr_syslog("Erreur création objet facture erreur : $facid");
+	  $error = 16;
 	}		  
     }
   
@@ -336,7 +336,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  else
 	    {
 	      dolibarr_syslog("ERREUR lecture facture téléphonique $factel_id");
-	      $error++;
+	      $error = 17;
 	    }
 	  
 	  /* Lecture de la ligne correspondante */
@@ -349,7 +349,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  else
 	    {
 	      dolibarr_syslog("ERREUR lecture ligne $factel->ligne");
-	      $error++;
+	      $error = 18;
 	    }
 	  
 	  if (!$error && $ligne->facturable) /* Test si on doit facturer ou non la ligne */
@@ -364,7 +364,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 		}
 	      else
 		{
-		  $error++;
+		  $error = 19;
 		}
 	      
 	      $soca = new Societe($db);
@@ -392,7 +392,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 		  $ventil = 0 ;
 		  if (defined("TELEPHONIE_COMPTE_VENTILATION"))
 		    {
-
 		      if (is_numeric(TELEPHONIE_COMPTE_VENTILATION))
 			{			  
 			  $ventil = TELEPHONIE_COMPTE_VENTILATION;
@@ -454,7 +453,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	}
       else
 	{
-	  $error = 2;
+	  $error = 20;
 	  dolibarr_syslog("Erreur $error");
 	}
     }
@@ -503,6 +502,150 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	}
     }
 
+  /*********************************/
+  /*                               */	  
+  /* Remise exceptionnelle         */
+  /*                               */
+  /*********************************/
+  if (!$error)
+    {
+      $remise_exceptionnelle = 0;
+      //$fac = new Facture($db, $soc->id);
+      
+      $sql = "SELECT rowid,amount,fk_user";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_remise";
+      $sql .= " WHERE fk_client = ".$soc->id;
+      $sql .= " AND fk_facture = 0";
+      
+      $resql = $db->query($sql) ;
+      if ( $resql )
+	{
+	  while ($row = $db->fetch_row($resql))
+	    {
+	      $remise_id = $row[0];
+	      $remise_exceptionnelle = $row[1];
+	      $remise_user = $row[2];
+	    }
+	}
+      else
+	{
+	  $error = 32;
+	  dolibarr_syslog("Erreur remise exceptionnelle");
+	  dolibarr_syslog($sql);
+	}
+      
+      if ($remise_exceptionnelle > 0)
+	{
+	  // Calcul valeur de remise a appliquer (remise) et reliquat
+	  if ($remise_exceptionnelle > ($fac->total_ht * 0.9))
+	    {
+	      $remise = floor($this->total_ht * 0.9);
+	      $reliquat = $remise_exceptionnelle - $remise;
+	    }
+	  else
+	    {
+	      $remise = $remise_exceptionnelle;
+	      $reliquat=0;
+	    }
+	  
+	  $result_insert = $fac->addline($fac->id,
+					 addslashes('Remise exceptionnelle'),
+					 (0 - $remise),
+					 1,
+					 '19.6');
+	  if ($result_insert < 0)
+	    {
+	      $error = 33;
+	    }
+	  
+	  $sql = 'UPDATE '.MAIN_DB_PREFIX.'telephonie_client_remise';
+	  $sql .= ' SET fk_facture = '.$fac->id;
+	  $sql .= " ,amount = '".ereg_replace(',','.',$remise)."'";
+	  $sql .= ' WHERE rowid ='.$remise_id;
+	  $sql .= ' AND fk_client ='. $soc->id;
+	  
+	  if (! $db->query( $sql))
+	    {
+	      $error = 34;
+	    }
+	  
+	  if ($reliquat > 0 && $error == 0)
+	    {
+	      $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'telephonie_client_remise';
+	      $sql .= ' (fk_client, datec, amount, fk_user) ';
+	      $sql .= ' VALUES ';
+	      $sql .= ' ('.$soc->id;
+	      $sql .= ' ,now()';
+	      $sql .= " ,'".ereg_replace(',','.',$reliquat)."'";
+	      $sql .= ' ,'.$remise_user;
+	      $sql .= ')';
+	      
+	      if (! $db->query( $sql) )
+		{
+		  $error = 35;
+		}
+	    }
+	}
+    }
+  /*********************************/
+  /*                               */	  
+  /* Prestas annexes               */
+  /*                               */
+  /*********************************/
+  if (!$error)
+    {
+      $prestas = 0;
+      
+      $sql = "SELECT rowid,amount,libelle";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_presta";
+      $sql .= " WHERE fk_client = ".$soc->id;
+      $sql .= " AND fk_facture = 0";
+      
+      $resql = $db->query($sql) ;
+      if ( $resql )
+	{
+	  while ($row = $db->fetch_row($resql))
+	    {
+	      $presta_id[$prestas] = $row[0];
+	      $presta_amount[$prestas] = $row[1];
+	      $presta_libelle[$prestas] = $row[2];
+	      $prestas++;
+	    }
+	}
+      else
+	{
+	  $error = 36;
+	}
+      
+      if ($prestas > 0)
+	{
+	  $i = 0;
+	  while ($i < $prestas)
+	    {
+	      $result_insert = $fac->addline($fac->id,
+					  addslashes($presta_libelle[$i]),
+					  $presta_amount[$i],
+					     1,
+					     '19.6');
+	      if ($result_insert < 0)
+		{
+		  $error = 37;
+		}
+	      
+	      $sql = 'UPDATE '.MAIN_DB_PREFIX.'telephonie_client_presta';
+	      $sql .= ' SET fk_facture = '.$fac->id;
+	      $sql .= ' WHERE rowid ='.$presta_id[$i];
+	      $sql .= ' AND fk_client ='. $soc->id;
+	      
+	      if (! $db->query( $sql))
+		{
+		  $error = 38;
+		}
+	      $i++;
+	    }
+	}
+    }
+
 
   /*********************************/
   /*                               */	  
@@ -548,7 +691,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  else
 	    {
 	      dolibarr_syslog("ERREUR lecture facture téléphonique $factel_id");
-	      $error++;
+	      $error = 17;
 	    }
 	  
 	  /* Lecture de la ligne correspondante */
@@ -561,7 +704,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  else
 	    {
 	      dolibarr_syslog("ERREUR lecture ligne $factel->ligne");
-	      $error++;
+	      $error = 18;
 	    }
 
 	  /* Facture détaillée standard */
@@ -643,9 +786,12 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       if ($fac->client->bank_account->verif() && $ligne->mode_paiement == 'pre')
 	{
 	  $message .= "Cette facture sera prélevée sur votre compte bancaire numéro : ";
-	  $message .= $fac->client->bank_account->number;
+	  $message .= $fac->client->bank_account->number."\n";
 	}
       
+      $message .= "Toute l'équipe ibreizh vous offre ses meilleurs voeux 2006\n";
+      $message .= "Dans le cadre de notre charte qualité nous prendrons contact avec vous au cours de ce mois à bientôt...";
+
       if ($verbose) dolibarr_syslog("Création du pdf facture : $facid");
       
       if (! facture_pdf_create($db, $facid, $message))
@@ -681,7 +827,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
   else
     {
       $db->query("ROLLBACK");
-      dolibarr_syslog("ROLLBACK de la transaction");;
+      dolibarr_syslog("ROLLBACK de la transaction $error");
     }    
 }
 
