@@ -46,7 +46,10 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ga
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ca.class.php");
 $year = strftime("%Y",time());
 $error = 0;
-
+if (strftime("%m",time()) == 1)
+{
+  $year = $year -1;
+}
 /*
  * Création des répertoires
  *

@@ -44,6 +44,10 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ca
 
 $error = 0;
 $year = strftime("%Y",time());
+if (strftime("%m",time()) == 1)
+{
+  $year = $year -1;
+}
 /*
  * Création des répertoires
  *
