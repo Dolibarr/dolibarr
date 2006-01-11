@@ -28,10 +28,8 @@ class GraphDistributeurGain extends GraphBar {
   {
     $this->db = $DB;
     $this->file = $file;
-
     $this->client = 0;
     $this->year = strftime("%Y",time());
-    $this->titre = "Marges effectuées sur les lignes ".$this->year;
 
     $this->barcolor = "pink";
     $this->showframe = true;
@@ -39,8 +37,9 @@ class GraphDistributeurGain extends GraphBar {
 
   Function GraphMakeGraph($distributeur=0)
   {
+    $this->titre = "Marges effectuées sur les lignes ".$this->year;
     $num = 0;
-    $year = strftime("%Y",time());
+
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
     if ($distributeur > 0)
@@ -127,7 +126,7 @@ class GraphDistributeurGain extends GraphBar {
 
     for ($i = 1 ; $i < 13 ; $i++)
       {
-	$idx = $year.substr('0'.$i,-2);
+	$idx = $this->year.substr('0'.$i,-2);
 	$datas[$i-1] = $gains[$idx];
 	$labels[$i-1] = $month[$i];
       }

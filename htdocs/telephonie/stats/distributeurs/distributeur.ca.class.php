@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +28,17 @@ class GraphDistributeurCa extends GraphBar {
   {
     $this->db = $DB;
     $this->file = $file;
-
     $this->client = 0;
     $this->year = strftime("%Y",time());
-    $this->titre = "Chiffre d'affaire ".$this->year;
-
     $this->barcolor = "blue";
     $this->showframe = true;
   }
 
   Function GraphMakeGraph($distributeur=0)
   {
+    $this->titre = "Chiffre d'affaire ".$this->year;
     $num = 0;
-    $year = strftime("%Y",time());
+
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
     if ($distributeur > 0)
@@ -127,7 +125,7 @@ class GraphDistributeurCa extends GraphBar {
 
     for ($i = 1 ; $i < 13 ; $i++)
       {
-	$idx = $year.substr('0'.$i,-2);
+	$idx = $this->year.substr('0'.$i,-2);
 	if ($cas[$idx])
 	  {
 	    $datas[$i-1] = $cas[$idx];

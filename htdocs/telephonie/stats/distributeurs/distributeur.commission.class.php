@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,14 @@ class GraphDistributeurCommission extends GraphBar {
     $this->file = $file;
     $this->year = strftime("%Y",time());
     $this->client = 0;
-    $this->titre = "Commissions mensuelles reversées ".$this->year;
-
     $this->barcolor = "orange";
     $this->showframe = true;
   }
 
   Function GraphMakeGraph($distributeur=0)
   {
+    $this->titre = "Commissions mensuelles reversées ".$this->year;
+
     $num = 0;
     $this->no_xaxis_title=1;
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";

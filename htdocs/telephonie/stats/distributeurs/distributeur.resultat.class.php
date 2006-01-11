@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,13 @@ class GraphDistributeurResultat extends GraphBar {
     $this->file = $file;
     $this->client = 0;
     $this->year = strftime("%Y",time());
-    $this->titre = "Resultat mensuel ".$this->year." (marges - commissions)";
-    $this->year = strftime("%Y",time());
     $this->barcolor = "green";
     $this->showframe = true;
   }
 
   Function GraphMakeGraph($distributeur=0)
   {
+    $this->titre = "Resultat mensuel ".$this->year." (marges - commissions)";
     $comms = array();
     $gains = array();
     $num = 0;

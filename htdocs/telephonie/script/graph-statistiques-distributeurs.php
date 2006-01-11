@@ -24,11 +24,24 @@
  */
 require ("../../master.inc.php");
 $verbose = 0;
+
+$year = strftime("%Y",time());
+
 for ($i = 1 ; $i <= sizeof($argv) ; $i++)
 {
   if ($argv[$i] == "-v")
     $verbose = 1;
+
+  if ($argv[$i] == "-vv")
+    $verbose = 1;
+
+  if ($argv[$i] == "-y")
+    {
+      $year = $argv[$i+1];
+    }
 }
+
+if ($verbose) print "Année $year\n";
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
@@ -43,11 +56,8 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ga
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ca.class.php");
 
 $error = 0;
-$year = strftime("%Y",time());
-if (strftime("%m",time()) == 1)
-{
-  $year = $year -1;
-}
+
+
 /*
  * Création des répertoires
  *
@@ -101,6 +111,7 @@ if ($resql)
       if ($verbose) print "Graph : ca distributeur ".$row[0]."\n";
       if ($verbose==2) print "Graph : ca distributeur $file\n";
       $graph = new GraphDistributeurCa($db, $file);
+      $graph->year = $year;
       $graph->width = 500;
       $graph->height = 260;
       $graph->GraphMakeGraph($row[0]);
@@ -111,6 +122,7 @@ if ($resql)
       $file = $dir."gain.mensuel.png";
       if ($verbose) print "Graph : gain distributeur ".$row[0]."\n";
       $graph = new GraphDistributeurGain($db, $file);
+      $graph->year = $year;
       $graph->width = 500;
       $graph->height = 260;
       $graph->GraphMakeGraph($row[0]);
@@ -121,6 +133,7 @@ if ($resql)
       $file = $dir."commission.mensuel.png";
       if ($verbose) print "Graph : commission distributeur ".$row[0]."\n";
       $graph = new GraphDistributeurCommission($db, $file);
+      $graph->year = $year;
       $graph->width = 500;
       $graph->height = 260;
       $graph->GraphMakeGraph($row[0]);
@@ -131,6 +144,7 @@ if ($resql)
       $file = $dir."resultat.mensuel.png";
       if ($verbose) print "Graph : resultat distributeur ".$row[0]."\n";
       $graph = new GraphDistributeurResultat($db, $file);
+      $graph->year = $year;
       $graph->width = 500;
       $graph->height = 260;
       $graph->GraphMakeGraph($row[0]);
@@ -145,6 +159,7 @@ if ($resql)
 $file = $img_root . "distributeurs/gain.mensuel.$year.png";
 if ($verbose) print "Graph : gain distributeur $file\n";
 $graph = new GraphDistributeurGain($db, $file);
+$graph->year = $year;
 $graph->width = 500;
 $graph->height = 260;
 $graph->GraphMakeGraph(0);
@@ -152,6 +167,7 @@ $graph->GraphMakeGraph(0);
 $file = $img_root . "distributeurs/ca.mensuel.$year.png";
 if ($verbose) print "Graph : ca distributeur $file\n";
 $graph = new GraphDistributeurCa($db, $file);
+$graph->year = $year;
 $graph->width = 500;
 $graph->height = 260;
 $graph->GraphMakeGraph(0);
@@ -159,6 +175,7 @@ $graph->GraphMakeGraph(0);
 $file = $img_root . "distributeurs/commission.mensuel.$year.png";
 if ($verbose) print "Graph : commission distributeur $file\n";
 $graph = new GraphDistributeurCommission($db, $file);
+$graph->year = $year;
 $graph->width = 500;
 $graph->height = 260;
 $graph->GraphMakeGraph(0);
@@ -166,6 +183,7 @@ $graph->GraphMakeGraph(0);
 $file = $img_root . "distributeurs/resultat.mensuel.$year.png";
 if ($verbose) print "Graph : resultat distributeur $file\n";
 $graph = new GraphDistributeurResultat($db, $file);
+$graph->year = $year;
 $graph->width = 500;
 $graph->height = 260;
 $graph->GraphMakeGraph(0);
