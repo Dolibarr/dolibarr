@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ if (strftime("%m",time()) == 1)
 $total = 0;
 $var = True;
 dolibarr_fiche_head($head, $hselected, "Distributeurs");
+stat_year_bar($year);
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
