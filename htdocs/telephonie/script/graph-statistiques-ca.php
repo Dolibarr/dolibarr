@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,11 @@
 require ("../../master.inc.php");
 
 $verbose = 0;
+
+$datetime = time();
+$date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
+$year = strftime("%Y", $datetime);
+
 for ($i = 1 ; $i < sizeof($argv) ; $i++)
 {
   if ($argv[$i] == "-v")
@@ -37,6 +42,10 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
   if ($argv[$i] == "-vvv")
     {
       $verbose = 3;
+    }
+  if ($argv[$i] == "-y")
+    {
+      $year = $argv[$i+1];
     }
 }
 
@@ -58,10 +67,6 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.clas
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
 
 $error = 0;
-
-$datetime = time();
-$date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
-$year = strftime("%Y", $datetime);
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie";
 
@@ -88,7 +93,7 @@ $month[12] = 'D';
 
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
 $sql .= " WHERE graph IN ('factures.facture_moyenne','factures.ca_mensuel','factures.nb_mensuel')";
-$sql .= " AND legend like '".$this->year."%';";
+$sql .= " AND legend like '".$year."%';";
 $resql = $db->query($sql);
 
 $sql = "SELECT date_format(tf.date,'%Y%m'), sum(tf.cout_vente)";
