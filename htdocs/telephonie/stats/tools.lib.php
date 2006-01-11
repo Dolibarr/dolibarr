@@ -32,7 +32,8 @@ function stat_year_bar($year)
 	}
       else
 	{
-	  $string .= '<a href="'.$PHP_SELF.'?year='.$x.'">'.$x.'</a>&nbsp;|&nbsp;';
+	  $string .= '<a href="'.$_SERVER["SCRIPT_URI"].'?year='.$x.'&amp;'.$_SERVER["QUERY_STRING"];
+	  $string .= '">'.$x.'</a>&nbsp;|&nbsp;';
 	}
       $x++;
     }
