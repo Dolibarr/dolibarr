@@ -20,6 +20,7 @@
  *
  */
 require("../../../main.inc.php");
+require_once DOL_DOCUMENT_ROOT.'/telephonie/stats/tools.lib.php';
 
 $user->getrights('telephonie');
 
