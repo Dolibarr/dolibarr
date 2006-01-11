@@ -46,6 +46,10 @@ if (strftime("%m",time()) == 1)
 {
   $year = $year -1;
 }
+if ($_GET["year"] > 0)
+{
+  $year = $_GET["year"];
+}
 $total = 0;
 $var = True;
 dolibarr_fiche_head($head, $hselected, "Distributeurs");
