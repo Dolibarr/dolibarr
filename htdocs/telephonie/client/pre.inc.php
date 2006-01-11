@@ -48,6 +48,8 @@ function llxHeader($head = "", $title="") {
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/my.php", "Mes clients");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/liste.php", "Liste");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/contacts.php", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/remises.php", "Remises à faire");
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/remisesdone.php", "Remises faites");
 
   //$menu->add_submenu(DOL_URL_ROOT."/telephonie/client/rapports", "Rapports");
 
