@@ -60,6 +60,7 @@ print '<tr class="liste_titre"><td>Mois</td><td align="right">Resultat</td></tr>
 
 $sql = "SELECT valeur,legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
 $sql .= " WHERE graph = 'distributeur.resultat.mensuel'";
+$sql .= " AND legend like '".$year."%'";
 $sql .= " ORDER BY legend DESC";  
 $resql = $db->query($sql);
   
@@ -91,6 +92,7 @@ print '<tr class="liste_titre"><td>Mois</td><td align="right">Gain</td></tr>';
 
 $sql = "SELECT sum(valeur),legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
 $sql .= " WHERE graph = 'distributeur.gain.mensuel'";
+$sql .= " AND legend like '".$year."%'";
 $sql .= " GROUP BY legend DESC";  
 $resql = $db->query($sql);
 $total = 0;
@@ -123,6 +125,7 @@ print '<tr class="liste_titre"><td>Mois</td><td align="right">Commission</td></t
 
 $sql = "SELECT valeur,legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
 $sql .= " WHERE graph = 'distributeur.commission.mensuel'";
+$sql .= " AND legend like '".$year."%'";
 $sql .= " GROUP BY legend DESC";  
 $resql = $db->query($sql);
 $total = 0;  
@@ -154,6 +157,7 @@ print '<tr class="liste_titre"><td>Mois</td><td align="right">Ca</td></tr>';
 
 $sql = "SELECT sum(valeur),legend FROM ".MAIN_DB_PREFIX."telephonie_stats";  
 $sql .= " WHERE graph = 'distributeur.ca.mensuel'";
+$sql .= " AND legend like '".$year."%'";
 $sql .= " GROUP BY legend DESC";  
 $resql = $db->query($sql);
 $total = 0;
