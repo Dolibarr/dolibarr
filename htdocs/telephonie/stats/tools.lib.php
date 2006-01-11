@@ -24,6 +24,19 @@ function stat_year_bar($year)
   $cyear = strftime("%Y",time());
   $x = 2005;
   $string = '';
+
+  $query = array();
+  $query = explode("&",$_SERVER["QUERY_STRING"]);
+
+  $qs = '';
+  foreach($query as $q)
+    {
+      if (substr($q,0,4) <> 'year')
+	{
+	  $qs .= '&amp;'.$q;
+	}
+    }
+
   while ($x <= $cyear)
     {
       if ($x == $year)
@@ -32,7 +45,11 @@ function stat_year_bar($year)
 	}
       else
 	{
-	  $string .= '<a href="'.$_SERVER["SCRIPT_URI"].'?year='.$x.'&amp;'.$_SERVER["QUERY_STRING"];
+	  $string .= '<a href="'.$_SERVER["SCRIPT_URI"].'?year='.$x;
+	  if ($qs)
+	    {
+	      $string .=$qs;
+	    }
 	  $string .= '">'.$x.'</a>&nbsp;|&nbsp;';
 	}
       $x++;
