@@ -72,8 +72,7 @@ print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/te
 print '</td><td align="left" valign="top">';
 _legend($db, "factures.ca_mensuel", "%11.2f");
 
-print '</td></tr>';
-
+print "</td></tr>\n";
 print '<tr><td valign="top" width="50%">';
 
 print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/facture_moyenne.png" alt="facture_moyenne">';
@@ -81,20 +80,18 @@ print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/te
 print '</td><td align="left" valign="top">';
 _legend($db, "factures.facture_moyenne","%01.1f");
 
-print '</td></tr>';
+print "</td></tr>\n";
 print '<tr><td valign="top" width="50%">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/nb_facture.png" alt="nb_facture">';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/nb_facture.'.$year.'.png" alt="nb_facture '.$year.'">';
 
 print '</td><td align="left" valign="top">';
 _legend($db, "factures.nb_mensuel","%01.0f");
 
-print '</td></tr>';
-
-print '</table>';
+print "</td></tr>\n";
+print "</table>\n";
 
 $db->close();
-
 
 function _legend($db, $graph, $format)
 {
