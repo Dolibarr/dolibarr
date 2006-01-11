@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  */
 require("../../../main.inc.php");
+require_once DOL_DOCUMENT_ROOT.'/telephonie/stats/tools.lib.php';
 
 $user->getrights('telephonie');
 
