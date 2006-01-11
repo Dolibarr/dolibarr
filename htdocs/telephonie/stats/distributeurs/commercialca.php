@@ -30,13 +30,20 @@ llxHeader('','Telephonie - Statistiques - Distributeurs');
  *
  *
  */
-
-
 $h = 0;
-
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/index.php';
 $head[$h][1] = "Global";
 $h++;
+
+$year = strftime("%Y",time());
+if (strftime("%m",time()) == 1)
+{
+  $year = $year -1;
+}
+if ($_GET["year"] > 0)
+{
+  $year = $_GET["year"];
+}
 
 if ($_GET["id"])
 {
@@ -53,15 +60,18 @@ if ($_GET["id"])
   $h++;
 
   dolibarr_fiche_head($head, $hselected, "Distributeurs");
+  stat_year_bar($year);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-
   print '<tr><td valign="top">';
-  
 
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/gain.mensuel.png" alt="Gain mensuel" title="Gain mensuel"><br /><br />'."\n";
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id;
+  print '/gain.mensuel.'.$year.'.png" alt="Gain mensuel" title="Gain mensuel">'."\n";
 
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/ca.mensuel.png" alt="Chiffre d\'affaire mensuel" title="Chiffre d\'affaire mensuel"><br /><br />'."\n";
+  print "</td></tr>\n";
+  print '<tr><td valign="top">';
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id;
+  print '/ca.mensuel.'.$year.'.png" alt="Chiffre d\'affaire mensuel" title="Chiffre d\'affaire mensuel">'."\n";
   
   print '</td></tr>';
   print '</table>';
