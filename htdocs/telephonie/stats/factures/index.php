@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,16 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+$year = strftime("%Y",time());
+if (strftime("%m",time()) == 1)
+{
+  $year = $year -1;
+}
+if ($_GET["year"] > 0)
+{
+  $year = $_GET["year"];
+}
+
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/index.php';
@@ -50,11 +60,8 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/type.php';
 $head[$h][1] = "Méthode de paiement";
 $h++;
 
-//$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/lastmonth.php';
-//$head[$h][1] = "3 derniers mois";
-//$h++;
-
 dolibarr_fiche_head($head, $hselected, "Satistiques Factures");
+stat_year_bar($year);
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
