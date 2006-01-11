@@ -67,7 +67,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="50%">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/ca_mensuel.png" alt="ca_mensuel">';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/ca_mensuel.'.$year.'.png" alt="ca_mensuel">';
 
 print '</td><td align="left" valign="top">';
 _legend($db, "factures.ca_mensuel", "%11.2f");
@@ -75,7 +75,7 @@ _legend($db, "factures.ca_mensuel", "%11.2f");
 print "</td></tr>\n";
 print '<tr><td valign="top" width="50%">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/facture_moyenne.png" alt="facture_moyenne">';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/facture_moyenne.'.$year.'.png" alt="facture_moyenne">';
 
 print '</td><td align="left" valign="top">';
 _legend($db, "factures.facture_moyenne","%01.1f");

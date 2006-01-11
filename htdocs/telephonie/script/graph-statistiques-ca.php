@@ -165,14 +165,14 @@ else
 {
   print $db->error();
 }
-$file = $img_root . "/factures/ca_mensuel.png";
+$file = $img_root . "/factures/ca_mensuel.$year.png";
 if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Chiffre d'affaire par mois en euros HT";
 $graph->width = 440;
 $graph->GraphDraw($file, $cout_vente, $short_labels);
 
-$file = $img_root . "/factures/facture_moyenne.png";
+$file = $img_root . "/factures/facture_moyenne.$year.png";
 if ($verbose) print "Graph $file\n";
 $graph = new GraphBar ($db, $file, $labels);
 $graph->titre = "Facture moyenne";
