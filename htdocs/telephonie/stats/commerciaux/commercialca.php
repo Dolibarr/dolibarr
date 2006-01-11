@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,10 @@ if (strftime("%m",time()) == 1)
 {
   $year = $year -1;
 }
-
+if ($_GET["year"] > 0)
+{
+  $year = $_GET["year"];
+}
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/index.php';
 $head[$h][1] = "Global";
 $h++;
@@ -59,6 +62,7 @@ if ($_GET["commid"])
   $h++;
 
   dolibarr_fiche_head($head, $hselected, "Commerciaux");
+  stat_year_bar($year);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -127,13 +131,10 @@ if ($_GET["commid"])
       print $db->error() . ' ' . $sql;
     }
   print '</table>';
-
-
   print '</td></tr>';
   print '</table>';
   
-  $db->close();
- 
+  $db->close(); 
 }
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
