@@ -41,7 +41,9 @@ require_once (DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php")
 require_once (DOL_DOCUMENT_ROOT."/includes/modules/facture/pdf_ibreizh.modules.php");
 
 $error = 0;
-
+$total_feuilles = 0;
+$pages = 0;
+$pages_facture = 0;
 $opt = getopt("m:");
 
 if ($opt['m'] > 0)
@@ -92,7 +94,6 @@ if ( $resql )
 
   $pdf = new FPDF('P','mm','A4');
   $pdf->Open();
-
   $pdf->SetMargins(10, 10, 10);
   $pdf->SetAutoPageBreak(1,0);
   $file = "/tmp/$year-$month-fac.pdf";
@@ -105,6 +106,11 @@ if ( $resql )
 
       $xx = new pdf_ibreizh($db);
       $xx->_write_pdf_file($row[0], &$pdf, 1);
+
+      $feuilles = 0;
+      $feuilles = $feuilles + $xx->pages;
+      $pages = $pages + $xx->pages;
+      $pages_facture = $pages_facture + $xx->pages;
 
       $fql = "SELECT rowid, ligne";
       $fql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
@@ -121,14 +127,19 @@ if ( $resql )
 	      $ligne_id = $fow[1];
 	      $yy = new pdfdetail_papier ($db, $ligne_id, $year, $month, $obj_factel);
 	      $yy->_write_pdf_file($obj_factel, $ligne_id, $pdf, 1);
+	      $pages = $pages + $yy->pages;
+	      $feuilles = $feuilles + $yy->pages;
 	    }
 	}
-
+      $total_feuilles = $total_feuilles + ceil($feuilles / 2);
       $i++;
     }
 
   $pdf->Close();	      
   $pdf->Output($file);
+  dolibarr_syslog("Generation de ".$pages_facture." envois");
+  dolibarr_syslog("Generation de ".$pages." pages");
+  dolibarr_syslog("Generation de ".$total_feuilles." feuilles");
   dolibarr_syslog("Ecriture de : ".$file);
   $db->free($resql);
 }
