@@ -37,6 +37,7 @@ class pdfdetail_papier {
       $this->year  = $year;
       $this->month = $month;
       $this->factel = $factel;
+      $this->pages = 0;
     }
 
   /*
@@ -138,6 +139,7 @@ class pdfdetail_papier {
 		  $num = $this->db->num_rows($resql);
 
 		  $pdf->AddPage();
+		  $this->pages++;
 		  $this->ListHeader($pdf);
 		  $i = 0;
 		  $var = 1;
@@ -162,6 +164,7 @@ class pdfdetail_papier {
 		      if ($this->inc > 130 && $this->colonne == 2)
 			{
 			  $pdf->AddPage();
+			  $this->pages++;
 			  $this->ListHeader($pdf);
 			  $var = 0;
 			  $col = 0;
