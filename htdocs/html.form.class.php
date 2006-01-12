@@ -1804,7 +1804,8 @@ class Form
  
         $filename = sanitize_string($filename);
         // Par defaut
-        $extension = 'pdf'; $relativepath = "${filename}/${filename}.${extension}";
+        $extension = 'pdf';
+	$relativepath = "${filename}/${filename}.${extension}";
         // Autre cas
         if ($modulepart == 'expedition') { $extension='pdf'; $relativepath = get_exdir("${filename}")."${filename}.pdf"; }
         if ($modulepart == 'don')        { $extension='html'; $relativepath = get_exdir("${filename}")."${filename}.html"; }
@@ -1880,7 +1881,11 @@ class Form
                 if ($extension == 'html') $mimetype='HTML';
                 if (eregi('\-detail\.pdf',$file)) $mimetype='PDF Détaillé';
                 print '<td nowrap>'.$mimetype.'</td>';
-                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a></td>';
+		//                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a></td>';
+
+                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode(${filename}."/".$file).'">'.$file.'</a></td>';
+
+
                 print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
                 print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
                 print '</tr>';
