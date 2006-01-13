@@ -130,7 +130,7 @@ class DoliDb
         // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
         if ($this->connected && $name)
         {
-            if ($this->select_db($name) == 1)
+            if ($this->select_db($name))
             {
                 $this->database_selected = 1;
                 $this->database_name = $name;
@@ -157,7 +157,7 @@ class DoliDb
     /**
             \brief      Selectionne une database.
             \param	    database		Nom de la database
-            \return	    resource
+            \return	    boolean         true si ok, false si ko
     */
     function select_db($database)
     {
