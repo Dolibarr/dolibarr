@@ -110,7 +110,7 @@ class DoliDb
         // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
         if ($this->connected && $name)
         {
-            if ($this->select_db($name) == 1)
+            if ($this->select_db($name))
             {
                 $this->database_selected = 1;
                 $this->database_name = $name;
@@ -136,17 +136,16 @@ class DoliDb
     /**
         \brief      Selectionne une database.
         \param		database		nom de la database
-        \return		resource
-        \remarks 	ici postgresql n'a aucune fonction equivalente de mysql_select_db
-        \remarks 	comparaison manuel si la database est bien celle choisie par l'utilisateur
-        \remarks 	en cas de succes renverra 1 ou 0
+        \return		boolean         true si ok, false si ko
+        \remarks 	Ici postgresql n'a aucune fonction equivalente de mysql_select_db
+        \remarks 	On compare juste manuellement si la database choisie est bien celle activée par la connexion
     */
     function select_db($database)
     {
         if ($database == $this->database_name)
-        	return 1;
+        	return true;
         else
-        	return 0;
+        	return false;
     }
     
     /**
@@ -161,6 +160,10 @@ class DoliDb
     {
         $con_string = "host=$host dbname=$name user=$login password=$passwd";
         $this->db = pg_connect($con_string);
+        if ($this->db)
+        {
+            $this->database_name = $name;
+        }
         return $this->db;
     }
     
