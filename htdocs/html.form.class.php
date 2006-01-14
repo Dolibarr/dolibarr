@@ -1803,13 +1803,6 @@ class Form
         $var=true;
  
         $filename = sanitize_string($filename);
-        // Par defaut
-        $extension = 'pdf';
-	$relativepath = "${filename}/${filename}.${extension}";
-        // Autre cas
-        if ($modulepart == 'expedition') { $extension='pdf'; $relativepath = get_exdir("${filename}")."${filename}.pdf"; }
-        if ($modulepart == 'don')        { $extension='html'; $relativepath = get_exdir("${filename}")."${filename}.html"; }
-
         $headershown=0;
 
         // Affiche en-tete tableau
@@ -1864,7 +1857,10 @@ class Form
             while (($file = readdir($handle))!==false)
             {
                 // Si fichier non lisible ou mauvaise extension, on passe au suivant
-                if (! is_readable($filedir."/".$file) || ! eregi('\.'.$extension.'$',$file)) continue;
+                if (! is_readable($filedir."/".$file) ||
+                    eregi('\.meta$',$file) ||
+                    eregi('\.$',$file)
+                    ) continue;
 
                 if (! $headershown)
                 {
@@ -1875,19 +1871,29 @@ class Form
                     print '<table class="border" width="100%">';
                 }
 
-                print "<tr $bc[$var]>";
+		        // Défini chemin relatif par rapport au module pour lien download
+		        $relativepath=$filename."/".$file;
+                if ($modulepart == 'expedition') { $relativepath = get_exdir("${filename}")."${file}"; }
+                if ($modulepart == 'don')        { $relativepath = get_exdir("${filename}")."${file}"; }
+
+                // Défini le type MIME du document
+                if (eregi('\.([^\.]+)$',$file,$reg)) $extension=$reg[1];
                 $mimetype=strtoupper($extension);
                 if ($extension == 'pdf') $mimetype='PDF';
                 if ($extension == 'html') $mimetype='HTML';
                 if (eregi('\-detail\.pdf',$file)) $mimetype='PDF Détaillé';
+
+                print "<tr $bc[$var]>";
+
+                // Affiche colonne type MIME
                 print '<td nowrap>'.$mimetype.'</td>';
-		//                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a></td>';
-
-                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode(${filename}."/".$file).'">'.$file.'</a></td>';
-
-
+                // Affiche nom fichier avec lien download
+		        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a></td>';
+                // Affiche taille fichier
                 print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
+                // Affiche date fichier
                 print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
+
                 print '</tr>';
 
                 $i++;
