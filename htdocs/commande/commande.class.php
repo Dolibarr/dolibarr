@@ -506,18 +506,20 @@ class Commande
 		}
 		return $this->lignes;
 	}
-  /**
-   * Renvoie un tableau avec les livraison par ligne
-   *
-   *
-   */
-	function livraison_array()
+
+    /**
+     *      \brief      Renvoie un tableau avec les livraison par ligne
+     *      \param      filtre_statut       Filtre sur statut
+     *      \return     int                 0 si OK, <0 si KO
+     */
+	function livraison_array($filtre_statut=-1)
 	{
 		$this->livraisons = array();
 		$sql = 'SELECT fk_product, sum(ed.qty)';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
-		$sql .=' WHERE ed.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid';
-		$sql .= ' AND cd.fk_commande =' .$this->id;
+		$sql.=' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'expedition as e, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql.=' WHERE ed.fk_expedition = e.rowid AND ed.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid';
+		$sql.=' AND cd.fk_commande =' .$this->id;
+		if ($filtre_statut >= 0) $sql.=' AND e.fk_statut = '.$filtre_statut;
 		$sql .= ' GROUP BY fk_product ';
 		$result = $this->db->query($sql);
 		if ($result)
@@ -532,7 +534,10 @@ class Commande
 			}
 			$this->db->free();
 		}
+	
+	    return 0;
 	}
+	
   /**
    * Renvoie un tableau avec les livraison par ligne
    *
