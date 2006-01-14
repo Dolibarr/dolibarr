@@ -28,15 +28,18 @@
 */
 
 require_once("./pre.inc.php");
-require_once("../../don.class.php");
+require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
 $langs->load("donations");
 $langs->load("bills");
 
-
 $mesg="";
 
+/*
+ * Actions
+ */
+ 
 if ($_POST["action"] == 'update')
 {
 

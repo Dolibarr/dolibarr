@@ -29,7 +29,7 @@
 */
 
 require("../../main.inc.php");
-require("../../projetdon.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projetdon.class.php");
 
 $langs->load("donations");
 $langs->load("propal");
@@ -40,7 +40,8 @@ $libelle[2] = $langs->trans("DonationsPayed");
 $libelle[3] = $langs->trans("DonationsReceived");
 
 
-function llxHeader($head = "") {
+function llxHeader($head = "")
+{
   global $user, $conf, $langs;
 
   $langs->load("donations");
