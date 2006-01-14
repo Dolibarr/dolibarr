@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
 -- Copyright (C) 2005 Marc Barilley / Océbo <marc@ocebo.com>
+-- Copyright (C) 2005 Laurent Destailleur   <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,15 +19,15 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===========================================================================
 
-CREATE TABLE IF NOT EXISTS `llx_paiementfourn_facturefourn` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_paiementfourn` int(11) default NULL,
-  `fk_facturefourn` int(11) default NULL,
-  `amount` double default '0',
-  PRIMARY KEY  (`rowid`),
-  KEY `idx_fk_facture` (`fk_facturefourn`),
-  KEY `idx_fk_paiement` (`fk_paiementfourn`)
+create table llx_paiementfourn_facturefourn
+(
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  fk_paiementfourn int(11) default NULL,
+  fk_facturefourn  int(11) default NULL,
+  amount double default '0',
+
+  KEY idx_fk_facture (fk_facturefourn),
+  KEY idx_fk_paiement (fk_paiementfourn)
 ) TYPE=innodb;
