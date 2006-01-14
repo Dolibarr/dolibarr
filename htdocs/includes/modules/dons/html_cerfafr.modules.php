@@ -72,6 +72,7 @@ class html_cerfafr extends ModeleDon
     function write_file($id)
     {
         global $conf,$langs,$user,$mysoc;
+        $langs->load("main");
         
         $don = new Don($this->db);
         $don->fetch($id);
