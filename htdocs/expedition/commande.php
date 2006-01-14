@@ -30,16 +30,16 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 
 $user->getrights('commande');
 $user->getrights('expedition');
 if (!$user->rights->commande->lire)
-accessforbidden();
+	accessforbidden();
 
-require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 // Sécurité accés client
 if ($user->societe_id > 0)
@@ -60,6 +60,9 @@ if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
 }
 
 
+$html = new Form($db);
+
+
 /* *************************************************************************** */
 /*                                                                             */
 /* Mode vue et edition                                                         */
@@ -68,15 +71,13 @@ if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
 
 llxHeader('',$langs->trans("OrderCard"));
 
-$html = new Form($db);
-
 
 if ($_GET["id"] > 0)
 {
     $commande = New Commande($db);
     if ( $commande->fetch($_GET["id"]) > 0)
     {
-        $commande->livraison_array();
+        $commande->livraison_array(1);
 
         $soc = new Societe($db);
         $soc->fetch($commande->soc_id);
@@ -124,51 +125,51 @@ if ($_GET["id"] > 0)
             print "<br />";
         }
 
-        // Onglet expedition
+        // Onglet commande
         print '<table class="border" width="100%">';
 
-            // Ref
-			print '<tr><td width="15%">'.$langs->trans('Ref').'</td>';
-			print '<td colspan="2">'.$commande->ref.'</td>';
-			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
-			if ($commande->source == 0)
-			{
-				// Si source = propal
-				$propal = new Propal($db);
-				$propal->fetch($commande->propale_id);
-				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
-			}
-			print '</td></tr>';
-
-			// Société
-			print '<tr><td>'.$langs->trans('Customer').'</td>';
-			print '<td colspan="3">';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
-			print '</tr>';
-
-			$nbrow=3;
-
-			// Ref commande client
-			print '<tr><td>';
-            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-			print $langs->trans('RefCdeClient').'</td><td align="left">';
-            print '</td>';
-            print '</tr></table>';
-            print '</td><td colspan="2">';
-			print $commande->ref_client;
-			print '</td>';
-			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
-			print nl2br($commande->note);
-			print '</td>';
-			print '</tr>';
-
-			print '<tr><td>'.$langs->trans('Status').'</td>';
-			print '<td colspan="2">'.$commande->statuts[$commande->statut].'</td>';
-			print '</tr>';
-
-			print '<tr><td>'.$langs->trans('Date').'</td>';
-			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
-			print '</tr>';
+        // Ref
+        print '<tr><td width="15%">'.$langs->trans('Ref').'</td>';
+        print '<td colspan="2">'.$commande->ref.'</td>';
+        print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
+        if ($commande->source == 0)
+        {
+        	// Si source = propal
+        	$propal = new Propal($db);
+        	$propal->fetch($commande->propale_id);
+        	print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+        }
+        print '</td></tr>';
+        
+        // Société
+        print '<tr><td>'.$langs->trans('Customer').'</td>';
+        print '<td colspan="3">';
+        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+        print '</tr>';
+        
+        $nbrow=3;
+        
+        // Ref commande client
+        print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+        print $langs->trans('RefCdeClient').'</td><td align="left">';
+        print '</td>';
+        print '</tr></table>';
+        print '</td><td colspan="2">';
+        print $commande->ref_client;
+        print '</td>';
+        print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
+        print nl2br($commande->note);
+        print '</td>';
+        print '</tr>';
+        
+        print '<tr><td>'.$langs->trans('Status').'</td>';
+        print '<td colspan="2">'.$commande->statuts[$commande->statut].'</td>';
+        print '</tr>';
+        
+        print '<tr><td>'.$langs->trans('Date').'</td>';
+        print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
+        print '</tr>';
         
         print '</table>';
 
@@ -206,7 +207,7 @@ if ($_GET["id"] > 0)
             $reste_a_livrer = array();
             while ($i < $num)
             {
-                $objp = $db->fetch_object();
+                $objp = $db->fetch_object($resql);
 
                 $var=!$var;
                 print "<tr $bc[$var]>";
@@ -373,25 +374,29 @@ if ($_GET["id"] > 0)
         /*
          * Déjà livré
          */
-	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
-	  $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
-	  $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
-	  $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-	  $sql .= " WHERE cd.fk_commande = $commande->id";
-	  $sql .= " AND cd.rowid = ed.fk_commande_ligne";
-	  $sql .= " AND ed.fk_expedition = e.rowid";
-	  $sql .= " ORDER BY cd.fk_product";
+        $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
+        $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
+        $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
+        $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+        $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
+        $sql .= " WHERE cd.fk_commande = ".$commande->id;
+        $sql .= " AND cd.rowid = ed.fk_commande_ligne";
+        $sql .= " AND ed.fk_expedition = e.rowid";
+        $sql .= " AND e.fk_statut > 0";
+        $sql .= " ORDER BY cd.fk_product";
 
         $resql = $db->query($sql);
         if ($resql)
         {
             $num = $db->num_rows($resql);
-	      $i = 0;
+	        $i = 0;
 
             if ($num)
             {
-                print '<br><table class="liste" width="100%">';
+                print '<br>';
+                
+                print_titre($langs->trans("OtherSendingsForSameOrder"));
+                print '<table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td width="54%">'.$langs->trans("Description").'</td>';
                 print '<td align="center">Quan. livrée</td>';
@@ -411,7 +416,7 @@ if ($_GET["id"] > 0)
             	      $product->fetch($objp->fk_product);
             	      
             	      print '<td>';
-            	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+            	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
             	      if ($objp->description) print nl2br($objp->description);
             	      print '</td>';
                     }
