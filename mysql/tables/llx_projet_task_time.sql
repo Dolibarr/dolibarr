@@ -25,7 +25,7 @@ create table llx_projet_task_time
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   fk_task          integer  NOT NULL,
   task_date        date,
-  task_duration    real UNSIGNED,
+  task_duration    double,
   fk_user          integer,
   note             text,
 
