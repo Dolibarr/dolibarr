@@ -25,12 +25,12 @@
 --
 -- ===========================================================================
 
-CREATE TABLE IF NOT EXISTS `llx_paiementfourn_facturefourn` (
-   SERIAL PRIMARY KEY,
-  "`fk_paiementfourn`" int4 default NULL,
-  "`fk_facturefourn`" int4 default NULL,
-  "`amount`" real default '0',
-  PRIMARY KEY  (`rowid`),
-    "UNIQUE"  (`fk_facturefourn`),
-    "UNIQUE"  (`fk_paiementfourn`)
+create table llx_paiementfourn_facturefourn
+(
+  rowid SERIAL PRIMARY KEY,
+  "fk_paiementfourn" int4 default NULL,
+  "fk_facturefourn"  int4 default NULL,
+  "amount" real default '0',
+    "UNIQUE"  (fk_facturefourn),
+    "UNIQUE"  (fk_paiementfourn)
 );
