@@ -31,6 +31,6 @@ create table llx_paiementfourn_facturefourn
   "fk_paiementfourn" int4 default NULL,
   "fk_facturefourn"  int4 default NULL,
   "amount" real default '0',
-    "UNIQUE"  (fk_facturefourn),
-    "UNIQUE"  (fk_paiementfourn)
+  UNIQUE(fk_facturefourn),
+  UNIQUE(fk_paiementfourn)
 );
