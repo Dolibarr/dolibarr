@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ require_once (DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/script/facture-detail-tableur-one.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/script/facture-detail-tableur-two.class.php");
 
 $error = 0;
 
@@ -64,8 +65,7 @@ dolibarr_syslog("Mois $month Année $year");
  */
 
 if (!$error)
-{
-  
+{  
   $sql = "SELECT fk_contrat as contrat";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service";
   $sql .= " WHERE fk_service = 3";
@@ -104,6 +104,14 @@ if (!$error)
 {
   foreach ($contrats as $contrat)
     {
+      $facdet = new FactureDetailTableurTwo($db);
+      $resg = $facdet->GenerateFile ($contrat, $year, $month);
+	      
+      if ($resg <> 0)
+	{
+	  dolibarr_syslog("ERREUR lors de Génération du détail tableur two");
+	  $error = 19;
+	}
 
       $sql = "SELECT rowid as ligne";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
@@ -128,7 +136,7 @@ if (!$error)
 	      
 	      if ($resg <> 0)
 		{
-		  dolibarr_syslog("ERREUR lors de Génération du détail tableur");
+		  dolibarr_syslog("ERREUR lors de Génération du détail tableur one");
 		  $error = 19;
 		}
 	      
