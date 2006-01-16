@@ -99,6 +99,7 @@ class FactureDetailTableurTwo {
 	$num = $this->db->num_rows($resql);
 	$total = 0;
 	dolibarr_syslog($num." lignes trouvées");
+	$xx = 1;
 	while ($row = $this->db->fetch_row($resql))
 	  {
 	    $sq = "SELECT ligne, date, numero, dest, dureetext, duree, cout_vente";
@@ -120,8 +121,6 @@ class FactureDetailTableurTwo {
 		  {
 		    $obj = $this->db->fetch_object($resq);
 		    
-		    $xx = $i + 1;
-		
 		    $page->write_string($xx, 0,  $obj->ligne, $fdest);
 		    $page->write_string($xx, 1,  $obj->date, $fdest);
 		    $page->write_string($xx, 2,  $obj->numero, $fdest);
@@ -130,6 +129,7 @@ class FactureDetailTableurTwo {
 		    $page->write($xx, 5,  $obj->cout_vente, $fp);
 		    
 		    $i++;
+		    $xx++;
 		  }
 		$this->db->free($resq);
 	      }
