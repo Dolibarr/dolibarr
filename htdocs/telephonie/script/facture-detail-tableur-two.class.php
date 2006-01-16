@@ -96,26 +96,29 @@ class FactureDetailTableurTwo {
 	
     if ($resql)
       {    
-	while ($row = $this->db->fetch_row[$resql])
+	$num = $this->db->num_rows($resql);
+	$total = 0;
+	dolibarr_syslog($num." lignes trouvées");
+	while ($row = $this->db->fetch_row($resql))
 	  {
-	    $sql = "SELECT ligne, date, numero, dest, dureetext, duree, cout_vente";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-	    $sql .= " WHERE fk_ligne = '".$row[1]."'";
-	    $sql .= " AND fk_telephonie_facture = ".$row[0];
-	    $sql .= " ORDER BY date ASC";
+	    $sq = "SELECT ligne, date, numero, dest, dureetext, duree, cout_vente";
+	    $sq .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+	    $sq .= " WHERE fk_ligne = '".$row[1]."'";
+	    $sq .= " AND fk_telephonie_facture = ".$row[0];
+	    $sq .= " ORDER BY date ASC";
 	       	
-	    $resql = $this->db->query($sql);
+	    $resq = $this->db->query($sq);
 	
-	    if ($resql)
+	    if ($resq)
 	      {
 		$i = 0;
-		$numsql = $this->db->num_rows($resql);
+		$numsq = $this->db->num_rows($resq);
+		$total = $total + $numsq;
+		dolibarr_syslog("Ligne : ".$row[1] . " : ".$numsq . " Total : ".$total);
 		
-		dolibarr_syslog("Ligne : ".$this->ligne->id . " : ".$numsql);
-		
-		while ($i < $numsql)
+		while ($i < $numsq)
 		  {
-		    $obj = $this->db->fetch_object($resql);
+		    $obj = $this->db->fetch_object($resq);
 		    
 		    $xx = $i + 1;
 		
@@ -128,7 +131,7 @@ class FactureDetailTableurTwo {
 		    
 		    $i++;
 		  }
-		$this->db->free($resql);
+		$this->db->free($resq);
 	      }
 	    else
 	      {
