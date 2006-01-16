@@ -21,10 +21,5 @@
 -- $Source$
 -- ===========================================================================
 
-create table llx_paiementfourn_facturefourn
-(
-  rowid integer AUTO_INCREMENT PRIMARY KEY,
-  fk_paiementfourn INT(11) DEFAULT NULL,
-  fk_facturefourn  INT(11) DEFAULT NULL,
-  amount DOUBLE DEFAULT '0'
-) TYPE=innodb;
+ALTER TABLE llx_paiementfourn_facturefourn ADD INDEX idx_paiementfourn_facturefourn_fk_facture(fk_facturefourn);
+ALTER TABLE llx_paiementfourn_facturefourn ADD INDEX idx_paiementfourn_facturefourn_fk_paiement(fk_paiementfourn);
