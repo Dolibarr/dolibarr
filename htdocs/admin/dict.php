@@ -31,6 +31,7 @@
 require("./pre.inc.php");
 
 $langs->load("main");
+$langs->load("other");
 $langs->load("admin");
 $langs->load("companies");
 
@@ -89,7 +90,7 @@ $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
-$tabsql[9] = "SELECT code    as rowid, code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT rowid   as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
@@ -117,7 +118,7 @@ $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type";
 $tabfield[7] = "libelle,deductible";
 $tabfield[8] = "code,libelle";
-$tabfield[9] = "code,code_iso,libelle";
+$tabfield[9] = "code,code_iso,label";
 $tabfield[10]= "pays,taux,recuperableonly,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm";
@@ -137,6 +138,7 @@ $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
+// Vide si pas de rowid
 $tabrowid[1] = "";
 $tabrowid[2] = "";
 $tabrowid[3] = "";
@@ -145,7 +147,7 @@ $tabrowid[5] = "rowid";
 $tabrowid[6] = "id";
 $tabrowid[7] = "id";
 $tabrowid[8] = "id";
-$tabrowid[9] = "code";
+$tabrowid[9] = "";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
 $tabrowid[12]= "rowid";
@@ -531,9 +533,11 @@ else
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Dictionnary").'</td><td>'.$langs->trans("Table").'</td></tr>';
 
-    foreach ($taborder as $i) {
+    foreach ($taborder as $i)
+    {
         $var=!$var;
-        if ($i) {
+        if ($i)
+        {
             $value=$tabname[$i];
             print '<tr '.$bc[$var].'><td width="30%"><a href="dict.php?id='.$i.'">'.$tablib[$i].'</a></td><td>'.$tabname[$i].'</td></tr>';
 

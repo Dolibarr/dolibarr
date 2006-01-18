@@ -5,6 +5,7 @@ ErrorForbidden=Accès non autorisé.<br>Vous essayez d'accéder à une page, zone ou
 ErrorForbidden2=Les permissions pour ce login peuvent être attribuées par l'administrateur Dolibarr via le menu %s -> %s.
 ErrorForbidden3=Dolibarr ne semble pas fonctionner au sein d'une session authentifiée. Consultez la documentation d'installation de Dolibarr pour savoir comment gérer les authentifications (htaccess, mod_auth ou autre...).
 ErrorNoImagickReadimage=La fonction imagick_readimage n'est pas présente sur cette installation de PHP. L'aperçu n'est donc pas disponible.
+ErrorRecordAlreadyExists=Enregistrement déjà existant
 AddTrip=Créer déplacement
 Tools=Outils
 Birthday=Anniversaire
