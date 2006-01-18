@@ -89,7 +89,7 @@ $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
-$tabsql[9] = "SELECT code    as rowid, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$tabsql[9] = "SELECT code    as rowid, code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT rowid   as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
@@ -131,7 +131,7 @@ $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type";
 $tabfieldinsert[7] = "libelle,deductible";
 $tabfieldinsert[8] = "code,libelle";
-$tabfieldinsert[9] = "code,code_iso,label";
+$tabfieldinsert[9] = "code_iso,label";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm";
