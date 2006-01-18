@@ -6,6 +6,10 @@
 # - gérer les autoincrement en SERIAL plutot qu'en séquenceurs
 # - utiliser le CHECK plutot que des sous-tables pour les types enum
 # - corriger de nombreux bugs
+#
+# Regle ecriture de fichier sql portables
+# Pour les cles autoincrement:  rowid integer AUTO_INCREMENT PRIMARY KEY,
+# Mettre les index dans fichier.key.sql
 #------------------------------------------------------------------------------
 use Data::Dumper;
 use Getopt::Long;
