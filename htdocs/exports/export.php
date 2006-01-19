@@ -98,7 +98,7 @@ if ($step == 1 || ! $datatoexport)
     // Affiche les modules d'exports
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td width="120">'.$langs->trans("Module").'</td>';
+    print '<td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>'.$langs->trans("ExportableDatas").'</td>';
     print '<td>&nbsp;</td>';
     print '</tr>';
