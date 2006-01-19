@@ -44,7 +44,16 @@ llxHeader('','Telephonie - Distributeur - Commercial');
  *
  */
 $h = 0;
+
 $year = strftime("%Y",time());
+if (strftime("%m",time()) == 1)
+{
+  $year = $year -1;
+}
+if ($_GET["year"] > 0)
+{
+  $year = $_GET["year"];
+}
 
 if ($_GET["id"] && $_GET["did"])
 {
