@@ -90,7 +90,7 @@ $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
-$tabsql[9] = "SELECT code, code_iso, label, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT rowid   as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
@@ -118,7 +118,7 @@ $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type";
 $tabfield[7] = "libelle,deductible";
 $tabfield[8] = "code,libelle";
-$tabfield[9] = "code,code_iso,label";
+$tabfield[9] = "code,code_iso,libelle";
 $tabfield[10]= "pays,taux,recuperableonly,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm";
@@ -132,13 +132,12 @@ $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type";
 $tabfieldinsert[7] = "libelle,deductible";
 $tabfieldinsert[8] = "code,libelle";
-$tabfieldinsert[9] = "code,code_iso,label";
+$tabfieldinsert[9] = "code_iso,label";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
-// Vide si pas de rowid
 $tabrowid[1] = "";
 $tabrowid[2] = "";
 $tabrowid[3] = "";
@@ -147,7 +146,7 @@ $tabrowid[5] = "rowid";
 $tabrowid[6] = "id";
 $tabrowid[7] = "id";
 $tabrowid[8] = "id";
-$tabrowid[9] = "";
+$tabrowid[9] = "code";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
 $tabrowid[12]= "rowid";
@@ -207,7 +206,8 @@ if ($_POST["actionadd"])
         $sql.=",active)";
         $sql.= " VALUES(";
         // Ajoute valeur des champs
-        if ($tabrowid[$_POST["id"]]) $sql.= $newid.",";
+        if ($tabrowid[$_POST["id"]] &&
+            ! in_array($tabrowid[$_POST["id"]],$listfield)) $sql.= $newid.",";
         $i=0;
         foreach ($listfield as $f => $value) {
             if ($i) $sql.=",";
@@ -501,13 +501,13 @@ if ($_GET["id"])
                 if ($obj->type && $obj->type == 'system') $iserasable=0;
 
                 if ($iserasable) {
-                    print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                    print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                 } else {
                     print $langs->trans("AlwaysActive");
                 }
                 print "</td>";
                 if ($iserasable) {
-                    print '<td><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete"'.img_delete().'</a></td>';
+                    print '<td><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete"'.img_delete().'</a></td>';
                 } else {
                     print '<td>&nbsp;</td>';   
                 }
