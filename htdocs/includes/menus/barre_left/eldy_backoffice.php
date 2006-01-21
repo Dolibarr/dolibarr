@@ -633,50 +633,58 @@ class MenuLeft {
 
         // Affichage du menu
         $alt=0;
-        for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++) 
+        if (! sizeof($this->menu_array))
         {
-            $alt++;
-            if ($this->menu_array[$i]['level']==0) {
-                if (($alt%2==0))
-                {
-                    print '<div class="blockvmenuimpair">'."\n";
+            print '<div class="blockvmenuimpair">'."\n";
+            print $langs->trans("NoPermission");
+            print '</div>';        
+        }
+        else
+        {
+            for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++) 
+            {
+                $alt++;
+                if ($this->menu_array[$i]['level']==0) {
+                    if (($alt%2==0))
+                    {
+                        print '<div class="blockvmenuimpair">'."\n";
+                    }
+                    else
+                    {
+                        print '<div class="blockvmenupair">'."\n";
+                    }
                 }
-                else
-                {
-                    print '<div class="blockvmenupair">'."\n";
+    
+                if ($this->menu_array[$i]['level']==0) {
+                    if ($this->menu_array[$i]['enabled'])
+                        print '<a class="vmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+                    else 
+                        print '<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
                 }
-            }
-
-            if ($this->menu_array[$i]['level']==0) {
-                if ($this->menu_array[$i]['enabled'])
-                    print '<a class="vmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                else 
-                    print '<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-            }
-            if ($this->menu_array[$i]['level']==1) {
-                if ($this->menu_array[$i]['enabled'])
-                    print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                else 
-                    print '<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-            }
-            if ($this->menu_array[$i]['level']==2) {
-                if ($this->menu_array[$i]['enabled'])
-                    print '&nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                else 
-                    print '&nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-            }
-            if ($this->menu_array[$i]['level']==3) {
-                if ($this->menu_array[$i]['enabled'])
-                    print '&nbsp; &nbsp; &nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                else 
-                    print '&nbsp; &nbsp; &nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-            }
-            
-            if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
-                print "</div>\n";
+                if ($this->menu_array[$i]['level']==1) {
+                    if ($this->menu_array[$i]['enabled'])
+                        print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+                    else 
+                        print '<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+                }
+                if ($this->menu_array[$i]['level']==2) {
+                    if ($this->menu_array[$i]['enabled'])
+                        print '&nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+                    else 
+                        print '&nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+                }
+                if ($this->menu_array[$i]['level']==3) {
+                    if ($this->menu_array[$i]['enabled'])
+                        print '&nbsp; &nbsp; &nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+                    else 
+                        print '&nbsp; &nbsp; &nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+                }
+                
+                if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
+                    print "</div>\n";
+                }
             }
         }
-
 
     }
     
