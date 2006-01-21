@@ -173,7 +173,7 @@ if ($_GET["action"] == 'create')
     print '<td>';
     $model=new ModelePDFPropales();
     $liste=$model->liste_modeles($db);
-    $form->select_array("modelpdf",$liste,$conf->global->PROPALE_ADDON_PDF);
+    $form->select_array("model",$liste,$conf->global->PROPALE_ADDON_PDF);
     print "</td></tr></table>";
 
     print '<br>';

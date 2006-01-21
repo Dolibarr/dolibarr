@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,9 @@
 
 class Export
 {
-    var $array_export_code=array();
-    var $array_export_module=array();
-    var $array_export_label=array();
+    var $array_export_code=array();             // Tableau de "idmodule_numlot"
+    var $array_export_module=array();           // Tableau de "nom de modules"
+    var $array_export_label=array();            // Tableau de "libellé de lots"
     var $array_export_fields_code=array();
     var $array_export_fields_label=array();
     var $array_export_sql=array();
@@ -121,6 +121,71 @@ class Export
             }
         }
         closedir($handle);
+    }
+
+    /**
+     *      \brief      Lance la generation du fichier
+     *      \param      user                User qui exporte
+     *      \param      model               Modele d'export
+     *      \param      datatoexport        Lot de donnée à exporter
+     *      \param      array_selected      Tableau des champs à exporter
+     *      \remarks    Les tableaux array_export_xxx sont déjà chargées pour le bon datatoexport
+     *                  aussi le parametre datatoexport est inutilisé
+     */ 
+    function build_file($user, $model, $datatoexport, $array_selected)
+    {
+        global $conf,$langs;
+        
+        $indice=0;
+        
+        dolibarr_syslog("Export::build_file $model, $datatoexport, $array_selected");
+        
+        // Creation de la classe d'export du model ExportXXX
+        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
+        $file = "export_".$model.".modules.php";
+        $classname = "Export".$model;
+        require_once($dir.$file);
+        $obj = new $classname($db);
+        
+        // Execute requete export        
+        $sql=$this->array_export_sql[$indice];
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+            //$this->array_export_label[$indice]
+            $filename="export_user".$user->id."_set".$datatoexport;
+            $filename.='.'.$obj->get_extension();
+            $dirname=$conf->export->dir_ouput;
+            
+            // Open file
+            create_exdir($dirname);
+            $obj->open_file($dirname."/".$filename);
+
+            // Genere en-tete
+            $obj->write_header();		    
+		    
+            // Genere ligne de titre
+            $obj->write_title();
+
+			while ($objp = $this->db->fetch_object($resql))
+			{
+				$var=!$var;
+                $obj->write_record($objp,$array_selected);
+            }
+            
+            // Genere en-tete
+            $obj->write_footer();
+            
+            // Close file
+            $obj->close_file();
+            
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            dolibarr_syslog("Error: sql=$sql ".$this->error);
+            return -1;
+        }
     }
     
 }

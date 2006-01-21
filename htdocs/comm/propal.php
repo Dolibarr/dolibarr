@@ -115,7 +115,7 @@ if ($_POST['action'] == 'add')
 
     $propal->contactid = $_POST['contactidp'];
     $propal->projetidp = $_POST['projetidp'];
-    $propal->modelpdf  = $_POST['modelpdf'];
+    $propal->modelpdf  = $_POST['model'];
     $propal->author    = $user->id;
     $propal->note      = $_POST['note'];
 
@@ -136,7 +136,7 @@ if ($_POST['action'] == 'add')
      */
     if ($id > 0)
     {
-        propale_pdf_create($db, $id, $_POST['modelpdf']);
+        propale_pdf_create($db, $id, $_POST['model']);
         Header ('Location: propal.php?propalid='.$id);
         exit;
     }
@@ -331,8 +331,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 if ($_POST['action'] == 'builddoc' && $user->rights->propale->creer) 
 {
     $propal = new Propal($db, 0, $_GET['propalid']);
-    $propal->set_pdf_model($user, $_POST['modelpdf']);
-    propale_pdf_create($db, $_GET['propalid'], $_POST['modelpdf']);
+    $propal->set_pdf_model($user, $_POST['model']);
+    propale_pdf_create($db, $_GET['propalid'], $_POST['model']);
 }
 
 

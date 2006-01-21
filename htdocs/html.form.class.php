@@ -1842,7 +1842,7 @@ class Form
             print '<table class="border" width="100%">';
 
             print '<tr '.$bc[$var].'><td>'.$langs->trans('Model').'</td><td align="center">';
-            $this->select_array('modelpdf',$liste,$modelselected);
+            $this->select_array('model',$liste,$modelselected);
             $texte=$langs->trans('Generate');
             print '</td><td align="center" colspan="2"><input class="button" type="submit" value="'.$texte.'">';
             print '</td></tr>';

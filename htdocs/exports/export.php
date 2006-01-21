@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_sel
 $datatoexport=isset($_GET["datatoexport"])?$_GET["datatoexport"]:'';
 $export=new Export($db);
 $export->load_arrays($user,$datatoexport);
-$action=isset($_GET["action"])?$_GET["action"]:'';
+$action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
 $step=isset($_GET["step"])?$_GET["step"]:'1';
 
 
@@ -48,24 +48,72 @@ $step=isset($_GET["step"])?$_GET["step"]:'1';
 /*
  * Actions
  */
+ 
 if ($action=='selectfield')
 { 
-    $array_selected[$_GET["field"]]=1;
+    $array_selected[$_GET["field"]]=sizeof($array_selected)+1;
     //print_r($array_selected);
     $_SESSION["export_selected_fields"]=$array_selected;
 }
 if ($action=='unselectfield')
 { 
-    $array_selected[$_GET["field"]]=0;
-    //print_r($array_selected);
+    unset($array_selected[$_GET["field"]]);
+    // Renumerote champs de array_selected (de 1 à nb_elements)
+    asort($array_selected);
+    $i=0;
+    $array_selected_save=$array_selected;
+    foreach($array_selected as $code=>$value)
+    {
+        $i++;
+        $array_selected[$code]=$i;
+        //print "x $code x $i y<br>";
+    }
     $_SESSION["export_selected_fields"]=$array_selected;
 }
+
+if ($action=='downfield' || $action=='upfield')
+{ 
+    $pos=$array_selected[$_GET["field"]];
+    if ($action=='downfield') $newpos=$pos+1;
+    if ($action=='upfield') $newpos=$pos-1;
+    // Recherche code avec qui switché
+    $newcode="";
+    foreach($array_selected as $code=>$value)
+    {
+        if ($value == $newpos)
+        {
+            $newcode=$code;
+            break;
+        }
+    }
+    //print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
+    $array_selected[$_GET["field"]]=$newpos;
+    $array_selected[$newcode]=$pos;
+    $_SESSION["export_selected_fields"]=$array_selected;
+}
+
 if ($step == 1 || $action == 'cleanselect')
 {
     $_SESSION["export_selected_fields"]=array();
     $array_selected=array();
 }
 
+if ($action == 'builddoc')
+{
+    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+    $model=new ModeleExports();
+    $liste=$model->liste_modeles($db);
+
+    $model=$liste[$_POST["model"]];
+
+    // Genère le fichier
+	$export->build_file($user, $model, $datatoexport, $array_selected);
+}
+
+
+/*
+ * Affichage Pages des Etapes
+ */
 
 if ($step == 1 || ! $datatoexport)
 {
@@ -224,6 +272,8 @@ if ($step == 2 && $datatoexport)
 
 if ($step == 3 && $datatoexport)
 {
+    asort($array_selected);
+
     llxHeader('',$langs->trans("NewExport"));
     
     /*
@@ -262,7 +312,7 @@ if ($step == 3 && $datatoexport)
     // Nbre champs exportés
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
     $list='';
-    foreach($array_selected as $code=>$label)
+    foreach($array_selected as $code=>$value)
     {
         $list.=($list?',':'');
         $list.=$langs->trans($export->array_export_fields[0][$code]);
@@ -276,7 +326,8 @@ if ($step == 3 && $datatoexport)
     
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="48%">'.$langs->trans("ExportedFields").'</td>';
-    print '<td>'.$langs->trans("Position").'</td>';
+    print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
+    print '<td>&nbsp;</td>';
     print '<td>'.$langs->trans("FieldsTitle").'</td>';
     print '</tr>';
 
@@ -288,10 +339,14 @@ if ($step == 3 && $datatoexport)
                     
         print '<td>'.$langs->trans($export->array_export_fields[0][$code]).' ('.$code.')</td>';
 
-        print '<td>';
-        print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&amp;datatoexport='.$datatoexport.'&amp;action=upfield&amp;field='.$field.'">'.img_up().'</a>';
-        print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&amp;datatoexport='.$datatoexport.'&amp;action=downfield&amp;field='.$field.'">'.img_down().'</a>';
+        print '<td align="right" width="100">';
+        print $value.' ';
+        print '</td><td align="center" width="20">';
+        if ($value < sizeof($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&amp;datatoexport='.$datatoexport.'&amp;action=downfield&amp;field='.$code.'">'.img_down().'</a>';
+        if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&amp;datatoexport='.$datatoexport.'&amp;action=upfield&amp;field='.$code.'">'.img_up().'</a>';
         print '</td>';
+
+        print '<td>&nbsp;</td>';
 
         print '<td>'.$langs->trans($export->array_export_fields[0][$code]).'</td>';
 
@@ -319,6 +374,8 @@ if ($step == 3 && $datatoexport)
 
 if ($step == 4 && $datatoexport)
 {
+    asort($array_selected);
+
     llxHeader('',$langs->trans("NewExport"));
     
     /*

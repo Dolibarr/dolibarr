@@ -547,9 +547,9 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 }
 
 /*
- * Générer ou regénérer le PDF
+ * Générer ou regénérer le document PDF
  */
-if ($_GET['action'] == 'pdf')
+if ($_GET['action'] == 'builddoc')
 {
 	facture_pdf_create($db, $_GET['facid']);
 }
@@ -1616,11 +1616,11 @@ else
 					{
 						if ($fac->paye == 0)
 						{
-							print '  <a class="butAction" href="facture.php?facid='.$fac->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
+							print '  <a class="butAction" href="facture.php?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
 						}
 						else
 						{
-							print '  <a class="butAction" href="facture.php?facid='.$fac->id.'&amp;action=pdf">'.$langs->trans('RebuildPDF').'</a>';
+							print '  <a class="butAction" href="facture.php?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('RebuildPDF').'</a>';
 						}
 					}
 				}
