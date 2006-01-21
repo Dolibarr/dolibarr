@@ -223,6 +223,7 @@ class DoliDb
     function create_db($database)
     {
         $ret=$this->query('CREATE DATABASE '.$database);
+        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysql_error($this->db);
         return $ret;
     }
         
@@ -334,9 +335,16 @@ class DoliDb
     {
         $query = trim($query);
 
-//        $ret = mysql_query($query, $this->db);
-        $ret = mysql_db_query($this->database_name, $query, $this->db);
-
+        if (! $this->database_name)
+        {
+            // Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
+            $ret = mysql_query($query, $this->db);
+        }
+        else
+        {
+            $ret = mysql_db_query($this->database_name, $query, $this->db);
+        }
+        
         if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query)) {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
             $this->lastquery=$query;
