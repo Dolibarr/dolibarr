@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis.houssin@cap-networks.com>
  *
@@ -38,35 +38,64 @@ if (!$user->rights->propale->lire)
 	accessforbidden();
 
 $langs->load('compta');
-
-llxHeader();
+$langs->load('other');
 
 $propalid=empty($_GET['propalid']) ? 0 : intVal($_GET['propalid']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
 
-function do_upload ($upload_dir)
+
+/*
+ * Actions
+ */
+ 
+// Envoi fichier
+if ($_POST["sendit"] && $conf->upload)
 {
-	global $local_file, $error_msg, $langs;
+	$propal = new Propal($db);
 
-	if (! is_dir($upload_dir))
-	{
-		create_exdir($upload_dir);
-	}
-
-	if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . '/' . $_FILES['userfile']['name']))
-	{
-		echo $langs->trans('FileUploaded');
-	}
-	else
-	{
-		echo $langs->trans('FileNotUploaded');
-	}
+	if ($propal->fetch($propalid))
+    {
+        $upload_dir = $conf->propal->dir_output . "/" . $propal->ref;
+        if (! is_dir($upload_dir)) create_exdir($upload_dir);
+    
+        if (is_dir($upload_dir))
+        {
+            if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+            {
+                $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+                //print_r($_FILES);
+            }
+            else
+            {
+                // Echec transfert (fichier dépassant la limite ?)
+                $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+                // print_r($_FILES);
+            }
+        }
+    }
 }
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+// Delete
+if ($action=='delete')
+{
+	$propal = new Propal($db);
+
+	if ($propal->fetch($propalid))
+    {
+        $upload_dir = $conf->propal->dir_output . "/" . $propal->ref;
+    	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+    	dol_delete_file($file);
+        $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+    }
+}
+
+
+/*
+ * Affichage
+ */
+ 
+llxHeader();
 
 if ($propalid > 0)
 {
@@ -76,25 +105,6 @@ if ($propalid > 0)
     {
 		$propref = sanitize_string($propal->ref);
 		$upload_dir = $conf->propal->dir_output.'/'.$propref;
-
-		if ( $error_msg )
-		{ 
-			echo '<B>'.$error_msg.'</B><BR><BR>';
-		}
-
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
-		if ($action=='delete')
-		{
-			$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
-			dol_delete_file($file);
-		}
-
-		if ( $_POST['sendit'] )
-		{
-			do_upload ($upload_dir);
-		}
 
 		$h=0;
 
@@ -126,33 +136,82 @@ if ($propalid > 0)
 		$hselected=$h;
 		$h++;
 
-		dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
+		dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal'));
 
-		print_titre($langs->trans('AssociatedDocuments').' '.$propal->ref_url);
+        // Construit liste des fichiers
+        clearstatcache();
 
-		print '<table width="100%" class="noborder">';
+        $totalsize=0;
+        $filearray=array();
 
-		print '<form name="userfile" action="document.php?propalid='.$propal->id.'" enctype="multipart/form-data" method="POST">';
-		print '<input type="hidden" name="max_file_size" value="2000000">';
-		print '<input type="file"   name="userfile" size="40" maxlength="80" class="flat"><br>';
-		print '<input type="submit" value="'.$langs->trans('Upload').'" name="sendit" class="button"> &nbsp; ';
-		print '<input type="submit" value="'.$langs->trans('Cancel').'" name="cancelit" class="button"><br>';
-		print '</form><br>';
+        $errorlevel=error_reporting();
+		error_reporting(0);
+		$handle=opendir($upload_dir);
+		error_reporting($errorlevel);
+        if ($handle)
+        {
+            $i=0;
+            while (($file = readdir($handle))!==false)
+            {
+                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+                {
+                    $filearray[$i]=$file;
+                    $totalsize+=filesize($upload_dir."/".$file);
+                    $i++;
+                }
+            }
+            closedir($handle);
+        }
+        else
+        {
+//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
+        }
 
-		clearstatcache();
+
+        print '<table class="border"width="100%">';
+        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref_url.'</td></tr>';
+        print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+        print '</table>';
+
+        print '</div>';
+
+        if ($mesg) { print "$mesg<br>"; }
+
+        // Affiche formulaire upload
+        if ($conf->global->MAIN_UPLOAD_DOC)
+        {
+            print_titre($langs->trans("AttachANewFile"));
+
+    		print '<form name="userfile" action="document.php?propalid='.$propal->id.'" enctype="multipart/form-data" method="POST">';
+    
+    		print '<table width="100%" class="noborder">';
+            print '<tr><td width="50%" valign="top">';
+    
+            print '<input type="hidden" name="max_file_size" value="2000000">';
+            print '<input class="flat" type="file" name="userfile" size="40" maxlength="80">';
+            print ' &nbsp; ';
+            print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="sendit">';
+
+            print "</td></tr>";
+            print "</table>";
+
+    		print '</form>';
+    		print '<br>';
+        }
+        
+
+        // Affiche liste des documents existant
+        print_titre($langs->trans("AttachedFiles"));
+
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre"><td>'.$langs->trans("Document").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td></tr>';
 
         if (is_dir($upload_dir))
         {
-            
     		$handle=opendir($upload_dir);
     		if ($handle)
     		{
-        		print '<tr class="liste_titre">';
-    			print '<td>'.$langs->trans('Document').'</td>';
-    			print '<td align="right">'.$langs->trans('Size').'</td>';
-    			print '<td align="center">'.$langs->trans('Date').'</td>';
-    			print '<td>&nbsp;</td>';
-    			print '</tr>';
     			$var=true;
     			while (($file = readdir($handle))!==false)
     			{
@@ -187,7 +246,6 @@ if ($propalid > 0)
         }
 		print '</table>';
 
-        print '</div>';
 	}
 	else
 	{

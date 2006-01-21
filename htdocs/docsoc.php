@@ -30,26 +30,23 @@
 require("./pre.inc.php");
 
 $langs->load("companies");
+$langs->load('other');
 
-
-llxHeader();
 
 $mesg = "";
 $socid=$_GET["socid"];
 
 
 /*
- * Creation répertoire si n'existe pas
+ * Actions
  */
-$upload_dir = $conf->societe->dir_output . "/" . $socid ;
-if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-
-/*
- * Action envoie fichier
- */
+ 
+// Envoie fichier
 if ( $_POST["sendit"] && $conf->upload)
 {
+    $upload_dir = $conf->societe->dir_output . "/" . $socid ;
+    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
     if (is_dir($upload_dir))
     {
         if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
@@ -66,12 +63,10 @@ if ( $_POST["sendit"] && $conf->upload)
     }
 }
 
-
-/*
- * Action suppression fichier
- */
+// Suppression fichier
 if ($_GET["action"]=='delete')
 {
+    $upload_dir = $conf->societe->dir_output . "/" . $socid ;
     $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
     dol_delete_file($file);
     $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -81,6 +76,8 @@ if ($_GET["action"]=='delete')
 /*
  * Affichage liste
  */
+
+llxHeader();
 
 if ($socid > 0)
 {
@@ -181,8 +178,8 @@ if ($socid > 0)
 
         if ($mesg) { print "$mesg<br>"; }
 
-        // Affiche forumlaire upload
-        if (defined('MAIN_UPLOAD_DOC') && $conf->upload)
+        // Affiche formulaire upload
+        if ($conf->global->MAIN_UPLOAD_DOC)
         {
             print_titre($langs->trans("AttachANewFile"));
             echo '<form name="userfile" action="docsoc.php?socid='.$socid.'" enctype="multipart/form-data" METHOD="POST">';

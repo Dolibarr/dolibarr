@@ -45,6 +45,7 @@ ModifiedBy=Modified by %s
 ValidatedBy=Validated by %s
 CanceledBy=Canceled by %s
 ClosedBy=Closed by %s
+FileWasRemoved=File was deleted
 ##### Webcal #####
 LoginWebcal=Login for Webcalendar
 AddCalendarEntry=Add entry in calendar
