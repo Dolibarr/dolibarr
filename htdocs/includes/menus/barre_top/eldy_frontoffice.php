@@ -213,7 +213,8 @@ class MenuTop {
         }
 
         // Tools
-        if (1 == 1) {
+        if ($conf->mailing->enabled || $conf->export->enabled || $conf->bookmark->enabled)
+        {
             $langs->load("other");
             
             $class="";
