@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   commercial     Module commercial
@@ -49,6 +48,7 @@ class modCommercial extends DolibarrModules
     function modCommercial($DB)
     {
         $this->db = $DB ;
+        $this->id = 'commercial';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 2 ;
         
         $this->family = "crm";

@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -50,6 +49,7 @@ class modService extends DolibarrModules
   function modService($DB)
   {
     $this->db = $DB ;
+    $this->id = 'service';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 53 ;
     
     $this->family = "products";

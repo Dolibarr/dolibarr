@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -51,6 +50,7 @@ class modPrelevement extends DolibarrModules
     global $conf;
     
     $this->db = $DB ;
+    $this->id = 'prelevement';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 57 ;
 
     $this->family = "financial";

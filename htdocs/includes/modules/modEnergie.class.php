@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /** 
@@ -48,6 +47,7 @@ class modEnergie extends DolibarrModules
   function modEnergie($DB)
   {
     $this->db = $DB ;
+    $this->id = 'energie';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 23 ;
     
     $this->family = "technic";

@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   webcalendar     Module webcalendar
@@ -48,6 +47,7 @@ class modWebcalendar extends DolibarrModules
   function modWebcalendar($DB)
   {
     $this->db = $DB ;
+    $this->id = 'webcalendar';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 410 ;
 
     $this->family = "projects";

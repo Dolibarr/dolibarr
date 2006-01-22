@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -48,6 +47,7 @@ class modExpedition extends DolibarrModules
   function modExpedition($DB)
   {
     $this->db = $DB ;
+    $this->id = 'expedition';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 80 ;
 
     $this->family = "crm";

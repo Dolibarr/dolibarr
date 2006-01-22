@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**  \defgroup   projet     Module projet
@@ -34,7 +33,9 @@
 
 include_once "DolibarrModules.class.php";
 
-/**     \class      modProjet
+
+/**
+    \class      modProjet
 	\brief      Classe de description et activation du module Projet
 */
 
@@ -48,6 +49,7 @@ class modProjet extends DolibarrModules
   function modProjet($DB)
   {
     $this->db = $DB ;
+    $this->id = 'projet';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 400 ;
 
     $this->family = "projects";

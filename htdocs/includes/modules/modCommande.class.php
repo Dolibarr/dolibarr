@@ -21,7 +21,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   commande     Module commande
@@ -50,6 +49,7 @@ class modCommande extends DolibarrModules
   function modCommande($DB)
   {
     $this->db = $DB ;
+    $this->id = 'commande';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 25 ;
 
     $this->family = "crm";

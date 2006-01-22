@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
@@ -21,7 +21,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /** 
@@ -52,6 +51,7 @@ class modSociete extends DolibarrModules
   function modSociete($DB)
   {
     $this->db = $DB ;
+    $this->id = 'company';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 1 ;
 
     $this->family = "crm";
@@ -151,7 +151,7 @@ class modSociete extends DolibarrModules
 
     // Export des liste des societes et attributs
     $r++;
-    $this->export_code[$r]=$this->numero.'_'.$r;
+    $this->export_code[$r]=$this->id.'_'.$r;
     $this->export_label[$r]='Liste des societes et attributs';
     $this->export_fields_array[$r]=array('s.idp'=>"Id",'s.nom'=>"Name",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note");
     $this->export_alias_array[$r]=array('s.idp'=>"idsoc",'s.nom'=>"name",'s.prefix_comm'=>"prefix",'s.client'=>"iscustomer",'s.fournisseur'=>"issupplier",'s.datec'=>"datecreation",'s.tms'=>"datelastmodification",'s.code_client'=>"customercode",'s.code_fournisseur'=>"suppliercode",'s.address'=>"address",'s.cp'=>"zip",'s.ville'=>"town",'p.libelle'=>"country",'p.code'=>"countrycode",'s.tel'=>"phone",'s.fax'=>"fax",'s.url'=>"url",'s.siret'=>"idprof1",'s.siren'=>"idprof2",'s.ape'=>"idprof3",'s.tva_intra'=>"vatintra",'s.capital'=>"capital",'s.note'=>"note");
@@ -168,7 +168,7 @@ class modSociete extends DolibarrModules
 
     // Export des liste des contacts et attributs
     $r++;
-    $this->export_code[$r]=$this->numero.'_'.$r;
+    $this->export_code[$r]=$this->id.'_'.$r;
     $this->export_label[$r]='Liste des contacts et attributs';
     $this->export_fields_array[$r]=array('c.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.email'=>"EMail",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.idp'=>"IdCompany",'s.nom'=>"CompanyName");
     $this->export_alias_array[$r]=array('c.civilite'=>"civilitycode",'c.name'=>'lastname','c.firstname'=>'firstname','c.datec'=>"datecreation",'c.tms'=>"datelastmodification",'c.address'=>"address",'c.cp'=>"zip",'c.ville'=>"town",'c.phone'=>"phone",'c.fax'=>"fax",'c.email'=>"email",'p.libelle'=>"country",'p.code'=>"countrycode",'s.idp'=>"idcompany",'s.nom'=>"companyname");

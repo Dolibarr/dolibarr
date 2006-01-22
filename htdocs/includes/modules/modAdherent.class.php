@@ -51,6 +51,7 @@ class modAdherent extends DolibarrModules
     function modAdherent($DB)
     {
         $this->db = $DB ;
+        $this->id = 'member';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 310 ;
     
         $this->family = "hr";
@@ -194,7 +195,7 @@ class modAdherent extends DolibarrModules
         // $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
 
         $r++;
-        $this->export_code[$r]=$this->numero.'_'.$r;
+        $this->export_code[$r]=$this->id.'_'.$r;
         $this->export_label[$r]='Adhérents et attributs';
         $this->export_fields_array[$r]=array('a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.email'=>"Email",'a.login'=>"Login",'a.naiss'=>"Birthday");
         $this->export_alias_array[$r]=array('a.nom'=>"lastname",'a.prenom'=>"firstname",'a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.email'=>"email",'a.login'=>"login",'a.naiss'=>"birthday");

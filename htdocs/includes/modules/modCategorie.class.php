@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
  */
 
 /**
@@ -31,8 +30,9 @@
 
 include_once "DolibarrModules.class.php";
 
-/** \class modProduit
-    \brief      Classe de description et activation du module Produit
+/**
+        \class      modProduit
+        \brief      Classe de description et activation du module Produit
 */
 
 class modCategorie extends DolibarrModules
@@ -45,6 +45,7 @@ class modCategorie extends DolibarrModules
   function modCategorie ($DB)
   {
     $this->db = $DB;
+    $this->id = 'categorie';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 1780;
 
     $this->family = "products";

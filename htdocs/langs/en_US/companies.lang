@@ -138,3 +138,5 @@ ExportCardToFormat=Export card to format
 ContactNotLinkedToCompany=Contact not linked to any company
 DolibarrLogin=Dolibarr login
 NoDolibarrAccess=No Dolibarr access
+ExportDataset_company_1=Companies/fundations and properties
+ExportDataset_company_2=Contacts and properties

@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   ldap     Module ldap
@@ -47,6 +46,7 @@ class modLdap extends DolibarrModules
   function modLdap($DB)
   {
     $this->db = $DB ;
+    $this->id = 'ldap';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 200 ;
 
     $this->name = "Ldap";

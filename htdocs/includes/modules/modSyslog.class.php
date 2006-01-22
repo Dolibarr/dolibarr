@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -49,6 +48,7 @@ class modSyslog extends DolibarrModules
   function modSyslog($DB)
   {
     $this->db = $DB ;
+    $this->id = 'syslog';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 42 ;
     
     $this->family = "technic";

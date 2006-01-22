@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -48,6 +47,7 @@ class modTelephonie extends DolibarrModules
   function modTelephonie($DB)
   {
     $this->db = $DB ;
+    $this->id = 'telephonie';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 56 ;
 
     $this->family = "technic";

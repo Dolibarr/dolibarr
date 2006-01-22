@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -49,6 +48,7 @@ class modBookmark4u extends DolibarrModules
   function modBookmark4u($DB)
   {
     $this->db = $DB ;
+    $this->id = 'bookmark4u';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 59 ;
 
     $this->family = "technic";

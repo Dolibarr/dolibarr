@@ -47,6 +47,7 @@ class modDeplacement extends DolibarrModules
   function modDeplacement($DB)
   {
     $this->db = $DB ;
+    $this->id = 'deplacement';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 75 ;
 
     $this->family = "crm";

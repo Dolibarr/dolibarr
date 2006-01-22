@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   boutique     Module boutique
@@ -49,6 +48,7 @@ class modBoutique extends DolibarrModules
   function modBoutique($DB)
   {
     $this->db = $DB ;
+    $this->id = 'boutique';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 86 ;
 
     $this->family = "products";

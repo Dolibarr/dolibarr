@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -49,6 +48,7 @@ class modClickToDial extends DolibarrModules
   function modClickToDial($DB)
   {
     $this->db = $DB ;
+    $this->id = 'clicktodial';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 58 ;
 
     $this->family = "technic";

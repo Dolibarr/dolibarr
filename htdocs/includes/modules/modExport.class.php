@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   export      Module export
@@ -46,6 +45,7 @@ class modExport extends DolibarrModules
   function modExport($DB)
   {
     $this->db = $DB ;
+    $this->id = 'export';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 240;
 
     $this->family = "technic";

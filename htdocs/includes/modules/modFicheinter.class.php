@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -51,6 +50,7 @@ class modFicheinter  extends DolibarrModules
   function modFicheinter($DB)
   {
     $this->db = $DB ;
+    $this->id = 'ficheinter';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 70 ;
     
     $this->family = "crm";

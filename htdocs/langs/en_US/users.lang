@@ -71,3 +71,4 @@ ErrorFailedToSaveFile=Error - Failed to save file
 GuiLanguage=Interface language
 InternalUser=Internal user
 MyInformations=My informations
+ExportDataset_user_1=Dolibarr's users and properties

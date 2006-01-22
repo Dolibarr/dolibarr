@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   externalrss     Module externalrss
@@ -47,6 +46,7 @@ class modExternalRss extends DolibarrModules
   function modExternalRss($DB)
   {
     $this->db = $DB ;
+    $this->id = 'externalrss';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 320;
 
     $this->family = "technic";

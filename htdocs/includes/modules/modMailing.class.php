@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -49,6 +48,7 @@ class modMailing extends DolibarrModules
   function modMailing($DB)
   {
     $this->db = $DB ;
+    $this->id = 'mailing';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 22 ;
 
     $this->family = "technic";

@@ -65,3 +65,4 @@ ConfirmDeleteMember=Etes-vous sûr de vouloir effacer ce membre (Effacer un membr
 Filehtpasswd=Fichier htpasswd
 ValidateMember=Valider un adhérent
 ConfirmValidateMember=Etes-vous sûr de vouloir valider cet adhérent ?
+ExportDataset_member_1=Adhérentes et caractéristiques

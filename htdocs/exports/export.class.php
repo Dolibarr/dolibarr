@@ -104,19 +104,6 @@ class Export
                         // Permissions ok
                         if ($bool)
                         {
-                            // Nom module
-                            $this->array_export_module[$i]=$module;
-                            // Code du dataset export
-                            $this->array_export_code[$i]=$module->export_code[$r];
-                            // Libellé du dataset export
-                            $this->array_export_label[$i]=$module->export_label[$r];
-                            // Requete sql du dataset
-                            $this->array_export_sql[$i]=$module->export_sql[$r];
-                            // Tableau des champ à exporter (clé=champ, valeur=libellé)
-                            $this->array_export_fields[$i]=$module->export_fields_array[$r];
-                            // Tableau des alias à exporter (clé=champ, valeur=alias)
-                            $this->array_export_alias[$i]=$module->export_alias_array[$r];
-
                             // Charge fichier lang en rapport
                             $langtoload=$module->getLangFilesArray();
                             if (is_array($langtoload))
@@ -126,7 +113,20 @@ class Export
                                     $langs->load($key);
                                 }
                             }
-                                                        
+
+                            // Nom module
+                            $this->array_export_module[$i]=$module;
+                            // Code du dataset export
+                            $this->array_export_code[$i]=$module->export_code[$r];
+                            // Libellé du dataset export
+                            $this->array_export_label[$i]=$module->getDatasetLabel($r);
+                            // Requete sql du dataset
+                            $this->array_export_sql[$i]=$module->export_sql[$r];
+                            // Tableau des champ à exporter (clé=champ, valeur=libellé)
+                            $this->array_export_fields[$i]=$module->export_fields_array[$r];
+                            // Tableau des alias à exporter (clé=champ, valeur=alias)
+                            $this->array_export_alias[$i]=$module->export_alias_array[$r];
+
                             dolibarr_syslog("Export chargé pour le module ".$modulename." en index ".$i.", dataset=".$module->export_code[$r].", nbre de champs=".sizeof($module->export_fields_code[$r]));
                             $i++;
                         }
@@ -168,7 +168,7 @@ class Export
 		if ($resql)
 		{
             //$this->array_export_label[$indice]
-            $filename="export_set".$datatoexport;
+            $filename="export_".$datatoexport;
             $filename.='.'.$objmodel->getDriverExtension();
             $dirname=$conf->export->dir_ouput.'/'.$user->id;
 

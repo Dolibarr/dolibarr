@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   comptabilite     Module comptabilite
@@ -51,6 +50,7 @@ class modComptabilite extends DolibarrModules
     global $conf;
 
     $this->db = $DB ;
+    $this->id = 'comptabilite';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 10 ;
     
     $this->family = "financial";

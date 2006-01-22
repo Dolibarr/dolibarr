@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -49,6 +48,7 @@ class modStock extends DolibarrModules
   function modStock($DB)
   {
     $this->db = $DB ;
+    $this->id = 'stock';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 52 ;
 
     $this->family = "products";

@@ -51,6 +51,7 @@ class modFacture extends DolibarrModules
     function modFacture($DB)
     {
         $this->db = $DB ;
+        $this->id = 'invoice';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 30 ;
     
         $this->family = "financial";
@@ -214,7 +215,7 @@ class modFacture extends DolibarrModules
         $r=0;
     
         $r++;
-        $this->export_code[$r]=$this->numero.'_'.$r;
+        $this->export_code[$r]=$this->id.'_'.$r;
         $this->export_label[$r]='Liste des factures clients et lignes de facture';
         $this->export_fields_array[$r]=array('f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.fk_soc'=>"IdCompany",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.amount'=>"Amount",'f.remise_percent'=>"GlobalDiscount",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.paye'=>"Paid",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.date_start'=>"DateStart",'fd.date_end'=>"DateEnd");
         $this->export_alias_array[$r]=array('f.rowid'=>"invoiceid",'f.facnumber'=>"ref",'f.fk_soc'=>"fk_soc",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",'f.amount'=>"amount",'f.remise_percent'=>"globaldiscount",'f.total'=>"totalht",'f.total_ttc'=>"totalttc",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid','fd.description'=>"linedescription",'fd.tva_taux'=>"linevatrate",'fd.qty'=>"lineqty",'fd.date_start'=>"linedatestart",'fd.date_end'=>"linedateend");

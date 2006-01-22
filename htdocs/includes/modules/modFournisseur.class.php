@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   fournisseur     Module fournisseur
@@ -48,6 +47,7 @@ class modFournisseur extends DolibarrModules
   function modFournisseur($DB)
   {
     $this->db = $DB ;
+    $this->id = 'fournisseur';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 40 ;
 
     $this->family = "products";

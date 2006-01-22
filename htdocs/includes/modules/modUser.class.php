@@ -48,6 +48,7 @@ class modUser extends DolibarrModules
   function modUser($DB)
   {
     $this->db = $DB ;
+    $this->id = 'user';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 0 ;
 
     $this->family = "base";
@@ -143,7 +144,7 @@ class modUser extends DolibarrModules
     $r=0;
 
     $r++;
-    $this->export_code[$r]=$this->numero.'_'.$r;
+    $this->export_code[$r]=$this->id.'_'.$r;
     $this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
     $this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.code'=>"Code",'u.login'=>"Login",'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.fk_socpeople'=>"IdContact",'u.note'=>"Note",'u.datelastaccess'=>'DateLastAccess');
     $this->export_alias_array[$r]=array('u.rowid'=>"rowid",'u.name'=>"name",'u.firstname'=>"firstname",'u.code'=>"code",'u.login'=>"login",'u.datec'=>"datecreation",'u.tms'=>"datelastmodification",'u.admin'=>"admin",'u.fk_socpeople'=>"idcontact",'u.note'=>"note",'u.datelastaccess'=>'datelastaccess');

@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -50,6 +49,7 @@ class modBarcode extends DolibarrModules
   function modBarcode($DB)
   {
     $this->db = $DB ;
+    $this->id = 'barcode';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 55 ;
     
     $this->family = "products";

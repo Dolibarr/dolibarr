@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   postnuke     Module postnuke
@@ -33,7 +32,8 @@
 
 include_once "DolibarrModules.class.php";
 
-/** \class modPostnuke
+/**
+        \class      modPostnuke
 		\brief      Classe de description et activation du module Postnuke
 */
 
@@ -47,6 +47,7 @@ class modPostnuke extends DolibarrModules
   function modPostnuke($DB)
   {
     $this->db = $DB ;
+    $this->id = 'postnuke';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 210;
 
     $this->family = "technic";

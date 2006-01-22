@@ -65,3 +65,4 @@ ConfirmDeleteMember=Are you sure you want to delete this member (Deleting a meme
 Filehtpasswd=htpasswd file
 ValidateMember=Validate a member
 ConfirmValidateMember=Are you sure you want to validate this member ?
+ExportDataset_member_1=Members and properties

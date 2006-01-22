@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -50,6 +49,7 @@ class modContrat extends DolibarrModules
     function modcontrat($DB)
     {
         $this->db = $DB ;
+         $this->id = 'contrat';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 54 ;
 
         $this->family = "crm";

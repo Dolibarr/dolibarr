@@ -50,6 +50,7 @@ class modProduit extends DolibarrModules
   function modProduit($DB)
   {
     $this->db = $DB ;
+    $this->id = 'produit';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 50 ;
     
     $this->family = "products";

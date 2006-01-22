@@ -48,6 +48,7 @@ class modBookmark extends DolibarrModules
   function modBookmark($DB)
   {
     $this->db = $DB ;
+    $this->id = 'bookmark';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 330;
 
     $this->family = "technic";

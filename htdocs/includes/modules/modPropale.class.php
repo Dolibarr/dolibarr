@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \defgroup   propale     Module propale
@@ -49,6 +48,7 @@ class modPropale extends DolibarrModules
   function modPropale($DB)
   {
     $this->db = $DB ;
+    $this->id = 'propale';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 20 ;
     
     $this->family = "crm";

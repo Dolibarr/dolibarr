@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -49,6 +48,7 @@ class modDon  extends DolibarrModules
   function modDon($DB)
   {
     $this->db = $DB ;
+    $this->id = 'don';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 700 ;
 
     $this->family = "financial";

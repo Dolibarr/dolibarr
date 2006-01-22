@@ -262,6 +262,27 @@ class DolibarrModules
         return $this->langfiles;
     }
     
+    /**
+            \brief      Retourne le libellé d'un lot de données exportable
+            \return     string      Libellé du lot de données
+     */
+    function getDatasetLabel($r)
+    {
+        global $langs;
+        
+        $langstring="ExportDataset_".$this->export_code[$r];
+        if ($langs->trans($langstring) == $langstring)
+        {
+            // Traduction non trouvée
+            return $this->export_label[$r];
+        }
+        else
+        {
+            // Traduction trouvée
+            return $langs->trans($langstring);
+        }
+    }
+    
     
     /**
             \brief      Insère ligne module
