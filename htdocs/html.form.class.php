@@ -1888,8 +1888,9 @@ class Form
 
 		        // Défini chemin relatif par rapport au module pour lien download
 		        $relativepath=$filename."/".$file;
-                if ($modulepart == 'expedition') { $relativepath = get_exdir("${filename}")."${file}"; }
-                if ($modulepart == 'don')        { $relativepath = get_exdir("${filename}")."${file}"; }
+                if ($modulepart == 'expedition') { $relativepath = get_exdir($filename).$file; }
+                if ($modulepart == 'don')        { $relativepath = get_exdir($filename).$file; }
+                if ($modulepart == 'export')     { $relativepath = $file; }
 
                 // Défini le type MIME du document
                 if (eregi('\.([^\.]+)$',$file,$reg)) $extension=$reg[1];

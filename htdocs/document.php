@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,7 @@ $modulepart = urldecode($_GET["modulepart"]);
 // Défini type et attachment
 $type = urldecode($_GET["type"]); $attachment = true;
 if (eregi('\.html',$original_file)) { $type='text/html'; $attachment = false; }
+if (eregi('\.csv',$original_file))  { $type='text/csv'; $attachment = true; }
 if (eregi('\.pdf',$original_file))  { $type='application/pdf'; $attachment = true; }
 
 //Suppression de la chaine de caractère ../ dans $original_file
@@ -151,7 +152,7 @@ if ($modulepart)
     }
 
 
-    // Wrapping pour la telephonie
+    // Wrapping pour les actions
     if ($modulepart == 'actionscomm')
     {
         $user->getrights('commercial');
@@ -173,7 +174,7 @@ if ($modulepart)
         $original_file=$conf->produit->dir_output.'/'.$original_file;
     }
 
-    // Wrapping pour les factures
+    // Wrapping pour les dons
     if ($modulepart == 'don')
     {
         $user->getrights('don');
@@ -182,6 +183,15 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->don->dir_output.'/'.$original_file;
+    }
+
+    // Wrapping pour les exports
+    if ($modulepart == 'export')
+    {
+        // Aucun test necessaire car on force le rep de doanwload sur
+        // le rep export qui est propre à l'utilisateur
+        $accessallowed=1;
+        $original_file=$conf->export->dir_ouput.'/'.$user->id.'/'.$original_file;
     }
 
 }
