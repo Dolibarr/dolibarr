@@ -424,12 +424,16 @@ class User
             {
                 $row = $this->db->fetch_row($result);
         
-                if (strlen($row[1]) > 0)
+                if ($row[1])
                 {
-        
-                    if (strlen($row[2]) > 0)
+                    if ($row[2])
                     {
-                        $this->rights->$row[0]->$row[1]->$row[2] = 1;
+                        if (! $this->rights->$row[0] ||
+                        (is_object($this->rights->$row[0]) && ! $this->rights->$row[0]->$row[1]) ||
+                        (is_object($this->rights->$row[0]->$row[1])) )
+                        {
+                            $this->rights->$row[0]->$row[1]->$row[2] = 1;
+                        }
                     }
                     else
                     {
