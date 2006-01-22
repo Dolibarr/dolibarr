@@ -91,9 +91,12 @@ if ($action=='downfield' || $action=='upfield')
         }
     }
     //print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
-    $array_selected[$_GET["field"]]=$newpos;
-    $array_selected[$newcode]=$pos;
-    $_SESSION["export_selected_fields"]=$array_selected;
+    if ($newcode)   // Si newcode trouvé (prtoection contre resoumission de page
+    {
+        $array_selected[$_GET["field"]]=$newpos;
+        $array_selected[$newcode]=$pos;
+        $_SESSION["export_selected_fields"]=$array_selected;
+    }
 }
 
 if ($step == 1 || $action == 'cleanselect')

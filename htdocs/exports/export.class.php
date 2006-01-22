@@ -118,11 +118,15 @@ class Export
                             $this->array_export_alias[$i]=$module->export_alias_array[$r];
 
                             // Charge fichier lang en rapport
-                            foreach($module->getLangFilesArray() as $key) 
+                            $langtoload=$module->getLangFilesArray();
+                            if (is_array($langtoload))
                             {
-                                $langs->load($key);
+                                foreach($langtoload as $key) 
+                                {
+                                    $langs->load($key);
+                                }
                             }
-                            
+                                                        
                             dolibarr_syslog("Export chargé pour le module ".$modulename." en index ".$i.", dataset=".$module->export_code[$r].", nbre de champs=".sizeof($module->export_fields_code[$r]));
                             $i++;
                         }
