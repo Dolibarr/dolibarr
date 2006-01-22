@@ -38,9 +38,16 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
 
 class ExportCsv extends ModeleExports
 {
+    var $id;
+    var $label;
     var $extension;
+    var $version;
+
+    var $label_lib;
+    var $version_lib;
+
     var $handle;    // Handle fichier
-    
+
     
     /**
     		\brief      Constructeur
@@ -51,13 +58,45 @@ class ExportCsv extends ModeleExports
         global $conf,$langs;
         $this->db = $db;
 
-        $this->extension='csv';
+        $this->id='csv';                // Same value then xxx in file name export_xxx.modules.php
+        $this->label='Csv';             // Label of driver
+        $this->extension='csv';         // Extension for generated file by this driver
+        $ver=split(' ','$Revision$');
+        $this->version=$ver[2];         // Driver version
+
+        // If driver use an external library, put its name here
+        $this->label_lib='Dolibarr';            
+        $this->version_lib=DOL_VERSION;
     }
 
+    function getDriverId()
+    {
+        return $this->id;
+    }
 
-    function get_extension()
+    function getDriverLabel()
+    {
+        return $this->label;
+    }
+
+    function getDriverExtension()
     {
         return $this->extension;
+    }
+
+    function getDriverVersion()
+    {
+        return $this->version;
+    }
+
+    function getLibLabel()
+    {
+        return $this->label_lib;
+    }
+
+    function getLibVersion()
+    {
+        return $this->version_lib;
     }
 
 
@@ -65,36 +104,50 @@ class ExportCsv extends ModeleExports
     {
         dolibarr_syslog("ExportCsv::open_file file=$file");
         $this->handle = fopen($file, "wt");
+        return 0;
     }
 
 
-    function write_header()
+    function write_header($langs)
     {
-
+        return 0;
     }
 
 
-    function write_title()
+    function write_title($array_export_fields_label,$array_selected_sorted,$langs)
     {
-
+        foreach($array_selected_sorted as $code => $value)
+        {
+            fwrite($this->handle,$langs->trans($array_export_fields_label[$code]).";");
+        }
+        fwrite($this->handle,"\n");
+        return 0;
     }
 
 
-    function write_record()
+    function write_record($array_alias,$array_selected_sorted,$objp)
     {
-
+        foreach($array_selected_sorted as $code => $value)
+        {
+            $alias=$array_alias[$code];
+            //print "dd".$alias;
+            fwrite($this->handle,ereg_replace(';',',',$objp->$alias).";");
+        }
+        fwrite($this->handle,"\n");
+        return 0;
     }
 
 
-    function write_footer()
+    function write_footer($langs)
     {
-
+        return 0;
     }
     
 
     function close_file()
     {
         fclose($this->handle);
+        return 0;
     }
 
 }

@@ -21,13 +21,15 @@
 
 /**
         \file       htdocs/exports/export.php
-        \ingroup    core
+        \ingroup    export
         \brief      Page d'edition d'un export
         \version    $Revision$
 */
  
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/exports/export.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+
 
 $langs->load("exports");
 
@@ -38,11 +40,13 @@ if (! $user->societe_id == 0)
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $datatoexport=isset($_GET["datatoexport"])?$_GET["datatoexport"]:'';
-$export=new Export($db);
-$export->load_arrays($user,$datatoexport);
 $action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
 $step=isset($_GET["step"])?$_GET["step"]:'1';
 
+$objexport=new Export($db);
+$objexport->load_arrays($user,$datatoexport);
+
+$objmodel=new ModeleExports();
 
 
 /*
@@ -100,14 +104,16 @@ if ($step == 1 || $action == 'cleanselect')
 
 if ($action == 'builddoc')
 {
-    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
-    $model=new ModeleExports();
-    $liste=$model->liste_modeles($db);
-
-    $model=$liste[$_POST["model"]];
-
     // Genère le fichier
-	$export->build_file($user, $model, $datatoexport, $array_selected);
+	$result=$objexport->build_file($user, $_POST["model"], $datatoexport, $array_selected);
+	if ($result < 0)
+	{
+	    $mesg='<div class="error">'.$objexport->error.'</div>';
+	}
+	else
+	{
+//	    $mesg='<div class="ok">'.$langs->trans("FileSuccessfulyBuilt").'</div>';
+    }
 }
 
 
@@ -151,18 +157,18 @@ if ($step == 1 || ! $datatoexport)
     print '<td>&nbsp;</td>';
     print '</tr>';
     $val=true;
-    if (sizeof($export->array_export_code))
+    if (sizeof($objexport->array_export_code))
     {
-        foreach ($export->array_export_code as $key => $value)
+        foreach ($objexport->array_export_code as $key => $value)
         {
             $val=!$val;
             print '<tr '.$bc[$val].'><td>';
-            print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
-            print $export->array_export_module[$key]->getName();
+            print img_object($objexport->array_export_module[$key]->getName(),$objexport->array_export_module[$key]->picto).' ';
+            print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
-            print $export->array_export_label[$key];
+            print $objexport->array_export_label[$key];
             print '</td><td align="right">';
-            print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$export->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+            print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
             print '</td></tr>';
         }
     }
@@ -200,13 +206,13 @@ if ($step == 2 && $datatoexport)
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    print img_object($export->array_export_module[0]->getName(),$export->array_export_module[0]->picto).' ';
-    print $export->array_export_module[0]->getName();
+    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
+    print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de données à exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
-    print '<td>'.$export->array_export_label[0].'</td></tr>';
+    print '<td>'.$objexport->array_export_label[0].'</td></tr>';
 
     print '</table>';
     print '<br>';
@@ -220,7 +226,7 @@ if ($step == 2 && $datatoexport)
     print '</tr>';
 
     // Champs exportables
-    $fieldsarray=$export->array_export_fields[0];
+    $fieldsarray=$objexport->array_export_fields[0];
 
 #    $this->array_export_module[$i]=$module;
 #    $this->array_export_code[$i]=$module->export_code[$r];
@@ -301,13 +307,13 @@ if ($step == 3 && $datatoexport)
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    print img_object($export->array_export_module[0]->getName(),$export->array_export_module[0]->picto).' ';
-    print $export->array_export_module[0]->getName();
+    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
+    print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de données à exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
-    print '<td>'.$export->array_export_label[0].'</td></tr>';
+    print '<td>'.$objexport->array_export_label[0].'</td></tr>';
 
     // Nbre champs exportés
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
@@ -315,7 +321,7 @@ if ($step == 3 && $datatoexport)
     foreach($array_selected as $code=>$value)
     {
         $list.=($list?',':'');
-        $list.=$langs->trans($export->array_export_fields[0][$code]);
+        $list.=$langs->trans($objexport->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
 
@@ -337,7 +343,7 @@ if ($step == 3 && $datatoexport)
         $var=!$var;
         print "<tr $bc[$var]>";
                     
-        print '<td>'.$langs->trans($export->array_export_fields[0][$code]).' ('.$code.')</td>';
+        print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).' ('.$code.')</td>';
 
         print '<td align="right" width="100">';
         print $value.' ';
@@ -348,7 +354,7 @@ if ($step == 3 && $datatoexport)
 
         print '<td>&nbsp;</td>';
 
-        print '<td>'.$langs->trans($export->array_export_fields[0][$code]).'</td>';
+        print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).'</td>';
 
         print '</tr>';
     }
@@ -370,7 +376,6 @@ if ($step == 3 && $datatoexport)
 
     print '</div>';    
 }
-
 
 if ($step == 4 && $datatoexport)
 {
@@ -407,13 +412,13 @@ if ($step == 4 && $datatoexport)
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    print img_object($export->array_export_module[0]->getName(),$export->array_export_module[0]->picto).' ';
-    print $export->array_export_module[0]->getName();
+    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
+    print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de données à exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
-    print '<td>'.$export->array_export_label[0].'</td></tr>';
+    print '<td>'.$objexport->array_export_label[0].'</td></tr>';
 
     // Nbre champs exportés
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
@@ -421,7 +426,7 @@ if ($step == 4 && $datatoexport)
     foreach($array_selected as $code=>$label)
     {
         $list.=($list?',':'');
-        $list.=$langs->trans($export->array_export_fields[0][$code]);
+        $list.=$langs->trans($objexport->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
 
@@ -429,7 +434,6 @@ if ($step == 4 && $datatoexport)
     print '<br>';
     
     print $langs->trans("NowClickToGenerateToBuildExportFile").'<br>';
-    print '<br>';
     
     // Liste des formats d'exports disponibles
     $var=true;
@@ -440,26 +444,27 @@ if ($step == 4 && $datatoexport)
     print '<td>'.$langs->trans("LibraryVersion").'</td>';
     print '</tr>';
 
-    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
-    $model=new ModeleExports();
-    $liste=$model->liste_modeles($db);
-
+    $liste=$objmodel->liste_modeles($db);
     foreach($liste as $key)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$model->getModelName($key).'</td><td>'.$model->getDriverName($key).'</td><td>'.$model->getDriverVersion($key).'</td></tr>';
+        print '<tr '.$bc[$var].'><td>'.$objmodel->getDriverLabel($key).'</td><td>'.$objmodel->getLibLabel($key).'</td><td>'.$objmodel->getLibVersion($key).'</td></tr>';
     }
     print '</table>';    
 
     print '</div>';
+
+    if ($mesg) print $mesg;
 
     $htmlform=new Form($db);
     print '<table width="100%"><tr><td width="50%">';
 
     if (! is_dir($conf->export->dir_ouput)) create_exdir($conf->export->dir_ouput);
 
+    // Affiche liste des documents
+    // NB: La fonction show_documents rescanne les modules qd genallowed=1
     $filename=$datatoexport;
-    $htmlform->show_documents('export',$filename,$conf->export->dir_ouput,$_SERVER["PHP_SELF"].'?step=4&amp;datatoexport='.$datatoexport,1,1,'csv');
+    $htmlform->show_documents('export',$filename,$conf->export->dir_ouput.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&amp;datatoexport='.$datatoexport,$liste,1,'csv');
     
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';

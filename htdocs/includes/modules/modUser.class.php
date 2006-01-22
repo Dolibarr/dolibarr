@@ -69,6 +69,7 @@ class modUser extends DolibarrModules
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
+    $this->langfiles = array("users","companies");
 
     // Constantes
     $this->const = array();
@@ -145,7 +146,16 @@ class modUser extends DolibarrModules
     $this->export_code[$r]=$this->numero.'_'.$r;
     $this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
     $this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.code'=>"Code",'u.login'=>"Login",'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.fk_socpeople'=>"IdContact",'u.note'=>"Note",'u.datelastaccess'=>'DateLastAccess');
-    $this->export_sql[$r]="select ".join(',',array_keys($this->export_fields_array[$r])).' from '.MAIN_DB_PREFIX.'user as u';
+    $this->export_alias_array[$r]=array('u.rowid'=>"rowid",'u.name'=>"name",'u.firstname'=>"firstname",'u.code'=>"code",'u.login'=>"login",'u.datec'=>"datecreation",'u.tms'=>"datelastmodification",'u.admin'=>"admin",'u.fk_socpeople'=>"idcontact",'u.note'=>"note",'u.datelastaccess'=>'datelastaccess');
+    $this->export_sql[$r]="select ";
+    $i=0;
+    foreach ($this->export_alias_array[$r] as $key => $value)
+    {
+        if ($i > 0) $this->export_sql[$r].=', ';
+        else $i++;
+        $this->export_sql[$r].=$key.' as '.$value;
+    }
+    $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'user as u';
     $this->export_permission[$r]=array(array("user","user","export"));
 
   }

@@ -72,7 +72,8 @@ class modSociete extends DolibarrModules
     // Dépendances
     $this->depends = array();
     $this->requiredby = array("modCommercial","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");
-
+    $this->langfiles = array("companies");
+    
     // Constantes
     $this->const = array();
 
@@ -148,18 +149,38 @@ class modSociete extends DolibarrModules
     //--------
     $r=0;
 
+    // Export des liste des societes et attributs
     $r++;
     $this->export_code[$r]=$this->numero.'_'.$r;
     $this->export_label[$r]='Liste des societes et attributs';
-    $this->export_fields_array[$r]=array('s.idp'=>"Id",'s.nom'=>"Name",'s.prefix'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note");
-    $this->export_sql[$r]="select ".join(',',array_keys($this->export_fields_array[$r])).' from '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'c_pays as p where s.fk_pays = p.rowid';
+    $this->export_fields_array[$r]=array('s.idp'=>"Id",'s.nom'=>"Name",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note");
+    $this->export_alias_array[$r]=array('s.idp'=>"idsoc",'s.nom'=>"name",'s.prefix_comm'=>"prefix",'s.client'=>"iscustomer",'s.fournisseur'=>"issupplier",'s.datec'=>"datecreation",'s.tms'=>"datelastmodification",'s.code_client'=>"customercode",'s.code_fournisseur'=>"suppliercode",'s.address'=>"address",'s.cp'=>"zip",'s.ville'=>"town",'p.libelle'=>"country",'p.code'=>"countrycode",'s.tel'=>"phone",'s.fax'=>"fax",'s.url'=>"url",'s.siret'=>"idprof1",'s.siren'=>"idprof2",'s.ape'=>"idprof3",'s.tva_intra'=>"vatintra",'s.capital'=>"capital",'s.note'=>"note");
+    $this->export_sql[$r]="select ";
+    $i=0;
+    foreach ($this->export_alias_array[$r] as $key => $value)
+    {
+        if ($i > 0) $this->export_sql[$r].=', ';
+        else $i++;
+        $this->export_sql[$r].=$key.' as '.$value;
+    }
+    $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'c_pays as p where s.fk_pays = p.rowid';
     $this->export_permission[$r]=array(array("societe","export"));
 
+    // Export des liste des contacts et attributs
     $r++;
     $this->export_code[$r]=$this->numero.'_'.$r;
     $this->export_label[$r]='Liste des contacts et attributs';
-    $this->export_fields_array[$r]=array('s.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.tel'=>"Phone",'s.fax'=>"Fax",'s.email'=>"EMail",'s.note'=>"Note",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.idp'=>"IdCompany",'s.nom'=>"CompanyName");
-    $this->export_sql[$r]="select ".join(',',array_keys($this->export_fields_array[$r])).' from '.MAIN_DB_PREFIX.'contact as c, '.MAIN_DB_PREFIX.'c_pays as p where c.fk_pays = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.idp';
+    $this->export_fields_array[$r]=array('c.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.email'=>"EMail",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.idp'=>"IdCompany",'s.nom'=>"CompanyName");
+    $this->export_alias_array[$r]=array('c.civilite'=>"civilitycode",'c.name'=>'lastname','c.firstname'=>'firstname','c.datec'=>"datecreation",'c.tms'=>"datelastmodification",'c.address'=>"address",'c.cp'=>"zip",'c.ville'=>"town",'c.phone'=>"phone",'c.fax'=>"fax",'c.email'=>"email",'p.libelle'=>"country",'p.code'=>"countrycode",'s.idp'=>"idcompany",'s.nom'=>"companyname");
+    $this->export_sql[$r]="select ";
+    $i=0;
+    foreach ($this->export_alias_array[$r] as $key => $value)
+    {
+        if ($i > 0) $this->export_sql[$r].=', ';
+        else $i++;
+        $this->export_sql[$r].=$key.' as '.$value;
+    }
+    $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'c_pays as p, '.MAIN_DB_PREFIX.'socpeople as c LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.idp WHERE c.fk_pays = p.rowid';
     $this->export_permission[$r]=array(array("societe","contact","export"));
 
 }

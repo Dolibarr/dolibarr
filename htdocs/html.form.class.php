@@ -1606,62 +1606,65 @@ class Form
         }
     }
     
-  /**
-    \brief  Affiche un select à partir d'un tableau
-    \param	name            nom de la zone select
-    \param	array           tableau de key+valeur
-    \param	id              key présélectionnée
-    \param	empty           1 si il faut un valeur " " dans la liste, 0 sinon
-    \param	key_libelle     1 pour afficher la key dans la valeur "[key] value"
-  */
-		
-  function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
-  {
-    print '<select class="flat" name="'.$name.'">';
-        
-    $i = 0;
-        
-    if (strlen($id)) {
-      if ($empty == 1)
-	{
-	  $array[0] = "&nbsp;";
-	}
-      reset($array);
+    /**
+        \brief  Affiche un select à partir d'un tableau
+        \param	htmlname        Nom de la zone select
+        \param	array           Tableau de key+valeur
+        \param	id              Key pré-sélectionnée
+        \param	show_empty      1 si il faut un valeur " " dans la liste, 0 sinon
+        \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
+        \param	value_as_key    1 pour utiliser la valeur comme clé
+    */
+    function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0)
+    {
+        print '<select class="flat" name="'.$htmlname.'">';
+    
+        $i = 0;
+    
+        if (strlen($id))
+        {
+            if ($show_empty == 1)
+            {
+                $array[0] = "&nbsp;";
+            }
+            reset($array);
+        }
+    
+        while (list($key, $value) = each ($array))
+        {
+            print '<option value="';
+            if ($value_as_key) print $value;
+            else print $key;
+            print '" ';
+    
+            // Si il faut présélectionner une valeur
+            if ($id && $id == $key)
+            {
+                print 'selected="true"';
+            }
+    
+            if ($key_in_label)
+            {
+                print '>['.$key.'] '.$value."</option>\n";
+            }
+            else
+            {
+                if ($value == '-') { $value='&nbsp;'; }
+                print ">".$value."</option>\n";
+            }
+        }
+    
+        print "</select>\n";
     }
-        
-    while (list($key, $value) = each ($array))
-      {
-	print "<option value=\"$key\" ";
 
-	// Si il faut présélectionner une valeur
-	if ($id && $id == $key)
-	  {
-	    print 'selected="true"';
-	  }
 
-	if ($key_libelle)
-	  {
-	    print ">[$key] $value</option>\n";  
-	  }
-	else
-	  {
-	    if ($value=="-") { $value="&nbsp;"; }
-	    print ">$value</option>\n";
-	  }
-      }
-
-    print "</select>";
-  }
-
-  /**
-   *    \brief  Renvoie la chaîne de caractère décrivant l'erreur
-   *
-   */
-	 
-  function error()
-  {
-    return $this->errorstr;
-  }
+    /**
+     *    \brief  Renvoie la chaîne de caractère décrivant l'erreur
+     */
+    function error()
+    {
+        return $this->errorstr;
+    }
 
 
   /**
@@ -1789,13 +1792,13 @@ class Form
      *      \param      filename            Nom fichier sans extension
      *      \param      filedir             Repertoire à scanner
      *      \param      urlsource           Url page origine
-     *      \param      genallowed          Génération autorisée
-     *      \param      delallowed          Suppression autorisée
+     *      \param      genallowed          Génération autorisée (1/0 ou array des formats)
+     *      \param      delallowed          Suppression autorisée (1/0)
      *      \param      modelselected       Modele à présélectionner par défaut
      *      \remarks    Le fichier de facture détaillée est de la forme
      *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
      */
-    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='')
+    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array())
     {
         // filedir = conf->...dir_ouput."/".get_exdir(id)
         
@@ -1808,24 +1811,36 @@ class Form
         // Affiche en-tete tableau
         if ($genallowed)
         {
-            $liste=array();
+            $modellist=array();
             if ($modulepart == 'propal')
             {
-                include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
-                $model=new ModelePDFPropales();
-                $liste=$model->liste_modeles($this->db);
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+                    $model=new ModelePDFPropales();
+                    $modellist=$model->liste_modeles($this->db);
+                }
             }
             elseif ($modulepart == 'facture')
             {
-                include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
-                $model=new ModelePDFFactures();
-                $liste=$model->liste_modeles($this->db);
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+                    $model=new ModelePDFFactures();
+                    $modellist=$model->liste_modeles($this->db);
+                }
             }
             elseif ($modulepart == 'export')
             {
-                include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
-                $model=new ModeleExports();
-                $liste=$model->liste_modeles($this->db);
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+                    $model=new ModeleExports();
+                    $modellist=$model->liste_modeles($this->db);
+                }
             }
             else
             {
@@ -1842,7 +1857,7 @@ class Form
             print '<table class="border" width="100%">';
 
             print '<tr '.$bc[$var].'><td>'.$langs->trans('Model').'</td><td align="center">';
-            $this->select_array('model',$liste,$modelselected);
+            $this->select_array('model',$modellist,$modelselected,0,0,1);
             $texte=$langs->trans('Generate');
             print '</td><td align="center" colspan="2"><input class="button" type="submit" value="'.$texte.'">';
             print '</td></tr>';

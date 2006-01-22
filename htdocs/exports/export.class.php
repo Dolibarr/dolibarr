@@ -21,7 +21,7 @@
 
 /**
         \file       htdocs/exports/export.class.php
-        \ingroup    core
+        \ingroup    export
         \brief      Fichier de la classe des exports
         \version    $Revision$
 */
@@ -37,9 +37,9 @@ class Export
     var $array_export_code=array();             // Tableau de "idmodule_numlot"
     var $array_export_module=array();           // Tableau de "nom de modules"
     var $array_export_label=array();            // Tableau de "libellé de lots"
-    var $array_export_fields_code=array();
-    var $array_export_fields_label=array();
-    var $array_export_sql=array();
+    var $array_export_sql=array();              // Tableau des "requetes sql"
+    var $array_export_fields=array();           // Tableau des liste de champ+libellé à exporter
+    var $array_export_alias=array();            // Tableau des liste de champ+alias à exporter
     
     
     /**
@@ -59,6 +59,8 @@ class Export
      */
     function load_arrays($user,$filter='')
     {
+        global $langs;
+        
         dolibarr_syslog("Export::load_arrays user=$user filter=$filter");
 
         $dir=DOL_DOCUMENT_ROOT."/includes/modules";
@@ -108,11 +110,19 @@ class Export
                             $this->array_export_code[$i]=$module->export_code[$r];
                             // Libellé du dataset export
                             $this->array_export_label[$i]=$module->export_label[$r];
-                            // Tableau des champ à exporter (clé=champ, valeur=libellé)
-                            $this->array_export_fields[$i]=$module->export_fields_array[$r];
                             // Requete sql du dataset
                             $this->array_export_sql[$i]=$module->export_sql[$r];
+                            // Tableau des champ à exporter (clé=champ, valeur=libellé)
+                            $this->array_export_fields[$i]=$module->export_fields_array[$r];
+                            // Tableau des alias à exporter (clé=champ, valeur=alias)
+                            $this->array_export_alias[$i]=$module->export_alias_array[$r];
 
+                            // Charge fichier lang en rapport
+                            foreach($module->getLangFilesArray() as $key) 
+                            {
+                                $langs->load($key);
+                            }
+                            
                             dolibarr_syslog("Export chargé pour le module ".$modulename." en index ".$i.", dataset=".$module->export_code[$r].", nbre de champs=".sizeof($module->export_fields_code[$r]));
                             $i++;
                         }
@@ -137,6 +147,7 @@ class Export
         global $conf,$langs;
         
         $indice=0;
+        asort($array_selected);
         
         dolibarr_syslog("Export::build_file $model, $datatoexport, $array_selected");
         
@@ -145,7 +156,7 @@ class Export
         $file = "export_".$model.".modules.php";
         $classname = "Export".$model;
         require_once($dir.$file);
-        $obj = new $classname($db);
+        $objmodel = new $classname($db);
         
         // Execute requete export        
         $sql=$this->array_export_sql[$indice];
@@ -153,37 +164,37 @@ class Export
 		if ($resql)
 		{
             //$this->array_export_label[$indice]
-            $filename="export_user".$user->id."_set".$datatoexport;
-            $filename.='.'.$obj->get_extension();
-            $dirname=$conf->export->dir_ouput;
-            
+            $filename="export_set".$datatoexport;
+            $filename.='.'.$objmodel->getDriverExtension();
+            $dirname=$conf->export->dir_ouput.'/'.$user->id;
+
             // Open file
             create_exdir($dirname);
-            $obj->open_file($dirname."/".$filename);
+            $objmodel->open_file($dirname."/".$filename);
 
             // Genere en-tete
-            $obj->write_header();		    
-		    
+            $objmodel->write_header($langs);
+
             // Genere ligne de titre
-            $obj->write_title();
+            $objmodel->write_title($this->array_export_fields[$indice],$array_selected,$langs);
 
 			while ($objp = $this->db->fetch_object($resql))
 			{
 				$var=!$var;
-                $obj->write_record($objp,$array_selected);
+                $objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp);
             }
             
             // Genere en-tete
-            $obj->write_footer();
+            $objmodel->write_footer($langs);
             
             // Close file
-            $obj->close_file();
+            $objmodel->close_file();
             
         }
         else
         {
-            $this->error=$this->db->error();
-            dolibarr_syslog("Error: sql=$sql ".$this->error);
+            $this->error=$this->db->error()." - sql=".$sql;
+            dolibarr_syslog("Error: ".$this->error);
             return -1;
         }
     }

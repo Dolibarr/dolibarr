@@ -37,9 +37,11 @@ class ModeleExports
 {
     var $error='';
     
-    var $modelname;
-    var $drivername;
+    var $driverlabel;
     var $driverversion;
+
+    var $libabel;
+    var $libversion;
 
     
     /**
@@ -47,37 +49,56 @@ class ModeleExports
      */
     function ModeleExports()
     {
-        $this->modelname=array('csv'=>'Csv','excel'=>'Excel');
-        $this->drivername=array('csv'=>'Dolibarr','excel'=>'Php_WriteExcel');
-        $this->driverversion=array('csv'=>DOL_VERSION,'excel'=>'?');
     }
     
     /**
-     *      \brief      Renvoi la liste des modèles actifs
+     *      \brief      Charge en memoire et renvoie la liste des modèles actifs
      *      \param      db      Handler de base
      */
     function liste_modeles($db)
     {
-        //$liste=array('csv','excel');
-        $liste=array('csv');
+        dolibarr_syslog("ModeleExport::loadFormat");
+
+        $dir=DOL_DOCUMENT_ROOT."/includes/modules/export/";
+        $handle=opendir($dir);
+
+        // Recherche des fichiers drivers exports disponibles
+        $var=True;
+        $i=0;
+        while (($file = readdir($handle))!==false)
+        {
+            if (eregi("^export_(.*)\.modules\.php",$file,$reg))
+            {
+                $moduleid=$reg[1];
     
-        return $liste;
-    }
+                // Chargement de la classe
+                $file = $dir."/export_".$moduleid.".modules.php";
+                $classname = "Export".ucfirst($moduleid);
+                
+                require_once($file);
+                $module = new $classname($db);
+
+                // Driver properties
+                $this->driverlabel[$module->id]=$module->getDriverLabel();
+                $this->driverversion[$module->id]=$module->getDriverVersion();
+                // If use an external lib
+                $this->liblabel[$module->id]=$module->getLibLabel();
+                $this->libversion[$module->id]=$module->getLibVersion();
+                
+                $i++;
+            }
+        }                
     
-    /**
-     *      \brief      Renvoi nom d'un format export
-     */
-    function getModelName($key)
-    {
-        return $this->modelname[$key];
+        return array_keys($this->driverlabel);
     }
 
+    
     /**
      *      \brief      Renvoi libelle d'un driver export
      */
-    function getDriverName($key)
+    function getDriverLabel($key)
     {
-        return $this->drivername[$key];
+        return $this->driverlabel[$key];
     }
 
     /**
@@ -86,6 +107,22 @@ class ModeleExports
     function getDriverVersion($key)
     {
         return $this->driverversion[$key];
+    }
+
+    /**
+     *      \brief      Renvoi libelle de librairie externe du driver
+     */
+    function getLibLabel($key)
+    {
+        return $this->liblabel[$key];
+    }
+
+    /**
+     *      \brief      Renvoi version de librairie externe du driver
+     */
+    function getLibVersion($key)
+    {
+        return $this->libversion[$key];
     }
 
 

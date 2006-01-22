@@ -254,8 +254,18 @@ class DolibarrModules
 
 
     /**
+            \brief      Retourne la liste des fichiers lang en rapport avec le module
+            \return     array       Tableau des fichier lang
+     */
+    function getLangFilesArray()
+    {
+        return $this->langfiles;
+    }
+    
+    
+    /**
             \brief      Insère ligne module
-            \return     int     Nombre d'erreurs (0 si ok)
+            \return     int         Nombre d'erreurs (0 si ok)
      */
     function _dbactive()
     {

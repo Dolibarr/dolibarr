@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ $liste=$model->liste_modeles($db);
 foreach($liste as $key)
 {
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$model->getModelName($key).'</td><td>'.$model->getDriverName($key).'</td><td>'.$model->getDriverVersion($key).'</td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$model->getDriverLabel($key).'</td><td>'.$model->getLibLabel($key).'</td><td>'.$model->getLibVersion($key).'</td></tr>';
 }
 
 print '</table>';

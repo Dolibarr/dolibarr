@@ -73,6 +73,7 @@ class modAdherent extends DolibarrModules
         //------------
         $this->depends = array();
         $this->requiredby = array();
+        $this->langfiles = array("members","companies");
     
         // Constantes
         //-----------
@@ -195,8 +196,17 @@ class modAdherent extends DolibarrModules
         $r++;
         $this->export_code[$r]=$this->numero.'_'.$r;
         $this->export_label[$r]='Adhérents et attributs';
-        $this->export_fields_array[$r]=array('a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.address'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.email'=>"Email",'a.login'=>"Login",'a.naiss'=>"Birthday");
-        $this->export_sql[$r]="select ".join(',',array_keys($this->export_fields_array[$r])).' from '.MAIN_DB_PREFIX.'adherent as a';
+        $this->export_fields_array[$r]=array('a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.email'=>"Email",'a.login'=>"Login",'a.naiss'=>"Birthday");
+        $this->export_alias_array[$r]=array('a.nom'=>"lastname",'a.prenom'=>"firstname",'a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.email'=>"email",'a.login'=>"login",'a.naiss'=>"birthday");
+        $this->export_sql[$r]="select ";
+        $i=0;
+        foreach ($this->export_alias_array[$r] as $key => $value)
+        {
+            if ($i > 0) $this->export_sql[$r].=', ';
+            else $i++;
+            $this->export_sql[$r].=$key.' as '.$value;
+        }
+        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'adherent as a';
         $this->export_permission[$r]=array(array("adherent","export"));
     }
 
