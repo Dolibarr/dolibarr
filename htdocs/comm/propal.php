@@ -23,9 +23,9 @@
  */
 
 /**
-   \file       htdocs/comm/propal.php
-   \ingroup    propale
-   \brief      Page liste des propales (vision commercial)
+        \file       htdocs/comm/propal.php
+        \ingroup    propale
+        \brief      Page liste des propales (vision commercial)
 */
 
 require("./pre.inc.php");
@@ -73,29 +73,29 @@ $form=new Form($db);
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 {
-  if ($user->rights->propale->supprimer)
+    if ($user->rights->propale->supprimer)
     {
-      $propal = new Propal($db, 0, $_GET['propalid']);
-      $propal->delete($user);
-      $propalid = 0;
-      $brouillon = 1;
+        $propal = new Propal($db, 0, $_GET['propalid']);
+        $propal->delete($user);
+        $propalid = 0;
+        $brouillon = 1;
     }
-  Header('Location: propal.php');
-  exit;
+    Header('Location: propal.php');
+    exit;
 }
 
 if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
 {
-  if ($user->rights->propale->valider)
+    if ($user->rights->propale->valider)
     {
-      $propal = new Propal($db);
-      $propal->fetch($_GET['propalid']);
-      $result=$propal->update_price($_GET['propalid']);
-      propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
-      $result=$propal->valid($user);
+        $propal = new Propal($db);
+        $propal->fetch($_GET['propalid']);
+        $result=$propal->update_price($_GET['propalid']);
+        propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+        $result=$propal->valid($user);
     }
-  Header ('Location: propal.php?propalid='.$_GET['propalid']);
-  exit;
+    Header ('Location: propal.php?propalid='.$_GET['propalid']);
+    exit;
 }
 
 if ($_POST['action'] == 'setecheance')
@@ -147,7 +147,7 @@ if ($_POST['action'] == 'add')
     }
 }
 
-if ($_GET['action'] == 'pdf')
+if ($_GET['action'] == 'builddoc')
 {
     $propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
@@ -159,9 +159,12 @@ if ($_GET['action'] == 'pdf')
  */
 if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer) 
 {
-    $propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
-    $propal->cloture($user, $_POST['statut'], $_POST['note']);
+    if (! $_POST['cancel'])
+    {
+        $propal = new Propal($db);
+        $propal->fetch($_GET['propalid']);
+        $propal->cloture($user, $_POST['statut'], $_POST['note']);
+    }
 }
 
 /*
@@ -588,10 +591,8 @@ if ($_GET['propalid'] > 0)
                     }
                 }
             }
-            print '</td>';
     
-            if ($conf->projet->enabled)
-            $rowspan++;
+            if ($conf->projet->enabled) $rowspan++;
     
             print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
     
@@ -923,7 +924,10 @@ if ($_GET['propalid'] > 0)
       print '<option value="3">'.$propal->labelstatut[3].'</option>';
       print '</select>';
       print '</td></tr>';
-      print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Validate').'"></td>';
+      print '<tr><td align="center" colspan="2">';
+      print '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
+      print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+      print '</td>';
       print '</tr></table></form>';
     }
 
@@ -933,67 +937,72 @@ if ($_GET['propalid'] > 0)
      */
     print '<div class="tabsAction">';
     
-    // Valid
-    if ($propal->statut == 0)
+    if ($_GET['action'] != 'statut')
     {
-        if ($user->rights->propale->valider)
+        
+        // Valid
+        if ($propal->statut == 0)
         {
-            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
-        }
-    }
-    
-    // Save
-    if ($propal->statut == 1)
-    {
-        if ($user->rights->propale->creer)
-        {
-            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
-        }
-    }
-    
-    // Build PDF
-    if ($user->rights->propale->creer)
-    {
-        if ($propal->statut < 2)
-        {
-            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans("BuildPDF").'</a>';
-        }
-        else
-        {
-            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans("RebuildPDF").'</a>';
-        }
-    }
-    
-    // Send
-    if ($propal->statut == 1)
-    {
-        if ($user->rights->propale->envoyer)
-        {
-            $propref = sanitize_string($propal->ref);
-            $file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-            if (file_exists($file))
+            if ($user->rights->propale->valider)
             {
-                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
             }
         }
-    }
-    
-    // Close
-    if ($propal->statut != 0)
-    {
-        if ($propal->statut == 1 && $user->rights->propale->cloturer)
+        
+        // Save
+        if ($propal->statut == 1)
         {
-            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
+            if ($user->rights->propale->creer)
+            {
+                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+            }
         }
-    }
-    
-    // Delete
-    if ($propal->statut == 0)
-    {
-        if ($user->rights->propale->supprimer)
+        
+        // Build PDF
+        if ($user->rights->propale->creer)
         {
-            print '<a class="butActionDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+            if ($propal->statut < 2)
+            {
+                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
+            }
+            else
+            {
+                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=builddoc">'.$langs->trans("RebuildPDF").'</a>';
+            }
         }
+        
+        // Send
+        if ($propal->statut == 1)
+        {
+            if ($user->rights->propale->envoyer)
+            {
+                $propref = sanitize_string($propal->ref);
+                $file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
+                if (file_exists($file))
+                {
+                    print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+                }
+            }
+        }
+        
+        // Close
+        if ($propal->statut != 0)
+        {
+            if ($propal->statut == 1 && $user->rights->propale->cloturer)
+            {
+                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
+            }
+        }
+        
+        // Delete
+        if ($propal->statut == 0)
+        {
+            if ($user->rights->propale->supprimer)
+            {
+                print '<a class="butActionDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+            }
+        }
+    
     }
     
     print '</div>';
