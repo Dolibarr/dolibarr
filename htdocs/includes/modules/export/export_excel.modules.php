@@ -1,0 +1,159 @@
+<?php
+/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+* or see http://www.gnu.org/
+*
+* $Id$
+* $Source$
+*/
+
+/**
+       	\file       htdocs/includes/modules/export/export_excel.modules.php
+		\ingroup    export
+		\brief      Fichier de la classe permettant de générer les export au format CSV
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/export/modules_export.php");
+require_once(PHP_WRITEEXCEL_PATH."class.writeexcel_workbookbig.inc.php");
+require_once(PHP_WRITEEXCEL_PATH."class.writeexcel_worksheet.inc.php");
+
+
+/**
+	    \class      ExportCsv
+		\brief      Classe permettant de générer les factures au modèle Crabe
+*/
+
+class ExportExcel extends ModeleExports
+{
+    var $id;
+    var $label;
+    var $extension;
+    var $version;
+
+    var $label_lib;
+    var $version_lib;
+
+    var $workbook;      // Handle fichier
+    var $worksheet;     // Handle onglet
+
+    
+    /**
+    		\brief      Constructeur
+    		\param	    db      Handler accès base de donnée
+    */
+    function ExportExcel($db)
+    {
+        global $conf,$langs;
+        $this->db = $db;
+
+        $this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
+        $this->label='Excel';               // Label of driver
+        $this->extension='xls';             // Extension for generated file by this driver
+        $ver=split(' ','$Revision$');
+        $this->version=$ver[2];             // Driver version
+
+        // If driver use an external library, put its name here
+        $this->label_lib='Php_WriteExcel';            
+        $this->version_lib='?';
+    }
+
+    function getDriverId()
+    {
+        return $this->id;
+    }
+
+    function getDriverLabel()
+    {
+        return $this->label;
+    }
+
+    function getDriverExtension()
+    {
+        return $this->extension;
+    }
+
+    function getDriverVersion()
+    {
+        return $this->version;
+    }
+
+    function getLibLabel()
+    {
+        return $this->label_lib;
+    }
+
+    function getLibVersion()
+    {
+        return $this->version_lib;
+    }
+
+
+    function open_file($file)
+    {
+        dolibarr_syslog("ExportExcel::open_file file=$file");
+        $this->workbook = &new writeexcel_workbookbig($file);
+        $this->worksheet = &$this->workbook->addworksheet();
+
+        // $this->worksheet->set_column(0, 50, 18);
+
+        return 0;
+    }
+
+
+    function write_header($langs)
+    {
+        return 0;
+    }
+
+
+    function write_title($array_export_fields_label,$array_selected_sorted,$langs)
+    {
+        return 0;
+    }
+
+
+    function write_record($array_alias,$array_selected_sorted,$objp)
+    {
+        $this->col=0;
+        $this->row++;
+        foreach($array_selected_sorted as $code => $value)
+        {
+            $alias=$array_alias[$code];
+            //print "dd".$alias;
+            $this->worksheet->write($this->row, $this->col, $objp->$alias);
+            $this->col++;
+        }
+        return 0;
+    }
+
+
+    function write_footer($langs)
+    {
+        return 0;
+    }
+    
+
+    function close_file()
+    {
+        $this->workbook->close();
+        return 0;
+    }
+
+}
+
+?>

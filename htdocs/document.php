@@ -43,6 +43,7 @@ $type = urldecode($_GET["type"]); $attachment = true;
 if (eregi('\.html',$original_file)) { $type='text/html'; $attachment = false; }
 if (eregi('\.csv',$original_file))  { $type='text/csv'; $attachment = true; }
 if (eregi('\.pdf',$original_file))  { $type='application/pdf'; $attachment = true; }
+if (eregi('\.xls',$original_file))  { $type='application/x-msexcel'; $attachment = true; }
 
 //Suppression de la chaine de caractère ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
