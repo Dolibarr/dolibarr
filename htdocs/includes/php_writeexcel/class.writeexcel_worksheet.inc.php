@@ -38,6 +38,7 @@ class writeexcel_worksheet extends writeexcel_biffwriter {
 
     var $_ext_sheets;
     var $_using_tmpfile;
+    var $_tmpfilename;
     var $_filehandle;
     var $_fileclosed;
     var $_offset;
@@ -100,6 +101,8 @@ class writeexcel_worksheet extends writeexcel_biffwriter {
     var $_zoom;
     var $_print_scale;
 
+    var $_debug;
+
     /*
      * Constructor. Creates a new Worksheet object from a BIFFwriter object
      */
@@ -122,6 +125,7 @@ class writeexcel_worksheet extends writeexcel_biffwriter {
 
         $this->_ext_sheets        = array();
         $this->_using_tmpfile     = 1;
+        $this->_tmpfilename       = false;
         $this->_filehandle        = false;
         $this->_fileclosed        = 0;
         $this->_offset            = 0;
@@ -198,7 +202,8 @@ class writeexcel_worksheet extends writeexcel_biffwriter {
 function _initialize() {
 
     # Open tmp file for storing Worksheet data.
-    $fh=fopen(tempnam($this->_tempdir, "php_writeexcel"), "w+b");
+    $this->_tmpfilename=tempnam($this->_tempdir, "php_writeexcel");
+    $fh=fopen($this->_tmpfilename, "w+b");
 
     if ($fh) {
         # Store filehandle
@@ -206,6 +211,7 @@ function _initialize() {
     } else {
         # If tempfile() failed store data in memory
         $this->_using_tmpfile = 0;
+        $this->_tmpfilename=false;
 
         if ($this->_index == 0) {
             $dir = $this->_tempdir;
@@ -305,11 +311,13 @@ function get_data() {
 
     # Return data stored in memory
     if ($this->_data!==false) {
-        $tmp           = $this->_data;
+        $tmp=$this->_data;
         $this->_data=false;
-        $fh         = $this->_filehandle;
+
+        // The next data comes from the temporary file, so prepare
+        // it by putting the file pointer to the beginning
         if ($this->_using_tmpfile) {
-            fseek($fh, 0, SEEK_SET);
+            fseek($this->_filehandle, 0, SEEK_SET);
         }
 
         if ($this->_debug) {
@@ -345,9 +353,19 @@ function get_data() {
         }
     }
 
-    # No data to return
+    # No more data to return
     return false;
 }
+
+    /* Remove the temporary file */
+    function cleanup() {
+      if ($this->_using_tmpfile) {
+        fclose($this->_filehandle);
+        unlink($this->_tmpfilename);
+        $this->_tmpfilename=false;
+        $this->_using_tmpfile=false;
+      }
+    }
 
     /*
      * Set this worksheet as a selected worksheet, i.e. the worksheet has
@@ -767,37 +785,37 @@ function write() {
 
     # Match an array ref.
     if (is_array($token)) {
-        return call_user_method_array('write_row', $this, $_);
+        return call_user_func_array(array(&$this, 'write_row'), $_);
     }
 
     # Match number
     if (preg_match('/^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/', $token)) {
-        return call_user_method_array('write_number', $this, $_);
+        return call_user_func_array(array(&$this, 'write_number'), $_);
     }
     # Match http, https or ftp URL
     elseif (preg_match('|^[fh]tt?ps?://|', $token)) {
-        return call_user_method_array('write_url', $this, $_);
+        return call_user_func_array(array(&$this, 'write_url'), $_);
     }
     # Match mailto:
     elseif (preg_match('/^mailto:/', $token)) {
-        return call_user_method_array('write_url', $this, $_);
+        return call_user_func_array(array(&$this, 'write_url'), $_);
     }
     # Match internal or external sheet link
     elseif (preg_match('[^(?:in|ex)ternal:]', $token)) {
-        return call_user_method_array('write_url', $this, $_);
+        return call_user_func_array(array(&$this, 'write_url'), $_);
     }
     # Match formula
     elseif (preg_match('/^=/', $token)) {
-        return call_user_method_array('write_formula', $this, $_);
+        return call_user_func_array(array(&$this, 'write_formula'), $_);
     }
     # Match blank
     elseif ($token == '') {
         array_splice($_, 2, 1); # remove the empty string from the parameter list
-        return call_user_method_array('write_blank', $this, $_);
+        return call_user_func_array(array(&$this, 'write_blank'), $_);
     }
     # Default: match string
     else {
-        return call_user_method_array('write_string', $this, $_);
+        return call_user_func_array(array(&$this, 'write_string'), $_);
     }
 }
 
@@ -1069,6 +1087,7 @@ function _cell_to_rowcol($cell) {
     function _encode_password($plaintext) {
         $chars=preg_split('//', $plaintext, -1, PREG_SPLIT_NO_EMPTY);
         $count=sizeof($chars);
+        $i=0;
 
         for ($c=0;$c<sizeof($chars);$c++) {
             $char=&$chars[$c];
@@ -1377,7 +1396,7 @@ function write_url() {
     }
 
     # Add start row and col to arg list
-    return call_user_method_array('write_url_range', $this,
+    return call_user_func_array(array(&$this, 'write_url_range'),
                                   array_merge(array($_[0], $_[1]), $_));
 }
 
@@ -1413,14 +1432,14 @@ function write_url_range() {
 
     # Check for internal/external sheet links or default to web link
     if (preg_match('[^internal:]', $url)) {
-        return call_user_method_array('_write_url_internal', $this, $_);
+        return call_user_func_array(array(&$this, '_write_url_internal'), $_);
     }
 
     if (preg_match('[^external:]', $url)) {
-        return call_user_method_array('_write_url_external', $this, $_);
+        return call_user_func_array(array(&$this, '_write_url_external'), $_);
     }
 
-    return call_user_method_array('_write_url_web', $this, $_);
+    return call_user_func_array(array(&$this, '_write_url_web'), $_);
 }
 
 ###############################################################################
@@ -1582,7 +1601,7 @@ function _write_url_external() {
     # Network drives are different. We will handle them separately
     # MS/Novell network drives and shares start with \\
     if (preg_match('[^external:\\\\]', $_[4])) {
-        return call_user_method_array('_write_url_external_net', $this, $_);
+        return call_user_func_array(array(&$this, '_write_url_external_net'), $_);
     }
 
     $record      = 0x01B8;                       # Record identifier
@@ -2075,15 +2094,13 @@ function _store_selection($_) {
 # Frozen panes are specified in terms of a integer number of rows and columns.
 # Thawed panes are specified in terms of Excel's units for rows and columns.
 #
-function _store_panes() {
-
-    $_=func_get_args();
+function _store_panes($_) {
 
     $record  = 0x0041;       # Record identifier
     $length  = 0x000A;       # Number of bytes to follow
 
-    $y       = $_[0] || 0;   # Vertical split position
-    $x       = $_[1] || 0;   # Horizontal split position
+    $y       = $_[0] ? $_[0] : 0;   # Vertical split position
+    $x       = $_[1] ? $_[1] : 0;   # Horizontal split position
     if (isset($_[2])) {
         $rwTop   = $_[2];        # Top row visible
     }
@@ -2371,8 +2388,8 @@ function merge_cells() {
     $cref     = 1;                       # Number of refs
     $rwFirst  = $_[0];                   # First row in reference
     $colFirst = $_[1];                   # First col in reference
-    $rwLast   = $_[2] || $rwFirst;       # Last  row in reference
-    $colLast  = $_[3] || $colFirst;      # Last  col in reference
+    $rwLast   = $_[2] ? $_[2] : $rwFirst;       # Last  row in reference
+    $colLast  = $_[3] ? $_[3] : $colFirst;      # Last  col in reference
 
     // Swap last row/col for first row/col as necessary
     if ($rwFirst > $rwLast) {

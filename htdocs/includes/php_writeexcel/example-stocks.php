@@ -5,7 +5,7 @@ set_time_limit(10);
 require_once "class.writeexcel_workbook.inc.php";
 require_once "class.writeexcel_worksheet.inc.php";
 
-$fname = tempnam("/tmp", "merge2.xls");
+$fname = tempnam("/tmp", "stocks.xls");
 $workbook = &new writeexcel_workbook($fname);
 $worksheet =& $workbook->addworksheet();
 
@@ -62,7 +62,8 @@ $worksheet->write(3, 3, 0,         $f_change); # 0 in the font color (black)
 
 $workbook->close();
 
-header("Content-Type: application/x-msexcel");
+header("Content-Type: application/x-msexcel; name=\"example-stocks.xls\"");
+header("Content-Disposition: inline; filename=\"example-stocks.xls\"");
 $fh=fopen($fname, "rb");
 fpassthru($fh);
 unlink($fname);

@@ -110,7 +110,7 @@ class writeexcel_format {
 
         // Set properties passed to writeexcel_workbook::addformat()
         if (sizeof($_)>0) {
-            call_user_method_array('set_properties', $this, $_);
+            call_user_func_array(array(&$this, 'set_properties'), $_);
         }
     }
 
@@ -119,7 +119,9 @@ class writeexcel_format {
      */
     function copy($other) {
         $xf = $this->_xf_index;   // Backup XF index
-        $this = $other;           // Copy properties
+        foreach ($other as $key->$value) {
+                $this->{$key} = $value;
+        }
         $this->_xf_index = $xf;   // Restore XF index
     }
 

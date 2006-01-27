@@ -31,6 +31,7 @@ class writeexcel_biffwriter {
     var $_data;
     var $_datasize;
     var $_limit;
+    var $_debug;
 
     /*
      * Constructor

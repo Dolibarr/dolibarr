@@ -1,3 +1,32 @@
+0.3.0 (2005-11-01):
+- Fixed cell merging (fix contributed by Nicolas Kahn - thanks!)
+- Corrected the README: formulas are supported since version 0.2.2
+- Added a method named set_codepage() to the workbook object which
+  allows to set the codepage (fixes German Umlauts on Macs for
+  example, contributed by Stefan Grünig - thanks!)
+- Changed all calls of call_user_method_array() to call_user_func_array()
+  as recent PHP versions complain about call_user_method_array() being
+  deprecated (reported by Julien Detante and Luc Cessieux)
+- Added $_debug to the class variable declaration of 
+  class.writeexcel_biffwriter.inc.php and 
+  class.writeexcel_worksheet.inc.php so that PHP doesn't complain about it
+- The demos now produce proper headers ("Content-Type" and 
+  "Content-Disposition") so that the correct application gets loaded
+  when an XLS file is received more reliably (thanks to
+  C. Mourad Jaber)
+- Temporary files are now deleted (reported by Siggi Oskarsson)
+- Added example-colors.php
+- Fixed frozen and thawed panes (reported by Roger Jochem and Flavio 
+  Ciotola)
+- Added example-panes.php to prove that it's really fixed ;-)
+- Added example-repeat.php because somebody reported that it doesn't
+  work - it does work for me, please report again if it fails for you
+  and send me your code
+- Fixed cell range formulas like '$A$1:$B$2' which should now work
+  (thanks Cedric Chandon)
+- Fixed the PHP 5 incompatibility (reported by several people, patch
+  by Jean Pasdeloup, thanks!)
+
 0.2.2 (2003-10-08):
 - Cleaned up class.writeexcel_biffwriter.inc.php
 - Cleaned up _append() and _prepend() in class.writeexcel_biffwriter.inc.php

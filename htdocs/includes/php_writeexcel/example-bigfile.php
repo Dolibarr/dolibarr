@@ -19,7 +19,8 @@ for ($col=0;$col<50;$col++) {
 
 $workbook->close();
 
-header("Content-Type: application/x-msexcel");
+header("Content-Type: application/x-msexcel; name=\"example-bigfile.xls\"");
+header("Content-Disposition: inline; filename=\"example-bigfile.xls\"");
 $fh=fopen($fname, "rb");
 fpassthru($fh);
 unlink($fname);

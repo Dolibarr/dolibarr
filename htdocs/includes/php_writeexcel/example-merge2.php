@@ -51,7 +51,8 @@ $worksheet->write_blank(2, 2,                 $border2);
 
 $workbook->close();
 
-header("Content-Type: application/x-msexcel");
+header("Content-Type: application/x-msexcel; name=\"example-merge2.xls\"");
+header("Content-Disposition: inline; filename=\"example-merge2.xls\"");
 $fh=fopen($fname, "rb");
 fpassthru($fh);
 unlink($fname);

@@ -61,11 +61,9 @@ $worksheet->write('B6', 37257, $num2_format);
 #
 # Formulae
 #
-/*
 $worksheet->set_selection('B7');
 $worksheet->write('A7', 'Formulas and functions, "=SIN(PI()/4)"');
 $worksheet->write('B7', '=SIN(PI()/4)');
-*/
 
 #######################################################################
 #
@@ -90,7 +88,8 @@ $worksheet->write('A18', "Multiple worksheets");
 
 $workbook->close();
 
-header("Content-Type: application/x-msexcel");
+header("Content-Type: application/x-msexcel; name=\"example-demo.xls\"");
+header("Content-Disposition: inline; filename=\"example-demo.xls\"");
 $fh=fopen($fname, "rb");
 fpassthru($fh);
 unlink($fname);

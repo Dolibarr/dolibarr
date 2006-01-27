@@ -67,20 +67,19 @@ with while porting SpreadSheet::WriteExcel to PHP:
 
 What features are currently supported?
 --------------------------------------
-Basically all features of Spreadsheet::WriteExcel will hopefully be
-supported one day. However, it makes use of some Perl packages with
-functions I did not yet find for PHP.
+Basically all features of Spreadsheet::WriteExcel are supported and
+thanks to a lot of people (see CHANGELOG) who contributed code and bug
+fixes, most things seem to work. However, please remember that it's still
+in beta stage, so there are probably some bugs left.
 
 Spreadsheet::WriteExcel uses the Parse::RecDescent package for formula
-support. I havn't looked for a Recursive Descent parser for PHP yet. Thus
-Excel formulas are not yet supported.
+support. Andreas Brodowski has imported and changed the PEAR::Spreadsheet
+Parser.php file, so formulas are supported since version 0.2.2.
 
 Spreadsheet::WriteExcel uses the OLE::Storage_Lite package for
 supporting Excel files bigger than approx. 7 MB. I have ported this
 package already and called it php_ole. But I really don't know how
 reliable it is, so use it with care!
-
-All other features SHOULD work.
 
 
 

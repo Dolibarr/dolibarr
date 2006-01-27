@@ -3,7 +3,7 @@
 require_once "class.writeexcel_workbook.inc.php";
 require_once "class.writeexcel_worksheet.inc.php";
 
-$fname = tempnam("/tmp", "merge2.xls");
+$fname = tempnam("/tmp", "textwrap.xls");
 $workbook = &new writeexcel_workbook($fname);
 $worksheet = &$workbook->addworksheet();
 
@@ -63,7 +63,8 @@ $worksheet->write(5, 3, $str2, $format2);
 
 $workbook->close();
 
-header("Content-Type: application/x-msexcel");
+header("Content-Type: application/x-msexcel; name=\"example-textwrap.xls\"");
+header("Content-Disposition: inline; filename=\"example-textwrap.xls\"");
 $fh=fopen($fname, "rb");
 fpassthru($fh);
 unlink($fname);

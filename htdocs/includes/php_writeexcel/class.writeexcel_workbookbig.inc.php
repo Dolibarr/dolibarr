@@ -43,6 +43,7 @@ class writeexcel_workbookbig extends writeexcel_workbook {
             while ($data=$worksheet->get_data()) {
                 $file->append($data);
             }
+            $worksheet->cleanup();
         }
 
         $ole=new ole_pps_root(false, false, array($file));

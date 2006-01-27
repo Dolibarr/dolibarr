@@ -45,6 +45,7 @@ class writeexcel_workbook extends writeexcel_biffwriter {
     var $_sheetname;
     var $_tmp_format;
     var $_url_format;
+    var $_codepage;
     var $_worksheets;
     var $_sheetnames;
     var $_formats;
@@ -77,6 +78,7 @@ function writeexcel_workbook($filename) {
     $this->_sheetname         = "Sheet";
     $this->_tmp_format        = $tmp_format;
     $this->_url_format        = false;
+    $this->_codepage          = 0x04E4;
     $this->_worksheets        = array();
     $this->_sheetnames        = array();
     $this->_formats           = array();
@@ -413,6 +415,24 @@ function set_tempdir($tempdir) {
 
 ###############################################################################
 #
+# set_codepage()
+#
+# See also the _store_codepage method. This is used to store the code page, i.e.
+# the character set used in the workbook.
+#
+function set_codepage($cp) {
+
+    if($cp==1)
+      $codepage   = 0x04E4;
+    else if($cp==2)
+      $codepage   = 0x8000;
+    if($codepage)
+      $this->_codepage = $codepage;
+}
+
+
+###############################################################################
+#
 # _store_workbook()
 #
 # Assemble worksheets into a workbook and send the BIFF data to an OLE
@@ -442,6 +462,8 @@ function _store_workbook() {
 
     $this->_store_names();      # For print area and repeat rows
 
+    $this->_store_codepage();
+    
     $this->_store_window1();
 
     $this->_store_1904();
@@ -499,6 +521,7 @@ function _store_OLE_file() {
             while ($tmp = $sheet->get_data()) {
                 $OLE->write($tmp);
             }
+            $sheet->cleanup();
         }
     }
 
@@ -1101,6 +1124,24 @@ function _store_palette() {
     $header = pack("vvv",  $record, $length, $ccv);
 
     $this->_append($header . $data);
+}
+
+###############################################################################
+#
+# _store_codepage()
+#
+# Stores the CODEPAGE biff record.
+#
+function _store_codepage() {
+
+    $record          = 0x0042;               # Record identifier
+    $length          = 0x0002;               # Number of bytes to follow
+    $cv              = $this->_codepage;     # The code page
+
+    $header          = pack("vv", $record, $length);
+    $data            = pack("v",  $cv);
+
+    $this->_append($header.$data);
 }
 
 }
