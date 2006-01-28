@@ -241,9 +241,9 @@ if ($_GET["id"])
 
 
         $sql = "SELECT distinct(s.nom), s.idp, p.rowid as propalid, p.ref, p.total as amount,";
-		$sql.= $db->pdate("p.datec")." as date, p.fk_statut as statut";
+				$sql.= $db->pdate("p.datec")." as date, p.fk_statut as statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."propaldet as d";
-		$sql.= " WHERE p.fk_soc = s.idp";
+				$sql.= " WHERE p.fk_soc = s.idp";
         $sql.= " AND d.fk_propal = p.rowid AND d.fk_product =".$product->id;
         if ($socid)
         {
@@ -278,7 +278,7 @@ if ($_GET["id"])
                     $var=!$var;
 
                     print "<tr $bc[$var]>";
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->propid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
                     print $objp->ref;
                     print "</a></td>\n";
                     print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
