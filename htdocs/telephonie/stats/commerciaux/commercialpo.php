@@ -98,12 +98,12 @@ if ($_GET["commid"])
       $num = $db->num_rows($resql);
       $i = 0;
       
-      print_barre_liste("Prises d'ordre", $page, "po.php", "", $sortfield, $sortorder, '', $num);
+      print_barre_liste("Prises d'ordre", $page, "commercialpo.php", "", $sortfield, $sortorder, '', $num);
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
-      print_liste_field_titre("Client","po.php","s.nom","","&amp;id=".$_GET["id"]);
-      print_liste_field_titre("Contrat","po.php","p.fk_contrat","","&amp;id=".$_GET["id"]);
+      print_liste_field_titre("Client","commercialpo.php","s.nom","","&amp;id=".$_GET["id"]);
+      print_liste_field_titre("Contrat","commercialpo.php","p.fk_contrat","","&amp;id=".$_GET["id"]);
       print '<td align="center">Date</td>';
       print '<td align="right">Montant</td>';
       print '<td align="center">Avance Durée</td><td align="center">Avance %</td>';
