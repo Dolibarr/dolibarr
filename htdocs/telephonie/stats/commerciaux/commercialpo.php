@@ -98,7 +98,7 @@ if ($_GET["commid"])
       $num = $db->num_rows($resql);
       $i = 0;
       
-      print_barre_liste("Prises d'ordre", $page, "commercialpo.php?commid=".$_GET["commid"], "", $sortfield, $sortorder, '', $num);
+      print_barre_liste("Prises d'ordre", $page, "commercialpo.php","&amp;commid=".$_GET["commid"], $sortfield, $sortorder, '', $num);
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
