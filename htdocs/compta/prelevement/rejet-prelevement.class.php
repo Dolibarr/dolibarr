@@ -57,7 +57,8 @@ class RejetPrelevement
     $this->motifs[4] = "Opposition sur compte";
     $this->motifs[5] = "RIB inexploitable";
     $this->motifs[6] = "Compte soldé";
-
+    $this->motifs[7] = "Décision judiciaire";
+    $this->motifs[8] = "Autre motif";
   }
 
   function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)
