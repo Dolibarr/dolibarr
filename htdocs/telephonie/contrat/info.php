@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +121,78 @@ if ($_GET["id"])
 	  print '</td></tr>';
 
 	  print "</table><br />";
+
+
+  $sql = "SELECT s.idp, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
+  $sql .= ", p.rem_pour_prev, p.rem_pour_autr, p.mode_paiement";
+  $sql .= ", u.name, u.firstname, uu.code";
+  $sql .= " , ".$db->pdate("p.datepo") . " as datepo";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
+  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
+  $sql .= " , ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " , ".MAIN_DB_PREFIX."user as u";
+  $sql .= " , ".MAIN_DB_PREFIX."user as uu";
+  
+  $sql .= " WHERE p.fk_commercial =u.rowid";
+  $sql .= " AND p.fk_user =uu.rowid";
+  $sql .= " AND c.fk_soc = s.idp";
+  $sql .= " AND p.fk_contrat = c.rowid";
+  $sql .= " AND c.rowid =".$_GET["id"];
+
+  
+  $resql = $db->query($sql);
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      
+      print_barre_liste("Prises d'ordre", $page, "commercialpo.php","&amp;commid=".$_GET["commid"], $sortfield, $sortorder, '', $num);
+      
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+      print '<tr class="liste_titre"><td>Affecté à</td>';
+      print '<td align="center">Date</td>';
+      print '<td align="right">Montant</td>';
+      print '<td align="center">MdP</td>';
+      print '<td align="center">Saisi par</td>';
+      print "</tr>\n";
+      
+      $var=True;
+      
+      while ($i < min($num,$conf->liste_limit))
+	{
+	  $obj = $db->fetch_object($resql);
+	  $var=!$var;
+	  
+	  print "<tr $bc[$var]>";
+	  
+	  print '<td>'.$obj->firstname.' '.$obj->name."</td>\n";
+
+	  print '<td align="center">'.strftime("%e %b %Y",$obj->datepo)."</td>\n";
+
+	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";
+	  
+	  if ($obj->mode_paiement == 'pre')
+	    {
+	      print '<td align="center">Prelev</td>';
+	    }
+	  else
+	    {
+	      print '<td align="center">Autre</td>';
+	    }
+	  print '<td align="center">'.$obj->code.'</td>';
+
+	  print "</tr>\n";
+	  $i++;
+	}
+      print "</table>";
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+
+
 	}
     }
 }
