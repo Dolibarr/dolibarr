@@ -102,8 +102,8 @@ if ($_GET["commid"])
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
-      print_liste_field_titre("Client","commercialpo.php","s.nom","","&amp;id=".$_GET["id"]);
-      print_liste_field_titre("Contrat","commercialpo.php","p.fk_contrat","","&amp;id=".$_GET["id"]);
+      print_liste_field_titre("Client","commercialpo.php","s.nom","","&amp;commid=".$_GET["commid"]);
+      print_liste_field_titre("Contrat","commercialpo.php","p.fk_contrat","","&amp;commid=".$_GET["commid"]);
       print '<td align="center">Date</td>';
       print '<td align="right">Montant</td>';
       print '<td align="center">Avance Durée</td><td align="center">Avance %</td>';
