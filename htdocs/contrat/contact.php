@@ -372,7 +372,7 @@ if ($id > 0)
 				print '<td align="left">';
 				if ($tab[$i]['socid'] > 0)
 				{
-					print '<a href="'.DOL_URL_ROOT.'/soc.php?idp='.$tab[$i]['socid'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$tab[$i]['socid'].'">';
 					print img_object($langs->trans("ShowCompany"),"company").' '.$societe->get_nom($tab[$i]['socid']);
 					print '</a>';
                 }
