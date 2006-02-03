@@ -590,7 +590,7 @@ class Form
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
-                $opt = '<option value="'.$objp->rowid.'">['.$objp->ref.'] ';
+                $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
                 $opt.= dolibarr_trunc($objp->label,40).' - ';
 				//multiprix
 				if($price_level > 1)
@@ -655,7 +655,7 @@ class Form
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
-                $opt = '<option value="'.$objp->rowid.'">['.$objp->ref.'] ';
+                $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
                 $opt.= dolibarr_trunc($objp->label,40).' - ';
                 $opt.= $objp->fprice." ".$langs->trans("Currency".$conf->monnaie)." / ".$objp->quantity." ".$langs->trans("Units");
                 if ($objp->quantity > 1)
