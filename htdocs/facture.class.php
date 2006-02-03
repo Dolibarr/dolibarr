@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2006      Andre Cianfarani        <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,10 +169,18 @@ class Facture
 			{
 				$prod = new Product($this->db, $this->products[$i]);
 				$prod->fetch($this->products[$i]);
-
+				// multiprix
+				if($conf->global->PRODUIT_MULTIPRICES == 1)
+				{
+					$soc = new Societe($this->db);
+					$soc->fetch($this->socidp);
+					$price = $prod->multiprices[$soc->price_level];
+				}
+				else
+					$price = $prod->price;
 				$result_insert = $this->addline($this->id,
 					$prod->libelle,
-					$prod->price,
+					$price,
 					$this->products_qty[$i],
 					$prod->tva_tx,
 					$this->products[$i],
@@ -970,6 +979,7 @@ class Facture
 	*/
 	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
 	{
+		global $conf;
 		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
 		if ($this->brouillon)
 		{
@@ -982,7 +992,15 @@ class Facture
             {
                 $prod = new Product($this->db, $fk_product);
                 $prod->fetch($fk_product);
-                $pu=$prod->price;
+				// multiprix
+				if($conf->global->PRODUIT_MULTIPRICES == 1)
+				{
+					$soc = new Societe($this->db);
+					$soc->fetch($this->socidp);
+					$pu = $prod->multiprices[$soc->price_level];
+				}
+				else
+                	$pu=$prod->price;
                 $txtva=$prod->tva_tx;
             }
 			$price = $pu;
