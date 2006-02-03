@@ -140,3 +140,4 @@ DolibarrLogin=Login Dolibarr
 NoDolibarrAccess=Pas d'accès Dolibarr
 ExportDataset_company_1=Sociétés/associations et caractéristiques
 ExportDataset_company_2=Contacts et caractéristiques
+PriceLevel=Niveau de prix
