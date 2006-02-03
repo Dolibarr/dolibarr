@@ -2,6 +2,7 @@
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -324,7 +325,97 @@ class DoliDb
             return 1;
         }
     }
-
+	/**
+        \brief      Crée une table
+        \param	    table Nom de la table
+		    \param	    fields tableau associatif [nom champ][tableau des descriptions] 
+			 	\param	    primary_key Nom du champ qui sera la clef primaire 
+				\param	    unique_keys tableau associatifs Nom de champs qui seront clef unique => valeur
+				\param	    fulltext tableau des Nom de champs qui seront indexés en fulltext
+				\param	    type type de la table
+        \return	    true/false    selon si requête a provoqué un erreur mysql ou pas
+    */
+	function create_table($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="")
+	{
+		// clés recherchées dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
+		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+		$sql = "create table ".$table."(";
+		$i=0;
+		foreach($fields as $field_name => $field_desc)
+		{
+			$sqlfields[$i] = $field_name." ";
+			$sqlfields[$i]  .= $field_desc['type'];
+			if( eregi("^[^ ]",$field_desc['value']))
+				$sqlfields[$i]  .= "(".$field_desc['value'].")";
+			if( eregi("^[^ ]",$field_desc['attribute']))
+				$sqlfields[$i]  .= " ".$field_desc['attribute'];
+			if( eregi("^[^ ]",$field_desc['null']))
+				$sqlfields[$i]  .= " ".$field_desc['null'];
+			if( eregi("^[^ ]",$field_desc['default']))
+				if(eregi("null",$field_desc['default']))
+					$sqlfields[$i]  .= " default ".$field_desc['default'];
+				else
+					$sqlfields[$i]  .= " default '".$field_desc['default']."'";
+			if( eregi("^[^ ]",$field_desc['extra']))
+				$sqlfields[$i]  .= " ".$field_desc['extra'];
+			$i++;
+		}
+		$pk = "primary key(".$primary_key.")";
+		
+		if($unique_keys != "")
+		{
+			$i = 0;
+			foreach($unique_keys as $key => $value)
+			{
+				$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$value."')";
+				$i++;
+			}
+		}
+		$sql .= implode(',',$sqlfields);
+		$sql .= ",".$pk;
+		if($unique_keys != "")
+			$sql .= ",".implode(',',$sqluq);
+		$sql .=") type=".$type;
+		// dolibarr_syslog($sql);
+		if(! $this -> query($sql))
+			return false;
+		else
+			return true;
+	}
+	/**
+        \brief      Insère un nouveau champ dans une table
+        \param	    table Nom de la table
+		    \param			field_name Nom du champ à insérer
+		    \param	    field_desc tableau associatif de description duchamp à insérer[nom du paramètre][valeur du paramètre] 
+				\param	    field_position Optionnel ex.: "after champtruc" 
+				\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
+    */
+	function add_field($table,$field_name,$field_desc,$field_position="")
+	{
+		// clés recherchées dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
+		$sql .= $field_desc['type'];
+		if( eregi("^[^ ]",$field_desc['value']))
+			$sql  .= "(".$field_desc['value'].")";
+		if( eregi("^[^ ]",$field_desc['attribute']))
+			$sql  .= " ".$field_desc['attribute'];
+		if( eregi("^[^ ]",$field_desc['null']))
+			$sql  .= " ".$field_desc['null'];
+		if( eregi("^[^ ]",$field_desc['default']))
+			if(eregi("null",$field_desc['default']))
+				$sql  .= " default ".$field_desc['default'];
+			else
+				$sql  .= " default '".$field_desc['default']."'";
+		if( eregi("^[^ ]",$field_desc['extra']))
+			$sql  .= " ".$field_desc['extra'];
+		$sql .= " ".$field_position;
+		
+		if(! $this -> query($sql))
+			return false;
+		else
+			return true;
+	}
     /**
         \brief      Effectue une requete et renvoi le resultset de réponse de la base
         \param	    query	    Contenu de la query
@@ -620,6 +711,18 @@ class DoliDb
     {
         $this->results = mysql_list_tables($database, $this->db);
         return $this->results;
+    }
+	 /**
+        \brief      décrit une table dans une database.
+				\param	    table	Nom de la table
+				\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
+        \return	    resource
+    */
+	function desc_table($table,$field="")
+    {
+		// $this->results = $this->query("DESC ".$table." ".$field);
+		$this->results = $this->query("DESC ".$table." ".$field);
+		return $this->results;
     }
 
 
