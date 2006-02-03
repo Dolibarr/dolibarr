@@ -47,7 +47,7 @@ class pdf_soleil extends ModelePDFFicheinter
     function pdf_soleil($db=0)
     {
         $this->db = $db;
-        $this->description = "Modèle de fiche d'intervention stantdard";
+        $this->description = "Modèle de fiche d'intervention standard";
     }
 
     /**
