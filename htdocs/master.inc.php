@@ -162,7 +162,7 @@ $langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
 
 /*
  * Pour utiliser d'autres versions des librairies externes que les
- * versions embarquées dans Dolibarr, dÚfinir les constantes adequates:
+ * versions embarquées dans Dolibarr, définir les constantes adequates:
  * Pour FPDF:           FPDF_PATH
  * Pour PEAR:           PEAR_PATH
  * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
