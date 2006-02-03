@@ -32,7 +32,7 @@
         \version    $Revision$
 */
 
-define('DOL_VERSION','2.0.0-alpha2');
+define('DOL_VERSION','2.1-alpha');
 
 // La fonction clearstatcache ne doit pas etre appelé de manière globale car ralenti.
 // Elle doit etre appelé uniquement par les pages qui ont besoin d'un cache fichier vidé

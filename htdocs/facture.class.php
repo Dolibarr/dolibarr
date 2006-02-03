@@ -3,8 +3,8 @@
  * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
- * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2006      Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
