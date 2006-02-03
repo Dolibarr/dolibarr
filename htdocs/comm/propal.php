@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -882,7 +883,11 @@ if ($_GET['propalid'] > 0)
                     $var=!$var;
                     print '<tr '.$bc[$var].'>';
                     print '<td colspan="2">';
-                    $html->select_produits('','idprod','',$conf->produit->limit_size);
+					// multiprix
+					if($conf->global->PRODUIT_MULTIPRICES == 1)
+						$html->select_produits('','idprod','',$conf->produit->limit_size,$societe->price_level);
+					else
+                    	$html->select_produits('','idprod','',$conf->produit->limit_size);
                     print '<br>';
                     print '<textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea>';
                     print '</td>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,6 +217,7 @@ class Commande
    */
 	function create($user)
 	{
+		global $conf;
 		/* On positionne en mode brouillon la commande */
 		$this->brouillon = 1;
 		if (! $remise)
@@ -241,12 +243,29 @@ class Commande
 				$prod = new Product($this->db, $this->products[$i]);
 				if ($prod->fetch($this->products[$i]))
 				{
-					$this->insert_product_generic($prod->libelle,
+					// multiprix
+					if($conf->global->PRODUIT_MULTIPRICES == 1)
+					{
+						$this->soc_id;
+						$client = new Societe($this->db);
+     					$client->fetch($this->soc_id);
+						//$prod->multiprices[$client->price_level]
+						$this->insert_product_generic($prod->libelle,
+						$prod->multiprices[$client->price_level],
+						$this->products_qty[$i],
+						$prod->tva_tx,
+						$this->products[$i],
+						$this->products_remise_percent[$i]);
+					}
+					else
+					{
+						$this->insert_product_generic($prod->libelle,
 						$prod->price,
 						$this->products_qty[$i],
 						$prod->tva_tx,
 						$this->products[$i],
 						$this->products_remise_percent[$i]);
+					}
 				}
 			}
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
@@ -338,6 +357,7 @@ class Commande
    */
 	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
 	{
+		global $conf;
 		// Nettoyage parametres
 		$qty = ereg_replace(',','.',$qty);
 		$pu = ereg_replace(',','.',$pu);
@@ -358,7 +378,16 @@ class Commande
 			if ($prod->fetch($fk_product) > 0)
 			{
 				$desc  = $desc?$desc:$prod->libelle;
-				$pu    = $prod->price;
+				// multiprix
+				if($conf->global->PRODUIT_MULTIPRICES == 1)
+				{
+						$client = new Societe($this->db);
+     					$client->fetch($this->soc_id);
+						$pu    = $prod->multiprices[$client->price_level];
+				
+				}
+				else
+					$pu    = $prod->price;
 				$txtva = $prod->tva_tx;
 			}
 		}

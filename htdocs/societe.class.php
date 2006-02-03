@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- *
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,8 @@ class Societe {
 
   var $stcomm_id;
   var $statut_commercial;
+  
+  var $price_level;
 
 
   /**
@@ -406,7 +408,7 @@ class Societe {
     function fetch($socid, $user=0)
     {
 		global $langs;
-
+		global $conf;
 		/* Lecture des permissions */
 		if ($user <> 0)
 		{
@@ -427,6 +429,9 @@ class Societe {
 		}
 
 		$sql = 'SELECT s.idp, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, prefix_comm';
+		// multiprix
+		if($conf->global->PRODUIT_MULTIPRICES == 1)
+			$sql .= ', s.price_level';
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
 		$sql .= ', s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur';
 		$sql .= ', s.siret, s.capital, s.ape, s.tva_intra, s.rubrique';
@@ -536,6 +541,9 @@ class Societe {
 
 				$this->rubrique = $obj->rubrique;
 				$this->note = $obj->note;
+				// multiprix
+				if($conf->global->PRODUIT_MULTIPRICES == 1)
+					$this->price_level = $obj->price_level;
 
 				$result = 1;
 			}
@@ -841,6 +849,27 @@ class Societe {
 	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
 	$sql .= " ( datec, fk_soc, amount_ht, fk_user )";
 	$sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
+
+	if (! $this->db->query($sql) )
+	  {
+	    dolibarr_print_error($this->db);
+	  }
+
+      }
+  }
+function set_price_level($price_level, $user)
+  {
+    if ($this->id)
+      {
+	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+	$sql .= " SET price_level = '".$price_level."'";
+	$sql .= " WHERE idp = " . $this->id .";";
+
+	$this->db->query($sql);
+
+	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices ";
+	$sql .= " ( datec, fk_soc, price_level, fk_user_author )";
+	$sql .= " VALUES (now(),".$this->id.",'".$price_level."',".$user->id.")";
 
 	if (! $this->db->query($sql) )
 	  {

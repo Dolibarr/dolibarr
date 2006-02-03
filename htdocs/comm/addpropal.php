@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +191,11 @@ if ($_GET["action"] == 'create')
         for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
         {
             print '<tr><td>';
-            $form->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
+			// multiprix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+				$form->select_produits('',"idprod".$i,'',$conf->produit->limit_size,$soc->price_level);
+			else
+            	$form->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
             print '</td>';
             print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
             print '<td><input type="text" size="3" name="remise'.$i.'" value="'.$soc->remise_client.'"> %</td></tr>';

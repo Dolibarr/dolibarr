@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,9 +58,19 @@ if ($_POST["action"] == 'update_price' &&
   $result = $product->fetch($_GET["id"]);
 
   $product->price = ereg_replace(" ","",$_POST["price"]);
+	// MultiPrix
+	if($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+		{
+				if($_POST["price_".$i])
+					$product->multiprices["$i"]=ereg_replace(" ","",$_POST["price_".$i]);
+				else
+					$product->multiprices["$i"] = "";
+		}
+	}
 
   if ( $product->update_price($product->id, $user) > 0 )
-
     {
       $_GET["action"] = '';
       $mesg = 'Fiche mise à jour';
@@ -168,9 +179,20 @@ print '</tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
 print '</tr>';
 
-// Prix
-print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
 
+// MultiPrix
+if($conf->global->PRODUIT_MULTIPRICES == 1)
+{
+	print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td colspan="2">'.price($product->price).'</td></tr>';
+	for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	{
+			print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td>'.price($product->multiprices["$i"]).'</td>';
+            print '</tr>';
+	}
+}
+// Prix
+else
+	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
 // Statut
 print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 if ($product->envente) print $langs->trans("OnSell");
@@ -213,20 +235,59 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
   print '<input type="hidden" name="action" value="update_price">';
   print '<input type="hidden" name="id" value="'.$product->id.'">';
   print '<table class="border" width="100%">';
+  if($conf->global->PRODUIT_MULTIPRICES == 1)
+  print '<tr><td width="15%">'.$langs->trans('SellingPrice').' 1</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
+  else
   print '<tr><td width="15%">'.$langs->trans('SellingPrice').'</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
   print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
   print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
   print '</form>';
+  // MultiPrix
+	if($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+		{
+				print '<form action="price.php?id='.$product->id.'" method="post">';
+				print '<input type="hidden" name="action" value="update_price">';
+				print '<input type="hidden" name="id" value="'.$product->id.'">';
+				print '<table class="border" width="100%">';
+				print '<tr><td width="15%">'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'"></td>';
+				print '</tr>';
+				print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+  				print '</table>';
+  				print '</form>';
+		}
+	}
 }
 
 
 // Liste des evolutions du prix
-$sql = "SELECT p.rowid, p.price, ".$db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
-$sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, llx_user as u";
-$sql .= " WHERE fk_product = ".$product->id;
-$sql .= " AND p.fk_user_author = u.rowid ";
-$sql .= " ORDER BY p.date_price DESC ";
+$sql = "SELECT p.rowid, p.price, ";
+if($conf->global->PRODUIT_MULTIPRICES == 1)
+{
+	$sql .= "p.price_level, ";
+	$sql .= $db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, llx_user as u";
+	$sql .= " WHERE fk_product = ".$product->id;
+	$sql .= " AND p.fk_user_author = u.rowid ";
+	$sql .= " ORDER BY p.price_level ASC ";
+	$sql .= ",p.date_price DESC ";
+}
+else
+{
+	$sql .= $db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, llx_user as u";
+	$sql .= " WHERE fk_product = ".$product->id;
+	$sql .= " AND p.fk_user_author = u.rowid ";
+	$sql .= " ORDER BY p.date_price DESC ";
+}
+
+	
+	
+	
+	
 $sql .= $db->plimit();
 $result = $db->query($sql) ;
 
@@ -254,6 +315,8 @@ if ($result)
 
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
+		if($conf->global->PRODUIT_MULTIPRICES == 1)
+			print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
         print '<td>'.$langs->trans("Price").'</td>';
         print '<td>'.$langs->trans("ChangedBy").'</td>';
         print '</tr>';
@@ -269,6 +332,10 @@ if ($result)
             // Date
             print "<td>".dolibarr_print_date($objp->dp,"%d %b %Y %H:%M:%S")."</td>";
             
+			// catégorie de Prix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+				print "<td>".$objp->price_level."</td>";
+			
             // Prix
             print "<td>".price($objp->price)."</td>";
 

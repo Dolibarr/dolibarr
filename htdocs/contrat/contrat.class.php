@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Destailleur Laurent  <eldy@users.sourceforge.net>
- *
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -566,6 +566,7 @@ class Contrat
     function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart, $dateend)
     {
         global $langs;
+		global $conf;
         
         dolibarr_syslog("contrat.class.php::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $datestart, $dateend");
 
@@ -580,7 +581,11 @@ class Contrat
                 if ($prod->fetch($fk_product) > 0)
                 {
                     $label = $prod->libelle;
-                    $pu    = $prod->price;
+					// multiprix
+					if($conf->global->PRODUIT_MULTIPRICES == 1)
+						$pu = $prod->multiprices[$this ->societe->price_level];
+					else
+                    	$pu    = $prod->price;
                     $txtva = $prod->tva_tx;
                 }
             }

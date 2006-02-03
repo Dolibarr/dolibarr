@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -308,6 +309,18 @@ if ($_socid > 0)
     print '</td>';
     print '</tr>';
 
+	// multiprix
+	if($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		print '<tr><td nowrap>';
+		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print $langs->trans("PriceLevel");
+		print '<td><td align="right">';
+		print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		print '</td></tr></table>';
+		print '</td><td colspan="3">'.$objsoc->price_level."</td>";
+		print '</tr>';
+	}
 
     print "</table>";
 

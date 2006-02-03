@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Régis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,17 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     $product->duration_value = $_POST["duration_value"];
     $product->duration_unit  = $_POST["duration_unit"];
     $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-
+	// MultiPrix
+	if($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+		{
+				if($_POST["price_".$i])
+					$product->multiprices["$i"]=ereg_replace(" ","",$_POST["price_".$i]);
+				else
+					$product->multiprices["$i"] = "";
+		}
+	}
     $e_product = $product;
 
     $id = $product->create($user);
@@ -286,8 +297,18 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     }
     print '</td></tr>';
     print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
-    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
-
+   
+	if($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+			 print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
+			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+			{
+				print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'"></td>';
+			}
+	}
+	// PRIX
+	else
+		 print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
     $langs->load("bills");
     print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
     print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
@@ -460,11 +481,25 @@ if ($_GET["id"] || $_GET["ref"])
             // Libelle
             print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
             print '</tr>';
-
-            // Prix
-            print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
-            print '</tr>';
-
+			
+			// MultiPrix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+			{
+				 print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td>'.price($product->price).'</td>';
+           		print '</tr>';
+				for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+				{
+					print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td>'.price($product->multiprices["$i"]).'</td>';
+            		print '</tr>';
+				}
+			}
+			 // Prix
+			else
+			{
+				 print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
+           			print '</tr>';
+			}
+			
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td><td>';
             if ($product->envente) print $langs->trans("OnSell");

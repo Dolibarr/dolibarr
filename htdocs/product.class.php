@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- *
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -42,6 +42,7 @@ class Product
     var $libelle;
     var $description;
     var $price;
+	var $multiprices=array();
     var $tva_tx;
     var $type;
     var $seuil_stock_alerte;
@@ -248,30 +249,89 @@ class Product
      */
     function _log_price($user) 
     {
-        // On supprimme ligne existante au cas ou
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
-        $sql .= "WHERE date_price = now()";
-        $sql .= " and fk_product = ".$this->id;
-        $sql .= " and fk_user_author = ".$user->id;
-        $sql .= " and price = ".ereg_replace(",",".",$this->price);
-        $sql .= " and envente = ".$this->envente;
-        $sql .= " and tva_tx = ".$this->tva_tx;
-
-        $this->db->query($sql);
-        
-        // On ajoute nouveau tarif
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
-        $sql .= " VALUES(now(),".$this->id.",".$user->id.",".ereg_replace(",",".",$this->price).",".$this->envente.",".$this->tva_tx;
-        $sql .= ")";
-        if ($this->db->query($sql) )
-        {
-            return 1;	      
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-            return 0;
-        }
+        // MultiPrix : si activé, on gère tout ici, même le prix standard
+		global $conf;
+		if($conf->global->PRODUIT_MULTIPRICES == 1)
+		{
+			$queryError = false;
+			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+			{
+						if($this->multiprices["$i"] != "")
+						{
+								// On supprimme ligne existante au cas ou
+								$sql_multiprix = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
+								$sql_multiprix .= "WHERE date_price = now()";
+								$sql_multiprix .= " and fk_product = ".$this->id;
+								$sql_multiprix .= " and fk_user_author = ".$user->id;
+								$sql_multiprix .= " and price = ".ereg_replace(",",".",$this->multiprices["$i"]);
+						
+								$this->db->query($sql_multiprix);
+								
+								// On ajoute nouveau tarif
+								$sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price) ";
+								$sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".ereg_replace(",",".",$this->multiprices["$i"]);
+								$sql_multiprix .= ")";
+								if (! $this->db->query($sql_multiprix) )
+									$queryError = true;
+						}
+				}
+				if (strlen(trim($this->price)) > 0 )
+				{
+					// On supprimme ligne existante au cas ou
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
+					$sql .= "WHERE date_price = now()";
+					$sql .= " and fk_product = ".$this->id;
+					$sql .= " and fk_user_author = ".$user->id;
+					$sql .= " and price = ".ereg_replace(",",".",$this->price);
+					$sql .= " and envente = ".$this->envente;
+					$sql .= " and tva_tx = ".$this->tva_tx;
+			
+					$this->db->query($sql);
+					
+					// On ajoute nouveau tarif
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
+					$sql .= " VALUES(now(),".$this->id.",".$user->id.",".ereg_replace(",",".",$this->price).",".$this->envente.",".$this->tva_tx;
+					$sql .= ")";
+					if (! $this->db->query($sql) )
+						$queryError = true;
+				}
+				if($queryError)
+				{
+					dolibarr_print_error($this->db);
+					return 0;
+				}
+				else
+				  return 1;
+		}
+		else
+		{
+				// On supprimme ligne existante au cas ou
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
+				$sql .= "WHERE date_price = now()";
+				$sql .= " and fk_product = ".$this->id;
+				$sql .= " and fk_user_author = ".$user->id;
+				$sql .= " and price = ".ereg_replace(",",".",$this->price);
+				$sql .= " and envente = ".$this->envente;
+				$sql .= " and tva_tx = ".$this->tva_tx;
+		
+				$this->db->query($sql);
+				
+				// On ajoute nouveau tarif
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
+				$sql .= " VALUES(now(),".$this->id.",".$user->id.",".ereg_replace(",",".",$this->price).",".$this->envente.",".$this->tva_tx;
+				$sql .= ")";
+			   
+				 if ($this->db->query($sql) )
+				{
+						return 1;	      
+				}
+				else
+				{
+						dolibarr_print_error($this->db);
+						return 0;
+				}
+		}
+		
     }
 
 
@@ -396,29 +456,67 @@ class Product
      */
     function update_price($id, $user)
     {
-        if (strlen(trim($this->price)) > 0 )
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-            $sql .= " SET price = " . ereg_replace(",",".",$this->price);
-            $sql .= " WHERE rowid = " . $id;
-    
-            if ( $this->db->query($sql) )
-            {
-                $this->_log_price($user);
-                return 1;
-            }
-            else
-            {
-                dolibarr_print_error($this->db);
-                return -1;
-            }
-        }
-        else
-        {
-            $this->error = "Prix saisi invalide.";
-            return -2;
-        }
-    }
+		//multiprix
+		global $conf;
+		if($conf->global->PRODUIT_MULTIPRICES == 1)
+		{
+				if (strlen(trim($this->price)) > 0 )
+				{
+					$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
+					$sql .= " SET price = " . ereg_replace(",",".",$this->price);
+					$sql .= " WHERE rowid = " . $id;
+			
+					if ( $this->db->query($sql) )
+					{
+						$this->_log_price($user);
+						return 1;
+					}
+					else
+					{
+						dolibarr_print_error($this->db);
+						return -1;
+					}
+				}
+				else if(count($this->multiprices) > 0)
+				{
+					$this->_log_price($user);
+					return 1;
+				}
+				else
+				{
+					$this->error = "Prix saisi invalide.";
+				    return -2;
+				}
+		}
+		else
+		{
+			if (strlen(trim($this->price)) > 0 )
+			{
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
+				$sql .= " SET price = " . ereg_replace(",",".",$this->price);
+				$sql .= " WHERE rowid = " . $id;
+		
+				if ( $this->db->query($sql) )
+				{
+					$this->_log_price($user);
+					return 1;
+				}
+				else
+				{
+					dolibarr_print_error($this->db);
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error = "Prix saisi invalide.";
+				return -2;
+			}
+		}
+		
+		
+		
+	}
 
 
     /**
@@ -430,6 +528,7 @@ class Product
     function fetch($id='',$ref='')
     {
         global $langs;
+		global $conf;
 
         // Verification parametres
         if (! $id && ! $ref)
@@ -479,7 +578,50 @@ class Product
             }
     
             $this->db->free();
-    
+			// multiprix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+			{
+					if ($ref) 
+					{
+						 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product ";
+						 $sql.=  "WHERE ref = '".addslashes($ref)."'";
+						 $result = $this->db->query($sql) ;
+						 if ($result)
+						{
+								$result = $this->db->fetch_array();
+								$prodid = $result["rowid"];
+						}
+						else
+						 {
+							dolibarr_print_error($this->db);
+							return -1;
+						}
+					}
+					for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+					{
+						$sql= "SELECT price, tva_tx, envente ";
+						$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
+						$sql.= "where price_level=".$i." and ";
+						if ($id) $sql.= "fk_product = ".$id." ";
+						if ($ref) $sql.= "fk_product = ".$prodid." ";
+						$sql.= "order by date_price DESC limit 1";
+					    $result = $this->db->query($sql) ;
+						if ( $result )
+						{
+							$result = $this->db->fetch_array();
+							if($result["price"] != "")
+							 $this -> multiprices[$i]=$result["price"];
+						}
+						else
+						 {
+							dolibarr_print_error($this->db);
+							return -1;
+						}
+					}
+					
+			  }
+			
+			
             $sql = "SELECT reel, fk_entrepot";
             $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = ".$this->id;
             $result = $this->db->query($sql) ;

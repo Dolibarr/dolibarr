@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -763,7 +764,11 @@ if ($_GET['action'] == 'create')
 		for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
 			print '<tr><td>';
-			$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
+			// multiprix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+				$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);
+			else
+				$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
 			print '</td>';
 			print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 			print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="0">%</td>';
@@ -1568,7 +1573,11 @@ else
                     $var=! $var;
     				print '<tr '.$bc[$var].'>';
     				print '<td colspan="2">';
-                    $html->select_produits('','idprod','',$conf->produit->limit_size);
+					// multiprix
+					if($conf->global->PRODUIT_MULTIPRICES == 1)
+						$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
+					else
+                    	$html->select_produits('','idprod','',$conf->produit->limit_size);
                     print '<br>';
                     print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
                     print '<td>&nbsp;</td>';

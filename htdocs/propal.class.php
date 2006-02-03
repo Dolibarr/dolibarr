@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,8 @@ class Propal
      */
     function insert_product($idproduct, $qty, $remise_percent=0, $p_desc='')
     {
-        dolibarr_syslog("propal.class.php::insert_product $idproduct, $qty, $remise_percent, $p_desc");
+        global $conf;
+		dolibarr_syslog("propal.class.php::insert_product $idproduct, $qty, $remise_percent, $p_desc");
         if ($this->statut == 0)
         {
             // Nettoyage parametres
@@ -141,13 +143,26 @@ class Propal
             
             if ($idproduct)
             {
-                $prod = new Product($this->db, $idproduct);
+				$prod = new Product($this->db, $idproduct);
                 if ($prod->fetch($idproduct) > 0)
                 {
-                    $txtva = $prod->tva_tx;
-                    $price = price2num($prod->price);
-                    $subprice = price2num($prod->price);
+					// multiprix
+					if($conf->global->PRODUIT_MULTIPRICES == 1)
+					{
+						$this -> fetch_client();
+						$price = price2num($prod->multiprices[$this->client->price_level]);
+                    	$subprice = price2num($prod->multiprices[$this->client->price_level]);
+					}
+					else
+					{
+						$price = price2num($prod->price);
+                    	$subprice = price2num($prod->price);
+					}
+				   $txtva = $prod->tva_tx;
+				   	/*
                     
+					*/
+           
                     // Calcul remise et nouveau prix
         			$remise = 0;
                     if ($remise_percent > 0)
@@ -341,7 +356,6 @@ class Propal
     function create()
     {
 		global $langs,$conf;
-
         // Définition paramètres
         $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
     
