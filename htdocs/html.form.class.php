@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -567,7 +568,7 @@ class Form
     *    \param      filtretype      Pour filtre sur type de produit
     *    \param      limit           Limite sur le nombre de lignes retournées
     */
-    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
+    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
     {
         global $langs,$conf;
     
@@ -589,9 +590,24 @@ class Form
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
-                $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
+                $opt = '<option value="'.$objp->rowid.'">['.$objp->ref.'] ';
                 $opt.= dolibarr_trunc($objp->label,40).' - ';
-                $opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
+				//multiprix
+				if($price_level > 1)
+				{
+						$sql= "SELECT price ";
+						$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
+						$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
+						$sql.= " order by date_price DESC limit 1";
+						$result2 = $this->db->query($sql) ;
+						$result2 = $this->db->fetch_array($result2);
+						if($result2["price"])
+							$opt.= $result2["price"].' '.$langs->trans("Currency".$conf->monnaie);
+						else
+							$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
+				}
+				else
+                	$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
                 if ($objp->duration) $opt.= ' - '.$objp->duration;
                 $opt.= "</option>\n";
                 print $opt;
@@ -639,7 +655,7 @@ class Form
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
-                $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
+                $opt = '<option value="'.$objp->rowid.'">['.$objp->ref.'] ';
                 $opt.= dolibarr_trunc($objp->label,40).' - ';
                 $opt.= $objp->fprice." ".$langs->trans("Currency".$conf->monnaie)." / ".$objp->quantity." ".$langs->trans("Units");
                 if ($objp->quantity > 1)
