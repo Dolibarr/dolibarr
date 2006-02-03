@@ -34,8 +34,8 @@
 
 define('DOL_VERSION','2.1-alpha');
 
-// La fonction clearstatcache ne doit pas etre appelÃ© de maniÃ¨re globale car ralenti.
-// Elle doit etre appelÃ© uniquement par les pages qui ont besoin d'un cache fichier vidÃ©
+// La fonction clearstatcache ne doit pas etre appelé de manière globale car ralenti.
+// Elle doit etre appelée uniquement par les pages qui ont besoin d'un cache fichier vidé
 // comme par exemple document.php
 //clearstatcache();     
 
@@ -132,7 +132,7 @@ if ($result)
     {
         $objp = $db->fetch_object($result);
         $key=$objp->name;
-        $value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture base mais aprÃ¨s POST quand get_magic_quotes_gpc()==1)
+        $value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture base mais après POST quand get_magic_quotes_gpc()==1)
         define ("$key", $value);
         $conf->global->$key=$value;
         $i++;
@@ -142,7 +142,7 @@ $db->free($result);
 
 /*
  * Nettoyage variables des gestionnaires de menu
- * conf->menu_top et conf->menu_left sont dÃ©finis dans main.inc.php (selon user)
+ * conf->menu_top et conf->menu_left sont définis dans main.inc.php (selon user)
  */
 if (! $conf->global->MAIN_MENU_BARRETOP) $conf->global->MAIN_MENU_BARRETOP="default.php";
 if (! $conf->global->MAIN_MENUFRONT_BARRETOP) $conf->global->MAIN_MENUFRONT_BARRETOP="default.php";
@@ -162,7 +162,7 @@ $langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
 
 /*
  * Pour utiliser d'autres versions des librairies externes que les
- * versions embarquÃ©es dans Dolibarr, dÃ©finir les constantes adequates:
+ * versions embarquées dans Dolibarr, dÚfinir les constantes adequates:
  * Pour FPDF:           FPDF_PATH
  * Pour PEAR:           PEAR_PATH
  * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
@@ -347,7 +347,7 @@ if (! $conf->global->MAIN_MONNAIE) $conf->global->MAIN_MONNAIE='EUR';
 $conf->monnaie=$conf->global->MAIN_MONNAIE;
 
 // $conf->compta->mode = Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
-$conf->compta->mode = 'RECETTES-DEPENSES';  // Par d?faut
+$conf->compta->mode = 'RECETTES-DEPENSES';  // Par défaut
 if (defined('COMPTA_MODE') && COMPTA_MODE) {
 	// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
     $conf->compta->mode = COMPTA_MODE;
@@ -355,10 +355,10 @@ if (defined('COMPTA_MODE') && COMPTA_MODE) {
 
 // $conf->defaulttx
 if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise') {
-	$conf->defaulttx='0';		// Taux par dÃ©faut des factures clients
+	$conf->defaulttx='0';		// Taux par défaut des factures clients
 }
 else {
-	$conf->defaulttx='';		// Pas de taux par dÃ©faut des factures clients, le premier sera pris
+	$conf->defaulttx='';		// Pas de taux par défaut des factures clients, le premier sera pris
 }
 
 // $conf->liste_limit = constante de taille maximale des listes
@@ -429,7 +429,7 @@ $conf->format_date_short="%d/%m/%Y";
 
 /* 
  * Creation objet mysoc
- * Objet Societe qui contient carac de l'institution gÃ©rÃ© par Dolibarr.
+ * Objet Societe qui contient carac de l'institution géré par Dolibarr.
  */
 require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 $mysoc=new Societe($db);
@@ -452,9 +452,9 @@ $mysoc->forme_juridique_code=$conf->global->MAIN_INFO_FORME_JURIDIQUE;
 $mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
 
 
-/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de dÃ©sactiver la fonction TVA
- * (pour particuliers ou libÃ©raux en franchise)
- * En attendant, valeur forcÃ©e Ã  1
+/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
+ * (pour particuliers ou libéraux en franchise)
+ * En attendant, valeur forcée à 1
  */
 $conf->compta->tva=1;
 
