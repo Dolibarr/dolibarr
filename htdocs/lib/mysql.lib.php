@@ -2,7 +2,7 @@
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
