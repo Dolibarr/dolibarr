@@ -59,13 +59,13 @@ if ($_POST["action"] == 'add')
 
     $contact->socid        = $_POST["socid"];
 
-    $contact->name         = $_POST["name"];
-    $contact->firstname    = $_POST["firstname"];
+    $contact->name         = addslashes($_POST["name"]);
+    $contact->firstname    = addslashes($_POST["firstname"]);
     $contact->civilite_id  = $_POST["civilite_id"];
-    $contact->poste        = $_POST["poste"];
+    $contact->poste        = addslashes($_POST["poste"]);
     $contact->address      = addslashes($_POST["address"]);
     $contact->cp           = $_POST["cp"];
-    $contact->ville        = $_POST["ville"];
+    $contact->ville        = addslashes($_POST["ville"]);
     $contact->fk_pays      = $_POST["pays_id"];
     $contact->email        = $_POST["email"];
     $contact->phone_pro    = $_POST["phone_pro"];
@@ -74,7 +74,7 @@ if ($_POST["action"] == 'add')
     $contact->fax          = $_POST["fax"];
     $contact->jabberid     = $_POST["jabberid"];
 
-    $contact->note         = $_POST["note"];
+    $contact->note         = addslashes($_POST["note"]);
 
     if (! $_POST["name"])
     {
@@ -117,14 +117,14 @@ if ($_POST["action"] == 'update')
     $contact->old_firstname = $_POST["old_firstname"];
     
     $contact->socid         = $_POST["socid"];
-    $contact->name          = $_POST["name"];
-    $contact->firstname     = $_POST["firstname"];
+    $contact->name          = addslashes($_POST["name"]);
+    $contact->firstname     = addslashes($_POST["firstname"]);
     $contact->civilite_id   = $_POST["civilite_id"];
-    $contact->poste         = $_POST["poste"];
+    $contact->poste         = addslashes($_POST["poste"]);
     
     $contact->address       = addslashes($_POST["address"]);
     $contact->cp            = $_POST["cp"];
-    $contact->ville         = $_POST["ville"];
+    $contact->ville         = addslashes($_POST["ville"]);
     $contact->fk_pays       = $_POST["pays_id"];
     
     $contact->email         = $_POST["email"];
@@ -134,7 +134,7 @@ if ($_POST["action"] == 'update')
     $contact->fax           = $_POST["fax"];
     $contact->jabberid      = $_POST["jabberid"];
     
-    $contact->note          = $_POST["note"];
+    $contact->note          = addslashes($_POST["note"]);
     
     $result = $contact->update($_POST["contactid"], $user);
     
