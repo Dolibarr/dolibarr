@@ -63,7 +63,7 @@ if ($_POST["action"] == 'add')
     $contact->firstname    = $_POST["firstname"];
     $contact->civilite_id  = $_POST["civilite_id"];
     $contact->poste        = $_POST["poste"];
-    $contact->address      = $_POST["address"];
+    $contact->address      = addslashes($_POST["address"]);
     $contact->cp           = $_POST["cp"];
     $contact->ville        = $_POST["ville"];
     $contact->fk_pays      = $_POST["pays_id"];
@@ -122,7 +122,7 @@ if ($_POST["action"] == 'update')
     $contact->civilite_id   = $_POST["civilite_id"];
     $contact->poste         = $_POST["poste"];
     
-    $contact->address       = $_POST["address"];
+    $contact->address       = addslashes($_POST["address"]);
     $contact->cp            = $_POST["cp"];
     $contact->ville         = $_POST["ville"];
     $contact->fk_pays       = $_POST["pays_id"];
