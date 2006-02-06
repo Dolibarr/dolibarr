@@ -242,11 +242,11 @@ if ($_POST["action"] == 'add')
 	      $verif = "nok";
 	      $mesg .= "Tarif Mobile Invalide : $temporel > 0.40 !";
 	    }
-	  if ($temporel <  0.16 )
+	  if ($temporel <  0.14 )
 	    {
 	      $error = 1034;
 	      $verif = "nok";
-	      $mesg .= "Tarif Mobile Invalide : $temporel <  0.16 !";
+	      $mesg .= "Tarif Mobile Invalide : $temporel <  0.14 !";
 	    }
 	}
     }      
