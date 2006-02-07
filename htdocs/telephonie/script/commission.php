@@ -167,7 +167,9 @@ if ( $resql )
       if (! $db->query($sqli))
 	{
 	  $error = 2;
-	  dolibarr_syslog("Calcul avance Erreur ".$db->error());
+	  dolibarr_syslog("Calcul avance Erreur ");
+	  dolibarr_syslog($db->error());
+	  dolibarr_syslog("$sqli");
 	}
       
       $i++;
@@ -252,7 +254,9 @@ if ( $resql )
       if (! $db->query($sqli))
 	{
 	  $error = 4;
-	  dolibarr_syslog("Calcul conso Erreur ".$db->error());
+	  dolibarr_syslog("Calcul conso Erreur");
+	  dolibarr_syslog($db->error());
+	  dolibarr_syslog("$sqli");
 	}
 
       //dolibarr_syslog("Conso po : ".$obj->rowid . " ".$comm);
