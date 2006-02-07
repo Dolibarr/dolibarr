@@ -177,7 +177,7 @@ if (!$error)
       
       /* Lecture des factures téléphoniques du contrat */
       dolibarr_syslog($xcli."/".$xclis." Contrat à facturer id=".$contrat." (".memory_get_usage() .")");
-      
+
       $sql = "SELECT f.rowid, s.idp FROM ";     
       $sql .=     MAIN_DB_PREFIX."telephonie_facture as f";
       $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -510,7 +510,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
   if (!$error)
     {
       $remise_exceptionnelle = 0;
-      //$fac = new Facture($db, $soc->id);
       
       $sql = "SELECT rowid,amount,fk_user";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_remise";
@@ -534,13 +533,17 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  dolibarr_syslog($sql);
 	}
       
+      print "remise $remise_exceptionnelle \n";
+      print "total ".$fac->total_ht."\n";
+
       if ($remise_exceptionnelle > 0)
 	{
+
 	  // Calcul valeur de remise a appliquer (remise) et reliquat
 	  if ($remise_exceptionnelle > ($fac->total_ht * 0.9))
 	    {
-	      $remise = floor($this->total_ht * 0.9);
-	      $reliquat = $remise_exceptionnelle - $remise;
+	      $remise = floor($fac->total_ht * 0.9);
+	      $reliquat = ($remise_exceptionnelle - $remise);
 	    }
 	  else
 	    {
@@ -789,9 +792,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  $message .= $fac->client->bank_account->number."\n";
 	}
       
-      $message .= "Toute l'équipe ibreizh vous offre ses meilleurs voeux 2006\n";
-      $message .= "Dans le cadre de notre charte qualité nous prendrons contact avec vous au cours de ce mois à bientôt...";
-
       if ($verbose) dolibarr_syslog("Création du pdf facture : $facid");
       
       if (! facture_pdf_create($db, $facid, $message))
