@@ -117,7 +117,7 @@ if ($result)
       print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.$obj->nom.'</a></td>';
 
       print '<td align="right">'.price($obj->amount)." euros HT</td>\n";
-      print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/facture.php?facid='.$obj->fk_facture.'">'.$obj->facnumber."</a></td>\n";
+      print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.$obj->facnumber."</a></td>\n";
 
       print "</tr>\n";
       $i++;
