@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,11 @@ if ($_POST["action"] == 'add' && $user->rights->telephonie->ligne->creer)
 
   if ( $contrat->create($user) == 0)
     {
+      $soc = new Societe($db);
+      $soc->id = $_POST["client_comm"];
+      $soc->AddPerms($user->id,1,1,1);
+      $soc->AddPerms($_POST["commercial_sign"],1,1,1);
+
       Header("Location: fiche.php?id=".$contrat->id);
     }
   else
@@ -581,8 +586,7 @@ else
 	      print "</table><br />";
 
 	      /* Lignes */
-	     
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table name="table_lignes" class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      
 	      $sql = "SELECT l.ligne, l.statut, l.rowid, l.remise, l.techno, f.nom as fournisseur";
 	      $sql .= ", ss.code_client, ss.nom as agence, l.support";
