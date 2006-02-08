@@ -57,7 +57,8 @@ class ModelePDFCommandes extends FPDF
     function liste_modeles($db)
     {
         $liste=array();
-        $sql ="";
+        $sql ="SELECT nom as id, nom as lib";
+        $sql.=" FROM ".MAIN_DB_PREFIX."propal_model_pdf";
         
         $resql = $db->query($sql);
         if ($resql)
@@ -130,5 +131,78 @@ class ModeleNumRefCommandes
     }
     
 }
+function commande_pdf_create($db, $comid, $modele='')
+{
+  global $langs;
+  $langs->load("orders");
+ 
+  $dir = DOL_DOCUMENT_ROOT."/includes/modules/commande/";
 
+  // Positionne modele sur le nom du modele de facture à utiliser
+  if (! strlen($modele))
+    {
+      if (defined("PROPALE_ADDON_PDF") && PROPALE_ADDON_PDF)
+	{
+	  $modele = PROPALE_ADDON_PDF;
+	}
+      else
+	{
+      print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
+	  return 0;
+	}
+    }
+
+  // Charge le modele
+  $file = "pdf_commande_".$modele.".modules.php";
+  if (file_exists($dir.$file))
+    {
+      $classname = "pdf_commande_".$modele;
+      require_once($dir.$file);
+  
+      $obj = new $classname($db);
+
+      if ( $obj->write_pdf_file($comid) > 0)
+	{
+	  // on supprime l'image correspondant au preview
+	   commande_delete_preview($db, $comid);
+	  return 1;
+	}
+      else
+	{
+	  dolibarr_syslog("Erreur dans propale_pdf_create");
+	  dolibarr_print_error($db,$obj->pdferror());
+	  return 0;
+	}
+    }
+  else
+    {
+      print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+      return 0;
+    }
+}
+function commande_delete_preview($db, $propalid)
+{
+	global $langs,$conf;
+
+	$com = new Commande($db,"",$propalid);
+	$com->fetch($propalid);  
+	$client = new Societe($db);
+    $client->fetch($com->soc_id);
+
+	if ($conf->commande->dir_output)
+		{
+		$comref = sanitize_string($com->ref); 
+		$dir = $conf->commande->dir_output . "/" . $comref ; 
+		$file = $dir . "/" . $comref . ".pdf.png";
+
+		if ( file_exists( $file ) && is_writable( $file ) )
+			{
+			if ( ! unlink($file) )
+				{
+				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+				return 0;
+				}
+			}
+		}
+}
 ?>
