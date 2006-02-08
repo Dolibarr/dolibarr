@@ -68,7 +68,10 @@ if ($_GET["action"] == 'setmod')
       $commande_addon_var = $_GET["value"];
     }
 }
-
+if ($_GET["action"] == 'setpdf')
+{
+  if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$_GET["value"])) $commande_addon_var_pdf = $_GET["value"];
+}
 
 $dir = "../includes/modules/commande/";
 
@@ -131,6 +134,63 @@ if ($handle)
 
 print '</table>';
 
+/*
+ *  PDF
+ */
+print '<br>';
+print_titre("Modèles de commande pdf");
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+$handle=opendir($dir);
+
+$var=True;
+while (($file = readdir($handle))!==false)
+{
+    if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
+    {
+        $var = !$var;
+        $name = substr($file, 4, strlen($file) -16);
+        $classname = substr($file, 0, strlen($file) -12);
+    
+        print '<tr '.$bc[$var].'><td width="100">';
+        echo "$name";
+        print "</td><td>\n";
+        require_once($dir.$file);
+        $obj = new $classname($db);
+    
+        print $obj->description;
+    
+        print '</td><td align="center">';
+    
+        if ($commande_addon_var_pdf == "$name")
+        {
+            print '&nbsp;';
+            print '</td><td align="center">';
+            print img_tick();
+        }
+        else
+        {
+            print '&nbsp;';
+			// print $commande_addon_var_pdf."iii";
+            print '</td><td align="center">';
+            print '<a href="commande.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
+        }
+        print "</td></tr>\n";
+    
+    }
+}
+closedir($handle);
+
+print '</table>';
 
 llxFooter('$Date$ - $Revision$');
 ?>
