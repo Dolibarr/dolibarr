@@ -1838,6 +1838,16 @@ class Form
                     $modellist=$model->liste_modeles($this->db);
                 }
             }
+			 else if ($modulepart == 'commande')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+                    $model=new ModelePDFCommandes();
+                    $modellist=$model->liste_modeles();
+                }
+            }
             elseif ($modulepart == 'facture')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
