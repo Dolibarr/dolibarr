@@ -1661,7 +1661,7 @@ class Form
     
             if ($key_in_label)
             {
-                print '>['.$key.'] '.$value."</option>\n";
+                print '>'.$key.' - '.$value."</option>\n";
             }
             else
             {
