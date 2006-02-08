@@ -477,7 +477,6 @@ else
 		  {
     		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
     		$head[$h][1] = $langs->trans("Preview");
-    		$hselected=$h;
     		$h++;
       }
 
