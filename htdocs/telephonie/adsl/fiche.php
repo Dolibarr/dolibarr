@@ -606,7 +606,8 @@ else
 	      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
 	      print '<td>&nbsp;</td></tr>';
 
-	      print '<tr><td width="20%">Débit de la liaison</td><td colspan="2">'.$ligne->type.'</td></tr>';
+	      print '<tr><td width="20%">Débit de la liaison</td><td>'.$ligne->type.'</td>';
+	      print '<td>Prix de vente : '.price($ligne->prix).' euros HT</td></tr>';
 	      	     
 	      $client_install = new Societe($db, $ligne->client_install_id);
 	      $client_install->fetch($ligne->client_install_id);
