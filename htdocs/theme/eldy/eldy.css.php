@@ -60,10 +60,6 @@ input.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-input:focus
-{ 
-    background: #F0ECEC;
-}
 textarea  {
     font: 12px helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
@@ -79,20 +75,12 @@ textarea.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-textarea:focus
-{ 
-    background: #F0ECEC;
-}
 select.flat
 {
     font: 12px helvetica, verdana, arial, sans-serif;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
-}
-select:focus
-{ 
-    background: #F0ECEC;
 }
 
 .button  {
