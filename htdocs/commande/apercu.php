@@ -230,7 +230,7 @@ if ($_GET["id"] > 0) {
 
 					print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
 
-					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
+					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
 					print '<td align="right">'.filesize($file). ' bytes</td>';
 					print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 					print '</tr>';
@@ -239,7 +239,7 @@ if ($_GET["id"] > 0) {
 					if (file_exists($filedetail)) { // commande détaillée supplémentaire
 						print "<tr $bc[$var]><td>Commande détaillée</td>";
 
-						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$commande->ref.'-detail.pdf</a></td>';
+						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$commande->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
 						print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
 						print '</tr>';
@@ -293,7 +293,7 @@ if ($_GET["id"] > 0) {
 			dolibarr_print_error($db);
 		}
 	} else {
-	// Propal non trouvée
+	// Commande non trouvée
 	print $langs->trans("ErrorPropalNotFound",$_GET["id"]);
 	}
 }
@@ -301,12 +301,12 @@ if ($_GET["id"] > 0) {
 // Si fichier png PDF d'1 page trouvé
 if (file_exists($fileimage))
 	{
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimage).'">';
+	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimage).'">';
 	}
 // Si fichier png PDF de plus d'1 page trouvé
 elseif (file_exists($fileimagebis))
 	{
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimagebis).'">';
+	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimagebis).'">';
 	}
 
 

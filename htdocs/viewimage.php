@@ -80,6 +80,17 @@ if ($modulepart)
         }
         $original_file=$conf->propal->dir_output.'/'.$original_file;
     }
+    
+    // Wrapping pour les apercu commande
+    if ($modulepart == 'apercucommande')
+    {
+        $user->getrights('commande');
+        if ($user->rights->commande->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->commande->dir_output.'/'.$original_file;
+    }
 
     // Wrapping pour les images des stats propales
     if ($modulepart == 'propalstats')
