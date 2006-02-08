@@ -40,7 +40,6 @@ if (!$user->rights->commande->lire)
 $langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
-$langs->load('sendings');
 
 
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
