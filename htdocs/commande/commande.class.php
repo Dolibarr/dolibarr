@@ -467,9 +467,57 @@ class Commande
 			$this->facturee        = $obj->facture;
 			$this->note            = $obj->note;
 			$this->projet_id       = $obj->fk_projet;
+			
 			$this->db->free();
 			if ($this->statut == 0)
 				$this->brouillon = 1;
+			// exp pdf -----------
+			$this->lignes = array();
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
+			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+			$sql.= ' WHERE l.fk_commande = '.$this->id;
+			$sql.= ' ORDER BY l.rowid';
+			$result = $this->db->query($sql);
+                if ($result)
+                {
+                    $num = $this->db->num_rows($result);
+                    $i = 0;
+    
+                    while ($i < $num)
+                    {
+                        $objp                  = $this->db->fetch_object($result);
+    
+                        $ligne                 = new CommandeLigne();
+
+                        $ligne->desc           = $objp->description;  // Description ligne
+                        $ligne->qty            = $objp->qty;
+                        $ligne->tva_tx         = $objp->tva_tx;
+                        $ligne->subprice       = $objp->subprice;
+                        $ligne->remise_percent = $objp->remise_percent;
+                        $ligne->price          = $objp->price;
+                        $ligne->product_id     = $objp->rowid;
+
+                        $ligne->libelle        = $objp->label;        // Label produit
+                        $ligne->product_desc   = $objp->product_desc; // Description produit
+                        $ligne->ref            = $objp->ref;
+    
+                        $this->lignes[$i]      = $ligne;
+                        //dolibarr_syslog("1 ".$ligne->desc);
+                        //dolibarr_syslog("2 ".$ligne->product_desc);
+                        $i++;
+                    }
+                    $this->db->free($result);
+                }
+                else
+                {
+                    dolibarr_syslog("Propal::Fetch Erreur lecture des produits");
+                    return -1;
+                }
+			
+			
+			// -------- exp pdf //
 			/*
 			* Propale associée
 			*/
@@ -992,8 +1040,22 @@ class Commande
 
 class CommandeLigne
 {
+	// From llx_propaldet
+		var $qty;
+		var $tva_tx;
+		var $subprice;
+		var $remise_percent;
+		var $price;
+		var $product_id;
+		var $desc;          // Description ligne
+	
+		// From llx_product
+		var $libelle;       // Label produit
+		var $product_desc;  // Description produit
+		var $ref;
 	function CommandeLigne()
 	{
+		
 	}
 }
 

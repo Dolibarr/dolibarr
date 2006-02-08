@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 
 $langs->load('orders');
 $langs->load('sendings');
@@ -216,13 +218,13 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	}
 }
 
-if ($_GET['action'] == 'pdf')
+if ($_GET['action'] == 'builddoc' || $_POST['action'] == 'builddoc')
 {
 	/*
 	 * Generation de la commande
 	 * définit dans /includes/modules/commande/modules_commande.php
 	 */
-	commande_pdf_create($db, $_GET['id']);
+	commande_pdf_create($db, $_GET['id'],$_POST['model']);
 }
 
 
@@ -772,7 +774,7 @@ else
 			/*
 			 * Ajouter une ligne
 			 */
-			if ($commande->statut == 0 && $user->rights->commande->creer && $_GET['action'] == '')
+			if ($commande->statut == 0 && $user->rights->commande->creer && ($_GET['action'] == '' || $_GET['action'] == 'builddoc'))
 			{
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans('Description').'</td>';
@@ -834,7 +836,7 @@ else
 			/*
 			 * Boutons actions
 			 */
-			if ($user->societe_id == 0 && $commande->statut < 3 && $_GET['action'] == '')
+			if ($user->societe_id == 0 && $commande->statut < 3 && ($_GET['action'] == '' || $_GET['action'] == 'builddoc'))
 			{
 				print '<div class="tabsAction">';
 
@@ -872,6 +874,11 @@ else
 						print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans('CancelOrder').'</a>';
 					}
 				}
+				  // Build PDF
+					if ($user->rights->commande->creer)
+					{
+						print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
+					}
 
 				print '</div>';
 			}
@@ -884,11 +891,18 @@ else
 			 * Documents générés
 			 *
 			 */
-			$file = $conf->commande->dir_output . '/' . $commande->ref . '/' . $commande->ref . '.pdf';
-			$relativepath = $commande->ref.'/'.$commande->ref.'.pdf';
+			$comref = sanitize_string($commande->ref);
+			$comref = str_replace("(","",$comref);
+			$comref = str_replace(")","",$comref);
+			$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
+			$relativepath = $comref.'/'.$comref.'.pdf';
+			$filedir = $conf->commande->dir_output . '/' . $comref;
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+			$genallowed=$user->rights->commande->creer;
+    		$delallowed=$user->rights->commande->supprimer;
 
 			$var=true;
-
+			/*
 			if (file_exists($file))
 			{
 				print_titre($langs->trans('Documents'));
@@ -901,7 +915,8 @@ else
 				print '</table>';
 				print '<br>';
 			}
-
+			*/
+			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed);
 			/*
 			 * Liste des factures
 			 */
