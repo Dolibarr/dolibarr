@@ -34,6 +34,6 @@ create table llx_telephonie_adsl_ligne (
   fk_commercial      integer NOT NULL,
   fk_user_creat      integer NOT NULL,
   statut             smallint DEFAULT -1,
-  note               text
-
+  note               text,
+  prix               real default 0
 )type=innodb;
