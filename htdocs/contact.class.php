@@ -139,22 +139,22 @@ class Contact
         }
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
-        $sql .= "  civilite='$this->civilite_id'";
-        $sql .= ", name='$this->name'";
-        $sql .= ", firstname='$this->firstname'";
-        $sql .= ", address='$this->address'";
-        $sql .= ", cp='$this->cp'";
-        $sql .= ", ville='$this->ville'";
-        $sql .= ", fk_pays='$this->fk_pays'";
-        $sql .= ", poste='$this->poste'";
-        $sql .= ", fax='$this->fax'";
-        $sql .= ", email='$this->email'";
-        $sql .= ", note='$this->note'";
-        $sql .= ", phone = '$this->phone_pro'";
-        $sql .= ", phone_perso = '$this->phone_perso'";
-        $sql .= ", phone_mobile = '$this->phone_mobile'";
-        $sql .= ", jabberid = '$this->jabberid'";
-        if ($user) $sql .= ", fk_user_modif='".$user->id."'";
+        $sql .= "  civilite='".addslashes($this->civilite_id)."'";
+        $sql .= ", name='".addslashes($this->name)."'";
+        $sql .= ", firstname='".addslashes($this->firstname)."'";
+        $sql .= ", address='".addslashes($this->address)."'";
+        $sql .= ", cp='".addslashes($this->cp)."'";
+        $sql .= ", ville='".addslashes($this->ville)."'";
+        $sql .= ", fk_pays='".addslashes($this->fk_pays)."'";
+        $sql .= ", poste='".addslashes($this->poste)."'";
+        $sql .= ", fax='".addslashes($this->fax)."'";
+        $sql .= ", email='".addslashes($this->email)."'";
+        $sql .= ", note='".addslashes($this->note)."'";
+        $sql .= ", phone = '".addslashes($this->phone_pro)."'";
+        $sql .= ", phone_perso = '".addslashes($this->phone_perso)."'";
+        $sql .= ", phone_mobile = '".addslashes($this->phone_mobile)."'";
+        $sql .= ", jabberid = '".addslashes($this->jabberid)."'";
+        if ($user) $sql .= ", fk_user_modif=".$user->id;
         $sql .= " WHERE idp=".$id;
     
         $result = $this->db->query($sql);
