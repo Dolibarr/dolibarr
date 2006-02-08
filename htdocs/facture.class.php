@@ -287,7 +287,7 @@ class Facture
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql .= ' SET fk_facture = '.$this->id;
-			$sql .= " ,amount_ht = '".ereg_replace(',','.',$remise)."'";
+			$sql .= " ,amount_ht = '".price2num($remise)."'";
 			$sql .= ' WHERE rowid ='.$this->remise_exceptionnelle[0];
 			$sql .= ' AND fk_soc ='. $this->socidp;
 
@@ -303,7 +303,7 @@ class Facture
 				$sql .= ' VALUES ';
 				$sql .= ' ('.$this->socidp;
 				$sql .= ' ,now()';
-				$sql .= " ,'".ereg_replace(',','.',$reliquat)."'";
+				$sql .= " ,'".price2num($reliquat)."'";
 				$sql .= ' ,'.$this->remise_exceptionnelle[3];
 				$sql .= ')';
 
@@ -1087,7 +1087,7 @@ class Facture
 				$qty=1;
 			}
 			$remise = 0;
-			$price = ereg_replace(',','.',$pu);
+			$price = price2num($pu);
 			$subprice = $price;
 			if (trim(strlen($remise_percent)) > 0)
 			{
@@ -1100,11 +1100,11 @@ class Facture
 			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet set description=\''.addslashes($desc).'\'';
-			$sql .= ",price='"    .     ereg_replace(',','.',$price)."'";
-			$sql .= ",subprice='" .     ereg_replace(',','.',$subprice)."'";
-			$sql .= ",remise='".        ereg_replace(',','.',$remise)."'";
-			$sql .= ",remise_percent='".ereg_replace(',','.',$remise_percent)."'";
-			$sql .= ",tva_taux='".      ereg_replace(',','.',$tva_tx)."'";
+			$sql .= ",price='"    .     price2num($price)."'";
+			$sql .= ",subprice='" .     price2num($subprice)."'";
+			$sql .= ",remise='".        price2num($remise)."'";
+			$sql .= ",remise_percent='".price2num($remise_percent)."'";
+			$sql .= ",tva_taux='".      price2num($tva_tx)."'";
 			$sql .= ",qty='$qty'";
 			if ($datestart) { $sql.= ",date_start='$datestart'"; }
 			else { $sql.=',date_start=null'; }
@@ -1185,11 +1185,11 @@ class Facture
 			*/
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
-			$sql .= "SET amount ='".ereg_replace(',','.',$this->amount_ht)."'";
-			$sql .= ", remise='".   ereg_replace(',','.',$this->total_remise)."'";
-			$sql .= ", total='".    ereg_replace(',','.',$this->total_ht)."'";
-			$sql .= ", tva='".      ereg_replace(',','.',$this->total_tva)."'";
-			$sql .= ", total_ttc='".ereg_replace(',','.',$this->total_ttc)."'";
+			$sql .= "SET amount ='".price2num($this->amount_ht)."'";
+			$sql .= ", remise='".   price2num($this->total_remise)."'";
+			$sql .= ", total='".    price2num($this->total_ht)."'";
+			$sql .= ", tva='".      price2num($this->total_tva)."'";
+			$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
 			$sql .= ' WHERE rowid = '.$facid;
 			if ( $this->db->query($sql) )
 			{
@@ -1200,7 +1200,7 @@ class Facture
 					{
 						$sql_del = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum where fk_facture ='.$this->id;
 						$this->db->query($sql_del);
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) values ($this->id,'".ereg_replace(',','.',$tvas[$key])."','".ereg_replace(',','.',$key)."');";
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) values ($this->id,'".price2num($tvas[$key])."','".price2num($key)."');";
 						//  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."facture_tva_sum SET fk_facture=".$this->id;
 						//		      $sql .= ", amount = '".$tvas[$key]."'";
 						//	      $sql .= ", tva_tx='".$key."'";
@@ -1246,7 +1246,7 @@ class Facture
 		if ($user->rights->facture->creer)
 		{
 			$this->remise_percent = $remise ;
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET remise_percent = '.ereg_replace(',','.',$remise);
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET remise_percent = '.price2num($remise);
 			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
 			if ($this->db->query($sql) )
@@ -1566,7 +1566,7 @@ class Facture
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 					$sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
 					$sql .= ' VALUES ('.$this->id;
-					$sql .= ",'".ereg_replace(',','.',$this->total_ttc)."'";
+					$sql .= ",'".price2num($this->total_ttc)."'";
 					$sql .= ',now(),'.$user->id;
 					$sql .= ",'".$soc->bank_account->code_banque."'";
 					$sql .= ",'".$soc->bank_account->code_guichet."'";
