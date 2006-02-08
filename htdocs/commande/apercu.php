@@ -120,10 +120,10 @@ if ($_GET["id"] > 0) {
 		/*
 		*   Commande
 		*/
-		$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp, p.note,';
-		$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'socpeople as x';
-		$sql.= ' WHERE p.fk_soc = s.idp AND p.fk_soc_contact = x.idp AND p.rowid = '.$commande->id;
+		$sql = 'SELECT s.nom, s.idp, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, '.$db->pdate('p.datep').' as dp, c.note,';
+		$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, c.fk_user_author, c.fk_user_valid, c.fk_user_cloture, c.date_creation, c.date_valid, c.date_cloture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'socpeople as x';
+		$sql.= ' WHERE c.fk_soc = s.idp AND c.fk_soc_contact = x.idp AND c.rowid = '.$commande->id;
 		if ($socidp) $sql .= ' AND s.idp = '.$socidp;
 
 		$result = $db->query($sql);
