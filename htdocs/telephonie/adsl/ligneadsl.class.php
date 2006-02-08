@@ -160,7 +160,7 @@ class LigneAdsl {
   function fetch($ligne, $id = 0)
     {
       $sql = "SELECT l.rowid, l.fk_client, l.fk_client_install, l.fk_client_facture, l.fk_fournisseur, l.numero_ligne, l.note, l.statut, l.fk_commercial";
-      $sql .= ", l.ip, l.login, l.password";
+      $sql .= ", l.ip, l.login, l.password, l.prix";
       $sql .= " , t.intitule AS type";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_adsl_ligne as l";
       $sql .= " , ".MAIN_DB_PREFIX."telephonie_adsl_type as t";
@@ -191,6 +191,7 @@ class LigneAdsl {
 	      $this->fournisseur_id    = $obj->fk_fournisseur;
 	      $this->commercial_id     = $obj->fk_commercial;
 	      $this->type              = $obj->type;
+	      $this->prix              = $obj->prix;
 	      $this->statut            = $obj->statut;
 
 	      $this->ip                = $obj->ip;
