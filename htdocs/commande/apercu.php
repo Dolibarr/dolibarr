@@ -160,13 +160,13 @@ if ($_GET["id"] > 0) {
 				// ligne 2
 				// partie Gauche
 				print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-				print dolibarr_print_date($propal->date,'%a %e %B %Y');
+				print dolibarr_print_date($commande->date,'%a %e %B %Y');
 				print '</td>';
 
 				// partie Droite
 				print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
-				if ($propal->fin_validite) {
-					print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
+				if ($commande->fin_validite) {
+					print dolibarr_print_date($commande->fin_validite,'%a %d %B %Y');
 				} else {
 					print $langs->trans("Unknown");
 				}
@@ -187,11 +187,11 @@ if ($_GET["id"] > 0) {
 					print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
 					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
 				} else {
-					if (!empty($propal->contactid)) {
+					if (!empty($commande->contactid)) {
 						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
 						$contact=new Contact($db);
-						$contact->fetch($propal->contactid);
-						print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
+						$contact->fetch($commande->contactid);
+						print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$commande->contactid.'" title="'.$langs->trans('ShowContact').'">';
 						print $contact->firstname.' '.$contact->name;
 						print '</a>';
 					} else {
@@ -279,7 +279,7 @@ if ($_GET["id"] > 0) {
 				// ligne 4
 				// partie Gauche
 				print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
-				print '<td colspan="3">'.$propal->remise_percent.'%</td>';
+				print '<td colspan="3">'.$commande->remise_percent.'%</td>';
 				print '</tr>';
 
 				// ligne 5
