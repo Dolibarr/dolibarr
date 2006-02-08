@@ -34,7 +34,7 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."facture as fc";
 
-$sql .= " WHERE date_format(f.date,'%Y') = '2005'";
+$sql .= " WHERE date_format(f.date,'%Y') = '2006'";
 $sql .= " AND l.fk_contrat = c.rowid";
 $sql .= " AND c.fk_client_comm = 52";
 $sql .= " AND f.ligne = l.ligne";
@@ -49,7 +49,7 @@ if ( $resql )
 
   $workbook = &new writeexcel_workbook($fname);
 	
-  $page = &$workbook->addworksheet("2005");
+  $page = &$workbook->addworksheet("2006");
 	
 	
   $page->write(0, 0,  "Ligne", $format_titre_agence1);
@@ -77,15 +77,12 @@ if ( $resql )
     }
 
   $workbook->close();
-
 }
 
 else
 {
   print $db->error();
 }
-
-
 
 $db->close();
 ?>
