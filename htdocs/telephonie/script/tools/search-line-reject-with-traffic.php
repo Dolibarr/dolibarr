@@ -31,7 +31,6 @@ $datemax = $datetime - (86400 * 90);
 $sql  = "SELECT ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
 $sql .= " WHERE statut = 7";
-$sql .= " AND unix_timestamp(datec) <".$datemax;
 
 $re2sql = $db->query($sql) ;
 
@@ -47,15 +46,14 @@ if ( $re2sql )
       $sqlm  = "SELECT unix_timestamp(max(date)) as md";
       $sqlm .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
       $sqlm .= " WHERE ligne = '".$row[0]."'";
+      $sqlm .= " AND date > '2006-01-01';";
 
       $resqlm = $db->query($sqlm) ;
       if ( $resqlm )
 	{
 	  $rowm = $db->fetch_row($resqlm);
-	  if ($rowm[0] < $datemax)
-	    {
-	      print $row[0]." ".strftime("%d/%m/%Y",$rowm[0])."\n";
-	    }
+
+	  print $row[0]." ".strftime("%d/%m/%Y",$rowm[0])."\n";
 	}
       $j++;
     }
