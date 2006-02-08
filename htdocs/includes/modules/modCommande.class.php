@@ -73,6 +73,9 @@ class modCommande extends DolibarrModules
 
     // Constantes
     $this->const = array();
+	$this->const[0][0] = "COMMANDE_ADDON_PDF";
+    $this->const[0][1] = "chaine";
+    $this->const[0][2] = "azur";
 
     // Boites
     $this->boxes = array();
