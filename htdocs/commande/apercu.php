@@ -40,6 +40,7 @@ if (!$user->rights->commande->lire)
 $langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
+$langs->load('sendings');
 
 
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
@@ -206,15 +207,15 @@ if ($_GET["id"] > 0) {
 				/*
   				 * Documents
  				 */
-				$propalref = sanitize_string($propal->ref);
-				$file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
-				$filedetail = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . "-detail.pdf";
-				$relativepath = "${propalref}/${propalref}.pdf";
-				$relativepathdetail = "${propalref}/${propalref}-detail.pdf";
+				$commanderef = sanitize_string($commande->ref);
+				$file = $conf->commande->dir_output . "/" . $commanderef . "/" . $commanderef . ".pdf";
+				$filedetail = $conf->commande->dir_output . "/" . $commanderef . "/" . $commanderef . "-detail.pdf";
+				$relativepath = "${commanderef}/${commanderef}.pdf";
+				$relativepathdetail = "${commanderef}/${commanderef}-detail.pdf";
 
                 // Chemin vers png aperçus
-				$relativepathimage = "${propalref}/${propalref}.pdf.png";
-				$relativepathimagebis = "${propalref}/${propalref}.pdf.png.0";
+				$relativepathimage = "${commanderef}/${commanderef}.pdf.png";
+				$relativepathimagebis = "${commanderef}/${commanderef}.pdf.png.0";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
 
@@ -229,16 +230,16 @@ if ($_GET["id"] > 0) {
 
 					print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
 
-					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
+					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
 					print '<td align="right">'.filesize($file). ' bytes</td>';
 					print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 					print '</tr>';
 
 					// Si fichier detail PDF existe
-					if (file_exists($filedetail)) { // propal détaillée supplémentaire
-						print "<tr $bc[$var]><td>Propal détaillée</td>";
+					if (file_exists($filedetail)) { // commande détaillée supplémentaire
+						print "<tr $bc[$var]><td>Commande détaillée</td>";
 
-						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$propal->ref.'-detail.pdf</a></td>';
+						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$commande->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
 						print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
 						print '</tr>';
@@ -284,7 +285,7 @@ if ($_GET["id"] > 0) {
 				// ligne 5
 				// partie Gauche
 				print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-				print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
+				print '<td align="right" colspan="2"><b>'.price($commande->price).'</b></td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				print '</table>';
 			}
@@ -293,7 +294,7 @@ if ($_GET["id"] > 0) {
 		}
 	} else {
 	// Propal non trouvée
-	print $langs->trans("ErrorPropalNotFound",$_GET["propalid"]);
+	print $langs->trans("ErrorPropalNotFound",$_GET["id"]);
 	}
 }
 
