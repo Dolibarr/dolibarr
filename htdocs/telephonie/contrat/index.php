@@ -161,7 +161,7 @@ $sql .= " , ".MAIN_DB_PREFIX."societe_perms as sp";
 $sql .= " WHERE c.fk_client_comm = s.idp";
 $sql .= " AND c.fk_soc_facture = sf.idp";
 
-$sql .= " AND c.fk_client_comm = sp.fk_soc";
+$sql .= " AND c.fk_soc = sp.fk_soc";
 
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
