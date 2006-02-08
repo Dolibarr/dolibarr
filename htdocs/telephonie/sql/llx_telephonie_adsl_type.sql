@@ -23,6 +23,7 @@
 create table llx_telephonie_adsl_type (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   intitule           varchar(255),
-  commande_active    smallint DEFAULT 1
+  commande_active    smallint DEFAULT 1,
+  fk_product         integer
 
 )type=innodb;
