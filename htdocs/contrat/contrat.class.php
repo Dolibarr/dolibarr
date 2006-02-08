@@ -572,8 +572,8 @@ class Contrat
 
         if ($this->statut == 0)
         {
-            $qty = ereg_replace(",",".",$qty);
-            $pu = ereg_replace(",",".",$pu);
+            $qty = price2num($qty);
+            $pu = price2num($pu);
             
             if ($fk_product > 0)
             {
@@ -591,7 +591,7 @@ class Contrat
             }
             
             $remise = 0;
-            $price = ereg_replace(",",".",round($pu, 2));
+            $price = price2num(round($pu, 2));
             $subprice = $price;
             if (strlen($remise_percent) > 0)
             {
@@ -607,7 +607,7 @@ class Contrat
             if ($dateend > 0)  { $sql.= ",date_fin_validite"; }
             $sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',";
             $sql.= ($fk_product>0 ? $fk_product : "null");
-            $sql.= ",".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."'";
+            $sql.= ",".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."'";
             if ($datestart > 0) { $sql.= ",".$this->db->idate($datestart); }
             if ($dateend > 0) { $sql.= ",".$this->db->idate($dateend); }
             $sql.= ");";
@@ -651,8 +651,8 @@ class Contrat
         $qty=trim($qty);
         $desc=trim($desc);
         $desc=trim($desc);
-        $price = ereg_replace(",",".",$pu);
-        $tvatx = ereg_replace(",",".",$tvatx);
+        $price = price2num($pu);
+        $tvatx = price2num($tvatx);
         $subprice = $price;
         $remise = 0;
         if (strlen($remise_percent) > 0)
@@ -670,12 +670,12 @@ class Contrat
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".addslashes($desc)."'";
-        $sql .= ",price_ht='" .     ereg_replace(",",".",$price)."'";
-        $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
-        $sql .= ",remise='" .       ereg_replace(",",".",$remise)."'";
-        $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
+        $sql .= ",price_ht='" .     price2num($price)."'";
+        $sql .= ",subprice='" .     price2num($subprice)."'";
+        $sql .= ",remise='" .       price2num($remise)."'";
+        $sql .= ",remise_percent='".price2num($remise_percent)."'";
         $sql .= ",qty='$qty'";
-        $sql .= ",tva_tx='".        ereg_replace(",",".",$tvatx)."'";
+        $sql .= ",tva_tx='".        price2num($tvatx)."'";
 
         if ($datestart > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($datestart); }
         else { $sql.=",date_ouverture_prevue=null"; }

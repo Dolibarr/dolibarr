@@ -839,7 +839,7 @@ class Societe {
   {
     if ($this->id)
       {
-	$remise = ereg_replace(",",".",$remise);
+	$remise = price2num($remise);
 
 	$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_remise_except ";
 	$sql .= " WHERE fk_soc = " . $this->id ." AND fk_facture IS NULL;";

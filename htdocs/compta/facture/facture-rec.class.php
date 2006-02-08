@@ -415,7 +415,7 @@ class FactureRec
 	    $qty=1;
 	  }
 	$remise = 0;
-	$price = round(ereg_replace(",",".",$pu), 2);
+	$price = round(price2num($pu), 2);
 	$subprice = $price;
 	if (trim(strlen($remise_percent)) > 0)
 	  {
@@ -425,13 +425,13 @@ class FactureRec
 	
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
 	$sql .= " VALUES ('$facid', '$desc'";
-	$sql .= ",".ereg_replace(",",".",$price);
-	$sql .= ",".ereg_replace(",",".",$qty);
-	$sql .= ",".ereg_replace(",",".",$txtva);
+	$sql .= ",".price2num($price);
+	$sql .= ",".price2num($qty);
+	$sql .= ",".price2num($txtva);
 	$sql .= ",'$fk_product'";
-	$sql .= ",'".ereg_replace(",",".",$remise_percent)."'";
-	$sql .= ",'".ereg_replace(",",".",$subprice)."'";
-	$sql .= ",'".ereg_replace(",",".",$remise)."') ;";
+	$sql .= ",'".price2num($remise_percent)."'";
+	$sql .= ",'".price2num($subprice)."'";
+	$sql .= ",'".price2num($remise)."') ;";
 	
 	if ( $this->db->query( $sql) )
 	  {
@@ -458,7 +458,7 @@ class FactureRec
 	    $qty=1;
 	  }
 	$remise = 0;
-	$price = round(ereg_replace(",",".",$pu), 2);
+	$price = round(price2num($pu), 2);
 	$subprice = $price;
 	if (trim(strlen($remise_percent)) > 0)
 	  {
@@ -471,11 +471,11 @@ class FactureRec
 	  }
 	
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc'";
-	$sql .= ",price=".ereg_replace(",",".",$price);
-	$sql .= ",subprice=".ereg_replace(",",".",$subprice);
-	$sql .= ",remise=".ereg_replace(",",".",$remise);
-	$sql .= ",remise_percent=".ereg_replace(",",".",$remise_percent);
-	$sql .= ",qty=".ereg_replace(",",".",$qty);
+	$sql .= ",price=".price2num($price);
+	$sql .= ",subprice=".price2num($subprice);
+	$sql .= ",remise=".price2num($remise);
+	$sql .= ",remise_percent=".price2num($remise_percent);
+	$sql .= ",qty=".price2num($qty);
 	$sql .= " WHERE rowid = $rowid ;";
 	
 	$result = $this->db->query( $sql);
@@ -536,11 +536,11 @@ class FactureRec
 	$tvas                 = $calculs[5];
 	
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET ";
-	$sql .= " amount = ".ereg_replace(",",".",$this->amount_ht);
-	$sql .= ", remise=".ereg_replace(",",".",$this->total_remise);
-	$sql .= ", total=".ereg_replace(",",".",$this->total_ht);
-	$sql .= ", tva=".ereg_replace(",",".",$this->total_tva);
-	$sql .= ", total_ttc=".ereg_replace(",",".",$this->total_ttc);
+	$sql .= " amount = ".price2num($this->amount_ht);
+	$sql .= ", remise=".price2num($this->total_remise);
+	$sql .= ", total=".price2num($this->total_ht);
+	$sql .= ", tva=".price2num($this->total_tva);
+	$sql .= ", total_ttc=".price2num($this->total_ttc);
 
 	$sql .= " WHERE rowid = $facid ;";
 	
@@ -578,7 +578,7 @@ class FactureRec
 	
 	$this->remise_percent = $remise ;
 	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET remise_percent = ".ereg_replace(",",".",$remise);
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET remise_percent = ".price2num($remise);
 	$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 	
 	if ($this->db->query($sql) )

@@ -172,7 +172,7 @@ class Propal
                     }
         
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-                    $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$txtva."','".addslashes($p_desc?$p_desc:$prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
+                    $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$txtva."','".addslashes($p_desc?$p_desc:$prod->label)."','".price2num($remise_percent)."','".price2num($subprice)."')";
         
                     if ($this->db->query($sql) )
                     {
@@ -230,7 +230,7 @@ class Propal
             }
     
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-            $sql .= " (".$this->id.", 0,'". $p_qty."','". ereg_replace(",",".",$price)."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '".ereg_replace(",",".",$subprice)."') ; ";
+            $sql .= " (".$this->id.", 0,'". $p_qty."','". price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '".price2num($subprice)."') ; ";
     
             if ($this->db->query($sql) )
             {
@@ -459,10 +459,10 @@ class Propal
 
         // Met a jour en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
-        $sql .= " price='".  ereg_replace(",",".",$this->total_ht)."'";
-        $sql .= ", tva='".   ereg_replace(",",".",$this->total_tva)."'";
-        $sql .= ", total='". ereg_replace(",",".",$this->total_ttc)."'";
-        $sql .= ", remise='".ereg_replace(",",".",$this->remise)."'";
+        $sql .= " price='".  price2num($this->total_ht)."'";
+        $sql .= ", tva='".   price2num($this->total_tva)."'";
+        $sql .= ", total='". price2num($this->total_ttc)."'";
+        $sql .= ", remise='".price2num($this->remise)."'";
         $sql .=" WHERE rowid = $this->id";
     
         if ( $this->db->query($sql) )

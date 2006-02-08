@@ -120,7 +120,7 @@ class Product
         if (strlen($this->price)==0) $this->price = 0;
         if (strlen($this->envente)==0) $this->envente = 0;  // deprecated
         if (strlen($this->status)==0) $this->status = 0;
-        $this->price = ereg_replace(",",".",$this->price);
+        $this->price = price2num($this->price);
 
         dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
     
@@ -263,13 +263,13 @@ class Product
 								$sql_multiprix .= "WHERE date_price = now()";
 								$sql_multiprix .= " and fk_product = ".$this->id;
 								$sql_multiprix .= " and fk_user_author = ".$user->id;
-								$sql_multiprix .= " and price = ".ereg_replace(",",".",$this->multiprices["$i"]);
+								$sql_multiprix .= " and price = ".price2num($this->multiprices["$i"]);
 						
 								$this->db->query($sql_multiprix);
 								
 								// On ajoute nouveau tarif
 								$sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price) ";
-								$sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".ereg_replace(",",".",$this->multiprices["$i"]);
+								$sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($this->multiprices["$i"]);
 								$sql_multiprix .= ")";
 								if (! $this->db->query($sql_multiprix) )
 									$queryError = true;
@@ -282,7 +282,7 @@ class Product
 					$sql .= "WHERE date_price = now()";
 					$sql .= " and fk_product = ".$this->id;
 					$sql .= " and fk_user_author = ".$user->id;
-					$sql .= " and price = ".ereg_replace(",",".",$this->price);
+					$sql .= " and price = ".price2num($this->price);
 					$sql .= " and envente = ".$this->envente;
 					$sql .= " and tva_tx = ".$this->tva_tx;
 			
@@ -290,7 +290,7 @@ class Product
 					
 					// On ajoute nouveau tarif
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
-					$sql .= " VALUES(now(),".$this->id.",".$user->id.",".ereg_replace(",",".",$this->price).",".$this->envente.",".$this->tva_tx;
+					$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->envente.",".$this->tva_tx;
 					$sql .= ")";
 					if (! $this->db->query($sql) )
 						$queryError = true;
@@ -310,7 +310,7 @@ class Product
 				$sql .= "WHERE date_price = now()";
 				$sql .= " and fk_product = ".$this->id;
 				$sql .= " and fk_user_author = ".$user->id;
-				$sql .= " and price = ".ereg_replace(",",".",$this->price);
+				$sql .= " and price = ".price2num($this->price);
 				$sql .= " and envente = ".$this->envente;
 				$sql .= " and tva_tx = ".$this->tva_tx;
 		
@@ -318,7 +318,7 @@ class Product
 				
 				// On ajoute nouveau tarif
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
-				$sql .= " VALUES(now(),".$this->id.",".$user->id.",".ereg_replace(",",".",$this->price).",".$this->envente.",".$this->tva_tx;
+				$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->envente.",".$this->tva_tx;
 				$sql .= ")";
 			   
 				 if ($this->db->query($sql) )
@@ -404,7 +404,7 @@ class Product
             $sql .= " ,fk_product = ".$this->id;
             $sql .= " ,fk_soc = ".$id_fourn;
             $sql .= " ,fk_user = ".$user->id;
-            $sql .= " ,price = ".ereg_replace(",",".",$buyprice);
+            $sql .= " ,price = ".price2num($buyprice);
             $sql .= " ,quantity = ".$qty;
     
             if (! $this->db->query($sql))
@@ -419,7 +419,7 @@ class Product
                 $sql .= " ,fk_product = ".$this->id;
                 $sql .= " ,fk_soc = ".$id_fourn;
                 $sql .= " ,fk_user = ".$user->id;
-                $sql .= " ,price = ".ereg_replace(",",".",$buyprice);
+                $sql .= " ,price = ".price2num($buyprice);
                 $sql .= " ,quantity = ".$qty;
 
                 if (! $this->db->query($sql))
@@ -463,7 +463,7 @@ class Product
 				if (strlen(trim($this->price)) > 0 )
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-					$sql .= " SET price = " . ereg_replace(",",".",$this->price);
+					$sql .= " SET price = " . price2num($this->price);
 					$sql .= " WHERE rowid = " . $id;
 			
 					if ( $this->db->query($sql) )
@@ -493,7 +493,7 @@ class Product
 			if (strlen(trim($this->price)) > 0 )
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-				$sql .= " SET price = " . ereg_replace(",",".",$this->price);
+				$sql .= " SET price = " . price2num($this->price);
 				$sql .= " WHERE rowid = " . $id;
 		
 				if ( $this->db->query($sql) )

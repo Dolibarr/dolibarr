@@ -399,10 +399,10 @@ class Livre {
 	$sql = "UPDATE ".OSC_DB_NAME.".products ";
 	$sql .= "SET products_model = '".$this->ref."'";
 	$sql .= ", products_image = '".$this->image."'";
-	$sql .= ", products_price = ".ereg_replace(",",".",$this->price)."";
+	$sql .= ", products_price = ".price2num($this->price)."";
 	if ($this->frais_de_port)
 	  {
-	    $sql .= ", products_weight = ".ereg_replace(",",".",$this->price)."";
+	    $sql .= ", products_weight = ".price2num($this->price)."";
 	  }
 	else
 	  {
@@ -445,7 +445,7 @@ class Livre {
     $sql = "UPDATE ".MAIN_DB_PREFIX."livre ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
     $sql .= ", ref = '" . trim($this->ref) ."'";
-    $sql .= ", prix = " . ereg_replace(",",".",$this->price)."";
+    $sql .= ", prix = " . price2num($this->price)."";
     $sql .= ", annee = " . $this->annee ;
     $sql .= ", fk_editeur = " . $this->editeurid ;
     $sql .= ", description = '" . trim($this->description) ."'";

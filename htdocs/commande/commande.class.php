@@ -402,7 +402,7 @@ class Commande
 		}
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)';
-		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
+		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
 
 		if ( $this->db->query( $sql) )
 		{

@@ -332,7 +332,7 @@ class Expedition
 	      $p_qty = 1;
 	    }
 
-	  $p_price = ereg_replace(",",".",$p_price);
+	  $p_price = price2num($p_price);
 
 	  $price = $p_price;
 	  $subprice = $p_price;

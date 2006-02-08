@@ -80,7 +80,7 @@ if ($socidp)
 }
 if ($_GET["search_montant"])
 {
-  $sql .=" AND p.amount=".ereg_replace(",",".",$_GET["search_montant"]);
+  $sql .=" AND p.amount=".price2num($_GET["search_montant"]);
 }
 
 if ($_GET["orphelins"])     // Option qui ne sert qu'au debogage

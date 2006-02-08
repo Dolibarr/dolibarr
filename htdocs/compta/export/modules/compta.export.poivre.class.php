@@ -200,7 +200,7 @@ class ComptaExportPoivre extends ComptaExport
                     $page->write_string($j, 3, stripslashes($this->line_out[$i][2]));
                     $page->write_string($j, 4, stripslashes($this->line_out[$i][3])." Facture");
                     $page->write_string($j, 5, $this->line_out[$i][5]); // Numéro de factur
-                    $page->write($j, 6, ereg_replace(",",".",$this->line_out[$i][7]));
+                    $page->write($j, 6, price2num($this->line_out[$i][7]));
                     $page->write_string($j, 7, 'D' ); // D pour débit
                     $page->write_string($j, 8, strftime("%d%m%y",$this->line_out[$i][0]));
 
@@ -213,7 +213,7 @@ class ComptaExportPoivre extends ComptaExport
 
                     $page->write_string($j, 4, stripslashes($this->line_out[$i][3])." Facture");
                     $page->write_string($j, 5, $this->line_out[$i][5]); // Numéro de facture
-                    $page->write($j, 6, ereg_replace(",",".",$this->line_out[$i][6])); // Montant de TVA
+                    $page->write($j, 6, price2num($this->line_out[$i][6])); // Montant de TVA
                     $page->write_string($j, 7, 'C'); // C pour crédit
                     $page->write_string($j, 8, strftime("%d%m%y",$this->line_out[$i][0]));
 
@@ -227,7 +227,7 @@ class ComptaExportPoivre extends ComptaExport
                 $page->write_string($j, 2, $this->line_out[$i][4]); // Code Comptable
                 $page->write_string($j, 4, $this->line_out[$i][3]." Facture");
                 $page->write_string($j, 5, $this->line_out[$i][5]);
-                $page->write($j, 6, ereg_replace(",",".",round($this->line_out[$i][8], 2)));
+                $page->write($j, 6, price2num(round($this->line_out[$i][8], 2)));
                 $page->write_string($j, 7, 'C');                     // C pour crédit
                 $page->write_string($j, 8, strftime("%d%m%y",$this->line_out[$i][0]));
 
@@ -304,7 +304,7 @@ class ComptaExportPoivre extends ComptaExport
                 $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); //
                 $page->write_string($j,5, $linep[$i][7]);                  // Numéro de facture
 
-                $page->write($j,6, ereg_replace(",",".",round(abs($linep[$i][5]), 2)));  // Montant de la ligne
+                $page->write($j,6, price2num(round(abs($linep[$i][5]), 2)));  // Montant de la ligne
                 $page->write_string($j,7,$debit);
                 $page->write_string($j,8, strftime("%d%m%y",$linep[$i][0]));
 
@@ -318,7 +318,7 @@ class ComptaExportPoivre extends ComptaExport
                 $page->write_string($j,3, $linep[$i][2]);
                 $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); //
                 $page->write_string($j,5, $linep[$i][7]);     // Numéro de facture
-                $page->write($j,6, ereg_replace(",",".",round(abs($linep[$i][5]), 2)));  // Montant de la ligne
+                $page->write($j,6, price2num(round(abs($linep[$i][5]), 2)));  // Montant de la ligne
                 $page->write_string($j,7, $credit);
                 $page->write_string($j,8, strftime("%d%m%y",$linep[$i][0]));
 

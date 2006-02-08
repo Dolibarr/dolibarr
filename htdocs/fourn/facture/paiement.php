@@ -385,7 +385,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 	}
 	if ($_GET["search_montant"])
 	{
-	  $sql .=" AND p.amount=".ereg_replace(",",".",$_GET["search_montant"]);
+	  $sql .=" AND p.amount=".price2num($_GET["search_montant"]);
 	}
 */
 

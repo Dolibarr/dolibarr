@@ -195,7 +195,7 @@ class Don
             $sql .= " fk_don_projet,";
         }
         $sql .= " note, fk_user_author, datedon, email)";
-        $sql .= " VALUES (now(),".ereg_replace(",",".", $this->amount).", $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, ";
+        $sql .= " VALUES (now(),".price2num($this->amount).", $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, ";
         if ($this->projetid)
         {
             $sql .= " $this->projetid,";

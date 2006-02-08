@@ -159,7 +159,7 @@ class BonPrelevement
 
             $sql .= " VALUES (".$this->id;
             $sql .= ",".$client_id.",'".addslashes($client_nom)."'";
-            $sql .= ",'".ereg_replace(",",".",$amount)."'";
+            $sql .= ",'".price2num($amount)."'";
             $sql .= ", '$code_banque', '$code_guichet', '$number')";
 
             if ($this->db->query($sql))
@@ -977,7 +977,7 @@ class BonPrelevement
              */
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-            $sql .= " SET amount = ".ereg_replace(",",".",$bonprev->total);
+            $sql .= " SET amount = ".price2num($bonprev->total);
             $sql .= " WHERE rowid = ".$prev_id;
 
             $resql=$this->db->query($sql);

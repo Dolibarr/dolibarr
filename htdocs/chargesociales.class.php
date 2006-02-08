@@ -64,10 +64,10 @@ class PaiementCharge {
             {
                 $facid = $key;
                 $value = trim($value);
-                $amount = round(ereg_replace(",",".",$value), 2);   // Un round est ok si nb avec '.'
+                $amount = round(price2num($value), 2);   // Un round est ok si nb avec '.'
                 if (is_numeric($amount)) $total += $amount;
             }
-            $total = ereg_replace(",",".",$total);
+            $total = price2num($total);
 
             if ($total > 0)
             {

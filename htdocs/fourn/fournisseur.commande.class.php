@@ -547,7 +547,7 @@ class CommandeFournisseur
 	      $p_qty = 1;
 	    }
 
-	  $p_price = ereg_replace(",",".",$p_price);
+	  $p_price = price2num($p_price);
 
 	  $price = $p_price;
 	  $subprice = $p_price;
@@ -645,11 +645,11 @@ class CommandeFournisseur
        *
        */
       $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur set";
-      $sql .= "  amount_ht ='".ereg_replace(",",".",$totalht)."'";
-      $sql .= ", total_ht  ='".ereg_replace(",",".",$totalht)."'";
-      $sql .= ", tva       ='".ereg_replace(",",".",$totaltva)."'";
-      $sql .= ", total_ttc ='".ereg_replace(",",".",$totalttc)."'";
-      $sql .= ", remise    ='".ereg_replace(",",".",$total_remise)."'";
+      $sql .= "  amount_ht ='".price2num($totalht)."'";
+      $sql .= ", total_ht  ='".price2num($totalht)."'";
+      $sql .= ", tva       ='".price2num($totaltva)."'";
+      $sql .= ", total_ttc ='".price2num($totalttc)."'";
+      $sql .= ", remise    ='".price2num($total_remise)."'";
       $sql .= " WHERE rowid = $this->id";
       if ( $this->db->query($sql) )
 	{
