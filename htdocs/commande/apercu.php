@@ -40,6 +40,7 @@ if (!$user->rights->commande->lire)
 $langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
+$langs->load('sendings');
 
 
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
@@ -122,7 +123,7 @@ if ($_GET["id"] > 0) {
 		$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp, p.note,';
 		$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'socpeople as x';
-		$sql.= ' WHERE p.fk_soc = s.idp AND p.fk_soc_contact = x.idp AND p.rowid = '.$propal->id;
+		$sql.= ' WHERE p.fk_soc = s.idp AND p.fk_soc_contact = x.idp AND p.rowid = '.$commande->id;
 		if ($socidp) $sql .= ' AND s.idp = '.$socidp;
 
 		$result = $db->query($sql);

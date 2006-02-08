@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,14 @@ $h = 0;
     	  $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
     	  $head[$h][1] = $langs->trans("ComptaCard");
     	  $h++;
-        }
+      }
+        
+    if ($conf->use_preview_tabs)
+		  {
+    		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
+    		$head[$h][1] = $langs->trans("Preview");
+    		$h++;
+      }
  
       $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
       $head[$h][1] = $langs->trans("Info");
