@@ -181,8 +181,8 @@ if ($resql)
 	$total = 0;
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td width="80">'.$langs->trans('Bill').'</td>';
-	print '<td width="80" align="center">'.$langs->trans('Status').'</td>';
+	print '<td>'.$langs->trans('Bill').'</td>';
+	print '<td align="center">'.$langs->trans('Status').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
 	print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 	print "</tr>\n";
