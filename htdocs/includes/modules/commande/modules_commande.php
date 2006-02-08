@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,28 +55,21 @@ class ModelePDFCommandes extends FPDF
     /** 
      *      \brief      Renvoi la liste des modèles actifs
      */
-    function liste_modeles($db)
+    function liste_modeles()
     {
         $liste=array();
-        $sql ="SELECT nom as id, nom as lib";
-        $sql.=" FROM ".MAIN_DB_PREFIX."propal_model_pdf";
-        
-        $resql = $db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $db->fetch_row($resql);
-                $liste[$row[0]]=$row[1];
-                $i++;
-            }
-        }
-        else
-        {
-            return -1;
-        }
+       	$dir = "../includes/modules/commande/";
+		$handle = opendir($dir);
+		$var=True;
+		while (($file = readdir($handle))!==false)
+		{
+			 if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
+    		{
+				$name = substr($file, 4, strlen($file) -16);
+				$liste[$name] = $name;
+        	// $classname = substr($file, 0, strlen($file) -12);
+			}
+		}
         return $liste;
     }
 
@@ -141,9 +135,9 @@ function commande_pdf_create($db, $comid, $modele='')
   // Positionne modele sur le nom du modele de facture à utiliser
   if (! strlen($modele))
     {
-      if (defined("PROPALE_ADDON_PDF") && PROPALE_ADDON_PDF)
+      if (defined("COMMANDE_ADDON_PDF") && COMMANDE_ADDON_PDF)
 	{
-	  $modele = PROPALE_ADDON_PDF;
+	  $modele = COMMANDE_ADDON_PDF;
 	}
       else
 	{
@@ -151,12 +145,11 @@ function commande_pdf_create($db, $comid, $modele='')
 	  return 0;
 	}
     }
-
   // Charge le modele
-  $file = "pdf_commande_".$modele.".modules.php";
+  $file = "pdf_".$modele.".modules.php";
   if (file_exists($dir.$file))
     {
-      $classname = "pdf_commande_".$modele;
+      $classname = "pdf_".$modele;
       require_once($dir.$file);
   
       $obj = new $classname($db);
@@ -169,7 +162,7 @@ function commande_pdf_create($db, $comid, $modele='')
 	}
       else
 	{
-	  dolibarr_syslog("Erreur dans propale_pdf_create");
+	  dolibarr_syslog("Erreur dans commande_pdf_create");
 	  dolibarr_print_error($db,$obj->pdferror());
 	  return 0;
 	}
