@@ -96,6 +96,16 @@ if ($modulepart)
         }
         $original_file=$conf->propal->dir_output.'/'.$original_file;
     }
+	 // Wrapping pour les comandes
+    if ($modulepart == 'commande')
+    {
+        $user->getrights('commande');
+        if ($user->rights->commande->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->commande->dir_output.'/'.$original_file;
+    }
 
     // Wrapping pour les rapport de paiements
     if ($modulepart == 'facture_paiement')
