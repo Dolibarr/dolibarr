@@ -52,8 +52,10 @@ if ( $re2sql )
       if ( $resqlm )
 	{
 	  $rowm = $db->fetch_row($resqlm);
-
-	  print $row[0]." ".strftime("%d/%m/%Y",$rowm[0])."\n";
+	  if ($rowm[0] > '1970-01-01')
+	    {
+	      print $row[0]." ".strftime("%d/%m/%Y",$rowm[0])."\n";
+	    }
 	}
       $j++;
     }
