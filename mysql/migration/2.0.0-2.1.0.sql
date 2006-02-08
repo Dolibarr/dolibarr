@@ -1,0 +1,6 @@
+-- $Revision$
+--
+-- Attention à l ordre des requetes
+-- ce fichier doit être chargé sur une version 2.0.0 
+-- sans AUCUNE erreur ni warning
+-- 
