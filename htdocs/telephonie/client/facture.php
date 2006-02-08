@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,11 @@
  */
 
 /**
-        \file       htdocs/compta/facture.php
-        \ingroup    facture
-        \brief      Page de création d'une facture
-        \version    $Revision$
+   \file       htdocs/telephonie/client/facture.php
+   \ingroup    telephonie/facture
+   \brief      Page de visualisation d'une facture
+   \version    $Revision$
 */
-
 require("./pre.inc.php");
 
 $user->getrights('facture');
@@ -40,7 +39,8 @@ $warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiemen
 require_once DOL_DOCUMENT_ROOT."/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
 require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
-
+include_once DOL_DOCUMENT_ROOT."/contact.class.php";
+include_once DOL_DOCUMENT_ROOT."/actioncomm.class.php";
 
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
@@ -51,10 +51,6 @@ if ($user->societe_id > 0)
     $action = '';
     $socidp = $user->societe_id;
 }
-
-// Nombre de ligne pour choix de produit/service prédéfinis
-$NBLINES=4;
-
 
 /*
  * Action envoi de mail
@@ -117,6 +113,21 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	      $filename[1] = $_FILES['addedfile']['name'];
 	      $mimetype[1] = $_FILES['addedfile']['type'];
 
+	      $dir = $conf->facture->dir_output . "/" . $fac->ref . "/";
+	      $handle=opendir($dir);
+	      $ifi = 2;
+	      while (($dfile = readdir($handle))!==false)
+		{
+		  if (is_readable($dir.$dfile) && substr($dfile, -10) == 'detail.pdf')
+		    {
+		      $filepath[$ifi] = $conf->facture->dir_output . "/" . $fac->ref . "/" . $dfile;
+		      $filename[$ifi] = $dfile;
+		      $mimetype[$ifi] = "application/pdf";
+		      $ifi++;
+		    }
+		}
+
+
 	      // Envoi de la facture
 	      $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
 
@@ -125,8 +136,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		  $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'.</div>';
 
 		  // Insertion action
-		  include_once("../contact.class.php");
-		  include_once("../actioncomm.class.php");
+
 		  $actioncomm = new ActionComm($db);
 		  $actioncomm->type_id     = $actiontypeid;
 		  $actioncomm->label       = $actionmsg2;
@@ -174,15 +184,9 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
       }
 }
 
-
-
-
 llxHeader('',$langs->trans("Bill"),'Facture');
 
 $html = new Form($db);
-
-
-
 
 if ($_GET["facid"] > 0)
 {
@@ -464,8 +468,6 @@ if ($_GET["facid"] > 0)
 
 		}
 
-
-
 	      $total = $total + ($objp->qty * $objp->price);
 	      $i++;
 	    }
@@ -476,16 +478,12 @@ if ($_GET["facid"] > 0)
 	{
 	  dolibarr_print_error($db);
 	}
-
       /*
        * Ajouter une ligne
        */
 
       print "</table>\n";
-
-
       print "</div>\n";
-
 
       /*
        * Boutons actions
@@ -495,10 +493,6 @@ if ($_GET["facid"] > 0)
 	{
 	  print "<div class=\"tabsAction\">\n";
 
-
-
-
-
 	  // Envoyer
 	  if ($fac->statut == 1 && $user->rights->facture->envoyer)
 	    {
@@ -506,14 +500,12 @@ if ($_GET["facid"] > 0)
 	    }
 
 	  // Envoyer une relance
+	  /*
 	  if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
 	    {
 	      print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>\n";
 	    }
-
-
-
-
+	  */
 
 	  print "</div>\n";
 
@@ -545,7 +537,6 @@ if ($_GET["facid"] > 0)
 	  print '<td align="right">'.filesize($file). ' bytes</td>';
 	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	  print '</tr>';
-
 
 	  $dir = $conf->facture->dir_output . "/" . $facref . "/";
 	  $handle=opendir($dir);
@@ -736,15 +727,12 @@ if ($_GET["facid"] > 0)
 	}
 
       }
-
-
     }
   else
     {
       /* Facture non trouvée */
       print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
     }
-
 }
 
 $db->close();
