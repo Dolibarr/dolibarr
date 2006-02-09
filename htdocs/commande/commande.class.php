@@ -545,6 +545,33 @@ class Commande
 			return -1;
 		}
 	}
+	
+	  /*
+   *
+   *
+   *
+   */
+	 
+  function set_pdf_model($user, $modelpdf)
+   {
+      if ($user->rights->commande->creer)
+	     {
+
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET model_pdf = '$modelpdf'";
+	      $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	  
+	     if ($this->db->query($sql) )
+	      {
+	        return 1;
+	      }
+	     else
+	     {
+    	  dolibarr_print_error($this->db);
+	      return 0;
+	     }
+	  }
+  }
+		
   /**
    *
    *
