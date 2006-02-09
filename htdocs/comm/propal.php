@@ -733,6 +733,7 @@ if ($_GET['propalid'] > 0)
 							              if ($conf->global->PROP_ADD_PROD_DESC)
                             {
                             	print '<br>'.$objp->product_desc;
+                            }
 							              
                             if ($objp->date_start && $objp->date_end)
                             {
