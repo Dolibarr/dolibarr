@@ -150,7 +150,8 @@ class modFacture extends DolibarrModules
         // Permissions
         $this->rights = array();
         $this->rights_class = 'facture';
-    
+		$r=0;
+		    
         $r++;
         $this->rights[$r][0] = 11;
         $this->rights[$r][1] = 'Lire les factures';
@@ -195,7 +196,7 @@ class modFacture extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 1320;
-        $this->rights[$r][1] = 'Exporter les factures et attributs';
+        $this->rights[$r][1] = 'Exporter les factures clients et attributs';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'facture';
@@ -216,8 +217,8 @@ class modFacture extends DolibarrModules
     
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
-        $this->export_label[$r]='Liste des factures clients et lignes de facture';
-        $this->export_fields_array[$r]=array('f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.fk_soc'=>"IdCompany",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.amount'=>"Amount",'f.remise_percent'=>"GlobalDiscount",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.paye'=>"Paid",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.date_start'=>"DateStart",'fd.date_end'=>"DateEnd");
+        $this->export_label[$r]='Factures clients et lignes de facture';
+        $this->export_fields_array[$r]=array('f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.fk_soc'=>"IdCompany",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.amount'=>"Amount",'f.remise_percent'=>"GlobalDiscount",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.paye'=>"BillShortStatusPayed",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.date_start'=>"DateStart",'fd.date_end'=>"DateEnd");
         $this->export_alias_array[$r]=array('f.rowid'=>"invoiceid",'f.facnumber'=>"ref",'f.fk_soc'=>"fk_soc",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",'f.amount'=>"amount",'f.remise_percent'=>"globaldiscount",'f.total'=>"totalht",'f.total_ttc'=>"totalttc",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid','fd.description'=>"linedescription",'fd.tva_taux'=>"linevatrate",'fd.qty'=>"lineqty",'fd.date_start'=>"linedatestart",'fd.date_end'=>"linedateend");
         $this->export_sql[$r]="select distinct ";
         $i=0;

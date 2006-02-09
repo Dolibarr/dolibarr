@@ -40,125 +40,166 @@ include_once "DolibarrModules.class.php";
 class modFournisseur extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
-    */
-  function modFournisseur($DB)
-  {
-    $this->db = $DB ;
-    $this->id = 'fournisseur';   // Same value xxx than in file modXxx.class.php file
-    $this->numero = 40 ;
+    /**
+     *   \brief      Constructeur. Definit les noms, constantes et boites
+     *   \param      DB      handler d'accès base
+     */
+  	function modFournisseur($DB)
+  	{
+		$this->db = $DB ;
+		$this->id = 'fournisseur';   // Same value xxx than in file modXxx.class.php file
+		$this->numero = 40 ;
+		
+		$this->family = "products";
+		$this->name = "Fournisseur";
+		$this->description = "Gestion des fournisseurs";
+		
+		$this->revision = explode(' ','$Revision$');
+		$this->version = $this->revision[1];
+		
+		$this->const_name = 'MAIN_MODULE_FOURNISSEUR';
+		$this->special = 0;
+		$this->picto='company';
+		
+		// Dir
+		$this->dirs = array();
+		
+		// Dépendances
+		$this->depends = array("modSociete");
+		$this->requiredby = array();
+        $this->langfiles = array("bills","companies","suppliers");
 
-    $this->family = "products";
-    $this->name = "Fournisseur";
-    $this->description = "Gestion des fournisseurs";
+		// Constantes
+		$this->const = array();
+		
+		// Boxes
+		$this->boxes = array();
+		$this->boxes[0][0] = "Derniers founisseurs";
+		$this->boxes[0][1] = "box_fournisseurs.php";
+		
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'fournisseur';
+		$r=0;
+		
+		$r++;
+		$this->rights[$r][0] = 181;
+		$this->rights[$r][1] = 'Lire les commandes fournisseur';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'lire';
+		
+		$r++;
+		$this->rights[$r][0] = 182;
+		$this->rights[$r][1] = 'Créer une commande fournisseur';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'creer';
+		
+		$r++;
+		$this->rights[$r][0] = 183;
+		$this->rights[$r][1] = 'Valider une commande fournisseur';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'valider';
+		
+		$r++;
+		$this->rights[$r][0] = 184;
+		$this->rights[$r][1] = 'Approuver les commandes fournisseur';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'approuver';
+		
+		$r++;
+		$this->rights[$r][0] = 185;
+		$this->rights[$r][1] = 'Commander une commande fournisseur';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'commander';
+		
+		$r++;
+		$this->rights[$r][0] = 186;
+		$this->rights[$r][1] = 'Réceptionner les commandes fournisseur';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'receptionner';
+		
+		$r++;
+		$this->rights[$r][0] = 187;
+		$this->rights[$r][1] = 'Clotûrer les commandes fournisseur';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'cloturer';
+		
+		$r++;
+		$this->rights[$r][0] = 188;
+		$this->rights[$r][1] = 'Annuler les commandes fournisseur';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'annuler';
+		
+		$r++;
+		$this->rights[$r][0] = 231;
+		$this->rights[$r][1] = 'Lire les factures fournisseur';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'facture';
+		$this->rights[$r][5] = 'lire';
+		
+		$r++;
+		$this->rights[$r][0] = 232;
+		$this->rights[$r][1] = 'Créer une facture fournisseur';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'facture';
+		$this->rights[$r][5] = 'creer';
+		
+		$r++;
+		$this->rights[$r][0] = 233;
+		$this->rights[$r][1] = 'Valider une facture fournisseur';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'facture';
+		$this->rights[$r][5] = 'valider';
 
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
+        $r++;
+        $this->rights[$r][0] = 236;
+        $this->rights[$r][1] = 'Exporter les factures fournisseurs et attributs';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'facture';
+        $this->rights[$r][5] = 'export';
+ 
 
-    $this->const_name = 'MAIN_MODULE_FOURNISSEUR';
-    $this->special = 0;
-    $this->picto='company';
-
-    // Dir
-    $this->dirs = array();
-
-    // Dépendances
-    $this->depends = array("modSociete");
-    $this->requiredby = array();
-
-    // Constantes
-    $this->const = array();
-
-    // Boxes
-    $this->boxes = array();
-    $this->boxes[0][0] = "Derniers founisseurs";
-    $this->boxes[0][1] = "box_fournisseurs.php";
-
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'fournisseur';
+        // Exports
+        //--------
+        $r=0;
     
-    $this->rights[2][0] = 181;
-    $this->rights[2][1] = 'Lire les commandes fournisseur';
-    $this->rights[2][2] = 'r';
-    $this->rights[2][3] = 1;
-    $this->rights[2][4] = 'commande';
-    $this->rights[2][5] = 'lire';
-
-    $this->rights[3][0] = 182;
-    $this->rights[3][1] = 'Créer une commande fournisseur';
-    $this->rights[3][2] = 'w';
-    $this->rights[3][3] = 0;
-    $this->rights[3][4] = 'commande';
-    $this->rights[3][5] = 'creer';
-
-    $this->rights[4][0] = 183;
-    $this->rights[4][1] = 'Valider une commande fournisseur';
-    $this->rights[4][2] = 'w';
-    $this->rights[4][3] = 0;
-    $this->rights[4][4] = 'commande';
-    $this->rights[4][5] = 'valider';
-
-    $this->rights[5][0] = 184;
-    $this->rights[5][1] = 'Approuver les commandes fournisseur';
-    $this->rights[5][2] = 'w';
-    $this->rights[5][3] = 0;
-    $this->rights[5][4] = 'commande';
-    $this->rights[5][5] = 'approuver';
-
-    $this->rights[6][0] = 185;
-    $this->rights[6][1] = 'Commander une commande fournisseur';
-    $this->rights[6][2] = 'w';
-    $this->rights[6][3] = 0;
-    $this->rights[6][4] = 'commande';
-    $this->rights[6][5] = 'commander';
-
-    $this->rights[7][0] = 186;
-    $this->rights[7][1] = 'Réceptionner les commandes fournisseur';
-    $this->rights[7][2] = 'd';
-    $this->rights[7][3] = 0;
-    $this->rights[7][4] = 'commande';
-    $this->rights[7][5] = 'receptionner';
-
-    $this->rights[8][0] = 187;
-    $this->rights[8][1] = 'Clotûrer les commandes fournisseur';
-    $this->rights[8][2] = 'd';
-    $this->rights[8][3] = 0;
-    $this->rights[8][4] = 'commande';
-    $this->rights[8][5] = 'cloturer';
-
-    $this->rights[9][0] = 188;
-    $this->rights[9][1] = 'Annuler les commandes fournisseur';
-    $this->rights[9][2] = 'd';
-    $this->rights[9][3] = 0;
-    $this->rights[9][4] = 'commande';
-    $this->rights[9][5] = 'annuler';
-
-
-    $this->rights[10][0] = 231;
-    $this->rights[10][1] = 'Lire les factures fournisseur';
-    $this->rights[10][2] = 'r';
-    $this->rights[10][3] = 1;
-    $this->rights[10][4] = 'facture';
-    $this->rights[10][5] = 'lire';
-
-    $this->rights[11][0] = 232;
-    $this->rights[11][1] = 'Créer une facture fournisseur';
-    $this->rights[11][2] = 'w';
-    $this->rights[11][3] = 0;
-    $this->rights[11][4] = 'facture';
-    $this->rights[11][5] = 'creer';
-
-    $this->rights[12][0] = 233;
-    $this->rights[12][1] = 'Valider une facture fournisseur';
-    $this->rights[12][2] = 'w';
-    $this->rights[12][3] = 0;
-    $this->rights[12][4] = 'facture';
-    $this->rights[12][5] = 'valider';
-
-  }
+        $r++;
+        $this->export_code[$r]=$this->id.'_'.$r;
+        $this->export_label[$r]='Factures fournisseurs et lignes de facture';
+        $this->export_fields_array[$r]=array('f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.fk_soc'=>"IdCompany",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.paye'=>"BillShortStatusPayed",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty");
+        $this->export_alias_array[$r]=array('f.rowid'=>"invoiceid",'f.facnumber'=>"ref",'f.fk_soc'=>"fk_soc",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",'f.total_ht'=>"totalht",'f.total_ttc'=>"totalttc",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid','fd.description'=>"linedescription",'fd.tva_taux'=>"linevatrate",'fd.qty'=>"lineqty");
+        $this->export_sql[$r]="select distinct ";
+        $i=0;
+        foreach ($this->export_alias_array[$r] as $key => $value)
+        {
+            if ($i > 0) $this->export_sql[$r].=', ';
+            else $i++;
+            $this->export_sql[$r].=$key.' as '.$value;
+        }
+        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'facture_fourn as f, '.MAIN_DB_PREFIX.'facture_fourn_det as fd WHERE fd.fk_facture_fourn = f.rowid';
+        $this->export_permission[$r]=array(array("fournisseur","facture","export"));
+    
+    }
 
 
    /**
