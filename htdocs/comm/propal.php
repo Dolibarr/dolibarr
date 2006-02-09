@@ -683,6 +683,12 @@ if ($_GET['propalid'] > 0)
             */
             $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice,';
             $sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+            
+            if ($conf->global->PROP_ADD_PROD_DESC)
+                        {
+                        	$sql.= ', p.description as product_desc';
+                        }
+            
             $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
             $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
             $sql.= ' WHERE pt.fk_propal = '.$propal->id;
@@ -722,7 +728,12 @@ if ($_GET['propalid'] > 0)
                             if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
                             else print img_object($langs->trans('ShowProduct'),'product');
                             print ' '.$objp->ref.'</a>';
-							print ' - '.nl2br(stripslashes($objp->product));
+							              print ' - '.nl2br(stripslashes($objp->product));
+							              
+							              if ($conf->global->PROP_ADD_PROD_DESC)
+                            {
+                            	print '<br>'.$objp->product_desc;
+							              
                             if ($objp->date_start && $objp->date_end)
                             {
                                 print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
