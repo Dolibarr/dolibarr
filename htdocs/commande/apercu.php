@@ -120,6 +120,7 @@ if ($_GET["id"] > 0) {
 		/*
 		*   Commande
 		*/
+/*		
 		$sql = 'SELECT s.nom, s.idp, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, '.$db->pdate('c.date_commande').' as dp, c.note,';
 		$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, c.fk_user_author, c.fk_user_valid, c.fk_user_cloture, c.date_creation, c.date_valid, c.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'socpeople as x';
@@ -134,7 +135,7 @@ if ($_GET["id"] > 0) {
 		if ($result) {
 			if ($db->num_rows($result)) {
 				$obj = $db->fetch_object($result);
-
+*/
 				$societe = new Societe($db);
 				$societe->fetch($obj->idp);
 
@@ -288,10 +289,10 @@ if ($_GET["id"] > 0) {
 				print '<td align="right" colspan="2"><b>'.price($commande->price).'</b></td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				print '</table>';
-			}
+/*			}
 		} else {
 			dolibarr_print_error($db);
-		}
+*/		}
 	} else {
 	// Commande non trouvée
 	print $langs->trans("ErrorPropalNotFound",$_GET["id"]);
