@@ -663,6 +663,12 @@ else
 			 */
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+			
+			if ($conf->global->PROP_ADD_PROD_DESC)
+                        {
+                        	$sql.= ', p.description as product_desc';
+                        }
+			
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 			$sql.= ' WHERE l.fk_commande = '.$commande->id;
@@ -704,6 +710,12 @@ else
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
+							
+							if ($conf->global->PROP_ADD_PROD_DESC)
+                            {
+                            	print '<br>'.nl2br(stripslashes($objp->product_desc));
+                            }
+							
 							print '</td>';
 						}
 						else
