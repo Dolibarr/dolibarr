@@ -320,7 +320,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
     print '</td></tr>';
 
-    if ($_GET["type"] == 0 && $conf->stick->enabled)
+    if ($_GET["type"] == 0 && $conf->stock->enabled)
     {
         print "<tr>".'<td>Seuil stock</td><td colspan="2">';
         print '<input name="seuil_stock_alerte" size="4" value="0">';
