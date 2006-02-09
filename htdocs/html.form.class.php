@@ -604,7 +604,7 @@ class Form
 						if($result2["price"])
 							$opt.= $result2["price"].' '.$langs->trans("Currency".$conf->monnaie);
 						else
-							$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
+							$opt.= '0.00 '.$langs->trans("Currency".$conf->monnaie);
 				}
 				else
                 	$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
