@@ -67,7 +67,7 @@ $liste=$model->liste_modeles($db);
 foreach($liste as $key)
 {
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$model->getDriverLabel($key).'</td><td>'.$model->getLibLabel($key).'</td><td>'.$model->getLibVersion($key).'</td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$model->getDriverLabel($key).'</td><td>'.$model->getLibLabel($key).'</td><td nowrap="nowrap">'.$model->getLibVersion($key).'</td></tr>';
 }
 
 print '</table>';
