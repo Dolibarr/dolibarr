@@ -1845,7 +1845,7 @@ class Form
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
                     $model=new ModelePDFCommandes();
-                    $modellist=$model->liste_modeles();
+                    $modellist=$model->liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'facture')
