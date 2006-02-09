@@ -77,5 +77,63 @@ else
   print $db->error();
 }
 
+/*
+ * Lignes en commandes
+ *
+ *
+ *
+ */
+print "Lignes en commande\n";
+
+$sql  = "SELECT ligne";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+$sql .= " WHERE statut = 2";
+
+$re2sql = $db->query($sql) ;
+
+if ( $re2sql )
+{
+  $nu2m = $db->num_rows($re2sql);
+  print "$nu2m lignes\n";
+  $j = 0;
+  while ($j < $nu2m)
+    {
+      $row = $db->fetch_row($re2sql);
+
+      $sqlc  = "SELECT count(*)";
+      $sqlc .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+      $sqlc .= " WHERE ligne = '".$row[0]."'";
+
+      $resqlc = $db->query($sqlc) ;
+      if ( $resqlc )
+	{
+	  $rowc = $db->fetch_row($resqlc);
+
+	  if ($rowc[0] > 0)
+	    {
+	      $sqlm  = "SELECT unix_timestamp(max(date)) as md";
+	      $sqlm .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+	      $sqlm .= " WHERE ligne = '".$row[0]."'";
+	      $sqlm .= " AND date > '2006-01-01';";
+	      
+	      $resqlm = $db->query($sqlm) ;
+	      if ( $resqlm )
+		{
+		  $rowm = $db->fetch_row($resqlm);
+		  
+		  print $row[0]." ".strftime("%d/%m/%Y",$rowm[0])." ".$rowc[0]."\n";
+		  
+		}
+	    }
+	}
+      $j++;
+    }
+}
+else
+{
+  print $db->error();
+}
+
+
 $db->close();
 ?>
