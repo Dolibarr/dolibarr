@@ -38,6 +38,8 @@ class Commande
 {
 	var $db ;
 	var $id ;
+	var $socidp;
+  var $contactid;
 	var $brouillon;
 
 	// Pour board

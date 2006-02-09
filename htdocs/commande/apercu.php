@@ -292,7 +292,7 @@ if ($_GET["id"] > 0) {
 /*			}
 		} else {
 			dolibarr_print_error($db);
-*/		}
+		}*/
 	} else {
 	// Commande non trouvée
 	print $langs->trans("ErrorPropalNotFound",$_GET["id"]);
