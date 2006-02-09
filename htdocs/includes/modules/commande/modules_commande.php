@@ -25,19 +25,19 @@
  */
 
 /**
-	    \file       htdocs/includes/modules/commande/modules_commande.php
-		\ingroup    commande
-		\brief      Fichier contenant la classe mère de generation des commandes en PDF
-		            et la classe mère de numérotation des commandes
-		\version    $Revision$
+            \file       htdocs/includes/modules/commande/modules_commande.php
+                \ingroup    commande
+                \brief      Fichier contenant la classe mère de generation des commandes en PDF
+                            et la classe mère de numérotation des commandes
+                \version    $Revision$
 */
 
 require_once(FPDF_PATH.'fpdf.php');
 
 
 /**
-	    \class      ModelePDFCommandes
-		\brief      Classe mère des modèles de commandes
+            \class      ModelePDFCommandes
+                \brief      Classe mère des modèles de commandes
 */
 
 class ModelePDFCommandes extends FPDF
@@ -55,21 +55,29 @@ class ModelePDFCommandes extends FPDF
     /** 
      *      \brief      Renvoi la liste des modèles actifs
      */
-    function liste_modeles()
+    function liste_modeles($db)
     {
         $liste=array();
-       	$dir = "../includes/modules/commande/";
-		$handle = opendir($dir);
-		$var=True;
-		while (($file = readdir($handle))!==false)
-		{
-			 if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
-    		{
-				$name = substr($file, 4, strlen($file) -16);
-				$liste[$name] = $name;
-        	// $classname = substr($file, 0, strlen($file) -12);
-			}
-		}
+        $sql ="SELECT nom as id, nom as lib";
+        $sql.=" FROM ".MAIN_DB_PREFIX."commande_model_pdf";
+        
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $db->fetch_row($resql);
+                $liste[$row[0]]=$row[1];
+                $i++;
+            }
+        }
+        else
+        {
+            $this->error=$db->error();
+            return -1;
+        }
         return $liste;
     }
 
@@ -79,7 +87,7 @@ class ModelePDFCommandes extends FPDF
 
 /**
         \class      ModeleNumRefCommandes
-	    \brief      Classe mère des modèles de numérotation des références de commandes
+            \brief      Classe mère des modèles de numérotation des références de commandes
 */
 
 class ModeleNumRefCommandes
@@ -136,14 +144,14 @@ function commande_pdf_create($db, $comid, $modele='')
   if (! strlen($modele))
     {
       if (defined("COMMANDE_ADDON_PDF") && COMMANDE_ADDON_PDF)
-	{
-	  $modele = COMMANDE_ADDON_PDF;
-	}
+        {
+          $modele = COMMANDE_ADDON_PDF;
+        }
       else
-	{
+        {
       print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
-	  return 0;
-	}
+          return 0;
+        }
     }
   // Charge le modele
   $file = "pdf_".$modele.".modules.php";
@@ -155,17 +163,17 @@ function commande_pdf_create($db, $comid, $modele='')
       $obj = new $classname($db);
 
       if ( $obj->write_pdf_file($comid) > 0)
-	{
-	  // on supprime l'image correspondant au preview
-	   commande_delete_preview($db, $comid);
-	  return 1;
-	}
+        {
+          // on supprime l'image correspondant au preview
+           commande_delete_preview($db, $comid);
+          return 1;
+        }
       else
-	{
-	  dolibarr_syslog("Erreur dans commande_pdf_create");
-	  dolibarr_print_error($db,$obj->pdferror());
-	  return 0;
-	}
+        {
+          dolibarr_syslog("Erreur dans commande_pdf_create");
+          dolibarr_print_error($db,$obj->pdferror());
+          return 0;
+        }
     }
   else
     {
@@ -175,27 +183,27 @@ function commande_pdf_create($db, $comid, $modele='')
 }
 function commande_delete_preview($db, $propalid)
 {
-	global $langs,$conf;
+        global $langs,$conf;
 
-	$com = new Commande($db,"",$propalid);
-	$com->fetch($propalid);  
-	$client = new Societe($db);
+        $com = new Commande($db,"",$propalid);
+        $com->fetch($propalid);  
+        $client = new Societe($db);
     $client->fetch($com->soc_id);
 
-	if ($conf->commande->dir_output)
-		{
-		$comref = sanitize_string($com->ref); 
-		$dir = $conf->commande->dir_output . "/" . $comref ; 
-		$file = $dir . "/" . $comref . ".pdf.png";
+        if ($conf->commande->dir_output)
+                {
+                $comref = sanitize_string($com->ref); 
+                $dir = $conf->commande->dir_output . "/" . $comref ; 
+                $file = $dir . "/" . $comref . ".pdf.png";
 
-		if ( file_exists( $file ) && is_writable( $file ) )
-			{
-			if ( ! unlink($file) )
-				{
-				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-				return 0;
-				}
-			}
-		}
+                if ( file_exists( $file ) && is_writable( $file ) )
+                        {
+                        if ( ! unlink($file) )
+                                {
+                                $this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+                                return 0;
+                                }
+                        }
+                }
 }
 ?>

@@ -69,10 +69,42 @@ if ($_GET["action"] == 'setmod')
       $commande_addon_var = $_GET["value"];
     }
 }
+if ($_GET["action"] == 'set')
+{
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_model_pdf (nom) VALUES ('".$_GET["value"]."')";
+
+    if ($db->query($sql))
+    {
+
+    }
+}
+$propale_addon_var_pdf = $conf->global->PROPALE_ADDON_PDF;
 if ($_GET["action"] == 'setpdf')
 {
-  if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$_GET["value"])) $commande_addon_var_pdf = $_GET["value"];
+  
+  if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$_GET["value"])) 
+  	$commande_addon_var_pdf = $_GET["value"];
+
+	// On active le modele
+    $sql_del = "delete from ".MAIN_DB_PREFIX."commande_model_pdf where nom = '".$_GET["value"]."';";
+    $db->query($sql_del);
+
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_model_pdf (nom) VALUES ('".$_GET["value"]."')";
+    if ($db->query($sql))
+    {
+
+    }
 }
+if ($_GET["action"] == 'del')
+{
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_model_pdf WHERE nom='".$_GET["value"]."'";
+
+    if ($db->query($sql))
+    {
+
+    }
+}
+$propale_addon_var_pdf = $conf->global->PROPALE_ADDON_PDF;
 
 $dir = "../includes/modules/commande/";
 
@@ -141,52 +173,79 @@ print '</table>';
 print '<br>';
 print_titre("Modèles de commande pdf");
 
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td width=\"140\">".$langs->trans("Name")."</td>\n";
+print "  <td>".$langs->trans("Description")."</td>\n";
+print '  <td align="center" colspan="2">'.$langs->trans("Activated")."</td>\n";
+print '  <td align="center">'.$langs->trans("Default")."</td>\n";
 print "</tr>\n";
 
 clearstatcache();
 
+$def = array();
+$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."commande_model_pdf";
+$resql=$db->query($sql);
+if ($resql)
+{
+  $i = 0;
+  $num_rows=$db->num_rows($resql);
+  while ($i < $num_rows)
+    {
+      $array = $db->fetch_array($resql);
+      array_push($def, $array[0]);
+      $i++;
+    }
+}
+else
+{
+  dolibarr_print_error($db);
+}
 $handle=opendir($dir);
-
 $var=True;
 while (($file = readdir($handle))!==false)
 {
-    if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
+	if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
     {
         $var = !$var;
         $name = substr($file, 4, strlen($file) -16);
         $classname = substr($file, 0, strlen($file) -12);
-    
-        print '<tr '.$bc[$var].'><td width="100">';
-        echo "$name";
-        print "</td><td>\n";
-        require_once($dir.$file);
-        $obj = new $classname($db);
-    
-        print $obj->description;
-    
-        print '</td><td align="center">';
-    
-        if ($commande_addon_var_pdf == "$name")
-        {
-            print '&nbsp;';
-            print '</td><td align="center">';
-            print img_tick();
-        }
-        else
-        {
-            print '&nbsp;';
-			// print $commande_addon_var_pdf."iii";
-            print '</td><td align="center">';
-            print '<a href="commande.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
-        }
-        print "</td></tr>\n";
-    
+	
+		  $var=!$var;
+		  print "<tr ".$bc[$var].">\n  <td>";
+		  print "$name";
+		  print "</td>\n  <td>\n";
+		  require_once($dir.$file);
+		  $obj = new $classname($db);
+		  
+		  print $obj->description;
+	
+		  print "</td>\n  <td align=\"center\">\n";
+	
+		  if (in_array($name, $def))
+	{
+	  print img_tick();
+	  print "</td>\n  <td>";
+	  print '<a href="commande.php?action=del&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
+	}
+      else
+	{
+	  print "&nbsp;";
+	  print "</td>\n  <td>";
+	  print '<a href="commande.php?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+	}
+
+      print "</td>\n  <td align=\"center\">";
+
+      if ($commande_addon_var_pdf == "$name")
+	{
+	  print img_tick();
+	}
+      else
+	{
+      print '<a href="commande.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+	}
+      print '</td></tr>';
     }
 }
 closedir($handle);

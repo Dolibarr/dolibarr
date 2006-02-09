@@ -127,8 +127,10 @@ class modCommande extends DolibarrModules
     // Dir
     $this->dirs[0] = $conf->commande->dir_output;
     $this->dirs[1] = $conf->commande->dir_images;
-
-    $sql = array();
+	$sql = array(
+		 "DELETE FROM ".MAIN_DB_PREFIX."commande_model_pdf WHERE nom = '".$this->const[0][2]."'",
+		 "INSERT INTO ".MAIN_DB_PREFIX."commande_model_pdf (nom) VALUES('".$this->const[0][2]."');",
+		 );
 
     return $this->_init($sql);
   }
@@ -141,7 +143,7 @@ class modCommande extends DolibarrModules
   function remove()
   {
     $sql = array();
-
+	
     return $this->_remove($sql);
 
   }
