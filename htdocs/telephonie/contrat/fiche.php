@@ -155,7 +155,7 @@ if ($_GET["action"] == 'create' && $user->rights->telephonie->ligne->creer)
 
   print '<tr><td width="20%">Client</td><td >';
   $ff = array();
-  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
+  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 AND parent = 0 ORDER BY nom ";
   if ( $db->query( $sql) )
     {
       $num = $db->num_rows();
