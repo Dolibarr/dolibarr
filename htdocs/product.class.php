@@ -597,6 +597,7 @@ class Product
 							return -1;
 						}
 					}
+					$this -> multiprices[1] = $this->price;
 					for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
 					{
 						$sql= "SELECT price, tva_tx, envente ";
@@ -609,8 +610,10 @@ class Product
 						if ( $result )
 						{
 							$result = $this->db->fetch_array();
-							if($result["price"] != "")
-							 $this -> multiprices[$i]=$result["price"];
+							if($result["price"] != "" && $result["price"] != "0.00")
+							 	$this -> multiprices[$i]=$result["price"];
+							 else
+							 	$this -> multiprices[$i]=$this->price;
 						}
 						else
 						 {
