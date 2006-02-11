@@ -219,7 +219,7 @@ class pdf_azur extends ModelePDFCommandes
                         }
 
                         // Ajoute description du produit
-                        if ($conf->global->PROP_ADD_PROD_DESC)
+                        if ($conf->global->COM_ADD_PROD_DESC)
                         {
                             if ($com->lignes[$i]->product_desc&&$com->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$com->lignes[$i]->product_desc!=$com->lignes[$i]->desc)
                             {

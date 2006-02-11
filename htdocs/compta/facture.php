@@ -1370,6 +1370,12 @@ else
 			$sql .= ' '.$db->pdate('l.date_start').' as date_start,';
 			$sql .= ' '.$db->pdate('l.date_end').' as date_end, ';
 			$sql .= ' p.ref, p.fk_product_type, p.label as product';
+			
+			if ($conf->global->FAC_ADD_PROD_DESC)
+                        {
+                        	$sql.= ', p.description as product_desc';
+                        }
+			
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l ';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
 			$sql .= ' WHERE l.fk_facture = '.$fac->id;
@@ -1413,6 +1419,12 @@ else
 							print ' - '.nl2br(stripslashes($objp->product));
 							print_date_range($objp->date_start,$objp->date_end);
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
+							
+							if ($conf->global->FAC_ADD_PROD_DESC)
+                            {
+                            	print '<br>'.nl2br(stripslashes($objp->product_desc));
+                            }
+							
 							print '</td>';
 						}
 						else

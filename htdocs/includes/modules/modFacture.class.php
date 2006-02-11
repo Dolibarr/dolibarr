@@ -118,19 +118,19 @@ class modFacture extends DolibarrModules
         $this->const[7][1] = "chaine";
         $this->const[7][2] = "bulot";
     
-        $this->const[7][0] = "FACTURE_ADDON";
-        $this->const[7][1] = "chaine";
-        $this->const[7][2] = "pluton";
+        $this->const[8][0] = "FACTURE_ADDON";
+        $this->const[8][1] = "chaine";
+        $this->const[8][2] = "pluton";
     
-        $this->const[8][0] = "FAC_FORCE_DATE_VALIDATION";
-        $this->const[8][1] = "yesno";
-        $this->const[8][2] = "0";
-    
-        $this->const[9][0] = "FAC_ADD_PROD_DESC";
-        $this->const[9][1] = "chaine";
+        $this->const[9][0] = "FAC_FORCE_DATE_VALIDATION";
+        $this->const[9][1] = "yesno";
         $this->const[9][2] = "0";
-        $this->const[9][3] = "Mettre à 1 pour voir la description d'un produit dans une facture";
-        $this->const[9][4] = 1;
+    
+        $this->const[10][0] = "FAC_ADD_PROD_DESC";
+        $this->const[10][1] = "chaine";
+        $this->const[10][2] = "0";
+        $this->const[10][3] = "Mettre à 1 pour voir la description d\'un produit dans une facture";
+        $this->const[10][4] = 1;
     
         // Boites
         $this->boxes = array();

@@ -683,7 +683,7 @@ else
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 			
-			if ($conf->global->PROP_ADD_PROD_DESC)
+			if ($conf->global->COM_ADD_PROD_DESC)
                         {
                         	$sql.= ', p.description as product_desc';
                         }
@@ -730,7 +730,7 @@ else
 							print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
 							
-							if ($conf->global->PROP_ADD_PROD_DESC)
+							if ($conf->global->COM_ADD_PROD_DESC)
                             {
                             	print '<br>'.nl2br(stripslashes($objp->product_desc));
                             }
