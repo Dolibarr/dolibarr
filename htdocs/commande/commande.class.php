@@ -379,8 +379,8 @@ class Commande
 			$prod = new Product($this->db, $fk_product);
 			if ($prod->fetch($fk_product) > 0)
 			{
-				$desc  = nl2br(stripslashes($prod->libelle));
-				$product_desc = $product_desc?$product_desc:$prod->description;
+				$desc  = $desc?$desc:$prod->libelle;
+				$product_desc = nl2br(stripslashes($prod->description));
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
