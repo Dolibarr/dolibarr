@@ -684,7 +684,7 @@ if ($_GET['propalid'] > 0)
             $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice,';
             $sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
             
-            if ($conf->global->PROP_ADD_PROD_DESC && $conf->global->CHANGE_PROD_DESC=0)
+            if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
                         {
                         	$sql.= ', p.description as product_desc';
                         }
@@ -730,7 +730,7 @@ if ($_GET['propalid'] > 0)
                             print ' '.$objp->ref.'</a>';
 							              print ' - '.nl2br(stripslashes($objp->product));
 							              
-							              if ($conf->global->PROP_ADD_PROD_DESC && $conf->global->CHANGE_PROD_DESC=0)
+							              if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
                             {
                             	print '<br>'.nl2br(stripslashes($objp->product_desc));
                             }

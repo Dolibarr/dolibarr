@@ -733,8 +733,7 @@ else
 							print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 							
-							//if ($conf->global->COM_ADD_PROD_DESC)
-							if ($conf->global->COM_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC=0)
+							if ($conf->global->COM_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
                         {
                         	print '<br>'.nl2br(stripslashes($objp->product_desc));
                         }
