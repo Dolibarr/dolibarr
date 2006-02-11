@@ -364,7 +364,6 @@ class Commande
 		$qty = ereg_replace(',','.',$qty);
 		$pu = ereg_replace(',','.',$pu);
 		$desc=trim($desc);
-		$product_desc=trim($desc);
 		if (strlen(trim($qty))==0)
 		{
 			$qty=1;
@@ -380,7 +379,7 @@ class Commande
 			$prod = new Product($this->db, $fk_product);
 			if ($prod->fetch($fk_product) > 0)
 			{
-				$desc  = $desc?$desc:$prod->libelle;
+				$desc  = nl2br(stripslashes($prod->libelle));
 				$product_desc = $product_desc?$product_desc:$prod->description;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
