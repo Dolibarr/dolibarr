@@ -364,6 +364,7 @@ class Commande
 		$qty = ereg_replace(',','.',$qty);
 		$pu = ereg_replace(',','.',$pu);
 		$desc=trim($desc);
+		$product_desc=trim($product_desc);
 		if (strlen(trim($qty))==0)
 		{
 			$qty=1;
