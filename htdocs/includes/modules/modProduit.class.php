@@ -74,6 +74,11 @@ class modProduit extends DolibarrModules
 	
     // Constantes
     $this->const = array();
+    $this->const[1][0] = "CHANGE_PROD_DESC";
+    $this->const[1][1] = "chaine";
+    $this->const[1][2] = "0";
+    $this->const[1][3] = "Mettre à 1 pour modifier la description d\'un produit dans une propale, commande et facture";
+    $this->const[1][4] = 1;
 
     // Boxes
     $this->boxes = array();
