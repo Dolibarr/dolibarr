@@ -380,7 +380,7 @@ class Commande
 			if ($prod->fetch($fk_product) > 0)
 			{
 				$desc  = $desc?$desc:$prod->libelle;
-				$product_desc = nl2br(stripslashes($prod->description));
+				$product_desc = $prod->description;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
@@ -405,7 +405,7 @@ class Commande
 		}
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)';
-		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($product_desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
+		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . nl2br(addslashes($product_desc)) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
 
 		if ( $this->db->query( $sql) )
 		{
