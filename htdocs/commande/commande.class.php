@@ -231,8 +231,8 @@ class Commande
 		{
 			$this->projetid = 0;
 		}
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client) ';
-		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\')';
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf) ';
+		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\', \''.$this->modelpdf.'\')';
 
 		if ( $this->db->query($sql) )
 		{
@@ -446,7 +446,7 @@ class Commande
 	function fetch($id)
 	{
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva';
-		$sql .= ', '.$this->db->pdate('c.date_commande').' as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note, c.ref_client';
+		$sql .= ', '.$this->db->pdate('c.date_commande').' as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note, c.ref_client, c.model_pdf';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql .= ' WHERE c.rowid = '.$id;
 
@@ -469,6 +469,7 @@ class Commande
 			$this->facturee        = $obj->facture;
 			$this->note            = $obj->note;
 			$this->projet_id       = $obj->fk_projet;
+			$this->modelpdf       = $obj->model_pdf;
 			
 			$this->db->free();
 			if ($this->statut == 0)

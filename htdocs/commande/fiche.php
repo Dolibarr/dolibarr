@@ -86,6 +86,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->projetid       = $_POST['projetid'];
 	$commande->remise_percent = $_POST['remise_percent'];
 	$commande->ref_client     = $_POST['ref_client'];
+	$commande->modelpdf  = $_POST['model'];
 
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
@@ -222,13 +223,20 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	}
 }
 
-if ($_GET['action'] == 'builddoc' || $_POST['action'] == 'builddoc')
+if ($_POST['action'] == 'builddoc')
 {
 	/*
 	 * Generation de la commande
 	 * définit dans /includes/modules/commande/modules_commande.php
 	 */
 	commande_pdf_create($db, $_GET['id'],$_POST['model']);
+		
+}
+if($_GET['action'] == 'builddoc')
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	commande_pdf_create($db, $_GET['id'],$commande->modelpdf);
 }
 
 
@@ -312,7 +320,16 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<tr><td>'.$langs->trans('Source').'</td><td>';
 			$html->select_array('source_id',$new_commande->sources,2);
 			print '</td></tr>';
-
+			print '<tr><td>Modèle</td>';
+			print '<td>';
+			// pdf
+			include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+			$form=new Form($db);
+			$model=new ModelePDFCommandes();
+			$liste=$model->liste_modeles($db);
+			$form->select_array("model",$liste,$conf->global->COMMANDE_ADDON_PDF);
+			print "</td></tr>";
+			
 			if ($propalid > 0)
 			{
 				$amount = ($obj->price);
@@ -579,8 +596,10 @@ else
 			{
 				print nl2br($commande->note);
 			}
+			
 			print '</td>';
 			print '</tr>';
+			
 
 			// Société
 			print '<tr><td>'.$langs->trans('Customer').'</td>';
@@ -939,7 +958,8 @@ else
 				print '<br>';
 			}
 			*/
-			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed);
+			//$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
+			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 			/*
 			 * Liste des factures
 			 */
