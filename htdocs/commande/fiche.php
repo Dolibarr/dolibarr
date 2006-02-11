@@ -151,6 +151,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		{
 			$result = $commande->addline(
 			$_POST['desc'],
+			$_POST['product_desc'],
 			$_POST['pu'],
 			$_POST['qty'],
 			$_POST['tva_tx'],
