@@ -357,7 +357,7 @@ class Commande
    * Ajoute une ligne de commande
    *
    */
-	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+	function addline($desc, $product_desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
 	{
 		global $conf;
 		// Nettoyage parametres
@@ -404,7 +404,7 @@ class Commande
 		}
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)';
-		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
+		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($product_desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
 
 		if ( $this->db->query( $sql) )
 		{
