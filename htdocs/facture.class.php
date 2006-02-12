@@ -1069,7 +1069,15 @@ class Facture
 				$row = $this->db->fetch_row($resql);
 				$rangmax = $row[0];
 			}
-
+			
+			 if ($conf->global->CHANGE_PROD_DESC)
+       {
+          if (!$product_desc)
+          {
+             $product_desc = $desc;
+          }
+       }
+			
 			// Formatage des prix
 			$price    = price2num($price);
 			$subprice  = price2num($subprice);
