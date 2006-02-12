@@ -47,6 +47,7 @@ create table llx_propal
   fk_mode_reglement   integer,  -- mode de reglement (Virement, Prélèvement)
 
   note            text,
+  note_public     text,
   model_pdf       varchar(50),
 
   UNIQUE INDEX (ref)

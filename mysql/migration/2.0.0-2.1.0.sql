@@ -12,3 +12,14 @@ create table llx_commande_model_pdf
   libelle     varchar(255),
   description text
 )type=innodb;
+
+
+alter table llx_commande add column note_public text after note;
+
+alter table llx_contrat add column note text;
+alter table llx_contrat add column note_public text after note;
+
+alter table llx_facture add column note_public text after note;
+
+alter table llx_propal add column note_public text after note;
+

@@ -45,6 +45,7 @@ create table llx_commande
   total_ht         real      default 0,
   total_ttc        real      default 0,
   note             text,
+  note_public      text,
   model_pdf        varchar(50),
   facture          tinyint default 0,   
   UNIQUE INDEX (ref)

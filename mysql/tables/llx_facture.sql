@@ -49,6 +49,7 @@ create table llx_facture
   date_lim_reglement  date,                         -- date limite de reglement
 
   note                text,
+  note_public         text,
   model               varchar(50),
 
   UNIQUE INDEX (facnumber)
