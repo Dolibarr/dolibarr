@@ -1009,7 +1009,7 @@ class Facture
 	* \param     dateend         date de fin de validité du service
 	* \param     ventil          code de ventilation comptable
 	*/
-	function addline($facid, $desc, $product_desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
+	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
 	{
 		global $conf;
 		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
