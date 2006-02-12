@@ -409,7 +409,7 @@ if ($_GET["propalid"] > 0)
                             {
                                 print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
                             }
-                            print $objp->description?'<br>'.$objp->description:'';
+                            print $objp->description?'<br>'.stripslashes(nl2br($objp->description)):'';
                             print '</td>';
                         }
                         else
