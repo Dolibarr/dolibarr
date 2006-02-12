@@ -175,7 +175,7 @@ class Propal
                     if ($conf->global->CHANGE_PROD_DESC)
 			              {
 			              	$sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-                      $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$txtva."','".addslashes($prod->product_desc)."','".price2num($remise_percent)."','".price2num($subprice)."')";
+                      $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$txtva."','".addslashes($p_product_desc)."','".price2num($remise_percent)."','".price2num($subprice)."')";
                     }
                     else
                     {

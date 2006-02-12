@@ -306,7 +306,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
     {
         $propal->insert_product_generic(
 				    $_POST['np_desc'],
-				    $_POST['np_product_desc'], 
+				    $_POST['product_desc'], 
 				    $_POST['np_price'], 
 				    $_POST['np_qty'],
 				    $_POST['np_tva_tx'],
@@ -319,7 +319,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
                     $_POST['qty'],
                     $_POST['remise'],
                     $_POST['np_desc'],
-                    $_POST['np_product_desc']);
+                    $_POST['product_desc']);
     }
     propale_pdf_create($db, $_POST['propalid'], $propal->modelpdf);
 }
