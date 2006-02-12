@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -386,14 +387,19 @@ class Commande
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
 						$client = new Societe($this->db);
-     					$client->fetch($this->soc_id);
+     				$client->fetch($this->soc_id);
 						$pu    = $prod->multiprices[$client->price_level];
 				
 				}
 				else
 					$pu    = $prod->price;
-				$txtva = $prod->tva_tx;
+				  $txtva = $prod->tva_tx;
 			}
+		}
+		
+		if ($fk_product = 0)
+		{
+			$product_desc = $desc
 		}
 
 		$remise = 0;
