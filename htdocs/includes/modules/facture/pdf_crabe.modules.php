@@ -207,7 +207,7 @@ class pdf_crabe extends ModelePDFFactures
                         }
 
                         // Ajoute description du produit
-                        if ($conf->global->FAC_ADD_PROD_DESC)
+                        if ($conf->global->FAC_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
                         {
                             if ($fac->lignes[$i]->product_desc&&$fac->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$fac->lignes[$i]->product_desc!=$fac->lignes[$i]->desc)
                             {
