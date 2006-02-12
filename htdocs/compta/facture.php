@@ -1418,7 +1418,7 @@ else
 							print ' '.$objp->ref.'</a>';
 							print ' - '.nl2br(stripslashes($objp->product));
 							print_date_range($objp->date_start,$objp->date_end);
-							print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
+							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 							
 							if ($conf->global->FAC_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
                             {

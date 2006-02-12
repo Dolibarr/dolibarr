@@ -280,7 +280,7 @@ if ($_GET["id"] > 0)
                     if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
                     else print img_object($langs->trans('ShowProduct'),'product');
                     print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
-                    print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
+                    print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
                     print '</td>';
                 }
                 else
