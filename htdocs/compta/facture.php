@@ -942,7 +942,7 @@ if ($_GET['action'] == 'create')
 				print $objp->product?' - '.$objp->product:'';
 				print "</td>\n";
 				print '<td>';
-				print nl2br(dolibarr_trunc($objp->description,60));
+				print stripslashes(nl2br(dolibarr_trunc($objp->description,60)));
 				print '</td>';
 				print '<td align="right">'.$objp->tva_tx.'%</td>';
 				print '<td align="right">'.price($objp->subprice).'</td>';
