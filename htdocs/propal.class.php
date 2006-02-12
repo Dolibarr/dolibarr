@@ -221,8 +221,7 @@ class Propal
      */
     function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent=0)
     {
-    	  global $conf;
-        dolibarr_syslog("propal.class.php::insert_product_generic $p_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent");
+    	  dolibarr_syslog("propal.class.php::insert_product_generic $p_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent");
         if ($this->statut == 0)
         {
 			// Nettoyage paramètres
