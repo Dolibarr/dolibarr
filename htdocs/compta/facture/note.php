@@ -30,6 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 
+$socidp=isset($_GET["socidp"])?$_GET["socidp"]:isset($_POST["socidp"])?$_POST["socidp"]:"";
 
 $user->getrights('facture');
 if (!$user->rights->facture->lire)
@@ -38,9 +39,7 @@ if (!$user->rights->facture->lire)
 $langs->load("companies");
 $langs->load("bills");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés
 if ($user->societe_id > 0) 
 {
   unset($_GET["action"]);
@@ -56,16 +55,43 @@ $fac->fetch($_GET["facid"]);
 /*                     Actions                                                */
 /******************************************************************************/
 
+if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
+{
+	$db->begin();
+	
+	$res=$fac->update_note_public($_POST["note_public"]);
+	if ($res < 0)
+	{
+		$db->rollback();
+		$msg=$fac->error();
+	}
+	else
+	{
+		$db->commit();
+	}
+}
+
 if ($_POST["action"] == 'update' && $user->rights->facture->creer)
 {
-  $fac->update_note($_POST["note"]);
+	$db->begin();
+	
+	$res=$fac->update_note($_POST["note"]);
+	if ($res < 0)
+	{
+		$db->rollback();
+		$msg=$fac->error();
+	}
+	else
+	{
+		$db->commit();
+	}
 }
 
 
-/******************************************************************************/
-/*                   Fin des  Actions                                         */
-/******************************************************************************/
 
+/******************************************************************************/
+/* Affichage fiche                                                            */
+/******************************************************************************/
 
 llxHeader();
 
@@ -108,19 +134,39 @@ if ($_GET["facid"])
     $html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->mode_reglement_id,"none");
     print '</td></tr>';
 
-    print '<tr><td valign="top" colspan="4">'.$langs->trans("Note").' :</td></tr>';
+	// Note publique
+    print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+	print '<td valign="top" colspan="3">';
+    if ($_GET["action"] == 'edit')
+    {
+        print '<form method="post" action="note.php?facid='.$fac->id.'">';
+        print '<input type="hidden" name="action" value="update_public">';
+        print '<textarea name="note_public" cols="80" rows="8">'.$fac->note_public."</textarea><br>";
+        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '</form>';
+    }
+    else
+    {
+	    print ($fac->note_public?nl2br($fac->note_public):"&nbsp;");
+    }
+	print "</td></tr>";
 
-    print '<tr><td valign="top" colspan="4">'.($fac->note?nl2br($fac->note):"&nbsp;")."</td></tr>";
-
+	// Note privée
+    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+	print '<td valign="top" colspan="3">';
     if ($_GET["action"] == 'edit')
     {
         print '<form method="post" action="note.php?facid='.$fac->id.'">';
         print '<input type="hidden" name="action" value="update">';
-        print '<tr><td valign="top" colspan="4"><textarea name="note" cols="80" rows="8">'.$fac->note."</textarea></td></tr>";
-        print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+        print '<textarea name="note" cols="80" rows="8">'.$fac->note."</textarea><br>";
+        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
         print '</form>';
     }
-
+	else
+	{
+	    print ($fac->note?nl2br($fac->note):"&nbsp;");
+	}
+	print "</td></tr>";
     print "</table>";
 
 

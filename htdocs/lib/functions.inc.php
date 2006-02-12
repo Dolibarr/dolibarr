@@ -282,7 +282,7 @@ function dolibarr_get_const($db, $name)
     if ($resql)
     {
         $obj=$db->fetch_object($resql);
-        $value=stripslashes($obj->value);
+        $value=$obj->value;
     }
     return $value;
 }

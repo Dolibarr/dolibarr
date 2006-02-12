@@ -54,6 +54,7 @@ class Facture
 	var $tva;
 	var $total;
 	var $note;
+	var $note_public;
 	var $paye;
 	var $propalid;
 	var $projetid;
@@ -94,12 +95,21 @@ class Facture
 	function create($user)
 	{
 		global $langs,$conf;
+
 		$this->db->begin();
 
-		/* On positionne en mode brouillon la facture */
-		$this->brouillon = 1;
+		// Nettoyage paramètres
+		$this->note=trim($this->note);
+		$this->note_public=trim($this->note_public);
+		if (! $this->remise) $this->remise = 0 ;
+		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 
-		/* Facture récurrente */
+		// On positionne en mode brouillon la facture
+		$this->brouillon = 1;
+		
+		dolibarr_syslog("Facture::create");
+		
+		// Facture récurrente
 		if ($this->fac_rec > 0)
 		{
 			require_once DOL_DOCUMENT_ROOT . '/compta/facture/facture-rec.class.php';
@@ -119,56 +129,60 @@ class Facture
 		// Definition de la date limite
 		$datelim=$this->calculate_date_lim_reglement();
 
-		/*
-		 *  Insertion dans la base
-		 */
+		// Insertion dans la base
 		$socid = $this->socidp;
 		$number = $this->number;
 		$amount = $this->amount;
 		$remise = $this->remise;
 
-		if (! $remise) $remise = 0 ;
-		if (strlen($this->mode_reglement_id)==0) $this->mode_reglement_id = 0;
-		if (! $this->projetid) $this->projetid = 'NULL';
-
 		$totalht = ($amount - $remise);
-// NE ME SEMBLE PLUS JUSTIFIE ICI
-// 		$tva = tva($totalht);
-// 		$total = $totalht + $tva;
 
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture (facnumber, fk_soc, datec, amount, remise, remise_percent';
-		$sql .= ', datef, note, fk_user_author, fk_projet';
-		$sql .= ', fk_cond_reglement, fk_mode_reglement, date_lim_reglement, ref_client) ';
-		$sql .= " VALUES ('$number','$socid', now(), '$totalht', '$remise'";
-		$sql .= ",'$this->remise_percent', ".$this->db->idate($this->date);
-		$sql .= ",'".addslashes($this->note)."',$user->id, $this->projetid";
-		$sql .= ','.$this->cond_reglement_id.','.$this->mode_reglement_id.','.$this->db->idate($datelim).', \''.$this->ref_client.'\')';
-		if ( $this->db->query($sql) )
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture (';
+		$sql.= ' facnumber, fk_soc, datec, amount, remise, remise_percent,';
+		$sql.= ' datef,';
+		$sql.= ' note,';
+		$sql.= ' note_public,';
+		$sql.= ' fk_user_author, fk_projet,';
+		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, ref_client) ';
+		$sql.= " VALUES (";
+		$sql.= "'$number','$socid', now(), '$totalht', '$remise'";
+		$sql.= ",'$this->remise_percent', ".$this->db->idate($this->date);
+		$sql.= ",".($this->note?"'".addslashes($this->note)."'":"null");
+		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
+		$sql.= ",".$user->id;
+		$sql.= ",".($this->projetid?$this->projetid:"null");
+		$sql.= ','.$this->cond_reglement_id;
+		$sql.= ",".$this->mode_reglement_id;
+		$sql.= ','.$this->db->idate($datelim);
+		$sql.= ', \''.$this->ref_client.'\')';
+
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture');
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='(PROV".$this->id.")' WHERE rowid=".$this->id;
-			$this->db->query($sql);
+			$resql=$this->db->query($sql);
 
-			if ($this->id && $this->propalid)
+			if ($resql && $this->id && $this->propalid)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fa_pr (fk_facture, fk_propal) VALUES ('.$this->id.','.$this->propalid.')';
-				$this->db->query($sql);
+				$resql=$this->db->query($sql);
 			}
-			if ($this->id && $this->commandeid)
+			if ($resql && $this->id && $this->commandeid)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_fa (fk_facture, fk_commande) VALUES ('.$this->id.','.$this->commandeid.')';
-				$this->db->query($sql);
+				$resql=$this->db->query($sql);
 			}
 
 			/*
-			* Produits/services
-			*
-			*/
+ 			 * Produits/services
+			 */
 			for ($i = 0 ; $i < sizeof($this->products) ; $i++)
 			{
 				$prod = new Product($this->db, $this->products[$i]);
-				$prod->fetch($this->products[$i]);
+				$res=$prod->fetch($this->products[$i]);
+
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
@@ -177,8 +191,12 @@ class Facture
 					$price = $prod->multiprices[$soc->price_level];
 				}
 				else
+				{
 					$price = $prod->price;
-				  $result_insert = $this->addline($this->id,
+				}
+
+				$resql = $this->addline(
+					$this->id,
 					$prod->libelle,
 					$prod->description,
 					$price,
@@ -188,19 +206,20 @@ class Facture
 					$this->products_remise_percent[$i],
 					$this->products_date_start[$i],
 					$this->products_date_end[$i]
-				);
+					);
 
-				if ( $result_insert < 0)
+				if ($resql < 0)
 				{
+					$this->error=$this->db->error;
 					dolibarr_print_error($this->db);
+					break;
 				}
 			}
 
 			/*
-			* Produits de la facture récurrente
-			*
-			*/
-			if ($this->fac_rec > 0)
+			 * Produits de la facture récurrente
+ 			 */
+			if ($resql && $this->fac_rec > 0)
 			{
 				for ($i = 0 ; $i < sizeof($_facrec->lignes) ; $i++)
 				{
@@ -210,13 +229,14 @@ class Facture
 						$prod->fetch($_facrec->lignes[$i]->produit_id);
 					}
 
-					$result_insert = $this->addline($this->id,
-					addslashes($_facrec->lignes[$i]->desc),
-					$_facrec->lignes[$i]->subprice,
-					$_facrec->lignes[$i]->qty,
-					$_facrec->lignes[$i]->tva_taux,
-					$_facrec->lignes[$i]->produit_id,
-					$_facrec->lignes[$i]->remise_percent);
+					$result_insert = $this->addline(
+						$this->id,
+						$_facrec->lignes[$i]->desc,
+						$_facrec->lignes[$i]->subprice,
+						$_facrec->lignes[$i]->qty,
+						$_facrec->lignes[$i]->tva_taux,
+						$_facrec->lignes[$i]->produit_id,
+						$_facrec->lignes[$i]->remise_percent);
 
 					if ( $result_insert < 0)
 					{
@@ -225,18 +245,26 @@ class Facture
 				}
 			}
 
-            $resql=$this->updateprice($this->id);
             if ($resql)
             {
-                // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('BILL_CREATE',$this,$user,$langs,$conf);
-                // Fin appel triggers
-    
-                $this->db->commit();
-                return $this->id;
-            }
+	            $resql=$this->updateprice($this->id);
+	            if ($resql)
+	            {
+	                // Appel des triggers
+	                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	                $interface=new Interfaces($this->db);
+	                $result=$interface->run_triggers('BILL_CREATE',$this,$user,$langs,$conf);
+	                // Fin appel triggers
+	    
+	                $this->db->commit();
+	                return $this->id;
+	            }
+	            else
+	            {
+	                $this->db->rollback();
+	                return -3;
+	            }
+			}
             else
             {
                 $this->db->rollback();
@@ -245,6 +273,8 @@ class Facture
         }
         else
         {
+            $this->error=$this->db->error();
+            dolibarr_syslog("Facture::create error ".$this->error." sql=".$sql);
             $this->db->rollback();
             return -1;
         }
@@ -275,7 +305,7 @@ class Facture
 			}
 
 			$result_insert = $this->addline($this->id,
-				addslashes('Remise exceptionnelle'),
+				'Remise exceptionnelle',
 				(0 - $remise),
 				1,
 				'0');   // Une remise est un négatif sur le TTC, on ne doit pas appliquer de TVA,
@@ -340,7 +370,7 @@ class Facture
 		$sql = 'SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent';
 		$sql .= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
 		$sql .= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
-		$sql .= ', f.note, f.paye, f.fk_statut, f.fk_user_author';
+		$sql .= ', f.note, f.note_public, f.paye, f.fk_statut, f.fk_user_author';
 		$sql .= ', f.fk_mode_reglement, f.ref_client, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c, '.MAIN_DB_PREFIX.'facture as f';
@@ -381,7 +411,8 @@ class Facture
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
 				$this->projetid               = $obj->fk_projet;
-				$this->note                   = stripslashes($obj->note);
+				$this->note                   = $obj->note;
+				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
 				$this->lignes                 = array();
 
@@ -982,12 +1013,14 @@ class Facture
 	{
 		global $conf;
 		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
+
 		if ($this->brouillon)
 		{
 			// Nettoyage paramètres
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
-			if (strlen(trim($qty))==0) $qty=1;
+			if (! $qty) $qty=1;
+			if (! $ventil) $ventil=0;
 
             if ($fk_product && ! $pu)
             {
@@ -1045,13 +1078,13 @@ class Facture
 			$sql.= ' (fk_facture, description, price, qty, tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
 			
 			if ($conf->global->CHANGE_PROD_DESC)
-      {
-      	$sql.= " VALUES ($facid, '".addslashes($product_desc)."','$price','$qty','$txtva',";
-      }
-      else
-      {
-      	$sql.= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',";
-      }
+			{
+				$sql.= " VALUES ($facid, '".addslashes($product_desc)."','$price','$qty','$txtva',";
+			}
+			else
+			{
+				$sql.= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',";
+			}
       
 			if ($fk_product) { $sql.= "'$fk_product',"; }
 			else { $sql.='0,'; }
@@ -1421,16 +1454,16 @@ class Facture
     }
     
 	/**
- 	 *    \brief      Mets à jour les commentaires
-	 *    \param      note        note
-	 *    \return     int         <0 si erreur, >0 si ok
+ 	 *    \brief      Mets à jour les commentaires privés
+	 *    \param      note        	Commentaire
+	 *    \return     int         	<0 si ko, >0 si ok
 	 */
 	function update_note($note)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET note = '".addslashes($note)."'";
 		$sql .= ' WHERE rowid ='. $this->id;
 
-		if ($this->db->query($sql) )
+		if ($this->db->query($sql))
 		{
 			$this->note = $note;
 			return 1;
@@ -1442,8 +1475,29 @@ class Facture
 	}
 
 	/**
+ 	 *    \brief      Mets à jour les commentaires publiques
+	 *    \param      note_public	Commentaire
+	 *    \return     int         	<0 si ko, >0 si ok
+	 */
+	function update_note_public($note_public)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET note_public = '".addslashes($note_public)."'";
+		$sql .= ' WHERE rowid ='. $this->id;
+
+		if ($this->db->query($sql))
+		{
+			$this->note_public = $note_public;
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	
+	/**
 	 *      \brief     Charge les informations d'ordre info dans l'objet facture
-	 *      \param     id       Id de la facture a charger
+	 *      \param     id       	Id de la facture a charger
 	 */
 	function info($id)
 	{

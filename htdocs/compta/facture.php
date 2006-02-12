@@ -118,6 +118,7 @@ if ($_POST['action'] == 'add')
 
 	$facture->number         = $_POST['facnumber'];
 	$facture->date           = $datefacture;
+	$facture->note_public    = $_POST['note_public'];
 	$facture->note           = $_POST['note'];
 
 	if ($_POST['fac_rec'] > 0)
@@ -155,10 +156,15 @@ if ($_POST['action'] == 'add')
 			}
 			$facid = $facture->create($user);
 
-			if ($facid)
+			if ($facid > 0)
 			{
 				Header('Location: facture.php?facid='.$facid);
 				exit;
+			}
+			else
+			{
+				$_GET["action"]='create';
+				$mesg='<div class="error">'.$facture->error.'</div>';
 			}
 		}
 		else
@@ -280,7 +286,7 @@ if ($_POST['action'] == 'add')
 			}
 
 			// Fin création facture, on l'affiche
-			if ($facid)
+			if ($facid > 0)
 			{
 				Header('Location: facture.php?facid='.$facid);
 				exit;
@@ -334,7 +340,8 @@ if ($_POST['action'] == 'addligne' && $user->rights->facture->creer)
 		{
 			$dateend=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
 		}
-		$result = $fac->addline($_POST['facid'],
+		$result = $fac->addline(
+			$_POST['facid'],
 			$_POST['desc'],
 			$_POST['product_desc'],
 			$_POST['pu'],
@@ -404,7 +411,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 
 if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
 {
-	if ($user->rights->facture->supprimer )
+	if ($user->rights->facture->supprimer)
 	{
 		$fac = new Facture($db);
     	$fac->fetch($_GET['facid']);
@@ -595,6 +602,8 @@ if ($_GET['action'] == 'create')
 {
 	print_titre($langs->trans('NewBill'));
 
+	if ($mesg) print $mesg;
+	
 	$soc = new Societe($db);
 
 	if ($_GET['propalid'])
@@ -642,32 +651,12 @@ if ($_GET['action'] == 'create')
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->nom.'</td>';
 	print '</tr>';
 
-	print '<tr><td>'.$langs->trans('Author').'</td><td>'.$user->fullname.'</td>';
-	print '<td class="border">'.$langs->trans('Comments').'</td>';
+	print '<tr><td>'.$langs->trans('Author').'</td><td colspan="2">'.$user->fullname.'</td>';
 	print '</tr>';
 
 	print '<tr><td>'.$langs->trans('Date').'</td><td>';
 	$html->select_date();
-	print '</td>';
-
-	// Notes
-	$nbrows=4;
-    if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
-	print '<td rowspan="'.$nbrows.'" valign="top">';
-	print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_5.'">';
-	if (is_object($propal))
-	{
-		print $propal->note;
-	}
-	if (is_object($commande))
-	{
-		print $commande->note;
-	}
-	if (is_object($contrat))
-	{
-		print $contrat->note;
-	}
-	print '</textarea></td></tr>';
+	print '</td></tr>';
 
 	// Conditions de réglement
 	$cond_reglement_id_defaut=1;
@@ -688,10 +677,42 @@ if ($_GET['action'] == 'create')
 		$html->select_projects($societe_id, $projet, 'projetid');
 		print '</td></tr>';
 	}
-	else
+
+	// Note publique
+	print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
+	print '<td valign="top">';
+	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+	if (is_object($propal))
 	{
-		print '<tr><td colspan="2">&nbsp;</td></tr>';
+		print $propal->note_public;
 	}
+	if (is_object($commande))
+	{
+		print $commande->note_public;
+	}
+	if (is_object($contrat))
+	{
+		print $contrat->note_public;
+	}
+	print '</textarea></td></tr>';
+
+	// Note privée
+	print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
+	print '<td valign="top">';
+	print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+	if (is_object($propal))
+	{
+		print $propal->note;
+	}
+	if (is_object($commande))
+	{
+		print $commande->note;
+	}
+	if (is_object($contrat))
+	{
+		print $contrat->note;
+	}
+	print '</textarea></td></tr>';
 
     /*
       \todo
@@ -753,7 +774,6 @@ if ($_GET['action'] == 'create')
 	}
 	else
 	{
-		print '<tr><td colspan="3">&nbsp;</td></tr>';
 		print '<tr><td colspan="3">';
 
 		print '<table class="noborder">';
@@ -1242,7 +1262,7 @@ else
 				print '<td>&nbsp;</td><td colspan="3">&nbsp;</td>';
 			}
 
-            $nbrows=8;
+            $nbrows=7;
             if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 			print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
@@ -1352,15 +1372,18 @@ else
 			// Statut
 			print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
 
-			if ($fac->note)
+			/*
+			if ($fac->note_public)
 			{
-				print '<tr><td colspan="4" valign="top">'.$langs->trans('Note').' : '.nl2br($fac->note).'</td></tr>';
+				print '<tr><td valign="top">'.$langs->trans('NotePublic').'</td>';
+				print '<td colspan="3">'.nl2br(dolibarr_trunc($fac->note_public,40)).'</td></tr>';
 			}
 			else
 			{
 				print '<tr><td colspan="4">&nbsp;</td></tr>';
 			}
-
+			*/
+			
 			print '</table><br>';
 
 			/*
