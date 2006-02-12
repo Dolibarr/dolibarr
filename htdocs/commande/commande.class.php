@@ -396,7 +396,7 @@ class Commande
 			if ($prod->fetch($fk_product) > 0)
 			{
 				$desc  = $desc?$desc:$prod->libelle;
-				//$product_desc = $prod->description;
+				$product_desc = $prod->description;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
