@@ -338,12 +338,12 @@ class Commande
 			
 			if ($conf->global->CHANGE_PROD_DESC)
 			{
-				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, remise_percent, subprice) VALUES ';
+				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, description, remise_percent, subprice) VALUES ';
 				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','". $price."','".$p_tva_tx."','".addslashes($p_desc)."','".addslashes($p_product_desc)."', '$remise_percent', '$subprice') ; ";
 			}
 			else
 			{
-				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, description, remise_percent, subprice) VALUES ';
+				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, remise_percent, subprice) VALUES ';
 				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','". $price."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '$subprice') ; ";
 			}
 				
