@@ -510,7 +510,7 @@ class Commande
                         $ligne->subprice       = $objp->subprice;
                         $ligne->remise_percent = $objp->remise_percent;
                         $ligne->price          = $objp->price;
-                        $ligne->product_id     = $objp->rowid;
+                        $ligne->product_id     = $objp->fk_product;
 
                         $ligne->libelle        = $objp->label;        // Label produit
                         $ligne->product_desc   = $objp->product_desc; // Description produit
