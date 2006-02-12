@@ -125,10 +125,13 @@ if ($_POST['action'] == 'add')
 
     for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
     {
-        $xid = 'idprod'.$i;
-        $xqty = 'qty'.$i;
-        $xremise = 'remise'.$i;
-        $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+		if ($_POST['idprod'.$i])
+		{
+	        $xid = 'idprod'.$i;
+	        $xqty = 'qty'.$i;
+	        $xremise = 'remise'.$i;
+	        $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+		}
     }
 
     $id = $propal->create();
@@ -294,32 +297,36 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
   $propal->reopen($user->id);
 }
 
+
+/*
+ *  Ajout d'une ligne produit dans la propale
+ */
 if ($_POST['action'] == "addligne" && $user->rights->propale->creer) 
 {
-    /*
-     *  Ajout d'une ligne produit dans la propale
-     */
-    $propal = new Propal($db);
-    $ret=$propal->fetch($_POST['propalid']);
-
-    if (isset($_POST['np_tva_tx']))
-    {
-        $propal->insert_product_generic(
-				    $_POST['np_desc'], 
-				    $_POST['np_price'], 
-				    $_POST['np_qty'],
-				    $_POST['np_tva_tx'],
-				    $_POST['np_remise']);
-    }
-    else 
-    {
-        $propal->insert_product(
-                    $_POST['idprod'],
-                    $_POST['qty'],
-                    $_POST['remise'],
-                    $_POST['np_desc']);
-    }
-    propale_pdf_create($db, $_POST['propalid'], $propal->modelpdf);
+	if ($_POST['qty'] && (($_POST['np_price']>=0 && $_POST['np_desc']) || $_POST['idprod']))
+	{
+	    $propal = new Propal($db);
+	    $ret=$propal->fetch($_POST['propalid']);
+	
+	    if (isset($_POST['np_tva_tx']))
+	    {
+	        $propal->insert_product_generic(
+					    $_POST['np_desc'], 
+					    $_POST['np_price'], 
+					    $_POST['qty'],
+					    $_POST['np_tva_tx'],
+					    $_POST['np_remise']);
+	    }
+	    else 
+	    {
+	        $propal->insert_product(
+	                    $_POST['idprod'],
+	                    $_POST['qty'],
+	                    $_POST['remise'],
+	                    $_POST['np_desc']);
+	    }
+	    propale_pdf_create($db, $_POST['propalid'], $propal->modelpdf);
+	}
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save")) 
@@ -882,7 +889,7 @@ if ($_GET['propalid'] > 0)
                 print '  <td align="center">';
                 $html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe) . "</td>\n";
                 print '  <td align="right"><input type="text" size="5" name="np_price"></td>';
-                print '  <td align="right"><input type="text" size="2" value="1" name="np_qty"></td>';
+                print '  <td align="right"><input type="text" size="2" value="1" name="qty"></td>';
                 print '  <td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';
                 print '  <td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
                 print '</tr>';
