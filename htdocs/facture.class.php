@@ -178,8 +178,9 @@ class Facture
 				}
 				else
 					$price = $prod->price;
-				$result_insert = $this->addline($this->id,
+				  $result_insert = $this->addline($this->id,
 					$prod->libelle,
+					$prod->description,
 					$price,
 					$this->products_qty[$i],
 					$prod->tva_tx,
@@ -2132,7 +2133,6 @@ class FactureLigne
 			$this->produit_id     = $objp->fk_product;
 			$this->date_start     = $objp->date_start;
 			$this->date_end       = $objp->date_end;
-//			$i++; //modification suite à la tache 4984
 			$this->db->free($result);
 		}
 		else
