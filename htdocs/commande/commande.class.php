@@ -397,11 +397,6 @@ class Commande
 			}
 		}
 		
-		if ($fk_product = 0)
-		{
-			$product_desc = $desc;
-		}
-
 		$remise = 0;
 		$price = round(ereg_replace(',','.',$pu), 2);
 		$subprice = $price;
