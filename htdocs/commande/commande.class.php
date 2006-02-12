@@ -92,7 +92,8 @@ class Commande
 		{
 			$CommLigne = new CommandeLigne();
 			$CommLigne->libelle        = $propal->lignes[$i]->libelle;
-			$CommLigne->price          = $propal->lignes[$i]->subprice;
+			$CommLigne->description    = $propal->lignes[$i]->description;
+			$CommLigne->price          = $propal->lignes[$i]->price;
 			$CommLigne->subprice       = $propal->lignes[$i]->subprice;
 			$CommLigne->tva_tx         = $propal->lignes[$i]->tva_tx;
 			$CommLigne->qty            = $propal->lignes[$i]->qty;
