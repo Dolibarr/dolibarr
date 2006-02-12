@@ -132,7 +132,7 @@ class Propal
      *    \return    int                 >0 si ok, <0 si ko
      *    \see       add_product
      */
-    function insert_product($idproduct, $qty, $remise_percent=0, $p_desc='', $p_product_desc)
+    function insert_product($idproduct, $qty, $remise_percent=0, $p_desc='')
     {
         global $conf;
 		dolibarr_syslog("propal.class.php::insert_product $idproduct, $qty, $remise_percent, $p_desc");
@@ -144,7 +144,7 @@ class Propal
             
             if ($idproduct)
             {
-				$prod = new Product($this->db, $idproduct);
+				      $prod = new Product($this->db, $idproduct);
                 if ($prod->fetch($idproduct) > 0)
                 {
                 	$p_product_desc = $prod->description;
