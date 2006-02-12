@@ -38,12 +38,19 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 {
     var $error='';
     
+   /**   \brief      Constructeur
+   */
+  function mod_commande_marbre()
+    {
+      $this->nom = "Marbre";
+    }
+    
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
     {
-      return "Renvoie le numéro sous la forme Cyymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0";
+      return "Renvoie le numéro sous la forme CYYMM-NNNN où YY est l'année, MM le mois et NNNN un compteur séquentiel sans rupture et sans remise à 0";
     }
 
 
