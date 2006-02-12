@@ -732,7 +732,6 @@ if ($_GET['propalid'] > 0)
                             else print img_object($langs->trans('ShowProduct'),'product');
                             print ' '.$objp->ref.'</a>';
 							              print ' - '.nl2br(stripslashes($objp->product));
-							              print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 							              
 							              if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
                             {
@@ -751,7 +750,7 @@ if ($_GET['propalid'] > 0)
                             {
                                 print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
                             }
-                            print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
+                            print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
                             print '</td>';
                         }
                         else

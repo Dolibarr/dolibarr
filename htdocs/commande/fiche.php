@@ -685,7 +685,6 @@ else
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 			
-			//if ($conf->global->COM_ADD_PROD_DESC)
 			if ($conf->global->COM_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
                         {
                         	$sql.= ', p.description as product_desc';
