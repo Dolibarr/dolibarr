@@ -147,6 +147,7 @@ class Propal
 				$prod = new Product($this->db, $idproduct);
                 if ($prod->fetch($idproduct) > 0)
                 {
+                	$product_desc = $prod->description;
 					// multiprix
 					if($conf->global->PRODUIT_MULTIPRICES == 1)
 					{
