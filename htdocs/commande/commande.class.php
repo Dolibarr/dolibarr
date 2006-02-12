@@ -399,7 +399,7 @@ class Commande
 		
 		if ($fk_product = 0)
 		{
-			$product_desc = $desc
+			$product_desc = $desc;
 		}
 
 		$remise = 0;
