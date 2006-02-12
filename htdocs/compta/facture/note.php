@@ -62,8 +62,8 @@ if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
 	$res=$fac->update_note_public($_POST["note_public"]);
 	if ($res < 0)
 	{
+		$mesg='<div class="error">'.$fac->error.'</div>';
 		$db->rollback();
-		$msg=$fac->error();
 	}
 	else
 	{
@@ -78,8 +78,8 @@ if ($_POST["action"] == 'update' && $user->rights->facture->creer)
 	$res=$fac->update_note($_POST["note"]);
 	if ($res < 0)
 	{
+		$mesg='<div class="error">'.$fac->error.'</div>';
 		$db->rollback();
-		$msg=$fac->error();
 	}
 	else
 	{

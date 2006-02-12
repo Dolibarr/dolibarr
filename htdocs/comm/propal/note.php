@@ -40,9 +40,7 @@ if (!$user->rights->propale->lire)
 	accessforbidden();
 
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
 	unset($_GET['action']);
@@ -53,21 +51,58 @@ if ($user->societe_id > 0)
 /*                     Actions                                                */
 /******************************************************************************/
 
+if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
+{
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+
+	$db->begin();
+	
+	$res=$propal->update_note_public($_POST["note_public"]);
+	if ($res < 0)
+	{
+		$mesg='<div class="error">'.$propal->error.'</div>';
+		$db->rollback();
+	}
+	else
+	{
+		$db->commit();
+	}
+}
+
 if ($_POST['action'] == 'update' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
-	$propal->update_note($_POST['note']);
+
+	$db->begin();
+
+	$res=$propal->update_note($_POST["note"]);
+	if ($res < 0)
+	{
+		$mesg='<div class="error">'.$propal->error.'</div>';
+		$db->rollback();
+	}
+	else
+	{
+		$db->commit();
+	}
 }
 
+
+
+/******************************************************************************/
+/* Affichage fiche                                                            */
+/******************************************************************************/
+
 llxHeader();
+
 $html = new Form($db);
-/******************************************************************************/
-/*                   Fin des  Actions                                         */
-/******************************************************************************/
 
 if ($_GET['propalid'])
 {
+	if ($mesg) print $mesg;
+	
 	$propal = new Propal($db);
 	if ( $propal->fetch($_GET['propalid']) )
 	{
@@ -139,18 +174,40 @@ if ($_GET['propalid'])
             print '</td>';
             print '</tr>';
 
-			print '<tr><td valign="top" colspan="4">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
-
-			if ($_GET['action'] == 'edit')
+			// Note publique
+		    print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+			print '<td valign="top" colspan="3">';
+		    if ($_GET["action"] == 'edit')
+		    {
+		        print '<form method="post" action="note.php?propalid='.$propal->id.'">';
+		        print '<input type="hidden" name="action" value="update_public">';
+		        print '<textarea name="note_public" cols="80" rows="8">'.$propal->note_public."</textarea><br>";
+		        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		        print '</form>';
+		    }
+		    else
+		    {
+			    print ($propal->note_public?nl2br($propal->note_public):"&nbsp;");
+		    }
+			print "</td></tr>";
+		
+			// Note privée
+		    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+			print '<td valign="top" colspan="3">';
+		    if ($_GET["action"] == 'edit')
+		    {
+		        print '<form method="post" action="note.php?propalid='.$propal->id.'">';
+		        print '<input type="hidden" name="action" value="update">';
+		        print '<textarea name="note" cols="80" rows="8">'.$propal->note."</textarea><br>";
+		        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		        print '</form>';
+		    }
+			else
 			{
-				print '<form method="post" action="note.php?propalid='.$propal->id.'">';
-				print '<input type="hidden" name="action" value="update">';
-				print '<tr><td valign="top" colspan="4"><textarea name="note" cols="80" rows="8">'.$propal->note."</textarea></td></tr>";
-				print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-				print '</form>';
+			    print ($propal->note?nl2br($propal->note):"&nbsp;");
 			}
-
-			print '</table>';
+			print "</td></tr>";
+		    print "</table>";
 
 			print '</div>';
 

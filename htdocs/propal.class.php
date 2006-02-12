@@ -67,6 +67,8 @@ class Propal
     // Pour board
     var $nbtodo;
     var $nbtodolate;
+    
+    var $error;
 
 
     /** 
@@ -372,8 +374,11 @@ class Propal
         $this->db->begin();
 
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf, fin_validite) ";
-        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, '".addslashes($this->note)."','$this->modelpdf',".$this->db->idate($this->fin_validite).")";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite) ";
+        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, ";
+        $sql.= "'".addslashes($this->note)."',";
+        $sql.= "'".addslashes($this->note_public)."',";
+        $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -494,14 +499,15 @@ class Propal
     function fetch($rowid)
     {
         $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact";
-        $sql .= " ,".$this->db->pdate("datep")."as dp";
-        $sql .= " ,".$this->db->pdate("fin_validite")."as dfv, model_pdf, note";
-        $sql .= " , fk_projet, fk_statut, remise_percent, fk_user_author";
-        $sql .= ", c.label as statut_label";
-        $sql .= " FROM ".MAIN_DB_PREFIX."propal";
-        $sql .= "," . MAIN_DB_PREFIX."c_propalst as c";
-        $sql .= " WHERE fk_statut = c.id";
-        $sql .= " AND rowid='".$rowid."';";
+        $sql.= ", ".$this->db->pdate("datep")."as dp";
+        $sql.= ", ".$this->db->pdate("fin_validite")."as dfv, model_pdf";
+        $sql.= ", note, note_public";
+        $sql.= ", fk_projet, fk_statut, remise_percent, fk_user_author";
+        $sql.= ", c.label as statut_label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= "," . MAIN_DB_PREFIX."c_propalst as c";
+        $sql.= " WHERE fk_statut = c.id";
+        $sql.= " AND rowid='".$rowid."';";
     
         $resql=$this->db->query($sql);
     
@@ -530,6 +536,7 @@ class Propal
                 $this->contactid      = $obj->fk_soc_contact;
                 $this->modelpdf       = $obj->model_pdf;
                 $this->note           = $obj->note;
+                $this->note_public    = $obj->note_public;
                 $this->statut         = $obj->fk_statut;
                 $this->statut_libelle = $obj->statut_label;
     
@@ -1132,27 +1139,55 @@ class Propal
       }
   }
 	
-    /**
-     *      \brief      Mets à jour la note
-     *      \param      note        Note à mettre à jour
-     *      \return     int         <0 si ko, >0 si ok
-     */
-    function update_note($note)
-    {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET note = '".addslashes($note)."'";
-        $sql.= " WHERE rowid = ".$this->id;
-    
-        if ($this->db->query($sql))
-        {
-            return 1;
-        }
-        else
-        {
+	/**
+ 	 *    \brief      Mets à jour les commentaires privés
+	 *    \param      note        	Commentaire
+	 *    \return     int         	<0 si ko, >0 si ok
+	 */
+	function update_note($note)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
+		$sql.= " SET note = '".addslashes($note)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		dolibarr_syslog("Propal::update_note $sql");
+
+		if ($this->db->query($sql))
+		{
+			$this->note = $note;
+			return 1;
+		}
+		else
+		{
             $this->error=$this->db->error();
-            return -1;
-        }
-    }
+			return -1;
+		}
+	}
+
+	/**
+ 	 *    \brief      Mets à jour les commentaires publiques
+	 *    \param      note_public	Commentaire
+	 *    \return     int         	<0 si ko, >0 si ok
+	 */
+	function update_note_public($note_public)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
+		$sql.= " SET note_public = '".addslashes($note_public)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		dolibarr_syslog("Propal::update_note_public $sql");
+
+		if ($this->db->query($sql))
+		{
+			$this->note_public = $note_public;
+			return 1;
+		}
+		else
+		{
+            $this->error=$this->db->error();
+			return -1;
+		}
+	}
   
   
   /**

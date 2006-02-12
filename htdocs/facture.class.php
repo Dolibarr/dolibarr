@@ -1460,8 +1460,9 @@ class Facture
 	 */
 	function update_note($note)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET note = '".addslashes($note)."'";
-		$sql .= ' WHERE rowid ='. $this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql.= " SET note = '".addslashes($note)."'";
+		$sql.= " WHERE rowid =". $this->id;
 
 		if ($this->db->query($sql))
 		{
@@ -1470,6 +1471,7 @@ class Facture
 		}
 		else
 		{
+            $this->error=$this->db->error();
 			return -1;
 		}
 	}
@@ -1481,8 +1483,9 @@ class Facture
 	 */
 	function update_note_public($note_public)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET note_public = '".addslashes($note_public)."'";
-		$sql .= ' WHERE rowid ='. $this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql.= " SET note_public = '".addslashes($note_public)."'";
+		$sql.= " WHERE rowid =". $this->id;
 
 		if ($this->db->query($sql))
 		{
@@ -1491,6 +1494,7 @@ class Facture
 		}
 		else
 		{
+            $this->error=$this->db->error();
 			return -1;
 		}
 	}
