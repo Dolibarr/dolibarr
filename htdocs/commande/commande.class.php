@@ -319,6 +319,7 @@ class Commande
    */
 	function insert_product_generic($p_desc, $p_product_desc, $p_price, $p_qty, $p_tva_tx=19.6, $p_product_id=0, $remise_percent=0)
 	{
+		global $conf;
 		if ($this->statut == 0)
 		{
 			if (strlen(trim($p_qty)) == 0)
