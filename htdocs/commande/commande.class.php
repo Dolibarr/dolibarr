@@ -254,6 +254,7 @@ class Commande
      					$client->fetch($this->soc_id);
 						//$prod->multiprices[$client->price_level]
 						$this->insert_product_generic($prod->libelle,
+						$prod->description,
 						$prod->multiprices[$client->price_level],
 						$this->products_qty[$i],
 						$prod->tva_tx,
@@ -263,6 +264,7 @@ class Commande
 					else
 					{
 						$this->insert_product_generic($prod->libelle,
+						$prod->description,
 						$prod->price,
 						$this->products_qty[$i],
 						$prod->tva_tx,
@@ -287,6 +289,7 @@ class Commande
 				{
 					$result_insert = $this->insert_product_generic(
 						 $this->lines[$i]->libelle,
+						 $this->lines[$i]->description,
 						 $this->lines[$i]->price,
 						 $this->lines[$i]->qty,
 						 $this->lines[$i]->tva_tx,
@@ -314,7 +317,7 @@ class Commande
    * Ajoute un produit
    *
    */
-	function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $p_product_id=0, $remise_percent=0)
+	function insert_product_generic($p_desc, $p_product_desc, $p_price, $p_qty, $p_tva_tx=19.6, $p_product_id=0, $remise_percent=0)
 	{
 		if ($this->statut == 0)
 		{
@@ -332,9 +335,18 @@ class Commande
 				$remise = round(($p_price * $remise_percent / 100), 2);
 				$price = $p_price - $remise;
 			}
-
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ';
-			$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','". $price."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '$subprice') ; ";
+			
+			if ($conf->global->CHANGE_PROD_DESC)
+			{
+				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, remise_percent, subprice) VALUES ';
+				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','". $price."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '$subprice') ; ";
+			}
+			else
+			{
+				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, description, remise_percent, subprice) VALUES ';
+				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','". $price."','".$p_tva_tx."','".addslashes($p_desc)."','".addslashes($p_product_desc)."', '$remise_percent', '$subprice') ; ";
+			}
+				
 			if ($this->db->query($sql) )
 			{
 				if ($this->update_price() > 0)
