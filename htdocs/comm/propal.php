@@ -318,8 +318,8 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
                     $_POST['idprod'],
                     $_POST['qty'],
                     $_POST['remise'],
-                    $_POST['np_desc'],
-                    $_POST['product_desc']);
+                    $_POST['np_desc']);
+                   // $_POST['product_desc']);
     }
     propale_pdf_create($db, $_POST['propalid'], $propal->modelpdf);
 }
