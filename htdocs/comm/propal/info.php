@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Regis Houssin        <regis.houssin@cap-networks.com>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -87,7 +86,7 @@ $head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
 $head[$h][1] = $langs->trans('Documents');
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
+dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal'));
 
 $propal->info($propal->id);
 

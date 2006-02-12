@@ -104,7 +104,7 @@ if ($_GET["propalid"] > 0) {
 		$head[$h][1] = $langs->trans('Documents');
 		$h++;
 
-		dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
+		dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal'));
 
 
 		/*
@@ -119,8 +119,6 @@ if ($_GET["propalid"] > 0) {
 		$result = $db->query($sql);
 
 
-
-
 		if ($result) {
 			if ($db->num_rows($result)) {
 				$obj = $db->fetch_object($result);
@@ -129,6 +127,9 @@ if ($_GET["propalid"] > 0) {
 				$societe->fetch($obj->idp);
 
 				print '<table class="border" width="100%">';
+
+		        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
+
 				$rowspan=3;
 				// ligne 1
 				// partie Gauche

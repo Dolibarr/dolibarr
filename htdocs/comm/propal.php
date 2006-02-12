@@ -422,7 +422,7 @@ if ($_GET['propalid'] > 0)
   $head[$h][1] = $langs->trans('Documents');
   $h++;
 
-  dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
+  dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal'));
 
   /*
    * Confirmation de la suppression de la propale
@@ -464,6 +464,9 @@ if ($_GET['propalid'] > 0)
             $societe->fetch($obj->idp);
     
             print '<table class="border" width="100%">';
+
+	        print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
+
             $rowspan=6;
             
             // Société
