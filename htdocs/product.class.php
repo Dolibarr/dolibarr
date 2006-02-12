@@ -540,7 +540,7 @@ class Product
         $sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
         $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        if ($id) $sql.= " WHERE rowid = ".$id;
+        if ($id) $sql.= " WHERE rowid = '".$id."'";
         if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
     
         $result = $this->db->query($sql) ;
@@ -603,8 +603,8 @@ class Product
 						$sql= "SELECT price, tva_tx, envente ";
 						$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
 						$sql.= "where price_level=".$i." and ";
-						if ($id) $sql.= "fk_product = ".$id." ";
-						if ($ref) $sql.= "fk_product = ".$prodid." ";
+						if ($id) $sql.= "fk_product = '".$id."' ";
+						if ($ref) $sql.= "fk_product = '".$prodid."' ";
 						$sql.= "order by date_price DESC limit 1";
 					    $result = $this->db->query($sql) ;
 						if ( $result )
@@ -626,7 +626,7 @@ class Product
 			
 			
             $sql = "SELECT reel, fk_entrepot";
-            $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = ".$this->id;
+            $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = '".$this->id."'";
             $result = $this->db->query($sql) ;
             if ($result)
             {
