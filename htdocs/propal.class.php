@@ -210,8 +210,9 @@ class Propal
      *    \return    int                >0 si ok, <0 si ko
      *    \see       add_product
      */
-    function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent=0)
+    function insert_product_generic($p_desc, $p_product_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent=0)
     {
+    	  global $conf;
         dolibarr_syslog("propal.class.php::insert_product_generic $p_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent");
         if ($this->statut == 0)
         {
@@ -229,9 +230,17 @@ class Propal
                 $remise = round(($p_price * $remise_percent / 100), 2);
                 $price = $p_price - $remise;
             }
-    
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-            $sql .= " (".$this->id.", 0,'". $p_qty."','". price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '".price2num($subprice)."') ; ";
+            
+            if ($conf->global->CHANGE_PROD_DESC)
+			      {
+			      	$sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+              $sql .= " (".$this->id.", 0,'". $p_qty."','". price2num($price)."','".$p_tva_tx."','".addslashes($p_product_desc)."','$remise_percent', '".price2num($subprice)."') ; ";
+            }
+            else
+            {
+            	$sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+              $sql .= " (".$this->id.", 0,'". $p_qty."','". price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '".price2num($subprice)."') ; ";
+            }
     
             if ($this->db->query($sql) )
             {
