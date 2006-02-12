@@ -92,7 +92,7 @@ class Commande
 		{
 			$CommLigne = new CommandeLigne();
 			$CommLigne->libelle        = $propal->lignes[$i]->libelle;
-			$CommLigne->description    = $propal->lignes[$i]->description;
+			$CommLigne->description    = $propal->lignes[$i]->desc;
 			$CommLigne->price          = $propal->lignes[$i]->price;
 			$CommLigne->subprice       = $propal->lignes[$i]->subprice;
 			$CommLigne->tva_tx         = $propal->lignes[$i]->tva_tx;
@@ -338,17 +338,9 @@ class Commande
 				$price = $p_price - $remise;
 			}
 			
-			if ($conf->global->CHANGE_PROD_DESC)
-			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, description, remise_percent, subprice) VALUES ';
 				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','". $price."','".$p_tva_tx."','".addslashes($p_desc)."','".addslashes($p_product_desc)."', '$remise_percent', '$subprice') ; ";
-			}
-			else
-			{
-				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, remise_percent, subprice) VALUES ';
-				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','". $price."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '$subprice') ; ";
-			}
-				
+							
 			if ($this->db->query($sql) )
 			{
 				if ($this->update_price() > 0)
