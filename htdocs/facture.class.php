@@ -977,7 +977,7 @@ class Facture
 	* \param     dateend         date de fin de validité du service
 	* \param     ventil          code de ventilation comptable
 	*/
-	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
+	function addline($facid, $desc, $product_desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
 	{
 		global $conf;
 		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
@@ -992,6 +992,7 @@ class Facture
             {
                 $prod = new Product($this->db, $fk_product);
                 $prod->fetch($fk_product);
+                $product_desc = $prod->description;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
@@ -1041,7 +1042,16 @@ class Facture
 
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet ';
 			$sql.= ' (fk_facture, description, price, qty, tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
-			$sql.= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',";
+			
+			if ($conf->global->CHANGE_PROD_DESC)
+      {
+      	$sql.= " VALUES ($facid, '".addslashes($product_desc)."','$price','$qty','$txtva',";
+      }
+      else
+      {
+      	$sql.= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',";
+      }
+      
 			if ($fk_product) { $sql.= "'$fk_product',"; }
 			else { $sql.='0,'; }
 			$sql.= " '$remise_percent','$subprice','$remise',";

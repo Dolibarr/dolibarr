@@ -336,6 +336,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->facture->creer)
 		}
 		$result = $fac->addline($_POST['facid'],
 			$_POST['desc'],
+			$_POST['product_desc'],
 			$_POST['pu'],
 			$_POST['qty'],
 			$_POST['tva_tx'],
