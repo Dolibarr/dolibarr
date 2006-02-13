@@ -473,7 +473,10 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 				$message = $_POST['message'];
 				if ($_POST['action'] == 'send')
 				{
-					$subject = $langs->trans('Bill').' '.$fac->ref;
+					if(strlen($_POST['subject']))
+						$subject = $_POST['subject'];
+					else
+						$subject = $langs->trans('Bill').' '.$fac->ref;
 					$actiontypeid=9;
 					$actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
 					if ($message) {
