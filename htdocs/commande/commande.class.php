@@ -339,15 +339,20 @@ class Commande
 			}
 			
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande, fk_product, qty, price, tva_tx, label, description, remise_percent, subprice) VALUES ';
+			$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','".price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','".addslashes($p_product_desc)."', '$remise_percent', '$subprice') ; ";
 			
+			// Bugfix 
+			/* 
 			if ($conf->global->CHANGE_PROD_DESC) 	 
       {
 				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','".price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','".addslashes($p_product_desc)."', '$remise_percent', '$subprice') ; ";
 			}
 			else
 			{
-				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','".price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','".addslashes($p_desc)."', '$remise_percent', '$subprice') ; ";
+				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','".price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','".addslashes($p_product_desc)."', '$remise_percent', '$subprice') ; ";
 			}
+				*/
+				
 								
 			if ($this->db->query($sql) )
 			{
