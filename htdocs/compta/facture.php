@@ -374,7 +374,6 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 	$result = $fac->updateline($_POST['rowid'],
 		$_POST['desc'],
-		$_POST['product_desc']
 		$_POST['price'],
 		$_POST['qty'],
 		$_POST['remise_percent'],
