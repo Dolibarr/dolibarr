@@ -565,7 +565,7 @@ class Contact
      *                  ref_contrat
      *                  ref_commande
      *                  ref_propale
-     *    \return       int         1 si ok, -1 si erreur
+     *    \return       int         0 si ok, -1 si erreur
      */
     function load_ref_elements()
     {
@@ -573,29 +573,33 @@ class Contact
         $sql ="SELECT tc.element, count(ec.rowid) as nb";
         $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.=" WHERE ec.fk_c_type_contact = tc.rowid";
-        $sql.=" AND element_id = ". $id;
+        $sql.=" AND fk_socpeople = ". $this->id;
         $sql.=" GROUP BY tc.element";
+
+        dolibarr_syslog("Contact::load_ref_elements sql=".$sql);
         
         $resql=$this->db->query($sql);
         if ($resql)
         {
-        $obj=$this->db->fetch_object($resql);
-        if ($obj->nb)
-        {
-            if ($obj->element=='facture')  $this->ref_facturation = $obj->nb;
-            if ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
-            if ($obj->element=='commande') $this->ref_commande = $obj->nb;
-            if ($obj->element=='propal')   $this->ref_propal = $obj->nb;
-        }
-        $this->db->free($resql);
+	        while($obj=$this->db->fetch_object($resql))
+	        {
+		        if ($obj->nb)
+		        {
+		            if ($obj->element=='facture')  $this->ref_facturation = $obj->nb;
+		            if ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
+		            if ($obj->element=='commande') $this->ref_commande = $obj->nb;
+		            if ($obj->element=='propal')   $this->ref_propal = $obj->nb;
+		        }
+			}
+	        $this->db->free($resql);
+	        return 0;
         }
         else
         {
-        dolibarr_syslog("Error in Contact::fetch() selectcontactfacture sql=$sql");
-        $this->error="Error in Contact::fetch() selectcontactfacture - ".$this->db->error()." - ".$sql;
-        return -1;
+	        $this->error=$this->db->error()." - ".$sql;
+	        dolibarr_syslog("Contact::load_ref_elements Error ".$this->error);
+	        return -1;
         }
-            
     }
 
   /*
