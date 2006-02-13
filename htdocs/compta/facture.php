@@ -190,6 +190,7 @@ if ($_POST['action'] == 'add')
 
 							$result = $facture->addline($facid,
 							addslashes($liblignefac),
+							$prop->lignes[$i]->desc,
 							$prop->lignes[$i]->subprice,
 							$prop->lignes[$i]->qty,
 							$prop->lignes[$i]->tva_tx,
@@ -221,6 +222,7 @@ if ($_POST['action'] == 'add')
 						{
 							$result = $facture->addline($facid,
 							addslashes($lines[$i]->description),
+							$lines[$i]->desc,
 							$lines[$i]->subprice,
 							$lines[$i]->qty,
 							$lines[$i]->tva_tx,
