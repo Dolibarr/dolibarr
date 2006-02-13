@@ -37,6 +37,7 @@ $user->getrights('expedition');
 if (!$user->rights->commande->lire)
 	accessforbidden();
 
+$langs->load('orders');
 $langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
@@ -231,7 +232,7 @@ if ($_GET["id"] > 0) {
 					print_titre($langs->trans("Documents"));
 					print '<table class="border" width="100%">';
 
-					print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
+					print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
 
 					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
 					print '<td align="right">'.filesize($file). ' bytes</td>';
