@@ -948,7 +948,7 @@ class Commande
 			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commandedet';
-			$sql.= " SET description='".addslashes($desc)."',price='".$price."',subprice='".$subprice."',";
+			$sql.= " SET description='".addslashes($desc)."',price='".price2num($price)."',subprice='".$subprice."',";
 			$sql.= " remise='".$remise."',remise_percent='".$remise_percent."',qty='".$qty."',tva_tx='".$tva_tx."'";
 			$sql.= " WHERE rowid = '".$rowid."'";
 

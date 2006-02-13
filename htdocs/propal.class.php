@@ -293,7 +293,7 @@ class Propal
     
             $sql = "UPDATE ".MAIN_DB_PREFIX."propaldet ";
             $sql.= " SET qty='".$qty."'";
-            $sql.= " , price='". $price."'";
+            $sql.= " , price='". price2num($price)."'";
             $sql.= " , remise_percent='".$remise_percent."'";
             $sql.= " , subprice='".$subprice."'";
             $sql.= " , tva_tx='".$tva_tx."'";
