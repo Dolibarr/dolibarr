@@ -58,6 +58,14 @@ if ($_GET["action"] == 'attribute_prefix')
     $societe = new Societe($db, $_GET["socid"]);
     $societe->attribute_prefix($db, $_GET["socid"]);
 }
+// mode de règlement
+if ($_POST["action"] == 'setmode')
+{
+    $societe = new Societe($db, $_GET["socid"]);
+    $societe->mode_reglement=$_POST['mode_reglement_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET mode_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$socid."'";
+    $result = $db->query($sql);
+}
 
 if ($action == 'recontact')
 {
@@ -321,7 +329,23 @@ if ($_socid > 0)
 		print '</td><td colspan="3">'.$objsoc->price_level."</td>";
 		print '</tr>';
 	}
-
+	// mode de règlement
+	if($conf->facture->enabled)
+	{
+		$langs->load('bills');
+		print '<tr><td nowrap>';
+		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print $langs->trans('PaymentMode');
+		print '<td><td align="right">';
+		print '&nbsp;';
+		print '</td></tr></table>';
+		print '</td><td colspan="3">';
+		$html = new Form($db);
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'mode_reglement_id');
+		print "</td>";
+		print '</tr>';
+	}
+	
     print "</table>";
 
     print "</td>\n";
