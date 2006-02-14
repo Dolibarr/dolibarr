@@ -24,3 +24,5 @@ alter table llx_facture add column note_public text after note;
 alter table llx_propal add column note_public text after note;
 
 ALTER TABLE llx_societe ADD mode_reglement INT( 11 ) DEFAULT NULL ;
+
+ALTER TABLE llx_societe ADD cond_reglement INT( 11 ) DEFAULT '1' NOT NULL ;
