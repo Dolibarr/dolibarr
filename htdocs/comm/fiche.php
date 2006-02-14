@@ -58,6 +58,15 @@ if ($_GET["action"] == 'attribute_prefix')
     $societe = new Societe($db, $_GET["socid"]);
     $societe->attribute_prefix($db, $_GET["socid"]);
 }
+// conditions de règlement
+if ($_POST["action"] == 'setconditions')
+{
+    
+	$societe = new Societe($db, $_GET["socid"]);
+    $societe->cond_reglement=$_POST['mode_reglement_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$socid."'";
+    $result = $db->query($sql);
+}
 // mode de règlement
 if ($_POST["action"] == 'setmode')
 {
@@ -329,10 +338,22 @@ if ($_socid > 0)
 		print '</td><td colspan="3">'.$objsoc->price_level."</td>";
 		print '</tr>';
 	}
-	// mode de règlement
 	if($conf->facture->enabled)
 	{
+		// conditions de règlement
 		$langs->load('bills');
+		$html = new Form($db);
+		print '<tr><td nowrap>';
+		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print $langs->trans('PaymentConditions');
+		print '<td><td align="right">';
+		print '&nbsp;';
+		print '</td></tr></table>';
+		print '</td><td colspan="3">';
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'mode_reglement_id');
+		print "</td>";
+		print '</tr>';
+	// mode de règlement
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans('PaymentMode');
@@ -340,7 +361,6 @@ if ($_socid > 0)
 		print '&nbsp;';
 		print '</td></tr></table>';
 		print '</td><td colspan="3">';
-		$html = new Form($db);
 		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'mode_reglement_id');
 		print "</td>";
 		print '</tr>';

@@ -665,9 +665,8 @@ if ($_GET['action'] == 'create')
 	print '</td></tr>';
 
 	// Conditions de réglement
-	$cond_reglement_id_defaut=1;
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
-	$html->select_conditions_paiements($cond_reglement_id_defaut,'cond_reglement_id');
+	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
 	// Mode de réglement
