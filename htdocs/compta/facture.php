@@ -672,7 +672,7 @@ if ($_GET['action'] == 'create')
 
 	// Mode de réglement
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	$html->select_types_paiements('','mode_reglement_id');
+	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
 
 	// Projet
