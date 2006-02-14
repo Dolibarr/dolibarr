@@ -439,7 +439,7 @@ class Societe {
 		$sql .= ', s.fk_effectif as effectif_id, e.libelle as effectif';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique';
 		$sql .= ', s.code_client, s.code_compta, s.code_fournisseur, s.parent';
-		$sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client';
+		$sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement';
 		$sql .= ', p.code as pays_code, p.libelle as pays';
 		$sql .= ', d.code_departement as departement_code, d.nom as departement';
 		$sql .= ', st.libelle as stcomm';
@@ -522,6 +522,7 @@ class Societe {
 				$this->prefix_comm = $obj->prefix_comm;
 
 				$this->remise_client = $obj->remise_client;
+				$this->mode_reglement = $obj->mode_reglement;
 
 				$this->client      = $obj->client;
 				$this->fournisseur = $obj->fournisseur;
