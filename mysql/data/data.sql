@@ -589,6 +589,7 @@ insert into llx_c_paiement (id,code,libelle,type,active) values (7, 'CHQ', 'Chèq
 insert into llx_c_paiement (id,code,libelle,type,active) values (8, 'TRA', 'Traite',            2,1);
 insert into llx_c_paiement (id,code,libelle,type,active) values (9, 'LCR', 'LCR',               2,1);
 insert into llx_c_paiement (id,code,libelle,type,active) values (10,'FAC', 'Factor',            2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (11,'PRO', 'Proforma',          2,1);
 
 --
 -- Pays

@@ -24,7 +24,8 @@ alter table llx_facture add column note_public text after note;
 alter table llx_propal add column note_public text after note;
 
 ALTER TABLE llx_societe ADD mode_reglement INT( 11 ) DEFAULT NULL ;
-
 ALTER TABLE llx_societe ADD cond_reglement INT( 11 ) DEFAULT '1' NOT NULL ;
 
 alter table llx_product add gencode varchar(255) DEFAULT NULL;
+
+insert into llx_c_paiement (id,code,libelle,type,active) values (11,'PRO', 'Proforma',          2,1);
