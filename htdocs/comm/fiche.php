@@ -350,8 +350,8 @@ if ($_socid > 0)
 		print '&nbsp;';
 		print '</td></tr></table>';
 		print '</td><td colspan="3">';
-		//$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'mode_reglement_id');
-		$html->select_conditions_paiements($objsoc->cond_reglement,'cond_reglement_id');
+		//$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'cond_reglement_id');
+		$html->select_conditions_paiements($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'cond_reglement_id');
 		print "</td>";
 		print '</tr>';
 	// mode de règlement
