@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +24,19 @@
 
 
 /**
-     	\file       htdocs/includes/modules/propale/mod_propale_diamant.php
+     	\file       htdocs/includes/modules/propale/mod_propale_ivoire.php
 		\ingroup    propale
-		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Diamant
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Ivoire
 		\version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
-/**	    \class      mod_propale_diamant
-		\brief      Classe du modèle de numérotation de référence de propale Diamant
+/**	    \class      mod_propale_ivoire
+		\brief      Classe du modèle de numérotation de référence de propale Ivoire
 */
 
-class mod_propale_diamant extends ModeleNumRefPropales
+class mod_propale_ivoire extends ModeleNumRefPropales
 {
 
     /**     \brief      Renvoi la description du modele de numérotation
@@ -44,19 +44,8 @@ class mod_propale_diamant extends ModeleNumRefPropales
      */
     function info()
     {
-    $texte = "Renvoie le numéro sous la forme numérique PRYYNNNN où YY représente l'année et NNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
-    $texte.= "Si la constante PROPALE_DIAMANT_DELTA est définie, un offset est appliqué sur le compteur";
-    
-    if (defined("PROPALE_DIAMANT_DELTA"))
-        {
-          $texte .= " (Définie et vaut: ".PROPALE_DIAMANT_DELTA.")";
-        }
-      else
-        {
-          $texte .= " (N'est pas définie)";
-        }
-      return $texte;
-     }
+      return "Renvoie le numéro sous la forme PRyynnnn où yy est l'année et nnnn un compteur sans remise à 0";
+    }
 
 
     /**     \brief      Renvoi un exemple de numérotation
@@ -64,18 +53,7 @@ class mod_propale_diamant extends ModeleNumRefPropales
      */
     function getExample()
     {
-    	
-    	
-        if (defined("PROPALE_DIAMANT_DELTA"))
-        {
-        	$y = strftime("%y",time());
-          $num = sprintf("%02d",PROPALE_DIAMANT_DELTA);
-          return "C".$y.substr("000".$num, strlen("000".$num)-4,4);
-        }
-        else 
-        {
-            return "C".$y."0001";
-        }            
+        return "PR050001";
     }
 
 
@@ -94,17 +72,10 @@ class mod_propale_diamant extends ModeleNumRefPropales
     
             $num = $row[0];
         }
-        
-        if (!defined("PROPALE_DIAMANT_DELTA"))
-        {
-          define("PROPALE_DIAMANT_DELTA", 0);
-        }
-    
-        $num = $num + PROPALE_NEPTUNE_DELTA;
     
         $y = strftime("%y",time());
     
-        return  "PR" .$y. substr("000".$num, strlen("000".$num)-4,4);
+        return  "PR" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
     }
     
     

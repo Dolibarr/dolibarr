@@ -73,9 +73,10 @@ class mod_commande_diamant extends ModeleNumRefCommandes
      */
     function getExample()
     {
+    	$y = strftime("%y",time());
+    	
     	if (defined("COMMANDE_DIAMANT_DELTA"))
         {
-        	$y = strftime("%y",time());
         	$num = sprintf("%02d",COMMANDE_DIAMANT_DELTA);
           return "C".$y.substr("000".$num, strlen("000".$num)-4,4);
         }

@@ -64,17 +64,16 @@ class mod_propale_diamant extends ModeleNumRefPropales
      */
     function getExample()
     {
-    	
+    	$y = strftime("%y",time());
     	
         if (defined("PROPALE_DIAMANT_DELTA"))
         {
-        	$y = strftime("%y",time());
           $num = sprintf("%02d",PROPALE_DIAMANT_DELTA);
-          return "C".$y.substr("000".$num, strlen("000".$num)-4,4);
+          return "PR".$y.substr("000".$num, strlen("000".$num)-4,4);
         }
         else 
         {
-            return "C".$y."0001";
+            return "PR".$y."0001";
         }            
     }
 
