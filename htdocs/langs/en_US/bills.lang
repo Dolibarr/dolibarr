@@ -110,3 +110,4 @@ SetMode=Set payment mode
 Billed=Billed
 RecurringBills=Recurring invoices
 ExportDataset_invoice_1=Customer invoices list and invoices' lines
+ProformaBill=Proforma Bill:
