@@ -52,7 +52,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
    */
   function info()
   {
-    $texte = "Renvoie le numéro sous la forme numérique CYY00001, CYY00002, CYY00003, ... où YY représente l'année. Le numéro d'incrément qui suit l'année n'est PAS remis à zéro en début d'année.";
+    $texte = "Renvoie le numéro sous la forme numérique CYY00001, CYY00002, CYY00003, ... où YY représente l'année. Le numéro d'incrément qui suit l'année n'est PAS remis à zéro en début d'année.<br>\n";
     $texte.= "Si la constante COMMANDE_DIAMANT_DELTA est définie, un offset est appliqué sur le compteur";
     
     if (defined("COMMANDE_DIAMANT_DELTA"))
