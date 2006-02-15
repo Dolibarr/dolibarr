@@ -503,6 +503,7 @@ class Propal
         $sql.= ", ".$this->db->pdate("fin_validite")."as dfv, model_pdf";
         $sql.= ", note, note_public";
         $sql.= ", fk_projet, fk_statut, remise_percent, fk_user_author";
+        $sql.= ", fk_cond_reglement, fk_mode_reglement";
         $sql.= ", c.label as statut_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
         $sql.= "," . MAIN_DB_PREFIX."c_propalst as c";
@@ -539,6 +540,8 @@ class Propal
                 $this->note_public    = $obj->note_public;
                 $this->statut         = $obj->fk_statut;
                 $this->statut_libelle = $obj->statut_label;
+                $this->cond_reglement = $obj->fk_cond_reglement;
+                $this->mode_reglement = $obj->fk_mode_reglement;
     
                 $this->user_author_id = $obj->fk_user_author;
     
