@@ -386,7 +386,7 @@ if ($_POST["action"] == 'setconditions')
 { 
 	$propal = new Propal($db, $_GET["propalid"]);
   $propal->cond_reglement=$_POST['cond_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_cond_reglement='".$_POST['cond_reglement_id']."' WHERE idp='".$propalid."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_cond_reglement='".$_POST['cond_reglement_id']."' WHERE rowid='".$propalid."'";
   $result = $db->query($sql);
 }
 
@@ -395,7 +395,7 @@ if ($_POST["action"] == 'setmode')
 {
   $propal = new Propal($db, $_GET["propalid"]);
   $propal->mode_reglement=$_POST['mode_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_mode_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$propalid."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_mode_reglement='".$_POST['mode_reglement_id']."' WHERE rowid='".$propalid."'";
   $result = $db->query($sql);
 }
 
