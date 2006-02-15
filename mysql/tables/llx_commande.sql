@@ -22,31 +22,33 @@
 
 create table llx_commande
 (
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
-  fk_soc           integer,
-  fk_soc_contact   integer,
-  fk_projet        integer DEFAULT 0,     -- projet auquel est rattache la commande
-  ref              varchar(30) NOT NULL,  -- order number
-  ref_client       varchar(30),           -- customer order number
-  date_creation    datetime,              -- date de creation 
-  date_valid       datetime,              -- date de validation
-  date_cloture     datetime,              -- date de cloture
-  date_commande    date,                  -- date de la commande
-  fk_user_author   integer,               -- createur de la commande
-  fk_user_valid    integer,               -- valideur de la commande
-  fk_user_cloture  integer,               -- cloture de la propale signee ou non signee
-  source           smallint NOT NULL,
-  fk_statut        smallint  default 0,
-  amount_ht        real      default 0,
-  remise_percent   real      default 0,
-  remise           real      default 0,
-  tva              real      default 0,
-  total_ht         real      default 0,
-  total_ttc        real      default 0,
-  note             text,
-  note_public      text,
-  model_pdf        varchar(50),
-  facture          tinyint default 0,   
+  rowid               integer AUTO_INCREMENT PRIMARY KEY,
+  tms                 timestamp,
+  fk_soc              integer,
+  fk_soc_contact      integer,
+  fk_projet           integer DEFAULT 0,             -- projet auquel est rattache la commande
+  ref                 varchar(30) NOT NULL,          -- order number
+  ref_client          varchar(30),                   -- customer order number
+  date_creation       datetime,                      -- date de creation 
+  date_valid          datetime,                      -- date de validation
+  date_cloture        datetime,                      -- date de cloture
+  date_commande       date,                          -- date de la commande
+  fk_user_author      integer,                       -- createur de la commande
+  fk_user_valid       integer,                       -- valideur de la commande
+  fk_user_cloture     integer,                       -- cloture de la propale signee ou non signee
+  source              smallint NOT NULL,
+  fk_statut           smallint  default 0,
+  amount_ht           real      default 0,
+  remise_percent      real      default 0,
+  remise              real      default 0,
+  tva                 real      default 0,
+  total_ht            real      default 0,
+  total_ttc           real      default 0,
+  note                text,
+  note_public         text,
+  model_pdf           varchar(50),
+  facture             tinyint default 0,
+  fk_cond_reglement   integer,                       -- condition de réglement
+  fk_mode_reglement   integer,                       -- mode de réglement
   UNIQUE INDEX (ref)
 )type=innodb;
