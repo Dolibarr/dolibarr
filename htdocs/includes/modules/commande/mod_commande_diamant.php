@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005        Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006   Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
    */
   function info()
   {
-    $texte = "Renvoie le numéro sous la forme numérique CYY00001, CYY00002, CYY00003, ... où YY représente l'année. Le numéro d'incrément qui suit l'année n'est PAS remis à zéro en début d'année.<br>\n";
+    $texte = "Renvoie le numéro sous la forme numérique CYYNNNN, où YY représente l'année et NNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
     $texte.= "Si la constante COMMANDE_DIAMANT_DELTA est définie, un offset est appliqué sur le compteur";
     
     if (defined("COMMANDE_DIAMANT_DELTA"))
@@ -72,13 +73,15 @@ class mod_commande_diamant extends ModeleNumRefCommandes
      */
     function getExample()
     {
-        if (defined("COMMANDE_DIAMANT_DELTA"))
+    	if (defined("COMMANDE_DIAMANT_DELTA"))
         {
-            return "C0400".sprintf("%02d",COMMANDE_DIAMANT_DELTA);
+        	$y = strftime("%y",time());
+        	$num = sprintf("%02d",COMMANDE_DIAMANT_DELTA);
+          return "C".$y.substr("000".$num, strlen("000".$num)-4,4);
         }
         else 
         {
-            return "C040001";
+            return "C".$y."0001";
         }            
     }
     
@@ -107,11 +110,11 @@ class mod_commande_diamant extends ModeleNumRefCommandes
           define("COMMANDE_DIAMANT_DELTA", 0);
         }
     
-      $num = $num + FACTURE_NEPTUNE_DELTA;
+      $num = $num + COMMANDE_NEPTUNE_DELTA;
     
     $y = strftime("%y",time());
 
-    return 'C'.$y.substr("0000".$num, strlen("0000".$num)-5,5);
+    return 'C'.$y.substr("000".$num, strlen("000".$num)-4,4);
   }
 }
 ?>
