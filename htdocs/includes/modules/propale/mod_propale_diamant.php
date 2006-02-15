@@ -99,7 +99,7 @@ class mod_propale_diamant extends ModeleNumRefPropales
           define("PROPALE_DIAMANT_DELTA", 0);
         }
     
-        $num = $num + PROPALE_NEPTUNE_DELTA;
+        $num = $num + PROPALE_DIAMANT_DELTA;
     
         $y = strftime("%y",time());
     

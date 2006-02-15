@@ -111,7 +111,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
           define("COMMANDE_DIAMANT_DELTA", 0);
         }
     
-      $num = $num + COMMANDE_NEPTUNE_DELTA;
+      $num = $num + COMMANDE_DIAMANT_DELTA;
     
     $y = strftime("%y",time());
 
