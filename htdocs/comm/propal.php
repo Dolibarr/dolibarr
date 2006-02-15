@@ -381,6 +381,24 @@ if ($_POST['action'] == 'set_contact')
   $propal->set_contact($user, $_POST['contactidp']);
 }
 
+// conditions de règlement
+if ($_POST["action"] == 'setconditions')
+{ 
+	$propal = new Propal($db, $_GET["propalid"]);
+  $propal->cond_reglement=$_POST['mode_reglement_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET cond_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$propalid."'";
+  $result = $db->query($sql);
+}
+
+// mode de règlement
+if ($_POST["action"] == 'setmode')
+{
+  $propal = new Propal($db, $_GET["propalid"]);
+  $propal->mode_reglement=$_POST['mode_reglement_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET mode_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$propalid."'";
+  $result = $db->query($sql);
+}
+
 
 llxHeader();
 
