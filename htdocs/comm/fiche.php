@@ -234,7 +234,7 @@ if ($_socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
+    print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
     print $objsoc->nom;
     print '</td></tr>';
 
@@ -346,22 +346,38 @@ if ($_socid > 0)
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans('PaymentConditions');
-		print '<td><td align="right">';
-		print '&nbsp;';
-		print '</td></tr></table>';
-		print '</td><td colspan="3">';
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'cond_reglement_id');
+		print '<td>';
+		
+		if ($_GET['action'] != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+		if ($_GET['action'] == 'editconditions')
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'mode_reglement_id');
+			}
+			else
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'none');
+			}
+		
 		print "</td>";
 		print '</tr>';
 	// mode de règlement
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans('PaymentMode');
-		print '<td><td align="right">';
-		print '&nbsp;';
-		print '</td></tr></table>';
-		print '</td><td colspan="3">';
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'mode_reglement_id');
+		print '<td>';
+		if ($_GET['action'] != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+		if ($_GET['action'] == 'editmode')
+			{
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'mode_reglement_id');
+			}
+			else
+			{
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
+			}
 		print "</td>";
 		print '</tr>';
 	}
