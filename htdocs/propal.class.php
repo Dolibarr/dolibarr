@@ -1189,6 +1189,73 @@ class Propal
 		}
 	}
   
+	/**
+	 *   \brief      Change les conditions de réglement de la facture
+	 *   \param      cond_reglement_id      Id de la nouvelle condition de réglement
+	 *   \return     int                    >0 si ok, <0 si ko
+	 */
+	function cond_reglement($cond_reglement_id)
+	{
+		dolibarr_syslog('Propale::cond_reglement('.$cond_reglement_id.')');
+		if ($this->statut >= 0)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
+			$sql .= ' SET fk_cond_reglement = '.$cond_reglement_id;
+			$sql .= ' WHERE rowid='.$this->id;
+			if ( $this->db->query($sql) )
+			{
+				$this->cond_reglement_id = $cond_reglement_id;
+				return 1;
+			}
+			else
+			{
+				dolibarr_syslog('Propale::cond_reglement Erreur '.$sql.' - '.$this->db->error());
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			dolibarr_syslog('Propale::cond_reglement, etat propale incompatible');
+			$this->error='Etat propale incompatible '.$this->statut;
+			return -2;
+		}
+	}
+
+
+	/**
+	 *   \brief      Change le mode de réglement
+	 *   \param      mode        Id du nouveau mode
+	 *   \return     int         >0 si ok, <0 si ko
+	 */
+	function mode_reglement($mode_reglement_id)
+	{
+		dolibarr_syslog('Propale::mode_reglement('.$mode_reglement_id.')');
+		if ($this->statut >= 0)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
+			$sql .= ' SET fk_mode_reglement = '.$mode_reglement_id;
+			$sql .= ' WHERE rowid='.$this->id;
+			if ( $this->db->query($sql) )
+			{
+				$this->mode_reglement_id = $mode_reglement_id;
+				return 1;
+			}
+			else
+			{
+				dolibarr_syslog('Propale::mode_reglement Erreur '.$sql.' - '.$this->db->error());
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			dolibarr_syslog('Propale::mode_reglement, etat propale incompatible');
+			$this->error='Etat facture incompatible '.$this->statut;
+			return -2;
+		}
+	}
+
   
   /**
    *      \brief      Information sur l'objet propal
