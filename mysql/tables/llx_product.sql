@@ -38,7 +38,8 @@ create table llx_product
   duration           varchar(6),
   stock_propale      integer DEFAULT 0,
   stock_commande     integer DEFAULT 0,
-  seuil_stock_alerte integer DEFAULT 0
+  seuil_stock_alerte integer DEFAULT 0,
+  gencode            varchar(255) DEFAULT NULL
 
 )type=innodb;
 
