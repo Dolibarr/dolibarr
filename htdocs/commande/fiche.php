@@ -127,6 +127,22 @@ if ($_POST['action'] == 'setnote' && $user->rights->commande->creer)
 	$commande->set_note($user, $_POST['note']);
 }
 
+if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$result=$commande->mode_reglement($_POST['mode_reglement_id']);
+	if ($result < 0) dolibarr_print_error($db,$commande->error);
+}
+
+if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$result=$commande->cond_reglement($_POST['cond_reglement_id']);
+	if ($result < 0) dolibarr_print_error($db,$commande->error);
+}
+
 if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 {
 	/*

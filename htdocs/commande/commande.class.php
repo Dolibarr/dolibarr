@@ -787,6 +787,73 @@ class Commande
 		}
 	}
 
+	/**
+	 *   \brief      Change les conditions de réglement de la commande
+	 *   \param      cond_reglement_id      Id de la nouvelle condition de réglement
+	 *   \return     int                    >0 si ok, <0 si ko
+	 */
+	function cond_reglement($cond_reglement_id)
+	{
+		dolibarr_syslog('Commande::cond_reglement('.$cond_reglement_id.')');
+		if ($this->statut >= 0)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql .= ' SET fk_cond_reglement = '.$cond_reglement_id;
+			$sql .= ' WHERE rowid='.$this->id;
+			if ( $this->db->query($sql) )
+			{
+				$this->cond_reglement_id = $cond_reglement_id;
+				return 1;
+			}
+			else
+			{
+				dolibarr_syslog('Commande::cond_reglement Erreur '.$sql.' - '.$this->db->error());
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			dolibarr_syslog('Commande::cond_reglement, etat commande incompatible');
+			$this->error='Etat commande incompatible '.$this->statut;
+			return -2;
+		}
+	}
+
+
+	/**
+	 *   \brief      Change le mode de réglement
+	 *   \param      mode        Id du nouveau mode
+	 *   \return     int         >0 si ok, <0 si ko
+	 */
+	function mode_reglement($mode_reglement_id)
+	{
+		dolibarr_syslog('Commande::mode_reglement('.$mode_reglement_id.')');
+		if ($this->statut >= 0)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql .= ' SET fk_mode_reglement = '.$mode_reglement_id;
+			$sql .= ' WHERE rowid='.$this->id;
+			if ( $this->db->query($sql) )
+			{
+				$this->mode_reglement_id = $mode_reglement_id;
+				return 1;
+			}
+			else
+			{
+				dolibarr_syslog('Commande::mode_reglement Erreur '.$sql.' - '.$this->db->error());
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			dolibarr_syslog('Commande::mode_reglement, etat facture incompatible');
+			$this->error='Etat commande incompatible '.$this->statut;
+			return -2;
+		}
+	}
+
     /**
      *      \brief      Positionne numero reference commande client
      *      \param      user            Utilisateur qui modifie
