@@ -385,8 +385,8 @@ if ($_POST['action'] == 'set_contact')
 if ($_POST["action"] == 'setconditions')
 { 
 	$propal = new Propal($db, $_GET["propalid"]);
-  $propal->cond_reglement=$_POST['mode_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_cond_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$propalid."'";
+  $propal->cond_reglement=$_POST['cond_reglement_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_cond_reglement='".$_POST['cond_reglement_id']."' WHERE idp='".$propalid."'";
   $result = $db->query($sql);
 }
 

@@ -63,8 +63,8 @@ if ($_POST["action"] == 'setconditions')
 {
     
 	$societe = new Societe($db, $_GET["socid"]);
-    $societe->cond_reglement=$_POST['mode_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$socid."'";
+    $societe->cond_reglement=$_POST['cond_reglement_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id']."' WHERE idp='".$socid."'";
     $result = $db->query($sql);
 }
 // mode de règlement
@@ -353,7 +353,7 @@ if ($_socid > 0)
 			print '</td><td colspan="3">';
 		if ($_GET['action'] == 'editconditions')
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'mode_reglement_id');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'cond_reglement_id');
 			}
 			else
 			{
