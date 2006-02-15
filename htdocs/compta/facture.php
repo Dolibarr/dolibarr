@@ -654,7 +654,7 @@ if ($_GET['action'] == 'create')
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 	print '<input name="facnumber" type="hidden" value="provisoire">';
 
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->nom.'</td>';
+	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->nom_url.'</td>';
 	print '</tr>';
 
 	print '<tr><td>'.$langs->trans('Author').'</td><td colspan="2">'.$user->fullname.'</td>';
