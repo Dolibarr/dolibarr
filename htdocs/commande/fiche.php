@@ -708,7 +708,7 @@ else
             print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('GlobalDiscount').'</td><td align="right">';
             print '</td>';
-            if ($_GET['action'] != 'setdiscount') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=setdiscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+            if ($_GET['action'] != 'setdiscount' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=setdiscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
             print '</tr></table>';
             print '</td>';
 			if ($user->rights->commande->creer && $_GET['action'] == 'setdiscount')
