@@ -58,6 +58,10 @@ class Propal
     var $price;
     var $status;
     var $fin_validite;
+    var $cond_reglement_id;
+	  var $cond_reglement_code;
+	  var $mode_reglement_id;
+	  var $mode_reglement_code;
     
     var $labelstatut=array();
     var $labelstatut_short=array();

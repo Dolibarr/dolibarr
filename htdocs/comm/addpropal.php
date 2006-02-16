@@ -39,6 +39,7 @@ if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/module
 $langs->load("propal");
 $langs->load("projects");
 $langs->load("companies");
+$langs->load("bills");
 
 $user->getrights('propale');
 $user->getrights('fichinter');
@@ -105,6 +106,16 @@ if ($_GET["action"] == 'create')
 
     print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
     print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
+
+	  // Conditions de réglement
+	  print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
+	  $form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
+	  print '</td></tr>';
+
+	  // Mode de réglement
+	  print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+	  $form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+	  print '</td></tr>';
 
     /*
     * Destinataire de la propale
