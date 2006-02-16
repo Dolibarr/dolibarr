@@ -378,11 +378,12 @@ class Propal
         $this->db->begin();
 
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite) ";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement) ";
         $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, ";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
-        $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).")";
+        $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
+        $sql.= "'$this->cond_reglement_id','$this->mode_reglement_id')";
 
         $resql=$this->db->query($sql);
         if ($resql)

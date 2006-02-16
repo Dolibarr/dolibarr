@@ -114,6 +114,8 @@ if ($_POST['action'] == 'add')
     $propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
     $propal->duree_validite = $_POST['duree_validite'];
+    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
+    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
 
     $propal->contactid = $_POST['contactidp'];
     $propal->projetidp = $_POST['projetidp'];
