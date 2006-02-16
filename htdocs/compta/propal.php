@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005      Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2004           Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005           Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2006      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,11 +200,11 @@ if ($_GET["propalid"] > 0)
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editconditions')
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->cond_reglement_id,'cond_reglement_id');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->cond_reglement,'cond_reglement_id');
 			}
 			else
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->cond_reglement_id,'none');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->cond_reglement,'none');
 			}
 			print '</td>';
 			print '<td width="25%">';
@@ -216,11 +216,11 @@ if ($_GET["propalid"] > 0)
 			print '</td><td width="25%">';
 			if ($_GET['action'] == 'editmode')
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->mode_reglement_id,'mode_reglement_id');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->mode_reglement,'mode_reglement_id');
 			}
 			else
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->mode_reglement_id,'none');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->mode_reglement,'none');
 			}
 			print '</td></tr>';
 
