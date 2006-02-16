@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
@@ -111,7 +112,6 @@ if ($_POST["action"] == 'add')
     else {
         $mesg='<div class="error">'.$contrat->error.'</div>';
     }
-
     $_GET["socid"]=$_POST["soc_id"];
     $_GET["action"]='create';
     $action = '';
@@ -348,8 +348,11 @@ if ($_GET["action"] == 'create')
                 print "</td></tr>";
             }
  
-            print '<tr><td>'.$langs->trans("Comment").'</td><td valign="top">';
-            print '<textarea name="note" wrap="soft" cols="70" rows="3"></textarea></td></tr>';
+            print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
+            print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
+
+            print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
+            print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
 
             print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 
@@ -459,21 +462,11 @@ else
         $commercial_suivi->id = $contrat->commercial_suivi_id;
         $commercial_suivi->fetch();
 
-        $h = 0;
-        $head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
-        $head[$h][1] = $langs->trans("ContractCard");
-        $hselected = $h;
-        $h++;
+	    $head = contract_prepare_head($contrat);
 
-		$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id;
-		$head[$h][1] = $langs->trans("ContractContacts");
-		$h++;
-		
-        $head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
-        $head[$h][1] = $langs->trans("Info");
-        $h++;      
+        $hselected = 0;
 
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->id);
+        dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->ref);
 
 
         /*

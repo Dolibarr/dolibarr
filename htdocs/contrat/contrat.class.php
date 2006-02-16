@@ -42,7 +42,8 @@ class Contrat
     var $id;
     var $ref;
     var $product;
-    var $societe;
+
+    var $societe;		// Objet societe
 
     var $user_author;
     var $user_service;
@@ -53,6 +54,9 @@ class Contrat
     var $commercial_signature_id;
     var $commercial_suivi_id;
 
+	var $note;
+	var $note_public;
+	
     var $fk_projet;
         
     var $statuts=array();
@@ -261,7 +265,8 @@ class Contrat
         $sql.= " fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat,";
         $sql.= " fk_user_author,";
         $sql.= " fk_projet,";
-        $sql.= " fk_commercial_signature, fk_commercial_suivi ";
+        $sql.= " fk_commercial_signature, fk_commercial_suivi,";
+        $sql.= " note, note_public";
         $sql.= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
     
         $resql = $this->db->query($sql) ;
@@ -286,10 +291,13 @@ class Contrat
                 $this->commercial_signature_id = $result["fk_commercial_signature"];
                 $this->commercial_suivi_id = $result["fk_commercial_suivi"];
         
-                $this->user_service->id = $result["fk_user_mise_en_service"];
-                $this->user_cloture->id = $result["fk_user_cloture"];
+                $this->user_service->id  = $result["fk_user_mise_en_service"];
+                $this->user_cloture->id  = $result["fk_user_cloture"];
     
-                $this->fk_projet        = $result["fk_projet"];
+                $this->note              = $result["note"];
+                $this->note_public       = $result["note_public"];
+
+                $this->fk_projet         = $result["fk_projet"];
         
                 $this->societe->fetch($result["fk_soc"]);
         
@@ -739,7 +747,6 @@ class Contrat
     /**
      *      \brief      Mets à jour le prix total du contrat
      */
-    
     function update_price()
     {
         include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
@@ -802,20 +809,66 @@ class Contrat
     }
 
 
-  /**
-   *    \brief      Retourne le libellé du statut du contrat
-   *    \return     string      Libellé
-   */
+	/**
+ 	 *    \brief      Mets à jour les commentaires privés
+	 *    \param      note        	Commentaire
+	 *    \return     int         	<0 si ko, >0 si ok
+	 */
+	function update_note($note)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'contrat';
+		$sql.= " SET note = '".addslashes($note)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		if ($this->db->query($sql))
+		{
+			$this->note = $note;
+			return 1;
+		}
+		else
+		{
+            $this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+ 	 *    \brief      Mets à jour les commentaires publiques
+	 *    \param      note_public	Commentaire
+	 *    \return     int         	<0 si ko, >0 si ok
+	 */
+	function update_note_public($note_public)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'contrat';
+		$sql.= " SET note_public = '".addslashes($note_public)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		if ($this->db->query($sql))
+		{
+			$this->note_public = $note_public;
+			return 1;
+		}
+		else
+		{
+            $this->error=$this->db->error();
+			return -1;
+		}
+	}
+	
+	/**
+	 *    \brief      Retourne le libellé du statut du contrat
+   	 *    \return     string      Libellé
+   	 */
     function getLibStatut()
     {
 		return $this->LibStatut($this->statut);
     }
 
-  /**
-   *    \brief      Renvoi le libellé d'un statut donné
-   *    \param      statut      id statut
-   *    \return     string      Libellé
-   */
+	/**
+   	 *    \brief      Renvoi le libellé d'un statut donné
+   	 *    \param      statut      id statut
+   	 *    \return     string      Libellé
+   	 */
     function LibStatut($statut)
     {
         global $langs;

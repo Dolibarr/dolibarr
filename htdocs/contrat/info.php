@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@
 */
 
 require("./pre.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
 
@@ -43,21 +44,9 @@ $contrat = new Contrat($db);
 $contrat->fetch($_GET["id"]);
 $contrat->info($_GET["id"]);
 
-$h = 0;
+$head = contract_prepare_head($contrat);
 
-$head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
-$head[$h][1] = $langs->trans("ContractCard");
-$hselected = $h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id;
-$head[$h][1] = $langs->trans("ContractContacts");
-$h++;
-			
-$head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
-$head[$h][1] = $langs->trans("Info");
-$hselected = $h;
-$h++;      
+$hselected = 3;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").": $contrat->ref");
 
