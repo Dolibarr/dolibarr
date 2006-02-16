@@ -646,8 +646,7 @@ else
 			print '</tr>';
 			
 						// Conditions et modes de réglement
-			print '<tr><td>';
-			print '</td><td height="10">';
+			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditions');
 			print '</td>';
