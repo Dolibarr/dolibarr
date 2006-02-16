@@ -667,7 +667,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
-			if ($_GET['action'] != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			if ($_GET['action'] != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editmode')
