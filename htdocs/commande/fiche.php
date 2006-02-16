@@ -647,10 +647,13 @@ else
 			
 						// Conditions et modes de réglement
 			print '<tr><td>';
+			print '</td><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditions');
 			print '</td>';
+					
 			if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-			print '</tr>';
+			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editconditions')
 			{
@@ -660,12 +663,13 @@ else
 			{
 				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'none');
 			}
-			print '</td>';
-			print '<tr><td>';
+			print '</td></tr>';
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
 			if ($_GET['action'] != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-			print '</tr>';
+			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editmode')
 			{
