@@ -238,7 +238,7 @@ class Commande
 			$this->projetid = 0;
 		}
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement) ';
-		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\', \''.$this->modelpdf.'\', $this->cond_reglement_id, $this->mode_reglement_id)';
+		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\', \''.$this->modelpdf.'\', '.$this->cond_reglement_id.', '.$this->mode_reglement_id.')';
 
 		if ( $this->db->query($sql) )
 		{

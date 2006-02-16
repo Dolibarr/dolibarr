@@ -523,30 +523,30 @@ class Propal
             {
                 $obj = $this->db->fetch_object($resql);
     
-                $this->id             = $rowid;
+                $this->id                = $rowid;
     
-                $this->datep          = $obj->dp;
-                $this->fin_validite   = $obj->dfv;
-                $this->date           = $obj->dp;
-                $this->ref            = $obj->ref;
-                $this->price          = $obj->price;
-                $this->remise         = $obj->remise;
-                $this->remise_percent = $obj->remise_percent;
-                $this->total          = $obj->total;
-                $this->total_ht       = $obj->price;
-                $this->total_tva      = $obj->tva;
-                $this->total_ttc      = $obj->total;
-                $this->socidp         = $obj->fk_soc;
-                $this->soc_id         = $obj->fk_soc;
-                $this->projetidp      = $obj->fk_projet;
-                $this->contactid      = $obj->fk_soc_contact;
-                $this->modelpdf       = $obj->model_pdf;
-                $this->note           = $obj->note;
-                $this->note_public    = $obj->note_public;
-                $this->statut         = $obj->fk_statut;
-                $this->statut_libelle = $obj->statut_label;
-                $this->cond_reglement = $obj->fk_cond_reglement;
-                $this->mode_reglement = $obj->fk_mode_reglement;
+                $this->datep             = $obj->dp;
+                $this->fin_validite      = $obj->dfv;
+                $this->date              = $obj->dp;
+                $this->ref               = $obj->ref;
+                $this->price             = $obj->price;
+                $this->remise            = $obj->remise;
+                $this->remise_percent    = $obj->remise_percent;
+                $this->total             = $obj->total;
+                $this->total_ht          = $obj->price;
+                $this->total_tva         = $obj->tva;
+                $this->total_ttc         = $obj->total;
+                $this->socidp            = $obj->fk_soc;
+                $this->soc_id            = $obj->fk_soc;
+                $this->projetidp         = $obj->fk_projet;
+                $this->contactid         = $obj->fk_soc_contact;
+                $this->modelpdf          = $obj->model_pdf;
+                $this->note              = $obj->note;
+                $this->note_public       = $obj->note_public;
+                $this->statut            = $obj->fk_statut;
+                $this->statut_libelle    = $obj->statut_label;
+                $this->cond_reglement_id = $obj->fk_cond_reglement;
+                $this->mode_reglement_id = $obj->fk_mode_reglement;
     
                 $this->user_author_id = $obj->fk_user_author;
     

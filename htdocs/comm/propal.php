@@ -387,7 +387,7 @@ if ($_POST['action'] == 'set_contact')
 if ($_POST["action"] == 'setconditions')
 { 
 	$propal = new Propal($db, $_GET["propalid"]);
-  $propal->cond_reglement = $_POST['cond_reglement_id'];
+  $propal->cond_reglement_id = $_POST['cond_reglement_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_cond_reglement='".$_POST['cond_reglement_id']."' WHERE rowid='".$propalid."'";
   $result = $db->query($sql);
 }
@@ -396,7 +396,7 @@ if ($_POST["action"] == 'setconditions')
 if ($_POST["action"] == 'setmode')
 {
   $propal = new Propal($db, $_GET["propalid"]);
-  $propal->mode_reglement = $_POST['mode_reglement_id'];
+  $propal->mode_reglement_id = $_POST['mode_reglement_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_mode_reglement='".$_POST['mode_reglement_id']."' WHERE rowid='".$propalid."'";
   $result = $db->query($sql);
 }
@@ -554,11 +554,11 @@ if ($_GET['propalid'] > 0)
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editconditions')
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement,'cond_reglement_id');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
 			}
 			else
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement,'none');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
 			}
 			print '</td>';
 			print '<td width="25%">';
@@ -570,11 +570,11 @@ if ($_GET['propalid'] > 0)
 			print '</td><td width="25%">';
 			if ($_GET['action'] == 'editmode')
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement,'mode_reglement_id');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
 			}
 			else
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement,'none');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'none');
 			}
 			print '</td></tr>';
 
