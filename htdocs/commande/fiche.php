@@ -80,14 +80,16 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
 	$commande = new Commande($db);
 
-	$commande->soc_id         = $_POST['soc_id'];
-	$commande->date_commande  = $datecommande;
-	$commande->note           = $_POST['note'];
-	$commande->source         = $_POST['source_id'];
-	$commande->projetid       = $_POST['projetid'];
-	$commande->remise_percent = $_POST['remise_percent'];
-	$commande->ref_client     = $_POST['ref_client'];
-	$commande->modelpdf  = $_POST['model'];
+	$commande->soc_id            = $_POST['soc_id'];
+	$commande->date_commande     = $datecommande;
+	$commande->note              = $_POST['note'];
+	$commande->source            = $_POST['source_id'];
+	$commande->projetid          = $_POST['projetid'];
+	$commande->remise_percent    = $_POST['remise_percent'];
+	$commande->ref_client        = $_POST['ref_client'];
+	$commande->modelpdf          = $_POST['model'];
+	$commande->cond_reglement_id = $_POST['cond_reglement_id'];
+  $commande->mode_reglement_id = $_POST['mode_reglement_id'];
 
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
@@ -277,14 +279,14 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 	if ($propalid)
 	{
-		$sql = 'SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, '.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst';
+		$sql = 'SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, p.fk_cond_reglement, fk_mode_reglement, '.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c';
 		$sql .= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id';
 		$sql .= ' AND p.rowid = '.$propalid;
 	}
 	else
 	{
-		$sql = 'SELECT s.nom, s.prefix_comm, s.idp ';
+		$sql = 'SELECT s.nom, s.prefix_comm, s.idp, s.mode_reglement, s.cond_reglement ';
 		$sql .= 'FROM '.MAIN_DB_PREFIX.'societe as s ';
 		$sql .= 'WHERE s.idp = '.$_GET['socidp'];
 	}
@@ -327,6 +329,16 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
 			$html->select_date();
 			print '</td></tr>';
+			
+			// Conditions de réglement
+	    print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
+	    $html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
+	    print '</td></tr>';
+
+	    // Mode de réglement
+	    print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+	    $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+	    print '</td></tr>';
 
 			if ($conf->projet->enabled)
 			{
