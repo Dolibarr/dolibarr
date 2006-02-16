@@ -28,6 +28,7 @@
 
 include_once("./inc.php");
 
+$migfile='^2.0.0-2.1.0.sql$';
 $grant_query='';
 $etape = 2;
 $ok = 0;
@@ -121,7 +122,6 @@ if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
     {
         if ($choix==1) $dir = "../../mysql/migration/";
         else $dir = "../../pgsql/migration/";
-        $migfile='^1.1.0-2.0.0.sql$';
         
         $i = 0;
         $ok = 0;
