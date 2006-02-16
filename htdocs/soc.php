@@ -783,7 +783,7 @@ else
     {
         $socm = new Societe($db);
         $socm->fetch($soc->parent);
-        print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socm->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$socm->nom.'</a>'.($socm->code_client?"(".$socm->code_client.")":"").' - '.$socm->ville;
+        print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socm->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$socm->nom.'</a>'.($socm->code_client?"(".$socm->code_client.")":"").' - '.$socm->ville;
     }
     else {
         print $langs->trans("NoParentCompany");
