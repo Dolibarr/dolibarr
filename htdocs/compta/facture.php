@@ -618,6 +618,8 @@ if ($_GET['action'] == 'create')
 		$propal->fetch($_GET['propalid']);
 		$societe_id = $propal->soc_id;
 		$projet=$propal->projetidp;
+		$cond_reglement_id = $propal->cond_reglement_id;
+	  $mode_reglement_id = $propal->mode_reglement_id;
 		$soc->fetch($societe_id);
 	}
 	elseif ($_GET['commandeid'])
