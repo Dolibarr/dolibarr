@@ -627,6 +627,8 @@ if ($_GET['action'] == 'create')
 		$societe_id = $commande->soc_id;
 		$projet=$commande-> projet_id;
 		$ref_client=$commande->ref_client;
+		$cond_reglement_id = $commande->cond_reglement_id;
+	  $mode_reglement_id = $commande->mode_reglement_id;
 		$soc->fetch($societe_id);
 	}
 	elseif ($_GET['contratid'])
@@ -641,6 +643,8 @@ if ($_GET['action'] == 'create')
 	{
 		$societe_id=$socidp;
 		$soc->fetch($societe_id);
+		$cond_reglement_id = $soc->cond_reglement;
+	  $mode_reglement_id = $soc->mode_reglement;
 	}
 
 
@@ -666,12 +670,12 @@ if ($_GET['action'] == 'create')
 
 	// Conditions de réglement
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
-	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
+	$html->select_conditions_paiements($cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 
 	// Mode de réglement
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+	$html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
 	// Projet
