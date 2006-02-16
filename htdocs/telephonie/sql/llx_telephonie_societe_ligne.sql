@@ -53,6 +53,9 @@ create table llx_telephonie_societe_ligne (
   code_analytique    varchar(12),
 
   pdfdetail          varchar(50) DEFAULT 'standard' NOT NULL,
+  techno             enum('voip','presel') default 'presel',
+  support            enum('unk','ndi','sda','rtc','nap') default 'unk',
+  last_comm_date     datetime,
 
   UNIQUE INDEX(fk_soc, ligne)
 )type=innodb;
