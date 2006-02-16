@@ -338,7 +338,7 @@ class LigneTel {
       $sql .= " , fk_user_creat, fk_user_commande";
       $sql .= " , fk_contrat ";
       $sql .= " , fk_commercial_suiv, fk_commercial_sign";
-      $sql .= " , pdfdetail, techno, support";
+      $sql .= " , pdfdetail, techno, support, last_comm_date";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as tl";
 
       if ($id > 0)
@@ -378,6 +378,7 @@ class LigneTel {
 	      $this->support            = $obj->support;
 	      $this->user_creat         = $obj->fk_user_creat;
 	      $this->user_commande      = $obj->fk_user_commande;
+	      $this->last_comm_date     = $obj->last_comm_date;
 
 	      if ($obj->isfacturable == 'oui')
 		{
@@ -540,7 +541,12 @@ class LigneTel {
 	$sql .= " (tms,fk_ligne, fk_user, statut, comment,fk_fournisseur) ";
 	$sql .= " VALUES ($datea,$this->id, $user->id, $statut, '$commentaire',$this->fournisseur_id)";
 
-	$this->db->query($sql);
+	if (!$this->db->query($sql))
+	  {
+	    dolibarr_syslog("LigneTel::set_statut Error -5");
+	    dolibarr_syslog($this->db->error());
+	    dolibarr_syslog($sql);
+	  }
 	/* 
 	 * Mise à jour des logs
 	 *
@@ -896,6 +902,44 @@ class LigneTel {
 	$this->error=$this->db->error();
 	return -1;
       }    
-  }  
+  }
+  /*
+   *
+   *
+   *
+   */
+  function load_previous_next_id($filtre='')
+  {
+    $sql = "SELECT rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+    $sql.= " WHERE rowid > ".$this->id."";
+    $sql .= " ORDER BY rowid ASC LIMIT 1";
+
+    $resql = $this->db->query($sql) ;
+    if ($resql)
+      {
+	while ($row = $this->db->fetch_row($resql))
+	  {
+	    $this->ref_next = $row[0];
+	  }
+      }
+
+    $sql = "SELECT rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+    $sql.= " WHERE rowid < ".$this->id."";
+    $sql .= " ORDER BY rowid DESC LIMIT 1";
+
+    $resql = $this->db->query($sql) ;
+    if ($resql)
+      {
+	while ($row = $this->db->fetch_row($resql))
+	  {
+	    $this->ref_previous = $row[0];
+	  }
+      }
+
+    return 1;
+  }
+
 }
 ?>
