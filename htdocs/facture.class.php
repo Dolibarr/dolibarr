@@ -106,9 +106,9 @@ class Facture
 
 		// On positionne en mode brouillon la facture
 		$this->brouillon = 1;
-		
+
 		dolibarr_syslog("Facture::create");
-		
+
 		// Facture récurrente
 		if ($this->fac_rec > 0)
 		{
@@ -130,7 +130,7 @@ class Facture
 		$datelim=$this->calculate_date_lim_reglement();
 
 		// Insertion dans la base
-		$socid = $this->socidp;
+		$socid  = $this->socidp;
 		$number = $this->number;
 		$amount = $this->amount;
 		$remise = $this->remise;
@@ -997,22 +997,23 @@ class Facture
 	}
 
 	/**
-	* \brief     Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)
-	* \param     facid           id de la facture
-	* \param     desc            description de la ligne
-	* \param     pu              prix unitaire
-	* \param     qty             quantit
-	* \param     txtva           taux de tva
-	* \param     fk_product      id du produit/service predéfini
-	* \param     remise_percent  pourcentage de remise de la ligne
-	* \param     datestart       date de debut de validité du service
-	* \param     dateend         date de fin de validité du service
-	* \param     ventil          code de ventilation comptable
+	* \brief    Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)
+	* \param    facid           id de la facture
+	* \param    desc            description de la ligne
+	* \param	product_desc	surcharge description produit
+	* \param    pu              prix unitaire
+	* \param    qty             quantit
+	* \param    txtva           taux de tva
+	* \param    fk_product      id du produit/service predéfini
+	* \param    remise_percent  pourcentage de remise de la ligne
+	* \param    datestart       date de debut de validité du service
+	* \param    dateend         date de fin de validité du service
+	* \param    ventil          code de ventilation comptable
 	*/
 	function addline($facid, $desc, $product_desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
 	{
 		global $conf;
-		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
+		dolibarr_syslog("facture.class.php::addline($facid,$desc,$product_desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
 
 		if ($this->brouillon)
 		{

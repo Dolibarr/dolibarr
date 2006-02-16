@@ -176,10 +176,8 @@ if ($_POST['action'] == 'add')
 			if ($_POST['propalid'])
 			{
 				$facture->propalid = $_POST['propalid'];
-
 				$facid = $facture->create($user);
-
-				if ($facid)
+				if ($facid > 0)
 				{
 					$prop = New Propal($db);
 					if ( $prop->fetch($_POST['propalid']) )
@@ -188,20 +186,25 @@ if ($_POST['action'] == 'add')
 						{
 							$liblignefac=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
 
-							$result = $facture->addline($facid,
-							addslashes($liblignefac),
-							$prop->lignes[$i]->desc,
-							$prop->lignes[$i]->subprice,
-							$prop->lignes[$i]->qty,
-							$prop->lignes[$i]->tva_tx,
-							$prop->lignes[$i]->product_id,
-							$prop->lignes[$i]->remise_percent);
+							$result = $facture->addline(
+								$facid,
+								addslashes($liblignefac),
+								$prop->lignes[$i]->desc,
+								$prop->lignes[$i]->subprice,
+								$prop->lignes[$i]->qty,
+								$prop->lignes[$i]->tva_tx,
+								$prop->lignes[$i]->product_id,
+								$prop->lignes[$i]->remise_percent);
 						}
 					}
 					else
 					{
 						print $langs->trans('UnknownError');
 					}
+				}
+				else
+				{
+					dolibarr_print_error($db,$facture->error);
 				}
 			}
 
@@ -212,7 +215,7 @@ if ($_POST['action'] == 'add')
 			{
 				$facture->commandeid = $_POST['commandeid'];
 				$facid = $facture->create($user);
-				if ($facid)
+				if ($facid > 0)
 				{
 					$comm = New Commande($db);
 					if ( $comm->fetch($_POST['commandeid']) )
@@ -220,14 +223,15 @@ if ($_POST['action'] == 'add')
 						$lines = $comm->fetch_lignes();
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
-							$result = $facture->addline($facid,
-							addslashes($lines[$i]->description),
-							$lines[$i]->desc,
-							$lines[$i]->subprice,
-							$lines[$i]->qty,
-							$lines[$i]->tva_tx,
-							$lines[$i]->product_id,
-							$lines[$i]->remise_percent);
+							$result = $facture->addline(
+								$facid,
+								addslashes($lines[$i]->description),
+								$lines[$i]->desc,
+								$lines[$i]->subprice,
+								$lines[$i]->qty,
+								$lines[$i]->tva_tx,
+								$lines[$i]->product_id,
+								$lines[$i]->remise_percent);
 						}
 					}
 					else
@@ -237,7 +241,7 @@ if ($_POST['action'] == 'add')
 				}
 				else
 				{
-					dolibarr_print_error($db);
+					dolibarr_print_error($db,$facture->error);
 				}
 			}
 
@@ -248,8 +252,7 @@ if ($_POST['action'] == 'add')
 			{
 				$facture->contratid = $_POST['contratid'];
 				$facid = $facture->create($user);
-
-				if ($facid)
+				if ($facid > 0)
 				{
 					$contrat = New Contrat($db);
 					if ($contrat->fetch($_POST['contratid']) > 0)
@@ -266,15 +269,17 @@ if ($_POST['action'] == 'add')
 							$date_end=$contrat->lignes[$i]->date_fin_prevue;
 							if ($contrat->lignes[$i]->date_fin_reel) $date_end=$contrat->lignes[$i]->date_fin_reel;
 
-							$result = $facture->addline($facid,
-							addslashes($liblignefac),
-							$lines[$i]->subprice,
-							$lines[$i]->qty,
-							$lines[$i]->tva_tx,
-							$lines[$i]->product_id,
-							$lines[$i]->remise_percent,
-							$date_start,
-							$date_end);
+							$result = $facture->addline(
+								$facid,
+								addslashes($liblignefac),
+								'',
+								$lines[$i]->subprice,
+								$lines[$i]->qty,
+								$lines[$i]->tva_tx,
+								$lines[$i]->product_id,
+								$lines[$i]->remise_percent,
+								$date_start,
+								$date_end);
 						}
 					}
 					else
@@ -284,7 +289,7 @@ if ($_POST['action'] == 'add')
 				}
 				else
 				{
-					dolibarr_print_error($db);
+					dolibarr_print_error($db,$facture->error);
 				}
 			}
 

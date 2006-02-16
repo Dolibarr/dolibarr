@@ -47,7 +47,6 @@ if ($user->societe_id > 0)
 $user->getrights('facture');
 
 
-
 if ($action == 'recontact')
 {
     $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
@@ -127,7 +126,11 @@ if ($socid > 0)
 {
     $societe = new Societe($db);
     $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
-
+	if ($societe->id <= 0)
+	{
+		dolibarr_print_error($db,$societe->error);
+	}
+	
     /*
      * Affichage onglets
      */
