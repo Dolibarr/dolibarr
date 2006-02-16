@@ -301,17 +301,6 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$soc = new Societe($db);
 			$soc->fetch($obj->idp);
 			
-			if ($propalid)
-			{
-				$cond_reglement_id = $obj->fk_cond_reglement;
-	      $mode_reglement_id = $obj->fk_mode_reglement;
-	    }
-	    else
-	    {
-	    	$cond_reglement_id = $soc->cond_reglement;
-	      $mode_reglement_id = $soc->mode_reglement;
-	    }
-
 			$nbrow=4;
 			if ($conf->projet->enabled) $nbrow++;
 
@@ -343,12 +332,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			
 			// Conditions de réglement
 	    print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
-	    $html->select_conditions_paiements($cond_reglement_id,'cond_reglement_id');
+	    $html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	    print '</td></tr>';
 
 	    // Mode de réglement
 	    print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	    $html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
+	    $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	    print '</td></tr>';
 
 			if ($conf->projet->enabled)

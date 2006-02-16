@@ -107,7 +107,10 @@ class Commande
 		}
 
 		$this->soc_id = $propal->soc_id;
-
+    $this->cond_reglement_id = $propal->cond_reglement_id;
+    $this->mode_reglement_id = $propal->mode_reglement_id;
+    
+    
 		/* Définit la société comme un client */
 		$soc = new Societe($this->db);
 		$soc->id = $this->soc_id;
