@@ -95,14 +95,14 @@ class Commande
 		for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
 		{
 			$CommLigne = new CommandeLigne();
-			$CommLigne->libelle        = $propal->lignes[$i]->libelle;
-			$CommLigne->description    = $propal->lignes[$i]->desc;
-			$CommLigne->price          = $propal->lignes[$i]->subprice;
-			$CommLigne->subprice       = $propal->lignes[$i]->subprice;
-			$CommLigne->tva_tx         = $propal->lignes[$i]->tva_tx;
-			$CommLigne->qty            = $propal->lignes[$i]->qty;
-			$CommLigne->remise_percent = $propal->lignes[$i]->remise_percent;
-			$CommLigne->product_id     = $propal->lignes[$i]->product_id;
+			$CommLigne->libelle           = $propal->lignes[$i]->libelle;
+			$CommLigne->description       = $propal->lignes[$i]->desc;
+			$CommLigne->price             = $propal->lignes[$i]->subprice;
+			$CommLigne->subprice          = $propal->lignes[$i]->subprice;
+			$CommLigne->tva_tx            = $propal->lignes[$i]->tva_tx;
+			$CommLigne->qty               = $propal->lignes[$i]->qty;
+			$CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
+			$CommLigne->product_id        = $propal->lignes[$i]->product_id;
 			$this->lines[$i] = $CommLigne;
 		}
 
@@ -529,7 +529,7 @@ class Commande
 	*/
 	function fetch($id)
 	{
-		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva';
+		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement';
 		$sql .= ', '.$this->db->pdate('c.date_commande').' as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note, c.ref_client, c.model_pdf';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql .= ' WHERE c.rowid = '.$id;
@@ -538,22 +538,24 @@ class Commande
 		if ( $result )
 		{
 			$obj = $this->db->fetch_object();
-			$this->id              = $obj->rowid;
-			$this->ref             = $obj->ref;
-			$this->ref_client      = $obj->ref_client;
-			$this->soc_id          = $obj->fk_soc;
-			$this->statut          = $obj->fk_statut;
-			$this->user_author_id  = $obj->fk_user_author;
-			$this->total_ht        = $obj->total_ht;
-			$this->total_tva       = $obj->tva;
-			$this->total_ttc       = $obj->total_ttc;
-			$this->date            = $obj->date_commande;
-			$this->remise_percent  = $obj->remise_percent;
-			$this->source          = $obj->source;
-			$this->facturee        = $obj->facture;
-			$this->note            = $obj->note;
-			$this->projet_id       = $obj->fk_projet;
-			$this->modelpdf       = $obj->model_pdf;
+			$this->id                = $obj->rowid;
+			$this->ref               = $obj->ref;
+			$this->ref_client        = $obj->ref_client;
+			$this->soc_id            = $obj->fk_soc;
+			$this->statut            = $obj->fk_statut;
+			$this->user_author_id    = $obj->fk_user_author;
+			$this->total_ht          = $obj->total_ht;
+			$this->total_tva         = $obj->tva;
+			$this->total_ttc         = $obj->total_ttc;
+			$this->date              = $obj->date_commande;
+			$this->remise_percent    = $obj->remise_percent;
+			$this->source            = $obj->source;
+			$this->facturee          = $obj->facture;
+			$this->note              = $obj->note;
+			$this->projet_id         = $obj->fk_projet;
+			$this->modelpdf          = $obj->model_pdf;
+			$this->cond_reglement_id = $obj->fk_cond_reglement;
+			$this->mode_reglement_id = $obj->fk_mode_reglement;
 			
 			$this->db->free();
 			if ($this->statut == 0)
