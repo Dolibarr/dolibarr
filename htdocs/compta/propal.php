@@ -200,11 +200,11 @@ if ($_GET["propalid"] > 0)
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editconditions')
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->cond_reglement,'cond_reglement_id');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$propal->cond_reglement_id,'cond_reglement_id');
 			}
 			else
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->cond_reglement,'none');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$propal->cond_reglement_id,'none');
 			}
 			print '</td>';
 			print '<td width="25%">';
@@ -216,11 +216,11 @@ if ($_GET["propalid"] > 0)
 			print '</td><td width="25%">';
 			if ($_GET['action'] == 'editmode')
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->mode_reglement,'mode_reglement_id');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$propal->mode_reglement_id,'mode_reglement_id');
 			}
 			else
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$prop->mode_reglement,'none');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$propal->mode_reglement_id,'none');
 			}
 			print '</td></tr>';
 
