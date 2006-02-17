@@ -212,14 +212,12 @@ if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == yes && $user->r
 if ($_POST['action'] == 'builddoc')
 {
 	commande_supplier_pdf_create($db, $_GET['id'],$_POST['model']);
-	$commande->modelpdf          = $_POST['model'];	
 }
 if($_GET['action'] == 'builddoc')
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($_GET['id']);
 	commande_supplier_pdf_create($db, $_GET['id'],$commande->modelpdf);
-	$commande->modelpdf          = $_POST['model'];
 }
 
 /*
@@ -230,6 +228,7 @@ if ($_GET["action"] == 'create')
 
     $fourn = new Fournisseur($db);
     $fourn->fetch($_GET["socid"]);
+    $commande->modelpdf          = muscadet; //test
 
     if ($fourn->create_commande($user) > 0)
     {
