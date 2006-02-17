@@ -31,6 +31,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
 
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
@@ -202,6 +203,21 @@ if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == yes && $user->r
     $result = $commande->cancel($user);
     Header("Location: fiche.php?id=".$_GET["id"]);
     exit;
+}
+
+	/*
+	 * Generation de la commande
+	 * définit dans /fourn/commande/modules/modules_commandefournisseur.php
+	 */
+if ($_POST['action'] == 'builddoc')
+{
+	commande_supplier_pdf_create($db, $_GET['id'],$_POST['model']);	
+}
+if($_GET['action'] == 'builddoc')
+{
+	$commande = new CommandeFournisseur($db);
+	$commande->fetch($_GET['id']);
+	commande_supplier_pdf_create($db, $_GET['id'],$commande->modelpdf);
 }
 
 /*
@@ -478,7 +494,7 @@ if ($_GET["id"] > 0)
         /*
          * Ajouter une ligne
          */
-        if ($_GET["action"] <> 'valid' && $commande->statut == 0 && $user->rights->fournisseur->commande->creer)
+        if ($commande->statut == 0 && $user->rights->fournisseur->commande->creer && ($_GET["action"] <> 'valid' || $_GET['action'] == 'builddoc'))
         {
             print '<form action="fiche.php?id='.$commande->id.'" method="post">';
             print '<input type="hidden" name="action" value="addligne">';
@@ -510,7 +526,7 @@ if ($_GET["id"] > 0)
         /**
          * Boutons actions
          */
-        if ($user->societe_id == 0 && $commande->statut < 3 && $_GET["action"] <> 'valid')
+        if ($user->societe_id == 0 && $commande->statut < 3 && ($_GET["action"] <> 'valid' || $_GET['action'] == 'builddoc'))
         {
             print '<div class="tabsAction">';
         
@@ -552,34 +568,46 @@ if ($_GET["id"] > 0)
                     print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
                 }
             }
+          // Build PDF
+					if ($user->rights->fournisseur->commande->creer)
+					{
+						print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
+					}
         
             print "</div>";
         }
 
-        /*
-         * Documents générés
-         *
-         */
-        $file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-        $relativepath=$commande->ref . "/" . $commande->ref . ".pdf";
-        
-        $var=true;
-        
-        if (file_exists($file))
-        {
-            print_titre($langs->trans("Documents"));
-            print '<table width="100%" class="border">';
-        
-            print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
-            print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-            print '<td align="right">'.filesize($file). ' bytes</td>';
-            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-            print '</tr>';
-        
-            print "</table>\n";
+			/*
+			 * Documents générés
+			 *
+			 */
+			$comfournref = sanitize_string($commande->ref);
+			$comfournref = str_replace("(","",$comfournref);
+			$comfournref = str_replace(")","",$comfournref);
+			$file = $conf->fournisseur->commande->dir_output . '/' . $comfournref . '/' . $comfournref . '.pdf';
+			$relativepath = $comfournref.'/'.$comfournref.'.pdf';
+			$filedir = $conf->fournisseur->commande->dir_output . '/' . $comfournref;
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+			$genallowed=$user->rights->fournisseur->commande->creer;
+    	$delallowed=$user->rights->fournisseur->commande->supprimer;
 
-            print '</td><td valign="top" width="50%">';
-        }
+			$var=true;
+			/*
+			if (file_exists($file))
+			{
+				print_titre($langs->trans('Documents'));
+				print '<table width="100%" class="border">';
+				print '<tr '.$bc[$var].'><td>'.$langs->trans('Order').' PDF</td>';
+				print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
+				print '<td align="right">'.filesize($file). ' bytes</td>';
+				print '<td align="right">'.strftime('%d %b %Y %H:%M:%S',filemtime($file)).'</td>';
+				print '</tr>';
+				print '</table>';
+				print '<br>';
+			}
+			*/
+			//$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
+			$html->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
         
       /*
        *

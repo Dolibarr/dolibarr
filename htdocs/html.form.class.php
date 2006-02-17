@@ -1838,7 +1838,7 @@ class Form
                     $modellist=$model->liste_modeles($this->db);
                 }
             }
-			 else if ($modulepart == 'commande')
+			      else if ($modulepart == 'commande')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
@@ -1868,6 +1868,26 @@ class Form
                     $modellist=$model->liste_modeles($this->db);
                 }
             }
+            else if ($modulepart == 'commande_fournisseur')
+  	        {
+  	            if (is_array($genallowed)) $modellist=$genallowed;
+  	            else
+  	            {
+  	                include_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
+  	                $model=new ModelePDFCommandesSuppliers();
+  	                $modellist=$model->liste_modeles();
+  	            }
+  	        }
+  	        else if ($modulepart == 'facture_fournisseur')
+  	        {
+  	            if (is_array($genallowed)) $modellist=$genallowed;
+  	            else
+  	            {
+  	                include_once(DOL_DOCUMENT_ROOT.'/fourn/facture/modules/modules_facturefournisseur.php');
+  	                $model=new ModelePDFFacturesSuppliers();
+  	                $modellist=$model->liste_modeles();
+  	            }
+  	        }
             else
             {
                 dolibarr_print_error($this->db,'Bad value for modulepart');

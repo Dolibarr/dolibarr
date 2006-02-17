@@ -96,7 +96,7 @@ if ($modulepart)
         }
         $original_file=$conf->propal->dir_output.'/'.$original_file;
     }
-	 // Wrapping pour les comandes
+	 // Wrapping pour les commandes
     if ($modulepart == 'commande')
     {
         $user->getrights('commande');
@@ -105,6 +105,28 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->commande->dir_output.'/'.$original_file;
+    }
+    
+    // Wrapping pour les commandes fournisseurs
+    if ($modulepart == 'commande_fournisseur')
+    {
+        $user->getrights('fournisseur');
+        if ($user->rights->fournisseur->commande->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->fournisseur->commande->dir_output.'/'.$original_file;
+    }
+    
+    // Wrapping pour les factures fournisseurs
+    if ($modulepart == 'facture_fournisseur')
+    {
+        $user->getrights('fournisseur');
+        if ($user->rights->fournisseur->facture->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
     }
 
     // Wrapping pour les rapport de paiements

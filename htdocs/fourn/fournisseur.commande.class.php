@@ -70,18 +70,15 @@ class CommandeFournisseur
         $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
         $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande ";
         $sql .= ", c.note";
-    
         $sql .= ", cm.libelle as methode_commande";
-    
         $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
-    
         $sql .= " WHERE c.rowid = ".$id;
 
-        $resql = $this->db->query($sql) ;
-        if ($resql)
+        $result = $this->db->query($sql) ;
+        if ($result)
         {
-            $obj = $this->db->fetch_object($resql);
+            $obj = $this->db->fetch_object();
     
             $this->id                  = $obj->rowid;
             $this->ref                 = $obj->ref;
@@ -102,26 +99,60 @@ class CommandeFournisseur
             $this->projet_id           = $obj->fk_projet;
             $this->note                = stripslashes($obj->note);
     
-            $this->db->free($resql);
+            $this->db->free();
     
             if ($this->statut == 0)
-            {
                 $this->brouillon = 1;
-            }
     
-            $result = 0;
+// export pdf -----------
+			
+			$this->lignes = array();
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
+			$sql.= ' p.label, p.description as product_desc, p.ref, p.fk_product_type, p.rowid as prodid';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as l';
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+			$sql.= ' WHERE l.fk_commande = '.$this->id;
+			$sql.= ' ORDER BY l.rowid';
+			$result = $this->db->query($sql);
+                if ($result)
+                {
+                    $num = $this->db->num_rows($result);
+                    $i = 0;
+    
+                    while ($i < $num)
+                    {
+                        $objp                  = $this->db->fetch_object($result);
+    
+                        $ligne                 = new CommandeLigne();
+
+                        $ligne->desc           = $objp->description;  // Description ligne
+                        $ligne->qty            = $objp->qty;
+                        $ligne->tva_tx         = $objp->tva_tx;
+                        $ligne->subprice       = $objp->subprice;
+                        $ligne->remise_percent = $objp->remise_percent;
+                        $ligne->price          = $objp->price;
+                        $ligne->product_id     = $objp->fk_product;
+
+                        $ligne->libelle        = $objp->label;        // Label produit
+                        $ligne->product_desc   = $objp->product_desc; // Description produit
+                        $ligne->ref            = $objp->ref;
+    
+                        $this->lignes[$i]      = $ligne;
+                        //dolibarr_syslog("1 ".$ligne->desc);
+                        //dolibarr_syslog("2 ".$ligne->product_desc);
+                        $i++;
+                    }
+                    $this->db->free($result);
     
         }
         else
         {
             dolibarr_syslog("CommandeFournisseur::Fetch Error $sql");
             dolibarr_syslog("CommandeFournisseur::Fetch Error ".$this->db->error());
-            $result = -1;
+            return -1;
         }
-    
-        return $result ;
-    
     }
+}
 
     /**
      *      \brief      Insère ligne de log
@@ -714,6 +745,32 @@ class CommandeFournisseur
     $opdf = new $var();
     $opdf->write_pdf_file($this);
   }
+
+	/**
+   *
+   *
+   *
+   */ 
+  function set_pdf_model($user, $modelpdf)
+   {
+      if ($user->rights->fournisseur->commande->creer)
+	     {
+
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET model_pdf = '$modelpdf'";
+	      $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	  
+	     if ($this->db->query($sql) )
+	      {
+	        return 1;
+	      }
+	     else
+	     {
+    	  dolibarr_print_error($this->db);
+	      return 0;
+	     }
+	  }
+  }
+
 
   /**
    *

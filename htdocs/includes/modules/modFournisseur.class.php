@@ -63,6 +63,9 @@ class modFournisseur extends DolibarrModules
 		
 		// Dir
 		$this->dirs = array();
+		$this->const[0][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
+  	$this->const[0][1] = "chaine";
+  	$this->const[0][2] = "muscadet";
 		
 		// Dépendances
 		$this->depends = array("modSociete");
