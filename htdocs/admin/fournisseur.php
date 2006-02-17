@@ -103,7 +103,7 @@ if ($_GET["action"] == 'del')
 }
 $propale_fournisseur_addon_var_pdf = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 
-$dir = "../fourn/commande/modules/";
+$dir = "../fourn/commande/modules/pdf/";
 
 print_titre($langs->trans("OrdersSetup"));
 
