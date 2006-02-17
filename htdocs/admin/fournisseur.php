@@ -75,7 +75,7 @@ if ($_GET["action"] == 'set')
 
     }
 }
-$propale_fournisseur_addon_var_pdf = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
+$commande_fournisseur_addon_var_pdf = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 if ($_GET["action"] == 'setpdf')
 {
   
@@ -101,7 +101,7 @@ if ($_GET["action"] == 'del')
 
     }
 }
-$propale_fournisseur_addon_var_pdf = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
+$commande_fournisseur_addon_var_pdf = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 
 $dir = "../fourn/commande/modules/pdf/";
 
