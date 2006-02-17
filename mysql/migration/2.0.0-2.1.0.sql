@@ -32,3 +32,13 @@ insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_
 
 alter table llx_commande add fk_cond_reglement int(11) DEFAULT NULL;
 alter table llx_commande add fk_mode_reglement int(11) DEFAULT NULL;
+
+create table llx_comfourn_facfourn
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande integer NOT NULL,
+  fk_facture  integer NOT NULL,
+
+  key(fk_commande),
+  key(fk_facture)
+)type=innodb;
