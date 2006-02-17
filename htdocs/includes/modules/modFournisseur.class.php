@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,11 +67,19 @@ class modFournisseur extends DolibarrModules
 		$this->const[0][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
   	$this->const[0][1] = "chaine";
   	$this->const[0][2] = "muscadet";
-		
+  	
+  	$this->const[1][0] = "COMMANDE_SUPPLIER_ADDON";
+    $this->const[1][1] = "chaine";
+    $this->const[1][2] = "diamant";
+    
 		// Dépendances
 		$this->depends = array("modSociete");
 		$this->requiredby = array();
-        $this->langfiles = array("bills","companies","suppliers");
+    $this->langfiles = array("bills","companies","suppliers");
+    
+        
+    // Config pages
+    $this->config_page_url = "fournisseur.php";
 
 		// Constantes
 		$this->const = array();
