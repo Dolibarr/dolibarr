@@ -42,3 +42,11 @@ create table llx_comfourn_facfourn
   key(fk_commande),
   key(fk_facture)
 )type=innodb;
+
+
+create table llx_commande_fournisseur_model_pdf
+(
+  nom         varchar(50) PRIMARY KEY,
+  libelle     varchar(255),
+  description text
+)type=innodb;

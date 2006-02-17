@@ -252,6 +252,10 @@ $conf->don->dir_images=DOL_DATA_ROOT."/dons/images";
 $conf->syslog->enabled=defined("MAIN_MODULE_SYSLOG")?MAIN_MODULE_SYSLOG:0;
 // Module fournisseur
 $conf->fournisseur->enabled=defined("MAIN_MODULE_FOURNISSEUR")?MAIN_MODULE_FOURNISSEUR:0;
+$conf->fournisseur->commande->dir_output=DOL_DATA_ROOT."/fournisseur/commande";
+$conf->fournisseur->commande->dir_images=DOL_DATA_ROOT."/fournisseur/commande/images";
+$conf->fournisseur->facture->dir_output=DOL_DATA_ROOT."/fournisseur/facture";
+$conf->fournisseur->facture->dir_images=DOL_DATA_ROOT."/fournisseur/facture/images";
 // Module ficheinter
 $conf->fichinter->enabled=defined("MAIN_MODULE_FICHEINTER")?MAIN_MODULE_FICHEINTER:0;
 $conf->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
