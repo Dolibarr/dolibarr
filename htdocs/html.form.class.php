@@ -426,47 +426,61 @@ class Form
   
   
     /**
-     *    \brief      Retourne la liste déroulante des contacts d'une société donnée
-     *    \param      socid           Id de la société
-     *    \param      selected        Id contact pré-sélectionn
-     *    \param      htmlname        Nom champ formulaire
+     *    	\brief      Retourne la liste déroulante des contacts d'une société donnée
+     *    	\param      socid      	Id de la société
+     *    	\param      selected   	Id contact pré-sélectionn
+     *    	\param      htmlname  	Nom champ formulaire ('none' pour champ non editable)
+     *		\return		int			<0 si ko, >=0 si ok
      */
     function select_contacts($socid,$selected='',$htmlname='contactid')
     {
-        // On recherche les societes
-        $sql = "SELECT s.idp, s.name, s.firstname FROM ";
-        $sql .= MAIN_DB_PREFIX ."socpeople as s";
-        $sql .= " WHERE fk_soc=".$socid;
-        $sql .= " ORDER BY s.name ASC";
-    
-        if ($this->db->query($sql))
-        {
-            print '<select class="flat" name="'.$htmlname.'">';
-            $num = $this->db->num_rows();
-            $i = 0;
-            if ($num)
-            {
-                while ($i < $num)
-                {
-                    $obj = $this->db->fetch_object();
-    
-                    if ($selected && $selected == $obj->idp)
-                    {
-                        print '<option value="'.$obj->idp.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
-                    }
-                    else
-                    {
-                        print '<option value="'.$obj->idp.'">'.$obj->name.' '.$obj->firstname.'</option>';
-                    }
-                    $i++;
-                }
-            }
-            print '</select>';
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-        }
+	        // On recherche les societes
+	        $sql = "SELECT s.idp, s.name, s.firstname FROM ";
+	        $sql .= MAIN_DB_PREFIX ."socpeople as s";
+	        $sql .= " WHERE fk_soc=".$socid;
+	        $sql .= " ORDER BY s.name ASC";
+	    
+	        $resql=$this->db->query($sql);
+	        if ($resql)
+	        {
+				$num=$this->db->num_rows();
+                if ($num==0) return 0;
+	        	
+	            if ($htmlname != 'none') print '<select class="flat" name="'.$htmlname.'">';
+	            $num = $this->db->num_rows();
+	            $i = 0;
+	            if ($num)
+	            {
+	                while ($i < $num)
+	                {
+	                    $obj = $this->db->fetch_object();
+
+			            if ($htmlname != 'none')
+			            {
+		                    if ($selected && $selected == $obj->idp)
+		                    {
+		                        print '<option value="'.$obj->idp.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+		                    }
+		                    else
+		                    {
+		                        print '<option value="'.$obj->idp.'">'.$obj->name.' '.$obj->firstname.'</option>';
+		                    }
+						}
+						else
+						{
+							if ($selected == $obj->idp) print $obj->name.' '.$obj->firstname;
+						}
+	                    $i++;
+	                }
+	            }
+	            if ($htmlname != 'none') print '</select>';
+	            return 1;
+	        }
+	        else
+	        {
+	            dolibarr_print_error($this->db);
+	            return -1;
+	        }
     }
     
     
@@ -591,7 +605,7 @@ class Form
             {
                 $objp = $this->db->fetch_object($result);
                 $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-                $opt.= dolibarr_trunc($objp->label,40).' - ';
+                $opt.= dolibarr_trunc($objp->label,36).' - ';
 				//multiprix
 				if($price_level > 1)
 				{
@@ -656,7 +670,7 @@ class Form
             {
                 $objp = $this->db->fetch_object($result);
                 $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-                $opt.= dolibarr_trunc($objp->label,40).' - ';
+                $opt.= dolibarr_trunc($objp->label,36).' - ';
                 $opt.= $objp->fprice." ".$langs->trans("Currency".$conf->monnaie)." / ".$objp->quantity." ".$langs->trans("Units");
                 if ($objp->quantity > 1)
                 {
@@ -1258,6 +1272,48 @@ class Form
     }
     
         
+    /**
+     *    \brief      Affiche formulaire de selection des contacts
+     *    \param      page        Page
+     *    \param      selected    Id contact présélectionné
+     *    \param      htmlname    Nom du formulaire select
+     */
+    function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="set_contact">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $num=$this->select_contacts($societe->id, $selected, $htmlname);
+            if ($num==0)
+            {
+                print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
+                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
+			}
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+				require_once(DOL_DOCUMENT_ROOT ."/contact.class.php");
+                //$this->load_cache_contacts();
+                //print $this->cache_contacts[$selected];
+                $contact=new Contact($this->db);
+				$contact->fetch($selected);
+				print $contact->nom.' '.$contact->prenom;				
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+    
+    
     /**
      *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
      *    \param     selected    code devise pré-sélectionnée
