@@ -638,6 +638,7 @@ if ($_GET["id"] > 0)
 	   */
 	  $form = new Form($db);
 	  
+	  print '<br>';
 	  print '<form action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
 	  print '<table class="noborder">';
 	  print '<tr class="liste_titre"><td colspan="2">Commander</td></tr>';
@@ -668,6 +669,7 @@ if ($_GET["id"] > 0)
 	   */
 	  $form = new Form($db);
 	  
+	  print '<br>';
 	  print '<form action="fiche.php?id='.$commande->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="livraison">';
 	  print '<table class="noborder">';
