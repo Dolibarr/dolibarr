@@ -224,8 +224,8 @@ class modFournisseur extends DolibarrModules
     
     // Dir
     $this->dirs[0] = $conf->fournisseur->dir_output;
-    $this->dirs[1] = $conf->fournisseur->commande->dir_output;
-    $this->dirs[2] = $conf->fournisseur->facture->dir_output;
+    //$this->dirs[1] = $conf->fournisseur->commande->dir_output;
+    //$this->dirs[2] = $conf->fournisseur->facture->dir_output;
 
     $sql = array();
 
