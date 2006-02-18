@@ -29,7 +29,7 @@
     \version    $Revision$
 */
 
-include_once("../modules_commandefournisseur.php");
+include_once("modules_commandefournisseur.php");
 
 
 /**
