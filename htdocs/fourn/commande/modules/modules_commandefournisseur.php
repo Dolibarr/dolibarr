@@ -185,7 +185,7 @@ function commande_supplier_delete_preview($db, $propalid)
 {
         global $langs,$conf;
 
-        $comfourn = new Commande($db,"",$propalid);
+        $comfourn = new CommandeFournisseur($db,"",$propalid);
         $comfourn->fetch($propalid);  
         $client = new Societe($db);
         $client->fetch($comfourn->soc_id);
