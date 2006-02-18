@@ -174,11 +174,35 @@ class pdf_crabe extends ModelePDFFactures
                 }
 
                 $this->_pagehead($pdf, $fac);
-
+				
+				// Affiches lignes
                 $pagenb = 1;
                 $tab_top = 90;
                 $tab_top_newpage = 50;
                 $tab_height = 110;
+
+				// Affiche notes
+                if ($fac->note_public)
+                {
+	                $tab_top = 88;
+
+	                $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+	                $pdf->SetXY ($this->posxdesc-1, $tab_top);
+	                $pdf->MultiCell(190, 3, $fac->note_public, 0, 'J');
+	                $nexY = $pdf->GetY();
+	                $height_note=$nexY-$tab_top;
+
+			        // Rect prend une longueur en 3eme param
+			        $pdf->SetDrawColor(192,192,192);
+			        $pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+
+	                $tab_height = $tab_height - $height_note;
+                	$tab_top = $nexY+6;
+               	}
+               	else
+               	{
+               		$height_note=0;
+				}
 
                 $iniY = $tab_top + 8;
                 $curY = $tab_top + 8;
@@ -261,7 +285,7 @@ class pdf_crabe extends ModelePDFFactures
 
                     $nexY+=2;    // Passe espace entre les lignes
 
-                    if ($nexY > 200 && $i < ($nblignes - 1))
+                    if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
                     {
                         $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
                         $this->_pagefoot($pdf);
@@ -384,14 +408,16 @@ class pdf_crabe extends ModelePDFFactures
                 /*
                  * Conditions de règlements
                  */
-                $pdf->SetFont('Arial','B',10);
-                $pdf->SetXY($this->marge_gauche, 217);
-                $titre = "Conditions de réglement:";
-                $pdf->MultiCell(80, 5, $titre, 0, 'L');
-                $pdf->SetFont('Arial','',10);
-                $pdf->SetXY(54, 217);
-                $pdf->MultiCell(80, 5, $fac->cond_reglement_facture,0,'L');
-
+                if ($fac->cond_reglement_facture)
+                {
+	                $pdf->SetFont('Arial','B',8);
+	                $pdf->SetXY($this->marge_gauche, 217);
+	                $titre = $langs->trans("PaymentConditions").':';
+	                $pdf->MultiCell(80, 5, $titre, 0, 'L');
+	                $pdf->SetFont('Arial','',8);
+	                $pdf->SetXY(50, 217);
+	                $pdf->MultiCell(80, 5, $fac->cond_reglement_facture,0,'L');
+				}
 
                 /*
                  * Pied de page
@@ -661,7 +687,7 @@ class pdf_crabe extends ModelePDFFactures
         // Rect prend une longueur en 3eme param
         $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
         // line prend une position y en 3eme param
-        $pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
+        $pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
 
         $pdf->SetFont('Arial','',10);
 

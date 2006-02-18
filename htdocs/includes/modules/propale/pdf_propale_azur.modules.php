@@ -183,10 +183,34 @@ class pdf_propale_azur extends ModelePDFPropales
 
                 $this->_pagehead($pdf, $prop);
 
+				// Affiches lignes
                 $pagenb = 1;
                 $tab_top = 90;
                 $tab_top_newpage = 50;
                 $tab_height = 110;
+
+				// Affiche notes
+                if ($prop->note_public)
+                {
+	                $tab_top = 88;
+
+	                $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+	                $pdf->SetXY ($this->posxdesc-1, $tab_top);
+	                $pdf->MultiCell(190, 3, $prop->note_public, 0, 'J');
+	                $nexY = $pdf->GetY();
+	                $height_note=$nexY-$tab_top;
+
+			        // Rect prend une longueur en 3eme param
+			        $pdf->SetDrawColor(192,192,192);
+			        $pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+
+	                $tab_height = $tab_height - $height_note;
+                	$tab_top = $nexY+6;
+               	}
+               	else
+               	{
+               		$height_note=0;
+				}
 
                 $iniY = $tab_top + 8;
                 $curY = $tab_top + 8;
@@ -273,14 +297,14 @@ class pdf_propale_azur extends ModelePDFPropales
                     if ($nexY > 200 && $i < ($nblignes - 1))
                     {
                         $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
-						$this->_pagefoot($pdf);
+                        $this->_pagefoot($pdf);
                         
                         // Nouvelle page
                         $pdf->AddPage();
                         $pagenb++;
                         $this->_pagehead($pdf, $prop, 0);
 
-						$nexY = $tab_top_newpage + 8;
+                        $nexY = $tab_top_newpage + 8;
                         $pdf->SetTextColor(0,0,0);
                         $pdf->SetFont('Arial','', 10);
                     }
@@ -289,7 +313,7 @@ class pdf_propale_azur extends ModelePDFPropales
                 // Affiche cadre tableau
                 if ($pagenb == 1)
                 {
-                	$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+                    $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
                     $bottomlasttab=$tab_top + $tab_height + 1;
                 }
                 else 
@@ -397,17 +421,17 @@ class pdf_propale_azur extends ModelePDFPropales
                 /*
                  * Conditions de règlements
                  */
-                /* Pour l'instant les conditions de règlement ne sont pas gérées sur les propales */
-                /*
-                $pdf->SetFont('Arial','B',10);
-                $pdf->SetXY($this->marge_gauche, 217);
-                $titre = "Conditions de réglement:";
-                $pdf->MultiCell(80, 5, $titre, 0, 'L');
-                $pdf->SetFont('Arial','',10);
-                $pdf->SetXY(54, 217);
-                $pdf->MultiCell(80, 5, $prop->cond_reglement_facture,0,'L');
-                */
-
+                if ($prop->cond_reglement_facture)
+                {
+	                $pdf->SetFont('Arial','B',8);
+	                $pdf->SetXY($this->marge_gauche, 217);
+	                $titre = "Conditions de réglement:";
+	                $pdf->MultiCell(80, 5, $titre, 0, 'L');
+	                $pdf->SetFont('Arial','',8);
+	                $pdf->SetXY(50, 217);
+	                $pdf->MultiCell(80, 5, $prop->cond_reglement_facture,0,'L');
+				}
+				
                 /*
                  * Pied de page
                  */
