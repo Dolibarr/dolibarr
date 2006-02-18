@@ -611,6 +611,9 @@ if ($_GET["id"] > 0)
 			*/
 			//$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 			$html->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+			
+			print '</td></tr>';
+			print '</table>';
         
       /*
        *
