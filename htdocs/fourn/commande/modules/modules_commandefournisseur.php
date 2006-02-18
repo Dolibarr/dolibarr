@@ -165,7 +165,7 @@ function commande_supplier_pdf_create($db, $comid, $modele='')
       if ( $obj->write_pdf_file($comid) > 0)
         {
           // on supprime l'image correspondant au preview
-           commande_delete_preview($db, $comid);
+           commande_supplier_delete_preview($db, $comid);
           return 1;
         }
       else

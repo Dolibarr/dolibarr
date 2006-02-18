@@ -30,6 +30,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
@@ -138,7 +139,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
 
         if ($conf->commande->dir_output)
         {
-            $com = new Commande($this->db);
+            $com = new CommandeFournisseur($this->db);
             $ret=$com->fetch($id);
             $nblignes = sizeof($com->lignes);
 
