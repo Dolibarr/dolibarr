@@ -179,7 +179,7 @@ print '  <td align="center">'.$langs->trans("Default")."</td>\n";
 print "</tr>\n";
 
 clearstatcache();
-
+$dir = "../fourn/commande/modules/pdf/";
 $def = array();
 $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."commande_fournisseur_model_pdf";
 $resql=$db->query($sql);

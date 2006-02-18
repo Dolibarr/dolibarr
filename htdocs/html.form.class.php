@@ -1875,7 +1875,7 @@ class Form
   	            {
   	                include_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
   	                $model=new ModelePDFCommandesSuppliers();
-  	                $modellist=$model->liste_modeles();
+  	                $modellist=$model->liste_modeles($this->db);
   	            }
   	        }
   	        else if ($modulepart == 'facture_fournisseur')
@@ -1885,7 +1885,7 @@ class Form
   	            {
   	                include_once(DOL_DOCUMENT_ROOT.'/fourn/facture/modules/modules_facturefournisseur.php');
   	                $model=new ModelePDFFacturesSuppliers();
-  	                $modellist=$model->liste_modeles();
+  	                $modellist=$model->liste_modeles($this->db);
   	            }
   	        }
             else
