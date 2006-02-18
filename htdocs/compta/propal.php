@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005      Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006      Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2004           Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2006      Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -43,11 +43,18 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
 // Sécurité accés client
+$socidp='';
+if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 if ($user->societe_id > 0)
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
+
+/******************************************************************************/
+/*                     Actions                                                */
+/******************************************************************************/
 
 if ($_GET["action"] == 'setstatut')
 {
@@ -195,32 +202,32 @@ if ($_GET["propalid"] > 0)
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditions');
 			print '</td>';
-			if ($_GET['action'] != 'editconditions' && $prop->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$prop->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			if ($_GET['action'] != 'editconditions' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editconditions')
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$propal->cond_reglement_id,'cond_reglement_id');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
 			}
 			else
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$propal->cond_reglement_id,'none');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
 			}
 			print '</td>';
 			print '<td width="25%">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
-			if ($_GET['action'] != 'editmode' && $prop->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$prop->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td width="25%">';
 			if ($_GET['action'] == 'editmode')
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$propal->mode_reglement_id,'mode_reglement_id');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
 			}
 			else
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$prop->id,$propal->mode_reglement_id,'none');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'none');
 			}
 			print '</td></tr>';
 
@@ -242,13 +249,13 @@ if ($_GET["propalid"] > 0)
             {
                 if ($propal->statut == 0 && $user->rights->propale->creer)
                 {
-                    print '<td colspan="2">';
-                    print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-                    print '<input type="hidden" name="action" value="set_contact">';
-                    $html->select_contacts($societe->id, $propal->contactid, 'contactidp');
-                    print '</td><td>';
-                    print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                    print '</form>';
+                    print '<td colspan="3">';
+//                    print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+//                    print '<input type="hidden" name="action" value="set_contact">';
+                    $html->select_contacts($societe->id, $propal->contactid, 'none');
+//                    print '</td><td>';
+//                    print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+//                    print '</form>';
                     print '</td>';
                 }
                 else
@@ -269,13 +276,12 @@ if ($_GET["propalid"] > 0)
                     }
                 }
             }
-            print '</td>';
     
-            if ($conf->projet->enabled)
-            $rowspan++;
+            if ($conf->projet->enabled) $rowspan++;
     
             print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
     
+            // Projet
             if ($conf->projet->enabled)
             {
                 $langs->load("projects");
@@ -292,13 +298,13 @@ if ($_GET["propalid"] > 0)
                 {
                     if ($propal->statut == 0 && $user->rights->propale->creer)
                     {
-                        print '<td colspan="2">';
-                        print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-                        print '<input type="hidden" name="action" value="set_project">';
+                        print '<td colspan="3">';
+//                        print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+//                        print '<input type="hidden" name="action" value="set_project">';
                         $html->select_projects($societe->id, $propal->projetidp, 'projetidp');
-                        print '</td><td>';
-                        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                        print '</form>';
+//                        print '</td><td>';
+//                        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+//                        print '</form>';
                         print '</td>';
                     }
                     else
@@ -321,17 +327,18 @@ if ($_GET["propalid"] > 0)
                 print '</tr>';
             }
     
+            // Remise globale
             print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
             if ($propal->brouillon == 1 && $user->rights->propale->creer)
             {
-                print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-                print '<input type="hidden" name="action" value="setremise">';
-                print '<td colspan="2"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
-                print '</td><td>';
-                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
+//                print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+//                print '<input type="hidden" name="action" value="setremise">';
+                print '<td colspan="3">'.$propal->remise_percent.'%';
+//                print '</td><td>';
+//                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+//                print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
                 print '</td>';
-                print '</form>';
+//                print '</form>';
             }
             else
             {
@@ -351,10 +358,6 @@ if ($_GET["propalid"] > 0)
             // Statut
             print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
             print '</table><br>';
-            if ($propal->brouillon == 1 && $user->rights->propale->creer)
-            {
-                print '</form>';
-            }
     
             /*
             * Lignes de propale

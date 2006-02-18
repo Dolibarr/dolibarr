@@ -361,7 +361,7 @@ if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer)
   propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
 
-if ($_POST['action'] == 'setremise' && $user->rights->propale->creer) 
+if ($_POST['action'] == 'set_discount' && $user->rights->propale->creer) 
 {
   $propal = new Propal($db);
   $propal->fetch($_GET['propalid']);
@@ -383,22 +383,29 @@ if ($_POST['action'] == 'set_contact')
   $propal->set_contact($user, $_POST['contactidp']);
 }
 
-// conditions de règlement
+// Conditions de règlement
 if ($_POST["action"] == 'setconditions')
 { 
 	$propal = new Propal($db, $_GET["propalid"]);
-  $propal->cond_reglement_id = $_POST['cond_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_cond_reglement='".$_POST['cond_reglement_id']."' WHERE rowid='".$propalid."'";
-  $result = $db->query($sql);
+	$propal->cond_reglement_id = $_POST['cond_reglement_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+	$sql.= " SET fk_cond_reglement='".$_POST['cond_reglement_id']."'";
+	$sql.= " WHERE rowid='".$_GET["propalid"]."'";
+	$resql = $db->query($sql);
+	if ($resql < 0) dolibarr_print_error($db);
 }
 
-// mode de règlement
+// Mode de règlement
 if ($_POST["action"] == 'setmode')
 {
-  $propal = new Propal($db, $_GET["propalid"]);
-  $propal->mode_reglement_id = $_POST['mode_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_mode_reglement='".$_POST['mode_reglement_id']."' WHERE rowid='".$propalid."'";
-  $result = $db->query($sql);
+	$propal = new Propal($db, $_GET["propalid"]);
+	$propal->mode_reglement_id = $_POST['mode_reglement_id'];
+	// \todo Créer une methode propal->cond_reglement
+	$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+	$sql.= " SET fk_mode_reglement='".$_POST['mode_reglement_id']."'";
+	$sql.= " WHERE rowid='".$_GET["propalid"]."'";
+	$resql = $db->query($sql);
+	if ($resql < 0) dolibarr_print_error($db);
 }
 
 
@@ -483,7 +490,7 @@ if ($_GET['propalid'] > 0)
   $resql = $db->query($sql);
   if ($resql)
     {
-        if($db->num_rows($resql))
+        if ($db->num_rows($resql))
         {
             $obj = $db->fetch_object($resql);
     
@@ -561,6 +568,7 @@ if ($_GET['propalid'] > 0)
 				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
 			}
 			print '</td>';
+			
 			print '<td width="25%">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
@@ -580,54 +588,28 @@ if ($_GET['propalid'] > 0)
 
             // Destinataire
             $langs->load('mails');
-            print '<tr>';
-            print '<td>'.$langs->trans('MailTo').'</td>';
-    
-            $dests=$societe->contact_array($societe->id);
-            $numdest = count($dests);
-            if ($numdest==0)
-            {
-                print '<td colspan="3">';
-                print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
-                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
-                print '</td>';
-            }
-            else
-            {
-                if ($propal->statut == 0 && $user->rights->propale->creer)
-                {
-                    print '<td colspan="2">';
-                    print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-                    print '<input type="hidden" name="action" value="set_contact">';
-                    $html->select_contacts($societe->id, $propal->contactid, 'contactidp');
-                    print '</td><td>';
-                    print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                    print '</form>';
-                    print '</td>';
-                }
-                else
-                {
-                    if (!empty($propal->contactid))
-                    {
-                        print '<td colspan="3">';
-                        require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
-                        $contact=new Contact($db);
-                        $contact->fetch($propal->contactid);
-                        print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
-                        print $contact->firstname.' '.$contact->name;
-                        print '</a>';
-                        print '</td>';
-                    }
-                    else {
-                        print '<td colspan="3">&nbsp;</td>';
-                    }
-                }
-            }
-    
+            print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+            print $langs->trans('MailTo');
+			print '</td>';
+			if ($_GET['action'] != 'editcontact' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcontact&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetReceiver'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($_GET['action'] == 'editcontact')
+			{
+				$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'contactidp');
+			}
+			else
+			{
+				$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
+			}
+			print '</td>';
+				    
             if ($conf->projet->enabled) $rowspan++;
     
             print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
     
+			// Projet
             if ($conf->projet->enabled)
             {
                 $langs->load("projects");
@@ -673,24 +655,30 @@ if ($_GET['propalid'] > 0)
                 print '</tr>';
             }
     
-            print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
-            if ($propal->brouillon == 1 && $user->rights->propale->creer)
-            {
+            // Remise globale
+            print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+            print $langs->trans('GlobalDiscount');
+			print '</td>';
+			if ($_GET['action'] != 'editdiscount' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdiscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetGlobalDiscount'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($_GET['action'] == 'editdiscount' && $propal->brouillon == 1 && $user->rights->propale->creer)
+			{
                 print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-                print '<input type="hidden" name="action" value="setremise">';
-                print '<td colspan="2"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
-                print '</td><td>';
+                print '<input type="hidden" name="action" value="set_discount">';
+                print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
                 print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                 print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
-                print '</td>';
                 print '</form>';
-            }
-            else
-            {
-                print '<td colspan="3">'.$propal->remise_percent.'%</td>';
-            }
-            print '</tr>';
-    
+			}
+			else
+			{
+				print $propal->remise_percent.'%';
+			}
+			print '</td></tr>';
+
+			// Amount   
             print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
             print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
@@ -703,23 +691,16 @@ if ($_GET['propalid'] > 0)
             // Statut
             print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
             print '</table><br>';
-            if ($propal->brouillon == 1 && $user->rights->propale->creer)
-            {
-                print '</form>';
-            }
     
             /*
             * Lignes de propale
             *
             */
+            print '<table class="noborder" width="100%">';
+
             $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice,';
-            $sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-            
-            if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
-                        {
-                        	$sql.= ', p.description as product_desc';
-                        }
-            
+            $sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
+           	$sql.= ' p.description as product_desc';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
             $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
             $sql.= ' WHERE pt.fk_propal = '.$propal->id;
@@ -730,7 +711,6 @@ if ($_GET['propalid'] > 0)
                 $num = $db->num_rows($resql);
                 $i = 0; $total = 0;
     
-                print '<table class="noborder" width="100%">';
                 if ($num)
                 {
                     print '<tr class="liste_titre">';
@@ -740,7 +720,8 @@ if ($_GET['propalid'] > 0)
                     print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
                     print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
                     print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-                    print '<td width="16">&nbsp;</td><td width="16">&nbsp;</td>';
+                    print '<td width="16">&nbsp;</td>';
+                    print '<td width="16">&nbsp;</td>';
                     print "</tr>\n";
                 }
                 $var=true;
@@ -759,9 +740,9 @@ if ($_GET['propalid'] > 0)
                             if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
                             else print img_object($langs->trans('ShowProduct'),'product');
                             print ' '.$objp->ref.'</a>';
-							              print ' - '.nl2br(stripslashes($objp->product));
+							print ' - '.nl2br(stripslashes($objp->product));
 							              
-							              if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
+			              	if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
                             {
                             	print '<br>'.nl2br(stripslashes($objp->product_desc));
                             }
@@ -883,8 +864,9 @@ if ($_GET['propalid'] > 0)
             }
     
             /*
-            * Ajouter une ligne
-            */
+             * Ajouter une ligne
+             */
+
             if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
             {
                 print '<tr class="liste_titre">';
@@ -902,20 +884,22 @@ if ($_GET['propalid'] > 0)
                 print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
                 print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
                 print '<input type="hidden" name="action" value="addligne">';
-    
+
                 $var=true;
+
                 print '<tr '.$bc[$var].">\n";
-                print '  <td><textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
-                print '  <td align="center">';
-                $html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe) . "</td>\n";
-                print '  <td align="right"><input type="text" size="5" name="np_price"></td>';
-                print '  <td align="right"><input type="text" size="2" value="1" name="qty"></td>';
-                print '  <td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';
-                print '  <td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
+                print '<td><textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
+                print '<td align="center">';
+                $html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
+                print "</td>\n";
+                print '<td align="right"><input type="text" size="5" name="np_price"></td>';
+                print '<td align="right"><input type="text" size="2" value="1" name="qty"></td>';
+                print '<td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';
+                print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
                 print '</tr>';
     
                 print '</form>';
-    
+
                 // Ajout de produits/services prédéfinis
                 if ($conf->produit->enabled)
                 {
@@ -924,6 +908,7 @@ if ($_GET['propalid'] > 0)
                     print '<input type="hidden" name="action" value="addligne">';
         
                     $var=!$var;
+
                     print '<tr '.$bc[$var].'>';
                     print '<td colspan="2">';
 					// multiprix
@@ -939,11 +924,11 @@ if ($_GET['propalid'] > 0)
                     print '<td align="right" nowrap><input type="text" size="2" name="remise" value="'.$societe->remise_client.'">%</td>';
                     print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne"></td>';
                     print "</tr>\n";
-        
+      
                     print '</form>';
                 }
             }
-    
+
             print '</table>';
     
         }
