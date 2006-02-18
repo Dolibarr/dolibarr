@@ -578,6 +578,8 @@ if ($_GET["id"] > 0)
             print "</div>";
         }
 
+       print '<table width="100%"><tr><td width="50%" valign="top">';
+       
 			/*
 			 * Documents générés
 			 *
