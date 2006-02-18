@@ -672,7 +672,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($com->date_commande,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($com->date,"%d %b %Y"), '', 'R');
 
         if ($showadress)
         {

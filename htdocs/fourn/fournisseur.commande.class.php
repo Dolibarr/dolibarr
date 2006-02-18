@@ -90,9 +90,10 @@ class CommandeFournisseur
             $this->total_tva           = $obj->tva;
             $this->total_ttc           = $obj->total_ttc;
             $this->date_commande       = $obj->date_commande; // date à laquelle la commande a été transmise
+            $this->date                = $obj->date_creation;
             $this->remise_percent      = $obj->remise_percent;
             $this->methode_commande_id = $obj->fk_methode_commande;
-            $this->methode_commande = $obj->methode_commande;
+            $this->methode_commande    = $obj->methode_commande;
     
             $this->source              = $obj->source;
             $this->facturee            = $obj->facture;
