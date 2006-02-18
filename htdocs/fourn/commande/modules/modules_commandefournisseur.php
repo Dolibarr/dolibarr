@@ -138,7 +138,7 @@ function commande_supplier_pdf_create($db, $comid, $modele='')
   global $langs;
   $langs->load("suppliers");
  
-  $dir = DOL_DOCUMENT_ROOT."/fourn/commande/modules/";
+  $dir = DOL_DOCUMENT_ROOT."/fourn/commande/modules/pdf/";
 
   // Positionne modele sur le nom du modele de commande fournisseur à utiliser
   if (! strlen($modele))
