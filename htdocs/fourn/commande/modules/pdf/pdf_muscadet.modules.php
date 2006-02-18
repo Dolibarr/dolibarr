@@ -137,7 +137,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
         $langs->load("products");
         $langs->load("orders");
 
-        if ($conf->commande->dir_output)
+        if ($conf->fournisseur->commande->dir_output)
         {
             $com = new CommandeFournisseur($this->db);
             $ret=$com->fetch($id);
@@ -146,7 +146,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
 			$comref = sanitize_string($com->ref);
 			$comref = str_replace("(","",$comref);
 			$comref = str_replace(")","",$comref);
-			$dir = $conf->commande->dir_output . "/" . $comref;
+			$dir = $conf->fournisseur->commande->dir_output . "/" . $comref;
 			$file = $dir . "/" . $comref . ".pdf";
 
             if (! file_exists($dir))
