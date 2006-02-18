@@ -612,9 +612,7 @@ if ($_GET["id"] > 0)
 			//$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 			$html->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 			
-			print '</td></tr>';
-			print '</table>';
-        
+
       /*
        *
        *
@@ -695,7 +693,8 @@ if ($_GET["id"] > 0)
 	  print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
 	  print "</table>\n";
 	  print "</form>\n";	  
-	}
+	    }
+	  print '</td></tr></table>';
     }
   else
     {
