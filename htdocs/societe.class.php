@@ -318,11 +318,11 @@ class Societe {
         
             $sql .= ",prefix_comm = ".($this->prefix_comm?"'".$this->prefix_comm."'":"null");
         
-            if ($this->effectif_id) $sql .= ",fk_effectif = '" . $this->effectif_id ."'";
+            $sql .= ",fk_effectif = ".($this->effectif_id?"'".$this->effectif_id."'":"null");
         
-            if ($this->typent_id)   $sql .= ",fk_typent = '" . $this->typent_id ."'";
+            $sql .= ",fk_typent = ".($this->typent_id?"'".$this->typent_id."'":"null");
         
-            if ($this->forme_juridique_code) $sql .= ",fk_forme_juridique = '".$this->forme_juridique_code."'";
+            $sql .= ",fk_forme_juridique = ".($this->forme_juridique_code?"'".$this->forme_juridique_code."'":"null");
         
             $sql .= ",client = " . $this->client;
             $sql .= ",fournisseur = " . $this->fournisseur;
