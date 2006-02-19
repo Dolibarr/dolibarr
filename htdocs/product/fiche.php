@@ -34,6 +34,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("bills");
 
@@ -199,6 +200,9 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
     }
 }
 
+/*
+ * Ajout du produit dans une propal
+ */
 if ($_POST["action"] == 'addinpropal')
 {
     $propal = New Propal($db);
@@ -211,6 +215,30 @@ if ($_POST["action"] == 'addinpropal')
     }
 
     Header("Location: ../comm/propal.php?propalid=".$propal->id);
+    exit;
+}
+
+/*
+ * Ajout du produit dans une commande
+ */
+if ($_POST["action"] == 'addincommande')
+{
+    $commande = New Commande($db);
+    $commande->fetch($_POST["commandid"]);
+
+    $result =  $commande->addline(addslashes($product->libelle),
+                                  addslashes($product->product_desc),
+                                  $product->price,
+                                  $_POST["qty"],
+                                  $product->tva_tx,
+                                  $product->id, 
+                                  $_POST["remise_percent"]);
+    if ( $result < 0)
+    {
+        $mesg = $langs->trans("ErrorUnknown").": $result";
+    }
+
+    Header("Location: ../commande/fiche.php?id=".$commande->id);
     exit;
 }
 
@@ -228,6 +256,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 
     $facture->addline($_POST["factureid"],
     addslashes($product->libelle),
+    addslashes($product->product_desc),
     $product->price,
     $_POST["qty"],
     $product->tva_tx,
@@ -758,6 +787,97 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         }
         else {
             print $langs->trans("NoOtherOpenedPropals");   
+        }
+        print '</td>';
+
+        print '</tr>';
+    }
+
+    $commande = New Commande($db);
+
+    print '<table width="100%" class="noborder">';
+
+    // Commande
+    if($user->rights->commande->creer)
+    {
+        $langs->load("orders");
+        
+        print '<tr><td width="50%" valign="top">';
+        print_titre($langs->trans("AddToMyOrders")) . '</td>';
+        print '<td width="50%" valign="top">';
+        print_titre($langs->trans("AddToOtherOrders")) . '</td>';
+        print '</tr>';
+
+        // Liste de "Mes commandes"
+        print '<tr><td width="50%" valign="top">';
+        $sql = "SELECT s.nom, s.idp, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+        $sql .=" WHERE c.fk_soc = s.idp AND c.fk_statut = 0 AND c.fk_user_author = ".$user->id;
+        $sql .= " ORDER BY c.date_creation DESC, tms DESC";
+
+        $result=$db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows($result);
+            if ($num) {
+                $i = 0;
+                print '<table class="noborder" width="100%">';
+                $var=true;
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+                    $var=!$var;
+                    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+                    print "<tr $bc[$var]>";
+                    print "<td nowrap><a href=\"../commande/fiche.php?id=$objp->commandeid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
+                    print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
+                    print "<td>". strftime("%d %b",$objp->dc)."</td>\n";
+                    print '<input type="hidden" name="action" value="addincommande">';
+                    print '<td><input type="hidden" name="commandeid" value="'.$objp->commandeid.'">';
+                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
+                    print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
+                    print " ".$product->stock_proposition;
+                    print '</td><td align="right">';
+                    print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+                    print '</td>';
+                    print '</tr>';
+                    print '</form>';
+                    $i++;
+                }
+                print "</table>";
+            }
+            else {
+                print $langs->trans("NoOpenedOrders");
+            }
+            $db->free($result);
+        }
+
+        print '</td>';
+
+        // Liste de "Other orders"
+        print '<td width="50%" valign="top">';
+
+        $othercom = $commande->liste_array(1, ' <> s'.$user->id);
+        if (is_array($othercom) && sizeof($othercom))
+        {
+            $var=false;
+            print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+            print '<table class="noborder" width="100%">'.$othercom;
+            print '<input type="hidden" name="action" value="addincommande">';
+            print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("OtherOrders").'</td><td>';
+            $html->select_array("commandeid", $othercom);
+            print '</td></tr>';
+            print '<tr '.$bc[$var].'><td>'. strftime("%d %b",$objp->dc)."</td><td nowrap>\n";
+            print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
+            print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
+            print '</td><td align="right">';
+            print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+            print '</td></tr>';
+            print '</table>';
+            print '</form>';
+        }
+        else {
+            print $langs->trans("NoOtherOpenedOrders");   
         }
         print '</td>';
 

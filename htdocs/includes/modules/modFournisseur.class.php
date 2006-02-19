@@ -70,7 +70,7 @@ class modFournisseur extends DolibarrModules
   	
   	$this->const[1][0] = "COMMANDE_SUPPLIER_ADDON";
     $this->const[1][1] = "chaine";
-    $this->const[1][2] = "diamant";
+    $this->const[1][2] = "emeraude";
     
 		// Dépendances
 		$this->depends = array("modSociete");
