@@ -766,7 +766,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         // Liste de "Other propals"
         print '<td width="50%" valign="top">';
 
-        $otherprop = $propal->liste_array(1, ' <> s'.$user->id);
+        $otherprop = $propal->liste_array(1, ' <> '.$user->id);
         if (is_array($otherprop) && sizeof($otherprop))
         {
             $var=false;
@@ -813,7 +813,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         $sql = "SELECT s.nom, s.idp, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
         $sql .=" WHERE c.fk_soc = s.idp AND c.fk_statut = 0 AND c.fk_user_author = ".$user->id;
-        $sql .= " ORDER BY c.date_creation DESC, tms DESC";
+        $sql .= " ORDER BY c.date_creation DESC";
 
         $result=$db->query($sql);
         if ($result)
@@ -857,7 +857,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         // Liste de "Other orders"
         print '<td width="50%" valign="top">';
 
-        $othercom = $commande->liste_array(1, ' <> s'.$user->id);
+        $othercom = $commande->liste_array(1, ' <> '.$user->id);
         if (is_array($othercom) && sizeof($othercom))
         {
             $var=false;
