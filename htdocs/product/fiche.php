@@ -227,7 +227,7 @@ if ($_POST["action"] == 'addincommande')
     $commande->fetch($_POST["commandid"]);
 
     $result =  $commande->addline(addslashes($product->libelle),
-                                  addslashes($product->product_desc),
+                                  addslashes($product->description),
                                   $product->price,
                                   $_POST["qty"],
                                   $product->tva_tx,
@@ -256,7 +256,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 
     $facture->addline($_POST["factureid"],
     addslashes($product->libelle),
-    addslashes($product->product_desc),
+    addslashes($product->description),
     $product->price,
     $_POST["qty"],
     $product->tva_tx,
