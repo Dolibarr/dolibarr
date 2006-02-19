@@ -21,6 +21,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("categories");
 
@@ -125,7 +126,8 @@ if ($_GET["id"])
           $head[$h][1] = $langs->trans('Statistics');
           $h++;
 	
-      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+      $titre=$langs->trans("CardProduct".$product->type);
+      dolibarr_fiche_head($head, $hselected, $titre);
 
       print($mesg);
       print '<table class="border" width="100%">';
