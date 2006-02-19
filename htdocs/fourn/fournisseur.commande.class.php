@@ -182,39 +182,63 @@ class CommandeFournisseur
    *
    *
    */
-  function valid($user)
+   function valid($user)
     {
       dolibarr_syslog("CommandeFournisseur::Valid");
       $result = 0;
       if ($user->rights->fournisseur->commande->valider)
-	{
-	  $ref = 'CF'.substr('000000'.$this->id, -6);
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET ref='$ref', fk_statut = 1";
-	  $sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0 ;";
-	  
-	  if ($this->db->query($sql) )
 	    {
-	      $result = 0;
-	      $this->log($user, 1, time());
+        if (defined('COMMANDE_SUPPLIER_ADDON'))
+			  {
+				   if (is_readable(DOL_DOCUMENT_ROOT .'/fourn/commande/modules/'.COMMANDE_SUPPLIER_ADDON.'.php'))
+				   {
+					   require_once DOL_DOCUMENT_ROOT .'/fourn/commande/modules/'.COMMANDE_SUPPLIER_ADDON.'.php';
 
-	      $this->ref = $ref;
+					// Definition du nom de module de numerotation de commande fournisseur
 
-	      $this->_NotifyApprobator($user);
+					$modName=COMMANDE_SUPPLIER_ADDON;
 
-	    }
+					// Recuperation de la nouvelle reference
+					$objMod = new $modName($this->db);
+					$soc = new Societe($this->db);
+					$soc->fetch($this->soc_id);
+					$num = $objMod->commande_get_num($soc);
+
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+					$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+
+					if ($this->db->query($sql) )
+					{
+						$result = 1;
+						$this->log($user, 1, time());
+	          $this->ref = $num;
+	          $this->_NotifyApprobator($user);
+					}
+					else
+					{
+						$result = -1;
+						dolibarr_print_error($this->db);
+						dolibarr_syslog("CommandeFournisseur::Valid Error -1");
+					}
+
+				}
+				else
+				{
+					print 'Impossible de lire le module de numérotation';
+				}
+			}
+			else
+			{
+				print 'Le module de numérotation n\'est pas défini' ;
+			}
+		}
 	  else
-	    {
-	      dolibarr_syslog("CommandeFournisseur::Valid Error -1");
-	      $result = -1;
-	    }	  
+	  {
+		  dolibarr_syslog("CommandeFournisseur::Valid Not Authorized");
+	  }
+	 return $result ;
 	}
-      else
-	{
-	  dolibarr_syslog("CommandeFournisseur::Valid Not Authorized");
-	}
-      return $result ;
-    }
+
   /**
    * Annule la commande
    * L'annulation se fait après la validation
@@ -726,25 +750,6 @@ class CommandeFournisseur
 	$this->db->rollback();
 	return -1;
       }
-  }
-  /**
-   *
-   *
-   *
-   */
-  function generate_pdf()
-  {
-    // Récupération des info sur le fournisseur
-    $this->fournisseur = new Societe($this->db);
-    $this->fournisseur->fetch($this->fourn_id);
-
-    $name = 'muscadet';
-    require_once DOL_DOCUMENT_ROOT.'/fourn/commande/modules/pdf/pdf_fourncomm_'.$name.'.modules.php';
-
-    $var = 'pdf_fourncomm_'.$name;
-
-    $opdf = new $var();
-    $opdf->write_pdf_file($this);
   }
 
 	/**
