@@ -132,10 +132,15 @@ if ($_GET["id"])
       print($mesg);
       print '<table class="border" width="100%">';
       print "<tr>";
-      print '<td>'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
-            
-      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-      print "</table><br>\n";
+     // Reference
+            print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+            $product->load_previous_next_ref();
+            $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+            $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+            if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+            if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+            print '</td>';
 
       $c = new Categorie($db);
       $cats = $c->containing($_REQUEST['id']);
