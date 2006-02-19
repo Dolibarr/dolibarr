@@ -316,7 +316,7 @@ class Societe {
             $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
             $sql .= ",capital = '" .   addslashes($this->capital) ."'";
         
-            if ($this->prefix_comm) $sql .= ",prefix_comm = '" . $this->prefix_comm ."'";
+            if ($this->prefix_comm) $sql .= ",prefix_comm = ".($this->prefix_comm?"'".$this->prefix_comm."'":"null");
         
             if ($this->effectif_id) $sql .= ",fk_effectif = '" . $this->effectif_id ."'";
         
