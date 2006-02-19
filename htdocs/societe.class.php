@@ -334,7 +334,7 @@ class Societe {
         
                 $this->check_codeclient();
         
-                $sql .= ", code_client = ".($this->code_client?"'".$this->code_client."'":"null");
+                $sql .= ", code_client = ".($this->code_client?"'".addslashes($this->code_client)."'":"null");
         
                 // Attention check_codecompta_client peut modifier le code
                 // suivant le module utilis
@@ -351,14 +351,14 @@ class Societe {
         
                 $this->check_codefournisseur();
         
-                $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".$this->code_fournisseur."'":"null");
+                $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".addslashes($this->code_fournisseur)."'":"null");
         
                 // Attention check_codecompta_fournisseur peut modifier le code
                 // suivant le module utilis
         
                 $this->check_codecompta_fournisseur();
         
-                $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".$this->code_compta_fournisseur."'":"null");
+                $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".addslashes($this->code_compta_fournisseur)."'":"null");
             }
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
             $sql .= " WHERE idp = '" . $id ."'";
