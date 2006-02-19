@@ -35,10 +35,10 @@ $types[1] = $langs->trans("Service");
 /*
  * Creation de l'objet produit correspondant à l'id
  */  
-if ($_GET["id"])
+if ($_GET["id"] || $_GET["ref"])
 {           
-  $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);      
+  if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+  if ($_GET["id"]) $result = $product->fetch($_GET["id"]);      
 }
 
 llxHeader("","",$langs->trans("CardProduct0"));
