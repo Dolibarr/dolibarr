@@ -37,8 +37,9 @@ $types[1] = $langs->trans("Service");
  */  
 if ($_GET["id"] || $_GET["ref"])
 {           
-  if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-  if ($_GET["id"]) $result = $product->fetch($_GET["id"]);      
+        $product = new Product($db);
+        if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+        if ($_GET["id"]) $result = $product->fetch($_GET["id"]);     
 }
 
 llxHeader("","",$langs->trans("CardProduct0"));
