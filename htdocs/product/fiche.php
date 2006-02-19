@@ -224,7 +224,7 @@ if ($_POST["action"] == 'addinpropal')
 if ($_POST["action"] == 'addincommande')
 {
     $commande = New Commande($db);
-    $commande->fetch($_POST["commandid"]);
+    $commande->fetch($_POST["commandeid"]);
 
     $result =  $commande->addline(addslashes($product->libelle),
                                   addslashes($product->description),
