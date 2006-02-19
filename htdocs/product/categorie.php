@@ -46,7 +46,7 @@ llxHeader("","",$langs->trans("CardProduct0"));
 /*
  * Fiche produit
  */
-if ($_GET["id"])
+if ($_GET["id"] || $_GET["ref"])
 {
   //on veut supprimer une catégorie
   if ($_REQUEST["cat"])
@@ -141,6 +141,11 @@ if ($_GET["id"])
             print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
             if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
             print '</td>';
+                  print '</tr>';
+
+            // Libelle
+            print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+            print '</tr>';
 
       $c = new Categorie($db);
       $cats = $c->containing($_REQUEST['id']);
