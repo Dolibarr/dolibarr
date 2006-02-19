@@ -174,6 +174,14 @@ if ($_GET["id"] || $_GET["ref"])
 	  $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
 	  $head[$h][1] = $langs->trans("Price");
 	  $h++;
+	  
+	      //affichage onglet catégorie
+    if ($conf->categorie->enabled)
+    {
+        $head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
+        $head[$h][1] = $langs->trans('Categories');
+        $h++;
+    }
 
          if($product->type == 0)
          {
