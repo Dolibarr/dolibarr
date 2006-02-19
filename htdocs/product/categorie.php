@@ -149,8 +149,16 @@ if ($_GET["id"] || $_GET["ref"])
             print '</tr>';
 
       $c = new Categorie($db);
-      $cats = $c->containing($_REQUEST['id']);
       
+      if ($_GET["id"])
+      {
+        $cats = $c->containing($_REQUEST['id']);
+      }
+      else
+      {
+      	$cats = $c->containing_ref($_REQUEST['ref']);
+      }
+            
       if (sizeof($cats) > 0)
 	{
 	  print "Vous avez stocké le produit dans les catégorie suivantes:<br/><br/>";

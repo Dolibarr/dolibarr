@@ -670,6 +670,35 @@ class Categorie
       }
   }
 	
+	  /**
+   * Retourne les catégories contenant le produit $ref
+   */
+  function containing_ref ($ref)
+  {
+    $cats = array ();
+		
+    $sql = "SELECT c.fk_categorie, c.fk_product, p.rowid, p.label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as c, ".MAIN_DB_PREFIX."product as p";
+    $sql.= " WHERE  p.label = '".$ref."' AND c.fk_product = p.rowid";
+
+    $res = $this->db->query ($sql);
+		
+    if ($res)
+    {
+	     while ($cat = $this->db->fetch_array ($res))
+	     {
+	        $cats[] = new Categorie ($this->db, $cat['fk_categorie']);
+	     }
+
+	  return $cats;
+    }
+    else
+    {
+	     dolibarr_print_error ($this->db);
+	     return -1;
+    }
+  }
+	
   /**
    * Retourne les catégories dont le nom correspond à $nom
    * ajoute des wildcards sauf si $exact = true
