@@ -829,8 +829,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                     $var=!$var;
                     print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
-                    print "<td nowrap><a href=\"../commande/fiche.php?id=$objp->commandeid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
-                    print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objc->nom,18)."</a></td>\n";
+                    print "<td nowrap><a href=\"../commande/fiche.php?id=$objc->commandeid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
+                    print "<td><a href=\"../comm/fiche.php?socid=$objc->idp\">".dolibarr_trunc($objc->nom,18)."</a></td>\n";
                     print "<td>". strftime("%d %b",$objc->dc)."</td>\n";
                     print '<input type="hidden" name="action" value="addincommande">';
                     print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
