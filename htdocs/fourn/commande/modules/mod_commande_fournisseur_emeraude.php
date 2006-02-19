@@ -87,5 +87,6 @@ class mod_commande_fournisseur_emeraude extends ModeleNumRefCommandesSuppliers
       }
 
     return 'CF'.substr("000000".$num,strlen("000000".$num)-6,6);
+  }
 }
 ?>
