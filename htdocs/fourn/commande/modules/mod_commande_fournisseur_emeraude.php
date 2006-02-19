@@ -23,9 +23,9 @@
  */
 
 /** 
-    \file       htdocs/fourn/commande/modules/pdf/mod_commande_fournisseur_diamant.php
+    \file       htdocs/fourn/commande/modules/pdf/mod_commande_fournisseur_emeraude.php
     \ingroup    fournisseur
-    \brief      Fichier contenant la classe du modèle de numérotation de référence de commande Diamant
+    \brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Emeraude
     \version    $Revision$
 */
 
@@ -33,18 +33,18 @@ include_once("modules_commandefournisseur.php");
 
 
 /**
-   \class      mod_commande_fournisseur_diamant
-   \brief      Classe du modèle de numérotation de référence de commande fournisseur Diamant
+   \class      mod_commande_fournisseur_emeraude
+   \brief      Classe du modèle de numérotation de référence de commande fournisseur Emeraude
 */
 
-class mod_commande_fournisseur_diamant extends ModeleNumRefCommandesSuppliers
+class mod_commande_fournisseur_emeraude extends ModeleNumRefCommandesSuppliers
 {
 
   /**   \brief      Constructeur
    */
-  function mod_commande_fournisseur_diamant()
+  function mod_commande_fournisseur_emeraude()
   {
-    $this->nom = "Diamant";
+    $this->nom = "Emeraude";
   }
 
 
@@ -53,18 +53,8 @@ class mod_commande_fournisseur_diamant extends ModeleNumRefCommandesSuppliers
    */
   function info()
   {
-    $texte = "Renvoie le numéro sous la forme numérique CFYYNNNN, où YY représente l'année et NNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
-    $texte.= "Si la constante COMMANDE_FOURNISSEUR_DIAMANT_DELTA est définie, un offset est appliqué sur le compteur";
-    
-    if (defined("COMMANDE_FOURNISSEUR_DIAMANT_DELTA"))
-        {
-          $texte .= " (Définie et vaut: ".COMMANDE_FOURNISSEUR_DIAMANT_DELTA.")";
-        }
-      else
-        {
-          $texte .= " (N'est pas définie)";
-        }
-      return $texte;
+    $texte = "Renvoie le numéro sous la forme numérique CFNNNNNN, où NNNNNN représente numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.";
+    return $texte;
   }
   
 
@@ -73,17 +63,7 @@ class mod_commande_fournisseur_diamant extends ModeleNumRefCommandesSuppliers
      */
     function getExample()
     {
-    	$y = strftime("%y",time());
-    	
-    	if (defined("COMMANDE_FOURNISSEUR_DIAMANT_DELTA"))
-        {
-        	$num = sprintf("%02d",COMMANDE_FOURNISSEUR_DIAMANT_DELTA);
-          return "CF".$y.substr("000".$num, strlen("000".$num)-4,4);
-        }
-        else 
-        {
-            return "CF".$y."0001";
-        }            
+      return "CF000001";
     }
     
   
@@ -105,17 +85,7 @@ class mod_commande_fournisseur_diamant extends ModeleNumRefCommandesSuppliers
 	
 	      $num = $row[0];
       }
-      
-      if (!defined("COMMANDE_FOURNISSEUR_DIAMANT_DELTA"))
-        {
-          define("COMMANDE_FOURNISSEUR_DIAMANT_DELTA", 0);
-        }
-    
-      $num = $num + COMMANDE_FOURNISSEUR_DIAMANT_DELTA;
-    
-    $y = strftime("%y",time());
 
-    return 'CF'.$y.substr("000".$num, strlen("000".$num)-4,4);
-  }
+    return 'CF'.substr("000000".$num,strlen("000000".$num)-6,6);
 }
 ?>
