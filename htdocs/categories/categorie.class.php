@@ -677,9 +677,9 @@ class Categorie
   {
     $cats = array ();
 		
-    $sql = "SELECT c.fk_categorie, c.fk_product, p.rowid, p.label";
+    $sql = "SELECT c.fk_categorie, c.fk_product, p.rowid, p.ref";
     $sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as c, ".MAIN_DB_PREFIX."product as p";
-    $sql.= " WHERE  p.label = '".$ref."' AND c.fk_product = p.rowid";
+    $sql.= " WHERE  p.ref = '".$ref."' AND c.fk_product = p.rowid";
 
     $res = $this->db->query ($sql);
 		

@@ -152,11 +152,12 @@ if ($_GET["id"] || $_GET["ref"])
       
       if ($_GET["id"])
       {
-        $cats = $c->containing($_REQUEST['id']);
+        $cats = $c->containing($_REQUEST["id"]);
       }
-      else
+      
+      if ($_GET["ref"])
       {
-      	$cats = $c->containing_ref($_REQUEST['ref']);
+      	$cats = $c->containing_ref($_REQUEST["ref"]);
       }
             
       if (sizeof($cats) > 0)
