@@ -825,15 +825,15 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                 $var=true;
                 while ($i < $num)
                 {
-                    $objp = $db->fetch_object($result);
+                    $objc = $db->fetch_object($result);
                     $var=!$var;
                     print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
-                    print "<td nowrap><a href=\"../commande/fiche.php?id=$objp->commandeid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
-                    print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
-                    print "<td>". strftime("%d %b",$objp->dc)."</td>\n";
+                    print "<td nowrap><a href=\"../commande/fiche.php?id=$objp->commandeid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
+                    print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objc->nom,18)."</a></td>\n";
+                    print "<td>". strftime("%d %b",$objc->dc)."</td>\n";
                     print '<input type="hidden" name="action" value="addincommande">';
-                    print '<td><input type="hidden" name="commandeid" value="'.$objp->commandeid.'">';
+                    print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
                     print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
                     print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
                     print " ".$product->stock_proposition;
@@ -867,7 +867,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
             print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("OtherOrders").'</td><td>';
             $html->select_array("commandeid", $othercom);
             print '</td></tr>';
-            print '<tr '.$bc[$var].'><td>'. strftime("%d %b",$objp->dc)."</td><td nowrap>\n";
+            print '<tr '.$bc[$var].'><td>'. strftime("%d %b",$objc->dc)."</td><td nowrap>\n";
             print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
             print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
             print '</td><td align="right">';
