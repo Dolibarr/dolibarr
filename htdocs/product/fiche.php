@@ -223,6 +223,9 @@ if ($_POST["action"] == 'addinpropal')
  */
 if ($_POST["action"] == 'addincommande')
 {
+	  $product = new Product($db);
+    $result = $product->fetch($_GET["id"]);
+    
     $commande = New Commande($db);
     $commande->fetch($_POST["commandeid"]);
 
@@ -233,10 +236,6 @@ if ($_POST["action"] == 'addincommande')
                                   $product->tva_tx,
                                   $product->id, 
                                   $_POST["remise_percent"]);
-    if ( $result < 0)
-    {
-        $mesg = $langs->trans("ErrorUnknown").": $result";
-    }
 
     Header("Location: ../commande/fiche.php?id=".$commande->id);
     exit;
