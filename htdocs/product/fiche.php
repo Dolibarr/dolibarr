@@ -423,6 +423,7 @@ if ($_GET["id"] || $_GET["ref"])
             {
             	$head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
             	$head[$h][1] = $langs->trans('Categories');
+            	$hselected = $h;
             	$h++;
             }
 
