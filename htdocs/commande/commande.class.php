@@ -796,6 +796,61 @@ class Commande
 		}
 	}
 
+  /**
+   *    \brief      Renvoi la liste des propal (éventuellement filtrée sur un user) dans un tableau
+   *    \param      brouillon       0=non brouillon, 1=brouillon
+   *    \param      user            Objet user de filtre
+   *    \return     int             -1 si erreur, tableau résultat si ok
+   */
+	 
+    function liste_array ($brouillon=0, $user='')
+    {
+        $ga = array();
+    
+        $sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."commande";
+    
+        if ($brouillon)
+        {
+            $sql .= " WHERE fk_statut = 0";
+            if ($user)
+            {
+                $sql .= " AND fk_user_author".$user;
+            }
+        }
+        else
+        {
+            if ($user)
+            {
+                $sql .= " WHERE fk_user_author".$user;
+            }
+        }
+    
+        $sql .= " ORDER BY date_commande DESC";
+
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $numc = $this->db->num_rows($result);
+    
+            if ($numc)
+            {
+                $i = 0;
+                while ($i < $numc)
+                {
+                    $obj = $this->db->fetch_object($result);
+    
+                    $ga[$obj->rowid] = $obj->ref;
+                    $i++;
+                }
+            }
+            return $ga;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
 	/**
 	 *   \brief      Change les conditions de réglement de la commande
 	 *   \param      cond_reglement_id      Id de la nouvelle condition de réglement
