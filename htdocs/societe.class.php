@@ -341,7 +341,7 @@ class Societe {
         
                 $this->check_codecompta_client();
         
-                $sql .= ", code_compta = ".($this->code_compta?"'".$this->code_compta."'":"null");
+                $sql .= ", code_compta = ".($this->code_compta?"'".addslashes($this->code_compta)."'":"null");
             }
         
             if ($this->creation_bit || $this->codefournisseur_modifiable)
