@@ -473,6 +473,17 @@ class MenuLeft {
                   $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"), 1, $user->rights->stock->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
                 }
+              
+              if ($conf->categorie->enabled)
+               {
+                  $newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
+                  if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
+                  
+                  if ($user->societe_id == 0)
+                  {
+                    if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/create.php", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+                  }
+               }  
             }
         
         

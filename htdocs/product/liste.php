@@ -65,9 +65,6 @@ if (isset($_POST["button_removefilter_x"]))
 if (isset($_REQUEST['catid']))
 {
     $catid = $_REQUEST['catid'];
-    if (!$catid && $catid == 0)
-    {
-    	$catid = 1;
 }
 
 
