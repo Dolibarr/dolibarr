@@ -468,10 +468,10 @@ class MenuLeft {
               if ($conf->stock->enabled)
                 {
                     // \todo mettre droits pour module stock
-                  $newmenu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"), 0, $user->rights->stock->lire);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"), 1, $user->rights->stock->creer);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"), 1, $user->rights->stock->lire);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
+                  $newmenu->add(DOL_URL_ROOT."/product/stock/index.php?leftmenu=stock", $langs->trans("Stock"), 0, $user->rights->stock->lire);
+                  if ($leftmenu=="stock") $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"), 1, $user->rights->stock->creer);
+                  if ($leftmenu=="stock") $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"), 1, $user->rights->stock->lire);
+                  if ($leftmenu=="stock") $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
                 }
               
               if ($conf->categorie->enabled)
