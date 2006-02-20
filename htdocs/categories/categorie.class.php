@@ -457,7 +457,7 @@ class Categorie
   /**
    * Vérifie si une catégorie porte le label $label
    */
-  function already_exists($label, $catmere)
+  function already_exists($label, $catmere=0)
   {
     $sql = "SELECT count(c.rowid)";
     $sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
