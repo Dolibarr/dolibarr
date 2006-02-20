@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
- * Copyright (C) 2005 Éric Seigne <eric.seigne@ryxeo.com>
+/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2005 Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  */
+
+/**
+        \file       htdocs/categories/index.php
+        \ingroup    categorie
+        \brief      Page accueil espace categories
+*/
+
 require "./pre.inc.php";
 
 if (!$user->rights->categorie->lire) accessforbidden();
+
 
 /**
  * Affichage page accueil
@@ -26,11 +38,11 @@ if (!$user->rights->categorie->lire) accessforbidden();
 
 llxHeader("","",$langs->trans("Categories"));
 
-print_titre($langs->trans("CategoriesArea"));
+print_fiche_titre($langs->trans("CategoriesArea"));
 
-print '<table border="0" width="100%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 $c = new Categorie ($db);
 
@@ -43,9 +55,9 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
 print '<tr '.$bc[0].'><td>';
-print $langs->trans("Name").'&nbsp;:</td><td><input class="flat" type="text" size="20" name="catname" value="' . $_POST['catname'] . '"/></td><td><input type="submit" value="'.$langs->trans ("Search").'"></td></tr>';
+print $langs->trans("Name").':</td><td><input class="flat" type="text" size="20" name="catname" value="' . $_POST['catname'] . '"/></td><td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
 print '<tr '.$bc[0].'><td>';
-print $langs->trans("SubCatOf").'&nbsp;:</td><td><select class="flat" name="subcatof" />';
+print $langs->trans("SubCatOf").':</td><td><select class="flat" name="subcatof" />';
 print '<option value="-1">'.$langs->trans("Choose").'</option>';
 
 $cats = $c->get_all_meres ();
@@ -55,7 +67,7 @@ foreach ($cats as $cat)
   print "<option value='".$cat->id."'>".htmlentities ($cat->label, ENT_QUOTES)."</option>\n";
 }
 
-print '</select></td><td><input type="submit" value="'.$langs->trans ("Search").'"></td></tr>';
+print '</select></td><td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
 print '</table></form>';
 
 print '</td><td valign="top" width="70%">';

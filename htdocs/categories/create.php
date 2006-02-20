@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,12 @@
  * $Source$
  */
 
+/**
+        \file       htdocs/categories/create.php
+        \ingroup    categorie
+        \brief      Page creation nouvelle categorie
+*/
+
 require "./pre.inc.php";
 
 if (!$user->rights->categorie->creer) accessforbidden();
@@ -32,13 +39,17 @@ else
   $nbcats = 1;
 }
 
+
+
+
 llxHeader("","",$langs->trans("Categories"));
 
-print_titre($langs->trans("CreateCat"));
+print_fiche_titre($langs->trans("CreateCat"));
 
-print '<table border="0" width="100%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
+
 ?>
 <form method="post" action="<?php print $_SERVER['REQUEST_URI']; ?>">
 	<table class="border">

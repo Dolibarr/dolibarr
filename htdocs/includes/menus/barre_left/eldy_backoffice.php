@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -467,7 +467,6 @@ class MenuLeft {
               
               if ($conf->stock->enabled)
                 {
-                    // \todo mettre droits pour module stock
                   $newmenu->add(DOL_URL_ROOT."/product/stock/index.php?leftmenu=stock", $langs->trans("Stock"), 0, $user->rights->stock->lire);
                   if ($leftmenu=="stock") $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"), 1, $user->rights->stock->creer);
                   if ($leftmenu=="stock") $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"), 1, $user->rights->stock->lire);
@@ -478,12 +477,11 @@ class MenuLeft {
               $langs->load("categories");
                {
                   $newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
-                  if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
-                  
                   if ($user->societe_id == 0)
                   {
                     if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/create.php", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
                   }
+                  if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
                }  
             }
         

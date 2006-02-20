@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,18 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  */
+
+/**
+        \file       htdocs/categories/liste.php
+        \ingroup    categorie
+        \brief      Page liste des categories
+*/
 
 require "./pre.inc.php";
 
 
+
 llxHeader ("","",$langs->trans("Categories"));
 
-print_titre ($langs->trans ("CatList"));
-?>
-<table border="0" width="100%">
-<tr><td valign="top" width="30%">
-<?php
+print_fiche_titre ($langs->trans ("CatList"));
+
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
+
 $c = new Categorie ($db);
 $cats = $c->get_all_categories ();
 

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  */
 
 /**
@@ -50,8 +53,8 @@ class modCategorie extends DolibarrModules
 
     $this->family = "products";
     $this->name = "Catégorie";
-    $this->description = "Gestion des catégories";
-    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
+    $this->description = "Gestion des catégories de produits";
+    $this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_CATEGORIE';
     $this->special = 0;
     $this->picto = '';
@@ -72,24 +75,28 @@ class modCategorie extends DolibarrModules
     $this->rights = array();
     $this->rights_class = 'categorie';
 
-    $this->rights[0][0] = 241; // id de la permission
-    $this->rights[0][1] = 'Lire les catégories'; // libelle de la permission
-    $this->rights[0][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 1; // La permission est-elle une permission par défaut
-    $this->rights[0][4] = 'lire';
+    $r=0;
 
-    $this->rights[1][0] = 242; // id de la permission
-    $this->rights[1][1] = 'Créer/modifier les catégories'; // libelle de la permission
-    $this->rights[1][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[1][4] = 'creer';
+    $this->rights[$r][0] = 241; // id de la permission
+    $this->rights[$r][1] = 'Lire les catégories'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'lire';
+    $r++;
 
-    $this->rights[2][0] = 243; // id de la permission
-    $this->rights[2][1] = 'Supprimer les catégories'; // libelle de la permission
-    $this->rights[2][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[2][4] = 'supprimer';
-
+    $this->rights[$r][0] = 242; // id de la permission
+    $this->rights[$r][1] = 'Créer/modifier les catégories'; // libelle de la permission
+    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'creer';
+	$r++;
+	
+    $this->rights[$r][0] = 243; // id de la permission
+    $this->rights[$r][1] = 'Supprimer les catégories'; // libelle de la permission
+    $this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'supprimer';
+	$r++;
   }
 
 
