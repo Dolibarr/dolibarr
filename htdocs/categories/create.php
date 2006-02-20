@@ -139,7 +139,7 @@ print '<tr><td valign="top" width="30%">';
 					echo "<p>".$langs->trans ("ErrForgotField")." \"".$langs->trans ("Label")."\"</p>";
 					$OK = false;
 					}
-				else if ($c->already_exists($_POST["nom"])) // on regarde si le nom n'existe pas déjà en tant que catégorie ou sous-catégorie
+				else if ($c->already_exists($_POST["nom"],$_POST["catsMeres"]) // on regarde si le nom n'existe pas déjà en tant que catégorie ou sous-catégorie
 					{
 					echo "<p>".$langs->trans ("ErrCatAlreadyExists")."</p>";
 					$OK = false;
