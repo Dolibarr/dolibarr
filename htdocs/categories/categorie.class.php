@@ -461,7 +461,12 @@ class Categorie
   {
     $sql = "SELECT count(c.rowid)";
     $sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
-    $sql.= " WHERE c.label = '".$label."' AND c.rowid = ca.fk_categorie_fille AND ca.fk_categorie_mere = '".$catmere."'";
+    $sql.= " WHERE c.label = '".$label."'";
+    if ($catmere)
+    {
+    $sql.= " AND c.rowid = ca.fk_categorie_fille";
+    $sql.= " AND ca.fk_categorie_mere = '".$catmere."'";
+    }
 
     $res  = $this->db->query ($sql);
     $res  = $this->db->fetch_array ($res);
