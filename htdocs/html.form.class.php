@@ -809,16 +809,16 @@ class Form
     {
         global $langs;
         print '<select class="flat" name="'.$htmlname.'">';
-		$options = array("oui","non");
-        foreach($options as $value)
+		$options = array(0=>"non",1=>"oui");
+        foreach($options as $id => $value)
         {
-            if ($selected == $value)
+            if ($selected == $id)
             {
-                print '<option value="'.$value.'" selected="true">'.$value;
+                print '<option value="'.$id.'" selected="true">'.$value;
             }
             else
             {
-                print '<option value="'.$value.'">'.$value;
+                print '<option value="'.$id.'">'.$value;
             }
             print '</option>';
         }
@@ -1266,6 +1266,7 @@ class Form
 	function form_assujetti_tva($page, $selected='', $htmlname='')
     {
         global $langs;
+		$options = array(0=>"non",1=>"oui");
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
@@ -1281,7 +1282,7 @@ class Form
         {
             if ($selected)
             {
-                print $selected;
+                print $options[$selected];
             } else {
                 print "&nbsp;";
             }
