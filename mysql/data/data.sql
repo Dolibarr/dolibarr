@@ -116,7 +116,7 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_
 --
 -- Mail Mailing
 --
-insert into llx_const (name, value, type, note) values ('MAILING_EMAIL_FROM','mailing@domain.com','chaine','EMail emmetteur pour les envois de mailings');
+insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','dolibarr@domain.com','chaine','EMail emmetteur pour les envois d\'emailings',0);
 
 --
 -- Mailman

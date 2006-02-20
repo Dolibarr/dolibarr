@@ -20,9 +20,10 @@
  * $Source$
  */
  
-/**	    \file       htdocs/admin/clicktodial.php
-		\ingroup    clicktodial
-		\brief      Page d'administration/configuration du module clicktodial
+/**
+	    \file       htdocs/admin/mailing.php
+		\ingroup    mailing
+		\brief      Page d'administration/configuration du module mailing
 		\version    $Revision$
 */
 
@@ -36,7 +37,7 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
-	$result=dolibarr_set_const($db, "CLICKTODIAL_URL",$_POST["url"]);
+	$result=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$_POST["email_from"]);
   	if ($result >= 0)
   	{
   		$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
@@ -48,6 +49,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 }
 
 
+
 /*
  *
  *
@@ -55,33 +57,33 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 
 llxHeader();
 
-print_titre($langs->trans("ClickToDialSetup"));
+print_titre($langs->trans("MailingSetup"));
 
 if ($mesg) print '<br>'.$mesg;
 
 print '<br>';
-print '<form method="post" action="clicktodial.php">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 $var=true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("NewValue").'</td><td>'.$langs->trans("CurrentValue").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("URL").'</td><td>';
-print '<input size="25" type="text" name="url" value="'.$conf->global->CLICKTODIAL_URL.'">';
-print '</td><td>';
-print $conf->global->CLICKTODIAL_URL;
+print $langs->trans("MailingEMailFrom").'</td><td>';
+print '<input size="32" type="text" name="email_from" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
 print '</td></tr>';
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
 
+
 $db->close();
+
 
 llxFooter('$Date$ - $Revision$');
 

@@ -411,7 +411,10 @@ BarcodeSetup=Barcode setup
 PaperFormatModule=Print' format module
 BarcodeEncodeModule=Barcode' encodage type
 ##### Prelevements #####
-WithdrawalsSetup=Withdrawal setup
+WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
 ExternalRSSSetup=External RSS imports setup
 NewRSS=New RSS
+##### Mailing #####
+MailingSetup=Mailing module setup
+MailingEMailFrom=Sender EMail (From) for emails sent by emailing module

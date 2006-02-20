@@ -416,4 +416,7 @@ WithdrawalsSetup=Configuration du module prélèvement
 ##### ExternalRSS #####
 ExternalRSSSetup=Configuration des imports de flux RSS
 NewRSS=Syndication d'un nouveau flux RSS
+##### Mailing #####
+MailingSetup=Configuration du module EMailing
+MailingEMailFrom=Email emetteur (From) des mails envoyés par EMailing
 
