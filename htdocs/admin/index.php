@@ -386,7 +386,7 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_LOGO . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%" valign="note">'.$langs->trans("Note").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_NOTE . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%" valign="top">'.$langs->trans("Note").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_NOTE . '</td></tr>';
 
     print '</table>';
 
