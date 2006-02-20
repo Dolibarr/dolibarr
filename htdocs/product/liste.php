@@ -62,6 +62,11 @@ if (isset($_POST["button_removefilter_x"]))
     $snom="";
 }
 
+if (isset($_REQUEST['catid']))
+{
+    $catid = $_REQUEST['catid'];
+}
+
 
 /*
  * Affichage mode liste
