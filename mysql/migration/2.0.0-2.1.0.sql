@@ -25,6 +25,7 @@ alter table llx_propal add column note_public text after note;
 
 ALTER TABLE llx_societe ADD mode_reglement INT( 11 ) DEFAULT NULL ;
 ALTER TABLE llx_societe ADD cond_reglement INT( 11 ) DEFAULT '1' NOT NULL ;
+ALTER TABLE llx_societe ADD tva_assuj  tinyint  DEFAULT '1' NOT NULL ;
 
 alter table llx_product add gencode varchar(255) DEFAULT NULL;
 
