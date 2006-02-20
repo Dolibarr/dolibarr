@@ -75,6 +75,14 @@ if ($_POST["action"] == 'setmode')
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET mode_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$socid."'";
     $result = $db->query($sql);
 }
+// assujétissement à la TVA
+if ($_POST["action"] == 'setassujtva')
+{
+	$societe = new Societe($db, $_GET["socid"]);
+    $societe->tva_assuj=$_POST['assujtva_value'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socid."'";
+    $result = $db->query($sql);
+}
 
 if ($action == 'recontact')
 {
@@ -390,11 +398,11 @@ if ($_socid > 0)
 			print '</td><td colspan="3">';
 		if ($_GET['action'] == 'editassujtva')
 			{
-				$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->assujetti_tva,'assujtva_value');
+				$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->tva_assuj,'assujtva_value');
 			}
 			else
 			{
-				$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->assujetti_tva,'none');
+				$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->tva_assuj,'none');
 			}
 		print "</td>";
 		print '</tr>';

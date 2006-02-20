@@ -805,7 +805,7 @@ class Form
      *      \param      selected        Id du type de paiement présélectionné
      *      \param      htmlname        Nom de la zone select
      */
-    function select_assujetti_tva($selected='',$htmlname='condid')
+    function select_assujetti_tva($selected='',$htmlname='')
     {
         global $langs;
         print '<select class="flat" name="'.$htmlname.'">';
@@ -1280,7 +1280,7 @@ class Form
         }
         else
         {
-            if ($selected)
+            if ($selected != "")
             {
                 print $options[$selected];
             } else {
