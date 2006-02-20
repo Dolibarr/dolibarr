@@ -68,7 +68,7 @@ if ($_GET["action"] == 'activate_multiprix')
 				dolibarr_print_error($db);
 				print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
 			}
-			// on crÃ©e la table societe_prices
+			// on crée la table societe_prices
 			else
 			{
 				$table = MAIN_DB_PREFIX."societe_prices";
@@ -108,6 +108,32 @@ else if ($_GET["action"] == 'disable_multiprix')
     Header("Location: produit.php");
     exit;
 }
+else if ($_GET["action"] == 'activate_sousproduits')
+{
+    $table = MAIN_DB_PREFIX."product_parent_child";
+	$fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+	$fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
+	$fields['datec'] = array('type'=>'datetime','default'=> 'null');
+	$fields['fk_product_parent'] = array('type'=>'int','value'=>'11','default'=> 'null');
+	$fields['fk_product_child'] = array('type'=>'int','value'=>'11','default'=> 'null');
+	if(! $db -> create_table($table,$fields,"rowid","MyISAM"))
+	{
+		dolibarr_print_error($db);
+		print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
+	}
+	else
+	{
+			dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", "1");
+			Header("Location: produit.php");
+	}
+}
+else if ($_GET["action"] == 'disable_sousproduits')
+{
+	dolibarr_del_const($db, "PRODUIT_SOUSPRODUITS");
+    Header("Location: produit.php");
+    exit;
+}
+
 
 /*
  * Affiche page
@@ -185,7 +211,31 @@ if($conf->global->PRODUIT_MULTIPRICES == 1)
 	print '</table>';
 	print '</form>';
 }
-	
+// sousproduits activation/desactivation
+print '<br>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="140">'.$langs->trans("Name").'</td>';
+print '<td align="center">&nbsp;</td>';
+print '<td align="center">'.$langs->trans("Active").'</td>';
+print "</tr>\n";
+print "<form method=\"post\" action=\"produit.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"multiprix\">";
+print "<tr ".$bc[false].">";
+print '<td width="80%">'.$langs->trans("AssociatedProductsAbility").'</td>';
+print '<td align="center">';
+if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+	print img_tick();
+print '</td>';
+print "<td align=\"center\">";
+if($conf->global->PRODUIT_SOUSPRODUITS == 0)
+print '<a href="produit.php?action=activate_sousproduits">'.$langs->trans("Activate").'</a>';
+else if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+	print '<a href="produit.php?action=disable_sousproduits">'.$langs->trans("Disable").'</a>';
+print "</td>";
+print '</tr>';
+print '</table>';
+print '</form>';
 
 
 $db->close();
