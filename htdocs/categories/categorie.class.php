@@ -462,7 +462,7 @@ class Categorie
     $sql = "SELECT count(c.rowid)";
     $sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
     $sql.= " WHERE c.label = '".$label."'";
-    if ($catmere)
+    if ($catmere!='' && $catmere > 0)
     {
     $sql.= " AND c.rowid = ca.fk_categorie_fille";
     $sql.= " AND ca.fk_categorie_mere = '".$catmere."'";
