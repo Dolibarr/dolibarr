@@ -380,6 +380,24 @@ if ($_socid > 0)
 			}
 		print "</td>";
 		print '</tr>';
+		// soumis à TVA ou pas
+		print '<tr><td nowrap>';
+		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print $langs->trans('VATIsUsed');
+		print '<td>';
+		if ($_GET['action'] != 'editassujtva') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editassujtva&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+		if ($_GET['action'] == 'editassujtva')
+			{
+				$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->assujetti_tva,'assujtva_value');
+			}
+			else
+			{
+				$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->assujetti_tva,'none');
+			}
+		print "</td>";
+		print '</tr>';
 	}
 	
     print "</table>";
