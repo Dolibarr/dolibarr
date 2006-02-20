@@ -800,10 +800,30 @@ class Form
         }
         print '</select>';
     }
-
-
-    
-
+/**
+     *      \brief      Retourne la liste des types de paiements possibles
+     *      \param      selected        Id du type de paiement présélectionné
+     *      \param      htmlname        Nom de la zone select
+     */
+    function select_assujetti_tva($selected='',$htmlname='condid')
+    {
+        global $langs;
+        print '<select class="flat" name="'.$htmlname.'">';
+		$options = array("oui","non");
+        foreach($options as $value)
+        {
+            if ($selected == $value)
+            {
+                print '<option value="'.$value.'" selected="true">'.$value;
+            }
+            else
+            {
+                print '<option value="'.$value.'">'.$value;
+            }
+            print '</option>';
+        }
+        print '</select>';
+    }
     /**
      *      \brief      Retourne la liste des modes de paiements possibles
      *      \param      selected        Id du mode de paiement présélectionné
@@ -1232,6 +1252,36 @@ class Form
             {
                 $this->load_cache_conditions_paiements();
                 print $this->cache_conditions_paiements_libelle[$selected];
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+	/**
+     *    \brief      Affiche formulaire de selection de l'assujétissement à la TVA
+     *    \param      page        Page
+     *    \param      selected    Id condition présélectionnée
+     *    \param      htmlname    Nom du formulaire select
+     */
+	function form_assujetti_tva($page, $selected='', $htmlname='')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setassujtva">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_assujetti_tva($selected,$htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                print $selected;
             } else {
                 print "&nbsp;";
             }
