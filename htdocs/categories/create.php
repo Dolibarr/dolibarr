@@ -139,14 +139,14 @@ print '<tr><td valign="top" width="30%">';
 					echo "<p>".$langs->trans ("ErrForgotField")." \"".$langs->trans ("Label")."\"</p>";
 					$OK = false;
 					}
-/*				else if ($c->already_exists ($_POST["nom"]))
+				else if ($c->already_exists($_POST["nom"])
 					{
 					// on regarde si le champ nom n'est pas déjà dans la table catégorie (rappel: un nom est unique dans la table catégorie
 					// nb a déjà été renseigné, il contient le nombre de catégories
 					echo "<p>".$langs->trans ("ErrCatAlreadyExists")."</p>";
 					$OK = false;
 					}
-*/
+
 				if ($_POST["description"] == '')
 					{
 					echo "<p>".$langs->trans ("ErrForgotField")." \"".$langs->trans ("Description")."\"</p>";

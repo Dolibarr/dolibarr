@@ -457,10 +457,11 @@ class Categorie
   /**
    * Vérifie si une catégorie porte le label $label
    */
-  function already_exists ($label)
+  function already_exists($label)
   {
-    $sql  = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX."categorie ";
-    $sql .= "WHERE label = '".$label."'";
+    $sql = "SELECT count(c.rowid)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
+    $sql.= " WHERE c.label = '".$label."' AND c.rowid = ca.fk_categorie_fille";
 
     $res  = $this->db->query ($sql);
     $res  = $this->db->fetch_array ($res);
