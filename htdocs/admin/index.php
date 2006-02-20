@@ -47,6 +47,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"]);
     if ($_FILES["logo"]["tmp_name"])
     {
         if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
@@ -166,6 +167,11 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
     print '<input type="file" class="flat" name="logo" size="30"></td></tr>';
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("Note").'</td><td>';
+    print '<textarea class="flat" name="note" cols="60">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';
     print '</td></tr>';
 
     print '</table>';
@@ -378,6 +384,9 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_LOGO . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%" valign="note">'.$langs->trans("Note").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_NOTE . '</td></tr>';
 
     print '</table>';
 
