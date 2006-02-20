@@ -84,3 +84,4 @@ ServiceLimitedDuration=Si produit de type service à durée limitée :
 MultiPricesAbility=Prise en charges de prix multiples
 MultiPricesNumPrices=Nombre de prix
 MultiPriceLevelsName=Catégorie de prix
+AssociatedProductsAbility=Prise en charges des produits associés
