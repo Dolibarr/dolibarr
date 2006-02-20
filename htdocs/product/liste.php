@@ -29,6 +29,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
+require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("products");
 
@@ -72,6 +73,12 @@ $title=$langs->trans("ProductsAndServices");
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+
+if ($catid)
+{
+  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+}
+
 if ($_GET["fourn_id"] > 0)
 {
     $fourn_id = $_GET["fourn_id"];
@@ -97,6 +104,11 @@ if ($snom)
 if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 {
     $sql .= " AND p.envente = ".$_GET["envente"];
+}
+if($catid)
+{
+    $sql .= " AND cp.fk_product = p.rowid";
+    $sql .= " AND cp.fk_categorie = ".$catid;
 }
 if ($fourn_id > 0)
 {
@@ -146,6 +158,15 @@ if ($resql)
     else
     {
         print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+    }
+    
+    if (isset($catid))
+    {
+        print "<div id='ways'>";
+        $c = new Categorie ($db, $catid);
+        $ways = $c->print_all_ways(' &gt; ','product/liste.php');
+        print " &gt; ".$ways[0]."<br />\n";
+        print "</div><br />";
     }
 
     print '<table class="liste" width="100%">';
