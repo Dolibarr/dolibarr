@@ -475,6 +475,7 @@ class MenuLeft {
                 }
               
               if ($conf->categorie->enabled)
+              $langs->load("categories");
                {
                   $newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
                   if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
