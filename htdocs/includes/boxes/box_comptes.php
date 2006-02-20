@@ -110,7 +110,8 @@ class box_comptes extends ModeleBoxes {
 					$this->info_box_contents[$i][-1] = array('class' => 'liste_total');
 					
 					$this->info_box_contents[$i][0] = array('align' => 'right',
-					'colspan' => '4',
+					'width' => '75%',
+          'colspan' => '3',
 					'class' => 'liste_total',
 					'text' => $langs->trans('Total')
 					);

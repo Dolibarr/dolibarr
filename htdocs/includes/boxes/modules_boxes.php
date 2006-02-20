@@ -90,7 +90,7 @@ class ModeleBoxes
                 }
                 
                 // Affiche chaque cellule
-                for ($j=0, $m=sizeof($contents[$i]); $j < $m; $j++)
+                for ($j=0, $m=isset($contents[$i][-1])?sizeof($contents[$i])-1:sizeof($contents[$i]); $j < $m; $j++)
                 {
                     $tdparam="";
                     if (isset($contents[$i][$j]['align'])) $tdparam.=' align="'. $contents[$i][$j]['align'].'"';
