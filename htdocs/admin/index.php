@@ -171,7 +171,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("Note").'</td><td>';
-    print '<textarea class="flat" name="note" cols="60">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';
+    print '<textarea class="flat" name="note" cols="60" rows="'.ROWS_4.'">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';
     print '</td></tr>';
 
     print '</table>';
@@ -386,7 +386,7 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_LOGO . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%" valign="top">'.$langs->trans("Note").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_NOTE . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%" valign="top">'.$langs->trans("Note").'</td><td>' . nl2br($conf->global->MAIN_INFO_SOCIETE_NOTE) . '</td></tr>';
 
     print '</table>';
 
