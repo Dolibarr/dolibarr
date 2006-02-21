@@ -72,9 +72,9 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 			<td><?php print $langs->trans ("In"); ?> <select name="choix">
 					<?php
 					// création d'un objet de type catégorie pour faire des requêtes sur la table
-					$c = new Categorie ($db);
+					$categorie = new Categorie ($db);
 					
-					$nb = $c->get_nb_categories ();
+					$nb = $categorie->get_nb_categories();
 					
 					for ($i = 0 ; $i <= $nb ; $i++)
 						{
@@ -94,7 +94,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 				<input type="submit" value="<?php print $langs->trans ("modify"); ?>" name="ok" id="ok" />
 			</td>
 			<?php
-				$cats = $c->get_all_categories ();//on récupère toutes les catégories et leurs attributs
+				$all_categories = $categorie->get_all_categories();//on récupère toutes les catégories et leurs attributs
 
 				for ($i = 0; $i < $nbcats ; $i++)
 					{
@@ -102,7 +102,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 					
 					echo "<option value='-1' id='choix'>".$langs->trans ("Choose")."</option>\n";
 
-					foreach ($cats as $id => $cat)
+					foreach ($all_categories as $id => $cat)
 						{ //ajout des categories dans la liste
 						echo "<option value='$id' id='$id'";
 						

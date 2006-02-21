@@ -32,13 +32,14 @@ class Categorie
   var $id;
   var $label;
   var $description;
+  var $statut;
 
   /**
    * Constructeur
    * db : accès base de données
    * id : id de la catégorie
    */
-  function Categorie ($db, $id=-1)
+  function Categorie($db, $id=-1)
   {
     $this->db = $db;
     $this->id = $id;
@@ -50,28 +51,29 @@ class Categorie
    * Charge la catégorie
    * id : id de la catégorie à charger
    */
-  function fetch ($id)
+  function fetch($id)
   {
-    $sql  = "SELECT rowid,label,description ";
-    $sql .= "FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$id;
+    $sql = "SELECT rowid, label, description, fk_statut";
+    $sql.= " FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$id;
 
     $resql  = $this->db->query ($sql);
 
     if ($resql)
-      {
-	$res = $this->db->fetch_array($resql);
+    {
+	     $res = $this->db->fetch_array($resql);
 
-	$this->id		= $res['rowid'];
-	$this->label		= $res['label'];
-	$this->description	= stripslashes($res['description']);
+	     $this->id		      = $res['rowid'];
+	     $this->label		    = $res['label'];
+	     $this->description	= stripslashes($res['description']);
+	     $this->statut      = $res['fk_statut'];
 
-	$this->db->free($resql);
-      }
+	     $this->db->free($resql);
+    }
     else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    {
+	     dolibarr_print_error ($this->db);
+	     return -1;
+    }
   }
 
   /**
@@ -80,12 +82,12 @@ class Categorie
    *          -2 : nouvel ID inconnu
    *          -3 : catégorie invalide
    */
-  function create ()
+  function create()
   {
     if (!$this->check () || $this->already_exists ($this->label))
-      {
-	return -3;
-      }
+    {
+	      return -3;
+    }
 
     $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description) ";
     $sql .= "VALUES ('".$this->label."', '".$this->description."')";
@@ -93,24 +95,24 @@ class Categorie
     $res  = $this->db->query ($sql);
 
     if ($res)
-      {
-	$id = $this->db->last_insert_id (MAIN_DB_PREFIX."categorie");
+    {
+	     $id = $this->db->last_insert_id (MAIN_DB_PREFIX."categorie");
 
-	if ($id > 0)
-	  {
-	    $this->id = $id;
-	    return $id;
-	  }
-	else
-	  {
-	    return -2;
-	  }
-      }
+	      if ($id > 0)
+	      {
+	         $this->id = $id;
+	         return $id;
+	      }
+	      else
+	      {
+	         return -2;
+	      }
+    }
     else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    {
+	      dolibarr_print_error ($this->db);
+	      return -1;
+    }
   }
 	
   /**
@@ -119,30 +121,31 @@ class Categorie
    *          -1 : erreur SQL
    *          -2 : catégorie invalide
    */
-  function update ()
+  function update()
   {
-    if (!$this->check () || $this->id < 0)
-      {
-	return -2;
-      }
+    if (!$this->check() || $this->id < 0)
+    {
+	     return -2;
+    }
 
-    $sql  = "UPDATE ".MAIN_DB_PREFIX."categorie ";
-    $sql .= "SET label = '".trim ($this->label)."'";
-    if (strlen (trim ($this->description)) > 0)
-      {
-	$sql .= ", description = '".trim ($this->description)."'";
-      }
-    $sql .= " WHERE rowid = ".$this->id;
+       $sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
+       $sql.= " SET label = '".trim($this->label)."'";
+    
+    if (strlen (trim($this->description)) > 0)
+    {
+	     $sql .= ", description = '".trim($this->description)."'";
+    }
+       $sql .= " WHERE rowid = ".$this->id;
 
-    if ($this->db->query ($sql))
-      {
-	return 1;
-      }
+    if ($this->db->query($sql))
+    {
+	    return 1;
+    }
     else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    {
+	     dolibarr_print_error($this->db);
+	     return -1;
+    }
   }
 
   /**
@@ -153,39 +156,42 @@ class Categorie
    */
   function remove ($all = false)
   {
-    if (!$this->check ())
-      {
-	return -2;
-      }
+    if (!$this->check())
+    {
+	     return -2;
+    }
 
     $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product ";
     $sql .= "WHERE fk_categorie = ".$this->id;
-    if (!$this->db->query ($sql))
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    
+    if (!$this->db->query($sql))
+    {
+	     dolibarr_print_error($this->db);
+	     return -1;
+    }
 
     $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association ";
     $sql .= "WHERE fk_categorie_mere  = ".$this->id;
     $sql .= "   OR fk_categorie_fille = ".$this->id;
-    if (!$this->db->query ($sql))
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    
+    if (!$this->db->query($sql))
+    {
+	     dolibarr_print_error($this->db);
+	     return -1;
+    }
 
     $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie ";
     $sql .= "WHERE rowid = ".$this->id;
-    if (!$this->db->query ($sql))
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    
+    if (!$this->db->query($sql))
+    {
+	     dolibarr_print_error($this->db);
+	     return -1;
+    }
     else
-      {
-	return 1;
-      }
+    {
+	     return 1;
+    }
 
   }
 	
@@ -193,12 +199,12 @@ class Categorie
    * Vérifie si la catégorie est correcte (prête à être
    * enregistrée ou mise à jour
    */
-  function check ()
+  function check()
   {
-    if (strlen (trim ($this->label)) == 0)
-      {
-	return false;
-      }
+    if (strlen(trim($this->label)) == 0)
+    {
+	     return false;
+    }
 
     return true;
   }
@@ -210,29 +216,29 @@ class Categorie
    *          -2 : $fille est déjà une fille de $this
    *          -3 : catégorie ($this ou $fille) invalide
    */
-  function add_fille ($fille)
+  function add_fille($fille)
   {
-    if (!$this->check () || !$fille->check ())
-      {
-	return -3;
-      }
-    else if ($this->is_fille ($fille))
-      {
-	return -2;
-      }
+    if (!$this->check() || !$fille->check())
+    {
+	      return -3;
+    }
+    else if ($this->is_fille($fille))
+    {
+	      return -2;
+    }
 
-    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_association (fk_categorie_mere, fk_categorie_fille) ";
-    $sql .= "VALUES (".$this->id.", ".$fille->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_association (fk_categorie_mere, fk_categorie_fille)";
+    $sql.= " VALUES (".$this->id.", ".$fille->id.")";
 
-    if ($this->db->query ($sql))
-      {
-	return 1;
-      }
+    if ($this->db->query($sql))
+    {
+	      return 1;
+    }
     else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    {
+	      dolibarr_print_error($this->db);
+	      return -1;
+    }
   }
 	 
   /**
@@ -241,25 +247,25 @@ class Categorie
    * retour :  1 : OK
    *          -3 : catégorie ($this ou $fille) invalide
    */
-  function del_fille ($fille)
+  function del_fille($fille)
   {
-    if (!$this->check () || !$fille->check ())
-      {
-	return -3;
-      }
+    if (!$this->check() || !$fille->check())
+    {
+	     return -3;
+    }
 
-    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association ";
-    $sql .= "WHERE fk_categorie_mere = ".$this->id." and fk_categorie_fille = ".$fille->id;
+    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+    $sql .= " WHERE fk_categorie_mere = ".$this->id." and fk_categorie_fille = ".$fille->id;
 
-    if ($this->db->query ($sql))
-      {
-	return 1;
-      }
+    if ($this->db->query($sql))
+    {
+       return 1;
+    }
     else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    {
+       dolibarr_print_error($this->db);
+       return -1;
+    }
   }
 	 
   /**
@@ -268,25 +274,25 @@ class Categorie
    *          -1 : erreur SQL
    *          -2 : id non renseigné
    */
-  function add_product ($prod)
+  function add_product($prod)
   {
     if ($this->id == -1)
-      {
-	return -2;
-      }
+    {
+      return -2;
+    }
 		
-    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_product (fk_categorie, fk_product) ";
-    $sql .= "VALUES (".$this->id.", ".$prod->id.")";
+    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_product (fk_categorie, fk_product)";
+    $sql .= " VALUES (".$this->id.", ".$prod->id.")";
 
-    if ($this->db->query ($sql))
-      {
-	return 1;
-      }
+    if ($this->db->query($sql))
+    {
+	     return 1;
+    }
     else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    {
+       dolibarr_print_error($this->db);
+       return -1;
+    }
   }
 	
   /**
@@ -295,49 +301,49 @@ class Categorie
    * retour :  1 : OK
    *          -1 : erreur SQL
    */
-  function del_product ($prod)
+  function del_product($prod)
   {
     $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
     $sql .= " WHERE fk_categorie = ".$this->id;
     $sql .= " AND   fk_product   = ".$prod->id;
 
-    if ($this->db->query ($sql))
-      {
-	return 1;
-      }
+    if ($this->db->query($sql))
+    {
+      return 1;
+    }
     else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    {
+       dolibarr_print_error($this->db);
+       return -1;
+    }
   }
 	
   /**
    * Retourne les produits de la catégorie
    */
-  function get_products ()
+  function get_products()
   {
     $sql  = "SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product ";
     $sql .= "WHERE fk_categorie = ".$this->id;
 
-    $res  = $this->db->query ($sql);
+    $res  = $this->db->query($sql);
 
     if ($res)
-      {
-	$prods = array ();
-	while ($rec = $this->db->fetch_array ($res))
-	  {
-	    $prod = new Product ($this->db, $rec['fk_product']);
-	    $prod->fetch ($prod->id);
-	    $prods[] = $prod;
-	  }
-	return $prods;
-      }
+    {
+       $prods = array();
+       while ($rec = $this->db->fetch_array ($res))
+	     {
+	        $prod = new Product ($this->db, $rec['fk_product']);
+	        $prod->fetch ($prod->id);
+	        $prods[] = $prod;
+	     }
+	       return $prods;
+    }
     else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
+    {
+        dolibarr_print_error ($this->db);
+        return -1;
+    }
   }
 	
   /**
@@ -458,7 +464,7 @@ class Categorie
    * Vérifie si une catégorie porte le label $label
    */
   function already_exists($label, $catmere=0)
-  {
+  {    
     $sql = "SELECT count(c.rowid)";
     $sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
     $sql.= " WHERE c.label = '".$label."'";
@@ -477,52 +483,26 @@ class Categorie
   function get_main_categories ()
   {
     $allcats = $this->get_all_categories ();
-
-    /*	$sql  = "SELECT rowid,label,description FROM ".MAIN_DB_PREFIX."categorie ";
-	$sql .= "WHERE ".MAIN_DB_PREFIX."categorie.rowid NOT IN (";
-	$sql .= "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association)";
-
-	$res = $this->db->query ($sql);
-
-	if ($res)
-	{
-	$cats = array ();
-	while ($record = $this->db->fetch_array ($res))
-	{
-	$cat = array ("rowid" => $record['rowid'],
-	"label" => $record['label'],
-	"description" => $record['description']);
-	$cats[$record['rowid']] = $cat;
-	}
-	return $cats;
-	}
-	else
-	{
-	return -1;
-	}
-    */	// pas de NOT IN avec MySQL ?
-
-		
     $maincats = array ();
     $filles   = array ();
 		
     $sql = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association";
     $res = $this->db->query ($sql);
     while ($res = $this->db->fetch_array ($res))
-      {
-	$filles[] = $res['fk_categorie_fille'];
-      }
+    {
+	     $filles[] = $res['fk_categorie_fille'];
+    }
 
     foreach ($allcats as $cat)
-      {
-	if (!in_array ($cat->id, $filles))
-	  {
-	    $maincats[] = $cat;
-	  }
-	else
-	  {
-	  }
-      }
+    {
+	     if (!in_array ($cat->id, $filles))
+	     {
+	         $maincats[] = $cat;
+	     }
+	     else
+	     {
+	     }
+    }
 		
     return $maincats;
   }

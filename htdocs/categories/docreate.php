@@ -26,7 +26,7 @@ $user->getrights('categorie');
 $langs->load("categories");
 
 
-if (!isset ($_REQUEST["nom"]) || !isset ($_REQUEST["description"]))
+if (!isset($_REQUEST["nom"]) || !isset($_REQUEST["description"]))
 	accessforbidden();
 
 
@@ -42,31 +42,33 @@ print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
-$cat = new Categorie ($db);
+$categorie = new Categorie($db);
 
-$cat->label       = $_REQUEST["nom"];
-$cat->description = $_REQUEST["description"];
+$categorie->label       = $_REQUEST["nom"];
+$categorie->description = $_REQUEST["description"];
 
-$cats_meres = isset ($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array ();
+$cats_meres = isset($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array ();
 
-$res = $cat->create ();
-if ($res < 0)
+$res = $categorie->create();
+  
+  if ($res < 0)
 	{
-	print "<p>Impossible d'ajouter la catégorie ".$cat->label.".</p>";
+	  print "<p>Impossible d'ajouter la catégorie ".$categorie->label.".</p>";
 	}
-else
+  else
 	{
-	print "<p>La catégorie ".$cat->label." a été ajoutée avec succès.</p>";
+	print "<p>La catégorie ".$categorie->label." a été ajoutée avec succès.</p>";
 
-	foreach ($cats_meres as $id)
-		{
-		$mere = new Categorie ($db, $id);
-		$res = $mere->add_fille ($cat);
-		if ($res < 0)
-			{
-			print "<p>Impossible d'associer la catégorie à \"".$mere->label."\" ($res).</p>";
-			}
-		}
+	  foreach ($cats_meres as $id)
+    {
+      $mere = new Categorie($db, $id);
+	    $res = $mere->add_fille($categorie);
+		 
+		  if ($res < 0)
+      {
+         print "<p>Impossible d'associer la catégorie à \"".$mere->label."\" ($res).</p>";
+      }
+    }
 	}
 
 
