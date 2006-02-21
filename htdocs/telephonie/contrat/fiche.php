@@ -635,11 +635,12 @@ else
 			  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 			  
 			  print '<td align="center">'.$obj->support."</td>\n";
-			  print "<td>";
-			  if ($user->rights->telephonie->fournisseur->lire)
-			    print $obj->fournisseur." - \n";
 
-			  print $obj->techno."</td>\n";
+			  if ($user->rights->telephonie->fournisseur->lire)
+			    {
+			      print "<td>".$obj->fournisseur." - \n";
+			      print $obj->techno."</td>\n";
+			    }
 			  print "</tr>\n";
 			  $i++;
 			}
