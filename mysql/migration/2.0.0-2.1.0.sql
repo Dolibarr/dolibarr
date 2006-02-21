@@ -51,3 +51,5 @@ create table llx_commande_fournisseur_model_pdf
   libelle     varchar(255),
   description text
 )type=innodb;
+
+alter table llx_categorie add fk_statut smallint DEFAULT 0;

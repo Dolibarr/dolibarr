@@ -1,6 +1,7 @@
 -- ============================================================================
--- Copyright (C) 2005 Brice Davoleau <e1davole@iu-vannes.fr>
--- Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>		
+-- Copyright (C) 2005      Brice Davoleau    <e1davole@iu-vannes.fr>
+-- Copyright (C) 2005      Matthieu Valleton <mv@seeschloss.org>
+-- Copyright (C) 2005-2006 Regis Houssin     <regis.houssin@cap-networks.com>		
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,7 +24,8 @@
 
 create table llx_categorie
 (
-	rowid 		integer AUTO_INCREMENT PRIMARY KEY,
-	label 		VARCHAR(255),
-	description 	text	
+	rowid 		    integer AUTO_INCREMENT PRIMARY KEY,
+	label 		    VARCHAR(255),                       -- nom de la catégorie
+	description 	text,                               -- description de la catégorie
+	fk_statut     smallint  default 0                 -- type et statut de la catégorie
 )type=innodb;
