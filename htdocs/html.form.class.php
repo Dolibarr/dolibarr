@@ -921,7 +921,7 @@ class Form
         global $conf,$langs;
         $langs->load("categorie");
     
-        $categorie = new Categorie ($db);
+        $categorie = new Categorie($db);
         $nb = $categorie->get_nb_categories();
     
         for ($i = 0 ; $i <= $nb ; $i++)
