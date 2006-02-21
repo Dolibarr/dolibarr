@@ -44,6 +44,7 @@ else
 
 
 llxHeader("","",$langs->trans("Categories"));
+$html = new Form($db);
 
 /*
  * Action création du produit
