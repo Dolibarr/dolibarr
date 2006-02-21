@@ -67,11 +67,10 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="description" rows="6" cols=""40"';
   print '</textarea></td></tr>';
-  print '<tr><td>'.$html->select_nombre_sous_categorie("choix", $nbcats);
+  print '<tr><td>'.$html->select_nombre_sous_categorie("choix", $nbcats).' ';
+  print $langs->trans("categories");
   print '</td></tr>';
 
-<?php print $langs->trans ("categories"); ?>
-			</td>
 			<td>
 				<input type="submit" value="<?php print $langs->trans ("modify"); ?>" name="ok" id="ok" />
 			</td>
