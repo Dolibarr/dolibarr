@@ -254,18 +254,23 @@ class Commande
 				$prod = new Product($this->db, $this->products[$i]);
 				if ($prod->fetch($this->products[$i]))
 				{
+					$this->soc_id;
+					$client = new Societe($this->db);
+     				$client->fetch($this->soc_id);
+					if($client->tva_assuj == "0")
+						$tva_tx ="0";
+					else
+						$tva_tx=$prod->tva_tx;
 					// multiprix
 					if($conf->global->PRODUIT_MULTIPRICES == 1)
 					{
-						$this->soc_id;
-						$client = new Societe($this->db);
-     					$client->fetch($this->soc_id);
+						
 						//$prod->multiprices[$client->price_level]
 						$this->insert_product_generic($prod->libelle,
 						$prod->description,
 						$prod->multiprices[$client->price_level],
 						$this->products_qty[$i],
-						$prod->tva_tx,
+						$tva_tx,
 						$this->products[$i],
 						$this->products_remise_percent[$i]);
 					}
@@ -275,7 +280,7 @@ class Commande
 						$prod->description,
 						$prod->price,
 						$this->products_qty[$i],
-						$prod->tva_tx,
+						$tva_tx,
 						$this->products[$i],
 						$this->products_remise_percent[$i]);
 					}
@@ -409,20 +414,22 @@ class Commande
 			{
 				$desc  = $desc?$desc:$prod->libelle;
 				$product_desc = $prod->description;
+				$client = new Societe($this->db);
+     			$client->fetch($this->soc_id);
+				if($client->tva_assuj == "0")
+					$txtva ="0";
+				else
+					$txtva=$prod->tva_tx;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
-						$client = new Societe($this->db);
-     				$client->fetch($this->soc_id);
 						$pu    = $prod->multiprices[$client->price_level];
-				
 				}
 				else
 					$pu    = $prod->price;
-				  $txtva = $prod->tva_tx;
+			
 			}
 		}
-		
 		$remise = 0;
 		$price = round(ereg_replace(',','.',$pu), 2);
 		$subprice = $price;
@@ -489,8 +496,8 @@ class Commande
 		}
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)';
-		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
-	  
+		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "','$fk_product',".price2num($price).", '$qty', '$txtva', $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
+	  print $sql;
 		if ( $this->db->query( $sql) )
 		{
 			$this->update_price();
