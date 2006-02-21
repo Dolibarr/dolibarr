@@ -132,12 +132,12 @@ function ActivationPreselection($host, $user_login, $user_passwd, $ligne, $id_pe
   
   if (substr($result,0,2) == "OK")
     {
-      dolibarr_syslog("Activation réussie ligne ".$ligne." id client ".$id_person." $result\n");
+      dolibarr_syslog("Resiliation réussie ligne ".$ligne." id client ".$id_person." $result\n");
       return 0;
     }
   else
     {
-      dolibarr_syslog("Activation échouée ligne ".$ligne." id client ".$id_person." $result\n");
+      dolibarr_syslog("Resiliation échouée ligne ".$ligne." id client ".$id_person." $result\n");
 
       return -1;
     }
