@@ -609,7 +609,9 @@ else
 		      
 		      print '<tr class="liste_titre"><td width="15%" valign="center">Ligne';
 		      print '</td><td>Agence/Filiale</td><td align="center">Statut</td><td align="center">Support';
-		      print '</td><td>Fournisseur</td>';
+		      print '</td>';
+		      if ($user->rights->telephonie->fournisseur->lire)
+			print '<td>Fournisseur</td>';
 		      
 		      print "</tr>\n";
 		      
@@ -633,7 +635,10 @@ else
 			  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 			  
 			  print '<td align="center">'.$obj->support."</td>\n";
-			  print "<td>".$obj->fournisseur." - \n";
+			  print "<td>";
+			  if ($user->rights->telephonie->fournisseur->lire)
+			    print $obj->fournisseur." - \n";
+
 			  print $obj->techno."</td>\n";
 			  print "</tr>\n";
 			  $i++;
