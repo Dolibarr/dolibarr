@@ -1069,6 +1069,7 @@ function dolibarr_print_error($db='',$msg='')
         print $langs->trans("InformationToHelpDiagnose").":<br><br>\n";
     
         print "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
+        print "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
         print "<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
         print "<b>QUERY_STRING:</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
         print "<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
