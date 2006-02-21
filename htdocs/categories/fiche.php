@@ -71,6 +71,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print $langs->trans("categories");
   print '</td></tr>';
 }
+/*
 			<td>
 				<input type="submit" value="<?php print $langs->trans ("modify"); ?>" name="ok" id="ok" />
 			</td>
@@ -168,7 +169,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 					<?php
 					}
 				}
-
+*/
 print '</td></tr></table>';
 
 $db->close();
