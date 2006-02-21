@@ -70,7 +70,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<tr><td>'.$html->select_nombre_sous_categorie("choix", $nbcats);
   print '</td></tr>';
 
-				</select> <?php print $langs->trans ("categories"); ?>
+<?php print $langs->trans ("categories"); ?>
 			</td>
 			<td>
 				<input type="submit" value="<?php print $langs->trans ("modify"); ?>" name="ok" id="ok" />
