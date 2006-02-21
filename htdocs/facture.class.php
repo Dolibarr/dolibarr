@@ -182,12 +182,16 @@ class Facture
 			{
 				$prod = new Product($this->db, $this->products[$i]);
 				$res=$prod->fetch($this->products[$i]);
-
+				$soc = new Societe($this->db);
+				$soc->fetch($this->socidp);
+				if($soc->tva_assuj == "0")
+						$tva_tx ="0";
+				else
+						$tva_tx=$prod->tva_tx;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
-					$soc = new Societe($this->db);
-					$soc->fetch($this->socidp);
+					
 					$price = $prod->multiprices[$soc->price_level];
 				}
 				else
@@ -201,7 +205,7 @@ class Facture
 					$prod->description,
 					$price,
 					$this->products_qty[$i],
-					$prod->tva_tx,
+					$tva_tx,
 					$this->products[$i],
 					$this->products_remise_percent[$i],
 					$this->products_date_start[$i],
@@ -234,7 +238,7 @@ class Facture
 						$_facrec->lignes[$i]->desc,
 						$_facrec->lignes[$i]->subprice,
 						$_facrec->lignes[$i]->qty,
-						$_facrec->lignes[$i]->tva_taux,
+						$tva_tx,
 						$_facrec->lignes[$i]->produit_id,
 						$_facrec->lignes[$i]->remise_percent);
 
@@ -1028,16 +1032,20 @@ class Facture
                 $prod = new Product($this->db, $fk_product);
                 $prod->fetch($fk_product);
                 $product_desc = $prod->description;
+				$soc = new Societe($this->db);
+				$soc->fetch($this->socidp);
+				if($soc->tva_assuj == "0")
+					$txtva ="0";
+				else
+					$txtva=$prod->tva_tx;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
-					$soc = new Societe($this->db);
-					$soc->fetch($this->socidp);
+					
 					$pu = $prod->multiprices[$soc->price_level];
 				}
 				else
                 	$pu=$prod->price;
-                $txtva=$prod->tva_tx;
             }
 			$price = $pu;
 			$subprice = $pu;
