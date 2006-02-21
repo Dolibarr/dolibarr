@@ -918,14 +918,16 @@ class Form
      */
     function select_nombre_sous_categorie($selected='', $nbcats=1)
     {
-        global $conf,$langs;
+        global $langs;
         $langs->load("categorie");
+        
+        if ($selected)
+        {
+        	$categorie = new Categorie($this->$db);
+          $nb = $categorie->get_nb_categories();
     
-        $categorie = new Categorie($db);
-        $nb = $categorie->get_nb_categories();
-    
-        for ($i = 0 ; $i <= $nb ; $i++)
-				{
+          for ($i = 0 ; $i <= $nb ; $i++)
+				  {
 					  print '<select class="flat" name="choix">';
             print '<option value="'.$i.'" ';//creation d'une valeur dans la liste
             if ($selected == $i)
@@ -938,7 +940,8 @@ class Form
             }
             print '$i</option>';
             print '</select>';
-        }
+           }
+         }
      }
 
     /**
