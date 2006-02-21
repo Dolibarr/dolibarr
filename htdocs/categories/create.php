@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +151,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 					echo "<p>".$langs->trans ("ErrForgotField")." \"".$langs->trans ("Label")."\"</p>";
 					$OK = false;
 					}
-				else if ($c->already_exists($_POST["nom"],$cat_mere)) // on regarde si le nom n'existe pas déjà en tant que catégorie ou sous-catégorie
+				else if ($categorie->already_exists($_POST["nom"],$cat_mere)) // on regarde si le nom n'existe pas déjà en tant que catégorie ou sous-catégorie
 					{
 					echo "<p>".$langs->trans ("ErrCatAlreadyExists")."</p>";
 					$OK = false;

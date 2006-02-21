@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
- * Copyright (C) 2005 Davoleau Brice    <brice.davoleau@gmail.com>
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
+ * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

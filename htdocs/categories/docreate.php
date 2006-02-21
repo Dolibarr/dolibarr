@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+ * Copyright (C) 2006 Regis Houssin     <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,10 +48,10 @@ $categorie = new Categorie($db);
 $categorie->label       = $_REQUEST["nom"];
 $categorie->description = $_REQUEST["description"];
 
-$cats_meres = isset($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array ();
+$cats_meres = isset($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array();
 
 $res = $categorie->create();
-  
+
   if ($res < 0)
 	{
 	  print "<p>Impossible d'ajouter la catégorie ".$categorie->label.".</p>";
