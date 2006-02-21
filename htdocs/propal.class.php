@@ -154,10 +154,14 @@ class Propal
                 if ($prod->fetch($idproduct) > 0)
                 {
                 	$p_product_desc = $prod->description;
+					$this -> fetch_client();
+					if($this->client->tva_assuj == "0")
+						$txtva ="0";
+					else
+						$txtva=$prod->tva_tx;
 					// multiprix
 					if($conf->global->PRODUIT_MULTIPRICES == 1)
 					{
-						$this -> fetch_client();
 						$price = price2num($prod->multiprices[$this->client->price_level]);
                     	$subprice = price2num($prod->multiprices[$this->client->price_level]);
 					}
@@ -166,7 +170,6 @@ class Propal
 						$price = price2num($prod->price);
                     	$subprice = price2num($prod->price);
 					}
-				   $txtva = $prod->tva_tx;
 				   	/*
                     
 					*/
