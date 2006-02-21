@@ -1026,24 +1026,20 @@ class Facture
             $qty=price2num($qty);
 			if (! $qty) $qty=1;
 			if (! $ventil) $ventil=0;
-
+			$soc = new Societe($this->db);
+			$soc->fetch($this->socidp);
+			if($soc->tva_assuj == "0")
+					$txtva ="0";
+			else
+				$txtva=$prod->tva_tx;
             if ($fk_product && ! $pu)
             {
                 $prod = new Product($this->db, $fk_product);
                 $prod->fetch($fk_product);
                 $product_desc = $prod->description;
-				$soc = new Societe($this->db);
-				$soc->fetch($this->socidp);
-				if($soc->tva_assuj == "0")
-					$txtva ="0";
-				else
-					$txtva=$prod->tva_tx;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
-				{
-					
 					$pu = $prod->multiprices[$soc->price_level];
-				}
 				else
                 	$pu=$prod->price;
             }

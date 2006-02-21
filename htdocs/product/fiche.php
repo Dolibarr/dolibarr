@@ -256,7 +256,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
     $facture->addline($_POST["factureid"],
     addslashes($product->libelle),
     addslashes($product->description),
-    $product->price,
+    "", // volontairement laissé vide pour fonctionnement module multiprix
     $_POST["qty"],
     $product->tva_tx,
     $product->id,
