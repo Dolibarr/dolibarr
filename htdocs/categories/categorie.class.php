@@ -448,12 +448,12 @@ class Categorie
   {
     $sql = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX."categorie";
     $res = $this->db->query ($sql);
-
+	
     if ($res)
-      {
-	$res = $this->db->fetch_array ();
-	return $res[0];
-      }
+     {
+		$res = $this->db->fetch_array ();
+		return $res[0];
+     }
     else
       {
 	dolibarr_print_error ($this->db);

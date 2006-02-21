@@ -67,12 +67,13 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   }
   print'</td></tr>';
   print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-  print '<textarea name="description" rows="6" cols=""40"';
+  print '<textarea name="description" rows="6" cols="50"';
   print '</textarea></td></tr>';
-  print '<tr><td>'.$html->select_nombre_sous_categorie("choix", $nbcats).' ';
-  print $langs->trans("categories");
-  print '</td></tr>';
+  print "<tr><td>";
+  print $langs->trans("categories").'&nbsp;&nbsp;'.$html->select_nombre_sous_categorie($nbcats,"choix");
+  print '</td><td></td></tr>';
 }
+print '</table>';
 /*
 			<td>
 				<input type="submit" value="<?php print $langs->trans ("modify"); ?>" name="ok" id="ok" />
@@ -172,7 +173,6 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 					}
 				}
 */
-print '</td></tr></table>';
 
 $db->close();
 
