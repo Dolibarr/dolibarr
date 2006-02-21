@@ -29,7 +29,7 @@
 
 require "./pre.inc.php";
 
-if (!$user->rights->categorie->creer) accessforbidden();
+if (!$user->rights->categorie->lire) accessforbidden();
 
 if (isset ($_REQUEST['choix']))
 {
@@ -45,50 +45,31 @@ else
 
 llxHeader("","",$langs->trans("Categories"));
 
-print_fiche_titre($langs->trans("CreateCat"));
+/*
+ * Action création du produit
+ */
+if ($_GET["action"] == 'create' && $user->rights->produit->creer)
+{
+	print '<form action="fiche.php" method="post">';
+	print '<input type="hidden" name="nom" value="'.$nom.'">';
+  print '<input type="hidden" name="description" value="'.$description.'">';
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
+  print_fiche_titre($langs->trans("CreateCat"));
 
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+  print '<table class="border" width="100%" class="notopnoleftnoright">';
+  print '<tr>';
+	print '<td>'.$langs->trans("Label").'</td><td><input name="nom" size"25" value="'.$categorie->nom.'">';
+  if ($_error == 1)
+  {
+  	print $lang->trans("ErrCatAlreadyExists");
+  }
+  print'</td></tr>';
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+  print '<textarea name="description" rows="6" cols=""40"';
+  print '</textarea></td></tr>';
+  print '<tr><td>'.$html->select_nombre_sous_categorie("choix", $nbcats);
+  print '</td></tr>';
 
-?>
-<form method="post" action="<?php print $_SERVER['REQUEST_URI']; ?>">
-	<table class="border">
-		<tr>
-			<td><?php print $langs->trans ("Label"); ?>&nbsp;:</td>
-
-			<td><input type='text' size='25' id='nom' name ='nom' value='<?php 
-					print htmlspecialchars (stripslashes ($_REQUEST['nom']), ENT_QUOTES); 
-				?>' />
-		</tr>
-		<tr>
-			<td><?php print $langs->trans ("Description"); ?>&nbsp;:</td>
-			
-			<td><textarea name='description' cols='40' rows='6' id='description'><?php
-					print htmlspecialchars (stripslashes ($_REQUEST['description']), ENT_QUOTES); 
-			?></textarea></td>
-			
-		</tr>
-		<tr>
-			<td><?php print $langs->trans ("In"); ?> <select name="choix">
-					<?php
-					// création d'un objet de type catégorie pour faire des requêtes sur la table
-					$categorie = new Categorie ($db);
-					
-					$nb = $categorie->get_nb_categories();
-					
-					for ($i = 0 ; $i <= $nb ; $i++)
-						{
-						echo "<option value='$i' ";//creation d'une valeur dans la liste
-							
-						if ($_REQUEST['choix'] == $i)
-								echo 'selected="true"'; // permet de rendre le choix toujours selectionne
-						else if (!isset ($_REQUEST['choix']) && $i == $nbcats) // nombre de catégories mères par défaut.
-								echo 'selected="true"';
-
-						echo ">$i</option>";
-						}
-					?>
 				</select> <?php print $langs->trans ("categories"); ?>
 			</td>
 			<td>

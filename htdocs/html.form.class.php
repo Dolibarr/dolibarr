@@ -912,6 +912,34 @@ class Form
         }
     }
 
+    /**
+     *    \brief      Retourne la liste déroulante de création en sous catégories possible
+     *    \param      selected    nombre de sous catégorie pré-sélectionnée
+     */
+    function select_nombre_sous_categorie($selected='', $nbcats=1)
+    {
+        global $conf,$langs;
+        $langs->load("categorie");
+    
+        $categorie = new Categorie ($db);
+        $nb = $categorie->get_nb_categories();
+    
+        for ($i = 0 ; $i <= $nb ; $i++)
+				{
+					  print '<select class="flat" name="choix">';
+            print '<option value="'.$i.'" ';//creation d'une valeur dans la liste
+            if ($selected == $i)
+            {
+            	print 'selected="true"'; // permet de rendre le choix toujours selectionne
+            }
+            else if (!isset($selected) && $i == $nbcats) // nombre de catégories mères par défaut.
+            {
+            	print 'selected="true">';
+            }
+            print '$i</option>';
+            print '</select>';
+        }
+     }
 
     /**
      *    \brief      Retourne la liste déroulante des civilite actives
