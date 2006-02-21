@@ -190,14 +190,9 @@ class Facture
 						$tva_tx=$prod->tva_tx;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
-				{
-					
 					$price = $prod->multiprices[$soc->price_level];
-				}
 				else
-				{
 					$price = $prod->price;
-				}
 
 				$resql = $this->addline(
 					$this->id,
@@ -1030,8 +1025,7 @@ class Facture
 			$soc->fetch($this->socidp);
 			if($soc->tva_assuj == "0")
 					$txtva ="0";
-			else
-				$txtva=$prod->tva_tx;
+			dolibarr_syslog("facture.class.php:: txtva : ".$txtva);
             if ($fk_product && ! $pu)
             {
                 $prod = new Product($this->db, $fk_product);
@@ -1041,7 +1035,11 @@ class Facture
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 					$pu = $prod->multiprices[$soc->price_level];
 				else
+				{
                 	$pu=$prod->price;
+				}
+				if($txtva == "")
+					$txtva=$prod->tva_tx;
             }
 			$price = $pu;
 			$subprice = $pu;
