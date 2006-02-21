@@ -858,10 +858,7 @@ else
 						}
 						print '<textarea name="eldesc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
 						print '<td align="right">';
-						if($soc->tva_assuj == "0")
-							print '<input type="hidden" name="eltva_tx" value="0">0';
-						else
-							print $html->select_tva('eltva_tx',$objp->tva_tx,$mysoc,$soc);
+						print $html->select_tva('eltva_tx',$objp->tva_tx,$mysoc,$soc);
 						print '</td>';
 						print '<td align="right"><input size="5" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
 						print '<td align="right"><input size="2" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
@@ -908,7 +905,7 @@ else
 				print '  <td><textarea cols="50" name="desc" rows="1"></textarea></td>';
 				print '<td align="center">';
 				if($soc->tva_assuj == "0")
-					print '<input type="hidden" name="tva_tx" value="0">0';
+					print '<input type="hidden" name="tva_tx" size="1" value="0">0';
 				else
 					print $html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
