@@ -25,7 +25,7 @@
 /**
         \file       htdocs/product/fournisseurs.php
         \ingroup    product
-        \brief      Page de la fiche produit
+        \brief      Page de l'onglet fournisseur de produits
         \version    $Revision$
 */
 

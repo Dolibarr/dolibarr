@@ -17,7 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
  */
+
+/**
+        \file       htdocs/product/categorie.php
+        \ingroup    product
+        \brief      Page de l'onglet categories de produits
+        \version    $Revision$
+*/
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -127,6 +136,14 @@ if ($_GET["id"] || $_GET["ref"])
           $head[$h][1] = $langs->trans('Statistics');
           $h++;
 	
+        $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+        $head[$h][1] = $langs->trans('Referers');
+        $h++;
+	  
+        $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
+        $head[$h][1] = $langs->trans('Documents');
+        $h++;
+
       $titre=$langs->trans("CardProduct".$product->type);
       dolibarr_fiche_head($head, $hselected, $titre);
 
@@ -196,15 +213,17 @@ if ($_GET["id"] || $_GET["ref"])
   
   print $langs->trans("AddProductToCat")."<br/><br/>";
   print '<table class="border" width="100%">';
-  print "<form method='post' action='".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."'>";
-  print "<tr><td><select name='add_cat'><option value='-1'>".$langs->trans("Choose")."</option>";
+  print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
+  print '<tr><td>';
+  print '<select class="flat" name="add_cat"><option value="-1">'.$langs->trans("Choose")."</option>";
   $cat = new Categorie($db);
   foreach ($cat->get_all_categories() as $categorie)
     {
       print "<option value='".$categorie->id."'>".$categorie->label."</option>\n";
     }
-  print "</select></td><td><input type='submit' value='".$langs->trans("Select")."'></td></tr>";
-  print "</form></table><br/>";
+  print '</select>';
+  print '</td><td><input type="submit" class="button" value="'.$langs->trans("Select").'"></td></tr>';
+  print '</form></table><br/>';
   
 }
 $db->close();
