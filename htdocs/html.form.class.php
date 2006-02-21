@@ -923,7 +923,7 @@ class Form
         
         if ($selected)
         {
-        	$categorie = new Categorie($this->$db);
+        	$categorie = new Categorie($db);
           $nb = $categorie->get_nb_categories();
     
           for ($i = 0 ; $i <= $nb ; $i++)
