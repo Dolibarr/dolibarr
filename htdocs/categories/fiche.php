@@ -48,9 +48,13 @@ $html = new Form($db);
 /*
  * Action création de la catégorie
  */
-if (($_GET["action"] == 'create' && $user->rights->produit->creer) || $_POST["action"] == 'choicenbcats')
+
+if ($user->rights->produit->creer)
 {
+ if ($_GET["action"] == 'create' || $_POST["action"] == 'choicenbcats')
+ {
 	print '<form action="fiche.php" method="post">';
+	print '<input type="hidden" name="action" value="choicenbcats">';
 	print '<input type="hidden" name="nom" value="'.$nom.'">';
   print '<input type="hidden" name="description" value="'.$description.'">';
 
