@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - categories
 Categorie=Category
-Categories=categories
+categories=categories
+TheCategorie=The catégorie
 In=In
 AddIn=Add in
 modify=modify
@@ -28,3 +29,6 @@ ErrForgotCat=You forgot to choose the category
 ErrForgotField=You forgot to inform the fields
 ErrCatAlreadyExists=This name is already used
 AddProductToCat=Add this product to a category?
+ImpossibleAddCat=Impossible to add the category
+ImpossibleAssociateCategory=Impossible to associate the category to
+WasAddedSuccessfully=was added successfully.

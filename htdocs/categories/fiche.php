@@ -41,11 +41,9 @@ else
   $nbcats = 1;
 }
 
-
-
-
 llxHeader("","",$langs->trans("Categories"));
 $html = new Form($db);
+
 
 /*
  * Action création du produit
@@ -69,12 +67,62 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="description" rows="6" cols="50"';
   print '</textarea></td></tr>';
-  print "<tr><td>";
-  print $langs->trans("AddIn").'&nbsp;';
-  print $langs->trans("Categories").'&nbsp;&nbsp;';
-  print $html->select_nombre_sous_categorie($nbcats,"choix");
-  print '</td><td></td></tr>';
+  print '<tr><td>';
+  print $langs->trans("AddIn").'  ';
+  print $html->select_nombre_sous_categorie($nbcats,"choix").'  ';
+  print $langs->trans("categories");
+  print '</td><td>';
+  print '<input type="submit" value="'.$langs->trans("modify").'" name="ok" />';
+  print '</td></tr>';
+  
+  
 }
+
+/*
+ * Affichage page accueil
+ */
+
+if ($_GET["action"] == 'confirmed' && $$user->rights->produit->creer)
+{
+  print_titre($langs->trans("CatCreated"));
+
+  print '<table border="0" width="100%">';
+  print '<tr><td valign="top" width="30%">';
+
+  $categorie = new Categorie($db);
+
+  $categorie->label       = $_REQUEST["nom"];
+  $categorie->description = $_REQUEST["description"];
+
+  $cats_meres = isset($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array();
+
+  $res = $categorie->create();
+
+  if ($res < 0)
+	{
+	  print '<p>'.$langs->trans("ImpossibleAddCat").' '.$categorie->label.'</p>';
+	}
+  else
+	{
+	  print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
+	  
+	  foreach ($cats_meres as $id)
+    {
+      $mere = new Categorie($db, $id);
+	    $res = $mere->add_fille($categorie);
+		 
+		  if ($res < 0)
+      {
+         print '<p>'.$langs->trans("TheCategorie").' '.$mere->label.' ('.$res.').</p>';
+      }
+    }
+	}
+	print '</td></tr></table>';
+}
+
+
+
+
 print '</table>';
 /*
 			<td>
