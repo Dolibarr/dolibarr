@@ -1,7 +1,8 @@
 # Dolibarr language file - fr_FR - categories
 Categorie=Catégorie
-categories=catégorie(s)
+Categories=catégorie(s)
 In=Dans
+AddIn=Ajouter dans
 modify=modifier
 CategoriesArea=Espace catégories
 MainCats=Catégories principales
