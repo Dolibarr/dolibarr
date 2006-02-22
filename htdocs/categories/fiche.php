@@ -62,7 +62,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     	  $res = $categorie->create();
     	  if ($res < 0)
     	  {
-    	  	$_error = 3
+    	  	$_error = 3;
     	  }
     	  else
     	  {
@@ -72,7 +72,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 	           $res = $mere->add_fille($categorie);
              if ($res < 0)
              {
-             	$_error = 2
+             	$_error = 2;
              }
            }
          }
