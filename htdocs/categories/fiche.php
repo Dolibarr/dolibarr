@@ -51,10 +51,11 @@ $html = new Form($db);
 
 if ($user->rights->produit->creer)
 {
- if ($_GET["action"] == 'create' || $_POST["action"] == 'choicenbcats')
+ if ($_GET["action"] == 'create' || $_POST["addcat"] == 'addcat')
  {
 	print '<form action="fiche.php" method="post">';
-	print '<input type="hidden" name="action" value="choicenbcats">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="addcat" value="addcat">';
 	print '<input type="hidden" name="nom" value="'.$nom.'">';
   print '<input type="hidden" name="description" value="'.$description.'">';
 
