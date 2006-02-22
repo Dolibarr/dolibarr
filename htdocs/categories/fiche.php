@@ -53,7 +53,32 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     $categorie->description    = stripslashes($_POST["description"]);
     $cats_meres = isset($_POST['cats_meres']) ? $_POST['cats_meres'] : array();
     
-    $_GET["action"] = 'confirmed';
+    if (!$categorie->label || !$categorie->description)
+    {
+        $_GET["action"] = 'create';
+    }
+    else
+    {
+    	  $res = $categorie->create();
+    	  if ($res < 0)
+    	  {
+    	  	$_error = 3
+    	  }
+    	  else
+    	  {
+    	  	 foreach ($cats_meres as $id)
+           {
+             $mere = new Categorie($db, $id);
+	           $res = $mere->add_fille($categorie);
+             if ($res < 0)
+             {
+             	$_error = 2
+             }
+           }
+         }
+        $_GET["action"] = 'confirmed';
+        $_POST["addcat"] = '';
+    }
 }
 
 
@@ -75,15 +100,15 @@ if ($user->rights->produit->creer)
 
   print '<table class="border" width="100%" class="notopnoleftnoright">';
   print '<tr>';
-	print '<td>'.$langs->trans("Label").'</td><td><input name="nom" size"25" value="'.$categorie->nom.'">';
+	print '<td>'.$langs->trans("Label").'</td><td><input name="nom" size"25" value="'.$categorie->label.'">';
   if ($_error == 1)
   {
   	print $lang->trans("ErrCatAlreadyExists");
   }
   print'</td></tr>';
   print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-  print '<textarea name="description" rows="6" cols="50"';
-  print '</textarea></td></tr>';
+  print '<textarea name="description" rows="6" cols="50">';
+  print $categorie->description.'</textarea></td></tr>';
   print '<tr><td>';
   print $langs->trans("AddIn").'  ';
   print $html->select_nombre_sous_categorie($nbcats,"choix").'  ';
@@ -110,16 +135,16 @@ if ($user->rights->produit->creer)
   print '<table border="0" width="100%">';
   print '<tr><td valign="top" width="30%">';
 
-  $categorie = new Categorie($db);
+  //$categorie = new Categorie($db);
 
-  $categorie->label       = $_REQUEST["nom"];
-  $categorie->description = $_REQUEST["description"];
+  //$categorie->label       = $_REQUEST["nom"];
+  //$categorie->description = $_REQUEST["description"];
 
-  $cats_meres = isset($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array();
+  //$cats_meres = isset($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array();
 
-  $res = $categorie->create();
+  //$res = $categorie->create();
 
-  if ($res < 0)
+  if ($_error == 3)
 	{
 	  print '<p>'.$langs->trans("ImpossibleAddCat").' '.$categorie->label.'</p>';
 	}
@@ -127,16 +152,16 @@ if ($user->rights->produit->creer)
 	{
 	  print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
 	  
-	  foreach ($cats_meres as $id)
-    {
-      $mere = new Categorie($db, $id);
-	    $res = $mere->add_fille($categorie);
+	  //foreach ($cats_meres as $id)
+    //{
+      //$mere = new Categorie($db, $id);
+	    //$res = $mere->add_fille($categorie);
 		 
-		  if ($res < 0)
+		  if ($_error == 2)
       {
          print '<p>'.$langs->trans("TheCategorie").' '.$mere->label.' ('.$res.').</p>';
       }
-    }
+    //}
 	}
 	print '</td></tr></table>';
  }
