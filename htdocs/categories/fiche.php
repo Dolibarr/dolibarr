@@ -46,7 +46,7 @@ $html = new Form($db);
 
 
 /*
- * Action création du produit
+ * Action création de la catégorie
  */
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
@@ -74,12 +74,16 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '</td><td>';
   print '<input type="submit" value="'.$langs->trans("modify").'" name="ok" />';
   print '</td></tr>';
+  print $html->select_all_categories($nbcats);
+  print '<tr><td colspan="2">';
+  print '<input type="submit" value="'.$langs->trans("CreateThisCat").'" name="creation"/>';
+  print '</td></tr></form>';
   
   
 }
 
 /*
- * Affichage page accueil
+ * Action confirmation de création de la catégorie
  */
 
 if ($_GET["action"] == 'confirmed' && $$user->rights->produit->creer)
@@ -125,9 +129,7 @@ if ($_GET["action"] == 'confirmed' && $$user->rights->produit->creer)
 
 print '</table>';
 /*
-			<td>
-				<input type="submit" value="<?php print $langs->trans ("modify"); ?>" name="ok" id="ok" />
-			</td>
+
 			<?php
 				$all_categories = $categorie->get_all_categories();//on récupère toutes les catégories et leurs attributs
 
