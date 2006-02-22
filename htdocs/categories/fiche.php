@@ -72,11 +72,16 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print $html->select_nombre_sous_categorie($nbcats,"choix").'  ';
   print $langs->trans("categories");
   print '</td><td>';
-  print '<input type="submit" value="'.$langs->trans("modify").'" name="ok" />';
+  print '<input type="submit" class="button" value="'.$langs->trans("modify").'" name="choicenbcats" id="choicenbcats"/>';
   print '</td></tr>';
-  print $html->select_all_categories($nbcats);
+  
+  if ($_GET["action"] == 'create' || $_POST["action"] == 'choicenbcats')
+  {
+  	print $html->select_all_categories($nbcats);
+  }
+  
   print '<tr><td colspan="2">';
-  print '<input type="submit" value="'.$langs->trans("CreateThisCat").'" name="creation"/>';
+  print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';
   print '</td></tr></form>';
   
   
