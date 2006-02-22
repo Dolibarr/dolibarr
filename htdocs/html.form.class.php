@@ -954,23 +954,26 @@ class Form
         global $langs;
         $langs->load("categorie");
         
-        $all_categories = $categorie->get_all_categories();//on récupère toutes les catégories et leurs attributs
+        if ($nbcats)
+        {
+        	$categorie = new Categorie($this -> db);
+          $all_categories = $categorie->get_all_categories();//on récupère toutes les catégories et leurs attributs
 
-				for ($i = 0; $i < $nbcats ; $i++)
-				{
-					print '<tr><td>'.$langs->trans ("Categorie").' '.($i+1).'</td><td><select name="catsMeres['.$i.']">'; //creation des categories meres
-					
-					print '<option value="-1" id="choix">'.$langs->trans("Choose").'</option>\n';
+				  for ($i = 0; $i < $nbcats ; $i++)
+				  {
+					  print '<tr><td>'.$langs->trans ("Categorie").' '.($i+1).'</td><td><select name="catsMeres['.$i.']">'; //creation des categories meres
+					  print '<option value="-1" id="choix">'.$langs->trans("Choose").'</option>\n';
 
-					foreach ($all_categories as $id => $cat)
+					  foreach ($all_categories as $id => $cat)
 						{ //ajout des categories dans la liste
-						print '<option value="'.$id.'"';
+						  print '<option value="'.$id.'"';
 						
-						if ($_REQUEST['catsMeres'][$i] == $id)
-							print ' selected="true"';
-							print '>'.$cat->label.'</option>\n';
+						  if ($_REQUEST['catsMeres'][$i] == $id)
+							  print ' selected="true"';
+							  print '>'.$cat->label.'</option>\n';
 						}
 					print '</select></td></tr>';
+				  }
 				}
 		}
         
