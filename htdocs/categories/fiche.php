@@ -70,9 +70,9 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<textarea name="description" rows="6" cols="50"';
   print '</textarea></td></tr>';
   print "<tr><td>";
-  print $langs->trans("AddIn").'  ';
-  print $html->select_nombre_sous_categorie($nbcats,"choix").'  ';
-  print $langs->trans("Categories");
+  print $langs->trans("AddIn").'&nbsp;';
+  print $langs->trans("Categories").'&nbsp;&nbsp;';
+  print $html->select_nombre_sous_categorie($nbcats,"choix");
   print '</td><td></td></tr>';
 }
 print '</table>';
