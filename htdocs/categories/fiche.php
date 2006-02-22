@@ -48,7 +48,7 @@ $html = new Form($db);
 /*
  * Action création de la catégorie
  */
-if ($_GET["action"] == 'create' && $user->rights->produit->creer)
+if (($_GET["action"] == 'create' && $user->rights->produit->creer) || $_POST["action"] == 'choicenbcats')
 {
 	print '<form action="fiche.php" method="post">';
 	print '<input type="hidden" name="nom" value="'.$nom.'">';
@@ -74,12 +74,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '</td><td>';
   print '<input type="submit" class="button" value="'.$langs->trans("modify").'" name="choicenbcats" id="choicenbcats"/>';
   print '</td></tr>';
-  
-  if ($_GET["action"] == 'create' || $_POST["action"] == 'choicenbcats')
-  {
-  	print $html->select_all_categories($nbcats);
-  }
-  
+ 	print $html->select_all_categories($nbcats);  
   print '<tr><td colspan="2">';
   print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';
   print '</td></tr></form>';
