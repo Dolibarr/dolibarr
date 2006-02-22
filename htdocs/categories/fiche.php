@@ -44,9 +44,21 @@ else
 llxHeader("","",$langs->trans("Categories"));
 $html = new Form($db);
 
+// Action ajout d'un produit ou service
+if ($_POST["action"] == 'add' && $user->rights->produit->creer)
+{
+    $categorie = new Categorie($db);
+
+    $categorie->label          = stripslashes($_POST["nom"]);
+    $categorie->description    = stripslashes($_POST["description"]);
+    $cats_meres = isset($_POST['cats_meres']) ? $_POST['cats_meres'] : array();
+    
+    $_GET["action"] = 'confirmed';
+}
+
 
 /*
- * Action création de la catégorie
+ * Fiche en mode création
  */
 
 if ($user->rights->produit->creer)
@@ -85,14 +97,14 @@ if ($user->rights->produit->creer)
   print '</td></tr></form>';
   
  }
-}
+
 
 /*
  * Action confirmation de création de la catégorie
  */
 
-if ($_GET["action"] == 'confirmed' && $$user->rights->produit->creer)
-{
+ if ($_GET["action"] == 'confirmed')
+ {
   print_titre($langs->trans("CatCreated"));
 
   print '<table border="0" width="100%">';
@@ -127,8 +139,8 @@ if ($_GET["action"] == 'confirmed' && $$user->rights->produit->creer)
     }
 	}
 	print '</td></tr></table>';
+ }
 }
-
 
 
 
