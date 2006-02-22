@@ -83,7 +83,7 @@ if ($user->rights->produit->creer)
   print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';
   print '</td></tr></form>';
   
-  
+ }
 }
 
 /*
