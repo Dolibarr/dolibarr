@@ -916,31 +916,31 @@ class Form
      *    \brief      Retourne la liste déroulante de création en sous catégories possible
      *    \param      selected    nombre de sous catégorie pré-sélectionnée
      */
-    function select_nombre_sous_categorie($selected='', $nbcats=1)
+    function select_nombre_sous_categorie($selected='',$htmlname)
     {
         global $langs;
         $langs->load("categorie");
         
         if ($selected)
         {
-        	$categorie = new Categorie($db);
+        	$categorie = new Categorie($this -> db);
           $nb = $categorie->get_nb_categories();
-    
-          for ($i = 0 ; $i <= $nb ; $i++)
-				  {
-					  print '<select class="flat" name="choix">';
+    	print '<select class="flat" name="'.$htmlname.'">';
+        for ($i = 0 ; $i <= $nb ; $i++)
+		{
+					 
             print '<option value="'.$i.'" ';//creation d'une valeur dans la liste
             if ($selected == $i)
-            {
-            	print 'selected="true"'; // permet de rendre le choix toujours selectionne
-            }
+            	print 'selected="true">'; // permet de rendre le choix toujours selectionne
             else if (!isset($selected) && $i == $nbcats) // nombre de catégories mères par défaut.
-            {
             	print 'selected="true">';
-            }
-            print '$i</option>';
-            print '</select>';
+			else
+			 	print '>';
+				
+            print $i.'</option>';
+            
            }
+		   print '</select>';
          }
      }
 
