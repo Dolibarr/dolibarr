@@ -51,7 +51,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 
     $categorie->label          = stripslashes($_POST["nom"]);
     $categorie->description    = stripslashes($_POST["description"]);
-    $cats_meres = isset($_POST['cats_meres']) ? $_POST['cats_meres'] : array();
+    $cats_meres = isset($_POST['catsMeres']) ? $_POST['catsMeres'] : array();
     
     if (!$categorie->label || !$categorie->description)
     {
@@ -96,9 +96,9 @@ if ($user->rights->produit->creer)
 	print '<input type="hidden" name="nom" value="'.$nom.'">';
   print '<input type="hidden" name="description" value="'.$description.'">';
   
-  foreach ($cats_meres as $id => $cat_mere)
+  foreach ($catsMeres as $id => $cat_mere)
   {
-    print '<input type="hidden" name="cats_meres[$id]" value="'.$cat_mere.'">';
+    print '<input type="hidden" name="catsMeres[$id]" value="'.$cat_mere.'">';
 	}
 
   print_fiche_titre($langs->trans("CreateCat"));
