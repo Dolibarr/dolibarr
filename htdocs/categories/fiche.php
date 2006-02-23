@@ -54,18 +54,25 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     $categorie->label          = stripslashes($_POST["nom"]);
     $categorie->description    = stripslashes($_POST["description"]);
     $cats_meres = isset($_POST['catsMeres']) ? $_POST['catsMeres'] : array();
+    $ok = true;
     
        if (!$categorie->label || !$categorie->description)
        {
           $_GET["action"] = 'create';
+          $ok = false;
        }
        
-       if (sizeof($cats_meres) > 1 && sizeof(array_unique($cats_meres)) != sizeof($cats_meres))
-       { // alors il y a des valeurs en double
-          print '<p>'.$langs->trans("ErrSameCatSelected").'</p>';
-          $_GET["action"] = 'create';
-       }
-       else
+       if ($ok)
+       {
+          if (sizeof($cats_meres) > 1 && sizeof(array_unique($cats_meres)) != sizeof($cats_meres))
+          { // alors il y a des valeurs en double
+             print '<p>'.$langs->trans("ErrSameCatSelected").'</p>';
+             $_GET["action"] = 'create';
+             $ok = false;
+          }
+        }
+       
+       if ($ok)
        {
     	    $res = $categorie->create();
     	    if ($res < 0)
@@ -129,7 +136,7 @@ if ($user->rights->produit->creer)
   print $categorie->description.'</textarea></td></tr>';
   print '<tr><td>';
   print $langs->trans("AddIn").'  ';
-  print $html->select_nombre_sous_categorie($nbcats,"cats_meres").'  ';
+  print $html->select_nombre_sous_categorie($nbcats,"choix").'  ';
   print $langs->trans("categories");
   print '</td><td>';
   print '<input type="submit" class="button" value="'.$langs->trans("modify").'" name="choicenbcats" id="choicenbcats"/>';
