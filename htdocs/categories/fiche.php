@@ -95,6 +95,11 @@ if ($user->rights->produit->creer)
 	print '<input type="hidden" name="addcat" value="addcat">';
 	print '<input type="hidden" name="nom" value="'.$nom.'">';
   print '<input type="hidden" name="description" value="'.$description.'">';
+  
+  foreach ($cats_meres as $id => $cat_mere)
+  {
+    print '<input type="hidden" name="cats_meres[$id]" value="'.$cat_mere.'">';
+	}
 
   print_fiche_titre($langs->trans("CreateCat"));
 
