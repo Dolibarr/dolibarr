@@ -55,38 +55,43 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     $categorie->description    = stripslashes($_POST["description"]);
     $cats_meres = isset($_POST['catsMeres']) ? $_POST['catsMeres'] : array();
     
-    if (sizeof ($cats_meres) > 1 && sizeof (array_unique ($cats_meres)) != sizeof ($cats_meres))
-    { // alors il y a des valeurs en double
-       print '<p>'.$langs->trans("ErrSameCatSelected").'</p>';
-       $_GET["action"] = 'create';
-    }
+       if (!$categorie->label || !$categorie->description)
+       {
+          $_GET["action"] = 'create';
+       }
+       
+       if (sizeof($cats_meres) > 1 && sizeof(array_unique($cats_meres)) != sizeof($cats_meres))
+       { // alors il y a des valeurs en double
+          print '<p>'.$langs->trans("ErrSameCatSelected").'</p>';
+          $_GET["action"] = 'create';
+       }
+       else
+       {
+    	    $res = $categorie->create();
+    	    if ($res < 0)
+    	    {
+    	  	  $_error = 3;
+    	    }
+    	    else
+    	    {
+    	  	  foreach ($cats_meres as $id)
+            {
+               $mere = new Categorie($db, $id);
+	             $res = $mere->add_fille($categorie);
+               if ($res < 0)
+               {
+             	    $_error = 2;
+               }
+               else
+               {
+               	$_GET["action"] = 'confirmed';
+               	$_POST["addcat"] = '';
+               }
+            }
+          }
+        }
+
     
-    else if (!$categorie->label || !$categorie->description)
-    {
-        $_GET["action"] = 'create';
-    }
-    else
-    {
-    	  $res = $categorie->create();
-    	  if ($res < 0)
-    	  {
-    	  	$_error = 3;
-    	  }
-    	  else
-    	  {
-    	  	 foreach ($cats_meres as $id)
-           {
-             $mere = new Categorie($db, $id);
-	           $res = $mere->add_fille($categorie);
-             if ($res < 0)
-             {
-             	$_error = 2;
-             }
-           }
-         }
-        $_GET["action"] = 'confirmed';
-        $_POST["addcat"] = '';
-    }
 }
 
 
