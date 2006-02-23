@@ -44,6 +44,8 @@ else
 llxHeader("","",$langs->trans("Categories"));
 $html = new Form($db);
 
+
+
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
@@ -53,7 +55,13 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     $categorie->description    = stripslashes($_POST["description"]);
     $cats_meres = isset($_POST['catsMeres']) ? $_POST['catsMeres'] : array();
     
-    if (!$categorie->label || !$categorie->description)
+    if (sizeof ($cats_meres) > 1 && sizeof (array_unique ($cats_meres)) != sizeof ($cats_meres))
+    { // alors il y a des valeurs en double
+       print '<p>'.$langs->trans("ErrSameCatSelected").'</p>';
+       $_GET["action"] = 'create';
+    }
+    
+    else if (!$categorie->label || !$categorie->description)
     {
         $_GET["action"] = 'create';
     }
@@ -161,32 +169,6 @@ if ($user->rights->produit->creer)
 print '</table>';
 /*
 
-			<?php
-				$all_categories = $categorie->get_all_categories();//on récupère toutes les catégories et leurs attributs
-
-				for ($i = 0; $i < $nbcats ; $i++)
-					{
-					echo "<tr><td>".$langs->trans ("Categorie")." ".($i+1)."</td><td><select name='catsMeres[".$i."]'>"; //creation des categories meres
-					
-					echo "<option value='-1' id='choix'>".$langs->trans ("Choose")."</option>\n";
-
-					foreach ($all_categories as $id => $cat)
-						{ //ajout des categories dans la liste
-						echo "<option value='$id' id='$id'";
-						
-						if ($_REQUEST['catsMeres'][$i] == $id)
-							echo ' selected="true"';
-						
-						echo ">".$cat->label."</option>\n";
-						}
-				
-					echo "</select></td></tr>";
-					}
-				?>
-		<tr>
-			<td colspan="2"><input type='submit' value='<?php print $langs->trans ("CreateThisCat"); ?>' id="creation" name="creation"/></td>
-		</tr>
-		</form>
 				
 			<?php
 			if (isset ($_REQUEST['creation']))
