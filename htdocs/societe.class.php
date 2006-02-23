@@ -269,7 +269,7 @@ class Societe {
         $this->capital=trim($this->capital);
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
-
+		$this->tva_assuj=trim($this->tva_assuj);
         $result = $this->verify();
 
         if ($result >= 0)
@@ -326,6 +326,7 @@ class Societe {
         
             $sql .= ",client = " . $this->client;
             $sql .= ",fournisseur = " . $this->fournisseur;
+			$sql .= ",tva_assuj = " . $this->tva_assuj;
         
             if ($this->creation_bit || $this->codeclient_modifiable)
             {

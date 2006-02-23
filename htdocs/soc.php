@@ -58,6 +58,12 @@ $soc = new Societe($db);
 /*
  * Actions
  */
+// assujétissement à la TVA
+if ($_POST["action"] == 'setassujtva')
+{
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socid."'";
+    $result = $db->query($sql);
+}
 if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 {
     $soc->nom                   = $_POST["nom"];
@@ -86,6 +92,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $soc->typent_id             = $_POST["typent_id"];
     $soc->client                = $_POST["client"];
     $soc->fournisseur           = $_POST["fournisseur"];
+	$soc->tva_assuj = $_POST["assujtva_value"];
     
     if ($_POST["action"] == 'update')
     {
@@ -188,6 +195,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $soc->effectif_id=$_POST["effectif_id"];
             $soc->tva_intra_code=$_POST["tva_intra_code"];
             $soc->tva_intra_num=$_POST["tva_intra_num"];
+			$soc->tva_assuj = $_POST["assujtva_value"];
         }
 
         // On positionne pays_id, pays_code et libelle du pays choisi
@@ -339,6 +347,16 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
         print '  '.$langs->trans("VATIntraCheckableOnEUSite");
         print '</td></tr>';
+		// assuj TVA
+		if($conf->facture->enabled)
+		{
+			$html = new Form($db);
+			print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+			$html->select_assujetti_tva("1",'assujtva_value');
+			print '</td></tr>'."\n";
+		}
+		
+		
 
         print '<tr><td colspan="4" align="center">';
         print '<input type="submit" class="button" value="'.$langs->trans('AddCompany').'"></td></tr>'."\n";
@@ -389,6 +407,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $soc->effectif_id=$_POST["effectif_id"];
             $soc->tva_intra_code=$_POST["tva_intra_code"];
             $soc->tva_intra_num=$_POST["tva_intra_num"];
+			$soc->tva_assuj = $_POST["assujtva_value"];
 
             // On positionne pays_id, pays_code et libelle du pays choisi
             if ($soc->pays_id)
@@ -547,7 +566,13 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans("Staff").'</td><td>';
         $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
         print '</td></tr>';
-
+		// assuj TVA
+		if($conf->facture->enabled)
+		{
+			print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+			$form->select_assujetti_tva($soc->tva_assuj,'assujtva_value');
+			print '</td></tr>'."\n";
+		}
         print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
         print '</table>';
@@ -818,7 +843,31 @@ else
         dolibarr_print_error($db);
     }
     print '</td></tr>';
-
+	// assuj TVA
+	if($conf->facture->enabled)
+	{
+			$html = new Form($db);
+			print '<tr><td>';
+			print '<table width="100%" class="nobordernopadding"><tr><td>';
+			print $langs->trans('VATIsUsed');
+			print '<td><td align="right">';
+			if ($user->rights->societe->creer && $_GET['action'] != 'editassujtva')
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=editassujtva&amp;socid='.$soc->id.'">'.img_edit($langs->trans('SetMode')).'</a>';
+			else
+				print '&nbsp;';
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td colspan="3">';
+			if($_GET['action'] == 'editassujtva')
+				print $html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$soc->id,$soc->tva_assuj,'assujtva_value');
+			else if($soc->tva_assuj == 1)
+				print 'oui';
+			else
+				print 'non';
+			print '';
+			print '</td></tr>';
+		
+	}
 
     print '</table>';
     print "</div>\n";
@@ -860,4 +909,3 @@ $db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>
-
