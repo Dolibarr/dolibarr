@@ -749,7 +749,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                     print "<tr $bc[$var]>";
                     print "<td nowrap><a href=\"../comm/propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
                     print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
-                    print "<td>". strftime("%d %b",$objp->dp)."</td>\n";
+                    print "<td nowrap=\"nowrap\">".dolibarr_print_date($objp->dp,"%d %b")."</td>\n";
                     print '<input type="hidden" name="action" value="addinpropal">';
                     print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
                     print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
@@ -780,12 +780,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         {
             $var=false;
             print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-            print '<table class="noborder" width="100%">'.$otherprop;
+            print '<table class="noborder" width="100%">';
             print '<input type="hidden" name="action" value="addinpropal">';
             print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("OtherPropals").'</td><td>';
             $html->select_array("propalid", $otherprop);
             print '</td></tr>';
-            print '<tr '.$bc[$var].'><td>'. strftime("%d %b",$objp->dp)."</td><td nowrap>\n";
+            print '<tr '.$bc[$var].'><td nowrap="nowrap" colspan="2">'.$langs->trans("Qty");
             print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
             print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
             print '</td><td align="right">';
@@ -828,19 +828,19 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         if ($result)
         {
             $num = $db->num_rows($result);
+            $var=true;
+            print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+            print '<table class="noborder" width="100%">';
             if ($num) {
                 $i = 0;
-                print '<table class="noborder" width="100%">';
-                $var=true;
                 while ($i < $num)
                 {
                     $objc = $db->fetch_object($result);
                     $var=!$var;
-                    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
                     print "<td nowrap><a href=\"../commande/fiche.php?id=$objc->commandeid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
                     print "<td><a href=\"../comm/fiche.php?socid=$objc->idp\">".dolibarr_trunc($objc->nom,18)."</a></td>\n";
-                    print "<td>". strftime("%d %b",$objc->dc)."</td>\n";
+                    print "<td nowrap=\"nowrap\">".dolibarr_print_date($objc->dc,"%d %b")."</td>\n";
                     print '<input type="hidden" name="action" value="addincommande">';
                     print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
                     print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
@@ -850,14 +850,16 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
-                    print '</form>';
                     $i++;
                 }
-                print "</table>";
             }
             else {
+                print "<tr $bc[$var]><td>";
                 print $langs->trans("NoOpenedOrders");
+				print "</td></tr>";
             }
+            print "</table>";
+            print '</form>';
             $db->free($result);
         }
 
@@ -871,12 +873,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         {
             $var=false;
             print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-            print '<table class="noborder" width="100%">'.$othercom;
+            print '<table class="noborder" width="100%">';
             print '<input type="hidden" name="action" value="addincommande">';
             print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("OtherOrders").'</td><td>';
             $html->select_array("commandeid", $othercom);
             print '</td></tr>';
-            print '<tr '.$bc[$var].'><td>'. strftime("%d %b",$objc->dc)."</td><td nowrap>\n";
+            print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("Qty");
             print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
             print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
             print '</td><td align="right">';
@@ -915,20 +917,20 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         if ($result)
         {
             $num = $db->num_rows($result);
+            $var=true;
             if ($num) {
                 $i = 0;
                 print '<table class="noborder" width="100%">';
-                $var=true;
+                print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
     
                     $var=!$var;
-                    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
                     print "<td nowrap><a href=\"../compta/facture.php?facid=$objp->factureid\">".img_object($langs->trans("ShowBills"),"bill")." ".$objp->facnumber."</a></td>\n";
                     print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
-                    print "<td>". strftime("%d %b",$objp->df)."</td>\n";
+                    print "<td nowrap=\"nowrap\">".dolibarr_print_date($objp->df,"%d %b")."</td>\n";
                     print '<input type="hidden" name="action" value="addinfacture">';
                     print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
                     print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
@@ -937,14 +939,16 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
-                    print '</form>';
                     $i++;
                 }
-                print "</table>";
             }
             else {
+                print "<tr $bc[$var]><td>";
                 print $langs->trans("NoDraftBills");   
+                print '</td></tr>';
             }
+            print "</table>";
+            print '</form>';
             $db->free($result);
         }
         else
@@ -966,20 +970,20 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         if ($result)
         {
             $num = $db->num_rows($result);
+            $var=true;
+            print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+            print '<table class="noborder" width="100%">';
             if ($num) {
                 $i = 0;
-                print '<table class="noborder" width="100%">';
-                $var=true;
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
     
                     $var=!$var;
-                    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
                     print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></td>\n";
                     print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
-                    print "<td>". strftime("%d %b",$objp->df)."</td>\n";
+                    print "<td colspan=\"2\">".$langs->trans("Qty");
                     print '<input type="hidden" name="action" value="addinfacture">';
                     print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
                     print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
@@ -988,14 +992,16 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
-                    print '</form>';
                     $i++;
                 }
-                print "</table>";
             }
             else {
+                print "<tr $bc[$var]><td>";
                 print $langs->trans("NoOtherDraftBills");
+                print '</td></tr>';
             }
+            print "</table>";
+            print '</form>';
             $db->free($result);
         }
         else
