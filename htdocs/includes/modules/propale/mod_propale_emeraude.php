@@ -90,7 +90,7 @@ class mod_propale_emeraude extends ModeleNumRefPropales
         	$y = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
 		else
 			$y = strftime("%y",time());
-			$num = $num+1    
+			$num = $num + 1;   
         return  "PR" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
     }
     
