@@ -44,7 +44,7 @@ class mod_propale_diamant extends ModeleNumRefPropales
      */
     function info()
     {
-    $texte = "Renvoie le numéro sous la forme numérique PRYYNNNN où YY représente l'année et NNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
+    $texte = "Renvoie le numéro sous la forme numérique PRYYNNNNN où YY représente l'année et NNNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
     $texte.= "Si la constante PROPALE_DIAMANT_DELTA est définie, un offset est appliqué sur le compteur";
     
     if (defined("PROPALE_DIAMANT_DELTA"))
@@ -69,11 +69,11 @@ class mod_propale_diamant extends ModeleNumRefPropales
         if (defined("PROPALE_DIAMANT_DELTA"))
         {
           $num = sprintf("%02d",PROPALE_DIAMANT_DELTA);
-          return "PR".$y.substr("000".$num, strlen("000".$num)-4,4);
+          return "PR".$y.substr("0000".$num, strlen("0000".$num)-5,5);
         }
         else 
         {
-            return "PR".$y."0001";
+            return "PR".$y."00001";
         }            
     }
 
@@ -103,7 +103,7 @@ class mod_propale_diamant extends ModeleNumRefPropales
     
         $y = strftime("%y",time());
     
-        return  "PR" .$y. substr("000".$num, strlen("000".$num)-4,4);
+        return  "PR" .$y. substr("0000".$num, strlen("0000".$num)-5,5);
     }
     
     

@@ -53,7 +53,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
    */
   function info()
   {
-    $texte = "Renvoie le numéro sous la forme numérique CYYNNNN, où YY représente l'année et NNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
+    $texte = "Renvoie le numéro sous la forme numérique CYYNNNNN, où YY représente l'année et NNNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
     $texte.= "Si la constante COMMANDE_DIAMANT_DELTA est définie, un offset est appliqué sur le compteur";
     
     if (defined("COMMANDE_DIAMANT_DELTA"))
@@ -78,11 +78,11 @@ class mod_commande_diamant extends ModeleNumRefCommandes
     	if (defined("COMMANDE_DIAMANT_DELTA"))
         {
         	$num = sprintf("%02d",COMMANDE_DIAMANT_DELTA);
-          return "C".$y.substr("000".$num, strlen("000".$num)-4,4);
+          return "C".$y.substr("0000".$num, strlen("0000".$num)-5,5);
         }
         else 
         {
-            return "C".$y."0001";
+            return "C".$y."00001";
         }            
     }
     
@@ -115,7 +115,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
     
     $y = strftime("%y",time());
 
-    return 'C'.$y.substr("000".$num, strlen("000".$num)-4,4);
+    return 'C'.$y.substr("0000".$num, strlen("0000".$num)-5,5);
   }
 }
 ?>

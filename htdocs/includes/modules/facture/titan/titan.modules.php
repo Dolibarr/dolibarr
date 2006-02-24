@@ -44,10 +44,10 @@ class mod_facture_titan extends ModeleNumRefFactures
      */
 function info()
     {
-      $texte = "Renvoie le numéro sous la forme FAYYNNNN où YY est l'année et NNNN le numéro d'incrément qui commence à 1.<br>\n";
+      $texte = "Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.<br>\n";
       $texte.= "L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.<br>\n";
       $texte.= "Définir la variable FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.<br>\n";
-      $texte.= "Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA070001.<br>\n";
+      $texte.= "Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700001.<br>\n";
       
       if (defined("FISCAL_MONTH_START"))
       {
@@ -65,7 +65,7 @@ function info()
      */
     function getExample()
     {
-        return "FA060001";           
+        return "FA0600001";           
     }
 
     /**     \brief      Renvoie la référence de facture suivante non utilisée
@@ -91,7 +91,7 @@ function info()
         $y = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
 		else
       	$y = strftime("%y",time());
-      return  "FA" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
+      return  "FA" . "$y" . substr("0000".$num, strlen("0000".$num)-5,5);
     
     }
     
