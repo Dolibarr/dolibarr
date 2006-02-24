@@ -479,10 +479,10 @@ class Contact
     
                 $this->fullname       = $this->firstname . ' ' . $this->name;
     
-                $this->phone_pro      = dolibarr_print_phone($obj->phone);
-                $this->fax            = dolibarr_print_phone($obj->fax);
-                $this->phone_perso    = dolibarr_print_phone($obj->phone_perso);
-                $this->phone_mobile   = dolibarr_print_phone($obj->phone_mobile);
+                $this->phone_pro      = $obj->phone;
+                $this->fax            = $obj->fax;
+                $this->phone_perso    = $obj->phone_perso;
+                $this->phone_mobile   = $obj->phone_mobile;
     
                 $this->code           = $obj->code;
                 $this->email          = $obj->email;
@@ -730,7 +730,7 @@ class Contact
     {
         $sql = "SELECT count(mc.email) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-        $sql.= " WHERE mc.email = '".$this->email."'";
+        $sql.= " WHERE mc.email = '".addslashes($this->email)."'";
         $sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoyé, 1 envoyé avec succès
         $resql=$this->db->query($sql);
         if ($resql)
