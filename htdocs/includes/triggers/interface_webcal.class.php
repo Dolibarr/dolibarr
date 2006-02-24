@@ -151,7 +151,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->trans("NewCompanyToDolibarr",$object->nom);
             $this->desc=$langs->trans("NewCompanyToDolibarr",$object->nom);
-            $this->desc.="\n".$langs->trans("Prefix").': '.$object->prefix;
+            if ($object->prefix) $this->desc.=" (".$object->prefix.")";
             //$this->desc.="\n".$langs->trans("Customer").': '.yn($object->client);
             //$this->desc.="\n".$langs->trans("Supplier").': '.yn($object->fournisseur);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
@@ -192,6 +192,56 @@ class InterfaceWebCal
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
 
+        if ($action == 'PROPAL_CREATE')
+        {
+			// Pas interessant
+		}
+        if ($action == 'PROPAL_MODIFY')
+        {
+			// Etat brouillon pas interessant
+		}
+        if ($action == 'PROPAL_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("PropalValidatedInDolibarr",$object->ref);
+            $this->desc=$langs->trans("PropalValidatedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
+        if ($action == 'PROPAL_CLOSE_SIGNED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("PropalClosedSignedInDolibarr",$object->ref);
+            $this->desc=$langs->trans("PropalClosedSignedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
+        if ($action == 'PROPAL_CLOSE_REFUSED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("PropalClosedRefusedInDolibarr",$object->ref);
+            $this->desc=$langs->trans("PropalClosedRefusedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
+        
+        if ($action == 'BILL_CREATE')
+        {
+			// Etat brouillon pas interessant
+		}
+        if ($action == 'BILL_MODIFY')
+        {
+			// Pas interessant
+		}
         if ($action == 'BILL_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);

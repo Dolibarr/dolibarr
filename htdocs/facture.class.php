@@ -843,7 +843,7 @@ class Facture
 			$action_notify = 2; // ne pas modifier cette valeur
 			if ($force_number)
 			{
-				$numfa=$force_number;
+				$numfa = $force_number;
 			}
 			else
 			{
@@ -941,6 +941,8 @@ class Facture
             {
                 $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
+                $this->ref = $numfa;
+                
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
