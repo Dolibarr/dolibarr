@@ -108,7 +108,8 @@ if ($resql)
     $i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datea","&status=$status",'','colspan="4"',$sortfield);
+//    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datea","&status=$status",'','colspan="4"',$sortfield);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datea","&status=$status",'','',$sortfield);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent","&status=$status","","",$sortfield);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode","&status=$status","","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","&status=$status","","",$sortfield);
@@ -125,28 +126,38 @@ if ($resql)
 
         print "<tr $bc[$var]>";
 
+		print '<td align="right">';
         if ($oldyear == strftime("%Y",$obj->da) )
         {
-            print '<td>&nbsp;</td>';
         }
         else
         {
-            print "<td width=\"30\">" .strftime("%Y",$obj->da)."</td>\n";
+            print strftime("%Y",$obj->da)."-";
             $oldyear = strftime("%Y",$obj->da);
         }
 
-        if ($oldmonth == strftime("%Y%b",$obj->da) )
+        if ($oldmonth == strftime("%Y%m",$obj->da) )
         {
-            print '<td width=\"20\">&nbsp;</td>';
         }
         else
         {
-            print "<td width=\"20\">" .strftime("%b",$obj->da)."</td>\n";
-            $oldmonth = strftime("%Y%b",$obj->da);
+            print strftime("%m",$obj->da)."-";
+            $oldmonth = strftime("%Y%m",$obj->da);
         }
 
-        print "<td width=\"20\">" .strftime("%d",$obj->da)."</td>\n";
-        print "<td width=\"30\">" .strftime("%H:%M",$obj->da)."</td>\n";
+        if ($oldday == strftime("%Y%m%d",$obj->da) )
+        {
+        }
+        else
+        {
+	        print strftime("%d",$obj->da)." ";
+            $oldday = strftime("%Y%m%d",$obj->da);
+        }
+
+        print strftime("%H:%M",$obj->da);
+        print "</td>\n";
+
+//        print '<td align="center">'.dolibarr_print_date($obj->da)."</td>\n";
 
         // Status/Percent
         if ($obj->percent < 100) {
@@ -168,7 +179,7 @@ if ($resql)
         if ($obj->client == 1) $url=DOL_URL_ROOT.'/comm/fiche.php?socid=';
         elseif ($obj->client == 2) $url=DOL_URL_ROOT.'/comm/prospect/fiche.php?id=';
         else $url=DOL_URL_ROOT.'/soc.php?socid=';
-        print '&nbsp;<a href="'.$url.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->societe,32).'</a></td>';
+        print '&nbsp;<a href="'.$url.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->societe,24).'</a></td>';
 
         // Contact
         print '<td>';
@@ -176,7 +187,7 @@ if ($resql)
         {
             $cont = new Contact($db);
             $cont->fetch($obj->fk_contact);
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$cont->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.dolibarr_trunc($cont->fullname,32).'</a>';
+            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$cont->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.dolibarr_trunc($cont->fullname,24).'</a>';
         }
         else
         {
