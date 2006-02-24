@@ -62,3 +62,4 @@ RelatedBill=Facture associée
 RelatedBills=Factures associées
 ErrorPropalNotFound=Propal %s inexistante
 Estimate=Devis :
+OtherPropals=Autres propositions
