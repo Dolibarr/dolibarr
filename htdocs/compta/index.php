@@ -46,9 +46,6 @@ if ($user->societe_id > 0)
 }
 
 
-llxHeader("",$langs->trans("AccountancyTreasuryArea"));
-
-
 /*
  * Actions
  */
@@ -75,10 +72,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 
 
 
+
 /*
  * Affichage page
  *
  */
+
+llxHeader("",$langs->trans("AccountancyTreasuryArea"));
+
 print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
