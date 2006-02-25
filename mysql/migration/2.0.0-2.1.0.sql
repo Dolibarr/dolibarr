@@ -61,3 +61,9 @@ alter table llx_actioncomm add column datec datetime after id;
 alter table llx_actioncomm add column datep datetime after datec;
 alter table llx_actioncomm add column tms timestamp after datea;
 
+create table llx_expedition_model_pdf
+(
+  nom         varchar(50) PRIMARY KEY,
+  libelle     varchar(255),
+  description text
+)type=innodb;
