@@ -613,8 +613,8 @@ else
                 */
                 $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
                 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-                $sql .= " WHERE a.fk_soc = $commande->socidp AND a.fk_action in (9,10)";
-                $sql .= " AND a.fk_commande = $expedition->id";
+                $sql .= " WHERE a.fk_soc = ".$commande->socidp." AND a.fk_action in (9,10)";
+                $sql .= " AND a.fk_commande = ".$expedition->id;
     
                 $resql = $db->query($sql);
                 if ($resql)
