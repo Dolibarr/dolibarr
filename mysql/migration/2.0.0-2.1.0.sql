@@ -60,3 +60,4 @@ alter table llx_actioncomm modify datea datetime;
 alter table llx_actioncomm add column datec datetime after id;
 alter table llx_actioncomm add column datep datetime after datec;
 alter table llx_actioncomm add column tms timestamp after datea;
+

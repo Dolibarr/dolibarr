@@ -777,14 +777,16 @@ class Form
      *      \param      selected        Id du type de paiement présélectionné
      *      \param      htmlname        Nom de la zone select
      *      \param      filtertype      Pour filtre
+     *		\param		addempty		Ajoute entrée vide
      */
-    function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1)
+    function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
     {
         global $langs;
         
         $this->load_cache_conditions_paiements();
  
         print '<select class="flat" name="'.$htmlname.'">';
+		if ($addempty) print '<option value="0">&nbsp;</option>';
         foreach($this->cache_conditions_paiements_code as $id => $code)
         {
             if ($selected == $id)
@@ -800,7 +802,8 @@ class Form
         }
         print '</select>';
     }
-/**
+    
+	/**
      *      \brief      Retourne la liste des types de paiements possibles
      *      \param      selected        Id du type de paiement présélectionné
      *      \param      htmlname        Nom de la zone select
@@ -1297,12 +1300,13 @@ class Form
     }
 
     /**
-     *    \brief      Affiche formulaire de selection de conditions de paiement
-     *    \param      page        Page
-     *    \param      selected    Id condition présélectionnée
-     *    \param      htmlname    Nom du formulaire select
+     *    	\brief      Affiche formulaire de selection de conditions de paiement
+     *    	\param      page        	Page
+     *    	\param      selected    	Id condition présélectionnée
+     *    	\param      htmlname    	Nom du formulaire select
+     *		\param		addempty		Ajoute entrée vide
      */
-    function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id')
+    function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)
     {
         global $langs;
         if ($htmlname != "none")
@@ -1311,7 +1315,7 @@ class Form
             print '<input type="hidden" name="action" value="setconditions">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_conditions_paiements($selected,$htmlname);
+            $this->select_conditions_paiements($selected,$htmlname,-1,$addempty);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -1327,6 +1331,7 @@ class Form
             }
         }
     }
+    
 	/**
      *    \brief      Affiche formulaire de selection de l'assujétissement à la TVA
      *    \param      page        Page

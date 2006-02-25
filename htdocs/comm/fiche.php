@@ -45,11 +45,16 @@ $langs->load("bills");
 $langs->load("contracts");
 if ($conf->fichinter->enabled) $langs->load("interventions");
 
-llxHeader('',$langs->trans('CustomerCard'));
+// Protection quand utilisateur externe
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id > 0)
+{
+    $socid = $user->societe_id;
+}
+
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
@@ -65,16 +70,20 @@ if ($_POST["action"] == 'setconditions')
     
 	$societe = new Societe($db, $_GET["socid"]);
     $societe->cond_reglement=$_POST['cond_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id']."' WHERE idp='".$socid."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id'];
+	$sql.= "' WHERE idp='".$_GET["socid"]."'";
     $result = $db->query($sql);
+    if (! $result) dolibarr_print_error($result);
 }
 // mode de règlement
 if ($_POST["action"] == 'setmode')
 {
     $societe = new Societe($db, $_GET["socid"]);
     $societe->mode_reglement=$_POST['mode_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET mode_reglement='".$_POST['mode_reglement_id']."' WHERE idp='".$socid."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET mode_reglement='".$_POST['mode_reglement_id'];
+	$sql.= "' WHERE idp='".$_GET["socid"]."'";
     $result = $db->query($sql);
+    if (! $result) dolibarr_print_error($result);
 }
 // assujétissement à la TVA
 if ($_POST["action"] == 'setassujtva')
@@ -83,6 +92,7 @@ if ($_POST["action"] == 'setassujtva')
     $societe->tva_assuj=$_POST['assujtva_value'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socid."'";
     $result = $db->query($sql);
+    if (! $result) dolibarr_print_error($result);
 }
 
 if ($action == 'recontact')
@@ -90,6 +100,7 @@ if ($action == 'recontact')
     $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'".  $user->login ."')";
     $result = $db->query($sql);
+    if (! $result) dolibarr_print_error($result);
 }
 
 if ($action == 'stcomm')
@@ -102,7 +113,7 @@ if ($action == 'stcomm')
 
         if ($result)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=".$socid;
             $result = $db->query($sql);
         }
         else
@@ -142,12 +153,9 @@ if ($mode == 'search') {
     }
 }
 
-// Protection quand utilisateur externe
-$_socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id > 0)
-{
-    $_socid = $user->societe_id;
-}
+
+
+llxHeader('',$langs->trans('CustomerCard'));
 
 
 /*********************************************************************************
@@ -155,12 +163,12 @@ if ($user->societe_id > 0)
  * Mode fiche
  *
  *********************************************************************************/
-if ($_socid > 0)
+if ($socid > 0)
 {
     // On recupere les donnees societes par l'objet
     $objsoc = new Societe($db);
-    $objsoc->id=$_socid;
-    $objsoc->fetch($_socid,$to);
+    $objsoc->id=$socid;
+    $objsoc->fetch($socid,$to);
 
     $dac = strftime("%Y-%m-%d %H:%M", time());
     if ($errmesg)
@@ -301,7 +309,7 @@ if ($_socid > 0)
     	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td nowrap>'.$objsoc->effectif.'</td></tr>';
     }
 
-	// soumis à TVA ou pas
+	// Assujeti à TVA ou pas
 	print '<tr>';
 /*	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('VATIsUsed');
@@ -322,6 +330,46 @@ if ($_socid > 0)
 	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($objsoc->tva_assuj);
 	print '</td>';
+	print '</tr>';
+
+	// Conditions de réglement par défaut
+	$langs->load('bills');
+	$html = new Form($db);
+	print '<tr><td nowrap>';
+	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print $langs->trans('PaymentConditions');
+	print '<td>';
+	if ($_GET['action'] != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($_GET['action'] == 'editconditions')
+	{
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'cond_reglement_id',-1,1);
+	}
+	else
+	{
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'none');
+	}
+	print "</td>";
+	print '</tr>';
+
+	// Mode de règlement
+	print '<tr><td nowrap>';
+	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print $langs->trans('PaymentMode');
+	print '<td>';
+	if ($_GET['action'] != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($_GET['action'] == 'editmode')
+	{
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'mode_reglement_id');
+	}
+	else
+	{
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
+	}
+	print "</td>";
 	print '</tr>';
 
     // Remise permanente
@@ -370,50 +418,7 @@ if ($_socid > 0)
 		print '</td><td colspan="3">'.$objsoc->price_level."</td>";
 		print '</tr>';
 	}
-	if($conf->facture->enabled)
-	{
-		// conditions de règlement
-		$langs->load('bills');
-		$html = new Form($db);
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-		print $langs->trans('PaymentConditions');
-		print '<td>';
-		
-		if ($_GET['action'] != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-		if ($_GET['action'] == 'editconditions')
-			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'cond_reglement_id');
-			}
-			else
-			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'none');
-			}
-		
-		print "</td>";
-		print '</tr>';
-	// mode de règlement
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-		print $langs->trans('PaymentMode');
-		print '<td>';
-		if ($_GET['action'] != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-		if ($_GET['action'] == 'editmode')
-			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'mode_reglement_id');
-			}
-			else
-			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
-			}
-		print "</td>";
-		print '</tr>';
-	}
-	
+
     print "</table>";
 
     print "</td>\n";
