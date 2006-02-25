@@ -232,6 +232,7 @@ DictionnaryActions=Actions list
 DictionnarySocialContributions=Social contributions types
 DictionnaryVAT=VAT Rates
 DictionnaryPaymentConditions=Payments conditions
+DictionnaryPaymentModes=Payments modes
 DictionnaryTypeContact=Contacts types
 VATReceivedOnly=Special rate not billed
 VATManagement=VAT Management

@@ -232,6 +232,7 @@ DictionnaryActions=Liste des actions
 DictionnarySocialContributions=Types de charges sociales
 DictionnaryVAT=Taux de TVA
 DictionnaryPaymentConditions=Conditions de paiements
+DictionnaryPaymentModes=Modes de paiements
 DictionnaryTypeContact=Types de contacts
 VATReceivedOnly=Taux special non facturé
 VATManagement=Gestion TVA

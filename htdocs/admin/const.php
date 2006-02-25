@@ -162,5 +162,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

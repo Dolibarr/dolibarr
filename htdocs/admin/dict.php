@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,7 @@ $active = 1;
 // Mettre ici tous les caractéristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(9,0,4,3,2,0,1,8,0,5,11,0,6,0,10,12,0,7);
+$taborder=array(9,0,4,3,2,0,1,8,0,5,11,0,6,0,10,12,13,0,7);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -66,6 +66,7 @@ $tabname[9] = MAIN_DB_PREFIX."c_currencies";
 $tabname[10]= MAIN_DB_PREFIX."c_tva";
 $tabname[11]= MAIN_DB_PREFIX."c_type_contact";
 $tabname[12]= MAIN_DB_PREFIX."cond_reglement";
+$tabname[13]= MAIN_DB_PREFIX."c_paiement";
 
 // Libellé des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -80,6 +81,7 @@ $tablib[9] = $langs->trans("DictionnaryCurrency");
 $tablib[10]= $langs->trans("DictionnaryVAT");
 $tablib[11]= $langs->trans("DictionnaryTypeContact");
 $tablib[12]= $langs->trans("DictionnaryPaymentConditions");
+$tablib[13]= $langs->trans("DictionnaryPaymentModes");
 
 // Requete pour extraction des données des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -94,6 +96,7 @@ $tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PRE
 $tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT rowid   as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
+$tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 
 // Tri par defaut
 $tabsqlsort[1] ="pays, code ASC";
@@ -108,6 +111,7 @@ $tabsqlsort[9] ="code ASC";
 $tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC";
 $tabsqlsort[11]="element ASC, source ASC, code ASC";
 $tabsqlsort[12]="sortorder ASC, code ASC";
+$tabsqlsort[13]="code ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -122,6 +126,7 @@ $tabfield[9] = "code,code_iso,libelle";
 $tabfield[10]= "pays,taux,recuperableonly,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm";
+$tabfield[13]= "code,libelle,type";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -136,6 +141,7 @@ $tabfieldinsert[9] = "code_iso,label";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm";
+$tabfieldinsert[12]= "code,libelle,type";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -150,6 +156,7 @@ $tabrowid[9] = "code";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
 $tabrowid[12]= "rowid";
+$tabrowid[13]= "id";
 
 
 $msg='';
@@ -378,7 +385,7 @@ if ($_GET["id"])
             }
             elseif ($fieldlist[$field] == 'lang') {
                 print '<td>';
-                $html->select_lang(MAIN_LANG_DEFAULT,'lang');
+                $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'lang');
                 print '</td>';
             }
             // Le type de l'element (pour les type de contact).'
@@ -406,7 +413,8 @@ if ($_GET["id"])
                 $html->select_array('source', $elementList);
                 print '</td>';
             }
-            elseif ($fieldlist[$field] == 'type') {
+            elseif ($fieldlist[$field] == 'type' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX."c_actioncomm")
+            {
                 print '<td>';
                 print 'user<input type="hidden" name="type" value="user">';
                 print '</td>';
@@ -554,7 +562,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 
 
 ?>
