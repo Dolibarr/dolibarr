@@ -147,6 +147,7 @@ class modUser extends DolibarrModules
     $this->export_code[$r]=$this->id.'_'.$r;
     $this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
     $this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.code'=>"Code",'u.login'=>"Login",'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.fk_socpeople'=>"IdContact",'u.note'=>"Note",'u.datelastaccess'=>'DateLastAccess');
+    $this->export_entities_array[$r]=array('u.rowid'=>"user",'u.name'=>"user",'u.firstname'=>"user",'u.code'=>"user",'u.login'=>"user",'u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.fk_socpeople'=>"user",'u.note'=>"user",'u.datelastaccess'=>'user');
     $this->export_alias_array[$r]=array('u.rowid'=>"rowid",'u.name'=>"name",'u.firstname'=>"firstname",'u.code'=>"code",'u.login'=>"login",'u.datec'=>"datecreation",'u.tms'=>"datelastmodification",'u.admin'=>"admin",'u.fk_socpeople'=>"idcontact",'u.note'=>"note",'u.datelastaccess'=>'datelastaccess');
     $this->export_sql[$r]="select ";
     $i=0;

@@ -64,26 +64,26 @@ class modFournisseur extends DolibarrModules
 		
 		// Dir
 		$this->dirs = array();
-		$this->const[0][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
-  	$this->const[0][1] = "chaine";
-  	$this->const[0][2] = "muscadet";
-  	
-  	$this->const[1][0] = "COMMANDE_SUPPLIER_ADDON";
-    $this->const[1][1] = "chaine";
-    $this->const[1][2] = "emeraude";
-    
+
 		// Dépendances
 		$this->depends = array("modSociete");
 		$this->requiredby = array();
-    $this->langfiles = array("bills","companies","suppliers");
-    
+		$this->langfiles = array("bills","companies","suppliers");
         
-    // Config pages
-    $this->config_page_url = "fournisseur.php";
-
+		// Config pages
+		$this->config_page_url = "fournisseur.php";
+		
 		// Constantes
 		$this->const = array();
 		
+		$this->const[0][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
+		$this->const[0][1] = "chaine";
+		$this->const[0][2] = "muscadet";
+		
+		$this->const[1][0] = "COMMANDE_SUPPLIER_ADDON";
+		$this->const[1][1] = "chaine";
+		$this->const[1][2] = "emeraude";
+    
 		// Boxes
 		$this->boxes = array();
 		$this->boxes[0][0] = "Derniers founisseurs";
@@ -198,8 +198,9 @@ class modFournisseur extends DolibarrModules
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
         $this->export_label[$r]='Factures fournisseurs et lignes de facture';
-        $this->export_fields_array[$r]=array('f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.fk_soc'=>"IdCompany",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.paye'=>"BillShortStatusPayed",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty");
-        $this->export_alias_array[$r]=array('f.rowid'=>"invoiceid",'f.facnumber'=>"ref",'f.fk_soc'=>"fk_soc",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",'f.total_ht'=>"totalht",'f.total_ttc'=>"totalttc",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid','fd.description'=>"linedescription",'fd.tva_taux'=>"linevatrate",'fd.qty'=>"lineqty");
+        $this->export_fields_array[$r]=array('s.idp'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.paye'=>"BillShortStatusPayed",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty");
+        $this->export_entities_array[$r]=array('s.idp'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company','s.tel'=>'company','s.siren'=>'company','s.siret'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total_ht'=>"invoice",'f.total_ttc'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'fd.rowid'=>'invoice_line','fd.description'=>"invoice_line",'fd.tva_taux'=>"invoice_line",'fd.qty'=>"invoice_line");
+        $this->export_alias_array[$r]=array('s.idp'=>"soc_id",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.cp'=>'soc_zip','s.ville'=>'soc_ville','s.fk_pays'=>'soc_pays','s.tel'=>'soc_tel','s.siren'=>'soc_siren','s.siret'=>'soc_siret','f.rowid'=>"invoiceid",'f.facnumber'=>"ref",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",'f.total_ht'=>"totalht",'f.total_ttc'=>"totalttc",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid','fd.description'=>"linedescription",'fd.tva_taux'=>"linevatrate",'fd.qty'=>"lineqty");
         $this->export_sql[$r]="select distinct ";
         $i=0;
         foreach ($this->export_alias_array[$r] as $key => $value)
@@ -208,7 +209,7 @@ class modFournisseur extends DolibarrModules
             else $i++;
             $this->export_sql[$r].=$key.' as '.$value;
         }
-        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'facture_fourn as f, '.MAIN_DB_PREFIX.'facture_fourn_det as fd WHERE fd.fk_facture_fourn = f.rowid';
+        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'facture_fourn as f, '.MAIN_DB_PREFIX.'facture_fourn_det as fd, '.MAIN_DB_PREFIX.'societe as s WHERE f.fk_soc = s.idp AND f.rowid = fd.fk_facture_fourn';
         $this->export_permission[$r]=array(array("fournisseur","facture","export"));
     
     }
