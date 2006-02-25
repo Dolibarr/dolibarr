@@ -252,10 +252,10 @@ if ($_GET["id"])
         print '</div>';
         
 
-        $sql = "SELECT distinct(s.nom), s.idp, s.code_client, c.rowid, c.total_ht as amount,";
+        $sql = "SELECT distinct(s.nom), s.idp, s.code_client, c.rowid, c.total_ht as amount, c.ref,";
         $sql.= " ".$db->pdate("c.date_creation")." as date, c.fk_statut as statut, c.rowid as commandeid";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."commandedet as d";
-		$sql.= " WHERE c.fk_soc = s.idp";
+		    $sql.= " WHERE c.fk_soc = s.idp";
         $sql.= " AND d.fk_commande = c.rowid AND d.fk_product =".$product->id;
         if ($socid)
         {
@@ -293,7 +293,7 @@ if ($_GET["id"])
 
                     print "<tr $bc[$var]>";
                     print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->commandeid.'">'.img_object($langs->trans("ShowOrder"),"order").' ';
-                    print $objp->rowid;
+                    print $objp->ref;
                     print "</a></td>\n";
                     print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
