@@ -119,8 +119,8 @@ if ($_GET["id"] > 0) {
 
 
 		/*
-		*   Commande
-		*/
+		 *   Commande
+		 */
 		
 		$sql = 'SELECT s.nom, s.idp, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, '.$db->pdate('c.date_commande').' as dp, c.note,';
 		$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, c.fk_user_author, c.fk_user_valid, c.fk_user_cloture, c.date_creation, c.date_valid, c.date_cloture';
@@ -132,81 +132,42 @@ if ($_GET["id"] > 0) {
 
 		$result = $db->query($sql);
 
-
-
-
-		if ($result) {
-			if ($db->num_rows($result)) {
+		if ($result)
+		{
+			if ($db->num_rows($result))
+			{
 				$obj = $db->fetch_object($result);
 
 				$societe = new Societe($db);
 				$societe->fetch($obj->idp);
 
 				print '<table class="border" width="100%">';
-				$rowspan=3;
-				// ligne 1
-				// partie Gauche
-				print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
-				if ($societe->client == 1)
-				{
-                    $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-				}
-				else
-				{
-					$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
-				}
-				print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-				// partie Droite
-				print '<td align="left">Conditions de réglement</td>';
-				print '<td>'.'&nbsp;'.'</td>';
-				print '</tr>';
 
-				// ligne 2
-				// partie Gauche
-				print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-				print dolibarr_print_date($commande->date,'%a %e %B %Y');
+		        // Reference
+		        print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
+		        print '<td colspan="2">'.$commande->ref.'</td>';
+		        print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
+		        if ($commande->source == 0)
+		        {
+		            // Propale
+		            $propal = new Propal($db);
+		            $propal->fetch($commande->propale_id);
+		            print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+		        }
+		        print "</td></tr>";
+		
+		        // Ref cde client
+				print '<tr><td>';
+		        print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+				print $langs->trans('RefCustomer').'</td><td align="left">';
+		        print '</td>';
+		        print '</tr></table>';
 				print '</td>';
-
-				// partie Droite
-				print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
-				if ($commande->fin_validite) {
-					print dolibarr_print_date($commande->fin_validite,'%a %d %B %Y');
-				} else {
-					print $langs->trans("Unknown");
-				}
-				print '</td>';
-				print '</tr>';
-
-				// Destinataire
-				$langs->load('mails');
-				// ligne 3
-				print '<tr>';
-				// partie Gauche
-				print '<td>'.$langs->trans('MailTo').'</td>';
-
-				$dests=$societe->contact_array($societe->id);
-				$numdest = count($dests);
-				print '<td colspan="3">';
-				if ($numdest==0) {
-					print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
-					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
-				} else {
-					if (!empty($commande->contactid)) {
-						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
-						$contact=new Contact($db);
-						$contact->fetch($commande->contactid);
-						print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$commande->contactid.'" title="'.$langs->trans('ShowContact').'">';
-						print $contact->firstname.' '.$contact->name;
-						print '</a>';
-					} else {
-						print '&nbsp;';
-					}
-				}
-				print '</td>';
-
-				// partie Droite sur $rowspan lignes
-				print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
-
+		        print '<td colspan="2">';
+				print $commande->ref_client;
+		        print '</td>';
+		        $nbrow=6;
+				print '<td rowspan="'.$nbrow.'" valign="top">';
 
 				/*
   				 * Documents
@@ -277,19 +238,37 @@ if ($_GET["id"] > 0) {
 						}
 					}
 				}
+
 				print "</td></tr>";
+				
 
-
-				// ligne 4
+		        // Client
+		        print "<tr><td>".$langs->trans("Customer")."</td>";
+		        print '<td colspan="2">';
+		        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id.'">'.$societe->nom.'</a>';
+		        print '</td>';
+		        print '</tr>';
+		
+		        // Statut
+		        print '<tr><td>'.$langs->trans("Status").'</td>';
+		        print "<td colspan=\"2\">".$commande->statuts[$commande->statut]."</td>\n";
+		        print '</tr>';
+		
+		        // Date
+		        print '<tr><td>'.$langs->trans("Date").'</td>';
+		        print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
+		        print '</tr>';
+		        
+				// ligne 6
 				// partie Gauche
 				print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
-				print '<td colspan="3">'.$commande->remise_percent.'%</td>';
+				print '<td colspan="2">'.$commande->remise_percent.'%</td>';
 				print '</tr>';
 
-				// ligne 5
+				// ligne 7
 				// partie Gauche
 				print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-				print '<td align="right" colspan="2"><b>'.price($commande->price).'</b></td>';
+				print '<td align="right" colspan="1"><b>'.price($commande->price).'</b></td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				print '</table>';
 			}
