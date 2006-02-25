@@ -17,3 +17,4 @@ QtyOrdered=Qté commandée
 QtyShipped=Qté expédiée
 KeepToShip=Reste à expédier
 OtherSendingsForSameOrder=Autres expéditions déjà envoyés
+SendingsToValidate=Expéditions à valider
