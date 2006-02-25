@@ -93,7 +93,7 @@ if ($_GET["facid"] > 0)
         // Dates
         print '<tr><td>'.$langs->trans("Date").'</td>';
         print '<td colspan="3">'.dolibarr_print_date($fac->date,"%A %d %B %Y").'</td>';
-        print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
+        print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
         if ($fac->paye == 0 && $fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
         print "</td></tr>";
 

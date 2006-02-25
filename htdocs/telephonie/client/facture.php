@@ -238,7 +238,7 @@ if ($_GET["facid"] > 0)
 	  
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
-	  print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
+	  print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
 	  print "</td></tr>";
 	  
 	  print '<tr>';
