@@ -809,7 +809,11 @@ class Form
     {
         global $langs;
         print '<select class="flat" name="'.$htmlname.'">';
-		$options = array(0=>"non",1=>"oui");
+		$options = array(
+					'-1'=>'&nbsp;',
+					'0'=>$langs->trans("No"),
+					'1'=>$langs->trans("Yes")
+					);
         foreach($options as $id => $value)
         {
             if ($selected == $id)
@@ -1821,15 +1825,11 @@ class Form
     
         while (list($key, $value) = each ($array))
         {
-            print '<option value="';
-            if ($value_as_key) print $value;
-            else print $key;
-            print '" ';
-    
+            print '<option value="'.($value_as_key?$value:$key).'"';
             // Si il faut présélectionner une valeur
             if ($id && $id == $key)
             {
-                print 'selected="true"';
+                print ' selected="true"';
             }
     
             if ($key_in_label)
@@ -1838,7 +1838,7 @@ class Form
             }
             else
             {
-                if ($value == '-') { $value='&nbsp;'; }
+                if ($value == '' || $value == '-') { $value='&nbsp;'; }
                 print ">".$value."</option>\n";
             }
         }
