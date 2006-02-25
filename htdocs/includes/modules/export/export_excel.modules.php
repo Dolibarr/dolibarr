@@ -50,6 +50,8 @@ class ExportExcel extends ModeleExports
 
     var $workbook;      // Handle fichier
     var $worksheet;     // Handle onglet
+    var $row;
+    var $col;
 
     
     /**
@@ -70,6 +72,8 @@ class ExportExcel extends ModeleExports
         // If driver use an external library, put its name here
         $this->label_lib='Php_WriteExcel';            
         $this->version_lib='?';
+        
+        $this->row=0;
     }
 
     function getDriverId()
@@ -123,6 +127,16 @@ class ExportExcel extends ModeleExports
 
     function write_title($array_export_fields_label,$array_selected_sorted,$langs)
     {
+    	global $langs;
+        $this->col=0;
+        foreach($array_selected_sorted as $code => $value)
+        {
+            $alias=$array_export_fields_label[$code];
+            //print "dd".$alias;
+            $this->worksheet->write($this->row, $this->col, $langs->trans($alias));
+            $this->col++;
+        }
+        $this->row++;
         return 0;
     }
 
@@ -130,7 +144,6 @@ class ExportExcel extends ModeleExports
     function write_record($array_alias,$array_selected_sorted,$objp)
     {
         $this->col=0;
-        $this->row++;
         foreach($array_selected_sorted as $code => $value)
         {
             $alias=$array_alias[$code];
@@ -138,6 +151,7 @@ class ExportExcel extends ModeleExports
             $this->worksheet->write($this->row, $this->col, $objp->$alias);
             $this->col++;
         }
+        $this->row++;
         return 0;
     }
 
