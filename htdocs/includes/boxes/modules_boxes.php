@@ -108,7 +108,15 @@ class ModeleBoxes
                     if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
                     else print '<td '.$tdparam.'>';
     
-                    if (isset($contents[$i][$j]['url'])) print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'">';
+					// Picto
+                    if (isset($contents[$i][$j]['url'])) {
+                    	print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
+                       //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
+	                   	print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+                        print '>';
+                    }
+                    
+                    // Texte
                     if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo'])
                     {
                         $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
