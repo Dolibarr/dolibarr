@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -60,13 +59,13 @@ $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 if ($socidp)           $sql .= " AND s.idp = $socidp";
 if ($user->societe_id) $sql .= " AND s.idp = " .$user->societe_id;
 
-if ($search_nom)   $sql .= " AND s.nom like '%".strtolower($search_nom)."%'";
-if ($search_ville) $sql .= " AND s.ville like '%".strtolower($search_ville)."%'";
-if ($search_code)  $sql .= " AND s.code_client like '%".strtolower($search_code)."%'";
+if ($search_nom)   $sql .= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
+if ($search_ville) $sql .= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";
+if ($search_code)  $sql .= " AND s.code_client like '%".addslashes(strtolower($search_code))."%'";
 
 if ($socname)
 {
-  $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
+  $sql .= " AND lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
   $sortfield = "lower(s.nom)";
   $sortorder = "ASC";
 }

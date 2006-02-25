@@ -1210,17 +1210,17 @@ else
 
   if (!empty($_GET['search_ref']))
     {
-      $sql .= " AND p.ref LIKE '%".$_GET['search_ref']."%'";
+      $sql .= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
     }
   if (!empty($_GET['search_societe']))
     {
-      $sql .= " AND s.nom LIKE '%".$_GET['search_societe']."%'";
+      $sql .= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
     }
   if (!empty($_GET['search_montant_ht']))
     {
-      $sql .= " AND p.price='".$_GET['search_montant_ht']."'";
+      $sql .= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
     }
-  if ($sall) $sql.= " AND (s.nom like '%".$sall."%' OR p.note like '%".$sall."%' OR pd.description like '%".$sall."%')";
+  if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
   if ($socidp) $sql .= ' AND s.idp = '.$socidp; 
   if ($_GET['viewstatut'] <> '')
     {
@@ -1236,7 +1236,7 @@ else
     }
   if (strlen($_POST['sf_ref']) > 0)
     {
-      $sql .= " AND p.ref like '%".$_POST["sf_ref"] . "%'";
+      $sql .= " AND p.ref like '%".addslashes($_POST["sf_ref"]) . "%'";
     }
   $sql .= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
   $sql .= $db->plimit($limit + 1,$offset);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2006 Regis Houssin         <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -2030,19 +2030,19 @@ else
 			}
 			if ($_GET['search_ref'])
 			{
-				$sql .= ' AND f.facnumber like \'%'.$_GET['search_ref'].'%\'';
+				$sql .= ' AND f.facnumber like \'%'.addslashes($_GET['search_ref']).'%\'';
 			}
 			if ($_GET['search_societe'])
 			{
-				$sql .= ' AND s.nom like \'%'.$_GET['search_societe'].'%\'';
+				$sql .= ' AND s.nom like \'%'.addslashes($_GET['search_societe']).'%\'';
 			}
 			if ($_GET['search_montant_ht'])
 			{
-				$sql .= ' AND f.total = \''.$_GET['search_montant_ht'].'\'';
+				$sql .= ' AND f.total = \''.addslashes($_GET['search_montant_ht']).'\'';
 			}
 			if ($_GET['search_montant_ttc'])
 			{
-				$sql .= ' AND f.total_ttc = \''.$_GET['search_montant_ttc'].'\'';
+				$sql .= ' AND f.total_ttc = \''.addslashes($_GET['search_montant_ttc']).'\'';
 			}
 			if ($year > 0)
 			{
@@ -2050,11 +2050,11 @@ else
 			}
 			if ($_POST['sf_ref'])
 			{
-				$sql .= ' AND f.facnumber like \'%'.$_POST['sf_ref'] . '%\'';
+				$sql .= ' AND f.facnumber like \'%'.addslashes($_POST['sf_ref']) . '%\'';
 			}
 			if ($sall)
 			{
-				$sql .= ' AND (s.nom like \'%'.$sall.'%\' OR f.facnumber like \'%'.$sall.'%\' OR f.note like \'%'.$sall.'%\' OR fd.description like \'%'.$sall.'%\')';
+				$sql .= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
 			}
 
 			$sql .= ' GROUP BY f.facnumber';
