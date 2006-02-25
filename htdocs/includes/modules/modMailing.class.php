@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,21 +21,21 @@
  */
 
 /**
-   \defgroup   mailing  Module mailing
-   \brief      Module pour gérer les mailings
+		\defgroup   mailing  Module mailing
+		\brief      Module pour gérer les mailings
 */
 
 /**
-   \file       htdocs/includes/modules/modMailing.class.php
-   \ingroup    mailing
-   \brief      Fichier de description et activation du module Mailing
+		\file       htdocs/includes/modules/modMailing.class.php
+		\ingroup    mailing
+		\brief      Fichier de description et activation du module Mailing
 */
 
 include_once "DolibarrModules.class.php";
 
 /**
-   \class      modMailing
-   \brief      Classe de description et activation du module Mailing
+		\class      modMailing
+		\brief      Classe de description et activation du module Mailing
 */
 
 class modMailing extends DolibarrModules
@@ -65,6 +65,10 @@ class modMailing extends DolibarrModules
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
+    $this->langfiles = array("mails");
+
+    // Config pages
+    $this->config_page_url = "mailing.php";
 
     // Constantes
     $this->const = array();

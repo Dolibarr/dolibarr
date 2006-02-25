@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("companies");
 $langs->load("orders");
+$langs->load("bills");
 $langs->load("contracts");
 if ($conf->fichinter->enabled) $langs->load("interventions");
 
@@ -300,6 +301,29 @@ if ($_socid > 0)
     	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td nowrap>'.$objsoc->effectif.'</td></tr>';
     }
 
+	// soumis à TVA ou pas
+	print '<tr>';
+/*	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print $langs->trans('VATIsUsed');
+	print '<td>';
+	if ($_GET['action'] != 'editassujtva') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editassujtva&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+	if ($_GET['action'] == 'editassujtva')
+		{
+			$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->tva_assuj,'assujtva_value');
+		}
+		else
+		{
+			$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->tva_assuj,'none');
+		}
+	print "</td>";
+*/
+	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print yn($objsoc->tva_assuj);
+	print '</td>';
+	print '</tr>';
+
     // Remise permanente
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
@@ -385,24 +409,6 @@ if ($_socid > 0)
 			else
 			{
 				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
-			}
-		print "</td>";
-		print '</tr>';
-		// soumis à TVA ou pas
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-		print $langs->trans('VATIsUsed');
-		print '<td>';
-		if ($_GET['action'] != 'editassujtva') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editassujtva&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-		if ($_GET['action'] == 'editassujtva')
-			{
-				$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->tva_assuj,'assujtva_value');
-			}
-			else
-			{
-				$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->tva_assuj,'none');
 			}
 		print "</td>";
 		print '</tr>';
@@ -790,7 +796,7 @@ if ($_socid > 0)
 
         $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-        $sql .= " WHERE a.fk_soc = $objsoc->id ";
+        $sql .= " WHERE a.fk_soc = ".$objsoc->id;
         $sql .= " AND u.rowid = a.fk_user_author";
         $sql .= " AND c.id=a.fk_action AND a.percent < 100";
         $sql .= " ORDER BY a.datea DESC, a.id DESC";
@@ -834,6 +840,10 @@ if ($_socid > 0)
 				if (date("U",$obj->da) < time())
 				{
 					print "<td>".img_warning("Late")."</td>";
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
 				}
 
                 // Status/Percent
@@ -887,7 +897,7 @@ if ($_socid > 0)
 
         $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-        $sql .= " WHERE a.fk_soc = $objsoc->id ";
+        $sql .= " WHERE a.fk_soc = ".$objsoc->id;
         $sql .= " AND u.rowid = a.fk_user_author";
         $sql .= " AND c.id=a.fk_action AND a.percent = 100";
         $sql .= " ORDER BY a.datea DESC, a.id DESC";
@@ -930,10 +940,7 @@ if ($_socid > 0)
                 }
                 print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
                 print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
-				if (date("U",$obj->da) < time())
-				{
-					print "<td> </td>";
-				}
+				print "<td>&nbsp;</td>";
 
                 // Statut/Percent
                 print '<td width="30">&nbsp;</td>';

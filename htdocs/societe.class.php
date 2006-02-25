@@ -326,7 +326,7 @@ class Societe {
         
             $sql .= ",client = " . $this->client;
             $sql .= ",fournisseur = " . $this->fournisseur;
-			$sql .= ",tva_assuj = " . $this->tva_assuj;
+			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
         
             if ($this->creation_bit || $this->codeclient_modifiable)
             {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -34,6 +34,7 @@ require("pre.inc.php");
 $user->getrights('societe');
 $langs->load("companies");
 $langs->load("commercial");
+$langs->load("bills");
  
 if (! $user->rights->societe->creer)
 {
@@ -58,12 +59,14 @@ $soc = new Societe($db);
 /*
  * Actions
  */
+
 // assujétissement à la TVA
 if ($_POST["action"] == 'setassujtva')
 {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socid."'";
     $result = $db->query($sql);
 }
+
 if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 {
     $soc->nom                   = $_POST["nom"];
@@ -92,7 +95,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $soc->typent_id             = $_POST["typent_id"];
     $soc->client                = $_POST["client"];
     $soc->fournisseur           = $_POST["fournisseur"];
-	$soc->tva_assuj = $_POST["assujtva_value"];
+	$soc->tva_assuj             = $_POST["assujtva_value"];
     
     if ($_POST["action"] == 'update')
     {
@@ -444,7 +447,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
 
-        print '<td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
         print '<input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
         print '</td>';
 
@@ -548,10 +551,15 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
         print '</tr>';
 
-        print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
+		// Assujeti TVA
+		print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td>';
+		$form->select_assujetti_tva($soc->tva_assuj,'assujtva_value');
+		print '</td>';
+
+        print '<td nowrap="nowrap">'.$langs->trans('VATIntraShort').'</td><td>';
         print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
         print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
-        print '  '.$langs->trans("VATIntraCheckableOnEUSite");
+        print ' <a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
@@ -566,13 +574,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans("Staff").'</td><td>';
         $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
         print '</td></tr>';
-		// assuj TVA
-		if($conf->facture->enabled)
-		{
-			print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-			$form->select_assujetti_tva($soc->tva_assuj,'assujtva_value');
-			print '</td></tr>'."\n";
-		}
+
         print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
         print '</table>';
@@ -762,8 +764,33 @@ else
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-    // TVA
-    print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
+	// Assujeti TVA
+	$html = new Form($db);
+	print '<tr><td>';
+/* Pas besoin de gérer l'icone "Modifier" car le champ est déja editable quand société en mode "Edit"
+			print '<table width="100%" class="nobordernopadding"><tr><td>';
+			print $langs->trans('VATIsUsed');
+			print '<td><td align="right">';
+			if ($user->rights->societe->creer && $_GET['action'] != 'editassujtva')
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=editassujtva&amp;socid='.$soc->id.'">'.img_edit($langs->trans('SetMode')).'</a>';
+			else
+				print '&nbsp;';
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td colspan="3">';
+			if($_GET['action'] == 'editassujtva')
+				print $html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$soc->id,$soc->tva_assuj,'assujtva_value');
+			else if($soc->tva_assuj == 1)
+				print 'oui';
+			else
+				print 'non';
+			print '';
+*/
+	print $langs->trans('VATIsUsed');
+	print '</td><td>';
+	print yn($soc->tva_assuj);
+	print '</td>';
+    print '<td nowrap="nowrpa">'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
     print $soc->tva_intra;
     print '</td></tr>';
 
@@ -843,31 +870,6 @@ else
         dolibarr_print_error($db);
     }
     print '</td></tr>';
-	// assuj TVA
-	if($conf->facture->enabled)
-	{
-			$html = new Form($db);
-			print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td>';
-			print $langs->trans('VATIsUsed');
-			print '<td><td align="right">';
-			if ($user->rights->societe->creer && $_GET['action'] != 'editassujtva')
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=editassujtva&amp;socid='.$soc->id.'">'.img_edit($langs->trans('SetMode')).'</a>';
-			else
-				print '&nbsp;';
-			print '</td></tr></table>';
-			print '</td>';
-			print '<td colspan="3">';
-			if($_GET['action'] == 'editassujtva')
-				print $html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$soc->id,$soc->tva_assuj,'assujtva_value');
-			else if($soc->tva_assuj == 1)
-				print 'oui';
-			else
-				print 'non';
-			print '';
-			print '</td></tr>';
-		
-	}
 
     print '</table>';
     print "</div>\n";

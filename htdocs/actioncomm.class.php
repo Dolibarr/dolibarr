@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
  */
 
 /**
@@ -42,7 +41,10 @@ class ActionComm
     var $type_code;
     var $type;
     var $label;
-    var $date;
+    var $datec;			// Date creation enregistrement
+    var $datep;			// Date action 0%
+    var $date;			// Date action 100% (datea)
+    var $datem;			// Date modif (tms)
     var $priority;
     var $user;
     var $author;
@@ -82,10 +84,14 @@ class ActionComm
         if (! $this->priority) $this->priority = 0;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
-        $sql.= "(datea,fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
+        $sql.= "(datec,";
+        $sql.= "datep,";
+        if ($this->percent == 100) $sql.= "datea,";
+        $sql.= "fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
         $sql.= "fk_facture,propalrowid)";
-        $sql.= " VALUES (";
+        $sql.= " VALUES (now,";
         $sql.= "'".$this->db->idate($this->date)."',";
+        if ($this->percent == 100) $sql.= "'".$this->db->idate($this->date)."',";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
         $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percent."','".$this->priority."',";
@@ -182,25 +188,31 @@ class ActionComm
         }
     }
 
-  /**
-   *    \brief      Met a jour l'action en base
-   *    \return     int     <0 si ko, >0 si ok
-   */
+	/**
+ 	 *    \brief      	Met a jour l'action en base.
+ 	 *					Si percent = 100, on met a jour date 100%
+ 	 *    \return     	int     <0 si ko, >0 si ok
+	 */
     function update()
     {
         if ($this->percent > 100) $this->percent = 100;
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
         $sql.= " SET percent='".$this->percent."'";
-        if ($this->percent == 100) $sql .= ", datea = now()";
-        if ($this->note) $sql .= ", note = '".addslashes($this->note)."'";
-        $sql.= ", fk_contact =". $this->contact->id;
+        if ($this->percent == 100) 	$sql.= ", datea = now()";
+        if ($this->note) 			$sql.= ", note = '".addslashes($this->note)."'";
+        if ($this->contact->id) 	$sql.= ", fk_contact =". $this->contact->id;
         $sql.= " WHERE id=$this->id;";
     
-        if ($this->db->query($sql) )
+        if ($this->db->query($sql))
         {
             return 1;
         }
+        else
+        {
+        	$this->error=$this->db->error();
+        	return -1;
+    	}
     }
     
     

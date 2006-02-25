@@ -102,7 +102,8 @@ Capital=Capital
 CapitalOf=Capital de %s
 EditCompany=Modification société
 ThisUserIsNot=Cet utilisateur n'est ni un prospect, ni un client, ni un fournisseur
-VATIntraCheckableOnEUSite=(Vérifiable sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la Commission Européenne)
+VATIntraCheckURL=http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm
+VATIntraCheckableOnEUSite=Vérifier sur le site de la Commission Européenne
 NorProspectNorCustomer=Ni client, ni prospect
 JuridicalStatus=Forme juridique
 Staff=Effectif

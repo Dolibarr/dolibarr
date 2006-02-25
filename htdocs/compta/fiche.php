@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -522,6 +522,109 @@ if ($socid > 0)
             $i++;
             $tag = !$tag;
         }
+        print "</table>";
+
+        print "<br>";
+
+        /*
+         *      Listes des actions a faire
+         *
+         */
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre"><td colspan="9"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
+
+        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+        $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+        $sql .= " WHERE a.fk_soc = ".$societe->id;
+        $sql .= " AND u.rowid = a.fk_user_author";
+        $sql .= " AND c.id=a.fk_action AND a.percent < 100";
+        $sql .= " ORDER BY a.datea DESC, a.id DESC";
+
+        $result=$db->query($sql);
+        if ($result)
+        {
+            $i = 0 ;
+            $num = $db->num_rows($result);
+            $var=true;
+            
+            while ($i < $num)
+            {
+                $var = !$var;
+
+                $obj = $db->fetch_object($result);
+                print "<tr $bc[$var]>";
+
+                if ($oldyear == strftime("%Y",$obj->da) )
+                {
+                    print '<td width="30" align="center">|</td>';
+                }
+                else
+                {
+                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
+                    $oldyear = strftime("%Y",$obj->da);
+                }
+
+                if ($oldmonth == strftime("%Y%b",$obj->da) )
+                {
+                    print '<td width="30" align="center">|</td>';
+                }
+                else
+                {
+                    print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
+                    $oldmonth = strftime("%Y%b",$obj->da);
+                }
+
+                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
+                print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
+				if (date("U",$obj->da) < time())
+				{
+					print "<td>".img_warning("Late")."</td>";
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+
+                // Status/Percent
+                print '<td width="30">&nbsp;</td>';
+
+                if ($obj->propalrowid)
+                {
+                    print '<td><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
+                      $transcode=$langs->trans("Action".$obj->acode);
+                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                      print $libelle;
+                    print '</a></td>';
+                }
+                else
+                {
+                    print '<td><a href="action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
+                      $transcode=$langs->trans("Action".$obj->acode);
+                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                      print $libelle;
+                    print '</a></td>';
+                }
+                print "<td>$obj->label</td>";
+
+                // Contact pour cette action
+                if ($obj->fk_contact) {
+                    $contact = new Contact($db);
+                    $contact->fetch($obj->fk_contact);
+                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
+                } else {
+                    print '<td>&nbsp;</td>';
+                }
+
+                print '<td width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code.'</a></td>';
+                print "</tr>\n";
+                $i++;
+            }
+            print "</table>";
+
+            $db->free($result);
+        } else {
+            dolibarr_print_error($db);
+        }
         print "</table><br>";
 
         /*
@@ -532,9 +635,9 @@ if ($socid > 0)
 
         $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, fk_contact, u.code, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-        $sql .= " WHERE a.fk_soc = $societe->id ";
+        $sql .= " WHERE a.fk_soc = ".$societe->id;
         $sql .= " AND u.rowid = a.fk_user_author";
-        $sql .= " AND c.id=a.fk_action ";
+        $sql .= " AND c.id=a.fk_action AND a.percent = 100";
         $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
         $result=$db->query($sql);

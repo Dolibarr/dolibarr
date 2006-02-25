@@ -33,6 +33,12 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
+if ($page == -1) { $page = 0 ; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="a.datea";
+
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
@@ -63,18 +69,6 @@ llxHeader();
 /*
  *  Liste
  */
-
-if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
-if ($sortfield == "")
-{
-  $sortfield="a.datea";
-}
 
 $sql = "SELECT count(*) as cc, date_format(a.datea, '%m/%Y') as df";
 $sql .= ", date_format(a.datea, '%m') as month";

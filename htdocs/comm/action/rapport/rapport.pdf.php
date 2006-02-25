@@ -96,7 +96,7 @@ class CommActionRapport
      */
     function _cover(&$pdf)
     {
-        global $user;
+        global $user,$conf;
 
         $pdf->AddPage();
         $pdf->SetAutoPageBreak(false);
@@ -112,11 +112,11 @@ class CommActionRapport
         $pdf->SetFont('Arial','B',18);
         $pdf->MultiCell(190, 15, $user->fullname, 0, 'C');
         $pdf->SetFont('Arial','B',16);
-        $pdf->MultiCell(190, 15, "Tél : +33 (0) 6 13 79 63 41", 0, 'C');
+        $pdf->MultiCell(190, 15, $conf->global->SOCIETE_TEL, 0, 'C');
 
         $pdf->SetFont('Arial','',10);
         $pdf->SetXY (10, 277);
-        $pdf->MultiCell(190, 10, "http://www.lafrere.com/", 1, 'C', 1);
+        $pdf->MultiCell(190, 10,  $conf->global->SOCIETE_WEB, 1, 'C', 1);
 
         $pdf->Rect(10, 10, 190, 277);
         return 1;
