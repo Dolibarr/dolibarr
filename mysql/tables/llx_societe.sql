@@ -64,5 +64,5 @@ create table llx_societe
   remise_client      real           DEFAULT 0,            -- remise systématique pour le client
   mode_reglement     integer				DEFAULT 0,            -- mode de réglement
   cond_reglement     integer				DEFAULT 1  NOT NULL,  -- condition de réglement
-  tva_assuj	tinyint	DEFAULT 1	NOT NULL,-- assujéti ou non à la TVA
+  tva_assuj          tinyint,									  -- assujéti ou non à la TVA
 )type=innodb;

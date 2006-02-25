@@ -25,7 +25,8 @@ alter table llx_propal add column note_public text after note;
 
 ALTER TABLE llx_societe ADD mode_reglement INT( 11 ) DEFAULT NULL ;
 ALTER TABLE llx_societe ADD cond_reglement INT( 11 ) DEFAULT '1' NOT NULL ;
-ALTER TABLE llx_societe ADD tva_assuj  tinyint  DEFAULT '1' NOT NULL ;
+ALTER TABLE llx_societe ADD tva_assuj tinyint;
+ALTER TABLE llx_societe MODIFY tva_assuj tinyint;
 
 alter table llx_product add gencode varchar(255) DEFAULT NULL;
 
@@ -53,3 +54,9 @@ create table llx_commande_fournisseur_model_pdf
 )type=innodb;
 
 alter table llx_categorie add fk_statut smallint DEFAULT 0;
+
+
+alter table llx_actioncomm modify datea datetime;
+alter table llx_actioncomm add column datec datetime after id;
+alter table llx_actioncomm add column datep datetime after datec;
+alter table llx_actioncomm add column tms timestamp after datea;
