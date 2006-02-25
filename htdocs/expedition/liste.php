@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,9 +65,9 @@ if ($socidp)
   $sql.= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = ".$socidp; 
   $sql_add = " AND ";
 }
-if (strlen($_POST["sf_ref"]) > 0)
+if ($_POST["sf_ref"])
 {
-  $sql.= $sql_add . " e.ref like '%".$_POST["sf_ref"] . "%'";
+  $sql.= $sql_add . " e.ref like '%".addslashes($_POST["sf_ref"])."%'";
 }
 
 $expedition = new Expedition($db);

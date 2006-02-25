@@ -118,7 +118,7 @@ if ($action == 'stcomm')
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
     $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
+    $sql .= " WHERE lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
   }
       
   if ( $db->query($sql) ) {
@@ -147,29 +147,29 @@ if (strlen($stcomm))
 
 if ($socname)
 {
-  $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-  $sortfield = "lower(s.nom)";
+  $sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
+  $sortfield = "s.nom";
   $sortorder = "ASC";
 }
 
 if ($_GET["search_nom"])
 {
-  $sql .= " AND lower(s.nom) like '%".strtolower($_GET["search_nom"])."%'";
+  $sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
 }
 
 if ($_GET["search_compta"])
 {
-  $sql .= " AND s.code_compta like '%".$_GET["search_compta"]."%'";
+  $sql .= " AND s.code_compta like '%".addslashes($_GET["search_compta"])."%'";
 }
 
 if ($_GET["search_code_client"])
 {
-  $sql .= " AND s.code_client like '%".$_GET["search_code_client"]."%'";
+  $sql .= " AND s.code_client like '%".addslashes($_GET["search_code_client"])."%'";
 }
 
 if (strlen($begin))
 {
-  $sql .= " AND upper(s.nom) like '$begin%'";
+  $sql .= " AND s.nom like '".addslashes($begin)."'";
 }
 
 if ($user->societe_id)

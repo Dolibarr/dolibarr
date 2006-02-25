@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,10 +77,10 @@ if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND date_fin_validite < sysdate()";
-if ($search_nom)      $sql.= " AND s.nom like '%".$search_nom."%'";
-if ($search_contract) $sql.= " AND c.rowid = '".$search_contract."'";
-if ($search_service)  $sql.= " AND (p.ref like '%".$search_service."%' OR p.label like '%".$search_service."%')";
-if ($socid > 0)       $sql.= " AND s.idp = $socid";
+if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
+if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
+if ($search_service)  $sql.= " AND (p.ref like '%".addslashes($search_service)."%' OR p.label like '%".addslashes($search_service)."%')";
+if ($socid > 0)       $sql.= " AND s.idp = ".$socid;
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
 

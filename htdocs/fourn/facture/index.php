@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -73,7 +72,7 @@ if ($_POST["mode"] == 'search')
   if ($_POST["mode-search"] == 'soc')
     {
       $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-      $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
+      $sql.= " WHERE s.nom like '%".addslashes(strtolower($socname))."%'";
     }
       
   if ( $db->query($sql) )
@@ -88,7 +87,6 @@ if ($_POST["mode"] == 'search')
 }
   
 
-llxHeader();
 
 
 /*
@@ -96,6 +94,8 @@ llxHeader();
  *
  */
  
+llxHeader();
+
 $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("fac.date_lim_reglement")." as date_echeance, fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, fac.rowid as facid, fac.facnumber";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac ";
 $sql .= " WHERE fac.fk_soc = s.idp";
@@ -115,27 +115,27 @@ if ($_GET["filtre"])
 
 if ($_GET["search_ref"])
   {
-    $sql .= " AND fac.facnumber like '%".$_GET["search_ref"]."%'";
+    $sql .= " AND fac.facnumber like '%".addslashes($_GET["search_ref"])."%'";
   }
 
 if ($_GET["search_libelle"])
   {
-    $sql .= " AND fac.libelle like '%".$_GET["search_libelle"]."%'";
+    $sql .= " AND fac.libelle like '%".addslashes($_GET["search_libelle"])."%'";
   }
 
 if ($_GET["search_societe"])
   {
-    $sql .= " AND s.nom like '%".$_GET["search_societe"]."%'";
+    $sql .= " AND s.nom like '%".addslashes($_GET["search_societe"])."%'";
   }
 
 if ($_GET["search_montant_ht"])
   {
-    $sql .= " AND fac.total_ht = '".$_GET["search_montant_ht"]."'";
+    $sql .= " AND fac.total_ht = '".addslashes($_GET["search_montant_ht"])."'";
   }
 
 if ($_GET["search_montant_ttc"])
   {
-    $sql .= " AND fac.total_ttc = '".$_GET["search_montant_ttc"]."'";
+    $sql .= " AND fac.total_ttc = '".addslashes($_GET["search_montant_ttc"])."'";
   }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit+1, $offset);

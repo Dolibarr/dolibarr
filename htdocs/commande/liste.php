@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,11 +67,11 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
 $sql.= ' WHERE c.fk_soc = s.idp';
 if ($sref)
 {
-	$sql .= " AND c.ref like '%".$sref."%'";
+	$sql .= " AND c.ref like '%".addslashes($sref)."%'";
 }
 if ($sall)
 {
-	$sql .= " AND (c.ref like '%".$sall."%' OR c.note like '%".$sall."%')";
+	$sql .= " AND (c.ref like '%".addslashes($sall)."%' OR c.note like '%".addslashes($sall)."%')";
 }
 if ($socidp)
 {
@@ -95,15 +95,15 @@ if (isset($_GET['afacturer']))
 }
 if (strlen($_POST['sf_ref']) > 0)
 {
-	$sql .= " AND c.ref like '%".$_POST['sf_ref'] . "%'";
+	$sql .= " AND c.ref like '%".addslashes($_POST['sf_ref']) . "%'";
 }
 if (!empty($snom))
 {
-	$sql .= ' AND s.nom like \'%'.$snom.'%\'';
+	$sql .= ' AND s.nom like \'%'.addslashes($snom).'%\'';
 }
 if (!empty($sref_client))
 {
-	$sql .= ' AND c.ref_client like \'%'.$sref_client.'%\'';
+	$sql .= ' AND c.ref_client like \'%'.addslashes($sref_client).'%\'';
 }
 
 $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;

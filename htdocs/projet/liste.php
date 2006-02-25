@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo      <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,46 +53,40 @@ $page = isset($_GET["page"])? $_GET["page"]:$_POST["page"];
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 
-if ($sortfield == "")
-{
-	$sortfield="p.ref";
-}
-if ($sortorder == "")
-{
-	$sortorder="ASC";
-}
-
+if (! $sortfield) $sortfield="p.ref";
+if (! $sortorder) $sortorder="ASC";
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-llxHeader();
 
-/*
- *
+/**
  * Affichage de la liste des projets
  * 
  */
+
+llxHeader();
+
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do";
 $sql .= " , s.nom, s.idp, s.client";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
 if ($socid)
 { 
-  $sql .= " AND s.idp = $socid"; 
+  $sql .= " AND s.idp = ".$socid; 
 }
 if ($_GET["search_ref"])
 {
-  $sql .= " AND p.ref LIKE '%".$_GET["search_ref"]."%'";
+  $sql .= " AND p.ref LIKE '%".addslashes($_GET["search_ref"])."%'";
 }
 if ($_GET["search_label"])
 {
-  $sql .= " AND p.title LIKE '%".$_GET["search_label"]."%'";
+  $sql .= " AND p.title LIKE '%".addslashes($_GET["search_label"])."%'";
 }
 if ($_GET["search_societe"])
 {
-  $sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
+  $sql .= " AND s.nom LIKE '%".addslashes($_GET["search_societe"])."%'";
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
