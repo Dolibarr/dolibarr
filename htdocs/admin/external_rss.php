@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -49,7 +49,7 @@ else {
     dolibarr_print_error($db);
 }
 
-if ($_POST["action"] == 'add')
+if ($_POST["action"] == 'add' || $_POST["modify"])
 {
     $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
 
@@ -59,18 +59,13 @@ if ($_POST["action"] == 'add')
 
         $db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name ='EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "'; ";
-        $db->query($sql);
+		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . $_POST["norss"],$_POST[$external_rss_title]);
+		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$_POST[$external_rss_urlrss]);
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name ='EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "'; ";
-        $db->query($sql);
-
-        $sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "','".$_POST[$external_rss_title]."',0) ;";
-        $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','".$_POST[$external_rss_urlrss]."',0) ;";
-
-        if ($db->query($sql1) && $db->query($sql2))
+        if ($result1 && $result2)
         {
             $db->commit();
+	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: external_rss.php");
         }
         else
@@ -86,47 +81,13 @@ if ($_POST["delete"])
     if(isset($_POST["norss"])) {
         $db->begin();
 
-        $sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URL_" . $_POST["norss"]."'";
-        $sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."'";
-        $sql3 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."'";
-
-        $result1 = $db->query($sql1);
-        $result2 = $db->query($sql2);
-        $result3 = $db->query($sql3);
-
-        if ($result1 && $result2 && $result3)
+		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . $_POST["norss"]);
+		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . $_POST["norss"]);
+		
+        if ($result1 && $result2)
         {
             $db->commit();
-            header("Location: external_rss.php");
-        }
-        else
-        {
-            $db->rollback();
-            dolibarr_print_error($db);
-        }
-    }
-}
-
-if ($_POST["modify"])
-{
-    $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
-    if(isset($_POST[$external_rss_urlrss])) {
-        $db->begin();
-
-        $external_rss_title = "external_rss_title_" . $_POST["norss"];
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."';";
-        $db->query($sql);
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."';";
-        $db->query($sql);
-
-        $sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES('" . "EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "','". $_POST[$external_rss_title]."',0) ;";
-        $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES('" . "EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','". $_POST[$external_rss_urlrss]."',0)";
-
-        if ($db->query($sql1) && $db->query($sql2))
-        {
-            $db->commit();
+	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: external_rss.php");
         }
         else
@@ -155,17 +116,17 @@ print '<td>'.$langs->trans("Example").'</td>';
 print '</tr>';
 print '<tr class="impair">';
 print '<td width="100">'.$langs->trans("Title").'</td>';
-print '<td><input type="text" name="external_rss_title_'.$nbexternalrss.'" value="'.@constant("EXTERNAL_RSS_TITLE_" . $nbexternalrss).'" size="45"></td>';
+print '<td><input type="text" name="external_rss_title_'.$nbexternalrss.'" value="'.@constant("EXTERNAL_RSS_TITLE_" . $nbexternalrss).'" size="64"></td>';
 print '<td>April,<br>LinuxFR,<br>Lolix,<br>Parinux</td>';
 print '</tr>';
 ?>
 <tr class="pair">
   <td>URL du RSS</td>
-  <td><input type="text" name="external_rss_urlrss_<?php echo $nbexternalrss ?>" value="<?php echo @constant("EXTERNAL_RSS_URLRSS_" . $nbexternalrss) ?>" size="45"></td>
+  <td><input type="text" name="external_rss_urlrss_<?php echo $nbexternalrss ?>" value="<?php echo @constant("EXTERNAL_RSS_URLRSS_" . $nbexternalrss) ?>" size="64"></td>
   <td>http://wiki.april.org/RecentChanges?format=rss,<br>http://www.linuxfr.org/backend.rss,<br>http://back.fr.lolix.org/jobs.rss.php3,<br>http://parinux.org/backend.rss</td>
 </tr>
 <tr><td colspan="3" align="center">
-<input type="submit"  value="<?php echo $langs->trans("Add") ?>">
+<input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>">
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="norss" value="<?php echo $nbexternalrss ?>">
 </td>
@@ -179,28 +140,27 @@ print '</tr>';
 
 <?php
 
-for($i = 0; $i < $nbexternalrss; $i++) {
-  print "<tr class=\"liste_titre\">
-<form name=\"externalrssconfig\" action=\"external_rss.php\" method=\"post\">
-  <td colspan=\"2\">Syndication du flux numéro " . ($i+1) . "</td>
-</tr>
-<tr class=\"impair\">
-  <td width=\"100\">Titre</td>
-  <td><input type=\"text\" name=\"external_rss_title_" . $i . "\" value=\"" . @constant("EXTERNAL_RSS_TITLE_" . $i) . "\" size=\"45\"></td>
-</tr>
-<tr class=\"pair\">
-  <td>URL du RSS</td>
-  <td><input type=\"text\" name=\"external_rss_urlrss_" . $i . "\" value=\"" . @constant("EXTERNAL_RSS_URLRSS_" . $i) . "\" size=\"45\"></td>
-</tr>
-<tr>
-<td colspan=\"2\" align=\"center\">
-<input type=\"submit\" name=\"modify\" value=\"".$langs->trans("Modify")."\">
-<input type=\"submit\" name=\"delete\" value=\"".$langs->trans("Delete")."\">
-<input type=\"hidden\" name=\"norss\"  value=\"$i\">
-</td>
-</form>
-</tr>
-";
+for($i = 0; $i < $nbexternalrss; $i++)
+{
+	print "<tr class=\"liste_titre\"><form name=\"externalrssconfig\" action=\"external_rss.php\" method=\"post\">";
+	print "<td colspan=\"2\">Syndication du flux numéro " . ($i+1) . "</td>";
+	print "</tr>";
+	print "<tr class=\"impair\">";
+	print "<td width=\"100\">".$langs->trans("Title")."</td>";
+	print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_title_" . $i . "\" value=\"" . @constant("EXTERNAL_RSS_TITLE_" . $i) . "\" size=\"64\"></td>";
+	print "</tr>";
+	print "<tr class=\"pair\">";
+	print "<td>URL du RSS</td>";
+	print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_urlrss_" . $i . "\" value=\"" . @constant("EXTERNAL_RSS_URLRSS_" . $i) . "\" size=\"64\"></td>";
+	print "</tr>";
+	print "<tr>";
+	print "<td colspan=\"2\" align=\"center\">";
+	print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\"> &nbsp;";
+	print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
+	print "<input type=\"hidden\" name=\"norss\"  value=\"$i\">";
+	print "</td>";
+	print "</form>";
+	print "</tr>";
 }
 ?>
 
