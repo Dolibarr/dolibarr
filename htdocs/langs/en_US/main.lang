@@ -291,6 +291,8 @@ BuildPDF=Build PDF
 RebuildPDF=Rebuild PDF
 BuildDoc=Build Doc
 RebuildDoc=Rebuild Doc
+Entity=Entity
+Entities=Entities
 # Countries
 CountryFR=France
 CountryBE=Belgium

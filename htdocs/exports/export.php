@@ -38,6 +38,9 @@ $user->getrights();
 if (! $user->societe_id == 0)
   accessforbidden();
 
+$entitytoicon=array('invoice'=>'bill','invoice_line'=>'bill');
+$entitytolang=array('user'=>'User','company'=>'Company','contact'=>'Contact','invoice'=>'Bill','invoice_line'=>'InvoiceLine');
+
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $datatoexport=isset($_GET["datatoexport"])?$_GET["datatoexport"]:'';
 $action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
@@ -223,7 +226,9 @@ if ($step == 2 && $datatoexport)
     print $langs->trans("SelectExportFields").'<br>';
     
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="48%">'.$langs->trans("ExportableFields").'</td>';
+    print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Entities").'</td>';
+    print '<td>'.$langs->trans("ExportableFields").'</td>';
     print '<td width="4%">&nbsp;</td>';
     print '<td width="48%">'.$langs->trans("ExportedFields").'</td>';
     print '</tr>';
@@ -231,12 +236,13 @@ if ($step == 2 && $datatoexport)
     // Champs exportables
     $fieldsarray=$objexport->array_export_fields[0];
 
-#    $this->array_export_module[$i]=$module;
-#    $this->array_export_code[$i]=$module->export_code[$r];
-#    $this->array_export_label[$i]=$module->export_label[$r];
-#    $this->array_export_fields_code[$i]=$module->export_fields_code[$r];
-#    $this->array_export_fields_label[$i]=$module->export_fields_label[$r];
-#    $this->array_export_sql[$i]=$module-
+#    $this->array_export_module[0]=$module;
+#    $this->array_export_code[0]=$module->export_code[$r];
+#    $this->array_export_label[0]=$module->export_label[$r];
+#    $this->array_export_sql[0]=$module->export_sql[$r];
+#    $this->array_export_fields[0]=$module->export_fields_array[$r];
+#    $this->array_export_entities[0]=$module->export_fields_entities[$r];
+#    $this->array_export_alias[0]=$module->export_fields_alias[$r];
                                 
     $var=true;
     foreach($fieldsarray as $code=>$label)
@@ -244,6 +250,11 @@ if ($step == 2 && $datatoexport)
         $var=!$var;
         print "<tr $bc[$var]>";
                     
+        $entity=$objexport->array_export_entities[0][$code];
+        $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
+        $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
+
+        print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
         if (isset($array_selected[$code]) && $array_selected[$code])
         {
             // Champ sélectionné
@@ -253,6 +264,7 @@ if ($step == 2 && $datatoexport)
         }
         else
         {
+        	// Champ non sélectionné
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&amp;datatoexport='.$datatoexport.'&amp;action=selectfield&amp;field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
@@ -334,7 +346,9 @@ if ($step == 3 && $datatoexport)
     print $langs->trans("ChooseFieldsOrdersAndTitle").'<br>';
     
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="48%">'.$langs->trans("ExportedFields").'</td>';
+    print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Entities").'</td>';
+    print '<td>'.$langs->trans("ExportedFields").'</td>';
     print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
     print '<td>&nbsp;</td>';
     print '<td>'.$langs->trans("FieldsTitle").'</td>';
@@ -345,6 +359,12 @@ if ($step == 3 && $datatoexport)
     {
         $var=!$var;
         print "<tr $bc[$var]>";
+
+        $entity=$objexport->array_export_entities[0][$code];
+        $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
+        $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
+
+        print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
                     
         print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).' ('.$code.')</td>';
 

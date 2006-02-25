@@ -291,6 +291,8 @@ BuildPDF=Générer le PDF
 RebuildPDF=Regénérer le PDF
 BuildDoc=Générer le doc
 RebuildDoc=Regénérer le doc
+Entity=Entité
+Entities=Entités
 # Countries
 CountryFR=France
 CountryBE=Belgique

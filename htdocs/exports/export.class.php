@@ -124,6 +124,8 @@ class Export
                             $this->array_export_sql[$i]=$module->export_sql[$r];
                             // Tableau des champ à exporter (clé=champ, valeur=libellé)
                             $this->array_export_fields[$i]=$module->export_fields_array[$r];
+                            // Tableau des entites à exporter (clé=champ, valeur=entite)
+                            $this->array_export_entities[$i]=$module->export_entities_array[$r];
                             // Tableau des alias à exporter (clé=champ, valeur=alias)
                             $this->array_export_alias[$i]=$module->export_alias_array[$r];
 
