@@ -794,7 +794,11 @@ else
     print $soc->tva_intra;
     print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    // Capital
+    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
+    if ($soc->capital) print $soc->capital.' '.$langs->trans("Currency".$conf->monnaie);
+    else print '&nbsp;';
+    print '</td></tr>';
 
     // Statut juridique
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';

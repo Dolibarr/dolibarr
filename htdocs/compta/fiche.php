@@ -244,7 +244,10 @@ if ($socid > 0)
     print $societe->tva_intra;
     print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$societe->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
+    if ($societe->capital) print $societe->capital.' '.$langs->trans("Currency".$conf->monnaie);
+    else print '&nbsp;';
+    print '</td></tr>';
 
     // Type + Staff
     $arr = $societe->typent_array($societe->typent_id);
