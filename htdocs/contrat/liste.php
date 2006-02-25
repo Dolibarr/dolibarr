@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,10 +71,10 @@ $sql.= " c.rowid as cid, c.ref, c.datec, c.statut, s.nom, s.idp as sidp";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.idp ";
-if ($search_nom)      $sql.= " AND s.nom like '%".$search_nom."%'";
-if ($search_contract) $sql.= " AND c.rowid = '".$search_contract."'";
-if ($sall)            $sql.= " AND (s.nom like '%".$sall."%' OR cd.label like '%".$sall."%' OR cd.description like '%".$sall."%')";
-if ($socid > 0)       $sql.= " AND s.idp = $socid";
+if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
+if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
+if ($sall)            $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR cd.label like '%".addslashes($sall)."%' OR cd.description like '%".addslashes($sall)."%')";
+if ($socid > 0)       $sql.= " AND s.idp = ".$socid;
 $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit + 1 ,$offset);
