@@ -38,7 +38,7 @@ $ok = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
-set_time_limit(60);         
+set_time_limit(60);
 error_reporting($err);
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
@@ -54,7 +54,7 @@ pHeader($langs->trans("DatabaseMigration"),"upgrade2","upgrade");
 if (file_exists($conffile))
 {
     include_once($conffile);
-    if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+    if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
     define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 }
 
@@ -122,7 +122,7 @@ if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
     {
         if ($choix==1) $dir = "../../mysql/migration/";
         else $dir = "../../pgsql/migration/";
-        
+
         $i = 0;
         $ok = 0;
         $handle=opendir($dir);
@@ -147,51 +147,54 @@ if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
                         if (eregi(';',$buffer))
                         {
                             // Found new request
-                            $arraysql[$i]=$buffer;
+                            $arraysql[$i]=trim($buffer);
                             $i++;
                             $buffer='';
                         }
                     }
-                    if ($buffer) $arraysql[$i]=$buffer;
+                    if ($buffer) $arraysql[$i]=trim($buffer);
                     fclose($fp);
                 }
 
                 // Loop on each request
                 foreach($arraysql as $i=>$sql)
                 {
-//                    print '<tr><td>'.$langs->trans("Request").' '.$i.'</td>';
-    
-                    if ($db->query($sql))
-                    {
-//                        print '<td align="right">OK</td>';
-                    }
-                    else
-                    {
-                        $errno=$db->errno();
-                        $okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
-                                        'DB_ERROR_COLUMN_ALREADY_EXISTS',
-                                        'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
-                                        'DB_ERROR_RECORD_ALREADY_EXISTS',
-                                        'DB_ERROR_NOSUCHTABLE',
-                                        'DB_ERROR_NOSUCHFIELD',
-                                        'DB_ERROR_CANNOT_CREATE'    // Qd contrainte deja existante
-                                       );
-                        if (in_array($errno,$okerror))
-                        {
-//                            print '<td align="right">'.$langs->trans("OK").'</td>';
-                        }
-                        else
-                        {
-                            print '<tr><td valign="top">'.$langs->trans("Request").' '.$i.'</td>';
-                            print '<td valign="top">'.$langs->trans("Error")." ".$db->errno()." ".$sql."<br>".$db->error()."</td>";
-                            print '</tr>';
-                            $error++;
-                        }
-                    }
-    
-//                    print '</tr>';
+					if ($sql)
+					{
+//	                    print '<tr><td>'.$langs->trans("Request").' '.$i.'</td>';
+						print("Execution de requete=".($i+1)." sql='".$sql."'<br>\n");
+    	                if ($db->query($sql))
+        	            {
+// 	                       print '<td align="right">OK</td>';
+            	        }
+	                    else
+	                    {
+	                        $errno=$db->errno();
+	                        $okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
+	                                        'DB_ERROR_COLUMN_ALREADY_EXISTS',
+	                                        'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+	                                        'DB_ERROR_RECORD_ALREADY_EXISTS',
+	                                        'DB_ERROR_NOSUCHTABLE',
+	                                        'DB_ERROR_NOSUCHFIELD',
+	                                        'DB_ERROR_CANNOT_CREATE'    // Qd contrainte deja existante
+	                                       );
+	                        if (in_array($errno,$okerror))
+	                        {
+	//                            print '<td align="right">'.$langs->trans("OK").'</td>';
+	                        }
+	                        else
+	                        {
+	                            print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1).'</td>';
+	                            print '<td valign="top">'.$langs->trans("Error")." ".$db->errno()." ".$sql."<br>".$db->error()."</td>";
+	                            print '</tr>';
+	                            $error++;
+	                        }
+	                    }
+
+//                    	print '</tr>';
+					}
                 }
-                
+
             }
 
         }
