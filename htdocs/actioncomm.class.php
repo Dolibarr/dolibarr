@@ -89,7 +89,7 @@ class ActionComm
         if ($this->percent == 100) $sql.= "datea,";
         $sql.= "fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
         $sql.= "fk_facture,propalrowid)";
-        $sql.= " VALUES (now,";
+        $sql.= " VALUES (now(),";
         $sql.= "'".$this->db->idate($this->date)."',";
         if ($this->percent == 100) $sql.= "'".$this->db->idate($this->date)."',";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
