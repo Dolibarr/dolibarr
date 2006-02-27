@@ -179,10 +179,10 @@ class Entrepot
             if ($this->pays_id)
             {
               $sqlp = "SELECT libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
-              $resql=$this->$db->query($sqlp);
+              $resql=$this->db->query($sqlp);
               if ($resql)
               {
-                $objp = $this->$db->fetch_object($resql);
+                $objp = $this->db->fetch_object($resql);
               }
               else
               {
