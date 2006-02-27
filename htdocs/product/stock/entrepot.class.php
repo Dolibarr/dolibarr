@@ -175,6 +175,21 @@ class Entrepot
             $this->cp             = $obj->cp;
             $this->ville          = $obj->ville;
             $this->pays_id        = $obj->fk_pays;
+            
+            if ($soc->pays_id)
+            {
+              $sql = "SELECT libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
+              $resql=$db->query($sql);
+              if ($resql)
+              {
+                $obj = $db->fetch_object($resql);
+              }
+              else
+              {
+                dolibarr_print_error($db);
+              }
+            $this->pays=$obj->libelle;
+        }
         
             $this->db->free($result);
             return 1;
