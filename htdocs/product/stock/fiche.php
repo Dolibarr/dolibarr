@@ -149,7 +149,7 @@ if ($_GET["action"] == 'create')
     print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%"><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
     
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-    $form->select_pays($entrepot->pays_id,$entrepot->pays_code);
+    $form->select_pays($entrepot->pays_id, 'pays_id');
     print '</td></tr>';
 
     print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
@@ -357,7 +357,7 @@ else
             print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
 
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-            $form->select_pays($entrepot->pays_id,$entrepot->pays_code);
+            $form->select_pays($entrepot->pays_id,'pays_id');
             print '</td></tr>';
 
             print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
