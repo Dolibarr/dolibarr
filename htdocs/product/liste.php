@@ -75,9 +75,9 @@ if (isset($_REQUEST['catid']))
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = 'SELECT distinct(p.rowid), p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_det as d';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p'; // '.MAIN_DB_PREFIX.'product_det as d'; //en attendant le debugage
 
 if ($catid)
 {
