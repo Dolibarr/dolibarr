@@ -131,7 +131,6 @@ class Entrepot
 	  $sql .= " SET label = '" . $this->libelle ."'";
 	  $sql .= ",description = '" . $this->description ."'";
 	  $sql .= ",statut = " . $this->statut ;
-	  $sql .= ",description = '" . $this->description ."'";
 	  $sql .= ",lieu = '" . $this->lieu ."'";
 	  $sql .= ",address = '" . $this->address ."'";
 	  $sql .= ",cp = '" . $this->cp ."'";
@@ -175,7 +174,7 @@ class Entrepot
             $this->address        = $obj->address;
             $this->cp             = $obj->cp;
             $this->ville          = $obj->ville;
-            $this->pays_id        = $obj->pays_id;
+            $this->pays_id        = $obj->fk_pays;
         
             $this->db->free($result);
             return 1;
