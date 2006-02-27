@@ -125,7 +125,7 @@ class Entrepot
       $this->address=trim($this->address);
       $this->cp=trim($this->cp);
       $this->ville=trim($this->ville);
-      $this->pays_id=trim($this->pays_id);
+      $this->pays_id=trim($this->pays_id?$this->pays_id:0);
       
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 	  $sql .= " SET label = '" . $this->libelle ."'";
@@ -135,7 +135,7 @@ class Entrepot
 	  $sql .= ",address = '" . $this->address ."'";
 	  $sql .= ",cp = '" . $this->cp ."'";
 	  $sql .= ",ville = '" . $this->ville ."'";
-	  $sql .= ",fk_pays = " . $this->pays_id?$this->pays_id:'0' ;
+	  $sql .= ",fk_pays = " . $this->pays_id;
 	  $sql .= " WHERE rowid = " . $id;
 	  
 	  if ( $this->db->query($sql) )

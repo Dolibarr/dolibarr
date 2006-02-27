@@ -211,7 +211,7 @@ else
             print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
 
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-            $entrepot->pays_id;
+            print $entrepot->pays_id;
             print '</td></tr>';
 
             print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
