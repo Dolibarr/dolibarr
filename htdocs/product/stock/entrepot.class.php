@@ -176,7 +176,7 @@ class Entrepot
             $this->ville          = $obj->ville;
             $this->pays_id        = $obj->fk_pays;
             
-            if ($soc->pays_id)
+            if ($this->pays_id)
             {
               $sql = "SELECT libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
               $resql=$db->query($sql);
