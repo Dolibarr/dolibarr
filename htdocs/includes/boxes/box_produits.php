@@ -58,7 +58,7 @@ class box_produits extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db;
+        global $user, $langs, $db, $conf;
         $langs->load("boxes");
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
@@ -78,6 +78,21 @@ class box_produits extends ModeleBoxes {
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
+                    
+                    // Multilangs
+					          if ($conf->global->PRODUIT_MULTILANGS == 1) // si l'option est active
+					          {
+						           $sqld = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+						           $sqld.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+						           $sqld.= " LIMIT 1";
+
+						           $resultd = $db->query($sqld);
+						           if ($resultd)
+						           {
+							           $objtp = $db->fetch_object($resultd);
+							           if ($objtp->label != '') $objp->label = $objtp->label;
+						           }
+					          }
     
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => ($objp->fk_product_type?'object_service':'object_product'),

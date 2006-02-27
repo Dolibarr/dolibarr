@@ -594,6 +594,20 @@ class Form
         if ($limit) $sql.= " LIMIT $limit";
     
         $result=$this->db->query($sql);
+        
+        // Multilang : on construit une liste des traductions des produits listés
+        $sqld = "SELECT d.fk_product, d.label";
+        $sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
+        $sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
+		    $sqld.= " ORDER BY p.nbvente DESC";
+    
+		   // inutile de faire la requete si l'option n'est pas active
+		   if ($conf->global->PRODUIT_MULTILANGS == 1)
+		   {
+			    $resultd = $this->db->query($sqld);
+			    if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
+		   }
+        
         if ($result)
         {
             print '<select class="flat" name="'.$htmlname.'">';
@@ -604,8 +618,17 @@ class Form
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
+                
+        // Multilangs : modification des donnée si une traduction existe
+				if ($conf->global->PRODUIT_MULTILANGS == 1)
+					if ( $objp->rowid == $objtp->fk_product ) // si on a une traduction
+					{
+						if ( $objtp->label != '') $objp->label = $objtp->label;
+						if ( $resultd ) $objtp = $this->db->fetch_object($resultd); // on charge la traduction suivante
+					}
                 $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-                $opt.= dolibarr_trunc($objp->label,36).' - ';
+                $opt.= dolibarr_trunc($objp->label,40).' - ';
+                
 				//multiprix
 				if($price_level > 1)
 				{

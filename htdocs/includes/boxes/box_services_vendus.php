@@ -64,7 +64,7 @@ class box_services_vendus extends ModeleBoxes {
 
         if ($user->rights->produit->lire)
         {
-            $sql  = "SELECT s.nom, s.idp, c.rowid, cd.rowid as cdid, p.label, p.fk_product_type";
+            $sql  = "SELECT s.nom, s.idp, c.rowid, cd.rowid as cdid, p.rowid as pid, p.label, p.fk_product_type";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
             $sql .= " WHERE s.idp = c.fk_soc AND c.rowid = cd.fk_contrat AND cd.fk_product = p.rowid";
             if($user->societe_id)
@@ -85,6 +85,21 @@ class box_services_vendus extends ModeleBoxes {
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
+                    
+                    // Multilangs
+					         if ($conf->global->PRODUIT_MULTILANGS == 1) // si l'option est active
+					         {
+						         $sqld = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+						         $sqld.= " WHERE fk_product=".$objp->pid." AND lang='". $langs->getDefaultLang() ."'";
+						         $sqld.= " LIMIT 1";
+
+						         $resultd = $db->query($sqld);
+						         if ($resultd)
+						         {
+							         $objtp = $db->fetch_object($resultd);
+							         if ($objtp->label != '') $objp->label = $objtp->label;
+						         }
+					         }
     
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => ($objp->fk_product_type?'object_service':'object_product'),

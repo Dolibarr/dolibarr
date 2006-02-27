@@ -75,9 +75,9 @@ if (isset($_REQUEST['catid']))
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
+$sql = 'SELECT distinct(p.rowid), p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_det as d';
 
 if ($catid)
 {
@@ -223,6 +223,21 @@ if ($resql)
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
+        
+        		// Multilangs
+		if ($conf->global->PRODUIT_MULTILANGS == 1) // si l'option est active
+		{
+			$sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+			$sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+			$sql.= " LIMIT 1";
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$objtp = $db->fetch_object($result);
+				if ($objtp->label != '') $objp->label = $objtp->label;
+			}
+		}
+        
         $var=!$var;
         print "<tr $bc[$var]><td>";
         print "<a href=\"fiche.php?id=$objp->rowid\">";

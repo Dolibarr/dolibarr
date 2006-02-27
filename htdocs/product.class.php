@@ -54,6 +54,7 @@ class Product
     var $stats_commande=array();
     var $stats_contrat=array();
     var $stats_facture=array();
+    var $multilangs=array();
 
     var $typeprodserv;
     var $error;
@@ -201,7 +202,7 @@ class Product
      */
     function update($id, $user)
     {
-        global $langs;
+        global $langs, $conf;
         $langs->load("main");
         $langs->load("products");
     
@@ -225,7 +226,14 @@ class Product
     
         if ( $this->db->query($sql) )
         {
-            return 1;
+        	// Multilangs
+			    if($conf->global->PRODUIT_MULTILANGS == 1)
+				     if ( $this->setMultiLangs() < 0)
+				     {
+					     $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+					     return -2;
+				     }
+           return 1;
         }
         else
         {
@@ -241,6 +249,89 @@ class Product
             }
         }
     }
+
+	/**
+	 *		\brief : update ou crée les traductions des infos produits
+	 */
+	function setMultiLangs()
+	{
+		global $langs;
+        $langs_available = $langs->get_available_languages();
+		$current_lang = $langs->getDefaultLang();
+
+		foreach ($langs_available as $value)
+		{
+			if ($value == $current_lang)
+			{
+				$sqlU = "UPDATE ".MAIN_DB_PREFIX."product_det";
+				$sqlU.= " SET label='".$this->libelle."'";
+				$sqlU.= " description='".$this->description."'";
+				$sqlU.= " note='".$this->note."'";
+				$sqlU.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+				
+				$sqlI = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
+				$sqlI.= " VALUES(".$this->id.",'".$value."','". $this->libelle;
+				$sqlI.= "','".$this->description;
+				$sqlI.= "','".$this->note."')";
+
+			}
+			else
+			{
+				$sqlU = "UPDATE ".MAIN_DB_PREFIX."product_det";
+				$sqlU.= " SET label='".$this->multilangs["$value"]["libelle"]."'";
+				$sqlU.= " description='".$this->multilangs["$value"]["libelle"]."'";
+				$sqlU.= " note='".$this->multilangs["$value"]["note"]."'";
+				$sqlU.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+
+				$sqlI = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
+				$sqlI.= " VALUES(".$this->id.",'".$value."','". $this->multilangs["$value"]["libelle"];
+				$sqlI.= "','".$this->multilangs["$value"]["description"];
+				$sqlI.= "','".$this->multilangs["$value"]["note"]."')";
+
+			}
+
+			if (!$this->db->query($sqlU)) // si aucun champ n'est mis a jour
+				if (!$this->db->query($sqlI)) return -1;
+		}
+		return 1;
+	}
+	 
+
+	/**
+	 *		\ brief Charge toutes les traductions du produit
+	 */
+	function getMultiLangs()
+	{
+		global $langs;
+		$current_lang = $langs->getDefaultLang();
+		
+		$sql = "SELECT lang, label, description, note";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_det";
+		$sql.= " WHERE fk_product=".$this->id;
+		
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			while ( $obj = $this->db->fetch_object($result) )
+			{
+				$this->multilangs["$obj->lang"]["libelle"]		= $obj->label;
+				$this->multilangs["$obj->lang"]["description"]	= $obj->description;
+				$this->multilangs["$obj->lang"]["note"]			= $obj->note;
+				
+				if( $obj->lang == $current_lang ) // si on a les traduct. dans la langue courant on les charge en infos principales.
+				{
+					$this->libelle		= $obj->label;
+					$this->description	= $obj->description;
+					$this->note			= $obj->note;
+				}
+			}
+		}
+		else
+		{
+			$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+			return -1;
+		}
+	}
 
 
     /**
@@ -580,6 +671,10 @@ class Product
             }
     
             $this->db->free();
+			// multilangs
+			if( $conf->global->PRODUIT_MULTILANGS == 1 ) $this->getMultiLangs();
+			
+
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
 			{

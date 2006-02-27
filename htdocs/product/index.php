@@ -138,6 +138,20 @@ if ($result)
       while ($i < $num)
 	{
 	  $objp = $db->fetch_object($result);
+	  
+	  	  //Multilangs
+	  if ($conf->global->PRODUIT_MULTILANGS == 1)
+	  {
+		  $sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+		  $sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+		  $resultd = $db->query($sql);
+		  if ($resultd)
+		  {
+			$objtp = $db->fetch_object($resultd);
+			if ($objtp->label != '') $objp->label = $objtp->label;
+		  }
+	  }
+	  
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print '<td nowrap="nowrap"><a href="fiche.php?id='.$objp->rowid.'">';

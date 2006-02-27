@@ -87,6 +87,32 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 					$product->multiprices["$i"] = "";
 		}
 	}
+	
+			if ( $value != $current_lang )
+
+	// MultiLangs
+	if($conf->global->PRODUIT_MULTILANGS == 1)
+	{
+        $langs_available=$langs->get_available_languages();
+		$current_lang = $langs->getDefaultLang();
+
+		foreach ($langs_available as $value)
+		{
+			if ($value == $current_lang)
+			{
+				$product->multilangs["$value"]["libelle"]		= $product->libelle;
+				$product->multilangs["$value"]["description"]	= $product->description;
+				$product->multilangs["$value"]["note"]			= $product->note;
+			}
+			else
+			{
+				$product->multilangs["$value"]["libelle"]		= stripslashes($_POST["libelle-".$value]);
+				$product->multilangs["$value"]["description"]	= stripslashes($_POST["desc-".$value]);
+				$product->multilangs["$value"]["note"]			= stripslashes($_POST["note-".$value]);
+			}
+		}
+	}	
+	
     $e_product = $product;
 
     $id = $product->create($user);
@@ -126,6 +152,29 @@ if ($_POST["action"] == 'update' &&
         $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
         $product->duration_value     = $_POST["duration_value"];
         $product->duration_unit      = $_POST["duration_unit"];
+
+		// MultiLangs
+		if($conf->global->PRODUIT_MULTILANGS == 1)
+		{
+			$langs_available=$langs->get_available_languages();
+			$current_lang = $langs->getDefaultLang();
+	
+			foreach ($langs_available as $value)
+			{
+				if ($value == $current_lang)
+				{
+					$product->multilangs["$value"]["libelle"]		= $product->libelle;
+					$product->multilangs["$value"]["description"]	= $product->description;
+					$product->multilangs["$value"]["note"]			= $product->note;
+				}
+				else
+				{
+					$product->multilangs["$value"]["libelle"]		= stripslashes($_POST["libelle-".$value]);
+					$product->multilangs["$value"]["description"]	= stripslashes($_POST["desc-".$value]);
+					$product->multilangs["$value"]["note"]			= stripslashes($_POST["note-".$value]);
+				}
+			}
+		}
 
         if ($product->check())
         {
@@ -379,7 +428,25 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     print '<textarea name="note" rows="8" cols="50">';
     print "</textarea></td></tr>";
 
-    print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+	// Gestion multilingue
+	if($conf->global->PRODUIT_MULTILANGS == 1)
+	{
+		print '<table class="border" width="100%">';
+		print '<tr><td valign="top" colspan="3" class="liste_titre">'.$langs->trans("language").'</td></tr>';
+
+        $langs_available=$langs->get_available_languages();
+		$current_lang = $langs->getDefaultLang();
+		foreach ($langs_available as $value)
+			if ( $value != $current_lang )
+			{
+				print '<tr><td valign="top" rowspan="3">'.$value.'</td>';
+				print '<td>'.$langs->trans("Label").'</td><td><input name="libelle-'.$value.'" size="40" value="'.$product->libelle.'"></td></tr>';
+				print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top"><textarea name="desc-'.$value.'" rows="4" cols="50"></textarea></td></tr>';
+				print '<tr><td valign="top">'.$langs->trans("Note").'</td><td valign="top"><textarea name="note-'.$value.'" rows="8" cols="50"></textarea></td></tr>';
+			}
+	}
+
+    print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
     print '</table>';
     print '</form>';
 }
@@ -593,6 +660,23 @@ if ($_GET["id"] || $_GET["ref"])
             // Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
 
+			// Multilangs
+			if ($conf->global->PRODUIT_MULTILANGS == 1)
+			{
+				print "</table>\n";
+				print '<table class="border" width="100%">';
+				$langs_available=$langs->get_available_languages();
+				$current_lang = $langs->getDefaultLang();
+				foreach ($langs_available as $value)
+					if ( $value != $current_lang )
+					{
+						print '<tr><td valign="top" rowspan="3" width="50">'.$value.'</td>';
+						print '<td valign="top" width="10%">'.$langs->trans("Label").'</td><td>'.$product->multilangs[$value]['libelle'].'</td></tr>';
+						print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top">'.$product->multilangs[$value]['description'].'</td></tr>';
+						print '<tr><td valign="top">'.$langs->trans("Note").'</td><td valign="top">'.$product->multilangs[$value]['note'].'</td></tr>';
+					}
+			}
+
             print "</table>\n";
 
             print "</div>\n";
@@ -672,6 +756,24 @@ if ($_GET["id"] || $_GET["ref"])
         print '<textarea name="note" rows="8" cols="50">';
         print $product->note;
         print "</textarea></td></tr>";
+        
+        		// Gestion multilingue
+		   if($conf->global->PRODUIT_MULTILANGS == 1)
+		   {
+			   print '<table class="border" width="100%">';
+			   print '<tr><td valign="top" colspan="3" class="liste_titre">'.$langs->trans("language").'</td></tr>';
+	
+			   $langs_available=$langs->get_available_languages();
+			   $current_lang = $langs->getDefaultLang();
+			   foreach ($langs_available as $value)
+				   if ( $value != $current_lang )
+				   {
+					  print '<tr><td valign="top" rowspan="3">'.$value.'</td>';
+					  print '<td>'.$langs->trans("Label").'</td><td><input name="libelle-'.$value.'" size="40" value="'.$product->multilangs[$value]["libelle"].'"></td></tr>';
+					  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top"><textarea name="desc-'.$value.'" rows="4" cols="50">'.$product->multilangs[$value]["description"].'</textarea></td></tr>';
+					  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td valign="top"><textarea name="note-'.$value.'" rows="8" cols="50">'.$product->multilangs[$value]["note"].'</textarea></td></tr>';
+				   }
+		   }
 
         print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';

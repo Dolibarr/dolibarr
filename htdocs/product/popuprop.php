@@ -83,6 +83,21 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object($result);
+      
+      	  // Multilangs
+	    if ($conf->global->PRODUIT_MULTILANGS == 1) // si l'option est active
+	    {
+		    $sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+		    $sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+		    $sql.= " LIMIT 1";
+		    $result = $db->query($sql);
+		    if ($result)
+		    {
+			    $objtp = $db->fetch_object($result);
+			    if ($objtp->label != '') $objp->label = $objtp->label;
+		    }
+	    }
+      
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$objp->rowid.'">';

@@ -67,3 +67,13 @@ create table llx_expedition_model_pdf
   libelle     varchar(255),
   description text
 )type=innodb;
+
+create table llx_product_det
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_product     integer      DEFAULT 0 NOT NULL,
+  fk_lang        integer      DEFAULT 0 NOT NULL,
+  label          varchar(128),
+  description    varchar(255),
+  note           text
+)type=innodb;
