@@ -24,7 +24,7 @@ create table llx_product_det
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_product     integer      DEFAULT 0 NOT NULL,
-  fk_lang        integer      DEFAULT 0 NOT NULL,
+  lang           varchar(5)   DEFAULT 0 NOT NULL,
   label          varchar(128),
   description    varchar(255),
   note           text
