@@ -563,9 +563,9 @@ class Propal
                    
                    if ($resqlcond)
                    {
-                   	$obj = $this->db->fetch_object($resqlcond);
-                   	$this->cond_reglement = $obj->cond_libelle;
-                   	$this->mode_reglement = $obj->mode_libelle;
+                   	$objc = $this->db->fetch_object($resqlcond);
+                   	$this->cond_reglement = $objc->cond_libelle;
+                   	$this->mode_reglement = $objc->mode_libelle;
                   }
                 }
 
