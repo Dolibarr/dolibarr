@@ -553,19 +553,19 @@ class Propal
     
                 $this->user_author_id = $obj->fk_user_author;
                 
-                if ($this->cond_reglement_id || $this->mode_reglement_id)
+                if ($this->cond_reglement_id)
                 {
-                   $sql = "SELECT cr.rowid, cr.libelle as cond_libelle, cr.code as cond_code, cp.rowid, cp.libelle as mode_libelle, cp.code as mode_code";
-                   $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement as cr, ".MAIN_DB_PREFIX."c_paiement as cp";
-                   $sql.= " WHERE cr.rowid = ".$this->cond_reglement_id." AND cp.rowid = ".$this->mode_reglement_id;
+                   $sql = "SELECT rowid, libelle, code";
+                   $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
+                   $sql.= " WHERE rowid = ".$this->cond_reglement_id;
                    
                    $resqlcond = $this->db->query($sql);
                    
                    if ($resqlcond)
                    {
                    	$objc = $this->db->fetch_object($resqlcond);
-                   	$this->cond_reglement = $objc->cond_libelle;
-                   	$this->mode_reglement = $objc->mode_libelle;
+                   	$this->cond_reglement      = $objc->libelle;
+                   	$this->cond_reglement_code = $objc->code;
                   }
                 }
 
