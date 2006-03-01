@@ -162,13 +162,17 @@ function setInitialDate() {
     // CREATE A NEW DATE OBJECT (WILL GENERALLY PARSE CORRECT DATE EXCEPT WHEN "." IS USED AS A DELIMITER)
     // (THIS ROUTINE DOES *NOT* CATCH ALL DATE FORMATS, IF YOU NEED TO PARSE A CUSTOM DATE FORMAT, DO IT HERE)
     
-	inDate = inDate.split("/");
-	if(inDate[1].indexOf("0") != -1)
-		inDate[1] = inDate[1].replace("0","");
-	if(inDate[0].indexOf("0") != -1)
-		inDate[0] = inDate[0].replace("0","");
-	
-	calDate = new Date(inDate[2],inDate[1]-1,inDate[0]);
+	if(inDate.indexOf("/") > -1)
+	{
+		inDate = inDate.split("/");
+		if(inDate[1].indexOf("0") > -1)
+			inDate[1] = inDate[1].replace("0","");
+		if(inDate[0].indexOf("0") > -1)
+			inDate[0] = inDate[0].replace("0","");
+		calDate = new Date(inDate[2],inDate[1]-1,inDate[0]);
+	}
+	else
+		calDate = new Date(inDate);
 	
     // IF THE INCOMING DATE IS INVALID, USE THE CURRENT DATE
     if (isNaN(calDate)) {
