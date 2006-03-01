@@ -63,4 +63,5 @@ RelatedBills=Factures associées
 ErrorPropalNotFound=Propal %s inexistante
 Estimate=Devis :
 OtherPropals=Autres propositions
-DateDelivery=Date de livraison
+DateDelivery=Date de livraison 
+SetDateLivraison=Définir la date de livraison
