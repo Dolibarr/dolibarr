@@ -240,8 +240,8 @@ class Commande
 		{
 			$this->projetid = 0;
 		}
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement) ';
-		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\', \''.$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\')';
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison) ';
+		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\', \''.$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\', \''.$this->db->idate($this->date_livraison).'\')';
 
 		if ( $this->db->query($sql) )
 		{
@@ -540,7 +540,7 @@ class Commande
 	function fetch($id)
 	{
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement';
-		$sql .= ', '.$this->db->pdate('c.date_commande').' as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note, c.ref_client, c.model_pdf';
+		$sql .= ', '.$this->db->pdate('c.date_commande').' as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note, c.ref_client, c.model_pdf, c.date_livraison';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql .= ' WHERE c.rowid = '.$id;
 
@@ -566,6 +566,7 @@ class Commande
 			$this->modelpdf          = $obj->model_pdf;
 			$this->cond_reglement_id = $obj->fk_cond_reglement;
 			$this->mode_reglement_id = $obj->fk_mode_reglement;
+			$this->date_livraison = $obj->date_livraison;
 			
 			$this->db->free();
 			if ($this->statut == 0)
@@ -802,7 +803,32 @@ class Commande
 			}
 		}
 	}
-
+/**
+     *      \brief      Définit une date de livraison
+     *      \param      user        Objet utilisateur qui modifie
+     *      \param      date_livraison      date de livraison  
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function set_date_livraison($user, $date_livraison)
+    {
+        if ($user->rights->commande->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET date_livraison = ".$this->db->idate($date_livraison);
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->date_livraison = $date_livraison;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dolibarr_syslog("Commande::set_date_livraison Erreur SQL");
+                return -1;
+            }
+        }
+    }
   /**
    *    \brief      Renvoi la liste des propal (éventuellement filtrée sur un user) dans un tableau
    *    \param      brouillon       0=non brouillon, 1=brouillon

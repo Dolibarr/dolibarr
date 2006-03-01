@@ -85,7 +85,7 @@ if ($_GET["action"] == 'create')
             $numpr .= "." . ($num + 1);
         }
     }
-    print "<form action=\"propal.php?socidp=".$soc->id."\" method=\"post\">";
+    print "<form name='addprop' action=\"propal.php?socidp=".$soc->id."\" method=\"post\">";
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
     print '<table class="border" width="100%">';
@@ -108,19 +108,11 @@ if ($_GET["action"] == 'create')
     print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
 
 	  // date de livraison
-	  if ($conf->use_javascript)
-    {
 		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
 		print '<td>';
-		$form->select_date('','liv_');
+		$form->select_date('','liv_','','','',"addprop");
 		print '</td></tr>';
-    }
-		else
-		{
-				print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
-    		$form->select_date();
-    		print "</td></tr>";
-		}
+  
 	  // Conditions de réglement
 	  print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
 	  $form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');

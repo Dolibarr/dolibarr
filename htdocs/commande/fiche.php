@@ -89,7 +89,8 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->ref_client        = $_POST['ref_client'];
 	$commande->modelpdf          = $_POST['model'];
 	$commande->cond_reglement_id = $_POST['cond_reglement_id'];
-  $commande->mode_reglement_id = $_POST['mode_reglement_id'];
+    $commande->mode_reglement_id = $_POST['mode_reglement_id'];
+    $commande->date_livraison = mktime(12, 1, 1, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
@@ -127,6 +128,12 @@ if ($_POST['action'] == 'setnote' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$commande->set_note($user, $_POST['note']);
+}
+if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$commande->set_date_livraison($user,mktime(12, 1, 1, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 }
 
 if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
@@ -301,10 +308,10 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$soc = new Societe($db);
 			$soc->fetch($obj->idp);
 			
-			$nbrow=4;
+			$nbrow=8;
 			if ($conf->projet->enabled) $nbrow++;
 
-			print '<form action="fiche.php" method="post">';
+			print '<form name="crea_commande" action="fiche.php" method="post">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="soc_id" value="'.$soc->id.'">' ."\n";
 			print '<input type="hidden" name="remise_percent" value="0">';
@@ -319,7 +326,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			// Reference client
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 			print '<input type="text" name="ref_client" value=""></td>';
-			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" wrap="soft" cols="50" rows="4"></textarea></td>';
+			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" wrap="soft" cols="50" rows="12"></textarea></td>';
 			print '</tr>';
 
 			// Client
@@ -327,8 +334,14 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '</tr>';
 
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
-			$html->select_date();
+			$html->select_date('','re','','','',"crea_commande");
 			print '</td></tr>';
+			
+			// date de livraison
+			print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
+    		$html->select_date('','liv_','','','',"crea_commande");
+    		print "</td></tr>";
+	
 			
 			// Conditions de réglement
 	    print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
@@ -644,6 +657,29 @@ else
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
 			print '</tr>';
+			
+			// date de livraison
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DateDelivery');
+			print '</td>';
+					
+			if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editdate_livraison')
+			{
+				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+                print '<input type="hidden" name="action" value="setdate_livraison">';
+                $html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+                print '</form>';
+			}
+			else
+			{
+				print dolibarr_print_date($commande->date_livraison,'%a %d %B %Y');
+			}
+			print '</td></tr>';
 			
 						// Conditions et modes de réglement
 			print '<tr><td height="10">';

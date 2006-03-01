@@ -107,6 +107,14 @@ if ($_POST['action'] == 'setecheance')
 	$result=$propal->set_echeance($user,mktime(12, 1, 1, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
+if ($_POST['action'] == 'setdate_livraison')
+{
+	$propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+	$result=$propal->set_date_livraison($user,mktime(12, 1, 1, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+	if ($result < 0) dolibarr_print_error($db,$propal->error);
+}
+
 
 if ($_POST['action'] == 'add') 
 {
@@ -531,9 +539,9 @@ if ($_GET['propalid'] > 0)
             print '<td>';
             if ($propal->brouillon && $_GET['action'] == 'editecheance')
             {
-                print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+                print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
                 print '<input type="hidden" name="action" value="setecheance">';
-                $html->select_date($propal->fin_validite,'ech');
+                $html->select_date($propal->fin_validite,'ech','','','',"editecheance");
                 print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                 print '</form>';
             }
@@ -560,14 +568,18 @@ if ($_GET['propalid'] > 0)
 			print '</td>';
 			if ($_GET['action'] != 'editdate_livraison' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDateLivraison'),1).'</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="3">';
+			print '</td><td colspan="5">';
 			if ($_GET['action'] == 'editdate_livraison')
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
+				print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+                print '<input type="hidden" name="action" value="setdate_livraison">';
+                $html->select_date($propal->date_livraison,'liv_','','','',"editdate_livraison");
+                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+                print '</form>';
 			}
 			else
 			{
-				print $propal->date_livraison;
+				print dolibarr_print_date($propal->date_livraison,'%a %d %B %Y');
 			}
 			print '</td>';
 			
