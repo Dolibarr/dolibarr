@@ -416,7 +416,7 @@ if ($action == 'create')
 {
 
     print_titre($langs->trans("NewMember"));
-    print "<form action=\"fiche.php\" method=\"post\">\n";
+    print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<table class="border" width="100%">';
 
     print '<input type="hidden" name="action" value="add">';
@@ -467,7 +467,7 @@ if ($action == 'create')
     // Boite cotisations
     print '<table class="border" width="100%">';
     print "<tr><td>".$langs->trans("DateSubscription")."</td><td>\n";
-    $htmls->select_date();
+    $htmls->select_date('','','','','','add');
     print "</td></tr>\n";
 
     if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE)
@@ -762,7 +762,7 @@ if ($rowid)
     {
         print "<table class=\"border\" width=\"100%\">\n";
     
-        print '<form method="post" action="fiche.php">';
+        print '<form name="cotisation" method="post" action="fiche.php">';
         print '<input type="hidden" name="action" value="cotisation">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
     
@@ -791,11 +791,11 @@ if ($rowid)
         print '<tr><td>'.$langs->trans("DateSubscription").'</td><td>';
         if ($adh->datefin > 0)
         {
-            $html->select_date($adh->datefin + (3600*24));
+            $html->select_date($adh->datefin + (3600*24),'','','','',"cotisation");
         }
         else
         {
-            $html->select_date();
+            $html->select_date('','','','','',"cotisation");
         }
         print "</td></tr>";
     
