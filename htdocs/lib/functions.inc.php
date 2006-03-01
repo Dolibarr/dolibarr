@@ -709,6 +709,15 @@ function img_help()
   global $conf,$langs;
   return '<img style="cursor: help;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0" alt="" title="">';
 }
+/**
+        \brief      Affiche picto calendrier "?"
+        \return     string      Retourne tag img
+*/
+function img_cal()
+{
+  global $conf,$langs;
+  return '<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
+}
 
 /**
         \brief      Affiche logo info
