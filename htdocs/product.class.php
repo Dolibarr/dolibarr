@@ -290,6 +290,8 @@ class Product
 
 			}
 
+    // on ne sauvegarde pas des champs vides
+    if ( $this->multilangs["$value"]["libelle"] || $this->multilangs["$value"]["description"] || $this->multilangs["$value"]["note"] ) 
 			if (!$this->db->query($sqlU)) // si aucun champ n'est mis a jour
 				if (!$this->db->query($sqlI)) return -1;
 		}
@@ -300,10 +302,17 @@ class Product
 	/**
 	 *		\ brief Charge toutes les traductions du produit
 	 */
-	function getMultiLangs()
+	function getMultiLangs($langue='')
 	{
 		global $langs;
-		$current_lang = $langs->getDefaultLang();
+        $langs_available = $langs->get_available_languages(); 
+		
+		if ( $langue != '')
+			foreach ($langs_available as $value)
+				if ( $value == $langue ) $current_lang = $value; // si $langue est une valeur correcte
+		
+		if ( !$current_lang )
+			$current_lang = $langs->getDefaultLang(); // sinon on choisi la langue par defaut
 		
 		$sql = "SELECT lang, label, description, note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_det";
@@ -325,7 +334,6 @@ class Product
 					$this->note			= $obj->note;
 				}
 			}
-		}
 		else
 		{
 			$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
