@@ -79,3 +79,4 @@ create table llx_product_det
 )type=innodb;
 
 ALTER TABLE `llx_propal` ADD `date_livraison` DATE;
+ALTER TABLE `llx_commande` ADD `date_livraison` DATE;
