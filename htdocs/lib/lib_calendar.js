@@ -882,7 +882,14 @@ function returnDate(inDay)
 
     // SET THE VALUE OF THE FIELD THAT WAS PASSED TO THE CALENDAR
     calDateField.value = outDate;
-
+	// SET THE VALUE OF THE FIELD THAT WAS PASSED TO THE CALENDAR
+	dayField = calDateField.name+"day";
+	monthField = calDateField.name+"month";
+	yearField = calDateField.name+"year";
+	calDateField.form.elements[dayField].value = day;
+	calDateField.form.elements[monthField].value = month;
+	calDateField.form.elements[yearField].value = year;
+	
     // GIVE FOCUS BACK TO THE DATE FIELD
     calDateField.focus();
 
