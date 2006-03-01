@@ -77,3 +77,5 @@ create table llx_product_det
   description    varchar(255),
   note           text
 )type=innodb;
+
+ALTER TABLE `llx_propal` ADD `date_livraison` DATE;
