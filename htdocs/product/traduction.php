@@ -99,7 +99,7 @@ if ($_POST["action"] == 'vedit' &&
 	$product->fetch($_POST["id"]);
 	$current_lang = $langs->getDefaultLang();
 	
-	foreach ( $product->multilangs as $key => &$value ) // enregistrement des nouvelles valeurs dans l'objet
+	foreach ( $product->multilangs as $key => $value ) // enregistrement des nouvelles valeurs dans l'objet
 	{
 		if ( $key == $current_lang )
 		{

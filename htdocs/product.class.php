@@ -333,6 +333,7 @@ class Product
 					$this->description	= $obj->description;
 					$this->note			= $obj->note;
 				}
+			 }
 			}
 		else
 		{
@@ -340,7 +341,7 @@ class Product
 			return -1;
 		}
 	}
-}
+
 
 
     /**
