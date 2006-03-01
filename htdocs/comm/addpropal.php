@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+ 
 include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
 if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
 {
@@ -84,7 +85,6 @@ if ($_GET["action"] == 'create')
             $numpr .= "." . ($num + 1);
         }
     }
-
     print "<form action=\"propal.php?socidp=".$soc->id."\" method=\"post\">";
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
@@ -96,8 +96,8 @@ if ($_GET["action"] == 'create')
     print $langs->trans("Comments").'</td></tr>';
 
     print '<tr><td>'.$langs->trans("Company").'</td><td><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
-    print '<td rowspan="5" colspan="2" valign="top">';
-    print '<textarea name="note" wrap="soft" cols="40" rows="6"></textarea>';
+    print '<td rowspan="8" colspan="2" valign="top">';
+    print '<textarea name="note" wrap="soft" cols="40" rows="8"></textarea>';
     print '</tr>';
 
     print "<tr><td>".$langs->trans("Date")."</td><td>";
@@ -107,6 +107,20 @@ if ($_GET["action"] == 'create')
     print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
     print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
 
+	  // date de livraison
+	  if ($conf->use_javascript)
+    {
+		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
+		print '<td>';
+		$form->select_date('','liv_');
+		print '</td></tr>';
+    }
+		else
+		{
+				print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
+    		$form->select_date();
+    		print "</td></tr>";
+		}
 	  // Conditions de réglement
 	  print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
 	  $form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
