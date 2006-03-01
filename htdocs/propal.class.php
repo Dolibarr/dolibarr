@@ -731,7 +731,6 @@ class Propal
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".$this->db->idate($date_fin_validite);
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    
             if ($this->db->query($sql) )
             {
                 $this->fin_validite = $date_fin_validite;
@@ -741,6 +740,32 @@ class Propal
             {
                 $this->error=$this->db->error();
                 dolibarr_syslog("Propal::set_echeance Erreur SQL");
+                return -1;
+            }
+        }
+    }
+ /**
+     *      \brief      Définit une date de livraison
+     *      \param      user        Objet utilisateur qui modifie
+     *      \param      date_livraison      date de livraison  
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function set_date_livraison($user, $date_livraison)
+    {
+        if ($user->rights->propale->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET date_livraison = ".$this->db->idate($date_livraison);
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->date_livraison = $date_livraison;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dolibarr_syslog("Propal::set_date_livraison Erreur SQL");
                 return -1;
             }
         }

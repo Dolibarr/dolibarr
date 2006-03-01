@@ -1601,7 +1601,7 @@ class Form
      *            - La date du jour si set_time vaut ''
      *            - Aucune date (champs vides) si set_time vaut -1
      */
-    function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
+ function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0,$form_name="")
     {
         global $conf,$langs;
     
@@ -1673,12 +1673,17 @@ class Form
 			}
 			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';	
 			$timearray=getDate($set_time);
+			// print '<br>'.$timearray['mon'];
             $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 			print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"> ';
 			print '<input type="hidden" name="'.$prefix.'day" value="'.$timearray['mday'].'">'."\n";
             print '<input type="hidden" name="'.$prefix.'month" value="'.$timearray['mon'].'">'."\n";
             print '<input type="hidden" name="'.$prefix.'year" value="'.$timearray['year'].'">'."\n";
-			print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
+			if($form_name =="")
+				print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
+			else
+				print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">'.img_cal().'</a>';
+		
         }
         /*
          * Affiche date en select
