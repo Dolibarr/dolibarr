@@ -340,6 +340,7 @@ class Product
 			return -1;
 		}
 	}
+}
 
 
     /**
