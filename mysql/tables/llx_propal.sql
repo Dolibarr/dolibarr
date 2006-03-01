@@ -45,10 +45,10 @@ create table llx_propal
 
   fk_cond_reglement   integer,  -- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement   integer,  -- mode de reglement (Virement, Prélèvement)
-
+ 
   note            text,
   note_public     text,
   model_pdf       varchar(50),
-
+  date_livraison date default NULL,
   UNIQUE INDEX (ref)
 )type=innodb;
