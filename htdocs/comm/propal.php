@@ -551,7 +551,26 @@ if ($_GET['propalid'] > 0)
             }
             print '</td>';
             print '</tr>';
-    
+    		
+			
+			// date de livraison
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DateDelivery');
+			print '</td>';
+			if ($_GET['action'] != 'editdate_livraison' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDateLivraison'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($_GET['action'] == 'editdate_livraison')
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
+			}
+			else
+			{
+				print $propal->date_livraison;
+			}
+			print '</td>';
+			
 			// Conditions et modes de réglement
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
