@@ -207,6 +207,7 @@ if ($_GET["propalid"] > 0) {
                 // Chemin vers png aperçus
 				$relativepathimage = "${propalref}/${propalref}.pdf.png";
 				$relativepathimagebis = "${propalref}/${propalref}.pdf.png.0";
+				$relativepathimagebis2 = "${propalref}/${propalref}.pdf.png.1";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
 
@@ -257,7 +258,7 @@ if ($_GET["propalid"] > 0) {
 								$description = imagick_faileddescription( $handle ) ;
 								print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
 							}
-							imagick_writeimage( $handle, $file .".png");
+							imagick_writeimages( $handle, $file .".png");
 						} else {
 							$langs->load("other");
 							print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
@@ -297,7 +298,8 @@ if (file_exists($fileimage))
 // Si fichier png PDF de plus d'1 page trouvé
 elseif (file_exists($fileimagebis))
 	{
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimagebis).'">';
+	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimagebis).'"><p>';
+	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimagebis2).'"></p>';
 	}
 
 
