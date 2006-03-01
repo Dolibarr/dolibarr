@@ -1646,11 +1646,12 @@ class Form
             $smin = '';
         }
 
-        $conf->use_popup_date=0;    // Mettre 1 pour avoir date en popup (experimental)
+        $conf->use_popup_date=1;    // Mettre 1 pour avoir date en popup (experimental)
 
-        /*
+        /* Commenté par André
          * Affiche date en popup
          */
+		 /*
         if ($conf->use_javascript && $conf->use_popup_date)
         {
             $timearray=getDate($set_time);
@@ -1660,7 +1661,24 @@ class Form
             print '<input type="hidden" name="'.$prefix.'month" value="'.$timearray['mon'].'">'."\n";
             print '<input type="hidden" name="'.$prefix.'year" value="'.$timearray['year'].'">'."\n";
         }
-
+	*/
+		if ($conf->use_javascript && $conf->use_popup_date)
+        {
+            print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';	
+			if ($langs->defaultlang != "")
+		 	{
+				print '<script language="javascript">';
+				print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
+				print '</script>';
+			}
+			$timearray=getDate($set_time);
+            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+			print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"> ';
+			print '<input type="hidden" name="'.$prefix.'day" value="'.$timearray['mday'].'">'."\n";
+            print '<input type="hidden" name="'.$prefix.'month" value="'.$timearray['mon'].'">'."\n";
+            print '<input type="hidden" name="'.$prefix.'year" value="'.$timearray['year'].'">'."\n";
+			print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
+        }
         /*
          * Affiche date en select
          */
