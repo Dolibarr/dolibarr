@@ -65,7 +65,7 @@ Function PLines(&$inc, $parent, $lines, &$level, $actors)
 	      print '<td><input size="4" type="text" class="flat" name="task'.$lines[$i][2].'" value="">';
 	      print '&nbsp;<input type="submit" class="flat" value="'.$langs->trans("Save").'"></td>';
 	      print "\n<td>";
-	      print $form->select_date('',$lines[$i][2]);
+	      print $form->select_date('',$lines[$i][2],'','','',"addtime");
 	      print '</td>';
 	    }
 	  else
@@ -307,7 +307,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   print '</table></form><br />';
 
-  print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
+  print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
   print '<input type="hidden" name="action" value="addtime">';
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';

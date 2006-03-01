@@ -237,7 +237,7 @@ if ($result)
         
         $i++;
 
-        print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+        print "<form name='update' method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
         print "<input type=\"hidden\" name=\"action\" value=\"update\">";
         print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
     
@@ -280,7 +280,7 @@ if ($result)
         if (! $objp->rappro)
         {
             print '<td colspan="3">';
-            $html->select_date($objp->do,'do');
+            $html->select_date($objp->do,'do','','','','update');
             print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
         }
         else
@@ -295,7 +295,7 @@ if ($result)
         if (! $objp->rappro)
         {
             print '<td colspan="3">';
-            $html->select_date($objp->dv,'dv');
+            $html->select_date($objp->dv,'dv','','','','update');
             print ' &nbsp; ';
             print '<a href="ligne.php?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
             print img_edit_remove() . "</a> ";

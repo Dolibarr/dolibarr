@@ -181,13 +181,13 @@ if ($_GET["action"] == 'create')
 {
     print_titre($langs->trans("AddDonation"));
     
-    print '<form action="fiche.php" method="post">';
+    print '<form name="add" action="fiche.php" method="post">';
     print '<table class="border" width="100%">';
     
     print '<input type="hidden" name="action" value="add">';
     
     print '<tr><td>'.$langs->trans("Date").'</td><td>';
-    $html->select_date();
+    $html->select_date('','','','','',"add");
     print '</td>';
     
     $nbrows=11;
@@ -252,14 +252,14 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     
     dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
     
-    print '<form action="fiche.php" method="post">';
+    print '<form name="update" action="fiche.php" method="post">';
     print '<table class="border" width="100%">';
     
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="rowid" value="'.$don->id.'">';
     
     print "<tr>".'<td>'.$langs->trans("Date").'</td><td>';
-    $html->select_date($don->date);
+    $html->select_date($don->date,'','','','',"update");
     print '</td>';
     
     $nbrows=12;

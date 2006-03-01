@@ -374,7 +374,7 @@ if ($id > 0)
              */
             $form = new Form($db);
 
-            print '<form action="ligne.php?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=active" method="post">';
+            print '<form name="active" action="ligne.php?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=active" method="post">';
 
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ActivateService").'</td></tr>';
@@ -395,11 +395,11 @@ if ($id > 0)
             }
 
             print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
-            print $form->select_date($dateactstart);
+            print $form->select_date($dateactstart,'','','','',"active");
             print '</td>';
 
             print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
-            print $form->select_date($dateactend,"end");
+            print $form->select_date($dateactend,"end",'','','',"active");
             print '</td>';
             
             print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" value="'.$langs->trans("Activate").'"></td>';
@@ -420,7 +420,7 @@ if ($id > 0)
              */
             $form = new Form($db);
 
-            print '<form action="ligne.php?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=close" method="post">';
+            print '<form name="close" action="ligne.php?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=close" method="post">';
 
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("CloseService").'</td></tr>';
@@ -441,7 +441,7 @@ if ($id > 0)
             }
 
             print '<tr '.$bc[$var].'><td>'.$langs->trans("DateEndReal").'</td><td>';
-            print $form->select_date($dateactend,"end");
+            print $form->select_date($dateactend,"end",'','','',"close");
             print '</td>';
 
             print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Close").'"></td></tr>';

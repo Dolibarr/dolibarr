@@ -642,11 +642,11 @@ if ($_GET["id"] > 0)
 	  $form = new Form($db);
 	  
 	  print '<br>';
-	  print '<form action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
+	  print '<form name="commande" action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
 	  print '<table class="noborder">';
 	  print '<tr class="liste_titre"><td colspan="2">Commander</td></tr>';
 	  print '<tr><td>Date commande</td><td>';
-	  print $form->select_date();
+	  print $form->select_date('','','','','',"commande");
 	  print '</td></tr>';
 
 	  $commande->get_methodes_commande();
@@ -678,7 +678,7 @@ if ($_GET["id"] > 0)
 	  print '<table class="noborder">';
 	  print '<tr class="liste_titre"><td colspan="2">Réceptionner</td></tr>';
 	  print '<tr><td>Date de livraison</td><td>';
-	  print $form->select_date();
+	  print $form->select_date('','','','','',"commande");
 	  print "</td></tr>\n";
 
 	  print "<tr><td>Livraison</td><td>\n";

@@ -683,11 +683,11 @@ if ( $user->rights->telephonie->adsl->commander && $ligne->statut == 1)
 
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=commandefourn" method="POST">';
+  print '<form name="commandefourn" action="fiche.php?id='.$ligne->id.'&amp;action=commandefourn" method="POST">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Commande chez le fournisseur</td><td>';
   print '<tr><td>Date de la commande</td><td>';
-  print $form->select_date();
+  print $form->select_date('','','','','',"commandefourn");
   print '</td>';
   print '<td colspan="2"><input type="submit" name="Commander"></td></tr>';
   print '<tr><td colspan="3">Commentaire <input size="30" type="text" name="commentaire"></td></tr>';
@@ -706,11 +706,11 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 2)
 
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=activefourn" method="POST">';
+  print '<form name="activefourn" action="fiche.php?id='.$ligne->id.'&amp;action=activefourn" method="POST">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Activée chez le fournisseur</td><td>';
   print "<tr><td>Date de l'activation</td><td>";
-  print $form->select_date();
+  print $form->select_date('','','','','',"activefourn");
   print '</td></tr>';
 
   print '<tr><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
@@ -736,11 +736,11 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 3)
 
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=livraison" method="POST">';
+  print '<form name="livraison" action="fiche.php?id='.$ligne->id.'&amp;action=livraison" method="POST">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Livrée au client</td><td>';
   print "<tr><td>Date de la livraison client</td><td>";
-  print $form->select_date();
+  print $form->select_date('','','','','',"livraison");
   print '</td>';
   print '<td colspan="2"><input type="submit" name="Commander"></td></tr>';
   print '<tr><td colspan="3">Commentaire <input size="30" type="text" name="commentaire"></td></tr>';
@@ -752,11 +752,11 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 3)
 if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 4)
 {
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=resilier" method="POST">';
+  print '<form name="resilier" action="fiche.php?id='.$ligne->id.'&amp;action=resilier" method="POST">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">A résilier</td><td>';
   print '<tr class="pair"><td>Date de résiliation demandée</td><td>';
-  print $form->select_date();
+  print $form->select_date('','','','','',"resilier");
   print '</td></tr>';
   print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
   print '<tr class="pair"><td colspan="2" align="center"><input type="submit" name="Commander"></td></tr>';
@@ -767,11 +767,11 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 4)
 if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 5)
 {
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=resilierfourn" method="POST">';
+  print '<form name="resilierfourn" action="fiche.php?id='.$ligne->id.'&amp;action=resilierfourn" method="POST">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Demande de résiliatin fournisseur</td><td>';
   print '<tr class="pair"><td>Date de la demande de résiliation</td><td>';
-  print $form->select_date();
+  print $form->select_date('','','','','',"resilierfourn");
   print '</td></tr>';
   print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
   print '<tr class="pair"><td colspan="2" align="center"><input type="submit" name="Commander"></td></tr>';
@@ -782,11 +782,11 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 5)
 if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 6)
 {
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=acquitresilierfourn" method="POST">';
+  print '<form name="acquitresilierfourn" action="fiche.php?id='.$ligne->id.'&amp;action=acquitresilierfourn" method="POST">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Confirmation de résiliatin fournisseur</td><td>';
   print '<tr class="pair"><td>Date de la confirmation de résiliation</td><td>';
-  print $form->select_date();
+  print $form->select_date('','','','','',"acquitresilierfourn");
   print '</td></tr>';
   print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
   print '<tr class="pair"><td colspan="2" align="center"><input type="submit" name="Commander"></td></tr>';

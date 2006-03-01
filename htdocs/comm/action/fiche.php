@@ -193,7 +193,7 @@ if ($_GET["action"] == 'create')
       $contact->fetch($_GET["contactid"]);
     }
 
-  print '<form action="fiche.php" method="post">';
+  print '<form name="action" action="fiche.php" method="post">';
   print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
   print '<input type="hidden" name="action" value="add_action">';
 
@@ -237,7 +237,7 @@ if ($_GET["action"] == 'create')
 	}
 
       print '<tr><td>'.$langs->trans("Date").'</td><td>';
-      $html->select_date('','ac');
+      $html->select_date('','ac','','','',"action");
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("Hour").'</td><td>';
       print_heure_select("heure",8,20);
@@ -348,21 +348,21 @@ if ($_GET["action"] == 'create')
       print '<tr><td>'.$langs->trans("Date").'</td><td>';
       if ($_GET["afaire"] == 1)
 	{
-	  $html->select_date('','ac');
+	  $html->select_date('','ac','','','',"action");
 	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
 	  print_heure_select("heure",8,20);
 	  print '</td></tr>';
 	} 
       else if ($_GET["afaire"] == 2) 
 	{
-	  $html->select_date('','ac');
+	  $html->select_date('','ac','','','',"action");
 	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
 	  print_heure_select("heure",8,20);
 	  print '</td></tr>';
 	} 
       else 
 	{
-	  $html->select_date('','ac');
+	  $html->select_date('','ac','','','',"action");
 	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
 	  print_heure_select("heure",8,20);
 	  print '</td></tr>';
@@ -578,5 +578,3 @@ function add_row_for_webcal_link()
 
 
 ?>
-
-

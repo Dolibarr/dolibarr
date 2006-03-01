@@ -1216,11 +1216,11 @@ if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 2 && $ligne->
 
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td valign="top">';
 
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=active" method="post">';
+  print '<form name="active" action="fiche.php?id='.$ligne->id.'&amp;action=active" method="post">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Activer</td><td>';
   print '<tr><td>Date</td><td>';
-  print $form->select_date();
+  print $form->select_date('','','','','',"active");
   print '</td>';
   print '<td colspan="2"><input type="submit" name="Activer"></td></tr>';
   print '</table>';
@@ -1228,11 +1228,11 @@ if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 2 && $ligne->
   print '</form></td><td>';
 
 
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=refuse" method="post">';
+  print '<form name="refuse" action="fiche.php?id='.$ligne->id.'&amp;action=refuse" method="post">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Refuser</td><td>';
   print '<tr><td>Date</td><td>';
-  print $form->select_date();
+  print $form->select_date('','','','','',"refuse");
   print '</td>';
   print '<td colspan="2"><input type="submit" name="Activer"></td></tr>';
   print '<tr><td colspan="3">Commentaire <input size="30" type="text" name="commentaire"></td></tr>';
@@ -1250,11 +1250,11 @@ if ( $user->rights->telephonie->ligne_activer && ( $ligne->statut == 5 || $ligne
 
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
-  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=confirmresilier" method="post">';
+  print '<form name="confirmresilier" action="fiche.php?id='.$ligne->id.'&amp;action=confirmresilier" method="post">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
   print '<tr class="liste_titre"><td colspan="2">Confirmation de la résiliation</td><td>';
   print '<tr><td>Date</td><td>';
-  print $form->select_date();
+  print $form->select_date('','','','','',"confirmresilier");
   print '</td>';
   print '<td colspan="2"><input type="submit" name="Activer"></td></tr>';
   print '<tr><td colspan="3">Commentaire <input size="30" type="text" name="commentaire"></td></tr>';

@@ -270,7 +270,7 @@ if ($_GET["action"] == 'create')
             $soc = new Societe($db);
             $soc->fetch($obj->idp);
 
-            print '<form action="fiche.php" method="post">';
+            print '<form name="contrat" action="fiche.php" method="post">';
 
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="soc_id" value="'.$soc->id.'">'."\n";
@@ -337,7 +337,7 @@ if ($_GET["action"] == 'create')
             print '</select></td></tr>';
 
             print '<tr><td>'.$langs->trans("Date").'</td><td>';
-            $html->select_date();
+            $html->select_date('','','','','',"contrat");
             print "</td></tr>";
 
             if ($conf->projet->enabled)
@@ -716,7 +716,7 @@ else
                 // Ligne en mode update
                 else
                 {
-                    print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+                    print "<form name='update' action=\"fiche.php?id=$id\" method=\"post\">";
                     print '<input type="hidden" name="action" value="updateligne">';
                     print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
                     // Ligne carac
@@ -747,19 +747,19 @@ else
                     print "<tr $bc[$var]>";
                     print '<td colspan="5">';
                     print $langs->trans("DateStartPlanned").' ';
-                    $html->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1));
+                    $html->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1),"update");
                     print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-                    $html->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1));
+                    $html->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1),"update");
                     if ($objp->statut >= 4)
                     {
                         print '<br>';
                         print $langs->trans("DateStartReal").' ';
-                        $html->select_date($objp->date_debut_reelle,"date_start_real_update",0,0,($objp->date_debut_reelle>0?0:1));
+                        $html->select_date($objp->date_debut_reelle,"date_start_real_update",0,0,($objp->date_debut_reelle>0?0:1),"update");
                         print ' &nbsp; ';
                         if ($objp->statut == 5)
                         {
                             print $langs->trans("DateEndReal").' ';
-                            $html->select_date($objp->date_fin_reelle,"date_end_real_update",0,0,($objp->date_fin_reelle>0?0:1));
+                            $html->select_date($objp->date_fin_reelle,"date_end_real_update",0,0,($objp->date_fin_reelle>0?0:1),"update");
                         }
                     }
                     print '</td>';
@@ -795,7 +795,7 @@ else
             $var=false;
 
             // Service sur produit prédéfini
-            print '<form action="fiche.php?id='.$id.'" method="post">';
+            print '<form name="addligne" action="fiche.php?id='.$id.'" method="post">';
             print '<input type="hidden" name="action" value="addligne">';
             print '<input type="hidden" name="mode" value="predefined">';
             print '<input type="hidden" name="id" value="'.$id.'">';
@@ -819,9 +819,9 @@ else
             print "<tr $bc[$var]>";
             print '<td colspan="8">';
             print $langs->trans("DateStartPlanned").' ';
-            $html->select_date('',"date_start",0,0,1);
+            $html->select_date('',"date_start",0,0,1,"addligne");
             print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-            $html->select_date('',"date_end",0,0,1);
+            $html->select_date('',"date_end",0,0,1,"addligne");
             print '</td>';
             print '</tr>';
             
@@ -830,7 +830,7 @@ else
             $var=!$var;
             
             // Service libre
-            print '<form action="fiche.php?id='.$id.'" method="post">';
+            print '<form name="addligne_sl" action="fiche.php?id='.$id.'" method="post">';
             print '<input type="hidden" name="action" value="addligne">';
             print '<input type="hidden" name="mode" value="libre">';
             print '<input type="hidden" name="id" value="'.$id.'">';
@@ -851,9 +851,9 @@ else
             print "<tr $bc[$var]>";
             print '<td colspan="8">';
             print $langs->trans("DateStartPlanned").' ';
-            $html->select_date('',"date_start",0,0,1);
+            $html->select_date('',"date_start",0,0,1,"addligne_sl");
             print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-            $html->select_date('',"date_end",0,0,1);
+            $html->select_date('',"date_end",0,0,1,"addligne_sl");
             print '</td>';
             print '</tr>';
             

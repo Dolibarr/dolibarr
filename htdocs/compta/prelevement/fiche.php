@@ -190,7 +190,7 @@ if ($_GET["id"])
 	  print '<input type="hidden" name="action" value="infotrans">';
 	  print '<table class="border" width="100%">';
 	  print '<tr><td width="20%">Date Transmission</td><td>';
-	  print $html->select_date();
+	  print $html->select_date('','','','','',"userfile");
 	  print '</td></tr>';
 	  print '<tr><td width="20%">Méthode Transmission</td><td>';
 	  print $html->select_array("methode",$bon->methodes_trans);
@@ -206,11 +206,11 @@ if ($_GET["id"])
 
       if($bon->date_trans <> 0 && $bon->date_credit == 0)
 	{
-	  print '<form method="post" action="fiche.php?id='.$bon->id.'">';
+	  print '<form name="infocredit" method="post" action="fiche.php?id='.$bon->id.'">';
 	  print '<input type="hidden" name="action" value="infocredit">';
 	  print '<table class="border" width="100%">';
 	  print '<tr><td width="20%">Crédité le</td><td>';
-	  print $html->select_date();
+	  print $html->select_date('','','','','',"infocredit");
 	  print '</td></tr>';
 	  print '<tr><td colspan="2" align="center">';
 	  print '<input type="submit" class="button" value="'.$langs->trans("Send").'">';

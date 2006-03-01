@@ -75,7 +75,7 @@ $html = new Form($db);
 // Formulaire saisie tva
 if ($_GET["action"] == 'create')
 {
-    print "<form action=\"fiche.php\" method=\"post\">\n";
+    print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="action" value="add">';
     
     print_fiche_titre($langs->trans("NewVATPayment"));
@@ -86,11 +86,11 @@ if ($_GET["action"] == 'create')
     
     print "<tr>";
     print '<td>'.$langs->trans("DatePayment").'</td><td>';
-    print $html->select_date("","datev");
+    print $html->select_date("","datev",'','','','add');
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
-    print $html->select_date("","datep");
+    print $html->select_date("","datep",'','','','add');
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("Type").'</td><td>';

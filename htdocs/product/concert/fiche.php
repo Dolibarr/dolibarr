@@ -61,7 +61,7 @@ if ($action == 'updateosc') {
 if ($action == 'create')
 {
 
-  print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
+  print "<form name='add' action=\"fiche.php?id=$id\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
   print '<div class="titre">Nouveau concert</div><br>';
@@ -73,7 +73,7 @@ if ($action == 'create')
   $ga = new Groupart($db);
 
   print "<tr><td>Date</td><td>";
-  $htmls->select_date();
+  $htmls->select_date('','','','','','add');
   print "</td></tr>";
 
   print "<tr><td>Lieu</td><td>";

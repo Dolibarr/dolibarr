@@ -232,7 +232,7 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		$fac_ori->fetch($_GET['facid']);
 	}
 
-	print '<form action="fiche.php" method="post">';
+	print '<form name="add" action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<table class="border" width="100%">';
 	print '<tr><td>'.$langs->trans('Company').'</td>';
@@ -254,11 +254,11 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" type="text"></td></tr>';
 	}
 	print '<tr><td>'.$langs->trans('Date').'</td><td>';
-	$html->select_date();
+	$html->select_date('','','','','',"add");
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('DateEcheance').'</td><td>';
-	$html->select_date('','ech');
+	$html->select_date('','ech','','','',"add");
 	print '</td></tr>';
 
 	print '</table><br>';
@@ -327,7 +327,7 @@ else
 
 			print_titre($langs->trans('Bill').': '.$fac->ref);
 
-			print '<form action="fiche.php?facid='.$fac->id.'" method="post">';
+			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
 			print '<input type="hidden" name="action" value="update">';
 
 			print '<table class="border" width="100%">';
@@ -351,11 +351,11 @@ else
 			print '<td>'.price($fac->total_ht).' / '.price($fac->total_ttc).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans('DateBill').'</td><td>';
-			$html->select_date($fac->datep);
+			$html->select_date($fac->datep,'','','','',"update");
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td>';
-			$html->select_date($fac->date_echeance,'ech');
+			$html->select_date($fac->date_echeance,'ech','','','',"update");
 			print '</td></tr>';
 
 			$authorfullname='&nbsp;';

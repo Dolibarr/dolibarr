@@ -135,7 +135,7 @@ if ($_GET["id"])
       
       $rej = new RejetPrelevement($db, $user);
 
-      print '<form method="post" action="ligne.php?id='.$_GET["id"].'">';
+      print '<form name="confirm_rejet" method="post" action="ligne.php?id='.$_GET["id"].'">';
       print '<input type="hidden" name="action" value="confirm_rejet">';
       print '<table class="border" width="100%">';
       print '<tr><td colspan="3">Rejet de prélèvement</td></tr>';
@@ -149,7 +149,7 @@ if ($_GET["id"])
 
       print '<tr><td class="valid">Date du rejet</td>';
       print '<td colspan="2" class="valid">';
-      print $html->select_date();
+      print $html->select_date('','','','','',"confirm_rejet");
       print '</td></tr>';
       print '<tr><td class="valid">Motif du rejet</td>';
       print '<td class="valid">';

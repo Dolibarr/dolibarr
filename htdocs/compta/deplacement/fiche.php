@@ -106,7 +106,7 @@ $html = new Form($db);
  */
 if ($_GET["action"] == 'create')
 {
-  print "<form action=\"fiche.php\" method=\"post\">\n";
+  print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
 
   print_fiche_titre($langs->trans("NewTrip"));
@@ -121,7 +121,7 @@ if ($_GET["action"] == 'create')
 
   print "<tr>";
   print '<td>'.$langs->trans("Date").'</td><td>';
-  print $html->select_date();
+  print $html->select_date('','','','','','add');
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans("Kilometers").'</td><td><input name="km" size="10" value=""></td></tr>';
@@ -150,7 +150,7 @@ else
             
           dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").' '.$deplacement->id);
 
-	      print "<form action=\"fiche.php\" method=\"post\">\n";
+	      print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update">';
 	      print '<input type="hidden" name="id" value="'.$id.'">';
 	            
@@ -167,7 +167,7 @@ else
           print '</td></tr>';
         
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
-	      print $html->select_date($deplacement->date);
+	      print $html->select_date($deplacement->date,'','','','','update');
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Kilometers").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
 

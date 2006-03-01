@@ -155,7 +155,7 @@ else
 	  
 	      
 	  $html = new Form($db);
-	  print '<form action="compteur.php?id='.$compteur->id.'" method="post">';
+	  print '<form name="addvalue" action="compteur.php?id='.$compteur->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="addvalue">';
 	  print '<table class="border" width="100%">';	  
 
@@ -163,7 +163,7 @@ else
 	  print "<tr $bc[$var]>";
 	  
 	  print '<td>Date</td><td>';
-	  print $html->select_date();
+	  print $html->select_date('','','','','',"addvalue");
 	  print '</td><td>Valeur relevée</td>';
 
 	  print '<td align="center"><input type="text" size="11" maxlength="10" name="releve"></td>';

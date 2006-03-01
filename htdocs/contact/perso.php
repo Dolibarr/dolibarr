@@ -100,7 +100,7 @@ if ($_GET["action"] == 'edit')
 
     print '<table class="border" width="100%">';
 
-    print '<form method="post" action="perso.php?id='.$_GET["id"].'">';
+    print '<form name="perso" method="post" action="perso.php?id='.$_GET["id"].'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
 
@@ -130,9 +130,9 @@ if ($_GET["action"] == 'edit')
     $html=new Form($db);
     if ($contact->birthday && $contact->birthday > 0)
     {
-        print $html->select_date($contact->birthday,'birthday',0,0,0);
+        print $html->select_date($contact->birthday,'birthday',0,0,0,"perso");
     } else {
-        print $html->select_date(0,'birthday',0,0,1);
+        print $html->select_date(0,'birthday',0,0,1,"perso");
     }
     print '</td>';
 

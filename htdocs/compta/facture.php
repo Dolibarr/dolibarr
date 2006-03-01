@@ -655,7 +655,7 @@ if ($_GET['action'] == 'create')
 	}
 
 
-	print '<form action="facture.php" method="post">';
+	print '<form name="add" action="facture.php" method="post">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 
@@ -672,7 +672,7 @@ if ($_GET['action'] == 'create')
 	print '</tr>';
 
 	print '<tr><td>'.$langs->trans('Date').'</td><td>';
-	$html->select_date();
+	$html->select_date('','','','','',"add");
 	print '</td></tr>';
 
 	// Conditions de réglement
@@ -815,9 +815,9 @@ if ($_GET['action'] == 'create')
 			{
 				print '<td nowrap="nowrap">';
 				print $langs->trans('From').' ';
-				print $html->select_date('','date_start'.$i,0,0,1);
+				print $html->select_date('','date_start'.$i,0,0,1,"add");
 				print '<br>'.$langs->trans('to').' ';
-				print $html->select_date('','date_end'.$i,0,0,1);
+				print $html->select_date('','date_end'.$i,0,0,1,"add");
 				print '</td>';
 			}
 			print "</tr>\n";
@@ -1520,7 +1520,7 @@ else
 					// Ligne en mode update
 					if ($_GET['action'] == 'editline' && $user->rights->facture->creer && $_GET['rowid'] == $objp->rowid)
 					{
-						print '<form action="facture.php" method="post">';
+						print '<form name="updateligne" action="facture.php" method="post">';
 						print '<input type="hidden" name="action" value="updateligne">';
 						print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 						print '<input type="hidden" name="rowid" value="'.$_GET['rowid'].'">';
@@ -1552,9 +1552,9 @@ else
 						{
 							print '<tr '.$bc[$var].'>';
 							print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-							print $html->select_date($objp->date_start,'date_start',0,0,$objp->date_start?0:1);
+							print $html->select_date($objp->date_start,'date_start',0,0,$objp->date_start?0:1,"updateligne");
 							print ' '.$langs->trans('to').' ';
-							print $html->select_date($objp->date_end,'date_end',0,0,$objp->date_end?0:1);
+							print $html->select_date($objp->date_end,'date_end',0,0,$objp->date_end?0:1,"updateligne");
 							print '</td>';
 							print '</tr>';
 						}
@@ -1590,7 +1590,7 @@ else
 				print "</tr>\n";
 
                 // Ajout produit produits/services personalisés
-				print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
+				print '<form name="addligne" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
 
@@ -1613,9 +1613,9 @@ else
 				{
 					print '<tr '.$bc[$var].'>';
 					print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-					print $html->select_date('','date_start',0,0,1);
+					print $html->select_date('','date_start',0,0,1,"addligne");
 					print ' '.$langs->trans('to').' ';
-					print $html->select_date('','date_end',0,0,1);
+					print $html->select_date('','date_end',0,0,1,"addligne");
 					print '</td>';
 					print '</tr>';
 				}
@@ -1624,7 +1624,7 @@ else
                 // Ajout de produits/services prédéfinis
                 if ($conf->produit->enabled)
                 {
-    				print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
+    				print '<form name="addligne_predef" action="'.$_SERVER['PHP_SELF'].'" method="post">';
     				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
     				print '<input type="hidden" name="action" value="addligne">';
     
@@ -1647,9 +1647,9 @@ else
     				{
     					print '<tr '.$bc[$var].'>';
     					print '<td colspan="5">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-    					print $html->select_date('','date_start',0,0,1);
+    					print $html->select_date('','date_start',0,0,1,"addligne_predef");
     					print ' '.$langs->trans('to').' ';
-    					print $html->select_date('','date_end',0,0,1);
+    					print $html->select_date('','date_end',0,0,1,"addligne_predef");
     					print '</td>';
     					print '</tr>';
     				}

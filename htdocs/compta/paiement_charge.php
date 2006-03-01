@@ -165,7 +165,7 @@ if ($_GET["action"] == 'create')
 	  print_titre("Emettre un paiement d'une charge");
       print "<br>\n";
 
-	  print '<form action="paiement_charge.php" method="post">';
+	  print '<form name="add_paiement" action="paiement_charge.php" method="post">';
 	  print "<input type=\"hidden\" name=\"id\" value=\"$charge->id\">";
 	  print '<input type="hidden" name="action" value="add_paiement">';
 	  print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
@@ -194,7 +194,7 @@ if ($_GET["action"] == 'create')
 	  print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 	  
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
-	  $html->select_date();
+	  $html->select_date('','','','','',"add_paiement");
 	  print "</td>";
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  

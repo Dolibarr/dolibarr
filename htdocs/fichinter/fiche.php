@@ -144,7 +144,7 @@ if ($_GET["action"] == 'create')
   $fix = new Fichinter($db);
   $numpr = $fix->get_new_num($objsoc->prefix_comm);
   
-  print "<form action=\"fiche.php\" method=\"post\">";
+  print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
   
   $smonth = 1;
   $syear = date("Y", time());
@@ -154,7 +154,7 @@ if ($_GET["action"] == 'create')
   print "<tr><td>".$langs->trans("Company")."</td><td><b>".$objsoc->nom."</td></tr>";
   
   print "<tr><td>".$langs->trans("Date")."</td><td>";
-  $sel->select_date(time(),"p");
+  $sel->select_date(time(),"p",'','','','fichinter');
   print "</td></tr>";
   
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
@@ -230,7 +230,7 @@ if ($_GET["action"] == 'edit')
     /*
      *   Initialisation de la liste des projets
      */
-    print "<form action=\"fiche.php\" method=\"post\">";
+    print "<form name='update' action=\"fiche.php\" method=\"post\">";
 
     print "<input type=\"hidden\" name=\"action\" value=\"update\">";
     print "<input type=\"hidden\" name=\"id\" value=\"".$_GET["id"]."\">";
@@ -240,7 +240,7 @@ if ($_GET["action"] == 'edit')
     print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
 
     print "<tr><td>".$langs->trans("Date")."</td><td>";
-    $sel->select_date($fichinter->date);
+    $sel->select_date($fichinter->date,'','','','','update');
     print "</td></tr>";
 
     print '<tr><td>'.$langs->trans("Duration")." (".$langs->trans("days").')</td><td><input name="duree" value="'.$fichinter->duree.'"></td></tr>';

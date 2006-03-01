@@ -220,7 +220,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 
 			print_titre($langs->trans('DoPayment'));
 
-			print '<form action="paiement.php" method="post">';
+			print '<form name="add_paiement" action="paiement.php" method="post">';
 			print '<input type="hidden" name="action" value="add_paiement">';
 			print '<input type="hidden" name="facid" value="'.$facid.'">';
 			print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';
@@ -236,7 +236,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 				$sel_date=mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			else
 				$sel_date='';
-			$html->select_date($sel_date);
+			$html->select_date($sel_date,'','','','',"add_paiement");
 			print '</td>';
 			print '<td>'.$langs->trans('Comments').'</td></tr>';
 
