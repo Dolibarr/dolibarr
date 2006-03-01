@@ -381,12 +381,12 @@ class Propal
         $this->db->begin();
 
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement) ";
-        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, ";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
+        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
-        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id)";
+        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '$this-> date_livraison')";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -511,7 +511,7 @@ class Propal
         $sql.= ", ".$this->db->pdate("fin_validite")."as dfv, model_pdf";
         $sql.= ", note, note_public";
         $sql.= ", fk_projet, fk_statut, remise_percent, fk_user_author";
-        $sql.= ", fk_cond_reglement, fk_mode_reglement";
+        $sql.= ", fk_cond_reglement, fk_mode_reglement, date_livraison";
         $sql.= ", c.label as statut_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
         $sql.= "," . MAIN_DB_PREFIX."c_propalst as c";
@@ -550,6 +550,7 @@ class Propal
                 $this->statut_libelle    = $obj->statut_label;
                 $this->cond_reglement_id = $obj->fk_cond_reglement;
                 $this->mode_reglement_id = $obj->fk_mode_reglement;
+				$this->date_livraison = $obj->date_livraison;
     
                 $this->user_author_id = $obj->fk_user_author;
                 
