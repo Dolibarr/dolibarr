@@ -1664,13 +1664,14 @@ class Form
 	*/
 		if ($conf->use_javascript && $conf->use_popup_date)
         {
-            print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';	
+            
 			if ($langs->defaultlang != "")
 		 	{
 				print '<script language="javascript">';
 				print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
 				print '</script>';
 			}
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';	
 			$timearray=getDate($set_time);
             $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 			print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"> ';

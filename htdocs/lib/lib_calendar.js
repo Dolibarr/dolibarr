@@ -127,8 +127,8 @@ else {
 
 // GET CURRENTLY SELECTED LANGUAGE
 // selectedLanguage = navigator.language;
-selectedLanguage = "en";
-
+if(selectedLanguage == "")
+	selectedLanguage = navigator.language;
 
 // PRE-BUILD PORTIONS OF THE CALENDAR WHEN THIS JS LIBRARY LOADS INTO THE BROWSER
 buildCalParts();
