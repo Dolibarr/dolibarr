@@ -101,7 +101,7 @@ if ($_GET["action"] == 'create')
     print '</tr>';
 
     print "<tr><td>".$langs->trans("Date")."</td><td>";
-    $form->select_date();
+    $form->select_date('','','','','',"addprop");
     print "</td></tr>";
 
     print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
