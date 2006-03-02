@@ -1600,11 +1600,16 @@ class Form
      *            - La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
      *            - La date du jour si set_time vaut ''
      *            - Aucune date (champs vides) si set_time vaut -1
+	 		*		\param	form_name nom du formulaire de provenance. Utilisé pour les dates en popup
      */
  function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0,$form_name="")
     {
         global $conf,$langs;
-    
+    	if($prefix=='') $prefix='re';
+		if($h == '') $h=0;
+		if($m == '') $m=0;
+		if($empty == '') $empty=0;
+		
         if (! $set_time && $empty == 0) $set_time = time();
     
         $strmonth[1]  = $langs->trans("January");
@@ -1662,7 +1667,7 @@ class Form
             print '<input type="hidden" name="'.$prefix.'year" value="'.$timearray['year'].'">'."\n";
         }
 	*/
-		if ($conf->use_javascript && $conf->use_popup_date)
+		if ($conf->use_javascript && $conf->use_popup_date && $h==0 && $m==0)
         {
             
 			if ($langs->defaultlang != "")
@@ -1675,6 +1680,7 @@ class Form
 			$timearray=getDate($set_time);
 			// print '<br>'.$timearray['mon'];
             $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+			if($formated_date=="?") $formated_date="";
 			print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"> ';
 			print '<input type="hidden" name="'.$prefix.'day" value="'.$timearray['mday'].'">'."\n";
             print '<input type="hidden" name="'.$prefix.'month" value="'.$timearray['mon'].'">'."\n";
