@@ -339,7 +339,10 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			
 			// date de livraison
 			print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
-    		$html->select_date('','liv_','','','',"crea_commande");
+			if(DATE_LIVRAISON_WEEK_DELAY != "")
+    			$html->select_date(time() + ((7*DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60),'liv_','','','',"crea_commande");
+			else
+				$html->select_date('','liv_','','','',"crea_commande");
     		print "</td></tr>";
 	
 			

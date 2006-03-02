@@ -110,7 +110,10 @@ if ($_GET["action"] == 'create')
 	  // date de livraison
 		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
 		print '<td>';
-		$form->select_date('','liv_','','','',"addprop");
+		if(DATE_LIVRAISON_WEEK_DELAY != "")
+			$form->select_date(time() + ((7*DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60),'liv_','','','',"addprop");
+		else
+			$form->select_date('','liv_','','','',"addprop");
 		print '</td></tr>';
   
 	  // Conditions de réglement
