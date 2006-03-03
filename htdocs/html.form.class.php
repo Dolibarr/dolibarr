@@ -1682,9 +1682,9 @@ class Form
             $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 			if($formated_date=="?") $formated_date="";
 			print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"> ';
-			print '<input type="hidden" name="'.$prefix.'day" value="'.$timearray['mday'].'">'."\n";
-            print '<input type="hidden" name="'.$prefix.'month" value="'.$timearray['mon'].'">'."\n";
-            print '<input type="hidden" name="'.$prefix.'year" value="'.$timearray['year'].'">'."\n";
+			print '<input type="hidden" name="'.$prefix.'day" value="'. $sday.'">'."\n";
+            print '<input type="hidden" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
+            print '<input type="hidden" name="'.$prefix.'year" value="'. $syear.'">'."\n";
 			if($form_name =="")
 				print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
 			else
