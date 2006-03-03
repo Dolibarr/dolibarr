@@ -22,9 +22,9 @@
  */
 
 /**
-        \file       htdocs/categories/fiche.php
-        \ingroup    categorie
-        \brief      Page creation nouvelle categorie
+		\file       htdocs/categories/fiche.php
+		\ingroup    categorie
+		\brief      Page creation nouvelle categorie
 */
 
 require "./pre.inc.php";
@@ -34,11 +34,11 @@ if (!$user->rights->categorie->lire) accessforbidden();
 
 if (isset ($_REQUEST['choix']))
 {
-  $nbcats = $_REQUEST['choix'];
+	$nbcats = $_REQUEST['choix'];
 }
 else
 { // par défault, une nouvelle catégorie sera dans une seule catégorie mère
-  $nbcats = 1;
+	$nbcats = 1;
 }
 
 llxHeader("","",$langs->trans("Categories"));
@@ -49,56 +49,57 @@ $html = new Form($db);
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
-    $categorie = new Categorie($db);
+	$categorie = new Categorie($db);
 
-    $categorie->label          = stripslashes($_POST["nom"]);
-    $categorie->description    = stripslashes($_POST["description"]);
-    $cats_meres = isset($_POST['catsMeres']) ? $_POST['catsMeres'] : array();
-    $ok = true;
-    
-       if (!$categorie->label || !$categorie->description)
-       {
-          $_GET["action"] = 'create';
-          $ok = false;
-       }
-       
-       if ($ok)
-       {
-          if (sizeof($cats_meres) > 1 && sizeof(array_unique($cats_meres)) != sizeof($cats_meres))
-          { // alors il y a des valeurs en double
-             print '<p>'.$langs->trans("ErrSameCatSelected").'</p>';
-             $_GET["action"] = 'create';
-             $ok = false;
-          }
-        }
-       
-       if ($ok)
-       {
-    	    $res = $categorie->create();
-    	    if ($res < 0)
-    	    {
-    	  	  $_error = 3;
-    	    }
-    	    else
-    	    {
-    	  	  foreach ($cats_meres as $id)
-            {
-               $mere = new Categorie($db, $id);
-	             $res = $mere->add_fille($categorie);
-               if ($res < 0)
-               {
-             	    $_error = 2;
-               }
-               else
-               {
-               	$_GET["action"] = 'confirmed';
-               	$_POST["addcat"] = '';
-               }
-            }
-          }
-        }
+	$categorie->label          = stripslashes($_POST["nom"]);
+	$categorie->description    = stripslashes($_POST["description"]);
+	$cats_meres = isset($_POST['catsMeres']) ? $_POST['catsMeres'] : array();
+	$ok = true;
 
-    
+	if (!$categorie->label || !$categorie->description)
+	{
+		$_GET["action"] = 'create';
+		$ok = false;
+	}
+
+	if ($ok)
+	{
+		if (sizeof($cats_meres) > 1 && sizeof(array_unique($cats_meres)) != sizeof($cats_meres))
+		{
+			// alors il y a des valeurs en double
+			print '<p>'.$langs->trans("ErrSameCatSelected").'</p>';
+			$_GET["action"] = 'create';
+			$ok = false;
+		}
+	}
+
+	if ($ok)
+	{
+		$res = $categorie->create();
+		if ($res < 0)
+		{
+			$_error = 3;
+		}
+		else
+		{
+			foreach ($cats_meres as $id)
+			{
+				$mere = new Categorie($db, $id);
+				$res = $mere->add_fille($categorie);
+				if ($res < 0)
+				{
+					$_error = 2;
+				}
+				else
+				{
+					$_GET["action"] = 'confirmed';
+					$_POST["addcat"] = '';
+				}
+			}
+		}
+	}
+
+
 }
 
 
@@ -108,72 +109,73 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 
 if ($user->rights->produit->creer)
 {
- if ($_GET["action"] == 'create' || $_POST["addcat"] == 'addcat')
- {
-	print '<form action="fiche.php" method="post">';
-	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="addcat" value="addcat">';
-	print '<input type="hidden" name="nom" value="'.$nom.'">';
-  print '<input type="hidden" name="description" value="'.$description.'">';
-  
-  foreach ($catsMeres as $id => $cat_mere)
-  {
-    print '<input type="hidden" name="catsMeres[$id]" value="'.$cat_mere.'">';
-	}
-
-  print_fiche_titre($langs->trans("CreateCat"));
-
-  print '<table class="border" width="100%" class="notopnoleftnoright">';
-  print '<tr>';
-	print '<td>'.$langs->trans("Label").'</td><td><input name="nom" size"25" value="'.$categorie->label.'">';
-  if ($_error == 1)
-  {
-  	print $lang->trans("ErrCatAlreadyExists");
-  }
-  print'</td></tr>';
-  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-  print '<textarea name="description" rows="6" cols="50">';
-  print $categorie->description.'</textarea></td></tr>';
-  print '<tr><td>';
-  print $langs->trans("AddIn").'  ';
-  print $html->select_nombre_sous_categorie($nbcats,"choix").'  ';
-  print $langs->trans("categories");
-  print '</td><td>';
-  print '<input type="submit" class="button" value="'.$langs->trans("modify").'" name="choicenbcats" id="choicenbcats"/>';
-  print '</td></tr>';
- 	print $html->select_all_categories($nbcats);  
-  print '<tr><td colspan="2">';
-  print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';
-  print '</td></tr></form>';
-  
- }
-
-
-/*
- * Action confirmation de création de la catégorie
- */
-
- if ($_GET["action"] == 'confirmed')
- {
-  print_titre($langs->trans("CatCreated"));
-
-  print '<table border="0" width="100%">';
-  print '<tr><td valign="top" width="30%">';
-
-  if ($_error == 3)
+	if ($_GET["action"] == 'create' || $_POST["addcat"] == 'addcat')
 	{
-	  print '<p>'.$langs->trans("ImpossibleAddCat").' '.$categorie->label.'</p>';
+		print '<form action="fiche.php" method="post">';
+		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="addcat" value="addcat">';
+		print '<input type="hidden" name="nom" value="'.$nom.'">';
+		print '<input type="hidden" name="description" value="'.$description.'">';
+
+		$catsMeres = isset($_POST['catsMeres']) ? $_POST['catsMeres'] : array();
+		foreach ($catsMeres as $id => $cat_mere)
+		{
+			print '<input type="hidden" name="catsMeres[$id]" value="'.$cat_mere.'">';
+		}
+
+		print_fiche_titre($langs->trans("CreateCat"));
+
+		print '<table class="border" width="100%" class="notopnoleftnoright">';
+		print '<tr>';
+		print '<td>'.$langs->trans("Label").'</td><td><input name="nom" size"25" value="'.$categorie->label.'">';
+		if ($_error == 1)
+		{
+			print $lang->trans("ErrCatAlreadyExists");
+		}
+		print'</td></tr>';
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+		print '<textarea name="description" rows="6" cols="50">';
+		print $categorie->description.'</textarea></td></tr>';
+		print '<tr><td>';
+		print $langs->trans("AddIn").'  ';
+		print $html->select_nombre_sous_categorie($nbcats,"choix").'  ';
+		print $langs->trans("categories");
+		print '</td><td>';
+		print '<input type="submit" class="button" value="'.$langs->trans("modify").'" name="choicenbcats" id="choicenbcats"/>';
+		print '</td></tr>';
+		print $html->select_all_categories($nbcats);
+		print '<tr><td colspan="2" align="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';
+		print '</td></tr></form>';
+
 	}
-  else
+
+
+	/*
+	 * Action confirmation de création de la catégorie
+	 */
+
+	if ($_GET["action"] == 'confirmed')
 	{
-	  print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
-	  if ($_error == 2)
-    {
-        print '<p>'.$langs->trans("TheCategorie").' '.$mere->label.' ('.$res.').</p>';
-    }
+		print_titre($langs->trans("CatCreated"));
+
+		print '<table border="0" width="100%">';
+		print '<tr><td valign="top" width="30%">';
+
+		if ($_error == 3)
+		{
+			print '<p>'.$langs->trans("ImpossibleAddCat").' '.$categorie->label.'</p>';
+		}
+		else
+		{
+			print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
+			if ($_error == 2)
+			{
+				print '<p>'.$langs->trans("TheCategorie").' '.$mere->label.' ('.$res.').</p>';
+			}
+		}
+		print '</td></tr></table>';
 	}
-	print '</td></tr></table>';
- }
 }
 
 
@@ -181,77 +183,77 @@ if ($user->rights->produit->creer)
 print '</table>';
 /*
 
-				
-			<?php
-			if (isset ($_REQUEST['creation']))
-				{	
-				// doit être à true pour valider la saisie de l'utilisateur
-				$OK = true;
 
-				$cats_meres = isset ($_REQUEST['catsMeres']) ? $_REQUEST['catsMeres'] : array ();
-				
-				if (sizeof ($cats_meres) > 1 && sizeof (array_unique ($cats_meres)) != sizeof ($cats_meres))
-					{ // alors il y a des valeurs en double
-					echo "<p>".$langs->trans ("ErrSameCatSelected")."</p>";
-					$OK = false;
-					}
+<?php
+if (isset ($_REQUEST['creation']))
+{
+// doit être à true pour valider la saisie de l'utilisateur
+$OK = true;
 
-				// vérification des champs renseignés par l'utilisateur: si il y a un problème, on affiche un message d'erreur
-				foreach ($cats_meres as $nb => $cat_mere)
-					{
-					if ($cat_mere == -1)
-						{
-						echo "<p>".$langs->trans ("ErrForgotCat")." ".($nb+1)."</p>";
-						$OK = false;
-						}
-					}
-					
-				// si les champs de description sont mal renseignés
-				if ($_POST["nom"] == '')
-					{
-					echo "<p>".$langs->trans ("ErrForgotField")." \"".$langs->trans ("Label")."\"</p>";
-					$OK = false;
-					}
-				else if ($categorie->already_exists($_POST["nom"],$cat_mere)) // on regarde si le nom n'existe pas déjà en tant que catégorie ou sous-catégorie
-					{
-					echo "<p>".$langs->trans ("ErrCatAlreadyExists")."</p>";
-					$OK = false;
-					}
+$cats_meres = isset ($_REQUEST['catsMeres']) ? $_REQUEST['catsMeres'] : array ();
 
-				if ($_POST["description"] == '')
-					{
-					echo "<p>".$langs->trans ("ErrForgotField")." \"".$langs->trans ("Description")."\"</p>";
-					$OK = false;
-					}
-					
-				// vérification pour savoir si tous les champs sont corrects
-				if ($OK)
-					{
-					$nom         = htmlspecialchars(stripslashes($_REQUEST['nom'])        ,ENT_QUOTES);
-					$description = htmlspecialchars(stripslashes($_REQUEST['description']),ENT_QUOTES);
-					// creation de champs caches pour etre appele dans la classe de traitement
-					?>
-					<table class="noborder"><tr><td>
-					<form method="post" action="docreate.php">
-						<p><?php print $langs->trans ("ValidateFields"); ?>&nbsp;?
-						<input type='submit' value='<?php print $langs->trans ("Valid"); ?>'/>
-						<input type='hidden' name='nom'         value="<?php print $nom;         ?>">
-						<input type='hidden' name='description' value="<?php print $description; ?>">
+if (sizeof ($cats_meres) > 1 && sizeof (array_unique ($cats_meres)) != sizeof ($cats_meres))
+{ // alors il y a des valeurs en double
+echo "<p>".$langs->trans ("ErrSameCatSelected")."</p>";
+$OK = false;
+}
 
-						<?php
-						foreach ($cats_meres as $id => $cat_mere)
-							{
-							echo "<input type='hidden' name='cats_meres[$id]' value='$cat_mere'>";
-							}
-						?>
-						</form></p>
-					</td></tr></table>
-					<?php
-					}
-				}
+// vérification des champs renseignés par l'utilisateur: si il y a un problème, on affiche un message d'erreur
+foreach ($cats_meres as $nb => $cat_mere)
+{
+if ($cat_mere == -1)
+{
+echo "<p>".$langs->trans ("ErrForgotCat")." ".($nb+1)."</p>";
+$OK = false;
+}
+}
+
+// si les champs de description sont mal renseignés
+if ($_POST["nom"] == '')
+{
+echo "<p>".$langs->trans ("ErrForgotField")." \"".$langs->trans ("Label")."\"</p>";
+$OK = false;
+}
+else if ($categorie->already_exists($_POST["nom"],$cat_mere)) // on regarde si le nom n'existe pas déjà en tant que catégorie ou sous-catégorie
+{
+echo "<p>".$langs->trans ("ErrCatAlreadyExists")."</p>";
+$OK = false;
+}
+
+if ($_POST["description"] == '')
+{
+echo "<p>".$langs->trans ("ErrForgotField")." \"".$langs->trans ("Description")."\"</p>";
+$OK = false;
+}
+
+// vérification pour savoir si tous les champs sont corrects
+if ($OK)
+{
+$nom         = htmlspecialchars(stripslashes($_REQUEST['nom'])        ,ENT_QUOTES);
+$description = htmlspecialchars(stripslashes($_REQUEST['description']),ENT_QUOTES);
+// creation de champs caches pour etre appele dans la classe de traitement
+?>
+<table class="noborder"><tr><td>
+<form method="post" action="docreate.php">
+<p><?php print $langs->trans ("ValidateFields"); ?>&nbsp;?
+<input type='submit' value='<?php print $langs->trans ("Valid"); ?>'/>
+<input type='hidden' name='nom'         value="<?php print $nom;         ?>">
+<input type='hidden' name='description' value="<?php print $description; ?>">
+
+<?php
+foreach ($cats_meres as $id => $cat_mere)
+{
+echo "<input type='hidden' name='cats_meres[$id]' value='$cat_mere'>";
+}
+?>
+</form></p>
+</td></tr></table>
+<?php
+}
+}
 */
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

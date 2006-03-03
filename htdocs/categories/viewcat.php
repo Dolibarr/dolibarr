@@ -18,8 +18,6 @@
 
 require "./pre.inc.php";
 
-llxHeader ("","",$langs->trans("Categories"));
-
 if ($_REQUEST['id'] == "")
 {
   dolibarr_print_error ();
@@ -28,11 +26,17 @@ if ($_REQUEST['id'] == "")
 
 $c = new Categorie ($db, $_REQUEST['id']);
 
-print_titre ($langs->trans("Categorie")." ".$c->label);
-?>
-<table border="0" width="100%">
-<tr><td valign="top" width="30%">
-<?php
+
+/*
+ * Affichage fiche categorie
+ */
+ 
+llxHeader ("","",$langs->trans("Categories"));
+
+print_fiche_titre($langs->trans("Categorie")." ".$c->label);
+
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 $ways = $c->print_all_ways ();
 print "<div id='ways'>";
@@ -46,26 +50,31 @@ $cats = $c->get_filles ();
 
 if ($cats < 0)
 {
-  dolibarr_print_error();
-}
-else if (sizeof ($cats) > 0)
-{
-  print "<table class='noborder' width='100%'>\n";
-	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("SubCats")."</td></tr>\n";
-	
-	foreach ($cats as $cat)
-	  {
-	    $i++;
-	    print "\t<tr ".$bc[$i%2].">\n";
-	    print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
-	    print "\t\t<td>".$cat->description."</td>\n";
-	    print "\t</tr>\n";
-	  }
-	print "</table>\n<br/>\n";
+	dolibarr_print_error();
 }
 else
 {
-  print "<p>".$langs->trans("NoSubCat")."</p>";
+	print "<br>";
+	print "<table class='noborder' width='100%'>\n";
+	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("SubCats")."</td></tr>\n";
+	if (sizeof ($cats) > 0)
+	{	
+		$var=true;
+		foreach ($cats as $cat)
+		{
+			$i++;
+			$var=!$var;
+			print "\t<tr ".$bc[$var].">\n";
+			print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
+			print "\t\t<td>".$cat->description."</td>\n";
+			print "\t</tr>\n";
+		}
+	}
+	else
+	{
+		print "<tr><td>".$langs->trans("NoSubCat")."</td></tr>";
+	}
+	print "</table>\n";
 }
 
 $i = 0;
@@ -76,33 +85,44 @@ if ($prods < 0)
 {
   dolibarr_print_error();
 }
-else if (sizeof ($prods) > 0)
-{
-  print "<table class='noborder' width='100%'>\n";
-  print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("Products")."</td></tr>\n";
-  
-  foreach ($prods as $prod)
-    {
-      $i++;
-      print "\t<tr ".$bc[$i%2].">\n";
-      print "\t\t<td><a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->libelle."</a></td>\n";
-      print "\t\t<td>".$prod->description."</td>\n";
-      print "\t</tr>\n";
-    }
-  print "</table>\n";
-}
 else
 {
-  print "<p>".$langs->trans ("NoProd")."</p>";
+	print "<br>";
+	print "<table class='noborder' width='100%'>\n";
+	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
+	
+	if (sizeof ($prods) > 0)
+	{
+		$var=true;
+		foreach ($prods as $prod)
+		{
+			$i++;
+			$var=!$var;
+			print "\t<tr ".$bc[$var].">\n";
+			print "\t\t<td><a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->libelle."</a></td>\n";
+			print "\t\t<td>".$prod->description."</td>\n";
+			print "\t</tr>\n";
+		}
+	}
+	else
+	{
+		print "<tr><td>".$langs->trans ("NoProd")."</td></tr>";
+	}
+	print "</table>\n";
 }
 
+/*
+ * Boutons actions
+ */
 print "<div class='tabsAction'>\n";
-print "<a class='tabAction' href='edit.php?id=".$c->id."'>&Eacute;diter</a>";
-print "<a class='tabAction' href='delete.php?id=".$c->id."'>Supprimer</a>";
+print "<a class='tabAction' href='edit.php?id=".$c->id."'>".$langs->trans("Edit")."</a>";
+print "<a class='tabAction' href='delete.php?id=".$c->id."'>".$langs->trans("Delete")."</a>";
 print "</div>";
+
+
 print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
