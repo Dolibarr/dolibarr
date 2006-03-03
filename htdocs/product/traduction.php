@@ -61,8 +61,7 @@ if ($_POST["action"] == 'vadd' &&
 	$product = new Product($db);
 	$product->fetch($_POST["id"]);
 	$current_lang = $langs->getDefaultLang();
-	
-	print $_POST["lang"].'<hr/>';
+
 	// update de l'objet
 	if ( $_POST["lang"] == $current_lang )
 	{
@@ -324,9 +323,12 @@ if ($_GET["action"] == 'add' || $user->rights->produit->modifier)
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 	print '<table class="border" width="100%">';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Translation').'</td><td>'.$select.'</td></tr>';;
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc" rows="3" cols="80">'.$product->multilangs[$key]["description"].'</textarea></td></tr>';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note" rows="3" cols="80">'.$product->multilangs[$key]["note"].'</textarea></td></tr>';
+	//print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
+	//print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc" rows="3" cols="80">'.$product->multilangs[$key]["description"].'</textarea></td></tr>';
+	//print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note" rows="3" cols="80">'.$product->multilangs[$key]["note"].'</textarea></td></tr>';
+	print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
+	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc" rows="3" cols="80"></textarea></td></tr>';
+	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note" rows="3" cols="80"></textarea></td></tr>';
 	print '</tr>';
 	print '</table>';
 	print '<br /><table class="noborder" width="100%">';
