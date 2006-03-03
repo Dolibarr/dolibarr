@@ -32,3 +32,4 @@ AddProductToCat=Add this product to a category?
 ImpossibleAddCat=Impossible to add the category
 ImpossibleAssociateCategory=Impossible to associate the category to
 WasAddedSuccessfully=was added successfully.
+ProductIsInCategories=Product/Service is in following categories
