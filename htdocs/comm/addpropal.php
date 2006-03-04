@@ -111,7 +111,13 @@ if ($_GET["action"] == 'create')
 		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
 		print '<td>';
 		if(DATE_LIVRAISON_WEEK_DELAY != "")
-			$form->select_date(time() + ((7*DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60),'liv_','','','',"addprop");
+		{
+			$tmpdte = time() + ((7*DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+			$syear = date("Y", $tmpdte);
+            $smonth = date("m", $tmpdte);
+            $sday = date("d", $tmpdte);
+			$form->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
+		}
 		else
 			$form->select_date('','liv_','','','',"addprop");
 		print '</td></tr>';

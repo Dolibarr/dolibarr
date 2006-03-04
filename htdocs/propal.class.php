@@ -386,7 +386,7 @@ class Propal
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
-        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, ".$this->db->idate($this->date_livraison).")";
+        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."')";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -754,7 +754,7 @@ class Propal
     {
         if ($user->rights->propale->creer)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET date_livraison = ".$this->db->idate($date_livraison);
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET date_livraison = '".$date_livraison."'";
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
     
             if ($this->db->query($sql) )

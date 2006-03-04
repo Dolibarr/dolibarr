@@ -90,7 +90,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->modelpdf          = $_POST['model'];
 	$commande->cond_reglement_id = $_POST['cond_reglement_id'];
     $commande->mode_reglement_id = $_POST['mode_reglement_id'];
-    $commande->date_livraison = mktime(12, 1, 1, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+    $commande->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
 
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
@@ -133,7 +133,7 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
-	$commande->set_date_livraison($user,mktime(12, 1, 1, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+	$commande->set_date_livraison($user,$_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day']);
 }
 
 if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
@@ -340,7 +340,13 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			// date de livraison
 			print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
 			if(DATE_LIVRAISON_WEEK_DELAY != "")
-    			$html->select_date(time() + ((7*DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60),'liv_','','','',"crea_commande");
+			{
+    			$tmpdte = time() + ((7*DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+				$syear = date("Y", $tmpdte);
+            	$smonth = date("m", $tmpdte);
+            	$sday = date("d", $tmpdte);
+				$html->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"crea_commande");
+			}
 			else
 				$html->select_date('','liv_','','','',"crea_commande");
     		print "</td></tr>";

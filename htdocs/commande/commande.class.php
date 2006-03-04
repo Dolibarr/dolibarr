@@ -109,7 +109,7 @@ class Commande
 		$this->soc_id = $propal->soc_id;
     $this->cond_reglement_id = $propal->cond_reglement_id;
     $this->mode_reglement_id = $propal->mode_reglement_id;
-    
+	$this->date_livraison = $propal->date_livraison;
     
 		/* Définit la société comme un client */
 		$soc = new Societe($this->db);
@@ -241,8 +241,7 @@ class Commande
 			$this->projetid = 0;
 		}
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison) ';
-		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\', \''.$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\', \''.$this->db->idate($this->date_livraison).'\')';
-
+		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\', \''.$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\', \''.$this->date_livraison.'\')';
 		if ( $this->db->query($sql) )
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande');
@@ -813,7 +812,7 @@ class Commande
     {
         if ($user->rights->commande->creer)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET date_livraison = ".$this->db->idate($date_livraison);
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET date_livraison = '".$date_livraison."'";
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
     
             if ($this->db->query($sql) )

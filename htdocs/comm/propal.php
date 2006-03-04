@@ -111,7 +111,7 @@ if ($_POST['action'] == 'setdate_livraison')
 {
 	$propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
-	$result=$propal->set_date_livraison($user,mktime(12, 1, 1, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+	$result=$propal->set_date_livraison($user,$_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day']);
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 
@@ -120,8 +120,7 @@ if ($_POST['action'] == 'add')
 {
     $propal = new Propal($db, $_GET['socidp']);
     $propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-	$propal->date_livraison = mktime(12, 1, 1, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
-
+	$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
     $propal->duree_validite = $_POST['duree_validite'];
     $propal->cond_reglement_id = $_POST['cond_reglement_id'];
     $propal->mode_reglement_id = $_POST['mode_reglement_id'];
