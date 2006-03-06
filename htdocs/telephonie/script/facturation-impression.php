@@ -105,6 +105,23 @@ if ( $resql )
       //print "$i/$num ".$row[1]." ".$row[0]."\n";
 
       $xx = new pdf_ibreizh($db);
+
+      $pql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_facture";
+      $pql .= " WHERE fk_facture = ".$row[0];
+      $repql = $db->query($pql);
+      if ( $repql )
+	{
+	  $pow = $db->fetch_row($repql);
+	  $db->free($repql);	  
+	}
+
+      if ($pow[0] > 0)
+	{
+	  $xx->message = "Cette facture sera prélevée sur votre compte bancaire.";
+	}
+
+
+
       $xx->_write_pdf_file($row[0], &$pdf, 1);
 
       $feuilles = 0;
