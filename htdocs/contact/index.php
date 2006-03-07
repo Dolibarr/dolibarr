@@ -112,7 +112,10 @@ if (!$user->rights->commercial->client->voir) //restriction
 {
 $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-
+if ($search_nom)        // filtre sur le nom
+{
+    $sql .= " AND p.name like '%".$search_nom."%'";
+}
 if ($search_prenom)     // filtre sur le prenom
 {
     $sql .= " AND p.firstname like '%".$search_prenom."%'";
