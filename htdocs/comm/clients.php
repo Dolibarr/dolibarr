@@ -59,7 +59,7 @@ $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 
 if ($socidp)           $sql .= " AND s.idp = $socidp";
 if ($user->societe_id) $sql .= " AND s.idp = " .$user->societe_id;
-if (!$user->rights->commercial->voir) $sql .= " AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($search_nom)   $sql .= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
 if ($search_ville) $sql .= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";
