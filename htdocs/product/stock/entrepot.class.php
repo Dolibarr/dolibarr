@@ -57,7 +57,7 @@ class Entrepot
         global $langs;
         $this->db = $DB;
         
-        $this->statuts[0] = $langs->trans("Closed");
+        $this->statuts[0] = $langs->trans("Closed2");
         $this->statuts[1] = $langs->trans("Opened");
     }
 
