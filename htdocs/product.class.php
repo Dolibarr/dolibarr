@@ -1334,21 +1334,24 @@ class Product
     
     if ($this->db->query($sql) )
       {
-	$row = $this->db->fetch_row(0);
-	if ($row[0] > 0)
-	  {
-	    return $this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement);
-	  }
-	else
-	  {
-	    return $this->create_stock($id_entrepot, $nbpiece);
-	  }
+	      $row = $this->db->fetch_row(0);
+	      if ($id_entrepot)
+	      {
+	        if ($row[0] > 0)
+	        {
+	         return $this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement);
+	        }
+	        else
+	        {
+	          return $this->create_stock($id_entrepot, $nbpiece);
+	        }
+	      }
       }
-    else
+      else
       {
-	  dolibarr_print_error($this->db);
-  	  $this->db->rollback();
-	  return -1;
+	      dolibarr_print_error($this->db);
+  	    $this->db->rollback();
+	      return -1;
       }        
   }
 
