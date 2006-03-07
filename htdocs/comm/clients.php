@@ -52,12 +52,14 @@ $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_
 $search_code=isset($_GET["search_code"])?$_GET["search_contract"]:$_POST["search_code"];
 
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.code_client ";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,";
+$sql .= " st.libelle as stcomm, s.prefix_comm, s.code_client, sc.fk_soc, sc.fk_user";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."societe_commerciaux as sc ";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 
 if ($socidp)           $sql .= " AND s.idp = $socidp";
 if ($user->societe_id) $sql .= " AND s.idp = " .$user->societe_id;
+if (!$user->rights->commercial->voir) $sql .= " AND sc.fk_user = " .$user->id;
 
 if ($search_nom)   $sql .= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
 if ($search_ville) $sql .= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";
