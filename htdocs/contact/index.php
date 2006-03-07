@@ -88,19 +88,31 @@ if ($_POST["button_removefilter"])
  *
  */
 
+if ($user->rights->commercial->client->voir)
+{
 $sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax ";
 $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p ";
 $sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc) ";
 $sql .= "WHERE 1=1 ";
+}
+else
+{
+$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax, ";
+$sql .= "sc.fk_soc, sc.fk_user ";
+$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."societe_commerciaux as sc ";
+$sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc) ";
+$sql .= "WHERE 1=1 ";
+}
 
 if ($_GET["userid"])    // statut commercial
 {
     $sql .= " AND p.fk_user=".$_GET["userid"];
 }
-if ($search_nom)        // filtre sur le nom
+if (!$user->rights->commercial->client->voir) //restriction
 {
-    $sql .= " AND p.name like '%".$search_nom."%'";
+$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
+
 if ($search_prenom)     // filtre sur le prenom
 {
     $sql .= " AND p.firstname like '%".$search_prenom."%'";
