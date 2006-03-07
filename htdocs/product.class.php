@@ -1328,15 +1328,14 @@ class Product
    */
   function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
-
+    if ($id_entrepot)
+    {
     $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product_stock ";
     $sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
     
     if ($this->db->query($sql) )
       {
 	      $row = $this->db->fetch_row(0);
-	      if ($id_entrepot)
-	      {
 	        if ($row[0] > 0)
 	        {
 	         return $this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement);
@@ -1345,14 +1344,14 @@ class Product
 	        {
 	          return $this->create_stock($id_entrepot, $nbpiece);
 	        }
-	      }
       }
       else
       {
 	      dolibarr_print_error($this->db);
   	    $this->db->rollback();
 	      return -1;
-      }        
+      }
+    }       
   }
 
 
