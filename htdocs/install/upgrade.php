@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,8 +161,10 @@ if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
                 {
 					if ($sql)
 					{
-//	                    print '<tr><td>'.$langs->trans("Request").' '.$i.'</td>';
-						print("Execution de requete=".($i+1)." sql='".$sql."'<br>\n");
+						// Ajout trace sur requete (eventuellement à commenter
+						// si beaucoup de requetes)
+						print('<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$sql."'</td></tr>\n");
+
     	                if ($db->query($sql))
         	            {
 // 	                       print '<td align="right">OK</td>';
