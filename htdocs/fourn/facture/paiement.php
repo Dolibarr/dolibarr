@@ -200,8 +200,12 @@ if ($action == 'create' || $action == 'add_paiement')
 	$facture->fetch($facid);
 
 	$sql = 'SELECT s.nom,s.idp, f.amount, f.total_ttc as total, f.facnumber';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f WHERE f.fk_soc = s.idp';
+	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
+	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= ' WHERE f.fk_soc = s.idp';
 	$sql .= ' AND f.rowid = '.$facid;
+	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
