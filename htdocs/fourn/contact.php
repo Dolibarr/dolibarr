@@ -113,7 +113,7 @@ if ($result) {
 
       print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->name.'</a></td>';
       print '<td>'.$obj->firstname.'</td>';
-      print '<td><a href="fiche.php?socidp='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
       print '<td>'.$obj->email.'</td>';
       print '<td>'.$obj->phone.'</td>';
       
