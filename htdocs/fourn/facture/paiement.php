@@ -356,13 +356,16 @@ if (! $_GET['action'] && ! $_POST['action'])
 	$sql .= ', f.amount as fa_amount, f.facnumber, s.nom';
 	$sql .= ', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
 	$sql .= ', ba.rowid as bid, ba.label';
+	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
+	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn ';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.idp = f.fk_soc';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " WHERE s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socidp)
 	{
 		$sql .= ' WHERE f.fk_soc = '.$socidp;
