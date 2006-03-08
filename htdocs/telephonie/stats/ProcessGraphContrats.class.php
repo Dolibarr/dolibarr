@@ -155,8 +155,6 @@ class ProcessGraphContrats
 	    $graphx->Graph();
 	  }       
       }
-
-    dolibarr_syslog("Fin contrat ".$this->ident);
   }
 }
 ?>
