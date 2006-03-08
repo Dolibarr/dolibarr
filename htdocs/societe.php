@@ -79,8 +79,12 @@ if ($mode == 'search')
 {
     $_POST["search_nom"]="$socname";
 
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
+    $sql = "SELECT s.idp";
+    if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE s.nom like '%".$socname."%'";
+    if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
     $result=$db->query($sql);
     if ($result)
