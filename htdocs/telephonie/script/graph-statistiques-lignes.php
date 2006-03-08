@@ -25,7 +25,7 @@
  */
 require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphLignes.class.php");
-
+$verbose = 0;
 $graph_all = 0;
 
 //loop through our arguments and see what the user selected
@@ -34,6 +34,8 @@ for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
   switch($GLOBALS["argv"][$i])
     {
     case "-v":
+      $verbose = 1;
+      break;
     case "--version":
       echo  $GLOBALS['argv'][0]." $Revision$\n";
       exit;
@@ -44,7 +46,8 @@ for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
     }
 }
 
-print strftime("%H:%M:%S",time())."\n";
+if ($verbose)
+  print strftime("%H:%M:%S",time())."\n";
 
 $datetime = time();
 $month = strftime("%m", $datetime);
@@ -74,11 +77,14 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
 
-  print "$num lignes\n";
+  if ($verbose)
+    print "$num lignes\n";
 
   while ($i < $num)
     {
-      print substr("0000".($i+1), -4) . "/".substr("0000".$num, -4)."\n";
+      if ($verbose)
+	print substr("0000".($i+1), -4) . "/".substr("0000".$num, -4)."\n";
+
       $row = $db->fetch_row($resql);
 
       $gr = new ProcessGraphLignes($db);
