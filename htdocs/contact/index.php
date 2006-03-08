@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,16 +34,13 @@ $langs->load("companies");
 $langs->load("suppliers");
 
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 
-llxHeader();
 
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
@@ -83,25 +80,29 @@ if ($_POST["button_removefilter"])
 }
 
 
+
+
 /*
- * Mode liste
+ * Affichage liste
  *
  */
+ 
+llxHeader();
 
 if ($user->rights->commercial->client->voir)
 {
-$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax ";
-$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p ";
-$sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc) ";
-$sql .= "WHERE 1=1 ";
+	$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax ";
+	$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p ";
+	$sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc ";
+	$sql .= "WHERE 1=1 ";
 }
 else
 {
-$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax, ";
-$sql .= "sc.fk_soc, sc.fk_user ";
-$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."societe_commerciaux as sc ";
-$sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc) ";
-$sql .= "WHERE 1=1 ";
+	$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax, ";
+	$sql .= "sc.fk_soc, sc.fk_user ";
+	$sql .= "FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc,".MAIN_DB_PREFIX."socpeople as p ";
+	$sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc ";
+	$sql .= "WHERE 1=1 ";
 }
 
 if ($_GET["userid"])    // statut commercial
@@ -110,23 +111,23 @@ if ($_GET["userid"])    // statut commercial
 }
 if (!$user->rights->commercial->client->voir) //restriction
 {
-$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($search_nom)        // filtre sur le nom
 {
-    $sql .= " AND p.name like '%".$search_nom."%'";
+    $sql .= " AND p.name like '%".addslashes($search_nom)."%'";
 }
 if ($search_prenom)     // filtre sur le prenom
 {
-    $sql .= " AND p.firstname like '%".$search_prenom."%'";
+    $sql .= " AND p.firstname like '%".addslashes($search_prenom)."%'";
 }
 if ($search_societe)    // filtre sur la societe
 {
-    $sql .= " AND s.nom like '%".$search_societe."%'";
+    $sql .= " AND s.nom like '%".addslashes($search_societe)."%'";
 }
 if ($search_email)      // filtre sur l'email
 {
-    $sql .= " AND p.email like '%".$search_email."%'";
+    $sql .= " AND p.email like '%".addslashes($search_email)."%'";
 }
 if ($type == "f")        // filtre sur type
 {
@@ -138,7 +139,7 @@ if ($type == "c")        // filtre sur type
 }
 if ($sall)
 {
-    $sql .= " AND (p.name like '%".$sall."%' OR p.firstname like '%".$sall."%' OR p.email like '%".$sall."%') ";
+    $sql .= " AND (p.name like '%".addslashes($sall)."%' OR p.firstname like '%".addslashes($sall)."%' OR p.email like '%".addslashes($sall)."%') ";
 }
 if ($socid)
 {
@@ -297,105 +298,6 @@ else
 }
 
 print '<br>';
-
-
-/*
- * TODO A virer ?
- * PhProjekt
- */
-
-if (2==1 && (strlen($_GET["search_nom"]) OR strlen($_GET["search_prenom"])))
-{
-
-
-    $sortfield = "p.nachname";
-    $sortorder = "ASC";
-    
-    $sql = "SELECT p.vorname, p.nachname, p.firma, p.email";
-    $sql .= " FROM phprojekt.contacts as p";
-    $sql .= " WHERE upper(p.nachname) like '%".$_GET["search_nom"]."%'";
-    
-    $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1, $offset);
-    
-    
-    $result = $db->query($sql);
-    
-    if ($result)
-    {
-        $num = $db->num_rows($result);
-        $i = 0;
-    
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td>';
-        print_liste_field_titre($langs->trans("Name"),"projekt.php","lower(p.name)", $begin);
-        print "</td><td>";
-        print_liste_field_titre($langs->trans("Fristname"),"projekt.php","lower(p.firstname)", $begin);
-        print "</td><td>";
-        print_liste_field_titre($langs->trans("Company"),"projekt.php","lower(s.nom)", $begin);
-        print '</td>';
-        print '<td>'.$langs->trans("Phone").'</td>';
-    
-        if ($_GET["view"] == 'phone')
-        {
-            print '<td>'.$langs->trans("Mobile").'</td>';
-            print '<td>'.$langs->trans("Fax").'</td>';
-        }
-        else
-        {
-            print '<td>'.$langs->trans("Email").'</td>';
-        }
-    
-        print "</tr>\n";
-        $var=True;
-        while ($i < min($num,$limit))
-        {
-            $obj = $db->fetch_object( $i);
-    
-            $var=!$var;
-    
-            print "<tr $bc[$var]>";
-    
-            // Nom
-            print '<td valign="center">';
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_file().' '.$obj->nachname.'</a></td>';
-            print '<td>'.$obj->vorname.'</td>';
-    
-            print '<td>';
-            print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=$obj->idp\">$obj->firma</a></td>\n";
-    
-    
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
-    
-            if ($_GET["view"] == 'phone')
-            {
-                print '<td>'.dolibarr_print_phone($obj->phone_mobile).'&nbsp;</td>';
-    
-                print '<td>'.dolibarr_print_phone($obj->fax).'&nbsp;</td>';
-            }
-            else
-            {
-                print '<td><a href="mailto:'.$obj->email.'">'.$obj->email.'</a>&nbsp;';
-                if (!valid_email($obj->email))
-                {
-                    print "Email Invalide !";
-                }
-                print '</td>';
-            }
-    
-            print "</tr>\n";
-            $i++;
-        }
-        print "</table>";
-        $db->free();
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
-
-}
-
-
 
 $db->close();
 
