@@ -38,7 +38,7 @@ $langs->load("suppliers");
 if ($user->societe_id > 0) 
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socidp = $user->societe_id;
 }
 
 
@@ -91,9 +91,9 @@ llxHeader();
 
 
 	$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
-	if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user ";
+	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p";
-	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc ";
 	$sql .= "WHERE 1=1 ";
 
@@ -101,7 +101,7 @@ if ($_GET["userid"])    // statut commercial
 {
     $sql .= " AND p.fk_user=".$_GET["userid"];
 }
-if (!$user->rights->commercial->client->voir) //restriction
+if (!$user->rights->commercial->client->voir && !$socidp) //restriction
 {
 	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
@@ -133,9 +133,9 @@ if ($sall)
 {
     $sql .= " AND (p.name like '%".addslashes($sall)."%' OR p.firstname like '%".addslashes($sall)."%' OR p.email like '%".addslashes($sall)."%') ";
 }
-if ($socid)
+if ($socidp)
 {
-    $sql .= " AND s.idp = $socid";
+    $sql .= " AND s.idp = $socidp";
 }
 
 if($_GET["view"] == "recent")

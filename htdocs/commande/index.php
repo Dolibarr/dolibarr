@@ -70,12 +70,12 @@ print "</form></table><br>\n";
  * Commandes à valider
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp";
-if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
 if ($socidp) $sql .= " AND c.fk_soc = ".$socidp;
-if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ( $db->query($sql) )
 {
@@ -104,12 +104,12 @@ if ( $db->query($sql) )
  * Commandes à traiter
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp";
-if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .=" FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
 if ($socidp) $sql .= " AND c.fk_soc = ".$socidp;
-if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql .= " ORDER BY c.rowid DESC";
 
 if ( $db->query($sql) )
@@ -144,12 +144,12 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Commandes en cours
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp";
-if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2 ";
 if ($socidp) $sql .= " AND c.fk_soc = ".$socidp;
-if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql .= " ORDER BY c.rowid DESC";
 
 if ( $db->query($sql) )
@@ -183,12 +183,12 @@ $max=5;
 
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp,";
 $sql.= " ".$db->pdate("date_cloture")." as datec";
-if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.idp and c.fk_statut > 2";
 if ($socidp) $sql .= " AND c.fk_soc = ".$socidp;
-if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " ORDER BY c.tms DESC";
 $sql.= $db->plimit($max, 0);
 

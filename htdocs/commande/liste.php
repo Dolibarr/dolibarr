@@ -63,11 +63,11 @@ $limit = $conf->liste_limit;
 $offset = $limit * $_GET['page'] ;
 
 $sql = 'SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,'.$db->pdate('c.date_commande').' as date_commande, c.fk_statut';
-if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
-if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ' WHERE c.fk_soc = s.idp';
-if (!$user->rights->commercial->client->voir) //restriction
+if (!$user->rights->commercial->client->voir && !$socidp) //restriction
 {
   $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }

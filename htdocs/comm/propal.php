@@ -1235,13 +1235,13 @@ else
   $pagenext = $page + 1;
 
   $sql = 'SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
-  if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-  if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
   $sql.= ' WHERE p.fk_soc = s.idp';
   
-  if (!$user->rights->commercial->client->voir) //restriction
+  if (!$user->rights->commercial->client->voir && !$socidp) //restriction
     {
 	    $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
     }

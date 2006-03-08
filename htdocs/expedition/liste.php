@@ -58,9 +58,9 @@ $offset = $limit * $_GET["page"] ;
 llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut";
-if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
 if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
 $sql_add = " WHERE ";
 if ($socidp)
@@ -73,7 +73,7 @@ if ($_POST["sf_ref"])
   $sql.= $sql_add . " e.ref like '%".addslashes($_POST["sf_ref"])."%'";
   $sql_add = " AND ";
 }
-if (!$user->rights->commercial->client->voir) //restriction
+if (!$user->rights->commercial->client->voir && !$socidp) //restriction
 {
 	$sql .= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
