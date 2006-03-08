@@ -67,7 +67,9 @@ llxHeader();
 $sql = "SELECT s.nom as societe, s.idp as socidp, s.client,";
 $sql.= " a.id,".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle, u.code, u.rowid as userid";
+if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
+if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
 if ($_GET["type"])
 {
@@ -80,6 +82,10 @@ if ($_GET["time"] == "today")
 if ($socid) 
 {
   $sql .= " AND s.idp = $socid";
+}
+if (!$user->rights->commercial->client->voir) //restriction
+{
+	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }

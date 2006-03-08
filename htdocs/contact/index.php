@@ -92,8 +92,8 @@ llxHeader();
 
 	$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
 	if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql .= "FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."socpeople as p ";
+	$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p";
+	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc ";
 	$sql .= "WHERE 1=1 ";
 
