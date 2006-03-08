@@ -110,8 +110,11 @@ if ($conf->facture->enabled)
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {  
   $sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom, s.idp";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   $sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
   
   if ($socidp)
     {
@@ -260,11 +263,14 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
   $langs->load("orders");
 
   $sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc";
-  $sql .= " ,s.nom, s.idp, p.rowid, p.ref, p.total_ht, p.total_ttc";
+  $sql .= ", s.nom, s.idp, p.rowid, p.ref, p.total_ht, p.total_ttc";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."commande AS p";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid";
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid";
   $sql .= " WHERE p.fk_soc = s.idp";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
   if ($socidp)
     {
       $sql .= " AND p.fk_soc = $socidp";
@@ -337,8 +343,11 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
    */
 
   $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc, ".$db->pdate("f.date_lim_reglement")." as datelimite, sum(pf.amount) as am";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
   $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   $sql.= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
   if ($socidp) $sql .= " AND f.fk_soc = $socidp";
   $sql.= " GROUP BY f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc";
   $sql.= " ORDER BY f.datef ASC, f.facnumber ASC";
@@ -425,9 +434,12 @@ if ($conf->facture->enabled) {
     if ($user->societe_id == 0)
     {
       $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ht, ff.total_ttc, s.nom, s.idp";
+      if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
+      if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
       $sql .= " WHERE s.idp = ff.fk_soc";
       $sql .= " AND ff.paye=0";
+      if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
       $result=$db->query($sql);
       if ($result)
