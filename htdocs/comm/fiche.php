@@ -46,10 +46,10 @@ $langs->load("contracts");
 if ($conf->fichinter->enabled) $langs->load("interventions");
 
 // Protection quand utilisateur externe
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socidp = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id > 0)
 {
-    $socid = $user->societe_id;
+    $socidp = $user->societe_id;
 }
 
 
@@ -90,7 +90,7 @@ if ($_POST["action"] == 'setassujtva')
 {
 	$societe = new Societe($db, $_GET["socid"]);
     $societe->tva_assuj=$_POST['assujtva_value'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socid."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socidp."'";
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
@@ -98,7 +98,7 @@ if ($_POST["action"] == 'setassujtva')
 if ($action == 'recontact')
 {
     $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'".  $user->login ."')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socidp, $dr,'".  $user->login ."')";
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
@@ -108,12 +108,12 @@ if ($action == 'stcomm')
     if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
     {
         $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
-        $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
+        $sql .= " VALUES ('$dateaction',$socidp,$stcommid,'" . $user->login . "')";
         $result = @$db->query($sql);
 
         if ($result)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=".$socid;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=".$socidp;
             $result = $db->query($sql);
         }
         else
@@ -124,7 +124,7 @@ if ($action == 'stcomm')
 
     if ($actioncommid)
     {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socidp,'" . $user->id . "')";
         $result = @$db->query($sql);
 
         if (!$result)
@@ -140,14 +140,18 @@ if ($action == 'stcomm')
  */
 if ($mode == 'search') {
     if ($mode-search == 'soc') {
-        $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
+        $sql = "SELECT s.idp";
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
     }
 
     if ( $db->query($sql) ) {
         if ( $db->num_rows() == 1) {
             $obj = $db->fetch_object();
-            $socid = $obj->idp;
+            $socidp = $obj->idp;
         }
         $db->free();
     }
@@ -163,12 +167,12 @@ llxHeader('',$langs->trans('CustomerCard'));
  * Mode fiche
  *
  *********************************************************************************/
-if ($socid > 0)
+if ($socidp > 0)
 {
     // On recupere les donnees societes par l'objet
     $objsoc = new Societe($db);
-    $objsoc->id=$socid;
-    $objsoc->fetch($socid,$to);
+    $objsoc->id=$socidp;
+    $objsoc->fetch($socidp,$to);
 
     $dac = strftime("%Y-%m-%d %H:%M", time());
     if ($errmesg)

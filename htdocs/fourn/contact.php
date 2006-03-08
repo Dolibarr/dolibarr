@@ -41,7 +41,7 @@ llxHeader();
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socid = $user->societe_id;
+  $socidp = $user->societe_id;
 }
 
 $page=$_GET["page"];
@@ -81,8 +81,8 @@ if ($contactname) {
   $sortorder = "ASC";
 }
 
-if ($socid) {
-  $sql .= " AND s.idp = $socid";
+if ($socidp) {
+  $sql .= " AND s.idp = $socidp";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
@@ -113,7 +113,7 @@ if ($result) {
 
       print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->name.'</a></td>';
       print '<td>'.$obj->firstname.'</td>';
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+      print '<td><a href="fiche.php?socidp='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
       print '<td>'.$obj->email.'</td>';
       print '<td>'.$obj->phone.'</td>';
       

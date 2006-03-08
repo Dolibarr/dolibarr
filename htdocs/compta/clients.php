@@ -137,8 +137,13 @@ if ($mode == 'search') {
  *
  */
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
+$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (strlen($stcomm))
 {
@@ -172,9 +177,9 @@ if (strlen($begin))
   $sql .= " AND s.nom like '".addslashes($begin)."'";
 }
 
-if ($user->societe_id)
+if ($socidp)
 {
-  $sql .= " AND s.idp = " .$user->societe_id;
+  $sql .= " AND s.idp = $socidp";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);

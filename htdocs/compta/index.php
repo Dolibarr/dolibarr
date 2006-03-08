@@ -140,7 +140,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	      $obj = $db->fetch_object($resql);
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,20).'</a></td>';
+	      print '<td><a href="fiche.php?socidp='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,20).'</a></td>';
 	      print '<td align="right">'.price($obj->total_ttc).'</td>';
 	      print '</tr>';
 	      $tot_ttc+=$obj->total_ttc;
@@ -238,7 +238,7 @@ if ( $resql )
 	  $obj = $db->fetch_object($resql);
 	  $var = !$var;
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<td><a href="fiche.php?socidp='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td align="right"><a href="index.php?action=del_bookmark&amp;bid='.$obj->bid.'">'.img_delete().'</a></td>';
 	  print '</tr>';
 	  $i++;
@@ -306,8 +306,8 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 				print "<td width=\"20%\"><a href=\"commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
 				print "<a href=\"commande/fiche.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
 				
-				print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-				print '<a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,50).'</a></td>';
+				print '<td><a href="fiche.php?socidp='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
+				print '<a href="fiche.php?socidp='.$obj->idp.'">'.dolibarr_trunc($obj->nom,50).'</a></td>';
 				print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
@@ -377,7 +377,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		  print '<td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a>';
 		  if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 		  print '</td>';
-		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+		  print '<td><a href="fiche.php?socidp='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';
 		  print '<td align="right">'.price($obj->am).'</td></tr>';
@@ -461,7 +461,7 @@ if ($conf->facture->enabled) {
     	      $obj = $db->fetch_object($result);
     	      $var = !$var;
         	  print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-    		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,50).'</a></td>';
+    		  print '<td><a href="fiche.php?socidp='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,50).'</a></td>';
 		      print '<td align="right">'.price($obj->total_ht).'</td>';
               print '<td align="right">'.price($obj->total_ttc).'</td>';
     	      print '</tr>';
