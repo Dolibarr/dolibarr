@@ -129,10 +129,13 @@ if ($conf->contrat->enabled)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     $sql = "SELECT p.rowid, p.ref, p.price, s.idp, s.nom";
+    if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
     $sql.= " AND s.idp = ".$socidp;
-    
+    if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+ 
     $resql=$db->query($sql);
     if ($resql)
     {
