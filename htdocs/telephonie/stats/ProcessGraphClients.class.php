@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,9 +58,8 @@ class ProcessGraphClients
     $this->db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,1);
   }
   
-  function go()
+  function go($id=0)
   {
-    dolibarr_syslog("Debut client ".$this->ident);
     $error = 0;
 
     $img_root = DOL_DATA_ROOT."/graph/telephonie/";
@@ -76,8 +75,16 @@ class ProcessGraphClients
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sql .= " WHERE l.fk_client_comm = s.idp ";
-    $sql .= " AND s.idp >= ".$min;
-    $sql .= " AND s.idp < ".$max;
+    if ($id == 0)
+      {
+	$sql .= " AND s.idp >= ".$min;
+	$sql .= " AND s.idp < ".$max;
+      }
+    else
+      {
+	$sql .= " AND l.fk_client_comm = ".$id;
+      }
+
     $sql .= " GROUP BY s.idp";
 
     $resql = $this->db->query($sql);
@@ -87,7 +94,7 @@ class ProcessGraphClients
 	$clients = array();
 	
 	$num = $this->db->num_rows($resql);
-	print "$this->ident : $num client a traiter ($min - $max)\n";
+
 	$i = 0;
 	
 	while ($i < $num)
@@ -124,7 +131,7 @@ class ProcessGraphClients
 
 	    $marge = 0;
 
-	    if ($graphgain->total_cout > 0)
+	    if ($graphgain->total_ca > 0)
 	      {
 		$marge = ( $graphgain->total_gain / $graphgain->total_ca * 100);
 	      }
@@ -165,9 +172,6 @@ class ProcessGraphClients
 	    
 	  }       
       }
-
-    dolibarr_syslog("Fin client ".$this->ident);
-
   }
 }
 ?>
