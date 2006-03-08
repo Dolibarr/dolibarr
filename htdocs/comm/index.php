@@ -177,8 +177,11 @@ if ($conf->commande->enabled)
 {
     $langs->load("orders");
     $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp";
+    if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
+    if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socidp)
     {
         $sql .= " AND c.fk_soc = $socidp";
