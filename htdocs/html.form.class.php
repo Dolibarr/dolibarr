@@ -941,39 +941,6 @@ class Form
             dolibarr_print_error($this->db);
         }
     }
-
-    /**
-     *    \brief      Retourne la liste déroulante de création en sous catégories possible
-     *    \param      selected    nombre de sous catégorie pré-sélectionnée
-     *    \param      htmlname    nom du select
-     */
-    function select_nombre_sous_categorie($selected='',$htmlname)
-    {
-        global $langs;
-        $langs->load("categorie");
-        
-        if ($selected)
-        {
-        	$categorie = new Categorie($this -> db);
-          $nb = $categorie->get_nb_categories();
-    	print '<select class="flat" name="'.$htmlname.'">';
-        for ($i = 0 ; $i <= $nb ; $i++)
-		{
-					 
-            print '<option value="'.$i.'" ';//creation d'une valeur dans la liste
-            if ($selected == $i)
-            	print 'selected="true">'; // permet de rendre le choix toujours selectionne
-            else if (!isset($selected) && $i == $nbcats) // nombre de catégories mères par défaut.
-            	print 'selected="true">';
-			else
-			 	print '>';
-				
-            print $i.'</option>';
-            
-           }
-		   print '</select>';
-         }
-     }
      
          /**
      *    \brief      Retourne la ou les listes déroulante des catégories en fonction du nombre choisi
@@ -991,8 +958,8 @@ class Form
 
 				  for ($i = 0; $i < $nbcats ; $i++)
 				  {
-					  print '<tr><td>'.$langs->trans ("Categorie").' '.($i+1).'</td><td><select name="catsMeres['.$i.']">'; //creation des categories meres
-					  print '<option value="-1" id="choix">'.$langs->trans("Choose").'</option>\n';
+					  print '<tr><td>'.$langs->trans ("AddIn").'</td><td><select name="catsMeres['.$i.']">'; //creation des categories meres
+					  print '<option value="-1" id="choix">'.$langs->trans("NoneCategory").'</option>\n';
 
 					  foreach ($all_categories as $id => $cat)
 						{ //ajout des categories dans la liste
