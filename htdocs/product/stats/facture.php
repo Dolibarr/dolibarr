@@ -48,10 +48,10 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
 
 // Securite
-$socid = 0;
+$socidp = 0;
 if ($user->societe_id > 0)
 {
-    $socid = $user->societe_id;
+    $socidp = $user->societe_id;
 }
 
 
@@ -186,7 +186,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Propals
         if ($conf->propal->enabled)
         {
-            $ret=$product->load_stats_propale($socid);
+            $ret=$product->load_stats_propale($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("propal");
             print '<tr><td>';
@@ -203,7 +203,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Commandes
         if ($conf->commande->enabled)
         {
-            $ret=$product->load_stats_commande($socid);
+            $ret=$product->load_stats_commande($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("orders");
             print '<tr><td>';
@@ -220,7 +220,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Contrats
         if ($conf->contrat->enabled)
         {
-            $ret=$product->load_stats_contrat($socid);
+            $ret=$product->load_stats_contrat($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("contracts");
             print '<tr><td>';
@@ -237,7 +237,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Factures
         if ($conf->facture->enabled)
         {
-            $ret=$product->load_stats_facture($socid);
+            $ret=$product->load_stats_facture($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("bills");
             print '<tr><td>';
@@ -259,12 +259,15 @@ if ($_GET["id"] || $_GET["ref"])
 
         $sql = "SELECT distinct(s.nom), s.idp, s.code_client, f.facnumber, f.amount as amount,";
         $sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d";
-		$sql.= " WHERE f.fk_soc = s.idp";
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE f.fk_soc = s.idp";
         $sql.= " AND d.fk_facture = f.rowid AND d.fk_product =".$product->id;
-        if ($socid)
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($socidp)
         {
-            $sql .= " AND f.fk_soc = $socid";
+            $sql .= " AND f.fk_soc = $socidp";
         }
         $sql.= " ORDER BY $sortfield $sortorder ";
         $sql.= $db->plimit($conf->liste_limit +1, $offset);

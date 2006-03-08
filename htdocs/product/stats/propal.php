@@ -48,11 +48,11 @@ if (! $sortfield) $sortfield="p.datec";
 if ($user->societe_id > 0)
 {
   $action = '';
-  $socid = $user->societe_id;
+  $socidp = $user->societe_id;
 }
 else
 {
-  $socid = 0;
+  $socidp = 0;
 }
 
 
@@ -177,7 +177,7 @@ if ($_GET["id"])
         // Propals
         if ($conf->propal->enabled)
         {
-            $ret=$product->load_stats_propale($socid);
+            $ret=$product->load_stats_propale($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("propal");
             print '<tr><td>';
@@ -194,7 +194,7 @@ if ($_GET["id"])
         // Commandes
         if ($conf->commande->enabled)
         {
-            $ret=$product->load_stats_commande($socid);
+            $ret=$product->load_stats_commande($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("orders");
             print '<tr><td>';
@@ -211,7 +211,7 @@ if ($_GET["id"])
         // Contrats
         if ($conf->contrat->enabled)
         {
-            $ret=$product->load_stats_contrat($socid);
+            $ret=$product->load_stats_contrat($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("contracts");
             print '<tr><td>';
@@ -228,7 +228,7 @@ if ($_GET["id"])
         // Factures
         if ($conf->facture->enabled)
         {
-            $ret=$product->load_stats_facture($socid);
+            $ret=$product->load_stats_facture($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("bills");
             print '<tr><td>';
@@ -250,12 +250,15 @@ if ($_GET["id"])
 
         $sql = "SELECT distinct(s.nom), s.idp, p.rowid as propalid, p.ref, p.total as amount,";
 				$sql.= $db->pdate("p.datec")." as date, p.fk_statut as statut";
+				if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."propaldet as d";
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				$sql.= " WHERE p.fk_soc = s.idp";
         $sql.= " AND d.fk_propal = p.rowid AND d.fk_product =".$product->id;
-        if ($socid)
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($socidp)
         {
-            $sql .= " AND p.fk_soc = $socid";
+            $sql .= " AND p.fk_soc = $socidp";
         }
         $sql .= " ORDER BY $sortfield $sortorder ";
         $sql.= $db->plimit($conf->liste_limit +1, $offset);
