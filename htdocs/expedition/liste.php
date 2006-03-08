@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +57,10 @@ $offset = $limit * $_GET["page"] ;
 
 llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
-$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut" ;
+$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut";
+if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
 if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
 $sql_add = " WHERE ";
 if ($socidp)
@@ -68,6 +71,11 @@ if ($socidp)
 if ($_POST["sf_ref"])
 {
   $sql.= $sql_add . " e.ref like '%".addslashes($_POST["sf_ref"])."%'";
+  $sql_add = " AND ";
+}
+if (!$user->rights->commercial->client->voir) //restriction
+{
+	$sql .= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 
 $expedition = new Expedition($db);
