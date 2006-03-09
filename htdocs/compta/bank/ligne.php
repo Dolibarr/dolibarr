@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,17 +98,15 @@ if ($_POST["action"] == "update")
 
     $db->begin();
     
-	$amount = str_replace(' ','',$_POST['amount']);
-	$amount = str_replace(',','.',$amount);
-
-	$dateop = $_POST["doyear"].'-'.$_POST["domonth"].'-'.$_POST["doday"];
-	$dateval= $_POST["dvyear"].'-'.$_POST["dvmonth"].'-'.$_POST["dvday"];
+	$amount = price2num($_POST['amount']);
+	$dateop = $_POST["dateoyear"].'-'.$_POST["dateomonth"].'-'.$_POST["dateoday"];
+	$dateval= $_POST["datevyear"].'-'.$_POST["datevmonth"].'-'.$_POST["datevday"];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 	$sql.= " SET label='".$_POST["label"]."',";
 	if (isset($_POST['amount'])) $sql.=" amount='$amount',";
 	$sql.= " dateo = '".$dateop."', datev = '".$dateval."',";
 	$sql.= " fk_account = ".$_POST['accountid'];
-	$sql.= " WHERE rowid = $rowid;";
+	$sql.= " WHERE rowid = ".$rowid;
 
 	$result = $db->query($sql);
 	if ($result)
@@ -276,11 +274,11 @@ if ($result)
         print '</tr>';
         
         // Date ope
-        print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<tr><td>'.$langs->trans("DateOperation").'</td>';
         if (! $objp->rappro)
         {
             print '<td colspan="3">';
-            $html->select_date($objp->do,'do','','','','update');
+            $html->select_date($objp->do,'dateo','','','','update');
             print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
         }
         else
@@ -295,7 +293,7 @@ if ($result)
         if (! $objp->rappro)
         {
             print '<td colspan="3">';
-            $html->select_date($objp->dv,'dv','','','','update');
+            $html->select_date($objp->dv,'datev','','','','update');
             print ' &nbsp; ';
             print '<a href="ligne.php?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
             print img_edit_remove() . "</a> ";
