@@ -279,6 +279,7 @@ if ($_POST["action"] == 'add')
 	  $soc->AddPerms(5,1,1,1);
 	  $soc->AddPerms(9,1,1,1);
 	  $soc->AddPerms(16,1,1,1);
+	  $soc->AddPerms(10,1,1,1);
 	  $soc->AddPerms($_POST["commercial_sign"],1,0,0);
 	}
       else
