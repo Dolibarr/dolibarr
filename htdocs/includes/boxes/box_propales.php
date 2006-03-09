@@ -40,11 +40,6 @@ class box_propales extends ModeleBoxes {
     var $info_box_head = array();
     var $info_box_contents = array();
     
-    if ($user->societe_id > 0) 
-    {
-      $action = '';
-      $socidp = $user->societe_id;
-    }
 
     /**
      *      \brief      Constructeur de la classe
@@ -63,6 +58,12 @@ class box_propales extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
+    	  if ($user->societe_id > 0) 
+        {
+          $action = '';
+          $socidp = $user->societe_id;
+        }
+        
         global $user, $langs, $db;
 
         $langs->load("boxes");
