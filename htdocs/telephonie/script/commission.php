@@ -192,7 +192,7 @@ else
 
 $sql = "SELECT p.rowid,  p.fk_contrat,  p.fk_distributeur";
 $sql .= " , p.avance_pourcent, p.rem_pour_prev, p.rem_pour_autr";
-$sql .= " , p.avance_duree";
+$sql .= " , p.avance_duree, p.mode_paiement";
 $sql .= " , date_format(p.datepo + INTERVAL p.avance_duree MONTH, '%Y%m') as date_regul";
 $sql .= " , f.cout_vente,l.rowid as ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
