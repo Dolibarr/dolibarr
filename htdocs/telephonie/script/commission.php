@@ -249,7 +249,8 @@ if ( $resql )
 
       fputs($fp, "DIS : ".$obj->fk_distributeur);
       fputs($fp, " CON : ".$obj->fk_contrat);
-      fputs($fp, " conso  : $comm avance $avan\n");
+      fputs($fp, " REM : ".$pourcent."%");
+      fputs($fp, " conso : $comm avance $avan\n");
       
       if (! $db->query($sqli))
 	{
@@ -507,7 +508,7 @@ foreach ($distri_co as $distributeur_id)
       while ($ia < $numa)
 	{
 	  $rowa = $db->fetch_row($resqla);
-	  dolibarr_syslog("** Calcul des consos la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
+	  dolibarr_syslog("** Calcul des consos po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
 	  $ia++;
 
 	  /* Communications relatives */
