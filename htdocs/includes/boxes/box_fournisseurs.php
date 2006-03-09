@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2005 Destailleur Laurent <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,11 @@ class box_fournisseurs extends ModeleBoxes {
         if ($user->rights->societe->lire)
         {
             $sql = "SELECT s.nom,s.idp";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur = 1";
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql .= " WHERE s.fournisseur = 1";
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id > 0)
             {
                 $sql .= " AND s.idp = $user->societe_id";
