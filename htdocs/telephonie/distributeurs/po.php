@@ -101,8 +101,8 @@ if ($_GET["id"])
     {
       $num = $db->num_rows($resql);
       $i = 0;
-      
-      print_barre_liste("Prises d'ordre", $page, "po.php", "", $sortfield, $sortorder, '', $num);
+      $url_opt = "&amp;id=".$_GET["id"];      
+      print_barre_liste("Prises d'ordre", $page, "po.php", $url_opt, $sortfield, $sortorder, '', $num);
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
