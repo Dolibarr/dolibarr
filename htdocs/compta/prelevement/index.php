@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,12 @@ require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
+// Sécurité accés client
+if ($user->societe_id > 0)
+{
+    $action = '';
+    $socidp = $user->societe_id;
+}
 
 
 /*
@@ -121,10 +128,14 @@ print '</td><td valign="top" width="70%">';
  *
  */
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.idp = f.fk_soc";
 $sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
+
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($socidp)
 {
