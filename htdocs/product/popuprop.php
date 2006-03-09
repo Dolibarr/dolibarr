@@ -90,10 +90,10 @@ if ($result)
 		    $sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
 		    $sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
 		    $sql.= " LIMIT 1";
-		    $result = $db->query($sql);
-		    if ($result)
+		    $resultp = $db->query($sql);
+		    if ($resultp)
 		    {
-			    $objtp = $db->fetch_object($result);
+			    $objtp = $db->fetch_object($resultp);
 			    if ($objtp->label != '') $objp->label = $objtp->label;
 		    }
 	    }
