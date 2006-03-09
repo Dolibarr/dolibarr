@@ -128,9 +128,12 @@ if ($_POST["action"] == 'type')
 
 if ($_POST["action"] == 'num_releve')
 {
+    $num_rel=trim($_POST["num_rel"]);
+    
     $db->begin();
+    
     $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-    $sql.= " SET num_releve='".$_POST["num_rel"]."'";
+    $sql.= " SET num_releve=".($num_rel?"'".$num_rel."'":"null");
     $sql.= " WHERE rowid = ".$rowid;
 
     $result = $db->query($sql);

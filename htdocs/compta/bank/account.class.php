@@ -214,8 +214,8 @@ class Account
 
             $datev = $date;
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq,fk_account, fk_type)";
-            $sql.= " VALUES (now(), '".$date."', '$datev', '$label', '" . ereg_replace(',','.',$amount) . "', '".$user->id."' ,'$num_chq', '".$this->rowid."', '$oper')";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type)";
+            $sql.= " VALUES (now(), '".$date."', '$datev', '$label', '" . price2num($amount) . "', '".$user->id."' ,'$num_chq', '".$this->rowid."', '$oper')";
 
             if ($this->db->query($sql))
             {

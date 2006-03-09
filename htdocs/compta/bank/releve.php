@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,8 +181,21 @@ else
     print '<td>&nbsp;</td>';
     print "</tr>\n";
     
-    
-    $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < $num AND fk_account = ".$acct->id;
+    // Recherche date valeur minimum pour ce relevé
+/*
+	$datemin=0;
+    $sql = "SELECT MIN(datev) FROM ".MAIN_DB_PREFIX."bank";
+    $sql.= " WHERE num_releve = '".$num."' AND fk_account = ".$acct->id;
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $datemin = $db->result(0, 0);
+        $db->free($resql);
+    }
+*/    
+    // Calcul du solde de départ du relevé
+    $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank";
+    $sql.= " WHERE num_releve < ".$num." AND fk_account = ".$acct->id;
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -190,6 +203,7 @@ else
         $db->free($resql);
     }
     
+	// Recherche les écritures pour le relevé
     $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
     $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
     $sql .= " WHERE num_releve='".$num."'";
@@ -271,7 +285,8 @@ else
             // Catégories
             if ($ve)
             {
-                $sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ as ct, ".MAIN_DB_PREFIX."bank_class as cl WHERE ct.rowid=cl.fk_categ AND cl.lineid=$objp->rowid";
+                $sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ as ct, ".MAIN_DB_PREFIX."bank_class as cl";
+                $sql.= " WHERE ct.rowid=cl.fk_categ AND cl.lineid=".$objp->rowid;
                 $resc = $db->query($sql);
                 if ($resc)
                 {

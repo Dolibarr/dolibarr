@@ -36,21 +36,22 @@ $user->getrights('compta');
 if (! $user->rights->banque->modifier) accessforbidden();
 
 
-llxHeader();
-
 
 /*
  * Action rapprochement
  */
 if ($_POST["action"] == 'rappro')
 {
-    if ($_POST["num_releve"] > 0)
+	// Definition, nettoyage parametres
+    $valrappro=1;
+    $num_releve=trim($_POST["num_releve"]);
+    
+    if ($num_releve)
     {
         $db->begin();
         
-        $valrappro=1;
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-        $sql.= " set rappro=".$valrappro.", num_releve=".$_POST["num_releve"].",";
+        $sql.= " set rappro=".$valrappro.", num_releve='".$_POST["num_releve"]."',";
         $sql.= " fk_user_rappro=".$user->id;
         $sql.= " WHERE rowid=".$_POST["rowid"];
 
@@ -59,7 +60,8 @@ if ($_POST["action"] == 'rappro')
         {
             if ($cat1 && $_POST["action"])
             {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ)";
+                $sql.= " VALUES ($rowid, $cat1)";
                 $resql = $db->query($sql);
         
                 if ($resql)
@@ -89,9 +91,10 @@ if ($_POST["action"] == 'rappro')
 }
 
 /*
-* Action suppression ecriture
-*/
-if ($_GET["action"] == 'del') {
+ * Action suppression ecriture
+ */
+if ($_GET["action"] == 'del')
+{
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$_GET["rowid"];
     $resql = $db->query($sql);
     if (! $resql) {
@@ -99,6 +102,8 @@ if ($_GET["action"] == 'del') {
     }
 }
 
+
+// Charge categories
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
 $resql = $db->query($sql);
 $options="";
@@ -115,9 +120,12 @@ if ($resql) {
 }
 
 
+
+llxHeader();
+
 /*
-* Affichage liste des transactions à rapprocher
-*/
+ * Affichage liste des transactions à rapprocher
+ */
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
