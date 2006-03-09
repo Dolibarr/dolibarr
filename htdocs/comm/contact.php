@@ -84,11 +84,14 @@ if ($type == "f")
  */
 
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm";
-$sql .= ", p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
+$sql .= ", p.idp as cidp, p.name, p.firstname, p.email, p.phone";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."socpeople as p";
 $sql .= " , ".MAIN_DB_PREFIX."c_stcomm as st";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($type == "c") $sql .= " AND s.client = 1";
 if ($type == "p") $sql .= " AND s.client = 2";

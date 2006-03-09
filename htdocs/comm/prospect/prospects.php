@@ -78,9 +78,12 @@ if ($_GET["action"] == 'cstc')
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.fk_stcomm ";
 $sql .= ", d.nom as departement";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " LEFT join ".MAIN_DB_PREFIX."c_departements as d on d.rowid = s.fk_departement";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=2";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (isset($_GET["stcomm"]))
 {
