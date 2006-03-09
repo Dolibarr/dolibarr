@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,9 +61,12 @@ print '<td align="center">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE t.fk_projet = p.rowid";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($socidp)
 { 
@@ -111,11 +115,14 @@ print '<td>Nb heures</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND tt.fk_task = t.rowid";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($socidp)
 { 
