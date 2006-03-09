@@ -39,6 +39,12 @@ class box_propales extends ModeleBoxes {
 
     var $info_box_head = array();
     var $info_box_contents = array();
+    
+    if ($user->societe_id > 0) 
+    {
+      $action = '';
+      $socidp = $user->societe_id;
+    }
 
     /**
      *      \brief      Constructeur de la classe
@@ -67,10 +73,14 @@ class box_propales extends ModeleBoxes {
         {
 
             $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.datep")." as dp,p.rowid";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p WHERE p.fk_soc = s.idp";
-            if($user->societe_id)
+            if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p";
+            if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql .= " WHERE p.fk_soc = s.idp";
+            if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if($socidp)
             {
-                $sql .= " AND s.idp = $user->societe_id";
+                $sql .= " AND s.idp = $socidp";
             }
             $sql .= " ORDER BY p.datep DESC, p.ref DESC ";
             $sql .= $db->plimit($max, 0);
