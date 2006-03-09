@@ -51,15 +51,26 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+// Sécurité accés client
+$socidp = $_GET["socidp"];
+if ($user->societe_id > 0)
+{
+    $action = '';
+    $socidp = $user->societe_id;
+}
+
 $sql = "SELECT s.nom, s.idp,";                                  // Ou
 $sql.= " d.rowid, ".$db->pdate("d.dated")." as dd, d.km, ";     // Comment
 $sql.= " u.name, u.firstname";                                  // Qui
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u ";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE d.fk_soc = s.idp AND d.fk_user = u.rowid";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-if ($user->societe_id > 0)
+if ($socidp)
 {
-  $sql .= " AND s.idp = " . $user->societe_id;
+  $sql .= " AND s.idp = $socidp";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
