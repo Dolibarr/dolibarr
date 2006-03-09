@@ -58,9 +58,8 @@ class box_propales extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-    	  if ($user->societe_id > 0) 
+    	  if ($user->societe_id) 
         {
-          $action = '';
           $socidp = $user->societe_id;
         }
         
