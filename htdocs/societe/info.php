@@ -65,9 +65,9 @@ llxHeader();
  */
 
 $soc = new Societe($db);
-$soc->id = $_GET["socid"];
-$soc->fetch($_GET["socid"]);
-$soc->info($_GET["socid"]);
+$soc->id = $socid;
+$soc->fetch($socid);
+$soc->info($socid);
 
 $h=0;
 

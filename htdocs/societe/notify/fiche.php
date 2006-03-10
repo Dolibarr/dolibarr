@@ -110,7 +110,7 @@ if ($_GET["action"] == 'delete')
  *
  */
 $soc = new Societe($db);
-$soc->id = $_GET["socid"];
+$soc->id = $socid;
 
 if ( $soc->fetch($soc->id) )
 {
