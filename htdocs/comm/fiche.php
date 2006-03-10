@@ -58,9 +58,9 @@ if ($user->societe_id > 0)
 // Protection restriction commercial
 if (!$user->rights->commercial->client->voir && $socidp && !$user->societe_id > 0)
 {
-        $sql = "SELECT fk_soc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux";
-        $sql .= " WHERE fk_soc = ".$socidp." AND fk_user = ".$user->id;
+        $sql = "SELECT sc.fk_soc, s.client";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " WHERE fk_soc = ".$socidp." AND fk_user = ".$user->id." AND s.client = 1";
 
         if ( $db->query($sql) )
         {
