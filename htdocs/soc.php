@@ -116,10 +116,10 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     
     if ($_POST["action"] == 'update')
     {
-        $result = $soc->update($_GET["socid"],$user);
+        $result = $soc->update($socid,$user);
         if ($result <= 0)
         {
-            $soc->id = $_GET["socid"];
+            $soc->id = $socid;
             // doublon sur le prefix comm
             $reload = 0;
             $mesg = $soc->error;      //"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
@@ -127,7 +127,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         }
         else
         {
-            Header("Location: soc.php?socid=".$_GET["socid"]);
+            Header("Location: soc.php?socid=".$socid);
             exit;
         }
     
@@ -153,8 +153,8 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
 {
   $soc = new Societe($db);
-  $soc->fetch($_GET["socid"]);
-  $result = $soc->delete($_GET["socid"]);
+  $soc->fetch($socid);
+  $result = $soc->delete($socid);
  
   if ($result == 0)
     {
@@ -394,13 +394,13 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
     print_titre($langs->trans("EditCompany"));
 
-    if ($_GET["socid"])
+    if ($socid)
     {
         if ($reload || ! $_POST["nom"])
         {
             $soc = new Societe($db);
-            $soc->id = $_GET["socid"];
-            $soc->fetch($_GET["socid"]);
+            $soc->id = $socid;
+            $soc->fetch($socid);
         }
         else
         {
@@ -604,8 +604,8 @@ else
      * Fiche société en mode visu
      */
     $soc = new Societe($db);
-    $soc->id = $_GET["socid"];
-    $result=$soc->fetch($_GET["socid"]);
+    $soc->id = $socid;
+    $result=$soc->fetch($socid);
     if ($result < 0)
     {
         dolibarr_print_error($db,$soc->error);
