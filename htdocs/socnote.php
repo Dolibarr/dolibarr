@@ -59,7 +59,7 @@ if ($_POST["action"] == 'add') {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".addslashes($_POST["note"])."' WHERE idp=".$_POST["socid"];
   $result = $db->query($sql);
 
-  $socid=$_POST["socid"];   // Pour retour sur fiche
+  $socidp=$_POST["socid"];   // Pour retour sur fiche
 }
 
 
@@ -69,10 +69,10 @@ if ($_POST["action"] == 'add') {
 
 llxHeader();
 
-if ($socid > 0)
+if ($socidp > 0)
 {
-    $societe = new Societe($db, $socid);
-    $societe->fetch($socid);
+    $societe = new Societe($db, $socidp);
+    $societe->fetch($socidp);
     
     
     $h=0;
