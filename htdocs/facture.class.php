@@ -1144,12 +1144,12 @@ class Facture
 				$qty=1;
 			}
 			$remise = 0;
-			$price = price2num($pu);
-			$subprice = $price;
+			$subprice = price2num($pu);
+			$price = $subprice;
 			if (trim(strlen($remise_percent)) > 0)
 			{
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+				$remise = round(($subprice * $remise_percent / 100), 2);
+				$price = $subprice - $remise;
 			}
 			else
 			{
