@@ -44,12 +44,29 @@ if (! $user->rights->societe->creer)
     }
 }
 
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+
+if ($socid == '') accessforbidden();
+
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $_GET["action"] = '';
   $_POST["action"] = '';
-  $_GET["socid"] = $user->societe_id;
+  $socid = $user->societe_id;
+}
+
+// Protection restriction commercial
+if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
+{
+        $sql = "SELECT sc.fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= " WHERE fk_soc = ".$socid." AND fk_user = ".$user->id;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
 }
 
 $soc = new Societe($db);

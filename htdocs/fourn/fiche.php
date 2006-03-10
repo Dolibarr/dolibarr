@@ -36,7 +36,7 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('companies');
 
-$socidp = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
 if ($socid == '') accessforbidden();
 
