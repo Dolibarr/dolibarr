@@ -43,6 +43,8 @@ $user->getrights('projet');
 
 $socid = isset($_GET["id"])?$_GET["id"]:$_GET["socid"];		// Fonctionne si on passe id ou socid
 
+if ($socid == '') accessforbidden();
+
 if ($_GET["action"] == 'cstc')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"];
@@ -58,6 +60,18 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+// Protection restriction commercial
+if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
+{
+        $sql = "SELECT fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux";
+        $sql .= " WHERE fk_soc = ".$socid." AND fk_user = ".$user->id;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
 
 llxHeader();
 
