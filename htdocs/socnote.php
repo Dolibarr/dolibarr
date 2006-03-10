@@ -31,6 +31,29 @@ require("./pre.inc.php");
 
 $langs->load("companies");
 
+// Protection quand utilisateur externe
+$socidp = isset($_GET["socid"])?$_GET["socid"]:'';
+
+if ($socidp == '') accessforbidden();
+
+if ($user->societe_id > 0)
+{
+    $socidp = $user->societe_id;
+}
+
+// Protection restriction commercial
+if (!$user->rights->commercial->client->voir && $socidp && !$user->societe_id > 0)
+{
+        $sql = "SELECT sc.fk_soc, s.client";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " WHERE fk_soc = ".$socidp." AND fk_user = ".$user->id." AND s.client = 1";
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
+
 
 if ($_POST["action"] == 'add') {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".addslashes($_POST["note"])."' WHERE idp=".$_POST["socid"];

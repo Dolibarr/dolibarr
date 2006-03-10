@@ -32,10 +32,27 @@ require("pre.inc.php");
 $langs->load("companies");
 
 // Sécurité accés client
-$socid = $_GET["socid"];
-if ($user->societe_id > 0) 
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+
+if ($socid == '') accessforbidden();
+
+if ($user->societe_id > 0)
 {
+    $action = '';
     $socid = $user->societe_id;
+}
+
+// Protection restriction commercial
+if (!$user->rights->commercial->client->voir && $socidp && !$user->societe_id > 0)
+{
+        $sql = "SELECT sc.fk_soc, s.client";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " WHERE fk_soc = ".$socidp." AND fk_user = ".$user->id." AND s.client = 1";
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
 }
 
 $sortorder=$_GET["sortorder"];
