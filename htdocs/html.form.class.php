@@ -1618,13 +1618,10 @@ class Form
             $smin = '';
         }
 
-		// \todo Externaliser ce parametre dans page config interface
-        $conf->use_popup_date=1;    
-
         /*
          * Affiche date en popup
          */
-		if ($conf->use_javascript && $conf->use_popup_date && $h==0 && $m==0)
+		if ($conf->use_javascript && $conf->use_popup_calendar && $h==0 && $m==0)
         {
             
 			if ($langs->defaultlang != "")
@@ -1652,7 +1649,7 @@ class Form
         /*
          * Affiche date en select
          */
-        if (! $conf->use_javascript || ! $conf->use_popup_date)
+        if (! $conf->use_javascript || ! $conf->use_popup_calendar)
         {
 
             // Jour

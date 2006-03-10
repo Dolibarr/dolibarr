@@ -52,6 +52,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"]);
   dolibarr_set_const($db, "SIZE_LISTE_LIMIT",        $_POST["size_liste_limit"]);
   dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["disable_javascript"]);
+  dolibarr_set_const($db, "MAIN_DISABLE_POPUP_CALENDAR", $_POST["disable_popup_calendar"]);
   
   dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
   dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD", $_POST["workboard"]);
@@ -118,6 +119,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     $html->selectyesnonum('disable_javascript',$conf->global->MAIN_DISABLE_JAVASCRIPT);
+    print '</td></tr>';
+    
+    // Désactiver le calendrier popup
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisablePopupCalendar").'</td><td>';
+    $html->selectyesnonum('disable_popup_calendar',$conf->global->MAIN_DISABLE_POPUP_CALENDAR);
     print '</td></tr>';
 
     print '</table><br>';
@@ -217,6 +224,11 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
     print ($conf->global->MAIN_DISABLE_JAVASCRIPT?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
+    
+    // Disable popup calendar
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisablePopupCalendar").'</td><td>';   
+    print ($conf->global->MAIN_DISABLE_POPUP_CALENDAR?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
 
     print '</table><br>';
 

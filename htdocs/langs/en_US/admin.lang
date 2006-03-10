@@ -14,6 +14,7 @@ GUISetup=GUI setup
 ErrorModuleRequirePHPVersion=Error, this module require PHP version %s or higher
 DictionnarySetup=Dictionnary setup
 DisableJavascript=Disable javascript functions
+DisablePopupCalendar=Disable popup calendar
 NextValue=Next value
 ComptaSetup=Accounting module setup
 UserSetup=Users' management setup
