@@ -49,7 +49,6 @@ if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
 if ($projetid == '') accessforbidden();
 
-$socidp = 0
 
 if ($user->societe_id > 0) 
 {
