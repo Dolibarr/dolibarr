@@ -36,7 +36,10 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('companies');
 
-$socid = $_GET['socid'];
+$socidp = isset($_GET["socid"])?$_GET["socid"]:'';
+
+if ($socid == '') accessforbidden();
+
 /*
  * Sécurité accés client
  */
@@ -44,6 +47,19 @@ if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
+}
+
+// Protection restriction commercial
+if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
+{
+        $sql = "SELECT sc.fk_soc, s.fournisseur";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " WHERE fk_soc = ".$socid." AND fk_user = ".$user->id." AND s.fournisseur = 1";
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
 }
 
 
