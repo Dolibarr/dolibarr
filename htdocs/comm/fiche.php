@@ -47,6 +47,9 @@ if ($conf->fichinter->enabled) $langs->load("interventions");
 
 // Protection quand utilisateur externe
 $socidp = isset($_GET["socid"])?$_GET["socid"]:'';
+
+if ($socidp == '') accessforbidden();
+
 if ($user->societe_id > 0)
 {
     $socidp = $user->societe_id;
