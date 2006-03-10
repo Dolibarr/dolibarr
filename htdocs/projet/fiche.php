@@ -34,6 +34,35 @@ require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
+/*
+ * Sécurité accés client
+ */
+$projetid='';
+if ($_GET["id"]) { $projetid=$_GET["id"]; }
+
+if ($projetid == '') accessforbidden();
+
+if ($user->societe_id > 0) 
+{
+  $socidp = $user->societe_id;
+}
+
+// Protection restriction commercial
+if ($projetid)
+{
+        $sql = "SELECT sc.fk_soc, p.rowid, p.fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."projet as p";
+        $sql .= " WHERE p.rowid = ".$projetid;
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND sc.fk_soc = p.fk_soc AND fk_user = ".$user->id;
+        if ($socidp) $sql .= " AND p.fk_soc = ".$socidp;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
+
+
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
   $pro = new Project($db);
