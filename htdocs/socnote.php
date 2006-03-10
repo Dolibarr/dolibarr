@@ -59,7 +59,7 @@ if ($_POST["action"] == 'add') {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".addslashes($_POST["note"])."' WHERE idp=".$_POST["socid"];
   $result = $db->query($sql);
 
-  $socidp=$_POST["socid"];   // Pour retour sur fiche
+  $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
 }
 
 
