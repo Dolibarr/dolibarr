@@ -36,6 +36,18 @@ $langs->load("projects");
 $langs->load("companies");
 $langs->load("orders");
 
+$user->getrights('projet');
+
+if (!$user->rights->projet->lire) accessforbidden();
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $socidp = $user->societe_id;
+}
+
 
 llxHeader("","../");
 

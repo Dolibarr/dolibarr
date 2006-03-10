@@ -36,7 +36,6 @@ if (!$user->rights->projet->lire) accessforbidden();
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
-  $action = '';
   $socidp = $user->societe_id;
 }
 

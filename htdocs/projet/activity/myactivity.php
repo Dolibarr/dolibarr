@@ -29,6 +29,8 @@
 
 require("./pre.inc.php");
 
+$user->getrights('projet');
+
 if (!$user->rights->projet->lire) accessforbidden();
 
 /*
@@ -36,7 +38,6 @@ if (!$user->rights->projet->lire) accessforbidden();
  */
 if ($user->societe_id > 0) 
 {
-  $action = '';
   $socidp = $user->societe_id;
 }
 
@@ -69,6 +70,10 @@ $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE t.fk_projet = p.rowid";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socidp)
+{ 
+  $sql .= " AND p.fk_soc = ".$socidp; 
+}
 
 $sql .= " GROUP BY p.rowid";
 
