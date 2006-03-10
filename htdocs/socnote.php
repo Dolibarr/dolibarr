@@ -69,10 +69,10 @@ if ($_POST["action"] == 'add') {
 
 llxHeader();
 
-if ($socidp > 0)
+if ($_GET["socid"] > 0)
 {
-    $societe = new Societe($db, $socidp);
-    $societe->fetch($socidp);
+    $societe = new Societe($db, $_GET["socid"]);
+    $societe->fetch($_GET["socid"]);
     
     
     $h=0;
