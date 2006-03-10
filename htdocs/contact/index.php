@@ -89,13 +89,12 @@ if ($_POST["button_removefilter"])
  
 llxHeader();
 
-
-	$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p";
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc ";
-	$sql .= "WHERE 1=1 ";
+$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc";
+$sql.= " WHERE 1=1 ";
 
 if ($_GET["userid"])    // statut commercial
 {
