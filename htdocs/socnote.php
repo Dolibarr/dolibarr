@@ -60,6 +60,7 @@ if ($_POST["action"] == 'add') {
   $result = $db->query($sql);
 
   $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
+  Header("Location:socnote.php?socid=".$socid);
 }
 
 
@@ -69,10 +70,10 @@ if ($_POST["action"] == 'add') {
 
 llxHeader();
 
-if ($_GET["socid"] > 0)
+if ($socidp > 0)
 {
-    $societe = new Societe($db, $_GET["socid"]);
-    $societe->fetch($_GET["socid"]);
+    $societe = new Societe($db, $socidp);
+    $societe->fetch($socidp);
     
     
     $h=0;
