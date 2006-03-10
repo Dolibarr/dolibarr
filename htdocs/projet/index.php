@@ -62,9 +62,9 @@ $sql = "SELECT p.title, p.rowid, count(t.rowid)";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
-//$sql.= " , ".MAIN_DB_PREFIX."projet_task as t"; // pourquoi est-ce que c'est en commentaire ?
-//$sql.= " WHERE t.fk_projet = p.rowid";
+//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
+$sql.= " , ".MAIN_DB_PREFIX."projet_task as t"; // pourquoi est-ce que c'était en commentaire ?
+$sql.= " WHERE t.fk_projet = p.rowid";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socidp)
 { 
