@@ -1618,22 +1618,12 @@ class Form
             $smin = '';
         }
 
-        $conf->use_popup_date=1;    // Mettre 1 pour avoir date en popup (experimental)
+		// \todo Externaliser ce parametre dans page config interface
+        $conf->use_popup_date=1;    
 
-        /* Commenté par André
+        /*
          * Affiche date en popup
          */
-		 /*
-        if ($conf->use_javascript && $conf->use_popup_date)
-        {
-            $timearray=getDate($set_time);
-            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
-            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"> <button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons" onClick="showDP(\''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/\',\''.$prefix.'\',\''.$conf->format_date_short.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
-            print '<input type="hidden" name="'.$prefix.'day" value="'.$timearray['mday'].'">'."\n";
-            print '<input type="hidden" name="'.$prefix.'month" value="'.$timearray['mon'].'">'."\n";
-            print '<input type="hidden" name="'.$prefix.'year" value="'.$timearray['year'].'">'."\n";
-        }
-	*/
 		if ($conf->use_javascript && $conf->use_popup_date && $h==0 && $m==0)
         {
             
@@ -1658,6 +1648,7 @@ class Form
 				print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">'.img_cal().'</a>';
 		
         }
+        
         /*
          * Affiche date en select
          */
