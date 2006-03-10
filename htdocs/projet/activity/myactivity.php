@@ -63,9 +63,12 @@ print '<td align="center">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE t.fk_projet = p.rowid";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 $sql .= " GROUP BY p.rowid";
 
@@ -96,7 +99,7 @@ else
 }
 print "</table>";
 
-/* Affichage de la liste des projets de la semaine */
+/* Affichage de la liste des projets d'aujourd'hui */
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('Today').'</td>';
@@ -140,6 +143,7 @@ print '<td align="center">'.$total.'</td>';
 print "</tr>\n";    
 print "</table>";
 
+/* Affichage de la liste des projets d'hier */
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('Yesterday').'</td>';
@@ -265,7 +269,7 @@ else
 }
 print "</table>";
 
-/* Affichage de la liste des projets du mois */
+/* Affichage de la liste des projets de l'année */
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans("Project").' cette année : '.strftime("%Y", $now).'</td>';

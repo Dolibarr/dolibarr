@@ -48,6 +48,10 @@ $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
 $head[$h][1] = $langs->trans("Project");
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$projet->id;
+$head[$h][1] = $langs->trans("Tasks");
+$h++;
+
 if ($conf->propal->enabled) {
   $langs->load("propal");
   $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
