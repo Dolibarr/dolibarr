@@ -53,19 +53,18 @@ if ($user->societe_id > 0)
 }
 
 // Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socidp)
+if (!$user->rights->commercial->client->voir && $socidp && !$user->societe_id > 0)
 {
-	$sql = "SELECT sc.fk_soc, sc.fk_user";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE sc.fk_soc = ".$socidp." AND sc.fk_user = ".$user->id;
-	
-	$resultp=$db->query($sql);
-  if (!$resultp)
-  {
-   	accessforbidden();
-  }
+        $sql = "SELECT fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux";
+        $sql .= " WHERE fk_soc = ".$socidp." AND fk_user = ".$user->id;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
 }
-	
+
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
