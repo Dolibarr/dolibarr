@@ -34,7 +34,7 @@ $langs->load("companies");
 // Protection quand utilisateur externe
 $socidp = isset($_GET["socid"])?$_GET["socid"]:'';
 
-if ($socidp == '') accessforbidden();
+//if ($socidp == '') accessforbidden(); //problème après update des notes
 
 if ($user->societe_id > 0)
 {
@@ -60,7 +60,6 @@ if ($_POST["action"] == 'add') {
   $result = $db->query($sql);
 
   $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
-  Header("Location:socnote.php?socid=".$socid);
 }
 
 
