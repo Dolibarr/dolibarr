@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +61,7 @@ if ($_POST["action"] == 'add') {
   $result = $db->query($sql);
 
   $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
+  $socidp = $_GET["socid"]
 }
 
 
