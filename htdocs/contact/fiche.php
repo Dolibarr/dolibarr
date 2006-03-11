@@ -239,8 +239,10 @@ if ($user->rights->societe->contact->supprimer)
   }
 }
 
-if ($_GET["action"] == 'create')
+if ($user->rights->societe->contact->creer)
 {
+  if ($_GET["action"] == 'create')
+  {
     /*
      * Fiche en mode creation
      *
@@ -314,9 +316,9 @@ if ($_GET["action"] == 'create')
     print "</table><br>";
 
     print "</form>";
-}
-elseif ($_GET["action"] == 'edit' && $_GET["id"])
-{
+  }
+  elseif ($_GET["action"] == 'edit' && $_GET["id"])
+  {
     /*
      * Fiche en mode edition
      *
@@ -420,8 +422,10 @@ elseif ($_GET["action"] == 'edit' && $_GET["id"])
     print '</table>';
 
     print "</form>";
+  }
 }
-elseif ($_GET["id"])
+
+if ($_GET["id"])
 {
     /*
      * Fiche en mode visualisation
