@@ -732,8 +732,13 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         
         print '<tr><td width="50%" valign="top">';
         print_titre($langs->trans("AddToMyProposals")) . '</td>';
+        
+        if (!$user->rights->commercial->client->voir)
+        {
         print '<td width="50%" valign="top">';
         print_titre($langs->trans("AddToOtherProposals")) . '</td>';
+        }
+        
         print '</tr>';
 
         // Liste de "Mes propals"
@@ -826,8 +831,13 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         
         print '<tr><td width="50%" valign="top">';
         print_titre($langs->trans("AddToMyOrders")) . '</td>';
+        
+        if (!$user->rights->commercial->client->voir)
+        {
         print '<td width="50%" valign="top">';
         print_titre($langs->trans("AddToOtherOrders")) . '</td>';
+        }
+        
         print '</tr>';
 
         // Liste de "Mes commandes"
@@ -918,8 +928,13 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 
         print '<tr><td width="50%" valign="top">';
         print_titre($langs->trans("AddToMyBills"));
+        
+        if (!$user->rights->commercial->client->voir)
+        {
         print '</td><td width="50%" valign="top">';
         print_titre($langs->trans("AddToOtherBills"));
+        }
+
         print '</td></tr>';
 
         // Liste de Mes factures
