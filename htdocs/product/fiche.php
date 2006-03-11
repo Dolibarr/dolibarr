@@ -782,6 +782,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 
         print '</td>';
 
+      if (!$user->rights->commercial->client->voir)
+      {
         // Liste de "Other propals"
         print '<td width="50%" valign="top">';
 
@@ -807,6 +809,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         else {
             print $langs->trans("NoOtherOpenedPropals");   
         }
+      }
         print '</td>';
 
         print '</tr>';
@@ -875,6 +878,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 
         print '</td>';
 
+      if (!$user->rights->commercial->client->voir)
+      {
         // Liste de "Other orders"
         print '<td width="50%" valign="top">';
 
@@ -900,6 +905,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         else {
             print $langs->trans("NoOtherOpenedOrders");   
         }
+      }
         print '</td>';
 
         print '</tr>';
@@ -966,7 +972,11 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
             dolibarr_print_error($db);
         }
 
-        print '</td><td width="50%" valign="top">';
+        print '</td>';
+        
+      if (!$user->rights->commercial->client->voir)
+      {  
+        print '<td width="50%" valign="top">';
 
         // Liste de Autres factures
         $var=true;
@@ -1018,6 +1028,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         {
             dolibarr_print_error($db);
         }
+      }
 
         print '</td></tr>';
     }
