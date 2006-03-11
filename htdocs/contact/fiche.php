@@ -48,11 +48,16 @@ if ($user->societe_id > 0)
 }
 
 // Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $contactid && !$user->societe_id > 0)
+if ($contactid)
 {
         $sql = "SELECT sc.fk_soc, sp.fk_soc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-        $sql .= " WHERE sp.idp = ".$contactid." AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
+        $sql .= " WHERE sp.idp = ".$contactid;
+        if (!$user->rights->commercial->client->voir && !$user->societe_id > 0)
+        {
+        	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
+        }
+        if ($user->societe_id > 0) $sql .= " AND sp.fk_soc = ".$socid;
 
         if ( $db->query($sql) )
         {
@@ -194,11 +199,11 @@ if ($socid)
 /*
  * Onglets
  */
-if ($socid > 0)
+if ($_GET["id"] > 0)
 {
     // Si edition contact deja existant
     $contact = new Contact($db);
-    $return=$contact->fetch($socid, $user);
+    $return=$contact->fetch($_GET["id"], $user);
     if ($return < 0)
     {
         dolibarr_print_error('',$contact->error);
