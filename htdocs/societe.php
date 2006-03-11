@@ -93,7 +93,7 @@ if ($mode == 'search')
         {
             $obj = $db->fetch_object($result);
             $socidp = $obj->idp;
-            header("location: soc.php?socidp=$socidp");
+            header("location: soc.php?socid=$socidp");
             exit;
         }
         $db->free($result);
