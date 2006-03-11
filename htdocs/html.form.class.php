@@ -1631,7 +1631,7 @@ class Form
 				print '</script>';
 			}
 			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';	
-			$timearray=getDate($set_time);
+			//$timearray=getDate($set_time);
 			// print '<br>'.$timearray['mon'];
             $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 			if($formated_date=="?") $formated_date="";
