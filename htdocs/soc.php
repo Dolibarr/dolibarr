@@ -31,7 +31,10 @@
 */
 
 require("pre.inc.php");
+
 $user->getrights('societe');
+$user->getrights('commercial');
+
 $langs->load("companies");
 $langs->load("commercial");
 $langs->load("bills");
@@ -45,8 +48,7 @@ if (! $user->rights->societe->creer)
 }
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-
-if ($socid == '') accessforbidden();
+if (! $socid && ($_GET["action"] != 'create' && $_POST["action"] == 'create')) accessforbidden();
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
