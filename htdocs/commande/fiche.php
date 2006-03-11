@@ -76,8 +76,9 @@ if ($_POST['action'] == 'classin' && $user->rights->commande->creer)
 // Ajout commande
 if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 {
-	$datecommande = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-
+	$datecommande='';
+	$datecommande = @mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	
 	$commande = new Commande($db);
 
 	$commande->soc_id            = $_POST['soc_id'];
