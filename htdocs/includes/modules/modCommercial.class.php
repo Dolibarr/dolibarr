@@ -93,11 +93,11 @@ class modCommercial extends DolibarrModules
         $this->rights[$r][5] = 'lire';
         $r++;
         
-        // 262 : Permission générale
+        // 262 : Resteindre l'accès des commerciaux
         $this->rights[$r][0] = 262;
         $this->rights[$r][1] = 'Consulter tous les clients';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
+        $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'client';
         $this->rights[$r][5] = 'voir';
         $r++;
