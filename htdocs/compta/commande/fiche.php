@@ -134,7 +134,7 @@ if ($_GET["id"] > 0)
         print '<table class="border" width="100%">';
 
         // Reference
-        print '<tr><td width="15%">'.$langs->trans("Ref")."</td>";
+        print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
         print '<td colspan="2">'.$commande->ref.'</td>';
         print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
         if ($commande->source == 0)
