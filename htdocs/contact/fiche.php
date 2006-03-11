@@ -60,18 +60,20 @@ if (!$user->rights->commercial->client->voir && $contactid && !$user->societe_id
         }
 }
 
-
-if ($_GET["action"] == 'create_user' && $user->admin) 
+if ($user->rights->societe->contact->creer)
 {
-  // Recuperation contact actuel
-  $contact = new Contact($db);
-  $result = $contact->fetch($_GET["id"]);
+  if ($_GET["action"] == 'create_user' && $user->admin) 
+  {
+    // Recuperation contact actuel
+    $contact = new Contact($db);
+    $result = $contact->fetch($_GET["id"]);
   
-  // Creation user
-  $nuser = new User($db);
-  $nuser->nom = $contact->name;
-  $nuser->prenom = $contact->firstname;
-  $nuser->create_from_contact($contact);
+    // Creation user
+    $nuser = new User($db);
+    $nuser->nom = $contact->name;
+    $nuser->prenom = $contact->firstname;
+    $nuser->create_from_contact($contact);
+  }
 }
 
 if ($user->rights->societe->contact->creer)
@@ -118,10 +120,6 @@ if ($user->rights->societe->contact->creer)
     }
   }
 }
-else
-{
-	accessforbidden();
-}
 
 if ($user->rights->societe->contact->supprimer)
 {
@@ -137,10 +135,6 @@ if ($user->rights->societe->contact->supprimer)
     Header("Location: index.php");
     exit;
   }
-}
-else
-{
-	accessforbidden();
 }
 
 if ($user->rights->societe->contact->creer)
@@ -179,10 +173,6 @@ if ($user->rights->societe->contact->creer)
         $error = $contact->error;
     }
   }
-}
-else
-{
-	accessforbidden();
 }
 
 
@@ -247,10 +237,6 @@ if ($user->rights->societe->contact->supprimer)
     $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
     print '<br>';
   }
-}
-else
-{
-	accessforbidden();
 }
 
 if ($_GET["action"] == 'create')
