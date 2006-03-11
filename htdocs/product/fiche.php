@@ -733,10 +733,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         print '<tr><td width="50%" valign="top">';
         print_titre($langs->trans("AddToMyProposals")) . '</td>';
         
-        if (!$user->rights->commercial->client->voir)
+        if ($user->rights->commercial->client->voir)
         {
         print '<td width="50%" valign="top">';
         print_titre($langs->trans("AddToOtherProposals")) . '</td>';
+        }
+        else
+        {
+        	print '<td width="50%" valign="top"></td>';
         }
         
         print '</tr>';
@@ -787,7 +791,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 
         print '</td>';
 
-      if (!$user->rights->commercial->client->voir)
+      if ($user->rights->commercial->client->voir)
       {
         // Liste de "Other propals"
         print '<td width="50%" valign="top">';
@@ -832,10 +836,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         print '<tr><td width="50%" valign="top">';
         print_titre($langs->trans("AddToMyOrders")) . '</td>';
         
-        if (!$user->rights->commercial->client->voir)
+        if ($user->rights->commercial->client->voir)
         {
         print '<td width="50%" valign="top">';
         print_titre($langs->trans("AddToOtherOrders")) . '</td>';
+        }
+        else
+        {
+        	print '<td width="50%" valign="top"></td>';
         }
         
         print '</tr>';
@@ -888,7 +896,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 
         print '</td>';
 
-      if (!$user->rights->commercial->client->voir)
+      if ($user->rights->commercial->client->voir)
       {
         // Liste de "Other orders"
         print '<td width="50%" valign="top">';
@@ -929,10 +937,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
         print '<tr><td width="50%" valign="top">';
         print_titre($langs->trans("AddToMyBills"));
         
-        if (!$user->rights->commercial->client->voir)
+        if ($user->rights->commercial->client->voir)
         {
         print '</td><td width="50%" valign="top">';
         print_titre($langs->trans("AddToOtherBills"));
+        }
+        else
+        {
+        	print '<td width="50%" valign="top"></td>';
         }
 
         print '</td></tr>';
@@ -989,7 +1001,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 
         print '</td>';
         
-      if (!$user->rights->commercial->client->voir)
+      if ($user->rights->commercial->client->voir)
       {  
         print '<td width="50%" valign="top">';
 
