@@ -205,20 +205,20 @@ if ($socid > 0)
     }
     
     $h=0;
-    $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$socid;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans("General");
     $hselected=$h;
     $h++;
     
-    $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$socid;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans("PersonalInformations");
     $h++;
     
-    $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$socid;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans("ExportImport");
     $h++;
     
-    $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$socid;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans("Info");
     $h++;
     
