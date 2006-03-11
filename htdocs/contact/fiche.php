@@ -52,7 +52,7 @@ if (!$user->rights->commercial->client->voir && $contactid && !$user->societe_id
 {
         $sql = "SELECT sc.fk_soc, sp.fk_soc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-        $sql .= " WHERE sp.idp = ".$contactid." AND sc.fk_soc = sp.fk_soc AND fk_user = ".$user->id;
+        $sql .= " WHERE sp.idp = ".$contactid." AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
 
         if ( $db->query($sql) )
         {
@@ -74,8 +74,10 @@ if ($_GET["action"] == 'create_user' && $user->admin)
   $nuser->create_from_contact($contact);
 }
 
-if ($_POST["action"] == 'add')
+if ($user->rights->societe->contact->creer)
 {
+  if ($_POST["action"] == 'add')
+  {
     $contact = new Contact($db);
 
     $contact->socid        = $_POST["socid"];
@@ -114,10 +116,17 @@ if ($_POST["action"] == 'add')
 
         $error=array($contact->error);
     }
+  }
+}
+else
+{
+	accessforbidden();
 }
 
-if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes') 
+if ($user->rights->societe->contact->supprimer)
 {
+  if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes') 
+  {
     $contact = new Contact($db);
     
     $contact->old_name      = $_POST["old_name"];
@@ -127,11 +136,17 @@ if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes')
     
     Header("Location: index.php");
     exit;
+  }
+}
+else
+{
+	accessforbidden();
 }
 
-
-if ($_POST["action"] == 'update') 
+if ($user->rights->societe->contact->creer)
 {
+  if ($_POST["action"] == 'update') 
+  {
     $contact = new Contact($db);
     
     $contact->old_name      = $_POST["old_name"];
@@ -163,6 +178,11 @@ if ($_POST["action"] == 'update')
     {
         $error = $contact->error;
     }
+  }
+}
+else
+{
+	accessforbidden();
 }
 
 
@@ -220,10 +240,17 @@ if ($_GET["id"] > 0)
  * Confirmation de la suppression du contact
  *
  */
-if ($_GET["action"] == 'delete')
+if ($user->rights->societe->contact->supprimer)
 {
+  if ($_GET["action"] == 'delete')
+  {
     $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
     print '<br>';
+  }
+}
+else
+{
+	accessforbidden();
 }
 
 if ($_GET["action"] == 'create')
