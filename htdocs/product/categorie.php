@@ -181,7 +181,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print "<option value='".$categorie->id."'>".$categorie->label."</option>\n";
 		}
 		print '</select>';
-		print '</td><td><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+		print '</td><td><input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"></td></tr>';
 		print '</form></table><br/>';
 
 
