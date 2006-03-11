@@ -33,6 +33,31 @@ require_once(DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
 $langs->load("companies");
 
+// Protection quand utilisateur externe
+$contactid = isset($_GET["id"])?$_GET["id"]:'';
+
+if ($user->societe_id > 0)
+{
+    $socid = $user->societe_id;
+}
+
+// Protection restriction commercial
+if ($contactid)
+{
+        $sql = "SELECT sc.fk_soc, sp.fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
+        $sql .= " WHERE sp.idp = ".$contactid;
+        if (!$user->rights->commercial->client->voir && !$user->societe_id > 0)
+        {
+        	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
+        }
+        if ($user->societe_id > 0) $sql .= " AND sp.fk_soc = ".$socid;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
 
 if ($_POST["action"] == 'update')
 {
