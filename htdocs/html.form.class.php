@@ -1623,27 +1623,42 @@ class Form
          */
 		if ($conf->use_javascript && $conf->use_popup_calendar && $h==0 && $m==0)
         {
-            
-			if ($langs->defaultlang != "")
-		 	{
-				print '<script language="javascript">';
-				print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
-				print '</script>';
+			// Calendrier popup version eldy
+			if ("$conf->use_popup_calendar" == "eldy")	// Laissé conf->use_popup_calendar entre quote
+			{
+	            //print "e".$conf->format_date_short;
+	            $timearray=getDate($set_time);
+	            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+	            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"> ';
+	            print '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
+	            //$base=DOL_URL_ROOT.'/theme/'.$conf->theme.'/';
+	            $base=DOL_URL_ROOT.'/lib/';
+	            print ' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
+	            print '<input type="hidden" name="'.$prefix.'day" value="'.$sday.'">'."\n";
+	            print '<input type="hidden" name="'.$prefix.'month" value="'.$month.'">'."\n";
+	            print '<input type="hidden" name="'.$prefix.'year" value="'.$syear.'">'."\n";
 			}
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';	
-			//$timearray=getDate($set_time);
-			// print '<br>'.$timearray['mon'];
-            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
-			if($formated_date=="?") $formated_date="";
-			print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"> ';
-			print '<input type="hidden" name="'.$prefix.'day" value="'. $sday.'">'."\n";
-            print '<input type="hidden" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
-            print '<input type="hidden" name="'.$prefix.'year" value="'. $syear.'">'."\n";
-			if($form_name =="")
-				print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
 			else
-				print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">'.img_cal().'</a>';
-		
+			{            
+				// Calendrier popup version defaut
+				if ($langs->defaultlang != "")
+			 	{
+					print '<script language="javascript">';
+					print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
+					print '</script>';
+				}
+				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
+	            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+				if($formated_date=="?") $formated_date="";
+				print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"> ';
+				print '<input type="hidden" name="'.$prefix.'day" value="'. $sday.'">'."\n";
+	            print '<input type="hidden" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
+	            print '<input type="hidden" name="'.$prefix.'year" value="'. $syear.'">'."\n";
+				if($form_name =="")
+					print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
+				else
+					print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">'.img_cal().'</a>';
+			}
         }
         
         /*

@@ -348,8 +348,8 @@ $conf->use_javascript=1;
 if (isset($conf->global->MAIN_DISABLE_JAVASCRIPT)) $conf->use_javascript=! $conf->global->MAIN_DISABLE_JAVASCRIPT;
 
 // conf->use_popup_calendar
-$conf->use_popup_calendar=1;
-if (isset($conf->global->MAIN_DISABLE_POPUP_CALENDAR)) $conf->use_popup_calendar=! $conf->global->MAIN_DISABLE_POPUP_CALENDAR;
+$conf->use_popup_calendar="eldy";
+if (isset($conf->global->MAIN_POPUP_CALENDAR)) $conf->use_popup_calendar=$conf->global->MAIN_POPUP_CALENDAR;
 
 // conf->monnaie
 if (! $conf->global->MAIN_MONNAIE) $conf->global->MAIN_MONNAIE='EUR';	
@@ -434,6 +434,7 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
 // \todo Mettre format dans fichier langue
 $conf->format_date_text_short="%d %b %Y";
 $conf->format_date_short="%d/%m/%Y";
+$conf->format_date_short_java="dd/MM/yyyy";
 
 
 /* 

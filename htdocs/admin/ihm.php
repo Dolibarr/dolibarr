@@ -52,7 +52,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"]);
   dolibarr_set_const($db, "SIZE_LISTE_LIMIT",        $_POST["size_liste_limit"]);
   dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["disable_javascript"]);
-  dolibarr_set_const($db, "MAIN_DISABLE_POPUP_CALENDAR", $_POST["disable_popup_calendar"]);
+  dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["popup_calendar"]);
   
   dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
   dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD", $_POST["workboard"]);
@@ -123,8 +123,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     
     // Désactiver le calendrier popup
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisablePopupCalendar").'</td><td>';
-    $html->selectyesnonum('disable_popup_calendar',$conf->global->MAIN_DISABLE_POPUP_CALENDAR);
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
+    $liste_popup_calendar=array('0'=>$langs->trans("No"),'eldy'=>$langs->trans("Yes").' (style eldy)','andre'=>$langs->trans("Yes").' (style andre)');
+    $html->select_array('popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
+    print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
     print '</td></tr>';
 
     print '</table><br>';
@@ -214,21 +216,23 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';   
-    print ($conf->global->MAIN_SHOW_BUGTRACK_LINK?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
+    print yn($conf->global->MAIN_SHOW_BUGTRACK_LINK)."</td></tr>";
 
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';   
-    print ($conf->global->MAIN_SHOW_WORKBOARD?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
+    print yn($conf->global->MAIN_SHOW_WORKBOARD)."</td></tr>";
 
     // Disable javascript
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
-    print ($conf->global->MAIN_DISABLE_JAVASCRIPT?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
+    print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td></tr>";
     
-    // Disable popup calendar
+    // Calendrier en popup
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisablePopupCalendar").'</td><td>';   
-    print ($conf->global->MAIN_DISABLE_POPUP_CALENDAR?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';   
+    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
+    else print ($conf->global->MAIN_POPUP_CALENDAR?$langs->trans("Yes").' (style '.$conf->global->MAIN_POPUP_CALENDAR.')':$langs->trans("No"));
+    print "</td></tr>";
 
     print '</table><br>';
 
