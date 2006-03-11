@@ -194,31 +194,31 @@ if ($socid)
 /*
  * Onglets
  */
-if ($_GET["id"] > 0)
+if ($socid > 0)
 {
     // Si edition contact deja existant
     $contact = new Contact($db);
-    $return=$contact->fetch($_GET["id"], $user);
+    $return=$contact->fetch($socid, $user);
     if ($return < 0)
     {
         dolibarr_print_error('',$contact->error);
     }
     
     $h=0;
-    $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
+    $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$socid;
     $head[$h][1] = $langs->trans("General");
     $hselected=$h;
     $h++;
     
-    $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
+    $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$socid;
     $head[$h][1] = $langs->trans("PersonalInformations");
     $h++;
     
-    $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
+    $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$socid;
     $head[$h][1] = $langs->trans("ExportImport");
     $h++;
     
-    $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
+    $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$socid;
     $head[$h][1] = $langs->trans("Info");
     $h++;
     
