@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,27 @@ $langs->load("users");
 
 $error = array();
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
+
+// Protection quand utilisateur externe
+$contactid = isset($_GET["id"])?$_GET["id"]:'';
+
+if ($user->societe_id > 0)
+{
+    $socid = $user->societe_id;
+}
+
+// Protection restriction commercial
+if (!$user->rights->commercial->client->voir && $contactid && !$user->societe_id > 0)
+{
+        $sql = "SELECT sc.fk_soc, sp.fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
+        $sql .= " WHERE sp.idp = ".$contactid." AND sc.fk_soc = sp.fk_soc AND fk_user = ".$user->id;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
 
 
 if ($_GET["action"] == 'create_user' && $user->admin) 

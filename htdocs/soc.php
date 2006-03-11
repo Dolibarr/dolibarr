@@ -63,7 +63,7 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
 {
         $sql = "SELECT sc.fk_soc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= " WHERE fk_soc = ".$socid." AND fk_user = ".$user->id;
+        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
 
         if ( $db->query($sql) )
         {
