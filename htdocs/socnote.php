@@ -61,7 +61,7 @@ if ($_POST["action"] == 'add') {
   $result = $db->query($sql);
 
   $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
-  $socidp = $_GET["socid"]
+  $socidp = $_GET["socid"];
 }
 
 
