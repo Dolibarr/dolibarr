@@ -52,7 +52,7 @@ function xyzToUnixTimestamp($mysqldate){
 }
 
 function displayBox($selectedDate,$month,$year){
-	global $dolibarr_main_url_root,$langs;
+	global $dolibarr_main_url_root,$langs,$conf;
 	$langs->load("main");
 	
 	//print "$selectedDate,$month,$year";
@@ -109,7 +109,10 @@ function displayBox($selectedDate,$month,$year){
 			elseif($thedate==$today) $dayclass="dpToday";
 			
 			// Sur click dans calendrier, appelle fonction dpClickDay
-			echo "<TD class=\"".$dayclass."\" onMouseOver=\"dpHighlightDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].")\" onClick=\"dpClickDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].")\">".sprintf("%02s",$mydate["mday"])."</TD>";
+			echo "<TD class=\"".$dayclass."\"";
+			echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].")\"";
+			echo " onClick=\"dpClickDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].",'".$conf->format_date_short_java."')\"";
+			echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 			
 			if($mydate["wday"]==6) echo "</tr>";
 			$thedate=strtotime("tomorrow",$thedate);

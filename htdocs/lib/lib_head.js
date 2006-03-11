@@ -3,10 +3,12 @@
 // Script javascript mis en en-tete de pages (dans section head)
 //
 // \file       htdocs/lib/lib_head.js
-// \brief      Fichier qui inclue les fonctions javascript d'en-tete si option use_javascript active
+// \brief      Fichier qui inclue les fonctions javascript d'en-tete (inclue si option use_javascript active)
 // \version    $Revision$
 
 
+
+// *****************************************
 // Pour la fonction de saisi auto des villes
 // *****************************************
 
@@ -32,15 +34,19 @@ function autofilltownfromzip_save_refresh_create()
 
 
 
+
+// *****************************************
 // Pour la saisie des dates par calendrier
-// ***************************************
+// *****************************************
 
 //	base			"/theme/eldy"
 //	dateFieldID		"dateo"			Nom du champ
 // 	format			"dd/MM/yyyy"	Format issu de Dolibarr de SimpleDateFormat à utiliser pour retour
 function showDP(base,dateFieldID,format)
 {
-	var dateField= getObjectFromID(dateFieldID);
+	showDP.datefieldID=dateFieldID;
+
+	var dateField=getObjectFromID(dateFieldID);
 	
 	//check to see if another box is already showing
 	var alreadybox=getObjectFromID("DPCancel");
@@ -58,8 +64,6 @@ function showDP(base,dateFieldID,format)
 	showDP.box.style.position="absolute";
 	showDP.box.style.top=thetop + "px";
 	showDP.box.style.left=theleft + "px";
-	
-	showDP.datefieldID=dateFieldID;
 	
 	if(dateField.value)	// Si il y avait valeur initiale dans champ
 	{
@@ -110,12 +114,27 @@ function closeDPBox(){
 	showDP.datefieldID=null;	
 }
 
-function dpClickDay(year,month,day){
+function dpClickDay(year,month,day,format){
 	var thefield=getObjectFromID(showDP.datefieldID);
-	if (day < 10) day="0"+day;
-	if (month < 10) month="0"+month;
-	thefield.value=day+"/"+month+"/"+year;
+	var thefieldday=getObjectFromID(showDP.datefieldID+"day");
+	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
+	var thefieldyear=getObjectFromID(showDP.datefieldID+"year");
+
+	var dt = new Date();
+	dt.setMonth(month-1);
+	dt.setYear(year);
+	dt.setDate(day);
+
+	thefield.value=formatDate(dt,format);
 	if(thefield.onchange) thefield.onchange.call(thefield);
+
+	thefieldday.value=day;
+	if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+	thefieldmonth.value=month;
+	if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+	thefieldyear.value=year;
+	if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
 	closeDPBox();
 }
 
@@ -182,34 +201,6 @@ function loadXMLDoc(url,readyStateFunction,async)
 	}
 }
 
-/*
-function addEvent(obj, evType, fn){
- if (obj.addEventListener){
-    obj.addEventListener(evType, fn, true);
-    return true;
- } else if (obj.attachEvent){
-    var r = obj.attachEvent("on"+evType, fn);
-    return r;
- } else {
-    return false;
- }
-}
-*/
-
-/*
-function removeEvent(obj, evType, fn, useCapture){
-  if (obj.removeEventListener){
-    obj.removeEventListener(evType, fn, useCapture);
-    return true;
-  } else if (obj.detachEvent){
-    var r = obj.detachEvent("on"+evType, fn);
-    return r;
-  } else {
-    window.status=("Handler could not be removed");
-  }
-}
-*/
-
 function hideSelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
 	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE") > -1) {		
@@ -248,45 +239,50 @@ var enabletip=false
 if (ie||ns6)
 var tipobj=document.all? document.all["dhtmltooltip"] : document.getElementById? document.getElementById("dhtmltooltip") : ""
 
-function ietruebody(){
-return (document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
+function ietruebody()
+{
+	return (document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
 }
 
-function showtip(thetext){
-if (ns6||ie){
-tipobj.innerHTML=thetext
-enabletip=true
-return false
+function showtip(thetext)
+{
+	if (ns6||ie)
+	{
+		tipobj.innerHTML=thetext
+		enabletip=true
+		return false
+	}
 }
-}
 
-function positiontip(e){
-if (enabletip){
-var curX=(ns6)?e.pageX : event.clientX+ietruebody().scrollLeft;
-var curY=(ns6)?e.pageY : event.clientY+ietruebody().scrollTop;
-//Find out how close the mouse is to the corner of the window
-var rightedge=ie&&!window.opera? ietruebody().clientWidth-event.clientX-offsetxpoint : window.innerWidth-e.clientX-offsetxpoint-20
-var bottomedge=ie&&!window.opera? ietruebody().clientHeight-event.clientY-offsetypoint : window.innerHeight-e.clientY-offsetypoint-20
-
-var leftedge=(offsetxpoint<0)? offsetxpoint*(-1) : -1000
-
-//if the horizontal distance isn't enough to accomodate the width of the context menu
-if (rightedge<tipobj.offsetWidth)
-//move the horizontal position of the menu to the left by it's width
-tipobj.style.left=ie? ietruebody().scrollLeft+event.clientX-tipobj.offsetWidth+"px" : window.pageXOffset+e.clientX-tipobj.offsetWidth+"px"
-else if (curX<leftedge)
-tipobj.style.left="5px"
-else
-//position the horizontal position of the menu where the mouse is positioned
-tipobj.style.left=curX+offsetxpoint+"px"
-
-//same concept with the vertical position
-if (bottomedge<tipobj.offsetHeight)
-tipobj.style.top=ie? ietruebody().scrollTop+event.clientY-tipobj.offsetHeight-offsetypoint+"px" : window.pageYOffset+e.clientY-tipobj.offsetHeight-offsetypoint+"px"
-else
-tipobj.style.top=curY+offsetypoint+"px"
-tipobj.style.visibility="visible"
-}
+function positiontip(e)
+{
+	if (enabletip)
+	{
+		var curX=(ns6)?e.pageX : event.clientX+ietruebody().scrollLeft;
+		var curY=(ns6)?e.pageY : event.clientY+ietruebody().scrollTop;
+		//Find out how close the mouse is to the corner of the window
+		var rightedge=ie&&!window.opera? ietruebody().clientWidth-event.clientX-offsetxpoint : window.innerWidth-e.clientX-offsetxpoint-20
+		var bottomedge=ie&&!window.opera? ietruebody().clientHeight-event.clientY-offsetypoint : window.innerHeight-e.clientY-offsetypoint-20
+		
+		var leftedge=(offsetxpoint<0)? offsetxpoint*(-1) : -1000
+		
+		//if the horizontal distance isn't enough to accomodate the width of the context menu
+		if (rightedge<tipobj.offsetWidth)
+		//move the horizontal position of the menu to the left by it's width
+		tipobj.style.left=ie? ietruebody().scrollLeft+event.clientX-tipobj.offsetWidth+"px" : window.pageXOffset+e.clientX-tipobj.offsetWidth+"px"
+		else if (curX<leftedge)
+		tipobj.style.left="5px"
+		else
+		//position the horizontal position of the menu where the mouse is positioned
+		tipobj.style.left=curX+offsetxpoint+"px"
+		
+		//same concept with the vertical position
+		if (bottomedge<tipobj.offsetHeight)
+		tipobj.style.top=ie? ietruebody().scrollTop+event.clientY-tipobj.offsetHeight-offsetypoint+"px" : window.pageYOffset+e.clientY-tipobj.offsetHeight-offsetypoint+"px"
+		else
+		tipobj.style.top=curY+offsetypoint+"px"
+		tipobj.style.visibility="visible"
+	}
 }
 
 function hidetip(){
@@ -400,7 +396,7 @@ function compareDates(date1,dateformat1,date2,dateformat2) {
 		return 1;
 		}
 	return 0;
-	}
+}
 
 // ------------------------------------------------------------------
 // formatDate (date_object, format)
@@ -463,7 +459,7 @@ function formatDate(date,format) {
 		}
 	//alert(format+' -> '+result);
 	return result;
-	}
+}
 	
 // ------------------------------------------------------------------
 // Utility functions for parsing in getDateFromFormat()
@@ -474,7 +470,8 @@ function _isInteger(val) {
 		if (digits.indexOf(val.charAt(i))==-1) { return false; }
 		}
 	return true;
-	}
+}
+
 function _getInt(str,i,minlength,maxlength) {
 	for (var x=maxlength; x>=minlength; x--) {
 		var token=str.substring(i,i+x);
@@ -482,7 +479,7 @@ function _getInt(str,i,minlength,maxlength) {
 		if (_isInteger(token)) { return token; }
 		}
 	return null;
-	}
+}
 	
 // ------------------------------------------------------------------
 // getDateFromFormat( date_string , format_string )
@@ -619,7 +616,7 @@ function getDateFromFormat(val,format) {
 
 //	return newdate.getTime();
 	return newdate;
-	}
+}
 
 // ------------------------------------------------------------------
 // parseDate( date_string [, prefer_euro_format] )
@@ -650,6 +647,6 @@ function parseDate(val) {
 			}
 		}
 	return null;
-	}
+}
 
 
