@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,12 @@ if (! $user->rights->user->user->lire && !$user->admin)
 $langs->load("users");
 
 
+
 llxHeader();
 
 
 $lien="";
-if ($user->admin) $lien='<a href="'.DOL_URL_ROOT.'/user/admin/index.php">'.img_picto($langs->trans("Setup"),"setup").' '.$langs->trans("Setup").'</a>';
+if ($user->admin) $lien='<a href="'.DOL_URL_ROOT.'/admin/perms.php">'.img_picto($langs->trans("Setup"),"setup").' '.$langs->trans("Setup").'</a>';
 
 print_fiche_titre($langs->trans("MenuUsersAndGroups"),$lien);
 
@@ -49,11 +50,7 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
-
-
-/*
- * Recherche User
- */
+// Recherche User
 $var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
 print '<table class="noborder" width="100%">';
@@ -64,9 +61,7 @@ print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input t
 print "</table><br>\n";
 print '</form>';
 
-/*
- * Recherche Group
- */
+// Recherche Group
 $var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
 print '<table class="noborder" width="100%">';

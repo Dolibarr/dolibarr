@@ -319,7 +319,7 @@ DelaysOfToleranceTransactionsToConciliate=Tolérance de retard avant alerte (en j
 DelaysOfToleranceMembers=Tolérance de retard avant alerte (en jours) sur cotisations adhérents en retard
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
-GeneratePassword=Générer mot de passe
+GeneratePassword=Suggest a generated password
 ##### Company setup #####
 CompanySetup=Companies module setup
 CustomerCodeChecker=Module for checking customer's code

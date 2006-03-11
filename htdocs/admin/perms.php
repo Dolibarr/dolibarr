@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,20 @@ if ($_GET["action"] == 'remove')
 
 llxHeader();
 
-print_fiche_titre($langs->trans("DefaultRights"));
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+$head[$h][1] = $langs->trans("DefaultRights");
+$hselected=$h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
+$head[$h][1] = $langs->trans("Passwords");
+$h++;
+
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
 
 print $langs->trans("DefaultRightsDesc")."<br><br>\n";
 
@@ -157,7 +170,8 @@ if ($result)
 }
 
 print '</table>';
-print '<br>';
+
+print '</div>';
 
 $db->close();
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
@@ -312,8 +312,13 @@ if ($action == 'create')
     print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
     print '<td class="valeur"><input size="20" maxsize="24" type="text" name="login" value=""></td></tr>';
 
+    $generated_password='';
+    if ($conf->global->USER_PASSWORD_GENERATED)
+    {
+    	$generated_passowrd='';	
+    }
     print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
-    print '<td class="valeur"><input size="30" maxsize="32" type="text" name="password" value=""></td></tr>';
+    print '<td class="valeur"><input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'"></td></tr>';
 
     if ($user->admin)
     {

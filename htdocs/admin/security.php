@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +20,7 @@
  */
 
 /**
-	    \file       htdocs/user/admin/index.php
+	    \file       htdocs/admin/security.php
         \ingroup    setup
         \brief      Page de configuration du module sécurité
 		\version    $Revision$
@@ -35,7 +34,9 @@ $langs->load("admin");
 if (!$user->admin) accessforbidden();
 
 
-
+/*
+ * Actions
+ */
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
   if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''))
@@ -50,21 +51,33 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 }
 
 
+
+
 llxHeader();
+
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+$head[$h][1] = $langs->trans("DefaultRights");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
+$head[$h][1] = $langs->trans("Passwords");
+$hselected=$h;
+$h++;
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
+
 
 $var=false;
 
 $form = new Form($db);
 $typeconst=array('yesno','texte','chaine');
 
-print_titre($langs->trans("UserSetup"));
-
-print "<br>";
-
 print '<table class="noborder" width=\"100%\">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Description").'</td>';
-print '<td>&nbsp;</td>';
+print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<form action="index.php" method="POST">';
@@ -72,24 +85,20 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
-print '<tr '.$bc[$var]."><td>USER_PASSWORD_GENERATED</td>\n";
+print '<tr '.$bc[$var].'><td>'.$langs->trans("GeneratePassword").'</td>';
 
 print '<td>';
 $form->selectyesnonum('constvalue',USER_PASSWORD_GENERATED);
-print '</td><td>';
-
-print '<input type="text" size="40" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
-print '</td><td>';
-print '<input type="submit" value="'.$langs->trans("Modify").'" name="button" class="button"> &nbsp; ';
 print "</td></tr>\n";
+
+print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
 print '</form>';
 
 
 print "</table>\n";
 
-
-
+print '</div>';
 
 llxFooter('$Date$ - $Revision$');
 
