@@ -36,31 +36,32 @@ $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
 if ($conf->projet->enabled) $langs->load("projects");
 
-// Sécurité accés client
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$user->getrights("commercial");
 
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($socid == '') accessforbidden();
 
+// Protection quand utilisateur externe
 if ($user->societe_id > 0)
 {
     $action = '';
     $socid = $user->societe_id;
 }
 
+
 // Protection restriction commercial
 if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
 {
-        $sql = "SELECT sc.fk_soc, s.client";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE fk_soc = ".$socid." AND fk_user = ".$user->id." AND s.client = 1";
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
+	//print "eeeee".$socid."rr".$user->societe_id."oo".$user->rights->commercial->client->voir;
+	$sql = "SELECT sc.fk_soc, s.client";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE fk_soc = ".$socid." AND fk_user = ".$user->id." AND s.client = 1";
+	
+	if ( $db->query($sql) )
+	{
+		if ( $db->num_rows() == 0) accessforbidden();
+	}
 }
-
-$user->getrights('facture');
 
 
 if ($action == 'recontact')
@@ -221,7 +222,8 @@ if ($socid > 0)
     
     print '<tr><td>'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
     
-    print '<td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+    // Prefix
+    print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
     print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
     print '</td>';
     
@@ -340,7 +342,7 @@ if ($socid > 0)
             {
                 $tableaushown=1;
                 print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$societe->id.'">'.$langs->trans("AllBills").' ('.$num.')</td></tr></table></td>';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$societe->id.'">'.$langs->trans("AllBills").' ('.$num.')</a></td></tr></table></td>';
                 print '</tr>';
             }
 
@@ -350,7 +352,7 @@ if ($socid > 0)
                 $var=!$var;
                 print "<tr $bc[$var]>";
                 print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$objp->facnumber."</a></td>\n";
-                if ($objp->df > 0 )
+                if ($objp->df > 0)
                 {
                     print "<td align=\"right\">".dolibarr_print_date($objp->df)."</td>\n";
                 }
@@ -405,7 +407,7 @@ if ($socid > 0)
                 print "<tr $bc[$var]>";
                 print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),"project")." ".$obj->title.'</a></td>';
 
-                print "<td align=\"right\">".strftime("%d %b %Y", $obj->do) ."</td></tr>";
+                print "<td align=\"right\">".dolibarr_print_date($obj->do,"%d %b %Y") ."</td></tr>";
                 $i++;
             }
             $db->free();
@@ -421,7 +423,7 @@ if ($socid > 0)
     if ($tableaushown) print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowLog").'</td></tr></table></td>';
+    print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowLog").'</a></td></tr></table></td>';
     print '</tr>';
     print '</table>';
 
@@ -484,14 +486,14 @@ if ($socid > 0)
          * Liste des contacts
          *
          */
-      print '<table class="noborder" width="100%">';
-
-      print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
-      print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-      print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-      print "<td align=\"center\">&nbsp;</td>";
-      print '<td>&nbsp;</td>';
-      print "</tr>";
+		print '<table class="noborder" width="100%">';
+		
+		print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
+		print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
+		print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+		print "<td align=\"center\">&nbsp;</td>";
+		print '<td>&nbsp;</td>';
+		print "</tr>";
 
         $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -638,7 +640,6 @@ if ($socid > 0)
                 print "</tr>\n";
                 $i++;
             }
-            print "</table>";
 
             $db->free($result);
         } else {
@@ -650,7 +651,7 @@ if ($socid > 0)
          *      Listes des actions effectuées
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="8"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
+        print '<tr class="liste_titre"><td colspan="9"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 
         $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, fk_contact, u.code, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -690,42 +691,48 @@ if ($socid > 0)
                 print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
                 print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
 
+                // Espace
                 print '<td>&nbsp;</td>';
 
+				// Action
         		print '<td>';
-        		if ($obj->propalrowid)
-        		  {
-        		    print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
-                  $transcode=$langs->trans("Action".$obj->acode);
-                  $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                  print $libelle;
-        		    print '</a></td>';
-        		  }
-        		else
-        		  {
-        		    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
-                  $transcode=$langs->trans("Action".$obj->acode);
-                  $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                  print $libelle;
-        		    print '</a></td>';
-        		  }
+				print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+				$transcode=$langs->trans("Action".$obj->acode);
+				$libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+				print $libelle;
+				print '</a>';
+				print '</td>';
+
+        		print '<td>';
+				if ($obj->propalrowid)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowPropal"),"propal");
+					print $langs->trans("Propal");
+					print '</a>';
+				}
+				else print '&nbsp;';
+        		print '</td>';
 
                 // Contact pour cette action
-                if ($obj->fk_contact) {
+                if ($obj->fk_contact)
+                {
                     $contact = new Contact($db);
                     $contact->fetch($obj->fk_contact);
                     print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
-                } else {
+                }
+                else
+                {
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.$obj->code.'</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }
-
             $db->free();
-        } else {
+        }
+        else
+        {
             dolibarr_print_error($db);
         }
         print "</table>";
