@@ -322,6 +322,8 @@ DelaysOfToleranceMembers=Tolérance de retard avant alerte (en jours) sur cotisat
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
+RuleForGeneratedPasswords=Rule to generate suggested passwords
+DoNotSuggest=Do not suggest any password
 ##### Company setup #####
 CompanySetup=Companies module setup
 CustomerCodeChecker=Module for checking customer's code

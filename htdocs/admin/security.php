@@ -39,19 +39,21 @@ if (!$user->admin) accessforbidden();
  */
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-  if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''))
-    {
-      dolibarr_print_error($db);
-    }
-  else
-    {
-      Header("Location: index.php");
-      exit;
-    }
+	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''))
+	{
+		dolibarr_print_error($db);
+	}
+	else
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
 }
 
 
-
+/*
+ * Affichage onglet
+ */
 
 llxHeader();
 
@@ -77,19 +79,38 @@ $typeconst=array('yesno','texte','chaine');
 
 print '<table class="noborder" width=\"100%\">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+//print '<td>'.$langs->trans("Example").'</td>';
 print "</tr>\n";
 
-print '<form action="index.php" method="POST">';
+
+// Choix du gestionnaire du générateur de mot de passe
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("GeneratePassword").'</td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("RuleForGeneratedPasswords").'</td>';
 
 print '<td>';
-$form->selectyesnonum('constvalue',USER_PASSWORD_GENERATED);
-print "</td></tr>\n";
+
+$dir = "../includes/modules/security/generate";
+$handle=opendir($dir);
+$arrayhandler=array('0'=>$langs->trans("DoNotSuggest"));
+$i=1;
+while (($file = readdir($handle))!==false)
+{
+    if (eregi('modGeneratePass([a-z]+).class.php',$file,$reg))
+    {
+        $arrayhandler[strtolower($reg[1])]=$reg[1];
+		$i++;
+    }
+}
+$form->select_array('constvalue',$arrayhandler,$conf->global->USER_PASSWORD_GENERATED);
+print "</td>";
+//print "<td>".."</td>";
+print "</tr>\n";
 
 print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
