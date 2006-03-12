@@ -164,7 +164,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 /**
  * Charges a payer
  */
-if ($conf->compta->enabled)
+if ($conf->compta->enabled || $conf->comptaexpert->enabled)
 {
     if ($user->societe_id == 0)
     {

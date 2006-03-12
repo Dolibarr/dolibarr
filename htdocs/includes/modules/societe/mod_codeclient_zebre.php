@@ -18,8 +18,20 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+        \file       htdocs/includes/modules/societe/mod_codeclient_zebre.class.php
+        \ingroup    societe
+        \brief      Fichier de la classe des gestion zebre des codes clients
+        \version    $Revision$
+*/
+
+
+/**
+        \class 		mod_codeclient_zebre
+        \brief 		Classe permettant la gestion zebre des codes clients
+*/
 
 class mod_codeclient_zebre
 {

@@ -103,7 +103,7 @@ if ($_GET["id"] > 0)
             $h++;
         }
 
-        if ($conf->compta->enabled)
+        if ($conf->compta->enabled || $conf->comptaexpert->enabled)
         {
             $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
             $head[$h][1] = $langs->trans("ComptaCard");

@@ -315,7 +315,12 @@ if ($action == 'create')
     $generated_password='';
     if ($conf->global->USER_PASSWORD_GENERATED)
     {
-    	$generated_passowrd='';	
+		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+		$nomfichier=$nomclass.".class.php";
+    	//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
+    	require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+    	$genhandler=new $nomclass($db,$conf,$lang,$user);
+    	$generated_password=$genhandler->getNewGeneratedPassword();
     }
     print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
     print '<td class="valeur"><input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'"></td></tr>';

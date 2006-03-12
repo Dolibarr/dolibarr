@@ -219,7 +219,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
   //
   
   // Nbre actions à faire (en retard)
-  if (($conf->commercial->enabled || $conf->compta->enabled)  && $user->rights->actions->lire)
+  if (($conf->commercial->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)  && $user->rights->actions->lire)
     {
       include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
       $board=new ActionComm($db);

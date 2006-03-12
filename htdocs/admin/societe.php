@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,46 +35,49 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
-$codeclient_addon_var = CODECLIENT_ADDON;
 
+/*
+ * Actions
+ */
 if ($_GET["action"] == 'setcodeclient')
 {
-  if (dolibarr_set_const($db, "CODECLIENT_ADDON",$_GET["value"]))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $codeclient_addon_var = $_GET["value"];
-      Header("Location: societe.php");
-    }
+	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$_GET["value"]))
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+	}
+	else
+	{
+		dolibarr_print_error($db);	
+	}
 }
-
-
-$codecompta_addon_var = CODECOMPTA_ADDON;
 
 if ($_GET["action"] == 'setcodecompta')
 {
-  if (dolibarr_set_const($db, "CODECOMPTA_ADDON",$_GET["value"]))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $codecompta_addon_var = $_GET["value"];
-      Header("Location: societe.php");
-    }
+	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$_GET["value"]))
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+	}
+	else
+	{
+		dolibarr_print_error($db);	
+	}
 }
 
 
+/*
+ * 	Affichage page configuration module societe
+ *
+ */
 
 llxHeader();
 
-/*
- *
- *
- *
- */
 
 print_titre($langs->trans("CompanySetup"));
 
 print "<br>";
+
+
+// Choix du module de gestion des codes clients / fournisseurs
 
 print_titre($langs->trans("CustomerCodeChecker"));
 
@@ -107,7 +110,7 @@ if ($handle)
 	  print $modCodeClient->info();
 	  print "</td>\n";
 	  
-	  if ($codeclient_addon_var == "$file")
+	  if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
 	    {
 	      print "  <td align=\"center\">\n";
     	  print img_tick();
@@ -127,7 +130,11 @@ if ($handle)
 }
 print '</table>';
 
+
 print "<br>";
+
+
+// Choix du module de gestion des codes compta
 
 print_titre($langs->trans("AccountCodeManager"));
 
@@ -161,7 +168,7 @@ if ($handle)
 	  print $modCodeCompta->info();
 	  print '</td>';
 	  
-	  if ($codecompta_addon_var == "$file")
+	  if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
 	    {
 	      print '<td align="center">';
     	  print img_tick();
@@ -180,7 +187,7 @@ if ($handle)
   closedir($handle);
 }
 print "</table>\n";
-
+	
 
 
 $db->close();

@@ -536,7 +536,7 @@ else
 				$h++;
 			}
 
-			if ($conf->compta->enabled)
+			if ($conf->compta->enabled || $conf->comptaexpert->enabled)
 			{
 				$head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
 				$head[$h][1] = $langs->trans('ComptaCard');
@@ -544,11 +544,11 @@ else
 			}
 			
 			if ($conf->use_preview_tabs)
-		  {
-    		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
-    		$head[$h][1] = $langs->trans("Preview");
-    		$h++;
-      }
+		  	{
+	    		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
+	    		$head[$h][1] = $langs->trans("Preview");
+	    		$h++;
+     		}
 
 			$head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
 			$head[$h][1] = $langs->trans('Info');

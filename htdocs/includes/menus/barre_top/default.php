@@ -144,9 +144,9 @@ class MenuTop {
         }
 
         // Entrée compta
-        if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
+        if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->caisse->enabled)
         {
-            if ($user->rights->compta->general->lire)
+            if ($user->rights->compta->general->lire || $user->rights->comptaexpert->general->lire)
             {
                 $langs->load("compta");
 

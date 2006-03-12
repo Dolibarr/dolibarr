@@ -374,20 +374,21 @@ class MenuLeft {
                 
                 // Charges
 /*
-                if ($conf->compta->enabled)
+                if ($conf->compta->enabled || $conf->comptaexpert->enabled)
                 {
                   $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&mainmenu=accountancy",$langs->trans("Charges"), 0, $user->rights->compta->charges->lire);
                   if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"), 1, $user->rights->compta->charges->creer);
                 }
                 
-                if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
+                if (($conf->compta->enabled || $conf->comptaexpert->enabled) && $conf->compta->tva && $user->societe_id == 0)
                 {
                   $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&mainmenu=accountancy",$langs->trans("VAT"),0,$user->rights->compta->charges->lire);
                   if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1,$user->rights->compta->charges->creer);
                   if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1,$user->rights->compta->charges->lire);
                 }
                 
-                if ($conf->compta->enabled) {
+                if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+                {
                     //$newmenu->add(DOL_URL_ROOT."/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Ventilations"));
                     //if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"),1);
                     //if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"),1);

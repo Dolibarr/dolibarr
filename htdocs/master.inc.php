@@ -339,6 +339,15 @@ $conf->export->dir_ouput=DOL_DATA_ROOT."/export";
  * Modification de quelques variable de conf en fonction des Constantes
  */
 
+// societe
+if (! $conf->global->SOCIETE_CODECLIENT_ADDON) $conf->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
+if (! $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON) $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON="mod_codeclient_leopard";
+if (! $conf->global->SOCIETE_CODECOMPTA_ADDON) $conf->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
+// Pour compatibilite ascendante:
+if ($conf->global->CODECLIENT_ADDON) $conf->global->SOCIETE_CODECLIENT_ADDON=$conf->global->CODECLIENT_ADDON;
+if ($conf->global->CODEFOURNISSEUR_ADDON) $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON=$conf->global->CODEFOURNISSEUR_ADDON;
+
+
 // conf->use_preview_tabs
 $conf->use_preview_tabs=1;
 if (isset($conf->global->MAIN_USE_PREVIEW_TABS)) $conf->use_preview_tabs=$conf->global->MAIN_USE_PREVIEW_TABS;

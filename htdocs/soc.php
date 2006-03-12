@@ -48,7 +48,7 @@ if (! $user->rights->societe->creer)
 }
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if (! $socid && ($_GET["action"] != 'create' && $_POST["action"] == 'create')) accessforbidden();
+if (! $socid && ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add')) accessforbidden();
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -116,25 +116,6 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $soc->fournisseur           = $_POST["fournisseur"];
 	$soc->tva_assuj             = $_POST["assujtva_value"];
     
-    if ($_POST["action"] == 'update')
-    {
-        $result = $soc->update($socid,$user);
-        if ($result <= 0)
-        {
-            $soc->id = $socid;
-            // doublon sur le prefix comm
-            $reload = 0;
-            $mesg = $soc->error;      //"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
-            $_GET["action"]= "edit";
-        }
-        else
-        {
-            Header("Location: soc.php?socid=".$socid);
-            exit;
-        }
-    
-    }
-    
     if ($_POST["action"] == 'add')
     {
         $result = $soc->create($user);
@@ -146,10 +127,28 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         }
         else
         {
+            $mesg=$soc->error;
             $_GET["action"]='create';
-            //dolibarr_print_error($db);
         }
     }
+    
+    if ($_POST["action"] == 'update')
+    {
+        $result = $soc->update($socid,$user);
+        if ($result > 0)
+        {
+            Header("Location: soc.php?socid=".$socid);
+            exit;
+		}
+		else
+		{
+	        $soc->id = $socid;
+            $reload = 0;
+            $mesg = $soc->error;
+            $_GET["action"]= "edit";
+        }
+    }
+
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
@@ -640,7 +639,8 @@ else
         $h++;
     }
 
-    if ($conf->compta->enabled) {
+    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+    {
         $langs->load("compta");
         $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
         $head[$h][1] = $langs->trans("Accountancy");

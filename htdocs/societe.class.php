@@ -87,9 +87,10 @@ class Societe {
    *    \param  DB     handler accès base de données
    *    \param  id     id societe (0 par defaut)
    */
-
   function Societe($DB, $id=0)
   {
+	global $conf;
+	
     $this->db = $DB;
     $this->creation_bit = 0;
 
@@ -101,21 +102,26 @@ class Societe {
     $this->effectif_id  = 0;
     $this->forme_juridique_code  = 0;
 
+	// Définit selon les modules codeclient et codefournisseur
+	
     // definit module code client
-    if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0) $var = CODECLIENT_ADDON;
-    else $var = "mod_codeclient_leopard";
-	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$var.'.php';
-
-    $this->mod_codeclient = new $var;
+    $varclient = $conf->global->SOCIETE_CODECLIENT_ADDON;
+	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$varclient.'.php';
+    $this->mod_codeclient = new $varclient;
     $this->codeclient_modifiable = $this->mod_codeclient->code_modifiable;
 
     // definit module code fournisseur
-    if (defined('CODEFOURNISSEUR_ADDON') && strlen(CODEFOURNISSEUR_ADDON) > 0) $var = CODEFOURNISSEUR_ADDON;
-    else $var = "mod_codeclient_leopard";
-	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$var.'.php';
-
-    $this->mod_codefournisseur = new $var;
-    $this->codeclient_modifiable = $this->mod_codeclient->code_modifiable;
+    $varfournisseur = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+	if ($varfournisseur == $varclient)	// Optimisation
+	{
+    	$this->mod_codefournisseur = $this->mod_codeclient;
+	}
+	else
+	{
+		require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$varfournisseur.'.php';
+    	$this->mod_codefournisseur = new $varfournisseur;
+    }
+    $this->codefournisseur_modifiable = $this->mod_codefournisseur->code_modifiable;
 
     return 1;
   }
@@ -250,6 +256,7 @@ class Societe {
 
         dolibarr_syslog("Societe::Update");
 
+		// Nettoyage des paramètres
         $this->id=$id;
         $this->capital=trim($this->capital);
         $this->nom=trim($this->nom);
@@ -270,7 +277,8 @@ class Societe {
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
 		$this->tva_assuj=trim($this->tva_assuj);
-        $result = $this->verify();
+
+        $result = $this->verify();		// Verifie que nom obligatoire et code client ok et unique
 
         if ($result >= 0)
         {
@@ -285,11 +293,6 @@ class Societe {
             $this->tel = ereg_replace("\.","",$this->tel);
             $this->fax = ereg_replace(" ","",$this->fax);
             $this->fax = ereg_replace("\.","",$this->fax);
-        
-            /*
-            * Supression des if (trim(valeur)) pour construire la requete
-            * sinon il est impossible de vider les champs
-            */
         
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
             $sql .= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
@@ -330,39 +333,33 @@ class Societe {
         
             if ($this->creation_bit || $this->codeclient_modifiable)
             {
-                // Attention check_codeclient peut modifier le code
-                // suivant le module utilis
-        
+                // Attention check_codeclient peut modifier le code suivant le module utilise
                 $this->check_codeclient();
         
                 $sql .= ", code_client = ".($this->code_client?"'".addslashes($this->code_client)."'":"null");
         
-                // Attention check_codecompta_client peut modifier le code
-                // suivant le module utilis
-        
-                $this->check_codecompta_client();
+                // Attention get_codecompta peut modifier le code suivant le module utilise
+                $this->get_codecompta('customer');
         
                 $sql .= ", code_compta = ".($this->code_compta?"'".addslashes($this->code_compta)."'":"null");
             }
         
             if ($this->creation_bit || $this->codefournisseur_modifiable)
             {
-                // Attention check_codefournisseur peut modifier le code
-                // suivant le module utilis
-        
+                // Attention check_codefournisseur peut modifier le code suivant le module utilise
                 $this->check_codefournisseur();
         
                 $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".addslashes($this->code_fournisseur)."'":"null");
         
-                // Attention check_codecompta_fournisseur peut modifier le code
-                // suivant le module utilis
-        
-                $this->check_codecompta_fournisseur();
+                // Attention get_codecompta peut modifier le code suivant le module utilise
+                $this->get_codecompta('supplier');
         
                 $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".addslashes($this->code_compta_fournisseur)."'":"null");
             }
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
             $sql .= " WHERE idp = '" . $id ."'";
+        
+        	// Verifie que code compta défini
         
             $resql=$this->db->query($sql);
             if ($resql)
@@ -1188,127 +1185,101 @@ function set_price_level($price_level, $user)
     return $this->bank_account->verif();
   }
 
-  /**
-   *    \brief      Verifie code client
-   *    \return     Renvoie 0 si ok, peut modifier le code client suivant le module utilisé
-   */
-  function verif_codeclient()
-  {
-    if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
-      {
 
-	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODECLIENT_ADDON.'.php';
+	/**
+	 *    \brief      Verifie code client
+	 *    \return     Renvoie 0 si ok, peut modifier le code client suivant le module utilis
+	 */
+	function verif_codeclient()
+	{
+		global $conf;
+		if ($conf->global->SOCIETE_CODECLIENT_ADDON)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+	
+			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
+	
+			$mod = new $var;
+	
+			return $mod->verif($this->db, $this->code_client, $this->id);
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	
+	function check_codeclient()
+	{
+		if ($conf->global->SOCIETE_CODECLIENT_ADDON)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+	
+			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
+	
+			$mod = new $var;
+	
+			return $mod->verif($this->db, $this->code_client);
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	function check_codefournisseur()
+	{
+		if ($conf->global->CODEFOURNISSEUR_ADDON)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->CODEFOURNISSEUR_ADDON.'.php';
+	
+			$var = $conf->global->CODEFOURNISSEUR_ADDON;
+	
+			$mod = new $var;
+	
+			return $mod->verif($this->db, $this->code_fournisseur);
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
-	$var = CODECLIENT_ADDON;
+	/**
+	 *    	\brief  	Renvoie un code compta, suivant le module de code compta.
+	 *            		Peut être identique à celui saisit ou généré automatiquement.
+	 *            		A ce jour seul la génération automatique est implémentée
+	 *    	\param      type			Type de tiers ('customer' ou 'supplier')
+	 */
+	function get_codecompta($type)
+	{
+		global $conf;
+	
+		if ($conf->global->SOCIETE_CODECOMPTA_ADDON)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECOMPTA_ADDON.'.php';
+	
+			$var = $conf->global->SOCIETE_CODECOMPTA_ADDON;
+	
+			$mod = new $var;
+	
+			$result = $mod->get_code($this->db, $this, $type);
+	
+			if ($type == 'customer') $this->code_compta = $mod->code;
+			if ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
+	
+			return $result;
+		}
+		else
+		{
+			if ($type == 'customer') $this->code_compta = '';
+			if ($type == 'supplier') $this->code_compta_fournisseur = '';
 
-	$mod = new $var;
-
-	return $mod->verif($this->db, $this->code_client, $this->id);
-      }
-    else
-      {
-	return 0;
-      }
-  }
-
-  function check_codeclient()
-  {
-    if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
-      {
-
-	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODECLIENT_ADDON.'.php';
-
-	$var = CODECLIENT_ADDON;
-
-	$mod = new $var;
-
-	return $mod->verif($this->db, $this->code_client);
-      }
-    else
-      {
-	return 0;
-      }
-  }
-
-  function check_codefournisseur()
-  {
-    if (defined('CODEFOURNISSEUR_ADDON') && strlen(CODEFOURNISSEUR_ADDON) > 0)
-      {
-
-	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODEFOURNISSEUR_ADDON.'.php';
-
-	$var = CODEFOURNISSEUR_ADDON;
-
-	$mod = new $var;
-
-	return $mod->verif($this->db, $this->code_fournisseur);
-      }
-    else
-      {
-	return 0;
-      }
-  }
-
-  /**
-   *    \brief  Renvoie un code compta, suivant le module le code compta renvoyé
-   *            peut être identique à celui saisit ou généré automatiquement
-   *
-   *            A ce jour seul la génération automatique est implémentée
-   */
-  function check_codecompta_client()
-  {
-    if (defined('CODECOMPTA_ADDON') && strlen(CODECOMPTA_ADDON) > 0)
-    {
-        require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODECOMPTA_ADDON.'.php';
-
-        $var = CODECOMPTA_ADDON;
-
-        $mod = new $var;
-
-        $result = $mod->get_code($this->db, $this);
-
-        $this->code_compta = $mod->code;
-
-        return $result;
-    }
-    else
-    {
-        $this->code_compta = '';
-        return 0;
-    }
-  }
-
-
-  /**
-   *    \brief  Renvoie un code compta, suivant le module le code compta renvoyé
-   *            peut être identique à celui saisit ou généré automatiquement
-   *
-   *            A ce jour seul la génération automatique est implémentée
-   */
-  function check_codecompta_fournisseur()
-  {
-    if (defined('CODECOMPTAFOURN_ADDON') && strlen(CODECOMPTAFOURN_ADDON) > 0)
-    {
-        require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODECOMPTAFOURN_ADDON.'.php';
-
-        $var = CODECOMPTAFOURN_ADDON;
-
-        $mod = new $var;
-
-        $result = $mod->get_code($this->db, $this);
-
-        $this->code_compta_fournisseur = $mod->code;
-
-        return $result;
-    }
-    else
-    {
-        $this->code_compta = '';
-        return 0;
-    }
-  }
-
-
+			return 0;
+		}
+	}
+	
     /**
      *    \brief      Défini la société mère pour les filiales
      *    \param      id      id compagnie mère à positionner

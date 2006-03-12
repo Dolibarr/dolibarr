@@ -58,14 +58,14 @@ $h = 0;
         }
         	 
 	  if ($conf->expedition->enabled && $user->rights->expedition->lire)
-	    {
+	  {
 	      $head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
 	      $head[$h][1] = $langs->trans("SendingCard");
 	      $h++;
-	    }
+	  }
 
-	  if ($conf->compta->enabled)
-	    {
+	  if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+	  {
     	  $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
     	  $head[$h][1] = $langs->trans("ComptaCard");
     	  $h++;

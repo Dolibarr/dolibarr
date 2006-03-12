@@ -71,7 +71,7 @@ function llxHeader($head = "") {
         }
     }
 
-    if ($conf->compta->enabled  && $user->rights->general->lire)
+    if (($conf->compta->enabled || $conf->comptaexpert->enabled) && $user->rights->general->lire)
     {
         $langs->load("compta");
         $menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("Accountancy"));

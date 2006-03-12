@@ -177,7 +177,7 @@ class MenuTop {
         }
         
         // Compta
-        if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
+        if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->caisse->enabled)
         {
             $langs->load("compta");
         

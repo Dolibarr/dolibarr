@@ -1,7 +1,7 @@
 <?php
-/*
- * Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Eric Seigne <eric.seigne@ryxeo.com>
+/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,84 +20,98 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+        \file       htdocs/includes/modules/societe/mod_codecompta_aquarium.class.php
+        \ingroup    societe
+        \brief      Fichier de la classe des gestion aquarium des codes compta des societes clientes
+        \version    $Revision$
+*/
+
+
+/**
+        \class 		mod_codecompta_aquarium
+        \brief 		Classe permettant la gestion aquarium des codes compta des societes clients
+*/
 
 class mod_codecompta_aquarium
 {
+	var $nom;
 
-  function mod_codecompta_aquarium()
-  {
-    $this->nom = "Aquarium";
-  }
-
-  function info()
-  {
-    return "Renvoie un code compta composé de 401 suivit du code tiers si c'est un fournisseur, et 411 suivit du code tiers si c'est un client (compta française).";
-  }
-
-  /**
-   *    \brief      Renvoi code
-   *    \param      DB              Handler d'accès base
-   *    \param      societe         Objet societe
-   */
-  function get_code($DB, $societe)
-  {    
-    $i = 0;
-    $this->db = $DB;
-
-    if($societe->fournisseur == "1")
-      $this->code = "401".$societe->code_client;
-    if($societe->client == "1")
-      $this->code = "411".$societe->code_client;
-
-    $is_dispo = $this->verif($DB, $this->code);
-
-    while ( $is_dispo <> 0 && $i < 37)
-      {
-	$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-	$this->code = $societe->prefix_comm . $societe->code_client . substr($arr, $i, 1);
-
-	$is_dispo = $this->verif($DB, $this->code);
-
-	$i++;
-      }
+	function mod_codecompta_aquarium()
+	{
+		$this->nom = "Aquarium";
+	}
+	
+	function info()
+	{
+		return "Renvoie un code compta composé de 401 suivi du code tiers si c'est un fournisseur, et 411 suivit du code tiers si c'est un client";
+	}
 
 
-    if ($is_dispo == 0)
-      {
-	return 0;
-      }
-    else
-      {
-	return -1;
-      }
-    
-  }
+	/**
+ 	 *    	\brief      Renvoi code compta d'une societe
+ 	 *    	\param      DB              Handler d'accès base
+	 *    	\param      societe         Objet societe
+	 *    	\param      type			Type de tiers ('customer' ou 'supplier')
+	 *		\return		int				>=0 ok, <0 ko
+	 */
+	function get_code($DB, $societe, $type)
+	{
+		$i = 0;
+		$this->db = $DB;
+	
+		// Regle gestion compte compta
+		if ($type == 'supplier') $codetouse=$societe->code_client;
+		if ($type == 'customer') $codetouse=$societe->code_fournisseur;
+		
+		if ($type == 'supplier') $this->code = "401".$codetouse;
+		if ($type == 'customer') $this->code = "411".$codetouse;
+	
+		$is_dispo = $this->verif($DB, $this->code);
+		while ($is_dispo == 0 && $i < 37)		// 40 char max
+		{
+			$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	
+			$this->code = $societe->prefix_comm . $codetouse . substr($arr, $i, 1);
+	
+			$is_dispo = $this->verif($DB, $this->code);
+	
+			$i++;
+		}
+
+		dolibarr_debug("mod_codecompta_aquarium::get_code code=>".$this->code);
+		return $is_dispo;
+	}
+
+
+	/**
+	 *		\brief		Renvoi si un code compta est dispo
+	 *		\return		int			0 non dispo, >0 dispo, <0 erreur
+	 */
+	function verif($db, $code)
+	{
+		$sql = "SELECT code_compta FROM ".MAIN_DB_PREFIX."societe";
+		$sql .= " WHERE code_compta = '".$code."'";
+	
+		if ($db->query($sql))
+		{
+			if ($db->num_rows() == 0)
+			{
+				return 1;	// Dispo
+			}
+			else
+			{
+				return 0;	// Non dispo
+			}
+		}
+		else
+		{
+			return -1;		// Erreur
+		}
+	}
   
-  function verif($db, $code)
-  {
-    $sql = "SELECT code_compta FROM ".MAIN_DB_PREFIX."societe";
-    $sql .= " WHERE code_compta = '".$code."'";
-
-    if ($db->query($sql))
-      {
-	if ($db->num_rows() == 0)
-	  {
-	    return 0;
-	  }
-	else
-	  {
-	    return -1;
-	  }
-      }
-    else
-      {
-	return -2;
-      }
-
-  }
 }
 
 ?>

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +19,25 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+        \file       htdocs/includes/modules/societe/mod_codecompta_digitaria.class.php
+        \ingroup    societe
+        \brief      Fichier de la classe des gestion digitaria des codes compta des societes clientes
+        \version    $Revision$
+*/
+
+
+/**
+        \class 		mod_codecompta_digitaria
+        \brief 		Classe permettant la gestion digitaria des codes compta des societes clients
+*/
 
 class mod_codecompta_digitaria
 {
+	var $nom;
+
 
   function mod_codecompta_digitaria()
   {

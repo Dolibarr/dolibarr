@@ -94,7 +94,8 @@ if ($soc->fournisseur)
     $h++;
 }
 
-if ($conf->compta->enabled) {
+if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+{
     $langs->load("compta");
     $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
     $head[$h][1] = $langs->trans("Accountancy");

@@ -129,7 +129,7 @@ if ($socid > 0)
         $h++;
     }
 
-    if ($conf->compta->enabled)
+    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
     {
         $langs->load("compta");
         $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;

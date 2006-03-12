@@ -18,8 +18,20 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
+/**
+        \file       htdocs/includes/modules/societe/mod_codeclient_leopard.class.php
+        \ingroup    societe
+        \brief      Fichier de la classe des gestion leopard des codes clients
+        \version    $Revision$
+*/
+
+
+/**
+        \class 		mod_codeclient_leopard
+        \brief 		Classe permettant la gestion leopard des codes clients
+*/
 
 class mod_codeclient_leopard
 {
