@@ -117,12 +117,31 @@ function closeDPBox()
 function dpChangeDay(dateFieldID,format)
 {
 	showDP.datefieldID=dateFieldID;
-	var thefield=getObjectFromID(dateFieldID);
+
+	var thefield=getObjectFromID(showDP.datefieldID);
+	var thefieldday=getObjectFromID(showDP.datefieldID+"day");
+	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
+	var thefieldyear=getObjectFromID(showDP.datefieldID+"year");
 
 	var date=getDateFromFormat(thefield.value,format);
-
-	if (date) dpClickDay(date.getFullYear(),date.getMonth()+1,date.getDate(),format)
-	else dpClickDay(0,0,0,format);
+	if (date)
+	{
+		thefieldday.value=date.getDate();
+		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value=date.getMonth()+1;
+		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value=date.getFullYear();
+		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+	}
+	else
+	{
+		thefieldday.value='';
+		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value='';
+		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value='';
+		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+	}
 }
 
 function dpClickDay(year,month,day,format)
@@ -138,7 +157,7 @@ function dpClickDay(year,month,day,format)
 	dt.setDate(day);
 
 	thefield.value=formatDate(dt,format);
-//	if(thefield.onchange) thefield.onchange.call(thefield);
+	if(thefield.onchange) thefield.onchange.call(thefield);
 
 	thefieldday.value=day;
 	if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
