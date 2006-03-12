@@ -1631,7 +1631,9 @@ class Form
 	            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 
 	            // Zone de saisie manuelle de la date
-	            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"> ';
+	            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"';
+	            print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
+	            print '> ';
 	            
 				// Icone calendrier
 	            print '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';

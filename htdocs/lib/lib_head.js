@@ -106,15 +106,27 @@ function loadMonth(base,month,year,ymd)
 	showDP.box.innerHTML=req.responseText;	
 }
 
-
-function closeDPBox(){
+function closeDPBox()
+{
 	document.body.removeChild(showDP.box);
 	displaySelectBoxes();
 	showDP.box=null;	
 	showDP.datefieldID=null;	
 }
 
-function dpClickDay(year,month,day,format){
+function dpChangeDay(dateFieldID,format)
+{
+	showDP.datefieldID=dateFieldID;
+	var thefield=getObjectFromID(dateFieldID);
+
+	var date=getDateFromFormat(thefield.value,format);
+
+	if (date) dpClickDay(date.getFullYear(),date.getMonth()+1,date.getDate(),format)
+	else dpClickDay(0,0,0,format);
+}
+
+function dpClickDay(year,month,day,format)
+{
 	var thefield=getObjectFromID(showDP.datefieldID);
 	var thefieldday=getObjectFromID(showDP.datefieldID+"day");
 	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
@@ -126,7 +138,7 @@ function dpClickDay(year,month,day,format){
 	dt.setDate(day);
 
 	thefield.value=formatDate(dt,format);
-	if(thefield.onchange) thefield.onchange.call(thefield);
+//	if(thefield.onchange) thefield.onchange.call(thefield);
 
 	thefieldday.value=day;
 	if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
