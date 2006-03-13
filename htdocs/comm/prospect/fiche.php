@@ -50,6 +50,19 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
+// Protection restriction commercial
+if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
+{
+        $sql = "SELECT sc.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.idp AND sc.fk_user = ".$user->id." AND s.client = 2";
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
+
 
 
 /*
@@ -61,19 +74,6 @@ if ($_GET["action"] == 'cstc')
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"];
   $sql .= " WHERE idp = ".$_GET["id"];
   $db->query($sql);
-}
-
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
-{
-        $sql = "SELECT sc.fk_soc, s.client";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id." AND s.client = 2";
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
 }
 
 
