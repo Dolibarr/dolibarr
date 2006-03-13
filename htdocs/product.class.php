@@ -825,7 +825,7 @@ class Product
         $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE p.rowid = pd.fk_product AND pd.fk_propal = pr.rowid AND p.rowid = ".$this->id;
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND pr.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         //$sql.= " AND pr.fk_statut != 0";
         if ($socid > 0)
         {
@@ -946,7 +946,7 @@ class Product
         $sql.= ", ".MAIN_DB_PREFIX."facture as f";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE f.rowid = pd.fk_facture AND p.rowid = pd.fk_product AND p.rowid = ".$this->id;
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         //$sql.= " AND f.fk_statut != 0";
         if ($socid > 0)
         {
