@@ -212,7 +212,7 @@ if($_GET["socid"])
     
     
     
-    if ($user->rights->societe->creer && !$user->rights->commercial->client->voir)
+    if ($user->rights->societe->creer && $user->rights->commercial->client->voir)
     {
         /*
         * Liste
