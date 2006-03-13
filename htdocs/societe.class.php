@@ -158,6 +158,12 @@ class Societe {
                 $this->creation_bit = 1;
 
                 $ret = $this->update($this->id,$user,0);
+                
+                // si un commercial crée un client il lui est affecté automatiquement
+                if (!$user->rights->commercial->client->voir)
+                {
+                	$this->add_commercial($user, $user->id);
+                }
 
                 if ($ret >= 0)
                 {
@@ -276,7 +282,7 @@ class Societe {
         $this->capital=trim($this->capital);
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
-		$this->tva_assuj=trim($this->tva_assuj);
+		    $this->tva_assuj=trim($this->tva_assuj);
 
         $result = $this->verify();		// Verifie que nom obligatoire et code client ok et unique
 
@@ -329,7 +335,7 @@ class Societe {
         
             $sql .= ",client = " . $this->client;
             $sql .= ",fournisseur = " . $this->fournisseur;
-			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
+			      $sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
         
             if ($this->creation_bit || $this->codeclient_modifiable)
             {
