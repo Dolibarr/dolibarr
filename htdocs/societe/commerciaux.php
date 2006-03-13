@@ -174,7 +174,18 @@ if($_GET["socid"])
     
         while ($i < $num)
         {
-            $obj = $db->fetch_object($resql);
+        	$obj = $db->fetch_object($resql);
+        	
+          if (!$user->rights->commercial->client->voir)
+          {
+          	print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+            print img_object($langs->trans("ShowUser"),"user").' ';
+            print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
+            print '</a><br>';
+            $i++;
+          }
+          else
+          {
             print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
             print img_object($langs->trans("ShowUser"),"user").' ';
             print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
@@ -183,6 +194,7 @@ if($_GET["socid"])
             print img_delete();
             print '</a><br>';
             $i++;
+          }
         }
     
         $db->free($resql);
@@ -193,15 +205,14 @@ if($_GET["socid"])
     }
     if($i == 0) { print $langs->trans("NoSalesRepresentativeAffected"); }
 
-    print "</td></tr>";
-    
+    print "</td></tr>";    
     
     print '</table>';
     print "</div>\n";
     
     
     
-    if ($user->rights->societe->creer)
+    if ($user->rights->societe->creer && !$user->rights->commercial->client->voir)
     {
         /*
         * Liste
