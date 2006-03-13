@@ -51,7 +51,7 @@ if ($_GET["id"] || $_GET["ref"])
 	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 }
-
+$html = new Form($db);
 
 
 llxHeader("","",$langs->trans("CardProduct0"));
@@ -69,9 +69,9 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	//on veut ajouter une catégorie
-	if (isset($_REQUEST["add_cat"]) && $_REQUEST["add_cat"]>=0)
+	if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	{
-		$cat = new Categorie($db,$_REQUEST["add_cat"]);
+		$cat = new Categorie($db,$_REQUEST["catMere"]);
 		$cat->add_product($product);
 	}
 
@@ -170,18 +170,10 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</table><br/>';
 
 		// Formulaire ajout dans une categorie
-		print $langs->trans("AddProductToCat")."<br/>";
 		print '<table class="border" width="100%">';
 		print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
-		print '<tr><td>';
-		print '<select class="flat" name="add_cat"><option value="-1">'.$langs->trans("Choose")."</option>";
-		$cat = new Categorie($db);
-		foreach ($cat->get_all_categories() as $categorie)
-		{
-			print "<option value='".$categorie->id."'>".$categorie->label."</option>\n";
-		}
-		print '</select>';
-		print '</td><td><input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"></td></tr>';
+		print $html->select_all_categories($categorie->id_mere);
+		print '<tr><td><input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"></td></tr>';
 		print '</form></table><br/>';
 
 
@@ -237,4 +229,3 @@ $db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>
-
