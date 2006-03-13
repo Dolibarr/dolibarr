@@ -246,9 +246,12 @@ if ($_GET["id"])
 
         $sql = "SELECT distinct(s.nom), s.idp, s.code_client, c.rowid, ";
         $sql.= " ".$db->pdate("c.datec")." as date, c.statut as statut, c.rowid as contratid";
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as d";
-		$sql.= " WHERE c.fk_soc = s.idp";
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		    $sql.= " WHERE c.fk_soc = s.idp";
         $sql.= " AND d.fk_contrat = c.rowid AND d.fk_product =".$product->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($socid)
         {
             $sql .= " AND c.fk_soc = $socid";
