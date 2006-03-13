@@ -852,6 +852,8 @@ class Product
      */
     function load_stats_commande($socid=0)
     {
+    	  global $conf;
+    	
         $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
         $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."product as p,";
