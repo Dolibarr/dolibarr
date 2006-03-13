@@ -63,7 +63,7 @@ llxHeader();
 
 
 $sql = "SELECT s.nom, c.rowid as cid, s.idp as sidp, cd.rowid, cd.label, cd.statut, p.rowid as pid,";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " sc.fk_soc, sc.fk_user,";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_ouverture_prevue,";
 $sql.= " ".$db->pdate("cd.date_ouverture")." as date_ouverture,";
 $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin_validite,";
@@ -71,11 +71,11 @@ $sql.= " ".$db->pdate("cd.date_cloture")." as date_cloture";
 $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
 $sql.= " , ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql.= " , ".MAIN_DB_PREFIX."contratdet as cd";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.statut > 0";
 $sql.= " AND c.rowid = cd.fk_contrat";
 $sql.= " AND c.fk_soc = s.idp AND cd.fk_product = p.rowid";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
