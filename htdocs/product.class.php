@@ -856,7 +856,9 @@ class Product
         $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."product as p,";
         $sql.= " ".MAIN_DB_PREFIX."commande as c";
+        if (!$user->rights->commercial->client->voir && $socid = 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE c.rowid = cd.fk_commande AND p.rowid = cd.fk_product AND p.rowid = ".$this->id;
+        if (!$user->rights->commercial->client->voir && $socid = 0) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         //$sql.= " AND c.fk_statut != 0";
         if ($socid > 0)
         {
