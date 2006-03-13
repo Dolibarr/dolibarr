@@ -51,11 +51,17 @@ class CommandeStats extends Stats
    */
     function getNbByMonth($year)
     {
-        $sql = "SELECT date_format(date_commande,'%m') as dm, count(*) nb FROM ".MAIN_DB_PREFIX."commande";
-        $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
+    	  global $conf;
+    	  global $user;
+    	  
+        $sql = "SELECT date_format(c.date_commande,'%m') as dm, count(*) nb";
+        $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
+        if (!$user->rights->commercial->client->voir && !$this->socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= " WHERE date_format(c.date_commande,'%Y') = $year AND c.fk_statut > 0";
+        if (!$user->rights->commercial->client->voir && !$this->socidp) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($this->socidp)
         {
-            $sql .= " AND fk_soc = ".$this->socidp;
+            $sql .= " AND c.fk_soc = ".$this->socidp;
         }
         $sql .= " GROUP BY dm";
         $sql .= " ORDER BY dm DESC";
@@ -69,11 +75,18 @@ class CommandeStats extends Stats
    */
   function getNbByYear()
   {
-    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*), sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut > 0";
+  	global $conf;
+    global $user;
+  	
+    $sql = "SELECT date_format(c.date_commande,'%Y') as dm, count(*), sum(c.total_ht)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
+    if (!$user->rights->commercial->client->voir && !$this->socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE c.fk_statut > 0";
+    if (!$user->rights->commercial->client->voir && !$this->socidp) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($this->socidp)
-      {
-	$sql .= " AND fk_soc = ".$this->socidp;
-      }
+    {
+	    $sql .= " AND c.fk_soc = ".$this->socidp;
+    }
     $sql .= " GROUP BY dm DESC";
 
     return $this->_getNbByYear($sql);
@@ -85,12 +98,18 @@ class CommandeStats extends Stats
    */
   function getAmountByMonth($year)
   {
-    $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
+  	global $conf;
+    global $user;
+  	
+    $sql = "SELECT date_format(c.date_commande,'%m') as dm, sum(c.total_ht)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
+    if (!$user->rights->commercial->client->voir && !$this->socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE date_format(c.date_commande,'%Y') = $year AND c.fk_statut > 0";
+    if (!$user->rights->commercial->client->voir && !$this->socidp) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($this->socidp)
-      {
-	$sql .= " AND fk_soc = ".$this->socidp;
-      }
+    {
+	    $sql .= " AND c.fk_soc = ".$this->socidp;
+    }
     $sql .= " GROUP BY dm DESC";
 
     return $this->_getAmountByMonth($year, $sql);
@@ -102,12 +121,18 @@ class CommandeStats extends Stats
    */
   function getAverageByMonth($year)
   {
-    $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
+  	global $conf;
+    global $user;
+  	
+    $sql = "SELECT date_format(c.date_commande,'%m') as dm, avg(c.total_ht)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
+    if (!$user->rights->commercial->client->voir && !$this->socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE date_format(c.date_commande,'%Y') = $year AND c.fk_statut > 0";
+    if (!$user->rights->commercial->client->voir && !$this->socidp) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($this->socidp)
-      {
-	$sql .= " AND fk_soc = ".$this->socidp;
-      }
+    {
+	    $sql .= " AND c.fk_soc = ".$this->socidp;
+    }
     $sql .= " GROUP BY dm DESC";
 
     return $this->_getAverageByMonth($year, $sql);
