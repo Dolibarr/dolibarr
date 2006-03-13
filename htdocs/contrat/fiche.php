@@ -38,9 +38,38 @@ $langs->load("orders");
 $langs->load("companies");
 
 $user->getrights('contrat');
+$user->getrights('commercial');
 
 if (! $user->rights->contrat->lire)
 accessforbidden();
+
+// Sécurité accés client et commerciaux
+$contratid = isset($_GET["id"])?$_GET["id"]:'';
+
+if ($user->societe_id > 0)
+{
+    $action = '';
+    $socidp = $user->societe_id;
+}
+
+// Protection restriction commercial
+if ($contratid)
+{
+        $sql = "SELECT sc.fk_soc, c.fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."contrat as c";
+        $sql .= " WHERE c.rowid = ".$contratid;
+        if (!$user->rights->commercial->client->voir && !$user->societe_id > 0)
+        {
+        	$sql .= " AND sc.fk_soc = c.fk_soc AND sc.fk_user = ".$user->id;
+        }
+        if ($user->societe_id > 0) $sql .= " AND c.fk_soc = ".$socidp;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
+
 
 // Param si create
 $date_start='';
@@ -73,13 +102,6 @@ if ($_POST["date_start_real_updatemonth"] && $_POST["date_start_real_updateday"]
 if ($_POST["date_end_real_updatemonth"] && $_POST["date_end_real_updateday"] && $_POST["date_end_real_updateyear"])
 {
     $date_end_real_update=mktime(12, 0 , 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
-}
-
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socidp = $user->societe_id;
 }
 
 
