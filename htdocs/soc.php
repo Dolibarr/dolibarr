@@ -114,7 +114,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $soc->typent_id             = $_POST["typent_id"];
     $soc->client                = $_POST["client"];
     $soc->fournisseur           = $_POST["fournisseur"];
-	$soc->tva_assuj             = $_POST["assujtva_value"];
+	  $soc->tva_assuj             = $_POST["assujtva_value"];
     
     if ($_POST["action"] == 'add')
     {
@@ -151,7 +151,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
 {
   $soc = new Societe($db);
   $soc->fetch($socid);
@@ -216,7 +216,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $soc->effectif_id=$_POST["effectif_id"];
             $soc->tva_intra_code=$_POST["tva_intra_code"];
             $soc->tva_intra_num=$_POST["tva_intra_num"];
-			$soc->tva_assuj = $_POST["assujtva_value"];
+			      $soc->tva_assuj = $_POST["assujtva_value"];
         }
 
         // On positionne pays_id, pays_code et libelle du pays choisi
