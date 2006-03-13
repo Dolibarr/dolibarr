@@ -35,9 +35,34 @@ $langs->load("companies");
 $langs->load("banks");
 
 $user->getrights('societe');
+$user->getrights('commercial');
 
 if ( !$user->rights->societe->creer)
   accessforbidden();
+
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if (!$socid) accessforbidden();
+
+
+// Sécurité accés client
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+// Protection restriction commercial
+if (!$user->rights->commercial->client->voir && $socid)
+{
+        $sql = "SELECT sc.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
 
 
 llxHeader();
