@@ -942,36 +942,33 @@ class Form
         }
     }
      
-         /**
+           /**
      *    \brief      Retourne la ou les listes déroulante des catégories en fonction du nombre choisi
      *    \param      selected    nombre de catégorie à créer
      */
-    function select_all_categories($nbcats='')
+    function select_all_categories($selected='')
     {
         global $langs;
         $langs->load("categorie");
-        
-        if ($nbcats)
-        {
-        	$categorie = new Categorie($this -> db);
-          $all_categories = $categorie->get_all_categories();//on récupère toutes les catégories et leurs attributs
-
-				  for ($i = 0; $i < $nbcats ; $i++)
-				  {
-					  print '<tr><td>'.$langs->trans ("AddIn").'</td><td><select name="catsMeres['.$i.']">'; //creation des categories meres
-					  print '<option value="-1" id="choix">'.$langs->trans("NoneCategory").'</option>\n';
-
-					  foreach ($all_categories as $id => $cat)
-						{ //ajout des categories dans la liste
-						  print '<option value="'.$id.'"';
-						
-						  if ($_REQUEST['catsMeres'][$i] == $id)
-							  print ' selected="true"';
-							  print '>'.$cat->label.'</option>\n';
-						}
-					print '</select></td></tr>';
-				  }
-				}
+        $cat = new Categorie ($this -> db);
+		$cat->get_categories_arbo();
+		$cate_arbo = $cat->get_arbo_each_cate();
+		print '<tr><td>'.$langs->trans ("AddIn").'</td><td><select name="catMere">'; //creation des categories meres
+		print '<option value="-1" id="choix">'.$langs->trans("NoneCategory").'</option>\n';
+		
+		
+		foreach($cate_arbo as $key => $value)
+		{
+			if($value[1] == $selected)
+				$add = "selected='true' ";
+			else
+				$add = "";
+			print '<option '.$add.'value="'.$value[1].'">'.$value[0].'</option>';
+		}
+					 
+		print '</select></td></tr>';
+				 
+				
 		}
         
         
