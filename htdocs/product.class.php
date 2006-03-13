@@ -1027,9 +1027,14 @@ class Product
 	 
   function get_nb_vente($socid=0)
     {
+    	global $conf;
+    	global $user;
+    	
       $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
+      if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
       $sql .= " WHERE f.rowid = d.fk_facture and d.fk_product =".$this->id;
+      if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
       if ($socid > 0)
 	{
 	  $sql .= " AND f.fk_soc = $socid";
@@ -1048,9 +1053,14 @@ class Product
 	 
   function get_num_vente($socid=0)
     {
+    	global $conf;
+    	global $user;
+    	
       $sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
+      if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
       $sql .= " WHERE f.rowid = d.fk_facture AND d.fk_product =".$this->id;
+      if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
       if ($socid > 0)
 	{
 	  $sql .= " AND f.fk_soc = $socid";
@@ -1069,9 +1079,14 @@ class Product
 	 
   function get_num_propal($socid=0)
   {
+  	  global $conf;
+    	global $user;
+    	
       $sql = "SELECT count(*), date_format(p.datep, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
+      if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
       $sql .= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;
+      if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
       if ($socid > 0)
 	{
 	  $sql .= " AND p.fk_soc = $socid";
