@@ -32,6 +32,36 @@ require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
 
+$user->getrights('contrat');
+if (!$user->rights->contrat->lire)
+  accessforbidden();
+
+// Sécurité accés client et commerciaux
+$contratid = isset($_GET["id"])?$_GET["id"]:'';
+
+if ($user->societe_id > 0) 
+{
+  $socidp = $user->societe_id;
+}
+
+// Protection restriction commercial
+if ($contratid)
+{
+        $sql = "SELECT sc.fk_soc, c.fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."contrat as c";
+        $sql .= " WHERE c.rowid = ".$contratid;
+        if (!$user->rights->commercial->client->voir && !$user->societe_id > 0)
+        {
+        	$sql .= " AND sc.fk_soc = c.fk_soc AND sc.fk_user = ".$user->id;
+        }
+        if ($user->societe_id > 0) $sql .= " AND c.fk_soc = ".$socidp;
+
+        if ( $db->query($sql) )
+        {
+          if ( $db->num_rows() == 0) accessforbidden();
+        }
+}
+
 llxHeader();
 
 
