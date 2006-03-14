@@ -39,17 +39,18 @@
 
 class DoliDb
 {
-    var $db;                      // Handler de base
-    var $type='mysql';            // Nom du gestionnaire
+    var $db;                    // Handler de base
+    var $type='mysql';          // Nom du gestionnaire
 
-    var $results;                 // Resultset de la dernière requete
+    var $results;               // Resultset de la dernière requete
 
-    var $connected;               // 1 si connecté, 0 sinon
-    var $database_selected;       // 1 si base sélectionné, 0 sinon
-    var $database_name;			  // Nom base sélectionnée
-    var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
+    var $connected;             // 1 si connecté, 0 sinon
+    var $database_selected;     // 1 si base sélectionné, 0 sinon
+    var $database_name;			// Nom base sélectionnée
+    var $transaction_opened;	// 1 si une transaction est en cours, 0 sinon
     var $lastquery;
-    
+	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
+
     var $ok;
     var $error;
     
@@ -421,7 +422,6 @@ class DoliDb
         \param	    query	    Contenu de la query
         \return	    resource    Resultset de la reponse
     */
-
     function query($query)
     {
         $query = trim($query);
@@ -436,8 +436,10 @@ class DoliDb
             $ret = mysql_db_query($this->database_name, $query, $this->db);
         }
         
-        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query)) {
+        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
+        {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
+			if (! $ret) $this->lastqueryerror = $query;
             $this->lastquery=$query;
             $this->results = $ret;
         }
@@ -635,17 +637,24 @@ class DoliDb
         \brief      Renvoie la derniere requete soumise par la methode query()
         \return	    lastquery
     */
-
     function lastquery()
     {
         return $this->lastquery;
     }
 
     /**
+        \brief      Renvoie la derniere requete en erreur()
+        \return	    lastqueryerror
+    */
+	function lastqueryerror()
+	{
+		return $this->lastqueryerror;
+	}
+
+    /**
         \brief     Renvoie le code erreur generique de l'operation precedente.
         \return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
     */
-
     function errno()
     {
         if (! $this->connected) {

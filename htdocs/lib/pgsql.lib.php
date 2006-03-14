@@ -52,6 +52,7 @@ class DoliDb
     var $database_name;			  // Nom base sélectionnée
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
     var $lastquery;
+	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
     
     var $ok;
     var $error;
@@ -274,7 +275,6 @@ class DoliDb
         \brief      Debut d'une transaction.
         \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
     */
-    
     function begin()
     {
         if (! $this->transaction_opened)
@@ -294,7 +294,6 @@ class DoliDb
         \brief      Validation d'une transaction
         \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
     */
-
     function commit()
     {
         if ($this->transaction_opened==1)
@@ -314,7 +313,6 @@ class DoliDb
         \brief      Annulation d'une transaction et retour aux anciennes valeurs
         \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
     */
-    
     function rollback()
     {
         if ($this->transaction_opened)
@@ -334,14 +332,15 @@ class DoliDb
         \param		query		Contenu de la query
         \return	    resource    Resultset de la reponse
     */
-    
     function query($query)
     {
         $query = trim($query);
         $ret = pg_query($this->db, $query);
 
-        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query)) {
+        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
+        {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
+			if (! $ret) $this->lastqueryerror = $query;
             $this->lastquery=$query;
             $this->results = $ret;
         }
@@ -355,7 +354,6 @@ class DoliDb
         \param	    fieldname	Nom du champ
         \return		resource
     */
-    
     function result($nb, $fieldname)
     {
         return pg_fetch_result($this->results, $nb, $fieldname);
@@ -366,7 +364,6 @@ class DoliDb
         \param      resultset   Curseur de la requete voulue
         \return		resource
     */
-    
     function fetch_object($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -379,7 +376,6 @@ class DoliDb
         \param      resultset   Curseur de la requete voulue
         \return		array
     */
-    
     function fetch_array($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -392,7 +388,6 @@ class DoliDb
         \param      resultset   Curseur de la requete voulue
         \return	    array
     */
-    
     function fetch_row($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -405,7 +400,6 @@ class DoliDb
         \param      resultset   Curseur de la requete voulue
         \return     array
     */
-    
     function fetch_field($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -419,7 +413,6 @@ class DoliDb
         \param      resultset   Curseur de la requete voulue
         \return     int		    Nombre de lignes
     */
-    
     function num_rows($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -433,7 +426,6 @@ class DoliDb
         \param      resultset   Curseur de la requete voulue
         \return     int		    Nombre de lignes
     */
-    
     function affected_rows($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -449,7 +441,6 @@ class DoliDb
         \param      resultset   Curseur de la requete voulue
         \return	    int
     */
-    
     function num_fields($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -461,7 +452,6 @@ class DoliDb
         \brief      Libère le dernier resultset utilisé sur cette connexion.
         \param      resultset   Curseur de la requete voulue
     */
-    
     function free($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -477,7 +467,6 @@ class DoliDb
         \param	    offset      numéro de la ligne à partir de laquelle recupérer les lignes
         \return	    string      chaine exprimant la syntax sql de la limite
     */
-    
     function plimit($limit=0,$offset=0)
     {
         global $conf;
@@ -537,17 +526,24 @@ class DoliDb
         \brief 		Renvoie la derniere requete soumise par la methode query()
         \return	    lastquery
     */
-    
     function lastquery()
     {
         return $this->lastquery;
     }
     
     /**
+        \brief      Renvoie la derniere requete en erreur()
+        \return	    lastqueryerror
+    */
+	function lastqueryerror()
+	{
+		return $this->lastqueryerror;
+	}
+
+    /**
          \brief     Renvoie le code erreur generique de l'operation precedente.
          \return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
     */
-    
     function errno()
     {
         static $error_regexps;
