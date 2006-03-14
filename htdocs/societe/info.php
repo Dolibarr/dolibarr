@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,11 @@ require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 $langs->load("companies");
 $langs->load("other");
 
+$user->getrights('commercial');
+
 // Sécurité accés client
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-
 if ($socid == '') accessforbidden();
-
 if ($user->societe_id > 0)
 {
     $action = '';
