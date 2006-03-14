@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,32 +31,41 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
+$user->getrights('commercial');
+
 $langs->load("companies");
 
 // Protection quand utilisateur externe
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 
+$socid=0;
 if ($user->societe_id > 0)
 {
     $socid = $user->societe_id;
 }
 
-// Protection restriction commercial
-if ($contactid)
-{
-        $sql = "SELECT sc.fk_soc, sp.fk_soc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-        $sql .= " WHERE sp.idp = ".$contactid;
-        if (!$user->rights->commercial->client->voir && !$user->societe_id > 0)
-        {
-        	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
-        }
-        if ($user->societe_id > 0) $sql .= " AND sp.fk_soc = ".$socid;
 
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
+// Protection restriction commercial
+if ($contactid && ! $user->rights->commercial->client->voir)
+{
+    $sql = "SELECT sc.fk_soc, sp.fk_soc";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
+    $sql .= " WHERE sp.idp = ".$contactid;
+    if (! $user->rights->commercial->client->voir && ! $socid)
+    {
+    	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
+    }
+    if ($socid) $sql .= " AND sp.fk_soc = ".$socid;
+
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+    	if ($db->num_rows() == 0) accessforbidden();
+    }
+    else
+    {
+    	dolibarr_print_error($db);
+    }
 }
 
 if ($_POST["action"] == 'update')

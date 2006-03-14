@@ -33,14 +33,13 @@ require("./pre.inc.php");
 $langs->load("companies");
 $langs->load('other');
 
+$user->getrights('commercial');
 
 $mesg = "";
 
 // Sécurité accés client
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-
 if ($socid == '') accessforbidden();
-
 if ($user->societe_id > 0)
 {
     $action = '';

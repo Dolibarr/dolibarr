@@ -32,6 +32,8 @@ require("./pre.inc.php");
 
 $langs->load("companies");
 
+$user->getrights('commercial');
+
 // Protection quand utilisateur externe
 $socidp = isset($_GET["socid"])?$_GET["socid"]:'';
 
