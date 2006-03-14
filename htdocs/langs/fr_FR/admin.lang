@@ -52,6 +52,8 @@ AvailableOnlyIfJavascriptNotDisabled=Disponible uniquement si javascript non dés
 TriggersAvailable=Triggers disponibles
 TriggersDesc=Les triggers sont des composants qui, une fois activés, modifient le comportement du workflow de Dolibarr. Ils réalisent des actions suplémentaires, déclenchées par les événements Dolibarr (création société, validation facture, clôture contrat...).
 Required=Requis
+Security=Sécurité
+Passwords=Mots de passe
 ModuleFamilyBase=Système
 ModuleFamilyCrm=Gestion client (CRM)
 ModuleFamilyProducts=Gestion produits
@@ -322,7 +324,7 @@ DelaysOfToleranceMembers=Tolérance de retard avant alerte (en jours) sur cotisat
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Proposer un mot de passe généré
-RuleForGeneratedPasswords=Règle pour la génération des mots de passes proposés
+RuleForGeneratedPasswords=Règle pour la génération des mots de passe proposés
 DoNotSuggest=Ne pas proposer
 ##### Company setup #####
 CompanySetup=Configuration du module Sociétés
