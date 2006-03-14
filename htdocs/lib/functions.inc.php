@@ -1098,14 +1098,14 @@ function dolibarr_print_error($db='',$msg='')
         {
             print "<br>\n";
             print "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
-            print "<b>".$langs->trans("RequestLastAccess").":</b> ".($db->lastquery()?$db->lastquery():$langs->trans("ErrorNoRequestRan"))."<br>\n";
+            print "<b>".$langs->trans("RequestLastAccess").":</b> ".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
             print "<b>".$langs->trans("ReturnCodeLastAccess").":</b> ".$db->errno()."<br>\n";
             print "<b>".$langs->trans("InformationLastAccess").":</b> ".$db->error()."<br>\n";
         }
         else                            // Mode CLI
         {
             print $langs->trans("DatabaseTypeManager").":\n".$db->type."\n";
-            print $langs->trans("RequestLastAccess").":\n".($db->lastquery()?$db->lastquery():$langs->trans("ErrorNoRequestRan"))."\n";
+            print $langs->trans("RequestLastAccess").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
             print $langs->trans("ReturnCodeLastAccess").":\n".$db->errno()."\n";
             print $langs->trans("InformationLastAccess").":\n".$db->error()."\n";
     
