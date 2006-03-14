@@ -1558,13 +1558,13 @@ class Form
 
 
     /**
-     *    \brief  Affiche zone de selection de date
-     *            Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
-     *            Les champs sont présélectionnées avec:
-     *            - La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
-     *            - La date du jour si set_time vaut ''
-     *            - Aucune date (champs vides) si set_time vaut -1
-	 		*		\param	form_name nom du formulaire de provenance. Utilisé pour les dates en popup
+     *		\brief  Affiche zone de selection de date
+     *      		Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
+     *            	Les champs sont présélectionnées avec:
+     *            	- La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
+     *            	- La date du jour si set_time vaut ''
+     *            	- Aucune date (champs vides) si set_time vaut -1
+	 *		\param	form_name 	Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
      */
  function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0,$form_name="")
     {
@@ -1623,10 +1623,13 @@ class Form
 			// Calendrier popup version eldy
 			if ("$conf->use_popup_calendar" == "eldy")	// Laissé conf->use_popup_calendar entre quote
 			{
-	            //print "e".$conf->format_date_short;
-	            $timearray=getDate($set_time);
-	            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
-
+	            //print "e".$set_time." t ".$conf->format_date_short;
+	            if ($set_time)
+	            {
+		            $timearray=getDate($set_time);
+		            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+				}
+				
 	            // Zone de saisie manuelle de la date
 	            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"';
 	            print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
