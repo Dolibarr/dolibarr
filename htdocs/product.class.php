@@ -1304,7 +1304,125 @@ class Product
         $db->commit();
         return 1;
     }
+/**
+   * fonction récursive uniquement utilisée par get_arbo_each_cate
+   * Recompose l'arborescence des catégories
+   */
+  function fetch_prod_arbo($prod,$compl_path="")
+{
+			$this->res;
+			$this->pere_encours;
+			foreach($prod as $nom_pere => $desc_pere)
+			{
+						// on est dans une sous-catégorie
+						if(is_array($desc_pere))
+							$this->res[]= array($compl_path.$nom_pere,$desc_pere[0]);
+						else if($nom_pere != "0")
+							$this->res[]= array($compl_path.$nom_pere,$desc_pere);
+						if(sizeof($desc_pere) >1)
+						{
+							$this ->fetch_prod_arbo($desc_pere,$nom_pere."->");
+						}
+			}
+	}	
+	/**
+   * reconstruit l'arborescence des catégorie sous la forme d'un tableau
+   * 
+   */
+function get_arbo_each_prod()
+{
+		if(is_array($this -> sousprods))
+		{
+			foreach($this -> sousprods as $nom_pere => $desc_pere)
+			{
+				if(sizeof($desc_pere) >1)
+					$this ->fetch_prod_arbo($desc_pere);
+					
+			}
+			sort($this->res);
+		}
+		return $this->res;
+}
+	
+/**
+   * Retourne le pere 
+   */
+  function get_pere()
+  {
+   
+	$sql  = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id FROM ";
+	$sql  .= MAIN_DB_PREFIX."product_association as pa,";
+	$sql  .= MAIN_DB_PREFIX."product as p";
+	$sql  .= " where p.rowid=pa.fk_product_pere and p.rowid = '".$this->id."'";
+    $res = $this->db->query ($sql);
+    if ($res)
+      {
+	$prods = array ();
+	while ($record = $this->db->fetch_array ($res))
+	 {
+			$prods[$record['label']] = array(0=>$record['id']);
+	 }
+		return $prods;
+      }
+    else
+      {
+	dolibarr_print_error ($this->db);
+	return -1;
+      }
+  }
 
+/**
+   * Retourne les fils de la catégorie structurés pour l'arbo
+   */
+  function get_fils_arbo ($id_pere)
+  {
+	$sql  = "SELECT p.rowid, p.label as label,pa.fk_product_fils as id FROM ";
+	$sql .= MAIN_DB_PREFIX."product as p,".MAIN_DB_PREFIX."product_association as pa";
+    $sql .= " WHERE p.rowid = pa.fk_product_fils and pa.fk_product_pere = '".$id_pere."'";
+    $res  = $this->db->query ($sql);
+
+    if ($res)
+     {
+			$prods = array();
+			while ($rec = $this->db->fetch_array ($res))
+			 {
+					$prods[$rec['label']]= array(0=>$rec['id']);
+					foreach($this -> get_fils_arbo($rec['id']) as $kf=>$vf)
+							$prods[$rec['label']][$kf] = $vf;
+			 }
+			 return $prods;
+      }
+    else
+    {
+				dolibarr_print_error ($this->db);
+				return -1;
+     }
+  }
+/**
+   * compose l'arborescence des sousproduits, id et nom
+   * sous la forme d'un tableau
+   */
+  function get_sousproduits_arbo ()
+  {
+		
+		$peres = $this -> get_pere();
+		foreach($peres as $k=>$v)
+		{
+			foreach($this -> get_fils_arbo($v[0]) as $kf=>$vf)
+				$peres[$k][$kf] = $vf;
+		}
+		// on concatène tout ça
+		foreach($peres as $k=>$v)
+		{
+			$this -> sousprods[$k]=$v;
+		}
+		
+		
+		
+		
+
+		
+  }
 	/**
 	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
 	 *    \param      mode          0=libellé long, 1=libellé court
