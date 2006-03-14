@@ -101,7 +101,7 @@ class Categorie
    */
   function create()
   {
-    if ($this->already_exists ($this->label))
+    if ($this->already_exists ())
     {
 	     $this->error="Cette catégorie existe déjà au même endroit";
 		 return -1;
@@ -632,7 +632,7 @@ function get_arbo_each_cate()
     $sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
     $sql.= " WHERE c.label = '".$this -> label."'";
     $sql.= " AND c.rowid = ca.fk_categorie_fille";
-    $sql.= " AND ca.fk_categorie_mere = '".$this -> catmere."'";
+    $sql.= " AND ca.fk_categorie_mere = '".$this -> id_mere."'";
 
     $res  = $this->db->query ($sql);
     $res  = $this->db->fetch_array ($res);
