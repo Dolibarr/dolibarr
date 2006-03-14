@@ -332,7 +332,7 @@ if ($_POST['action'] == 'setremise' && $user->rights->facture->creer)
 	$result = $fac->set_remise($user, $_POST['remise']);
 }
 
-if ($_POST['action'] == 'addligne' && $user->rights->facture->creer)
+if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') && $user->rights->facture->creer)
 {
 	if ($_POST['qty'] && ( $_POST['desc'] || $_POST['idprod']))
 	{
@@ -340,13 +340,29 @@ if ($_POST['action'] == 'addligne' && $user->rights->facture->creer)
 		$fac->fetch($_POST['facid']);
 		$datestart='';
 		$dateend='';
-		if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
+		// Si ajout champ produit libre
+		if ($_POST['action'] == 'addligne')
 		{
-			$datestart=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
+			if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
+			{
+				$datestart=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
+			}
+			if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
+			{
+				$dateend=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
+			}
 		}
-		if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
+		// Si ajout champ produit prédéfini
+		if ($_POST['action'] == 'addligne_predef')
 		{
-			$dateend=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
+			if ($_POST['date_start_predefyear'] && $_POST['date_start_predefmonth'] && $_POST['date_start_predefday'])
+			{
+				$datestart=$_POST['date_start_predefyear'].'-'.$_POST['date_start_predefmonth'].'-'.$_POST['date_start_predefday'];
+			}
+			if ($_POST['date_end_predefyear'] && $_POST['date_end_predefmonth'] && $_POST['date_end_predefday'])
+			{
+				$dateend=$_POST['date_end_predefyear'].'-'.$_POST['date_end_predefmonth'].'-'.$_POST['date_end_predefday'];
+			}
 		}
 		$result = $fac->addline(
 			$_POST['facid'],
@@ -1626,7 +1642,7 @@ else
                 {
     				print '<form name="addligne_predef" action="'.$_SERVER['PHP_SELF'].'" method="post">';
     				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-    				print '<input type="hidden" name="action" value="addligne">';
+    				print '<input type="hidden" name="action" value="addligne_predef">';
     
                     $var=! $var;
     				print '<tr '.$bc[$var].'>';
@@ -1647,9 +1663,9 @@ else
     				{
     					print '<tr '.$bc[$var].'>';
     					print '<td colspan="5">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-    					print $html->select_date('','date_start',0,0,1,"addligne_predef");
+    					print $html->select_date('','date_start_predef',0,0,1,"addligne_predef");
     					print ' '.$langs->trans('to').' ';
-    					print $html->select_date('','date_end',0,0,1,"addligne_predef");
+    					print $html->select_date('','date_end_predef',0,0,1,"addligne_predef");
     					print '</td>';
     					print '</tr>';
     				}
