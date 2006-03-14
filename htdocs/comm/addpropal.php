@@ -107,34 +107,36 @@ if ($_GET["action"] == 'create')
     print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
     print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
 
-	  // date de livraison
-		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
-		print '<td>';
-		if(DATE_LIVRAISON_WEEK_DELAY != "")
-		{
-			$tmpdte = time() + ((7*DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-			$syear = date("Y", $tmpdte);
-            $smonth = date("m", $tmpdte);
-            $sday = date("d", $tmpdte);
-			$form->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
-		}
-		else
-			$form->select_date('','liv_','','','',"addprop");
-		print '</td></tr>';
+	// Date de livraison
+	print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
+	print '<td>';
+	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "")
+	{
+		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+		$syear = date("Y", $tmpdte);
+		$smonth = date("m", $tmpdte);
+		$sday = date("d", $tmpdte);
+		$form->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
+	}
+	else
+	{
+		$form->select_date(-1,'liv_','','','',"addprop");
+	}
+	print '</td></tr>';
   
-	  // Conditions de réglement
-	  print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
-	  $form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
-	  print '</td></tr>';
-
-	  // Mode de réglement
-	  print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	  $form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
-	  print '</td></tr>';
+	// Conditions de réglement
+	print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
+	$form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
+	print '</td></tr>';
+	
+	// Mode de réglement
+	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+	$form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+	print '</td></tr>';
 
     /*
-    * Destinataire de la propale
-    */
+     * Destinataire de la propale
+     */
     print "<tr><td>".$langs->trans("Contact")."</td><td>\n";
     $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$soc->id;
