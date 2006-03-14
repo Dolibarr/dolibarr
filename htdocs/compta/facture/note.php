@@ -107,7 +107,7 @@ if ($_GET["facid"])
     if ($conf->use_preview_tabs) $hselected++;
     if ($fac->mode_reglement_code == 'PRE') $hselected++;
 
-    dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
+    dolibarr_fiche_head($head, $hselected, $langs->trans("InvoiceCustomer"));
 
 
     print '<table class="border" width="100%">';

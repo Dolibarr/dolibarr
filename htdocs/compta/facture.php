@@ -83,7 +83,7 @@ if ($_POST['action'] == 'setmode')
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
 	$result=$facture->mode_reglement($_POST['mode_reglement_id']);
-	if ($result < 0) dolibarr_print_error($db,$facture->error);
+	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
 }
 
 if ($_POST['action'] == 'setconditions')
@@ -91,7 +91,7 @@ if ($_POST['action'] == 'setconditions')
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
 	$result=$facture->cond_reglement($_POST['cond_reglement_id']);
-	if ($result < 0) dolibarr_print_error($db,$facture->error);
+	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
 }
 
 if ($_POST['action'] == 'classin')
@@ -204,7 +204,7 @@ if ($_POST['action'] == 'add')
 				}
 				else
 				{
-					dolibarr_print_error($db,$facture->error);
+					dolibarr_print_error($facture->db,$facture->error);
 				}
 			}
 
@@ -241,7 +241,7 @@ if ($_POST['action'] == 'add')
 				}
 				else
 				{
-					dolibarr_print_error($db,$facture->error);
+					dolibarr_print_error($facture->db,$facture->error);
 				}
 			}
 
@@ -289,7 +289,7 @@ if ($_POST['action'] == 'add')
 				}
 				else
 				{
-					dolibarr_print_error($db,$facture->error);
+					dolibarr_print_error($facture->db,$facture->error);
 				}
 			}
 
@@ -1166,7 +1166,7 @@ else
 
 			$head = facture_prepare_head($fac);
  
-			dolibarr_fiche_head($head, 0, $langs->trans('Bill').' : '.$fac->ref);
+			dolibarr_fiche_head($head, 0, $langs->trans('InvoiceCustomer'));
 
 			/*
 			 * Confirmation de la suppression de la facture
@@ -1260,41 +1260,22 @@ else
 			}
 			print '</td></tr>';
 
-			// Projet
-			print '<tr>';
-			if ($conf->projet->enabled)
+			// Remise globale
+			print '<tr><td>'.$langs->trans('GlobalDiscount').'</td>';
+			if ($fac->brouillon == 1 && $user->rights->facture->creer)
 			{
-				$langs->load('projects');
-				print '<td>';
-				
-				print '<table class="nobordernopadding" width="100%"><tr><td>';
-				print $langs->trans('Project');
-				print '</td>';
-				if ($_GET['action'] != 'classer')
-				{
-				    print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">';
-				    print img_edit($langs->trans('SetProject'),1);
-				    print '</a></td>';
-				}
-				print '</tr></table>';
-				
-				print '</td><td colspan="3">';
-				if ($_GET['action'] == 'classer')
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->fk_soc,$fac->projetid,'projetid');
-				}
-				else
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->fk_soc,$fac->projetid,'none');
-				}
-				print '</td>';
+				print '<form action="facture.php?facid='.$fac->id.'" method="post">';
+				print '<input type="hidden" name="action" value="setremise">';
+				print '<td colspan="3"><input type="text" name="remise" size="1" value="'.$fac->remise_percent.'">% ';
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
+				print '</form>';
 			}
 			else
 			{
-				print '<td>&nbsp;</td><td colspan="3">&nbsp;</td>';
+				print '<td colspan="3">'.$fac->remise_percent.'%</td>';
 			}
 
-            $nbrows=7;
+            $nbrows=5;
             if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 			print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
@@ -1351,23 +1332,6 @@ else
 
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Author').'</td><td colspan="3">'.$author->fullname.'</td></tr>';
-
-			print '<tr><td>'.$langs->trans('GlobalDiscount').'</td>';
-			if ($fac->brouillon == 1 && $user->rights->facture->creer)
-			{
-				print '<form action="facture.php?facid='.$fac->id.'" method="post">';
-				print '<input type="hidden" name="action" value="setremise">';
-				print '<td colspan="3"><input type="text" name="remise" size="1" value="'.$fac->remise_percent.'">% ';
-				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
-				print '</form>';
-			}
-			else
-			{
-				print '<td colspan="3">'.$fac->remise_percent.'%</td>';
-			}
-			print '</tr>';
-
             /*
               \todo
               L'info "Reference commande client" est une carac de la commande et non de la facture.
@@ -1404,18 +1368,37 @@ else
 			// Statut
 			print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
 
-			/*
-			if ($fac->note_public)
+			// Projet
+			if ($conf->projet->enabled)
 			{
-				print '<tr><td valign="top">'.$langs->trans('NotePublic').'</td>';
-				print '<td colspan="3">'.nl2br(dolibarr_trunc($fac->note_public,40)).'</td></tr>';
+				print '<tr>';
+				$langs->load('projects');
+				print '<td>';
+				
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans('Project');
+				print '</td>';
+				if ($_GET['action'] != 'classer')
+				{
+				    print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">';
+				    print img_edit($langs->trans('SetProject'),1);
+				    print '</a></td>';
+				}
+				print '</tr></table>';
+				
+				print '</td><td colspan="3">';
+				if ($_GET['action'] == 'classer')
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->fk_soc,$fac->projetid,'projetid');
+				}
+				else
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->fk_soc,$fac->projetid,'none');
+				}
+				print '</td>';
+				print '</tr>';
 			}
-			else
-			{
-				print '<tr><td colspan="4">&nbsp;</td></tr>';
-			}
-			*/
-			
+						
 			print '</table><br>';
 
 			/*

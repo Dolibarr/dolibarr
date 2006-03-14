@@ -75,7 +75,7 @@ if ($_GET["facid"] > 0)
         
 		$head = facture_prepare_head($fac);
 		$hselected = $conf->use_preview_tabs ? 2 : false;
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
+        dolibarr_fiche_head($head, $hselected, $langs->trans("InvoiceCustomer"));
 
 
         /*
@@ -84,7 +84,10 @@ if ($_GET["facid"] > 0)
         print '<table class="border" width="100%">';
 		$rowspan=3;
         
-        // Societe
+        // Reference
+        print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+
+		// Societe
         print '<tr><td>'.$langs->trans("Company").'</td>';
         print '<td colspan="5">';
         print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
@@ -105,31 +108,24 @@ if ($_GET["facid"] > 0)
         $html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->mode_reglement_id,"none");
         print '</td></tr>';
 
-        print '<tr>';
-        if ($conf->projet->enabled)
-        {
-            $langs->load("projects");
-            print '<td>'.$langs->trans("Project").'</td><td colspan="3">';
-            if ($fac->projetid > 0)
-            {
-                $projet = New Project($db);
-                $projet->fetch($fac->projetid);
-                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->projetid.'">'.$projet->title.'</a>';
-            }
-            else
-            {
-                print '&nbsp;';
-            }
-        }
-        else
-        {
-            print '<td>&nbsp;</td><td colspan="3">';
-        }
-		print '</td>';
+		// Remise globale
+		print '<tr><td>'.$langs->trans('GlobalDiscount').'</td>';
+		if ($fac->brouillon == 1 && $user->rights->facture->creer)
+		{
+			print '<form action="facture.php?facid='.$fac->id.'" method="post">';
+			print '<input type="hidden" name="action" value="setremise">';
+			print '<td colspan="3"><input type="text" name="remise" size="1" value="'.$fac->remise_percent.'">% ';
+			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
+			print '</form>';
+		}
+		else
+		{
+			print '<td colspan="3">'.$fac->remise_percent.'%</td>';
+		}
 
-		// partie Droite sur $rowspan lignes
-		print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
-
+        $nbrows=5;
+        if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
+		print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
         /*
          * Documents
@@ -214,14 +210,36 @@ if ($_GET["facid"] > 0)
         }
         print "</td></tr>";
 
-
-        print '<tr><td nowrap>'.$langs->trans("GlobalDiscount").'</td>';
-        print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
-        print '<td>%</td></tr>';
-
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
         print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
         print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_tva).'</td>';
+		print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_ttc).'</td>';
+		print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+
+		// Statut
+		print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
+
+		// Projet
+        if ($conf->projet->enabled)
+        {
+	        print '<tr>';
+            $langs->load("projects");
+            print '<td>'.$langs->trans("Project").'</td><td colspan="3">';
+            if ($fac->projetid > 0)
+            {
+                $projet = New Project($db);
+                $projet->fetch($fac->projetid);
+                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->projetid.'">'.$projet->title.'</a>';
+            }
+            else
+            {
+                print '&nbsp;';
+            }
+			print '</td></tr>';
+        }
 
         print '</table>';
 

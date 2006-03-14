@@ -225,7 +225,7 @@ if ($id > 0)
 
 			$head = facture_prepare_head($facture);
 
-			dolibarr_fiche_head($head, 1, $langs->trans('Bill').' : '.$facture->ref);
+			dolibarr_fiche_head($head, 1, $langs->trans('InvoiceCustomer'));
 
 		/*
 		 *   Facture synthese pour rappel
@@ -241,7 +241,7 @@ if ($id > 0)
 		if ( is_null($facture->client) )
 			$facture->fetch_client();
 			
-		print "<tr><td>".$langs->trans("Customer")."</td>";
+		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">';
 		print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$facture->client->id.'">'.$facture->client->nom.'</a></b></td></tr>';
 		print "</table>";

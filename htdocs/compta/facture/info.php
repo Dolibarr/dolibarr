@@ -49,7 +49,7 @@ $head = facture_prepare_head($fac);
 $hselected = 3;
 if ($conf->use_preview_tabs) $hselected++;
 if ($fac->mode_reglement_code == 'PRE') $hselected++;
-dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
+dolibarr_fiche_head($head, $hselected, $langs->trans("InvoiceCustomer"));
 
 
 print '<table width="100%"><tr><td>';
