@@ -37,7 +37,7 @@ if (!$user->rights->categorie->lire) accessforbidden();
  */
 
 llxHeader("","",$langs->trans("Categories"));
-
+$html = new Form($db);
 print_fiche_titre($langs->trans("CategoriesArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -56,18 +56,16 @@ print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
 print '<tr '.$bc[0].'><td>';
 print $langs->trans("Name").':</td><td><input class="flat" type="text" size="20" name="catname" value="' . $_POST['catname'] . '"/></td><td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
+/*
+// faire une rech dans une sous catégorie uniquement
 print '<tr '.$bc[0].'><td>';
-print $langs->trans("SubCatOf").':</td><td><select class="flat" name="subcatof" />';
-print '<option value="-1">'.$langs->trans("Choose").'</option>';
+print $langs->trans("SubCatOf").':</td><td>';
 
-$cats = $c->get_all_meres ();
+print $html->select_all_categories('','subcatof');
+print '</td>';
+print '<td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
+*/
 
-foreach ($cats as $cat)
-{
-  print "<option value='".$cat->id."'>".htmlentities ($cat->label, ENT_QUOTES)."</option>\n";
-}
-
-print '</select></td><td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
 print '</table></form>';
 
 print '</td><td valign="top" width="70%">';

@@ -125,7 +125,9 @@ if ($user->rights->produit->creer)
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 		print '<textarea name="description" rows="6" cols="50">';
 		print $categorie->description.'</textarea></td></tr>';
+		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
 		print $html->select_all_categories();
+		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';
 		print '</td></tr></form>';

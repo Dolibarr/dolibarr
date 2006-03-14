@@ -86,8 +86,9 @@ print '<tr><td valign="top" width="30%">';
 	</tr>
 	
 	
-	<?php print $langs->trans("In"); ?>
+	<tr><td><?php print $langs->trans ("AddIn"); ?></td><td>
 	<?php print $html->select_all_categories($categorie->id_mere);?>
+	</td></tr>
 		
 	
 	<tr>
