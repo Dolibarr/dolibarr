@@ -467,6 +467,48 @@ class FactureFournisseur
 
 
 	/**
+	 *      \brief     Charge les informations d'ordre info dans l'objet facture
+	 *      \param     id       	Id de la facture a charger
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec';
+		$sql .= ', fk_user_author, fk_user_valid';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
+		$sql .= ' WHERE c.rowid = '.$id;
+
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db, $obj->fk_user_author);
+					$cuser->fetch();
+					$this->user_creation     = $cuser;
+				}
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db, $obj->fk_user_valid);
+					$vuser->fetch();
+					$this->user_validation = $vuser;
+				}
+				$this->date_creation     = $obj->datec;
+				//$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore gérée
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+	
+	
+	/**
 	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
 	 *    \return     string      Libellé
 	 */

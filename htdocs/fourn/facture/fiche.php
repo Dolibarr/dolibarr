@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
  *
@@ -24,7 +24,7 @@
 
 /**
 	\file       htdocs/fourn/facture/fiche.php
-	\ingroup    facture
+	\ingroup    facture, fournisseur
 	\brief      Page des la fiche facture fournisseur
 	\version    $Revision$
 */
@@ -82,7 +82,7 @@ if($_GET['action'] == 'deletepaiement')
 
 if ($_POST['action'] == 'modif_libelle')
 {
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set libelle = \''.$form_libelle.'\' WHERE rowid = '.$_GET['facid'];
+	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set libelle = \''.addslashes($form_libelle).'\' WHERE rowid = '.$_GET['facid'];
 	$result = $db->query( $sql);
 }
 
@@ -93,8 +93,8 @@ if ($_POST['action'] == 'update')
 	$date_echeance = $db->idate(mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']));
 
 	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set ';
-	$sql .= " facnumber='".trim($_POST['facnumber'])."'";
-	$sql .= ", libelle='".trim($_POST['libelle'])."'";
+	$sql .= " facnumber='".addslashes(trim($_POST['facnumber']))."'";
+	$sql .= ", libelle='".addslashes(trim($_POST['libelle']))."'";
 	$sql .= ", note='".$_POST['note']."'";
 	$sql .= ", datef = '$datefacture'";
 	$sql .= ", date_lim_reglement = '$date_echeance'";
@@ -318,6 +318,7 @@ else
 			$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$fac->socidp;
 			$addons[0][1] = $societe->nom;
 		}
+
 		llxHeader('','', $addons);
 
 		if ($mesg) { print '<br>'.$mesg.'<br>'; }
@@ -325,7 +326,7 @@ else
 		if ($_GET['action'] == 'edit')
 		{
 
-			print_titre($langs->trans('Bill').': '.$fac->ref);
+			print_titre($langs->trans('SupplierInvoice'));
 
 			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
 			print '<input type="hidden" name="action" value="update">';
@@ -440,7 +441,11 @@ else
 			$hselected = $h;
 			$h++;
 
-			$titre=$langs->trans('SupplierBill').': '.$fac->ref;
+			$head[$h][0] = 'info.php?facid='.$fac->id;
+			$head[$h][1] = $langs->trans('Info');
+			$h++;
+
+			$titre=$langs->trans('SupplierInvoice');
 			dolibarr_fiche_head($head, $hselected, $titre);
 
 
