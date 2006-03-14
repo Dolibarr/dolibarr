@@ -357,7 +357,7 @@ $conf->use_javascript=1;
 if (isset($conf->global->MAIN_DISABLE_JAVASCRIPT)) $conf->use_javascript=! $conf->global->MAIN_DISABLE_JAVASCRIPT;
 
 // conf->use_popup_calendar
-$conf->use_popup_calendar="eldy";
+$conf->use_popup_calendar="";	// Pas de date popup par defaut
 if (isset($conf->global->MAIN_POPUP_CALENDAR)) $conf->use_popup_calendar=$conf->global->MAIN_POPUP_CALENDAR;
 
 // conf->monnaie
