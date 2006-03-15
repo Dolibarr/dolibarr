@@ -111,7 +111,7 @@ class Categorie
     }
 	
     $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description) ";
-    $sql .= "VALUES ('".str_replace("'","''",$this->label)."', '".$this->description."')";
+    $sql .= "VALUES ('".str_replace("'","''",$this->label)."', '".str_replace("'","''",$this->description)."')";
 		
 
     $res  = $this->db->query ($sql);
@@ -172,10 +172,10 @@ class Categorie
 		}
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-    $sql.= " SET label = '".trim($this->label)."'";
+    $sql.= " SET label = '".trim(str_replace("'","''",$this->label))."'";
     
     if (strlen (trim($this->description)) > 0)
-	     $sql .= ", description = '".trim($this->description)."'";
+	     $sql .= ", description = '".trim(str_replace("'","''",$this->description))."'";
     $sql .= " WHERE rowid = ".$this->id;
 
     if ($this->db->query($sql))
