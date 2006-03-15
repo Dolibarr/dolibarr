@@ -946,14 +946,16 @@ class Form
      *    \brief      Retourne la ou les listes déroulante des catégories en fonction du nombre choisi
      *    \param      selected    nombre de catégorie à créer
      */
-    function select_all_categories($selected='')
+    function select_all_categories($selected='',$select_name="")
     {
         global $langs;
         $langs->load("categorie");
+		if($select_name=="")
+			$select_name="catMere";
         $cat = new Categorie ($this -> db);
 		$cat->get_categories_arbo();
 		$cate_arbo = $cat->get_arbo_each_cate();
-		print '<select name="catMere">'; //creation des categories meres
+		print '<select name="'.$select_name.'">'; //creation des categories meres
 		print '<option value="-1" id="choix">'.$langs->trans("NoneCategory").'</option>\n';
 		
 		
