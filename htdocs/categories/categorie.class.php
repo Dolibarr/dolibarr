@@ -126,7 +126,7 @@ class Categorie
 			{
 				if($this->add_fille() < 0)
 				{
-					 $this->error="La catégorie n'ap pas pu être associé a sa catégorie parente";
+					 $this->error=$langs->trans("ImpossibleAssociateCategory");
 					return -1;
 				}
 					
