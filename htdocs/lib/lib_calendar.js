@@ -91,16 +91,16 @@ calDateFormat    = "dd/mm/yyyy";
 
 
 // CALENDAR COLORS
-topBackground    = "white";         // BG COLOR OF THE TOP FRAME
+topBackground    = "#dee7ec";         // BG COLOR OF THE TOP FRAME
 bottomBackground = "white";         // BG COLOR OF THE BOTTOM FRAME
-tableBGColor     = "black";         // BG COLOR OF THE BOTTOM FRAME'S TABLE
+tableBGColor     = "#7699A9";         // BG COLOR OF THE BOTTOM FRAME'S TABLE
 cellColor        = "lightgrey";     // TABLE CELL BG COLOR OF THE DATE CELLS IN THE BOTTOM FRAME
 headingCellColor = "white";         // TABLE CELL BG COLOR OF THE WEEKDAY ABBREVIATIONS
 headingTextColor = "black";         // TEXT COLOR OF THE WEEKDAY ABBREVIATIONS
-dateColor        = "blue";          // TEXT COLOR OF THE LISTED DATES (1-28+)
+dateColor        = "black";          // TEXT COLOR OF THE LISTED DATES (1-28+)
 focusColor       = "#ff0000";       // TEXT COLOR OF THE SELECTED DATE (OR CURRENT DATE)
 hoverColor       = "darkred";       // TEXT COLOR OF A LINK WHEN YOU HOVER OVER IT
-fontStyle        = "12pt arial, helvetica";           // TEXT STYLE FOR DATES
+fontStyle        = "10pt arial,tahoma,verdana,helvetica;";           // TEXT STYLE FOR DATES
 headingFontStyle = "bold 12pt arial, helvetica";      // TEXT STYLE FOR WEEKDAY ABBREVIATIONS
 
 // FORMATTING PREFERENCES
@@ -201,7 +201,7 @@ function showCalendar(dateField) {
     // USE THE JAVASCRIPT-GENERATED DOCUMENTS (calDocTop, calDocBottom) IN THE FRAMESET
     calDocFrameset = 
         "<HTML><HEAD><TITLE>JavaScript Calendar</TITLE></HEAD>\n" +
-        "<FRAMESET ROWS='70,*' FRAMEBORDER='0'>\n" +
+        "<FRAMESET ROWS='50,*' FRAMEBORDER='0'>\n" +
         "  <FRAME NAME='topCalFrame' SRC='javascript:parent.opener.calDocTop' SCROLLING='no'>\n" +
         "  <FRAME NAME='bottomCalFrame' SRC='javascript:parent.opener.calDocBottom' SCROLLING='no'>\n" +
         "</FRAMESET>\n";
@@ -209,7 +209,7 @@ function showCalendar(dateField) {
     // DISPLAY THE CALENDAR IN A NEW POPUP WINDOW
 	l= eval(screen.width / 2);
 	h=eval(screen.height / 2);
-    top.newWin = window.open("javascript:parent.opener.calDocFrameset", "calWin", 'directories=no,menubar=no,status=no,location=no,scrollbars=yes,resizable=yes,height=300,width=300,left='+l+'px,top='+h+'px');
+    top.newWin = window.open("javascript:parent.opener.calDocFrameset", "calWin", 'directories=no,menubar=no,status=no,location=no,scrollbars=yes,resizable=yes,height=234,width=194,left='+l+'px,top='+h+'px');
     top.newWin.focus();
 	
 }
@@ -230,12 +230,21 @@ function buildTopCalFrame() {
     var calDoc =
         "<HTML>" +
         "<HEAD>" +
+		"<style><!--" +
+		"body {font-size: 12px;font-family: arial,tahoma,verdana,helvetica;margin-top: 0;margin-bottom: 0;margin-right: 0;margin-left: 0;}" +
+		"a:link    { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }" +
+		"a:visited { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }" +
+		"a:active  { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }" +
+		"a:hover   { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }" +
+		"input { font: 12px helvetica, verdana, arial, sans-serif; background: #FDFDFD;border: 1px solid #ACBCBB;padding: 0px 0px 0px 0px;margin: 0px 0px 0px 0px;}}" +
+		"//--></style>" +
         "</HEAD>" +
         "<BODY BGCOLOR='" + topBackground + "'>" +
-        "<FORM NAME='calControl' onSubmit='return false;'>" +
+        
         "<CENTER>" +
         "<TABLE CELLPADDING=0 CELLSPACING=1 BORDER=0>" +
         "<TR><TD COLSPAN=7>" +
+		"<FORM NAME='calControl' onSubmit='return false;'>" +
         "<CENTER>" +
         getMonthSelect() +
         "<INPUT NAME='year' VALUE='" + calDate.getFullYear() + "'TYPE=TEXT SIZE=4 MAXLENGTH=4 onChange='parent.opener.setYear()'>" +
@@ -250,11 +259,12 @@ function buildTopCalFrame() {
         "TYPE=BUTTON NAME='Today' VALUE=\"" + today_trans+"\" onClick='parent.opener.setToday()'><INPUT " +
         "TYPE=BUTTON NAME='nextMonth' VALUE=' > '   onClick='parent.opener.setNextMonth()'><INPUT " +
         "TYPE=BUTTON NAME='nextYear' VALUE='>>'    onClick='parent.opener.setNextYear()'>" +
+		      "</FORM>" +
         "</TD>" +
         "</TR>" +
         "</TABLE>" +
         "</CENTER>" +
-        "</FORM>" +
+  
         "</BODY>" +
         "</HTML>";
 
@@ -674,7 +684,8 @@ function buildCalParts() {
         // STYLESHEET DEFINES APPEARANCE OF CALENDAR
         "<STYLE type='text/css'>" +
         "<!--" +
-        "TD.heading { text-decoration: none; color:" + headingTextColor + "; font: " + headingFontStyle + "; }" +
+        "body {font-family: arial,tahoma,verdana,helvetica;margin-top: 0;margin-bottom: 0;margin-right: 0;margin-left: 0;}" +
+		"TD.heading { text-decoration: none; color:" + headingTextColor + "; font: " + headingFontStyle + "; }" +
         "A.focusDay:link { color: " + focusColor + "; text-decoration: none; font: " + fontStyle + "; }" +
         "A.focusDay:hover { color: " + focusColor + "; text-decoration: none; font: " + fontStyle + "; }" +
         "A.weekday:link { color: " + dateColor + "; text-decoration: none; font: " + fontStyle + "; }" +
@@ -682,7 +693,7 @@ function buildCalParts() {
         "-->" +
         "</STYLE>" +
         "</HEAD>" +
-        "<BODY BGCOLOR='" + bottomBackground + "'" +
+        "<BODY BGCOLOR='" + bottomBackground + "'>" +
         "<CENTER>";
 
         // NAVIGATOR NEEDS A TABLE CONTAINER TO DISPLAY THE TABLE OUTLINES PROPERLY
