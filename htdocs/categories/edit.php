@@ -38,10 +38,10 @@ $html = new Form($db);
 if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 {
 
-	$categorie->label          = stripslashes($_POST["nom"]);
-	$categorie->description    = stripslashes($_POST["description"]);
+	$categorie->label          = $_POST["nom"];
+	$categorie->description    = $_POST["description"];
 	if($_POST['catMere'] != "-1")
-		$categorie->id_mere = stripslashes($_POST['catMere']);
+		$categorie->id_mere = $_POST['catMere'];
 	
 
 	if (!$categorie->label || !$categorie->description)
@@ -72,9 +72,9 @@ print '<tr><td valign="top" width="30%">';
 	<tr>
 		<td><?php print $langs->trans("Label"); ?>&nbsp;:</td>
 
-		<td><input type='text' size='25' id='nom' name ='nom' value='<?php 
+		<td><input type='text' size='25' id='nom' name ='nom' value="<?php 
 				print $categorie->label; 
-			?>' />
+			?>" />
 	</tr>
 	<tr>
 		<td><?php print $langs->trans("Description"); ?>&nbsp;:</td>

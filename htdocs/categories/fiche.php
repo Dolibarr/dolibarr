@@ -51,16 +51,16 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 {
 	$categorie = new Categorie($db);
 
-	$categorie->label          = stripslashes($_POST["nom"]);
-	$categorie->description    = stripslashes($_POST["description"]);
+	$categorie->label          = $_POST["nom"];
+	$categorie->description    = $_POST["description"];
 	if($_POST['catMere'] != "-1")
-		$categorie->id_mere = stripslashes($_POST['catMere']);
+		$categorie->id_mere = $_POST['catMere'];
 	
 
 	if (!$categorie->label || !$categorie->description)
 	{
 		$_GET["action"] = 'create';
-		$categorie->error = "Le libellé ou la description n'a pas été renseigné";
+		$categorie->error = $langs->trans(ErrForgotField);
 	}
 	if ($categorie->error =="")
 	{
@@ -68,6 +68,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		{
 			$_GET["action"] = 'confirmed';
 			$_POST["addcat"] = '';
+			
 		}
 	}
 	/*
@@ -80,19 +81,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 
                 print '<table border="0" width="100%">';
                 print '<tr><td valign="top" width="30%">';
-
-                if ($_error == 3)
-                {
-                        print '<p>'.$langs->trans("ImpossibleAddCat").' '.$categorie->label.'</p>';
-                }
-                else
-                {
-                        print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
-                        if ($_error == 2)
-                        {
-                                print '<p>'.$langs->trans("TheCategorie").' '.$mere->label.' ('.$res.').</p>';
-                        }
-                }
+                print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
                 print '</td></tr></table>';
         }
 }
