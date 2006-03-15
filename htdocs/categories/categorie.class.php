@@ -101,17 +101,20 @@ class Categorie
    */
   function create()
   {
-    if ($this->already_exists ())
+		global $langs;
+		$langs->load('categories');
+	if ($this->already_exists ())
     {
-	     $this->error="Cette catégorie existe déjà au même endroit";
+		 $this->error=$langs->trans("ImpossibleAddCat");
+		 $this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
 		 return -1;
     }
 	
     $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description) ";
-    $sql .= "VALUES ('".$this->label."', '".$this->description."')";
+    $sql .= "VALUES ('".str_replace("'","''",$this->label)."', '".$this->description."')";
 		
-    $res  = $this->db->query ($sql);
 
+    $res  = $this->db->query ($sql);
     if ($res)
     {
 	     $id = $this->db->last_insert_id (MAIN_DB_PREFIX."categorie");
@@ -630,14 +633,28 @@ function get_arbo_each_cate()
   {    
     $sql = "SELECT count(c.rowid)";
     $sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
-    $sql.= " WHERE c.label = '".$this -> label."'";
-    $sql.= " AND c.rowid = ca.fk_categorie_fille";
-    $sql.= " AND ca.fk_categorie_mere = '".$this -> id_mere."'";
+    $sql.= " WHERE c.label = '".str_replace("'","''",$this -> label)."'";
+	if($this -> id_mere != "")
+	{
+    	$sql.= " AND c.rowid = ca.fk_categorie_fille";
+    	$sql.= " AND ca.fk_categorie_mere = '".$this -> id_mere."'";
+	}
 
     $res  = $this->db->query ($sql);
-    $res  = $this->db->fetch_array ($res);
-
-    return ($res[0] > 0);
+	if($res)
+	{
+    	$res  = $this->db->fetch_array ($res);
+		if($res[0] > 0)
+			return true;
+		else
+			return false;
+	}
+	else
+    {
+	      dolibarr_print_error ($this->db);
+	      return -1;
+    }
+    
   }
 
   /**
