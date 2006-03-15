@@ -1306,7 +1306,7 @@ class Product
     }
 /**
    * fonction récursive uniquement utilisée par get_arbo_each_cate
-   * Recompose l'arborescence des catégories
+   * Recompose l'arborescence des sousproduits
    */
   function fetch_prod_arbo($prod,$compl_path="")
 {
@@ -1316,12 +1316,12 @@ class Product
 			{
 						// on est dans une sous-catégorie
 						if(is_array($desc_pere))
-							$this->res[]= array($compl_path.$nom_pere,$desc_pere[0]);
-						else if($nom_pere != "0")
-							$this->res[]= array($compl_path.$nom_pere,$desc_pere);
+							$this->res[]= array($compl_path.stripslashes($nom_pere)." (".$desc_pere[1].")",$desc_pere[0]);
+						else if($nom_pere != "0" && $nom_pere != "1")
+							$this->res[]= array($compl_path.stripslashes($nom_pere),$desc_pere);
 						if(sizeof($desc_pere) >1)
 						{
-							$this ->fetch_prod_arbo($desc_pere,$nom_pere."->");
+							$this ->fetch_prod_arbo($desc_pere,$nom_pere." -> ");
 						}
 			}
 	}	
@@ -1331,6 +1331,7 @@ class Product
    */
 function get_arbo_each_prod()
 {
+		$this->res = array();
 		if(is_array($this -> sousprods))
 		{
 			foreach($this -> sousprods as $nom_pere => $desc_pere)
@@ -1360,7 +1361,7 @@ function get_arbo_each_prod()
 	$prods = array ();
 	while ($record = $this->db->fetch_array ($res))
 	 {
-			$prods[$record['label']] = array(0=>$record['id']);
+			$prods[addslashes($record['label'])] = array(0=>$record['id']);
 	 }
 		return $prods;
       }
@@ -1376,7 +1377,7 @@ function get_arbo_each_prod()
    */
   function get_fils_arbo ($id_pere)
   {
-	$sql  = "SELECT p.rowid, p.label as label,pa.fk_product_fils as id FROM ";
+	$sql  = "SELECT p.rowid, p.label as label,pa.qty as qty,pa.fk_product_fils as id FROM ";
 	$sql .= MAIN_DB_PREFIX."product as p,".MAIN_DB_PREFIX."product_association as pa";
     $sql .= " WHERE p.rowid = pa.fk_product_fils and pa.fk_product_pere = '".$id_pere."'";
     $res  = $this->db->query ($sql);
@@ -1386,7 +1387,7 @@ function get_arbo_each_prod()
 			$prods = array();
 			while ($rec = $this->db->fetch_array ($res))
 			 {
-					$prods[$rec['label']]= array(0=>$rec['id']);
+					$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 					foreach($this -> get_fils_arbo($rec['id']) as $kf=>$vf)
 							$prods[$rec['label']][$kf] = $vf;
 			 }
