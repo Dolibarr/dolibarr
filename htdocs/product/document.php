@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis.houssin@cap-networks.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
@@ -219,6 +219,14 @@ if ($product->id)
 
     // Libelle
     print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
+
+    // Prix
+    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
+
+    // Statut
+    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+	print $product->getLibStatut(2);
+    print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';

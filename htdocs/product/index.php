@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,35 +135,39 @@ if ($result)
       print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastRecordedProducts",$max).'</td></tr>';
     
       $var=True;
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object($result);
-	  
-	  	  //Multilangs
-	  if ($conf->global->PRODUIT_MULTILANGS == 1)
-	  {
-		  $sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-		  $sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
-		  $resultd = $db->query($sql);
-		  if ($resultd)
-		  {
-			$objtp = $db->fetch_object($resultd);
-			if ($objtp->label != '') $objp->label = $objtp->label;
-		  }
-	  }
-	  
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print '<td nowrap="nowrap"><a href="fiche.php?id='.$objp->rowid.'">';
-	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
-	  else print img_object($langs->trans("ShowProduct"),"product");
-	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
-	  print "<td>$objp->label</td>";
-	  print "<td>".$staticproduct->typeprodser[$objp->fk_product_type]."</td>";
-	  print '<td align="center" nowrap="nowrap">'.($objp->envente?$langs->trans("OnSell"):$langs->trans("NotOnSell"))."</td>";
-	  print "</tr>\n";
-	  $i++;
-	}
+
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($result);
+		
+			//Multilangs
+			if ($conf->global->PRODUIT_MULTILANGS == 1)
+			{
+				$sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+				$sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+				$resultd = $db->query($sql);
+				if ($resultd)
+				{
+					$objtp = $db->fetch_object($resultd);
+					if ($objtp->label != '') $objp->label = $objtp->label;
+				}
+			}
+		
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td nowrap="nowrap"><a href="fiche.php?id='.$objp->rowid.'">';
+			if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+			else print img_object($langs->trans("ShowProduct"),"product");
+			print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+			print '<td>'.dolibarr_trunc($objp->label,40).'</td>';
+			print '<td>'.$staticproduct->typeprodser[$objp->fk_product_type]."</td>";
+			print '<td align="left" nowrap="nowrap">';
+			print $staticproduct->LibStatut($objp->envente,2);
+			print "</td>";
+			print "</tr>\n";
+			$i++;
+		}
+		
       $db->free();
 
       print "</table>";

@@ -167,14 +167,26 @@ if ($_GET["id"] || $_GET["ref"])
 		// Libelle
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
+
+        // Prix
+        print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
+
+        // Statut
+        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+		print $product->getLibStatut(2);
+        print '</td></tr>';
+
 		print '</table><br/>';
 
 		// Formulaire ajout dans une categorie
-		print '<table class="border" width="100%">';
 		print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
-		print $html->select_all_categories($categorie->id_mere);
-		print '<tr><td><input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"></td></tr>';
-		print '</form></table><br/>';
+		print '<table class="border" width="100%">';
+		print '<tr><td>';
+		print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'">'. $html->select_all_categories($categorie->id_mere);
+		print '</td></tr>';
+		print '</table>';
+		print '</form>';
+		print '<br/>';
 
 
 		$c = new Categorie($db);
@@ -194,7 +206,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print $langs->trans("ProductIsInCategories");
 			print '<br/>';
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("AllWays").'</td></tr>';
+			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td></tr>';
 
 			foreach ($cats as $cat)
 			{
@@ -204,7 +216,7 @@ if ($_GET["id"] || $_GET["ref"])
 				{
 					$i = !$i;
 					print "<tr ".$bc[$i]."><td>".$way."</td>";
-					print "<td><a href= '".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
+					print "<td>".img_delete($langs->trans("DeleteFromCat"))." <a href= '".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
 
 				}
 

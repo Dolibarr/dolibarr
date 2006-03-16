@@ -219,8 +219,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-        if ($product->envente) print $langs->trans("OnSell");
-        else print $langs->trans("NotOnSell");
+		print $product->getLibStatut(2);
         print '</td></tr>';
 
         print '<tr><td valign="top" width="28%">'.$langs->trans("Referers").'</td>';

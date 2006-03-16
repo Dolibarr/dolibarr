@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -194,8 +194,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-        if ($product->envente) print $langs->trans("OnSell");
-        else print $langs->trans("NotOnSell");
+		print $product->getLibStatut(2);
         print '</td></tr>';
 
         print "</table>\n";

@@ -70,7 +70,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     $product->price          = stripslashes($_POST["price"]);
     $product->tva_tx         = $_POST["tva_tx"];
     $product->type           = $_POST["type"];
-    $product->envente        = $_POST["statut"];
+    $product->status         = $_POST["statut"];
     $product->description    = stripslashes($_POST["desc"]);
     $product->note           = stripslashes($_POST["note"]);
     $product->duration_value = $_POST["duration_value"];
@@ -125,7 +125,7 @@ if ($_POST["action"] == 'update' &&
         $product->tva_tx             = $_POST["tva_tx"];
         $product->description        = stripslashes($_POST["desc"]);
         $product->note               = stripslashes($_POST["note"]);
-        $product->envente            = $_POST["statut"];
+        $product->status             = $_POST["statut"];
         $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
         $product->duration_value     = $_POST["duration_value"];
         $product->duration_unit      = $_POST["duration_unit"];
@@ -163,7 +163,7 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
     if ($product->fetch($_GET["id"]) > 0)
     {
         $product->ref = "Clone ".$product->ref;
-        $product->envente = 0;
+        $product->status = 0;
         $product->id = null;
 
         if ($product->check())
@@ -551,8 +551,7 @@ if ($_GET["id"] || $_GET["ref"])
 			
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td><td>';
-            if ($product->envente) print $langs->trans("OnSell");
-            else print $langs->trans("NotOnSell");
+			print $product->getLibStatut(2);
             print '</td></tr>';
             
             // TVA
@@ -635,7 +634,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</td></tr>';
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
         print '<select class="flat" name="statut">';
-        if ($product->envente)
+        if ($product->status)
         {
             print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
             print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
@@ -719,7 +718,7 @@ if ($_GET["action"] == '')
 print "\n</div><br>\n";
 
 
-if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
+if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 {
     $propal = New Propal($db);
 
