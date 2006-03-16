@@ -96,6 +96,11 @@ function llxHeader($head = "", $urlp = "", $title="")
     {
       $menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
     }
+    
+  if ($conf->categorie->enabled)
+    {
+        $menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
+    }
   
   left_menu($menu->liste);
   /*
