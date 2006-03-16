@@ -209,7 +209,7 @@ if ($_POST["actionadd"])
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$_POST["id"]]." (";
         if ($tabrowid[$_POST["id"]]) $sql.= $tabrowid[$_POST["id"]].",";
-        $sql.= addslashes($tabfieldinsert[$_POST["id"]]);
+        $sql.= $tabfieldinsert[$_POST["id"]];
         $sql.=",active)";
         $sql.= " VALUES(";
         // Ajoute valeur des champs
