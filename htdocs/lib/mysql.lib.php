@@ -333,10 +333,11 @@ class DoliDb
 			 	\param	    primary_key Nom du champ qui sera la clef primaire 
 				\param	    unique_keys tableau associatifs Nom de champs qui seront clef unique => valeur
 				\param	    fulltext tableau des Nom de champs qui seront indexés en fulltext
+				\param	    key tableau des champs clés noms => valeur
 				\param	    type type de la table
         \return	    true/false    selon si requête a provoqué un erreur mysql ou pas
     */
-	function create_table($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="")
+	function create_table($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
 		// clés recherchées dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
@@ -348,20 +349,24 @@ class DoliDb
 			$sqlfields[$i]  .= $field_desc['type'];
 			if( eregi("^[^ ]",$field_desc['value']))
 				$sqlfields[$i]  .= "(".$field_desc['value'].")";
-			if( eregi("^[^ ]",$field_desc['attribute']))
+			else if( eregi("^[^ ]",$field_desc['attribute']))
 				$sqlfields[$i]  .= " ".$field_desc['attribute'];
-			if( eregi("^[^ ]",$field_desc['null']))
-				$sqlfields[$i]  .= " ".$field_desc['null'];
-			if( eregi("^[^ ]",$field_desc['default']))
+			else if( eregi("^[^ ]",$field_desc['default']))
+			{
 				if(eregi("null",$field_desc['default']))
 					$sqlfields[$i]  .= " default ".$field_desc['default'];
 				else
 					$sqlfields[$i]  .= " default '".$field_desc['default']."'";
-			if( eregi("^[^ ]",$field_desc['extra']))
+			}
+			else if( eregi("^[^ ]",$field_desc['null']))
+				$sqlfields[$i]  .= " ".$field_desc['null'];
+			
+			else if( eregi("^[^ ]",$field_desc['extra']))
 				$sqlfields[$i]  .= " ".$field_desc['extra'];
 			$i++;
 		}
-		$pk = "primary key(".$primary_key.")";
+		if($primary_key != "")
+			$pk = "primary key(".$primary_key.")";
 		
 		if($unique_keys != "")
 		{
@@ -372,10 +377,22 @@ class DoliDb
 				$i++;
 			}
 		}
+		if($keys != "")
+		{
+			$i = 0;
+			foreach($keys as $key => $value)
+			{
+				$sqlk[$i] = "KEY ".$key." (".$value.")";
+				$i++;
+			}
+		}
 		$sql .= implode(',',$sqlfields);
-		$sql .= ",".$pk;
+		if($primary_key != "")
+			$sql .= ",".$pk;
 		if($unique_keys != "")
 			$sql .= ",".implode(',',$sqluq);
+		if($keys != "")
+			$sql .= ",".implode(',',$sqlk);
 		$sql .=") type=".$type;
 		// dolibarr_syslog($sql);
 		if(! $this -> query($sql))
