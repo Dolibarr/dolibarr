@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -244,15 +244,15 @@ if ($_GET["action"] == 'create')
 
 
 
-llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
-
-$html = new Form($db);
-
 /* *************************************************************************** */
 /*                                                                             */
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
+
+llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
+
+$html = new Form($db);
 
 if ($_GET["id"] > 0)
 {
@@ -578,6 +578,8 @@ if ($_GET["id"] > 0)
             print "</div>";
         }
 
+
+
        print '<table width="100%"><tr><td width="50%" valign="top">';
        
 			/*
@@ -613,6 +615,8 @@ if ($_GET["id"] > 0)
 			$html->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 			
 
+       print '</td><td width="50%" valign="top">';
+
       /*
        *
        *
@@ -630,6 +634,7 @@ if ($_GET["id"] > 0)
 	  print "</td></tr>";
 	  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Send").'"></td></tr></table></form>';
 	}
+
       /*
        *
        *
@@ -661,6 +666,7 @@ if ($_GET["id"] > 0)
 	  print '</table>';
 	  print '</form>';	  
 	}
+
       /*
        *
        *

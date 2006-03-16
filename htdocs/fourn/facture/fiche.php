@@ -289,7 +289,13 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
 		print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
 		print '<td align="center">';
-		$html->select_tva('tauxtva'.$i,'', '',$mysoc);
+		$societe='';
+		if ($_GET['socid'])
+		{
+			$societe=new Societe($db);
+			$societe->fetch($_GET['socid']);
+		}
+		$html->select_tva('tauxtva'.$i,'',$societe,$mysoc);
 		print '</td>';
 		print '<td align="center"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
 	}

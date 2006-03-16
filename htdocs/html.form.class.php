@@ -1501,7 +1501,7 @@ class Form
         global $langs,$conf,$mysoc;
 
 		//print $societe_vendeuse."-".$societe_acheteuse;
-        if (! $societe_vendeuse->pays_code)
+        if (is_object($societe_vendeuse) && ! $societe_vendeuse->pays_code)
         {
             if ($societe_vendeuse->id == $mysoc->id)
             {
@@ -1514,10 +1514,19 @@ class Form
             return;
         }
 
+		if (is_object($societe_vendeuse->pays_code))
+		{
+			$code_pays=$societe_vendeuse->pays_code;
+		}
+		else
+		{
+			$code_pays=$mysoc->pays_code;
+		}
+		
 		// Recherche liste des codes TVA du pays vendeur
         $sql  = "SELECT t.taux,t.recuperableonly";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_tva AS t";
-        $sql .= " WHERE t.fk_pays = '".$societe_vendeuse->pays_code."'";
+        $sql .= " WHERE t.fk_pays = '".$code_pays."'";
         $sql .= " AND t.active = 1";
         $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
@@ -1532,6 +1541,10 @@ class Form
                 $libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
             }
         }
+        else
+        {
+            print '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry").'</div>';
+		}        	
 
 		// Définition du taux à présélectionner
 		if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
