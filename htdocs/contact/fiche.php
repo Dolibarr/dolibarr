@@ -52,7 +52,7 @@ if ($user->societe_id > 0)
 }
 
 // Protection restriction commercial
-if ($contactid)
+if ($contactid && !$user->rights->commercial->client->voir)
 {
         $sql = "SELECT sc.fk_soc, sp.fk_soc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
