@@ -1494,11 +1494,11 @@ function set_price_level($price_level, $user)
 
    /*
     *       \brief     Renvoi si pays appartient à CEE
-    *       \param     boolean		true = pays dans CEE, false, pays hors CEE
+    *       \param     boolean		true = pays dans CEE, false= pays hors CEE
     */
     function isInEEC()
     {
-    	// \todo liste pays à compléter
+    	// \todo liste code pays à compléter
 		$country_code_in_EEC=array('BE','FR','LU');	
     	//print "dd".$this->pays_code;
 		return in_array($this->pays_code,$country_code_in_EEC);
