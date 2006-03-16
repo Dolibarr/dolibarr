@@ -955,8 +955,8 @@ class Form
         $cat = new Categorie ($this -> db);
 		$cat->get_categories_arbo();
 		$cate_arbo = $cat->get_arbo_each_cate();
-		print '<select name="'.$select_name.'">'; //creation des categories meres
-		print '<option value="-1" id="choix">'.$langs->trans("NoneCategory").'</option>\n';
+		$output= '<select name="'.$select_name.'">'; //creation des categories meres
+		$output.= '<option value="-1" id="choix">'.$langs->trans("NoneCategory").'</option>\n';
 		
 		
 		foreach($cate_arbo as $key => $value)
@@ -965,11 +965,11 @@ class Form
 				$add = "selected='true' ";
 			else
 				$add = "";
-			print '<option '.$add.'value="'.$value[1].'">'.$value[0].'</option>';
+			$output.= '<option '.$add.'value="'.$value[1].'">'.$value[0].'</option>';
 		}
 					 
-		print '</select>';
-				 
+		$output.= '</select>';
+			return $output; 
 				
 		}
         
