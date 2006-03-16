@@ -218,7 +218,7 @@ if ($_POST["actionadd"])
         $i=0;
         foreach ($listfield as $f => $value) {
             if ($i) $sql.=",";
-            $sql.="'".$_POST[$value]."'";
+            $sql.="'".addslashes($_POST[$value])."'";
             $i++;
         }
         $sql.=",1)";
