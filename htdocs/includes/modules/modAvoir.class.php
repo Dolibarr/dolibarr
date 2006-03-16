@@ -163,5 +163,6 @@ class modAvoir extends DolibarrModules
     
         return $this->_remove($sql);
     }
+  }
 }
 ?>
