@@ -333,6 +333,10 @@ $conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
 // Module export
 $conf->export->enabled=defined("MAIN_MODULE_EXPORT")?MAIN_MODULE_EXPORT:0;
 $conf->export->dir_ouput=DOL_DATA_ROOT."/export";
+// Module avoir client
+$conf->avoir->enabled=defined("MAIN_MODULE_AVOIR")?MAIN_MODULE_AVOIR:0;
+$conf->avoir->dir_output=DOL_DATA_ROOT."/avoir";
+$conf->avoir->dir_images=DOL_DATA_ROOT."/avoir/images";
 
 
 /*
