@@ -730,8 +730,7 @@ class Product
 					}
 					
 			  }
-			
-			
+		
             $sql = "SELECT reel, fk_entrepot";
             $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = '".$this->id."'";
             $result = $this->db->query($sql) ;
@@ -1321,7 +1320,7 @@ class Product
 							$this->res[]= array($compl_path.stripslashes($nom_pere),$desc_pere);
 						if(sizeof($desc_pere) >1)
 						{
-							$this ->fetch_prod_arbo($desc_pere,$nom_pere." -> ");
+							$this ->fetch_prod_arbo($desc_pere,stripslashes($nom_pere)." -> ");
 						}
 			}
 	}	
@@ -1389,7 +1388,7 @@ function get_arbo_each_prod()
 			 {
 					$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 					foreach($this -> get_fils_arbo($rec['id']) as $kf=>$vf)
-							$prods[$rec['label']][$kf] = $vf;
+							$prods[addslashes($rec['label'])][$kf] = $vf;
 			 }
 			 return $prods;
       }
