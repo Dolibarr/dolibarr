@@ -84,3 +84,5 @@ MultiPricesNumPrices=Nombre de prix
 MultiPriceLevelsName=Catégorie de prix
 AssociatedProductsAbility=Prise en charges des produits associés
 AssociatedProducts=Produits associés
+AssociatedProductsNumber=Nbre de produits associés
+EditAssociate=Associer au
