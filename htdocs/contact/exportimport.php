@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ $langs->load("companies");
 // Protection quand utilisateur externe
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 
-$scoid=0;
+$socid=0;
 if ($user->societe_id > 0)
 {
     $socid = $user->societe_id;
