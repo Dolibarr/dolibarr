@@ -1484,9 +1484,9 @@ class Form
 
 
     /**
-     *      \brief      Selection du taux de tva
+     *      \brief      Selection du taux de tva appliqué par vendeur
      *      \param      name                Nom champ html
-     *      \param      defaulttx           Taux tva présélectionné (deprecated)
+     *      \param      defaulttx           Forçage du taux tva présélectionné. Mettre '' pour appliquer règle par défaut.
      *      \param      societe_vendeuse    Objet société vendeuse
      *      \param      societe_acheteuse   Objet société acheteuse
      *      \param      taux_produit        Taux par defaut du produit vendu
@@ -1498,13 +1498,12 @@ class Form
      */
     function select_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
     {
-        global $langs,$conf;
+        global $langs,$conf,$mysoc;
 
-        // \todo Si pays vendeur non défini
-        if (1 == 2)
+		//print $societe_vendeuse."-".$societe_acheteuse;
+        if (! $societe_vendeuse->pays_code)
         {
-            // \todo si pays vendeur = soi-même
-            if (1 == 1)
+            if ($societe_vendeuse->id == $mysoc->id)
             {
                 print '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
             }
@@ -1515,38 +1514,37 @@ class Form
             return;
         }
 
-        // \todo Ecraser defaulttx par valeur en fonction de la règle de gestion TVA
-        //$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
-
-        // \todo Initialiser code_pays avec code_pays société vendeuse
-        $code_pays=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		// Recherche liste des codes TVA du pays vendeur
         $sql  = "SELECT t.taux,t.recuperableonly";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_tva AS t";
-        $sql .= " WHERE t.fk_pays = '".$code_pays."'";
+        $sql .= " WHERE t.fk_pays = '".$societe_vendeuse->pays_code."'";
         $sql .= " AND t.active = 1";
         $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
-        if ($this->db->query($sql))
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
-            $num = $this->db->num_rows();
+            $num = $this->db->num_rows($resql);
             for ($i = 0; $i < $num; $i++)
             {
-                $obj = $this->db->fetch_object();
+                $obj = $this->db->fetch_object($resql);
                 $txtva[ $i ] = $obj->taux;
                 $libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
             }
         }
 
+		// Définition du taux à présélectionner
+		if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
         // Si taux par defaut n'a pu etre trouvé, on prend dernier.
         // Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
         if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
 
-        $taille = sizeof($txtva);
+        $nbdetaux = sizeof($txtva);
 
         print '<select class="flat" name="'.$name.'">';
         if ($default) print '<option value="0">'.$langs->trans("Default").'</option>';
 
-        for ($i = 0 ; $i < $taille ; $i++)
+        for ($i = 0 ; $i < $nbdetaux ; $i++)
         {
             print '<option value="'.$txtva[$i].'"';
             if ($txtva[$i] == $defaulttx)

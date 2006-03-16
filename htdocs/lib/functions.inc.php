@@ -1654,25 +1654,28 @@ function price2num($amount)
  */
 function get_default_tva($societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
 {
-    $tva=$taux_produit;
+	// Si vendeur non assujeti à TVA
+	if (! $societe_vendeuse->tva_assuj) return 0;
+	
+	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.	
+	if ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id)
+	{
+	    return $taux_produit;
+	}
+	
+	// Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
+	// Non géré
+	
+ 	// Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
+	if ($societe_vendeuse->isInEEC() && $societe_vendeuse->isInEEC())
+	{
+	    return $taux_produit;
+	}
 
-    // \todo       fonction a ecrire
-
-    return '';
+	// Sinon la TVA proposée par défaut=0. Fin de règle.
+    return 0;
 }
 
-
-/**
-		\brief  Fonction qui calcule la tva
-		\param	euros			somme en euro
-		\param	taux			taux de tva
-*/
-function tva($euros, $taux=19.6)
-{
-  $taux = $taux / 100 ;
-
-  return sprintf("%01.2f",($euros * $taux));
-}
 
 /**
 		\brief  Renvoie oui ou non dans la langue choisie

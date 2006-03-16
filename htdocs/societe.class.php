@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,50 +36,53 @@
         \brief 		Classe permettant la gestion des societes
 */
 
-class Societe {
-  var $db;
-
-  var $id;
-  var $nom;
-  var $adresse;
-  var $cp;
-  var $ville;
-  var $departement_id;
-  var $pays_id;
-  var $pays_code;
-  var $tel;
-  var $fax;
-  var $url;
-  var $siren;
-  var $siret;
-  var $ape;
-
-  var $prefix_comm;
-
-  var $tva_intra;
-  var $capital;
-  var $typent_id;
-  var $effectif_id;
-  var $forme_juridique_code;
-  var $forme_juridique;
-
-  var $remise_client;
-
-  var $client;
-  var $prospect;
-  var $fournisseur;
-
-  var $code_client;
-  var $code_fournisseur;
-  var $code_compta;
-  var $code_compta_fournisseur;
-
-  var $note;
-
-  var $stcomm_id;
-  var $statut_commercial;
-  
-  var $price_level;
+class Societe
+{
+	var $db;
+	
+	var $id;
+	var $nom;
+	var $adresse;
+	var $cp;
+	var $ville;
+	var $departement_id;
+	var $pays_id;
+	var $pays_code;
+	var $tel;
+	var $fax;
+	var $url;
+	var $siren;
+	var $siret;
+	var $ape;
+	
+	var $prefix_comm;
+	
+	var $tva_assuj;
+	var $tva_intra;
+	
+	var $capital;
+	var $typent_id;
+	var $effectif_id;
+	var $forme_juridique_code;
+	var $forme_juridique;
+	
+	var $remise_client;
+	
+	var $client;
+	var $prospect;
+	var $fournisseur;
+	
+	var $code_client;
+	var $code_fournisseur;
+	var $code_compta;
+	var $code_compta_fournisseur;
+	
+	var $note;
+	
+	var $stcomm_id;
+	var $statut_commercial;
+	
+	var $price_level;
 
 
   /**
@@ -278,11 +281,13 @@ class Societe {
         $this->siret=trim($this->siret);
         $this->ape=trim($this->ape);
         $this->prefix_comm=trim($this->prefix_comm);
+
+		$this->tva_assuj=trim($this->tva_assuj);
         $this->tva_intra=trim($this->tva_intra);
+
         $this->capital=trim($this->capital);
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
-		    $this->tva_assuj=trim($this->tva_assuj);
 
         $result = $this->verify();		// Verifie que nom obligatoire et code client ok et unique
 
@@ -300,10 +305,10 @@ class Societe {
             $this->fax = ereg_replace(" ","",$this->fax);
             $this->fax = ereg_replace("\.","",$this->fax);
         
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
-            $sql .= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
-            $sql .= ", datea = now()";
-            $sql .= ",address = '" . addslashes($this->adresse) ."'";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+            $sql.= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
+            $sql.= ",datea = now()";
+            $sql.= ",address = '" . addslashes($this->adresse) ."'";
         
             if ($this->cp)
             { $sql .= ",cp = '" . $this->cp ."'"; }
@@ -322,9 +327,11 @@ class Societe {
             $sql .= ",siret = '". addslashes($this->siret) ."'";
             $sql .= ",ape   = '". addslashes($this->ape)   ."'";
         
+			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
             $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
+
             $sql .= ",capital = '" .   addslashes($this->capital) ."'";
-        
+       
             $sql .= ",prefix_comm = ".($this->prefix_comm?"'".addslashes($this->prefix_comm)."'":"null");
         
             $sql .= ",fk_effectif = ".($this->effectif_id?"'".$this->effectif_id."'":"null");
@@ -335,7 +342,6 @@ class Societe {
         
             $sql .= ",client = " . $this->client;
             $sql .= ",fournisseur = " . $this->fournisseur;
-			      $sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
         
             if ($this->creation_bit || $this->codeclient_modifiable)
             {
@@ -510,6 +516,7 @@ class Societe {
 				$this->code_compta = $obj->code_compta;
 				$this->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
+				$this->tva_assuj      = $obj->tva_assuj;
 				$this->tva_intra      = $obj->tva_intra;
 				$this->tva_intra_code = substr($obj->tva_intra,0,2);
 				$this->tva_intra_num  = substr($obj->tva_intra,2);
@@ -528,7 +535,6 @@ class Societe {
 				$this->remise_client = $obj->remise_client;
 				$this->mode_reglement = $obj->mode_reglement;
 				$this->cond_reglement = $obj->cond_reglement;
-				$this->tva_assuj = $obj->tva_assuj;
 				$this->client      = $obj->client;
 				$this->fournisseur = $obj->fournisseur;
 
@@ -1485,6 +1491,18 @@ function set_price_level($price_level, $user)
             dolibarr_print_error($this->db);
         }
     }
+
+   /*
+    *       \brief     Renvoi si pays appartient à CEE
+    *       \param     boolean		true = pays dans CEE, false, pays hors CEE
+    */
+    function isInEEC()
+    {
+    	// \todo liste pays à compléter
+		$country_code_in_EEC=array('BE','FR','LU');	
+    	//print "dd".$this->pays_code;
+		return in_array($this->pays_code,$country_code_in_EEC);
+	}
 
 }
 

@@ -99,9 +99,6 @@ class FactureFournisseur
 
 		if (! $remise) $remise = 0 ;
 		$totalht = ($amount - $remise);
-// NE ME SEMBLE PLUS JUSTIFIE ICI
-//        $tva = tva($totalht);
-//        $total = $totalht + $tva;
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ';
 		$sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";

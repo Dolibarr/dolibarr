@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
@@ -465,11 +465,11 @@ $mysoc->siren=$conf->global->MAIN_INFO_SIREN;
 $mysoc->siret=$conf->global->MAIN_INFO_SIRET;
 $mysoc->ape=$conf->global->MAIN_INFO_APE;
 $mysoc->rcs=$conf->global->MAIN_INFO_RCS;
-$mysoc->tvaintra=$conf->global->MAIN_INFO_TVAINTRA;
+$mysoc->tva_assuj=$conf->global->FACTURE_TVAOPTION;
+$mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;
 $mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
 $mysoc->forme_juridique_code=$conf->global->MAIN_INFO_FORME_JURIDIQUE;
 $mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
-
 
 /* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
  * (pour particuliers ou libéraux en franchise)

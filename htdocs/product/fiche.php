@@ -631,7 +631,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         $langs->load("bills");
         print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
-        print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '');
+        print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '', $product->tva_tx);
         print '</td></tr>';
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
         print '<select class="flat" name="statut">';
