@@ -51,7 +51,7 @@ class modAvoir extends DolibarrModules
     {
         $this->db = $DB ;
         $this->id = 'avoir';   // Same value xxx than in file modXxx.class.php file
-        $this->numero = 30 ;
+        $this->numero = 35 ;
     
         $this->family = "financial";
         $this->name = "Avoir";
