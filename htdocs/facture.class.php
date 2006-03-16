@@ -305,6 +305,7 @@ class Facture
 
 			$result_insert = $this->addline($this->id,
 				'Remise exceptionnelle',
+				'',
 				(0 - $remise),
 				1,
 				'0');   // Une remise est un négatif sur le TTC, on ne doit pas appliquer de TVA,
