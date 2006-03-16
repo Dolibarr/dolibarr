@@ -141,7 +141,7 @@ $tabfieldinsert[9] = "code_iso,label";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm";
-$tabfieldinsert[12]= "code,libelle,type";
+$tabfieldinsert[13]= "code,libelle,type";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
