@@ -110,13 +110,13 @@ else if ($_GET["action"] == 'disable_multiprix')
 }
 else if ($_GET["action"] == 'activate_sousproduits')
 {
-    $table = MAIN_DB_PREFIX."product_parent_child";
-	$fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-	$fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
-	$fields['datec'] = array('type'=>'datetime','default'=> 'null');
-	$fields['fk_product_parent'] = array('type'=>'int','value'=>'11','default'=> 'null');
-	$fields['fk_product_child'] = array('type'=>'int','value'=>'11','default'=> 'null');
-	if(! $db -> create_table($table,$fields,"rowid","MyISAM"))
+    $table = MAIN_DB_PREFIX."product_association";
+	$fields['fk_product_pere'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
+	$fields['fk_product_fils'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
+	$fields['qty'] = array('type'=>'double','default'=> 'null');
+	$keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
+	$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
+	if(! $db -> create_table($table,$fields,"","MyISAM","","",$keys))
 	{
 		dolibarr_print_error($db);
 		print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
