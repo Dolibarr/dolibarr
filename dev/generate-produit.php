@@ -61,7 +61,7 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
     print "Produit $s\n";
     $produit = new Product($db);
     $produit->type = rand(0,1);
-    $produit->envente = 1;
+    $produit->status = 1;
     $produit->ref = 'P'.time().$s;
     $produit->libelle = 'Label '.time().$s;
     $produit->description = 'Description '.time().$s;
