@@ -108,14 +108,7 @@ if ($_GET["id"])
       print "<tr>";
       print '<td>'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
       print '<td colspan="2">';
-      if ($product->envente)
-	{
-	  print $langs->trans("OnSell");
-	}
-      else
-	{
-	  print $langs->trans("NotOnSell");
-	}
+		print $product->getLibStatut(2);
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print '<td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td></tr>';

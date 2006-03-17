@@ -67,7 +67,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     $product->catid          = $_POST["catid"];
     $product->tva_tx         = $_POST["tva_tx"];
     $product->type           = $_POST["type"];
-    $product->envente        = $_POST["statut"];
+    $product->status         = $_POST["statut"];
     $product->description    = $_POST["desc"];
     $product->duration_value = $_POST["duration_value"];
     $product->duration_unit  = $_POST["duration_unit"];
@@ -361,14 +361,7 @@ else
 	      print "<tr>";
 	      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%">'.$product->ref.'</td>';
 	      print '<td width="40%">';
-	      if ($product->envente)
-		{
-		  print $langs->trans("OnSell");
-		}
-	      else
-		{
-		  print $langs->trans("NotOnSell");
-		}
+		  print $product->getLibStatut(2);
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
 	      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
