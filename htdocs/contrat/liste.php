@@ -134,7 +134,7 @@ if ($resql)
         print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-        print '<td align="center">'.$contratstatic->LibStatut($obj->statut).'</td>';
+        print '<td align="center">'.$contratstatic->LibStatut($obj->statut,1).'</td>';
         print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
         print '<td align="center">'.($obj->nb_running+$obj->nb_late>0?$obj->nb_running+$obj->nb_late:'').'</td>';
         print '<td align="center">'.($obj->nb_closed>0?$obj->nb_closed:'').'</td>';
