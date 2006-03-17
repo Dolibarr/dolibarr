@@ -220,6 +220,10 @@ Permission302=Supprimer les codes barres
 Permission331=Lire les bookmarks
 Permission332=Créer/modifier les bookmarks
 Permission333=Supprimer les bookmarks
+Permission401=Consulter les avoirs
+Permission402=Créer/modifier les avoirs
+Permission403=Valider les avoirs
+Permission404=Supprimer les avoirs
 Permission700=Consulter les dons
 Permission701=Créer/modifier les dons
 Permission702=Supprimer les dons
@@ -428,4 +432,8 @@ NewRSS=Syndication d'un nouveau flux RSS
 ##### Mailing #####
 MailingSetup=Configuration du module EMailing
 MailingEMailFrom=Email emetteur (From) des mails envoyés par EMailing
+##### Discount setup #####
+DiscountSetup=Configuration du module Avoirs
+DiscountsNumberingModules=Modules de numérotation des avoirs
+DiscountsPDFModules=Modules d'avoirs PDF
 

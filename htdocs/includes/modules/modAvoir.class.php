@@ -73,19 +73,23 @@ class modAvoir extends DolibarrModules
         $this->requiredby = array();
     
         // Config pages
-        //$this->config_page_url = "avoir.php";
+        $this->config_page_url = "avoir.php";
     
         // Constantes
         $this->const = array();
-/*    
-        $this->const[0][0] = "FACTURE_ADDON_PDF";
-        $this->const[0][1] = "chaine";
-        $this->const[0][2] = "bulot";
     
-        $this->const[1][0] = "FACTURE_ADDON";
+        $this->const[0][0] = "AVOIR_ADDON_PDF";
+        $this->const[0][1] = "chaine";
+        $this->const[0][2] = "azur";
+        $this->const[0][3] = 'Nom du gestionnaire de génération des avoirs en PDF';
+        $this->const[0][4] = 0;
+    
+        $this->const[1][0] = "AVOIR_ADDON";
         $this->const[1][1] = "chaine";
         $this->const[1][2] = "pluton";
-*/
+        $this->const[1][3] = 'Nom du gestionnaire de numérotation des avoirs';
+        $this->const[1][4] = 0;
+
     
         // Boites
         $this->boxes = array();

@@ -220,6 +220,10 @@ Permission302=Delete bar codes
 Permission331=Read bookmarks
 Permission332=Create/modify bookmarks
 Permission333=Delete bookmarks
+Permission401=Read discounts
+Permission402=Create/modify discounts
+Permission403=Validate discounts
+Permission404=Delete discounts
 Permission700=Read donations
 Permission701=Create/modify donations
 Permission702=Delete donations
@@ -428,3 +432,7 @@ NewRSS=New RSS
 ##### Mailing #####
 MailingSetup=Mailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
+##### Discount setup #####
+DiscountSetup=Discount module setup
+DiscountsNumberingModules=Discount numbering modules
+DiscountsPDFModules=Discount PDF modules

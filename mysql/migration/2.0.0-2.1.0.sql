@@ -83,3 +83,10 @@ ALTER TABLE `llx_commande` ADD `date_livraison` DATE;
 
 ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk_facture_fourn);
 ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture FOREIGN KEY (fk_facture_fourn) REFERENCES llx_facture_fourn (rowid);
+
+create table llx_avoir_model_pdf
+(
+  nom         varchar(50) PRIMARY KEY,
+  libelle     varchar(255),
+  description text
+)type=innodb;
