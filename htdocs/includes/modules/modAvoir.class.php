@@ -27,7 +27,7 @@
 
 
 /**
-        \file       htdocs/includes/modules/modFacture.class.php
+        \file       htdocs/includes/modules/modAvoir.class.php
 		\ingroup    avoir
 		\brief      Fichier de la classe de description et activation du module Avoir
 */
@@ -126,6 +126,8 @@ class modAvoir extends DolibarrModules
         $this->rights[$r][2] = 'a';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'supprimer';
+        
+      }
 
     
    /**
@@ -163,6 +165,5 @@ class modAvoir extends DolibarrModules
     
         return $this->_remove($sql);
     }
-  }
 }
 ?>
