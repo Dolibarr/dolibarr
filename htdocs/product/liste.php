@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ if ($resql)
             print '<td align="center">'.$objp->duration.'</td>';
         }
         print '<td align="right">'.price($objp->price).'</td>';
-        print '<td align="center">'.$product_static->LibStatut($objp->statut,2).'</td>';
+        print '<td align="left" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,2).'</td>';
         print "</tr>\n";
         $i++;
     }
