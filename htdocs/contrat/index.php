@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,6 @@ require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 $langs->load("products");
 $langs->load("companies");
 
-
-llxHeader();
-
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
@@ -50,6 +47,15 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
+
+$staticcontrat=new Contrat($db);
+
+
+/*
+ * Affichage page
+ */
+
+llxHeader();
 
 print_fiche_titre($langs->trans("ContractsArea"));
 
@@ -126,8 +132,6 @@ if ($result)
     print '<td width="16">'.img_statut(5,$langs->trans("ServiceStatusClosed")).'</td>';
     print "</tr>\n";
     
-    $contratstatic=new Contrat($db);
-
     $var=True;
     while ($i < $num)
     {
@@ -142,7 +146,7 @@ if ($result)
         print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-        print '<td align="center">'.$contratstatic->LibStatut($obj->statut).'</td>';
+        print '<td align="center">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
         print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
         print '<td align="center">'.($obj->nb_running+$obj->nb_late>0?$obj->nb_running+$obj->nb_late:'').'</td>';
         print '<td align="center">'.($obj->nb_closed>0?$obj->nb_closed:'').'</td>';
@@ -196,7 +200,9 @@ if ( $db->query($sql) )
         if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
         else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
-        print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
+        print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+        print $staticcontrat->LibStatut($obj->statut,3);
+        print '</a></td>';
         print "</tr>\n";
         $i++;
     }
@@ -249,7 +255,9 @@ if ( $db->query($sql) )
         if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
         else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
-        print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
+        print '<td nowrap="nowrap"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+        print $staticcontrat->LibStatut($obj->statut,3);
+        print '</a></td>';
         print "</tr>\n";
         $i++;
     }
