@@ -38,7 +38,6 @@ if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 llxHeader();
 
 
-
 print_fiche_titre($langs->trans("HomeArea"));
 
 

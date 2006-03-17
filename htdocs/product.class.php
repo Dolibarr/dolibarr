@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -71,7 +71,6 @@ class Product
         
         $this->db = $DB;
         $this->id   = $id ;
-        $this->envente = 0;   // deprecated
         $this->status = 0;
         $this->seuil_stock_alerte = 0;
         
@@ -117,10 +116,9 @@ class Product
     
         $this->ref = trim(sanitize_string($this->ref));
 
-        if (strlen($this->tva_tx)==0) $this->tva_tx = 0;
-        if (strlen($this->price)==0) $this->price = 0;
-        if (strlen($this->envente)==0) $this->envente = 0;  // deprecated
-        if (strlen($this->status)==0) $this->status = 0;
+        if ($this->tva_tx=='') $this->tva_tx = 0;
+        if ($this->price=='')  $this->price = 0;
+        if ($this->status=='') $this->status = 0;
         $this->price = price2num($this->price);
 
         dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
@@ -660,7 +658,6 @@ class Product
             $this->tva_tx             = $result["tva_tx"];
             $this->type               = $result["fk_product_type"];
             $this->nbvente            = $result["nbvente"];
-            $this->envente            = $result["envente"]; // deprecated
             $this->status             = $result["envente"];
             $this->duration           = $result["duration"];
             $this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
@@ -1416,16 +1413,11 @@ function get_arbo_each_prod()
 		{
 			$this -> sousprods[$k]=$v;
 		}
-		
-		
-		
-		
+	}
 
-		
-  }
 	/**
 	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	 *    \param      mode          0=libellé long, 1=libellé court
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -1436,40 +1428,52 @@ function get_arbo_each_prod()
 	/**
 	 *    \brief      Renvoi le libellé d'un statut donne
 	 *    \param      status        Statut
-	 *    \param      mode          0=libellé long, 1=libellé court
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court
 	 *    \return     string        Libellé du statut
 	 */
 	function LibStatut($status,$mode=0)
 	{
 		global $langs;
 		$langs->load('products');
-		if ($status == 0) return $langs->trans('ProductStatusNotOnSell'.($mode?'Short':''));
-		if ($status == 1) return $langs->trans('ProductStatusOnSell'.($mode?'Short':''));
+		if ($mode == 0)
+		{
+			if ($status == 0) return $langs->trans('ProductStatusNotOnSellShort');
+			if ($status == 1) return $langs->trans('ProductStatusOnSellShort');
+		}
+		if ($mode == 1)
+		{
+			if ($status == 0) return $langs->trans('ProductStatusNotOnSell');
+			if ($status == 1) return $langs->trans('ProductStatusOnSell');
+		}
+		if ($mode == 2)
+		{
+			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5').' '.$langs->trans('ProductStatusNotOnSell');
+			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4').' '.$langs->trans('ProductStatusOnSell');
+		}
 		return $langs->trans('Unknown');
 	}
 	
-  /**
-   *    \brief  Entre un nombre de piece du produit en stock dans un entrepôt
-   *    \param  id_entrepot     id de l'entrepot
-   *    \param  nbpiece         nombre de pieces
-   */
-  function create_stock($id_entrepot, $nbpiece)
-  {
-    
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock ";
-    $sql .= " (fk_product, fk_entrepot, reel)";
-    $sql .= " VALUES ($this->id, $id_entrepot, $nbpiece)";
-    
-    if ($this->db->query($sql) )
-      {
-	return 1;	      
-      }
-    else
-      {
-    dolibarr_print_error($this->db);
-	return -1;
-      }    
-  }
+	/**
+	 *    \brief  Entre un nombre de piece du produit en stock dans un entrepôt
+	 *    \param  id_entrepot     id de l'entrepot
+	 *    \param  nbpiece         nombre de pieces
+	 */
+	function create_stock($id_entrepot, $nbpiece)
+	{
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock ";
+		$sql .= " (fk_product, fk_entrepot, reel)";
+		$sql .= " VALUES ($this->id, $id_entrepot, $nbpiece)";
+		
+		if ($this->db->query($sql) )
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}    
+	}
 
 
   /**
