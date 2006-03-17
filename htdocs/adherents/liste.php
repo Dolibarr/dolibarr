@@ -87,11 +87,12 @@ if ($result)
     $i = 0;
 
     $titre=$langs->trans("MembersList");
-    if (isset($_GET["statut"])) {
+    if (isset($_GET["statut"]))
+    {
         if ($statut == '-1,1') { $titre=$langs->trans("MembersListQualified"); }
-        if ($statut == '-1') { $titre=$langs->trans("MembersListToValid"); }
-        if ($statut == '1')  { $titre=$langs->trans("MembersListValid"); }
-        if ($statut == '0')  { $titre=$langs->trans("MembersListResiliated"); }
+        if ($statut == '-1')   { $titre=$langs->trans("MembersListToValid"); }
+        if ($statut == '1')    { $titre=$langs->trans("MembersListValid"); }
+        if ($statut == '0')    { $titre=$langs->trans("MembersListResiliated"); }
     }
     elseif ($_POST["action"] == 'search') {
         $titre=$langs->trans("MembersListQualified");
@@ -106,13 +107,14 @@ if ($result)
 
     print "<table class=\"noborder\" width=\"100%\">";
 
+    $param="&page=$page".(isset($_GET["statut"])?"&statut=$statut":"");
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield);
-    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","t.cotisation","&page=$page&statut=$statut","","",$sortfield);
-    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email","&page=$page&statut=$statut","","",$sortfield);
-    print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle","&page=$page&statut=$statut","","",$sortfield);
-    print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy","&page=$page&statut=$statut","","",$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut","","",$sortfield);
+    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","t.cotisation",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut",$param,"","",$sortfield);
     print "<td>".$langs->trans("Action")."</td>\n";
     print "</tr>\n";
 
@@ -129,9 +131,9 @@ if ($result)
             $var=!$var;
             print "<tr $bc[$var]>";
             if ($objp->societe != ''){
-                print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></td>\n";
+                print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></td>\n";
                 }else{
-                    print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
+                    print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
                 }
                 print "<td>";
                 if ($objp->cotisation == 'yes')
