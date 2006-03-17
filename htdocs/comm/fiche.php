@@ -586,7 +586,7 @@ if ($socidp > 0)
                 .(!isset($objp->ref) ? $objp->id : $objp->ref) ."</a></td>\n";
                 print '<td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
                 print '<td width="20">&nbsp;</td>';
-                print '<td align="center" width="100">'.$contratstatic->LibStatut($objp->statut)."</td>\n";
+                print '<td align="center" width="100">'.$contratstatic->LibStatut($objp->statut,2)."</td>\n";
                 print '</tr>';
                 $i++;
             }
