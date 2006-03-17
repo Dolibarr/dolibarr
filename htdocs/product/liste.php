@@ -252,7 +252,7 @@ if ($resql)
             print '<td align="center">'.$objp->duration.'</td>';
         }
         print '<td align="right">'.price($objp->price).'</td>';
-        print '<td align="center">'.$product_static->LibStatut($objp->statut).'</td>';
+        print '<td align="center">'.$product_static->LibStatut($objp->statut,2).'</td>';
         print "</tr>\n";
         $i++;
     }
