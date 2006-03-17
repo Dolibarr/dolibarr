@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *                         Jean-Louis Bergamo <jlb@j1b.org>
+ *                         Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -116,7 +117,8 @@ if ($_POST["action"] == 'add')
   }
 }
 
-llxHeader();
+
+llxHeaderVierge();
 
 
 /* ************************************************************************** */
@@ -128,7 +130,8 @@ llxHeader();
 // fetch optionals attributes and labels
 $adho->fetch_optionals();
 
-if (isset($action) && $action== 'added'){
+if (isset($action) && $action== 'added')
+{
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   print "<tr><td><FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT></td></tr>\n";
   print '</table>';

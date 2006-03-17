@@ -37,6 +37,12 @@ function llxHeader($head = "")
   $menu->add_submenu("priv_liste.php","Liste des adherents");
 
   left_menu($menu->liste);
+}
+
+
+function llxHeaderVierge($head = "")
+{
+  global $user, $conf, $langs;
 
 }
 

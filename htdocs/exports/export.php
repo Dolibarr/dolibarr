@@ -38,8 +38,14 @@ $user->getrights();
 if (! $user->societe_id == 0)
   accessforbidden();
 
-$entitytoicon=array('invoice'=>'bill','invoice_line'=>'bill');
-$entitytolang=array('user'=>'User','company'=>'Company','contact'=>'Contact','invoice'=>'Bill','invoice_line'=>'InvoiceLine');
+$entitytoicon=array(
+	'invoice'=>'bill','invoice_line'=>'bill',
+	'member'=>'user', 'member_type'=>'user');
+$entitytolang=array(
+	'user'=>'User',
+	'company'=>'Company','contact'=>'Contact',
+	'invoice'=>'Bill','invoice_line'=>'InvoiceLine',
+	'member'=>'Member','member_type'=>'MemberType');
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $datatoexport=isset($_GET["datatoexport"])?$_GET["datatoexport"]:'';
@@ -49,7 +55,7 @@ $step=isset($_GET["step"])?$_GET["step"]:'1';
 $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
 
-$objmodel=new ModeleExports();
+$objmodelexport=new ModeleExports();
 
 
 /*
@@ -467,11 +473,11 @@ if ($step == 4 && $datatoexport)
     print '<td>'.$langs->trans("LibraryVersion").'</td>';
     print '</tr>';
 
-    $liste=$objmodel->liste_modeles($db);
+    $liste=$objmodelexport->liste_modeles($db);
     foreach($liste as $key)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$objmodel->getDriverLabel($key).'</td><td>'.$objmodel->getLibLabel($key).'</td><td>'.$objmodel->getLibVersion($key).'</td></tr>';
+        print '<tr '.$bc[$var].'><td>'.$objmodelexport->getDriverLabel($key).'</td><td>'.$objmodelexport->getLibLabel($key).'</td><td>'.$objmodelexport->getLibVersion($key).'</td></tr>';
     }
     print '</table>';    
 

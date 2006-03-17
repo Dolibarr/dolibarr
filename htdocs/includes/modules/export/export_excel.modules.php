@@ -71,7 +71,7 @@ class ExportExcel extends ModeleExports
 
         // If driver use an external library, put its name here
         $this->label_lib='Php_WriteExcel';            
-        $this->version_lib='?';
+        $this->version_lib='0.3.0';
         
         $this->row=0;
     }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -87,24 +87,25 @@ class Adherent
   }
 
 
-/**
+	/**
 		\brief	    function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
 		\param	    recipients		destinataires
 		\param	    text			contenu du message
 		\param	    subject			sujet du message
-		\remarks	La particularite de cette fonction est de remplacer certains champs
-		\remarks	par leur valeur pour l'adherent en l'occurrence :
-		\remarks	%PRENOM% : est remplace par le prenom
-		\remarks	%NOM% : est remplace par nom
-		\remarks	%INFOS% : l'ensemble des attributs de cet adherent
-		\remarks	%SERVEUR% : URL du serveur web
-		\remarks	etc..
-		\todo       Utiliser classe CMailFile
-*/
-
-  function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
-  {
-    $patterns = array (
+		\return		int				<0 si ko, >0 si ok
+		\remarks		La particularite de cette fonction est de remplacer certains champs
+		\remarks		par leur valeur pour l'adherent en l'occurrence :
+		\remarks		%PRENOM% : est remplace par le prenom
+		\remarks		%NOM% : est remplace par nom
+		\remarks		%INFOS% : l'ensemble des attributs de cet adherent
+		\remarks		%SERVEUR% : URL du serveur web
+		\remarks		etc..
+	*/
+	function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
+	{
+		global $conf,$langs;
+		
+	    $patterns = array (
 		       '/%PRENOM%/',
 		       '/%NOM%/',
 		       '/%INFOS%/',
@@ -121,16 +122,21 @@ class Adherent
 		       '/%LOGIN%/',
 		       '/%PASS%/'
 		       );
-    $infos = "Prenom : $this->prenom\nNom : $this->nom\nSociete : $this->societe\nAdresse : $this->adresse\nCP : $this->cp\nVille : $this->ville\nPays : $this->pays\nEmail : $this->email\nLogin : $this->login\nPassword : $this->pass\nDate de naissance : $this->naiss\nPhoto : $this->photo\n";
-    if ($this->public == 1)
-      {
-	$infos.="Fiche Publique : Oui\n";
-      }
-    else
-      {
-	$infos.="Fiche Publique : Non\n";
-      }
-    $replace = array (
+	    $infos.= $langs->trans("Lastname").": $this->nom\n";
+	    $infos = $langs->trans("Firstname").": $this->prenom\n";
+	    $infos.= $langs->trans("Company").": $this->societe\n";
+	    $infos.= $langs->trans("Address").": $this->adresse\n";
+	    $infos.= $langs->trans("Zip").": $this->cp\n";
+	    $infos.= $langs->trans("Town").": $this->ville\n";
+	    $infos.= $langs->trans("Country").": $this->pays\n";
+	    $infos.= $langs->trans("EMail").": $this->email\n";
+	    $infos.= $langs->trans("Login").": $this->login\n";
+	    $infos.= $langs->trans("Password").": $this->pass\n";
+	    $infos.= $langs->trans("Birthday").": $this->naiss\n";
+	    $infos.= $langs->trans("Photo").": $this->photo\n";
+		$infos.= $langs->trans("Public").": ".yn($this->public)."\n";
+
+	    $replace = array (
 		      $this->prenom,
 		      $this->nom,
 		      $infos,
@@ -147,14 +153,29 @@ class Adherent
 		      $this->login,
 		      $this->pass
 		      );
-    $texttosend = preg_replace ($patterns, $replace, $text);
-    $subjectosend = preg_replace ($patterns, $replace, $subject);
-    if (defined('ADHERENT_MAIL_FROM') && ADHERENT_MAIL_FROM != ''){
-	  return mail($recipients,$subjectosend,$texttosend,"From: ".ADHERENT_MAIL_FROM."\nReply-To: ".ADHERENT_MAIL_FROM."\nX-Mailer: php/" . phpversion());
-    }else{
-      return mail($recipients,$subjectosend,$texttosend);
-    }
-  }
+		$texttosend = preg_replace ($patterns, $replace, $text);
+		$subjectosend = preg_replace ($patterns, $replace, $subject);
+		
+		// Envoi mail confirmation
+        include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+
+        $from=$conf->email_from;
+        if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
+        
+        $mailfile = new CMailFile($subject,$this->email,$from,$mesg,array(),array(),array());
+
+        if ($mailfile->sendfile())
+        {
+            return 1;
+        }
+        else
+        {
+            $this->error=$langs->trans("ErrorFailedToSendPassword");
+            return -1;
+        }
+
+	}
+
 
 /**
 		\brief	imprime une liste d'erreur.
@@ -284,109 +305,120 @@ class Adherent
 
     }
 
-/**
-		\brief  fonction qui crée l'adhérent
-		\param	userid		userid de l'adhérent
-*/
-
-  function create($userid)
-    {
-      /*
-       *  Insertion dans la base
-       */
-
-      $this->date = $this->db->idate($this->date);
-
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec)";
-      $sql .= " VALUES (now())";
-
-      $result = $this->db->query($sql);
-
-      if ($result)
+	/**
+		\brief  	Fonction qui crée l'adhérent
+		\param		userid		userid de l'adhérent
+		\return		int			<0 si ko, >0 si ok
+	*/
+	function create($userid)
 	{
-	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
-	  return $this->update();
+		global $conf,$langs;
+	
+		// Verification parametres
+		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email)) {
+			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
+	
+		$this->date = $this->db->idate($this->date);
+	
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec)";
+		$sql .= " VALUES (now())";
+	
+		$result = $this->db->query($sql);
+	
+		if ($result)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
+			return $this->update();
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
 	}
-      else
+	
+
+	/**
+			\brief fonction qui met à jour l'adhérent
+			\return		int			<0 si ko, >0 si ok
+	*/
+	function update()
 	{
-      dolibarr_print_error($this->db);
-	  return 0;
-	}  
-    }
-
-
-/**
-		\brief fonction qui met à jour l'adhérent
-*/
-  function update() 
-    {
-
-    $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-    $sql .= " prenom = '".$this->prenom ."'";
-    $sql .= ",nom='"    .$this->nom."'";
-    $sql .= ",societe='".$this->societe."'";
-    $sql .= ",adresse='".$this->adresse."'";
-    $sql .= ",cp='"     .$this->cp."'";
-    $sql .= ",ville='"  .$this->ville."'";
-    $sql .= ",pays='"   .$this->pays."'";
-    $sql .= ",note='"   .$this->commentaire."'";
-    $sql .= ",email='"  .$this->email."'";
-    $sql .= ",login='"  .$this->login."'";
-    $sql .= ",pass='"   .$this->pass."'";
-    if ($this->naiss) $sql .= ",naiss='"  .$this->naiss."'";
-    else $sql .= ",naiss=null";
-    $sql .= ",photo='"  .$this->photo."'";
-    $sql .= ",public='" .$this->public."'";
-    $sql .= ",statut="  .$this->statut;
-    $sql .= ",fk_adherent_type=".$this->typeid;
-    $sql .= ",morphy='".$this->morphy."'";
-    
-    $sql .= " WHERE rowid = $this->id";
-    
-    $result = $this->db->query($sql);
-    
-    if (!$result)
-    {
-        dolibarr_print_error($this->db);
-        return 0;
-    }
-    
-    if (sizeof($this->array_options) > 0 )
-    {
-        $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = $this->id;";
-        $this->db->query($sql_del);
-
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
-        foreach($this->array_options as $key => $value)
-        {
-            // recupere le nom de l'attribut
-            $attr=substr($key,8);
-            $sql.=",$attr";
-        }
-        $sql .= ") VALUES ($this->id";
-        foreach($this->array_options as $key => $value)
-        {
-    
-            $sql.=",'".$this->array_options[$key]."'";
-        }
-        $sql.=");";
-    
-        $result = $this->db->query($sql);
-    
-        if ($result)
-        {
-            return 1;
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-            return 0;
-        }
-    
-    }
-
-    return 1;
-    }
+		global $conf,$langs;
+	
+		// Verification parametres
+		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email)) {
+			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
+	
+	
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+		$sql .= " prenom = '".$this->prenom ."'";
+		$sql .= ",nom='"    .$this->nom."'";
+		$sql .= ",societe='".$this->societe."'";
+		$sql .= ",adresse='".$this->adresse."'";
+		$sql .= ",cp='"     .$this->cp."'";
+		$sql .= ",ville='"  .$this->ville."'";
+		$sql .= ",pays='"   .$this->pays_code."'";
+		$sql .= ",note='"   .$this->commentaire."'";
+		$sql .= ",email='"  .$this->email."'";
+		$sql .= ",login='"  .$this->login."'";
+		$sql .= ",pass='"   .$this->pass."'";
+		$sql .= ",naiss="   .$this->naiss?"'".$this->naiss."'":"null";
+		$sql .= ",photo="   .$this->photo?"'".$this->photo."'":"null";
+		$sql .= ",public='" .$this->public."'";
+		$sql .= ",statut="  .$this->statut;
+		$sql .= ",fk_adherent_type=".$this->typeid;
+		$sql .= ",morphy='".$this->morphy."'";
+		$sql .= " WHERE rowid = ".$this->id;
+	
+		$result = $this->db->query($sql);
+	
+		if (!$result)
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	
+		if (sizeof($this->array_options) > 0 )
+		{
+			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$this->id;
+			$this->db->query($sql_del);
+	
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
+			foreach($this->array_options as $key => $value)
+			{
+				// recupere le nom de l'attribut
+				$attr=substr($key,8);
+				$sql.=",$attr";
+			}
+			$sql .= ") VALUES ($this->id";
+			foreach($this->array_options as $key => $value)
+			{
+	
+				$sql.=",'".$this->array_options[$key]."'";
+			}
+			$sql.=");";
+	
+			$result = $this->db->query($sql);
+	
+			if ($result)
+			{
+				return 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return -2;
+			}
+	
+		}
+	
+		return 1;
+	}
 
 
 /**
@@ -469,9 +501,9 @@ class Adherent
         $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
         $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
         $sql .= ", d.pays, p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib";
-        $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+        $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
-        $sql .= " WHERE d.rowid = $rowid AND d.fk_adherent_type = t.rowid";
+        $sql .= " WHERE d.rowid = ".$rowid." AND d.fk_adherent_type = t.rowid";
     
         $result=$this->db->query( $sql);
         if ($result)
@@ -1257,10 +1289,10 @@ class Adherent
       }
   }
 
-  /**
-   *    \brief      Retourne le nom complet de l'adhérent
-   *    \return     string      Nom complet
-   */
+	/**
+	 *    \brief      Retourne le nom complet de l'adhérent
+	 *    \return     string      	Nom complet
+	 */
     function getFullname()
     {
         if ($this->nom && $this->prenom) return $this->nom.' '.$this->prenom;
@@ -1269,27 +1301,56 @@ class Adherent
         return '';
     }
 
-  /**
-   *    \brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
-   *    \return     string      Libellé
-   */
-    function getLibStatut()
+	/**
+	*    \brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
+	*    \param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	*    \return     string			Libellé
+	*/
+    function getLibStatut($mode=0)
     {
-		return $this->LibStatut($this->statut);
+		return $this->LibStatut($this->statut,$mode);
     }
 
-  /**
-   *    \brief      Renvoi le libellé d'un statut donné
-   *    \param      statut      id statut
-   *    \return     string      Libellé
-   */
-    function LibStatut($statut)
+	/**
+	 *    \brief      Renvoi le libellé d'un statut donné
+ 	 *    \param      statut      	id statut
+ 	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+ 	 *    \return     string      	Libellé
+ 	 */
+    function LibStatut($statut,$mode=0)
     {
         global $langs;
         $langs->load("members");
-        if ($statut == -1) return $langs->trans("MemberStatusDraft");
-        if ($statut == 1)  return $langs->trans("MemberStatusActive");
-        if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+		if ($mode == 0)
+		{
+	        if ($statut == -1) return $langs->trans("MemberStatusDraft");
+	        if ($statut == 1)  return $langs->trans("MemberStatusActive");
+	        if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+		}
+		if ($mode == 1)
+		{
+	        if ($statut == -1) return $langs->trans("MemberStatusDraft");
+	        if ($statut == 1)  return $langs->trans("MemberStatusActive");
+	        if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+		}
+		if ($mode == 2)
+		{
+	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
+	        if ($statut == 1)  return img_picto($langs->trans('MemberStatusActive'),'statut4').' '.$langs->trans("MemberStatusActive");
+	        if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
+		}
+		if ($mode == 3)
+		{
+	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
+	        if ($statut == 1)  return img_picto($langs->trans('MemberStatusActive'),'statut4');
+	        if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
+		}
+		if ($mode == 4)
+		{
+	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
+	        if ($statut == 1)  return img_picto($langs->trans('MemberStatusActive'),'statut4').' '.$langs->trans("MemberStatusActive");
+	        if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
+		}
     }
 
 

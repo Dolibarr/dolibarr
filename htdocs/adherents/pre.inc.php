@@ -46,7 +46,7 @@ function llxHeader($head = "") {
   $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"));
   $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"));
 
-  $menu->add(DOL_URL_ROOT."/public/adherents/","Espace adherents public");
+  $menu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
 
   $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Exports"));
   $menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"));

@@ -1576,17 +1576,23 @@ class Form
      *            	Les champs sont présélectionnées avec:
      *            	- La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
      *            	- La date du jour si set_time vaut ''
-     *            	- Aucune date (champs vides) si set_time vaut -1
-	 *		\param	form_name 	Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
+     *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 0)
+	 *		\param	set_time 		Date de pré-sélection
+	 *		\param	prefix			Prefix pour nom champ
+	 *		\param	h				Heure
+	 *		\param	m				Minutes
+	 *		\param	empty			0=Champ obligatoire, 1=Permet une saisie vide
+	 *		\param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
      */
- function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0,$form_name="")
+ function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0, $form_name="")
     {
         global $conf,$langs;
+    	
     	if($prefix=='') $prefix='re';
 		if($h == '') $h=0;
 		if($m == '') $m=0;
 		if($empty == '') $empty=0;
-		
+	
         if (! $set_time && $empty == 0) $set_time = time();
     
         $strmonth[1]  = $langs->trans("January");
@@ -1603,7 +1609,8 @@ class Form
         $strmonth[12] = $langs->trans("December");
     
         // Analyse de la date de préselection
-        if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg)) {
+        if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg))
+        {
             // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
             $syear = $reg[1];
             $smonth = $reg[2];
@@ -1611,7 +1618,8 @@ class Form
             $shour = $reg[4];
             $smin = $reg[5];
         }
-        elseif ($set_time) {
+        elseif ($set_time > 0)
+        {
             // Date est un timestamps
             $syear = date("Y", $set_time);
             $smonth = date("n", $set_time);
@@ -1619,8 +1627,9 @@ class Form
             $shour = date("H", $set_time);
             $smin = date("i", $set_time);
         }
-        else {
-            // Date est vide
+        else
+        {
+            // Date est vide ou vaut -1
             $syear = '';
             $smonth = '';
             $sday = '';
@@ -1633,16 +1642,15 @@ class Form
          */
 		if ($conf->use_javascript && $conf->use_popup_calendar && $h==0 && $m==0)
         {
+            //print "e".$set_time." t ".$conf->format_date_short;
+            if ($set_time > 0)
+            {
+	            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+			}
+
 			// Calendrier popup version eldy
 			if ("$conf->use_popup_calendar" == "eldy")	// Laissé conf->use_popup_calendar entre quote
 			{
-	            //print "e".$set_time." t ".$conf->format_date_short;
-	            if ($set_time)
-	            {
-		            $timearray=getDate($set_time);
-		            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
-				}
-				
 	            // Zone de saisie manuelle de la date
 	            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"';
 	            print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
@@ -1662,13 +1670,11 @@ class Form
 				// Calendrier popup version defaut
 				if ($langs->defaultlang != "")
 			 	{
-					print '<script language="javascript">';
+					print '<script language="javascript" type="text/javascript">';
 					print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
 					print '</script>';
 				}
 				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
-	            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
-				if($formated_date=="?") $formated_date="";
 				print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"> ';
 				print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
 	            print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";

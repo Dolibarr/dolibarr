@@ -197,8 +197,9 @@ class modAdherent extends DolibarrModules
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
         $this->export_label[$r]='Adhérents et attributs';
-        $this->export_fields_array[$r]=array('a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.email'=>"Email",'a.login'=>"Login",'a.naiss'=>"Birthday");
-        $this->export_alias_array[$r]=array('a.nom'=>"lastname",'a.prenom'=>"firstname",'a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.email'=>"email",'a.login'=>"login",'a.naiss'=>"birthday");
+        $this->export_fields_array[$r]=array('a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.email'=>"Email",'a.login'=>"Login",'a.naiss'=>"Birthday",'a.statut'=>"Satus",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.datefin'=>'DateEnd','a.tms'=>'DateLastModification','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel');
+		$this->export_entities_array[$r]=array('a.nom'=>"member",'a.prenom'=>"member",'a.adresse'=>"member",'a.cp'=>"member",'a.ville'=>"member",'a.pays'=>"member",'a.email'=>"member",'a.login'=>"member",'a.naiss'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.datefin'=>'member','a.tms'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type');
+        $this->export_alias_array[$r]=array('a.nom'=>"lastname",'a.prenom'=>"firstname",'a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.email'=>"email",'a.login'=>"login",'a.naiss'=>"birthday",'a.statut'=>"status",'a.photo'=>'photo','a.note'=>'note','a.datec'=>'datec','a.datevalid'=>'datevalid','a.datefin'=>'dateend','a.tms'=>'datem','ta.rowid'=>'type_id','ta.libelle'=>'type_label');
         $this->export_sql[$r]="select ";
         $i=0;
         foreach ($this->export_alias_array[$r] as $key => $value)
@@ -207,7 +208,7 @@ class modAdherent extends DolibarrModules
             else $i++;
             $this->export_sql[$r].=$key.' as '.$value;
         }
-        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'adherent as a';
+        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'adherent as a, '.MAIN_DB_PREFIX.'adherent_type as ta WHERE a.fk_adherent_type = ta.rowid';
         $this->export_permission[$r]=array(array("adherent","export"));
     }
 

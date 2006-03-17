@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +18,48 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
+/**
+       	\file       htdocs/public/adherents/index.php
+		\ingroup    member
+		\brief      Fichier de la page de l'espace publique adherent
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
+
+
+/*
+ * Afffichage page
+ */
+ 
 llxHeader();
 
-print_titre("Gestion des adhesions a l'association");
+print_fiche_titre($langs->trans("PublicMembersArea"));
+
+
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+
+print '<tr><td valign="top" width="100%" class="notopnoleft">';
+
+print $langs->trans('FollowingLinksArePublic').'<br>';
+print '<br>';
 
 print '<table class="border" cellspacing="0" cellpadding="3">';
-print '<tr class="liste_titre"><td colspan=2>Les menus ci-contre correspondent a:</td></tr>';
-print '<tr><td>-Inscription :</td><td> Formulaires d\'inscription pour les non-adherents</td></tr>';
-print '<tr><td>-Edition de sa fiche :</td><td> Permet d\'editer sa fiche d\'adherent</td></tr>';
-print '<tr><td>-Liste des adherents :</td><td> Permet de voir la liste des adherents (reserve aux adherents)</td></tr>';
-
-
-
+print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("URL").'</td></tr>';
+print '<tr><td>'.$langs->trans("BlankSubscriptionForm").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/adherents/new.php'.'">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/new.php'.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("BlankSubscriptionEditForm").'</td><td>'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/priv_edit.php?id=xxx'.'</td></tr>';
+print '<tr><td>'.$langs->trans("PublicMemberList").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/adherents/priv_liste.php'.'">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/priv_liste.php'.'</a></td></tr>';
 print '</table>';
+
+
+print '</td></tr></table>';
+
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

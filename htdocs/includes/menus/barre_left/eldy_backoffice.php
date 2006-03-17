@@ -617,8 +617,15 @@ class MenuLeft {
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->export);
                 
-                  $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php","Espace adherents public");
-                
+                  $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
+				  /*
+				  if ($leftmenu=="member_public") $newmenu->add(DOL_URL_ROOT."/public/adherents/","Non adherent");
+				  if ($leftmenu=="member_public") $newmenu->add_submenu("new.php","Inscription");
+				  if ($leftmenu=="member_public") $newmenu->add(DOL_URL_ROOT."/public/adherents/","Adherents");
+				  if ($leftmenu=="member_public") $newmenu->add_submenu("priv_edit.php",$langs->trans("EditCard"));
+				  if ($leftmenu=="member_public") $newmenu->add_submenu("priv_liste.php",$langs->trans("List"));
+                  */
+                  
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=setup&mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/type.php?leftmenu=setup&",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/options.php?leftmenu=setup&",$langs->trans("MembersAttributes"),1,$user->rights->adherent->configurer);
