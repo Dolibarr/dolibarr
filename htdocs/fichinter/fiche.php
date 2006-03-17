@@ -299,7 +299,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
     if ($conf->projet->enabled)
     {
         $fichinter->fetch_projet();
-        print '<tr><td valign="top">'.$langs->trans("Ref").'</td><td>'.$fichinter->projet.'</td></tr>';
+        print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>'.$fichinter->projet.'</td></tr>';
     }
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$fichinter->getLibStatut().'</td></tr>';
 
