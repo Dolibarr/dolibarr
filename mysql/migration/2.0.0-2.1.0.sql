@@ -103,4 +103,4 @@ create table llx_avoir_model_pdf
 )type=innodb;
 
 
-drop table llx_soc_recontact if exists;
+drop table if exists llx_soc_recontact;
