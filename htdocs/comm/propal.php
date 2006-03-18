@@ -720,7 +720,7 @@ if ($_GET['propalid'] > 0)
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     
             // Statut
-            print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
+            print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut(4).'</td></tr>';
             print '</table><br>';
     
             /*
@@ -1357,7 +1357,7 @@ else
         
             print '<td align="right">'.price($objp->price)."</td>\n";
             $propal=New Propal($db);
-            print '<td align="center">'.$propal->LibStatut($objp->fk_statut,0)."</td>\n";
+            print '<td align="center">'.$propal->LibStatut($objp->fk_statut,2)."</td>\n";
             print "</tr>\n";
         
             $total = $total + $objp->price;

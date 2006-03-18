@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,6 +354,64 @@ else
 
 
 /*
+ * Dernières actions commerciales effectuées
+ */
+
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE c.id=a.fk_action AND a.percent >= 100 AND s.idp = a.fk_soc";
+if ($socidp)
+{
+	$sql .= " AND s.idp = ".$socidp;
+}
+if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+{
+	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+}
+$sql .= " ORDER BY a.datea DESC";
+$sql .= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastDoneTasks",$max).'</td></tr>';
+	$var = true;
+	$i = 0;
+
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
+
+		print "<tr $bc[$var]>";
+		print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
+		$transcode=$langs->trans("Action".$obj->code);
+		$libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+		print $libelle;
+		print '</a></td>';
+
+		print "<td>".dolibarr_print_date($obj->da)."</td>";
+		print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
+		$i++;
+	}
+	// TODO Ajouter rappel pour "il y a des contrats à mettre en service"
+	// TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
+	print "</table><br>";
+
+	$db->free($resql);
+}
+else
+{
+	dolibarr_print_error($db);
+}
+
+
+/*
  * Derniers clients enregistrés
  */
 if ($user->rights->societe->lire)
@@ -408,64 +466,6 @@ if ($user->rights->societe->lire)
 
 
 /*
- * Dernières actions commerciales effectuées
- */
-
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.id=a.fk_action AND a.percent >= 100 AND s.idp = a.fk_soc";
-if ($socidp)
-{ 
-  $sql .= " AND s.idp = $socidp"; 
-}
-if (!$user->rights->commercial->client->voir && !$socidp) //restriction
-{
-	      $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-}
-$sql .= " ORDER BY a.datea DESC";
-$sql .= $db->plimit($max, 0);
-
-$resql=$db->query($sql);
-if ($resql)
-{
-  $num = $db->num_rows($resql);
-
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastDoneTasks",$max).'</td></tr>';
-  $var = true;
-  $i = 0;
-
-  while ($i < $num) 
-	{
-	  $obj = $db->fetch_object($resql);
-	  $var=!$var;
-	  
-	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
-      $transcode=$langs->trans("Action".$obj->code);
-      $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-      print $libelle;
-	  print '</a></td>';
-	  
-	  print "<td>".dolibarr_print_date($obj->da)."</td>";
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
-	  $i++;
-	}
-  // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
-  // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
-  print "</table><br>";
-
-  $db->free($resql);
-} 
-else
-{
-  dolibarr_print_error($db);
-}
-
-
-/*
  * Derniers contrat
  *
  */
@@ -499,7 +499,7 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
 	  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastContracts",5).'</td></tr>';
 	  $i = 0;
 	  
-      $contrat=new Contrat($db);
+      $staticcontrat=new Contrat($db);
       
 	  $var=false;
 	  while ($i < $num)
@@ -507,7 +507,7 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
 	      $obj = $db->fetch_object();
 	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
 	      print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";      
-	      print "<td align=\"right\">".$contrat->LibStatut($obj->enservice)."</td></tr>\n";
+	      print "<td align=\"right\">".$staticcontrat->LibStatut($obj->enservice,3)."</td></tr>\n";
 	      $var=!$var;
 	      $i++;
 	    }
@@ -617,7 +617,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		print "<td align=\"right\">";
 		print dolibarr_print_date($objp->dp)."</td>\n";	  
 		print "<td align=\"right\">".price($objp->price)."</td>\n";
-		print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,0)."</td>\n";
+		print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
 		print "</tr>\n";
 		$i++;
 		$var=!$var;

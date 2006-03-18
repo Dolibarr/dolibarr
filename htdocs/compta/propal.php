@@ -356,7 +356,7 @@ if ($_GET["propalid"] > 0)
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     
             // Statut
-            print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
+            print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut(4).'</td></tr>';
             print '</table><br>';
     
             /*
@@ -728,7 +728,7 @@ if ($_GET["propalid"] > 0)
 	  print strftime("%Y",$objp->dp)."</a></td>\n";
 
 	  print "<td align=\"right\">".price($objp->price)."</td>\n";
-	  print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,0)."</td>\n";
+	  print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,2)."</td>\n";
 	  print "</tr>\n";
 
 	  $i++;

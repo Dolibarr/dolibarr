@@ -1365,25 +1365,59 @@ class Propal
   }
   
   
-  /**
-   *    \brief      Retourne le libellé du statut d'une propale (brouillon, validée, ...)
-   *    \return     string      Libellé
-   */
-  function getLibStatut()
-  {
-    return $this->LibStatut($this->statut);
-  }
+	/**
+	 *    \brief      Retourne le libellé du statut d'une propale (brouillon, validée, ...)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string		Libellé
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
   
-  /**
-   *    \brief      Renvoi le libellé d'un statut donné
-   *    \param      statut      id statut
-   *    \param      size        Libellé court si 0, long si non défini
-   *    \return     string      Libellé
-   */
-    function LibStatut($statut,$size=1)
+	/**
+	 *    \brief      Renvoi le libellé d'un statut donné
+	 *    \param      statut		id statut
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string		Libellé
+ 	 */
+    function LibStatut($statut,$mode=1)
     {
-        if ($size) return $this->labelstatut[$statut];
-        else return $this->labelstatut_short[$statut];
+    	global $langs;
+    	$langs->load("propal");
+    	
+        if ($mode == 0)
+        {
+	        return $this->labelstatut[$statut];
+		}
+        if ($mode == 1)
+        {
+        	return $this->labelstatut_short[$statut];
+        }
+        if ($mode == 2)
+        {
+        	if ($statut==0) return img_picto($langs->trans('PropalStatusDraftShort'),'statut0').' '.$this->labelstatut_short[$statut];
+        	if ($statut==1) return img_picto($langs->trans('PropalStatusOpenedShort'),'statut1').' '.$this->labelstatut_short[$statut];
+        	if ($statut==2) return img_picto($langs->trans('PropalStatusSignedShort'),'statut3').' '.$this->labelstatut_short[$statut];
+        	if ($statut==3) return img_picto($langs->trans('PropalStatusNotSignedShort'),'statut5').' '.$this->labelstatut_short[$statut];
+        	if ($statut==4) return img_picto($langs->trans('PropalStatusBilledShort'),'statut6').' '.$this->labelstatut_short[$statut];
+        }
+        if ($mode == 3)
+        {
+        	if ($statut==0) return img_picto($langs->trans('PropalStatusDraftShort'),'statut0');
+        	if ($statut==1) return img_picto($langs->trans('PropalStatusOpenedShort'),'statut1');
+        	if ($statut==2) return img_picto($langs->trans('PropalStatusSignedShort'),'statut3');
+        	if ($statut==3) return img_picto($langs->trans('PropalStatusNotSignedShort'),'statut5');
+        	if ($statut==4) return img_picto($langs->trans('PropalStatusBilledShort'),'statut6');
+        }
+        if ($mode == 4)
+        {
+        	if ($statut==0) return img_picto($langs->trans('PropalStatusDraft'),'statut0').' '.$this->labelstatut[$statut];
+        	if ($statut==1) return img_picto($langs->trans('PropalStatusOpened'),'statut1').' '.$this->labelstatut[$statut];
+        	if ($statut==2) return img_picto($langs->trans('PropalStatusSigned'),'statut3').' '.$this->labelstatut[$statut];
+        	if ($statut==3) return img_picto($langs->trans('PropalStatusNotSigned'),'statut5').' '.$this->labelstatut[$statut];
+        	if ($statut==4) return img_picto($langs->trans('PropalStatusBilled'),'statut6').' '.$this->labelstatut[$statut];
+        }
     }
 
 
