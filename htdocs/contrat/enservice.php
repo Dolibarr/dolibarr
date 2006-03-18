@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -33,7 +32,6 @@ require("./pre.inc.php");
 $langs->load("products");
 $langs->load("companies");
 
-llxHeader();
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
@@ -41,16 +39,12 @@ $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 $socid=$_GET["socid"];
 
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socid = $user->societe_id;
 }
-
 
 if ($page == -1) { $page = 0 ; }
 
@@ -60,6 +54,15 @@ $offset = $limit * $page ;
 if (! $sortfield) $sortfield="cd.date_ouverture";
 if (! $sortorder) $sortorder="DESC";
 
+$staticcontrat=new Contrat($db);
+$staticcontratligne=new ContratLigne($db);
+
+
+/*
+ * Affichage page
+ */
+
+llxHeader();
 
 $sql = "SELECT s.nom, c.rowid as cid, s.idp as sidp, cd.rowid, cd.label, cd.statut, p.rowid as pid,";
 $sql .= " ".$db->pdate("cd.date_ouverture")." as date_ouverture,";
@@ -110,7 +113,9 @@ if ($resql)
       if ($obj->date_fin_validite < mktime()) print img_warning($langs->trans("Late"));
       else print '&nbsp;&nbsp;&nbsp;&nbsp;';
       print '</td>';
-      print '<td align="center"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
+      print '<td align="center"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'">';
+      print $staticcontratligne->LibStatut($obj->statut,2);
+      print '</a></td>';
       print "</tr>\n";
       $i++;
     }

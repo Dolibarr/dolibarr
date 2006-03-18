@@ -488,7 +488,7 @@ else
 
         $hselected = 0;
 
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->ref);
+        dolibarr_fiche_head($head, $hselected, $langs->trans("Contract"));
 
 
         /*
@@ -542,7 +542,7 @@ else
 
         // Statut contrat
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-        print $contrat->statuts[$contrat->statut];
+        print $contrat->getLibStatut(2);
         print "</td></tr>";
 
         // Date

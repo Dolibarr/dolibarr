@@ -128,7 +128,7 @@ if ($_GET["id"])
 
     $hselected = 2;
 
-    dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").": ".$contrat->ref);
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Contract"));
 
 
     print '<table class="border" width="100%">';

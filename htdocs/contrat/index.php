@@ -49,6 +49,7 @@ if ($user->societe_id > 0)
 }
 
 $staticcontrat=new Contrat($db);
+$staticcontratligne=new ContratLigne($db);
 
 
 /*
@@ -87,9 +88,9 @@ $var=false;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ServicesLegend").'</td></tr>';
 print '<tr '.$bc[$var].'><td nowrap>';
-print img_statut(0,$langs->trans("ServiceStatusInitial")).'&nbsp;'.$langs->trans("ServiceStatusInitial").'<br />';
-print img_statut(4,$langs->trans("ServiceStatusRunning")).'&nbsp;'.$langs->trans("ServiceStatusRunning").'<br />';
-print img_statut(5,$langs->trans("ServiceStatusClosed")).'&nbsp;'.$langs->trans("ServiceStatusClosed").'<br />';
+print $staticcontratligne->LibStatut(0,4).'<br />';
+print $staticcontratligne->LibStatut(4,4).'<br />';
+print $staticcontratligne->LibStatut(5,4).'<br />';
 print '</td></tr>';
 print '</table>';
 
@@ -127,9 +128,9 @@ if ($result)
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
     print '<td align="center">'.$langs->trans("DateCreation").'</td>';
     print '<td align="center">'.$langs->trans("Status").'</td>';
-    print '<td width="16">'.img_statut(0,$langs->trans("ServiceStatusInitial")).'</td>';
-    print '<td width="16">'.img_statut(4,$langs->trans("ServiceStatusRunning")).'</td>';
-    print '<td width="16">'.img_statut(5,$langs->trans("ServiceStatusClosed")).'</td>';
+    print '<td width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
+    print '<td width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
+    print '<td width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
     print "</tr>\n";
     
     $var=True;
@@ -201,7 +202,7 @@ if ( $db->query($sql) )
         else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
         print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
-        print $staticcontrat->LibStatut($obj->statut,3);
+        print $staticcontratligne->LibStatut($obj->statut,3);
         print '</a></td>';
         print "</tr>\n";
         $i++;

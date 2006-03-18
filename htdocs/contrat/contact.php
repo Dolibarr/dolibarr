@@ -243,7 +243,7 @@ if ($id > 0)
 		
 		$hselected=1;
 
-		dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->ref);
+		dolibarr_fiche_head($head, $hselected, $langs->trans("Contract"));
 
 		/*
 		 *   Contrat

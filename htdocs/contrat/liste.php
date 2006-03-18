@@ -34,9 +34,6 @@ $langs->load("contracts");
 $langs->load("products");
 $langs->load("companies");
 
-
-llxHeader();
-
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
@@ -60,7 +57,15 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
+$staticcontrat=new Contrat($db);
+$staticcontratligne=new ContratLigne($db);
 
+
+/*
+ * Affichage page
+ */
+
+llxHeader();
 
 $sql = 'SELECT';
 $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
@@ -99,9 +104,9 @@ if ($resql)
     print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param","",$sortfield);
     print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield);
     print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield);
-    print '<td class="liste_titre" width="16">'.img_statut(0,$langs->trans("ServiceStatusInitial")).'</td>';
-    print '<td class="liste_titre" width="16">'.img_statut(4,$langs->trans("ServiceStatusRunning")).'</td>';
-    print '<td class="liste_titre" width="16">'.img_statut(5,$langs->trans("ServiceStatusClosed")).'</td>';
+    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
+    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
+    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
     print "</tr>\n";
 
     print '<form method="POST" action="liste.php">';
@@ -118,7 +123,6 @@ if ($resql)
     print "</td>";
     print "</tr>\n";
     print '</form>';
-    $contratstatic=new Contrat($db);
 
     $now=mktime();
     $var=True;
@@ -128,13 +132,12 @@ if ($resql)
         $var=!$var;
         print "<tr $bc[$var]>";
         print "<td nowrap><a href=\"fiche.php?id=$obj->cid\">";
-        print img_object($langs->trans("ShowContract"),"contract").' '
-        		. (isset($obj->ref) ? $obj->ref : $obj->cid) .'</a>';
+        print img_object($langs->trans("ShowContract"),"contract").' '.(isset($obj->ref) ? $obj->ref : $obj->cid) .'</a>';
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-        print '<td align="center">'.$contratstatic->LibStatut($obj->statut,1).'</td>';
+        print '<td align="center">'.$staticcontrat->LibStatut($obj->statut,3).'</td>';
         print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
         print '<td align="center">'.($obj->nb_running+$obj->nb_late>0?$obj->nb_running+$obj->nb_late:'').'</td>';
         print '<td align="center">'.($obj->nb_closed>0?$obj->nb_closed:'').'</td>';

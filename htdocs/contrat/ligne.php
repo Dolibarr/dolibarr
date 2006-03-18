@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -110,39 +111,19 @@ if ($id > 0)
     $contrat = New Contrat($db);
     if ( $contrat->fetch($id) > 0)
     {
-
         $author = new User($db);
         $author->id = $contrat->user_author_id;
         $author->fetch();
 
-/* Remplacé par fonctions des contacts de contrat
-        $commercial_signature = new User($db);
-        $commercial_signature->id = $contrat->commercial_signature_id;
-        $commercial_signature->fetch();
-
-        $commercial_suivi = new User($db);
-        $commercial_suivi->id = $contrat->commercial_suivi_id;
-        $commercial_suivi->fetch();
-*/
-        $h = 0;
-        $head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
-        $head[$h][1] = $langs->trans("ContractCard");
-        $h++;
-
-        $head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id;
-        $head[$h][1] = $langs->trans("ContractContacts");
-        $h++;
-			
-        $head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
-        $head[$h][1] = $langs->trans("Info");
-        $hselected = $h;
-        $h++;      
-        
+	    $head = contract_prepare_head($contrat);
+		$h=sizeof($head);
+		
+        // On ajout onglet service
         $head[$h][0] = DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id."&ligne=".$_GET["ligne"];
         $head[$h][1] = $langs->trans($langs->trans("EditServiceLine"));
         $hselected = $h;
 
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->id);
+        dolibarr_fiche_head($head, $hselected, $langs->trans("Contract"));
 
 
         /*
@@ -183,9 +164,9 @@ if ($id > 0)
         print '<td colspan="3">';
         print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
 
-            // Statut contrat
+        // Statut contrat
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-        print $contrat->statuts[$contrat->statut];
+        print $contrat->getLibStatut(2);
         print "</td></tr>";
 
         // Date

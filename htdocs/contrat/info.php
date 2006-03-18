@@ -78,7 +78,7 @@ $head = contract_prepare_head($contrat);
 
 $hselected = 3;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").": $contrat->ref");
+dolibarr_fiche_head($head, $hselected, $langs->trans("Contract"));
 
 
 print '<table width="100%"><tr><td>';

@@ -28,10 +28,10 @@
 */
 
 require("./pre.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("products");
 $langs->load("companies");
-
 
 $mode = isset($_GET["mode"])?$_GET["mode"]:$_POST["mode"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
@@ -58,7 +58,13 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+$staticcontrat=new Contrat($db);
+$staticcontratligne=new ContratLigne($db);
 
+
+/*
+ * Affichage page
+ */
 llxHeader();
 
 
@@ -164,7 +170,9 @@ if ($resql)
         if ($obj->date_fin_validite && $obj->date_fin_validite < (time() - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
         else print '&nbsp;&nbsp;&nbsp;&nbsp;';
         print '</td>';
-        print '<td align="center"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
+        print '<td align="left"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'">';
+		print $staticcontratligne->LibStatut($obj->statut,2);
+        print '</a></td>';
         print "</tr>\n";
         $i++;
     }
