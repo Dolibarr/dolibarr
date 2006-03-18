@@ -133,96 +133,64 @@ if ( $societe->fetch($socid) )
     
     dolibarr_fiche_head($head, $hselected, $societe->nom);
 
-  /*
-   *
-   *
-   */
-
-  print '<table width="100%">';
-  print '<tr><td valign="top" width="50%">';
-
-  print '<table class="border" width="100%">';
-  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
-
+	
+	print '<table width="100%">';
+	print '<tr><td valign="top" width="50%">';
+	
+	print '<table class="border" width="100%">';
+	print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+	
     print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
 
-    /*
-    if ($societe->client) {
-        print '<tr><td>';
-        print $langs->trans('CustomerCode').'</td><td colspan="3">';
-        print $societe->code_client;
-        if ($societe->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
-        print '</td></tr>';
-    }
-    */
-    
-    if ($societe->fournisseur) {
-        print '<tr><td>';
+    if ($societe->fournisseur)
+    {
+        print '<tr><td nowrap="nowrap">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $societe->code_fournisseur;
         if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
         print '</td></tr>';
-        print '<tr>';
-        print '<td nowrap>'.$langs->trans("SupplierAccountancyCode").'</td><td colspan="3">'.$societe->code_compta_fournisseur.'</td>';
-        print '</tr>';
     }
     
-  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
-  
-  print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
-  print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
-  print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">'.$societe->pays.'</td></tr>';
-  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
-  print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
+	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
+	
+	print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
+	print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">'.$societe->pays.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
+	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
-    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$societe->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$societe->siren."\">".$societe->siren."</a>&nbsp;</td>";
-    print '<td>'.$langs->transcountry('ProfId2',$societe->pays_code).'</td><td>'.$societe->siret.'</td></tr>';
+	// Assujeti à TVA ou pas
+	print '<tr>';
+	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print yn($objsoc->tva_assuj);
+	print '</td>';
+	print '</tr>';
 
-    print '<tr><td>'.$langs->transcountry('ProfId3',$societe->pays_code).'</td><td>'.$societe->ape.'</td><td colspan="2">&nbsp;</td></tr>';
-
-    // Statut juridique
-    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
-
-    // Type + Staff
-    $arr = $societe->typent_array($societe->typent_id);
-    $societe->typent= $arr[$societe->typent_id];
-    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$societe->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$societe->effectif.'</td></tr>';
-
-  print '</table>';
+	print '</table>';
 
 
-  /*
-   *
-   */
+	print '</td><td valign="top" width="50%">';
+ 	$var=true;
 
-  print '</td><td valign="top" width="50%">';
-
-
-  $var=true;
-
-  /*
-   * Liste des produits
-   */
-  if ($conf->produit->enabled || $conf->service->enabled)
-    {
-      $langs->load("products");
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-      print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("All").' ('.$societe->NbProduct().')';
-      print '</a></td></tr></table><br>';
-    }
+    $MAXLIST=4;
+    
+    // Lien recap
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
+    print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$societe->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
+    print '</tr>';
+    print '</table>';
+    print '<br>';
 
     /*
      * Liste des commandes associées
      */
-    $max=4;
-    
     $sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
     $sql.= " WHERE p.fk_soc =".$societe->id;
     $sql.= " ORDER BY p.rowid";
-    $sql.= " ".$db->plimit($max);
+    $sql.= " ".$db->plimit($MAXLIST);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -233,11 +201,11 @@ if ( $societe->fetch($socid) )
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre">';
             print '<td colspan="3">';
-            print '<table class="noborder" width="100%"><tr><td>'.$langs->trans("LastOrders",min($num,$max)).'</td>';
+            print '<table class="noborder" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
             print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table>';
             print '</td></tr>';
         }
-        while ($i < $num && $i <= $max)
+        while ($i < $num && $i <= $MAXLIST)
         {
             $obj = $db->fetch_object($resql);
             $var=!$var;
@@ -273,8 +241,11 @@ if ( $societe->fetch($socid) )
     /*
      * Liste des factures associées
      */
+	$MAXLIST=5;
+
 	$langs->load('bills');
-	$max=5;
+	$facturestatic = new FactureFournisseur($db);
+
 	$sql = 'SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut,'.$db->pdate('p.datef').' as df, total_ttc as amount, paye';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as p';
 	$sql.= ' WHERE p.fk_soc = '.$societe->id;
@@ -289,11 +260,10 @@ if ( $societe->fetch($socid) )
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="4">';
-			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',min($num,$max)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td></tr></table>';
+			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td></tr></table>';
 			print '</td></tr>';
 		}
-		$facturestatic = new FactureFournisseur($db);
-		while ($i < min($num,$max))
+		while ($i < min($num,$MAXLIST))
 		{
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
@@ -301,9 +271,9 @@ if ( $societe->fetch($socid) )
 			print '<td>';
 			print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
 			print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,14).'</td>';
-			print '<td align="center" width="80">'.dolibarr_print_date($obj->df).'</td>';
+			print '<td align="center">'.dolibarr_print_date($obj->df).'</td>';
 			print '<td align="right">'.price($obj->amount).'</td>';
-			print '<td align="center">'.$facturestatic->LibStatutShort($obj->paye,$obj->fk_statut).'</td>';
+			print '<td align="left">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,2).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -318,54 +288,69 @@ if ( $societe->fetch($socid) )
 		dolibarr_print_error($db);
 	}
 
-  /*
-   *
-   *
-   */
-  print '</td></tr>';
-  print '</table>' . "\n";
-  print '</div>';
+	/*
+	 * Liste des produits
+	 */
+  	if ($conf->produit->enabled || $conf->service->enabled)
+    {
+      $langs->load("products");
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+      print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("All").' ('.$societe->NbProduct().')';
+      print '</a></td></tr></table><br>';
+    }
 
-  /*
-   *
-   * Barre d'actions
-   *
-   */
+	print '</td></tr>';
+	print '</table>' . "\n";
+	print '</div>';
+
+
+	/*
+	 *
+	 * Barre d'actions
+	 *
+	 */
   
-  print '<div class="tabsAction">';
+	print '<div class="tabsAction">';
+	
+	if ($user->rights->fournisseur->commande->creer)
+	{
+		$langs->load("orders");
+		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddOrder").'</a>';
+	}
+	
+	if ($user->rights->fournisseur->facture->creer)
+	{
+		$langs->load("bills");
+		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
+	}
+	
+    print '<a class="butAction" href="action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
 
-  if ($user->rights->fournisseur->commande->creer)
-    {
-      $langs->load("orders");
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddOrder").'</a>';
-    }
+	if ($user->rights->societe->contact->creer)
+	{
+		print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
+	}
+	
+	print '</div>';
 
-  if ($user->rights->fournisseur->facture->creer)
-    {
-      $langs->load("bills");
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
-    }
-  print '</div>';
 
   /*
    *
    * Liste des contacts
    *
    */
-  $langs->load("companies");
-
-  print '<br><table class="noborder" width="100%">';
-
-  print '<tr class="liste_titre"><td><b>'.$langs->trans("Contact").'</b></td>';
-  print '<td><b>Poste</b></td><td><b>'.$langs->trans("Tel").'</b></td>';
-  print "<td><b>".$langs->trans("Fax")."</b></td><td><b>".$langs->trans("EMail")."</b></td>";
-  
-  if ($user->rights->societe->contact->creer)
-  {
-  	print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
-  }
-  
-  print "</tr>";
+	$langs->load("companies");
+	
+	print '<br><table class="noborder" width="100%">';
+	
+	print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
+	print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
+	print "<td>".$langs->trans("Fax")."</td><td>".$langs->trans("EMail")."</td>";
+	print "<td align=\"center\">&nbsp;</td>";
+	print '<td>&nbsp;</td>';
+	print "</tr>";
     
   $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
   $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -405,6 +390,10 @@ if ( $societe->fetch($socid) )
       	print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">".img_edit()."</a></td>";
     	}
     	
+            print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+            print img_object($langs->trans("Rendez-Vous"),"action");
+            print '</a></td>';
+
       print "</tr>\n";
       $i++;
     }

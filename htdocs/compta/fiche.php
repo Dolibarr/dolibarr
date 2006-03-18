@@ -251,20 +251,17 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code).'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\" target=\"_blank\">$societe->url</a>&nbsp;</td></tr>";
 
-    // TVA
+	// Assujeti à TVA ou pas
+	print '<tr>';
+	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print yn($objsoc->tva_assuj);
+	print '</td>';
+	print '</tr>';
+
+    // TVA Intra
     print '<tr><td nowrap>'.$langs->trans('VATIntraVeryShort').'</td><td colspan="3">';
     print $societe->tva_intra;
     print '</td></tr>';
-
-    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
-    if ($societe->capital) print $societe->capital.' '.$langs->trans("Currency".$conf->monnaie);
-    else print '&nbsp;';
-    print '</td></tr>';
-
-    // Type + Staff
-    $arr = $societe->typent_array($societe->typent_id);
-    $societe->typent= $arr[$societe->typent_id];
-    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$societe->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$societe->effectif.'</td></tr>';
 
     if ($societe->client == 1)
     {
@@ -312,13 +309,24 @@ if ($socid > 0)
 
     // Nbre max d'éléments des petites listes
     $MAXLIST=5;
-    $tableaushown=0;
+    $tableaushown=1;
+
+    // Lien recap
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
+    print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowAccountancyPreview").'</a></td></tr></table></td>';
+    print '</tr>';
+    print '</table>';
+    print '<br>';
 
     /**
      *   Dernieres factures
      */
     if ($conf->facture->enabled && $user->rights->facture->lire)
     {
+        $facturestatic = new Facture($db);
+
         print '<table class="noborder" width="100%">';
 
         $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, f.total, f.total_ttc, ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
@@ -336,7 +344,7 @@ if ($socid > 0)
             {
                 $tableaushown=1;
                 print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$societe->id.'">'.$langs->trans("AllBills").' ('.$num.')</a></td></tr></table></td>';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$societe->id.'">'.$langs->trans("AllBills").' ('.$num.')</a></td></tr></table></td>';
                 print '</tr>';
             }
 
@@ -356,8 +364,7 @@ if ($socid > 0)
                 }
                 print "<td align=\"right\">".price($objp->total_ttc)."</td>\n";
 
-                $fac = new Facture($db);
-                print "<td align=\"center\">".($fac->LibStatut($objp->paye,$objp->statut,1))."</td>\n";
+                print '<td align="left">'.($facturestatic->LibStatut($objp->paye,$objp->statut,2))."</td>\n";
                 print "</tr>\n";
                 $i++;
             }
@@ -413,14 +420,6 @@ if ($socid > 0)
         print "</table>";
     }
 
-    // Lien recap
-    if ($tableaushown) print '<br>';
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowLog").'</a></td></tr></table></td>';
-    print '</tr>';
-    print '</table>';
-
     print "</td></tr>";
     print "</table></div>\n";
 
@@ -431,24 +430,26 @@ if ($socid > 0)
      */
     print '<div class="tabsAction">';
 
-    if ($user->societe_id == 0)
-      {
-    	// Si société cliente ou prospect, on affiche bouton "Créer facture client"
-    	if ($societe->client != 0 && $conf->facture->enabled && $user->rights->facture->creer) {
-            $langs->load("bills");
-	        print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$societe->id\">".$langs->trans("AddBill")."</a>";
-        }
+	if ($user->societe_id == 0)
+	{
+		// Si société cliente ou prospect, on affiche bouton "Créer facture client"
+		if ($societe->client != 0 && $conf->facture->enabled && $user->rights->facture->creer) {
+			$langs->load("bills");
+			print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$societe->id\">".$langs->trans("AddBill")."</a>";
+		}
+	
+		if ($conf->deplacement->enabled) {
+			$langs->load("trips");
+			print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
+		}
+	}
+	
+    print '<a class="butAction" href="action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
 
-        if ($conf->deplacement->enabled) {
-            $langs->load("trips");
-            print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
-        }
-      }
-
-		if ($user->rights->societe->contact->creer)
-    {
-    	print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
-    }
+	if ($user->rights->societe->contact->creer)
+	{
+		print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
+	}
 
     print '</div>';
     print "<br>\n";

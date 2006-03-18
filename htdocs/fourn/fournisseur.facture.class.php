@@ -507,54 +507,93 @@ class FactureFournisseur
 	
 	/**
 	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	 *    \return     string      Libellé
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
 	 */
-	function getLibStatut()
+	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->paye,$this->statut);
+		return $this->LibStatut($this->paye,$this->statut,$mode);
 	}
 
 	/**
-	 *    \brief      Renvoi le libellé court d'un statut donné
-	 *    \param      paye        etat paye
-	 *    \param      statut      id statut
-	 *    \return     string      Libellé long du statut
+	 *    \brief      Renvoi le libellé d'un statut donné
+	 *    \param      paye          Etat paye
+	 *    \param      statut        Id statut
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libellé du statut
 	 */
-	function LibStatutShort($paye,$statut)
+	function LibStatut($paye,$statut,$mode)
 	{
 		global $langs;
 		$langs->load('bills');
-		if (! $paye)
+	
+		if ($mode==0)
 		{
-			if ($statut == 0) return $langs->trans('BillShortStatusDraft');
-			if ($statut == 3) return $langs->trans('BillShortStatusCanceled');
-			return $langs->trans('BillShortStatusValidated');
+			if (! $paye)
+			{
+				if ($statut == 0) return $langs->trans('BillStatusDraft');
+				if ($statut == 3) return $langs->trans('BillStatusCanceled');
+				return $langs->trans('BillStatusValidated');
+			}
+			else
+			{
+				return $langs->trans('BillStatusPayed');
+			}
 		}
-		else
+		if ($mode==1)
 		{
-			return $langs->trans('BillShortStatusPayed');
+			if (! $paye)
+			{
+				if ($statut == 0) return $langs->trans('BillShortStatusDraft');
+				if ($statut == 3) return $langs->trans('BillShortStatusCanceled');
+				return $langs->trans('BillShortStatusValidated');
+			}
+			else
+			{
+				return $langs->trans('BillShortStatusPayed');
+			}
 		}
-	}
-
-	/**
-	 *    \brief      Renvoi le libellé long d'un statut donné
-	 *    \param      paye        etat paye
-	 *    \param      statut      id statut
-	 *    \return     string      Libellé long du statut
-	 */
-	function LibStatut($paye,$statut)
-	{
-		global $langs;
-		$langs->load('bills');
-		if (! $paye)
+		if ($mode == 2)
 		{
-			if ($statut == 0) return $langs->trans('BillStatusDraft');
-			if ($statut == 3) return $langs->trans('BillStatusCanceled');
-			return $langs->trans('BillStatusValidated');
+			$prefix='Short';
+			if (! $paye)
+			{
+				if ($statut == 0) return img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
+				if ($statut == 3) return img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
+				return img_picto($langs->trans('Bill'.$prefix.'StatusValidated'),'statut4').' '.$langs->trans('Bill'.$prefix.'StatusValidated');
+			}
+			else
+			{
+				return img_picto($langs->trans('Bill'.$prefix.'StatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
+			}
 		}
-		else
+		if ($mode == 3)
 		{
-			return $langs->trans('BillStatusPayed');
+			$prefix='Short';
+			if (! $paye)
+			{
+				if ($statut == 0) return img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0');
+				if ($statut == 3) return img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5');
+				return img_picto($langs->trans('Bill'.$prefix.'StatusValidated'),'statut4');
+			}
+			else
+			{
+				return img_picto($langs->trans('Bill'.$prefix.'StatusPayed'),'statut6');
+			}
+		}
+		if ($mode == 4)
+		{
+			$prefix='Short';
+			if (! $paye)
+			{
+				if ($statut == 0) return img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0');
+				if ($statut == 3) return img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5');
+				return img_picto($langs->trans('Bill'.$prefix.'StatusValidated'),'statut4');
+			}
+			else
+			{
+				return img_picto($langs->trans('Bill'.$prefix.'StatusPayed'),'statut6');
+			}
 		}
 	}
 

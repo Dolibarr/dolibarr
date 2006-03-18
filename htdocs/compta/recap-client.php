@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -34,9 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 $socid = $_GET["socid"];
 if ($user->societe_id > 0)
 {
@@ -46,7 +43,6 @@ if ($user->societe_id > 0)
 
 $user->getrights('facture');
 
-llxHeader();
 
 
 /*
@@ -54,14 +50,14 @@ llxHeader();
  * Mode fiche
  *
  */
+
+llxHeader();
+
 if ($socid > 0)
 {
     $societe = new Societe($db);
     $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
 
-    /*
-     * Affichage onglets
-     */
     /*
      * Affichage onglets
      */
@@ -137,22 +133,24 @@ if ($socid > 0)
     print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
     print '</td>';
     
-    if ($societe->client) {
-    print '<tr>';
-    print '<td nowrap width="100">'.$langs->trans("CustomerCode"). '</td><td colspan="3">'. $societe->code_client . '</td>';
-    print '</tr>';
-    print '<tr>';
-    print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
-    print '</tr>';
+    if ($societe->client)
+    {
+	    print '<tr>';
+	    print '<td nowrap width="100">'.$langs->trans("CustomerCode"). '</td><td colspan="3">'. $societe->code_client . '</td>';
+	    print '</tr>';
+	    print '<tr>';
+	    print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
+	    print '</tr>';
     }
     
-    if ($societe->fournisseur) {
-    print '<tr>';
-    print '<td nowrap>'.$langs->trans("SupplierCode"). '</td><td colspan="3">'. $societe->code_fournisseur . '</td>';
-    print '</tr>';
-    print '<tr>';
-    print '<td nowrap>'.$langs->trans("SupplierAccountancyCode").'</td><td colspan="3">'.$societe->code_compta_fournisseur.'</td>';
-    print '</tr>';
+    if ($societe->fournisseur)
+    {
+	    print '<tr>';
+	    print '<td nowrap>'.$langs->trans("SupplierCode"). '</td><td colspan="3">'. $societe->code_fournisseur . '</td>';
+	    print '</tr>';
+	    print '<tr>';
+	    print '<td nowrap>'.$langs->trans("SupplierAccountancyCode").'</td><td colspan="3">'.$societe->code_compta_fournisseur.'</td>';
+	    print '</tr>';
     }
 
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
@@ -164,10 +162,19 @@ if ($socid > 0)
 
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code).'&nbsp;</td></tr>';
 
-    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$societe->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$societe->siren."\">".$societe->siren."</a>&nbsp;</td>";
-    print '<td>'.$langs->transcountry('ProfId2',$societe->pays_code).'</td><td>'.$societe->siret.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\" target=\"_blank\">$societe->url</a>&nbsp;</td></tr>";
 
-    print '<tr><td>'.$langs->transcountry('ProfId3',$societe->pays_code).'</td><td>'.$societe->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+	// Assujeti à TVA ou pas
+	print '<tr>';
+	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print yn($objsoc->tva_assuj);
+	print '</td>';
+	print '</tr>';
+
+    // TVA Intra
+    print '<tr><td nowrap>'.$langs->trans('VATIntraVeryShort').'</td><td colspan="3">';
+    print $societe->tva_intra;
+    print '</td></tr>';
 
     print "</table>";
 
@@ -182,9 +189,9 @@ if ($socid > 0)
     if ($conf->facture->enabled && $user->rights->facture->lire)
     {
         // Factures
-        print_fiche_titre($langs->trans("Bills"));
+        print_fiche_titre($langs->trans("AccountancyPreview"));
     
-        print '<table class="border" width="100%">';
+        print '<table class="noborder" width="100%">';
     
         $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df";
         $sql .= " , f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
@@ -200,7 +207,9 @@ if ($socid > 0)
             if ($num > 0)
             {
                 print '<tr class="liste_titre">';
-                print '<td width="100" align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td>';
+                print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
                 print '<td align="right">'.$langs->trans("Debit").'</td>';
                 print '<td align="right">'.$langs->trans("Credit").'</td>';
                 print '<td align="right">'.$langs->trans("Balance").'</td>';
@@ -240,6 +249,7 @@ if ($socid > 0)
                 print "<td align=\"center\">".dolibarr_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
     
+    			print '<td aling="left">'.$fac->getLibStatut(2).'</td>';
                 print '<td align="right">'.price($fac->total_ttc)."</td>\n";
                 $solde = $solde + $fac->total_ttc;
     

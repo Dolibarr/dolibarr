@@ -297,6 +297,13 @@ BuildDoc=Build Doc
 RebuildDoc=Rebuild Doc
 Entity=Entity
 Entities=Entities
+EventLogs=Logs
+CustomerPreview=Customer preview
+SupplierPreview=Supplier preview
+AccountancyPreview=Accountancy preview
+ShowCustomerPreview=Show customer preview
+ShowSupplierPreview=Show supplier preview
+ShowAccountancyPreview=Show accountancy preview
 # Countries
 CountryFR=France
 CountryBE=Belgium

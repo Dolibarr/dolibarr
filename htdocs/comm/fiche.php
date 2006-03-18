@@ -279,23 +279,7 @@ if ($socidp > 0)
         if ($objsoc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
         print '</td></tr>';
     }
-    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-    {
-        print '<tr>';
-        print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$objsoc->code_compta.'</td>';
-        print '</tr>';
-    }
 
-    /*
-    if ($objsoc->fournisseur) {
-        print '<tr><td>';
-        print $langs->trans('SupplierCode').'</td><td colspan="3">';
-        print $objsoc->code_fournisseur;
-        if ($objsoc->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
-        print '</td></tr>';
-    }
-    */
-    
     print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($objsoc->adresse)."</td></tr>";
 
     print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";
@@ -316,31 +300,8 @@ if ($socidp > 0)
     	print '<tr><td>'.$langs->transcountry('ProfId3',$objsoc->pays_code).'</td><td>'.$objsoc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
     }
 
-    // Type + Staff
-    $arr = $objsoc->typent_array($objsoc->typent_id);
-    $objsoc->typent= $arr[$objsoc->typent_id];
-    if ($objsoc->typent || $objsoc->effectif) {
-    	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td nowrap>'.$objsoc->effectif.'</td></tr>';
-    }
-
 	// Assujeti à TVA ou pas
 	print '<tr>';
-/*	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-	print $langs->trans('VATIsUsed');
-	print '<td>';
-	if ($_GET['action'] != 'editassujtva') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editassujtva&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editassujtva')
-		{
-			$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->tva_assuj,'assujtva_value');
-		}
-		else
-		{
-			$html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->tva_assuj,'none');
-		}
-	print "</td>";
-*/
 	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($objsoc->tva_assuj);
 	print '</td>';
@@ -443,6 +404,15 @@ if ($socidp > 0)
     // Nbre max d'éléments des petites listes
     $MAXLIST=4;
 
+    // Lien recap
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
+    print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td></tr></table></td>';
+    print '</tr>';
+    print '</table>';
+    print '<br>';
+
 
     /*
      * Dernieres propales
@@ -483,7 +453,7 @@ if ($socidp > 0)
                 }
                 print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp)."</td>\n";
                 print '<td align="right" width="120">'.price($objp->price).'</td>';
-                print '<td align="center" width="100">'.$propal_static->labelstatut_short[$objp->fk_statut].'</td></tr>';
+                print '<td align="center" width="100">'.$propal_static->LibStatut($objp->fk_statut,2).'</td></tr>';
                 $var=!$var;
                 $i++;
             }
@@ -710,8 +680,11 @@ if ($socidp > 0)
 
     print '<a class="butAction" href="action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
 
-    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-
+	if ($user->rights->societe->contact->creer)
+	{
+	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+	}
+	
     print '</div>';
     print '<br>';
 
