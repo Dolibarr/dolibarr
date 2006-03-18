@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,9 @@ if ($_POST["action"] == '2bank' && $_POST["rowid"] !='')
 }
 
 
-
+/*
+ * Affichage liste
+ */
 
 llxHeader();
 
@@ -137,7 +139,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation",$param,"","align=\"right\"",$sortfield);
-    if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0)
+    if ($conf->global->ADHERENT_BANK_USE)
     {
         print_liste_field_titre($langs->trans("Bank"),"cotisations.php","b.fk_account",$pram,"","",$sortfield);
     }
@@ -155,7 +157,7 @@ if ($result)
         print "<td>".dolibarr_print_date($objp->dateadh)."</td>\n";
         print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_object($langs->trans("ShowMember"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
         print '<td align="right">'.price($objp->cotisation).'</td>';
-        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0)
+        if ($conf->global->ADHERENT_BANK_USE)
         {
             if ($objp->fk_account)
             {
@@ -189,7 +191,10 @@ if ($result)
     print "<td>".$langs->trans("Total")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">".price($total)."</td>\n";
-    print '<td>&nbsp;</td>';
+    if ($conf->global->ADHERENT_BANK_USE)
+    {
+    	print '<td>&nbsp;</td>';
+    }
     print "</tr>\n";
     print "</table>";
     print "<br>\n";
