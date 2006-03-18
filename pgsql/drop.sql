@@ -181,8 +181,6 @@ drop table  llx_socpeople;
 
 drop table  llx_soc_events;
 
-drop table  llx_soc_recontact;
-
 drop table  llx_socstatutlog ;
 
 drop table  llx_stock;

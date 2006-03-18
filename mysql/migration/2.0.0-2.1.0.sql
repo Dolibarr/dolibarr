@@ -101,3 +101,6 @@ create table llx_avoir_model_pdf
   libelle     varchar(255),
   description text
 )type=innodb;
+
+
+drop table llx_soc_recontact if exists;

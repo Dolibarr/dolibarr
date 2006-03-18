@@ -189,8 +189,6 @@ drop table if exists llx_socpeople;
 
 drop table if exists llx_soc_events;
 
-drop table if exists llx_soc_recontact;
-
 drop table if exists llx_socstatutlog ;
 
 drop table if exists llx_stock;

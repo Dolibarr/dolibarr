@@ -64,13 +64,6 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
 }
 
 
-if ($action == 'recontact')
-{
-    $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $user->login ."')";
-    $result = $db->query($sql);
-}
-
 /* TODO RODO
 if ($action == 'stcomm')
 {

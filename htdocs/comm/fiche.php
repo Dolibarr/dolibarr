@@ -112,14 +112,6 @@ if ($_POST["action"] == 'setassujtva')
     if (! $result) dolibarr_print_error($result);
 }
 
-if ($action == 'recontact')
-{
-    $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socidp, $dr,'".  $user->login ."')";
-    $result = $db->query($sql);
-    if (! $result) dolibarr_print_error($result);
-}
-
 if ($action == 'stcomm')
 {
     if ($stcommid <> 'null' && $stcommid <> $oldstcomm)

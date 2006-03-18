@@ -67,13 +67,6 @@ if ($action == 'attribute_prefix')
   $societe->attribute_prefix($db, $socid);
 }
 
-if ($action == 'recontact')
-{
-  $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $user->login ."')";
-  $result = $db->query($sql);
-}
-
 if ($action == 'note')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='$note' WHERE idp=$socid";

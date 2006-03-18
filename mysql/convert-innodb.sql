@@ -152,8 +152,6 @@ alter table llx_socpeople type=INNODB;
 
 alter table llx_soc_events type=INNODB;
 
-alter table llx_soc_recontact type=INNODB;
-
 alter table llx_socstatutlog  type=INNODB;
 
 alter table llx_sqltables type=INNODB;
