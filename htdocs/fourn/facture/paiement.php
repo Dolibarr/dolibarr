@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
@@ -44,15 +44,15 @@ $sortfield = isset($_GET['sortfield'])?$_GET['sortfield']:$_POST['sortfield'];
 $sortorder = isset($_GET['sortorder'])?$_GET['sortorder']:$_POST['sortorder'];
 $page=isset($_GET['page'])?$_GET['page']:$_POST['page'];
 
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
+$socidp=0;
 if ($user->societe_id > 0)
 {
 	$action = '';
 	$socidp = $user->societe_id;
 }
+
+
 /*
  * Actions
  */
@@ -216,7 +216,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			$total = $obj->total;
 
 			print_titre($langs->trans('DoPayment'));
-			print '<form name="addpaiement action="paiement.php" method="post">';
+			print '<form name="addpaiement" action="paiement.php" method="post">';
 			print '<input type="hidden" name="action" value="add_paiement">';
 			print '<input type="hidden" name="facid" value="'.$facid.'">';
 			print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';
