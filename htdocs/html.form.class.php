@@ -220,24 +220,46 @@ class Form
     }
   }
 
-  /**
-   *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
-   *    \param     selected         Code pays pré-sélectionné
-   *    \param     htmlname         Nom de la liste deroulante
-   *    \param     htmloption       Options html sur le select
-   *    \todo      trier liste sur noms après traduction plutot que avant
-   */
-	 
-  function select_pays($selected='',$htmlname='pays_id',$htmloption='')
-  {
-    global $conf,$langs;
-    $langs->load("dict");
-    
-    $sql = "SELECT rowid, libelle, code, active FROM ".MAIN_DB_PREFIX."c_pays";
-    $sql .= " WHERE active = 1";
-    $sql .= " ORDER BY code ASC;";
-    
-    if ($this->db->query($sql))
+
+	/**
+	 *   	\brief      Renvoie la liste des sources de commandes
+	 *		\param      selected		Id de la source pré-sélectionnée
+	 *    	\param     	htmlname 		Nom de la liste deroulante
+	 *      \param     	addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *      \return		array			Tableau des sources de commandes
+	 */
+	function selectSourcesCommande($selected='',$htmlname='source_id',$addempty=0)
+	{
+	    global $conf,$langs;
+        print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
+		if ($addempty) print '<option value="-1" selected="true">&nbsp;</option>';
+		print '<option value="0"'.($selected=='0'?' selected="true"':'').'>'.$langs->trans('OrderSource0').'</option>';
+		print '<option value="1"'.($selected=='1'?' selected="true"':'').'>'.$langs->trans('OrderSource1').'</option>';
+		print '<option value="2"'.($selected=='2'?' selected="true"':'').'>'.$langs->trans('OrderSource2').'</option>';
+		print '<option value="3"'.($selected=='3'?' selected="true"':'').'>'.$langs->trans('OrderSource3').'</option>';
+		print '<option value="4"'.($selected=='4'?' selected="true"':'').'>'.$langs->trans('OrderSource4').'</option>';
+		print '<option value="5"'.($selected=='5'?' selected="true"':'').'>'.$langs->trans('OrderSource5').'</option>';
+		print '</select>';
+	}
+
+
+	/**
+	 *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
+	 *    \param     selected         Code pays pré-sélectionné
+	 *    \param     htmlname         Nom de la liste deroulante
+	 *    \param     htmloption       Options html sur le select
+	 *    \todo      trier liste sur noms après traduction plutot que avant
+	 */
+	function select_pays($selected='',$htmlname='pays_id',$htmloption='')
+	{
+	    global $conf,$langs;
+	    $langs->load("dict");
+	    
+	    $sql = "SELECT rowid, libelle, code, active FROM ".MAIN_DB_PREFIX."c_pays";
+	    $sql .= " WHERE active = 1";
+	    $sql .= " ORDER BY code ASC;";
+	    
+	    if ($this->db->query($sql))
       {
         print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
         $num = $this->db->num_rows();

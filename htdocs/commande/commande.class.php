@@ -40,7 +40,7 @@ class Commande
 	var $db ;
 	var $id ;
 	var $socidp;
-  var $contactid;
+	var $contactid;
 	var $brouillon;
 	var $cond_reglement_id;
 	var $cond_reglement_code;
@@ -60,6 +60,7 @@ class Commande
 		global $langs;
 		$langs->load('orders');
 		$this->db = $DB;
+
 		$this->statuts[-1] = $langs->trans('StatusOrderCanceled');
 		$this->statuts[0]  = $langs->trans('StatusOrderDraft');
 		$this->statuts[1]  = $langs->trans('StatusOrderValidated');
@@ -78,6 +79,7 @@ class Commande
 		$this->sources[3] = $langs->trans('OrderSource3');
 		$this->sources[4] = $langs->trans('OrderSource4');
 		$this->sources[5] = $langs->trans('OrderSource5');
+
 		$this->products = array();
 	}
 
@@ -107,9 +109,9 @@ class Commande
 		}
 
 		$this->soc_id = $propal->soc_id;
-    $this->cond_reglement_id = $propal->cond_reglement_id;
-    $this->mode_reglement_id = $propal->mode_reglement_id;
-	$this->date_livraison = $propal->date_livraison;
+		$this->cond_reglement_id = $propal->cond_reglement_id;
+		$this->mode_reglement_id = $propal->mode_reglement_id;
+		$this->date_livraison = $propal->date_livraison;
     
 		/* Définit la société comme un client */
 		$soc = new Societe($this->db);
@@ -222,26 +224,43 @@ class Commande
 			}
 		}
 	}
-  /**
-   * Créé la commande
-   *
-   */
+
+	/**
+	 * 		\brief		Créé la commande
+	 *		\param		user		Id utilisateur qui crée
+	 */
 	function create($user)
 	{
-		global $conf;
-		/* On positionne en mode brouillon la commande */
+		global $conf,$langs;
+
+		// Vérification paramètres
+		if ($this->source < 0)
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
+			return -1;
+		}
+
+		// On positionne en mode brouillon la commande
 		$this->brouillon = 1;
 		if (! $remise)
 		{
 			$remise = 0 ;
 		}
-
 		if (! $this->projetid)
 		{
 			$this->projetid = 0;
 		}
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison) ';
-		$sql .= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.', '.$this->db->idate($this->date_commande).', '.$this->source.', \''.$this->note.'\', \''.$this->ref_client.'\', \''.$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\', \''.$this->date_livraison.'\')';
+
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
+		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison) ';
+		$sql.= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.',';
+		$sql.= ' '.$this->db->idate($this->date_commande).',';
+		$sql.= ' '.$this->source.', ';
+		$sql.= " '".addslashes($this->note)."', ";
+		$sql.= " '".$this->ref_client."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
+		$sql.= "  ".($this->date_livraison?$this->db->idate($this->date_livraison):'null').")";
+
+		dolibarr_syslog("Commande.class.php::create sql=$sql");
 		if ( $this->db->query($sql) )
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande');
@@ -565,7 +584,7 @@ class Commande
 			$this->modelpdf          = $obj->model_pdf;
 			$this->cond_reglement_id = $obj->fk_cond_reglement;
 			$this->mode_reglement_id = $obj->fk_mode_reglement;
-			$this->date_livraison = $obj->date_livraison;
+			$this->date_livraison    = $obj->date_livraison;
 			
 			$this->db->free();
 			if ($this->statut == 0)
@@ -804,9 +823,9 @@ class Commande
 	}
 /**
      *      \brief      Définit une date de livraison
-     *      \param      user        Objet utilisateur qui modifie
-     *      \param      date_livraison      date de livraison  
-     *      \return     int         <0 si ko, >0 si ok
+     *      \param      user        		Objet utilisateur qui modifie
+     *      \param      date_livraison      Date de livraison  
+     *      \return     int         		<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison)
     {
@@ -1177,10 +1196,11 @@ class Commande
 			return -1;
 		}
 	}
-  /**
-   *        \brief      Classer la commande dans un projet
-   *        \param      cat_id      Id du projet
-   */
+
+	/**
+	 *        \brief      Classer la commande dans un projet
+	 *        \param      cat_id      Id du projet
+	 */
 	function classin($cat_id)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
@@ -1197,6 +1217,7 @@ class Commande
 		}
 	}
 
+	
     /**
      *      \brief          Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
      *      \param          user    Objet user

@@ -32,6 +32,9 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
 $langs->load('orders');
 $langs->load('sendings');
@@ -44,13 +47,6 @@ $user->getrights('expedition');
 
 if (!$user->rights->commande->lire) accessforbidden();
 
-if ($conf->projet->enabled) 
-{
-  require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
-}
-
-require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
 // Sécurité accés client
 $socidp=0;
@@ -77,7 +73,8 @@ if ($_POST['action'] == 'classin' && $user->rights->commande->creer)
 if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 {
 	$datecommande='';
-	$datecommande = @mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	$datecommande  = @mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
+	$datelivraison = @mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 	
 	$commande = new Commande($db);
 
@@ -91,7 +88,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->modelpdf          = $_POST['model'];
 	$commande->cond_reglement_id = $_POST['cond_reglement_id'];
     $commande->mode_reglement_id = $_POST['mode_reglement_id'];
-    $commande->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+    $commande->date_livraison    = $datelivraison;
 
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
@@ -104,9 +101,17 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
 	$commande_id = $commande->create($user);
 
-	$_GET['id'] = $commande->id;
-
-	$action = '';
+	if ($commande_id <= 0)
+	{
+		$_GET['action']='create';
+		$_GET['socidp']=$_POST['soc_id'];
+		$mesg='<div class="error">'.$commande->error.'</div>';
+	}
+	else
+	{
+		$_GET['id'] = $commande->id;
+		$action = '';
+	}
 }
 
 // Positionne ref commande client
@@ -215,6 +220,7 @@ if ($_GET['action'] == 'deleteline' && $user->rights->commande->creer)
 	$commande->fetch($_GET['id']);
 	$result = $commande->delete_line($_GET['lineid']);
 	Header('Location: fiche.php?id='.$_GET['id']);
+	exit;
 }
 
 if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->rights->commande->valider)
@@ -248,6 +254,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 		$commande->id = $_GET['id'];
 		$commande->delete();
 		Header('Location: index.php');
+		exit;
 	}
 }
 
@@ -271,7 +278,6 @@ if($_GET['action'] == 'builddoc')
 llxHeader('',$langs->trans('OrderCard'),'Commande');
 
 
-
 $html = new Form($db);
 
 /*********************************************************************
@@ -283,6 +289,8 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 {
 	print_titre($langs->trans('CreateOrder'));
 
+	if ($mesg) print $mesg.'<br>';
+	
 	$new_commande = new Commande($db);
 
 	if ($propalid)
@@ -338,30 +346,29 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$html->select_date('','re','','','',"crea_commande");
 			print '</td></tr>';
 			
-			// date de livraison
+			// Date de livraison
 			print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
-			if(DATE_LIVRAISON_WEEK_DELAY != "")
+			if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
 			{
-    			$tmpdte = time() + ((7*DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-				$syear = date("Y", $tmpdte);
-            	$smonth = date("m", $tmpdte);
-            	$sday = date("d", $tmpdte);
-				$html->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"crea_commande");
+    			$tmpdte = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+				$html->select_date($tmpdte,'liv_','','',1,"crea_commande");
 			}
 			else
-				$html->select_date('','liv_','','','',"crea_commande");
+			{
+				$html->select_date(-1,'liv_','','',1,"crea_commande");
+    		}
     		print "</td></tr>";
 	
 			
 			// Conditions de réglement
-	    print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
-	    $html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
-	    print '</td></tr>';
-
-	    // Mode de réglement
-	    print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	    $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
-	    print '</td></tr>';
+		    print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
+		    $html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
+		    print '</td></tr>';
+	
+		    // Mode de réglement
+		    print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+		    $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+		    print '</td></tr>';
 
 			if ($conf->projet->enabled)
 			{
@@ -371,16 +378,15 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			}
 
 			print '<tr><td>'.$langs->trans('Source').'</td><td>';
-			$html->select_array('source_id',$new_commande->sources,2);
+			$html->selectSourcesCommande('','source_id',1);
 			print '</td></tr>';
 			print '<tr><td>Modèle</td>';
 			print '<td>';
 			// pdf
 			include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
-			$form=new Form($db);
 			$model=new ModelePDFCommandes();
 			$liste=$model->liste_modeles($db);
-			$form->select_array("model",$liste,$conf->global->COMMANDE_ADDON_PDF);
+			$html->select_array("model",$liste,$conf->global->COMMANDE_ADDON_PDF);
 			print "</td></tr>";
 			
 			if ($propalid > 0)

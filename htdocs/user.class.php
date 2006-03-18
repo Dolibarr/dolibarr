@@ -46,53 +46,52 @@
 
 class User
 {
-  var $db;
+	var $db;
 	
-  var $id;
-  var $fullname;
-  var $nom;
-  var $prenom;
-  var $note;
-  var $code;
-  var $email;
-  var $office_tel;
-  var $office_fax;
-  var $user_mobile;
-  var $admin;
-  var $login;
-  var $pass;
-  var $lang;
-  var $datec;
-  var $datem;
-  var $societe_id;
-  var $webcal_login;
-  var $datelastaccess;
-  
-  var $error;
-  var $userpref_limite_liste;
-  var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
-
-
-  /**
-   *    \brief Constructeur de la classe
-   *    \param  $DB         handler accès base de données
-   *    \param  $id         id de l'utilisateur (0 par défaut)
-   */
-	 
-  function User($DB, $id=0)
-    {
-
-      $this->db = $DB;
-      $this->id = $id;
-
-      // Preference utilisateur
-      $this->liste_limit = 0;
-      $this->clicktodial_enabled = 0;
+	var $id;
+	var $fullname;
+	var $nom;
+	var $prenom;
+	var $note;
+	var $code;
+	var $email;
+	var $office_tel;
+	var $office_fax;
+	var $user_mobile;
+	var $admin;
+	var $login;
+	var $pass;
+	var $lang;
+	var $datec;
+	var $datem;
+	var $societe_id;
+	var $webcal_login;
+	var $datelastaccess;
+	
+	var $error;
+	var $userpref_limite_liste;
+	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
+	
+	
+	/**
+	 *    \brief Constructeur de la classe
+	 *    \param  $DB         handler accès base de données
+	 *    \param  $id         id de l'utilisateur (0 par défaut)
+	 */
+	function User($DB, $id=0)
+	{
+		$this->db = $DB;
+		$this->id = $id;
+		
+		// Preference utilisateur
+		$this->liste_limit = 0;
+		$this->clicktodial_enabled = 0;
 		  
-      $this->all_permissions_are_loaded = 0;
+		$this->all_permissions_are_loaded = 0;
+		$this->admin=0;
 
-      return 1;
-  }
+		return 1;
+	}
 
 
   /**
@@ -564,7 +563,8 @@ class User
         
         $this->db->begin();
 
-        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='".addslashes($this->login)."'";
+        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
+        $sql.= " WHERE login ='".addslashes($this->login)."'";
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -574,7 +574,7 @@ class User
             if ($num)
             {
                 $this->error = $langs->trans("ErrorLoginAlreadyExists");
-                return -5;
+                return -6;
             }
             else
             {
@@ -589,19 +589,17 @@ class User
                     // Set default rights
                     if ($this->set_default_rights() < 0) 
                     {
-                        $this->db->rollback();
-        
                         $this->error=$this->db->error();
-                        return -4;
+                        $this->db->rollback();
+                        return -5;
                     }
                     
                     // Update minor fields
                     if ($this->update() < 0)
                     {
-                        $this->db->rollback();
-        
                         $this->error=$this->db->error();
-                        return -5;
+                        $this->db->rollback();
+                        return -4;
                     }
     
                     // Appel des triggers
@@ -614,29 +612,27 @@ class User
                     if (! $error)
                     {
                         $this->db->commit();
-        
                         return $this->id;
                     }
                     else
                     {
-                        $this->db->rollback();
-        
                         $this->error=$interface->error;
+                        $this->db->rollback();
                         return -3;
                     }
                 }
                 else
                 {
-                    $this->db->rollback();
                     $this->error=$this->db->error();
+                    $this->db->rollback();
                     return -2;
                 }
             }
         }
         else
         {
-            $this->db->rollback();
             $this->error=$this->db->error();
+            $this->db->rollback();
             return -1;
         }
     }
@@ -767,6 +763,7 @@ class User
         $this->pass=trim($this->pass);
         $this->email=trim($this->email);
         $this->note=trim($this->note);
+        $this->admin=$this->admin?$this->admin:0;
         
         $error=0;
         
@@ -777,7 +774,7 @@ class User
         $sql .= ", firstname = '".addslashes($this->prenom)."'";
         $sql .= ", login = '".addslashes($this->login)."'";
         if ($this->pass) $sql .= ", pass = '".addslashes($this->pass)."'";
-        $sql .= ", admin = $this->admin";
+        $sql .= ", admin = ".$this->admin;
         $sql .= ", office_phone = '$this->office_phone'";
         $sql .= ", office_fax = '$this->office_fax'";
         $sql .= ", user_mobile = '$this->user_mobile'";
