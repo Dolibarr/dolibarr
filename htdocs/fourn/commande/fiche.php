@@ -392,11 +392,6 @@ if ($_GET["id"] > 0)
         print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
         print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="3">&nbsp;</td></tr>';
         
-        if ($commande->note)
-        {
-            print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5">'.nl2br($commande->note)."</td></tr>";
-        }
-        
         print "</table>";
 
         if ($mesg) print $mesg;

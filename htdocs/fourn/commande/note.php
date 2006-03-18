@@ -37,21 +37,25 @@ $user->getrights('fournisseur');
 
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
+
 /*
- *
+ * Actions
  */	
 
 if ($_POST["action"] == 'updatenote' && $user->rights->fournisseur->commande->creer)
 {
-  $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
-
-  $result = $commande->UpdateNote($user, $_POST["note"]);
-  if ($result == 0)
-    {
-      Header("Location: note.php?id=".$_GET["id"]);
-    }
+	$commande = new CommandeFournisseur($db);
+	$commande->fetch($_GET["id"]);
+	
+	$result = $commande->UpdateNote($user, $_POST["note"], $_POST["note_public"]);
+	if ($result >= 0)
+	{
+		Header("Location: note.php?id=".$_GET["id"]);
+		exit;
+	}
 }
+
+
 
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
@@ -129,34 +133,43 @@ if ($_GET["id"] > 0)
 	  print "</td></tr>";
 	}
       
-      // Auteur
-      print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';	
-      print '<td width="50%">';
-      print "&nbsp;</td></tr>";
-  
-      // Ligne de 3 colonnes
-      print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-      print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
-      print '<td valign="top">&nbsp;</td></tr>';
+		// Auteur
+		print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';	
+		print '<td width="50%">';
+		print "&nbsp;</td></tr>";
+		
+		// Ligne de 3 colonnes
+		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
+		print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
+		print '<td valign="top">&nbsp;</td></tr>';
+		
+		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
+		
+		
+		print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+		print '<td colspan="3">';
+		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="60" rows="'.ROWS_4.'" name="note">';
+		print nl2br($commande->note);
+		if ($user->rights->fournisseur->commande->creer) print '</textarea>';
+		print '</td></tr>';
 
-      print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
-      print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
+		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+		print '<td colspan="3">';
+		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="60" rows="'.ROWS_4.'" name="note_public">';
+		print nl2br($commande->note_public);
+		if ($user->rights->fournisseur->commande->creer) print '</textarea>';
+		print '</td></tr>';
 
-
-      if ($user->rights->fournisseur->commande->creer)
-	{
-	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3"><textarea cols="60" rows="10" name="note">'.nl2br($commande->note)."</textarea></td></tr>";
-	  print '<tr><td colspan="4" align="center"><input type="submit" class="button"></td></tr>';
-	}
-      else
-	{
-	  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">'.nl2br($commande->note)."</td></tr>";
-	}
+		if ($user->rights->fournisseur->commande->creer)
+		{
+	  		print '<tr><td colspan="4" align="center"><input type="submit" class="button"></td></tr>';
+		}
 	  
-      print "</table></form>";
+		print "</table></form>";
     }
   else
     {

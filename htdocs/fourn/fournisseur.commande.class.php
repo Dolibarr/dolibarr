@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class CommandeFournisseur
     {
       $this->db = $DB;
 
-      $this->statuts[-1] = "Annulée";
+      $this->statuts[-1]= "Annulée";
       $this->statuts[0] = "Brouillon";
       $this->statuts[1] = "Validée";
       $this->statuts[2] = "Approuvée";
@@ -67,10 +67,10 @@ class CommandeFournisseur
      */
     function fetch ($id)
     {
-        $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
-        $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande ";
-        $sql .= ", c.note";
-        $sql .= ", cm.libelle as methode_commande";
+        $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+        $sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande,";
+        $sql .= " c.note, c.note_public,";
+        $sql .= " cm.libelle as methode_commande";
         $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
         $sql .= " WHERE c.rowid = ".$id;
@@ -98,7 +98,8 @@ class CommandeFournisseur
             $this->source              = $obj->source;
             $this->facturee            = $obj->facture;
             $this->projet_id           = $obj->fk_projet;
-            $this->note                = stripslashes($obj->note);
+            $this->note                = $obj->note;
+            $this->note_public         = $obj->note_public;
     
             $this->db->free();
     
@@ -242,7 +243,6 @@ class CommandeFournisseur
   /**
    * Annule la commande
    * L'annulation se fait après la validation
-   *
    */
   function Cancel($user)
     {
@@ -860,34 +860,35 @@ class CommandeFournisseur
       return $result ;
     }
 
-  /**
-   *
-   *
-   *
-   */
-  function UpdateNote($user, $note)
-    {
-      dolibarr_syslog("CommandeFournisseur::UpdateNote");
-      $result = 0;
-
-      $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-
-      $sql .= " SET note  ='".trim($note) ."'";
-
-      $sql .= " WHERE rowid = ".$this->id;
-      
-      if ($this->db->query($sql) )
+	/**
+	 *		\brief		Met a jour les notes
+	 *		\return		int			<0 si ko, >=0 si ok
+	 */
+	function UpdateNote($user, $note, $note_public)
 	{
-	  $result = 0;
+		dolibarr_syslog("CommandeFournisseur::UpdateNote");
+	
+		$result = 0;
+	
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+		$sql.= " SET note  ='".trim($note) ."',";
+		$sql.= " note_public  ='".trim($note_public) ."'";
+		$sql.= " WHERE rowid = ".$this->id;
+	
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$result = 0;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("CommandeFournisseur::UpdateNote "+$this->error);
+			$result = -1;
+		}
+	
+		return $result ;
 	}
-      else
-	{
-	  dolibarr_syslog("CommandeFournisseur::UpdateNote Error -1");
-	  $result = -1;
-	}	  
-
-      return $result ;
-    }
 
   /*
    *
@@ -925,6 +926,7 @@ class CommandeFournisseur
 	dolibarr_syslog("ReadApprobators Erreur");
       }    
   }
+
   /*
    *
    *

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-  \file       htdocs/fourn/fournisseur.class.php
-  \ingroup    fournisseur,societe
-  \brief      Fichier de la classe des fournisseurs
-  \version    $Revision$
+		\file       htdocs/fourn/fournisseur.class.php
+		\ingroup    fournisseur,societe
+		\brief      Fichier de la classe des fournisseurs
+		\version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
@@ -33,11 +33,12 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
 /**
-  \class Fournisseur
-  \brief Classe permettant la gestion des fournisseur
+		\class Fournisseur
+		\brief Classe permettant la gestion des fournisseur
 */
 
-class Fournisseur extends Societe {
+class Fournisseur extends Societe
+{
   var $db;
 
   /**
