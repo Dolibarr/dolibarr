@@ -84,6 +84,14 @@ ALTER TABLE `llx_commande` ADD `date_livraison` DATE;
 ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk_facture_fourn);
 ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture FOREIGN KEY (fk_facture_fourn) REFERENCES llx_facture_fourn (rowid);
 
+
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_soc (fk_soc);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+
+ALTER TABLE llx_commande_fournisseur ADD INDEX idx_commande_fournisseur_fk_soc (fk_soc);
+ALTER TABLE llx_commande_fournisseur ADD CONSTRAINT fk_commande_fournisseur_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+
+
 create table llx_avoir_model_pdf
 (
   nom         varchar(50) PRIMARY KEY,

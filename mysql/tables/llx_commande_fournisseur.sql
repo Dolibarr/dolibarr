@@ -24,18 +24,18 @@ create table llx_commande_fournisseur
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   tms                 timestamp,
-  fk_soc              integer,
+  fk_soc              integer NOT NULL,
   fk_soc_contact      integer,
   fk_projet           integer DEFAULT 0,     -- projet auquel est rattache la commande
-  ref                 varchar(30) NOT NULL,  -- propal number
+  ref                 varchar(30) NOT NULL,  -- order number
+
   date_creation       datetime,              -- date de creation 
   date_valid          datetime,              -- date de validation
   date_cloture        datetime,              -- date de cloture
   date_commande       date,                  -- date de la commande
-  fk_methode_commande integer default 0,
   fk_user_author      integer,               -- createur de la commande
   fk_user_valid       integer,               -- valideur de la commande
-  fk_user_cloture     integer,               -- cloture de la propale signee ou non signee
+  fk_user_cloture     integer,               -- auteur cloture
   source              smallint NOT NULL,
   fk_statut           smallint  default 0,
   amount_ht           real      default 0,
@@ -45,7 +45,10 @@ create table llx_commande_fournisseur
   total_ht            real      default 0,
   total_ttc           real      default 0,
   note                text,
+  note_public         text,
   model_pdf           varchar(50),
+
+  fk_methode_commande integer default 0,
 
   UNIQUE INDEX (ref)
 )type=innodb;
