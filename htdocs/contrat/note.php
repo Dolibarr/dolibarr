@@ -134,7 +134,7 @@ if ($_GET["id"])
     print '<table class="border" width="100%">';
 
     // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$contrat->ref.'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$contrat->ref.'</td></tr>';
 
     print '<tr><td>'.$langs->trans("Customer").'</td>';
     print '<td colspan="3">';
