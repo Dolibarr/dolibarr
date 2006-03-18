@@ -143,7 +143,9 @@ if ($_POST["action"] == 'add' && $caneditperms)
         {
             $db->rollback();
 
-            $message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+            //$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+            $message='<div class="error">'.$edituser->error.$id.'</div>';
+
             $action="create";       // Go back to create page
         }
 
