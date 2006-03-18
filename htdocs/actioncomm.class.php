@@ -247,5 +247,43 @@ class ActionComm
         }
     }
 
+
+	/**
+	 *      \brief     Charge les informations d'ordre info dans l'objet facture
+	 *      \param     id       	Id de la facture a charger
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT a.id, '.$this->db->pdate('a.datec').' as datec,';
+		$sql.= ' '.$this->db->pdate('tms').' as datem,';
+		$sql.= ' fk_user_author';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
+		$sql.= ' WHERE a.id = '.$id;
+
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->id;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db, $obj->fk_user_author);
+					$cuser->fetch();
+					$this->user_creation     = $cuser;
+				}
+
+				$this->date_creation     = $obj->datec;
+				$this->date_modification = $obj->datem;
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+	
 }    
 ?>
