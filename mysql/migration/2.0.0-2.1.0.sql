@@ -60,6 +60,9 @@ alter table llx_actioncomm modify datea datetime;
 alter table llx_actioncomm add column datec datetime after id;
 alter table llx_actioncomm add column datep datetime after datec;
 alter table llx_actioncomm add column tms timestamp after datea;
+update llx_actioncomm set datec = datea where datec is null;
+update llx_actioncomm set datep = datea where datep is null;
+
 
 create table llx_expedition_model_pdf
 (

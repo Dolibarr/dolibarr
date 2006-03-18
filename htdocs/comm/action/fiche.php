@@ -414,10 +414,13 @@ if ($_GET["id"])
 
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans('Documents');
-    //$hselected=$h;
     $h++;
 
-    dolibarr_fiche_head($head, $hselected, $langs->trans("Ref")." ".$act->id);
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans('Info');
+	$h++;
+	
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
 
 
     // Confirmation suppression action
@@ -450,8 +453,11 @@ if ($_GET["id"])
         print '<tr><td>'.$langs->trans("Author").'</td>';
         print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
 
-        // Date
-        print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
+        // Date debut
+        print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">'.dolibarr_print_date($act->datep,'%d %B %Y %H:%M').'</td></tr>';
+
+        // Date fin real
+        print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
 
         print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
         if ($act->objet_url)
@@ -490,8 +496,11 @@ if ($_GET["id"])
         print '<tr><td>'.$langs->trans("Author").'</td>';
         print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
 
-        // Date
-        print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
+        // Date debut
+		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">'.dolibarr_print_date($act->datep,'%d %B %Y %H:%M').'</td></tr>';
+        
+        // Date fin real
+        print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
 
         print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
         if ($act->objet_url)

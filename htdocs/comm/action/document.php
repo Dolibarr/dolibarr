@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis.houssin@cap-networks.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
@@ -120,7 +120,11 @@ if ($_GET["id"] > 0)
 	$hselected=$h;
 	$h++;
 
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Ref")." ".$act->id);
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans('Info');
+	$h++;
+	
+	dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
 
     // Affichage fiche action en mode visu
     print '<table class="border" width="100%"';
@@ -140,9 +144,6 @@ if ($_GET["id"] > 0)
     print '<tr><td>'.$langs->trans("Author").'</td>';
     print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
 
-    // Date
-    print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
-    
     // Construit liste des fichiers
     clearstatcache();
 
