@@ -640,7 +640,7 @@ if ($_GET['action'] == 'create')
 		$societe_id = $propal->soc_id;
 		$projet=$propal->projetidp;
 		$cond_reglement_id = $propal->cond_reglement_id;
-	  $mode_reglement_id = $propal->mode_reglement_id;
+		$mode_reglement_id = $propal->mode_reglement_id;
 		$soc->fetch($societe_id);
 	}
 	elseif ($_GET['commandeid'])
@@ -651,7 +651,7 @@ if ($_GET['action'] == 'create')
 		$projet=$commande-> projet_id;
 		$ref_client=$commande->ref_client;
 		$cond_reglement_id = $commande->cond_reglement_id;
-	  $mode_reglement_id = $commande->mode_reglement_id;
+		$mode_reglement_id = $commande->mode_reglement_id;
 		$soc->fetch($societe_id);
 	}
 	elseif ($_GET['contratid'])
@@ -667,7 +667,7 @@ if ($_GET['action'] == 'create')
 		$societe_id=$socidp;
 		$soc->fetch($societe_id);
 		$cond_reglement_id = $soc->cond_reglement;
-	  $mode_reglement_id = $soc->mode_reglement;
+		$mode_reglement_id = $soc->mode_reglement;
 	}
 
 
@@ -763,10 +763,10 @@ if ($_GET['action'] == 'create')
 	{
 		print '<input type="hidden" name="amount"         value="'.$propal->price.'">'."\n";
 		print '<input type="hidden" name="total"          value="'.$propal->total.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$propal->tva.'">'."\n";
 		print '<input type="hidden" name="remise"         value="'.$propal->remise.'">'."\n";
 		print '<input type="hidden" name="remise_percent" value="'.$propal->remise_percent.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$propal->tva.'">'."\n";
-		print '<input type="hidden" name="propalid"       value="'.$_GET['propalid'].'">';
+		print '<input type="hidden" name="propalid"       value="'.$propal->id.'">';
 
 		print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2">'.$propal->ref.'</td></tr>';
 		print '<tr><td>'.$langs->trans('GlobalDiscount').'</td><td colspan="2">'.$propal->remise_percent.'%</td></tr>';
@@ -776,9 +776,12 @@ if ($_GET['action'] == 'create')
 	}
 	elseif ($_GET['commandeid'] > 0)
 	{
-		$commande->remise_percent=$soc->remise_client;
-		print '<input type="hidden" name="commandeid" value="'.$commande->id.'">';
+		print '<input type="hidden" name="amount"         value="'.$commande->total_ht.'">'."\n";
+		print '<input type="hidden" name="total"          value="'.$commande->total_ttc.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$commande->tva.'">'."\n";
+		print '<input type="hidden" name="remise"         value="'.$commande->remise.'">'."\n";
 		print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
+		print '<input type="hidden" name="commandeid"     value="'.$commande->id.'">';
 
 		print '<tr><td>'.$langs->trans('Order').'</td><td colspan="2">'.$commande->ref.'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
@@ -792,12 +795,12 @@ if ($_GET['action'] == 'create')
 		$contrat->remise_percent=$soc->remise_client;
 		$contrat->update_price();
 
-		print '<input type="hidden" name="amount"    value="'.$contrat->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"     value="'.$contrat->total_ttc.'">'."\n";
-		print '<input type="hidden" name="remise"    value="'.$contrat->remise.'">'."\n";
-		print '<input type="hidden" name="remise_percent"   value="'.$contrat->remise_percent.'">'."\n";
-		print '<input type="hidden" name="tva"       value="'.$contrat->total_tva.'">'."\n";
-		print '<input type="hidden" name="contratid" value="'.$_GET["contratid"].'">';
+		print '<input type="hidden" name="amount"         value="'.$contrat->total_ht.'">'."\n";
+		print '<input type="hidden" name="total"          value="'.$contrat->total_ttc.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$contrat->total_tva.'">'."\n";
+		print '<input type="hidden" name="remise"         value="'.$contrat->remise.'">'."\n";
+		print '<input type="hidden" name="remise_percent" value="'.$contrat->remise_percent.'">'."\n";
+		print '<input type="hidden" name="contratid"      value="'.$contrat->id.'">';
 
 		print '<tr><td>'.$langs->trans('Contract').'</td><td colspan="2">'.$contrat->ref.'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($contrat->total_ht).'</td></tr>';
