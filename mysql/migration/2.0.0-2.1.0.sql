@@ -92,6 +92,9 @@ ALTER TABLE llx_commande_fournisseur ADD INDEX idx_commande_fournisseur_fk_soc (
 ALTER TABLE llx_commande_fournisseur ADD CONSTRAINT fk_commande_fournisseur_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
 
 
+alter table llx_commande_fournisseur add note_public text after note;
+
+
 create table llx_avoir_model_pdf
 (
   nom         varchar(50) PRIMARY KEY,
