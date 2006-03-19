@@ -516,41 +516,45 @@ class FactureFournisseur
 	}
 
 	/**
-	 *    \brief      Renvoi le libellé d'un statut donné
-	 *    \param      paye          Etat paye
-	 *    \param      statut        Id statut
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
-	 *    \return     string        Libellé du statut
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      paye          	Etat paye
+	 *		\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string			Libellé du statut
 	 */
-	function LibStatut($paye,$statut,$mode)
+	function LibStatut($paye,$statut,$mode=0)
 	{
 		global $langs;
 		$langs->load('bills');
 	
-		if ($mode==0)
+		if ($mode == 0)
 		{
+			$prefix='';
 			if (! $paye)
 			{
-				if ($statut == 0) return $langs->trans('BillStatusDraft');
-				if ($statut == 3) return $langs->trans('BillStatusCanceled');
-				return $langs->trans('BillStatusValidated');
+				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
+				if ($statut == 3) return $langs->trans('Bill'.$prefix.'StatusCanceled');
+				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
+				return $langs->trans('Bill'.$prefix.'StatusStarted');
 			}
 			else
 			{
-				return $langs->trans('BillStatusPayed');
+				return $langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
-		if ($mode==1)
+		if ($mode == 1)
 		{
+			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return $langs->trans('BillShortStatusDraft');
-				if ($statut == 3) return $langs->trans('BillShortStatusCanceled');
-				return $langs->trans('BillShortStatusValidated');
+				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
+				if ($statut == 3) return $langs->trans('Bill'.$prefix.'StatusCanceled');
+				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
+				return $langs->trans('Bill'.$prefix.'StatusStarted');
 			}
 			else
 			{
-				return $langs->trans('BillShortStatusPayed');
+				return $langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
 		if ($mode == 2)
@@ -560,7 +564,8 @@ class FactureFournisseur
 			{
 				if ($statut == 0) return img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
 				if ($statut == 3) return img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				return img_picto($langs->trans('Bill'.$prefix.'StatusValidated'),'statut4').' '.$langs->trans('Bill'.$prefix.'StatusValidated');
+				if ($alreadypayed <= 0) return img_picto($langs->trans('Bill'.$prefix.'StatusNotPayed'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPayed');
+				return img_picto($langs->trans('Bill'.$prefix.'StatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
 			}
 			else
 			{
@@ -574,7 +579,8 @@ class FactureFournisseur
 			{
 				if ($statut == 0) return img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0');
 				if ($statut == 3) return img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5');
-				return img_picto($langs->trans('Bill'.$prefix.'StatusValidated'),'statut4');
+				if ($alreadypayed <= 0) return img_picto($langs->trans('Bill'.$prefix.'StatusNotPayed'),'statut1');
+				return img_picto($langs->trans('Bill'.$prefix.'StatusStarted'),'statut3');
 			}
 			else
 			{
@@ -583,16 +589,31 @@ class FactureFournisseur
 		}
 		if ($mode == 4)
 		{
-			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0');
-				if ($statut == 3) return img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5');
-				return img_picto($langs->trans('Bill'.$prefix.'StatusValidated'),'statut4');
+				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
+				if ($statut == 3) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('BillStatusCanceled');
+				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('BillStatusNotPayed');
+				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('BillStatusStarted');
 			}
 			else
 			{
-				return img_picto($langs->trans('Bill'.$prefix.'StatusPayed'),'statut6');
+				return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('BillStatusPayed');
+			}
+		}
+		if ($mode == 5)
+		{
+			$prefix='Short';
+			if (! $paye)
+			{
+				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0');
+				if ($statut == 3) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5');
+				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed').' '.img_picto($langs->trans('Bill'.$prefix.'StatusValidated'),'statut1');
+				return $langs->trans('Bill'.$prefix.'StatusStarted').' '.img_picto($langs->trans('Bill'.$prefix.'StatusStarted'),'statut3');
+			}
+			else
+			{
+				return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('Bill'.$prefix.'StatusPayed'),'statut6');
 			}
 		}
 	}
