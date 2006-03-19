@@ -1285,7 +1285,9 @@ else
 			/*
 			 * Liste des paiements
 			 */
-			print $langs->trans('Payments').' :<br>';
+ 			$totalpaye = 0;
+ 
+ 			print $langs->trans('Payments').' :<br>';
 			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
 			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
@@ -1297,7 +1299,7 @@ else
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				$i = 0; $totalpaye = 0;
+				$i = 0;
 				print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre"><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Type').'</td>';
 				print '<td align="right">'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
@@ -1369,7 +1371,8 @@ else
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Statut
-			print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
+			print '<tr><td>'.$langs->trans('Status').'</td>';
+			print '<td align="left" colspan="3">'.($fac->getLibStatut(4,$totalpaye)).'</td></tr>';
 
 			// Projet
 			if ($conf->projet->enabled)
@@ -1681,7 +1684,7 @@ else
 				else
 				{
 					// Générer
-					if ($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer)
+					if ($fac->statut == 1 && $user->rights->facture->creer)
 					{
 						if ($fac->paye == 0)
 						{
@@ -1998,7 +2001,7 @@ else
 		$month=$_GET['month'];
 		$year=$_GET['year'];
 
-		$fac=new Facture($db);
+		$facturestatic=new Facture($db);
 
 		if ($page == -1) $page = 0 ;
 
@@ -2091,7 +2094,7 @@ else
 				print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','','&amp;socidp='.$socidp,'align="right"',$sortfield);
 				print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socidp='.$socidp,'align="right"',$sortfield);
 				print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socidp='.$socidp,'align="right"',$sortfield);
-				print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye','','&amp;socidp='.$socidp,'align="right"',$sortfield);
+				print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socidp='.$socidp,'align="right"',$sortfield);
 				print '</tr>';
 
 				// Lignes des champs de filtre
@@ -2124,22 +2127,6 @@ else
 						$var=!$var;
 
 						print '<tr '.$bc[$var].'>';
-						if ($objp->paye)
-						{
-							$class = 'normal';
-						}
-						else
-						{
-							if ($objp->fk_statut == 0)
-							{
-								$class = 'normal';
-							}
-							else
-							{
-								$class = 'impayee';
-							}
-						}
-
 						print '<td nowrap="nowrap"><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').'</a> ';
 						print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
 						if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans('Late'));
@@ -2166,26 +2153,10 @@ else
 						print '<td align="right">'.price($objp->am).'</td>';
 
 						// Affiche statut de la facture
-						if (! $objp->paye)
-						{
-							if ($objp->fk_statut == 0)
-							{
-								print '<td align="center">'.$langs->trans('BillShortStatusDraft').'</td>';
-							}
-							elseif ($objp->fk_statut == 3)
-							{
-								print '<td align="center">'.$langs->trans('BillShortStatusCanceled').'</td>';
-							}
-							else
-							{
-								print '<td align="center"><a class="'.$class.'" href="facture.php?filtre=paye:0,fk_statut:1">'.($objp->am?$langs->trans('BillShortStatusStarted'):$langs->trans('BillShortStatusNotPayed')).'</a></td>';
-							}
-						}
-						else
-						{
-							print '<td align="center">'.$langs->trans('BillShortStatusPayed').'</td>';
-						}
-
+						print '<td align="right" nowrap="nowrap">';
+						print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
+						print '</td>';
+						
 						print '</tr>';
 						$total+=$objp->total;
 						$total_ttc+=$objp->total_ttc;

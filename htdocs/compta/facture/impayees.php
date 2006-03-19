@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
  */
 
 /**
-        \file       htdocs/compta/facture.php
+        \file       htdocs/compta/facture/imapyees.php
         \ingroup    facture
-        \brief      Page de création d'une facture
+        \brief      Page de liste des factures imapyées
         \version    $Revision$
 */
 
@@ -153,7 +153,7 @@ if ($user->rights->facture->lire)
       print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp",'align="right"',$sortfield);
       print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp",'align="right"',$sortfield);
       print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp",'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp",'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","","&amp;socidp=$socidp",'align="right"',$sortfield);
       print "</tr>\n";
       
       // Lignes des champs de filtre
@@ -175,6 +175,10 @@ if ($user->rights->facture->lire)
       print "</tr>\n";
       print '</form>';
       
+      
+		$facturestatic=new Facture($db);
+		
+		
       if ($num > 0)
         {
 	  $var=True;
@@ -205,25 +209,9 @@ if ($user->rights->facture->lire)
                 print "<td align=\"right\">".price($objp->am)."</td>";
 
                 // Affiche statut de la facture
-                if (! $objp->paye)
-                {
-                    if ($objp->fk_statut == 0)
-                    {
-                        print '<td align="center">'.$langs->trans("BillShortStatusDraft").'</td>';
-                    }
-                    elseif ($objp->fk_statut == 3)
-                    {
-                        print '<td align="center">'.$langs->trans("BillShortStatusCanceled").'</td>';
-                    }
-                    else
-                    {
-                        print '<td align="center"><a class="'.$class.'" href="'.$_SERVER["PHP_SELF"].'?filtre=paye:0,fk_statut:1">'.($objp->am?$langs->trans("BillShortStatusStarted"):$langs->trans("BillShortStatusNotPayed")).'</a></td>';
-                    }
-                }
-                else
-                {
-                    print '<td align="center">'.$langs->trans("BillShortStatusPayed").'</td>';
-                }
+				print '<td align="right" nowrap="nowrap">';
+				print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
+				print '</td>';
 
                 print "</tr>\n";
                 $total+=$objp->total;
