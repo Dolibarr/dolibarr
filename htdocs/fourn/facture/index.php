@@ -190,7 +190,7 @@ if ($resql)
     print "</tr>\n";
     print '</form>';
 
-    $fac = new FactureFournisseur($db);
+    $facturestatic = new FactureFournisseur($db);
 
     $var=true;
     $total=0;
@@ -201,9 +201,9 @@ if ($resql)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->facnumber.'">'.img_object($langs->trans("ShowBill"),"bill").' '.dolibarr_trunc($obj->facnumber,20)."</a></td>\n";
+        print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->facnumber.'">'.img_object($langs->trans("ShowBill"),"bill").' '.dolibarr_trunc($obj->facnumber,12)."</a></td>\n";
         print '<td align="center" nowrap>'.dolibarr_print_date($obj->date_echeance).'</td>';
-        print '<td>'.dolibarr_trunc(stripslashes("$obj->libelle"),44).'</td>';
+        print '<td>'.dolibarr_trunc(stripslashes("$obj->libelle"),36).'</td>';
         print '<td>';
         print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
         print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -212,56 +212,23 @@ if ($resql)
         $total_ttc+=$obj->total_ttc;
 
         // Affiche statut de la facture
-        if ($obj->paye)
-        {
-	  $class = "normal";
-        }
-        else
-	  {
-            if ($obj->fk_statut == 0)
-	      {
-                $class = "normal";
-	      }
-            else
-	      {
-                $class = "impayee";
-	      }
-	  }
-	
-        print '<td align="center">';
-        if (! $obj->paye)
-        {
-	  if ($obj->fk_statut == 0)
-            {
-	      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
-            }
-	  elseif ($obj->fk_statut == 3)
-            {
-	      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
-            }
-	  else
-            {
+        print '<td align="right">';
 	      // \todo  le montant deja payé obj->am n'est pas définie
-	      print '<a class="'.$class.'" href=""index.php?filtre=paye:0,fk_statut:1">'.($fac->PayedLibStatut($obj->paye,$obj->fk_statut,$obj->am)).'</a>';
-            }
-        }
-        else
-	  {
-            print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
-	  }
+		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
         print '</td>';
 	
         print "</tr>\n";
         $i++;
 	
-        if ($i == min($num,$limit)) {
-	  // Print total
-	  print '<tr class="liste_total">';
-	  print '<td class="liste_total" colspan="4" align="left">'.$langs->trans("Total").'</td>';
-	  print '<td class="liste_total" align="right">'.price($total).'</td>';
-	  print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
-	  print '<td class="liste_total" align="center">&nbsp;</td>';
-	  print "</tr>\n";
+        if ($i == min($num,$limit))
+        {
+		  // Print total
+		  print '<tr class="liste_total">';
+		  print '<td class="liste_total" colspan="4" align="left">'.$langs->trans("Total").'</td>';
+		  print '<td class="liste_total" align="right">'.price($total).'</td>';
+		  print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
+		  print '<td class="liste_total" align="center">&nbsp;</td>';
+		  print "</tr>\n";
         }
       }
     

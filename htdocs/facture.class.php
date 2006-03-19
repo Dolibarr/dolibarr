@@ -1465,7 +1465,7 @@ class Facture
 			{
 				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0');
 				if ($statut == 3) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5');
-				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed').' '.img_picto($langs->trans('Bill'.$prefix.'StatusValidated'),'statut1');
+				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed').' '.img_picto($langs->trans('Bill'.$prefix.'StatusNotPayed'),'statut1');
 				return $langs->trans('Bill'.$prefix.'StatusStarted').' '.img_picto($langs->trans('Bill'.$prefix.'StatusStarted'),'statut3');
 			}
 			else

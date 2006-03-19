@@ -497,7 +497,7 @@ else
 				$authorfullname=$author->fullname;
 			}
 			print '<tr><td>'.$langs->trans('Author').'</td><td colspan="3">'.$authorfullname.'</td>';
-			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut).'</td></tr>';
+			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans('AmountHT').'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
