@@ -212,7 +212,7 @@ if ($resql)
         $total_ttc+=$obj->total_ttc;
 
         // Affiche statut de la facture
-        print '<td align="right">';
+        print '<td align="right" nowrap="nowrap">';
 	      // \todo  le montant deja payé obj->am n'est pas définie
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
         print '</td>';
