@@ -50,6 +50,12 @@ $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $cancel=isset($_GET["cancel"])?$_GET["cancel"]:$_POST["cancel"];
 
+if ($action <> 're-edit')
+    {
+        $product = new Product($db);
+        if ($id) $result = $product->fetch($id);
+		 if ($ref) $result = $product->fetch($ref);
+    }
 
 	
 if (!$user->rights->produit->lire) accessforbidden();
@@ -58,47 +64,43 @@ $html = new Form($db);
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
-// Action mise a jour d'un produit ou service
-if ($action == 'update' && 
+// Action association d'un sousproduit
+if ($action == 'add_prod' && 
     $cancel <> $langs->trans("Cancel") && 
     $user->rights->produit->creer)
 {
-    $product = new Product($db);
-    if ($product->fetch($_POST["id"]))
-    {
-        $product->ref                = stripslashes($_POST["ref"]);
-        $product->libelle            = stripslashes($_POST["libelle"]);
-        if ( isset( $_POST["price"] ) )
-          $product->price              = stripslashes($_POST["price"]);
-        $product->tva_tx             = $_POST["tva_tx"];
-        $product->description        = stripslashes($_POST["desc"]);
-        $product->note               = stripslashes($_POST["note"]);
-        $product->envente            = $_POST["statut"];
-        $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-        $product->duration_value     = $_POST["duration_value"];
-        $product->duration_unit      = $_POST["duration_unit"];
-
-        if ($product->check())
-        {
-            if ($product->update($product->id, $user) > 0)
-            {
-                $action = '';
-                 $_GET["id"] = $_POST["id"];
-            }
-            else
-            {
-                $action = 're-edit';
-                $_GET["id"] = $_POST["id"];
-                $mesg = $product->mesg_error;
-            }
+  
+		for($i=0;$i<$_POST["max_prod"];$i++)
+		{
+				// print "<br> : ".$_POST["prod_id_chk".$i];
+				if($_POST["prod_id_chk".$i] != "")
+				{
+					if($product->add_sousproduit($id, $_POST["prod_id_".$i],$_POST["prod_qty_".$i]) )
+					{
+						$action = 'edit';
+					}
+					else
+					{
+						$action = 're-edit';
+						$mesg = "erreur";
+					}
+				}
+				else
+				{
+					if($product->del_sousproduit($id, $_POST["prod_id_".$i]))
+					{
+						$action = 'edit';
+					}
+					else
+					{
+						$action = 're-edit';
+						$mesg = "erreur";
+					}
+				
+				
+				}
         }
-        else
-        {
-            $action = 're-edit';
-            $_GET["id"] = $_POST["id"];
-            $mesg = $langs->trans("ErrorProductBadRefOrLabel");
-        }
-    }
+  
 }
 // action recherche des produits par mot-clé et/ou par catégorie
 if($action == 'search' )
@@ -142,8 +144,6 @@ if ($cancel == $langs->trans("Cancel"))
     exit;
 }
 
-
-
 llxHeader("","",$langs->trans("ProductServiceCard"));
 $html = new Form($db);
 
@@ -153,13 +153,6 @@ $html = new Form($db);
  */
 if ($id || $ref)
 {
-
-    if ($action <> 're-edit')
-    {
-        $product = new Product($db);
-        if ($id) $result = $product->fetch($id);
-		 if ($ref) $result = $product->fetch($ref);
-    }
 
     if ( $result )
     {
@@ -341,7 +334,7 @@ if ($id || $ref)
 			$product->get_sousproduits_arbo ();
             print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
             print '</tr>';
-			print '<tr><td colspan="2"><b>'.$langs->trans("ProductSearch").'</b>';
+			print '<tr><td colspan="2"><b>'.$langs->trans("ProductToAddSearch").'</b>';
 			print '<table class="noborder">';
 			print '<tr><td><form action="./fiche.php" method="post">';
 			print $langs->trans("KeywordFilter");
@@ -353,35 +346,47 @@ if ($id || $ref)
 			// if(MAIN_MODULE_CATEGORIE)
 			print '</td><td>'.$html->select_all_categories($catMere).'</td></tr>';
 			print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-			print '<tr><td colspan="2">';
-			print '<table class="border">';
-			print '<tr>';
-			print '<td>Ref</td><td>Libelle</td><td>Ajouter</td>';
-			print '<form action="./fiche.php"';
+			print '</form>';
+			print '<tr><td colspan="2"><br>';
+			
 			if($action == 'search')
 			{
+				print '<table class="border">';
+				print '<tr>';
+				print '<td><b>'.$langs->trans("Ref").'</b></td><td><b>'.$langs->trans("Label").'</b></td><td><b>'.$langs->trans("AddDel").'</b></td><td><b>'.$langs->trans("Quantity").'</b></td>';
+				print '<form action="./fiche.php" method="post"';
+				print '<input type="hidden" name="action" value="add_prod"';
+				print '<input type="hidden" name="id" value="'.$id.'"';
 				if ($resql)
 				{
 					$num = $db->num_rows($resql);
 					$i=0;
+					if($num == 0)
+					print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
 					while ($i < $num)
 					{
 						$objp = $db->fetch_object($resql);
-						print '<tr>';
+						print "\n<tr>";
 						print '<td>'.$objp->ref.'</td>';
 						print '<td>'.$objp->label.'</td>';
-						print '<td align="center"><input type="checkbox" name="prod_'.$i.'" value="'.$objp->rowid.'"></td>';
+						print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="checkbox" name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
+						print '<td align="center"><input type="text" size="3" name="prod_qty_'.$i.'" value="1"></td>';
 						print '</td>';
 						print '</tr>';
 						$i++;
 					}	
+					
 				}
 				else
 				{
 					dolibarr_print_error($db);
 				}
+				print '<input type="hidden" name="max_prod" value="'.$i.'">';
+				if($num > 0)
+				print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td></tr>';
+        		print '</table>';
 			}
-        print '</table>';
+			
          print '</form></td></tr>';
          print '</table>';
 		 print '</td></tr>';
