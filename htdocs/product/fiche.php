@@ -756,7 +756,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
         if ($result)
         {
             $num = $db->num_rows($result);
-            print '<form method="POST" action="fiche.php?id='.$product->id.'">';
             print '<table class="noborder" width="100%">';
             if ($num)
             {
@@ -766,6 +765,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
+                    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
                     print "<td nowrap>";
                     print '<input type="hidden" name="action" value="addinpropal">';
@@ -780,6 +780,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
+                    print '</form>';
                     $i++;
                 }
             }
@@ -789,7 +790,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				print "</td></tr>";
             }
             print "</table>";
-            print '</form>';
             $db->free($result);
         }
 
@@ -866,7 +866,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
         {
             $num = $db->num_rows($result);
             $var=true;
-            print '<form method="POST" action="fiche.php?id='.$product->id.'">';
             print '<table class="noborder" width="100%">';
             if ($num) {
                 $i = 0;
@@ -874,6 +873,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                 {
                     $objc = $db->fetch_object($result);
                     $var=!$var;
+                    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
                     print "<td nowrap>";
                     print '<input type="hidden" name="action" value="addincommande">';
@@ -888,6 +888,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
+                    print '</form>';
                     $i++;
                 }
             }
@@ -897,7 +898,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				print "</td></tr>";
             }
             print "</table>";
-            print '</form>';
             $db->free($result);
         }
 
@@ -969,7 +969,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
         {
             $num = $db->num_rows($result);
             $var=true;
-            print '<form method="POST" action="fiche.php?id='.$product->id.'">';
             print '<table class="noborder" width="100%">';
             if ($num)
             {
@@ -977,8 +976,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
-    
                     $var=!$var;
+                    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
                     print "<td nowrap>";
                     print '<input type="hidden" name="action" value="addinfacture">';
@@ -992,6 +991,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
+                    print '</form>';
                     $i++;
                 }
             }
@@ -1001,7 +1001,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                 print '</td></tr>';
             }
             print "</table>";
-            print '</form>';
             $db->free($result);
         }
         else
@@ -1028,7 +1027,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
         {
             $num = $db->num_rows($result);
             $var=true;
-            print '<form method="POST" action="fiche.php?id='.$product->id.'">';
             print '<table class="noborder" width="100%">';
             if ($num) {
                 $i = 0;
@@ -1037,6 +1035,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     $objp = $db->fetch_object($result);
     
                     $var=!$var;
+                    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
                     print "<tr $bc[$var]>";
                     print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></td>\n";
                     print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
@@ -1050,6 +1049,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
+                    print '</form>';
                     $i++;
                 }
             }
@@ -1059,7 +1059,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                 print '</td></tr>';
             }
             print "</table>";
-            print '</form>';
             $db->free($result);
         }
         else
