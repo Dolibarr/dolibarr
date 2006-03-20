@@ -155,16 +155,18 @@ class Categorie
   {
     $sql = 'delete from '.MAIN_DB_PREFIX.'categorie_association';
     $sql .= ' WHERE fk_categorie_mere  = "'.$this->id.'" or fk_categorie_fille = "'.$this->id.'"';
+	
     if (! $this->db->query($sql))
     {
 	    dolibarr_print_error($this->db);
 	     return -1;
     }
-	if($this->id_mere !="")
+	if($this->id_mere !="" && $this->id_mere!=$this->id)
 	{
 		
 		$sql = 'insert into '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
 		$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
+		print $sql;
 		if (! $this->db->query($sql))
 		{
 			dolibarr_print_error($this->db);

@@ -42,6 +42,8 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 	$categorie->description    = $_POST["description"];
 	if($_POST['catMere'] != "-1")
 		$categorie->id_mere = $_POST['catMere'];
+	else
+		$categorie->id_mere = "";
 	
 
 	if (!$categorie->label || !$categorie->description)
