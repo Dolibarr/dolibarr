@@ -200,7 +200,7 @@ $h++;
 // sousproduits
 if($conf->global->PRODUIT_SOUSPRODUITS == 1)
 {
-	$head[$h][0] = DOL_URL_ROOT."/product/sousproduits.php?id=".$product->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
 	$head[$h][1] = $langs->trans('AssociatedProducts');
 	$h++;
 }
