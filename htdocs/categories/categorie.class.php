@@ -166,7 +166,6 @@ class Categorie
 		
 		$sql = 'insert into '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
 		$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
-		print $sql;
 		if (! $this->db->query($sql))
 		{
 			dolibarr_print_error($this->db);
