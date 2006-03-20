@@ -270,21 +270,24 @@ if ($id || $ref)
             print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
             print '</tr>';
 			
-			
+			$product->get_sousproduits_arbo ();
+            print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
             
           // associations sousproduits
-		  print '<tr><td colspan="2">';
-		$product->get_sousproduits_arbo();
 		$prods_arbo = $product->get_arbo_each_prod();
-		foreach($prods_arbo as $key => $value)
+		if(sizeof($prods_arbo) > 0)
 		{
-			// if($value[1] != $product->id)
-			print '<br>'.$value[1].' :: '.$value[0];
-		}
+			print '<tr><td colspan="2">';
+			print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
+			foreach($prods_arbo as $key => $value)
+			{
+				// print $value[1].' :: '.$value[0].'<br>';
+				print $value[0].'<br>';
+			}
 					 
 		
             print '</td></tr>';
-            
+            }
 
             print "</table>\n";
 
@@ -369,7 +372,11 @@ if ($id || $ref)
 						print "\n<tr>";
 						print '<td>'.$objp->ref.'</td>';
 						print '<td>'.$objp->label.'</td>';
-						print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="checkbox" name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
+						if($product->is_sousproduit($id, $objp->rowid))
+							$addchecked = ' checked="true"';
+						else
+							$addchecked = '';
+						print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
 						print '<td align="center"><input type="text" size="3" name="prod_qty_'.$i.'" value="1"></td>';
 						print '</td>';
 						print '</tr>';
