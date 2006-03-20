@@ -1129,7 +1129,7 @@ class Product
    *    \return     int         < 0 si erreur, > 0 si ok
    */
 	 
-  function del_sousproduit($id_pere, $id_fils,$qty) 
+  function del_sousproduit($id_pere, $id_fils) 
     {
         $sql = 'delete from '.MAIN_DB_PREFIX.'product_association';
 		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
@@ -1139,19 +1139,7 @@ class Product
 			 return -1;
 		}
 		else
-		{
-			$sql = 'insert into '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
-			$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
-			if (! $this->db->query($sql))
-			{
-				dolibarr_print_error($this->db);
-				 return -1;
-			}
-			else
-			{
-				 return 1;
-			}
-		}
+			return 1;
     }
 
   /**
