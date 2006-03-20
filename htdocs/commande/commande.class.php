@@ -31,6 +31,7 @@
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
+ 
 /**
         \class      Commande
         \brief      Classe de gestion de commande
@@ -128,6 +129,7 @@ class Commande
 	function valid($user)
 	{
 		$result = 0;
+		global $conf;
 		if ($user->rights->commande->valider)
 		{
 			if (defined('COMMANDE_ADDON'))
@@ -156,7 +158,7 @@ class Commande
 
 					if ($this->db->query($sql) )
 					{
-						$result = 1;
+							$result = 1;
 					}
 					else
 					{
@@ -184,6 +186,7 @@ class Commande
    */
 	function cloture($user)
 	{
+		global $conf;
 		if ($user->rights->commande->valider)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
@@ -194,6 +197,33 @@ class Commande
 
 			if ($this->db->query($sql) )
 			{
+				if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1)
+							{
+								require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+								for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+								{
+										$prod = new Product($this->db, $this->lignes[$i]->product_id);
+										$prod -> get_sousproduits_arbo ();
+										$prods_arbo = $prod->get_each_prod();
+										if(sizeof($prods_arbo) > 0)
+										{
+											foreach($prods_arbo as $key => $value)
+											{
+												// print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+												
+													$mouvS = new MouvementStock($this->db);
+													$entrepot_id = "1";
+                            						$result=$mouvS->livraison($user, $this->lignes[$i]->product_id, $entrepot_id, $value[1]);
+													
+													print "::".$value[1];
+													print $result;
+													// $this->add_product($value[1], $value[0]);
+												
+											}
+										}
+									}
+							
+							}
 				return 1;
 			}
 			else
