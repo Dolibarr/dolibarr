@@ -190,17 +190,20 @@ if ($_GET["id"])
                 // Rupture détectée, on récupère objMod
                 $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
-
-                print '<tr '. $bc[$var].'>';
-                print '<td>'.img_object('',$picto).' '.$objMod->getName();
-                print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
-                print '<td align="center" nowrap>';
-                print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
-                print '/';
-                print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
-                print '</td>';
-                print '<td colspan="2">&nbsp;</td>';
-                print '</tr>';
+                
+                if ($caneditperms)
+                {
+                   print '<tr '. $bc[$var].'>';
+                   print '<td>'.img_object('',$picto).' '.$objMod->getName();
+                   print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
+                   print '<td align="center" nowrap>';
+                   print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
+                   print '/';
+                   print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
+                   print '</td>';
+                   print '<td colspan="2">&nbsp;</td>';
+                   print '</tr>';
+                }
             }
 
             print '<tr '. $bc[$var].'>';
