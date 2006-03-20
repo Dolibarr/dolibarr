@@ -1091,7 +1091,68 @@ class Product
 
       return $this->_get_stats($sql);
     }
-
+/**
+   *    \brief      Lie un sousproduit au produit/service
+   *    \param      id_pere    Id du produit auquel sera lié le produit à lier
+   *    \param      id_fils  Id du produit à lier
+   *    \return     int         < 0 si erreur, > 0 si ok
+   */
+	 
+  function add_sousproduit($id_pere, $id_fils,$qty) 
+    {
+        $sql = 'delete from '.MAIN_DB_PREFIX.'product_association';
+		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
+		if (! $this->db->query($sql))
+		{
+			dolibarr_print_error($this->db);
+			 return -1;
+		}
+		else
+		{
+			$sql = 'insert into '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
+			$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
+			if (! $this->db->query($sql))
+			{
+				dolibarr_print_error($this->db);
+				 return -1;
+			}
+			else
+			{
+				 return 1;
+			}
+		}
+    }
+/**
+   *    \brief      retire le lien entre un sousproduit et un produit/service
+   *    \param      id_pere    Id du produit auquel ne sera plus lié le produit lié
+   *    \param      id_fils  Id du produit à ne plus lié
+   *    \return     int         < 0 si erreur, > 0 si ok
+   */
+	 
+  function del_sousproduit($id_pere, $id_fils,$qty) 
+    {
+        $sql = 'delete from '.MAIN_DB_PREFIX.'product_association';
+		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
+		if (! $this->db->query($sql))
+		{
+			dolibarr_print_error($this->db);
+			 return -1;
+		}
+		else
+		{
+			$sql = 'insert into '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
+			$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
+			if (! $this->db->query($sql))
+			{
+				dolibarr_print_error($this->db);
+				 return -1;
+			}
+			else
+			{
+				 return 1;
+			}
+		}
+    }
 
   /**
    *    \brief      Lie un fournisseur au produit/service
