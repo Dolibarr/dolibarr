@@ -191,7 +191,7 @@ if ($_GET["id"])
                 $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
                 
-                if ($caneditperms)
+                if ($caneditperms && ($obj->module != 'user' || ! $fuser->admin))
                 {
                    print '<tr '. $bc[$var].'>';
                    print '<td>'.img_object('',$picto).' '.$objMod->getName();
