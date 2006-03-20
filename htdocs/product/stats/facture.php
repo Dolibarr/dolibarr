@@ -131,12 +131,13 @@ if ($_GET["id"] || $_GET["ref"])
         $head[$h][1] = $langs->trans('Statistics');
         $h++;
 
-	    //erics: pour créer des produits composés de x 'sous' produits
-        /*
-	    $head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
-	    $head[$h][1] = $langs->trans('Packs');
-	    $h++;
-        */
+	          // sousproduits
+		if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+		{
+				$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
+				$head[$h][1] = $langs->trans('AssociatedProducts');
+				$h++;
+		}
         
         $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
         $head[$h][1] = $langs->trans('Referers');
