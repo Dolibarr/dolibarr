@@ -214,9 +214,10 @@ class Commande
 													$mouvS = new MouvementStock($this->db);
 													$entrepot_id = "1";
                             						$result=$mouvS->livraison($user, $this->lignes[$i]->product_id, $entrepot_id, $value[1]);
-													
+													/*
 													print "::".$value[1];
 													print $result;
+													*/
 													// $this->add_product($value[1], $value[0]);
 												
 											}
