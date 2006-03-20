@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,10 +95,24 @@ if ($_GET["action"] == 'delete')
 $dir = "../includes/modules/facture/";
 
 
-llxHeader('',$langs->trans("BillsSetup"),'FactureConfiguration');
+//llxHeader('',$langs->trans("BillsSetup"),'FactureConfiguration');
 
-print_titre($langs->trans("BillsSetup"));
+//print_titre($langs->trans("BillsSetup"));
 
+llxHeader("","");
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/facture.php";
+$head[$h][1] = $langs->trans("Bills");
+$hselected=$h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/avoir.php";
+$head[$h][1] = $langs->trans("ModulesSpecial");
+$h++;
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("BillsSetup"));
 
 /*
  *  Module numérotation
