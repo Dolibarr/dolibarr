@@ -388,6 +388,7 @@ class Commande
 			{
 				if ($this->update_price() > 0)
 				{
+					
 					return 1;
 				}
 				else
@@ -538,6 +539,7 @@ class Commande
 	*/
 	function add_product($idproduct, $qty, $remise_percent=0)
 	{
+		global $conf;
 		if ($idproduct > 0)
 		{
 			$i = sizeof($this->products);
@@ -548,6 +550,25 @@ class Commande
 			}
 			$this->products_qty[$i] = $qty;
 			$this->products_remise_percent[$i] = $remise_percent;
+			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS À LA COMMANDE
+			if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+			{
+				$prod = new Product($this->db, $idproduct);
+				$prod -> get_sousproduits_arbo ();
+				$prods_arbo = $prod->get_each_prod();
+				if(sizeof($prods_arbo) > 0)
+				{
+					foreach($prods_arbo as $key => $value)
+					{
+						// print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+						if(! in_array($value[1],$this->products))
+							$this->add_product($value[1], $value[0]);
+					
+					}
+				}
+			
+			}
+			**/
 		}
 	}
 
