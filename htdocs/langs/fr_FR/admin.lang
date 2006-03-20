@@ -54,6 +54,7 @@ TriggersDesc=Les triggers sont des composants qui, une fois activés, modifient l
 Required=Requis
 Security=Sécurité
 Passwords=Mots de passe
+ModuleSetup=Configuration du module
 ModuleFamilyBase=Système
 ModuleFamilyCrm=Gestion client (CRM)
 ModuleFamilyProducts=Gestion produits
@@ -436,4 +437,5 @@ MailingEMailFrom=Email emetteur (From) des mails envoyés par EMailing
 DiscountSetup=Configuration du module Avoirs
 DiscountsNumberingModules=Modules de numérotation des avoirs
 DiscountsPDFModules=Modules d'avoirs PDF
+Discounts=Avoirs
 

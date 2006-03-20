@@ -94,11 +94,6 @@ if ($_GET["action"] == 'delete')
 
 $dir = "../includes/modules/facture/";
 
-
-//llxHeader('',$langs->trans("BillsSetup"),'FactureConfiguration');
-
-//print_titre($langs->trans("BillsSetup"));
-
 llxHeader("","");
 
 $h = 0;
@@ -109,10 +104,10 @@ $hselected=$h;
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/avoir.php";
-$head[$h][1] = $langs->trans("ModulesSpecial");
+$head[$h][1] = $langs->trans("Discounts");
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("BillsSetup"));
+dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
  *  Module numérotation

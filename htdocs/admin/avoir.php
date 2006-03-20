@@ -31,7 +31,7 @@
 require("./pre.inc.php");
 
 $langs->load("admin");
-$langs->load("discount");
+$langs->load("bills");
 
 if (!$user->admin)
   accessforbidden();
@@ -103,11 +103,6 @@ if ($_GET["action"] == 'setmod')
 
 $dir = DOL_DOCUMENT_ROOT .'/avoir/modules/';
 
-
-//llxHeader('',$langs->trans("DiscountSetup"));
-
-//print_titre($langs->trans("DiscountSetup"));
-
 llxHeader("","");
 
 $h = 0;
@@ -121,7 +116,7 @@ $head[$h][1] = $langs->trans("Discounts");
 $hselected=$h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("DiscountSetup"));
+dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
  *  Module numérotation
