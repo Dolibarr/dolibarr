@@ -39,6 +39,7 @@ $form = new Form($db);
 $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
 // Defini si peux modifier utilisateurs et permisssions
+$user->getrights('user'); // les droits n'était pas récupéré
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 
 
