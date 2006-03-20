@@ -1141,7 +1141,37 @@ class Product
 		else
 			return 1;
     }
-
+/**
+   *    \brief      retire le lien entre un sousproduit et un produit/service
+   *    \param      id_pere    Id du produit auquel ne sera plus lié le produit lié
+   *    \param      id_fils  Id du produit à ne plus lié
+   *    \return     int         < 0 si erreur, > 0 si ok
+   */
+	 
+  function is_sousproduit($id_pere, $id_fils) 
+    {
+        $sql = 'select fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
+		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
+		if (! $this->db->query($sql))
+		{
+			dolibarr_print_error($this->db);
+			 return -1;
+		}
+		else
+		{
+			$result = $this->db->query($sql) ;
+       		 if ($result)
+        	{
+            	$num = $this->db->num_rows($result);
+				if($num > 0)
+				{
+					return true;
+				}
+				else
+					return false;
+			}
+		}
+    }
   /**
    *    \brief      Lie un fournisseur au produit/service
    *    \param      user        Utilisateur qui fait le lien
@@ -1350,7 +1380,7 @@ class Product
         return 1;
     }
 /**
-   * fonction récursive uniquement utilisée par get_arbo_each_cate
+   * fonction récursive uniquement utilisée par get_arbo_each_prod
    * Recompose l'arborescence des sousproduits
    */
   function fetch_prod_arbo($prod,$compl_path="")
@@ -1370,9 +1400,27 @@ class Product
 						}
 			}
 	}	
+/**
+   *   \brief fonction récursive uniquement utilisée par get_each_prod, ajoute chaque sousproduits dans le tableau res
+   *   \return void
+   */
+  function fetch_prods($prod)
+{
+			$this->res;
+			foreach($prod as $nom_pere => $desc_pere)
+			{
+						// on est dans une sous-catégorie
+						if(is_array($desc_pere))
+							$this->res[]= array($desc_pere[1],$desc_pere[0]);
+						if(sizeof($desc_pere) >1)
+						{
+							$this ->fetch_prods($desc_pere);
+						}
+			}
+	}	
 	/**
-   * reconstruit l'arborescence des catégorie sous la forme d'un tableau
-   * 
+   *   \brief reconstruit l'arborescence des catégorie sous la forme d'un tableau
+   *   \return array $this->res
    */
 function get_arbo_each_prod()
 {
@@ -1389,9 +1437,29 @@ function get_arbo_each_prod()
 		}
 		return $this->res;
 }
+	/**
+   *   \brief renvoie tous les sousproduits dans le tableau res, chaque ligne de res contient : id -> qty
+   *   \return array $this->res
+   */
+function get_each_prod()
+{
+		$this->res = array();
+		if(is_array($this -> sousprods))
+		{
+			foreach($this -> sousprods as $nom_pere => $desc_pere)
+			{
+				if(sizeof($desc_pere) >1)
+					$this ->fetch_prods($desc_pere);
+					
+			}
+			sort($this->res);
+		}
+		return $this->res;
+}
 	
 /**
-   * Retourne le pere 
+   *   \brief Retourne les catégories pères
+   *   \return array prod
    */
   function get_pere()
   {
@@ -1418,7 +1486,8 @@ function get_arbo_each_prod()
   }
 
 /**
-   * Retourne les fils de la catégorie structurés pour l'arbo
+   *  \brief Retourne les fils de la catégorie structurés pour l'arbo
+   *   \return     array        prod
    */
   function get_fils_arbo ($id_pere)
   {
@@ -1445,8 +1514,8 @@ function get_arbo_each_prod()
      }
   }
 /**
-   * compose l'arborescence des sousproduits, id et nom
-   * sous la forme d'un tableau
+   * \brief compose l'arborescence des sousproduits, id, nom et quantité sous la forme d'un tableau associatif 
+   *    \return    void
    */
   function get_sousproduits_arbo ()
   {
