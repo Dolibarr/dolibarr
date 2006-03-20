@@ -436,6 +436,6 @@ MailingEMailFrom=Email emetteur (From) des mails envoyés par EMailing
 ##### Discount setup #####
 DiscountSetup=Configuration du module Avoirs
 DiscountsNumberingModules=Modules de numérotation des avoirs
-DiscountsPDFModules=Modules d'avoirs PDF
+DiscountsPDFModules=Modèles d'avoirs PDF
 Discounts=Avoirs
 
