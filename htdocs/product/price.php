@@ -141,6 +141,14 @@ if($product->type == 0)
     }
 }
 
+// Multilangs
+if($conf->global->PRODUIT_MULTILANGS == 1)
+{
+	$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;
+	$head[$h][1] = $langs->trans("Translation");
+	$h++;
+}
+
 if ($conf->fournisseur->enabled) {
     $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
     $head[$h][1] = $langs->trans("Suppliers");
@@ -150,6 +158,7 @@ if ($conf->fournisseur->enabled) {
 $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
 $head[$h][1] = $langs->trans("Statistics");
 $h++;
+
 // sousproduits
 if($conf->global->PRODUIT_SOUSPRODUITS == 1)
 {
@@ -157,13 +166,6 @@ if($conf->global->PRODUIT_SOUSPRODUITS == 1)
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 		$h++;
 }
-
-//erics: pour créer des produits composés de x 'sous' produits
-/*
-$head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
-$head[$h][1] = $langs->trans('Packs');
-$h++;
-*/
 
 $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
 $head[$h][1] = $langs->trans("Referers");

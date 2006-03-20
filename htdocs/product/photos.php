@@ -140,6 +140,14 @@ if ($_GET["id"] || $_GET["ref"])
             }
         }
         
+        // Multilangs
+        if($conf->global->PRODUIT_MULTILANGS == 1)
+        {
+	        $head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;
+	        $head[$h][1] = $langs->trans("Translation");
+	        $h++;
+        }
+        
         if ($conf->fournisseur->enabled)
         {
             $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;

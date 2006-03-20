@@ -211,25 +211,33 @@ if ($_GET["id"] || $_GET["ref"])
 	        }
         }
         
+        // Multilangs
+       if($conf->global->PRODUIT_MULTILANGS == 1)
+       {
+	       $head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;
+	       $head[$h][1] = $langs->trans("Translation");
+	       $h++;
+       }
+        
 	      if ($conf->fournisseur->enabled)
-		{
+		    {
     		    $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
     		    $head[$h][1] = $langs->trans("Suppliers");
 		        $hselected = $h;
     		    $h++;
-		}
+		    }
 
         $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
         $head[$h][1] = $langs->trans('Statistics');
         $h++;
         
         // sousproduits
-		if($conf->global->PRODUIT_SOUSPRODUITS == 1)
-		{
-				$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
-				$head[$h][1] = $langs->trans('AssociatedProducts');
-				$h++;
-		}
+		   if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+		   {
+				  $head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
+				  $head[$h][1] = $langs->trans('AssociatedProducts');
+				  $h++;
+		   }
         
         $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
         $head[$h][1] = $langs->trans('Referers');
