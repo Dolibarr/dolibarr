@@ -215,7 +215,7 @@ class Product
         $sql .= " SET label = '" . addslashes($this->libelle) ."'";
         if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
         $sql .= ",tva_tx = " . $this->tva_tx ;
-        $sql .= ",envente = " . $this->envente ;
+        $sql .= ",envente = " . $this->status ;
         $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
         $sql .= ",description = '" . addslashes($this->description) ."'";
         $sql .= ",note = '" . addslashes($this->note) ."'";
@@ -382,14 +382,14 @@ class Product
 					$sql .= " and fk_product = ".$this->id;
 					$sql .= " and fk_user_author = ".$user->id;
 					$sql .= " and price = ".price2num($this->price);
-					$sql .= " and envente = ".$this->envente;
+					$sql .= " and envente = ".$this->status;
 					$sql .= " and tva_tx = ".$this->tva_tx;
 			
 					$this->db->query($sql);
 					
 					// On ajoute nouveau tarif
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
-					$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->envente.",".$this->tva_tx;
+					$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->status.",".$this->tva_tx;
 					$sql .= ")";
 					if (! $this->db->query($sql) )
 						$queryError = true;
@@ -410,14 +410,14 @@ class Product
 				$sql .= " and fk_product = ".$this->id;
 				$sql .= " and fk_user_author = ".$user->id;
 				$sql .= " and price = ".price2num($this->price);
-				$sql .= " and envente = ".$this->envente;
+				$sql .= " and envente = ".$this->status;
 				$sql .= " and tva_tx = ".$this->tva_tx;
 		
 				$this->db->query($sql);
 				
 				// On ajoute nouveau tarif
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
-				$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->envente.",".$this->tva_tx;
+				$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->status.",".$this->tva_tx;
 				$sql .= ")";
 			   
 				 if ($this->db->query($sql) )
