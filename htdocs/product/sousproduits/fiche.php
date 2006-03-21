@@ -377,17 +377,20 @@ if ($id || $ref)
 					while ($i < $num)
 					{
 						$objp = $db->fetch_object($resql);
-						print "\n<tr>";
-						print '<td>'.$objp->ref.'</td>';
-						print '<td>'.$objp->label.'</td>';
-						if($product->is_sousproduit($id, $objp->rowid))
-							$addchecked = ' checked="true"';
-						else
-							$addchecked = '';
-						print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
-						print '<td align="center"><input type="text" size="3" name="prod_qty_'.$i.'" value="1"></td>';
-						print '</td>';
-						print '</tr>';
+						if($objp->rowid != $id)
+						{
+							print "\n<tr>";
+							print '<td>'.$objp->ref.'</td>';
+							print '<td>'.$objp->label.'</td>';
+							if($product->is_sousproduit($id, $objp->rowid))
+								$addchecked = ' checked="true"';
+							else
+								$addchecked = '';
+							print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
+							print '<td align="center"><input type="text" size="3" name="prod_qty_'.$i.'" value="1"></td>';
+							print '</td>';
+							print '</tr>';
+						}
 						$i++;
 					}	
 					
