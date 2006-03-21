@@ -209,19 +209,15 @@ class Commande
 										{
 											foreach($prods_arbo as $key => $value)
 											{
-												// print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-												
+													// on décompte le stock de tous les sousproduits
 													$mouvS = new MouvementStock($this->db);
 													$entrepot_id = "1";
-                            						$result=$mouvS->livraison($user, $value[0], $entrepot_id, $value[1]);
-													/*
-													print "::".$value[1];
-													print $result;
-													*/
-													// $this->add_product($value[1], $value[0]);
-												
+                            						$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]);
+													
 											}
 										}
+										// on décompte le stock du produit
+										$result=$mouvS->livraison($user, $this->lignes[$i]->product_id, $entrepot_id, $this->lignes[$i]->qty);
 									}
 							
 							}
