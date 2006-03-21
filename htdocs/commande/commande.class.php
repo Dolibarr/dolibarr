@@ -216,8 +216,8 @@ class Commande
 													
 											}
 										}
-										// on décompte le stock du produit
-										$result=$mouvS->livraison($user, $this->lignes[$i]->product_id, $entrepot_id, $this->lignes[$i]->qty);
+										// on décompte pas le stock du produit principal, ça serait fait manuellement avec l'expédition
+										// $result=$mouvS->livraison($user, $this->lignes[$i]->product_id, $entrepot_id, $this->lignes[$i]->qty);
 									}
 							
 							}
