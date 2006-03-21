@@ -355,7 +355,7 @@ if ($id || $ref)
             print '</td></tr>';
 			print '<tr><td>'.$langs->trans("CategoryFilter");
 			
-			if(MAIN_MODULE_CATEGORIE)
+			if($conf->categorie->enabled)
 			{
 			  print '</td><td>'.$html->select_all_categories($catMere).'</td></tr>';
 			}
