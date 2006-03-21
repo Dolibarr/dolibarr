@@ -383,11 +383,17 @@ if ($id || $ref)
 							print '<td>'.$objp->ref.'</td>';
 							print '<td>'.$objp->label.'</td>';
 							if($product->is_sousproduit($id, $objp->rowid))
+							{
 								$addchecked = ' checked="true"';
+								$qty=$product->is_sousproduit_qty;
+							}
 							else
+							{
 								$addchecked = '';
+								$qty="1";
+							}
 							print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
-							print '<td align="center"><input type="text" size="3" name="prod_qty_'.$i.'" value="1"></td>';
+							print '<td align="center"><input type="text" size="3" name="prod_qty_'.$i.'" value="'.$qty.'"></td>';
 							print '</td>';
 							print '</tr>';
 						}
