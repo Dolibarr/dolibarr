@@ -54,7 +54,9 @@ if ($action <> 're-edit')
     {
         $product = new Product($db);
         if ($id) $result = $product->fetch($id);
-		 if ($ref) $result = $product->fetch($ref);
+		    if ($ref) $result = $product->fetch($ref);
+		    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+        if ($_GET["id"])  $result = $product->fetch($_GET["id"]);
     }
 
 	
@@ -262,6 +264,15 @@ if ($id || $ref)
 
             // Reference
             print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+            
+            // Suivant/précédent
+            $product->load_previous_next_ref();
+	          $previous_ref = $product->ref_previous?'<a href="?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+	          $next_ref     = $product->ref_next?'<a href="?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+	          if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+	          print '<a href="?id='.$product->id.'">'.$product->ref.'</a>';
+	          if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+            
             print '</td>';
             
             if ($product->is_photo_available($conf->produit->dir_output))
