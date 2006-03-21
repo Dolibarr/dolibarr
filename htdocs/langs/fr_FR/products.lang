@@ -92,4 +92,5 @@ CategoryFilter=Filtre par catégorie
 ProductToAddSearch=Recherche des produits à ajouter
 AddDel=Ajouter/Retirer
 Quantity=Quantité
-NoMatchFound=Aucun résultat n'a été trouvé
+NoMatchFound=Aucun résultat n'a été trouvé 
+ProductAssociationList=Liste des produits/services associés : nom du produit/service (quantité affectée)
