@@ -1150,7 +1150,7 @@ class Product
 	 
   function is_sousproduit($id_pere, $id_fils) 
     {
-        $sql = 'select fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
+        $sql = 'select fk_product_pere,qty from '.MAIN_DB_PREFIX.'product_association';
 		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
 		if (! $this->db->query($sql))
 		{
@@ -1165,6 +1165,9 @@ class Product
             	$num = $this->db->num_rows($result);
 				if($num > 0)
 				{
+					$obj = $this->db->fetch_object($result);
+               		$this->is_sousproduit_qty = $obj->qty;          
+					
 					return true;
 				}
 				else
