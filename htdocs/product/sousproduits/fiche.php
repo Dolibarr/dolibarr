@@ -122,21 +122,10 @@ if($action == 'search' )
 	if($catMere != -1)
 	{
 		$sql .= " AND p.rowid=cp.fk_product AND cp.fk_categorie ='".$catMere."'";
-	
 	}
 	$sql .= " ORDER BY p.ref ASC ";
 	// $sql .= $db->plimit($limit + 1 ,$offset);
 	$resql = $db->query($sql) ;
-	
-
-
-
-
-
-
-
-
-
 }
 
 if ($cancel == $langs->trans("Cancel"))
@@ -365,8 +354,12 @@ if ($id || $ref)
 			print '<input type="hidden" name="id" value="'.$id.'">';
             print '</td></tr>';
 			print '<tr><td>'.$langs->trans("CategoryFilter");
-			// if(MAIN_MODULE_CATEGORIE)
-			print '</td><td>'.$html->select_all_categories($catMere).'</td></tr>';
+			
+			if(MAIN_MODULE_CATEGORIE)
+			{
+			  print '</td><td>'.$html->select_all_categories($catMere).'</td></tr>';
+			}
+			
 			print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 			print '</form>';
 			print '<tr><td colspan="2"><br>';
