@@ -624,7 +624,7 @@ class Form
 		    $sqld.= " ORDER BY p.nbvente DESC";
     
 		   // inutile de faire la requete si l'option n'est pas active
-		   if ($conf->global->PRODUIT_MULTILANGS == 1)
+		   if ($conf->global->MAIN_MULTILANGS)
 		   {
 			    $resultd = $this->db->query($sqld);
 			    if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
@@ -642,7 +642,7 @@ class Form
                 $objp = $this->db->fetch_object($result);
                 
         // Multilangs : modification des donnée si une traduction existe
-				if ($conf->global->PRODUIT_MULTILANGS == 1)
+				if ($conf->global->MAIN_MULTILANGS)
 					if ( $objp->rowid == $objtp->fk_product ) // si on a une traduction
 					{
 						if ( $objtp->label != '') $objp->label = $objtp->label;
@@ -2086,7 +2086,7 @@ class Form
                     $modellist=$model->liste_modeles($this->db);
                 }
             }
-			      else if ($modulepart == 'commande')
+			else if ($modulepart == 'commande')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
@@ -2150,10 +2150,17 @@ class Form
             print_titre($langs->trans("Documents"));
             print '<table class="border" width="100%">';
 
-            print '<tr '.$bc[$var].'><td>'.$langs->trans('Model').'</td><td align="center">';
+            print '<tr '.$bc[$var].'>';
+            print '<td>'.$langs->trans('Model').'</td>';
+            print '<td align="center">';
             $this->select_array('model',$modellist,$modelselected,0,0,1);
             $texte=$langs->trans('Generate');
-            print '</td><td align="center" colspan="2"><input class="button" type="submit" value="'.$texte.'">';
+            print '</td>';
+            print '<td align="center">';
+            $this->select_lang($langs->getDefaultLang());
+            print '</td>';
+            print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
+            print '<input class="button" type="submit" value="'.$texte.'">';
             print '</td></tr>';
         }
 
@@ -2198,11 +2205,17 @@ class Form
                 // Affiche colonne type MIME
                 print '<td nowrap>'.$mimetype.'</td>';
                 // Affiche nom fichier avec lien download
-		        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a></td>';
+		        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a>';
+				print '</td>';
                 // Affiche taille fichier
                 print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
                 // Affiche date fichier
                 print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
+
+  				if ($delallowed)
+				{
+                	print '<td><a href="'.$urlsource.'&action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.img_delete().'</a></td>';
+				}
 
                 print '</tr>';
 

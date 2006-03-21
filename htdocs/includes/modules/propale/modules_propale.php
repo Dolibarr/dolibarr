@@ -132,59 +132,62 @@ class ModeleNumRefPropales
 
 /**
 		\brief      Crée une propale sur disque en fonction du modèle de PROPALE_ADDON_PDF
-		\param	    db  		objet base de donnée
-		\param	    facid		id de la facture à créer
-		\param	    modele		force le modele à utiliser ('' par defaut)
+		\param	    db  			objet base de donnée
+		\param	    id				id de la propale à créer
+		\param	    modele			force le modele à utiliser ('' par defaut)
+		\param		outputlangs		objet lang a utiliser pour traduction
+        \return     int         	0 si KO, 1 si OK
 */
-function propale_pdf_create($db, $facid, $modele='')
+function propale_pdf_create($db, $id, $modele='', $outputlangs='')
 {
-  global $langs;
-  $langs->load("propale");
- 
-  $dir = DOL_DOCUMENT_ROOT."/includes/modules/propale/";
+	global $langs;
+	$langs->load("propale");
 
-  // Positionne modele sur le nom du modele de facture à utiliser
-  if (! strlen($modele))
-    {
-      if (defined("PROPALE_ADDON_PDF") && PROPALE_ADDON_PDF)
-	{
-	  $modele = PROPALE_ADDON_PDF;
-	}
-      else
-	{
-      print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
-	  return 0;
-	}
-    }
+	$dir = DOL_DOCUMENT_ROOT."/includes/modules/propale/";
 
-  // Charge le modele
-  $file = "pdf_propale_".$modele.".modules.php";
-  if (file_exists($dir.$file))
-    {
-      $classname = "pdf_propale_".$modele;
-      require_once($dir.$file);
-  
-      $obj = new $classname($db);
+	// Positionne modele sur le nom du modele de facture à utiliser
+	if (! strlen($modele))
+	{
+		if ($conf->global->PROPALE_ADDON_PDF)
+		{
+			$modele = $conf->global->PROPALE_ADDON_PDF;
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
+			return 0;
+		}
+	}
 
-      if ( $obj->write_pdf_file($facid) > 0)
+	// Charge le modele
+	$file = "pdf_propale_".$modele.".modules.php";
+	if (file_exists($dir.$file))
 	{
-	  // on supprime l'image correspondant au preview
-	    propale_delete_preview($db, $facid);
-	  return 1;
+		$classname = "pdf_propale_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+
+		if ( $obj->write_pdf_file($id, $outputlangs) > 0)
+		{
+			// on supprime l'image correspondant au preview
+			propale_delete_preview($db, $id);
+			return 1;
+		}
+		else
+		{
+			dolibarr_syslog("Erreur dans propale_pdf_create");
+			dolibarr_print_error($db,$obj->pdferror());
+			return 0;
+		}
 	}
-      else
+	else
 	{
-	  dolibarr_syslog("Erreur dans propale_pdf_create");
-	  dolibarr_print_error($db,$obj->pdferror());
-	  return 0;
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		return 0;
 	}
-    }
-  else
-    {
-      print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
-      return 0;
-    }
 }
+
 /**
    \brief      Supprime l'image de prévisualitation, pour le cas de régénération de propal
    \param	    db  		objet base de donnée

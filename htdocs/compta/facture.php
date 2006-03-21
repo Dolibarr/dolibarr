@@ -585,9 +585,11 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 /*
  * Générer ou regénérer le document PDF
  */
-if ($_GET['action'] == 'builddoc')
+if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	facture_pdf_create($db, $_GET['facid']);
+	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	facture_pdf_create($db, $_REQUEST['facid'], '', '', $outputlangs);
 }
 
 /*********************************************************************
@@ -1754,9 +1756,8 @@ else
 			$filename=sanitize_string($fac->ref);
 			$filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-//            $genallowed=($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer);
+            $genallowed=($fac->statut == 1 && $user->rights->facture->creer);
 //            $delallowed=$user->rights->facture->supprimer;
-			$genallowed=0;
 			$delallowed=0;
 
 			$var=true;

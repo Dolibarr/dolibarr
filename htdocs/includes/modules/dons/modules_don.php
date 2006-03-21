@@ -134,38 +134,55 @@ class ModeleNumRefDons
 
 /**
     \brief      Crée un don sur disque en fonction du modèle de DON_ADDON_PDF
-    \param	    db  		objet base de donnée
-    \param	    donid		id de la facture à créer
-    \param	    message		message
-    \return     int         0 si KO, 1 si OK
+    \param	    db  			objet base de donnée
+    \param	    id				id du don à créer
+    \param	    message			message
+	\param	    modele			force le modele à utiliser ('' par defaut)
+	\param		outputlangs		objet lang a utiliser pour traduction
+    \return     int         	0 si KO, 1 si OK
 */
-function don_create($db, $donid, $message="")
+function don_create($db, $id, $message='', $modele='', $outputlangs='')
 {
-    global $langs;
+    global $conf, $langs;
     $langs->load("bills");
     
-    define("DON_ADDON",'html_cerfafr');
+	// todo forcé ici
+    $conf->global->DON_ADDON='html_cerfafr';
     
     $dir = DOL_DOCUMENT_ROOT . "/includes/modules/dons/";
 
-    if (defined("DON_ADDON") && DON_ADDON)
-    {
-        $file = DON_ADDON.".modules.php";
-    
-        $classname = DON_ADDON;
+	// Positionne modele sur le nom du modele à utiliser
+	if (! strlen($modele))
+	{
+		if ($conf->global->DON_ADDON_PDF)
+		{
+			$modele = $conf->global->DON_ADDON_PDF;
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_DON_ADDON_PDF_NotDefined");
+			return 0;
+		}
+	}
+
+	// Charge le modele
+	$file = $modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+        $classname = $modele;
         require_once($dir.$file);
     
         $obj = new $classname($db);
     
         $obj->message = $message;
     
-        if ( $obj->write_file($donid) > 0)
+        if ( $obj->write_file($id,$outputlangs) > 0)
         {
             // Succès de la création de la facture. On génère le fichier meta
-            don_meta_create($db, $donid);
+            don_meta_create($db, $id);
     
             // et on supprime l'image correspondant au preview
-            don_delete_preview($db, $donid);
+            don_delete_preview($db, $id);
     
             return 1;
         }
@@ -176,11 +193,11 @@ function don_create($db, $donid, $message="")
             return 0;
         }
     }
-    else
-    {
-        print $langs->trans("Error")." ".$langs->trans("Error_DON_ADDON_PDF_NotDefined");
-        return 0;
-    }
+	else
+	{
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		return 0;
+	}
 }
 
 /**

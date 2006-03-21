@@ -49,31 +49,33 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
-  dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"]);
-  dolibarr_set_const($db, "SIZE_LISTE_LIMIT",        $_POST["size_liste_limit"]);
-  dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["disable_javascript"]);
-  dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["popup_calendar"]);
-  
-  dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
-  dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD", $_POST["workboard"]);
-
-  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
-  dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
-
-  dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP",      $_POST["main_menufront_barretop"]);
-  dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",     $_POST["main_menufront_barreleft"]);
-
-  dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
-  
-  dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
-  dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
-  dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
-  
-  dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
-  
-  $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
-  
-  Header("Location: ihm.php?mainmenu=home&leftmenu=setup");
+	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"]);
+	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"]);
+	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"]);
+	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["disable_javascript"]);
+	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["popup_calendar"]);
+	
+	dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
+	dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD",     $_POST["workboard"]);
+	
+	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
+	dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
+	
+	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP", $_POST["main_menufront_barretop"]);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"]);
+	
+	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"]);
+	
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["main_searchform_contact"]);
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE", $_POST["main_searchform_societe"]);
+	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
+	
+	dolibarr_set_const($db, "MAIN_MOTD",               $_POST["main_motd"]);
+	
+	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
+	
+	Header("Location: ihm.php?mainmenu=home&leftmenu=setup");
+	exit;
 }
 
 
@@ -103,7 +105,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // Taille max des listes
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="size_liste_limit" size="4" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
+    $html->selectyesnonum('main_multilangs',$conf->global->MAIN_MULTILANGS);
+    print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
@@ -212,7 +219,10 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>' . ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT) . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->SIZE_LISTE_LIMIT . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';   

@@ -69,8 +69,8 @@ if ($_POST["action"] == 'update')
         $tabparam["MAIN_MENU_BARRETOP"]=$_POST["main_menu_barretop"];
         $tabparam["MAIN_MENU_BARRELEFT"]=$_POST["main_menu_barreleft"];
     
-        if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["SIZE_LISTE_LIMIT"]=$_POST["size_liste_limit"];
-        else $tabparam["SIZE_LISTE_LIMIT"]='';
+        if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
+        else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';
     
         if ($_POST["check_MAIN_THEME"]=="on") $tabparam["MAIN_THEME"]=$_POST["main_theme"];
         else $tabparam["MAIN_THEME"]='';
@@ -157,9 +157,9 @@ if ($_GET["action"] == 'edit')
     // Taille max des listes
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
-    print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="left" nowrap="nowrap" width="20%"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td><input class="flat" name="size_liste_limit" size="4" value="' . $fuser->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
+    print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
+    print '<td align="left" nowrap="nowrap" width="20%"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->MAIN_SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td><input class="flat" name="main_size_liste_limit" size="4" value="' . $fuser->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
 
     print '</table><br>';
 
@@ -192,9 +192,9 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
-    print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="left" nowrap="nowrap" width="20%"><input type="checkbox" disabled '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td>' . $fuser->conf->SIZE_LISTE_LIMIT . '</td></tr>';
+    print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
+    print '<td align="left" nowrap="nowrap" width="20%"><input type="checkbox" disabled '.($fuser->conf->MAIN_SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>' . $fuser->conf->MAIN_SIZE_LISTE_LIMIT . '</td></tr>';
 
     print '</table><br>';
 

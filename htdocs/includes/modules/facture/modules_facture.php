@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -43,43 +43,45 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis ca
 
 class ModelePDFFactures extends FPDF
 {
-  var $error='';
+	var $error='';
 
-  /** 
-   *       \brief      Renvoi le dernier message d'erreur de création de facture
-   */
-  function pdferror()
-  {
-    return $this->error;
-  }
+	/**
+	 *       \brief      Renvoi le dernier message d'erreur de création de facture
+	 */
+	function pdferror()
+	{
+		return $this->error;
+	}
 
-  /** 
-   *      \brief      Renvoi la liste des modèles actifs
-   *      \param      db      Handler de base
-   */
-  function liste_modeles($db)
-  {
-    $liste=array();
-    $sql ="";
-        
-    $resql = $db->query($sql);
-    if ($resql)
-      {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $db->fetch_row($resql);
-	    $liste[$row[0]]=$row[1];
-	    $i++;
-	  }
-      }
-    else
-      {
-	return -1;
-      }
-    return $liste;
-  }
+	/**
+	 *      \brief      Renvoi la liste des modèles actifs
+	 *      \param      db      Handler de base
+	 */
+	function liste_modeles($db)
+	{
+		$liste=array();
+		$sql ="SELECT value, value from ".MAIN_DB_PREFIX."const";
+		$sql.=" where name='FACTURE_ADDON_PDF'";
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$liste[$row[0]]=$row[1];
+				$i++;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($db);
+			return -1;
+		}
+		return $liste;
+	}
 
 }
 
@@ -133,52 +135,68 @@ class ModeleNumRefFactures
 
 
 /**
-   \brief    Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
-   \param    db  		objet base de donnée
-   \param    facid		id de la facture à créer
-   \param    message		message
-   \return   int         0 si KO, 1 si OK
+		\brief   	Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
+		\param   	db  			objet base de donnée
+		\param   	id				id de la facture à créer
+		\param	    message			message
+		\param	    modele			force le modele à utiliser ('' par defaut)
+		\param		outputlangs		objet lang a utiliser pour traduction
+		\return  	int        		0 si KO, 1 si OK
 */
-function facture_pdf_create($db, $facid, $message="")
+function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 {
-  global $langs;
-  $langs->load("bills");
+	global $conf,$langs;
+	$langs->load("bills");
 
-  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
 
-  if (defined("FACTURE_ADDON_PDF") && FACTURE_ADDON_PDF)
-    {
-      $file = "pdf_".FACTURE_ADDON_PDF.".modules.php";
-
-      $classname = "pdf_".FACTURE_ADDON_PDF;
-      require_once($dir.$file);
-
-      $obj = new $classname($db);
-      $obj->message = $message;
-
-      if ( $obj->write_pdf_file($facid) > 0)
+	// Positionne modele sur le nom du modele à utiliser
+	if (! strlen($modele))
 	{
-	  // Succès de la création de la facture. On génère le fichier meta
-	  facture_meta_create($db, $facid);
-	  
-	  // et on supprime l'image correspondant au preview
-	  facture_delete_preview($db, $facid);
-
-	  return 1; //TODO A MODIFIER
-	}
-      else
-	{
-	  dolibarr_syslog("Erreur dans facture_pdf_create");
-	  dolibarr_print_error($db,$obj->pdferror());
-	  return 0;
+		if ($conf->global->FACTURE_ADDON_PDF)
+		{
+			$modele = $conf->global->FACTURE_ADDON_PDF;
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
+			return 0;
+		}
 	}
 
-    }
-  else
-    {
-      print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
-      return 0;
-    }
+	// Charge le modele
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+		$obj->message = $message;
+
+		if ($obj->write_pdf_file($id, $outputlangs) > 0)
+		{
+			// Succès de la création de la facture. On génère le fichier meta
+			facture_meta_create($db, $id);
+
+			// et on supprime l'image correspondant au preview
+			facture_delete_preview($db, $id);
+
+			return 1;
+		}
+		else
+		{
+			dolibarr_syslog("Erreur dans facture_pdf_create");
+			dolibarr_print_error($db,$obj->pdferror());
+			return 0;
+		}
+
+	}
+	else
+	{
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		return 0;
+	}
 }
 
 /**

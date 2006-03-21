@@ -301,6 +301,7 @@ DefaultMaxSizeList=Default max length for list
 MessageOfDay=Message of day
 PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
+EnableMultilangInterface=Enable multi-langual interface
 SystemSuccessfulyUpdated=Your sustem has been updated successfully
 CompanyInfo=Company/foundation informations
 CompanyIds=Company/foundation identities

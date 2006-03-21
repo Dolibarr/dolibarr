@@ -384,8 +384,8 @@ else {
 }
 
 // $conf->liste_limit = constante de taille maximale des listes
-if (! $conf->global->SIZE_LISTE_LIMIT) $conf->global->SIZE_LISTE_LIMIT=20;
-$conf->liste_limit=$conf->global->SIZE_LISTE_LIMIT;
+if (! $conf->global->MAIN_SIZE_LISTE_LIMIT) $conf->global->MAIN_SIZE_LISTE_LIMIT=20;
+$conf->liste_limit=$conf->global->MAIN_SIZE_LISTE_LIMIT;
 
 // $conf->produit->limit_size = constante de taille maximale des select de produit
 if (! isset($conf->global->PRODUIT_LIMIT_SIZE)) $conf->global->PRODUIT_LIMIT_SIZE=50;

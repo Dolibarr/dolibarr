@@ -225,7 +225,7 @@ class Product
         if ( $this->db->query($sql) )
         {
         	// Multilangs
-			    if($conf->global->PRODUIT_MULTILANGS == 1)
+			    if($conf->global->MAIN_MULTILANGS)
 				     if ( $this->setMultiLangs() < 0)
 				     {
 					     $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
@@ -679,7 +679,7 @@ class Product
     
             $this->db->free();
 			// multilangs
-			if( $conf->global->PRODUIT_MULTILANGS == 1 ) $this->getMultiLangs();
+			if( $conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
 			
 
 			// multiprix

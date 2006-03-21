@@ -139,42 +139,57 @@ class ModeleNumRefFicheinter
 
 /**
 		\brief      Crée une fiche intervention sur disque en fonction du modèle de FICHEINTER_ADDON_PDF
-		\param	    db  		objet base de donnée
-		\param	    facid		id de la facture à créer
-        \return     int         0 si KO, 1 si OK
+		\param	    db  			objet base de donnée
+		\param	    id				id de la fiche à créer
+		\param	    modele			force le modele à utiliser ('' par defaut)
+		\param		outputlangs		objet lang a utiliser pour traduction
+        \return     int         	0 si KO, 1 si OK
 */
-function fichinter_pdf_create($db, $facid)
+function fichinter_pdf_create($db, $facid, $modele='', $outputlangs)
 {
-  global $langs;
-  $langs->load("ficheinter");
-  
-  $dir = DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
-
-  if (defined("FICHEINTER_ADDON_PDF") && FICHEINTER_ADDON_PDF)
-    {
-
-      $file = "pdf_".FICHEINTER_ADDON_PDF.".modules.php";
-
-      $classname = "pdf_".FICHEINTER_ADDON_PDF;
-      require_once($dir.$file);
-
-      $obj = new $classname($db);
-
-      if ( $obj->write_pdf_file($facid) > 0)
+	global $conf,$langs;
+	$langs->load("ficheinter");
+	
+	$dir = DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
+	
+	// Positionne modele sur le nom du modele de facture à utiliser
+	if (! strlen($modele))
 	{
-	  return 1;
+		if ($conf->global->FICHEINTER_ADDON_PDF)
+		{
+			$modele = $conf->global->FICHEINTER_ADDON_PDF;
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined");
+			return 0;
+		}
 	}
-      else
+	
+	// Charge le modele
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
 	{
-	  dolibarr_print_error($db,$obj->pdferror());
-	  return 0;
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+	
+		$obj = new $classname($db);
+	
+		if ( $obj->write_pdf_file($id,$outputlangs) > 0)
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($db,$obj->pdferror());
+			return 0;
+		}
 	}
-    }
-  else
-    {
-      print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined");
-      return 0;
-    }
+	else
+	{
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		return 0;
+	}
 }
 
 ?>

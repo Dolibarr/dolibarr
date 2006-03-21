@@ -141,7 +141,7 @@ if ($result)
 			$objp = $db->fetch_object($result);
 		
 			//Multilangs
-			if ($conf->global->PRODUIT_MULTILANGS == 1)
+			if ($conf->global->MAIN_MULTILANGS)
 			{
 				$sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
 				$sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";

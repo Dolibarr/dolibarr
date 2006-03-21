@@ -169,7 +169,7 @@ if ($_GET["id"] || $_GET["ref"])
         }
         
         // Multilangs
-        if($conf->global->PRODUIT_MULTILANGS == 1)
+        if($conf->global->MAIN_MULTILANGS)
         {
 	        $head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;
 	        $head[$h][1] = $langs->trans("Translation");

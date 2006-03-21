@@ -161,9 +161,9 @@ if ($user->admin)
  * Overwrite configs global par configs perso
  * ------------------------------------------
  */
-if (isset($user->conf->SIZE_LISTE_LIMIT) && $user->conf->SIZE_LISTE_LIMIT > 0)
+if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT) && $user->conf->MAIN_SIZE_LISTE_LIMIT > 0)
 {
-    $conf->liste_limit = $user->conf->SIZE_LISTE_LIMIT;
+    $conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;
 }
 if (isset($user->conf->PRODUIT_LIMIT_SIZE))
 {

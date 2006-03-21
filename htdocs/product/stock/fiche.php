@@ -290,7 +290,7 @@ else
                     $objp = $db->fetch_object($resql);
                     
                    // Multilangs
-					        if ($conf->global->PRODUIT_MULTILANGS == 1) // si l'option est active
+					        if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 					        {
 						        $sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
 						        $sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";

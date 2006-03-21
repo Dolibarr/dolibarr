@@ -133,54 +133,66 @@ class ModeleNumRefCommandes
     }
     
 }
-function commande_pdf_create($db, $comid, $modele='')
+
+
+/*
+		\brief      Crée un bon de commande sur disque en fonction du modèle de COMMANDE_ADDON_PDF
+		\param	    db  			objet base de donnée
+		\param	    id				id de la propale à créer
+		\param	    modele			force le modele à utiliser ('' par defaut)
+		\param		outputlangs		objet lang a utiliser pour traduction
+*/
+function commande_pdf_create($db, $id, $modele='', $outputlangs='')
 {
-  global $langs;
-  $langs->load("orders");
- 
-  $dir = DOL_DOCUMENT_ROOT."/includes/modules/commande/";
-
-  // Positionne modele sur le nom du modele de facture à utiliser
-  if (! strlen($modele))
-    {
-      if (defined("COMMANDE_ADDON_PDF") && COMMANDE_ADDON_PDF)
-        {
-          $modele = COMMANDE_ADDON_PDF;
-        }
-      else
-        {
-      print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
-          return 0;
-        }
-    }
-  // Charge le modele
-  $file = "pdf_".$modele.".modules.php";
-  if (file_exists($dir.$file))
-    {
-      $classname = "pdf_".$modele;
-      require_once($dir.$file);
-  
-      $obj = new $classname($db);
-
-      if ( $obj->write_pdf_file($comid) > 0)
-        {
-          // on supprime l'image correspondant au preview
-           commande_delete_preview($db, $comid);
-          return 1;
-        }
-      else
-        {
-          dolibarr_syslog("Erreur dans commande_pdf_create");
-          dolibarr_print_error($db,$obj->pdferror());
-          return 0;
-        }
-    }
-  else
-    {
-      print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
-      return 0;
-    }
+	global $conf,$langs;
+	$langs->load("orders");
+	
+	$dir = DOL_DOCUMENT_ROOT."/includes/modules/commande/";
+	
+	// Positionne modele sur le nom du modele de facture à utiliser
+	if (! strlen($modele))
+	{
+		if ($conf->global->COMMANDE_ADDON_PDF)
+		{
+			$modele = $conf->global->COMMANDE_ADDON_PDF;
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_PDF_NotDefined");
+			return 0;
+		}
+	}
+	
+	// Charge le modele
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+	
+		$obj = new $classname($db);
+	
+		if ( $obj->write_pdf_file($id, $outputlangs) > 0)
+		{
+			// on supprime l'image correspondant au preview
+			commande_delete_preview($db, $id);
+			return 1;
+		}
+		else
+		{
+			dolibarr_syslog("Erreur dans commande_pdf_create");
+			dolibarr_print_error($db,$obj->pdferror());
+			return 0;
+		}
+	}
+	else
+	{
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		return 0;
+   }
 }
+
+
 function commande_delete_preview($db, $propalid)
 {
         global $langs,$conf;
