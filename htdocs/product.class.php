@@ -1380,8 +1380,8 @@ class Product
         return 1;
     }
 /**
-   * fonction récursive uniquement utilisée par get_arbo_each_prod
-   * Recompose l'arborescence des sousproduits
+   *   \brief fonction récursive uniquement utilisée par get_arbo_each_prod, recompose l'arborescence des sousproduits
+   *   \return void
    */
   function fetch_prod_arbo($prod,$compl_path="")
 {
