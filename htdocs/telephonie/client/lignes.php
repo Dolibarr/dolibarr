@@ -138,7 +138,8 @@ if ($_GET["id"])
 		  print '<tr class="liste_titre"><td width="15%" valign="center">Ligne';
 		  print '</td><td colspan="3">Agence/Filiale</td>';
 		  print '<td align="center">Remise LMN</td>';
-		  print '<td>Fournisseur</td>';
+		  if ($user->rights->telephonie->fournisseur->lire)
+		    print '<td>Fournisseur</td>';
 
 		  print "</tr>\n";
 
@@ -163,7 +164,8 @@ if ($_GET["id"])
 		      print '<td>'.$obj->ville."</td>\n";
 
 		      print '<td align="center">'.$obj->remise." %</td>\n";
-		      print "<td>".$obj->fournisseur."</td>\n";
+		      if ($user->rights->telephonie->fournisseur->lire)
+			print "<td>".$obj->fournisseur."</td>\n";
 		      print "</tr>\n";
 		      $i++;
 		    }
