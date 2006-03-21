@@ -101,15 +101,14 @@ if ($action == 'add_prod' &&
 				
 				
 				}
-        }
-  
+     }
 }
 // action recherche des produits par mot-clé et/ou par catégorie
 if($action == 'search' )
 {
 	$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-	if($catMere != -1)
+	if($conf->categorie->enabled && $catMere != -1)
 	{
 		$sql .= ', '.MAIN_DB_PREFIX.'categorie_product as cp';
 	}
@@ -119,7 +118,7 @@ if($action == 'search' )
 		$sql .= " AND (p.ref like '%".$key."%'";
 		$sql .= " OR p.label like '%".$key."%')";
 	}
-	if($catMere != -1)
+	if($conf->categorie->enabled && $catMere != -1)
 	{
 		$sql .= " AND p.rowid=cp.fk_product AND cp.fk_categorie ='".$catMere."'";
 	}
@@ -352,11 +351,11 @@ if ($id || $ref)
 			print '</td><td><input type="text" name="key" value="'.$key.'">';
 			print '<input type="hidden" name="action" value="search">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
-            print '</td></tr>';
-			print '<tr><td>'.$langs->trans("CategoryFilter");
-			
-			if($conf->categorie->enabled)
+      print '</td></tr>';
+      
+      if($conf->categorie->enabled)
 			{
+			  print '<tr><td>'.$langs->trans("CategoryFilter");
 			  print '</td><td>'.$html->select_all_categories($catMere).'</td></tr>';
 			}
 			
