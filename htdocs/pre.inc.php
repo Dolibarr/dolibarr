@@ -97,6 +97,7 @@ function llxHeader($head = "") {
         if ($conf->service->enabled) { $chaine.= $langs->trans("Services"); }
         $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
 
+/*
         if ($conf->boutique->enabled)
         {
             if ($conf->boutique->livre->enabled)
@@ -110,6 +111,7 @@ function llxHeader($head = "") {
             }
         }
     }
+*/
 
     if ($conf->commande->enabled && $user->rights->commande->lire)
     {

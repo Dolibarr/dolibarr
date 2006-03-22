@@ -19,14 +19,8 @@
  * $Source$
  *
  */
-require("../main.inc.php");
-//require("./livre/livre.class.php");
-//require("./editeur/editeur.class.php");
-//require("./auteur/auteur.class.php");
-require("../product/categorie/categorie.class.php");
-
-//affichages dans la page d'accueil
-define("OSC_MAXNBCOM", 5);
+require("../../main.inc.php");
+require("../../product/categorie/categorie.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {
@@ -39,30 +33,13 @@ function llxHeader($head = "", $urlp = "")
   top_menu($head);
 
   $menu = new Menu();
-/*
-  $menu->add(DOL_URL_ROOT."/boutique/livre/", "Livres");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/vignettes.php","Vignettes manquantes");
-
-  $menu->add(DOL_URL_ROOT."/boutique/auteur/", "Auteurs");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
-
-  $menu->add(DOL_URL_ROOT."/boutique/editeur/", "Editeurs");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
-*/
-
   $menu->add(DOL_URL_ROOT."/boutique/produits/osc-liste.php", "Produits");
+
+  $menu->add(DOL_URL_ROOT."/boutique/client/", "Clients");
 
   $menu->add(DOL_URL_ROOT."/boutique/commande/", "Commandes");
 
-  $menu->add(DOL_URL_ROOT."/boutique/client/", "Clients");
-  
-/*
-  $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
+/*  $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
 
   $menu->add(DOL_URL_ROOT."/product/promotion/", "Promotions");
 

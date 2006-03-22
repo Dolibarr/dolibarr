@@ -272,6 +272,23 @@ class MenuTop {
 
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/energie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
         }
+        
+        // Entrée boutique
+        if ($conf->boutique->enabled)
+        {
+            $langs->load("shop");
+            $class="";
+            if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/boutique/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Shop").'</a></td>';
+        }
 
         // Entrée webcal
         if ($conf->webcal->enabled)

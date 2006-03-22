@@ -230,6 +230,24 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a></td>';
         }
         
+        // Projets
+        if ($conf->boutique->enabled)
+        {
+            $langs->load("shop");
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "shop")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Shop").'</a></td>';
+        }
+        
         // Webcal
         if ($conf->webcal->enabled)
         {
