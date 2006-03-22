@@ -134,20 +134,6 @@ else if ($_GET["action"] == 'disable_sousproduits')
     exit;
 }
 
-// Multilangs
-if ($_GET['action'] == 'enable_multilangs')
-{
-	dolibarr_set_const($db, "PRODUIT_MULTILANGS", "1");
-	Header("Location: produit.php");
-
-}
-else if ($_GET['action'] == 'disable_multilangs')
-{
-	dolibarr_del_const($db, "PRODUIT_MULTILANGS");
-    Header("Location: produit.php");
-    exit;
-}
-
 
 /*
  * Affiche page
@@ -225,6 +211,7 @@ if($conf->global->PRODUIT_MULTIPRICES == 1)
 	print '</table>';
 	print '</form>';
 }
+
 // sousproduits activation/desactivation
 print '<br>';
 print '<table class="noborder" width="100%">';
@@ -250,30 +237,6 @@ print "</td>";
 print '</tr>';
 print '</table>';
 print '</form>';
-
-// multilangs activation/desactivation
-print '<br />';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td align="center">&nbsp;</td>';
-print '<td align="center">'.$langs->trans("Active").'</td>';
-print "</tr>\n";
-print "<tr ".$bc[false].">";
-print '<td width="80%">'.$langs->trans("MultilangsAbility").'</td>';
-print '<td align="center">';
-if($conf->global->PRODUIT_MULTILANGS == 1)
-	print img_tick();
-print '</td>';
-print "<td align=\"center\">";
-if($conf->global->PRODUIT_MULTILANGS == 0)
-print '<a href="produit.php?action=enable_multilangs">'.$langs->trans("Activate").'</a>';
-else if($conf->global->PRODUIT_MULTILANGS == 1)
-	print '<a href="produit.php?action=disable_multilangs">'.$langs->trans("Disable").'</a>';
-print "</td>";
-print '</tr>';
-print '</table>';
-
 
 $db->close();
 
