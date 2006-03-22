@@ -43,6 +43,7 @@ if ($_GET["action"] == 'set' && $user->admin)
     $mesg='';
     if ($result) $mesg=$result;
     Header("Location: modules.php?spe=".$_GET["spe"]."&mesg=".urlencode($mesg));
+	exit;
 }
 
 if ($_GET["action"] == 'reset' && $user->admin)
@@ -51,6 +52,7 @@ if ($_GET["action"] == 'reset' && $user->admin)
     $mesg='';
     if ($result) $mesg=$result;
     Header("Location: modules.php?spe=".$_GET["spe"]."&mesg=".urlencode($mesg));
+	exit;
 }
 
 
@@ -242,7 +244,7 @@ foreach ($orders as $key => $value)
     $modName = $nom[$key];
     $objMod  = $modules[$key];
 
-    // On affiche pas module si en version 'development' et que
+    // On affiche pas les modules en version 'development' si
     // constante MAIN_SHOW_DEVELOPMENT_MODULES non définie
     if ($objMod->version == 'development' && ! $conf->global->MAIN_SHOW_DEVELOPMENT_MODULES)
     {
@@ -256,7 +258,7 @@ foreach ($orders as $key => $value)
         $atleastoneforfamily=0;
     }
 
-    if((!$objMod->special && !$_GET["spe"] ) or ($objMod->special && $_GET["spe"]))
+    if ((!$objMod->special && !$_GET["spe"] ) or ($objMod->special && $_GET["spe"]))
     {
         $atleastoneforfamily=1;
         $var=!$var;
@@ -279,13 +281,13 @@ foreach ($orders as $key => $value)
         print '</td><td valign="top">'.$objMod->getName();
         print "</td>\n  <td valign=\"top\">";
         print $objMod->getDesc();
-        print "</td>\n  <td align=\"center\">";
+        print "</td>\n  <td align=\"center\" valign=\"top\">";
         print $objMod->getVersion();
-        print "</td>\n  <td align=\"center\">";
+        print "</td>\n  <td align=\"center\" valign=\"top\">";
         print $objMod->getDbVersion();
-        print "</td>\n  <td align=\"center\">";
+        print "</td>\n  <td align=\"center\" valign=\"top\">";
 
-        if ($conf->global->$const_name == 1)
+        if ($conf->global->$const_name)
         {
             print img_tick();
         }
@@ -294,9 +296,9 @@ foreach ($orders as $key => $value)
             print "&nbsp;";
         }
 
-        print "</td>\n  <td align=\"center\">";
+        print "</td>\n  <td align=\"center\" valign=\"top\">";
 
-        if ($conf->global->$const_name == 1)
+        if ($conf->global->$const_name)
         {
             // Module actif
             if ($family == 'base') print $langs->trans("Required");
@@ -304,19 +306,21 @@ foreach ($orders as $key => $value)
 
             if ($objMod->config_page_url)
             {
-                if (is_array($objMod->config_page_url)) {
-                    print '  <td align="center">';
+                if (is_array($objMod->config_page_url))
+                {
+                    print '  <td align="center" valign="top">';
                     $i=0;
                     foreach ($objMod->config_page_url as $page)
                     {
                         if ($i++)
                         {
-                            print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+                            print '<a href="'.$page.'" alt="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
+                        //    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
                         }
                         else
                         {
                             //print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;';
-                            print '<a href="'.$page.'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                            print '<a href="'.$page.'" alt="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
                         }
                     }
                     print "</td>\n";
@@ -324,7 +328,7 @@ foreach ($orders as $key => $value)
                 else
                 {
                     //print '  <td align="center"><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
-                    print '  <td align="center"><a href="'.$objMod->config_page_url.'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                    print '  <td align="center" valign="top"><a href="'.$objMod->config_page_url.'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
                 }
             }
             else
