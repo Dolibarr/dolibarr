@@ -73,7 +73,7 @@ else
 require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 
-if (isset($_GET["action"]) && $_GET["action"] == "upgrade")
+if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 {
     print '<h2>'.$langs->trans("DatabaseMigration").'</h2>';
 
