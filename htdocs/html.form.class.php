@@ -2156,14 +2156,12 @@ class Form
             $this->select_array('model',$modellist,$modelselected,0,0,1);
             $texte=$langs->trans('Generate');
             print '</td>';
-            
+            print '<td align="center">';
             if($conf->global->MAIN_MULTILANGS)
             {
-              print '<td align="center">';
               $this->select_lang($langs->getDefaultLang());
-              print '</td>';
             }
-            
+            print '</td>';
             print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
             print '<input class="button" type="submit" value="'.$texte.'">';
             print '</td></tr>';
