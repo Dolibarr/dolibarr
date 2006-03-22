@@ -110,8 +110,9 @@ function llxHeader($head = "") {
                 $menu->add_submenu(DOL_URL_ROOT."/product/album/index.php", "Albums");
             }
         }
+*/        
     }
-*/
+
 
     if ($conf->commande->enabled && $user->rights->commande->lire)
     {
