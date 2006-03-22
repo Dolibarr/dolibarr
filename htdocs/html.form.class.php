@@ -2059,10 +2059,12 @@ class Form
      *      \param      genallowed          Génération autorisée (1/0 ou array des formats)
      *      \param      delallowed          Suppression autorisée (1/0)
      *      \param      modelselected       Modele à présélectionner par défaut
+     *      \param      modelliste			Tableau des modeles possibles
+     *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS défini
      *      \remarks    Le fichier de facture détaillée est de la forme
      *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
      */
-    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array())
+    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0)
     {
         // filedir = conf->...dir_ouput."/".get_exdir(id)
         
@@ -2157,9 +2159,13 @@ class Form
             $texte=$langs->trans('Generate');
             print '</td>';
             print '<td align="center">';
-            if($conf->global->MAIN_MULTILANGS)
+            if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
             {
               $this->select_lang($langs->getDefaultLang());
+            }
+            else
+            {
+            	print '&nbsp;';
             }
             print '</td>';
             print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
