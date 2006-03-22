@@ -77,14 +77,15 @@ if ($action == 'add_prod' &&
 				// print "<br> : ".$_POST["prod_id_chk".$i];
 				if($_POST["prod_id_chk".$i] != "")
 				{
-					if($product->add_sousproduit($id, $_POST["prod_id_".$i],$_POST["prod_qty_".$i]) )
+					if($product->add_sousproduit($id, $_POST["prod_id_".$i],$_POST["prod_qty_".$i]) > 0)
 					{
 						$action = 'edit';
 					}
 					else
 					{
 						$action = 're-edit';
-						$mesg = "erreur";
+						if($product->error == "isFatherOfThis")
+							$mesg = $langs->trans("ErrorAssociationIsFatherOfThis");
 					}
 				}
 				else
@@ -96,7 +97,6 @@ if ($action == 'add_prod' &&
 					else
 					{
 						$action = 're-edit';
-						$mesg = "erreur";
 					}
 				
 				
