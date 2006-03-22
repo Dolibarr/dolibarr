@@ -94,3 +94,4 @@ AddDel=Ajouter/Retirer
 Quantity=Quantité
 NoMatchFound=Aucun résultat n'a été trouvé 
 ProductAssociationList=Liste des produits/services associés : nom du produit/service (quantité affectée)
+ErrorAssociationIsFatherOfThis=L'un des produits sélectionnés est parent du produit en cours
