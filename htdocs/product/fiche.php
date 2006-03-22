@@ -556,7 +556,7 @@ if ($_GET["id"] || $_GET["ref"])
             
             // TVA
             $langs->load("bills");
-            print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.' %</td></tr>';
+            print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
 
             // Stock
             if ($product->type == 0 && $conf->stock->enabled)

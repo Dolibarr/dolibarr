@@ -137,7 +137,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     if ($_POST["action"] == 'update')
     {
         $result = $soc->update($socid,$user);
-        if ($result > 0)
+        if ($result >= 0)
         {
             Header("Location: soc.php?socid=".$socid);
             exit;

@@ -370,7 +370,7 @@ class Societe
             }
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
             $sql .= " WHERE idp = '" . $id ."'";
-        
+
         	// Verifie que code compta défini
         
             $resql=$this->db->query($sql);
@@ -392,7 +392,7 @@ class Societe
                 if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
                     // Doublon
-                    $this->error = $langs->trans("ErrorPrefixAlreadyExists",$this->prefix_comm);
+                    $this->error = $langs->trans("ErrorDuplicateField");
                     $result =  -1;
                 }
                 else
@@ -1261,7 +1261,7 @@ function set_price_level($price_level, $user)
 	/**
 	 *    	\brief  	Renvoie un code compta, suivant le module de code compta.
 	 *            		Peut être identique à celui saisit ou généré automatiquement.
-	 *            		A ce jour seul la génération automatique est implémentée
+	 *            		A ce jour seule la génération automatique est implémentée
 	 *    	\param      type			Type de tiers ('customer' ou 'supplier')
 	 */
 	function get_codecompta($type)

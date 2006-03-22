@@ -63,25 +63,25 @@ class mod_codecompta_aquarium
 		$this->db = $DB;
 	
 		// Regle gestion compte compta
-		if ($type == 'supplier') $codetouse=$societe->code_client;
-		if ($type == 'customer') $codetouse=$societe->code_fournisseur;
+		if ($type == 'customer') $codetouse=$societe->code_client;
+		if ($type == 'supplier') $codetouse=$societe->code_fournisseur;
 		
-		if ($type == 'supplier') $this->code = "401".$codetouse;
 		if ($type == 'customer') $this->code = "411".$codetouse;
+		if ($type == 'supplier') $this->code = "401".$codetouse;
 	
-		$is_dispo = $this->verif($DB, $this->code);
+		$is_dispo = $this->verif($DB, $this->code, $societe);
 		while ($is_dispo == 0 && $i < 37)		// 40 char max
 		{
 			$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	
 			$this->code = $societe->prefix_comm . $codetouse . substr($arr, $i, 1);
 	
-			$is_dispo = $this->verif($DB, $this->code);
+			$is_dispo = $this->verif($DB, $this->code, $societe);
 	
 			$i++;
 		}
 
-		dolibarr_debug("mod_codecompta_aquarium::get_code code=>".$this->code);
+		dolibarr_syslog("mod_codecompta_aquarium::get_code type=".$type." code=".$this->code);
 		return $is_dispo;
 	}
 
@@ -90,10 +90,11 @@ class mod_codecompta_aquarium
 	 *		\brief		Renvoi si un code compta est dispo
 	 *		\return		int			0 non dispo, >0 dispo, <0 erreur
 	 */
-	function verif($db, $code)
+	function verif($db, $code, $societe)
 	{
 		$sql = "SELECT code_compta FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE code_compta = '".$code."'";
+		$sql.= " WHERE code_compta = '".$code."'";
+		$sql.= " AND idp != ".$societe->id;
 	
 		if ($db->query($sql))
 		{
