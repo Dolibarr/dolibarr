@@ -54,7 +54,11 @@ class modCategorie extends DolibarrModules
     $this->family = "products";
     $this->name = "Catégorie";
     $this->description = "Gestion des catégories de produits";
-    $this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
+    
+    $this->revision = explode(' ','$Revision$');
+    $this->version = $this->revision[1];
+    //$this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
+    
     $this->const_name = 'MAIN_MODULE_CATEGORIE';
     $this->special = 0;
     $this->picto = '';
