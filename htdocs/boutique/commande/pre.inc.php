@@ -33,10 +33,13 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
+  $menu->add(DOL_URL_ROOT."/boutique/produits/osc-liste.php", "Produits");
+
   $menu->add(DOL_URL_ROOT."/boutique/client/", "Clients");
 
   $menu->add(DOL_URL_ROOT."/boutique/commande/", "Commandes");
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/commande/ca.php", "Chiffre d'affaire");
+
+/*  $menu->add_submenu(DOL_URL_ROOT."/boutique/commande/ca.php", "Chiffre d'affaire");
   $menu->add(DOL_URL_ROOT."/boutique/notification/", "Notifications");
 
   $menu->add_submenu(DOL_URL_ROOT."/boutique/notification/produits.php", "Produits");
@@ -44,7 +47,7 @@ function llxHeader($head = "", $urlp = "") {
   $menu->add(DOL_URL_ROOT."/boutique/newsletter/", "Newsletter");
 
   $menu->add_submenu(DOL_URL_ROOT."/boutique/newsletter/fiche.php?action=create", "Nouvelle newsletter");
-
+*/
   left_menu($menu->liste);
   /*
    *
