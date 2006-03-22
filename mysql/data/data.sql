@@ -68,7 +68,7 @@ insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_
 -- IHM
 --
 insert into llx_const (name, value, type, note, visible) values ('MAIN_LANG_DEFAULT','fr_FR','chaine','Langue par défaut pour les écrans Dolibarr',0);
-insert into llx_const (name, value, type, note, visible) values ('SIZE_LISTE_LIMIT','25','chaine','Longueur maximum des listes',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Longueur maximum des listes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_SHOW_WORKBOARD','1','yesno','Affichage tableau de bord de travail Dolibarr',0);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_BARRETOP','default.php','chaine','Module de gestion de la barre de menu du haut pour utilisateurs internes',0);

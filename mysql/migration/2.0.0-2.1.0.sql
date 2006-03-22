@@ -106,3 +106,6 @@ create table llx_avoir_model_pdf
 
 
 drop table if exists llx_soc_recontact;
+
+
+update llx_const set name='MAIN_SIZE_LISTE_LIMIT' where name='SIZE_LISTE_LIMIT';
