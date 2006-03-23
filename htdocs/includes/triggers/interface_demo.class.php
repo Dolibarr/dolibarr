@@ -219,6 +219,31 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+        // Members
+        elseif ($action == 'MEMBER_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'MEMBER_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'MEMBER_SUBSCRIPTION')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'MEMBER_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'MEMBER_RESILIATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'MEMBER_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
         else
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran but no handler found for this action.");

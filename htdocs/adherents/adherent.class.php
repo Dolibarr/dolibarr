@@ -54,7 +54,6 @@ class Adherent
   var $pays_id;
   var $pays_code;
   var $pays;
-  var $typeid;
   var $morphy;
   var $email;
   var $public;
@@ -64,6 +63,10 @@ class Adherent
   var $pass;
   var $naiss;
   var $photo;
+
+  var $typeid;			// Id type adherent
+  var $type;			// Libellé type adherent
+
   //  var $public;
   var $array_options;
 
@@ -307,12 +310,11 @@ class Adherent
 
 	/**
 		\brief  	Fonction qui crée l'adhérent
-		\param		userid		userid de l'adhérent
 		\return		int			<0 si ko, >0 si ok
 	*/
-	function create($userid)
+	function create()
 	{
-		global $conf,$langs;
+		global $conf,$langs,$user;
 	
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email)) {
@@ -330,7 +332,15 @@ class Adherent
 		if ($result)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
-			return $this->update();
+			$result=$this->update(1);
+			
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
+            // Fin appel triggers
+
+			return 1;
 		}
 		else
 		{
@@ -342,18 +352,23 @@ class Adherent
 
 	/**
 			\brief fonction qui met à jour l'adhérent
-			\return		int			<0 si ko, >0 si ok
+			\param		disable_triggers	1=désactive le trigger UPDATE (quand appelé par creation)
+			\return		int					<0 si ko, >0 si ok
 	*/
-	function update()
+	function update($disable_trigger=0)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$user;
 	
+		dolibarr_syslog("Adherent.class.php::update $disable_trigger");
+		
 		// Verification parametres
-		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email)) {
+		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
+		{
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
 	
+		$this->db->begin();
 	
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " prenom = '".$this->prenom ."'";
@@ -376,14 +391,14 @@ class Adherent
 		$sql .= " WHERE rowid = ".$this->id;
 	
 		$result = $this->db->query($sql);
-	
-		if (!$result)
+		if (! $result)
 		{
-			dolibarr_print_error($this->db);
+			$this->error=$this->db->error();
+			$this->db->rollback();
 			return -1;
 		}
 	
-		if (sizeof($this->array_options) > 0 )
+		if (sizeof($this->array_options) > 0)
 		{
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$this->id;
 			$this->db->query($sql_del);
@@ -398,24 +413,29 @@ class Adherent
 			$sql .= ") VALUES ($this->id";
 			foreach($this->array_options as $key => $value)
 			{
-	
 				$sql.=",'".$this->array_options[$key]."'";
 			}
 			$sql.=");";
 	
 			$result = $this->db->query($sql);
-	
-			if ($result)
+			if (! $result)
 			{
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
+				$this->error=$this->db->error();
+				$this->db->rollback();
 				return -2;
 			}
-	
 		}
+
+		if (! $disable_trigger)
+		{
+	        // Appel des triggers
+	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	        $interface=new Interfaces($this->db);
+	        $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
+	        // Fin appel triggers
+		}
+
+		$this->db->commit();
 	
 		return 1;
 	}
@@ -625,12 +645,16 @@ class Adherent
   
     /**
     		\brief      Fonction qui insère la cotisation dans la base de données
+    					et eventuellement liens dans banques, mailman, etc...
     		\param	    date        Date cotisation
     		\param	    montant     Montant cotisation
             \return     int         rowid de l'entrée ajoutée, <0 si erreur
     */
-    function cotisation($date, $montant)
+    function cotisation($date, $montant, $accountid, $operation, $label, $num_chq)
     {
+        global $conf,$langs,$user;
+        
+        dolibarr_syslog("Adherent.class.php::cotisation $date, $montant, $accountid, $operation, $label, $num_chq");
         $this->db->begin();
             
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation)";
@@ -639,33 +663,77 @@ class Adherent
         $result=$this->db->query($sql);
         if ($result)
         {
-            if ( $this->db->affected_rows($result) )
+            $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
+			// datefin = date + 1 an
+            $datefin = mktime(12, 0 , 0, strftime("%m",$date), strftime("%d",$date),
+                                            strftime("%Y",$date)+1) - (24 * 3600);
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin);
+            $sql.= " WHERE rowid =". $this->id;
+            $resql=$this->db->query( $sql);
+            if ($resql)
             {
-                $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
-                $datefin = mktime(12, 0 , 0,
-                strftime("%m",$date),
-                strftime("%d",$date),
-                strftime("%Y",$date)+1) - (24 * 3600);
-    
-                $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin)." WHERE rowid =". $this->id;
-                if ( $this->db->query( $sql) )
-                {
-                    $this->db->commit();
-                    return $rowid;
-                }
-                else 
-                {
-                    $this->error=$this->db->error();
-                    $this->db->rollback();
-                    return -3;
-                }            
+
+		        // Rajout du nouveau cotisant dans les listes qui vont bien
+		        if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && ! $adh->datefin)
+		        {
+		            $adh->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
+		        }
+	
+	            // Insertion dans la gestion bancaire si configuré pour
+	            if ($conf->global->ADHERENT_BANK_USE && $accountid)
+	            {
+	                $acct=new Account($this->db,$accountid);
+	    
+	                $dateop=strftime("%Y%m%d",time());
+	                $amount=$cotisation;
+	    
+	                $insertid=$acct->addline($dateop, $operation, $label, $amount, $num_chq, '', $user);
+	                if ($insertid > 0)
+	                {
+	        			$inserturlid=$acct->add_url_line($insertid, $adh->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adh->getFullname(), 'member');
+	                    if ($inserturlid > 0)
+	                    {
+	                        // Met a jour la table cotisation
+	                        $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$crowid;
+	                        $resql = $this->db->query($sql);
+	                        if (! $resql)
+	                        {
+				                $this->error=$this->db->error();
+				                $this->db->rollback();
+				                return -5;
+	                        }
+	                    }
+	                    else
+	                    {
+			                $this->error=$acct->error();
+			                $this->db->rollback();
+			                return -4;
+	                    }
+	                }
+	                else
+	                {
+		                $this->error=$this->db->error();
+		                $this->db->rollback();
+		                return -3;
+	                }
+	            }
+
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
+                // Fin appel triggers
+
+               	$this->db->commit();
+               	return $rowid;
             }
-            else
+            else 
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
                 return -2;
-            }
+            }            
         }
         else
         {
@@ -675,59 +743,76 @@ class Adherent
         }
     }
 
-/**
-		\brief fonction qui vérifie que l'utilisateur est valide
-		\param	userid		userid de l'adhérent
-*/
-
-  function validate($userid)
-    {
-
-      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
-      $sql .= "statut=1";
-      $sql .= ",fk_user_valid=".$userid;
-
-      $sql .= " WHERE rowid = $this->id";
-
-      $result = $this->db->query($sql);
-
-      if ($result)
+	/**
+	 *		\brief 		Fonction qui vérifie que l'utilisateur est valide
+	 *		\param		userid		userid adhérent à valider
+	 *		\return		int			<0 si ko, >0 si ok
+	 */
+	function validate($userid)
 	{
-	  return 1;
+		global $user,$langs,$conf;
+			
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+		$sql.= " statut=1,";
+		$sql.= " fk_user_valid=".$userid;
+		$sql.= " WHERE rowid = $this->id";
+	
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
+			// Fin appel triggers
+	
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
 	}
-      else
+
+
+	/**
+	 *		\brief 		Fonction qui résilie un adhérent
+	 *		\param		userid		userid adhérent à résilier
+	 *		\return		int			<0 si ko, >0 si ok
+	 */
+	function resiliate($userid)
 	{
-      dolibarr_print_error($this->db);
-	  return 0;
+		global $user,$langs,$conf;
+		
+		$this->db->begin();
+		
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
+		$sql .= "statut=0";
+		$sql .= ",fk_user_valid=".$userid;
+		$sql .= " WHERE rowid = ".$this->id;
+	
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+	        // Appel des triggers
+	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	        $interface=new Interfaces($this->db);
+	        $result=$interface->run_triggers('MEMBER_RESILIATE',$this,$user,$langs,$conf);
+	        // Fin appel triggers
+
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
 	}
-    }
-
-/**
-		\brief fonction qui résilie un adhérent
-		\param	userid		userid de de l'adhérent
-*/
-
-  function resiliate($userid)
-    {
-
-      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
-      $sql .= "statut=0";
-      $sql .= ",fk_user_valid=".$userid;
-
-      $sql .= " WHERE rowid = $this->id";
-
-      $result = $this->db->query($sql);
-
-      if ($result)
-	{
-	  return 1;
-	}
-      else
-	{
-      dolibarr_print_error($this->db);
-	  return 0;
-	}
-    }
 
 
 /**

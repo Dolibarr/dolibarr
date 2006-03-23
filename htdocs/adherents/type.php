@@ -153,7 +153,9 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit') {
      *
      */
     print '<div class="tabsAction">';
-    print "<a class=\"tabAction\" href=\"type.php?action=create\">".$langs->trans("NewType")."</a>";
+
+    print "<a class=\"butAction\" href=\"type.php?action=create\">".$langs->trans("NewType")."</a>";
+
     print "</div>";
 
 }
@@ -230,11 +232,11 @@ if ($rowid > 0)
         print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.$adht->libelle.'</td></tr>';  
         
         print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-        print $adht->cotisation;
+        print yn($adht->cotisation);
         print '</tr>';
         
         print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-        print $adht->vote;
+        print yn($adht->vote);
         print '</tr>';
         
         print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
@@ -252,7 +254,11 @@ if ($rowid > 0)
          *
          */
         print '<div class="tabsAction">';
-        print "<a class=\"tabAction\" href=\"type.php?action=edit&amp;rowid=".$adht->id."\">".$langs->trans("Edit")."</a>";
+
+        print "<a class=\"butAction\" href=\"type.php?action=edit&amp;rowid=".$adht->id."\">".$langs->trans("Edit")."</a>";
+
+	    print "<a class=\"butAction\" href=\"fiche.php?action=create&typeid=".$adht->id."\">".$langs->trans("AddMember")."</a>";
+
         print "</div>";
     }
     

@@ -45,6 +45,7 @@ $errmsg='';
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
+$typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
 
 
 
@@ -62,95 +63,56 @@ if ($_POST["action"] == 'sendinfo')
 
 if ($_POST["action"] == 'cotisation')
 {
+    $adh = new Adherent($db);
+    $adh->id = $rowid;
+    $adh->fetch($rowid);
+
     $reday=$_POST["reday"];
     $remonth=$_POST["remonth"];
     $reyear=$_POST["reyear"];
+	$datecotisation=@mktime(12, 0 , 0, $remonth, $reday, $reyear);
     $cotisation=$_POST["cotisation"];
 
-    if ($cotisation > 0)
+	$accountid=$_POST["accountid"];
+	$operation=$_POST["operation"];
+	$label=$_POST["label"];
+	$num_chq=$_POST["num_chq"];
+
+	
+	if (! $datecotisation)
+	{
+		$errmsg=$langs->trans("BadDateFormat");
+	    $action='';
+	}
+
+    if (! $cotisation > 0)
+    {
+	    $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+	    $action='';
+    }
+
+    if ($action)
     {
         $db->begin();
 
-        $adh = new Adherent($db);
-        $adh->id = $rowid;
-        $adh->fetch($rowid);
-
-        // Rajout du nouveau cotisant dans les listes qui vont bien
-        //      if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == "0000-00-00 00:00:00"){
-        if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && $adh->datefin == 0)
-        {
-            $adh->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
-        }
-
-        $crowid=$adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
+		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq);
+		
         if ($crowid > 0)
         {
-            // Insertion dans la gestion banquaire si configuré pour
-            if ($conf->global->ADHERENT_BANK_USE)
-            {
-                $acct=new Account($db,$_POST["accountid"]);
-    
-                $dateop=strftime("%Y%m%d",time());
-                $amount=$cotisation;
-    
-                $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"], '', $user);
-                if ($insertid > 0)
-                {
-        			$inserturlid=$acct->add_url_line($insertid, $adh->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adh->getFullname(), 'member');
-                    if ($inserturlid > 0)
-                    {
-                        // Met a jour la table cotisation
-                        $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$crowid;
-                        $resql = $db->query($sql);
-                        if ($resql)
-                        {
-                            $db->commit();
-                            //Header("Location: fiche.php");
-                        }
-                        else
-                        {
-                            $db->rollback();
-                            dolibarr_print_error($db);
-                        }
-                    }
-                    else
-                    {
-                        $db->rollback();
-                        dolibarr_print_error($db,$acct->error);
-                    }
-                }
-                else
-                {
-                    $db->rollback();
-                    dolibarr_print_error($db,$acct->error);
-                }
-            }
-            else
-            {
-                $db->commit();
-            }
+            $db->commit();
+
+	        // Envoi mail
+	        if ($conf->global->ADHERENT_MAIL_COTIS)
+	        {
+	            $adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
+	        }
         }
         else
         {
             $db->rollback();
-            dolibarr_print_error($db);
-        }
-
-        // Envoi mail
-        if ($conf->global->ADHERENT_MAIL_COTIS)
-        {
-            $adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
+            dolibarr_print_error($db,$adh->error);
         }
     }
-    else
-    {
-        $adh = new Adherent($db);
-        $adh->id = $rowid;
-        $adh->fetch($rowid);
-    }
-    $errmsg=$langs->trans("FieldRequired",$langs->trans("Amount"));
-    
-    $action = "edit";
 }
 
 if ($action == 'update')
@@ -184,12 +146,14 @@ if ($action == 'update')
 		$adh->statut      = $_POST["statut"];
 		$adh->public      = $_POST["public"];
 
-		foreach($_POST as $key => $value){
-			if (ereg("^options_",$key)){
+		foreach($_POST as $key => $value)
+		{
+			if (ereg("^options_",$key))
+			{
 				$adh->array_options[$key]=$_POST[$key];
 			}
 		}
-		if ($adh->update($user->id)>=0)
+		if ($adh->update(0) >= 0)
 		{
 			Header("Location: fiche.php?rowid=".$adh->id);
 			exit;
@@ -463,7 +427,7 @@ if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 llxHeader();
 
 
-if ($errmsg != '')
+if ($errmsg)
 {
     print '<div class="error">'.$errmsg.'</div>';
     print "\n";
@@ -590,7 +554,7 @@ if ($action == 'create')
     print '<tr><td width="15%">'.$langs->trans("MemberType").'</td><td width="35%">';
     $listetype=$adht->liste_array();
     if (sizeof($listetype)) {
-        $htmls->select_array("type", $listetype);
+        $htmls->select_array("type", $listetype, $typeid);
     } else {
         print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';   
     }
@@ -685,6 +649,7 @@ if ($rowid && $action != 'edit')
     $adht->fetch($adh->typeid);
 
     $html = new Form($db);
+
 
     /*
      * Affichage onglets
