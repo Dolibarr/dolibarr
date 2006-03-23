@@ -753,7 +753,7 @@ class Adherent
 		global $user,$langs,$conf;
 			
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql.= " statut=1,";
+		$sql.= " statut=1, datevalid = now(),";
 		$sql.= " fk_user_valid=".$userid;
 		$sql.= " WHERE rowid = $this->id";
 	

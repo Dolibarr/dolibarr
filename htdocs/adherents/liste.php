@@ -121,65 +121,71 @@ if ($result)
     $var=True;
     while ($i < $num)
     {
-        if ($_GET["type"] && $i==0) { # Fetch deja fait
-            } else {
-                $objp = $db->fetch_object($result);
-            }
+        if ($_GET["type"] && $i==0)
+        {
+        	# Fetch deja fait
+        } else {
+            $objp = $db->fetch_object($result);
+        }
 
-            $adh=new Adherent($db);
+        $adh=new Adherent($db);
 
-            $var=!$var;
-            print "<tr $bc[$var]>";
-            if ($objp->societe != ''){
-                print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></td>\n";
-                }else{
-                    print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
-                }
-                print "<td>";
-                if ($objp->cotisation == 'yes')
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        if ($objp->societe != '')
+        {
+            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></td>\n";
+        }
+        else
+        {
+            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
+        }
+        print "<td>";
+        if ($objp->cotisation == 'yes')
+        {
+            if ($objp->datefin)
+            {
+                if ($objp->datefin < time() && $objp->statut != 0)
                 {
-                    if ($objp->datefin)
-                    {
-                        if ($objp->datefin < time())
-                        {
-                            print dolibarr_print_date($objp->datefin)." - ".$langs->trans("SubscriptionLate")." ".img_warning()."</td>\n";
-                        }
-                        else
-                        {
-                            print dolibarr_print_date($objp->datefin)."</td>\n";
-                        }
-                    }
-                    else {
-                        print $langs->trans("SubscriptionNotReceived")." ".img_warning()."</td>\n";
-                    }
+                    print dolibarr_print_date($objp->datefin)." - ".$langs->trans("SubscriptionLate")." ".img_warning()."</td>\n";
                 }
                 else
                 {
-                    print "&nbsp;</td>";
+                    print dolibarr_print_date($objp->datefin)."</td>\n";
                 }
-
-                print "<td>$objp->email</td>\n";
-                print '<td><a href="type.php?rowid='.$objp->type_id.'">'.img_object($langs->trans("ShowType"),"group").' '.$objp->type.'</a></td>';
-                print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
-
-                // Statut
-                print "<td>";
-                print $adh->LibStatut($objp->statut,2);
-                print "</td>";
-
-                print "<td><a href=\"edit.php?rowid=$objp->rowid&action=edit\">".img_edit()."</a> &nbsp; ";
-                print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign\">".img_disable($langs->trans("Resiliate"))."</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=delete\">".img_delete()."</a></td>\n";
-                print "</tr>";
-                $i++;
             }
-            print "</table><br>\n";
-            print "<table class=\"noborder\" width=\"100%\">";
-
-            print_barre_liste("", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
-
-            print "</table><br>\n";
-
+            else {
+                print $langs->trans("SubscriptionNotReceived");
+                if ($objp->statut != 0) print " ".img_warning();
+                print "</td>\n";
+            }
         }
+        else
+        {
+            print "&nbsp;</td>";
+        }
+
+        print "<td>$objp->email</td>\n";
+        print '<td><a href="type.php?rowid='.$objp->type_id.'">'.img_object($langs->trans("ShowType"),"group").' '.$objp->type.'</a></td>';
+        print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+
+        // Statut
+        print "<td>";
+        print $adh->LibStatut($objp->statut,4);
+        print "</td>";
+
+        print "<td><a href=\"edit.php?rowid=$objp->rowid&action=edit\">".img_edit()."</a> &nbsp; ";
+        print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign\">".img_disable($langs->trans("Resiliate"))."</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=delete\">".img_delete()."</a></td>\n";
+        print "</tr>";
+        $i++;
+    }
+    print "</table><br>\n";
+    print "<table class=\"noborder\" width=\"100%\">";
+
+    print_barre_liste("", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
+
+    print "</table><br>\n";
+}
 else
 {
     dolibarr_print_error($db);
