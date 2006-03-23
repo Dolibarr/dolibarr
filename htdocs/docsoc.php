@@ -64,10 +64,12 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
  * Actions
  */
  
+$upload_dir = $conf->societe->dir_output . "/" . $socid ;
+
+
 // Envoie fichier
 if ( $_POST["sendit"] && $conf->upload)
 {
-    $upload_dir = $conf->societe->dir_output . "/" . $socid ;
     if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
     if (is_dir($upload_dir))
@@ -89,7 +91,6 @@ if ( $_POST["sendit"] && $conf->upload)
 // Suppression fichier
 if ($_GET["action"]=='delete')
 {
-    $upload_dir = $conf->societe->dir_output . "/" . $socid ;
     $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
     dol_delete_file($file);
     $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
