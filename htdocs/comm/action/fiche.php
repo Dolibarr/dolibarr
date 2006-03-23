@@ -344,38 +344,35 @@ if ($_GET["action"] == 'create')
 	    print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
 	  }
       
-      // Date
-      print '<tr><td>'.$langs->trans("Date").'</td><td>';
-      if ($_GET["afaire"] == 1)
-	{
-	  $html->select_date('','ac','','','',"action");
-	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
-	  print_heure_select("heure",8,20);
-	  print '</td></tr>';
-	} 
-      else if ($_GET["afaire"] == 2) 
-	{
-	  $html->select_date('','ac','','','',"action");
-	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
-	  print_heure_select("heure",8,20);
-	  print '</td></tr>';
-	} 
-      else 
-	{
-	  $html->select_date('','ac','','','',"action");
-	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
-	  print_heure_select("heure",8,20);
-	  print '</td></tr>';
-	}
-      print '</td></tr>';
+      	// Date
+      	print '<tr><td>'.$langs->trans("Date").'</td><td>';
+		if ($_GET["afaire"] == 1)
+		{
+			$html->select_date('','ac','','','',"action");
+			print '</tr><tr><td>'.$langs->trans("Hour").'</td><td>';
+			print_heure_select("heure",8,20);
+		}
+		else if ($_GET["afaire"] == 2)
+		{
+			$html->select_date('','ac','','','',"action");
+			print '</tr><tr><td>'.$langs->trans("Hour").'</td><td>';
+			print_heure_select("heure",8,20);
+		}
+		else
+		{
+			$html->select_date('','ac','','','',"action");
+			print '</tr><tr><td>'.$langs->trans("Hour").'</td><td>';
+			print_heure_select("heure",8,20);
+		}
+		print '</td></tr>';
       
-      add_row_for_webcal_link();
+		add_row_for_webcal_link();
       
       // Note
       print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
       print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
 
-      print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"</td></tr>';
+      print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 
       print '</table>';  
 
@@ -479,7 +476,7 @@ if ($_GET["id"])
     else
     {
         // Affichage fiche action en mode visu
-        print '<table class="border" width="100%"';
+        print '<table class="border" width="100%">';
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
