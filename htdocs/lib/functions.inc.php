@@ -1684,10 +1684,10 @@ function get_default_tva($societe_vendeuse='', $societe_acheteuse='', $taux_prod
 */
 function yn($yesno, $case=1) {
     global $langs;
-    if ($yesno == 0 || $yesno == 'no' || $yesno == 'false') 
-        return $case?$langs->trans("No"):$langs->trans("no");
-    if ($yesno == 1 || $yesno == 'yes' || $yesno == 'true') 
+    if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') 	// A mettre avant test sur no a cause du == 0
         return $case?$langs->trans("Yes"):$langs->trans("yes");
+    if ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false') 
+        return $case?$langs->trans("No"):$langs->trans("no");
     return "unknown";
 }
 
