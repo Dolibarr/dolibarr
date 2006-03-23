@@ -80,6 +80,11 @@ if ($resql)
 {
   $i = 0;
   $num = $db->num_rows($resql);
+
+  if ($verbose > 2)
+    {
+      print $num ." lignes a commander\n";
+    }
   
   while ($i < $num)
     {
