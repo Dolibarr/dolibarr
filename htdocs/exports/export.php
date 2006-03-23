@@ -40,7 +40,7 @@ if (! $user->societe_id == 0)
 
 $entitytoicon=array(
 	'invoice'=>'bill','invoice_line'=>'bill',
-	'member'=>'user', 'member_type'=>'user');
+	'member'=>'user', 'member_type'=>'group');
 $entitytolang=array(
 	'user'=>'User',
 	'company'=>'Company','contact'=>'Contact',
