@@ -190,10 +190,10 @@ if ($modecompta == 'CREANCES-DETTES') {
     	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
 } else {
-	$sql = "SELECT s.nom, s.idp, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql = "SELECT s.nom, s.idp, date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f";
-	$sql .= " ON f.rowid = pf.fk_facturefourn";
+	$sql .= " ON pf.fk_facturefourn = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " ON f.fk_soc = s.idp";
     $sql .= " WHERE p.rowid = pf.fk_paiementfourn ";
