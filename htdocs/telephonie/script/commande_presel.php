@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +140,6 @@ if ($resql)
 function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
 {  
   global $verbose;
-  //dolibarr_syslog("Appel de CreatePreselection($host, $user_login, ****, $ligne, $id_person)");
 
   $url = "/AzurApp_websvc_b3gdb/account.asmx/CreatePreselection?";
 
@@ -220,12 +219,14 @@ function CreatePreselection($host, $user_login, $user_passwd, $lint, $id_person)
 
   if (substr($result,0,2) == "OK")
     {
-      dolibarr_syslog("Presel OK  ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
+      if ($verbose > 1)
+	dolibarr_syslog("Presel OK  ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
       return 0;
     }
   else
     {
-      dolibarr_syslog("Presel ERR ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
+      if ($verbose > 1)
+	dolibarr_syslog("Presel ERR ".$lint->numero." ".$lint->support." id client ".$id_person." $result\n");
 
       $fp = fopen("/tmp/".$lint->numero.".presel","w");
       if ($fp)
@@ -334,7 +335,8 @@ function CreateAbonne($host, $user_login, $user_passwd, $user_contract, $societe
 	      
 	      $result = $results[1];
 	      $client_id = $results[2];
-	      dolibarr_syslog($line);
+	      if ($verbose > 1)
+		dolibarr_syslog($line);
 	    }
 	  
 	  if (substr($line,0,38) == '<?xml version="1.0" encoding="utf-8"?>')
@@ -345,11 +347,13 @@ function CreateAbonne($host, $user_login, $user_passwd, $user_contract, $societe
       fclose($fp);
     }
   
-  dolibarr_syslog("$result:$client_id");
+  if ($verbose > 1)
+    dolibarr_syslog("$result:$client_id");
 
   if ($result == "OK")
     {
-      dolibarr_syslog("Commande réussie id client ".$client_id);
+      if ($verbose > 1)
+	dolibarr_syslog("Commande réussie id client ".$client_id);
       return $client_id;
     }
   else
