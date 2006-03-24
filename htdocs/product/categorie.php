@@ -199,7 +199,14 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<table class="border" width="100%">';
 		print '<tr><td>';
 		print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'">'. $html->select_all_categories($categorie->id_mere);
-		print '</td></tr>';
+		print '</td>';
+		
+    if ($user->rights->categorie->creer)
+    {
+        print '<td><a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create">'.$langs->trans("NewCat").'</a></td>';
+    }
+    
+		print '</tr>';
 		print '</table>';
 		print '</form>';
 		print '<br/>';
