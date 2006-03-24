@@ -32,5 +32,6 @@ create table llx_paiementfourn
   fk_paiement       integer NOT NULL,  -- moyen de paiement
   num_paiement      varchar(50),       -- numéro de paiement (cheque)
   note              text,
-  fk_bank           integer NOT NULL
+  fk_bank           integer NOT NULL,
+  statut			smallint(6) NOT NULL DEFAULT 0
 )type=innodb;
