@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ if ( $societe->fetch($socid) )
 			print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,14).'</td>';
 			print '<td align="center">'.dolibarr_print_date($obj->df).'</td>';
 			print '<td align="right">'.price($obj->amount).'</td>';
-			print '<td align="left">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,2).'</td>';
+			print '<td align="left" nowrap="nowrap">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,2).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -406,5 +406,5 @@ else
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
