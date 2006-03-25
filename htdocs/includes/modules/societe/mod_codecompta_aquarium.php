@@ -29,13 +29,15 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
+
 
 /**
         \class 		mod_codecompta_aquarium
         \brief 		Classe permettant la gestion aquarium des codes compta des societes clients
 */
 
-class mod_codecompta_aquarium
+class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
 	var $nom;
 
@@ -44,9 +46,9 @@ class mod_codecompta_aquarium
 		$this->nom = "Aquarium";
 	}
 	
-	function info()
+	function info($langs)
 	{
-		return "Renvoie un code compta composé de 401 suivi du code tiers si c'est un fournisseur, et 411 suivit du code tiers si c'est un client";
+		return $langs->trans("ModuleCompanyCode".$this->nom);
 	}
 
 

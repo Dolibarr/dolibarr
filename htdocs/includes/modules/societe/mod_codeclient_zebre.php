@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +28,15 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
+
 
 /**
         \class 		mod_codeclient_zebre
-        \brief 		Classe permettant la gestion zebre des codes clients
+        \brief 		Classe permettant la gestion zebre des codes tiers
 */
 
-class mod_codeclient_zebre
+class mod_codeclient_zebre extends ModeleThirdPartyCode
 {
 
   function mod_codeclient_zebre()
@@ -52,7 +55,7 @@ class mod_codeclient_zebre
   /*!     \brief      Renvoi la description du module
    *      \return     string      Texte descripif
    */
-  function info()
+  function info($langs)
     {
       return "Vérifie si le code client est de la forme ABCD5600. Les quatres premières lettres étant une représentation mnémotechnique, suivi du code postal en 2 chiffres et un numéro d'ordre pour la prise en compte des doublons.";
     }

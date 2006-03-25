@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +28,15 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
+
 
 /**
         \class 		mod_codeclient_leopard
-        \brief 		Classe permettant la gestion leopard des codes clients
+        \brief 		Classe permettant la gestion leopard des codes tiers
 */
 
-class mod_codeclient_leopard
+class mod_codeclient_leopard extends ModeleThirdPartyCode
 {
 
   /*
@@ -58,7 +61,7 @@ class mod_codeclient_leopard
 
   }
 
-  function info()
+  function info($langs)
   {
     return "Renvoie toujours ok, pour ceux qui ne veulent pas faire de test.";
   }

@@ -28,26 +28,29 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
+
 
 /**
         \class 		mod_codecompta_panicum
         \brief 		Classe permettant la gestion panicum des codes compta des societes clients
 */
 
-class mod_codecompta_panicum
+class mod_codecompta_panicum extends ModeleAccountancyCode
 {
 	var $nom;
 
-
-  function mod_codecompta_panicum()
-  {
-    $this->nom = "Panicum";
-  }
-
-  function info()
-  {
-    return "Renvoie un code compta identique à celui saisi. Module dédié aux tests";
-  }
+	
+	function mod_codecompta_panicum()
+	{
+		$this->nom = "Panicum";
+	}
+	
+	
+	function info($langs)
+	{
+		return $langs->trans("ModuleCompanyCode".$this->nom);
+	}
   
   /**
    *    \brief      Renvoi code

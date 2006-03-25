@@ -28,13 +28,15 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
+
 
 /**
         \class 		mod_codecompta_digitaria
         \brief 		Classe permettant la gestion digitaria des codes compta des societes clients
 */
 
-class mod_codecompta_digitaria
+class mod_codecompta_digitaria extends ModeleAccountancyCode
 {
 	var $nom;
 
@@ -44,10 +46,10 @@ class mod_codecompta_digitaria
     $this->nom = "Digitaria";
   }
 
-  function info()
-  {
-    return "Renvoie un code compta composé suivant le code client. Le code est composé du caractère 'C' en première position suivi des 5 premiers caractères du code client.";
-  }
+	function info($langs)
+	{
+		return $langs->trans("ModuleCompanyCode".$this->nom);
+	}
 
   /**
    *    \brief      Renvoi code
