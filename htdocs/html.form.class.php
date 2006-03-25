@@ -1617,19 +1617,6 @@ class Form
 	
         if (! $set_time && $empty == 0) $set_time = time();
     
-        $strmonth[1]  = $langs->trans("January");
-        $strmonth[2]  = $langs->trans("February");
-        $strmonth[3]  = $langs->trans("March");
-        $strmonth[4]  = $langs->trans("April");
-        $strmonth[5]  = $langs->trans("May");
-        $strmonth[6]  = $langs->trans("June");
-        $strmonth[7]  = $langs->trans("July");
-        $strmonth[8]  = $langs->trans("August");
-        $strmonth[9]  = $langs->trans("September");
-        $strmonth[10] = $langs->trans("October");
-        $strmonth[11] = $langs->trans("November");
-        $strmonth[12] = $langs->trans("December");
-    
         // Analyse de la date de préselection
         if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg))
         {
@@ -1752,14 +1739,8 @@ class Form
             // Mois
             for ($month = 1 ; $month <= 12 ; $month++)
             {
-                if ($month == $smonth)
-                {
-                    print "<option value=\"$month\" selected=\"true\">" . $strmonth[$month];
-                }
-                else
-                {
-                    print "<option value=\"$month\">" . $strmonth[$month];
-                }
+                print '<option value="'.$month.'"'.($month == $smonth?' selected="true"':'').'>';
+                print dolibarr_print_date(mktime(1,1,1,$month,1,2000),"%b");
                 print "</option>";
             }
             print "</select>";
