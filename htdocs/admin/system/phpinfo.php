@@ -72,9 +72,10 @@ $chaine = eregi_replace('</body></html>','',$chaine);
 $chaine = eregi_replace('body, td, th, h1, h2 {font-family: sans-serif;}','',$chaine);
 $chaine = eregi_replace('cellpadding="3" ','cellpadding="1" cellspacing="1"',$chaine);
 $chaine = eregi_replace('class="h"','class="liste_titre"',$chaine);
+$chaine = eregi_replace('<th colspan="2">','<td>',$chaine);
 $chaine = eregi_replace('th>','td>',$chaine);
 // Titres
-$chaine = eregi_replace('<h1>','<div class="titre">',$chaine);
+$chaine = eregi_replace('<h1([^>]*)>','<div class="titre">',$chaine);
 $chaine = eregi_replace('<h2>','<div class="titre">',$chaine);
 $chaine = eregi_replace('</h1>','</div><br>',$chaine);
 $chaine = eregi_replace('</h2>','</div>',$chaine);
