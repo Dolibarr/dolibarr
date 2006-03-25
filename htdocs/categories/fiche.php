@@ -88,8 +88,9 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
                 print '<tr><td valign="top" width="30%">';
                 print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
                 
-                if ($idprodorigin)
+                if ($_GET['idprodorigin'])
                 {
+                	$idprodorigin = $_GET['idprodorigin']
                 	print '<p><a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idprodorigin.'">'.$langs->trans("ReturnInProduct").'</a></p>';
                 }
                 
@@ -114,6 +115,10 @@ if ($user->rights->produit->creer)
 		print '<form action="fiche.php" method="post">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
+		if ($idprodorigin)
+		{
+			print '<input type="hidden" name="idprodorigin" value='.$idprodorigin.'>';
+		}
 		print '<input type="hidden" name="nom" value="'.$nom.'">';
 		print '<input type="hidden" name="description" value="'.$description.'">';
 		print_fiche_titre($langs->trans("CreateCat"));
