@@ -649,7 +649,7 @@ class Form
 						if ( $resultd ) $objtp = $this->db->fetch_object($resultd); // on charge la traduction suivante
 					}
                 $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-                $opt.= dolibarr_trunc($objp->label,40).' - ';
+                $opt.= dolibarr_trunc($objp->label,36).' - ';
                 
 				//multiprix
 				if($price_level > 1)
@@ -1606,7 +1606,7 @@ class Form
 	 *		\param	empty			0=Champ obligatoire, 1=Permet une saisie vide
 	 *		\param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
      */
- function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0, $form_name="")
+	function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0, $form_name="")
     {
         global $conf,$langs;
     	
@@ -1658,7 +1658,7 @@ class Form
 			}
 
 			// Calendrier popup version eldy
-			if ("$conf->use_popup_calendar" == "eldy")	// Laissé conf->use_popup_calendar entre quote
+			if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
 			{
 	            // Zone de saisie manuelle de la date
 	            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"';
