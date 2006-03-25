@@ -857,9 +857,9 @@ class Contrat
 	
 
 	/**
-	 *    \brief      Retourne le libellé du statut du contrat
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
-   	 *    \return     string      	Libellé
+	 *    	\brief      Retourne le libellé du statut du contrat
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+   	 *    	\return     string      	Libellé
    	 */
     function getLibStatut($mode)
     {
@@ -867,10 +867,10 @@ class Contrat
     }
 
 	/**
-   	 *    \brief      Renvoi le libellé d'un statut donné
-   	 *    \param      statut      	id statut
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
-   	 *    \return     string      	Libellé
+   	 *    	\brief      Renvoi le libellé d'un statut donné
+   	 *    	\param      statut      	id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+   	 *		\return     string      	Libellé
    	 */
     function LibStatut($statut,$mode)
     {
@@ -905,6 +905,12 @@ class Contrat
 	        if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'),'statut0').' '.$langs->trans("ContractStatusDraft"); }
 	        if ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4').' '.$langs->trans("ContractStatusValidated"); }
 	        if ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6').' '.$langs->trans("ContractStatusClosed"); }
+		}
+		if ($mode == 5)
+		{
+	        if ($statut == 0) { return $langs->trans("ContractStatusDraft").' '.img_picto($langs->trans('ContractStatusDraft'),'statut0'); }
+	        if ($statut == 1) { return $langs->trans("ContractStatusValidated").' '.img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
+	        if ($statut == 2) { return $langs->trans("ContractStatusClosed").' '.img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
 		}
     }
 

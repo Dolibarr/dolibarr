@@ -453,7 +453,7 @@ if ($socidp > 0)
                 }
                 print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp)."</td>\n";
                 print '<td align="right" width="120">'.price($objp->price).'</td>';
-                print '<td align="center" width="100">'.$propal_static->LibStatut($objp->fk_statut,2).'</td></tr>';
+                print '<td align="right" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
                 $var=!$var;
                 $i++;
             }
@@ -548,7 +548,7 @@ if ($socidp > 0)
                 .(!isset($objp->ref) ? $objp->id : $objp->ref) ."</a></td>\n";
                 print '<td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
                 print '<td width="20">&nbsp;</td>';
-                print '<td align="center" width="100">'.$contratstatic->LibStatut($objp->statut,2)."</td>\n";
+                print '<td align="right" nowrap="nowrap">'.$contratstatic->LibStatut($objp->statut,5)."</td>\n";
                 print '</tr>';
                 $i++;
             }

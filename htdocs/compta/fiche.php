@@ -364,7 +364,7 @@ if ($socid > 0)
                 }
                 print "<td align=\"right\">".price($objp->total_ttc)."</td>\n";
 
-                print '<td align="left">'.($facturestatic->LibStatut($objp->paye,$objp->statut,2))."</td>\n";
+                print '<td align="right" nowrap="nowrap">'.($facturestatic->LibStatut($objp->paye,$objp->statut,5))."</td>\n";
                 print "</tr>\n";
                 $i++;
             }

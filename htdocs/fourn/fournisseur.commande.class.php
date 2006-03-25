@@ -273,6 +273,56 @@ class CommandeFournisseur
 	}
       return $result ;
     }
+
+
+	/**
+	 *    \brief      Retourne le libellé du statut d'une commande (brouillon, validée, abandonnée, payée)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *		\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string			Libellé du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('orders');
+	
+		if ($mode == 0)
+		{
+			return $this->statuts[$statut];
+		}
+		if ($mode == 1)
+		{
+			return $this->statuts[$statut];
+		}
+		if ($mode == 2)
+		{
+			return $this->statuts[$statut];
+		}
+		if ($mode == 3)
+		{
+			return $this->statuts[$statut];
+		}
+		if ($mode == 4)
+		{
+			return $this->statuts[$statut];
+		}
+		if ($mode == 5)
+		{
+			return $this->statuts[$statut];
+		}
+	}
+
+
   /*
    *
    *

@@ -186,6 +186,8 @@ if ( $societe->fetch($socid) )
     /*
      * Liste des commandes associées
      */
+	$orderstatic = new CommandeFournisseur($db);
+
     $sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
     $sql.= " WHERE p.fk_soc =".$societe->id;
@@ -222,7 +224,7 @@ if ( $societe->fetch($socid) )
                 print "-";
             }
             print '</td>';
-            print '<td width="20"><img src="commande/statut'.$obj->fk_statut.'.png"></td>';
+			print '<td align="right" nowrap="nowrap">'.$orderstatic->LibStatut($obj->fk_statut,5).'</td>';
             print '</tr>';
             $i++;
         }
@@ -273,7 +275,7 @@ if ( $societe->fetch($socid) )
 			print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,14).'</td>';
 			print '<td align="center">'.dolibarr_print_date($obj->df).'</td>';
 			print '<td align="right">'.price($obj->amount).'</td>';
-			print '<td align="left" nowrap="nowrap">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,2).'</td>';
+			print '<td align="right" nowrap="nowrap">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,5).'</td>';
 			print '</tr>';
 			$i++;
 		}
