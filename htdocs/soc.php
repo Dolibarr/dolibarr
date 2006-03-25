@@ -79,14 +79,20 @@ $soc = new Societe($db);
  * Actions
  */
 
-// assujétissement à la TVA
-if ($_POST["action"] == 'setassujtva')
+if ($_POST["getcustomercode"])
 {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socid."'";
-    $result = $db->query($sql);
+	// On défini valeur pour code_client
+	$_POST["code_client"]="aa";
 }
 
-if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
+if ($_POST["getsuppliercode"])
+{
+	// On défini valeur pour code_fournisseur
+	$_POST["code_fournisseur"]="aa";
+}
+
+if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
+	 && ($_POST["action"] == 'add' || $_POST["action"] == 'update'))
 {
     $soc->nom                   = $_POST["nom"];
     $soc->adresse               = $_POST["adresse"];
@@ -184,7 +190,8 @@ $form = new Form($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
-if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
+if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
+	$_GET["action"] == 'create' || $_POST["action"] == 'create')
 {
     if ($user->rights->societe->creer)
     {
@@ -268,7 +275,10 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '<option value="0"'.($soc->client==0?' selected="true"':'').'>Ni client, ni prospect</option>';
         print '</select></td>';
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
-        print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
+        print '<table class="noborder"><tr><td>';
+        print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15"></td><td>';
+        print '<input type="image" name="getcustomercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
+        print '</td></tr></table>';
         print '</td></tr>';
 
         // Fournisseur
@@ -277,7 +287,10 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         $form->selectyesnonum("fournisseur",$soc->fournisseur);
         print '</td>';
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
-        print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+        print '<table class="noborder"><tr><td>';
+        print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15"></td><td>';
+        print '<input type="image" name="getsuppliercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
+        print '</td></tr></table>';
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
