@@ -277,7 +277,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
         print '<table class="noborder"><tr><td>';
         print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15"></td><td>';
-        print '<input type="image" name="getcustomercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
+        //print '<input type="image" name="getcustomercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
         print '</td></tr></table>';
         print '</td></tr>';
 
@@ -289,7 +289,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
         print '<table class="noborder"><tr><td>';
         print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15"></td><td>';
-        print '<input type="image" name="getsuppliercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
+        //print '<input type="image" name="getsuppliercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
         print '</td></tr></table>';
         print '</td></tr>';
 
