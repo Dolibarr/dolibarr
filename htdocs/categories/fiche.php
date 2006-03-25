@@ -41,9 +41,9 @@ else
 	$nbcats = 1;
 }
 
-if ($_REQUEST['origin'])
+if ($_GET['origin'])
 {
-	$idprodorigin = $_REQUEST['origin'];
+	$idprodorigin = $_GET['origin'];
 }
 
 llxHeader("","",$langs->trans("Categories"));

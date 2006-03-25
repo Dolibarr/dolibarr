@@ -203,7 +203,7 @@ if ($_GET["id"] || $_GET["ref"])
 		
     if ($user->rights->categorie->creer)
     {
-        print '<td><a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create">'.$langs->trans("NewCat").'</a></td>';
+        print '<td><a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$product->id.'">'.$langs->trans("NewCat").'</a></td>';
     }
     
 		print '</tr>';
