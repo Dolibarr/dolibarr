@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,68 +71,68 @@ llxHeader();
  */
 
 $sql = "SELECT count(*) as cc, date_format(a.datea, '%m/%Y') as df";
-$sql .= ", date_format(a.datea, '%m') as month";
-$sql .= ", date_format(a.datea, '%Y') as year";
-$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-$sql .= " GROUP BY date_format(a.datea, '%m/%Y') ";
-$sql .= " ORDER BY date_format(a.datea, '%Y %m') DESC";
+$sql.= ", date_format(a.datea, '%m') as month";
+$sql.= ", date_format(a.datea, '%Y') as year";
+$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+$sql.= " GROUP BY date_format(a.datea, '%m/%Y') ";
+$sql.= " ORDER BY a.datea DESC";
 
-
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  
-  print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, "index.php",'',$sortfield,$sortorder,'',$num);
-  
-  $i = 0;
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td>'.$langs->trans("Date").'</td>';
-  print '<td align="center">'.$langs->trans("Nb").'</td>';
-  print '<td>'.$langs->trans("Action").'</td>';
-  print '<td align="center">'.$langs->trans("PDF").'</td>';
-  print '<td align="center">'.$langs->trans("Date").'</td>';
-  print '<td align="center">'.$langs->trans("Size").'</td>';
-  print "</tr>\n";
-  $var=true;
-  while ($i < min($num,$limit))
-    {
-      $obj = $db->fetch_object();
-      
-      $var=!$var;
-    
-      print "<tr $bc[$var]>";
+	$num = $db->num_rows($resql);
 
-      print "<td>$obj->df</td>\n";
-      print '<td align="center">'.$obj->cc.'</td>';
+	print_barre_liste($langs->trans("DoneAndToDoActions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
 
-      print '<td><a href="index.php?action=pdf&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a></td>';
-
-      $name = "rapport-action-".$obj->month."-".$obj->year.".pdf";
-      $relativepath="comm/actions/" .$name;
-      $file = $conf->commercial->dir_output . "/comm/actions/" .$name;
-
-      if (file_exists($file))
+	$i = 0;
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Date").'</td>';
+	print '<td align="center">'.$langs->trans("Nb").'</td>';
+	print '<td>'.$langs->trans("Action").'</td>';
+	print '<td align="center">'.$langs->trans("PDF").'</td>';
+	print '<td align="center">'.$langs->trans("Date").'</td>';
+	print '<td align="center">'.$langs->trans("Size").'</td>';
+	print "</tr>\n";
+	$var=true;
+	while ($i < min($num,$limit))
 	{
-	  print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?file='.urlencode($relativepath).'&modulepart=actionscomm">'.img_pdf().'</a></td>';
-	  print '<td align="center">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	  print '<td align="center">'.filesize($file). ' bytes</td>';
-	}
-	else {
-	   print '<td>&nbsp;</td>';  
-	   print '<td>&nbsp;</td>';  
-	   print '<td>&nbsp;</td>';  
-	 }
+		$obj = $db->fetch_object($resql);
 
-      print "</tr>\n";
-      $i++;
-    }
-  print "</table>";
-  $db->free();
+		$var=!$var;
+
+		print "<tr $bc[$var]>";
+
+		print "<td>$obj->df</td>\n";
+		print '<td align="center">'.$obj->cc.'</td>';
+
+		print '<td><a href="index.php?action=pdf&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a></td>';
+
+		$name = "rapport-action-".$obj->month."-".$obj->year.".pdf";
+		$relativepath="comm/actions/" .$name;
+		$file = $conf->commercial->dir_output . "/comm/actions/" .$name;
+
+		if (file_exists($file))
+		{
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?file='.urlencode($relativepath).'&modulepart=actionscomm">'.img_pdf().'</a></td>';
+			print '<td align="center">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+			print '<td align="center">'.filesize($file). ' '.$langs->trans("Bytes").'</td>';
+		}
+		else {
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+		}
+
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>";
+	$db->free();
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 
