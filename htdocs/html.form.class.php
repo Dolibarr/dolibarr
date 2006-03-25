@@ -649,7 +649,7 @@ class Form
 						if ( $resultd ) $objtp = $this->db->fetch_object($resultd); // on charge la traduction suivante
 					}
                 $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-                $opt.= dolibarr_trunc($objp->label,36).' - ';
+                $opt.= dolibarr_trunc($objp->label,32).' - ';
                 
 				//multiprix
 				if($price_level > 1)
