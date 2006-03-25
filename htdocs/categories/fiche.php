@@ -90,7 +90,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
                 
                 if ($_GET['idprodorigin'])
                 {
-                	$idprodorigin = $_GET['idprodorigin']
+                	$idprodorigin = $_GET['idprodorigin'];
                 	print '<p><a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idprodorigin.'">'.$langs->trans("ReturnInProduct").'</a></p>';
                 }
                 
