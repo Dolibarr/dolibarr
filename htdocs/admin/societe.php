@@ -79,12 +79,13 @@ print "<br>";
 
 // Choix du module de gestion des codes clients / fournisseurs
 
-print_titre($langs->trans("CustomerCodeChecker"));
+print_titre($langs->trans("CompanyCodeChecker"));
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
+print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td align="center">'.$langs->trans("Activated").'</td>';
 print '  <td>&nbsp;</td>';
 print "</tr>\n";
@@ -104,11 +105,12 @@ if ($handle)
 
 	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
-	  $modCodeClient = new $file;
+	  $modCodeTiers = new $file;
 	  $var = !$var;
-	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeClient->nom."</td>\n  <td>";
-	  print $modCodeClient->info();
+	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
+	  print $modCodeTiers->info($langs);
 	  print "</td>\n";
+	  print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
 	  
 	  if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
 	    {
@@ -142,6 +144,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center">'.$langs->trans("Activated").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
@@ -164,9 +167,11 @@ if ($handle)
 	  $modCodeCompta = new $file;
 	  $var = !$var;
 
-	  print '<tr '.$bc[$var].'><td width="140">'.$modCodeCompta->nom."</td><td>\n";
-	  print $modCodeCompta->info();
+	  print '<tr '.$bc[$var].'>';
+	  print '<td width="140">'.$modCodeCompta->nom."</td><td>\n";
+	  print $modCodeCompta->info($langs);
 	  print '</td>';
+	  print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
 	  
 	  if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
 	    {
@@ -192,5 +197,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -336,8 +336,11 @@ RuleForGeneratedPasswords=Règle pour la génération des mots de passe proposés
 DoNotSuggest=Ne pas proposer
 ##### Company setup #####
 CompanySetup=Configuration du module Sociétés
-CustomerCodeChecker=Module de contrôle des codes clients
-AccountCodeManager=Module de gestion des codes compta
+CompanyCodeChecker=Module de contrôle des codes tiers (clients/fournisseurs)
+AccountCodeManager=Module de gestion des codes compta (clients/fournisseurs)
+ModuleCompanyCodeAquarium=Renvoie un code compta composé de 401 suivi du code tiers fournisseur pour le code compta fournisseur, et 411 suivi du code tiers client pour le code compta client
+ModuleCompanyCodePanicum=Renvoie un code compta identique à celui saisi. Module dédié aux tests
+ModuleCompanyCodeDigitaria=Renvoie un code compta composé suivant le code tiers. Le code est composé du caractère 'C' en première position suivi des 5 premiers caractères du code tiers.
 ##### Webcal setup #####
 WebCalSetup=Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro=Intégrer les évênements Dolibarr dans WebCalendar
