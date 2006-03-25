@@ -25,18 +25,18 @@
 
 /**
         \file       htdocs/main.inc.php
-        \brief      Fichier de formatage g?rique des ?ans Dolibarr
+        \brief      Fichier de formatage générique des écrans Dolibarr
         \version    $Revision$
 */
 
 // Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
-// est positionn? A appeler avant tout.
+// est positionnée. A appeler avant tout.
 if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=microtime(true);
 
 
 // Forcage du parametrage PHP magic_quots_gpc (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
-// En mode off (recommand? il faut juste fait addslashes au moment d'un insert/update.
+// En mode off (recommandé), il faut juste fait addslashes au moment d'un insert/update.
 function stripslashes_deep($value)
 {
    return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
@@ -55,15 +55,15 @@ require_once("master.inc.php");
 
 
 // Verification du login.
-// Cette verification est faite pour chaque acc? Apr?l'authentification,
-// l'objet $user est initialis? Notament $user->id, $user->login et $user->nom, $user->prenom
+// Cette verification est faite pour chaque accès. Après l'authentification,
+// l'objet $user est initialisée. Notament $user->id, $user->login et $user->nom, $user->prenom
 // \todo Stocker les infos de $user en session persistente php et ajouter recup dans le fetch
 //       depuis la sessions pour ne pas avoir a acceder a la base a chaque acces de page.
 
-// MODE 1: Pas d'identification car force
+// MODE 1: Pas d'identification car forcé
 if (! empty($dolibarr_auto_user))
 {
-    // Mode forc?ur un utilisateur (pour debug, demo, ...), on initialise la session
+    // Mode forcé sur un utilisateur (pour debug, demo, ...), on initialise la session
     if (! session_id()) {
         session_name("DOLSESSID_".$dolibarr_main_db_name);
         session_start();
@@ -97,9 +97,10 @@ elseif (! empty($_SERVER["REMOTE_USER"]))
         $_SESSION["dol_user"]=$user;
     }
 }
-// MODE 3: Identification depuis base de donn?else
+// MODE 3: Identification depuis base de donnée
+else
 {
-    // Authentification Apache KO ou non active, pas de mode forc?on demande le login
+    // Authentification Apache KO ou non active, pas de mode forcé, on demande le login
     require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
 
     $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
@@ -136,9 +137,10 @@ elseif (! empty($_SERVER["REMOTE_USER"]))
         }
         else 
         {
-            // Non authentifi?           dolibarr_syslog("Authentification non r?is?;
+            // Non authentifié
+            dolibarr_syslog("Authentification non réalisé");
         }
-        // Le d?t de la page a ? affich?ar loginfunction. On ferme juste la page
+        // Le début de la page a été affiché par loginfunction. On ferme juste la page
         print "</div>\n</div>\n</body>\n</html>";
         exit;
     }
@@ -171,13 +173,14 @@ if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
 {
     if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
     {
-        // Si on a un langage perso diff?nt du langage courant global
+        // Si on a un langage perso différent du langage courant global
         $langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
         $langs->setPhpLang($user->conf->MAIN_LANG_DEFAULT);
     }
 }
 
-// Remplace conf->css par valeur personnalis?if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
+// Remplace conf->css par valeur personnalisée
+if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 {
     $conf->theme=$user->conf->MAIN_THEME;
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
@@ -190,12 +193,13 @@ if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAV
     $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
-// D?ni gestionnaire de menu ?tiliser
+// Défini gestionnaire de menu à utiliser
 if (! $user->societe_id)    // Si utilisateur interne
 {
     $conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
     $conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
-    // Pour compatibilit?   if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
+    // Pour compatibilité
+    if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
     if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
 }
 else                        // Si utilisateur externe
@@ -204,7 +208,7 @@ else                        // Si utilisateur externe
     $conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 }
 
-// Si le login n'a pu ?e r?p?, on est identifi?vec un compte qui n'existe pas.
+// Si le login n'a pu être récupéré, on est identifié avec un compte qui n'existe pas.
 // Tentative de hacking ?
 if (! $user->login) accessforbidden();
 
@@ -229,7 +233,7 @@ if (defined("MAIN_NOT_INSTALLED"))
     exit;
 }
 
-// Constantes utilis? pour d?nir le nombre de lignes des textarea
+// Constantes utilisées pour définir le nombre de lignes des textarea
 if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
 {
     define('ROWS_1',1);
@@ -246,7 +250,7 @@ else
 
 
 /**
- *  \brief      Affiche en-t? html
+ *  \brief      Affiche en-tête html
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
@@ -254,10 +258,10 @@ else
 function top_htmlhead($head, $title="", $target="") 
 {
     global $user, $conf, $langs, $db;
-
+    
     //header("Content-type: text/html; charset=UTF-8");
     header("Content-type: text/html; charset=iso-8859-1");
-    
+
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
     print "\n<html>";
 
@@ -310,7 +314,7 @@ function top_htmlhead($head, $title="", $target="")
 }
   
 /**
- *  \brief      Affiche en-t? html + la barre de menu sup?eure
+ *  \brief      Affiche en-tête html + la barre de menu supérieure
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
@@ -324,8 +328,8 @@ function top_menu($head, $title="", $target="")
     print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 
     /*
-     * Si la constante MAIN_NEED_UPDATE est d?nie (par le script de migration sql en g?ral), c'est que
-     * les donn? ont besoin d'un remaniement. Il faut passer le update.php
+     * Si la constante MAIN_NEED_UPDATE est définie (par le script de migration sql en général), c'est que
+     * les données ont besoin d'un remaniement. Il faut passer le update.php
      */
     if ($conf->global->MAIN_NEED_UPDATE)
     {
@@ -342,11 +346,11 @@ function top_menu($head, $title="", $target="")
 
 
     /*
-     * Barre de menu sup?eure
+     * Barre de menu supérieure
      */
     print '<div class="tmenu">'."\n";
 
-    // Charge le gestionnaire des entr? de menu du haut
+    // Charge le gestionnaire des entrées de menu du haut
     require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
     $menutop = new MenuTop($db);
     $menutop->atarget=$target;
@@ -378,9 +382,9 @@ function top_menu($head, $title="", $target="")
 
 /**
  *  \brief      Affiche barre de menu gauche
- *  \param      menu_array      Tableau des entr?de menu
+ *  \param      menu_array      Tableau des entrée de menu
  *  \param      help_url        Url pour le lien aide ('' par defaut)
- *  \param      form_search     Formulaire de recherche permanant suppl?ntaire
+ *  \param      form_search     Formulaire de recherche permanant supplémentaire
  */
 function left_menu($menu_array, $help_url='', $form_search='')
 {
@@ -394,7 +398,7 @@ function left_menu($menu_array, $help_url='', $form_search='')
     print '<div class="vmenu">'."\n";
 
 
-    // Autres entr? du menu par le gestionnaire
+    // Autres entrées du menu par le gestionnaire
     require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
     $menu=new MenuLeft($db,$menu_array);
     $menu->showmenu();
@@ -442,7 +446,7 @@ function left_menu($menu_array, $help_url='', $form_search='')
         print '</div>';
     }
 
-    // Zone de recherche suppl?ntaire
+    // Zone de recherche supplémentaire
     if ($form_search)
     {
         print $form_search;
@@ -510,12 +514,12 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 
 /**
  * \brief   Impression du pied de page
- * \param   foot    Non utilise
+ * \param   foot    Non utilisé
  */
+ 
 function llxFooter($foot='') 
 {
     global $conf, $dolibarr_auto_user, $micro_start_time;
-
     
     print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
     print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->';
@@ -531,7 +535,7 @@ function llxFooter($foot='')
         print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>';
     }
 
-    // Juste pour ?ter bug IE qui r?ganise mal div pr?dents si celui-ci absent
+    // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
     print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
     
     print "</body>\n";
