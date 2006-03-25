@@ -41,6 +41,11 @@ else
 	$nbcats = 1;
 }
 
+if ($_REQUEST['origin'])
+{
+	$idprodorigin = $_REQUEST['origin'];
+}
+
 llxHeader("","",$langs->trans("Categories"));
 $html = new Form($db);
 
@@ -82,6 +87,12 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
                 print '<table border="0" width="100%">';
                 print '<tr><td valign="top" width="30%">';
                 print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
+                
+                if ($idprodorigin)
+                {
+                	print '<p><a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idprodorigin.'">'.$langs->trans("ReturnInProduct").'</a></p>';
+                }
+                
                 print '</td></tr></table>';
         }
 }
