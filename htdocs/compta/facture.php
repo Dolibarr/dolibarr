@@ -1211,8 +1211,8 @@ else
 			}
 
 			/*
-			*   Facture
-			*/
+			 *   Facture
+			 */
 			print '<table class="border" width="100%">';
 			
             // Reference
@@ -1269,11 +1269,13 @@ else
 			print '<tr><td>'.$langs->trans('GlobalDiscount').'</td>';
 			if ($fac->brouillon == 1 && $user->rights->facture->creer)
 			{
+				print '<td colspan="3">';
 				print '<form action="facture.php?facid='.$fac->id.'" method="post">';
 				print '<input type="hidden" name="action" value="setremise">';
-				print '<td colspan="3"><input type="text" name="remise" size="1" value="'.$fac->remise_percent.'">% ';
-				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
+				print '<input type="text" name="remise" size="1" value="'.$fac->remise_percent.'">% ';
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
+				print '</td>';
 			}
 			else
 			{
@@ -1409,6 +1411,7 @@ else
 						
 			print '</table><br>';
 
+
 			/*
 			 * Lignes de factures
 			 */
@@ -1435,8 +1438,10 @@ else
 				$i = 0; $total = 0;
 
 				print '<table class="noborder" width="100%">';
+
 				if ($num_lignes)
 				{
+
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans('Description').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
@@ -1446,6 +1451,7 @@ else
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
 					print '<td width="16">&nbsp;</td><td width="16">&nbsp;</td><td width="16">&nbsp;</td>';
 					print "</tr>\n";
+
 				}
 				$var=true;
 				while ($i < $num_lignes)
@@ -1662,6 +1668,7 @@ else
     				}
     				print '</form>';
                 }
+
 			}
 			print "</table>\n";
 
@@ -1747,6 +1754,7 @@ else
 
 				print '</div>';
 			}
+
 
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 
