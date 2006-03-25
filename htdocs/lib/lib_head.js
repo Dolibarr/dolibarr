@@ -47,6 +47,7 @@ function showDP(base,dateFieldID,format)
 	showDP.datefieldID=dateFieldID;
 
 	var dateField=getObjectFromID(dateFieldID);
+
 	
 	//check to see if another box is already showing
 	var alreadybox=getObjectFromID("DPCancel");
@@ -54,6 +55,15 @@ function showDP(base,dateFieldID,format)
 
 	//get positioning
 	var thetop=getTop(dateField)+dateField.offsetHeight;
+
+//	var xxx=getObjectFromID('bottompage');
+//alert(xxx.style.pixelTop);
+//alert(document.body.clientHeight);
+//alert(document.body.style.offsetTop);
+//alert(thetop);
+//alert(window.innerHeight);
+	if (thetop+160 > window.innerHeight)
+		thetop=thetop-160-20;
 	var theleft=getLeft(dateField);
 	if (theleft+140 > window.innerWidth)
 		theleft= theleft-140+dateField.offsetWidth-15;
