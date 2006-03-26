@@ -1298,24 +1298,68 @@ class Commande
 	}
 
 
-  /**
-   *    \brief      Retourne le libellé du statut de la commande
-   *    \return     string      Libellé
-   */
-	function getLibStatut()
+	/**
+	 *    	\brief      Retourne le libellé du statut de la commande
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string      Libellé
+	 */
+	function getLibStatut($mode)
 	{
 		return $this->LibStatut($this->statut);
 	}
 
-  /**
-   *    \brief      Renvoi le libellé d'un statut donné
-   *    \param      statut      id statut
-   *    \return     string      Libellé
-   */
-	function LibStatut($statut)
+	/**
+	 *		\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut        	Id statut
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string		Libellé
+	 */
+	function LibStatut($statut,$mode)
 	{
-		return $this->status_label_short[$statut];
+		global $langs;
+		
+        if ($mode == 0)
+        {
+	        return $this->statuts[$statut];
+		}
+        if ($mode == 1)
+        {
+        	return $this->status_label_short[$statut];
+        }
+        if ($mode == 2)
+        {
+        	if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut6').' '.$this->status_label_short[$statut];
+        	if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$this->status_label_short[$statut];
+        	if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$this->status_label_short[$statut];
+        	if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3').' '.$this->status_label_short[$statut];
+        	if ($statut==3) return img_picto($langs->trans('StatusOrderProcessed'),'statut5').' '.$this->status_label_short[$statut];
+        }
+        if ($mode == 3)
+        {
+        	if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut6');
+        	if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
+        	if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
+        	if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
+        	if ($statut==3) return img_picto($langs->trans('StatusOrderProcessed'),'statut5');
+        }
+        if ($mode == 4)
+        {
+        	if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut6').' '.$this->statuts[$statut];
+        	if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$this->statuts[$statut];
+        	if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$this->statuts[$statut];
+        	if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3').' '.$this->statuts[$statut];
+        	if ($statut==3) return img_picto($langs->trans('StatusOrderProcessed'),'statut5').' '.$this->statuts[$statut];
+        }
+        if ($mode == 5)
+        {
+        	if ($statut==-1) return $this->status_label_short[$statut].' '.img_picto($langs->trans('StatusOrderCanceled'),'statut6');
+        	if ($statut==0) return $this->status_label_short[$statut].' '.img_picto($langs->trans('StatusOrderDraft'),'statut0');
+        	if ($statut==1) return $this->status_label_short[$statut].' '.img_picto($langs->trans('StatusOrderValidated'),'statut1');
+        	if ($statut==2) return $this->status_label_short[$statut].' '.img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
+        	if ($statut==3) return $this->status_label_short[$statut].' '.img_picto($langs->trans('StatusOrderProcessed'),'statut5');
+        }
 	}
+
 
     /**
      *      \brief     Charge les informations d'ordre info dans l'objet commande
