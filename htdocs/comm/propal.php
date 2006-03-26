@@ -1076,7 +1076,7 @@ if ($_GET['propalid'] > 0)
     }
     
     print '</div>';
-    
+    print "<br>\n";
     
     
     print '<table width="100%"><tr><td width="50%" valign="top">';

@@ -477,29 +477,30 @@ if ($_GET["propalid"] > 0)
     print '</div>';
 
             
-  /*
-   * Boutons Actions
-   */
-  if ($obj->statut <> 4 && $user->societe_id == 0)
-    {
-      print '<div class="tabsAction">';
+	/*
+ 	 * Boutons Actions
+ 	 */
+	if ($obj->statut <> 4 && $user->societe_id == 0)
+	{
+		print '<div class="tabsAction">';
+	
+		if ($obj->statut == 2 && $user->rights->facture->creer)
+		{
+			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create\">".$langs->trans("BuildBill")."</a>";
+		}
+	
+		if ($obj->statut == 2 && sizeof($propal->facture_liste_array()))
+		{
+			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4\">".$langs->trans("ClassifyBilled")."</a>";
+		}
+	
+		print "</div>";
+		print "<br>\n";
+	}
+	
 
-      if ($obj->statut == 2 && $user->rights->facture->creer)
-        {
-	  print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create\">".$langs->trans("BuildBill")."</a>";
-        }
 
-      if ($obj->statut == 2 && sizeof($propal->facture_liste_array()))
-        {
-	  print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4\">".$langs->trans("ClassifyBilled")."</a>";
-        }
-
-      print "</div>";
-    }
-
-
-
-  print '<table width="100%"><tr><td width="50%" valign="top">';
+	print '<table width="100%"><tr><td width="50%" valign="top">';
 
     /*
      * Documents générés
@@ -515,80 +516,89 @@ if ($_GET["propalid"] > 0)
     $html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
     
 
-  /*
-   * Commandes rattachées
-   */
-  if($conf->commande->enabled)
-    {
-      $coms = $propal->associated_orders();
-      if (sizeof($coms) > 0)
+	/*
+	 * Commandes rattachées
+	 */
+	if($conf->commande->enabled)
 	{
-	  print '<br>';
-	  print_titre($langs->trans('RelatedOrders'));
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre">';
-	  print '<td>'.$langs->trans("Ref").'</td>';
-	  print '<td align="center">'.$langs->trans("Date").'</td>';
-	  print '<td align="right">'.$langs->trans("Price").'</td>';
-	  print '</tr>';
-	  $var=true;
-	  for ($i = 0 ; $i < sizeof($coms) ; $i++)
-	    {
-	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td>';
-	      print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
-	      print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
-	      print '<td align="right">'.$coms[$i]->total_ttc.'</td>';
-	      print "</tr>\n";
-	    }
-	  print '</table>';
+		$coms = $propal->associated_orders();
+		if (sizeof($coms) > 0)
+		{
+			require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
+			$staticcommande=new Commande($db);
+
+			$total=0;
+			print '<br>';
+			print_titre($langs->trans('RelatedOrders'));
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Ref").'</td>';
+			print '<td align="center">'.$langs->trans("Date").'</td>';
+			print '<td align="right">'.$langs->trans("Price").'</td>';
+			print '<td align="right">'.$langs->trans("Status").'</td>';
+			print '</tr>';
+			$var=true;
+			for ($i = 0 ; $i < sizeof($coms) ; $i++)
+			{
+				$var=!$var;
+				print '<tr '.$bc[$var].'><td>';
+				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
+				print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
+				print '<td align="right">'.$coms[$i]->total_ttc.'</td>';
+				print '<td align="right">'.$staticcommande->LibStatut($coms[$i]->statut,3).'</td>';
+				print "</tr>\n";
+				$total = $total + $objp->total;
+			}
+			print '</table>';
+		}
 	}
-    }
 
-
-  /*
-   * Factures associees
-   */
-  $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
-
-  $resql = $db->query($sql);
-  if ($resql)
+	
+	/*
+	 * Factures associees
+	 */
+	$sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
+	
+	$resql = $db->query($sql);
+	if ($resql)
     {
-      $num_fac_asso = $db->num_rows($resql);
-      $i = 0; $total = 0;
-      print "<br>";
-      if ($num_fac_asso > 1) print_titre($langs->trans("RelatedBills"));
-      else print_titre($langs->trans("RelatedBill"));
-      print '<table class="noborder" width="100%">';
-      print "<tr class=\"liste_titre\">";
-      print '<td>'.$langs->trans("Ref").'</td>';
-      print '<td align="center">'.$langs->trans("Date").'</td>';
-      print '<td align="right">'.$langs->trans("Price").'</td>';
-      print "</tr>\n";
-
-      $var=True;
-      while ($i < $num_fac_asso)
-        {
-	  $objp = $db->fetch_object();
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print '<td><a href="../compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a>';
-	  if ($objp->paye)
-            {
-	      print " (<b>pay&eacute;e</b>)";
-            }
-	  print "</td>\n";
-	  print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
-	  print '<td align="right">'.price($objp->total).'</td>';
-	  print "</tr>";
-	  $total = $total + $objp->total;
-	  $i++;
-        }
-      print "<tr class=\"liste_total\"><td align=\"right\" colspan=\"2\">".$langs->trans("TotalHT")."</td><td align=\"right\">".price($total)."</td></tr>\n";
-      print "</table>";
-      $db->free();
-    }
+		$num_fac_asso = $db->num_rows($resql);
+		$i = 0; $total = 0;
+		print "<br>";
+		if ($num_fac_asso > 1) print_titre($langs->trans("RelatedBills"));
+		else print_titre($langs->trans("RelatedBill"));
+		print '<table class="noborder" width="100%">';
+		print "<tr class=\"liste_titre\">";
+		print '<td>'.$langs->trans("Ref").'</td>';
+		print '<td align="center">'.$langs->trans("Date").'</td>';
+		print '<td align="right">'.$langs->trans("Price").'</td>';
+		print '<td align="right">'.$langs->trans("Status").'</td>';
+		print "</tr>\n";
+		
+		require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+		$staticfacture=new Facture($db);
+		
+		$var=True;
+		while ($i < $num_fac_asso)
+		{
+			$objp = $db->fetch_object();
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td><a href="../compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
+			print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
+			print '<td align="right">'.price($objp->total).'</td>';
+			print '<td align="right">'.$staticfacture->LibStatut($objp->paye,$objp->fk_statut,3).'</td>';
+			print "</tr>";
+			$total = $total + $objp->total;
+			$i++;
+		}
+		print "<tr class=\"liste_total\"><td align=\"right\" colspan=\"2\">".$langs->trans("TotalHT")."</td>";
+		print "<td align=\"right\">".price($total)."</td>";
+		print "<td>&nbsp;</td></tr>\n";
+		print "</table>";
+		$db->free();
+	}
 
 
   print '</td><td valign="top" width="50%">';
@@ -660,7 +670,9 @@ if ($_GET["propalid"] > 0)
   $pagenext = $page + 1;
 
 
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ";
+  $sql.= $db->pdate("p.datep")." as dp, ";
+  $sql.= $db->pdate("p.fin_validite")." as dfin";
   if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
   if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -673,76 +685,71 @@ if ($_GET["propalid"] > 0)
   $sql .= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
   $sql .= $db->plimit($limit + 1,$offset);
 
-  if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
+	if ( $db->query($sql) )
+	{
+		$num = $db->num_rows();
+		
+		$propalstatic=new Propal($db);
+		
+		print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+		
+		$i = 0;
+		$var=true;
+		
+		print "<table class=\"noborder\" width=\"100%\">";
+		print '<tr class="liste_titre">';
+		print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
+		print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
+		print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+		print_liste_field_titre($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+		print_liste_field_titre($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+		print "</tr>\n";
 
-      $propalstatic=new Propal($db);
-
-      print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
-
-      $i = 0;
-      $var=true;
-      
-      print "<table class=\"noborder\" width=\"100%\">";
-      print '<tr class="liste_titre">';
-      print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
-      print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
-      print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
-      print_liste_field_titre($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
-      print "</tr>\n";
-
-      while ($i < min($num, $limit))
-        {
-	  $objp = $db->fetch_object();
-
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-
-	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
-	  print $objp->ref."</a></td>\n";
-
-	  print "<td><a href=\"fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,44)."</a></td>\n";
-
-	  $now = time();
-	  $lim = 3600 * 24 * 15 ;
-
-	  if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
-            {
-	      print "<td><b> &gt; 15 jours</b></td>";
-            }
-	  else
-            {
-	      print "<td>&nbsp;</td>";
-            }
-
-	  print "<td align=\"right\">";
-	  $y = strftime("%Y",$objp->dp);
-	  $m = strftime("%m",$objp->dp);
-
-	  print strftime("%d",$objp->dp)."\n";
-	  print " <a href=\"propal.php?year=$y&month=$m\">";
-	  print strftime("%B",$objp->dp)."</a>\n";
-	  print " <a href=\"propal.php?year=$y\">";
-	  print strftime("%Y",$objp->dp)."</a></td>\n";
-
-	  print "<td align=\"right\">".price($objp->price)."</td>\n";
-	  print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,2)."</td>\n";
-	  print "</tr>\n";
-
-	  $i++;
-        }
-
-      print "</table>";
-      $db->free();
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
+		while ($i < min($num, $limit))
+		{
+			$objp = $db->fetch_object();
+		
+			$var=!$var;
+			print "<tr $bc[$var]>";
+		
+			// Ref
+			print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
+			print $objp->ref."</a>";
+			if ($objp->fk_statut==1 && $obj->dfin < time() - $conf->propal->cloture->warning_delay)  { print " ".img_warning($langs->trans("Late")); }
+			print "</td>\n";
+		
+			// Societe
+			print "<td><a href=\"fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,44)."</a></td>\n";
+		
+			// Date
+			print "<td align=\"right\">";
+			$y = strftime("%Y",$objp->dp);
+			$m = strftime("%m",$objp->dp);
+			print strftime("%d",$objp->dp)."\n";
+			print " <a href=\"propal.php?year=$y&month=$m\">";
+			print strftime("%B",$objp->dp)."</a>\n";
+			print " <a href=\"propal.php?year=$y\">";
+			print strftime("%Y",$objp->dp)."</a></td>\n";
+		
+			// Prix
+			print "<td align=\"right\">".price($objp->price)."</td>\n";
+			print "<td align=\"right\">".$propalstatic->LibStatut($objp->fk_statut,5)."</td>\n";
+			print "</tr>\n";
+		
+			$i++;
+		}
+		
+	  	print "</table>";
+	  	$db->free();
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
 }
 $db->close();
 
+
 llxFooter('$Date$ - $Revision$');
+
 ?>
