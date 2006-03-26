@@ -375,7 +375,7 @@ div.tabBar {
     padding-left: 12px;
     padding-right: 12px;
     padding-bottom: 12px;
-    margin: 0px 0px 50px 0px;
+    margin: 0px 0px 10px 0px;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
     -moz-border-radius-bottomleft:6px;

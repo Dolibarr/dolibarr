@@ -489,14 +489,14 @@ if ($_GET['propalid'] > 0)
    * Fiche propal
    *
    */
-  $sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, p.fk_cond_reglement, p.fk_mode_reglement, '.$db->pdate('p.datep').' as dp, p.note,';
-  $sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
-  $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'socpeople as x';
-  $sql.= ' WHERE p.fk_soc = s.idp AND p.fk_soc_contact = x.idp AND p.rowid = '.$propal->id;
-  if ($socidp) $sql .= ' AND s.idp = '.$socidp;
-
-  $resql = $db->query($sql);
-  if ($resql)
+	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, p.fk_cond_reglement, p.fk_mode_reglement, '.$db->pdate('p.datep').' as dp, p.note,';
+	$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'socpeople as x';
+	$sql.= ' WHERE p.fk_soc = s.idp AND p.fk_soc_contact = x.idp AND p.rowid = '.$propal->id;
+	if ($socidp) $sql .= ' AND s.idp = '.$socidp;
+	
+	$resql = $db->query($sql);
+	if ($resql)
     {
         if ($db->num_rows($resql))
         {
@@ -967,20 +967,20 @@ if ($_GET['propalid'] > 0)
             }
 
             print '</table>';
-    
         }
     }
-  else
+  	else
     {
-      dolibarr_print_error($db);
+    	dolibarr_print_error($db);
     }
   
-  print '</div>';
+	print '</div>';
+	print "\n";
 
-  /*
-   * Formulaire cloture (signé ou non)
-   */
-  if ($_GET['action'] == 'statut') 
+	/*
+ 	 * Formulaire cloture (signé ou non)
+	 */
+  	if ($_GET['action'] == 'statut') 
     {
       print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
       print '<table class="border" width="100%">';
