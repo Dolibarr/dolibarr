@@ -952,7 +952,7 @@ function loginfunction()
     print '}'."\n";
     print '-->'."\n";
     print '</style>'."\n";
-    print '<script type="text/javascript">'."\n";
+    print '<script language="javascript" type="text/javascript">'."\n";
     print "function donnefocus() {\n";
     print "document.getElementsByTagName('INPUT')[0].focus();";
     print "}\n";
