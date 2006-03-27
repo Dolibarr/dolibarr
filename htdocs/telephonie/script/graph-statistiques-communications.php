@@ -30,6 +30,8 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
+$verbose = 0;
+
 $nbval = 14;
 
 /*
@@ -112,8 +114,14 @@ $graphgain = new GraphBar ($db, $file);
 $graphgain->show_console = 0 ;
 $graphgain->width = 480 ;
 $graphgain->titre = "Nb minutes -> portables (milliers)";
-print $graphgain->titre."\n";
+if ($verbose)
+  print $graphgain->titre."\n";
 $graphgain->GraphDraw($file, $kilomindurees_mob, $labels);
+
+
+
+
+
 
 function _deal($db, $resql, $graph, &$data, &$labels)
 {
