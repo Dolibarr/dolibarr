@@ -25,18 +25,18 @@
 
 /**
         \file       htdocs/main.inc.php
-        \brief      Fichier de formatage g?rique des ?ans Dolibarr
+        \brief      Fichier de formatage generique des ecrans Dolibarr
         \version    $Revision$
 */
 
 // Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
-// est positionnee. A appeler avant tout.
+// est positionne A appeler avant tout.
 if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=microtime(true);
 
 
-// Forcage du parametrage PHP magic_quotes_gpc (Sinon il faudrait a chaque POST, conditionner
+// Forcage du parametrage PHP magic_quots_gpc (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
-// En mode off (recommande, il faut juste fait addslashes au moment d'un insert/update.
+// En mode off (recommande il faut juste fait addslashes au moment d'un insert/update.
 function stripslashes_deep($value)
 {
    return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
@@ -55,15 +55,14 @@ require_once("master.inc.php");
 
 
 // Verification du login.
-// Cette verification est faite pour chaque acc? Apr?l'authentification,
-// l'objet $user est initialis? Notament $user->id, $user->login et $user->nom, $user->prenom
+// Cette verification est faite pour chaque accee Apres l'authentification,
+// l'objet $user est initialise Notament $user->id, $user->login et $user->nom, $user->prenom
 // \todo Stocker les infos de $user en session persistente php et ajouter recup dans le fetch
 //       depuis la sessions pour ne pas avoir a acceder a la base a chaque acces de page.
 
-// MODE 1: Pas d'identification car force
-if (! empty($dolibarr_auto_user))
+// MODE 1: Pas d'identification car force if (! empty($dolibarr_auto_user))
 {
-    // Mode forc?ur un utilisateur (pour debug, demo, ...), on initialise la session
+    // Mode force sur un utilisateur (pour debug, demo, ...), on initialise la session
     if (! session_id()) {
         session_name("DOLSESSID_".$dolibarr_main_db_name);
         session_start();
@@ -97,9 +96,10 @@ elseif (! empty($_SERVER["REMOTE_USER"]))
         $_SESSION["dol_user"]=$user;
     }
 }
-// MODE 3: Identification depuis base de donn?else
+// MODE 3: Identification depuis base de donnees
+else
 {
-    // Authentification Apache KO ou non active, pas de mode forc?on demande le login
+    // Authentification Apache KO ou non active, pas de mode force on demande le login
     require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
 
     $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
@@ -136,9 +136,9 @@ elseif (! empty($_SERVER["REMOTE_USER"]))
         }
         else 
         {
-            // Non authentifi?           dolibarr_syslog("Authentification non r?is?;
+            // Non authentifie            dolibarr_syslog("Authentification non realise;
         }
-        // Le d?t de la page a ? affich?ar loginfunction. On ferme juste la page
+        // Le debut de la page a ete affiche par loginfunction. On ferme juste la page
         print "</div>\n</div>\n</body>\n</html>";
         exit;
     }
@@ -171,13 +171,14 @@ if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
 {
     if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
     {
-        // Si on a un langage perso diff?nt du langage courant global
+        // Si on a un langage perso different du langage courant global
         $langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
         $langs->setPhpLang($user->conf->MAIN_LANG_DEFAULT);
     }
 }
 
-// Remplace conf->css par valeur personnalis?if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
+// Remplace conf->css par valeur personnalise
+if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 {
     $conf->theme=$user->conf->MAIN_THEME;
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
@@ -190,12 +191,12 @@ if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAV
     $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
-// D?ni gestionnaire de menu ?tiliser
+// Defini gestionnaire de menu a utiliser
 if (! $user->societe_id)    // Si utilisateur interne
 {
     $conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
     $conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
-    // Pour compatibilit?   if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
+    // Pour compatibilite    if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
     if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
 }
 else                        // Si utilisateur externe
@@ -204,7 +205,7 @@ else                        // Si utilisateur externe
     $conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 }
 
-// Si le login n'a pu ?e r?p?, on est identifi?vec un compte qui n'existe pas.
+// Si le login n'a pu etre recupere, on est identifie avec un compte qui n'existe pas.
 // Tentative de hacking ?
 if (! $user->login) accessforbidden();
 
@@ -229,7 +230,7 @@ if (defined("MAIN_NOT_INSTALLED"))
     exit;
 }
 
-// Constantes utilisees pour definir le nombre de lignes des textarea
+// Constantes utilise pour definir le nombre de lignes des textarea
 if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
 {
     define('ROWS_1',1);
@@ -312,7 +313,7 @@ function top_htmlhead($head, $title="", $target="")
 }
   
 /**
- *  \brief      Affiche en-t? html + la barre de menu sup?eure
+ *  \brief      Affiche en-tete html + la barre de menu superieure
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
@@ -326,8 +327,8 @@ function top_menu($head, $title="", $target="")
     print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 
     /*
-     * Si la constante MAIN_NEED_UPDATE est d?nie (par le script de migration sql en g?ral), c'est que
-     * les donn? ont besoin d'un remaniement. Il faut passer le update.php
+     * Si la constante MAIN_NEED_UPDATE est definie (par le script de migration sql en general), c'est que
+     * les donnees ont besoin d'un remaniement. Il faut passer le update.php
      */
     if ($conf->global->MAIN_NEED_UPDATE)
     {
@@ -344,11 +345,11 @@ function top_menu($head, $title="", $target="")
 
 
     /*
-     * Barre de menu sup?eure
+     * Barre de menu superieure
      */
     print '<div class="tmenu">'."\n";
 
-    // Charge le gestionnaire des entr? de menu du haut
+    // Charge le gestionnaire des entrees de menu du haut
     require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
     $menutop = new MenuTop($db);
     $menutop->atarget=$target;
@@ -380,9 +381,9 @@ function top_menu($head, $title="", $target="")
 
 /**
  *  \brief      Affiche barre de menu gauche
- *  \param      menu_array      Tableau des entr?de menu
+ *  \param      menu_array      Tableau des entrees de menu
  *  \param      help_url        Url pour le lien aide ('' par defaut)
- *  \param      form_search     Formulaire de recherche permanant suppl?ntaire
+ *  \param      form_search     Formulaire de recherche permanant supplementaire
  */
 function left_menu($menu_array, $help_url='', $form_search='')
 {
@@ -396,7 +397,7 @@ function left_menu($menu_array, $help_url='', $form_search='')
     print '<div class="vmenu">'."\n";
 
 
-    // Autres entr? du menu par le gestionnaire
+    // Autres entrees du menu par le gestionnaire
     require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
     $menu=new MenuLeft($db,$menu_array);
     $menu->showmenu();
@@ -444,7 +445,7 @@ function left_menu($menu_array, $help_url='', $form_search='')
         print '</div>';
     }
 
-    // Zone de recherche suppl?ntaire
+    // Zone de recherche supplementaire
     if ($form_search)
     {
         print $form_search;
@@ -515,6 +516,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
  *		\remarks	Ferme 2 div
  * 		\param   	foot    Non utilise
  */
+ 
 function llxFooter($foot='',$limitIEbug=1) 
 {
     global $conf, $dolibarr_auto_user, $micro_start_time;
