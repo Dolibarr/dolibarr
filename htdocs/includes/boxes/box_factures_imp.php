@@ -62,8 +62,6 @@ class box_factures_imp extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
-
         $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedCustomerBills",$max));
 
         if ($user->rights->facture->lire)
@@ -94,7 +92,7 @@ class box_factures_imp extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $late="";
-                    if ($objp->datelimite < (time() - $warning_delay)) $late=img_warning($langs->trans("Late"));
+                    if ($objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay)) $late=img_warning($langs->trans("Late"));
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
