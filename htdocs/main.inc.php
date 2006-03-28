@@ -60,10 +60,12 @@ require_once("master.inc.php");
 // \todo Stocker les infos de $user en session persistente php et ajouter recup dans le fetch
 //       depuis la sessions pour ne pas avoir a acceder a la base a chaque acces de page.
 
-// MODE 1: Pas d'identification car force if (! empty($dolibarr_auto_user))
+// MODE 1: Pas d'identification car force
+if (! empty($dolibarr_auto_user))
 {
     // Mode force sur un utilisateur (pour debug, demo, ...), on initialise la session
-    if (! session_id()) {
+    if (! session_id())
+    {
         session_name("DOLSESSID_".$dolibarr_main_db_name);
         session_start();
     }
