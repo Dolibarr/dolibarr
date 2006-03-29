@@ -43,10 +43,10 @@ for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
   switch($GLOBALS["argv"][$i])
     {
     case "--month":
-      $month  = $GLOBALS["argv"][$i+1]
+      $month  = $GLOBALS["argv"][$i+1];
       break;
     case "--year":
-      $year  = $GLOBALS["argv"][$i+1]
+      $year  = $GLOBALS["argv"][$i+1];
       break;
     case "-v":
       $verbose = 1;
