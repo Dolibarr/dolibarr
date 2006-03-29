@@ -97,7 +97,8 @@ else
 
 $month = substr("00".$month, -2) ;
 
-print "Analyse $month/$year\n";
+if ($verbose > 0)
+  print "Analyse $month/$year\n";
 
 $sql = "SELECT cd.fk_fournisseur, sum(cd.fourn_montant), sum(cd.cout_vente)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
