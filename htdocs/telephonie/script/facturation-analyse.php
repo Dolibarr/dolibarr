@@ -113,6 +113,7 @@ $re2sql = $db->query($sql) ;
 if ( $re2sql )
 {
   $nu2m = $db->num_rows($re2sql);      
+  print "Num $nu2m\n";
   $j = 0;
   while ($j < $nu2m)
     {
