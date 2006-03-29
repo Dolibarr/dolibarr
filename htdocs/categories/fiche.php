@@ -135,7 +135,7 @@ if ($user->rights->produit->creer)
 		print $html->select_all_categories();
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans ("ContentsVisibleByAll").'</td><td>';
-		print $html->selectyesnonum("visible",$categorie->visible);
+		print $html->selectyesnonum("visible", 1);
 		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';
