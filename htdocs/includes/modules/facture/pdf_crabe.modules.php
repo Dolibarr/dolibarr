@@ -888,7 +888,7 @@ class pdf_crabe extends ModelePDFFactures
         $ligne2="";
         if ($conf->global->MAIN_INFO_APE)
         {
-            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
+            $ligne2.=($ligne2?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
         }
         if ($conf->global->MAIN_INFO_RCS)
         {
