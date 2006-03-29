@@ -51,6 +51,12 @@ for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
     case "-v":
       $verbose = 1;
       break;
+    case "-vv":
+      $verbose = 2;
+      break;
+    case "--no-xls":
+      $no-xls = 1;
+      break;
     case "--version":
       echo  $GLOBALS['argv'][0]." $Revision$\n";
       exit;
@@ -62,6 +68,7 @@ for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
 	"\t-v\t\tverbose mode\n".
 	"\t--month int\n".
 	"\t--year  int\n";
+	"\t--no-xls  int\n";
       break;
     }
 }
@@ -117,6 +124,9 @@ if ( $re2sql )
 
       $resqli = $db->query($sqli) ;
 
+      if ($verbose > 1)
+	print $resqli."\n";
+
       if (! $resqli )
 	{
 	  print $db->error($resqli);
@@ -130,6 +140,9 @@ else
   print $db->error();
 }
 
+
+if($no-xls)
+  exit;
 
 /*
  * Partie 2
