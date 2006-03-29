@@ -54,7 +54,7 @@ class Categorie
    */
   function fetch($id)
   {
-    $sql = "SELECT rowid, label, description, fk_statut";
+    $sql = "SELECT rowid, label, description, visible";
     $sql.= " FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$id;
 
     $resql  = $this->db->query ($sql);
@@ -66,7 +66,7 @@ class Categorie
 	     $this->id		      = $res['rowid'];
 	     $this->label		    = $res['label'];
 	     $this->description	= stripslashes($res['description']);
-	     $this->statut      = $res['fk_statut'];
+	     $this->visible     = $res['visible'];
 
 	     $this->db->free($resql);
     }
