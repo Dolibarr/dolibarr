@@ -93,14 +93,21 @@ class modCategorie extends DolibarrModules
     $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[$r][4] = 'creer';
-	$r++;
+    $r++;
 	
     $this->rights[$r][0] = 243; // id de la permission
     $this->rights[$r][1] = 'Supprimer les catégories'; // libelle de la permission
     $this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[$r][4] = 'supprimer';
-	$r++;
+    $r++;
+    
+    $this->rights[$r][0] = 244; // id de la permission
+    $this->rights[$r][1] = 'Voir le contenu des catégories cachées'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'voir';
+    $r++;
   }
 
 
