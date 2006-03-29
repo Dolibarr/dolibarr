@@ -55,7 +55,7 @@ for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
       $verbose = 2;
       break;
     case "--no-xls":
-      $no-xls = 1;
+      $no_xls = 1;
       break;
     case "--version":
       echo  $GLOBALS['argv'][0]." $Revision$\n";
@@ -141,7 +141,7 @@ else
 }
 
 
-if($no-xls)
+if($no_xls)
   exit;
 
 /*
