@@ -801,13 +801,13 @@ class pdf_propale_azur extends ModelePDFPropales
         {
             $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
         }
+
+        // Deuxieme ligne d'info réglementaires
+        $ligne2="";
         if ($conf->global->MAIN_INFO_APE)
         {
             $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
         }
-
-        // Deuxieme ligne d'info réglementaires
-        $ligne2="";
         if ($conf->global->MAIN_INFO_RCS)
         {
             $ligne2.=($ligne2?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
