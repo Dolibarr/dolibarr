@@ -110,8 +110,8 @@ class Categorie
 		 return -1;
     }
 	
-    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description) ";
-    $sql .= "VALUES ('".str_replace("'","''",$this->label)."', '".str_replace("'","''",$this->description)."')";
+    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, visible) ";
+    $sql .= "VALUES ('".str_replace("'","''",$this->label)."', '".str_replace("'","''",$this->description)."', '".$this->visible."')";
 		
 
     $res  = $this->db->query ($sql);
@@ -172,11 +172,15 @@ class Categorie
 			 return -1;
 		}
 	}
-	$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
     $sql.= " SET label = '".trim(str_replace("'","''",$this->label))."'";
-    
+
     if (strlen (trim($this->description)) > 0)
-	     $sql .= ", description = '".trim(str_replace("'","''",$this->description))."'";
+    {
+    	$sql .= ", description = '".trim(str_replace("'","''",$this->description))."'";
+    }
+    
+    $sql .= ", visible = '".$this->visible."'";
     $sql .= " WHERE rowid = ".$this->id;
 
     if ($this->db->query($sql))

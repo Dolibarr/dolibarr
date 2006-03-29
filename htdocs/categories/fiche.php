@@ -58,6 +58,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
+	$categorie->visible        = $_POST["visible"];
 	if($_POST['catMere'] != "-1")
 		$categorie->id_mere = $_POST['catMere'];
 	
@@ -132,6 +133,9 @@ if ($user->rights->produit->creer)
 		print $categorie->description.'</textarea></td></tr>';
 		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
 		print $html->select_all_categories();
+		print '</td></tr>';
+		print '<tr><td>'.$langs->trans ("ContentsVisibleByAll").'</td><td>';
+		print $html->selectyesnonum("visible",$categorie->visible);
 		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';

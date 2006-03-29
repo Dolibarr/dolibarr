@@ -40,6 +40,7 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
+	$categorie->visible        = $_POST["visible"];
 	if($_POST['catMere'] != "-1")
 		$categorie->id_mere = $_POST['catMere'];
 	else
@@ -90,6 +91,10 @@ print '<tr><td valign="top" width="30%">';
 	
 	<tr><td><?php print $langs->trans ("AddIn"); ?></td><td>
 	<?php print $html->select_all_categories($categorie->id_mere);?>
+	</td></tr>
+	
+	<tr><td><?php print $langs->trans ("ContentsVisibleByAll"); ?></td><td>
+	<?php print $html->selectyesnonum("visible",$categorie->visible);?>
 	</td></tr>
 		
 	
