@@ -95,7 +95,6 @@ else
   $month = substr("00".($month - 1), -2) ;
 }
 
-$year  = substr("00".$year, -2) ;
 $month = substr("00".$month, -2) ;
 
 print "Analyse $month/$year\n";
