@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *
  *
  * Script de facturation
- * Verification des factures négatives
+ * Analyse de la facturation
  *
  */
 
@@ -31,23 +31,52 @@
    \version    $Revision$
 */
 
-
 require ("../../master.inc.php");
 
-$opt = getopt("l:c:");
+$verbose = 0;
+$month = 0;
+$year = 0;
 
-$limit = $opt['l'];
-$optcontrat = $opt['c'];
+//loop through our arguments and see what the user selected
+for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
+{
+  switch($GLOBALS["argv"][$i])
+    {
+    case "--month":
+      $month  = $GLOBALS["argv"][$i+1]
+      break;
+    case "--year":
+      $year  = $GLOBALS["argv"][$i+1]
+      break;
+    case "-v":
+      $verbose = 1;
+      break;
+    case "--version":
+      echo  $GLOBALS['argv'][0]." $Revision$\n";
+      exit;
+      break;
+    case "--help":
+      print $GLOBALS['argv'][0].
+	"\n\t--help\t\tprint this help\n".
+	"\t--version\tprint version\n".
+	"\t-v\t\tverbose mode\n".
+	"\t--month int\n".
+	"\t--year  int\n";
+      break;
+    }
+}
 
 /*
- * analyse ratio cout fournisseur
+ * Analyse ratio cout fournisseur
  *
  */
 
 $datetime = time();
 $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
-$month = strftime("%m", $datetime);
-$year = strftime("%Y", $datetime);
+if ($month == 0)
+  $month = strftime("%m", $datetime);
+if ($year == 0)
+  $year = strftime("%Y", $datetime);
 
 if ($month == 1)
 {
@@ -59,6 +88,10 @@ else
   $month = substr("00".($month - 1), -2) ;
 }
 
+$year  = substr("00".$year, -2) ;
+$month = substr("00".$month, -2) ;
+
+print "Analyse $month/$year\n";
 
 $sql = "SELECT cd.fk_fournisseur, sum(cd.fourn_montant), sum(cd.cout_vente)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
@@ -111,7 +144,8 @@ $dir = "/tmp/";
 
 $fname = $dir . "facturation-analyse.xls";
 
-dolibarr_syslog("Open $fname");
+if ($verbose > 0)
+  dolibarr_syslog("Open $fname");
     
 $workbook = &new writeexcel_workbook($fname);
 
