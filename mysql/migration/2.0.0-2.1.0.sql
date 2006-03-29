@@ -52,7 +52,8 @@ create table llx_commande_fournisseur_model_pdf
   description text
 )type=innodb;
 
-alter table llx_categorie add fk_statut smallint DEFAULT 0;
+alter table llx_categorie drop column fk_statut;
+alter table llx_categorie add visible tinyint DEFAULT 1 NOT NULL;
 
 
 alter table llx_actioncomm modify datea datetime;
