@@ -106,7 +106,7 @@ else
 {
 	print "<br>";
 	print "<table class='noborder' width='100%'>\n";
-	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
+	print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
 	
 	if (sizeof ($prods) > 0)
 	{
@@ -116,7 +116,11 @@ else
 			$i++;
 			$var=!$var;
 			print "\t<tr ".$bc[$var].">\n";
-			print "\t\t<td><a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->libelle."</a></td>\n";
+			print "\t\t<td>";
+			if ($prod->type == 1) print img_object($langs->trans("ShowService"),"service");
+        else print img_object($langs->trans("ShowProduct"),"product");
+			print "<a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
+			print "\t\t<td>".$prod->libelle."</td>\n";
 			print "\t\t<td>".$prod->description."</td>\n";
 			print "\t</tr>\n";
 		}
