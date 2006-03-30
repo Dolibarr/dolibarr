@@ -81,7 +81,7 @@ else
 			}
 			else
 			{
-				print "\t\t<td>".$langs->trans("ContentsNoVisibleByAllShort")."</td>\n";
+				print "\t\t<td>".$langs->trans("ContentsNotVisibleByAllShort")."</td>\n";
 			}
 			
 			print "\t</tr>\n";
