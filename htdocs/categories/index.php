@@ -95,37 +95,22 @@ if($_POST['catname']) {
 /*
  * Catégories principales
  */
-$cats = $c->get_main_categories ();
-
-if ($cats != -1)
-{
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("MainCats").'</td></tr>';
+print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("AllCats").'</td></tr>';
   
-  foreach ($cats as $cat)
-    {
-      $i = !$i;
-      print "\t<tr ".$bc[$i].">\n";
-      print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
-      print "\t\t<td>".$cat->description."</td>\n";
-      
-      if ($cat->visible == 1)
-			{
-				print "\t\t<td>".$langs->trans("ContentsVisibleByAllShort")."</td>\n";
-			}
-			else
-			{
-				print "\t\t<td>".$langs->trans("ContentsNotVisibleByAllShort")."</td>\n";
-			}
-      
-      print "\t</tr>\n";
-    }
+  		$c->get_categories_arbo();
+		$cate_arbo = $c->get_arbo_each_cate();
+	
+		foreach($cate_arbo as $key => $value)
+		{
+			$i = !$i;
+			print "\t<tr ".$bc[$i].">\n";
+			print '<td><a href="viewcat.php?id='.$value[1].'">'.$value[0].'</a></td>';
+			 print "\t</tr>\n";
+		}
+					 
+			
   print "</table>";
-}
-else
-{
-  dolibarr_print_error();
-}
 
 
 print '</td></tr></table>';
