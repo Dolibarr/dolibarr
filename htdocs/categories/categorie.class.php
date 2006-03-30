@@ -485,12 +485,12 @@ class Categorie
 			{
 						// on est dans une sous-catégorie
 						if(is_array($desc_mere))
-							$this->res[]= array($this->mere_encours.$compl_path." -> ".$nom_mere,$desc_mere[0]);
+							$this->res[]= array($this->mere_encours.$compl_path." >> ".$nom_mere,$desc_mere[0]);
 						else if($nom_mere != "0")
-							$this->res[]= array($this->mere_encours.$compl_path." -> ".$nom_mere,$desc_mere);
+							$this->res[]= array($this->mere_encours.$compl_path." >> ".$nom_mere,$desc_mere);
 						if(sizeof($desc_mere) >1)
 						{
-							$this ->fetch_cate_arbo($desc_mere," -> ".$nom_mere);
+							$this ->fetch_cate_arbo($desc_mere," >> ".$nom_mere);
 						}
 			}
 	}
