@@ -100,7 +100,7 @@ $cats = $c->get_main_categories ();
 if ($cats != -1)
 {
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("MainCats").'</td></tr>';
+  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("MainCats").'</td></tr>';
   
   foreach ($cats as $cat)
     {
@@ -108,6 +108,16 @@ if ($cats != -1)
       print "\t<tr ".$bc[$i].">\n";
       print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
       print "\t\t<td>".$cat->description."</td>\n";
+      
+      if ($cat->visible == 1)
+			{
+				print "\t\t<td>".$langs->trans("ContentsVisibleByAllShort")."</td>\n";
+			}
+			else
+			{
+				print "\t\t<td>".$langs->trans("ContentsNoVisibleByAllShort")."</td>\n";
+			}
+      
       print "\t</tr>\n";
     }
   print "</table>";
