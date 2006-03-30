@@ -483,7 +483,7 @@ class MenuLeft {
                   {
                     if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
                   }
-                  if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
+                  //if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
                }  
             }
         
