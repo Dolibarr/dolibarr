@@ -360,7 +360,7 @@ if ($_POST["action"] == 'add')
       if (strlen(trim($_POST["cli"])) == 9)
 	{
 	  
-	  if ( $ligne->create($user) == 0)
+	  if ( $ligne->create($user, $_POST["mode_paiement"]) == 0)
 	    {
 	      
 	    }
@@ -392,7 +392,7 @@ if ($_POST["action"] == 'add')
       if (strlen(trim($_POST["cli2"])) == 9)
 	{
 	  
-	  if ( $ligne->create($user) == 0)
+	  if ( $ligne->create($user, $_POST["mode_paiement"]) == 0)
 	    {
 	      
 	    }
@@ -424,7 +424,7 @@ if ($_POST["action"] == 'add')
       if (strlen(trim($_POST["cli3"])) == 9)
 	{
 	  
-	  if ( $ligne->create($user) == 0)
+	  if ( $ligne->create($user, $_POST["mode_paiement"]) == 0)
 	    {
 	      
 	    }
