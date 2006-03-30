@@ -36,3 +36,5 @@ ProductIsInCategories=Product/Service is in following categories
 ClassifyInCategory=Classify in category
 ReturnInProduct=Return in product/service card
 ContentsVisibleByAll=The contents will be visible by all
+ContentsVisibleByAllShort=Contents visible by all
+ContentsNoVisibleByAllShort=Contents no visible by all

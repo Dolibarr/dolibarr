@@ -18,6 +18,13 @@
 
 require "./pre.inc.php";
 
+$user->getrights('categorie');
+
+if (! $user->rights->categorie->lire)
+{
+	accessforbidden();
+}
+
 if ($_REQUEST['id'] == "")
 {
   dolibarr_print_error ();
@@ -67,6 +74,16 @@ else
 			print "\t<tr ".$bc[$var].">\n";
 			print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
 			print "\t\t<td>".$cat->description."</td>\n";
+			
+			if ($cat->visible == 1)
+			{
+				print "\t\t<td>".$langs->trans("ContentsVisibleByAllShort")."</td>\n";
+			}
+			else
+			{
+				print "\t\t<td>".$langs->trans("ContentsNoVisibleByAllShort")."</td>\n";
+			}
+			
 			print "\t</tr>\n";
 		}
 	}
@@ -115,8 +132,17 @@ else
  * Boutons actions
  */
 print "<div class='tabsAction'>\n";
-print "<a class='tabAction' href='edit.php?id=".$c->id."'>".$langs->trans("Edit")."</a>";
-print "<a class='tabAction' href='delete.php?id=".$c->id."'>".$langs->trans("Delete")."</a>";
+
+if ($user->rights->categorie->creer)
+{
+	print "<a class='tabAction' href='edit.php?id=".$c->id."'>".$langs->trans("Edit")."</a>";
+}
+
+if ($user->rights->categorie->supprimer)
+{
+	print "<a class='tabAction' href='delete.php?id=".$c->id."'>".$langs->trans("Delete")."</a>";
+}
+
 print "</div>";
 
 

@@ -38,3 +38,5 @@ NoneCategory=Aucune
 CategoryExistsAtSameLevel=Cette catégorie existe déjà au même endroit
 ReturnInProduct=Retour sur la fiche produit/service
 ContentsVisibleByAll=Le contenu sera visible par tous
+ContentsVisibleByAllShort=Contenu visible par tous
+ContentsNoVisibleByAllShort=Contenu non visible par tous
