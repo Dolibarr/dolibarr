@@ -163,6 +163,15 @@ if ($_POST["action"] == 'add')
       $verif = "nok";
     }
 
+  $ligne = new LigneTel($db);
+  $ligne->fetch("0".trim($_POST["cli"]));
+  if ($ligne->id > 0 && $verif == 'ok')
+    {
+      $mesg = "La ligne #1 : 0".$_POST["cli"]." existe déjà !";
+      $verif = "nok";
+    }
+
+
   /* Ligne #2 */
 
   if (strlen(trim($_POST["cli2"])) > 0 && $verif == 'ok')
@@ -176,6 +185,14 @@ if ($_POST["action"] == 'add')
       if (!in_array(substr(trim($_POST["cli2"]),0,1), $p) && $verif == 'ok')
 	{
 	  $mesg = "Numéro de ligne #2 (0".$_POST["cli2"].") incorrect";
+	  $verif = "nok";
+	}
+
+      $ligne = new LigneTel($db);
+      $ligne->fetch("0".trim($_POST["cli2"]));
+      if ($ligne->id > 0 && $verif == 'ok')
+	{
+	  $mesg = "La ligne #2 : 0".$_POST["cli2"]." existe déjà !";
 	  $verif = "nok";
 	}
     }
@@ -192,6 +209,14 @@ if ($_POST["action"] == 'add')
       if (!in_array(substr(trim($_POST["cli3"]),0,1), $p) && $verif == 'ok')
 	{
 	  $mesg = "Numéro de ligne #3 (0".$_POST["cli3"].") incorrect";
+	  $verif = "nok";
+	}
+
+      $ligne = new LigneTel($db);
+      $ligne->fetch("0".trim($_POST["cli3"]));
+      if ($ligne->id > 0 && $verif == 'ok')
+	{
+	  $mesg = "La ligne #3 : 0".$_POST["cli3"]." existe déjà !";
 	  $verif = "nok";
 	}
     }
@@ -527,7 +552,7 @@ if ($_POST["action"] == 'add')
     }
   else
     {
-      $mesg .= $error;
+      $mesg .= " (numéro erreur : $error)";
     }
   
 }
