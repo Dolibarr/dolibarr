@@ -63,7 +63,7 @@ else
 {
 	print "<br>";
 	print "<table class='noborder' width='100%'>\n";
-	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("SubCats")."</td></tr>\n";
+	print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("SubCats")."</td></tr>\n";
 	if (sizeof ($cats) > 0)
 	{	
 		$var=true;
