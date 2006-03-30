@@ -213,7 +213,7 @@ class LigneTel {
    *
    *
    */
-  function create($user)
+  function create($user, $mode_paiement='pre')
   {
     if (strlen(trim($this->numero)) == 10)
       {
@@ -224,9 +224,9 @@ class LigneTel {
 	 */
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-	$sql .= " (datec,fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, fk_commercial_sign, fk_commercial_suiv, statut, fk_user_creat, fk_concurrent, fk_contrat)";
+	$sql .= " (datec,fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, fk_commercial_sign, fk_commercial_suiv, statut, fk_user_creat, fk_concurrent, fk_contrat, mode_paiement)";
 	$sql .= " VALUES (";
-	$sql .= "now(),$this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial_sign, $this->commercial_sign, $this->commercial_suiv, -1,$user->id, $this->concurrent, $this->contrat)";
+	$sql .= "now(),$this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial_sign, $this->commercial_sign, $this->commercial_suiv, -1,$user->id, $this->concurrent, $this->contrat,'$mode_paiement')";
 	
 	if ( $this->db->query($sql) )
 	  {
