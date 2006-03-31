@@ -122,7 +122,7 @@ if (! function_exists("ldap_connect"))
 }
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
+else print '<br>';
 
 
 print '<form method="post" action="ldap.php?action=setvalue">';
@@ -255,7 +255,7 @@ if (function_exists("ldap_connect"))
 {
 	if ($conf->global->LDAP_SERVER_HOST)
 	{
-	    print '<a class="tabAction" href="ldap.php?action=test">'.$langs->trans("TestConnectLdap").'</a><br><br>';
+	    print '<a class="tabAction" href="ldap.php?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
 	
 	
@@ -263,7 +263,7 @@ if (function_exists("ldap_connect"))
 	{
 		// Test ldap_connect
 		$ds = dolibarr_ldap_connect();
-	
+	print "x".$ds;
 		if ($ds)
 		{
 			print img_picto('','info');
