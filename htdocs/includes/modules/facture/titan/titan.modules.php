@@ -44,18 +44,20 @@ class mod_facture_titan extends ModeleNumRefFactures
      */
 function info()
     {
+    	global $conf;
+    	
       $texte = "Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.<br>\n";
       $texte.= "L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.<br>\n";
       $texte.= "Définir la variable FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.<br>\n";
       $texte.= "Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700001.<br>\n";
       
-      if (defined("FISCAL_MONTH_START"))
+      if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
-      	$texte.= "FISCAL_MONTH_START est définie et vaut: ".FISCAL_MONTH_START."";
+      	$texte.= "SOCIETE_FISCAL_MONTH_START est définie et vaut: ".$conf->global->SOCIETE_FISCAL_MONTH_START."";
       }
       else
       {
-      	$texte.= "FISCAL_MONTH_START n'est pas définie.";
+      	$texte.= "SOCIETE_FISCAL_MONTH_START n'est pas définie.";
       }
       return $texte;
     }
@@ -74,7 +76,7 @@ function info()
      */
     function getNumRef($objsoc=0)
     { 
-      global $db;
+      global $db,$conf;
     
       $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0";
     
@@ -87,7 +89,7 @@ function info()
     
       $num = $num + 1;
     	$current_month = date("n");
-		if($current_month >= FISCAL_MONTH_START)
+		if($current_month >= $conf->global->FISCAL_MONTH_START)
         $y = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
 		else
       	$y = strftime("%y",time());

@@ -44,18 +44,20 @@ class mod_propale_emeraude extends ModeleNumRefPropales
      */
     function info()
     {
+    	global $conf;
+    	
       $texte = "Renvoie le numéro sous la forme PRYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.<br>\n";
       $texte.= "L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.<br>\n";
       $texte.= "Définir la variable FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.<br>\n";
       $texte.= "Dans cette exemple nous aurons au 1er septembre 2006 une propale nommée PR0700001.<br>\n";
       
-      if (defined("FISCAL_MONTH_START"))
+      if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
-      	$texte.= "FISCAL_MONTH_START est définie et vaut: ".FISCAL_MONTH_START."";
+      	$texte.= "SOCIETE_FISCAL_MONTH_START est définie et vaut: ".$conf->global->SOCIETE_FISCAL_MONTH_START."";
       }
       else
       {
-      	$texte.= "FISCAL_MONTH_START n'est pas définie.";
+      	$texte.= "SOCIETE_FISCAL_MONTH_START n'est pas définie.";
       }
       return $texte;
     }
@@ -75,7 +77,7 @@ class mod_propale_emeraude extends ModeleNumRefPropales
      */
     function getNextValue()
     {
-        global $db;
+        global $db,$conf;
     
         $sql = "SELECT count(*) FROM  ".MAIN_DB_PREFIX."propal";
     
@@ -86,7 +88,7 @@ class mod_propale_emeraude extends ModeleNumRefPropales
             $num = $row[0];
         }
 		$current_month = date("n");
-		if($current_month >= FISCAL_MONTH_START)
+		if($current_month >= $conf->global->FISCAL_MONTH_START)
         	$y = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
 		else
 			$y = strftime("%y",time());

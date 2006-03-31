@@ -77,7 +77,7 @@ class modSociete extends DolibarrModules
     // Constantes
     $this->const = array();
     
-    $this->const[0][0] = "FISCAL_MONTH_START";
+    $this->const[0][0] = "SOCIETE_FISCAL_MONTH_START";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "0";
     $this->const[0][3] = "Mettre le numéro du mois du début d\'année fiscale, ex: 9 pour septembre";
