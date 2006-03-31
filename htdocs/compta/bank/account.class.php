@@ -266,7 +266,7 @@ class Account
 
         if (! $pcgnumber) $pcgnumber="51";
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label, account_number) values (now(),'$this->label','$pcgnumber');";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label, account_number) values (now(),'" . addslashes($this->label) . "','$pcgnumber');";
         $resql=$this->db->query($sql);
         if ($resql)
         {
