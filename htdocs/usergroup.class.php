@@ -383,7 +383,7 @@ class UserGroup
   {
 
     $sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec,nom)";
-    $sql .= " VALUES(now(),'$this->nom')";
+    $sql .= " VALUES(now(),'".addslashes($this->nom)."')";
 
     $result=$this->db->query($sql);
     if ($result)
