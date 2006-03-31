@@ -924,10 +924,14 @@ if ($_GET['propalid'] > 0)
                 print '<tr '.$bc[$var].">\n";
                 print '<td><textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
                 print '<td align="center">';
-				if($societe->tva_assuj == "0")
-					print '<input type="hidden" name="np_tva_tx" value="0">0';
-				else
-                	$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
+				        if($societe->tva_assuj == "0")
+				        {
+				        	print '<input type="hidden" name="np_tva_tx" value="0">0';
+				        }
+				        else
+				        {
+				        	$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
+				        }
                 print "</td>\n";
                 print '<td align="right"><input type="text" size="5" name="np_price"></td>';
                 print '<td align="right"><input type="text" size="2" value="1" name="qty"></td>';
@@ -948,11 +952,15 @@ if ($_GET['propalid'] > 0)
 
                     print '<tr '.$bc[$var].'>';
                     print '<td colspan="2">';
-					// multiprix
-					if($conf->global->PRODUIT_MULTIPRICES == 1)
-						$html->select_produits('','idprod','',$conf->produit->limit_size,$societe->price_level);
-					else
-                    	$html->select_produits('','idprod','',$conf->produit->limit_size);
+					          // multiprix
+					          if($conf->global->PRODUIT_MULTIPRICES == 1)
+					          {
+					          	$html->select_produits('','idprod','',$conf->produit->limit_size,$societe->price_level);
+					          }
+					          else
+					          {
+					          	$html->select_produits('','idprod','',$conf->produit->limit_size);
+					          }
                     print '<br>';
                     print '<textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea>';
                     print '</td>';

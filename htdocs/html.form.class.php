@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -606,11 +607,21 @@ class Form
     */
     function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
     {
-        global $langs,$conf;
+        global $langs,$conf,$user;
     
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+        {
+           $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+           $sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+        }
         $sql.= " WHERE p.envente = 1";
+        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+        {
+           $sql .= " AND cp.fk_product = p.rowid";
+           $sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+        }
         if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
