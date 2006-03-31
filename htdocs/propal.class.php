@@ -1437,14 +1437,17 @@ class Propal
      */
     function load_board($user,$mode)
     {
-        global $conf;
+        global $conf, $user;
         
         $this->nbtodo=$this->nbtodolate=0;
         $sql ="SELECT p.rowid,".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
+        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.=" FROM ".MAIN_DB_PREFIX."propal as p";
+        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         if ($mode == 'opened') $sql.=" WHERE p.fk_statut = 1";
         if ($mode == 'signed') $sql.=" WHERE p.fk_statut = 2";
-        if ($user->societe_id) $sql.=" AND fk_soc = ".$user->societe_id;
+        if ($user->societe_id) $sql.=" AND p.fk_soc = ".$user->societe_id;
+        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {

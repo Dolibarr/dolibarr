@@ -370,7 +370,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
     {
       $langs->load("bills");
     
-      include_once("./fourn/fournisseur.facture.class.php");
+      include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
       $board=new FactureFournisseur($db);
       $board->load_board($user);
 

@@ -1916,13 +1916,16 @@ class Facture
 	 */
 	function load_board($user)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->nbtodo=$this->nbtodolate=0;
 		$sql = 'SELECT f.rowid,'.$this->db->pdate('f.date_lim_reglement').' as datefin';
+		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
+		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= ' WHERE f.paye=0 AND f.fk_statut = 1';
-		if ($user->societe_id) $sql.=' AND fk_soc = '.$user->societe_id;
+		if ($user->societe_id) $sql.=' AND f.fk_soc = '.$user->societe_id;
+		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

@@ -1006,25 +1006,30 @@ class Contrat
      */
     function load_board($user,$mode)
     {
-        global $conf;
+        global $conf, $user;
         
         $this->nbtodo=$this->nbtodolate=0;
         if ($mode == 'inactives')
         {
             $sql = "SELECT cd.rowid,".$this->db->pdate("cd.date_ouverture_prevue")." as datefin";
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE c.statut = 1 AND c.rowid = cd.fk_contrat";
             $sql.= " AND cd.statut = 0";
         }
         if ($mode == 'expired')
         {
             $sql = "SELECT cd.rowid,".$this->db->pdate("cd.date_fin_validite")." as datefin";
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE c.statut = 1 AND c.rowid = cd.fk_contrat";
             $sql.= " AND cd.statut = 4";
             $sql.= " AND cd.date_fin_validite < '".$this->db->idate(time())."'";
         }
-        if ($user->societe_id) $sql.=" AND fk_soc = ".$user->societe_id;
+        if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
+        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {
