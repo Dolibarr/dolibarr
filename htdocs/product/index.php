@@ -72,7 +72,16 @@ print "</table></form><br>";
 $prodser = array();
 $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
-$sql = "SELECT count(*), fk_product_type, envente FROM ".MAIN_DB_PREFIX."product as p GROUP BY fk_product_type, envente";
+$sql = "SELECT count(*), p.fk_product_type, p.envente";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+if (!$user->rights->categorie->voir)
+{
+  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+  $sql .= " WHERE cp.fk_product = p.rowid";
+	$sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+}
+$sql .= " GROUP BY p.fk_product_type, p.envente";
 $result=$db->query($sql);
 if ($result)
 {
