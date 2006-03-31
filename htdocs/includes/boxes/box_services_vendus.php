@@ -69,8 +69,18 @@ class box_services_vendus extends ModeleBoxes {
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+            {
+              $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+              $sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+            }
             $sql .= " WHERE s.idp = c.fk_soc AND c.rowid = cd.fk_contrat AND cd.fk_product = p.rowid";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+            {
+              $sql .= " AND cp.fk_product = p.rowid";
+              $sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+            }
             if($user->societe_id)
             {
                 $sql .= " AND s.idp = $user->societe_id";
