@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ class modEnergie extends DolibarrModules
     $this->id = 'energie';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 23 ;
     
-    $this->family = "technic";
+    $this->family = "other";
     $this->name = "Energie";
     $this->description = "Suivi de la consommation des energies";
 
@@ -58,7 +59,7 @@ class modEnergie extends DolibarrModules
     $this->version = $this->revision[1];
 
     $this->const_name = 'MAIN_MODULE_ENERGIE';
-    $this->special = 1;
+    $this->special = 2;
     $this->picto='energie';
 
     // Dir

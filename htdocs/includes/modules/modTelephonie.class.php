@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ class modTelephonie extends DolibarrModules
     $this->id = 'telephonie';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 56 ;
 
-    $this->family = "technic";
+    $this->family = "other";
     $this->name = "Telephonie";
     $this->description = "Gestion de la Telephonie";
 
@@ -59,7 +60,7 @@ class modTelephonie extends DolibarrModules
 
     $this->const_name = "MAIN_MODULE_TELEPHONIE";
     $this->const_config = MAIN_MODULE_TELEPHONIE;
-    $this->special = 1;
+    $this->special = 2;
     $this->picto='phoning';
 
     // Dir

@@ -23,84 +23,81 @@
  */
 
 /**     \defgroup   boutique     Module boutique
-        \brief      Module pour gérer une boutique et interface avec OSC
+        \brief      Module pour gérer une boutique et interface avec OSCommerce
 */
 
 /**
         \file       htdocs/includes/modules/modBoutique.class.php
         \ingroup    boutique
-        \brief      Fichier de description et activation du module Boutique
+        \brief      Fichier de description et activation du module OSCommerce
 */
 
 include_once "DolibarrModules.class.php";
 
-/** \class modBoutique
-		\brief      Classe de description et activation du module Boutique
+/** 
+		\class 		modBoutique
+		\brief      Classe de description et activation du module OSCommerce
 */
 
 class modBoutique extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
-    */
-  function modBoutique($DB)
-  {
-    $this->db = $DB ;
-    $this->id = 'boutique';   // Same value xxx than in file modXxx.class.php file
-    $this->numero = 86 ;
-
-    $this->family = "products";
-    $this->name = "Boutique";
-    $this->description = "Gestion des boutiques";
-    $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_BOUTIQUE';
-    $this->special = 1;
-
-    // Dir
-    $this->dirs = array();
-
-    // Config pages
-    $this->config_page_url = array("boutique.php","osc-languages.php");
-
-    // Dépendances
-    $this->depends = array();
-    $this->requiredby = array();
-
-    // Constantes
-    $this->const = array();
-
-    // Boxes
-    $this->boxes = array();
-    $this->boxes[0][0] = "Livres";
-    $this->boxes[0][1] = "box_boutique_livre.php";
-
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'boutique';
-  }
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'accès base
+	 */
+	function modBoutique($DB)
+	{
+		$this->db = $DB ;
+		$this->id = 'boutique';   // Same value xxx than in file modXxx.class.php file
+		$this->numero = 86 ;
+	
+		$this->family = "products";
+		$this->name = "OSCommerce";
+		$this->description = "Gestion d'une boutique OSCommerce";
+		$this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
+		$this->const_name = 'MAIN_MODULE_BOUTIQUE';
+		$this->special = 1;
+	
+		// Dir
+		$this->dirs = array();
+	
+		// Config pages
+		$this->config_page_url = array("boutique.php","osc-languages.php");
+	
+		// Dépendances
+		$this->depends = array();
+		$this->requiredby = array();
+	
+		// Constantes
+		$this->const = array();
+	
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'boutique';
+	}
   
    /**
     *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
-  function init()
-  {
-    $sql = array();
- 
-    return $this->_init($sql);
-  }
+	function init()
+	{
+		$sql = array();
+		
+		return $this->_init($sql);
+	}
 
-  /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
-
-    return $this->_remove($sql);
-  }
+	/**
+	 *    \brief      Fonction appelée lors de la désactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
+		
+		return $this->_remove($sql);
+	}
+  
 }
 ?>

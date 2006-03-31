@@ -55,12 +55,12 @@ class modProjet extends DolibarrModules
     $this->family = "projects";
     $this->name = "Projets";
     $this->description = "Gestion des projets";
-  
     $this->revision = explode(" ","$Revision$");
     $this->version = $this->revision[1];
-
     $this->const_name = 'MAIN_MODULE_PROJET';
-
+    $this->special = 0;
+    $this->picto='email';
+    
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
