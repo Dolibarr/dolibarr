@@ -47,9 +47,18 @@ if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
   
 $sql = "SELECT p.rowid, p.label as produit, s.label as stock, m.value, ".$db->pdate("m.datem")." as datem, s.rowid as entrepot_id";
-$sql .= " FROM llx_product as p, llx_entrepot as s, llx_stock_mouvement as m";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+}
 $sql .= " WHERE m.fk_product = p.rowid AND m.fk_entrepot = s.rowid";
-
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= " AND cp.fk_product = p.rowid";
+  $sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+}
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
 $result = $db->query($sql) ;
