@@ -410,8 +410,8 @@ class UserGroup
   function update()
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-        $sql .= " nom = '$this->nom',";
-        $sql .= " note = '$this->note'";
+        $sql .= " nom = '".addslashes($this->nom)."',";
+        $sql .= " note = '".addslashes($this->note)."'";
         $sql .= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
