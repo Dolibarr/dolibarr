@@ -328,7 +328,7 @@ if ($resql)
                 print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
 				if (date("U",$obj->da) < time())
 				{
-					print "<td>".img_warning("Late")."</td>";
+					print "<td>".img_warning($langs->trans("Late"))."</td>";
 				} else {
 					print "<td>&nbsp;</td>";	
 				}
