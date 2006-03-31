@@ -39,14 +39,38 @@ $mesg = '';
  *
  *
  */
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product WHERE fk_product_type = 0";
+$sql = "SELECT count(*)";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+}
+$sql .= " WHERE p.fk_product_type = 0";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= " AND cp.fk_product = p.rowid";
+	$sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+}
 if ($db->query($sql))
 {
   $row = $db->fetch_row(0);
   $nbproduct = $row[0];
 }
 $db->free();
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product WHERE envente = 0 AND fk_product_type = 0";
+$sql = "SELECT count(*)";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+}
+$sql .= " WHERE p.envente = 0 AND p.fk_product_type = 0";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= " AND cp.fk_product = p.rowid";
+	$sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+}
 if ($db->query($sql))
 {
   $row = $db->fetch_row(0);
@@ -72,14 +96,39 @@ print "<tr ".$bc[$var].">";
 print '<td width="40%">Nb de produit dans le catalogue qui ne sont pas en vente</td>';
 print '<td>'.$nbhv.'</td></tr>';
 
-$sql = "SELECT count(*) FROM llx_product WHERE fk_product_type = 1";
+$sql = "SELECT count(*)";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+}
+$sql .= " WHERE p.fk_product_type = 1";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= " AND cp.fk_product = p.rowid";
+	$sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+}
 if ($db->query($sql))
 {
   $row = $db->fetch_row(0);
   $nbproduct = $row[0];
 }
 $db->free();
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product WHERE envente = 0 AND fk_product_type = 1";
+$sql = "SELECT count(*)";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+}
+$sql .= " WHERE p.envente = 0 AND p.fk_product_type = 1";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+  $sql .= " AND cp.fk_product = p.rowid";
+	$sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+}
+
 if ($db->query($sql))
 {
   $row = $db->fetch_row(0);
