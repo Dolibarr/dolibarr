@@ -74,12 +74,13 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
   $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
 }
-$sql .= " WHERE p.rowid = pd.fk_product group by (p.rowid)";
+$sql .= " WHERE p.rowid = pd.fk_product";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql .= " AND cp.fk_product = p.rowid";
 	$sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
 }
+$sql .= " group by (p.rowid)";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
 
