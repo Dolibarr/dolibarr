@@ -200,13 +200,23 @@ class Service
      */
     function load_state_board()
     {
-        global $conf;
+        global $conf, $user;
         
         $this->nb=array();
 
         $sql = "SELECT count(p.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+        {
+           $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+           $sql .= ", ".MAIN_DB_PREFIX."categorie as ca";
+        }
         $sql.= " WHERE p.fk_product_type = 1";
+        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+        {
+           $sql .= " AND cp.fk_product = p.rowid";
+           $sql .= " AND cp.fk_categorie = ca.rowid AND ca.visible = 1";
+        }
         $resql=$this->db->query($sql);
         if ($resql)
         {
