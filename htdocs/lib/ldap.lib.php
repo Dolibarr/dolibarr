@@ -42,7 +42,17 @@ function dolibarr_ldap_connect()
 {
 	global $conf;
 	
-	$ldapconnect = ldap_connect($conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT);
+	if (ereg('^ldap',$conf->global->LDAP_SERVER_HOST))
+	{
+		// ex url:		ldaps://ldap.example.com/
+		$ldapconnect = ldap_connect($conf->global->LDAP_SERVER_HOST);
+	}
+	else
+	{
+		// ex serveur: 	localhost
+		// ex port: 	329
+		$ldapconnect = ldap_connect($conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT);
+	}
 	
 	if ($ldapconnect)
 	{
@@ -54,7 +64,7 @@ function dolibarr_ldap_connect()
 
 
 /**
-		\brief bind au serveur ldap.
+		\brief 	Se connecte au serveur LDAP avec user et mot de passe
 		\param	ds
 		\return	bool
 */

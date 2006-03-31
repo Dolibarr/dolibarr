@@ -406,7 +406,7 @@ DNAdmin=Administrator DN
 LDAPPassword=administrator password
 DNUser=Dolibarr users' DN
 DNGroup=Dolibarr groups' DN
-LDAPServerExample=Server address (ex: localhost, 127.0.0.1, 192.168.0.2)
+LDAPServerExample=Server address (ex: localhost, 192.168.0.2, ldaps://ldap.example.com/)
 #LDAPSuffixExample=Complete DN (ex: dc=company,dc=com)
 DNAdminExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
 LDAPPasswordExample=Admin password
