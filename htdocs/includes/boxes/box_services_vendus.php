@@ -58,7 +58,7 @@ class box_services_vendus extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db;
+        global $user, $langs, $db, $conf;
         $langs->load("boxes");
 
         $this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract",$max));
