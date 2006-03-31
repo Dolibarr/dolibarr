@@ -281,7 +281,21 @@ class Entrepot
    */
     function nb_products()
     {
-        $sql = "SELECT sum(reel) FROM llx_product_stock WHERE fk_entrepot = ".$this->id;
+    	  global $conf,$user;
+    	  
+        $sql = "SELECT sum(ps.reel)";
+        $sql .= " FROM llx_product_stock as ps";
+        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+        {
+           $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+           $sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+        }
+        $sql .= " WHERE ps.fk_entrepot = ".$this->id;
+        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+        {
+           $sql .= " AND cp.fk_product = ps.fk_product";
+           $sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+        }
         
           $result = $this->db->query($sql) ;
         
