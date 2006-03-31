@@ -74,7 +74,7 @@ $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
 $sql = "SELECT count(*), p.fk_product_type, p.envente";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-if (!$user->rights->categorie->voir)
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
@@ -127,7 +127,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-if (!$user->rights->categorie->voir)
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";

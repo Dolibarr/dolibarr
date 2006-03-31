@@ -79,12 +79,12 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate
 $sql.= ' p.duration, p.envente as statut';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p'; // '.MAIN_DB_PREFIX.'product_det as d'; //en attendant le debugage
 
-if ($catid || !$user->rights->categorie->voir)
+if ($catid || ($conf->categorie->enabled && !$user->rights->categorie->voir))
 {
   $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 
-if (!$user->rights->categorie->voir)
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
 }
@@ -115,7 +115,7 @@ if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 {
     $sql .= " AND p.envente = ".$_GET["envente"];
 }
-if($catid || !$user->rights->categorie->voir)
+if($catid || ($conf->categorie->enabled && !$user->rights->categorie->voir))
 {
     $sql .= " AND cp.fk_product = p.rowid";
 }
@@ -123,7 +123,7 @@ if($catid)
 {
     $sql .= " AND cp.fk_categorie = ".$catid;
 }
-if (!$user->rights->categorie->voir)
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
 }
