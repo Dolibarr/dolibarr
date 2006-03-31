@@ -321,7 +321,7 @@ else
                     print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
                     print img_object($langs->trans("ShowProduct"),"product").' '.$objp->ref;
                     print "</a></td>\n";
-                    print '<td>'.$objp->produit.'</td>\n';
+                    print '<td>'.$objp->produit.'</td>';
                     print '<td align="center">'.$objp->value.'</td>';
                     //print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
                     //print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
