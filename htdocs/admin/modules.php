@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,8 +30,12 @@
 
 require("./pre.inc.php");
 
+$mode=isset($_GET["mode"])?$_GET["mode"]:0;
+$mesg=isset($_GET["mesg"])?urldecode($_GET["mode"]):"";
+
 if (!$user->admin)
     accessforbidden();
+
 
 /*
  * Actions
@@ -42,7 +46,7 @@ if ($_GET["action"] == 'set' && $user->admin)
     $result=Activate($_GET["value"]);
     $mesg='';
     if ($result) $mesg=$result;
-    Header("Location: modules.php?spe=".$_GET["spe"]."&mesg=".urlencode($mesg));
+    Header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
 	exit;
 }
 
@@ -51,7 +55,7 @@ if ($_GET["action"] == 'reset' && $user->admin)
     $result=UnActivate($_GET["value"]);
     $mesg='';
     if ($result) $mesg=$result;
-    Header("Location: modules.php?spe=".$_GET["spe"]."&mesg=".urlencode($mesg));
+    Header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
 	exit;
 }
 
@@ -143,33 +147,31 @@ llxHeader("","");
 
 $h = 0;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?spe=0";
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=0";
 $head[$h][1] = $langs->trans("ModulesCommon");
-if (!$_GET["spe"]) $hselected=$h;
+if ($mode==0) $hselected=$h;
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?spe=1";
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=1";
+$head[$h][1] = $langs->trans("ModulesInterfaces");
+if ($mode==1) $hselected=$h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=2";
 $head[$h][1] = $langs->trans("ModulesSpecial");
-if ($_GET["spe"]) $hselected=$h;
+if ($mode==2) $hselected=$h;
 $h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("Modules"));
 
 
-if (!$_GET["spe"])
-{
-    print $langs->trans("ModulesDesc")."<br>\n";
-}
-else
-{
-    print $langs->trans("ModulesSpecialDesc")."<br>\n";
-}
+if ($mode==0) print $langs->trans("ModulesDesc")."<br>\n";
+if ($mode==1) print $langs->trans("ModulesInterfaceDesc")."<br>\n";
+if ($mode==2) print $langs->trans("ModulesSpecialDesc")."<br>\n";
 
-if ($_GET["mesg"]) 
-{
-    $mesg=urldecode($_GET["mesg"]);
-    print '<div class="error">'.$mesg.'</div>';
-}
+
+
+if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 print "<br>\n";
 print "<table class=\"noborder\" width=\"100%\">\n";
@@ -258,7 +260,7 @@ foreach ($orders as $key => $value)
         $atleastoneforfamily=0;
     }
 
-    if ((!$objMod->special && !$_GET["spe"] ) or ($objMod->special && $_GET["spe"]))
+    if ($objMod->special == $mode)
     {
         $atleastoneforfamily=1;
         $var=!$var;
@@ -302,7 +304,7 @@ foreach ($orders as $key => $value)
         {
             // Module actif
             if ($family == 'base') print $langs->trans("Required");
-            else print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
+            else print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Disable") . "</a></td>\n";
 
             if ($objMod->config_page_url)
             {
@@ -345,7 +347,7 @@ foreach ($orders as $key => $value)
             }
 
             // Module non actif
-            print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
+            print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
         }
 
         print "</tr>\n";

@@ -395,6 +395,8 @@ AdherentMailRequired=EMail obligatoire pour créer un nouvel adhérent
 ##### LDAP setup #####
 LDAPSetup=Configuration du module LDAP
 LDAPFunctionsNotAvailableOnPHP=Les fonctions LDAP ne sont pas disponibles sur votre PHP
+LDAPSynchronizeUsersAndGroup=Synchronisation des utilisateurs et groupes Dolibarr vers LDAP
+LDAPSynchronizeContacts=Synchronisation des contacts Dolibarr vers LDAP
 LDAPTypeExample=OpenLdap, Egroupware ou Active Directory
 LDAPServer=Serveur LDAP
 LDAPServerPort=Port du serveur LDAP
@@ -408,9 +410,10 @@ LDAPServerExample=Adresse du serveur (ex: localhost, 127.0.0.1, 192.168.0.2)
 #LDAPSuffixExample=DN complet (ex: dc=societe,dc=com)
 DNAdminExample=DN complet (ex: cn=adminldap,dc=societe,dc=com)
 LDAPPasswordExample=Mot de passe de l'administrateur
+DBUserGroupActive=Synchronisation des utilisateurs et groupes
 DNUserExample=DN complet (ex: ou=users,dc=societe,dc=com)
 DNGroupExample=DN complet (ex: ou=groups,dc=societe,dc=com)
-DNContactActive=Synchronisation des contacts ?
+DNContactActive=Synchronisation des contacts
 DNContactActiveYes=Synchronisation activée
 DNContactActiveExample=Synchronisation activée/désactivée
 DNContact=DN des contacts Dolibarr

@@ -54,27 +54,15 @@ $var=True;
 // Action mise a jour ou ajout d'une constante
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-  if (isset($_POST["consttype"]) && $_POST["consttype"] != '')
+	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''))
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_POST["constname"]."';";
-	    $db->query($sql);
-		$sql = '';
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,type,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."','".$typeconst[$_POST["consttype"]]."',0,'".$_POST["constnote"]."') ;";
-
-  }
+		print $db->error();
+	}
 	else
 	{
-	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_POST["constname"]."';";
-	    $db->query($sql);
-		$sql ='';
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."',0,'".$_POST["constnote"]."') ;";
-  }
-  
-  if ($db->query($sql))
-    {
-      Header("Location: adherent.php");
-    }
-  
+        Header("Location: adherent.php");
+		exit;
+	}
 }
 
 // Action activation d'un sous module du module adhérent
@@ -94,6 +82,7 @@ if ($_GET["action"] == 'set')
     if ($result)
     {
         Header("Location: adherent.php");
+		exit;
     }
     else {
         dolibarr_print_error($db);   
@@ -270,7 +259,7 @@ $db->close();
 print '<br>';
 
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 
 
 function form_constantes($tableau){

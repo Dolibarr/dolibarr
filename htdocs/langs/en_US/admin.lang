@@ -392,9 +392,11 @@ MembersSetup=Members module setup
 MemberMainOptions=Main options
 AddSubscriptionIntoAccount=Add subscriptions into bank or cash account, of bank module
 AdherentMailRequired=EMail required to create a new member
-##### LDAP setup ####
+##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPFunctionsNotAvailableOnPHP=LDAP functions are not availbale on your PHP
+LDAPSynchronizeUsersAndGroup=Synchronize Dolibarr users and groups to LDAP
+LDAPSynchronizeContacts=Synchronize Dolibarr contacts to LDAP
 LDAPTypeExample=OpenLdap, Egroupware or Active Directory
 LDAPServer=LDAP Server
 LDAPServerPort=LDAP server port
@@ -408,9 +410,10 @@ LDAPServerExample=Server address (ex: localhost, 127.0.0.1, 192.168.0.2)
 #LDAPSuffixExample=Complete DN (ex: dc=company,dc=com)
 DNAdminExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
 LDAPPasswordExample=Admin password
+DBUserGroupActive=Users and groups synchronization
 DNUserExample=Complete DN (ex: ou=users,dc=society,dc=com)
 DNGroupExample=Complete DN (ex: ou=groups,dc=society,dc=com)
-DNContactActive=Contacts' synchronization?
+DNContactActive=Contacts' synchronization
 DNContactActiveYes=Activated synchronization
 DNContactActiveExample=Activated/Unactivated synchronization
 DNContact=Dolibarr contacts' DN
