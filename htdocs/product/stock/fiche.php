@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Simon Tosser  <simon@kornog-computing.com>
+ * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +273,7 @@ else
 
             print "<td align=\"center\">".$langs->trans("Units")."</td>";
             print "</tr>\n";
-            $sql = "SELECT p.rowid as rowid, p.label as produit, ps.reel as value ";
+            $sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, ps.reel as value ";
             $sql .= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p ";
             if ($conf->categorie->enabled && !$user->rights->categorie->voir)
             {
@@ -318,8 +319,9 @@ else
                     print "<tr $bc[$var]>";
                     //print '<td>'.dolibarr_print_date($objp->datem).'</td>';
                     print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
-                    print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
+                    print img_object($langs->trans("ShowProduct"),"product").' '.$objp->ref;
                     print "</a></td>\n";
+                    print '<td>'.$objp->produit.'</td>\n';
                     print '<td align="center">'.$objp->value.'</td>';
                     //print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
                     //print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
