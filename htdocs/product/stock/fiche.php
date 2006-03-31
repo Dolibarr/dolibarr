@@ -269,10 +269,11 @@ else
             print '<table class="noborder" width="100%">';
             print "<tr class=\"liste_titre\">";
 
-            print_liste_field_titre($langs->trans("Product"),"", "p.ref","","","",$sortfield);
-
+            print_liste_field_titre($langs->trans("Reference"),"", "p.ref","","","",$sortfield);
+            
+            print "<td>".$langs->trans("Label")."</td>";
             print "<td align=\"center\">".$langs->trans("Units")."</td>";
-            print "</tr>\n";
+            print "</tr>";
             $sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, ps.reel as value ";
             $sql .= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p ";
             if ($conf->categorie->enabled && !$user->rights->categorie->voir)
@@ -320,13 +321,13 @@ else
                     //print '<td>'.dolibarr_print_date($objp->datem).'</td>';
                     print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
                     print img_object($langs->trans("ShowProduct"),"product").' '.$objp->ref;
-                    print "</a></td>\n";
+                    print "</a></td>";
                     print '<td>'.$objp->produit.'</td>';
                     print '<td align="center">'.$objp->value.'</td>';
                     //print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
                     //print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
                     //print "</a></td>\n";
-                    print "</tr>\n";
+                    print "</tr>";
                     $i++;
                 }
                 $db->free($resql);
