@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
- * Copyright (C) 2005 Regis Houssin  <regis.houssin@cap-networks.com>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,113 +21,113 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!	\file htdocs/lib/ldap.lib.php
-		\brief Librairie contenant les fonctions pour accèder au serveur ldap.
-		\author Rodolphe Quiedeville.
-		\author	Benoit Mortier.
-		\version $Revision$
+/**
+		\file 		htdocs/lib/ldap.lib.php
+		\brief 		Librairie contenant les fonctions pour accèder au serveur ldap.
+		\author 	Rodolphe Quiedeville.
+		\author		Benoit Mortier.
+		\version 	$Revision$
 
-		Ensemble des fonctions permettant d'accèder à un serveur ldap.
+		Ensemble des fonctions permettant d'accèder à un serveur LDAP.
 */
 
 
-/*!
-		\brief ouverture d'une connection vers le serveur ldap.
-		\return	resource
+/**
+		\brief 		Ouverture d'une connection vers le serveur LDAP
+		\return		resource
 */
-
 function dolibarr_ldap_connect()
 {
-  $ldapconnect = ldap_connect(LDAP_SERVER_HOST,LDAP_SERVER_PORT);
-  
-  if ($ldapconnect)
-    {
-      ldap_set_option($ldapconnect, LDAP_OPT_PROTOCOL_VERSION, LDAP_SERVER_PROTOCOLVERSION);
-    }
-
-  return $ldapconnect;
+	global $conf;
+	
+	$ldapconnect = ldap_connect($conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT);
+	
+	if ($ldapconnect)
+	{
+		ldap_set_option($ldapconnect, $conf->global->LDAP_OPT_PROTOCOL_VERSION, $conf->global->LDAP_SERVER_PROTOCOLVERSION);
+	}
+	
+	return $ldapconnect;
 }
 
-/*!
+
+/**
 		\brief bind au serveur ldap.
 		\param	ds
 		\return	bool
 */
-
-
 function dolibarr_ldap_bind($ds)
 {
-	if (defined("LDAP_ADMIN_PASS") && LDAP_ADMIN_DN && LDAP_ADMIN_PASS)
+	global $conf;
+	
+	if (defined("LDAP_ADMIN_PASS") && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
     {
-    	$ldapbind = ldap_bind($ds, LDAP_ADMIN_DN, LDAP_ADMIN_PASS);
+    	$ldapbind = ldap_bind($ds, $conf->global->LDAP_ADMIN_DN, $conf->global->LDAP_ADMIN_PASS);
     }
 
-      return $ldapbind;
+	return $ldapbind;
 }
 
-/*!
+/**
 		\brief unbind du serveur ldap.
 		\param	ds
 		\return	bool
 */
-
 function dolibarr_ldap_unbind($ds)
 {
+	$ldapunbind = ldap_unbind($ds);
 
-   $ldapunbind = ldap_unbind($ds);
-
-  return $ldapunbind;
+	return $ldapunbind;
 }
 
-/*!
-  \brief verification de la version du serveur ldap.
-  \param	ds
-  \return	version
+/**
+		\brief verification de la version du serveur ldap.
+		\param	ds
+		\return	version
 */
-
 function dolibarr_ldap_getversion($ds)
 {
-  $version = 0;
-  
-  ldap_get_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
-  
-  return $version;
+	global $conf;
+	
+	$version = 0;
+	
+	ldap_get_option($ds, $conf->global->LDAP_OPT_PROTOCOL_VERSION, $version);
+	
+	return $version;
 }
 
-/*!
-  \brief changement de la version du serveur ldap.
-  \param	ds
-  \param	version
-  \return	version
+/**
+		\brief changement de la version du serveur ldap.
+		\param	ds
+		\param	version
+		\return	version
 */
-
-
 function dolibarr_ldap_setversion($ds,$version)
 {
-  $ldapsetversion = ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
+	global $conf;
+	
+	$ldapsetversion = ldap_set_option($ds, $conf->global->LDAP_OPT_PROTOCOL_VERSION, $version);
   
-  return $ldapsetversion;
+	return $ldapsetversion;
 }
 
-/*!
-  \brief permet d'enlever les accents d'une chaine.
-  \param	str
-  \return	string
+/**
+		\brief permet d'enlever les accents d'une chaine.
+		\param	str
+		\return	string
 */
-
 function dolibarr_ldap_unacc($str)
 {
-  $stu = ereg_replace("é","e",$str);
-  $stu = ereg_replace("è","e",$stu);
-  $stu = ereg_replace("ê","e",$stu);
-  $stu = ereg_replace("à","a",$stu);
-  $stu = ereg_replace("ç","c",$stu);
-  $stu = ereg_replace("ï","i",$stu);
-  $stu = ereg_replace("ä","a",$stu);
-  return $stu;
+	$stu = ereg_replace("é","e",$str);
+	$stu = ereg_replace("è","e",$stu);
+	$stu = ereg_replace("ê","e",$stu);
+	$stu = ereg_replace("à","a",$stu);
+	$stu = ereg_replace("ç","c",$stu);
+	$stu = ereg_replace("ï","i",$stu);
+	$stu = ereg_replace("ä","a",$stu);
+	return $stu;
 }
 
 ?>

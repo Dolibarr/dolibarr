@@ -25,6 +25,7 @@ OtherOptions=Autres options
 OtherSetup=Divers
 Modules=Modules
 ModulesCommon=Modules standards
+ModulesInterfaces=Modules interfaces
 ModulesSpecial=Modules spéciaux
 ParameterInDolibarr=Variable %s
 LanguageParameter=Variable langue %s
@@ -42,6 +43,7 @@ AutoDetectLang=Détection auto (navigateur)
 Rights=Permissions
 BoxesDesc=Les boîtes sont des zones d'information réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer une boîte en sélectionnant la page cible et en cliquant sur 'Activer', ou en cliquant sur la poubelle pour la désactiver. Seules les boîtes en rapport avec un <a href="modules.php">module</a> actif sont présentées.
 ModulesDesc=Les modules Dolibarr définissent les fonctionnalités disponibles dans l'application. Certains modules nécessitent des droits qu'il vous faudra affecter aux utilisateurs pour qu'ils puissent accéder à leurs fonctionnalités.
+ModulesInterfaceDesc=Les modules d'interfaces sont des modules qui permettent de lier Dolibarr à des systèmes, applications ou services externes.
 ModulesSpecialDesc=Les modules spéciaux sont des modules à usage très spécifique ou moins courant que les modules standards.
 BoxesAvailable=Boîtes disponibles
 BoxesActivated=Boîtes activées
@@ -61,7 +63,7 @@ ModuleFamilyProducts=Gestion produits
 ModuleFamilyHr=Ressources humaines
 ModuleFamilyProjects=Projets/Travail collaboratif
 ModuleFamilyOther=Autre
-ModuleFamilyTechnic=Modules techniques, interfaces
+ModuleFamilyTechnic=Modules outils ou système
 ModuleFamilyExperimental=Modules expérimentaux (ne pas utiliser en production)
 ModuleFamilyFinancial=Modules financiers (Compta/trésorerie)
 Module0Name=Utilisateurs & groupes
@@ -75,7 +77,7 @@ Module10Desc=Gestion simple de la comptabilité et trésorerie
 Module20Name=Propositions commerciales
 Module20Desc=Gestion des devis/propositions commerciales
 Module22Name=Mailings
-Module22Desc=Gestion des mailings
+Module22Desc=Administration et envoi de mailings
 Module25Name=Commandes clients
 Module25Desc=Gestion des commandes clients
 Module30Name=Factures
@@ -129,7 +131,7 @@ Module330Desc=Gestion des marque-pages
 Module400Name=Projets
 Module400Desc=Gestion des projets au sein des autres modules
 Module410Name=Webcalendar
-Module410Desc=Interfaçage avec le calendrier Webcalendar
+Module410Desc=Interface avec le calendrier Webcalendar
 Module700Name=Dons
 Module700Desc=Gestion des dons
 Module1780Name=Catégories
@@ -392,16 +394,17 @@ AddSubscriptionIntoAccount=Enregistrer cotisations dans compte bancaire ou caiss
 AdherentMailRequired=EMail obligatoire pour créer un nouvel adhérent
 ##### LDAP setup #####
 LDAPSetup=Configuration du module LDAP
+LDAPFunctionsNotAvailableOnPHP=Les fonctions LDAP ne sont pas disponibles sur votre PHP
+LDAPTypeExample=OpenLdap, Egroupware ou Active Directory
 LDAPServer=Serveur LDAP
 LDAPServerPort=Port du serveur LDAP
 LDAPServerPortExample=Port par défaut : 389
-TestConnectLdap=Tester la connexion
 #LDAPSuffix=Suffix LDAP
 DNAdmin=DN de l'administrateur
-LDAPPassword=Mot de passe
-DNUser=DN des utilisateurs
-DNGroup=DN des groupes
-LDAPServerExample=Adresse du serveur
+LDAPPassword=Mot de passe de l'administrateur
+DNUser=DN des utilisateurs Dolibarr
+DNGroup=DN des groupes Dolibarr
+LDAPServerExample=Adresse du serveur (ex: localhost, 127.0.0.1, 192.168.0.2)
 #LDAPSuffixExample=DN complet (ex: dc=societe,dc=com)
 DNAdminExample=DN complet (ex: cn=adminldap,dc=societe,dc=com)
 LDAPPasswordExample=Mot de passe de l'administrateur
@@ -409,10 +412,14 @@ DNUserExample=DN complet (ex: ou=users,dc=societe,dc=com)
 DNGroupExample=DN complet (ex: ou=groups,dc=societe,dc=com)
 DNContactActive=Synchronisation des contacts ?
 DNContactActiveYes=Synchronisation activée
-DNContact=DN des contacts
-DNContactActiveExample=Synchronisation désactivée
+DNContactActiveExample=Synchronisation activée/désactivée
+DNContact=DN des contacts Dolibarr
 DNContactExample=DN complet (ex: ou=contacts,dc=societe,dc=com)
-TypeExample=OpenLdap, Egroupware ou Active Directory
+LDAPTestConnect=Tester la connexion LDAP
+LDAPTestOK=Connexion au serveur LDAP réussie
+LDAPTestKO=Connexion au serveur LDAP echouée
+LDAPSetupForVersion3=Serveur LDAP configuré en version 3
+LDAPSetupForVersion2=Serveur LDAP configuré en version 2
 ##### Products #####
 ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)

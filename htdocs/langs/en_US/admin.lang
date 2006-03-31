@@ -25,6 +25,7 @@ OtherOptions=Other options
 OtherSetup=Other setup
 Modules=Modules
 ModulesCommon=Common modules
+ModulesInterfaces=Interfaces modules
 ModulesSpecial=Special modules
 ParameterInDolibarr=Parameter %s
 LanguageParameter=Language parameter %s
@@ -42,6 +43,7 @@ AutoDetectLang=Autodetect (browser language)
 Rights=Permissions
 BoxesDesc=Boxes are screen area that show some informations on some pages. You can choose between showing or not a such box by selecting target page en clicking 'Activate', or by clicking the dustbin to disable it. Only boxes about enabled <a href="modules.php">modules</a> are shown.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module.
+ModulesInterfaceDesc=Interface Dolibarr modules allows you to add features depending on external softwares, systems or services.
 ModulesSpecialDesc=Special modules are very specific or rarely used modules.
 BoxesAvailable=Boxes available
 BoxesActivated=Boxes activated
@@ -61,7 +63,7 @@ ModuleFamilyProducts=Products Management
 ModuleFamilyHr=Human Ressource Management
 ModuleFamilyProjects=Projects/Collaborative work
 ModuleFamilyOther=Other
-ModuleFamilyTechnic=Technical Modules
+ModuleFamilyTechnic=Tools or System Modules
 ModuleFamilyExperimental=Experimental modules
 ModuleFamilyFinancial=Financial Modules (Accountancy/Treasury)
 Module0Name=Users & groups
@@ -392,27 +394,32 @@ AddSubscriptionIntoAccount=Add subscriptions into bank or cash account, of bank 
 AdherentMailRequired=EMail required to create a new member
 ##### LDAP setup ####
 LDAPSetup=LDAP Setup
+LDAPFunctionsNotAvailableOnPHP=LDAP functions are not availbale on your PHP
+LDAPTypeExample=OpenLdap, Egroupware or Active Directory
 LDAPServer=LDAP Server
 LDAPServerPort=LDAP server port
 LDAPServerPortExample=Default port : 389
-TestConnectLdap=Test connection
 #LDAPSuffix=LDAP suffix
-DNAdmin=Administrator' DN
-LDAPPassword=Password
-DNUser=Users' DN
-DNGroup=Groups' DN
-LDAPServerExample=Server adress
-#LDAPSuffixExample=ex: dc=company,dc=com
+DNAdmin=Administrator DN
+LDAPPassword=administrator password
+DNUser=Dolibarr users' DN
+DNGroup=Dolibarr groups' DN
+LDAPServerExample=Server address (ex: localhost, 127.0.0.1, 192.168.0.2)
+#LDAPSuffixExample=Complete DN (ex: dc=company,dc=com)
 DNAdminExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
 LDAPPasswordExample=Admin password
 DNUserExample=Complete DN (ex: ou=users,dc=society,dc=com)
 DNGroupExample=Complete DN (ex: ou=groups,dc=society,dc=com)
 DNContactActive=Contacts' synchronization?
 DNContactActiveYes=Activated synchronization
-DNContactActiveExample=Desactivated synchronization
-DNContact=Contacts' DN
+DNContactActiveExample=Activated/Unactivated synchronization
+DNContact=Dolibarr contacts' DN
 DNContactExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
-TypeExample=OpenLdap, Egroupware or Active Directory
+LDAPTestConnect=Test LDAP connection
+LDAPTestOK=Connect to LDAP server successful
+LDAPTestKO=Connect to LDAP server failed
+LDAPSetupForVersion3=LDAP server configured for version 3
+LDAPSetupForVersion2=LDAP server configured for version 2
 ##### Products #####
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
