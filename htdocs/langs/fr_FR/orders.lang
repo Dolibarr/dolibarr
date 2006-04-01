@@ -22,6 +22,7 @@ SearchOrder=Rechercher une commande
 MenuOrdersToBill=Commandes à facturer
 Sending=Expédition
 Sendings=Expéditions
+ShipProduct=Expédier produit
 VAT=TVA
 Discount=Remise
 CreateOrder=Créer Commande

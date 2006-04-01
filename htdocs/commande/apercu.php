@@ -252,7 +252,7 @@ if ($_GET["id"] > 0) {
 		
 		        // Statut
 		        print '<tr><td>'.$langs->trans("Status").'</td>';
-		        print "<td colspan=\"2\">".$commande->statuts[$commande->statut]."</td>\n";
+		        print "<td colspan=\"2\">".$commande->getLibStatut(4)."</td>\n";
 		        print '</tr>';
 		
 		        // Date

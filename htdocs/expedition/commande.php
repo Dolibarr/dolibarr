@@ -137,7 +137,7 @@ if ($_GET["id"] > 0)
         print '<table class="border" width="100%">';
 
         // Ref
-        print '<tr><td width="15%">'.$langs->trans('Ref').'</td>';
+        print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
         print '<td colspan="2">'.$commande->ref.'</td>';
         print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
         if ($commande->source == 0)
@@ -149,32 +149,33 @@ if ($_GET["id"] > 0)
         }
         print '</td></tr>';
         
-        // Société
-        print '<tr><td>'.$langs->trans('Customer').'</td>';
-        print '<td colspan="3">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
-        print '</tr>';
-        
-        $nbrow=3;
-        
         // Ref commande client
         print '<tr><td>';
         print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-        print $langs->trans('RefCdeClient').'</td><td align="left">';
+        print $langs->trans('RefCustomer').'</td><td align="left">';
         print '</td>';
         print '</tr></table>';
         print '</td><td colspan="2">';
         print $commande->ref_client;
         print '</td>';
+  		$nbrow=3;
         print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
         print nl2br($commande->note);
         print '</td>';
         print '</tr>';
-        
+
+        // Société
+        print '<tr><td>'.$langs->trans('Customer').'</td>';
+        print '<td>';
+        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+        print '</tr>';
+
+		// Statut        
         print '<tr><td>'.$langs->trans('Status').'</td>';
-        print '<td colspan="2">'.$commande->statuts[$commande->statut].'</td>';
+        print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
         print '</tr>';
         
+        // Date
         print '<tr><td>'.$langs->trans('Date').'</td>';
         print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
         print '</tr>';

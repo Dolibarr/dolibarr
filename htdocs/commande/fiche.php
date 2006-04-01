@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2006 Regis Houssin         <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -666,8 +666,9 @@ else
 			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
 			print '</tr>';
 
+			// Statut
 			print '<tr><td>'.$langs->trans('Status').'</td>';
-			print '<td colspan="2">'.$commande->statuts[$commande->statut].'</td>';
+			print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
 			print '</tr>';
 
 			print '<tr><td>'.$langs->trans('Date').'</td>';
@@ -1006,17 +1007,25 @@ else
 			{
 				print '<div class="tabsAction">';
 
-				if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('Send').'</a>';
-				}
-
+				// Valid
 				if ($commande->statut == 0)
 				{
 					if ($user->rights->commande->valider)
 					{
 						print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans('Valid').'</a>';
 					}
+				}
+
+				// Build PDF
+				if ($user->rights->commande->creer)
+				{
+					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
+				}
+
+				// Ship
+				if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
 				}
 
 				if ($commande->statut == 1 || $commande->statut == 2)
@@ -1027,11 +1036,6 @@ else
 					}
 				}
 
-				if ($commande->statut == 0 && $user->rights->commande->supprimer)
-				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-				}
-
 				if ($commande->statut == 1)
 				{
 					$nb_expedition = $commande->nb_expedition();
@@ -1040,12 +1044,12 @@ else
 						print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans('CancelOrder').'</a>';
 					}
 				}
-				  // Build PDF
-					if ($user->rights->commande->creer)
-					{
-						print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
-					}
 
+				if ($commande->statut == 0 && $user->rights->commande->supprimer)
+				{
+					print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+				}
+				
 				print '</div>';
 			}
 			print '<br>';

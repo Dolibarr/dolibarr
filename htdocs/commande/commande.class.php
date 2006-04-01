@@ -1308,7 +1308,7 @@ class Commande
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut);
+		return $this->LibStatut($this->statut,$mode);
 	}
 
 	/**
