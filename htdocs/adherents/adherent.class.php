@@ -43,34 +43,35 @@
 
 class Adherent
 {
-  var $id;
-  var $db;
-  var $prenom;
-  var $nom;
-  var $societe;
-  var $adresse;
-  var $cp;
-  var $ville;
-  var $pays_id;
-  var $pays_code;
-  var $pays;
-  var $morphy;
-  var $email;
-  var $public;
-  var $commentaire;
-  var $statut;
-  var $login;
-  var $pass;
-  var $naiss;
-  var $photo;
-
-  var $typeid;			// Id type adherent
-  var $type;			// Libellé type adherent
-
-  //  var $public;
-  var $array_options;
-
-  var $errorstr;
+	var $id;
+	var $db;
+	var $prenom;
+	var $nom;
+	var $societe;
+	var $adresse;
+	var $cp;
+	var $ville;
+	var $pays_id;
+	var $pays_code;
+	var $pays;
+	var $morphy;
+	var $email;
+	var $public;
+	var $commentaire;
+	var $statut;
+	var $login;
+	var $pass;
+	var $naiss;
+	var $photo;
+	
+	var $typeid;			// Id type adherent
+	var $type;			// Libellé type adherent
+	var $need_subscription;
+	
+	//  var $public;
+	var $array_options;
+	
+	var $errorstr;
 
 /**
 		\brief Adherent
@@ -518,12 +519,13 @@ class Adherent
     {
         global $langs;
         
-        $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
-        $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
-        $sql .= ", d.pays, p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib";
-        $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
-        $sql .= " WHERE d.rowid = ".$rowid." AND d.fk_adherent_type = t.rowid";
+        $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy,";
+        $sql.= " ".$this->db->pdate("d.datefin")." as datefin,";
+        $sql.= " d.pays, p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
+        $sql.= " t.libelle as type, t.cotisation as cotisation";
+        $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
+        $sql.= " WHERE d.rowid = ".$rowid." AND d.fk_adherent_type = t.rowid";
     
         $result=$this->db->query( $sql);
         if ($result)
@@ -533,8 +535,6 @@ class Adherent
                 $obj = $this->db->fetch_object($result);
     
                 $this->id             = $obj->rowid;
-                $this->typeid         = $obj->fk_adherent_type;
-                $this->type           = $obj->type;
                 $this->statut         = $obj->statut;
                 $this->public         = $obj->public;
                 $this->date           = $obj->datedon;
@@ -558,6 +558,10 @@ class Adherent
                 $this->datefin        = $obj->datefin;
                 $this->commentaire    = stripslashes($obj->note);
                 $this->morphy         = $obj->morphy;
+
+                $this->typeid         = $obj->fk_adherent_type;
+                $this->type           = $obj->type;
+                $this->need_subscription = ($obj->cotisation=='yes'?1:0);
             }
         }
         else
@@ -1387,55 +1391,91 @@ class Adherent
     }
 
 	/**
-	*    \brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
-	*    \param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
-	*    \return     string			Libellé
-	*/
+	 *    	\brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string		Libellé
+	 */
     function getLibStatut($mode=0)
     {
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut,$this->need_subscription,$this->datefin,$mode);
     }
 
 	/**
-	 *    \brief      Renvoi le libellé d'un statut donné
- 	 *    \param      statut      	id statut
- 	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
- 	 *    \return     string      	Libellé
+	 *    	\brief      Renvoi le libellé d'un statut donné
+ 	 *    	\param      statut      id statut
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+ 	 *    	\return     string      Libellé
  	 */
-    function LibStatut($statut,$mode=0)
+    function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
     {
         global $langs;
         $langs->load("members");
 		if ($mode == 0)
 		{
 	        if ($statut == -1) return $langs->trans("MemberStatusDraft");
-	        if ($statut == 1)  return $langs->trans("MemberStatusActive");
+	        if ($statut == 1)
+	        {
+	        	if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
+	        	elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
+	        	else                                     return $langs->trans("MemberStatusPayed");
+	        }
 	        if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
 		}
 		if ($mode == 1)
 		{
 	        if ($statut == -1) return $langs->trans("MemberStatusDraft");
-	        if ($statut == 1)  return $langs->trans("MemberStatusActive");
+	        if ($statut == 1)
+	        {
+	        	if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
+	        	elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
+	        	else                                     return $langs->trans("MemberStatusPayedShort");
+	        }
 	        if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
 		}
 		if ($mode == 2)
 		{
 	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-	        if ($statut == 1)  return img_picto($langs->trans('MemberStatusActive'),'statut4').' '.$langs->trans("MemberStatusActive");
+	        if ($statut == 1)
+	        {
+	        	if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
+	        	elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
+	        	else                                     return img_picto($langs->trans('MemberStatusPayed'),'statut4').' '.$langs->trans("MemberStatusPayedShort");
+	        }
 	        if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
 		}
 		if ($mode == 3)
 		{
 	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
-	        if ($statut == 1)  return img_picto($langs->trans('MemberStatusActive'),'statut4');
+	        if ($statut == 1)
+	        {
+	        	if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1');
+	        	elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
+	        	else                                     return img_picto($langs->trans('MemberStatusPayed'),'statut4');
+	        }
 	        if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}
 		if ($mode == 4)
 		{
 	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-	        if ($statut == 1)  return img_picto($langs->trans('MemberStatusActive'),'statut4').' '.$langs->trans("MemberStatusActive");
+	        if ($statut == 1)
+	        {
+	        	if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActive");
+	        	elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLate");
+	        	else                                     return img_picto($langs->trans('MemberStatusPayed'),'statut4').' '.$langs->trans("MemberStatusPayed");
+	        }
 	        if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
 		}
+        if ($mode == 5)
+        {
+	        if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
+	        if ($statut == 1)
+	        {
+	        	if (! $date_end_subscription)            return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'),'statut1');
+	        	elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate").' '.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
+	        	else                                     return $langs->trans("MemberStatusPayed").' '.img_picto($langs->trans('MemberStatusPayed'),'statut4');
+	        }
+	        if ($statut == 0)  return $langs->trans("MemberStatusResiliated").' '.img_picto($langs->trans('MemberStatusResiliated'),'statut5');
+		}		
     }
 
 

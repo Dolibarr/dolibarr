@@ -28,43 +28,45 @@
 
 require("../main.inc.php");
 
-function llxHeader($head = "") {
-  global $user, $conf, $langs;
+function llxHeader($head = "")
+{
+	global $user, $conf, $langs;
 
-  $langs->load("members");
-  
-  top_menu($head);
+	$langs->load("members");
 
-  $menu = new Menu();
+	top_menu($head);
+
+	$menu = new Menu();
 
 
-  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Members"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php",$langs->trans("List"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersValidated"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"));
+	$menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Members"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php",$langs->trans("List"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersValidated"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"));
 
-  $menu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
+	$menu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
 
-  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Exports"));
-  $menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php",$langs->trans("Filehtpasswd"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php",$langs->trans("MembersCards"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php","Etiquettes d'adhérents");
+	$menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Exports"));
+	$menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php",$langs->trans("Filehtpasswd"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php",$langs->trans("MembersCards"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php","Etiquettes d'adhérents");
 
-  $langs->load("compta");
-  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Accountancy"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php",$langs->trans("Subscriptions"));
-  $langs->load("banks");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/",$langs->trans("Banks"));
+	$langs->load("compta");
+	$menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Accountancy"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php",$langs->trans("Subscriptions"));
+	$langs->load("banks");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/",$langs->trans("Banks"));
 
-  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Setup"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/type.php",$langs->trans("MembersTypes"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/options.php",$langs->trans("MembersAttributes"));
+	$menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Setup"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/type.php",$langs->trans("MembersTypes"));
+	$menu->add_submenu(DOL_URL_ROOT."/adherents/options.php",$langs->trans("MembersAttributes"));
 
-  left_menu($menu->liste);
+	left_menu($menu->liste);
 
 }
 

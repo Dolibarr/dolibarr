@@ -29,9 +29,14 @@
 */
 
 require("./pre.inc.php");
-
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
+$langs->load("members");
+
+
+/*
+ * Affiche liste
+ */
 
 llxHeader();
 
@@ -75,8 +80,13 @@ if ( $_POST["action"] == 'search')
     $sql.= " AND (d.prenom LIKE '%".$_POST['search']."%' OR d.nom LIKE '%".$_POST['search']."%')";
   }
 }
-if ($filter == 'uptodate') {
+if ($filter == 'uptodate')
+{
     $sql.=" AND datefin >= sysdate()";
+}
+if ($filter == 'outofdate')
+{
+    $sql.=" AND datefin < sysdate()";
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
@@ -91,7 +101,9 @@ if ($result)
     {
         if ($statut == '-1,1') { $titre=$langs->trans("MembersListQualified"); }
         if ($statut == '-1')   { $titre=$langs->trans("MembersListToValid"); }
-        if ($statut == '1')    { $titre=$langs->trans("MembersListValid"); }
+        if ($statut == '1' && ! $filter)    		{ $titre=$langs->trans("MembersListValid"); }
+        if ($statut == '1' && $filter=='uptodate')  { $titre=$langs->trans("MembersListUpToDate"); }
+        if ($statut == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
         if ($statut == '0')    { $titre=$langs->trans("MembersListResiliated"); }
     }
     elseif ($_POST["action"] == 'search') {
@@ -110,12 +122,12 @@ if ($result)
     $param="&page=$page".(isset($_GET["statut"])?"&statut=$statut":"");
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","t.cotisation",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut",$param,"","",$sortfield);
-    print "<td>".$langs->trans("Action")."</td>\n";
+    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","t.cotisation",$param,"","",$sortfield);
+    print '<td width="60" align="center">'.$langs->trans("Action")."</td>\n";
     print "</tr>\n";
 
     $var=True;
@@ -130,6 +142,7 @@ if ($result)
 
         $adh=new Adherent($db);
 
+        // Nom
         $var=!$var;
         print "<tr $bc[$var]>";
         if ($objp->societe != '')
@@ -140,12 +153,28 @@ if ($result)
         {
             print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
         }
+        
+        // Type
+        print '<td><a href="type.php?rowid='.$objp->type_id.'">'.img_object($langs->trans("ShowType"),"group").' '.$objp->type.'</a></td>';
+        
+        // Moral/Physique
+        print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+
+        // EMail
+        print "<td>$objp->email</td>\n";
+        
+        // Statut
+        print "<td>";
+        print $adh->LibStatut($objp->statut,$objp->cotisation,$objp->datefin,4);
+        print "</td>";
+
+        // Date fin cotisation
         print "<td>";
         if ($objp->cotisation == 'yes')
         {
             if ($objp->datefin)
             {
-                if ($objp->datefin < time() && $objp->statut != 0)
+                if ($objp->datefin < time() && $objp->statut > 0)
                 {
                     print dolibarr_print_date($objp->datefin)." - ".$langs->trans("SubscriptionLate")." ".img_warning()."</td>\n";
                 }
@@ -156,7 +185,7 @@ if ($result)
             }
             else {
                 print $langs->trans("SubscriptionNotReceived");
-                if ($objp->statut != 0) print " ".img_warning();
+                if ($objp->statut > 0) print " ".img_warning();
                 print "</td>\n";
             }
         }
@@ -165,25 +194,19 @@ if ($result)
             print "&nbsp;</td>";
         }
 
-        print "<td>$objp->email</td>\n";
-        print '<td><a href="type.php?rowid='.$objp->type_id.'">'.img_object($langs->trans("ShowType"),"group").' '.$objp->type.'</a></td>';
-        print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+        // Actions
+        print '<td align="center">';
+        print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit&return=liste.php\">".img_edit()."</a>&nbsp;";
+        print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign&return=liste.php\">".img_disable($langs->trans("Resiliate"))."</a>";
+        print "</td>\n";
 
-        // Statut
-        print "<td>";
-        print $adh->LibStatut($objp->statut,4);
-        print "</td>";
-
-        print "<td><a href=\"edit.php?rowid=$objp->rowid&action=edit\">".img_edit()."</a> &nbsp; ";
-        print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign\">".img_disable($langs->trans("Resiliate"))."</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=delete\">".img_delete()."</a></td>\n";
         print "</tr>";
         $i++;
     }
     print "</table><br>\n";
+
     print "<table class=\"noborder\" width=\"100%\">";
-
     print_barre_liste("", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
-
     print "</table><br>\n";
 }
 else

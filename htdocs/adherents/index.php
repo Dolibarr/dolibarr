@@ -27,8 +27,10 @@
         \brief      Page accueil module adherents
 */
 
-
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+
 
 $langs->load("companies");
 $langs->load("members");
@@ -36,6 +38,7 @@ $langs->load("members");
 
 llxHeader();
 
+$staticmember=new Adherent($db);
 
 print_fiche_titre($langs->trans("MembersArea"));
 
@@ -49,7 +52,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td align=right width="80">'.$langs->trans("MembersStatusToValid").'</td>';
-print '<td align=right width="80">'.$langs->trans("MembersStatusValidated").'</td>';
+print '<td align=right width="80">'.$langs->trans("MembersStatusNotPayed").'</td>';
 print '<td align=right width="80">'.$langs->trans("MembersStatusPayed").'</td>';
 print '<td align=right width="80">'.$langs->trans("MembersStatusResiliated").'</td>';
 print "</tr>\n";
@@ -57,44 +60,56 @@ print "</tr>\n";
 $var=True;
 
 
-$AdherentsAll=array();
 $Adherents=array();
 $AdherentsAValider=array();
 $AdherentsResilies=array();
 $Cotisants=array();
 
 # Liste les adherents
-$sql  = "SELECT count(*) as somme , t.rowid, t.libelle, d.statut";
+$sql  = "SELECT count(*) as somme , t.rowid, t.libelle, t.cotisation, d.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
-$sql .= " GROUP BY t.libelle, d.statut";
+$sql .= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($result);
-      $AdherentsAll[$objp->libelle]=$objp->rowid; 
-      if ($objp->statut == -1) { $AdherentsAValider[$objp->libelle]=$objp->somme; }
-      if ($objp->statut == 1)  { $Adherents[$objp->libelle]=$objp->somme; }
-      if ($objp->statut == 0)  { $AdherentsResilies[$objp->libelle]=$objp->somme; }
-      $i++;
-    }
-  $db->free($result);
+	$num = $db->num_rows($result);
+	$i = 0;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
 
+		$adhtype=new AdherentType($db);
+		$adhtype->id=$objp->rowid;
+		$adhtype->cotisation=$objp->cotisation;
+		$adhtype->libelle=$objp->libelle;
+		$AdherentType[$objp->rowid]=$adhtype;
+
+		if ($objp->statut == -1) { $AdherentsAValider[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == 1)  { $Adherents[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == 0)  { $AdherentsResilies[$objp->rowid]=$objp->somme; }
+
+		if ($objp->cotisation != 'yes')
+		{
+			$Cotisants[$objp->rowid]=$Adherents[$objp->rowid]=$objp->somme;
+		}
+		else
+		{
+			$Cotisants[$objp->rowid]=0;	// Calculé plus loin
+		}	
+		$i++;
+	}
+	$db->free($result);
 }
 
 # Liste les cotisants a jour
-$sql  = "SELECT count(*) as somme , t.libelle";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid  AND d.statut = 1 AND d.datefin >= now()";
-$sql .= " GROUP BY t.libelle";
+$sql = "SELECT count(*) as somme , d.fk_adherent_type";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
+$sql.= " WHERE d.statut = 1 AND d.datefin >= now()";
+$sql.= " GROUP BY d.fk_adherent_type";
 
 $result = $db->query($sql);
-
 if ($result) 
 {
   $num = $db->num_rows($result);
@@ -102,7 +117,7 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object($result);
-      $Cotisants[$objp->libelle]=$objp->somme;
+      $Cotisants[$objp->fk_adherent_type]=$objp->somme;
       $i++;
     }
   $db->free();
@@ -113,26 +128,27 @@ $SommeB=0;
 $SommeC=0;
 $SommeD=0;
 
-foreach ($AdherentsAll as $key=>$value){
-  $var=!$var;
-  print "<tr $bc[$var]>";
-  print '<td><a href="type.php?rowid='.$AdherentsAll[$key].'">'.img_object($langs->trans("ShowType"),"group").' '.$key.'</a></td>';
-  print '<td align="right">'.(isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:'').'</td>';
-  print '<td align="right">'.(isset($Adherents[$key])?$Adherents[$key]:'').'</td>';
-  print '<td align="right">'.(isset($Cotisants[$key])?$Cotisants[$key]:'').'</td>';
-  print '<td align="right">'.(isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:'').'</td>';
-  print "</tr>\n";
-  $SommeA+=isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:0;
-  $SommeB+=isset($Adherents[$key])?$Adherents[$key]:0;
-  $SommeC+=isset($Cotisants[$key])?$Cotisants[$key]:0;
-  $SommeD+=isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:0;
+foreach ($AdherentType as $key => $adhtype)
+{
+	$var=!$var;
+	print "<tr $bc[$var]>";
+	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->libelle.'</a></td>';
+	print '<td align="right">'.(isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($Adherents[$key])?$Adherents[$key]-$Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($Cotisants[$key])?$Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,mktime(),3).'</td>';
+	print '<td align="right">'.(isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
+	print "</tr>\n";
+	$SommeA+=isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:0;
+	$SommeB+=isset($Adherents[$key])?$Adherents[$key]-$Cotisants[$key]:0;
+	$SommeC+=isset($Cotisants[$key])?$Cotisants[$key]:0;
+	$SommeD+=isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:0;
 }
 print '<tr class="liste_total">';
 print '<td> <b>'.$langs->trans("Total").'</b> </td>';
-print '<td align="right"><b>'.$SommeA.'</b></td>';
-print '<td align="right"><b>'.$SommeB.'</b></td>';
-print '<td align="right"><b>'.$SommeC.'</b></td>';
-print '<td align="right"><b>'.$SommeD.'</b></td>';
+print '<td align="right"><b>'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</b></td>';
+print '<td align="right"><b>'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</b></td>';
+print '<td align="right"><b>'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,mktime(),3).'</b></td>';
+print '<td align="right"><b>'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</b></td>';
 print '</tr>';
 
 print "</table>\n";
@@ -166,18 +182,19 @@ print "</table></form>";
 
 print '</td><td class="notopnoleftnoright" valign="top">';
 
-
-$sql = "SELECT c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
-$sql.= " WHERE d.rowid = c.fk_adherent";
-if(isset($date_select) && $date_select != ''){
-  $sql .= " AND dateadh LIKE '$date_select%'";
-}
-$result = $db->query($sql);
 $Total=array();
 $Number=array();
 $tot=0;
 $numb=0;
+
+$sql = "SELECT c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
+$sql.= " WHERE d.rowid = c.fk_adherent";
+if(isset($date_select) && $date_select != '')
+{
+	$sql .= " AND dateadh LIKE '$date_select%'";
+}
+$result = $db->query($sql);
 if ($result) 
 {
   $num = $db->num_rows($result);
@@ -203,6 +220,7 @@ print '<td align="right">'.$langs->trans("Average").'</td>';
 print "</tr>\n";
 
 $var=true;
+krsort($Total);
 foreach ($Total as $key=>$value)
 {
     $var=!$var;

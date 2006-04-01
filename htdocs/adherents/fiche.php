@@ -463,11 +463,11 @@ if ($action == 'edit')
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$rowid;
-    $head[$h][1] = $langs->trans("MemberCard");
+    $head[$h][1] = $langs->trans("Card");
     $hselected=$h;
     $h++;
 
-    dolibarr_fiche_head($head, $hselected, $adh->fullname);
+    dolibarr_fiche_head($head, $hselected, $langs->trans("MemberCard"));
 
 
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -480,29 +480,32 @@ if ($action == 'edit')
 	
 	$htmls = new Form($db);
 	
-	
-	print '<tr><td>'.$langs->trans("Type").'</td><td>';
-	$htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
-	print "</td>";
-	
+	// Nom
+	print '<tr><td>'.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
 	print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
-	
-	$morphys["phy"] = $langs->trans("Physical");
-	$morphys["mor"] = $langs->trans("Morale");
-	
-	print "<tr><td>".$langs->trans("Person")."</td><td>";
-	$htmls->select_array("morphy",  $morphys, $adh->morphy);
-	print "</td>";
-	
+
+	// Prenom
+	print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
 	$rowspan=13;
 	print '<td rowspan="'.$rowspan.'" valign="top">';
 	print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$adh->commentaire.'</textarea></td></tr>';
 	
-	print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td></tr>';
+	// Type
+	print '<tr><td>'.$langs->trans("Type").'</td><td>';
+	$htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
+	print "</td></tr>";
 	
-	print '<tr><td>'.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td></tr>';
+	// Physique-Moral	
+	$morphys["phy"] = $langs->trans("Physical");
+	$morphys["mor"] = $langs->trans("Morale");
+	print "<tr><td>".$langs->trans("Person")."</td><td>";
+	$htmls->select_array("morphy",  $morphys, $adh->morphy);
+	print "</td></tr>";
 	
+	// Société
 	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
+
+	// Adresse
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
 	print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.$adh->adresse.'</textarea></td></tr>';
 	print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="32" value="'.$adh->ville.'"></td></tr>';
@@ -546,12 +549,21 @@ if ($action == 'create')
     $adht = new AdherentType($db);
 
     print_titre($langs->trans("NewMember"));
+
     print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="15%">'.$langs->trans("MemberType").'</td><td width="35%">';
+    print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td>';
+    print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
+    $rowspan=12;
+    print '<td valign="top" rowspan="'.$rowspan.'"><textarea name="comment" wrap="soft" cols="60" rows="12"></textarea></td></tr>';
+
+	// Type
+    print '<tr><td width="15%">'.$langs->trans("MemberType").'*</td><td width="35%">';
     $listetype=$adht->liste_array();
     if (sizeof($listetype)) {
         $htmls->select_array("type", $listetype, $typeid);
@@ -560,20 +572,14 @@ if ($action == 'create')
     }
     print "</td>\n";
 
-    print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
 
+	// Moral-Physique
     $morphys["phy"] = "Physique";
     $morphys["mor"] = "Morale";
-
-    print "<tr><td>".$langs->trans("Person")."</td><td>\n";
+    print "<tr><td>".$langs->trans("Person")."*</td><td>\n";
     $htmls->select_array("morphy",  $morphys);
     print "</td>\n";
 
-    $rowspan=12;
-    print '<td valign="top" rowspan="'.$rowspan.'"><textarea name="comment" wrap="soft" cols="60" rows="12"></textarea></td></tr>';
-
-    print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td></tr>';
-    print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="2"></textarea></td></tr>';
@@ -657,11 +663,11 @@ if ($rowid && $action != 'edit')
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$rowid;
-    $head[$h][1] = $langs->trans("MemberCard");
+    $head[$h][1] = $langs->trans("Card");
     $hselected=$h;
     $h++;
 
-    dolibarr_fiche_head($head, $hselected, $adh->fullname);
+    dolibarr_fiche_head($head, $hselected, $langs->trans("MemberCard"));
 
     // Confirmation de la suppression de l'adhérent
     if ($action == 'delete')
@@ -725,25 +731,23 @@ if ($rowid && $action != 'edit')
     print '<table class="border" width="100%">';
     print '<form action="fiche.php" method="post">';
 
-    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur">'.$adh->id.'&nbsp;</td>';
-    print '<td valign="top" width="50%">'.$langs->trans("Comments").'</tr>';
+    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="3">'.$adh->id.'&nbsp;</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td>\n";
+    print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
+    print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
 
-    print '<td rowspan="'.(14+count($adh->array_options)).'" valign="top" width="50%">';
+    print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td>';
+    print '<td rowspan="'.(13+count($adh->array_options)).'" valign="top" width="50%">';
     print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'&nbsp;</td></tr>';
-
-    print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
-
-    print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td></tr>\n";
+    print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'</td></tr>';
 
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'</td></tr>';
-    print '<tr><td>'.$langs->trans("EMail").(ADHERENT_MAIL_REQUIRED&&ADHERENT_MAIL_REQUIRED==1?'*':'').'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
     //  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
@@ -794,7 +798,7 @@ if ($rowid && $action != 'edit')
     }
         
     // Action Glasnost
-    if ($adht->vote == 'yes' && defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1)
+    if ($adht->vote == 'yes' && $conf->global->ADHERENT_USE_GLASNOST)
     {
         define("XMLRPC_DEBUG", 1);
         $isinglasnost=$adh->is_in_glasnost();
@@ -811,7 +815,7 @@ if ($rowid && $action != 'edit')
     }
     
     // Action SPIP
-    if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1)
+    if ($conf->global->ADHERENT_USE_SPIP)
     {
         $isinspip=$adh->is_in_spip();
         if ($isinspip == 1)
