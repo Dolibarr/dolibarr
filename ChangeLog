@@ -1,5 +1,26 @@
+English Dolibarr changelog
 
-Changelog for 2.0
+
+***** Changelog for 2.1 compared to 2.0.1 *****
+
+- Added an export tool to export main dolibarr data.
+- Added product categories management.
+- Graphical enhancements (picto to describe all status).
+- New permissions (can restrict access for a commercial user to elements
+  of its companies only).
+- Lot of fixes after 2.0 release not fixed in 2.0.1
+- Little enhancements to OSCommerce module.
+- Provide PDF generation for orders.
+- Can make one payment for several supplier invoices.
+
+
+***** Changelog for 2.0.1 compared to 2.0 *****
+
+Minor bug fixes
+
+
+
+***** Changelog for 2.0 compared to 1.0 *****
 
 Changelog file size is so important, that it is not included inside Dolibarr
 package. You can find it at dolibarrint.jexiste.fr

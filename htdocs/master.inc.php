@@ -351,6 +351,8 @@ if (! $conf->global->SOCIETE_CODECOMPTA_ADDON) $conf->global->SOCIETE_CODECOMPTA
 if ($conf->global->CODECLIENT_ADDON) $conf->global->SOCIETE_CODECLIENT_ADDON=$conf->global->CODECLIENT_ADDON;
 if ($conf->global->CODEFOURNISSEUR_ADDON) $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON=$conf->global->CODEFOURNISSEUR_ADDON;
 
+// securite
+if (! $conf->global->USER_PASSWORD_GENERATED) $conf->global->USER_PASSWORD_GENERATED='standard';
 
 // conf->use_preview_tabs
 $conf->use_preview_tabs=1;

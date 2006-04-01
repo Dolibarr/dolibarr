@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,11 @@ $langs->load("users");
 
 $form = new Form($db);
 
+
+/*
+ * Actions
+ */
+ 
 if ($_POST["action"] == 'update')
 {
   $edituser = new User($db, $_GET["id"]);
@@ -44,16 +49,13 @@ if ($_POST["action"] == 'update')
   $edituser->update_clicktodial();
 
   Header("Location: clicktodial.php?id=".$_GET["id"]);
+	exit;
 }
 
-llxHeader("","Addon Utilisateur");
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Nouvel utilisateur                                                         */
-/*                                                                            */
-/* ************************************************************************** */
+
+llxHeader("","ClickToDial");
 
 
 if ($_GET["id"])
@@ -101,8 +103,8 @@ if ($_GET["id"])
     dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
 
     /*
-    * Fiche en mode visu
-    */
+     * Fiche en mode visu
+     */
 
     print '<table class="border" width="100%">';
 
@@ -124,7 +126,7 @@ if ($_GET["id"])
     if ($_GET["action"] == 'edit')
     {
         print '<form action="clicktodial.php?id='.$_GET["id"].'" method="post">';
-        print '<input type="hidden" name="action" value="update"></td>';
+        print '<input type="hidden" name="action" value="update">';
         print '<table class="border" width="100%">';
         print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login").'</td>';
         print '<td width="25%" class="valeur">';
@@ -140,10 +142,11 @@ if ($_GET["id"])
         print '<input name="poste" value="'.$fuser->clicktodial_poste.'"></td>';
         print '<td width="25%" valign="top">&nbsp;</td>';
         print '<td width="25%" valign="top">&nbsp;</td>';
-
         print "</tr>\n";
 
-        print '</table><input type="submit"</form>';
+		print '<tr><td colspan="4" align="center"><input class="button" type="submit"></td></tr>';
+		
+        print '</table></form>';
     }
     else
     {
@@ -164,7 +167,6 @@ if ($_GET["id"])
         print "</tr></table>\n";
     }
 
-    print "<br>\n";
     print "</div>\n";
 
     /*

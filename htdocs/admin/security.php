@@ -37,9 +37,9 @@ if (!$user->admin) accessforbidden();
 /*
  * Actions
  */
-if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
+if ($_GET["action"] == 'setgeneraterule')
 {
-	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''))
+	if (! dolibarr_set_const($db, 'USER_PASSWORD_GENERATED',$_GET["value"]))
 	{
 		dolibarr_print_error($db);
 	}
@@ -73,16 +73,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
 
 
 $var=false;
-
 $form = new Form($db);
-$typeconst=array('yesno','texte','chaine');
-
-print '<table class="noborder" width=\"100%\">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-//print '<td>'.$langs->trans("Example").'</td>';
-print "</tr>\n";
 
 
 // Choix du gestionnaire du générateur de mot de passe
@@ -91,33 +82,65 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
-print '<tr '.$bc[$var].'><td>'.$langs->trans("RuleForGeneratedPasswords").'</td>';
-
-print '<td>';
-
+// Charge tableau des modules generation
 $dir = "../includes/modules/security/generate";
+clearstatcache();
 $handle=opendir($dir);
-$arrayhandler=array('0'=>$langs->trans("DoNotSuggest"));
 $i=1;
 while (($file = readdir($handle))!==false)
 {
-    if (eregi('modGeneratePass([a-z]+).class.php',$file,$reg))
+    if (eregi('(modGeneratePass[a-z]+).class.php',$file,$reg))
     {
-        $arrayhandler[strtolower($reg[1])]=$reg[1];
+        // Chargement de la classe de numérotation
+        $classname = $reg[1];
+        require_once($dir.'/'.$file);
+
+        $obj = new $classname($db,$conf,$langs,$user);
+        $arrayhandler[$obj->id]=$obj;
 		$i++;
     }
 }
-$form->select_array('constvalue',$arrayhandler,$conf->global->USER_PASSWORD_GENERATED);
-print "</td>";
-//print "<td>".."</td>";
-print "</tr>\n";
+closedir($handle);
 
-print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans("RuleForGeneratedPasswords").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
+
+foreach ($arrayhandler as $key => $module)
+{
+        $var = !$var;
+        print '<tr '.$bc[$var].'><td width="100">';
+        print ucfirst($key);
+        print "</td><td>\n";
+        print $arrayhandler[$key]->getDescription();
+        print '</td>';
+
+        // Affiche example
+        print '<td width="60">'.$module->getExample().'</td>';
+
+        print '<td width="50" align="center">';
+        if ($conf->global->USER_PASSWORD_GENERATED == $key)
+        {
+            $title='';
+            print img_tick($title);
+        }
+        else
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
+        }
+        print "</td></tr>\n";
+}
+
+print '</table>';
+
+
+//print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
 print '</form>';
 
-
-print "</table>\n";
 
 print '</div>';
 

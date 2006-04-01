@@ -21,12 +21,12 @@
  */
 
 /**
-        \file       htdocs/includes/modules/security/generate/modGeneratePassDefault.class.php
+        \file       htdocs/includes/modules/security/generate/modGeneratePassStandard.class.php
         \ingroup    core
         \brief      Fichier de gestion de la generation de mot de passe selon règle standard
 */
 
-class modGeneratePassDefault
+class modGeneratePassStandard
 {
 	var $id;
 	var $length;
@@ -44,9 +44,9 @@ class modGeneratePassDefault
 	 *		\param		lang		Handler de langue
 	 *		\param		user		Handler du user connecté
 	 */
-	function modGeneratePassDefault($db, $conf, $langs, $user)
+	function modGeneratePassStandard($db, $conf, $langs, $user)
 	{
-		$this->id = "default";
+		$this->id = "standard";
 		$this->length = 8;
 
 		$this->db=$db;

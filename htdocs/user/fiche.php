@@ -586,15 +586,19 @@ else
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
 
-            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login)
-            {
-                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
-            }
-
-            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login)
-            {
-                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
-            }
+	       	// Si on a un gestionnaire de generation de mot de passe actif
+			if ($conf->global->USER_PASSWORD_GENERATED != 'none')
+			{
+	            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login)
+	            {
+	                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
+	            }
+			
+	            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login)
+	            {
+	                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
+	            }
+			}
 
             if ($user->id <> $_GET["id"] && $candisableperms && $fuser->login)
             {
