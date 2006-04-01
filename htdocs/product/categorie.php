@@ -192,20 +192,29 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-		print '</table><br/>';
+		print '</table>';
+
+		print '</div>';
+		
+		
+	    /*
+	     * Barre d'actions
+	     *
+	     */
+	    print '<div class="tabsAction">';
+	    if ($user->rights->categorie->creer)
+	    {
+    	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$product->id.'">'.$langs->trans("NewCat").'</a>';
+	    }
+		print '</div>';
+
 
 		// Formulaire ajout dans une categorie
 		print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
-		print '<table class="border" width="100%">';
+		print '<table class="noborder" width="100%">';
 		print '<tr><td>';
-		print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'">'. $html->select_all_categories($categorie->id_mere);
+		print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"> '. $html->select_all_categories($categorie->id_mere);
 		print '</td>';
-		
-    if ($user->rights->categorie->creer)
-    {
-        print '<td><a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$product->id.'">'.$langs->trans("NewCat").'</a></td>';
-    }
-    
 		print '</tr>';
 		print '</table>';
 		print '</form>';
