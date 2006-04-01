@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -191,6 +191,7 @@ if ($user->rights->societe->contact->creer)
  */
 
 llxHeader();
+
 $form = new Form($db);
 
 if ($socid)
@@ -434,7 +435,7 @@ if ($user->rights->societe->contact->creer)
   }
 }
 
-if ($_GET["id"])
+if ($_GET["id"] && $_GET["action"] != 'edit')
 {
     /*
      * Fiche en mode visualisation
