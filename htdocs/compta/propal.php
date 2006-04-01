@@ -29,6 +29,10 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
 $user->getrights('facture');
 $user->getrights('propale');
@@ -37,10 +41,18 @@ if (!$user->rights->propale->lire)
 
 $langs->load('compta');
 
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="nom";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 // Sécurité accés client
 $socidp='';
@@ -90,6 +102,7 @@ if ( $action == 'delete' )
   $propalid = 0;
   $brouillon = 1;
 }
+
 
 
 llxHeader();
