@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -69,17 +68,16 @@ class box_services_vendus extends ModeleBoxes {
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-            {
-              $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-              $sql .= ", ".MAIN_DB_PREFIX."categorie as ca";
-            }
+	        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+	        {
+	           $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	           $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as ca ON cp.fk_categorie = ca.rowid";
+	        }
             $sql .= " WHERE s.idp = c.fk_soc AND c.rowid = cd.fk_contrat AND cd.fk_product = p.rowid";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($conf->categorie->enabled && !$user->rights->categorie->voir)
             {
-              $sql .= " AND cp.fk_product = p.rowid";
-              $sql .= " AND cp.fk_categorie = ca.rowid AND ca.visible = 1";
+				$sql.= ' AND IFNULL(ca.visible,1)=1';
             }
             if($user->societe_id)
             {

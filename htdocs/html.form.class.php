@@ -613,20 +613,20 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
         if ($conf->categorie->enabled && !$user->rights->categorie->voir)
         {
-           $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-           $sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+           $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+           $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
         }
         $sql.= " WHERE p.envente = 1";
         if ($conf->categorie->enabled && !$user->rights->categorie->voir)
         {
-           $sql .= " AND cp.fk_product = p.rowid";
-           $sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+        	$sql.= ' AND IFNULL(c.visible,1)=1';
         }
         if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
-    
+
         $result=$this->db->query($sql);
+        if (! $result) dolibarr_print_error($this->db);
         
         // Multilang : on construit une liste des traductions des produits listés
         $sqld = "SELECT d.fk_product, d.label";
