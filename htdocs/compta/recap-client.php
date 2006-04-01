@@ -281,6 +281,7 @@ if ($socid > 0)
                         print '&nbsp; &nbsp; &nbsp; '; // Décalage
                         print '<a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
                         print "<td>&nbsp;</td>\n";
+                        print "<td>&nbsp;</td>\n";
                         print '<td align="right">'.price($objp->amount).'</td>';
                         $solde = $solde - $objp->amount;
                         print '<td align="right">'.price($solde)."</td>\n";
