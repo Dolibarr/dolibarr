@@ -13,6 +13,8 @@ create table llx_commande_model_pdf
   description text
 )type=innodb;
 
+insert into llx_commande_model_pdf(nom) values('azur');
+
 
 alter table llx_commande add column note_public text after note;
 
