@@ -143,13 +143,13 @@ if ($step == 1 || ! $datatoexport)
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
-    $head[$h][1] = $langs->trans("Step1");
+    $head[$h][1] = $langs->trans("Step")." 1";
     $hselected=$h;
     $h++;
 
     /*
     $head[$h][0] = '';
-    $head[$h][1] = $langs->trans("Step2");
+    $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
     */
     
@@ -203,11 +203,11 @@ if ($step == 2 && $datatoexport)
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
-    $head[$h][1] = $langs->trans("Step1");
+    $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step2");
+    $head[$h][1] = $langs->trans("Step")." 2";
     $hselected=$h;
     $h++;
     
@@ -309,15 +309,15 @@ if ($step == 3 && $datatoexport)
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
-    $head[$h][1] = $langs->trans("Step1");
+    $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step2");
+    $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&amp;datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step3");
+    $head[$h][1] = $langs->trans("Step")." 3";
     $hselected=$h;
     $h++;
     
@@ -418,19 +418,19 @@ if ($step == 4 && $datatoexport)
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
-    $head[$h][1] = $langs->trans("Step1");
+    $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step2");
+    $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&amp;datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step3");
+    $head[$h][1] = $langs->trans("Step")." 3";
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=4&amp;datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step4");
+    $head[$h][1] = $langs->trans("Step")." 4";
     $hselected=$h;
     $h++;
     
