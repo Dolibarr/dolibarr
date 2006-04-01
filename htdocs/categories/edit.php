@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +17,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/**
+        \file       htdocs/categories/edit.php
+        \ingroup    categories
+        \brief      Page d'edition de categorie produit
+        \version    $Revision$
+*/
+
 require "./pre.inc.php";
+
 $user->getrights();
 
 if (!$user->rights->categorie->lire)
   accessforbidden();
-  
+
+
+/*
+ * Affichage fiche
+ */
+
 llxHeader("","",$langs->trans("Categories"));
 
 print_titre($langs->trans("ModifCat"));
@@ -37,7 +51,6 @@ $html = new Form($db);
 // Action mise à jour d'une catégorie
 if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 {
-
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
 	$categorie->visible        = $_POST["visible"];
@@ -52,7 +65,7 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 		$_GET["action"] = 'create';
 		$categorie->error = "Le libellé ou la description n'a pas été renseigné";
 	}
-	if ($categorie->error =="")
+	if (! $categorie->error)
 	{
 		if ($categorie->update() > 0)
 		{
@@ -61,13 +74,14 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 		}
 	}
 }
-if($categorie->error != "")
+if ($categorie->error)
 {
-			print '<div class="error">';
-			print $categorie->error;
-			print '</div>';
+	print '<div class="error">';
+	print $categorie->error;
+	print '</div>';
 }
 print '<tr><td valign="top" width="30%">';
+
 ?>
 <form method="post" action="<?php print $_SERVER['REQUEST_URI']; ?>">
 <input type="hidden" name="action" value="update">
@@ -99,7 +113,7 @@ print '<tr><td valign="top" width="30%">';
 		
 	
 	<tr>
-		<td colspan="2" align="center"><input type='submit' value='<?php print $langs->trans ("Modify"); ?>'></td>
+		<td colspan="2" align="center"><input type="submit" class="button" value='<?php print $langs->trans ("Modify"); ?>'></td>
 	</tr>
 </table>
 </form>
