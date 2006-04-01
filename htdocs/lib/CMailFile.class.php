@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,6 +159,8 @@ class CMailFile
     */
     function sendfile()
     {
+        global $conf;
+        
         $headers = $this->smtp_headers . $this->mime_headers;
         $message=$this->text_body . $this->text_encoded;
 
@@ -176,17 +178,20 @@ class CMailFile
 
         $errorlevel=error_reporting();
         //error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
-        if ($this->errors_to)
+        if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
         {
-            dolibarr_syslog("CMailFile::sendfile with errorsto : ".$this->errors_to);
-            $res = mail($this->addr_to,$this->subject,stripslashes($message),$headers,"-f".$this->errors_to);
-        }
-        else
-        {
-            dolibarr_syslog("CMailFile::sendfile");
-            $res = mail($this->addr_to,$this->subject,stripslashes($message),$headers);
-        }
-        //if (! $res) $this->error= 
+	        if ($this->errors_to)
+	        {
+	            dolibarr_syslog("CMailFile::sendfile with errorsto : ".$this->errors_to);
+	            $res = mail($this->addr_to,$this->subject,stripslashes($message),$headers,"-f".$this->errors_to);
+	        }
+	        else
+	        {
+	            dolibarr_syslog("CMailFile::sendfile");
+	            $res = mail($this->addr_to,$this->subject,stripslashes($message),$headers);
+	        }
+	        //if (! $res) $this->error= 
+		}
         error_reporting($errorlevel);              // Réactive niveau erreur origine
 
         //$this->write_to_file();
