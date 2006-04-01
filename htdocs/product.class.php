@@ -1562,9 +1562,9 @@ function get_each_prod()
 	}
 
 	/**
-	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court
-	 *    \return     string        Libelle
+	 *    	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string		Libelle
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -1572,10 +1572,10 @@ function get_each_prod()
 	}
 
 	/**
-	 *    \brief      Renvoi le libellé d'un statut donne
-	 *    \param      status        Statut
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court
-	 *    \return     string        Libellé du statut
+	 *    	\brief      Renvoi le libellé d'un statut donne
+	 *    	\param      status      Statut
+	 *		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string      Libellé du statut
 	 */
 	function LibStatut($status,$mode=0)
 	{
@@ -1595,6 +1595,11 @@ function get_each_prod()
 		{
 			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5').' '.$langs->trans('ProductStatusNotOnSell');
 			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4').' '.$langs->trans('ProductStatusOnSell');
+		}
+		if ($mode == 5)
+		{
+			if ($status == 0) return $langs->trans('ProductStatusNotOnSell').' '.img_picto($langs->trans('ProductStatusNotOnSell'),'statut5');
+			if ($status == 1) return $langs->trans('ProductStatusOnSell').' '.img_picto($langs->trans('ProductStatusOnSell'),'statut4');
 		}
 		return $langs->trans('Unknown');
 	}

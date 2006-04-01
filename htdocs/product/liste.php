@@ -146,6 +146,7 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
         Header("Location: fiche.php?id=$objp->rowid");
+        exit;
     }
 
     if (isset($_GET["envente"]) || isset($_POST["envente"]))
@@ -252,7 +253,7 @@ if ($resql)
 		}
         
         $var=!$var;
-        print "<tr $bc[$var]><td>";
+        print '<tr '.$bc[$var].'><td nowrap="nowrap">';
         print "<a href=\"fiche.php?id=$objp->rowid\">";
         if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
         else print img_object($langs->trans("ShowProduct"),"product");
@@ -265,7 +266,7 @@ if ($resql)
             print '<td align="center">'.$objp->duration.'</td>';
         }
         print '<td align="right">'.price($objp->price).'</td>';
-        print '<td align="left" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,2).'</td>';
+        print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
         print "</tr>\n";
         $i++;
     }
