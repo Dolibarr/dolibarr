@@ -1,5 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software. you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,6 +26,8 @@
 -- ;
 delete from llx_bank_account;
 delete from llx_chargesociales;
+delete from llx_contratdet;
+delete from llx_contrat;
 delete from llx_fichinter;
 delete from llx_actioncomm;
 delete from llx_propal;
@@ -35,10 +38,12 @@ delete from llx_facturedet;
 delete from llx_facture_tva_sum;
 delete from llx_facture;
 delete from llx_compta_account;
-delete from llx_product_fournisseur_price;
-delete from llx_product;
+delete from llx_facture_fourn_det;
 delete from llx_facture_fourn;
 delete from llx_socpeople;
+delete from llx_commande_fournisseur;
+delete from llx_commande;
+delete from llx_societe_remise_except;
 delete from llx_societe;
 delete from llx_boxes;
 delete from llx_user_rights;
@@ -48,7 +53,9 @@ delete from llx_energie_compteur;
 delete from llx_energie_compteur_releve;
 delete from llx_energie_compteur_groupe;
 delete from llx_energie_groupe;
-
+delete from llx_categorie_product;
+delete from llx_product;
+delete from llx_product_fournisseur_price;
 
 DELETE FROM llx_const WHERE name = 'MAIN_NOT_INSTALLED';
 
@@ -117,14 +124,14 @@ values ('Travail Temporaire Boharssais',now(),'29820','Bohars','01 40 15 03 18',
 --
 -- Utilisateurs
 --
-replace into llx_user (name,firstname,code,login,pass,webcal_login,datec,admin)
-values ('demo','demo','DEMO','demo','demo','demo',sysdate(),0);
+replace into llx_user (rowid, name,firstname,code,login,pass,webcal_login,datec,admin)
+values (1,'demo','demo','DEMO','demo','demo','demo',sysdate(),0);
 
-replace into llx_user (name,firstname,code,login,pass,webcal_login,datec)
-values ('demo1','demo1','DM1','demo1','demo','demo1',sysdate());
+replace into llx_user (rowid,name,firstname,code,login,pass,webcal_login,datec)
+values (2,'demo1','demo1','DM1','demo1','demo','demo1',sysdate());
 
-replace into llx_user (name,firstname,code,login,pass,webcal_login,datec)
-values ('demo2','demo2','DM2','demo2','demo','demo2',sysdate());
+replace into llx_user (rowid,name,firstname,code,login,pass,webcal_login,datec)
+values (3,'demo2','demo2','DM2','demo2','demo','demo2',sysdate());
 
 --
 -- Facture fournisseurs
@@ -471,9 +478,6 @@ insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Saule','22800','Quintin','01 55 55 03 18','01 55 55 55 55',1,'ME');
 
 insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values ('Poirier','22940','Plaintel','01 55 55 03 18','01 55 55 55 55',1,'CEG');
-
-insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Tek','22300','Rospez','01 55 55 03 18','01 55 55 55 55',1,'LMT');
 --
 --
@@ -625,6 +629,3 @@ INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES
 INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-11',545);
 INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-06',510);
 INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-01',480);
-
-
-
