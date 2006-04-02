@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/compta/bank/virement.php
-   \ingroup    banque
-   \brief      Page de saisie d'un virement
-   \version    $Revision$
+		\file       htdocs/compta/bank/virement.php
+		\ingroup    banque
+		\brief      Page de saisie d'un virement
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -36,52 +35,67 @@ $user->getrights('banque');
 if (!$user->rights->banque->modifier)
   accessforbidden();
 
-llxHeader();
-
-$html=new Form($db);
-
 
 /*
  * Action ajout d'un virement
  */
 if ($_POST["action"] == 'add')
 {
-  $mesg='';
-  $dateo = $_POST["reyear"]."-".$_POST["remonth"]."-".$_POST["reday"];
-  $label = $_POST["label"];
-  $amount= $_POST["amount"];
-  
-  if ($label && $amount) {
+	$mesg='';
+	$dateo = $_POST["reyear"]."-".$_POST["remonth"]."-".$_POST["reday"];
+	$label = $_POST["label"];
+	$amount= $_POST["amount"];
 
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-      $sql .= " VALUES (now(), '$dateo', '$dateo', '$label', (0 - $amount),$user->id, ".$_POST["account_from"].", 'VIR')";
-    
-      $result = $db->query($sql);
-      if (!$result)
-        {
-          dolibarr_print_error($db);
-        }
-    
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-      $sql .= " VALUES (now(), '$dateo', '$dateo', '$label', $amount,$user->id, ".$_POST["account_to"].", 'VIR')";
-    
-      $result = $db->query($sql);
-      if ($result)
-        {
-            $accountfrom=new Account($db);
-            $accountfrom->fetch($_POST["account_from"]);
-            $accountto=new Account($db);
-            $accountto->fetch($_POST["account_to"]);
+	if ($label && $amount)
+	{
+		$db->begin();
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
+		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', (0 - $amount),$user->id, ".$_POST["account_from"].", 'VIR')";
 
-            $mesg.="<div class=\"ok\"><b>Le virement depuis «&nbsp;<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>&nbsp;» vers «&nbsp;<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>&nbsp;» de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a été créé.</b></div>";
-        }
-      else {
-          dolibarr_print_error($db);
-        } 
-  } else {
-      $mesg.="<div class=\"error\"><b>Un libellé de virement et un montant non nul sont obligatoires.</b></div>";
-  }
+		$result = $db->query($sql);
+		if (!$result)
+		{
+			$db->rollback();
+			dolibarr_print_error($db);
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
+		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', $amount,$user->id, ".$_POST["account_to"].", 'VIR')";
+
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$accountfrom=new Account($db);
+			$accountfrom->fetch($_POST["account_from"]);
+			$accountto=new Account($db);
+			$accountto->fetch($_POST["account_to"]);
+
+			$mesg.="<div class=\"ok\">Le virement depuis «&nbsp;<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>&nbsp;» vers «&nbsp;<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>&nbsp;» de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a été créé.</div>";
+			$db->commit();
+		}
+		else
+		{
+			$mesg.="<div class=\"error\">".$db->lasterror()."</div>";
+			$db->rollback();
+		}
+	}
+	else
+	{
+		$mesg.="<div class=\"error\"><b>Un libellé de virement et un montant non nul sont obligatoires.</b></div>";
+	}
 }
+
+
+
+/*
+ * Affichage
+ */
+ 
+llxHeader();
+
+$html=new Form($db);
+
 
 print_titre("Virement inter-compte");
 print '<br>';
@@ -105,7 +119,7 @@ $var=false;
 print '<tr '.$bc[$var].'><td>';
 print "<select class=\"flat\" name=\"account_from\">";
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
-$sql .= " WHERE clos = 0";
+$sql.= " WHERE clos = 0";
 $resql = $db->query($sql);
 if ($resql)
 {

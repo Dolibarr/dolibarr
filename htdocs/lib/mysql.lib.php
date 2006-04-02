@@ -48,8 +48,10 @@ class DoliDb
     var $database_selected;     // 1 si base sélectionné, 0 sinon
     var $database_name;			// Nom base sélectionnée
     var $transaction_opened;	// 1 si une transaction est en cours, 0 sinon
-    var $lastquery;
-	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
+    var $lastquery;				// Derniere requete exécutée
+	var $lastqueryerror;		// Derniere requete exécutée avec echec
+	var $lasterror;				// Message erreur mysql
+	var $lasterrno;				// Message erreur mysql
 
     var $ok;
     var $error;
@@ -456,7 +458,12 @@ class DoliDb
         if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
         {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
-			if (! $ret) $this->lastqueryerror = $query;
+			if (! $ret) 
+			{
+				$this->lastqueryerror = $query;
+            	$this->lasterror = $this->error();
+            	$this->lasterrno = $this->errno();
+            }
             $this->lastquery=$query;
             $this->results = $ret;
         }
@@ -660,12 +667,30 @@ class DoliDb
     }
 
     /**
-        \brief      Renvoie la derniere requete en erreur()
-        \return	    lastqueryerror
+        \brief      Renvoie la derniere requete en erreur
+        \return	    string	lastqueryerror
     */
 	function lastqueryerror()
 	{
 		return $this->lastqueryerror;
+	}
+
+    /**
+        \brief      Renvoie le libelle derniere erreur
+        \return	    string	lasterror
+    */
+	function lasterror()
+	{
+		return $this->lasterror;
+	}
+
+    /**
+        \brief      Renvoie le code derniere erreur
+        \return	    string	lasterrno
+    */
+	function lasterrno()
+	{
+		return $this->lasterrno;
 	}
 
     /**
@@ -691,7 +716,6 @@ class DoliDb
         \brief     Renvoie le texte de l'erreur mysql de l'operation precedente.
         \return    error_text
     */
-
     function error()
     {
         if (! $this->connected) {
