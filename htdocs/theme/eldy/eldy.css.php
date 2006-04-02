@@ -877,6 +877,7 @@ table.dp {
     border-bottom: solid 1px #222222;
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
+/* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
 	font-weight:bold;
 	background-color:#b3c5cc;
@@ -884,6 +885,7 @@ table.dp {
 	font-size:11px;
 	cursor:auto;
 }
+/* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
 	background-color:#617389;color:#FFFFFF; font-weight:bold; 
@@ -900,6 +902,8 @@ table.dp {
 }
 .dpToday{font-weight:bold; color:black; background-color:#DDDDDD;}
 .dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
+
+/* Jour courant */
 .dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
 
 .tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
@@ -909,7 +913,8 @@ table.dp {
 .tpMinute {margin-top:5px;}
 .tpMinute td:Hover {background-color:black; color:white; }
 .tpMinute td {background-color:#D9DBE1; text-align:center; cursor:pointer;}
-	
+
+/* Bouton X fermer */	
 .dpInvisibleButtons
 {
 border-style:none;
