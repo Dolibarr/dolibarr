@@ -841,35 +841,63 @@ class Societe
       }
   }
 
-  /**
-   *    \brief      Définit la société comme un client
-   *    \param      remise      montant de la remise
-   *    \param      user        utilisateur qui place la remise
-   *
-   */
-  function set_remise_except($remise, $user)
-  {
-    if ($this->id)
-      {
-	$remise = price2num($remise);
+	/**
+	 *    	\brief      Ajoute un avoir pour la société
+	 *    	\param      remise      Montant de la remise
+	 *    	\param      user        Utilisateur qui accorde la remise
+	 *    	\param      desc		Motif de l'avoir
+	 *		\return		int			<0 si ko, id de l'avoir si ok
+	 */
+	function set_remise_except($remise, $user, $desc)
+	{
+		if ($this->id)
+		{
+			$remise = price2num($remise);
+	
+			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
+			$sql .= " (datec, fk_soc, amount_ht, fk_user, description)";
+			$sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.",'".addslashes($desc)."')";
+	
+			if (! $this->db->query($sql) )
+			{
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+			else
+			{
+				return $this->db->last_insert_id(MAIN_DB_PREFIX."societe_remise_except");
+			}
+		}
+		else return 0;
+	}
 
-	$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_remise_except ";
-	$sql .= " WHERE fk_soc = " . $this->id ." AND fk_facture IS NULL;";
+	/**
+	 *    	\brief      Supprime un avoir (à condition que non affecté à une facture)
+	 *    	\param      id			Id de l'avoir à supprimer
+	 *		\return		int			<0 si ko, id de l'avoir si ok
+	 */
+	function del_remise_except($id)
+	{
+		if ($this->id)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
+			$sql.= " WHERE rowid = ".$id." AND fk_facture IS NULL";
 
-	$this->db->query($sql);
+			if (! $this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+			else
+			{
+				return 1;
+			}
+		}
+		else return 0;
+	}
 
-	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
-	$sql .= " ( datec, fk_soc, amount_ht, fk_user )";
-	$sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
 
-	if (! $this->db->query($sql) )
-	  {
-	    dolibarr_print_error($this->db);
-	  }
-
-      }
-  }
-function set_price_level($price_level, $user)
+	function set_price_level($price_level, $user)
   {
     if ($this->id)
       {
