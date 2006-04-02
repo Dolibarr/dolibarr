@@ -367,17 +367,10 @@ if ($socidp > 0)
     print '</td></tr></table>';
     print '</td>';
     print '<td colspan="3">';
-    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-    $sql .= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql .= " AND rc.fk_user = ".$user->id." AND fk_facture IS NULL";
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $obj = $db->fetch_object($resql);
-        if ($obj->amount_ht) print $obj->amount_ht.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
+		$amount_discount=$objsoc->getcurrentDiscount();
+		if ($amount_discount < 0) dolibarr_print_error($db,$societe->error);
+        if ($amount_discount > 0) print $amount_discount.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
         else print $langs->trans("None");
-    }
     print '</td>';
     print '</tr>';
 

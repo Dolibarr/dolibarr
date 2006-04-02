@@ -230,8 +230,8 @@ if ($_socid > 0)
         print_titre($langs->trans("Ristournes restant dues"));
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
-        print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
         print '<td>'.$langs->trans("ReasonDiscount").'</td>';
+        print '<td width="120" align="right">'.$langs->trans("Amount").'</td>';
         print '<td align="center" width="100">'.$langs->trans("DiscountOfferedBy").'</td>';
         print '<td width="20">&nbsp;</td>';
         print '</tr>';
@@ -245,8 +245,8 @@ if ($_socid > 0)
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dolibarr_print_date($obj->dc).'</td>';
-            print '<td align="right">'.price($obj->amount_ht).'</td>';
             print '<td>'.$obj->description.'</td>';
+            print '<td align="right">'.price($obj->amount_ht).'</td>';
             print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</td>';
 			if ($obj->user_id == $user->id) print '<td><a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</td>';
             else print '<td>&nbsp;</td>';
@@ -283,8 +283,8 @@ if ($_socid > 0)
         print_titre($langs->trans("Ristournes appliquées"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
-        print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
         print '<td>'.$langs->trans("ReasonDiscount").'</td>';
+        print '<td width="120" align="right">'.$langs->trans("Amount").'</td>';
         print '<td align="center">'.$langs->trans("Bill").'</td>';
         print '<td align="center" width="100">'.$langs->trans("Author").'</td>';
         print '<td width="20">&nbsp;</td>';
@@ -299,8 +299,8 @@ if ($_socid > 0)
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dolibarr_print_date($obj->dc).'</td>';
-            print '<td align="right">'.price($obj->amount_ht).'</td>';
             print '<td>'.$obj->description.'</td>';
+            print '<td align="right">'.price($obj->amount_ht).'</td>';
             print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
             print '<td align="center">'.$obj->code.'</td>';
             print '<td>&nbsp;</td>';
