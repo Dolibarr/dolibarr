@@ -438,21 +438,21 @@ values (1, 'FI-LP-1','2001-12-05','2001-12-05','2001-12-05',1,1,1,4,'Mise à jour
 --
 
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
-values ('2002-04-06',1,1,1,1,1);
+values ('2002-04-06',1,1,1,1,10);
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
-values ('2002-04-05',2,1,1,1,1);
+values ('2002-04-05',2,1,1,1,12);
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
-values ('2002-04-05',1,1,1,2,1);
+values ('2002-04-05',1,1,1,2,10);
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
-values ('2002-04-02',3,1,1,1,1);
+values ('2002-04-02',3,1,1,1,13);
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
-values ('2002-04-02',3,1,1,1,1);
+values ('2002-04-02',3,1,1,1,13);
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
-values ('2002-03-05',3,1,1,1,1);
+values ('2002-03-05',3,1,1,1,13);
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
-values ('2002-03-04',1,1,1,1,1);
+values ('2002-03-04',1,1,1,1,11);
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
-values ('2001-03-05',1,1,1,1,1);
+values ('2001-03-05',1,1,1,1,11);
 --
 --
 --

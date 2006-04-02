@@ -34,6 +34,7 @@ create table llx_facturedet
   price           real,              -- prix final
   date_start      datetime,          -- date debut si service
   date_end        datetime,          -- date fin si service
+  info_bits		  integer DEFAULT 0,
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
   fk_export_compta    integer DEFAULT 0 NOT NULL,
   rang                integer DEFAULT 0
