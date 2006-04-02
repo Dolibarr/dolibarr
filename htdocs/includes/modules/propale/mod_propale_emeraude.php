@@ -48,7 +48,7 @@ class mod_propale_emeraude extends ModeleNumRefPropales
     	
       $texte = "Renvoie le numéro sous la forme PRYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.<br>\n";
       $texte.= "L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.<br>\n";
-      $texte.= "Définir la variable FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.<br>\n";
+      $texte.= "Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.<br>\n";
       $texte.= "Dans cette exemple nous aurons au 1er septembre 2006 une propale nommée PR0700001.<br>\n";
       
       if ($conf->global->SOCIETE_FISCAL_MONTH_START)
