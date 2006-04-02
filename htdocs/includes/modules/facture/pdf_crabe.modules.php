@@ -227,7 +227,13 @@ class pdf_crabe extends ModelePDFFactures
 
                         $prodser->fetch($fac->lignes[$i]->produit_id);
                         if ($prodser->ref) {
-                            $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
+                        	$prefix_prodserv = "";
+                        	if($prodser->type == 0)
+                        		$prefix_prodserv = $langs->trans("Product")." ";
+                        	if($prodser->type == 1)
+                        		$prefix_prodserv = $langs->trans("Service")." ";
+                        		
+                            $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
                         }
 
                         // Ajoute description du produit
