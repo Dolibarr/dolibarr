@@ -103,6 +103,7 @@ DateMaxPayment=Payment due before
 DateEcheance=Due date limit
 DateBill=Invoice date
 DateInvoice=Invoice date
+NoInvoice=No invoice
 ClassifyBill=Classify invoice
 NoSupplierBillsUnpayed=No suppliers invoices unpayed
 SupplierBillsToPay=Suppliers invoices to pay

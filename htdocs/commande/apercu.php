@@ -249,17 +249,17 @@ if ($_GET["id"] > 0) {
 		        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id.'">'.$societe->nom.'</a>';
 		        print '</td>';
 		        print '</tr>';
-		
+
 		        // Statut
 		        print '<tr><td>'.$langs->trans("Status").'</td>';
 		        print "<td colspan=\"2\">".$commande->getLibStatut(4)."</td>\n";
 		        print '</tr>';
-		
+
 		        // Date
 		        print '<tr><td>'.$langs->trans("Date").'</td>';
 		        print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
 		        print '</tr>';
-		        
+
 				// ligne 6
 				// partie Gauche
 				print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';

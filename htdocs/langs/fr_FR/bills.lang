@@ -103,6 +103,7 @@ DateMaxPayment=Date limite règlement
 DateEcheance=Date échéance
 DateBill=Date facturaction
 DateInvoice=Date facturation
+NoInvoice=Aucune facture
 ClassifyBill=Classer la facture
 NoSupplierBillsUnpayed=Aucune facture fournisseur impayée
 SupplierBillsToPay=Factures fournisseurs à payer

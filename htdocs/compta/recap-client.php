@@ -193,50 +193,44 @@ if ($socid > 0)
     
         print '<table class="noborder" width="100%">';
     
-        $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df";
-        $sql .= " , f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-        $sql .= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
-        $sql .= " ORDER BY f.datef DESC";
+        $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df,";
+        $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
+        $sql.= " u.code";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
+        $sql.= " AND f.fk_user_valid = u.rowid";
+        $sql.= " ORDER BY f.datef DESC";
     
         $resql=$db->query($sql);
         if ($resql)
         {
             $var=true;
             $num = $db->num_rows($resql);
-            if ($num > 0)
+
+            print '<tr class="liste_titre">';
+            print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
+            print '<td>&nbsp;</td>';
+            print '<td>&nbsp;</td>';
+            print '<td align="right">'.$langs->trans("Debit").'</td>';
+            print '<td align="right">'.$langs->trans("Credit").'</td>';
+            print '<td align="right">'.$langs->trans("Balance").'</td>';
+            print '<td>&nbsp;</td>';
+            print '</tr>';
+
+			if (! $num > 0)
             {
-                print '<tr class="liste_titre">';
-                print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
-                print '<td align="right">'.$langs->trans("Debit").'</td>';
-                print '<td align="right">'.$langs->trans("Credit").'</td>';
-                print '<td align="right">'.$langs->trans("Balance").'</td>';
-                print '</tr>';
-            }
-            else
-            {
-                print $langs->trans("NoBills");
+                print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
             }
             
-            $i = 0;
-            while ($i < $num)
-            {
-                $objp = $db->fetch_object($resql);
-                $facs[$i] = $objp->facid;
-                $i++;
-            }
-            $db->free($resql);
-    
-    
             $solde = 0;
     
             // Boucle sur chaque facture
             for ($i = 0 ; $i < $num ; $i++)
             {
+                $objf = $db->fetch_object($resql);
+
                 $fac = new Facture($db);
-                $ret=$fac->fetch($facs[$i]);
+                $ret=$fac->fetch($objf->facid);
                 if ($ret < 0) 
                 {
                     print $fac->error."<br>";
@@ -255,25 +249,30 @@ if ($socid > 0)
     
                 print '<td align="right">&nbsp;</td>';
                 print '<td align="right">'.price($solde)."</td>\n";
+
+				// Auteur
+                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->code.'</a></td>';
+
                 print "</tr>\n";
     
                 // Paiements
-                $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut";
+                $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut,";
+    			$sql.= " p.fk_user_creat, u.code";
+                $sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf,";
+                $sql.= " ".MAIN_DB_PREFIX."paiement as p";
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
+                $sql.= " WHERE pf.fk_paiement = p.rowid";
+                $sql.= " AND pf.fk_facture = ".$fac->id;
     
-                $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-                $sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
-                $sql .= " WHERE pf.fk_paiement = p.rowid";
-                $sql .= " AND pf.fk_facture = ".$fac->id;
-    
-                $resql = $db->query($sql);
-                if ($resql)
+                $resqlp = $db->query($sql);
+                if ($resqlp)
                 {
-                    $nump = $db->num_rows($resql);
+                    $nump = $db->num_rows($resqlp);
                     $j = 0;
     
                     while ($j < $nump)
                     {
-                        $objp = $db->fetch_object($resql);
+                        $objp = $db->fetch_object($resqlp);
                         //$var=!$var;
                         print "<tr $bc[$var]>";
                         print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
@@ -285,10 +284,20 @@ if ($socid > 0)
                         print '<td align="right">'.price($objp->amount).'</td>';
                         $solde = $solde - $objp->amount;
                         print '<td align="right">'.price($solde)."</td>\n";
+
+						// Auteur
+		                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->code.'</a></td>';
+
                         print '</tr>';
     
                         $j++;
                     }
+
+	                $db->free($resqlp);
+                }
+                else
+                {
+                	dolibarr_print_error($db);
                 }
             }
         }
@@ -301,7 +310,7 @@ if ($socid > 0)
 }
 else
 {
-  print "Erreur";
+  	dolibarr_print_error($db);
 }
 
 
