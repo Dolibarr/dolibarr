@@ -119,39 +119,68 @@ if ($_POST['action'] == 'setdate_livraison')
 if ($_POST['action'] == 'add') 
 {
     $propal = new Propal($db, $_GET['socidp']);
-    $propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-	$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
-    $propal->duree_validite = $_POST['duree_validite'];
-    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
-    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
-
-    $propal->contactid = $_POST['contactidp'];
-    $propal->projetidp = $_POST['projetidp'];
-    $propal->modelpdf  = $_POST['model'];
-    $propal->author    = $user->id;
-    $propal->note      = $_POST['note'];
-
-    $propal->ref = $_POST['ref'];
-
-    for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+    
+    /*
+     * Si on seléctionné une propal à copier, on réalise la copie
+     */
+    if($_POST['copie_propal'])
     {
-		if ($_POST['idprod'.$i])
-		{
-	        $xid = 'idprod'.$i;
-	        $xqty = 'qty'.$i;
-	        $xremise = 'remise'.$i;
-	        $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
-		}
+    	if($propal->copie_from($_POST['copie_propal']) == -1)
+    	{
+    		//$msg = '<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+    		$msg = '<div class="error">Impossible de copier la propal Id = ' . $_POST['copie_propal'] . '!</div>';
+    	}
+    	$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+	    $propal->duree_validite = $_POST['duree_validite'];
+	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
+	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
+	    $propal->contactid = $_POST['contactidp'];
+	    $propal->projetidp = $_POST['projetidp'];
+	    $propal->modelpdf  = $_POST['model'];
+	    $propal->author    = $user->id;
+	    $propal->note      = $_POST['note'];
+	    $propal->ref = $_POST['ref'];
+	    $propal->statut = 0;
+
+	    $id = $propal->create_from();
     }
-
-    $id = $propal->create();
-
+    else
+    {
+	    $propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+	    $propal->duree_validite = $_POST['duree_validite'];
+	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
+	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
+	
+	    $propal->contactid = $_POST['contactidp'];
+	    $propal->projetidp = $_POST['projetidp'];
+	    $propal->modelpdf  = $_POST['model'];
+	    $propal->author    = $user->id;
+	    $propal->note      = $_POST['note'];
+	
+	    $propal->ref = $_POST['ref'];
+	    
+	    for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+	    {
+			if ($_POST['idprod'.$i])
+			{
+		        $xid = 'idprod'.$i;
+		        $xqty = 'qty'.$i;
+		        $xremise = 'remise'.$i;
+		        $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+			}
+	    }
+	
+	    $id = $propal->create();
+    }
     /*
      *   Generation
      */
     if ($id > 0)
     {
         propale_pdf_create($db, $id, $_POST['model']);
+        
         Header ('Location: propal.php?propalid='.$id);
         exit;
     }

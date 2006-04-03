@@ -204,7 +204,36 @@ if ($_GET["action"] == 'create')
     $model=new ModelePDFPropales();
     $liste=$model->liste_modeles($db);
     $form->select_array("model",$liste,$conf->global->PROPALE_ADDON_PDF);
-    print "</td></tr></table>";
+    print "</td></tr>";
+    
+    /*
+     * Combobox pour la fonction de copie
+     */
+    print '<td colspan="2">&nbsp;</td><td>Copier Propal depuis</td><td>';
+    $liste_propal = array();
+    $liste_propal[0] = '';
+    $sql ="SELECT p.rowid as id, CONCAT(p.ref, '-', s.nom)  as lib";
+    $sql.=" FROM ".MAIN_DB_PREFIX."propal p, ".MAIN_DB_PREFIX."societe s";
+    $sql.=" WHERE s.idp = p.fk_soc AND fk_statut = 1 ORDER BY Id";
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+		$num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
+        {
+        	$row = $db->fetch_row($resql);
+            $liste_propal[$row[0]]=$row[1];
+            $i++;
+        }
+        $form->select_array("copie_propal",$liste_propal, 0);
+    }
+    else
+    {
+      	print '<select name="copie_propal"></select>';
+    }
+    print "</td></tr>";
+    print "</table>";
 
     print '<br>';
 

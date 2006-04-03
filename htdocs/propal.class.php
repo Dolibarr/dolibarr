@@ -150,7 +150,7 @@ class Propal
             
             if ($idproduct)
             {
-				      $prod = new Product($this->db, $idproduct);
+   		        $prod = new Product($this->db, $idproduct);
                 if ($prod->fetch($idproduct) > 0)
                 {
                 	$p_product_desc = $prod->description;
@@ -1480,7 +1480,135 @@ class Propal
             return -1;
         }
     }
+	
+	 /**
+     *    \brief     Copie un objet propal dont l'id est passé en premier argument dans l'objet courant, en mémoire
+     *    \param     $src_propal_id      Id de la propal à copier
+     *    \return    int                 >0 si ok, <0 si ko
+     *    \see       fetch
+     */
+	function copie_from($src_propal_id)
+	{
+		$src_propal = new Propal($this->db);
+		if($src_propal->fetch($src_propal_id) < 0)
+		{
+			dolibarr_syslog("Propal::Copie_from Erreur de lecture de la propal source.");
+            return -1;
+		}
+		$this->datep             = $src_propal->datep;
+		$this->fin_validite      = $src_propal->fin_validite;
+		$this->date              = $src_propal->date;
+        $this->ref               = $src_propal->ref;
+        $this->price             = $src_propal->price;
+        $this->remise            = $src_propal->remise;
+        $this->remise_percent    = $src_propal->remise_percent;
+        $this->total             = $src_propal->total;
+        $this->total_ht          = $src_propal->total_ht;
+        $this->total_tva         = $src_propal->total_tva;
+        $this->total_ttc         = $src_propal->total_ttc;
+        $this->socidp            = $src_propal->socidp;
+        $this->soc_id            = $src_propal->soc_id;
+        $this->projetidp         = $src_propal->projetidp;
+        $this->contactid         = $src_propal->contactid;
+        $this->modelpdf          = $src_propal->modelpdf;
+        $this->note              = $src_propal->note;
+        $this->note_public       = $src_propal->note_public;
+        $this->statut            = $src_propal->statut;
+        $this->statut_libelle    = $src_propal->statut_libelle;
+        $this->cond_reglement_id = $src_propal->cond_reglement_id;
+        $this->mode_reglement_id = $src_propal->mode_reglement_id;
+		$this->date_livraison 	 = $src_propal->date_livraison;
+		$this->user_author_id    = $src_propal->user_author_id;
+		
+        $this->cond_reglement    = $src_propal->cond_reglement;
+        $this->cond_reglement_code=$src_propal->cond_reglement_code;
+        $this->ref_url 			 = $src_propal->ref_url;
+        $this->lignes 			 = $src_propal->lignes;
+        return 1;
+	}
+	/**
+     *    \brief     Insert en base un objet propal complétement définie par ses données membres (resultant d'une copie par exemple).
+     *    \return    int                 l'id du nouvel objet propal en base si ok, <0 si ko
+     *    \see       create
+     */
+	function create_from()
+	{
+     
+        $this->db->begin();
+        
+        $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
+        // Insertion dans la base
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
+        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
+        $sql.= "'".addslashes($this->note)."',";
+        $sql.= "'".addslashes($this->note_public)."',";
+        $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
+        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."')";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal");
+    
+            if ($this->id)
+            {
+                /*
+                 *  Insertion du detail des produits dans la base
+                 */
+                 foreach($this->lignes as $ligne)
+                 {
+                	if($ligne->product_id != 0)
+                	{
+                    	$result=$this->insert_product($ligne->product_id,
+                                        $ligne->qty,
+                                        $ligne->remise_percent, $ligne->product_desc);
+                  	}
+                	else
+                	{
+                		$this->insert_product_generic($ligne->desc, $ligne->price, 
+                						$ligne->qty, $ligne->tva_tx, $ligne->remise_percent);
+                	}
+                }
+
+                // Affectation au projet
+                if ($this->projetidp)
+                {
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref'";
+                    $result=$this->db->query($sql);
+                }
+
+                $resql=$this->update_price();
+                if ($resql)
+                {
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
+                    // Fin appel triggers
+        
+                    $this->db->commit();
+                    return $this->id;
+                }
+                else
+                {
+                    $this->error=$this->db->error();
+                    dolibarr_syslog("Propal::Create -2 ".$this->error);
+                    $this->db->rollback();
+                    return -2;
+                }
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            dolibarr_syslog("Propal::Create -1 ".$this->error);
+            $this->db->rollback();
+            return -1;
+        }
+        
+        return $this->id;
+	}
 }
 
 
