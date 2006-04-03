@@ -69,10 +69,9 @@ class box_produits extends ModeleBoxes {
             $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
             if ($conf->categorie->enabled && !$user->rights->categorie->voir)
             {
-            	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-            	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
-            	$sql .= " WHERE cp.fk_product = p.rowid";
-              $sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+            	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+              $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+              $sql.= " WHERE IFNULL(c.visible,1)=1";
             }
             $sql .= " ORDER BY p.datec DESC";
             $sql .= $db->plimit($max, 0);
