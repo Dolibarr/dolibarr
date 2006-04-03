@@ -214,7 +214,7 @@ if ($_GET["action"] == 'create')
     $liste_propal[0] = '';
     $sql ="SELECT p.rowid as id, CONCAT(p.ref, '-', s.nom)  as lib";
     $sql.=" FROM ".MAIN_DB_PREFIX."propal p, ".MAIN_DB_PREFIX."societe s";
-    $sql.=" WHERE s.idp = p.fk_soc AND fk_statut = 1 ORDER BY Id";
+    $sql.=" WHERE s.idp = p.fk_soc AND fk_statut <> 0 ORDER BY Id";
     $resql = $db->query($sql);
     if ($resql)
     {
