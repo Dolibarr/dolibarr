@@ -51,14 +51,13 @@ $sql = "SELECT p.rowid, p.label as produit, s.label as stock, m.value, ".$db->pd
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-	$sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
 $sql .= " WHERE m.fk_product = p.rowid AND m.fk_entrepot = s.rowid";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql .= " AND cp.fk_product = p.rowid";
-  $sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+  $sql.= ' AND IFNULL(c.visible,1)=1';
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);

@@ -287,14 +287,13 @@ class Entrepot
         $sql .= " FROM llx_product_stock as ps";
         if ($conf->categorie->enabled && !$user->rights->categorie->voir)
         {
-           $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-           $sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+           $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+              $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
         }
         $sql .= " WHERE ps.fk_entrepot = ".$this->id;
         if ($conf->categorie->enabled && !$user->rights->categorie->voir)
         {
-           $sql .= " AND cp.fk_product = ps.fk_product";
-           $sql .= " AND cp.fk_categorie = c.rowid AND c.visible = 1";
+           $sql.= ' AND IFNULL(c.visible,1)=1';
         }
         
           $result = $this->db->query($sql) ;
