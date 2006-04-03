@@ -550,7 +550,7 @@ class Propal
                 $this->statut_libelle    = $obj->statut_label;
                 $this->cond_reglement_id = $obj->fk_cond_reglement;
                 $this->mode_reglement_id = $obj->fk_mode_reglement;
-				$this->date_livraison = $obj->date_livraison;
+				        $this->date_livraison = $obj->date_livraison;
     
                 $this->user_author_id = $obj->fk_user_author;
                 
@@ -568,6 +568,22 @@ class Propal
                    	$this->cond_reglement      = $objc->libelle;
                    	$this->cond_reglement_code = $objc->code;
                   }
+                }
+                
+                if ($this->user_author_id)
+                {
+                	$sql = "SELECT name, firstname";
+                	$sql.= " FROM ".MAIN_DB_PREFIX."user";
+                	$sql.= " WHERE rowid = ".$this->user_author_id;
+                	
+                	$resqluser = $this->db->query($sql);
+                	
+                	if ($resqluser)
+                	{
+                		obju = $this->db->fetch_object($resqluser);
+                		$this->user_author_name      = $obju->name;
+                		$this->user_author_firstname = $obju->firstname;
+                	}
                 }
 
     
