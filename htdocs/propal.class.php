@@ -580,7 +580,7 @@ class Propal
                 	
                 	if ($resqluser)
                 	{
-                		obju = $this->db->fetch_object($resqluser);
+                		$obju = $this->db->fetch_object($resqluser);
                 		$this->user_author_name      = $obju->name;
                 		$this->user_author_firstname = $obju->firstname;
                 	}
