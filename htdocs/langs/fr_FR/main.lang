@@ -169,6 +169,7 @@ SubTotal=Sous total
 TotalHT=Total HT
 TotalTTC=Total TTC
 TotalVAT=Total TVA
+IncludedVAT=Dont TVA
 VAT=TVA
 Average=Moyenne
 Sum=Somme

@@ -169,6 +169,7 @@ SubTotal=Subtotal
 TotalHT=Total HT
 TotalTTC=Total TTC
 TotalVAT=Total VAT
+IncludedVAT=Included VAT
 VAT=VAT
 Average=Average
 Sum=Sum
