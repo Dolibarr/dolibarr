@@ -94,20 +94,20 @@ if ($_POST['action'] == 'setconditions')
 	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
 }
 
-if ($_POST['action'] == 'setremisepercent' && $user->rights->facture->creer)
+if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db);
-	$fac->fetch($_POST['facid']);
+	$fac->fetch($_REQUEST['facid']);
 	$result = $fac->set_remise($user, $_POST['remise_percent']);
-	$_GET['facid']=$_POST['facid'];
+	$_GET['facid']=$_REQUEST['facid'];
 }
 
-if ($_POST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
+if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db);
-	$fac->fetch($_POST['facid']);
+	$fac->fetch($_REQUEST['facid']);
 	$result = $fac->set_remise_absolue($user, $_POST['remise_absolue']);
-	$_GET['facid']=$_POST['facid'];
+	$_GET['facid']=$_REQUEST['facid'];
 }
 
 if ($_POST['action'] == 'classin')
@@ -1685,7 +1685,16 @@ else
 				{
 					print '<td>&nbsp;</td>';
 				}
-				print '<td>&nbsp;</td>';
+				if ($fac->brouillon && $user->rights->facture->creer && $fac->remise_percent)
+				{
+					print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
 				print '<td>&nbsp;</td>';
 			}
 			else
@@ -1728,7 +1737,16 @@ else
 				{
 					print '<td>&nbsp;</td>';
 				}
-				print '<td>&nbsp;</td>';
+				if ($fac->brouillon && $user->rights->facture->creer && $fac->remise_absolue)
+				{
+					print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
 				print '<td>&nbsp;</td>';
 			}
 			else
