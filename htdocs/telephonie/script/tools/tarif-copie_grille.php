@@ -44,7 +44,7 @@ if ( $resql )
   $num = $db->num_rows($resql);
   $i = 0;
 
-  $sqlu = "DELETE FROM ."MAIN_DB_PREFIX."telephonie_tarif_montant";
+  $sqlu = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_tarif_montant";
   $sqlu .= " WHERE fk_tarif_desc = $dest;";
   
   $resqlu = $db->query($sqlu);
