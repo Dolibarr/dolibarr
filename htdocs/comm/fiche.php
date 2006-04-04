@@ -350,18 +350,18 @@ if ($socidp > 0)
     // Remise permanente
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-    print $langs->trans("CustomerRelativeDiscount");
+    print $langs->trans("CustomerRelativeDiscountShort");
     print '<td><td align="right">';
     print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     print '</td></tr></table>';
-    print '</td><td colspan="3">'.$objsoc->remise_client."&nbsp;%</td>";
+    print '</td><td colspan="3">'.($objsoc->remise_client?$objsoc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
     print '</tr>';
     
     // Remise avoirs
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding">';
     print '<tr><td nowrap>';
-    print $langs->trans("CustomerAbsoluteDiscount");
+    print $langs->trans("CustomerAbsoluteDiscountShort");
     print '<td><td align="right">';
     print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     print '</td></tr></table>';
@@ -370,7 +370,7 @@ if ($socidp > 0)
 		$amount_discount=$objsoc->getcurrentDiscount();
 		if ($amount_discount < 0) dolibarr_print_error($db,$societe->error);
         if ($amount_discount > 0) print $amount_discount.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
-        else print $langs->trans("None");
+        else print $langs->trans("DiscountNone");
     print '</td>';
     print '</tr>';
 

@@ -281,42 +281,6 @@ class Facture
     }
 
 
-	/*
-	 *		\todo		Plus utilisé. A reprendre dans validation facture
-	 */
-	function _affect_remise_exceptionnelle()
-	{
-		$error = 0;
-
-		$this->db->begin();
-
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-		$sql .= ' SET fk_facture = '.$this->id.',';
-		$sql .= " amount_ht = '".price2num($remise)."'";
-		$sql .= ' WHERE rowid ='.$this->remise_exceptionnelle[0];
-		$sql .= ' AND fk_soc ='. $this->socidp;
-
-		if (! $this->db->query( $sql))
-		{
-			$error++;
-		}
-
-		if ($reliquat > 0)
-		{
-		}
-
-		if (! $error)
-		{
-			$this->db->commit();
-		}
-		else
-		{
-			$this->db->rollback();
-		}
-
-		return $error;
-	}
-
 	/**
 	*    \brief      Recupére l'objet facture et ses lignes de factures
 	*    \param      rowid       id de la facture a récupérer
