@@ -1328,7 +1328,7 @@ else
       print_liste_field_titre($langs->trans('Date'),'propal.php','p.datep','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
       print_liste_field_titre($langs->trans('DateEndPropalShort'),'propal.php','dfv','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
       print_liste_field_titre($langs->trans('Price'),'propal.php','p.price','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans('Status'),'propal.php','p.fk_statut','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'align="center"',$sortfield);
+      print_liste_field_titre($langs->trans('Status'),'propal.php','p.fk_statut','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield);
       print "</tr>\n";
       // Lignes des champs de filtre
       print '<form method="get" action="propal.php">';
@@ -1394,7 +1394,7 @@ else
         
             print '<td align="right">'.price($objp->price)."</td>\n";
             $propal=New Propal($db);
-            print '<td align="center">'.$propal->LibStatut($objp->fk_statut,2)."</td>\n";
+            print '<td align="right">'.$propal->LibStatut($objp->fk_statut,5)."</td>\n";
             print "</tr>\n";
         
             $total = $total + $objp->price;
