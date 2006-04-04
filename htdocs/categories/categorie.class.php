@@ -422,7 +422,19 @@ class Categorie
 				return -1;
      }
   }
-	
+	/**
+   * retourne la description d'une catégorie
+   */
+  function get_desc ($cate)
+  {
+    $sql  = "SELECT description FROM ".MAIN_DB_PREFIX."categorie ";
+    $sql .= "WHERE rowid = '".$cate."'";
+
+    $res  = $this->db->query ($sql);
+    $n    = $this->db->fetch_array ($res);
+		
+    return ($n[0]);
+  }
   /**
    * La catégorie $fille est-elle une fille de cette catégorie ?
    */
