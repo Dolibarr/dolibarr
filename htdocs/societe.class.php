@@ -907,9 +907,12 @@ class Societe
         $sql  = "SELECT SUM(rc.amount_ht) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql.= " WHERE rc.fk_soc =". $this->id;
-        if (is_object($user)) $sql.= " AND rc.fk_user = ".$user->id.
+        if (is_object($user)) $sql.= " AND rc.fk_user = ".$user->id;
         $sql.= " AND rc.fk_facture IS NULL";
         $resql=$this->db->query($sql);
+
+		dolibarr_syslog("Societe::getCurrentDiscount sql=$sql");
+		
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);

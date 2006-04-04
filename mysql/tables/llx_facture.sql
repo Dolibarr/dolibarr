@@ -31,11 +31,12 @@ create table llx_facture
   date_valid          date,      -- date de validation
   paye                smallint DEFAULT 0 NOT NULL,
   amount              real     DEFAULT 0 NOT NULL,
-  remise_percent      real     DEFAULT 0,   -- remise globale en pourcent
-  remise              real     DEFAULT 0,
-  tva                 real     DEFAULT 0,   -- montant tva apres remise globale
-  total               real     DEFAULT 0,   -- montant total ht apres remise globale
-  total_ttc           real     DEFAULT 0,   -- montant total ttc apres remise globale
+  remise_percent      real     DEFAULT 0,   -- remise relative
+  remise_absolute     real     DEFAULT 0,   -- remise absolue
+  remise              real     DEFAULT 0,   -- remise totale calculee
+  tva                 real     DEFAULT 0,   -- montant tva apres remise totale
+  total               real     DEFAULT 0,   -- montant total ht apres remise totale
+  total_ttc           real     DEFAULT 0,   -- montant total ttc apres remise totale
 
   fk_statut           smallint DEFAULT 0 NOT NULL,
 

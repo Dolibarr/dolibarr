@@ -728,7 +728,7 @@ function img_info($alt = "default")
 {
   global $conf,$langs;
   if ($alt=="default") $alt=$langs->trans("Informations");
-  return '<img style="cursor: help;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**

@@ -122,8 +122,9 @@ class Facture
 			$this->mode_reglement    = $_facrec->mode_reglement_id;
 			$this->mode_reglement_id = $_facrec->mode_reglement_id;
 			$this->amount            = $_facrec->amount;
-			$this->remise            = $_facrec->remise;
+			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
+			$this->remise_absolue    = $_facrec->remise;
 		}
 
 		// Definition de la date limite
@@ -138,15 +139,15 @@ class Facture
 		$totalht = ($amount - $remise);
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture (';
-		$sql.= ' facnumber, fk_soc, datec, amount, remise, remise_percent,';
+		$sql.= ' facnumber, fk_soc, datec, amount, remise_absolue, remise_percent,';
 		$sql.= ' datef,';
 		$sql.= ' note,';
 		$sql.= ' note_public,';
 		$sql.= ' fk_user_author, fk_projet,';
 		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, ref_client) ';
 		$sql.= " VALUES (";
-		$sql.= "'$number','$socid', now(), '$totalht', '$remise'";
-		$sql.= ",'$this->remise_percent', ".$this->db->idate($this->date);
+		$sql.= "'$number','$socid', now(), '$totalht', '".$this->remise_absolue."'";
+		$sql.= ",'".$this->remise_percent."', ".$this->db->idate($this->date);
 		$sql.= ",".($this->note?"'".addslashes($this->note)."'":"null");
 		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
 		$sql.= ",".$user->id;
@@ -154,7 +155,7 @@ class Facture
 		$sql.= ','.$this->cond_reglement_id;
 		$sql.= ",".$this->mode_reglement_id;
 		$sql.= ','.$this->db->idate($datelim);
-		$sql.= ', \''.$this->ref_client.'\')';
+		$sql.= ", '".$this->ref_client."')";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -281,7 +282,7 @@ class Facture
 
 
 	/*
-	 *       \brief      Affecte la remise exceptionnelle
+	 *		\todo		Plus utilisé. A reprendre dans validation facture
 	 */
 	function _affect_remise_exceptionnelle()
 	{
@@ -289,60 +290,19 @@ class Facture
 
 		$this->db->begin();
 
-		if ($this->remise_exceptionnelle[1] > 0)
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql .= ' SET fk_facture = '.$this->id.',';
+		$sql .= " amount_ht = '".price2num($remise)."'";
+		$sql .= ' WHERE rowid ='.$this->remise_exceptionnelle[0];
+		$sql .= ' AND fk_soc ='. $this->socidp;
+
+		if (! $this->db->query( $sql))
 		{
-			// Calcul valeur de remise a appliquer (remise) et reliquat
-			if ($this->remise_exceptionnelle[1] > ($this->total_ht * 0.9))
-			{
-				$remise = floor($this->total_ht * 0.9);
-				$reliquat = $this->remise_exceptionnelle[1] - $remise;
-			}
-			else
-			{
-				$remise = $this->remise_exceptionnelle[1];
-				$reliquat=0;
-			}
+			$error++;
+		}
 
-			$result_insert = $this->addline($this->id,
-				'Remise exceptionnelle',
-				'',
-				(0 - $remise),
-				1,
-				'0');   // Une remise est un négatif sur le TTC, on ne doit pas appliquer de TVA,
-						// sinon on impute une TVA négative.
-
-			if ($result_insert < 0)
-			{
-				$error++;
-			}
-
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-			$sql .= ' SET fk_facture = '.$this->id;
-			$sql .= " ,amount_ht = '".price2num($remise)."'";
-			$sql .= ' WHERE rowid ='.$this->remise_exceptionnelle[0];
-			$sql .= ' AND fk_soc ='. $this->socidp;
-
-			if (! $this->db->query( $sql))
-			{
-				$error++;
-			}
-
-			if ($reliquat > 0)
-			{
-				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'societe_remise_except';
-				$sql .= ' (fk_soc, datec, amount_ht, fk_user) ';
-				$sql .= ' VALUES ';
-				$sql .= ' ('.$this->socidp;
-				$sql .= ' ,now()';
-				$sql .= " ,'".price2num($reliquat)."'";
-				$sql .= ' ,'.$this->remise_exceptionnelle[3];
-				$sql .= ')';
-
-				if (! $this->db->query( $sql) )
-				{
-					$error++;
-				}
-			}
+		if ($reliquat > 0)
+		{
 		}
 
 		if (! $error)
@@ -367,7 +327,7 @@ class Facture
 	{
 		//dolibarr_syslog("Facture::Fetch rowid : $rowid, societe_id : $societe_id");
 
-		$sql = 'SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent';
+		$sql = 'SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql .= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
 		$sql .= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
 		$sql .= ', f.note, f.note_public, f.paye, f.fk_statut, f.fk_user_author';
@@ -395,12 +355,13 @@ class Facture
 				$this->ref                    = $obj->facnumber;
 				$this->ref_client             = $obj->ref_client;
 				$this->amount                 = $obj->amount;
+				$this->remise_percent         = $obj->remise_percent;
+				$this->remise_absolue         = $obj->remise_absolue;
 				$this->remise                 = $obj->remise;
 				$this->total_ht               = $obj->total;
 				$this->total_tva              = $obj->tva;
 				$this->total_ttc              = $obj->total_ttc;
 				$this->paye                   = $obj->paye;
-				$this->remise_percent         = $obj->remise_percent;
 				$this->socidp                 = $obj->fk_soc;
 				$this->statut                 = $obj->fk_statut;
 				$this->date_lim_reglement     = $obj->dlr;
@@ -492,83 +453,25 @@ class Facture
 		$this->client = $client;
 	}
 
+
 	/**
-	* \brief     Valide la facture
-	* \param     userid      id de l'utilisateur qui valide
-	*/
+	 * 		\brief     	Valide la facture
+	 * 		\param     	userid      	Id de l'utilisateur qui valide
+	 *		\return		int				<0 si ko, >0 si ok
+	 *		\remarks	Utiliser set_valid directement plutot que cette methode
+	 *		\deprecated
+	 */
 	function valid($userid)
 	{
-		$error = 0;
-
-		if ($this->db->begin())
-		{
-			/*
-			* Lecture de la remise exceptionnelle
-			*
-			*/
-			$sql  = 'SELECT rowid, rc.amount_ht, fk_soc, fk_user';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
-			$sql .= ' WHERE rc.fk_soc ='. $this->socidp;
-			$sql .= ' AND fk_facture IS NULL';
-			$resql = $this->db->query($sql) ;
-			if ( $resql)
-			{
-				$nurmx = $this->db->num_rows($resql);
-				if ($nurmx > 0)
-				{
-					$row = $this->db->fetch_row($resql);
-					$this->remise_exceptionnelle = $row;
-				}
-				$this->db->free($resql);
-			}
-			else
-			{
-				dolibarr_syslog('Facture::Valide Erreur lecture Remise');
-				$error++;
-			}
-
-			/*
-			* Affectation de la remise exceptionnelle
-			*/
-			if ( $this->_affect_remise_exceptionnelle() <> 0)
-			{
-				$error++;
-			}
-			else
-			{
-				$this->updateprice($this->id);
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET fk_statut = 1, date_valid=now(), fk_user_valid='.$userid;
-				$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
-				if (! $this->db->query($sql) )
-				{
-					$error++;
-					dolibarr_syslog('Facture::Valide Erreur ');
-				}
-			}
-
-			if ($error == 0)
-			{
-				$this->db->commit();
-			}
-			else
-			{
-				$this->db->rollback();
-			}
-		}
-		else
-		{
-			$error++;
-		}
-
-		if ($error > 0)
-		{
-			return 0;
-		}
-		else
-		{
-			return 1;
-		}
+		$user=new User($this->db);
+		$user->fetch($userid);
+		
+		$soc=new Societe($this->db);
+		$soc->fetch($this->socidp);
+		
+		return set_valid($this->rowid,$user,$soc,'');
 	}
+
 
 	/**
 	 *      \brief     Classe la facture dans un projet
@@ -612,9 +515,9 @@ class Facture
 	}
 
 	/**
-	* \brief     Supprime la facture
-	* \param     rowid      id de la facture à supprimer
-	*/
+	 * 		\brief     Supprime la facture
+	 * 		\param     rowid      id de la facture à supprimer
+	 */
 	function delete($rowid)
 	{
 		global $user,$langs,$conf;
@@ -633,11 +536,9 @@ class Facture
 					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
 					if ($this->db->query( $sql) )
 					{
-						/*
-						* On repositionne la remise
-						*/
+						// On désaffecte de la facture les remises liées
 						$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-						$sql .= ' SET fk_facture = NULL WHERE fk_facture = '.$rowid;
+						$sql.= ' SET fk_facture = NULL WHERE fk_facture = '.$rowid;
 						if ($this->db->query( $sql) )
 						{
 							$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid.' AND fk_statut = 0';
@@ -828,11 +729,12 @@ class Facture
 	}
 
 	/**
-	 *      \brief     Tag la facture comme validée + appel trigger BILL_VALIDATE
-	 *      \param     rowid            Id de la facture à valider
-	 *      \param     user             Utilisateur qui valide la facture
-	 *      \param     soc              Objet societe
-	 *      \param     force_number     Référence à forcer de la facture
+	 *      \brief     	Tag la facture comme validée + appel trigger BILL_VALIDATE
+	 *      \param     	rowid           Id de la facture à valider
+	 *      \param     	user            Utilisateur qui valide la facture
+	 *      \param     	soc             Objet societe
+	 *      \param     	force_number	Référence à forcer de la facture
+	 *		\return		int				<0 si ko, >0 si ok
 	 */
 	function set_valid($rowid, $user, $soc, $force_number='')
 	{
@@ -841,6 +743,8 @@ class Facture
 		$error = 0;
 		if ($this->brouillon)
 		{
+            $this->db->begin();
+
 			$action_notify = 2; // ne pas modifier cette valeur
 			if ($force_number)
 			{
@@ -851,67 +755,98 @@ class Facture
 				$numfa = $this->getNextNumRef($soc);
 			}
 
-            $this->db->begin();
-            
-			/*
-			 * Affectation de la remise exceptionnelle
-			 *
-			 * \todo    Appliquer la remise avoir dans les lignes quand brouillon plutot
-			 *          qu'au moment de la validation
-			 */
-			$sql  = 'SELECT rowid, rc.amount_ht, fk_soc, fk_user';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
-			$sql .= ' WHERE rc.fk_soc ='. $this->socidp;
-			$sql .= ' AND fk_facture IS NULL';
-			$resql = $this->db->query($sql) ;
-			if ($resql)
-			{
-				$nurmx = $this->db->num_rows($resql);
-				if ($nurmx > 0)
-				{
-					$row = $this->db->fetch_row($resql);
-					$this->remise_exceptionnelle = $row;
-				}
-				$this->db->free($resql);
-			}
-			else
-			{
-				dolibarr_syslog('Facture::Valide Erreur lecture Remise');
-				$error++;
-			}
-			if ( $this->_affect_remise_exceptionnelle() <> 0)
-			{
-				$error++;
-			}
-			else
-			{
-				$this->updateprice($this->id);
-			}
+			$this->updateprice($this->id);
 
-			/* Validation de la facture */
+			// Validation de la facture
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
 			$sql.= " SET facnumber='".$numfa."', fk_statut = 1, fk_user_valid = ".$user->id;
-
-			/* Si l'option est activée on force la date de facture */
 			if ($conf->global->FAC_FORCE_DATE_VALIDATION)
 			{
+				// Si l'option est activée, on force la date de facture
 				$this->date=time();
 				$datelim=$this->calculate_date_lim_reglement();
-				$sql .= ', datef='.$this->db->idate($this->date);
-				$sql .= ', date_lim_reglement='.$this->db->idate($datelim);
+				$sql.= ', datef='.$this->db->idate($this->date);
+				$sql.= ', date_lim_reglement='.$this->db->idate($datelim);
 			}
-			$sql .= ' WHERE rowid = '.$rowid;
-			$resql = $this->db->query($sql);
+			$sql.= ' WHERE rowid = '.$rowid;
+			$resql=$this->db->query($sql);
             if ($resql)
             {
                 $this->facnumber=$numfa;
             }
             else
             {
-                dolibarr_syslog("Facture::set_valid() Echec - 10");
+                dolibarr_syslog("Facture::set_valid() Echec update - 10");
                 dolibarr_print_error($this->db);
                 $error++;
             }
+
+			/*
+			 *	Lit les avoirs / remises absolues en cours et les décrémente
+			 */
+			$remise_a_decrementee=$this->remise_absolue;
+			if ($remise_a_decrementee)
+			{
+				$sql = 'SELECT rowid, fk_soc, datec, rc.amount_ht as amount, fk_user, description';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
+				$sql.= ' WHERE rc.fk_soc ='. $this->socidp;
+				$sql.= ' AND fk_facture IS NULL';
+				$sql.= ' ORDER BY datec';
+				$resql = $this->db->query($sql) ;
+				if ($resql)
+				{
+					$nurmx = $this->db->num_rows($resql);
+					if ($nurmx > 0)
+					{
+						$i=0;
+						while ($i < $nurmx && $remise_a_decrementee && ! $error)
+						{
+							$obj = $this->db->fetch_object($resql);
+							$avoir=$obj->amount;
+						
+							// On met à jour avoir comme affecté à facture
+							$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+							$sql.= ' SET fk_facture = '.$this->id.',';
+							$sql.= " amount_ht = '".price2num(min($remise_a_decrementee,$avoir))."'";
+							$sql.= ' WHERE rowid ='.$obj->rowid;
+							dolibarr_syslog("Societe::set_valid Mise a jour avoir sql=$sql");
+							if (! $this->db->query($sql))
+							{
+								$error++;
+							}
+
+							if ($remise_a_decrementee < $avoir)
+							{
+								// L'avoir n'a pas été complètement consommée, on insère ligne du reste
+								$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'societe_remise_except';
+								$sql.= ' (fk_soc, datec, amount_ht, fk_user, fk_facture, description) ';
+								$sql.= ' VALUES ';
+								$sql.= ' ('.$this->socidp;
+								$sql.= ' ,'.$obj->datec;
+								$sql.= " ,'".price2num($avoir - $remise_a_decrementee)."'";
+								$sql.= ' ,'.$user->id;
+								$sql.= ' ,null';
+								$sql.= " ,'".addslashes($obj->description)."'";
+								$sql.= ')';
+								if (! $this->db->query( $sql))
+								{
+									$error++;
+								}
+							}
+
+							$remise_a_decrementee-=min($remise_a_decrementee,$avoir);
+							$i++;
+						}
+					}
+					$this->db->free($resql);
+				}
+				else
+				{
+					dolibarr_syslog('Facture::set_valid() Erreur lecture Remise');
+					$error++;
+				}
+			}
+		
                 
             /*
              * Pour chaque produit, on met a jour indicateur nbvente
@@ -950,10 +885,9 @@ class Facture
                 $result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
                 // Fin appel triggers
 
-                $this->db->commit();
-
                 /*
                  * Notify
+                 * \todo	Mettre notifications dans triggers
                  */
                 $facref = sanitize_string($this->ref);
 				$filepdf = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
@@ -962,12 +896,14 @@ class Facture
                 $notify = New Notify($this->db);
 				$notify->send($action_notify, $this->socidp, $mesg, 'facture', $rowid, $filepdf);
 
+                $this->db->commit();
+
                 return 1;
             }
             else
             {
-                $this->db->rollback();
                 $this->error=$this->db->error();
+                $this->db->rollback();
                 return -1;
             }
         }
@@ -1054,10 +990,12 @@ class Facture
 				$soc = new Societe($this->db);
 				$soc->fetch($this->socidp);
 				$remise_client = $soc->remise_client;
+				/* La remise est client n'est pas a mettre au niveau ligne de produit mais globale
 				if ($remise_client > $remise_percent)
 				{
 					$remise_percent = $remise_client ;
 				}
+				*/
 			}
 
 			if ($remise_percent > 0)
@@ -1204,14 +1142,18 @@ class Facture
 	}
 
 	/**
-	* \brief     Mise à jour des sommes de la facture
-	* \param     facid      id de la facture a modifier
-	*/
+	 *		\brief     	Mise à jour des sommes de la facture
+	 * 		\param     	facid      	id de la facture a modifier
+	 *		\return		int			<0 si ko, >0 si ok
+	 */
 	function updateprice($facid)
 	{
 		include_once DOL_DOCUMENT_ROOT . '/lib/price.lib.php';
 		$err=0;
-		$sql = 'SELECT price, qty, tva_taux FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$facid;
+
+		// Lit les lignes detail
+		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$facid;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1220,6 +1162,7 @@ class Facture
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
+				// qty, tva_taux, sub_price = prix unitaire HT, remise_percent, price = prix unitaire HT apres remise %
 				$products[$i][0] = $obj->price;
 				$products[$i][1] = $obj->qty;
 				$products[$i][2] = $obj->tva_taux;
@@ -1230,7 +1173,7 @@ class Facture
 			/*
 			*
 			*/
-			$calculs = calcul_price($products, $this->remise_percent);
+			$calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
 			$this->total_remise   = $calculs[3];
 			$this->amount_ht      = $calculs[4];
 			$this->total_ht       = $calculs[0];
@@ -1295,34 +1238,72 @@ class Facture
 	}
 
 	/**
-	* \brief     Applique une remise
-	* \param     user
-	* \param     remise
-	*/
+	 * 		\brief     	Applique une remise relative sur facture
+	 * 		\param     	user		User qui positionne la remise
+	 * 		\param     	remise
+	 *		\return		int 		<0 si ko, >0 si ok
+	 */
 	function set_remise($user, $remise)
 	{
+		$remise=trim($remise)?trim($remise):0;
+
 		if ($user->rights->facture->creer)
 		{
-			$this->remise_percent = $remise ;
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET remise_percent = '.price2num($remise);
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+			$sql.= ' SET remise_percent = '.price2num($remise);
+			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
-			if ($this->db->query($sql) )
+			if ($this->db->query($sql))
 			{
+				$this->remise_percent = $remise;
 				$this->updateprice($this->id);
 				return 1;
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				$this->error=$this->db->error();
+				return -1;
 			}
 		}
 	}
 
 
 	/**
-	* \brief     Renvoie la liste des sommes de tva
-	*/
+	 * 		\brief     	Applique une remise absolue sur facture
+	 * 		\param     	user 		User qui positionne la remise
+	 * 		\param     	remise
+	 *		\return		int 		<0 si ko, >0 si ok
+	 */
+	function set_remise_absolue($user, $remise)
+	{
+		$remise=trim($remise)?trim($remise):0;
+		
+		if ($user->rights->facture->creer)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+			$sql.= ' SET remise_absolue = '.price2num($remise);
+			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+
+			dolibarr_syslog("Facture::set_remise_absolue sql=$sql");
+
+			if ($this->db->query($sql))
+			{
+				$this->remise_absolue = $remise;
+				$this->updateprice($this->id);
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+	}
+
+
+	/**
+	 * 		\brief     Renvoie la liste des sommes de tva
+	 */
 	function getSumTva()
 	{
 		$sql = 'SELECT amount, tva_tx FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$this->id;
@@ -2239,15 +2220,16 @@ class FactureLigne
     // From llx_facturedet
 	var $desc;
 	var $qty;
-	var $price;         // Prix HT apres remise %
-	var $price_ttc;
-	var $subprice;      // Prix unitaire HT
-	var $tva_taux;
-	var $remise;
-	var $remise_percent;
+	var $price;         	// Prix unitaire HT apres remise % de ligne
+	//var $price_ttc;
+	var $subprice;      	// Prix unitaire HT
+	var $tva_taux;			// Taux tva produit/service
+	var $remise_percent;	// % de la remise
+	var $remise;			// Montant unitaire calculé de la remise %
 	var $produit_id;
 	var $date_start;
 	var $date_end;
+	var $info_bits;
 
 
 	/**
@@ -2268,7 +2250,8 @@ class FactureLigne
 	function fetch($rowid, $societe_id=0)
 	{
 		$sql = 'SELECT fk_product, description, price, qty, rowid, tva_taux, remise, remise_percent,';
-		$sql.= ' subprice, '.$this->db->pdate('date_start').' as date_start,'.$this->db->pdate('date_end').' as date_end';
+		$sql.= ' subprice, '.$this->db->pdate('date_start').' as date_start,'.$this->db->pdate('date_end').' as date_end,';
+		$sql.= ' info_bits';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
 		$result = $this->db->query($sql);
 		if ($result)
@@ -2277,7 +2260,7 @@ class FactureLigne
 			$this->desc           = stripslashes($objp->description);
 			$this->qty            = $objp->qty;
 			$this->price          = $objp->price;
-			$this->price_ttc      = $objp->price_ttc;
+			//$this->price_ttc      = $objp->price_ttc;
 			$this->subprice       = $objp->subprice;
 			$this->tva_taux       = $objp->tva_taux;
 			$this->remise         = $objp->remise;
@@ -2285,6 +2268,7 @@ class FactureLigne
 			$this->produit_id     = $objp->fk_product;
 			$this->date_start     = $objp->date_start;
 			$this->date_end       = $objp->date_end;
+			$this->info_bits      = $objp->info_bits;
 			$this->db->free($result);
 		}
 		else

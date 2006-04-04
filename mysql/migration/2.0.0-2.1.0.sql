@@ -22,6 +22,7 @@ alter table llx_contrat add column note text;
 alter table llx_contrat add column note_public text after note;
 
 alter table llx_facture add column note_public text after note;
+alter table llx_facture add column remise_absolue real DEFAULT 0 after remise_percent;
 
 alter table llx_propal add column note_public text after note;
 

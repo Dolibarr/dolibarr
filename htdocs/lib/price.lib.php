@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,26 +18,29 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!	\file htdocs/lib/price.lib.php
-  \brief librairie contenant les fonctions pour calculer un prix.
-  \author Rodolphe Quiedeville.
-		\version $Revision$
-  
-  Ensemble des fonctions permettant de calculer un prix.
+/**
+		\file 		htdocs/lib/price.lib.php
+		\brief 		Librairie contenant les fonctions pour calculer un prix.
+		\author 	Rodolphe Quiedeville.
+		\version 	$Revision$
+		
+		Ensemble des fonctions permettant de calculer un prix.
 */
 
 
-/*!
-  \brief permet de calculer un prix.
-  \param products
-  \param remise_percent
-  \return result
+/**
+		\brief 		Permet de calculer un prix.
+		\param 		products
+		\param 		remise_percent
+		\param 		remise_absolue
+		\return 	result[0]	total_ht
+					result[1]	total_tva
+					result[2]	total_ttc
+					result[5]	tableau des totaux par tva
 */
-
-function calcul_price($products, $remise_percent)
+function calcul_price($products, $remise_percent, $remise_absolue=0)
 {
 	$total_ht = 0;
 	$amount_ht = 0;
@@ -49,7 +53,7 @@ function calcul_price($products, $remise_percent)
 	{
 		foreach ($products as $product)
 		{
-			$prod_price = $product[0];
+			$prod_price = $product[0];	// Prix unitaire HT apres remise % de ligne
 			$prod_qty   = $product[1];
 			$prod_txtva = $product[2];
 		
@@ -59,7 +63,7 @@ function calcul_price($products, $remise_percent)
 			// incrémentation montant HT hors remise de l'ensemble
 			$amount_ht += $line_price_ht;
 		
-			// si une remise est consentie sur l'ensemble
+			// si une remise relative est consentie sur l'ensemble
 			if ($remise_percent > 0)
 			{
 				// calcul de la remise sur la ligne
@@ -77,6 +81,7 @@ function calcul_price($products, $remise_percent)
 		
 			// incrémentation du montant TTC de la valeur HT, on traite la TVA ensuite
 			$total_ttc  += $line_price_ht; 
+			
 			// traitement de la tva non perçue récupérable
 			if ( $prod_txtva >= 0 )
 			{
@@ -84,8 +89,10 @@ function calcul_price($products, $remise_percent)
 				// donc on incrémente le total TTC de l'ensemble, de la valeur de TVA de la ligne
 				$total_ttc  += $line_tva; 
 			}
+			
 			// dans tous les cas, on incrémente le total de TVA
 			$total_tva += $line_tva;
+
 			// on incrémente le tableau de différentiation des taux de TVA
 // s'il faut rassembler les tva facturables ou non, du même taux
 // dans un même ligne du tableau, remplacer la ligne suivante par :
@@ -95,19 +102,26 @@ function calcul_price($products, $remise_percent)
 			$i++;
 		}
 	}
-	/*
-	* arrondis
-	*/
-	$total_ht  = round($total_ht, 2);
-	$total_tva = round($total_tva, 2);
 	
 	/*
-	*
-	*/
+	 * Si remise absolue, on la retire
+	 */
+	 $total_ht -= $remise_absolue;
+	 
+	/*
+	 * 	Gestion des arrondis sur total des prix
+	 */
+	$total_ht  = round($total_ht, 2);
+	$total_tva = round($total_tva, 2);
+	$total_ttc = $total_ht + $total_tva;
+	
+	
+	// Renvoi réponse
 	$result[0] = $total_ht;
 	$result[1] = $total_tva;
 	$result[2] = $total_ttc;
-	$result[3] = $total_remise;
+
+	$result[3] = $total_remise;	
 	$result[4] = $amount_ht;
 	
 	return $result;

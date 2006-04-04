@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,11 +172,12 @@ if ($_socid > 0)
     /*
      * Liste de l'historique des remises
      */
-    $sql  = "SELECT rc.rowid,rc.remise_client,".$db->pdate("rc.datec")." as dc, u.code";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
-    $sql .= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql .= " AND u.rowid = rc.fk_user_author";
-    $sql .= " ORDER BY rc.datec DESC";
+    $sql  = "SELECT rc.rowid,rc.remise_client,".$db->pdate("rc.datec")." as dc,";
+    $sql.= " u.rowid as user_id, u.code";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
+    $sql.= " WHERE rc.fk_soc =". $objsoc->id;
+    $sql.= " AND u.rowid = rc.fk_user_author";
+    $sql.= " ORDER BY rc.datec DESC";
 
     $resql=$db->query($sql);
     if ($resql)
@@ -186,7 +187,7 @@ if ($_socid > 0)
 	print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Date").'</td>';
     print '<td>'.$langs->trans("Discount").'</td>';
-    print '<td>'.$langs->trans("User").'</td>';
+    print '<td align="center">'.$langs->trans("User").'</td>';
 	print '</tr>';
 	$i = 0 ; 
 	$num = $db->num_rows($resql);
@@ -198,7 +199,7 @@ if ($_socid > 0)
 	    print '<tr '.$bc[$tag].'>';
 	    print '<td>'.dolibarr_print_date($obj->dc,"%d %B %Y %H:%M").'</td>';
 	    print '<td>'.$obj->remise_client.' %</td>';
-	    print '<td>'.$obj->code.'</td>';
+	    print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
 	    print '</tr>';
 	    $i++;
 	  }

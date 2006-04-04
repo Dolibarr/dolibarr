@@ -888,6 +888,7 @@ class Form
         }
         print '</select>';
     }
+    
     /**
      *      \brief      Retourne la liste des modes de paiements possibles
      *      \param      selected        Id du mode de paiement présélectionné
@@ -917,9 +918,10 @@ class Form
             if (eregi('[a-z]', $selected) && $selected == $code) print ' selected="true"';
             elseif ($selected == $id) print ' selected="true"';
             print '>';
-            if ($format == 0) print $this->cache_types_paiements_libelle[$id];
-            if ($format == 1) print $code;
-            if ($format == 2) print $this->cache_types_paiements_libelle[$id];
+            if ($format == 0) $value=$this->cache_types_paiements_libelle[$id];
+            if ($format == 1) $value=$code;
+            if ($format == 2) $value=$this->cache_types_paiements_libelle[$id];
+            print $value?$value:'&nbsp;';
             print '</option>';
         }
         print '</select>';
@@ -1419,8 +1421,72 @@ class Form
             }
         }
     }
+
+
+    /**
+     *    \brief      Affiche formulaire de selection de la remise relative
+     *    \param      page        Page
+     *    \param      selected    Valeur remise
+     *    \param      htmlname    Nom du formulaire select. Si none, non modifiable
+     */
+    function form_remise_percent($page, $selected='', $htmlname='remise_percent')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+			print '<input type="hidden" name="action" value="setremisepercent">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+			print '<input type="text" name="'.$htmlname.'" size="1" value="'.$selected.'">%';
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                print $selected;
+            } else {
+                print "0%";
+            }
+        }
+    }
     
         
+    /**
+     *    \brief      Affiche formulaire de selection de la remise avoir
+     *    \param      page        Page
+     *    \param      selected    Valeur à appliquer
+     *    \param      htmlname    Nom du formulaire select. Si none, non modifiable
+     */
+    function form_remise($page, $selected='', $htmlname='remise')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+			print '<input type="hidden" name="action" value="setremise">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+			print '<input type="text" name="'.$htmlname.'" size="1" value="'.$selected.'">';
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                print $selected;
+            } else {
+                print "0";
+            }
+        }
+    }
+    
+    
     /**
      *    \brief      Affiche formulaire de selection des contacts
      *    \param      page        Page
