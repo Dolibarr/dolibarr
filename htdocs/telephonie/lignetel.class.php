@@ -571,7 +571,12 @@ class LigneTel {
 	$sql .= " (tms, fk_ligne, fk_user, statut, comment,fk_fournisseur) ";
 	$sql .= " VALUES (now(), $this->id, $user->id, $statut, '$commentaire',$this->fournisseur_id)";
 
-	$this->db->query($sql);
+	if (!$this->db->query($sql))
+	  {
+	    dolibarr_syslog("LigneTel::set_statut Error -6");
+	    dolibarr_syslog($this->db->error());
+	    dolibarr_syslog($sql);
+	  }
       }
 
     
