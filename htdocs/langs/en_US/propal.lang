@@ -63,3 +63,7 @@ RelatedBills=Related invoices
 ErrorPropalNotFound=Propal %s not found
 Estimate=Estimate
 OtherPropals=Other proposals
+DateDelivery=Shipping date
+SetDateLivraison=Set shipping date
+CopyPropalFrom=Create commercial proposal by copying existing proposal
+CreateEmptyPropal=Create empty commercial proposals vierge or from list of products/services

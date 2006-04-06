@@ -260,11 +260,11 @@ if ($_GET["propalid"] > 0)
             $langs->load('mails');
             print '<tr>';
             print '<td>'.$langs->trans('MailTo').'</td>';
-    
+ 
             if ($propal->statut == 0 && $user->rights->propale->creer)
             {
                 print '<td colspan="3">';
-                $html->select_contacts($societe->id, $propal->contactid, 'none');
+				$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
                 print '</td>';
             }
             else

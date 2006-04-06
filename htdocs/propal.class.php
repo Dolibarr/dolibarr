@@ -1483,17 +1483,17 @@ class Propal
     }
 	
 	 /**
-     *    \brief     Copie un objet propal dont l'id est passé en premier argument dans l'objet courant, en mémoire
-     *    \param     $src_propal_id      Id de la propal à copier
+     *    \brief     Charge l'objet propal en mémoire avec propal dont l'id est passé en argument
+     *    \param     $src_propal_id      Id de la propal source
      *    \return    int                 >0 si ok, <0 si ko
      *    \see       fetch
      */
-	function copie_from($src_propal_id)
+	function load_from($src_propal_id)
 	{
 		$src_propal = new Propal($this->db);
 		if($src_propal->fetch($src_propal_id) < 0)
 		{
-			dolibarr_syslog("Propal::Copie_from Erreur de lecture de la propal source.");
+			dolibarr_syslog("Propal::load_from: Erreur de lecture de la propal source.");
             return -1;
 		}
 		$this->datep             = $src_propal->datep;
@@ -1527,6 +1527,7 @@ class Propal
         $this->lignes 			 = $src_propal->lignes;
         return 1;
 	}
+	
 	/**
      *    \brief     Insert en base un objet propal complétement définie par ses données membres (resultant d'une copie par exemple).
      *    \return    int                 l'id du nouvel objet propal en base si ok, <0 si ko

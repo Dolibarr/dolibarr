@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2006 Regis Houssin         <regis.houssin@cap-networks.com>
@@ -118,14 +118,14 @@ if ($_POST['action'] == 'setdate_livraison')
 
 if ($_POST['action'] == 'add') 
 {
-    $propal = new Propal($db, $_GET['socidp']);
+    $propal = new Propal($db, $_POST['socidp']);
     
     /*
      * Si on seléctionné une propal à copier, on réalise la copie
      */
-    if($_POST['copie_propal'])
+    if($_POST['createmode']=='copy' && $_POST['copie_propal'])
     {
-    	if($propal->copie_from($_POST['copie_propal']) == -1)
+    	if($propal->load_from($_POST['copie_propal']) == -1)
     	{
     		//$msg = '<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
     		$msg = '<div class="error">Impossible de copier la propal Id = ' . $_POST['copie_propal'] . '!</div>';
@@ -135,6 +135,7 @@ if ($_POST['action'] == 'add')
 	    $propal->duree_validite = $_POST['duree_validite'];
 	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
 	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
+	    $propal->socidp    = $_POST['socidp'];
 	    $propal->contactid = $_POST['contactidp'];
 	    $propal->projetidp = $_POST['projetidp'];
 	    $propal->modelpdf  = $_POST['model'];

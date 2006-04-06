@@ -84,9 +84,10 @@ class mod_propale_marbre extends ModeleNumRefPropales
     }
 
     /**     \brief      Renvoi prochaine valeur attribuée
+     *      \param      objsoc      Objet société
      *      \return     string      Valeur
      */
-    function getNextValue()
+    function getNextValue($objsoc=0)
     {
         global $db;
 
@@ -126,15 +127,6 @@ class mod_propale_marbre extends ModeleNumRefPropales
         return  "PR$yymm-$num";
     }
 
-
-    /**     \brief      Renvoie la référence de propale suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function propale_get_num($objsoc=0)
-    {
-        return $this->getNextValue();
-    }
 }
 
 ?>

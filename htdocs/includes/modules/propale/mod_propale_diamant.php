@@ -79,9 +79,10 @@ class mod_propale_diamant extends ModeleNumRefPropales
 
 
     /**     \brief      Renvoi prochaine valeur attribuée
+     *      \param      objsoc      Objet société
      *      \return     string      Valeur
      */
-    function getNextValue()
+    function getNextValue($objsoc=0)
     {
         global $db;
     
@@ -106,16 +107,6 @@ class mod_propale_diamant extends ModeleNumRefPropales
         return  "PR" .$y. substr("0000".$num, strlen("0000".$num)-5,5);
     }
     
-    
-    /**     \brief      Renvoie la référence de propale suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function propale_get_num($objsoc=0)
-    { 
-//        return $this->propale_get_num();
-	  return $this->getNextValue();
-    }
 }
 
 ?>

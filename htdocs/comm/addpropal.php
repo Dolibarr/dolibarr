@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
@@ -53,7 +53,7 @@ llxHeader();
 
 print_titre($langs->trans("NewProp"));
 
-$form=new Form($db);
+$html=new Form($db);
 
 
 /*
@@ -71,11 +71,13 @@ if ($_GET["action"] == 'create')
         exit;
     }
 
-    $obj = PROPALE_ADDON;
+    $obj = $conf->global->PROPALE_ADDON;
     $modPropale = new $obj;
-    $numpr = $modPropale->propale_get_num($soc);
-    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
+    $numpr = $modPropale->getNextValue($soc);
 
+	// Si numero deja pris (ne devrait pas arriver)
+	// on incremente par .num+1
+    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
     if ( $db->query($sql) )
     {
         $num = $db->result(0, 0);
@@ -85,59 +87,95 @@ if ($_GET["action"] == 'create')
             $numpr .= "." . ($num + 1);
         }
     }
+
     print "<form name='addprop' action=\"propal.php?socidp=".$soc->id."\" method=\"post\">";
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="ref" value="'.$numpr.'"></td>';
+    // Ref
+    print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
 
-    print '<td valign="top" colspan="2">';
-    print $langs->trans("Comments").'</td></tr>';
+	// Societe
+	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->nom_url;
+	print '<input type="hidden" name="socidp" value="'.$soc->id.'">';
+	print '</td>';
+	print '</tr>';
 
-    print '<tr><td>'.$langs->trans("Company").'</td><td><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
-    print '<td rowspan="8" colspan="2" valign="top">';
-    print '<textarea name="note" wrap="soft" cols="40" rows="8"></textarea>';
-    print '</tr>';
+	// Date facture
+	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">';
+	$html->select_date('','','','','',"addprop");
+	print '</td></tr>';
 
-    print "<tr><td>".$langs->trans("Date")."</td><td>";
-    $form->select_date('','','','','',"addprop");
-    print "</td></tr>";
+    print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
-    print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
+	// Conditions de réglement
+	print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td colspan="2">';
+	$html->select_conditions_paiements($cond_reglement_id,'cond_reglement_id');
+	print '</td></tr>';
 
-	// Date de livraison
-	print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
+	// Mode de réglement
+	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
+	$html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
+	print '</td></tr>';
+
+	// Remise relative
+	$relative_discount=$soc->remise_client;
+	print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
 	print '<td>';
-	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "")
+	print '<input type="text" name="remise_percent" size="1" value="'.$relative_discount.'"> %';
+	print '</td><td>'.img_info().' ';
+	if ($relative_discount)
 	{
-		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		$syear = date("Y", $tmpdte);
-		$smonth = date("m", $tmpdte);
-		$sday = date("d", $tmpdte);
-		$form->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
-	}
+		print $langs->trans("CompanyHasRelativeDiscount",$relative_discount);
+	}	
 	else
 	{
-		$form->select_date(-1,'liv_','','','',"addprop");
+		print $langs->trans("CompanyHasNoRelativeDiscount");
 	}
 	print '</td></tr>';
-  
-	// Conditions de réglement
-	print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
-	$form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
+
+	// Remise avoirs
+	$absolute_discount=$soc->getCurrentDiscount();
+	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
+	print '<td>';
+	print '<input type="text" name="remise_absolue" size="1" value="0"> '.$langs->trans("Currency".$conf->monnaie);
+	print '</td><td>'.img_info().' ';
+	if ($absolute_discount)
+	{
+		print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+	}	
+	else
+	{
+		print $langs->trans("CompanyHasNoAbsoluteDiscount");
+	}
 	print '</td></tr>';
-	
-	// Mode de réglement
-	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	$form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
-	print '</td></tr>';
+
+
+	// Date de livraison
+	if ($conf->global->PROPAL_ADD_SHIPPING_DATE)
+	{
+		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
+		print '<td>';
+		if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "")
+		{
+			$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+			$syear = date("Y", $tmpdte);
+			$smonth = date("m", $tmpdte);
+			$sday = date("d", $tmpdte);
+			$html->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
+		}
+		else
+		{
+			$html->select_date(-1,'liv_','','','',"addprop");
+		}
+		print '</td></tr>';
+	}  
 
     /*
      * Destinataire de la propale
      */
-    print "<tr><td>".$langs->trans("Contact")."</td><td>\n";
+    print "<tr><td>".$langs->trans("Contact")."</td><td colspan=\"2\">\n";
     $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$soc->id;
 
@@ -180,36 +218,40 @@ if ($_GET["action"] == 'create')
 
     print '</td></tr>';
 
-    print '<tr>';
+	// Projet
     if ($conf->projet->enabled)
     {
-        /*
-         * Projet associ
-         */
-        print '<td valign="top">'.$langs->trans("Project").'</td><td>';
+	    print '<tr>';
+        print '<td valign="top">'.$langs->trans("Project").'</td><td colspan="2">';
 
-        $numprojet=$form->select_projects($soc->id,0,'projetidp');
+        $numprojet=$html->select_projects($soc->id,0,'projetidp');
         if ($numprojet==0)
         {
             print ' &nbsp; <a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
         }
         print '</td>';
-    }
-    else {
-        print '<td colspan="2">&nbsp;</td>';
+		print '</tr>';
     }
 
-    print '<td>Modèle</td>';
-    print '<td>';
+    print '<tr>';
+    print '<td>'.$langs->trans("Model").'</td>';
+    print '<td colspan="2">';
     $model=new ModelePDFPropales();
     $liste=$model->liste_modeles($db);
-    $form->select_array("model",$liste,$conf->global->PROPALE_ADDON_PDF);
+    $html->select_array("model",$liste,$conf->global->PROPALE_ADDON_PDF);
     print "</td></tr>";
+
+    print "</table>";
+	print '<br>';
     
     /*
      * Combobox pour la fonction de copie
      */
-    print '<td colspan="2">&nbsp;</td><td>Copier Propal depuis</td><td>';
+    print '<table>';
+    print '<tr>';
+    print '<td><input type="radio" name="createmode" value="copy"></td>';
+    print '<td>'.$langs->trans("CopyPropalFrom").' </td>';
+    print '<td>';
     $liste_propal = array();
     $liste_propal[0] = '';
     $sql ="SELECT p.rowid as id, CONCAT(p.ref, '-', s.nom)  as lib";
@@ -226,43 +268,48 @@ if ($_GET["action"] == 'create')
             $liste_propal[$row[0]]=$row[1];
             $i++;
         }
-        $form->select_array("copie_propal",$liste_propal, 0);
+        $html->select_array("copie_propal",$liste_propal, 0);
     }
     else
     {
-      	print '<select name="copie_propal"></select>';
+      	dolibarr_print_error($db);
     }
-    print "</td></tr>";
-    print "</table>";
-
-    print '<br>';
-
+    print '</td></tr>';
+   
+   	print '<tr><td colspan="3">&nbsp;</td></tr>';
+   	
+    print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="true"></td>';
+	print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
+    print '<tr><td colspan="3">';
     if ($conf->produit->enabled || $conf->service->enabled)
     {
-        $titre=$langs->trans("ProductsAndServices");
-        $lib=$langs->trans("Product").'/'.$langs->trans("Services");
-
-        print_titre($titre);
+        $lib=$langs->trans("ProductsAndServices");
 
         print '<table class="border">';
         print '<tr><td>'.$lib.'</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td></tr>';
-        for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+        for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
         {
             print '<tr><td>';
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
-				$form->select_produits('',"idprod".$i,'',$conf->produit->limit_size,$soc->price_level);
+				$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size,$soc->price_level);
 			else
-            	$form->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
+            	$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
             print '</td>';
             print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-            print '<td><input type="text" size="3" name="remise'.$i.'" value="'.$soc->remise_client.'"> %</td></tr>';
+            print '<td><input type="text" size="2" name="remise'.$i.'" value="">%</td></tr>';
         }
 
         print "</table>";
 
-        print '<br>';
     }
+    else
+    {
+    	print '&nbsp;';
+    }
+    print '</td></tr>';
+	print '</table>';
+    print '<br>';
 
     /*
     * Si il n'y a pas de contact pour la societe on ne permet pas la creation de propale
@@ -278,5 +325,6 @@ if ($_GET["action"] == 'create')
 }
 
 $db->close();
+
 llxFooter('$Date$ - $Revision$');
 ?>

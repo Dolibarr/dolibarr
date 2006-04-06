@@ -689,7 +689,7 @@ if ($_GET['action'] == 'create')
 
 	print '<table class="border" width="100%">';
 
-    // Reference
+    // Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
 	// Societe

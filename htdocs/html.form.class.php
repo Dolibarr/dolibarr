@@ -459,10 +459,10 @@ class Form
     function select_contacts($socid,$selected='',$htmlname='contactid')
     {
 	        // On recherche les societes
-	        $sql = "SELECT s.idp, s.name, s.firstname FROM ";
-	        $sql .= MAIN_DB_PREFIX ."socpeople as s";
-	        $sql .= " WHERE fk_soc=".$socid;
-	        $sql .= " ORDER BY s.name ASC";
+	        $sql = "SELECT s.idp, s.name, s.firstname FROM";
+	        $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
+	        $sql.= " WHERE fk_soc=".$socid;
+	        $sql.= " ORDER BY s.name ASC";
 	    
 	        $resql=$this->db->query($sql);
 	        if ($resql)
