@@ -399,6 +399,10 @@ function _print_lines($db,$result,$sql,$acct)
                     //print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("Payment");
                 }
+                else if ($links[$key]['type']=='payment_supplier') {
+                    //print img_object($langs->trans('ShowPayment'),'payment').' ';
+                    print $langs->trans("Payment");
+                }
                 else if ($links[$key]['type']=='company') {
                     //print img_object($langs->trans('ShowCustomer'),'company').' ';
                     print $links[$key]['label'];
