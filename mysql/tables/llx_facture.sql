@@ -32,7 +32,7 @@ create table llx_facture
   paye                smallint DEFAULT 0 NOT NULL,
   amount              real     DEFAULT 0 NOT NULL,
   remise_percent      real     DEFAULT 0,   -- remise relative
-  remise_absolute     real     DEFAULT 0,   -- remise absolue
+  remise_absolue      real     DEFAULT 0,   -- remise absolue
   remise              real     DEFAULT 0,   -- remise totale calculee
   tva                 real     DEFAULT 0,   -- montant tva apres remise totale
   total               real     DEFAULT 0,   -- montant total ht apres remise totale
