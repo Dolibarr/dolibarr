@@ -76,7 +76,7 @@ if ($resql)
     {
       $obj = $db->fetch_object($resql);
      
-      $result = ResiliationPreselection($db, $host, $user_login, $user_passwd, $obj->ligne, $num_abo, $verbose);
+      $result = ResiliationPreselection($db, $user, $host, $user_login, $user_passwd, $obj->ligne, $num_abo, $verbose);
 
       if ($result == 0)
 	{
@@ -92,7 +92,7 @@ if ($resql)
     }
 }
 
-function ResiliationPreselection($db, $host, $user_login, $user_passwd, $ligne_num, $id_person, $verbose)
+function ResiliationPreselection($db, $user, $host, $user_login, $user_passwd, $ligne_num, $id_person, $verbose)
 {  
   if ($verbose)
     dolibarr_syslog("Appel de DeletePreselection($host, $user_login, ****, $ligne_num, $id_person)");
@@ -172,7 +172,7 @@ function ResiliationPreselection($db, $host, $user_login, $user_passwd, $ligne_n
 
       $ligne = new LigneTel($db);
       $ligne->fetch($ligne_num);
-      $ligne->set_statut(1, 5,'','cron', 4);
+      $ligne->set_statut($user, 5,'','cron', 4);
 
       return 0;
     }
