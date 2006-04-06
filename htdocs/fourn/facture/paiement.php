@@ -353,7 +353,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 	if (! $sortfield) $sortfield='p.datep';
 
 	$sql  = 'SELECT p.rowid, '.$db->pdate('p.datep').' as dp, p.amount';
-	$sql .= ', f.amount as fa_amount, f.facnumber, s.nom';
+	$sql .= ', f.amount, f.facnumber, s.nom';
 	$sql .= ', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
 	$sql .= ', ba.rowid as bid, ba.label';
 	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -412,7 +412,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield);
 		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','','','',$sortfield);
 		print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','','','',$sortfield);
-		print_liste_field_titre($langs->trans('AmountTTC'),'paiement.php','fa_amount','','','align="right"',$sortfield);
+		print_liste_field_titre($langs->trans('AmountTTC'),'paiement.php','f.amount','','','align="right"',$sortfield);
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 
