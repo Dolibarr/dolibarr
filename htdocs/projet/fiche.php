@@ -40,7 +40,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
-if ($projetid == '') accessforbidden();
+if ($projetid == '' && ($_GET['action'] != "create" && $_POST['action'] != "add")) accessforbidden();
 
 if ($user->societe_id > 0) 
 {
