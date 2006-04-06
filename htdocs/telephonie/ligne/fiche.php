@@ -545,6 +545,15 @@ else
 	      $head[$h][1] = $langs->trans('Historique');
 	      $h++;
 
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/commentaires.php?id=".$ligne->id;
+	      $head[$h][1] = $langs->trans('Commentaires');
+	      $numc = $ligne->num_comments();
+	      if ($numc > 0)
+		{
+		  $head[$h][1] = $langs->trans("Commentaires ($numc)");
+		}
+	      $h++;
+
 	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/conso.php?id=".$ligne->id;
 	      $head[$h][1] = $langs->trans('Conso');
 	      $h++;
@@ -553,9 +562,16 @@ else
 	      $head[$h][1] = $langs->trans('Stats');
 	      $h++;
 	      
+	      $ligne->load_previous_next_id();
+
+	      $previous_ref = $ligne->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$ligne->ref_previous.'">'.img_previous().'</a>':'';
+	      $next_ref     = $ligne->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$ligne->ref_next.'">'.img_next().'</a>':'';
+
 	      dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
 
-	      print_fiche_titre('Fiche Ligne', $mesg);
+	      print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">Fiche Ligne '.$mesg.'</td>';
+	      print '<td class="nobordernopadding"><a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+	      print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table><br />';
 
 	      /*
 	       *
