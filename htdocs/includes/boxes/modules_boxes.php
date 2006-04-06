@@ -70,7 +70,8 @@ class ModeleBoxes
         // Affiche titre de la boite
         print '<tr class="box_titre"><td';
         if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
-        print '>'.dolibarr_trunc($head['text'],$this->MAXLENGTHBOX);
+        print '>';
+        print dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
         if ($head['sublink'])
         {
             print ' <a href="'.$head['sublink'].'">'.img_picto($head['subtext'],$head['subpicto']).'</a>';

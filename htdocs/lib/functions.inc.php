@@ -516,11 +516,12 @@ function dolibarr_print_phone($phone,$country="FR")
 /**
         \brief      Tronque une chaine à une taille donnée en ajoutant les points de suspension si cela dépasse
         \param      string		Chaine à tronquer
-        \param      size		Longueur max de la chaine
+        \param      size		Longueur max de la chaine. Si 0, pas de limite.
         \return     string		Chaine tronquée
 */
 function dolibarr_trunc($string,$size=40)
 {
+	if ($size==0) return $string;
 	if (strlen($string) > $size)
 		return substr($string,0,$size).'...';
 	else
