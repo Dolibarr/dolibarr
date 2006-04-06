@@ -622,6 +622,8 @@ class TelephonieContrat {
 
     if ($lignes[3] > 0)	$statut = 3;
 
+    if ($num == 1)	$statut = $row[0];
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
     $sql .= " SET statut = ".$statut;
     $sql .= " WHERE rowid = ".$this->id;
