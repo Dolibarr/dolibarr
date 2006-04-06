@@ -26,8 +26,9 @@ create table llx_telephonie_societe_ligne_comments (
   fk_ligne    integer NOT NULL,
   fk_user     integer NOT NULL,
   datec       datetime,
-  commentaire text
+  commentaire text,
 
+  INDEX (fk_ligne)
 )type=innodb;
 
 
