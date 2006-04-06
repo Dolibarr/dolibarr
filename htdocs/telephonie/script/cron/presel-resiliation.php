@@ -76,7 +76,7 @@ if ($resql)
     {
       $obj = $db->fetch_object($resql);
      
-      $result = ResiliationPreselection($host, $user_login, $user_passwd, $obj->ligne, $num_abo, $verbose);
+      $result = ResiliationPreselection($db, $host, $user_login, $user_passwd, $obj->ligne, $num_abo, $verbose);
 
       if ($result == 0)
 	{
@@ -92,7 +92,7 @@ if ($resql)
     }
 }
 
-function ResiliationPreselection($host, $user_login, $user_passwd, $ligne_num, $id_person, $verbose)
+function ResiliationPreselection($db, $host, $user_login, $user_passwd, $ligne_num, $id_person, $verbose)
 {  
   if ($verbose)
     dolibarr_syslog("Appel de DeletePreselection($host, $user_login, ****, $ligne_num, $id_person)");
