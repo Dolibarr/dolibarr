@@ -41,6 +41,12 @@ if ($_GET["id"])
   $ligne = new LigneTel($db);
   $result = $ligne->fetch_by_id($_GET["id"]);
 
+  if ($result == 1)
+    {
+      $client_comm = new Societe($db);
+      $client_comm->fetch($ligne->client_comm_id, $user);
+    }
+
   $soc = new Societe($db);
   $result = $soc->fetch($ligne->client_comm_id, $user);
 
@@ -142,8 +148,7 @@ if ($_GET["id"])
       print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
       print '</td></tr>';
       
-      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero);
-      print " ".$ligne->support.'</td>';
+      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
       print '<td>Facturée : '.$ligne->facturable.'</td></tr>';
       
       $client = new Societe($db, $ligne->client_id);
