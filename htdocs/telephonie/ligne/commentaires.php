@@ -54,7 +54,7 @@ if ($_GET["id"])
     {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne_comments";
       $sql .= " (fk_ligne, fk_user, commentaire,datec)";
-      $sql .= " VALUES ('".$ligne->id."','".$user->id."','".$_POST["comment"]."',now());";
+      $sql .= " VALUES ('".$ligne->id."','".$user->id."','".addslashes($_POST["comment"])."',now());";
       $db->query($sql);
     }
 
