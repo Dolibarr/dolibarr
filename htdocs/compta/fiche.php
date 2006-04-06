@@ -64,39 +64,6 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
 }
 
 
-/* TODO RODO
-if ($action == 'stcomm')
-{
-  if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
-    {
-      $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
-      $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
-      $result = @$db->query($sql);
-
-      if ($result)
-        {
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
-	  $result = $db->query($sql);
-        }
-      else
-        {
-	  $errmesg = "ERREUR DE DATE !";
-        }
-    }
-
-  if ($actioncommid)
-    {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
-      $result = @$db->query($sql);
-
-      if (!$result)
-        {
-	  $errmesg = "ERREUR DE DATE !";
-        }
-    }
-}
-*/
-
 /*
  * Recherche
  *
