@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2006      Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ $mesg='';
 /*
  * Actions
  */
+ 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
 {
 	$db->begin();
@@ -54,7 +56,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 	if ($result > 0)
 	{
         $db->commit();
-        Header('Location: /fourn/facture/paiement.php');
+        Header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
         exit;
 	}
 	else

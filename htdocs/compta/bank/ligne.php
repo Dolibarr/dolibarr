@@ -340,6 +340,12 @@ if ($result)
                     print $langs->trans("Payment");
                     print '</a>';
                 }
+                else if ($links[$key]['type']=='payment_supplier') {
+                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowPayment'),'payment').' ';
+                    print $langs->trans("Payment");
+                    print '</a>';
+                }
                 else if ($links[$key]['type']=='company') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowCustomer'),'company').' ';

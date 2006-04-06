@@ -147,7 +147,7 @@ if ($action == 'add_paiement')
 							$paiement_id,
 							DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=',
 							'(paiement)',
-							'payment');
+							'payment_supplier');
 						$acc->add_url_line($bank_line_id,
 							$fac->fournisseur->id,
 							DOL_URL_ROOT.'/fourn/fiche.php?socid=',

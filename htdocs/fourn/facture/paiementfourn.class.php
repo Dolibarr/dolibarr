@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -240,7 +240,7 @@ class PaiementFourn
 		}
 
 		// Vérifier si paiement ne porte pas sur ecriture bancaire rapprochée
-		// Si c'est le cas, on refuse le paiement
+		// Si c'est le cas, on refuse le delete
 		if ($bank_line_id)
 		{
 			$accline = new AccountLine($this->db,$bank_line_id);
