@@ -97,6 +97,27 @@ class LigneTel {
    *
    *
    */
+  function num_comments()
+  {
+    $num_comments = 0;
+
+    /* Commentaires */
+    $sql = "SELECT fk_ligne ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne_comments";
+    $sql .= " WHERE fk_ligne = ".$this->id;
+    $resql = $this->db->query($sql);
+    
+    if ($resql)
+      {
+	$num_comments = $this->db->num_rows($resql);
+	$this->db->free($resql);
+      }
+    return $num_comments;
+  }
+  /*
+   *
+   */
+
   function send_mail($user, $commentaire, $statut)
   {
   /* 
