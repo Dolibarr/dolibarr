@@ -232,7 +232,7 @@ if ($_GET["action"] == 'create')
       if ($_GET["socid"])
 	{
 	  print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td width="40%">';
-          print $html->select_contacts($_GET["socid"],'','contactid',1,1);
+          $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
 	}
 
@@ -324,7 +324,7 @@ if ($_GET["action"] == 'create')
       if ($_GET["socid"])
 	{
 	  print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-          print $html->select_contacts($_GET["socid"],'','contactid',1,1);
+          $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
 	}
       

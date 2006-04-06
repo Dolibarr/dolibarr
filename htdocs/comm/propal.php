@@ -538,7 +538,7 @@ if ($_GET['propalid'] > 0)
 
 	        print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
 
-            $rowspan=6;
+            $rowspan=9;
             
             // Société
             print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
@@ -557,14 +557,22 @@ if ($_GET['propalid'] > 0)
             print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
             print dolibarr_print_date($propal->date,'%a %d %B %Y');
             print '</td>';
+
+            if ($conf->projet->enabled) $rowspan++;
     
+            // Notes
+            print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td>';
+    		print '</tr>';
+    
+    		// Date fin propal
+    		print '<tr>';
 			print '<td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DateEndPropal');
 			print '</td>';
 			if ($_GET['action'] != 'editecheance' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
-            print '<td>';
+            print '<td colspan="3">';
             if ($propal->brouillon && $_GET['action'] == 'editecheance')
             {
                 print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
@@ -589,28 +597,33 @@ if ($_GET['propalid'] > 0)
             print '</tr>';
     		
 			
-			// date de livraison
-			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('DateDelivery');
-			print '</td>';
-			if ($_GET['action'] != 'editdate_livraison' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDateLivraison'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="5">';
-			if ($_GET['action'] == 'editdate_livraison')
+			// date de livraison (conditonné sur PROPAL_ADD_SHIPPING_DATE car carac à
+			// gérer par les commandes et non les propal
+			if ($conf->global->PROPAL_ADD_SHIPPING_DATE)
 			{
-				print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-                print '<input type="hidden" name="action" value="setdate_livraison">';
-                $html->select_date($propal->date_livraison,'liv_','','','',"editdate_livraison");
-                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                print '</form>';
+				print '<tr><td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans('DateDelivery');
+				print '</td>';
+				if ($_GET['action'] != 'editdate_livraison' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDateLivraison'),1).'</a></td>';
+				print '</tr></table>';
+				print '</td><td colspan="5">';
+				if ($_GET['action'] == 'editdate_livraison')
+				{
+					print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+	                print '<input type="hidden" name="action" value="setdate_livraison">';
+	                $html->select_date($propal->date_livraison,'liv_','','','',"editdate_livraison");
+	                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+	                print '</form>';
+				}
+				else
+				{
+					print dolibarr_print_date($propal->date_livraison,'%a %d %B %Y');
+				}
+				print '</td>';
+				print '</tr>';
 			}
-			else
-			{
-				print dolibarr_print_date($propal->date_livraison,'%a %d %B %Y');
-			}
-			print '</td>';
-			
+						
 			// Conditions et modes de réglement
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -628,14 +641,17 @@ if ($_GET['propalid'] > 0)
 				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
 			}
 			print '</td>';
+			print '</tr>';
 			
+			// Mode paiement
+			print '<tr>';
 			print '<td width="25%">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
 			if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
-			print '</td><td width="25%">';
+			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editmode')
 			{
 				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
@@ -664,11 +680,8 @@ if ($_GET['propalid'] > 0)
 				$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
 			}
 			print '</td>';
+			print '</tr>';
 				    
-            if ($conf->projet->enabled) $rowspan++;
-    
-            print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
-    
 			// Projet
             if ($conf->projet->enabled)
             {
@@ -716,6 +729,7 @@ if ($_GET['propalid'] > 0)
             }
     
             // Remise globale
+/*
             print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('GlobalDiscount');
@@ -737,6 +751,7 @@ if ($_GET['propalid'] > 0)
 				print $propal->remise_percent.'%';
 			}
 			print '</td></tr>';
+*/
 
 			// Amount   
             print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';

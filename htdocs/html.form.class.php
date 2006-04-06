@@ -498,7 +498,7 @@ class Form
 	                }
 	            }
 	            if ($htmlname != 'none') print '</select>';
-	            // return 1;  // affiche 1 à l'écran !
+	            return 1;
 	        }
 	        else
 	        {
