@@ -382,7 +382,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
         print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
         print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
-        print ' '.$langs->trans("VATIntraCheckableOnEUSite");
+        print ' <a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
         print '</td></tr>';
 
 
