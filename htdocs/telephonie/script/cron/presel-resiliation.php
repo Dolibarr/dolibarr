@@ -172,7 +172,7 @@ function ResiliationPreselection($host, $user_login, $user_passwd, $ligne_num, $
 
       $ligne = new LigneTel($db);
       $ligne->fetch($ligne_num);
-      $ligne->set_statut(1, 5, $datea='', $commentaire='', 4)
+      $ligne->set_statut(1, 5, $datea='', $commentaire='', 4);
 
       return 0;
     }
