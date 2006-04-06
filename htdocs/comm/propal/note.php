@@ -143,26 +143,29 @@ if ($_GET['propalid'])
 
             print '<table class="border" width="100%">';
 
-	        print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref_url.'</td></tr>';
+	        print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref_url.'</td></tr>';
 
-            print '<tr><td>'.$langs->trans('Company').'</td><td>';
+            // Société
+            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
             if ($societe->client == 1)
             {
-                $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
+                $url ='fiche.php?socid='.$societe->id;
             }
             else
             {
                 $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
             }
             print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-            print '<td align="left" width="25%">Conditions de réglement</td>';
-            print '<td width="25%">'.'&nbsp;'.'</td>';
             print '</tr>';
-    
+            
+			// Date
             print '<tr><td>'.$langs->trans('Date').'</td><td>';
             print dolibarr_print_date($propal->date,'%a %d %B %Y');
             print '</td>';
-    
+    		print '</tr>';
+    		
+    		// Date fin propal
+            print '<tr>';
             print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
             if ($propal->fin_validite)
             {

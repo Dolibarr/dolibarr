@@ -104,7 +104,11 @@ if ($propalid > 0)
 	if ($propal->fetch($propalid))
     {
 		$propref = sanitize_string($propal->ref);
+
 		$upload_dir = $conf->propal->dir_output.'/'.$propref;
+
+        $societe = new Societe($db);
+        $societe->fetch($propal->socidp);
 
 		$h=0;
 
@@ -169,9 +173,26 @@ if ($propalid > 0)
 
 
         print '<table class="border"width="100%">';
+
+		// Ref
         print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref_url.'</td></tr>';
+
+        // Société
+        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
+        if ($societe->client == 1)
+        {
+            $url ='fiche.php?socid='.$societe->id;
+        }
+        else
+        {
+            $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
+        }
+        print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
+        print '</tr>';
+
         print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
         print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+
         print '</table>';
 
         print '</div>';

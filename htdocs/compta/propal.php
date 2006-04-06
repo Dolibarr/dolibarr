@@ -175,9 +175,10 @@ if ($_GET["propalid"] > 0)
     
             print '<table class="border" width="100%">';
 
+			// Ref
 	        print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
 
-            $rowspan=6;
+            $rowspan=9;
             
             // Société
             print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
@@ -197,7 +198,15 @@ if ($_GET["propalid"] > 0)
             print dolibarr_print_date($propal->date,'%a %d %B %Y');
             print '</td>';
     
-            print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
+            if ($conf->projet->enabled) $rowspan++;
+    
+			// Note
+            print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
+            print '</tr>';
+    
+			// Date fin propal
+			print '<tr>';
+            print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
             if ($propal->fin_validite)
             {
                 print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
@@ -227,13 +236,16 @@ if ($_GET["propalid"] > 0)
 				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
 			}
 			print '</td>';
+
+			// Mode de paiement
+			print '<tr>';
 			print '<td width="25%">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
 			if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
-			print '</td><td width="25%">';
+			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editmode')
 			{
 				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
@@ -249,50 +261,24 @@ if ($_GET["propalid"] > 0)
             print '<tr>';
             print '<td>'.$langs->trans('MailTo').'</td>';
     
-            $dests=$societe->contact_array($societe->id);
-            $numdest = count($dests);
-            if ($numdest==0)
+            if ($propal->statut == 0 && $user->rights->propale->creer)
             {
                 print '<td colspan="3">';
-                print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
-                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
+                $html->select_contacts($societe->id, $propal->contactid, 'none');
                 print '</td>';
             }
             else
             {
-                if ($propal->statut == 0 && $user->rights->propale->creer)
+                if (!empty($propal->contactid))
                 {
                     print '<td colspan="3">';
-//                    print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-//                    print '<input type="hidden" name="action" value="set_contact">';
-                    $html->select_contacts($societe->id, $propal->contactid, 'none');
-//                    print '</td><td>';
-//                    print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-//                    print '</form>';
+					$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
                     print '</td>';
                 }
-                else
-                {
-                    if (!empty($propal->contactid))
-                    {
-                        print '<td colspan="3">';
-                        require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
-                        $contact=new Contact($db);
-                        $contact->fetch($propal->contactid);
-                        print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
-                        print $contact->firstname.' '.$contact->name;
-                        print '</a>';
-                        print '</td>';
-                    }
-                    else {
-                        print '<td colspan="3">&nbsp;</td>';
-                    }
+                else {
+                    print '<td colspan="3">&nbsp;</td>';
                 }
             }
-    
-            if ($conf->projet->enabled) $rowspan++;
-    
-            print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
     
             // Projet
             if ($conf->projet->enabled)
@@ -312,12 +298,7 @@ if ($_GET["propalid"] > 0)
                     if ($propal->statut == 0 && $user->rights->propale->creer)
                     {
                         print '<td colspan="3">';
-//                        print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-//                        print '<input type="hidden" name="action" value="set_project">';
                         $html->select_projects($societe->id, $propal->projetidp, 'projetidp');
-//                        print '</td><td>';
-//                        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-//                        print '</form>';
                         print '</td>';
                     }
                     else
@@ -341,24 +322,19 @@ if ($_GET["propalid"] > 0)
             }
     
             // Remise globale
+/* TODO Remise a mettre sur meme principe que factures
             print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
             if ($propal->brouillon == 1 && $user->rights->propale->creer)
             {
-//                print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-//                print '<input type="hidden" name="action" value="setremise">';
                 print '<td colspan="3">'.$propal->remise_percent.'%';
-//                print '</td><td>';
-//                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-//                print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
                 print '</td>';
-//                print '</form>';
             }
             else
             {
                 print '<td colspan="3">'.$propal->remise_percent.'%</td>';
             }
             print '</tr>';
-    
+*/    
             print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
             print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
@@ -367,7 +343,8 @@ if ($_GET["propalid"] > 0)
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
             print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-    
+
+
             // Statut
             print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut(4).'</td></tr>';
             print '</table><br>';

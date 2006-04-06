@@ -536,6 +536,7 @@ if ($_GET['propalid'] > 0)
     
             print '<table class="border" width="100%">';
 
+	        // Ref
 	        print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
 
             $rowspan=9;
@@ -561,7 +562,7 @@ if ($_GET['propalid'] > 0)
             if ($conf->projet->enabled) $rowspan++;
     
             // Notes
-            print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td>';
+            print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
     		print '</tr>';
     
     		// Date fin propal
@@ -729,7 +730,7 @@ if ($_GET['propalid'] > 0)
             }
     
             // Remise globale
-/*
+/* TODO Remise a mettre sur meme principe que factures
             print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('GlobalDiscount');
