@@ -303,4 +303,3 @@ class Fichinter
     }
 }  
 ?>
-    
