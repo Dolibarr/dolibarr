@@ -28,6 +28,7 @@
 */
 
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
@@ -81,14 +82,13 @@ if ($_GET["action"] == 'cstc')
  *
  * Mode fiche
  *
- *
  *********************************************************************************/  
 
 llxHeader();
 
 if ($socid > 0)
 {
-    $societe = new Societe($db, $socid);
+    $societe = new Prospect($db, $socid);
     $result = $societe->fetch($socid);
     if ($result < 0)
     {
@@ -114,13 +114,6 @@ if ($socid > 0)
     $head[$h][1] = $langs->trans("Prospect");
     $hselected=$h;
     $h++;
-
-    if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$societe->id;
-        $head[$h][1] = 'Fiche catalogue';
-        $h++;
-    }
 
     if ($societe->fournisseur)
     {
@@ -149,13 +142,19 @@ if ($socid > 0)
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
     $head[$h][1] = $langs->trans("Notifications");
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$societe->id;
+    $head[$h][1] = $langs->trans("Info");
+    $h++;
+
 
 
     dolibarr_fiche_head($head, $hselected, $societe->nom);
 
     /*
-    *
-    */
+     *
+     */
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
 
@@ -171,23 +170,19 @@ if ($socid > 0)
 
     if ($societe->rubrique)
     {
-        print "<tr><td>Rubrique</td><td colspan=\"3\">$societe->rubrique</td></tr>";
+        print "<tr><td>Rubrique</td><td colspan=\"3\">".$societe->rubrique."</td></tr>";
     }
 
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
-    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->statut_commercial.'</td>';
-    print '<td> ';
-    print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">';
-    print img_action(0,-1);
-    print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=0&amp;action=cstc">';
-    print img_action(0,0);
-    print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=1&amp;action=cstc">';
-    print img_action(0,1);
-    print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=2&amp;action=cstc">';
-    print img_action(0,2);
-    print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=3&amp;action=cstc">';
-    print img_action(0,3);
-    print '</a>';
+
+	// Status
+    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->getLibStatut(4).'</td>';
+    print '<td>';
+    if ($societe->stcomm_id != -1) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
+    if ($societe->stcomm_id !=  0) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';
+    if ($societe->stcomm_id !=  1) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=1&amp;action=cstc">'.img_action(0,1).'</a>';
+    if ($societe->stcomm_id !=  2) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
+    if ($societe->stcomm_id !=  3) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
     print '</td></tr>';
     print '</table>';
 
