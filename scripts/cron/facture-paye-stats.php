@@ -43,7 +43,6 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 }
 
 /*
- * Lecture des lignes a résilier
  *
  */
 $sql = "SELECT paye, count(*)";
@@ -57,10 +56,29 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."facture_stats";
-      $sqli .= " VALUES (now(),now(),'$row[0]',$row[1])";
+      $sqli .= " VALUES (now(),now(),'paye $row[0]',$row[1])";
      
       $resqli = $db->query($sqli);
     }
+  $db->free($resql);
+}
+
+$sql = "SELECT paye, sum(total)";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture";
+$sql .= " GROUP BY paye";
+
+$resql = $db->query($sql);
+
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      $sqli = "INSERT INTO ".MAIN_DB_PREFIX."facture_stats";
+      $sqli .= " VALUES (now(),now(),'total $row[0]','$row[1]')";
+     
+      $resqli = $db->query($sqli);
+    }
+  $db->free($resql);
 }
 
 ?>
