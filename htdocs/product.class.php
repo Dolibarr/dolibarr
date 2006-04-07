@@ -285,8 +285,8 @@ class Product
           {
         	  $sqld = "DELETE from ".MAIN_DB_PREFIX."product ";
         	  $sqld.= " WHERE rowid = ".$id;
-        	  $this->db->query($sqld);
-        	  return 0;
+        	  $result = $this->db->query($sqld);
+        	  return $result;
           }
           else
           {
