@@ -744,10 +744,9 @@ if ($_GET["action"] == '')
 
         print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
     }
-    if ($product->verif_prod_use($id))
-    {
-    	$prod_use = $product->verif_prod_use($id);
-    }
+    
+    $product = new Product($db);
+    $prod_use = $product->verif_prod_use($id);
     
     if ($user->rights->produit->supprimer && $prod_use == 0)
     {
