@@ -120,7 +120,7 @@ if ($resql)
     // Date fin
     if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite","$param",'',' align="center"',$sortfield);
     else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture","$param",'',' align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut","$param","","",$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut","$param","","align=\"right\"",$sortfield);
     print "</tr>\n";
 
     print '<form method="POST" action="services.php">';
@@ -170,8 +170,8 @@ if ($resql)
         if ($obj->date_fin_validite && $obj->date_fin_validite < (time() - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
         else print '&nbsp;&nbsp;&nbsp;&nbsp;';
         print '</td>';
-        print '<td align="left"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'">';
-		print $staticcontratligne->LibStatut($obj->statut,2);
+        print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'">';
+		print $staticcontratligne->LibStatut($obj->statut,5);
         print '</a></td>';
         print "</tr>\n";
         $i++;
