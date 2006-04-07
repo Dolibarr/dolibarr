@@ -258,17 +258,23 @@ class Product
     	$sql = "SELECT COUNT(*)";
       $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as p, ".MAIN_DB_PREFIX."commandedet as c";
       $sql.= ", ".MAIN_DB_PREFIX."facturedet as f, ".MAIN_DB_PREFIX."contratdet as ct";
-      $sql.= " WHERE p.fk_product = ".$id." AND c.fk_product = ".$id." AND f.fk_product = ".$id." AND ct.fkproduct = ".$id;
+      $sql.= " WHERE p.fk_product = ".$id." OR c.fk_product = ".$id." OR f.fk_product = ".$id." OR ct.fk_product = ".$id;
       $resql = $this->db->query($sql);
-      if ($resql == 0)
+      if ($resql)
       {
-      	return 0;
+        $row = $this->db->fetch_row($resql);
+        $nbuse = $row[0];
+      }
+      if ($nbuse == 0)
+      {
+        return 0;
       }
       else
       {
         return -1;
       }
     }
+
 
     /**
      *    \brief      Suppression du produit en base si pas utilisé
