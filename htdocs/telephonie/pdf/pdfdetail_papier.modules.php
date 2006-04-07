@@ -26,7 +26,6 @@ require_once DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php";
 require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_standard.modeles.php";
 require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/xlsdetail_nodet.modules.php";
 
-
 class pdfdetail_papier {
 
   function pdfdetail_papier ($db=0, $ligne, $year, $month, $factel)
@@ -151,17 +150,37 @@ class pdfdetail_papier {
 		      $obj = $this->db->fetch_object($resql);
 		      $Y = $pdf->GetY();
 		
-		      if ($this->inc > 130 && $this->colonne == 1)
+		      if ($this->inc > 132 && $this->colonne == 1)
 			{
-			  $col = 95;
+			  $col = 50;
 			  $Y = $pdf->tab_top + 6;
-			  $this->inc = 0;
+			  //$this->inc = 0;
 			  $this->colonne = 2;
 			  $old_dest='';
 			  $old_date='';
 			}
 
-		      if ($this->inc > 130 && $this->colonne == 2)
+		      if ($this->inc > 265 && $this->colonne == 2)
+			{
+			  $col = 100;
+			  $Y = $pdf->tab_top + 6;
+			  //$this->inc = 0;
+			  $this->colonne = 3;
+			  $old_dest='';
+			  $old_date='';
+			}
+
+		      if ($this->inc > 398 && $this->colonne == 3)
+			{
+			  $col = 150;
+			  $Y = $pdf->tab_top + 6;
+			  //$this->inc = 0;
+			  $this->colonne = 4;
+			  $old_dest='';
+			  $old_date='';
+			}
+
+		      if ($this->inc > 531 && $this->colonne == 4)
 			{
 			  $pdf->AddPage();
 			  $this->pages++;
@@ -178,8 +197,7 @@ class pdfdetail_papier {
 		      $var=!$var;
 
 		      $pdf->SetFont('Arial','', 6);
-
-		      $pdf->SetXY (10 + $col, $Y);
+		      $pdf->SetXY (5 + $col, $Y);
 
 		      if ($old_date == strftime("%d/%m/%Y", $obj->pdate))
 			{
@@ -188,23 +206,24 @@ class pdfdetail_papier {
 		      else
 			{
 			  $old_date = strftime("%d/%m/%Y", $obj->pdate) ;
-			  $date = strftime("%d/%m/%y",$obj->pdate);
+			  $date = strftime("%d",$obj->pdate);
 			}
 
-		      $pdf->MultiCell(11, $line_height, $date, 0,'L',$var);
+		      $pdf->MultiCell(5, $line_height, $date, 0,'L',$var);
 
 		      if ($Y > $pdf->GetY())
 			$Y = $pdf->GetY() - $line_height;
 
-		      $pdf->SetXY (21 + $col, $Y);
-		      $heure = strftime("%H:%M:%S",$obj->pdate);
-		      $pdf->MultiCell(11, $line_height, $heure, 0,'L',$var);
+		      $pdf->SetXY (9 + $col, $Y);
+		      $heure = strftime("%H%M%S",$obj->pdate);
+		      $pdf->MultiCell(10, $line_height, $heure, 0,'L',$var);
+
+		      $pdf->SetXY (18 + $col, $Y);
+		      $numero = ereg_replace("^00","",$obj->numero);
+		      $numero = ereg_replace("^0","",$obj->numero);
+		      $pdf->MultiCell(15, $line_height, $numero, 0,'L',$var);
 
 		      $pdf->SetXY (32 + $col, $Y);
-		      $numero = ereg_replace("^00","",$obj->numero);
-		      $pdf->MultiCell(17, $line_height, $numero, 0,'L',$var);
-
-		      $pdf->SetXY (48 + $col, $Y);
 
 		      if ($obj->dest == $old_dest)
 			{
@@ -216,13 +235,30 @@ class pdfdetail_papier {
 			  $dest = $obj->dest;
 			}
 
-		      $pdf->MultiCell(37, $line_height, $dest, 0, 'L',$var);
+		      $xs = explode(" ",$dest);
+		      if (sizeof($xs) == 1)
+			$small_dest = substr($xs[0],0,4);
 
-		      $pdf->SetXY (85 + $col, $Y);
-		      $pdf->MultiCell(10, $line_height, $obj->duree, 0, 'R',$var);
+		      if (sizeof($xs) == 2)
+			$small_dest = substr($xs[0],0,2).substr($xs[1],0,2);
 
-		      $pdf->SetXY (95 + $col, $Y);
-		      $pdf->MultiCell(10, $line_height, sprintf("%01.3f", $obj->cout_vente), 0,'R',$var);
+		      if (sizeof($xs) == 3)
+			$small_dest = substr($xs[0],0,2).substr($xs[1],0,1).substr($xs[2],0,1);
+
+		      if (sizeof($xs) == 4)
+			$small_dest = substr($xs[0],0,1).substr($xs[1],0,1).substr($xs[2],0,1).substr($xs[3],0,1);
+
+		      if ($dest == ' "')
+			$small_dest == ' "';
+
+
+		      $pdf->MultiCell(9, $line_height, $small_dest, 0, 'L',$var);
+
+		      $pdf->SetXY (39 + $col, $Y);
+		      $pdf->MultiCell(8, $line_height, $obj->duree, 0, 'R',$var);
+
+		      $pdf->SetXY (46 + $col, $Y);
+		      $pdf->MultiCell(9, $line_height, sprintf("%01.3f", $obj->cout_vente), 0,'R',$var);
 
 		      $i++;
 		      $this->inc++;
@@ -285,7 +321,7 @@ class pdfdetail_papier {
 	$pdf->MultiCell(80, 4, "Agence : ". $pdf->ligne_ville, 0);
       }
 
-    $pdf->rect(10, 30, 95, 23);
+    $pdf->rect(5, 30, 100, 23);
     
     $pdf->SetTextColor(0,0,0);
     $pdf->SetFont('Arial','',10);
@@ -297,7 +333,7 @@ class pdfdetail_papier {
     $pdf->SetX(107);
     $pdf->MultiCell(86,4, $pdf->client_adresse . "\n" . $pdf->client_cp . " " . $pdf->client_ville);
 
-    $pdf->rect(105, 30, 95, 23);
+    $pdf->rect(105, 30, 100, 23);
 
     /*
      * On positionne le curseur pour la liste
@@ -362,28 +398,28 @@ class pdfdetail_papier {
     $pdf->SetXY(10,5);
     //$pdf->SetTextColor(0,90,200);
     $pdf->SetFont('Arial','',10);
-    $pdf->SetXY(11,5);
+    $pdf->SetXY(6,5);
     $pdf->MultiCell(89, 4, "Facture détaillée : ".$pdf->fac->ref);
 
-    $pdf->SetX(11);
+    $pdf->SetX(6);
     $pdf->MultiCell(89, 4, "Ligne : " . $pdf->ligne);
-    $pdf->SetX(11);
+    $pdf->SetX(6);
 
     $libelle = "Du ".strftime("%d/%m/%Y",$pdf->factel->get_comm_min_date($this->year.$this->month));
     $libelle .= " au ".strftime("%d/%m/%Y",$pdf->factel->get_comm_max_date($this->year.$this->month));
     $pdf->MultiCell(89, 4, $libelle, 0);
 
-    //$pdf->SetX(11);
+    //$pdf->SetX(6);
     //$pdf->MultiCell(80, 4, "Page : ". $pdf->PageNo() ."/{nb}", 0);
     // Clients spéciaux
 
     if ($pdf->ligne_ville)
       {
-	$pdf->SetX(11);
+	$pdf->SetX(6);
 	$pdf->MultiCell(80, 4, "Agence : ". $pdf->ligne_ville, 0);
       }
 
-    $pdf->rect(10, 4, 95, 19);
+    $pdf->rect(5, 4, 100, 19);
     $pdf->SetTextColor(0,0,0);
     $pdf->SetFont('Arial','',10);
 
@@ -394,7 +430,7 @@ class pdfdetail_papier {
     $pdf->SetX(107);
     $pdf->MultiCell(86,4, $pdf->client_adresse . "\n" . $pdf->client_cp . " " . $pdf->client_ville);
 
-    $pdf->rect(105, 4, 95, 19);
+    $pdf->rect(105, 4, 100, 19);
 
     /*
      * On positionne le curseur pour la liste
