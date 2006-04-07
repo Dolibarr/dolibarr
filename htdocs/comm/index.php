@@ -28,12 +28,11 @@
 */
  
 require("./pre.inc.php");
+if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 if (!$user->rights->commercial->main->lire)
   accessforbidden();
-
-if ($conf->contrat->enabled)
-  require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 	  
 $langs->load("commercial");
 $langs->load("orders");
@@ -49,7 +48,10 @@ if ($user->societe_id > 0)
 
 $max=5;
 
-llxHeader();
+
+$propalstatic=new Propal($db);
+	
+
 
 /*
  * Actions
@@ -80,16 +82,15 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
  * Affichage page
  */
 
+llxHeader();
+
 print_fiche_titre($langs->trans("CommercialArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
-      
 
-/*
- * Recherche Propal
- */
+// Recherche Propal
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
   $var=false;
@@ -547,7 +548,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
             $var=true;
 
             print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
+            print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").'</td></tr>';
             while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
@@ -558,12 +559,14 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";
-                print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
+                print "<td align=\"right\">".price($obj->price)."</td>";
+				print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
+                print "</tr>\n";
                 $i++;
                 $total += $obj->price;
             }
             if ($total>0) {
-                print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+                print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
             }
             print "</table><br>";
         }
@@ -594,9 +597,6 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$sql .= " ORDER BY p.rowid DESC";
 	$sql .= $db->plimit($NBMAX, 0);
-	
-    include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-	$propalstatic=new Propal($db);
 	
 	if ( $db->query($sql) )
 	    {
