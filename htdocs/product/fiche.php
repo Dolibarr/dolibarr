@@ -208,22 +208,22 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
  */
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->produit->supprimer)
 {
-  $product = new Product($db);
-  $product->fetch($id);
-  $result = $product->delete($id);
- 
-  if ($result == 0)
-    {
-      llxHeader();
-      print '<div class="ok">'.$langs->trans("ProductDeleted",$product->ref).'</div>';
-      llxFooter();
-      exit ;
-    }
-  else
-    {
-      $reload = 0;
-      $_GET["action"]='';
-    }
+	$product = new Product($db);
+	$product->fetch($_GET["id"]);
+	$result = $product->delete($_GET["id"]);
+	
+	if ($result == 0)
+	{
+		llxHeader();
+		print '<div class="ok">'.$langs->trans("ProductDeleted",$product->ref).'</div>';
+		llxFooter();
+		exit ;
+	}
+	else
+	{
+		$reload = 0;
+		$_GET["action"]='';
+	}
 }
 
 
