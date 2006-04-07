@@ -746,7 +746,7 @@ if ($_GET["action"] == '')
     }
     if ($product->verif_prod_use($id))
     {
-    	$prod_use = $product->verif_prod_use($id)
+    	$prod_use = $product->verif_prod_use($id);
     }
     
     if ($user->rights->produit->supprimer && $prod_use == 0)

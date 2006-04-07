@@ -262,11 +262,11 @@ class Product
       $resql = $this->db->query($sql);
       if ($resql == 0)
       {
-      	return 0
+      	return 0;
       }
       else
       {
-        return -1
+        return -1;
       }
     }
 
@@ -291,7 +291,7 @@ class Product
           else
           {
             $this->error .= "Impossible de supprimer le produit.\n";
-            return -1
+            return -1;
           }
         }
     }
