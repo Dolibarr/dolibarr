@@ -96,3 +96,6 @@ Quantity=Quantité
 NoMatchFound=Aucun résultat n'a été trouvé 
 ProductAssociationList=Liste des produits/services associés : nom du produit/service (quantité affectée)
 ErrorAssociationIsFatherOfThis=L'un des produits sélectionnés est parent du produit en cours
+DeleteProduct=Supprimer un produit/service
+ConfirmDeleteProduct=Etes-vous sûr de vouloir supprimer ce produit/service ?
+ProductDeleted=Le produit/service "%s" à été supprimé de la base.

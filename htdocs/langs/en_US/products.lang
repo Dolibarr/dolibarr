@@ -86,3 +86,6 @@ ProductToAddSearch=Search product to add
 AddDel=Add/Delete
 Quantity=Quantity
 NoMatchFound=No match found
+DeleteProduct=Delete a product/service
+ConfirmDeleteProduct=Are you sure you want to delete this product/service ?
+ProductDeleted=Product/Service "%s" deleted from database.
