@@ -249,8 +249,55 @@ class Product
         }
     }
 
+    /**
+     *    \brief      Vérification de l'utilisation du produit en base
+     *    \param      id          id du produit
+     */
+    function verif_prod_use($id)
+    {
+    	$sql = "SELECT COUNT(*)";
+      $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as p, ".MAIN_DB_PREFIX."commandedet as c";
+      $sql.= ", ".MAIN_DB_PREFIX."facturedet as f, ".MAIN_DB_PREFIX."contratdet as ct";
+      $sql.= " WHERE p.fk_product = ".$id." AND c.fk_product = ".$id." AND f.fk_product = ".$id." AND ct.fkproduct = ".$id;
+      $resql = $this->db->query($sql);
+      if ($resql == 0)
+      {
+      	return 0
+      }
+      else
+      {
+        return -1
+      }
+    }
+
+    /**
+     *    \brief      Suppression du produit en base si pas utilisé
+     *    \param      id          id du produit
+     */
+    function delete($id)
+    {
+        global $user;
+        
+        if ($user->rights->produit->supprimer)
+        {
+          $prod_use = $this->verif_prod_use($id);
+          if ($prod_use == 0)
+          {
+        	  $sqld = "DELETE from ".MAIN_DB_PREFIX."product ";
+        	  $sqld.= " WHERE rowid = ".$id;
+        	  $this->db->query($sqld);
+        	  return 0;
+          }
+          else
+          {
+            $this->error .= "Impossible de supprimer le produit.\n";
+            return -1
+          }
+        }
+    }
+
 	/**
-	 *		\brief : update ou crée les traductions des infos produits
+	 *		\brief   update ou crée les traductions des infos produits
 	 */
 	function setMultiLangs()
 	{

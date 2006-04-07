@@ -204,6 +204,30 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 }
 
 /*
+ * Suppression d'un produit/service pas encore affecté
+ */
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->produit->supprimer)
+{
+  $product = new Product($db);
+  $product->fetch($id);
+  $result = $product->delete($id);
+ 
+  if ($result == 0)
+    {
+      llxHeader();
+      print '<div class="ok">'.$langs->trans("ProductDeleted",$product->ref).'</div>';
+      llxFooter();
+      exit ;
+    }
+  else
+    {
+      $reload = 0;
+      $_GET["action"]='';
+    }
+}
+
+
+/*
  * Ajout du produit dans une propal
  */
 if ($_POST["action"] == 'addinpropal')
@@ -495,6 +519,14 @@ if ($_GET["id"] || $_GET["ref"])
             
             $titre=$langs->trans("CardProduct".$product->type);
             dolibarr_fiche_head($head, $hselected, $titre);
+            
+            // Confirmation de la suppression de la facture
+            if ($_GET["action"] == 'delete')
+            {
+               $html = new Form($db);
+               $html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
+               print "<br />\n";
+            }
 
 
             print($mesg);
@@ -711,6 +743,15 @@ if ($_GET["action"] == '')
         print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 
         print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
+    }
+    if ($product->verif_prod_use($id))
+    {
+    	$prod_use = $product->verif_prod_use($id)
+    }
+    
+    if ($user->rights->produit->supprimer && $prod_use == 0)
+    {
+	      print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
     }
 
 }
