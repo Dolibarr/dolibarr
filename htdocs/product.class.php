@@ -292,7 +292,7 @@ class Product
         	  $sqld = "DELETE from ".MAIN_DB_PREFIX."product ";
         	  $sqld.= " WHERE rowid = ".$id;
         	  $result = $this->db->query($sqld);
-        	  return $result;
+        	  return 0;
           }
           else
           {
