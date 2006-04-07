@@ -79,7 +79,7 @@ class Societe
 	
 	var $note;
 	
-	var $stcomm_id;
+	var $stcomm_id;				// code statut prospect
 	var $statut_commercial;
 	
 	var $price_level;

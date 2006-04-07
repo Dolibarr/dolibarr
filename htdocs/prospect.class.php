@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,22 +21,22 @@
  */
 
 /**
-    	\file       htdocs/client.class.php
+    	\file       htdocs/prospect.class.php
 		\ingroup    societe
-		\brief      Fichier de la classe des clients
+		\brief      Fichier de la classe des prospects
 		\version    $Revision$
 */
 
 
 /** 
-        \class      Client
-		\brief      Classe permettant la gestion des clients
+        \class      Prospect
+		\brief      Classe permettant la gestion des prospects
 */
 
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
 
-class Client extends Societe
+class Prospect extends Societe
 {
     var $db;
 
@@ -45,41 +46,14 @@ class Client extends Societe
      *    \param  DB     handler accès base de données
      *    \param  id     id societe (0 par defaut)
      */
-    function Client($DB, $id=0)
+    function Prospect($DB, $id=0)
     {
         global $config;
     
         $this->db = $DB;
         $this->id = $id;
-        $this->factures = array();
     
         return 0;
-    }
-    
-    function read_factures()
-    {
-        $sql = "SELECT rowid, facnumber";
-        $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-        $sql .= " WHERE f.fk_soc = ".$this->id;
-        $sql .= " ORDER BY datef DESC";
-    
-        $result = $this->db->query($sql) ;
-        $i = 0;
-        if ( $result )
-        {
-            $num = $this->db->num_rows();
-    
-            while ($i < $num )
-            {
-                $row = $this->db->fetch_row();
-    
-                $this->factures[$i][0] = $row[0];
-                $this->factures[$i][1] = $row[1];
-    
-                $i++;
-            }
-        }
-        return $result;
     }
 
     
@@ -116,8 +90,41 @@ class Client extends Societe
             $this->error=$this->db->error();
             return -1;
         }
-
     }
+
     
+	/**
+	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->stcomm_id,$mode);
+	}
+
+	/**
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string        	Libellé du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('customers');
+
+		if ($mode == 4)
+		{
+			if ($statut == -1) return img_action(0,-1).' '.$langs->trans("StatusProspect-1");
+			if ($statut ==  0) return img_action(0, 0).' '.$langs->trans("StatusProspect0");
+			if ($statut ==  1) return img_action(0, 1).' '.$langs->trans("StatusProspect1");
+			if ($statut ==  2) return img_action(0, 2).' '.$langs->trans("StatusProspect2");
+			if ($statut ==  3) return img_action(0, 3).' '.$langs->trans("StatusProspect3");
+		}
+
+		return "Error, mode/status not found";
+	}
+
 }
 ?>
