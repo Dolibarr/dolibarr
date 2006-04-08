@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -317,7 +317,7 @@ if ($_GET["id"] || $_GET["ref"])
                     print dolibarr_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->amount)."</td>\n";
                     $fac=new Facture($db);
-                    print '<td align="center">'.$fac->LibStatut($objp->paye,$objp->statut,1).'</td>';
+                    print '<td align="right">'.$fac->LibStatut($objp->paye,$objp->statut,5).'</td>';
                     print "</tr>\n";
                     $i++;
                 }

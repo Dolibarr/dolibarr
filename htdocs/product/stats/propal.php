@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,9 +153,19 @@ if ($_GET["id"])
 
         print '<table class="border" width="100%">';
 
+        // Reference
         print '<tr>';
-        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">'.$product->ref.'</td>';
+        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
+        $product->load_previous_next_ref();
+        $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+        $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+        if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+        if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+        print '</td>';
         print '</tr>';
+
+		// Libelle
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
         print '</tr>';
         
@@ -279,6 +289,8 @@ if ($_GET["id"])
             print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
             print "</tr>\n";
 
+            $propalstatic=new Propal($db);
+
             if ($num > 0)
             {
                 $var=True;
@@ -295,8 +307,7 @@ if ($_GET["id"])
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->amount)."</td>\n";
-                    $prop=new Propal($db);
-                    print '<td align="center">'.$prop->LibStatut($objp->statut,1).'</td>';
+                    print '<td align="right">'.$propalstatic->LibStatut($objp->statut,5).'</td>';
                     print "</tr>\n";
                     $i++;
                 }
