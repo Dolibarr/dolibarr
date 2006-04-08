@@ -46,6 +46,7 @@ ValidatedBy=Validé par %s
 CanceledBy=Annulé par %s
 ClosedBy=Cloturé par %s
 FileWasRemoved=Le fichier a été supprimé
+FeatureNotYetAvailable=Fonctionnalité pas encore disponible dans cette version
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier

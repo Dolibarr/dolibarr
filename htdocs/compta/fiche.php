@@ -275,7 +275,7 @@ if ($socid > 0)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
-    print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowAccountancyPreview").'</a></td></tr></table></td>';
+    print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$societe->id.'">'.$langs->trans("ShowAccountancyPreview").'</a></td></tr></table></td>';
     print '</tr>';
     print '</table>';
     print '<br>';

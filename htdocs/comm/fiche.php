@@ -401,7 +401,7 @@ if ($socidp > 0)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
-    print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td></tr></table></td>';
+    print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/recap-client.php?socid='.$objsoc->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td></tr></table></td>';
     print '</tr>';
     print '</table>';
     print '<br>';
