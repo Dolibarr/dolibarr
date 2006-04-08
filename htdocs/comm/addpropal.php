@@ -97,7 +97,7 @@ if ($_GET["action"] == 'create')
     print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
 
 	// Societe
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->nom_url;
+	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.img_object($langs->trans("ShowCompany"),'company').' '.$soc->nom_url;
 	print '<input type="hidden" name="socidp" value="'.$soc->id.'">';
 	print '</td>';
 	print '</tr>';

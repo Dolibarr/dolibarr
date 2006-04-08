@@ -1213,8 +1213,10 @@ class Facture
 
 		if ($user->rights->facture->creer)
 		{
+			$remise=price2num($remise);
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql.= ' SET remise_percent = '.price2num($remise);
+			$sql.= ' SET remise_percent = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
 			if ($this->db->query($sql))
@@ -1244,8 +1246,10 @@ class Facture
 		
 		if ($user->rights->facture->creer)
 		{
+			$remise=price2num($remise);
+			
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql.= ' SET remise_absolue = '.price2num($remise);
+			$sql.= ' SET remise_absolue = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
 			dolibarr_syslog("Facture::set_remise_absolue sql=$sql");

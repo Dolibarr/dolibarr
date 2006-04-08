@@ -82,7 +82,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
         $propalid = 0;
         $brouillon = 1;
     }
-    Header('Location: propal.php');
+    Header('Location: '.$_SERVER["PHP_SELF"]);
     exit;
 }
 
@@ -96,7 +96,7 @@ if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
         propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
         $result=$propal->valid($user);
     }
-    Header ('Location: propal.php?propalid='.$_GET['propalid']);
+    Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
     exit;
 }
 
@@ -135,6 +135,8 @@ if ($_POST['action'] == 'add')
 	    $propal->duree_validite = $_POST['duree_validite'];
 	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
 	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
+	    $propal->remise_percent = $_POST['remise_percent'];
+	    $propal->remise_absolue = $_POST['remise_absolue'];
 	    $propal->socidp    = $_POST['socidp'];
 	    $propal->contactid = $_POST['contactidp'];
 	    $propal->projetidp = $_POST['projetidp'];
@@ -182,7 +184,7 @@ if ($_POST['action'] == 'add')
     {
         propale_pdf_create($db, $id, $_POST['model']);
         
-        Header ('Location: propal.php?propalid='.$id);
+        Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
         exit;
     }
     else
@@ -266,7 +268,7 @@ if ($_POST['action'] == 'send')
                     $filename[1] = $_FILES['addedfile']['name'];
                     $mimetype[1] = $_FILES['addedfile']['type'];
                 }
-                // Envoi de la facture
+                // Envoi de la propal
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
                 if ($mailfile->sendfile())
                 {
@@ -291,7 +293,7 @@ if ($_POST['action'] == 'send')
                     else
                     {
                         // Renvoie sur la fiche
-                        Header('Location: propal.php?propalid='.$propal->id.'&msg='.urlencode($msg));
+                        Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($msg));
                         exit;
                     }
                 }
@@ -433,6 +435,22 @@ if ($_POST["action"] == 'setconditions')
 	if ($resql < 0) dolibarr_print_error($db);
 }
 
+if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->propale->creer)
+{
+	$propal = new Propal($db);
+	$propal->fetch($_REQUEST['propalid']);
+	$result = $propal->set_remise_percent($user, $_POST['remise_percent']);
+	$_GET['propalid']=$_REQUEST['propalid'];
+}
+
+if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->propale->creer)
+{
+	$propal = new Propal($db);
+	$propal->fetch($_REQUEST['propalid']);
+	$result = $propal->set_remise_absolue($user, $_POST['remise_absolue']);
+	$_GET['propalid']=$_REQUEST['propalid'];
+}
+
 // Mode de règlement
 if ($_POST["action"] == 'setmode')
 {
@@ -501,7 +519,7 @@ if ($_GET['propalid'] > 0)
    */
   if ($_GET['action'] == 'delete')
     {
-      $html->form_confirm('propal.php?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
+      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
       print '<br>';
     }
 
@@ -510,7 +528,7 @@ if ($_GET['propalid'] > 0)
    */
   if ($_GET['action'] == 'validate')
     {
-      $html->form_confirm('propal.php?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
+      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
       print '<br>';
     }
 
@@ -702,7 +720,7 @@ if ($_GET['propalid'] > 0)
                     if ($propal->statut == 0 && $user->rights->propale->creer)
                     {
                         print '<td colspan="2">';
-                        print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+                        print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
                         print '<input type="hidden" name="action" value="set_project">';
                         $form->select_projects($societe->id, $propal->projetidp, 'projetidp');
                         print '</td><td>';
@@ -730,31 +748,6 @@ if ($_GET['propalid'] > 0)
                 print '</tr>';
             }
     
-            // Remise globale
-/* TODO Remise a mettre sur meme principe que factures
-            print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-            print $langs->trans('GlobalDiscount');
-			print '</td>';
-			if ($_GET['action'] != 'editdiscount' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdiscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetGlobalDiscount'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			if ($_GET['action'] == 'editdiscount' && $propal->brouillon == 1 && $user->rights->propale->creer)
-			{
-                print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-                print '<input type="hidden" name="action" value="set_discount">';
-                print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
-                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
-                print '</form>';
-			}
-			else
-			{
-				print $propal->remise_percent.'%';
-			}
-			print '</td></tr>';
-*/
-
 			// Amount   
             print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
             print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
@@ -799,6 +792,7 @@ if ($_GET['propalid'] > 0)
                     print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
                     print '<td width="16">&nbsp;</td>';
                     print '<td width="16">&nbsp;</td>';
+					print '<td width="16">&nbsp;</td>';
                     print "</tr>\n";
                 }
                 $var=true;
@@ -872,16 +866,19 @@ if ($_GET['propalid'] > 0)
                         // Icone d'edition et suppression
                         if ($propal->statut == 0  && $user->rights->propale->creer)
                         {
-                            print '<td align="right"><a href="propal.php?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'">';
+                            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'">';
                             print img_edit();
                             print '</a></td>';
-                            print '<td align="right"><a href="propal.php?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
+                            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
                             print img_delete();
                             print '</a></td>';
-                        }
+  							print '<td align="right">';
+  							print '&nbsp;';		// \todo Mettre critere ordre
+							print '</td>';  							
+						}
                         else
                         {
-                            print '<td>&nbsp;</td><td>&nbsp;</td>';
+							print '<td colspan="3">&nbsp;</td>';
                         }
                         print '</tr>';
                     }
@@ -889,7 +886,7 @@ if ($_GET['propalid'] > 0)
                     // Ligne en mode update
                     if ($propal->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["ligne"] == $objp->rowid)
                     {
-                        print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+                        print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
                         print '<input type="hidden" name="action" value="updateligne">';
                         print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
                         print '<input type="hidden" name="ligne" value="'.$_GET["ligne"].'">';
@@ -914,7 +911,7 @@ if ($_GET['propalid'] > 0)
                         print '<td align="right"><input size="6" type="text" name="subprice" value="'.price($objp->subprice).'"></td>';
                         print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
                         print '<td align="right" nowrap><input size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
-                        print '<td align="center" colspan="4" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+                        print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
                         print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
                         print '</tr>' . "\n";
                         /*
@@ -943,10 +940,122 @@ if ($_GET['propalid'] > 0)
                 dolibarr_print_error($db);
             }
     
+
+			/*
+			 * Lignes de remise
+			 */
+			
+			// Remise relative
+			$var=!$var;
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="setremisepercent">';
+			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+			print '<tr class="liste_total"><td>';
+			print $langs->trans('CustomerRelativeDiscount');
+			if ($propal->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
+			print '</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] == 'editrelativediscount')
+			{
+				print '<input type="text" name="remise_percent" size="2" value="'.$propal->remise_percent.'">%';
+			}
+			else
+			{
+				print $propal->remise_percent?$propal->remise_percent.'%':'&nbsp;';
+			}
+			print '</font></td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] != 'editrelativediscount') print $propal->remise_percent?'-'.price($propal->remise_percent*$total/100):$langs->trans("DiscountNone");
+			else print '&nbsp;';
+			print '</font></td>';
+			if ($_GET['action'] != 'editrelativediscount')
+			{
+				if ($propal->brouillon && $user->rights->propale->creer)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				if ($propal->brouillon && $user->rights->propale->creer && $propal->remise_percent)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			else
+			{
+				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			}
+			print '</tr>';
+			print '</form>';
+
+			// Remise absolue
+			$var=!$var;
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="setremiseabsolue">';
+			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+			print '<tr class="liste_total"><td>';
+			print $langs->trans('CustomerAbsoluteDiscount');
+			if ($propal->brouillon) print ' <font style="font-weight: normal">('.($avoir_en_cours?$langs->trans("CompanyHasAbsoluteDiscount",$avoir_en_cours,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
+			print '</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] == 'editabsolutediscount')
+			{
+				print '-<input type="text" name="remise_absolue" size="2" value="'.$propal->remise_absolue.'">';
+			}
+			else
+			{
+				print $propal->remise_absolue?'-'.price($propal->remise_absolue):$langs->trans("DiscountNone");
+			}
+			print '</font></td>';
+			if ($_GET['action'] != 'editabsolutediscount')
+			{
+				if ($propal->brouillon && $user->rights->propale->creer)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				if ($propal->brouillon && $user->rights->propale->creer && $propal->remise_absolue)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			else
+			{
+				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			}
+			print '</tr>';
+			print '</form>';
+			
+			
             /*
              * Ajouter une ligne
              */
-
             if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
             {
                 print '<tr class="liste_titre">';
@@ -958,10 +1067,11 @@ if ($_GET['propalid'] > 0)
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
+				print '<td>&nbsp;</td>';
                 print "</tr>\n";
     
                 // Ajout produit produits/services personalisés
-                print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+                print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
                 print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
                 print '<input type="hidden" name="action" value="addligne">';
 
@@ -982,7 +1092,7 @@ if ($_GET['propalid'] > 0)
                 print '<td align="right"><input type="text" size="5" name="np_price"></td>';
                 print '<td align="right"><input type="text" size="2" value="1" name="qty"></td>';
                 print '<td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';
-                print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
+                print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
                 print '</tr>';
     
                 print '</form>';
@@ -990,7 +1100,7 @@ if ($_GET['propalid'] > 0)
                 // Ajout de produits/services prédéfinis
                 if ($conf->produit->enabled)
                 {
-                    print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+                    print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
                     print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
                     print '<input type="hidden" name="action" value="addligne">';
         
@@ -1013,7 +1123,7 @@ if ($_GET['propalid'] > 0)
                     print '<td>&nbsp;</td>';
                     print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
                     print '<td align="right" nowrap><input type="text" size="2" name="remise" value="'.$societe->remise_client.'">%</td>';
-                    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne"></td>';
+                    print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne"></td>';
                     print "</tr>\n";
       
                     print '</form>';
@@ -1036,7 +1146,7 @@ if ($_GET['propalid'] > 0)
 	 */
   	if ($_GET['action'] == 'statut') 
     {
-      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+      print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
       print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="60" rows="'.ROWS_3.'" wrap="soft" name="note">';
       print $propal->note;
@@ -1069,7 +1179,7 @@ if ($_GET['propalid'] > 0)
         {
             if ($user->rights->propale->valider)
             {
-                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
             }
         }
         
@@ -1078,7 +1188,7 @@ if ($_GET['propalid'] > 0)
         {
             if ($user->rights->propale->creer)
             {
-                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
             }
         }
         
@@ -1087,11 +1197,11 @@ if ($_GET['propalid'] > 0)
         {
             if ($propal->statut < 2)
             {
-                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
             }
             else
             {
-                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=builddoc">'.$langs->trans("RebuildPDF").'</a>';
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=builddoc">'.$langs->trans("RebuildPDF").'</a>';
             }
         }
         
@@ -1104,7 +1214,7 @@ if ($_GET['propalid'] > 0)
                 $file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
                 if (file_exists($file))
                 {
-                    print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
                 }
             }
         }
@@ -1114,7 +1224,7 @@ if ($_GET['propalid'] > 0)
         {
             if ($propal->statut == 1 && $user->rights->propale->cloturer)
             {
-                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
             }
         }
         
@@ -1123,7 +1233,7 @@ if ($_GET['propalid'] > 0)
         {
             if ($user->rights->propale->supprimer)
             {
-                print '<a class="butActionDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
             }
         }
     
@@ -1340,15 +1450,15 @@ else
       $i = 0;
       print '<table class="liste" width="100%">';
       print '<tr class="liste_titre">';
-      print_liste_field_titre($langs->trans('Ref'),'propal.php','p.ref','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
-      print_liste_field_titre($langs->trans('Company'),'propal.php','s.nom','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
-      print_liste_field_titre($langs->trans('Date'),'propal.php','p.datep','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
-      print_liste_field_titre($langs->trans('DateEndPropalShort'),'propal.php','dfv','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
-      print_liste_field_titre($langs->trans('Price'),'propal.php','p.price','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans('Status'),'propal.php','p.fk_statut','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
+      print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
+      print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
+      print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
+      print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.price','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield);
       print "</tr>\n";
       // Lignes des champs de filtre
-      print '<form method="get" action="propal.php">';
+      print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
       print '<tr class="liste_titre">';
       print '<td class="liste_titre" valign="right">';
@@ -1374,7 +1484,7 @@ else
             $now = time();
             $var=!$var;
             print '<tr '.$bc[$var].'>';
-            print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref."</a></td>\n";
+            print '<td><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref."</a></td>\n";
         
             if ($objp->client == 1)
             {
@@ -1392,9 +1502,9 @@ else
             $m = strftime('%m',$objp->dp);
         
             print strftime('%d',$objp->dp)."\n";
-            print ' <a href="propal.php?year='.$y.'&amp;month='.$m.'">';
+            print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
             print dolibarr_print_date($objp->dp,'%b')."</a>\n";
-            print ' <a href="propal.php?year='.$y.'">';
+            print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
             print strftime('%Y',$objp->dp)."</a></td>\n";
         
             // Date fin validite

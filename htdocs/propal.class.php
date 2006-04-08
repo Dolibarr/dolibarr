@@ -51,7 +51,6 @@ class Propal
     var $author;
     var $ref;
     var $datep;
-    var $remise;
     var $products;
     var $products_qty;
 	var $price;
@@ -61,6 +60,9 @@ class Propal
 	var $cond_reglement_code;
 	var $mode_reglement_id;
 	var $mode_reglement_code;
+    var $remise;
+	var $remise_percent;
+	var $remise_absolue;
 	var $note;
 	var $note_public;
     
@@ -91,6 +93,8 @@ class Propal
       $this->id = $propalid;
       $this->products = array();
       $this->remise = 0;
+      $this->remise_percent = 0;
+      $this->remise_absolue = 0;
       
       $langs->load("propals");
       $this->labelstatut[0]=$langs->trans("PropalStatusDraft");
@@ -108,9 +112,9 @@ class Propal
 
   /**
    * \brief     Ajout d'un produit dans la proposition, en memoire dans l'objet
-   * \param     idproduct       id du produit à ajouter
-   * \param     qty             quantité
-   * \param     remise_percent  remise effectuée sur le produit
+   * \param     idproduct       	Id du produit à ajouter
+   * \param     qty             	Quantité
+   * \param     remise_percent  	Remise relative effectuée sur le produit
    * \return    void
    * \see       insert_product
    */
@@ -134,7 +138,7 @@ class Propal
      *    \brief     Ajout d'un produit dans la proposition, en base
      *    \param     idproduct           Id du produit à ajouter
      *    \param     qty                 Quantité
-     *    \param     remise_percent      Remise effectuée sur le produit
+     *    \param     remise_percent      Remise relative effectuée sur le produit
      *    \param     p_desc              Descriptif optionnel
      *    \return    int                 >0 si ok, <0 si ko
      *    \see       add_product
@@ -382,8 +386,10 @@ class Propal
         $this->db->begin();
 
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
-        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, remise_percent, remise_absolue,";
+        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
+        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
+        $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
@@ -474,20 +480,22 @@ class Propal
                 $i++;
             }
         }
-        $calculs = calcul_price($products, $this->remise_percent);
+        $calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
     
-        $this->remise         = $calculs[3];
+        $this->total_remise   = $calculs[3];
+		$this->amount_ht      = $calculs[4];
         $this->total_ht       = $calculs[0];
         $this->total_tva      = $calculs[1];
         $this->total_ttc      = $calculs[2];
+		$tvas                 = $calculs[5];
 
         // Met a jour en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
         $sql .= " price='".  price2num($this->total_ht)."'";
         $sql .= ", tva='".   price2num($this->total_tva)."'";
         $sql .= ", total='". price2num($this->total_ttc)."'";
-        $sql .= ", remise='".price2num($this->remise)."'";
-        $sql .=" WHERE rowid = $this->id";
+        $sql .= ", remise='".price2num($this->total_remise)."'";
+        $sql .=" WHERE rowid = ".$this->id;
     
         if ( $this->db->query($sql) )
         {
@@ -507,15 +515,15 @@ class Propal
      */
     function fetch($rowid)
     {
-        $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact";
+        $sql = "SELECT ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc,fk_soc_contact";
         $sql.= ", ".$this->db->pdate("datep")."as dp";
         $sql.= ", ".$this->db->pdate("fin_validite")."as dfv, model_pdf";
         $sql.= ", note, note_public";
-        $sql.= ", fk_projet, fk_statut, remise_percent, fk_user_author";
+        $sql.= ", fk_projet, fk_statut, fk_user_author";
         $sql.= ", fk_cond_reglement, fk_mode_reglement, date_livraison";
         $sql.= ", c.label as statut_label";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-        $sql.= "," . MAIN_DB_PREFIX."c_propalst as c";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal,";
+        $sql.= " ".MAIN_DB_PREFIX."c_propalst as c";
         $sql.= " WHERE fk_statut = c.id";
         $sql.= " AND rowid='".$rowid."';";
     
@@ -536,6 +544,7 @@ class Propal
                 $this->price             = $obj->price;
                 $this->remise            = $obj->remise;
                 $this->remise_percent    = $obj->remise_percent;
+                $this->remise_absolue    = $obj->remise_absolue;
                 $this->total             = $obj->total;
                 $this->total_ht          = $obj->price;
                 $this->total_tva         = $obj->tva;
@@ -551,7 +560,7 @@ class Propal
                 $this->statut_libelle    = $obj->statut_label;
                 $this->cond_reglement_id = $obj->fk_cond_reglement;
                 $this->mode_reglement_id = $obj->fk_mode_reglement;
-				        $this->date_livraison = $obj->date_livraison;
+		        $this->date_livraison    = $obj->date_livraison;
     
                 $this->user_author_id = $obj->fk_user_author;
                 
@@ -737,10 +746,10 @@ class Propal
 	
 
     /**
-     *      \brief      Définit une remise globale sur la proposition
-     *      \param      user        Objet utilisateur qui modifie
-     *      \param      remise      Montant remise    
-     *      \return     int         <0 si ko, >0 si ok
+     *      \brief      Définit la date de fin de validité
+     *      \param      user        		Objet utilisateur qui modifie
+     *      \param      date_fin_validite	Date fin
+     *      \return     int         		<0 si ko, >0 si ok
      */
     function set_echeance($user, $date_fin_validite)
     {
@@ -761,7 +770,8 @@ class Propal
             }
         }
     }
- /**
+    
+    /**
      *      \brief      Définit une date de livraison
      *      \param      user        Objet utilisateur qui modifie
      *      \param      date_livraison      date de livraison  
@@ -790,13 +800,15 @@ class Propal
 
 
     /**
-     *      \brief      Définit une remise globale sur la proposition
+     *      \brief      Définit une remise globale relative sur la proposition
      *      \param      user        Objet utilisateur qui modifie
      *      \param      remise      Montant remise    
      *      \return     int         <0 si ko, >0 si ok
      */
-    function set_remise($user, $remise)
+    function set_remise_percent($user, $remise)
     {
+		$remise=trim($remise)?trim($remise):0;
+
         if ($user->rights->propale->creer)
         {
             $remise = price2num($remise);
@@ -813,20 +825,53 @@ class Propal
             else
             {
                 $this->error=$this->db->error();
-                dolibarr_syslog("Propal::set_remise Erreur SQL");
+                dolibarr_syslog("Propal::set_remise_percent Error sql=$sql");
                 return -1;
             }
         }
     }
 
   
-  /*
-   *
-   *
-   *
-   */
-  function set_project($user, $project_id)
-  {
+    /**
+     *      \brief      Définit une remise globale absolue sur la proposition
+     *      \param      user        Objet utilisateur qui modifie
+     *      \param      remise      Montant remise    
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function set_remise_absolue($user, $remise)
+    {
+		$remise=trim($remise)?trim($remise):0;
+
+        if ($user->rights->propale->creer)
+        {
+            $remise = price2num($remise);
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
+            $sql.= " SET remise_absolue = ".$remise;
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->remise_absolue = $remise;
+                $this->update_price();
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dolibarr_syslog("Propal::set_remise_absolue Error sql=$sql");
+                return -1;
+            }
+        }
+    }
+    
+	/*
+     *
+     *
+     *
+     */
+  	function set_project($user, $project_id)
+  	{
     if ($user->rights->propale->creer)
       {
 	//verif que le projet et la société concordent
@@ -1190,10 +1235,10 @@ class Propal
    */
   function delete($user)
   {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $this->id ;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
     if ( $this->db->query($sql) ) 
       {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = $this->id;";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
 	if ( $this->db->query($sql) ) 
 	  {
 	    dolibarr_syslog("Suppression de la proposition $this->id par $user->fullname ($user->id)");
@@ -1503,6 +1548,7 @@ class Propal
         $this->price             = $src_propal->price;
         $this->remise            = $src_propal->remise;
         $this->remise_percent    = $src_propal->remise_percent;
+        $this->remise_absolue    = $src_propal->remise_absolue;
         $this->total             = $src_propal->total;
         $this->total_ht          = $src_propal->total_ht;
         $this->total_tva         = $src_propal->total_tva;
@@ -1541,8 +1587,10 @@ class Propal
         $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
-        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, remise_percent, remise_absolue,";
+        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
+        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
+        $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";

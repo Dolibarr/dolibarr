@@ -197,7 +197,7 @@ if ($_POST['action'] == 'add')
 
 			if ($facid > 0)
 			{
-				Header('Location: facture.php?facid='.$facid);
+				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
 				exit;
 			}
 			else
@@ -334,7 +334,7 @@ if ($_POST['action'] == 'add')
 			// Fin création facture, on l'affiche
 			if ($facid > 0)
 			{
-				Header('Location: facture.php?facid='.$facid);
+				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
 				exit;
 			}
 		}
@@ -419,7 +419,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
-	Header('Location: facture.php?facid='.$_POST['facid']);   // Pour réaffichage de la fiche en cours d'édition
+	Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_POST['facid']);   // Pour réaffichage de la fiche en cours d'édition
 	exit;
 }
 
@@ -437,7 +437,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 		$fac = new Facture($db);
 		$result = $fac->delete($_GET['facid']);
 		$_GET['facid'] = 0 ;
-		Header('Location: facture.php');
+		Header('Location: '.$_SERVER["PHP_SELF"]);
 		exit;
 	}
 }
@@ -564,7 +564,7 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 					else
 					{
 						// Renvoie sur la fiche
-						Header('Location: facture.php?facid='.$fac->id.'&msg='.urlencode($msg));
+						Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&msg='.urlencode($msg));
 						exit;
 					}
 				}
@@ -682,7 +682,7 @@ if ($_GET['action'] == 'create')
 	}
 
 
-	print '<form name="add" action="facture.php" method="post">';
+	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 	print '<input name="facnumber" type="hidden" value="provisoire">';
@@ -1388,7 +1388,7 @@ else
 
     			if ($fac->brouillon == 1 && $user->rights->facture->creer)
     			{
-    					print '<form action="facture.php?facid='.$fac->id.'" method="post">';
+    					print '<form action="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'" method="post">';
     					print '<input type="hidden" name="action" value="set_ref_client">';
     					print '<td colspan="3"><input type="text" name="ref_client" size="20" value="'.$fac->ref_client.'">';
     					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
@@ -1452,7 +1452,7 @@ else
 				print '</td>';
 				if ($_GET['action'] != 'classer')
 				{
-				    print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">';
+				    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
 				    print img_edit($langs->trans('SetProject'),1);
 				    print '</a></td>';
 				}
@@ -1509,7 +1509,9 @@ else
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-					print '<td width="16">&nbsp;</td><td width="16">&nbsp;</td><td width="16">&nbsp;</td>';
+					print '<td width="16">&nbsp;</td>';
+					print '<td width="16">&nbsp;</td>';
+					print '<td width="16">&nbsp;</td>';
 					print "</tr>\n";
 
 				}
@@ -1562,22 +1564,22 @@ else
 						// Icone d'edition et suppression
 						if ($fac->statut == 0  && $user->rights->facture->creer)
 						{
-							print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 							print img_edit();
 							print '</a></td>';
-							print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
 							print img_delete();
 							print '</a></td>';
 							print '<td align="right">';
 							if ($i > 0)
 							{
-								print '<a href="facture.php?facid='.$fac->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
 								print img_up();
 								print '</a>';
 							}
 							if ($i < $num_lignes-1)
 							{
-								print '<a href="facture.php?facid='.$fac->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
 								print img_down();
 								print '</a>';
 							}
@@ -1593,7 +1595,7 @@ else
 					// Ligne en mode update
 					if ($_GET['action'] == 'editline' && $user->rights->facture->creer && $_GET['rowid'] == $objp->rowid)
 					{
-						print '<form name="updateligne" action="facture.php" method="post">';
+						print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 						print '<input type="hidden" name="action" value="updateligne">';
 						print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 						print '<input type="hidden" name="rowid" value="'.$_GET['rowid'].'">';
@@ -1651,7 +1653,7 @@ else
 			
 			// Remise relative
 			$var=!$var;
-			print '<form name="updateligne" action="facture.php" method="post">';
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremisepercent">';
 			print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 			print '<tr class="liste_total"><td>';
@@ -1687,7 +1689,7 @@ else
 				}
 				if ($fac->brouillon && $user->rights->facture->creer && $fac->remise_percent)
 				{
-					print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
 					print img_delete();
 					print '</a></td>';
 				}
@@ -1706,7 +1708,7 @@ else
 
 			// Remise absolue
 			$var=!$var;
-			print '<form name="updateligne" action="facture.php" method="post">';
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremiseabsolue">';
 			print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 			print '<tr class="liste_total"><td>';
@@ -1739,7 +1741,7 @@ else
 				}
 				if ($fac->brouillon && $user->rights->facture->creer && $fac->remise_absolue)
 				{
-					print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
 					print img_delete();
 					print '</a></td>';
 				}
@@ -1792,7 +1794,7 @@ else
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
 				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="0">%</td>';
-				print '<td align="center" valign="middle" rowspan="1" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+				print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 				print '</tr>';
 				if ($conf->service->enabled)
 				{
@@ -1859,7 +1861,7 @@ else
 				{
 					if ($user->rights->facture->valider)
 					{
-						print '  <a class="butAction" href="facture.php?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
+						print '  <a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
 					}
 				}
 				else
@@ -1869,11 +1871,11 @@ else
 					{
 						if ($fac->paye == 0)
 						{
-							print '  <a class="butAction" href="facture.php?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
+							print '  <a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
 						}
 						else
 						{
-							print '  <a class="butAction" href="facture.php?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('RebuildPDF').'</a>';
+							print '  <a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('RebuildPDF').'</a>';
 						}
 					}
 				}
@@ -1881,7 +1883,7 @@ else
 				// Supprimer
 				if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
 				{
-					print '<a class="butActionDelete" href="facture.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 				}
 
 				// Envoyer
@@ -2279,7 +2281,7 @@ else
 				print '</tr>';
 
 				// Lignes des champs de filtre
-				print '<form method="get" action="facture.php">';
+				print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre" valign="right">';
 				print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
@@ -2308,8 +2310,8 @@ else
 						$var=!$var;
 
 						print '<tr '.$bc[$var].'>';
-						print '<td nowrap="nowrap"><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').'</a> ';
-						print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
+						print '<td nowrap="nowrap"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').'</a> ';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
 						if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans('Late'));
 						print '</td>';
 
@@ -2319,9 +2321,9 @@ else
 							$y = strftime('%Y',$objp->df);
 							$m = strftime('%m',$objp->df);
 							print strftime('%d',$objp->df);
-							print ' <a href="facture.php?year='.$y.'&amp;month='.$m.'">';
+							print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
 							print substr(strftime('%B',$objp->df),0,3).'</a>';
-							print ' <a href="facture.php?year='.$y.'">';
+							print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
 							print strftime('%Y',$objp->df).'</a></td>';
 						}
 						else
