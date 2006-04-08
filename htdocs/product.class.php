@@ -872,9 +872,9 @@ class Product
     	
         $sql = "SELECT COUNT(DISTINCT pr.fk_soc) as nb_customers, COUNT(DISTINCT pr.rowid) as nb,";
         $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as pr";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE p.rowid = pd.fk_product AND pd.fk_propal = pr.rowid AND p.rowid = ".$this->id;
+        $sql.= " WHERE pr.rowid = pd.fk_propal AND pd.fk_product = ".$this->id;
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND pr.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         //$sql.= " AND pr.fk_statut != 0";
         if ($socid > 0)
@@ -912,10 +912,10 @@ class Product
     	
         $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
         $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
-        $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."product as p,";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
         $sql.= " ".MAIN_DB_PREFIX."commande as c";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE c.rowid = cd.fk_commande AND p.rowid = cd.fk_product AND p.rowid = ".$this->id;
+        $sql.= " WHERE c.rowid = cd.fk_commande AND cd.fk_product = ".$this->id;
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         //$sql.= " AND c.fk_statut != 0";
         if ($socid > 0)
@@ -952,17 +952,17 @@ class Product
     	
         $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
         $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
-        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p,";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd,";
         $sql.= " ".MAIN_DB_PREFIX."contrat as c";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE c.rowid = cd.fk_contrat AND p.rowid = cd.fk_product AND p.rowid = ".$this->id;
+        $sql.= " WHERE c.rowid = cd.fk_contrat AND cd.fk_product = ".$this->id;
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         //$sql.= " AND c.statut != 0";
         if ($socid > 0)
         {
             $sql .= " AND c.fk_soc = $socid";
         }
-    
+
         $result = $this->db->query($sql) ;
         if ( $result )
         {
@@ -992,10 +992,10 @@ class Product
     	
         $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
         $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as pd, ".MAIN_DB_PREFIX."product as p";
-        $sql.= ", ".MAIN_DB_PREFIX."facture as f";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as pd,";
+        $sql.= " ".MAIN_DB_PREFIX."facture as f";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE f.rowid = pd.fk_facture AND p.rowid = pd.fk_product AND p.rowid = ".$this->id;
+        $sql.= " WHERE f.rowid = pd.fk_facture AND pd.fk_product = ".$this->id;
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         //$sql.= " AND f.fk_statut != 0";
         if ($socid > 0)

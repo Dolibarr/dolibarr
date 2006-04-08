@@ -47,7 +47,8 @@ $pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="c.datec";
 
-
+// Securite
+$socidp = 0;
 if ($user->societe_id > 0)
 {
     $action = '';
@@ -67,10 +68,11 @@ else
 llxHeader();
 
 
-if ($_GET["id"])
+if ($_GET["id"] || $_GET["ref"])
 {
     $product = new Product($db);
-    $result = $product->fetch($_GET["id"]);
+    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
     if ($result > 0)
     {
@@ -292,7 +294,7 @@ if ($_GET["id"])
             print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"c.datec","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
             print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
+            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
             print "</tr>\n";
 
             $contratstatic=new Contrat($db);
@@ -314,7 +316,7 @@ if ($_GET["id"])
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->amount)."</td>\n";
-                    print '<td align="center">'.$contratstatic->LibStatut($objp->statut,5).'</td>';
+                    print '<td align="right">'.$contratstatic->LibStatut($objp->statut,5).'</td>';
                     print "</tr>\n";
                     $i++;
                 }

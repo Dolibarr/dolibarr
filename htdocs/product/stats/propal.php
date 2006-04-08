@@ -45,6 +45,8 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.datec";
 
 
+// Securite
+$socidp = 0;
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -63,10 +65,11 @@ else
 
 llxHeader();
 
-if ($_GET["id"])
+if ($_GET["id"] || $_GET["ref"])
 {
     $product = new Product($db);
-    $result = $product->fetch($_GET["id"]);
+    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
     if ( $result > 0)
     {
@@ -286,7 +289,7 @@ if ($_GET["id"])
             print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"p.datec","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
             print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
+            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
             print "</tr>\n";
 
             $propalstatic=new Propal($db);

@@ -48,6 +48,8 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="c.date_creation";
 
 
+// Securite
+$socidp = 0;
 if ($user->societe_id > 0)
 {
     $action = '';
@@ -67,10 +69,11 @@ else
 llxHeader();
 
 
-if ($_GET["id"])
+if ($_GET["id"] || $_GET["ref"])
 {
     $product = new Product($db);
-    $result = $product->fetch($_GET["id"]);
+    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
     if ($result > 0)
     {
@@ -292,7 +295,7 @@ if ($_GET["id"])
             print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"c.date_creation","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
             print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
+            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
             print "</tr>\n";
 
             $commandestatic=new Commande($db);

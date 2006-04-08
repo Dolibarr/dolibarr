@@ -296,7 +296,7 @@ if ($_GET["id"] || $_GET["ref"])
             print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
             print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
+            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
             print "</tr>\n";
 
             if ($num > 0)
