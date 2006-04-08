@@ -320,6 +320,7 @@ CompanyCurrency=Main currency
 DoNotShow=Do not show
 ShowBugTrackLink=Show link "Report a bug"
 ShowWorkBoard=Show "work board" on home page
+Alerts=Alerts
 Delays=Delays
 DelayBeforeWarning=Delay before warning
 DelaysBeforeWarning=Delays before warning
