@@ -69,7 +69,11 @@ if ($_GET['action'] == 'delete')
 	}
 }
 
+/*
+ * Affichage page
+ */
 
+$html=new Form($db);
 print_titre($langs->trans('ComptaSetup'));
 
 
@@ -142,7 +146,7 @@ if ($result)
 			print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
 		}
 		print '</td><td>';
-		print '<input type="submit" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
+		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
 		print "</td></tr>\n";
 
 		print '</form>';

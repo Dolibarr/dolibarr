@@ -30,6 +30,7 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load('suppliers');
 $langs->load('products');
@@ -81,60 +82,9 @@ if ( $societe->fetch($socid) )
 	/*
 	 * Affichage onglets
 	 */
-	$h = 0;
+	$head = societe_prepare_head($societe);
 
-	$head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
-	$head[$h][1] = $langs->trans('Company');
-	$h++;
-
-	if ($societe->client==1)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
-		$head[$h][1] = $langs->trans('Customer');
-		$h++;
-	}
-	if ($societe->client==2)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
-		$head[$h][1] = $langs->trans('Prospect');
-		$h++;
-	}
-	if ($societe->fournisseur)
-	{
-		$hselected=$h;
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-		$head[$h][1] = $langs->trans('Supplier');
-		$h++;
-	}
-
-	if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-	{
-		$langs->load('compta');
-		$head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid;
-		$head[$h][1] = $langs->trans('Accountancy');
-		$h++;
-	}
-
-	$head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-	$head[$h][1] = $langs->trans('Note');
-	$h++;
-
-	if ($user->societe_id == 0)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-		$head[$h][1] = $langs->trans('Documents');
-		$h++;
-	}
-
-	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-	$head[$h][1] = $langs->trans('Notifications');
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$societe->id;
-	$head[$h][1] = $langs->trans("Info");
-	$h++;
-
-	dolibarr_fiche_head($head, $hselected, $societe->nom);
+	dolibarr_fiche_head($head, 'supplier', $societe->nom);
 
 
 	print '<table width="100%">';

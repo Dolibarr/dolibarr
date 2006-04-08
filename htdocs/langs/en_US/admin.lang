@@ -342,11 +342,13 @@ RuleForGeneratedPasswords=Rule to generate suggested passwords
 DoNotSuggest=Do not suggest any password
 ##### Company setup #####
 CompanySetup=Companies module setup
-CompanyCodeChecker=Module for checking third parties code (customer or supplier)
-AccountCodeManager=Module for managing accountancy code (customer or supplier)
-ModuleCompanyCodeAquarium=Return an accountancy code built by "401" followed by third party supplier code for a supplier accountancy code, and "411" followed by third party customer code for a customer accountancy code
-ModuleCompanyCodePanicum=Return an accountancy code that is always same than the one typed. For test use
+CompanyCodeChecker=Module for third parties code checking (customer or supplier)
+AccountCodeManager=Module for accountancy code generation (customer or supplier)
+ModuleCompanyCodeAquarium=Return an accountancy code built by "401" followed by third party supplier code for a supplier accountancy code, and "411" followed by third party customer code for a customer accountancy code.
+ModuleCompanyCodePanicum=Return an empty accountancy code.
 ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. Le code est composé du caractère 'C' en première position suivi des 5 premiers caractères du code tiers.
+UseNotifications=Use notifications
+NotificationsDesc=Notifications feature allows you to silently send automatic mail, for some Dolibarr events, to companies that are configured to
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr events to WebCalendar

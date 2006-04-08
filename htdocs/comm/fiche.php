@@ -30,14 +30,12 @@
 */
 
 require_once("./pre.inc.php");
-
-if (!$user->rights->societe->lire) accessforbidden();
-
-require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("companies");
 $langs->load("orders");
@@ -46,6 +44,7 @@ $langs->load("contracts");
 if ($conf->fichinter->enabled) $langs->load("interventions");
 
 $user->getrights("commercial");
+if (!$user->rights->societe->lire) accessforbidden();
 
 $socidp = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($socidp == '') accessforbidden();
@@ -192,69 +191,10 @@ if ($socidp > 0)
     /*
      * Affichage onglets
      */
-    $h = 0;
 
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Company");
-    $h++;
+	$head = societe_prepare_head($objsoc);
 
-    if ($objsoc->client==1)
-    {
-        $hselected=$h;
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
-        $head[$h][1] = $langs->trans("Customer");;
-        $h++;
-    }
-    if ($objsoc->client==2)
-    {
-        $hselected=$h;
-        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socid;
-        $head[$h][1] = $langs->trans("Prospect");
-        $h++;
-    }
-    if ($objsoc->fournisseur)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
-        $head[$h][1] = $langs->trans("Supplier");
-        $h++;
-    }
-
-    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-    {
-        $langs->load("compta");
-        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
-        $head[$h][1] = $langs->trans("Accountancy");
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Note");
-    $h++;
-
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
-        $head[$h][1] = $langs->trans("Documents");
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Notifications");
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Info");
-    $h++;
-
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT."/bookmarks/fiche.php?action=add&amp;socid=".$objsoc->id."&amp;urlsource=".$_SERVER["PHP_SELF"]."?socid=".$objsoc->id;
-        $head[$h][1] = img_object($langs->trans("BookmarkThisPage"),'bookmark');
-        $head[$h][2] = 'image';
-        $h++;
-    }
-
-    dolibarr_fiche_head($head, $hselected, $objsoc->nom);
+    dolibarr_fiche_head($head, 'customer', $objsoc->nom);
 
 
     /*

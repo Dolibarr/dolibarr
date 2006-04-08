@@ -28,6 +28,7 @@
 */
 
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -96,6 +97,13 @@ if ($socid > 0)
         exit;
     }
 
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($societe);
+
+	dolibarr_fiche_head($head, 'prospect', $societe->nom);
+
 
     /* TODO Finir verification PagesJaunes
     * print '<form action="http://www.pagesjaunes.fr/pj.cgi" method="post" target="_blank">';
@@ -105,56 +113,7 @@ if ($socid > 0)
     * print '</form>';
     */
 
-    $h=0;
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Company");
-    $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-    $head[$h][1] = $langs->trans("Prospect");
-    $hselected=$h;
-    $h++;
-
-    if ($societe->fournisseur)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Supplier");
-        $h++;
-    }
-
-    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-    {
-        $langs->load("compta");
-        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Accountancy");
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Note");
-    $h++;
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Documents");
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Notifications");
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Info");
-    $h++;
-
-
-
-    dolibarr_fiche_head($head, $hselected, $societe->nom);
-
-    /*
-     *
-     */
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
 

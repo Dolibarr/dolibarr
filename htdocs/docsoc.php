@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("companies");
 $langs->load('other');
@@ -108,61 +109,13 @@ if ($socid > 0)
     $societe = new Societe($db);
     if ($societe->fetch($socid))
     {
-        $h = 0;
+		/*
+		 * Affichage onglets
+		 */
+		$head = societe_prepare_head($societe);
+	
+		dolibarr_fiche_head($head, 'document', $societe->nom);
 
-        $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Company");
-        $h++;
-
-        if ($societe->client==1)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-            $head[$h][1] = $langs->trans("Customer");
-            $h++;
-        }
-
-        if ($societe->client==2)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-            $head[$h][1] = $langs->trans("Prospect");
-            $h++;
-        }
-        if ($societe->fournisseur)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-            $head[$h][1] = $langs->trans("Supplier");
-            $h++;
-        }
-
-        if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-        {
-            $langs->load("compta");
-            $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
-            $head[$h][1] = $langs->trans("Accountancy");
-            $h++;
-        }
-
-        $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Note");
-        $h++;
-
-        if ($user->societe_id == 0)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-            $head[$h][1] = $langs->trans("Documents");
-            $hselected = $h;
-            $h++;
-        }
-
-        $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Notifications");
-        $h++;
-
-        $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Info");
-        $h++;
-        
-        dolibarr_fiche_head($head, $hselected, $societe->nom);
 
         // Construit liste des fichiers
         clearstatcache();

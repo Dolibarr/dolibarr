@@ -223,7 +223,7 @@ function dolibarr_syslog($message, $level=LOG_ERR)
 		\param	    active      0=onglet non actif, 1=onglet actif
 		\param      title       Titre tabelau ("" par defaut)
 */
-function dolibarr_fiche_head($links, $active=0, $title='')
+function dolibarr_fiche_head($links, $active='0', $title='')
 {
     print '<div class="tabs">'."\n";
 
@@ -248,7 +248,9 @@ function dolibarr_fiche_head($links, $active=0, $title='')
         }
         else
         {
-            if ($i == $active)
+        	//print "x $i $active ".$links[$i][2]." z";
+            if ((is_numeric($active) && $i == $active)
+             || (! is_numeric($active) && $active == $links[$i][2]))
             {
                 print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
             }

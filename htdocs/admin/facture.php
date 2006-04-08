@@ -93,6 +93,8 @@ if ($_GET["action"] == 'delete')
  */
 
 $dir = "../includes/modules/facture/";
+$html=new Form($db);
+
 
 llxHeader("","");
 
@@ -112,7 +114,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 /*
  *  Module numérotation
  */
-print "<br>";
+
 print_titre($langs->trans("BillsNumberingModule"));
 
 print '<table class="noborder" width="100%">';
@@ -342,7 +344,7 @@ print '<tr '.$bc[$var].'><td>';
 echo "Forcer la définition de la date des factures lors de la validation";
 print '</td><td width="60" align="center">';
 $forcedate=(defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION)?1:0;
-$html=new Form($db);
+
 print $html->selectyesno("forcedate",$forcedate,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -351,8 +353,6 @@ print '</form>';
 
 print '</table>';
 
-
-print "<br>";
 
 $db->close();
 

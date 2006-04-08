@@ -44,6 +44,7 @@ if ($_GET["action"] == 'setcodeclient')
 	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$_GET["value"]))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
 	}
 	else
 	{
@@ -56,6 +57,20 @@ if ($_GET["action"] == 'setcodecompta')
 	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$_GET["value"]))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dolibarr_print_error($db);	
+	}
+}
+
+if ($_POST["action"] == 'setdisablenotifications')
+{
+	if (dolibarr_set_const($db, "SOCIETE_DISABLE_NOTIFICATIONS",! $_POST["constvalue"]))
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
 	}
 	else
 	{
@@ -69,8 +84,10 @@ if ($_GET["action"] == 'setcodecompta')
  *
  */
 
-llxHeader();
+$form=new Form($db);
 
+
+llxHeader();
 
 print_titre($langs->trans("CompanySetup"));
 
@@ -193,6 +210,43 @@ if ($handle)
 }
 print "</table>\n";
 	
+print '<br>';
+
+
+// Choix du module de gestion des codes compta
+
+print_titre($langs->trans("OtherOptions"));
+
+$var=true;
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>&nbsp;</td>';
+print "</tr>\n";
+
+print '<form action="'.$_SERVER["societe.php"].'" method="POST">';
+print '<input type="hidden" name="action" value="setdisablenotifications">';
+print '<input type="hidden" name="constname" value="SOCIETE_DISABLE_NOTIFICATIONS">';
+
+$var=!$var;
+print '<tr '.$bc[$var].' class="value">';
+print '<td nowrap="nowrap">'.$langs->trans("UseNotifications")."</td>\n";
+print '<td>';
+$form->selectyesnonum('constvalue',! $conf->global->SOCIETE_DISABLE_NOTIFICATIONS);
+print '</td>';
+print '<td>'.$langs->trans("NotificationsDesc").'</td>';
+print '<td align="right">';
+print '<input class="button" type="submit" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
+print '</td>';
+print "</tr>\n";
+
+print '</form>';
+
+print "</table>\n";
+
 
 
 $db->close();

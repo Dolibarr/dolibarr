@@ -343,10 +343,12 @@ DoNotSuggest=Ne pas proposer
 ##### Company setup #####
 CompanySetup=Configuration du module Sociétés
 CompanyCodeChecker=Module de contrôle des codes tiers (clients/fournisseurs)
-AccountCodeManager=Module de gestion des codes compta (clients/fournisseurs)
-ModuleCompanyCodeAquarium=Renvoie un code compta composé de 401 suivi du code tiers fournisseur pour le code compta fournisseur, et 411 suivi du code tiers client pour le code compta client
-ModuleCompanyCodePanicum=Renvoie un code compta identique à celui saisi. Module dédié aux tests
+AccountCodeManager=Module de génération des codes compta (clients/fournisseurs)
+ModuleCompanyCodeAquarium=Renvoie un code compta composé de 401 suivi du code tiers fournisseur pour le code compta fournisseur, et 411 suivi du code tiers client pour le code compta client.
+ModuleCompanyCodePanicum=Renvoie un code compta vide.
 ModuleCompanyCodeDigitaria=Renvoie un code compta composé suivant le code tiers. Le code est composé du caractère 'C' en première position suivi des 5 premiers caractères du code tiers.
+UseNotifications=Utiliser les notifications
+NotificationsDesc=La fonction des notifications permet d'envoyer automatiquement un mail, pour certains évênement Dolibarr, aux sociétés configurées pour.
 ##### Webcal setup #####
 WebCalSetup=Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro=Intégrer les évênements Dolibarr dans WebCalendar

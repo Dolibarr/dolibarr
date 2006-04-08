@@ -28,6 +28,7 @@
 */
 
 require("pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("companies");
 
@@ -95,13 +96,8 @@ if ($_POST["action"] == 'add')
  */
 if ($_GET["action"] == 'delete')
 {
- $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
- $db->query($sql);
-    
- // if ($db->query($sql))
-   // {
-      // TODO ajouter une sécu pour la suppression 
-    //}
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
+	$db->query($sql);
 }
 
 
@@ -117,66 +113,13 @@ if ( $soc->fetch($soc->id) )
     $html = new Form($db);
     $langs->load("other");
     
-    $h=0;
-    
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("Company");
-    $h++;
-    
-    if ($soc->client==1)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
-        $head[$h][1] = $langs->trans("Customer");
-        $h++;
-    }
-    
-    if ($soc->client==2)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
-        $head[$h][1] = $langs->trans("Prospect");
-        $h++;
-    }
-    if ($soc->fournisseur)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
-        $head[$h][1] = $langs->trans("Supplier");
-        $h++;
-    }
-    
-    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-	{
-  		$langs->load("compta");
-        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
-        $head[$h][1] = $langs->trans("Accountancy");
-        $h++;
-    }
-    
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("Note");
-    $h++;
-    
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
-        $head[$h][1] = $langs->trans("Documents");
-        $h++;
-    }
-    
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("Notifications");
-    $hselected=$h;
-    $h++;
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($soc);
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("Info");
-    $h++;
-    
-    dolibarr_fiche_head($head, $hselected, $soc->nom);
-    
-    /*
-    *
-    *
-    */
+	dolibarr_fiche_head($head, 'notify', $soc->nom);
+
     
     print '<table class="border"width="100%">';
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">'.$soc->nom.'</td></tr>';

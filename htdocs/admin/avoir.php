@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin         <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,10 @@ if (!$user->admin)
   accessforbidden();
 
 
+/*
+ * Actions
+ */
+ 
 if ($_GET["action"] == 'set')
 {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."avoir_model_pdf (nom) VALUES ('".$_GET["value"]."')";
@@ -121,7 +125,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 /*
  *  Module numérotation
  */
-print "<br>";
+
 print_titre($langs->trans("DiscountsNumberingModules"));
 
 print '<table class="noborder" width="100%">';
@@ -279,7 +283,7 @@ print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
 print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("Directory")."</td>\n  <td>".$conf->avoir->dir_output."</td>\n</tr>\n";
-print "</table>\n<br>";
+print "</table>\n";
 
 
 $db->close();

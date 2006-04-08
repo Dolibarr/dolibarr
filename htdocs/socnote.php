@@ -29,6 +29,7 @@
 */
  
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("companies");
 
@@ -78,78 +79,28 @@ if ($socidp > 0)
     $societe = new Societe($db, $socidp);
     $societe->fetch($socidp);
     
-    
-    $h=0;
-    
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Company");
-    $h++;
-    
-    if ($societe->client==1)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Customer");
-        $h++;
-    }
-    
-    if ($societe->client==2)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-        $head[$h][1] = $langs->trans("Prospect");
-        $h++;
-    }
-    if ($societe->fournisseur)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Supplier");
-        $h++;
-    }
-    
-    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-    {
-        $langs->load("compta");
-        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Accountancy");
-        $h++;
-    }
-    
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Note");
-    $hselected = $h;
-    $h++;
-    
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Documents");
-        $h++;
-    }
-    
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Notifications");
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Info");
-    $h++;
-    
-    dolibarr_fiche_head($head, $hselected, $societe->nom);
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($societe);
 
-
-  print "<form method=\"post\" action=\"socnote.php\">";
-
-  print '<table class="border" width="100%">';
-  print '<tr><td width="50%" valign="top">'.$langs->trans("Note").'</td><td>'.$langs->trans("CurrentNote").'</td></tr>';
-  print '<tr><td width="50%" valign="top">';
-  print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
-  print '<textarea name="note" cols="70" rows="10">'.$societe->note.'</textarea><br>';
-  print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
-  print "</td></tr>";
-  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-  print "</table>";
-
-  print '</form>';
+	dolibarr_fiche_head($head, 'note', $societe->nom);
+	
+	
+	print "<form method=\"post\" action=\"socnote.php\">";
+	
+	print '<table class="border" width="100%">';
+	print '<tr><td width="50%" valign="top">'.$langs->trans("Note").'</td><td>'.$langs->trans("CurrentNote").'</td></tr>';
+	print '<tr><td width="50%" valign="top">';
+	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+	print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
+	print '<textarea name="note" cols="70" rows="10">'.$societe->note.'</textarea><br>';
+	print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
+	print "</td></tr>";
+	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
+	print "</table>";
+	
+	print '</form>';
 }
 
 print '</div><br>';
