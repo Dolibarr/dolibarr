@@ -121,3 +121,5 @@ NewGlobalDiscount=Nouvel avoir
 ReasonDiscount=Motif
 AddGlobalDiscount=Ajouter avoir
 DiscountOfferedBy=Accordé par
+DiscountStillRemaining=Avoirs restant en cours
+DiscountAlreadyCounted=Remises déjà appliquées

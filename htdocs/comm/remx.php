@@ -227,7 +227,7 @@ if ($_socid > 0)
     $resql=$db->query($sql);
     if ($resql)
     {
-        print_titre($langs->trans("Ristournes restant dues"));
+        print_titre($langs->trans("DiscountStillRemaining"));
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
         print '<td>'.$langs->trans("ReasonDiscount").'</td>';
@@ -280,7 +280,7 @@ if ($_socid > 0)
     $resql=$db->query($sql);
     if ($resql)
     {
-        print_titre($langs->trans("Ristournes appliquées"));
+        print_titre($langs->trans("DiscountAlreadyCounted"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
         print '<td>'.$langs->trans("ReasonDiscount").'</td>';
