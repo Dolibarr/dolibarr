@@ -528,6 +528,8 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
+    $langs->load("propal");
+    
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
     if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
@@ -560,7 +562,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";
                 print "<td align=\"right\">".price($obj->price)."</td>";
-				print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
+				print "<td align=\"center\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
                 print "</tr>\n";
                 $i++;
                 $total += $obj->price;

@@ -114,6 +114,14 @@ class Prospect extends Societe
 		global $langs;
 		$langs->load('customers');
 
+		if ($mode == 2)
+		{
+			if ($statut == -1) return img_action(0,-1).' '.$langs->trans("StatusProspect-1");
+			if ($statut ==  0) return img_action(0, 0).' '.$langs->trans("StatusProspect0");
+			if ($statut ==  1) return img_action(0, 1).' '.$langs->trans("StatusProspect1");
+			if ($statut ==  2) return img_action(0, 2).' '.$langs->trans("StatusProspect2");
+			if ($statut ==  3) return img_action(0, 3).' '.$langs->trans("StatusProspect3");
+		}
 		if ($mode == 4)
 		{
 			if ($statut == -1) return img_action(0,-1).' '.$langs->trans("StatusProspect-1");

@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 
 $langs->load("propal");
 
@@ -163,6 +164,8 @@ if ($resql)
 
     $var=true;
 
+    $prospectstatic=new Prospect($db);
+
     while ($i < min($num,$conf->liste_limit))
     {
         $obj = $db->fetch_object($resql);
@@ -179,9 +182,7 @@ if ($resql)
         print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
         // Statut
         print "<td align=\"center\">";
-        $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
-        $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
-        print $libelle;
+        print $prospectstatic->LibStatut($obj->fk_stcomm,2);
         print "</td>";
 
         $sts = array(-1,0,1,2,3);
