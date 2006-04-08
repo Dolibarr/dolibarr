@@ -61,6 +61,9 @@ PropalValidatedInDolibarr=Proposition %s validée dans Dolibarr
 InvoiceValidatedInDolibarr=Facture %s validée dans Dolibarr
 InvoicePayedInDolibarr=Facture %s passée à payée dans Dolibarr
 InvoiceCanceledInDolibarr=Facture %s annulée dans Dolibarr
+PaymentDoneInDolibarr=Paiement %s réalisé dans Dolibarr
+CustomerPaymentDoneInDolibarr=Paiement client %s dans Dolibarr
+SupplierPaymentDoneInDolibarr=Paiement fournisseur %s dans Dolibarr
 ##### Export #####
 ExportsArea=Espace exports
 AvailableFormats=Formats disponibles

@@ -25,6 +25,7 @@
 		\file       htdocs/fourn/facture/paiementfourn.class.php
 		\ingroup    fournisseur, facture
 		\brief      Page de création de paiement factures fournisseurs
+        \remarks	Cette classe est presque identique à paiement.class.php
 		\version    $Revision$
 */
 
@@ -120,23 +121,23 @@ class PaiementFourn
 	 */
 	function create($user)
 	{
-		$sql_err = 0;
+		$error = 0;
 
-		$this->db->begin();
-
-		$this->total = 0.0;
+		// Nettoyage parametres
+		$value = price2num($value);
+		$this->total = 0;
 		foreach ($this->amounts as $key => $value)
 		{
-			$val = price2num($value);
-			if (is_numeric($val))
-			{
-				$val = price2num(round($val, 2));
-				$this->total += $val;
-			}
+			$val = round($value, 2);
 			$this->amounts[$key] = $val;
+			$this->total += $val;
 		}
 		$this->total = price2num($this->total);
-		if ($this->total <> 0) /* On accepte les montants négatifs pour les avoirs ??? */
+		
+		
+		$this->db->begin();
+		
+		if ($this->total <> 0) // On accepte les montants négatifs
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author)';
 			$sql .= ' VALUES (now(), '.$this->datepaye.', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.')';
@@ -144,6 +145,8 @@ class PaiementFourn
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiementfourn');
+
+				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount)
 				{
 					$facid = $key;
@@ -154,7 +157,7 @@ class PaiementFourn
 						if (! $this->db->query($sql) )
 						{
 							dolibarr_syslog('Paiement::Create Erreur INSERT dans paiement_facture '.$facid);
-							$sql_err++;
+							$error++;
 						}
 					}
 					else
@@ -162,15 +165,25 @@ class PaiementFourn
 						dolibarr_syslog('PaiementFourn::Create Montant non numérique');
 					}
 				}
+
+				if (! $error)
+				{
+		            // Appel des triggers
+		            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		            $interface=new Interfaces($this->db);
+		            $result=$interface->run_triggers('PAYMENT_SUPPLIER_CREATE',$this,$user,$lang,$conf);
+		            if ($result < 0) $error++;
+		            // Fin appel triggers
+				}
 			}
 			else
 			{
 				dolibarr_syslog('PaiementFourn::Create Erreur INSERT dans paiementfourn');
-				$sql_err++;
+				$error++;
 			}
 		}
 
-		if ( $this->total <> 0 && $sql_err == 0 ) // On accepte les montants négatifs
+		if ( $this->total <> 0 && $error == 0 ) // On accepte les montants négatifs
 		{
 			$this->db->commit();
 			dolibarr_syslog('PaiementFourn::Create Ok Total = '.$this->total);

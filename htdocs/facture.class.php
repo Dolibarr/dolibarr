@@ -1326,6 +1326,7 @@ class Facture
 	 *    	\param      paye          	Etat paye
 	 *    	\param      statut        	Id statut
 	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *		\param		alreadypayed	Montant deja payé
 	 *    	\return     string        	Libellé du statut
 	 */
 	function LibStatut($paye,$statut,$mode=0,$alreadypayed=-1)

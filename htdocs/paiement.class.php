@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
         \file       htdocs/paiement.class.php
         \ingroup    facture
         \brief      Fichier de la classe des paiement de factures clients
+        \remarks	Cette classe est presque identique à paiementfourn.class.php
         \version    $Revision$
 */
 
@@ -40,6 +41,7 @@ class Paiement
 	var $facid;
 	var $datepaye;
 	var $amount;
+	var $total;
 	var $author;
 	var $paiementid;	// Type de paiement. Stocké dans fk_paiement
 						// de llx_paiement qui est lié aux types de
@@ -53,13 +55,12 @@ class Paiement
 
 	var $db;
 
-  /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
-   *    \param  soc_idp     id societe ('' par defaut)
-   */
 
-	function Paiement($DB, $soc_idp='')
+	/**
+	 *    \brief  Constructeur de la classe
+	 *    \param  DB          handler accès base de données
+	 */
+	function Paiement($DB)
 	{
 		$this->db = $DB ;
 	}
@@ -109,41 +110,39 @@ class Paiement
 		}
 	}
 
-  /**
-   *    \brief      Création du paiement en base
-   *    \param      user        object utilisateur qui crée
-   *    \return     int         id du paiement crée, < 0 si erreur
-   */
-
+	/**
+ 	 *    \brief      Création du paiement en base
+	 *    \param      user        object utilisateur qui crée
+	 *    \return     int         id du paiement crée, < 0 si erreur
+	 */
 	function create($user)
 	{
-		$sql_err = 0;
+		$error = 0;
+
+		// Nettoyage parametres
+		$value = price2num($value);
+		$this->total = 0;
+		foreach ($this->amounts as $key => $value)
+		{
+			$val = round($value, 2);
+			$this->amounts[$key] = $val;
+			$this->total += $val;
+		}
+		$this->total = price2num($this->total);
+
 
 		$this->db->begin();
 
-		$total = 0.0;
-		foreach ($this->amounts as $key => $value)
-		{
-			$val = $value;
-			$val = str_replace(' ','',$val);
-			$val = str_replace(',','.',$val);
-			$val = round($val, 2);
-			$val = str_replace(',','.',$val);
-			if (is_numeric($val))
-			{
-				$total += $val;
-			}
-			$this->amounts[$key] = $val;
-		}
-		$total = str_replace(',','.',$total);
-		if ($total <> 0) /* On accepte les montants négatifs pour les rejets de prélèvement */
+		if ($this->total <> 0) // On accepte les montants négatifs pour les rejets de prélèvement
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)';
-			$sql .= ' VALUES (now(), '.$this->datepaye.', \''.$total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.')';
+			$sql .= ' VALUES (now(), '.$this->datepaye.', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.')';
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiement');
+				
+				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount)
 				{
 					$facid = $key;
@@ -154,7 +153,7 @@ class Paiement
 						if (! $this->db->query($sql) )
 						{
 							dolibarr_syslog('Paiement::Create Erreur INSERT dans paiement_facture '.$facid);
-							$sql_err++;
+							$error++;
 						}
 					}
 					else
@@ -162,18 +161,28 @@ class Paiement
 						dolibarr_syslog('Paiement::Create Montant non numérique');
 					}
 				}
+				
+				if (! $error)
+				{
+		            // Appel des triggers
+		            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		            $interface=new Interfaces($this->db);
+		            $result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$lang,$conf);
+		            if ($result < 0) $error++;
+		            // Fin appel triggers
+				}
 			}
 			else
 			{
 				dolibarr_syslog('Paiement::Create Erreur INSERT dans paiement');
-				$sql_err++;
+				$error++;
 			}
 		}
 
-		if ( $total <> 0 && $sql_err == 0 ) // On accepte les montants négatifs
+		if ( $this->total <> 0 && $error == 0 ) // On accepte les montants négatifs
 		{
 			$this->db->commit();
-			dolibarr_syslog('Paiement::Create Ok Total = '.$total);
+			dolibarr_syslog('Paiement::Create Ok Total = '.$this->total);
 			return $this->id;
 		}
 		else

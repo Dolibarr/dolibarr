@@ -120,7 +120,7 @@ if ($action == 'add_paiement')
 			if ($conf->banque->enabled)
 			{
 				// Insertion dans llx_bank
-				$label = 'Règlement fournisseur';
+				$label = "(SupplierInvoicePayment)";
 				$acc = new Account($db, $_POST['accountid']);
 				//paiementid contient "CHQ ou VIR par exemple"
 				$bank_line_id = $acc->addline($paiement->datepaye,

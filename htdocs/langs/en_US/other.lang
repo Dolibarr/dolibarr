@@ -61,6 +61,7 @@ PropalValidatedInDolibarr=Proposal %s validated in Dolibarr
 InvoiceValidatedInDolibarr=Invoice %s validated in Dolibarr
 InvoicePayedInDolibarr=Invoice %s changed to payed in Dolibarr
 InvoiceCanceledInDolibarr=Invoice %s canceled in Dolibarr
+PaymentDoneInDolibarr=Payment %s done in Dolibarr
 ##### Export #####
 ExportsArea=Exports area
 AvailableFormats=Available formats

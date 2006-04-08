@@ -24,7 +24,8 @@
 /**
 	    \file       htdocs/compta/paiement/fiche.php
 		\ingroup    facture
-		\brief      Onglet paiement d'un paiement
+		\brief      Onglet paiement d'un paiement client
+		\remarks	Fichier presque identique a fournisseur/paiement/fiche.php
 		\version    $Revision$
 */
 
@@ -183,14 +184,18 @@ if ($resql)
 	$total = 0;
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Bill').'</td><td>'.$langs->trans('Company').'</td>';
-	print '<td align="right">'.$langs->trans('AmountTTC').'</td><td align="center">'.$langs->trans('Status').'</td>';
+	print '<td>'.$langs->trans('Bill').'</td>';
+	print '<td align="center">'.$langs->trans('Status').'</td>';
+	print '<td>'.$langs->trans('Company').'</td>';
+	print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 	print "</tr>\n";
   
 	if ($num > 0) 
 	{
 		$var=True;
       
+		$facturestatic=new Facture($db);
+
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
@@ -199,10 +204,9 @@ if ($resql)
 			print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 			print $objp->facnumber;
 			print "</a></td>\n";
+			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
-			$fac=new Facture($db);
-			print '<td align="center">'.$fac->LibStatut($objp->paye,$objp->fk_statut).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)
 			{

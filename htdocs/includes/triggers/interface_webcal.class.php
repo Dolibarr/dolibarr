@@ -275,6 +275,31 @@ class InterfaceWebCal
             $this->desc=$langs->trans("InvoiceCanceledInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
+        // Payments
+        elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("CustomerPaymentDoneInDolibarr",$object->ref);
+            $this->desc=$langs->trans("CustomerPaymentDoneInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->trans("AmountTTC").': '.$object->total;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
+        elseif ($action == 'PAYMENT_SUPPLIER_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("SupplierPaymentDoneInDolibarr",$object->ref);
+            $this->desc=$langs->trans("SupplierPaymentDoneInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->trans("AmountTTC").': '.$object->total;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
 
         // Ajoute entrée dans webcal
         if ($this->date)

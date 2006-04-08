@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -119,7 +119,7 @@ if ($_POST['action'] == 'add_paiement')
 			if ($conf->banque->enabled)
 			{
 				// Insertion dans llx_bank
-				$label = 'Règlement facture';
+				$label = "(CustomerInvoicePayment)";
 				$acc = new Account($db, $_POST['accountid']);
 				//paiementid contient "CHQ ou VIR par exemple"
 				$bank_line_id = $acc->addline($paiement->datepaye,
@@ -171,6 +171,7 @@ if ($_POST['action'] == 'add_paiement')
 			$loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
 			$db->commit();
 			Header('Location: '.$loc);
+			exit;
 		}
 		else
 		{

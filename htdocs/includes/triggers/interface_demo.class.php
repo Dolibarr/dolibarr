@@ -127,6 +127,31 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }
+        // Products
+        elseif ($action == 'PRODUCT_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'PRODUCT_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'PRODUCT_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'ORDER_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'ORDER_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'ORDER_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
         // Proposals
         elseif ($action == 'PROPAL_CREATE')
         {
@@ -194,28 +219,12 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
-        // Products
-        elseif ($action == 'PRODUCT_CREATE')
+        // Payments
+        elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
-        elseif ($action == 'PRODUCT_MODIFY')
-        {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
-        }
-        elseif ($action == 'PRODUCT_DELETE')
-        {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
-        }
-        elseif ($action == 'ORDER_CREATE')
-        {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
-        }
-        elseif ($action == 'ORDER_MODIFY')
-        {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
-        }
-        elseif ($action == 'ORDER_DELETE')
+        elseif ($action == 'PAYMENT_SUPPLIER_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }

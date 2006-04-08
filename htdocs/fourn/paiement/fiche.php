@@ -23,8 +23,9 @@
 
 /**
 	    \file       htdocs/fourn/paiement/fiche.php
-		\ingroup    facture
-		\brief      Onglet paiement d'un paiement
+		\ingroup    facture, fournisseur
+		\brief      Onglet paiement d'un paiement fournisseur
+		\remarks	Fichier presque identique a compta/paiement/fiche.php
 		\version    $Revision$
 */
 
@@ -193,7 +194,8 @@ if ($resql)
 	{
 		$var=True;
 
-    	$fac_static=new FactureFournisseur($db);
+    	$facturestatic=new FactureFournisseur($db);
+    	
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
@@ -202,7 +204,7 @@ if ($resql)
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 			print $objp->facnumber;
 			print "</a></td>\n";
-			print '<td align="center">'.$fac_static->LibStatut($objp->paye,$objp->fk_statut).'</td>';
+			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
