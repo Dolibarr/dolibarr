@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,6 +68,7 @@ if (! $sortfield) $sortfield="nom";
  */
 
 $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
+$sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -99,9 +100,11 @@ if ($resql)
 
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="middle"',$sortfield);
-  print_liste_field_titre($langs->trans("Town"),"index.php","s.ville","","",'valign="middle"',$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),"index.php","datec","","",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="middle"',$sortfield);
+  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="middle"',$sortfield);
+  print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield);
+  print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","","",'align="center"',$sortfield);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 
@@ -109,6 +112,16 @@ if ($resql)
   print '<form action="index.php" method="GET">';
   print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
   print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
+
+  print '<td align="left" class="liste_titre">';
+  print '<input class="flat" type="text" size="10" name="search_code_fournisseur" value="'.$_GET["search_code_fournisseur"].'">';
+  print '</td>';
+
+  print '<td align="left" class="liste_titre">';
+  print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+  print '</td>';
+
+
   print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
@@ -124,6 +137,8 @@ if ($resql)
       print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
       print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print "<td>".$obj->ville."</td>\n";       
+      print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
+      print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
       print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
       print "<td>&nbsp;</td>\n";       
       print "</tr>\n";

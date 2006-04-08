@@ -193,11 +193,11 @@ if ($result)
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
 
-  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
-  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","","",'align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("AccountancyCode"),"clients.php","s.code_compta","","",'align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield);
+  print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$addu,"",'align="center"',$sortfield);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 
