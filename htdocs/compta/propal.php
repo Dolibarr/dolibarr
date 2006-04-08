@@ -229,7 +229,7 @@ if ($_GET["propalid"] > 0)
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'editconditions')
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
 			}
 			else
 			{
@@ -321,20 +321,7 @@ if ($_GET["propalid"] > 0)
                 print '</tr>';
             }
     
-            // Remise globale
-/* TODO Remise a mettre sur meme principe que factures
-            print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
-            if ($propal->brouillon == 1 && $user->rights->propale->creer)
-            {
-                print '<td colspan="3">'.$propal->remise_percent.'%';
-                print '</td>';
-            }
-            else
-            {
-                print '<td colspan="3">'.$propal->remise_percent.'%</td>';
-            }
-            print '</tr>';
-*/    
+            // Amount
             print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
             print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
@@ -374,7 +361,9 @@ if ($_GET["propalid"] > 0)
                     print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
                     print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
                     print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-                    print '<td>&nbsp;</td><td>&nbsp;</td>';
+                    print '<td width="16">&nbsp;</td>';
+                    print '<td width="16">&nbsp;</td>';
+					print '<td width="16">&nbsp;</td>';
                     print "</tr>\n";
                 }
                 $var=true;
@@ -405,7 +394,7 @@ if ($_GET["propalid"] > 0)
                             {
                                 print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
                             }
-                            print $objp->description?'<br>'.stripslashes(nl2br($objp->description)):'';
+                            print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
                             print '</td>';
                         }
                         else
@@ -438,7 +427,7 @@ if ($_GET["propalid"] > 0)
                         }
                         print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
     
-                        print '<td>&nbsp;</td><td>&nbsp;</td>';
+						print '<td colspan="3">&nbsp;</td>';
     
                         print '</tr>';
                     }
@@ -455,6 +444,117 @@ if ($_GET["propalid"] > 0)
                 dolibarr_print_error($db);
             }
     
+			/*
+			 * Lignes de remise
+			 */
+			
+			// Remise relative
+			$var=!$var;
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="setremisepercent">';
+			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+			print '<tr class="liste_total"><td>';
+			print $langs->trans('CustomerRelativeDiscount');
+			if ($propal->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
+			print '</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] == 'editrelativediscount')
+			{
+				print '<input type="text" name="remise_percent" size="2" value="'.$propal->remise_percent.'">%';
+			}
+			else
+			{
+				print $propal->remise_percent?$propal->remise_percent.'%':'&nbsp;';
+			}
+			print '</font></td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] != 'editrelativediscount') print $propal->remise_percent?'-'.price($propal->remise_percent*$total/100):$langs->trans("DiscountNone");
+			else print '&nbsp;';
+			print '</font></td>';
+			if ($_GET['action'] != 'editrelativediscount')
+			{
+				if ($propal->brouillon && $user->rights->propale->creer)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				if ($propal->brouillon && $user->rights->propale->creer && $propal->remise_percent)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			else
+			{
+				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			}
+			print '</tr>';
+			print '</form>';
+
+			// Remise absolue
+			$var=!$var;
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="setremiseabsolue">';
+			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+			print '<tr class="liste_total"><td>';
+			print $langs->trans('CustomerAbsoluteDiscount');
+			if ($propal->brouillon) print ' <font style="font-weight: normal">('.($avoir_en_cours?$langs->trans("CompanyHasAbsoluteDiscount",$avoir_en_cours,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
+			print '</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] == 'editabsolutediscount')
+			{
+				print '-<input type="text" name="remise_absolue" size="2" value="'.$propal->remise_absolue.'">';
+			}
+			else
+			{
+				print $propal->remise_absolue?'-'.price($propal->remise_absolue):$langs->trans("DiscountNone");
+			}
+			print '</font></td>';
+			if ($_GET['action'] != 'editabsolutediscount')
+			{
+				if ($propal->brouillon && $user->rights->propale->creer)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				if ($propal->brouillon && $user->rights->propale->creer && $propal->remise_absolue)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			else
+			{
+				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			}
+			print '</tr>';
+			print '</form>';
+
             print '</table>';
     
         }

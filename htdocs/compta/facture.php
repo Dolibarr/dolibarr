@@ -650,9 +650,12 @@ if ($_GET['action'] == 'create')
 		$propal->fetch($_GET['propalid']);
 		$societe_id = $propal->soc_id;
 		$projet=$propal->projetidp;
+
+		$soc->fetch($societe_id);
 		$cond_reglement_id = $propal->cond_reglement_id;
 		$mode_reglement_id = $propal->mode_reglement_id;
-		$soc->fetch($societe_id);
+		$remise_percent = $propal->remise_percent;
+		$remise_absolue = $propal->remise_absolue;
 	}
 	elseif ($_GET['commandeid'])
 	{
@@ -661,9 +664,12 @@ if ($_GET['action'] == 'create')
 		$societe_id = $commande->soc_id;
 		$projet=$commande-> projet_id;
 		$ref_client=$commande->ref_client;
+
+		$soc->fetch($societe_id);
 		$cond_reglement_id = $commande->cond_reglement_id;
 		$mode_reglement_id = $commande->mode_reglement_id;
-		$soc->fetch($societe_id);
+		$remise_percent = $commande->remise_percent;
+		$remise_absolue = $commande->remise_absolue;
 	}
 	elseif ($_GET['contratid'])
 	{
@@ -671,14 +677,22 @@ if ($_GET['action'] == 'create')
 		$contrat->fetch($_GET['contratid']);
 		$societe_id = $contrat->societe->id;
 		$projet=$contrat->fk_projet;
+
 		$soc=$contrat->societe;
+		$cond_reglement_id = $soc->cond_reglement;
+		$mode_reglement_id = $soc->mod_reglement;
+		$remise_percent = $soc->remise_client;
+		$remise_absolue = 0;
 	}
 	else
 	{
 		$societe_id=$socidp;
+
 		$soc->fetch($societe_id);
 		$cond_reglement_id = $soc->cond_reglement;
 		$mode_reglement_id = $soc->mode_reglement;
+		$remise_percent = $soc->remise_client;
+		$remise_absolue = 0;
 	}
 
 
@@ -712,11 +726,14 @@ if ($_GET['action'] == 'create')
 	print '</td></tr>';
 
 	// Remise relative
-	$relative_discount=$soc->remise_client;
 	print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
 	print '<td>';
-	print '<input type="text" name="remise_percent" size="1" value="'.$relative_discount.'"> %';
+	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '<input type="text" name="remise_percent" size="1" value="';
+	print $remise_percent;
+	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '">';
+	print ' %';
 	print '</td><td>'.img_info().' ';
+	$relative_discount=$soc->remise_client;
 	if ($relative_discount)
 	{
 		print $langs->trans("CompanyHasRelativeDiscount",$relative_discount);
@@ -728,11 +745,14 @@ if ($_GET['action'] == 'create')
 	print '</td></tr>';
 
 	// Remise avoirs
-	$absolute_discount=$soc->getCurrentDiscount();
 	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
 	print '<td>';
-	print '<input type="text" name="remise_absolue" size="1" value="0"> '.$langs->trans("Currency".$conf->monnaie);
+	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '<input type="text" name="remise_absolue" size="1" value="';
+	print $remise_absolue;
+	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '">';
+	print ' '.$langs->trans("Currency".$conf->monnaie);
 	print '</td><td>'.img_info().' ';
+	$absolute_discount=$soc->getCurrentDiscount();
 	if ($absolute_discount)
 	{
 		print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
@@ -813,7 +833,6 @@ if ($_GET['action'] == 'create')
 		print '<input type="hidden" name="propalid"       value="'.$propal->id.'">';
 
 		print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2">'.$propal->ref.'</td></tr>';
-		print '<tr><td>'.$langs->trans('GlobalDiscount').'</td><td colspan="2">'.$propal->remise_percent.'%</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($propal->price).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($propal->tva)."</td></tr>";
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($propal->total)."</td></tr>";
@@ -835,8 +854,8 @@ if ($_GET['action'] == 'create')
 	elseif ($_GET['contratid'] > 0)
 	{
 		// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-		$contrat->remise_absolue=0;
-		$contrat->remise_percent=$soc->remise_client;
+		$contrat->remise_absolue=$remise_absolue;
+		$contrat->remise_percent=$remise_percent;
 		$contrat->update_price();
 
 		print '<input type="hidden" name="amount"         value="'.$contrat->total_ht.'">'."\n";
