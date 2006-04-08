@@ -79,3 +79,5 @@ AddBankRecordLong=Saisie d'une écriture manuelle hors facture
 ConciliatedBy=Rapproché par
 DateConciliating=Date rapprochement
 BankLineConciliated=Ecriture rapprochée
+CustomerInvoicePayment=Réglement client
+SupplierInvoicePayment=Réglement fournisseur

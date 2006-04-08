@@ -385,7 +385,17 @@ function _print_lines($db,$result,$sql,$acct)
             print "<td nowrap>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
             print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
             print "<td nowrap>&nbsp;".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
-            print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">'.$objp->label.'</a>';
+            print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
+			if (eregi('^\((.*)\)$',$objp->label,$reg))
+			{
+				// Label générique car entre parenthèses. On l'affiche en le traduisant	
+				print $langs->trans($reg[1]);
+			}
+			else
+			{    
+            	print $objp->label;
+            }
+            print '</a>';
 
             /*
              * Ajout les liens

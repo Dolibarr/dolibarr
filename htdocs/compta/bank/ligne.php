@@ -316,14 +316,32 @@ if ($result)
         if (! $objp->rappro)
         {
             print '<td colspan="3">';
-            print '<input name="label" class="flat" value="'.$objp->label.'" size="50">';
+            print '<input name="label" class="flat" value="';
+			if (eregi('^\((.*)\)$',$objp->label,$reg))
+			{
+				// Label générique car entre parenthèses. On l'affiche en le traduisant	
+				print $langs->trans($reg[1]);
+			}
+			else
+			{    
+            	print $objp->label;
+            }
+            print '" size="50">';
             print '</td>';
             print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
         }
         else
         {
             print '<td colspan="4">';
-            print $objp->label;            
+			if (eregi('^\((.*)\)$',$objp->label,$reg))
+			{
+				// Label générique car entre parenthèses. On l'affiche en le traduisant	
+				print $langs->trans($reg[1]);
+			}
+			else
+			{    
+            	print $objp->label;
+            }
         }
         print '</td></tr>';
 
