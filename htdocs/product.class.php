@@ -255,7 +255,7 @@ class Product
      */
     function verif_prod_use($id)
     {
-    	  $sqr = 0
+    	  $sqr = 0;
     	
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
