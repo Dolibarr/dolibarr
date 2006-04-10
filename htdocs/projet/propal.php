@@ -128,7 +128,7 @@ print '</table>';
  if ($conf->propal->enabled && $user->rights->propale->creer)
  {
      $langs->load("propal");
-     print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$projet->societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+     print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddProp").'</a>';
  }
  print '</div>';
 

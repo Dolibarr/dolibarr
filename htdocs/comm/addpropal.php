@@ -55,6 +55,12 @@ print_titre($langs->trans("NewProp"));
 
 $html=new Form($db);
 
+//récupération de l'id de projet
+$projetid = 0
+if ($_GET["projetid"])
+{
+	$projetid = $_GET["projetid"]
+}
 
 /*
  *
@@ -224,7 +230,7 @@ if ($_GET["action"] == 'create')
 	    print '<tr>';
         print '<td valign="top">'.$langs->trans("Project").'</td><td colspan="2">';
 
-        $numprojet=$html->select_projects($soc->id,0,'projetidp');
+        $numprojet=$html->select_projects($soc->id,$projetid,'projetidp');
         if ($numprojet==0)
         {
             print ' &nbsp; <a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
