@@ -139,7 +139,7 @@ if (sizeof($propales)>0 && is_array($propales))
 {
     print '<br>';
     
-    print_titre($lang->trans("ListProposalsAssociatedProject"));
+    print_titre($langs->trans("ListProposalsAssociatedProject"));
     print '<table class="noborder" width="100%">';
     
     print '<tr class="liste_titre">';
