@@ -117,6 +117,17 @@ print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
 print '</table>';
 
+/*
+ * Barre d'action
+ *
+ */
+ print '<div class="tabsAction">';
+
+ if ($conf->facture->enabled && $user->rights->facture->creer)
+ {
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$projet->societe->id.'&amp;action=create">'.$langs->trans("AddBill").'</a>';
+ }
+ print '</div>';
 
 /*
  * Factures
@@ -127,7 +138,7 @@ if (sizeof($factures)>0 && is_array($factures))
 {
     print '<br>';
 
-    print_titre('Listes des factures associées au projet');
+    print_titre($langs->trans("ListInvoicesAssociatedProject"));
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre">';

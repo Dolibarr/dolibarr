@@ -21,3 +21,5 @@ Activity=Activité
 MyActivity=Mon activité
 DurationEffective=Durée effective
 ListProposalsAssociatedProject=Listes des propositions commerciales associées au projet
+ListOrdersAssociatedProject=Listes des commandes associées au projet
+ListInvoicesAssociatedProject=Listes des factures associées au projet

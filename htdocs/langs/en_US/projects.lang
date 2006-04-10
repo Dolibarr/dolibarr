@@ -20,4 +20,6 @@ NewTask=New task
 Activity=Activity
 MyActivity=My activity
 DurationEffective=Effective duration
-ListProposalsAssociatedProject=Lists of the commercial proposals associated the project
+ListProposalsAssociatedProject=Lists of the commercial proposals associated with the project
+ListOrdersAssociatedProject=Lists of the orders associated with the project
+ListInvoicesAssociatedProject=Lists of the invoices associated with the project

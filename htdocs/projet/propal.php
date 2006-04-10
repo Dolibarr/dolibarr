@@ -131,7 +131,6 @@ print '</table>';
      print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$projet->societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
  }
  print '</div>';
- print '<br>';
 
 $propales = $projet->get_propal_list();
 

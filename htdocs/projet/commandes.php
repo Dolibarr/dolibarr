@@ -117,6 +117,19 @@ print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
 print '</table>';
 
 /*
+ * Barre d'action
+ *
+ */
+ print '<div class="tabsAction">';
+
+ if ($conf->commande->enabled && $user->rights->commande->creer)
+ {
+     $langs->load("orders");
+     print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$projet->societe->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
+ }
+ print '</div>';
+
+/*
  * Commandes
  *
  */
@@ -126,7 +139,7 @@ if (sizeof($commandes)>0 && is_array($commandes))
 {
     print '<br>';
     
-    print_titre('Listes des commandes associées au projet');
+    print_titre($langs->trans("ListProposalsAssociatedProject"));
     print '<table class="noborder" width="100%">';
     
     print '<tr class="liste_titre">';
