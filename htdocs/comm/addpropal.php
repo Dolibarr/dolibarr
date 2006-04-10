@@ -56,7 +56,7 @@ print_titre($langs->trans("NewProp"));
 $html=new Form($db);
 
 //récupération de l'id de projet
-$projetid = 0
+$projetid = 0;
 if ($_GET["projetid"])
 {
 	$projetid = $_GET["projetid"];
