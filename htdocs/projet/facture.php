@@ -138,7 +138,7 @@ if (sizeof($factures)>0 && is_array($factures))
 {
     print '<br>';
 
-    print_titre($langs->trans("ListInvoicesAssociatedProject"));
+    print_titre($langs->trans("ListInvoicesAssociatedProject");
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre">';
