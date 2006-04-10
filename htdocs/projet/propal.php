@@ -119,6 +119,18 @@ print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
 print '</table>';
 
+/*
+ * Barre d'action
+ *
+ */
+ print '<div class="tabsAction">';
+
+ if ($conf->propal->enabled && $user->rights->propale->creer)
+ {
+     $langs->load("propal");
+     print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$projet->societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+ }
+
 $propales = $projet->get_propal_list();
 
 if (sizeof($propales)>0 && is_array($propales))
