@@ -130,6 +130,8 @@ print '</table>';
      $langs->load("propal");
      print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$projet->societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
  }
+ print '</div>';
+ print '<br>';
 
 $propales = $projet->get_propal_list();
 
@@ -137,7 +139,7 @@ if (sizeof($propales)>0 && is_array($propales))
 {
     print '<br>';
     
-    print_titre('Listes des propositions commerciales associées au projet');
+    print_titre($lang->trans("ListProposalsAssociatedProject"));
     print '<table class="noborder" width="100%">';
     
     print '<tr class="liste_titre">';
