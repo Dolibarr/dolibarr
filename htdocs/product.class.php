@@ -255,17 +255,67 @@ class Product
      */
     function verif_prod_use($id)
     {
-    	$sql = "SELECT COUNT(*)";
-      $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as p, ".MAIN_DB_PREFIX."commandedet as c";
-      $sql.= ", ".MAIN_DB_PREFIX."facturedet as f, ".MAIN_DB_PREFIX."contratdet as ct";
-      $sql.= " WHERE p.fk_product = ".$id." OR c.fk_product = ".$id." OR f.fk_product = ".$id." OR ct.fk_product = ".$id;
-      $resql = $this->db->query($sql);
-      if ($resql)
-      {
-        $row = $this->db->fetch_row($resql);
-        $nbuse = $row[0];
-      }
-      if ($nbuse == 0)
+    	  $sqr = 0
+    	
+        $sql = "SELECT rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
+        $sql.= " WHERE fk_product = ".$id;
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+           $num = $this->db->num_rows($result);
+           if ($num != 0)
+           {
+             $sqr++;
+           }
+        }
+
+        $sql = "SELECT rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facturedet";
+        $sql.= " WHERE fk_product = ".$id;
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+           $num = $this->db->num_rows($result);
+           if ($num != 0)
+           {
+             $sqr++;
+           }
+        }
+
+
+        $sql = "SELECT rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
+        $sql.= " WHERE fk_product = ".$id;
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+           $num = $this->db->num_rows($result);
+           if ($num != 0)
+           {
+             $sqr++;
+           }
+        }
+
+
+        $sql = "SELECT rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet";
+        $sql.= " WHERE fk_product = ".$id;
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+           $num = $this->db->num_rows($result);
+           if ($num != 0)
+           {
+             $sqr++;
+           }
+        }
+
+      if ($sqr == 0)
       {
         return 0;
       }
