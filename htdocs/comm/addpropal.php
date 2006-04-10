@@ -59,7 +59,7 @@ $html=new Form($db);
 $projetid = 0
 if ($_GET["projetid"])
 {
-	$projetid = $_GET["projetid"]
+	$projetid = $_GET["projetid"];
 }
 
 /*
