@@ -63,6 +63,13 @@ if ($user->societe_id > 0)
 	$socidp = $user->societe_id;
 }
 
+// Récupération de l'id de projet
+$projetid = 0;
+if ($_GET["projetid"])
+{
+	$projetid = $_GET["projetid"];
+}
+
 // Nombre de ligne pour choix de produit/service prédéfinis
 $NBLINES=4;
 
@@ -649,7 +656,7 @@ if ($_GET['action'] == 'create')
 		$propal = New Propal($db);
 		$propal->fetch($_GET['propalid']);
 		$societe_id = $propal->soc_id;
-		$projet=$propal->projetidp;
+		$projetid=$propal->projetidp;
 
 		$soc->fetch($societe_id);
 		$cond_reglement_id = $propal->cond_reglement_id;
@@ -662,7 +669,7 @@ if ($_GET['action'] == 'create')
 		$commande = New Commande($db);
 		$commande->fetch($_GET['commandeid']);
 		$societe_id = $commande->soc_id;
-		$projet=$commande-> projet_id;
+		$projetid=$commande-> projet_id;
 		$ref_client=$commande->ref_client;
 
 		$soc->fetch($societe_id);
@@ -676,7 +683,7 @@ if ($_GET['action'] == 'create')
 		$contrat = New Contrat($db);
 		$contrat->fetch($_GET['contratid']);
 		$societe_id = $contrat->societe->id;
-		$projet=$contrat->fk_projet;
+		$projetid=$contrat->fk_projet;
 
 		$soc=$contrat->societe;
 		$cond_reglement_id = $soc->cond_reglement;
@@ -768,7 +775,7 @@ if ($_GET['action'] == 'create')
 	{
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$html->select_projects($societe_id, $projet, 'projetid');
+		$html->select_projects($societe_id, $projetid, 'projetid');
 		print '</td></tr>';
 	}
 

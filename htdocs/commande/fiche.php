@@ -56,6 +56,12 @@ if ($user->societe_id > 0)
 	$socidp = $user->societe_id;
 }
 
+// Récupération de l'id de projet
+$projetid = 0;
+if ($_GET["projetid"])
+{
+	$projetid = $_GET["projetid"];
+}
 
 /*
  * Actions
@@ -373,7 +379,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			if ($conf->projet->enabled)
 			{
 				print '<tr><td>'.$langs->trans('Project').'</td><td>';
-				$html->select_projects($soc->id,'','projetid');
+				$html->select_projects($soc->id,$projetid,'projetid');
 				print '</td></tr>';
 			}
 

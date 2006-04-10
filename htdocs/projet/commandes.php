@@ -125,7 +125,7 @@ print '</table>';
  if ($conf->commande->enabled && $user->rights->commande->creer)
  {
      $langs->load("orders");
-     print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$projet->societe->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
+     print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddOrder").'</a>';
  }
  print '</div>';
 

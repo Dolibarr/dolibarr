@@ -125,7 +125,7 @@ print '</table>';
 
  if ($conf->facture->enabled && $user->rights->facture->creer)
  {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$projet->societe->id.'&amp;action=create">'.$langs->trans("AddBill").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddBill").'</a>';
  }
  print '</div>';
 
@@ -138,7 +138,7 @@ if (sizeof($factures)>0 && is_array($factures))
 {
     print '<br>';
 
-    print_titre($langs->trans("ListInvoicesAssociatedProject");
+    print_titre($langs->trans("ListInvoicesAssociatedProject"));
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre">';
