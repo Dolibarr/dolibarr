@@ -515,7 +515,7 @@ class Form
      */
     function select_users($selected='',$htmlname='userid')
     {
-        // On recherche les societes
+        // On recherche les utilisateurs
         $sql = "SELECT u.rowid, u.name, u.firstname FROM ";
         $sql .= MAIN_DB_PREFIX ."user as u";
         $sql .= " ORDER BY u.name ASC";
