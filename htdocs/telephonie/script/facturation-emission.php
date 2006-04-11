@@ -405,7 +405,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 					  1,
 					  '19.6',
 					  0,
-					  0,'','',$ventil);		  
+					  0,'','',$ventil);
 		}		      		  
 	    }
 	   	  	  
@@ -429,7 +429,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       $sql .= " AND sc.montant > 0";
 
       $resql = $db->query($sql) ;
-
+      $ventil = 18;
       if ( $resql )
 	{
 	  $num = $db->num_rows($resql);      
@@ -446,7 +446,10 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 				      '19.6',
 				      0,
 				      0,
-				      0);
+				      0,
+				      '',
+				      $ventil);
+
 	      $is++;
 	    }            
 	  $db->free();
@@ -472,6 +475,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
       $sql .= " AND afacturer = 1 LIMIT 1;";
       $resql = $db->query($sql) ;
+      $ventil = 10;
       if ( $resql )
 	{
 	  while ($row = $db->fetch_row($resql))
@@ -483,7 +487,9 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 				      '0',
 				      0,
 				      0,
-				      0);
+				      0,
+				      '',
+				      $ventil);
 
 	      $sqlu = "UPDATE ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 	      $sqlu .= " SET afacturer=0";
