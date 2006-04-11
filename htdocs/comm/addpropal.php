@@ -117,12 +117,12 @@ if ($_GET["action"] == 'create')
 
 	// Conditions de réglement
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td colspan="2">';
-	$html->select_conditions_paiements($cond_reglement_id,'cond_reglement_id');
+	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
 	// Mode de réglement
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
+	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
 
 	// Remise relative
