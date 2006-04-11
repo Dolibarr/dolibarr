@@ -120,10 +120,10 @@ class Paiement
 		$error = 0;
 
 		// Nettoyage parametres
-		$value = price2num($value);
 		$this->total = 0;
 		foreach ($this->amounts as $key => $value)
 		{
+			$value = price2num($value);
 			$val = round($value, 2);
 			$this->amounts[$key] = $val;
 			$this->total += $val;
