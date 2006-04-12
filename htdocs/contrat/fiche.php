@@ -153,7 +153,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
         $result = 0;
         $contrat = new Contrat($db);
         $result=$contrat->fetch($_GET["id"]);
-        if (($_POST["p_idprod"] > 0 && $_POST["mode"]=='predefined') || ($_POST["mode"]=='libre'))
+        if ($_POST["p_idprod"] > 0 && $_POST["mode"]=='predefined')
         {
             //print $_POST["desc"]." - ".$_POST["pu"]." - ".$_POST["pqty"]." - ".$_POST["tva_tx"]." - ".$_POST["p_idprod"]." - ".$_POST["premise"]; exit;
             $result = $contrat->addline(
@@ -165,6 +165,19 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
                 $_POST["premise"],
                 $date_start,
                 $date_end
+                );
+        }
+        elseif ($_POST["mode"]=='libre')
+        {
+        	$result = $contrat->addline(
+                $_POST["desc"],
+                $_POST["pu"],
+                $_POST["pqty"],
+                $_POST["tva_tx"],
+                0,
+                $_POST["premise"],
+                $date_start_sl,
+                $date_end_sl
                 );
         }
     
