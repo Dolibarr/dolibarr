@@ -91,13 +91,13 @@ if ($_POST["mode"]=='libre')
 {
 	$date_start_sl='';
 	$date_end_sl='';
-  if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
+  if ($_POST["date_start_slmonth"] && $_POST["date_start_slday"] && $_POST["date_start_slyear"])
   {
-    $date_start_sl=mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+    $date_start_sl=mktime(12, 0 , 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
   }
-  if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
+  if ($_POST["date_end_slmonth"] && $_POST["date_end_slday"] && $_POST["date_end_slyear"])
   {
-    $date_end_sl=mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+    $date_end_sl=mktime(12, 0 , 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
   }
 }
 
