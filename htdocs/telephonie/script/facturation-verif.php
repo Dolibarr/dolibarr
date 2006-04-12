@@ -32,10 +32,6 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
 $error = 0;
 
-$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
-$sql .= " WHERE num in (1014,1015,1013,1016)";
-$db->query($sql);
-
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
   
 if ( $db->query($sql) )
@@ -99,12 +95,14 @@ if ( $resql )
 	  if (! $tarif_achat->cout($numero, $x, $y, $z))
 	    {
 	      print "\nTarif achat manquant pour $numero\n";
+	      print "\nPour les corrections utilisez facturation-correction-import.php\n";
 	      exit(1);
 	    }
 	  
 	  if (! $tarif_vente->cout($numero, $x, $y, $z))
 	    {
 	      print "\nTarif vente manquant pour $numero\n";
+	      print "\nPour les corrections utilisez facturation-correction-import.php\n";
 	      exit(1);
 	    }
 	}
