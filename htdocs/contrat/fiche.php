@@ -873,9 +873,9 @@ else
             print "<tr $bc[$var]>";
             print '<td colspan="8">';
             print $langs->trans("DateStartPlanned").' ';
-            $html->select_date('',"date_start",0,0,1,"addligne_sl");
+            $html->select_date('',"date_start_sl",0,0,1,"addligne_sl");
             print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-            $html->select_date('',"date_end",0,0,1,"addligne_sl");
+            $html->select_date('',"date_end_sl",0,0,1,"addligne_sl");
             print '</td>';
             print '</tr>';
             
