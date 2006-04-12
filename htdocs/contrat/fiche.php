@@ -71,7 +71,7 @@ if ($contratid && !$user->rights->commercial->client->voir)
 }
 
 
-// Si ajout champ produit libre
+// Si ajout champ produit prédéfini
 if ($_POST["mode"]=='predefined')
 {
 	$date_start='';
