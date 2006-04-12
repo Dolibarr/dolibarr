@@ -148,6 +148,7 @@ class Paiement
 					$facid = $key;
 					if (is_numeric($amount) && $amount <> 0)
 					{
+						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
 						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\')';
 						if (! $this->db->query($sql) )
