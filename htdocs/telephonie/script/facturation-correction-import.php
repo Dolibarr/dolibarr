@@ -48,7 +48,7 @@ if ( $resql )
 
       $resqlu = $db->query($sqlu) ;
     }            
-  $db->free();
+  $db->free($resql);
 } 
 else
 {
