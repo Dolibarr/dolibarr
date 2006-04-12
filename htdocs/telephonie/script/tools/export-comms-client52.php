@@ -18,7 +18,7 @@
  * $Id$
  * $Source$
  *
- * Vérifie les lignes ayant le statut d'attente
+ * Export les comms du client 52 pour analyse Birts
  *
  */
 require ("../../../master.inc.php");
@@ -45,7 +45,7 @@ $sql .= " ORDER BY f.date ASC, f.fk_ligne ASC";
 $resql = $db->query($sql);
 if ( $resql )
 {
-  $fname = "/tmp/export-comms-52.xls";
+  $fname = "/var/www/export-comms-52.xls";
 
   $workbook = &new writeexcel_workbook($fname);
 	
@@ -64,7 +64,7 @@ if ( $resql )
   $i = 1;
   while ($row = $db->fetch_row($resql))
     {
-      print $row[0]. " ".$row[1]." ".$row[3]." ".$row[2]."\n";
+      //print $row[0]. " ".$row[1]." ".$row[3]." ".$row[2]."\n";
 
       $xx = $i + 1;
       
