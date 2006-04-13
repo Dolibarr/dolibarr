@@ -124,10 +124,10 @@ class PaiementFourn
 		$error = 0;
 
 		// Nettoyage parametres
-		$value = price2num($value);
 		$this->total = 0;
 		foreach ($this->amounts as $key => $value)
 		{
+			$value = price2num($value);
 			$val = round($value, 2);
 			$this->amounts[$key] = $val;
 			$this->total += $val;
@@ -152,6 +152,7 @@ class PaiementFourn
 					$facid = $key;
 					if (is_numeric($amount) && $amount <> 0)
 					{
+						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount)';
 						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\')';
 						if (! $this->db->query($sql) )
