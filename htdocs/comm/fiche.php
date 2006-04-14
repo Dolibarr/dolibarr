@@ -719,7 +719,7 @@ if ($socidp > 0)
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre"><td colspan="10"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
 
-        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE a.fk_soc = ".$objsoc->id;
         $sql .= " AND u.rowid = a.fk_user_author";
@@ -740,32 +740,32 @@ if ($socidp > 0)
                 $obj = $db->fetch_object($result);
                 print "<tr $bc[$var]>";
 
-                if ($oldyear == strftime("%Y",$obj->da) )
+                if ($oldyear == strftime("%Y",$obj->dp) )
                 {
                     print '<td width="30" align="center">|</td>';
                 }
                 else
                 {
-                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
-                    $oldyear = strftime("%Y",$obj->da);
+                    print '<td width="30" align="center">'.strftime("%Y",$obj->dp)."</td>\n";
+                    $oldyear = strftime("%Y",$obj->dp);
                 }
 
-                if ($oldmonth == strftime("%Y%b",$obj->da) )
+                if ($oldmonth == strftime("%Y%b",$obj->dp) )
                 {
                     print '<td width="30" align="center">|</td>';
                 }
                 else
                 {
-                    print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
-                    $oldmonth = strftime("%Y%b",$obj->da);
+                    print '<td width="30" align="center">' .strftime("%b",$obj->dp)."</td>\n";
+                    $oldmonth = strftime("%Y%b",$obj->dp);
                 }
 
-                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
-               	print '<td width="30" nowrap="nowrap">'.strftime("%H:%M",$obj->da).'</td>';
+                print '<td width="20">'.strftime("%d",$obj->dp)."</td>\n";
+               	print '<td width="30" nowrap="nowrap">'.strftime("%H:%M",$obj->dp).'</td>';
 				
 				// Picto warning
 				print '<td width="16">';
-				if (date("U",$obj->da) < time()) print ' '.img_warning("Late");
+				if (date("U",$obj->dp) < time()) print ' '.img_warning("Late");
 				else print '&nbsp;';
 				print '</td>';
 
