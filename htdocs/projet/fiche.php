@@ -239,17 +239,18 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
    * Boutons actions
    */
   print '<div class="tabsAction">';
-
-  if ($user->rights->projet->creer == 1)
-    {
-
-      if ($_GET["action"] != "edit")
+  
+  if ($_GET["action"] != "edit")
 	{
-	  print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-      print '<a class="butActionDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-	}
-
+		if ($user->rights->projet->creer)
+    {
+    	print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
     }
+    if ($user->rights->projet->supprimer)
+    {
+    	print '<a class="butActionDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+    }
+  }
 
   print "</div>";
 
