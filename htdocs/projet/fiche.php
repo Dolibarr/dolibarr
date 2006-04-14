@@ -93,7 +93,7 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 	  $projet->id = $_POST["id"];
 	  $projet->ref = $_POST["ref"];
 	  $projet->title = $_POST["title"];
-	  $projet->update();
+	  $projet->update($user);
 	  
 	  $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
 	}
