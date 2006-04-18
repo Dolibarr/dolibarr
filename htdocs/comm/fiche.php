@@ -724,7 +724,7 @@ if ($socidp > 0)
         $sql .= " WHERE a.fk_soc = ".$objsoc->id;
         $sql .= " AND u.rowid = a.fk_user_author";
         $sql .= " AND c.id=a.fk_action AND a.percent < 100";
-        $sql .= " ORDER BY a.datea DESC, a.id DESC";
+        $sql .= " ORDER BY a.datep DESC, a.id DESC";
 
         $result=$db->query($sql);
         if ($result)
