@@ -123,3 +123,21 @@ alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 
 
 update llx_bank_url set type = 'payment_supplier' where label = '(paiement)' and type='payment' and url like '%/fourn/%';
+
+
+create table llx_societe_adresse_livraison
+(
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  tms                timestamp,
+  datec	             datetime,
+  fk_societe         integer        DEFAULT 0,
+  nom                varchar(60),
+  address            varchar(255),
+  cp                 varchar(10),
+  ville              varchar(50),
+  fk_departement     integer        DEFAULT 0,
+  fk_pays            integer        DEFAULT 0,
+  note               text,
+  fk_user_creat      integer,
+  fk_user_modif      integer
+)type=innodb;
