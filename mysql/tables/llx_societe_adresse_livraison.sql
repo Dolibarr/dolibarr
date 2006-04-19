@@ -26,6 +26,7 @@ create table llx_societe_adresse_livraison
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   tms                timestamp,
   datec	             datetime,                            -- creation date
+  label              varchar(30),                         --
   fk_societe         integer        DEFAULT 0,            --
   nom                varchar(60),                         -- company name
   address            varchar(255),                        -- company adresse

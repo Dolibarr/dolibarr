@@ -141,3 +141,5 @@ create table llx_societe_adresse_livraison
   fk_user_creat      integer,
   fk_user_modif      integer
 )type=innodb;
+
+alter table llx_societe_adresse_livraison add column label varchar(30) after datec;
