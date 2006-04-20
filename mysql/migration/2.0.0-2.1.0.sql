@@ -143,4 +143,3 @@ create table llx_societe_adresse_livraison
 )type=innodb;
 
 alter table llx_societe_adresse_livraison add column label varchar(30) after tms;
--- Le champ date modif existe deja sous le nom tms. alter table llx_societe_adresse_livraison add column datea datetime after datec;
