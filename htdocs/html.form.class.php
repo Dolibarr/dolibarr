@@ -104,65 +104,72 @@ class Form
      */
     function select_departement($selected='',$pays_code=0)
     {
-    global $conf,$langs;
-    $langs->load("dict");
-    
-    $htmlname='departement_id';
-    
-    // On recherche les départements/cantons/province active d'une region et pays actif
-    $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
-    $sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
-    $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
-    $sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
-    if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
-    $sql .= " ORDER BY p.code, d.code_departement";
-    
-    $result=$this->db->query($sql);
-    if ($result)
-    {
-        print '<select class="flat" name="'.$htmlname.'">';
-        if ($pays_code) print '<option value="0">&nbsp;</option>';
-        $num = $this->db->num_rows($result);
-        $i = 0;
-        if ($num)
-        {
-            $pays='';
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-                if ($obj->code == 0) {
-                    print '<option value="0">&nbsp;</option>';
-                }
-                else {
-                    if (! $pays || $pays != $obj->libelle_pays) {
-                        // Affiche la rupture si on est en mode liste multipays
-                        if (! $pays_code && $obj->code_pays) {
-                            print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
-                            $pays=$obj->libelle_pays;
-                        }
-                    }
-    
-                    if ($selected > 0 && $selected == $obj->rowid)
-                    {
-                        print '<option value="'.$obj->rowid.'" selected="true">';
-                    }
-                    else
-                    {
-                        print '<option value="'.$obj->rowid.'">';
-                    }
-                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                    print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
-                    print '</option>';
-                }
-                $i++;
-            }
-        }
-        print '</select>';
-    }
-    else {
-        dolibarr_print_error($this->db);
-    }
-  }
+	    dolibarr_syslog("html.form.class::select_departement selected=$selected, pays_code=$pays_code");
+	    
+	    global $conf,$langs;
+	    $langs->load("dict");
+	    
+	    $htmlname='departement_id';
+	    
+	    // On recherche les départements/cantons/province active d'une region et pays actif
+	    $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
+	    $sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
+	    $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
+	    $sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
+	    if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
+	    $sql .= " ORDER BY p.code, d.code_departement";
+	    dolibarr_syslog("html.form.class::select_departement sql=$sql");
+	    
+	    $result=$this->db->query($sql);
+	    if ($result)
+	    {
+	        print '<select class="flat" name="'.$htmlname.'">';
+	        if ($pays_code) print '<option value="0">&nbsp;</option>';
+	        $num = $this->db->num_rows($result);
+	        $i = 0;
+	    	dolibarr_syslog("html.form.class::select_departement num=$num");
+	        if ($num)
+	        {
+	            $pays='';
+	            while ($i < $num)
+	            {
+	                $obj = $this->db->fetch_object($result);
+	                if ($obj->code == '0')		// Le code peut etre une chaine
+	                {
+	                    print '<option value="0">&nbsp;</option>';
+	                }
+	                else {
+	                    if (! $pays || $pays != $obj->libelle_pays)
+	                    {
+	                        // Affiche la rupture si on est en mode liste multipays
+	                        if (! $pays_code && $obj->code_pays)
+	                        {
+	                            print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
+	                            $pays=$obj->libelle_pays;
+	                        }
+	                    }
+	    
+	                    if ($selected > 0 && $selected == $obj->rowid)
+	                    {
+	                        print '<option value="'.$obj->rowid.'" selected="true">';
+	                    }
+	                    else
+	                    {
+	                        print '<option value="'.$obj->rowid.'">';
+	                    }
+	                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+	                    print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+	                    print '</option>';
+	                }
+	                $i++;
+	            }
+	        }
+	        print '</select>';
+	    }
+	    else {
+	        dolibarr_print_error($this->db);
+	    }
+	}
   
   
   /**
