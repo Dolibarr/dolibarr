@@ -51,5 +51,7 @@ create table llx_propal
   note_public     text,
   model_pdf       varchar(50),
   date_livraison date default NULL,
+  fk_adresse_livraison  integer,  -- adresse de livraison
+  
   UNIQUE INDEX (ref)
 )type=innodb;

@@ -143,3 +143,6 @@ create table llx_societe_adresse_livraison
 )type=innodb;
 
 alter table llx_societe_adresse_livraison add column label varchar(30) after tms;
+
+alter table llx_propal add column fk_adresse_livraison integer after date_livraison;
+alter table llx_commande add column fk_adresse_livraison integer after date_livraison;
