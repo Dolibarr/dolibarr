@@ -33,5 +33,6 @@ create table llx_cond_reglement
   "libelle"         varchar(255),
   "libelle_facture" text,
   "fdm"             smallint,    -- reglement fin de mois
-  "nbjour"          smallint
+  "nbjour"          smallint,
+  "decalage"		smallint
 );

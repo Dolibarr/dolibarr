@@ -264,6 +264,7 @@ LabelUsedByDefault=Libellé qui sera utilisé si aucune traduction n'est trouvé po
 LabelOnDocuments=Libellé sur documents
 NbOfDays=Nbre de jours
 AtEndOfMonth=En fin de mois
+Offset=Décalage
 AlwaysActive=Toujours actif
 UpdateRequired=Votre système nécessite une mise à jour. Pour cela cliquez sur <a href="%s">Mettre à jour</a>.
 WebServer=Serveur Web

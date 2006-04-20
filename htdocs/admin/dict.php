@@ -95,7 +95,7 @@ $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT rowid   as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
+$tabsql[12]= "SELECT rowid   as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 
 // Tri par defaut
@@ -125,7 +125,7 @@ $tabfield[8] = "code,libelle";
 $tabfield[9] = "code,code_iso,libelle";
 $tabfield[10]= "pays,taux,recuperableonly,note";
 $tabfield[11]= "element,source,code,libelle";
-$tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm";
+$tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfield[13]= "code,libelle,type";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
@@ -140,7 +140,7 @@ $tabfieldinsert[8] = "code,libelle";
 $tabfieldinsert[9] = "code_iso,label";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
-$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm";
+$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldinsert[13]= "code,libelle,type";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
@@ -359,6 +359,7 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='recuperableonly') $valuetoshow=MENTION_NPR;
             if ($fieldlist[$field]=='nbjour')          $valuetoshow=$langs->trans("NbOfDays");
             if ($fieldlist[$field]=='fdm')             $valuetoshow=$langs->trans("AtEndOfMonth");
+            if ($fieldlist[$field]=='decalage')        $valuetoshow=$langs->trans("Offset");
             print '<td>';
             print $valuetoshow;
             print '</td>';
@@ -406,7 +407,8 @@ if ($_GET["id"])
                 print '</td>';
             }
             // La source de l'element (pour les type de contact).'
-            elseif ($fieldlist[$field] == 'source') {
+            elseif ($fieldlist[$field] == 'source')
+            {
                 print '<td>';
                 $elementList = array("internal"=>$langs->trans("Internal"),
                                      "external"=>$langs->trans("External"));
@@ -427,13 +429,16 @@ if ($_GET["id"])
             elseif ($fieldlist[$field] == 'nbjour') {
                 print '<td><input type="text" class="flat" value="" size="3" name="'.$fieldlist[$field].'"></td>';
             }
+            elseif ($fieldlist[$field] == 'decalage') {
+                print '<td><input type="text" class="flat" value="" size="3" name="'.$fieldlist[$field].'"></td>';
+            }
             elseif ($fieldlist[$field] == 'fdm') {
                 print '<td>';
                 $html->selectyesno('fdm','',1);
                 print '</td>';
             }
             else {
-                print '<td><input type="text" class="flat" value="" name="'.$fieldlist[$field].'"></td>';
+                print '<td><input type="text" class="flat" value="" name="'.$fieldlist[$field].'" ></td>';
             }
         }
         print '<td colspan=3><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
@@ -472,10 +477,11 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='recuperableonly') $valuetoshow=MENTION_NPR;
                 if ($fieldlist[$field]=='nbjour')          $valuetoshow=$langs->trans("NbOfDays");
                 if ($fieldlist[$field]=='fdm')             $valuetoshow=$langs->trans("AtEndOfMonth");
+                if ($fieldlist[$field]=='decalage')        $valuetoshow=$langs->trans("Offset");
                 // Affiche nom du champ
                 print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield);
             }
-            print_liste_field_titre($langs->trans("Activate")."/".$langs->trans("Disable"),"dict.php","active","&id=".$_GET["id"],"","",$sortfield);
+            print_liste_field_titre($langs->trans("Action"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield);
             print '<td>&nbsp;</td>';
             print '</tr>';
 
@@ -501,7 +507,7 @@ if ($_GET["id"])
                     print '<td>'.$valuetoshow.'</td>';
 
                 }
-                print '<td>';
+                print '<td align="center">';
 
                 // Est-ce une entrée du dictionnaire qui peut etre désactivée ?
                 $iserasable=1;  // Oui par defaut

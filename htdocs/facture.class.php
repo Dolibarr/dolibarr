@@ -567,7 +567,7 @@ class Facture
 	{
 		if (! $cond_reglement_id)
 			$cond_reglement_id=$this->cond_reglement_id;
-		$sqltemp = 'SELECT c.fdm,c.nbjour';
+		$sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
 		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c';
 		$sqltemp.= ' WHERE c.rowid='.$cond_reglement_id;
 		$resqltemp=$this->db->query($sqltemp);
@@ -578,6 +578,7 @@ class Facture
 				$obj = $this->db->fetch_object($resqltemp);
 				$cdr_nbjour = $obj->nbjour;
 				$cdr_fdm = $obj->fdm;
+				$cdr_decalage = $obj->decalage;
 			}
 		}
 		else
@@ -586,15 +587,34 @@ class Facture
 			return -1;
 		}
 		$this->db->free($resqltemp);
-		// Definition de la date limite
+		
+		/* Definition de la date limite */
+		
+		// 1 : ajout du nombre de jours
 		$datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
+		
+		// 2 : application de la règle "fin de mois"
 		if ($cdr_fdm)
 		{
 			$mois=date('m', $datelim);
 			$annee=date('Y', $datelim);
-			$fins=array(31,28,31,30,31,30,31,31,30,31,30,31);
-			$datelim=mktime(12,0,0,$mois,$fins[$mois-1],$annee);
+			if ($mois == 12)
+			{
+				$mois = 1;
+				$annee += 1;
+			}
+			else
+			{
+				$mois += 1;
+			}
+			// On se déplace au début du mois suivant, et on retire un jour
+			$datelim=mktime(12,0,0,$mois,1,$annee);
+			$datelim -= (3600 * 24);
 		}
+		
+		// 3 : application du décalage
+		$datelim += ( $cdr_decalage * 3600 * 24);
+		
 		return $datelim;
 	}
 
