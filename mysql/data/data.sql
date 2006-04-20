@@ -456,6 +456,15 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'10','',2,'LUXEMBOURG','Luxembourg');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'11','',2,'NAMUR','Namur');
 
+-- Provinces Australie
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'NSW','',1,'','New South Wales');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'VIC','',1,'','Victoria');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'QLD','',1,'','Queensland');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'SA','',1,'','South Australia');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'ACT','',1,'','Australia Capital Territory');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'TAS','',1,'','Tasmania');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'WA','',1,'','Western Australia');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'NT','',1,'','Northern Territory');
 
 
 --
@@ -704,13 +713,7 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 203, 2, 203,     '',3,'Bruxelles-Capitale');
 
 -- Regions d'Australie (id pays=29)
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2901,29,2901,     '',0,'New South Wales');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2902,29,2902,     '',0,'Victoria');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2903,29,2903,     '',0,'Queensland');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2904,29,2904,     '',0,'Australia Capital Territory');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2905,29,2905,     '',0,'Tasmania');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2906,29,2906,     '',0,'Western Australia');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2907,29,2907,     '',0,'Northern Territory');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2901,29,2901,     '',0,'Australia');
 
 
 --
