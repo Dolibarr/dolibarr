@@ -128,8 +128,8 @@ update llx_bank_url set type = 'payment_supplier' where label = '(paiement)' and
 create table llx_societe_adresse_livraison
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  tms                timestamp,
   datec	             datetime,
+  tms                timestamp,
   fk_societe         integer        DEFAULT 0,
   nom                varchar(60),
   address            varchar(255),
@@ -142,5 +142,5 @@ create table llx_societe_adresse_livraison
   fk_user_modif      integer
 )type=innodb;
 
-alter table llx_societe_adresse_livraison add column label varchar(30) after datec;
-alter table llx_societe_adresse_livraison add column datea datetime after datec;
+alter table llx_societe_adresse_livraison add column label varchar(30) after tms;
+-- Le champ date modif existe deja sous le nom tms. alter table llx_societe_adresse_livraison add column datea datetime after datec;
