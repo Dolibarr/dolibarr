@@ -443,9 +443,7 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 3,'973','97302',3,'GUYANE','Guyane');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 4,'974','97411',3,'REUNION','Réunion');
 
---
--- Provinces de Belgique - en Francais
---
+-- Provinces de Belgique
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'03','',2,'BRABANT-WALLON','Brabant-Wallon');
@@ -457,6 +455,8 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','',1,'LIMBOURG','Limbourg');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'10','',2,'LUXEMBOURG','Luxembourg');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'11','',2,'NAMUR','Namur');
+
+
 
 --
 -- Types effectifs
@@ -625,6 +625,7 @@ insert into llx_c_pays (rowid,code,libelle) values (25, 'CM', 'Cameroun'       )
 insert into llx_c_pays (rowid,code,libelle) values (26, 'PT', 'Portugal'       );
 insert into llx_c_pays (rowid,code,libelle) values (27, 'SA', 'Arabie Saoudite');
 insert into llx_c_pays (rowid,code,libelle) values (28, 'MC', 'Monaco'         );
+insert into llx_c_pays (rowid,code,libelle) values (29, 'AU', 'Australie'      );
 
 --
 -- Types etat propales
@@ -669,41 +670,48 @@ insert into llx_c_typent (id,code,libelle) values (100, 'TE_OTHER',   'Autres');
 --
 
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
--- Regions de France
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (102,1,  2,'97209',3,'Martinique');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (103,1,  3,'97302',3,'Guyane');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (104,1,  4,'97411',3,'Réunion');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (105,1, 11,'75056',1,'Île-de-France');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (106,1, 21,'51108',0,'Champagne-Ardenne');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (107,1, 22,'80021',0,'Picardie');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (108,1, 23,'76540',0,'Haute-Normandie');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (109,1, 24,'45234',2,'Centre');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (110,1, 25,'14118',0,'Basse-Normandie');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (111,1, 26,'21231',0,'Bourgogne');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (112,1, 31,'59350',2,'Nord-Pas-de-Calais');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (113,1, 41,'57463',0,'Lorraine');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (114,1, 42,'67482',1,'Alsace');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (115,1, 43,'25056',0,'Franche-Comté');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (116,1, 52,'44109',4,'Pays de la Loire');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (117,1, 53,'35238',0,'Bretagne');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (118,1, 54,'86194',2,'Poitou-Charentes');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (119,1, 72,'33063',1,'Aquitaine');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (120,1, 73,'31555',0,'Midi-Pyrénées');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (121,1, 74,'87085',2,'Limousin');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (122,1, 82,'69123',2,'Rhône-Alpes');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (123,1, 83,'63113',1,'Auvergne');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (124,1, 91,'34172',2,'Languedoc-Roussillon');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (125,1, 93,'13055',0,'Provence-Alpes-Côte d\'Azur');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (126,1, 94,'2A004',0,'Corse');
+-- Regions de France (id pays=1)
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 101, 1,   1,'97105',3,'Guadeloupe');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 102, 1,   2,'97209',3,'Martinique');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 103, 1,   3,'97302',3,'Guyane');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 104, 1,   4,'97411',3,'Réunion');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 105, 1,  11,'75056',1,'Île-de-France');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 106, 1,  21,'51108',0,'Champagne-Ardenne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 107, 1,  22,'80021',0,'Picardie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 108, 1,  23,'76540',0,'Haute-Normandie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 109, 1,  24,'45234',2,'Centre');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 110, 1,  25,'14118',0,'Basse-Normandie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 111, 1,  26,'21231',0,'Bourgogne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 112, 1,  31,'59350',2,'Nord-Pas-de-Calais');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 113, 1,  41,'57463',0,'Lorraine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 114, 1,  42,'67482',1,'Alsace');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 115, 1,  43,'25056',0,'Franche-Comté');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 116, 1,  52,'44109',4,'Pays de la Loire');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 117, 1,  53,'35238',0,'Bretagne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 118, 1,  54,'86194',2,'Poitou-Charentes');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 119, 1,  72,'33063',1,'Aquitaine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 120, 1,  73,'31555',0,'Midi-Pyrénées');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 121, 1,  74,'87085',2,'Limousin');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 122, 1,  82,'69123',2,'Rhône-Alpes');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 123, 1,  83,'63113',1,'Auvergne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 124, 1,  91,'34172',2,'Languedoc-Roussillon');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 125, 1,  93,'13055',0,'Provence-Alpes-Côte d\'Azur');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 126, 1,  94,'2A004',0,'Corse');
 
---
--- Regions de Belgique
---
+-- Regions de Belgique (id pays=2)
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 201, 2, 201,     '',1,'Flandre');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 202, 2, 202,     '',2,'Wallonie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 203, 2, 203,     '',3,'Bruxelles-Capitale');
 
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (201,2,201,'',1,'Flandre');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (202,2,202,'',2,'Wallonie');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (203,2,203,'',3,'Bruxelles-Capitale');
+-- Regions d'Australie (id pays=29)
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2901,29,2901,     '',0,'New South Wales');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2902,29,2902,     '',0,'Victoria');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2903,29,2903,     '',0,'Queensland');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2904,29,2904,     '',0,'Australia Capital Territory');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2905,29,2905,     '',0,'Tasmania');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2906,29,2906,     '',0,'Western Australia');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2907,29,2907,     '',0,'Northern Territory');
+
 
 --
 -- Devises (code secondaire - code ISO4217 - libelle fr)
@@ -768,6 +776,10 @@ delete from llx_c_tva;
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 51, 5,  '16','0','VAT Rate 16',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 52, 5,   '7','0','VAT Rate 7',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 53, 5,   '0','0','VAT Rate 0',1);
+
+-- AUSTRALIE (id 29)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (291, 5,  '10','0','VAT Rate 10',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (292, 5,   '0','0','VAT Rate 0',1);
 
 -- BELGIQUE (id 2)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 21, 2,  '21','0','VAT Rate 21',1);
