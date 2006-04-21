@@ -47,6 +47,7 @@ class Commande
 	var $cond_reglement_code;
 	var $mode_reglement_id;
 	var $mode_reglement_code;
+	var $adresse_livraison_id;
 
 	// Pour board
 	var $nbtodo;

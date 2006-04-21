@@ -84,17 +84,18 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	
 	$commande = new Commande($db);
 
-	$commande->soc_id            = $_POST['soc_id'];
-	$commande->date_commande     = $datecommande;
-	$commande->note              = $_POST['note'];
-	$commande->source            = $_POST['source_id'];
-	$commande->projetid          = $_POST['projetid'];
-	$commande->remise_percent    = $_POST['remise_percent'];
-	$commande->ref_client        = $_POST['ref_client'];
-	$commande->modelpdf          = $_POST['model'];
-	$commande->cond_reglement_id = $_POST['cond_reglement_id'];
-    $commande->mode_reglement_id = $_POST['mode_reglement_id'];
-    $commande->date_livraison    = $datelivraison;
+	$commande->soc_id               = $_POST['soc_id'];
+	$commande->date_commande        = $datecommande;
+	$commande->note                 = $_POST['note'];
+	$commande->source               = $_POST['source_id'];
+	$commande->projetid             = $_POST['projetid'];
+	$commande->remise_percent       = $_POST['remise_percent'];
+	$commande->ref_client           = $_POST['ref_client'];
+	$commande->modelpdf             = $_POST['model'];
+	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
+  $commande->mode_reglement_id    = $_POST['mode_reglement_id'];
+  $commande->date_livraison       = $datelivraison;
+  $commande->adresse_livraison_id = $_POST['adresse_livraison_id'];
 
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);

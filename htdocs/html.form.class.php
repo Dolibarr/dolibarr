@@ -1595,7 +1595,7 @@ class Form
             print '<input type="hidden" name="socid" value="'.$socid.'">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_adresse_livraison($selected, $_POST['socid'], $htmlname);
+            $this->select_adresse_livraison($selected, $_GET['socid'], $htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
