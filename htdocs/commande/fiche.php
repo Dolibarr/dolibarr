@@ -687,7 +687,7 @@ else
 			print $langs->trans('DateDelivery');
 			print '</td>';
 					
-			if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDateDelivery'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editdate_livraison')
@@ -701,6 +701,25 @@ else
 			else
 			{
 				print dolibarr_print_date($commande->date_livraison,'%a %d %B %Y');
+			}
+			print '</td></tr>';
+			
+			// adresse de livraison
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DeliveryAdress');
+			print '</td>';
+					
+			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAdress'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editdelivery_adress')
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,'adresse_livraison_id');
+			}
+			else
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,'none');
 			}
 			print '</td></tr>';
 			

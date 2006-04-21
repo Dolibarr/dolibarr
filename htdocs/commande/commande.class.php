@@ -279,13 +279,14 @@ class Commande
 		}
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
-		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison) ';
+		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison) ';
 		$sql.= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.',';
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";
 		$sql.= " '".$this->ref_client."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
-		$sql.= "  ".($this->date_livraison?$this->db->idate($this->date_livraison):'null').")";
+		$sql.= " '".($this->date_livraison?$this->db->idate($this->date_livraison):'null').'\',';
+		$sql.= " '".$this->adresse_reglement_id."')";
 
 		dolibarr_syslog("Commande.class.php::create sql=$sql");
 		if ( $this->db->query($sql) )
@@ -606,7 +607,7 @@ class Commande
 	function fetch($id)
 	{
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement';
-		$sql .= ', '.$this->db->pdate('c.date_commande').' as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note, c.ref_client, c.model_pdf, c.date_livraison';
+		$sql .= ', '.$this->db->pdate('c.date_commande').' as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note, c.ref_client, c.model_pdf, c.date_livraison, c.fk_adresse_livraison';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql .= ' WHERE c.rowid = '.$id;
 
@@ -614,25 +615,26 @@ class Commande
 		if ( $result )
 		{
 			$obj = $this->db->fetch_object();
-			$this->id                = $obj->rowid;
-			$this->ref               = $obj->ref;
-			$this->ref_client        = $obj->ref_client;
-			$this->soc_id            = $obj->fk_soc;
-			$this->statut            = $obj->fk_statut;
-			$this->user_author_id    = $obj->fk_user_author;
-			$this->total_ht          = $obj->total_ht;
-			$this->total_tva         = $obj->tva;
-			$this->total_ttc         = $obj->total_ttc;
-			$this->date              = $obj->date_commande;
-			$this->remise_percent    = $obj->remise_percent;
-			$this->source            = $obj->source;
-			$this->facturee          = $obj->facture;
-			$this->note              = $obj->note;
-			$this->projet_id         = $obj->fk_projet;
-			$this->modelpdf          = $obj->model_pdf;
-			$this->cond_reglement_id = $obj->fk_cond_reglement;
-			$this->mode_reglement_id = $obj->fk_mode_reglement;
-			$this->date_livraison    = $obj->date_livraison;
+			$this->id                   = $obj->rowid;
+			$this->ref                  = $obj->ref;
+			$this->ref_client           = $obj->ref_client;
+			$this->soc_id               = $obj->fk_soc;
+			$this->statut               = $obj->fk_statut;
+			$this->user_author_id       = $obj->fk_user_author;
+			$this->total_ht             = $obj->total_ht;
+			$this->total_tva            = $obj->tva;
+			$this->total_ttc            = $obj->total_ttc;
+			$this->date                 = $obj->date_commande;
+			$this->remise_percent       = $obj->remise_percent;
+			$this->source               = $obj->source;
+			$this->facturee             = $obj->facture;
+			$this->note                 = $obj->note;
+			$this->projet_id            = $obj->fk_projet;
+			$this->modelpdf             = $obj->model_pdf;
+			$this->cond_reglement_id    = $obj->fk_cond_reglement;
+			$this->mode_reglement_id    = $obj->fk_mode_reglement;
+			$this->date_livraison       = $obj->date_livraison;
+			$this->adresse_livraison_id = $obj->fk_adresse_livraison;
 			
 			$this->db->free();
 			if ($this->statut == 0)

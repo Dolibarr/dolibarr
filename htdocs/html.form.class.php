@@ -756,6 +756,48 @@ class Form
         }
     }
 
+    /**
+     *    \brief      Retourne la liste déroulante des adresses de livraison
+     *    \param      selected        Id contact pré-sélectionn
+     *    \param      htmlname        Nom champ formulaire
+     */
+    function select_adresse_livraison($selected='', $socid, $htmlname='idl')
+    {
+        // On recherche les utilisateurs
+        $sql = "SELECT a.rowid, a.label";
+        $sql .= " FROM ".MAIN_DB_PREFIX ."societe_adresse_livraison as a";
+        $sql .= " WHERE a.fk_societe = ".$socid;
+        $sql .= " ORDER BY a.label ASC";
+    
+        if ($this->db->query($sql))
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows();
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object();
+    
+                    if ($selected && $selected == $obj->rowid)
+                    {
+                        print '<option value="'.$obj->rowid.'" selected="true">'.$obj->label.'</option>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->rowid.'">'.$obj->label.'</option>';
+                    }
+                    $i++;
+                }
+            }
+            print '</select>';
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
 
     /**
      *      \brief      Charge dans cache la liste des conditions de paiements possibles
@@ -1535,7 +1577,43 @@ class Form
             }
         }
     }
-    
+
+    /**
+     *    	\brief      Affiche formulaire de selection de l'adresse de livraison
+     *    	\param      page        	Page
+     *    	\param      selected    	Id condition présélectionnée
+     *    	\param      htmlname    	Nom du formulaire select
+     *		\param		addempty		Ajoute entrée vide
+     */
+    function form_adresse_livraison($page, $selected='', $socid, $htmlname='adresse_livraison_id')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setdeliveryadress">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_adresse_livraison($selected, $socid, $htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+            	require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
+            	$livraison=new Livraison($this->db);
+				      $livraison->fetch_adresse($selected);
+				      print $livraison->label;
+            }
+            else
+            {
+              print "&nbsp;";
+            }
+        }
+    }    
     
     /**
      *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
