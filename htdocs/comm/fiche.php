@@ -335,7 +335,23 @@ if ($socidp > 0)
 		print '<td><td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 		print '</td></tr></table>';
-		print '</td><td colspan="3"></td>';
+		print '</td><td colspan="3">';
+		
+		$sql = "SELECT count(rowid) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
+    $sql.= " WHERE fk_soc =".$objsoc->id;
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $obj = $db->fetch_object($resql);
+        print $objsoc->nb?($objsoc->nb):$langs->trans("NoOtherDeliveryAdress");
+    }
+    else {
+        dolibarr_print_error($db);
+    }
+		print '</td>';
 		print '</tr>';
 
     print "</table>";
