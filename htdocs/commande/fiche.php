@@ -719,7 +719,7 @@ else
 			}
 			else
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$_GET['socid']d,$commande->adresse_livraison_id,'none');
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$_GET['socid'],$commande->adresse_livraison_id,'none');
 			}
 			print '</td></tr>';
 			
