@@ -715,10 +715,10 @@ else
 			// adresse de livraison
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('DeliveryAdress');
+			print $langs->trans('DeliveryAddress');
 			print '</td>';
 					
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAdress'),1).'</a></td>';
+			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editdelivery_adress')
