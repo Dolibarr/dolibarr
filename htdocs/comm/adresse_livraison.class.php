@@ -241,9 +241,9 @@ class Livraison
     {
 		   global $langs, $conf;
 
-		   $sql = 'SELECT s.idp, s.nom';
-		   $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		   $sql .= ' WHERE s.idp = '.$socid;
+		   $sql = 'SELECT idp, nom, client, fournisseur';
+		   $sql .= ' FROM '.MAIN_DB_PREFIX.'societe';
+		   $sql .= ' WHERE idp = '.$socid;
 		   
 		   $resqlsoc=$this->db->query($sql);
     
