@@ -345,8 +345,8 @@ if ($socidp > 0)
     if ($resql)
     {
         $num = $db->num_rows($resql);
-        $objsoc = $db->fetch_object($resql);
-        print $objsoc->nb?($objsoc->nb):$langs->trans("NoOtherDeliveryAdress");
+        $objal = $db->fetch_object($resql);
+        print $objal->nb?($objal->nb):$langs->trans("NoOtherDeliveryAdress");
     }
     else
     {
