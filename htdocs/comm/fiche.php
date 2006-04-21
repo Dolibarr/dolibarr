@@ -326,6 +326,17 @@ if ($socidp > 0)
 		print '</td><td colspan="3">'.$objsoc->price_level."</td>";
 		print '</tr>';
 	}
+	
+	// adresse de livraison
+
+		print '<tr><td nowrap>';
+		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print $langs->trans("DeliveryAdress");
+		print '<td><td align="right">';
+		print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		print '</td></tr></table>';
+		print '</td><td colspan="3"></td>';
+		print '</tr>';
 
     print "</table>";
 
