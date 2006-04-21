@@ -345,12 +345,14 @@ if ($socidp > 0)
     if ($resql)
     {
         $num = $db->num_rows($resql);
-        $obj = $db->fetch_object($resql);
+        $objsoc = $db->fetch_object($resql);
         print $objsoc->nb?($objsoc->nb):$langs->trans("NoOtherDeliveryAdress");
     }
-    else {
+    else
+    {
         dolibarr_print_error($db);
     }
+    
 		print '</td>';
 		print '</tr>';
 
