@@ -10,7 +10,7 @@ To build Dolibarr packages, launch the script
 > perl makepack-build.pl
 
 
-The build directory and all its contents is absolutely not require to make
+The build directory and all its contents is absolutely not required to make
 Dolibarr working. It is here only to build Dolibarr packages, and those
 generated packages will not contains this "build" directory.
 
