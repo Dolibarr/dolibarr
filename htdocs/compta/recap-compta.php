@@ -28,7 +28,8 @@
 */
 
 require("./pre.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
@@ -61,67 +62,11 @@ if ($socid > 0)
     /*
      * Affichage onglets
      */
-    $h = 0;
+	$head = societe_prepare_head($societe);
+	
+    dolibarr_fiche_head($head, 'compta', $societe->nom);
 
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Company");
-    $h++;
 
-    if ($societe->client==1)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Customer");
-        $h++;
-    }
-    if ($societe->client==2)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-        $head[$h][1] = $langs->trans("Prospect");
-        $h++;
-    }
-    if ($societe->fournisseur)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Supplier");
-        $h++;
-    }
-
-    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-    {
-        $langs->load("compta");
-        $hselected=$h;
-        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Accountancy");
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Note");
-    $h++;
-
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Documents");
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Notifications");
-    $h++;
-
-    if ($user->societe_id == 0)
-    {
-    	$head[$h][0] = DOL_URL_ROOT."/index.php?socidp=$societe->id&action=add_bookmark";
-    	$head[$h][1] = img_object($langs->trans("BookmarkThisPage"),'bookmark');
-    	$head[$h][2] = 'image';
-    }
-
-    dolibarr_fiche_head($head, $hselected, $societe->nom);
-
-    /*
-     *
-     */
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">'; 
 
