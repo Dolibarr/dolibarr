@@ -328,33 +328,35 @@ if ($socidp > 0)
 	}
 	
 	// adresse de livraison
-
+	if ($conf->expedition->enabled || $conf->commande->enabled)
+	{
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-		print $langs->trans("DeliveryAdress");
+		print $langs->trans("DeliveryAddress");
 		print '<td><td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 		print '</td></tr></table>';
 		print '</td><td colspan="3">';
-		
-		$sql = "SELECT count(rowid) as nb";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
-    $sql.= " WHERE fk_societe =".$objsoc->id;
 
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $objal = $db->fetch_object($resql);
-        print $objal->nb?($objal->nb):$langs->trans("NoOtherDeliveryAdress");
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
-    
+		$sql = "SELECT count(rowid) as nb";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
+	    $sql.= " WHERE fk_societe =".$objsoc->id;
+	
+	    $resql = $db->query($sql);
+	    if ($resql)
+	    {
+	        $num = $db->num_rows($resql);
+	        $objal = $db->fetch_object($resql);
+	        print $objal->nb?($objal->nb):$langs->trans("NoOtherDeliveryAddress");
+	    }
+	    else
+	    {
+	        dolibarr_print_error($db);
+	    }
+	    
 		print '</td>';
 		print '</tr>';
+	}	
 
     print "</table>";
 

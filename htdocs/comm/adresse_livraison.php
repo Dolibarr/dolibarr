@@ -192,7 +192,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $livraison->pays=$obj->libelle;
         }
     
-        print_titre($langs->trans("NewDeliveryAdress"));
+        print_titre($langs->trans("NewDeliveryAddress"));
         print "<br>\n";
     
         if ($livraison->error)
@@ -208,7 +208,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
     
         print '<table class="border" width="100%">';
 
-        print '<tr><td>'.$langs->trans('DeliveryAdressLabel').'</td><td><input type="text" size="30" name="label" value="'.$livraison->label.'"></td></tr>';
+        print '<tr><td>'.$langs->trans('DeliveryAddressLabel').'</td><td><input type="text" size="30" name="label" value="'.$livraison->label.'"></td></tr>';
         print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$livraison->nom.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
@@ -242,7 +242,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '</textarea></td></tr>';
 
         print '<tr><td colspan="4" align="center">';
-        print '<input type="submit" class="button" value="'.$langs->trans('AddDeliveryAdress').'"></td></tr>'."\n";
+        print '<input type="submit" class="button" value="'.$langs->trans('AddDeliveryAddress').'"></td></tr>'."\n";
     
         print '</table>'."\n";
         print '</form>'."\n";
@@ -310,7 +310,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         print '<table class="border" width="100%">';
 
-        print '<tr><td>'.$langs->trans('DeliveryAdressLabel').'</td><td colspan="3"><input type="text" size="40" name="label" value="'.$livraison->label.'"></td></tr>';
+        print '<tr><td>'.$langs->trans('DeliveryAddressLabel').'</td><td colspan="3"><input type="text" size="40" name="label" value="'.$livraison->label.'"></td></tr>';
         print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$livraison->nom.'"></td></tr>';
 
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
@@ -367,7 +367,7 @@ else
     if ($_GET["action"] == 'delete')
     {
         $html = new Form($db);
-        $html->form_confirm("adresse_livraison.php?socid=".$livraison->socid."&amp;idl=".$_GET["idl"],$langs->trans("DeleteDeliveryAdress"),$langs->trans("ConfirmDeleteDeliveryAdress"),"confirm_delete");
+        $html->form_confirm("adresse_livraison.php?socid=".$livraison->socid."&amp;idl=".$_GET["idl"],$langs->trans("DeleteDeliveryAddress"),$langs->trans("ConfirmDeleteDeliveryAdress"),"confirm_delete");
         print "<br />\n";
     }
 
@@ -384,7 +384,7 @@ else
     
       print '<table class="border" width="100%">';
 
-      print '<tr><td width="20%">'.$langs->trans('DeliveryAdressLabel').'</td><td colspan="3">'.$livraison->lignes[$i]->label.'</td>';
+      print '<tr><td width="20%">'.$langs->trans('DeliveryAddressLabel').'</td><td colspan="3">'.$livraison->lignes[$i]->label.'</td>';
       print '<td valign="top" colspan="2" width="50%" rowspan="7">'.$langs->trans('Note').' :<br>'.nl2br($livraison->lignes[$i]->note).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$livraison->lignes[$i]->nom.'</td></tr>';
     
