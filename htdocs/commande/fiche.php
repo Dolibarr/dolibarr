@@ -715,11 +715,11 @@ else
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$_GET['socid'],$commande->adresse_livraison_id,'adresse_livraison_id');
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id');
 			}
 			else
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$_GET['socid'],$commande->adresse_livraison_id,'none');
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none');
 			}
 			print '</td></tr>';
 			
