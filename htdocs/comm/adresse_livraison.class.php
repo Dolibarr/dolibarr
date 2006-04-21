@@ -254,8 +254,10 @@ class Livraison
                 $obj = $this->db->fetch_object($resqlsoc);
                 
                 $this->nom_societe = $obj->nom;
-                $this->socid = $obj->idp;
-                $this->id = $obj->idp;
+                $this->socid       = $obj->idp;
+                $this->id          = $obj->idp;
+                $this->client      = $obj->client;
+                $this->fournisseur = $obj->fournisseur;
                 
                 if ($this->client == 1)
 				        {
