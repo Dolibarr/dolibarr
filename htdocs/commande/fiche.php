@@ -710,16 +710,16 @@ else
 			print $langs->trans('DeliveryAdress');
 			print '</td>';
 					
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAdress'),1).'</a></td>';
+			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->$soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAdress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->$soc_id,$commande->adresse_livraison_id,'adresse_livraison_id');
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$_GET['socid'],$commande->adresse_livraison_id,'adresse_livraison_id');
 			}
 			else
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->$soc_id,$commande->adresse_livraison_id,'none');
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$_GET['socid']d,$commande->adresse_livraison_id,'none');
 			}
 			print '</td></tr>';
 			
