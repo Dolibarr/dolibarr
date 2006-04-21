@@ -67,6 +67,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		// Regle gestion compte compta
 		if ($type == 'customer') $codetouse=$societe->code_client;
 		if ($type == 'supplier') $codetouse=$societe->code_fournisseur;
+		$codetouse=eregi_replace('[^0-9]','',$codetouse);
 		
 		if ($type == 'customer') $this->code = "411".$codetouse;
 		if ($type == 'supplier') $this->code = "401".$codetouse;
@@ -74,7 +75,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$is_dispo = $this->verif($DB, $this->code, $societe);
 		while ($is_dispo == 0 && $i < 37)		// 40 char max
 		{
-			$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			$arr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
 			$this->code = $societe->prefix_comm . $codetouse . substr($arr, $i, 1);
 	
