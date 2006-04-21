@@ -898,6 +898,34 @@ class Commande
             }
         }
     }
+    
+    /**
+     *      \brief      Définit une adresse de livraison
+     *      \param      user        		Objet utilisateur qui modifie
+     *      \param      adresse_livraison      Adresse de livraison  
+     *      \return     int         		<0 si ko, >0 si ok
+     */
+    function set_adresse_livraison($user, $adresse_livraison)
+    {
+        if ($user->rights->commande->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$adresse_livraison."'";
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->adresse_livraison_id = $adresse_livraison;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dolibarr_syslog("Commande::set_adresse_livraison Erreur SQL");
+                return -1;
+            }
+        }
+    }
+    
   /**
    *    \brief      Renvoi la liste des propal (éventuellement filtrée sur un user) dans un tableau
    *    \param      brouillon       0=non brouillon, 1=brouillon

@@ -149,6 +149,13 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 	$commande->set_date_livraison($user,$_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day']);
 }
 
+if ($_POST['action'] == 'setdeliveryadress' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$commande->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
+}
+
 if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
