@@ -123,3 +123,15 @@ AddGlobalDiscount=Add discount
 DiscountOfferedBy=Granted by
 DiscountStillRemaining=Discount still remaining
 DiscountAlreadyCounted=Discount already counted
+# PaymentConditions
+PaymentConditionShortRECEP=After reception
+PaymentConditionRECEP=After invoice reception
+PaymentConditionShort30D=30 days
+PaymentCondition30D=Payment after 30 days
+PaymentConditionShort30DENDMONTH=30 days end of month
+PaymentCondition30DENDMONTH=Payment after 30 days end of month
+PaymentConditionShort60D=60 days
+PaymentCondition60D=Payment after 60 days
+PaymentConditionShort60DENDMONTH=60 days end of month
+PaymentCondition60DENDMONTH=Payment after 60 days end of month
+

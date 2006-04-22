@@ -123,3 +123,14 @@ AddGlobalDiscount=Ajouter avoir
 DiscountOfferedBy=Accordé par
 DiscountStillRemaining=Avoirs restant en cours
 DiscountAlreadyCounted=Remises déjà appliquées
+# PaymentConditions
+PaymentConditionShortRECEP=A réception
+PaymentConditionRECEP=A réception de facture
+PaymentConditionShort30D=30 jours
+PaymentCondition30D=Réglement à 30 jours
+PaymentConditionShort30DENDMONTH=30 jours fin de mois
+PaymentCondition30DENDMONTH=Réglement à 30 jours fin de mois
+PaymentConditionShort60D=60 jours
+PaymentCondition60D=Réglement à 60 jours
+PaymentConditionShort60DENDMONTH=60 jours fin de mois
+PaymentCondition60DENDMONTH=Réglement à 60 jours fin de mois

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -427,15 +427,16 @@ class pdf_propale_azur extends ModelePDFPropales
                 /*
                  * Conditions de règlements
                  */
-                if ($prop->cond_reglement_facture)
+                if ($prop->cond_reglement_code)
                 {
 	                $pdf->SetFont('Arial','B',8);
 	                $pdf->SetXY($this->marge_gauche, 217);
-	                $titre = "Conditions de réglement:";
+	                $titre = $langs->trans("PaymentConditions").':';
 	                $pdf->MultiCell(80, 5, $titre, 0, 'L');
 	                $pdf->SetFont('Arial','',8);
 	                $pdf->SetXY(50, 217);
-	                $pdf->MultiCell(80, 5, $prop->cond_reglement_facture,0,'L');
+	                $lib_condition_paiement=$langs->trans("PaymentCondition".$prop->cond_reglement_code)?$langs->trans("PaymentCondition".$prop->cond_reglement_code):$prop->cond_reglement;
+	                $pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
 				}
 				
                 /*
@@ -700,78 +701,83 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($prop->date,"%d %b %Y"), '', 'R');
 
+        $posy+=6;
+        $pdf->SetXY(100,$posy);
+        $pdf->SetTextColor(0,0,60);
+        $pdf->MultiCell(100, 4, $langs->trans("DateEndPropal")." : " . dolibarr_print_date($prop->fin_validite,"%d %b %Y"), '', 'R');
+
         if ($showadress)
         {
-        // Emetteur
-        $posy=42;
-        $hautcadre=40;
-        $pdf->SetTextColor(0,0,0);
-        $pdf->SetFont('Arial','',8);
-        $pdf->SetXY($this->marge_gauche,$posy-5);
-        $pdf->MultiCell(66,5, $langs->trans("BillFrom").":");
-
-
-        $pdf->SetXY($this->marge_gauche,$posy);
-        $pdf->SetFillColor(230,230,230);
-        $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
-
-        $pdf->SetXY($this->marge_gauche+2,$posy+3);
-
-        // Nom emetteur
-        $pdf->SetTextColor(0,0,60);
-        $pdf->SetFont('Arial','B',11);
-        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-        else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
-
-        // Caractéristiques emetteur
-        $carac_emetteur = '';
-        if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
-        else {
-            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
-            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
-        }
-        $carac_emetteur .= "\n";
-        // Tel
-        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".FAC_PDF_TEL;
-        elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".$mysoc->tel;
-        // Fax
-        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".FAC_PDF_FAX;
-        elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".$mysoc->fax;
-        // EMail
-		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".FAC_PDF_MEL;
-        elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".$mysoc->email;
-        // Web
-		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".FAC_PDF_WWW;
-        elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".$mysoc->url;
-
-        $pdf->SetFont('Arial','',9);
-        $pdf->SetXY($this->marge_gauche+2,$posy+8);
-        $pdf->MultiCell(80,4, $carac_emetteur);
-
-        // Client destinataire
-        $posy=42;
-        $pdf->SetTextColor(0,0,0);
-        $pdf->SetFont('Arial','',8);
-        $pdf->SetXY(102,$posy-5);
-        $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
-		$prop->fetch_client();
-
-        // Cadre client destinataire
-        $pdf->rect(100, $posy, 100, $hautcadre);
-
-		// Nom client
-        $pdf->SetXY(102,$posy+3);
-        $pdf->SetFont('Arial','B',11);
-        $pdf->MultiCell(106,4, $prop->client->nom, 0, 'L');
-
-		// Caractéristiques client
-        $carac_client=$prop->client->adresse;
-        $carac_client.="\n".$prop->client->cp . " " . $prop->client->ville."\n";
-		if ($prop->client->tva_intra) $carac_client.="\n".$langs->trans("VATIntraShort").': '.$prop->client->tva_intra;
-        $pdf->SetFont('Arial','',9);
-        $pdf->SetXY(102,$posy+8);
-        $pdf->MultiCell(86,4, $carac_client);
+	        // Emetteur
+	        $posy=42;
+	        $hautcadre=40;
+	        $pdf->SetTextColor(0,0,0);
+	        $pdf->SetFont('Arial','',8);
+	        $pdf->SetXY($this->marge_gauche,$posy-5);
+	        $pdf->MultiCell(66,5, $langs->trans("BillFrom").":");
+	
+	
+	        $pdf->SetXY($this->marge_gauche,$posy);
+	        $pdf->SetFillColor(230,230,230);
+	        $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+	
+	
+	        $pdf->SetXY($this->marge_gauche+2,$posy+3);
+	
+	        // Nom emetteur
+	        $pdf->SetTextColor(0,0,60);
+	        $pdf->SetFont('Arial','B',11);
+	        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
+	        else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
+	
+	        // Caractéristiques emetteur
+	        $carac_emetteur = '';
+	        if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
+	        else {
+	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
+	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
+	        }
+	        $carac_emetteur .= "\n";
+	        // Tel
+	        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".FAC_PDF_TEL;
+	        elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".$mysoc->tel;
+	        // Fax
+	        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".FAC_PDF_FAX;
+	        elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".$mysoc->fax;
+	        // EMail
+			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".FAC_PDF_MEL;
+	        elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".$mysoc->email;
+	        // Web
+			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".FAC_PDF_WWW;
+	        elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".$mysoc->url;
+	
+	        $pdf->SetFont('Arial','',9);
+	        $pdf->SetXY($this->marge_gauche+2,$posy+8);
+	        $pdf->MultiCell(80,4, $carac_emetteur);
+	
+	        // Client destinataire
+	        $posy=42;
+	        $pdf->SetTextColor(0,0,0);
+	        $pdf->SetFont('Arial','',8);
+	        $pdf->SetXY(102,$posy-5);
+	        $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
+			$prop->fetch_client();
+	
+	        // Cadre client destinataire
+	        $pdf->rect(100, $posy, 100, $hautcadre);
+	
+			// Nom client
+	        $pdf->SetXY(102,$posy+3);
+	        $pdf->SetFont('Arial','B',11);
+	        $pdf->MultiCell(106,4, $prop->client->nom, 0, 'L');
+	
+			// Caractéristiques client
+	        $carac_client=$prop->client->adresse;
+	        $carac_client.="\n".$prop->client->cp . " " . $prop->client->ville."\n";
+			if ($prop->client->tva_intra) $carac_client.="\n".$langs->trans("VATIntraShort").': '.$prop->client->tva_intra;
+	        $pdf->SetFont('Arial','',9);
+	        $pdf->SetXY(102,$posy+8);
+	        $pdf->MultiCell(86,4, $carac_client);
         }
 
     }

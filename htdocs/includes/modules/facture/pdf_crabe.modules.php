@@ -414,7 +414,7 @@ class pdf_crabe extends ModelePDFFactures
                 /*
                  * Conditions de règlements
                  */
-                if ($fac->cond_reglement_facture)
+                if ($fac->cond_reglement_code)
                 {
 	                $pdf->SetFont('Arial','B',8);
 	                $pdf->SetXY($this->marge_gauche, 217);
@@ -422,7 +422,8 @@ class pdf_crabe extends ModelePDFFactures
 	                $pdf->MultiCell(80, 5, $titre, 0, 'L');
 	                $pdf->SetFont('Arial','',8);
 	                $pdf->SetXY(50, 217);
-	                $pdf->MultiCell(80, 5, $fac->cond_reglement_facture,0,'L');
+	                $lib_condition_paiement=$langs->trans("PaymentCondition".$fac->cond_reglement_code)?$langs->trans("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+	                $pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
 				}
 
                 /*

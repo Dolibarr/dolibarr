@@ -810,7 +810,7 @@ class Form
         if (sizeof($this->cache_conditions_paiements_code)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('html.form.class.php::load_cache_conditions_paiements');
-        $sql = "SELECT rowid, libelle";
+        $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY sortorder";
@@ -824,7 +824,7 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                $libelle=($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $libelle=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 $this->cache_conditions_paiements_code[$obj->rowid]=$obj->code;
                 $this->cache_conditions_paiements_libelle[$obj->rowid]=$libelle;
                 $i++;
