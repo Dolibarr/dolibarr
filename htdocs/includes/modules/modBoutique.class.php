@@ -72,6 +72,9 @@ class modBoutique extends DolibarrModules
 		// Constantes
 		$this->const = array();
 	
+	    // Boites
+	    $this->boxes = array();
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'boutique';

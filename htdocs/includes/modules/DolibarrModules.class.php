@@ -365,30 +365,33 @@ class DolibarrModules
     {
         $err=0;
 
-        foreach ($this->boxes as $key => $value)
+        if (is_array($this->boxes))
         {
-            $titre = $this->boxes[$key][0];
-            $file  = $this->boxes[$key][1];
-
-            $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def WHERE name ='".$titre."'";
-
-            $result=$this->db->query($sql);
-            if ($result)
-            {
-                $row = $this->db->fetch_row($result);
-                if ($row[0] == 0)
-                {
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file) VALUES ('".$titre."','".$file."')";
-                    if (! $this->db->query($sql))
-                    {
-                        $err++;
-                    }
-                }
-            }
-            else
-            {
-                $err++;
-            }
+	        foreach ($this->boxes as $key => $value)
+	        {
+	            $titre = $this->boxes[$key][0];
+	            $file  = $this->boxes[$key][1];
+	
+	            $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def WHERE name ='".$titre."'";
+	
+	            $result=$this->db->query($sql);
+	            if ($result)
+	            {
+	                $row = $this->db->fetch_row($result);
+	                if ($row[0] == 0)
+	                {
+	                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file) VALUES ('".$titre."','".$file."')";
+	                    if (! $this->db->query($sql))
+	                    {
+	                        $err++;
+	                    }
+	                }
+	            }
+	            else
+	            {
+	                $err++;
+	            }
+	        }
         }
         
         return $err;
@@ -403,18 +406,21 @@ class DolibarrModules
     {
         $err=0;
         
-        foreach ($this->boxes as $key => $value)
+        if (is_array($this->boxes))
         {
-            $titre = $this->boxes[$key][0];
-            $file  = $this->boxes[$key][1];
-
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$file."'";
-            if (! $this->db->query($sql) )
-            {
-                $err++;
-            }
-        }
-    
+	        foreach ($this->boxes as $key => $value)
+	        {
+	            $titre = $this->boxes[$key][0];
+	            $file  = $this->boxes[$key][1];
+	
+	            $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$file."'";
+	            if (! $this->db->query($sql) )
+	            {
+	                $err++;
+	            }
+	        }
+		}
+		    
         return $err;
     }
 
