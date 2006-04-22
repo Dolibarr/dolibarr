@@ -414,7 +414,7 @@ LDAPServerExample=Adresse du serveur (ex: localhost, 192.168.0.2, ldaps://ldap.e
 #LDAPSuffixExample=DN complet (ex: dc=societe,dc=com)
 DNAdminExample=DN complet (ex: cn=adminldap,dc=societe,dc=com)
 LDAPPasswordExample=Mot de passe de l'administrateur
-DBUserGroupActive=Synchronisation des utilisateurs et groupes
+DNUserGroupActive=Synchronisation des utilisateurs et groupes
 DNUserExample=DN complet (ex: ou=users,dc=societe,dc=com)
 DNGroupExample=DN complet (ex: ou=groups,dc=societe,dc=com)
 DNContactActive=Synchronisation des contacts
