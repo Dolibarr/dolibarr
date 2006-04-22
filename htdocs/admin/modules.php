@@ -31,7 +31,7 @@
 require("./pre.inc.php");
 
 $mode=isset($_GET["mode"])?$_GET["mode"]:0;
-$mesg=isset($_GET["mesg"])?urldecode($_GET["mode"]):"";
+$mesg=isset($_GET["mesg"])?urldecode($_GET["mesg"]):"";
 
 if (!$user->admin)
     accessforbidden();
