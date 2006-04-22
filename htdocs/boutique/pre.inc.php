@@ -57,9 +57,10 @@ function llxHeader($head = "", $urlp = "")
 
   $menu->add(DOL_URL_ROOT."/boutique/produits/osc-liste.php", "Produits");
 
+  $menu->add(DOL_URL_ROOT."/boutique/client/", "Clients");
+
   $menu->add(DOL_URL_ROOT."/boutique/commande/", "Commandes");
 
-  $menu->add(DOL_URL_ROOT."/boutique/client/", "Clients");
   
 /*
   $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
