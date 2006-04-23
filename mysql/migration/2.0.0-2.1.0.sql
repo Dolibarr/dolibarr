@@ -148,3 +148,19 @@ alter table llx_societe_adresse_livraison add column label varchar(30) after tms
 
 alter table llx_propal add column fk_adresse_livraison integer after date_livraison;
 alter table llx_commande add column fk_adresse_livraison integer after date_livraison;
+
+
+
+insert into llx_c_pays (rowid,code,libelle) values (29, 'AU', 'Australie'      );
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2901,29,2901,     '',0,'Australia');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'NSW','',1,'','New South Wales');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'VIC','',1,'','Victoria');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'QLD','',1,'','Queensland');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'SA','',1,'','South Australia');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'ACT','',1,'','Australia Capital Territory');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'TAS','',1,'','Tasmania');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'WA','',1,'','Western Australia');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'NT','',1,'','Northern Territory');
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (291, 5,  '10','0','VAT Rate 10',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (292, 5,   '0','0','VAT Rate 0',1);
+
