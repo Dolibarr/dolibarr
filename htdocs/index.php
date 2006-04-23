@@ -240,6 +240,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   // Nbre commandes clients à honorer
@@ -263,6 +264,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   // Nbre propales ouvertes (expirées)
@@ -313,6 +315,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   // Nbre services à activer (en retard)
@@ -338,6 +341,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   // Nbre services actifs (à renouveler)
@@ -363,6 +367,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   // Nbre factures fournisseurs (à payer)
@@ -388,6 +393,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   // Nbre factures clients (à payer)
@@ -411,6 +417,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   // Nbre ecritures à rapprocher
@@ -436,6 +443,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   // Nbre adhérent valides (attente cotisation)
@@ -461,6 +469,7 @@ if (MAIN_SHOW_WORKBOARD == 1)
       else print '&nbsp;';
       print '</td>';
       print '</tr>';
+    print "\n";
     }
 
   print '</table>';

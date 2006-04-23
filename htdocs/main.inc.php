@@ -349,6 +349,7 @@ function top_menu($head, $title="", $target="")
     /*
      * Barre de menu superieure
      */
+    print "\n".'<!-- Start top horizontal menu -->'."\n";
     print '<div class="tmenu">'."\n";
 
     // Charge le gestionnaire des entrees de menu du haut
@@ -376,7 +377,7 @@ function top_menu($head, $title="", $target="")
         print '</a>';
     }
 
-    print "</div><!-- class=tmenu -->\n";
+    print "\n</div>\n<!-- End top horizontal menu -->\n";
 
 }
 

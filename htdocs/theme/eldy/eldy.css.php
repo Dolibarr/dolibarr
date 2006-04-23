@@ -150,9 +150,9 @@ div.tmenu
     border-bottom: 1px solid #8B9999;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
-    font-weight:bold;
+    font-weight: bold;
     font-size: 12px;
-    height: 19px;
+    height: 21px;
     background: #b3c5cc; 
     background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
     color: #000000; 
