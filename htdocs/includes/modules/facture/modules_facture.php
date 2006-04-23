@@ -141,7 +141,7 @@ class ModeleNumRefFactures
 		\param	    message			message
 		\param	    modele			force le modele à utiliser ('' par defaut)
 		\param		outputlangs		objet lang a utiliser pour traduction
-		\return  	int        		0 si KO, 1 si OK
+		\return  	int        		<0 si KO, >0 si OK
 */
 function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 {
@@ -186,16 +186,16 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 		}
 		else
 		{
-			dolibarr_syslog("Erreur dans facture_pdf_create");
-			dolibarr_print_error($db,$obj->pdferror());
-			return 0;
+			dolibarr_print_error('',"facture_pdf_create Error: ".$obj->error);
+            $this->error=$langs->trans("Error")." ".$obj->error;			
+			return -1;
 		}
 
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
-		return 0;
+        dolibarr_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
+		return -1;
 	}
 }
 

@@ -1095,7 +1095,7 @@ function dolibarr_print_error($db='',$msg='')
         $syslog.="pid=".getmypid();
     }
     
-    if ($db)
+    if (is_object($db))
     {
         if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
         {
