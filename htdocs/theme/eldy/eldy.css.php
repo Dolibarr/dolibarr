@@ -152,7 +152,7 @@ div.tmenu
     margin: 0px 0px 2px 0px;
     font-weight: bold;
     font-size: 12px;
-    height: 21px;
+    height: 19px;
     background: #b3c5cc; 
     background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
     color: #000000; 
@@ -168,16 +168,16 @@ table.tmenu
 a.tmenu:link
 {
   color: #234046;
-  padding: 0px 8px;
-  margin: 0px 1px 1.5px 1px;
+  padding: 0px 8px 0px 8px;
+  margin: 0px 1px 2px 1px;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
 }
 a.tmenu:visited
 {
   color: #234046;
-  padding: 0px 8px;
-  margin: 0px 1px 1.5px 1px;
+  padding: 0px 8px 0px 8px;
+  margin: 0px 1px 2px 1px;
   border: 0px solid #b3c5cc;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
@@ -185,8 +185,8 @@ a.tmenu:visited
 a.tmenu#sel
 { 
   color: #234046;
-  padding: 0px 8px;
-  margin: 0px 0px 1.5px 0px;
+  padding: 0px 8px 0px 8px;
+  margin: 0px 0px 2px 0px;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
   background: #dee7ec;
@@ -198,8 +198,8 @@ a.tmenu#sel
 a.tmenu:hover
 {
   color: #234046;
-  padding: 0px 8px;
-  margin: 0px 1px 1.5px 1px;
+  padding: 0px 8px 0px 8px;
+  margin: 0px 1px 2px 1px;
   text-decoration: none;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
@@ -209,8 +209,8 @@ a.tmenu:hover
 font.tmenudisabled
 {
   color: #93a5aa;
-  padding: 0px 8px;
-  margin: 0px 0px 1.5px 0px;
+  padding: 0px 8px 0px 8px;
+  margin: 0px 0px 2px 0px;
   font-weight:bold;
   font-size:12px;
 }
