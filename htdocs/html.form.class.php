@@ -1594,7 +1594,6 @@ class Form
         {
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setdeliveryadress">';
-            print '<input type="hidden" name="socid" value="'.$socid.'">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
             $numaddress = $this->select_adresse_livraison($selected, $socid, $htmlname);
