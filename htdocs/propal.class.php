@@ -808,7 +808,7 @@ class Propal
      */
     function set_adresse_livraison($user, $adresse_livraison)
     {
-        if ($user->rights->propal->creer)
+        if ($user->rights->propale->creer)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$adresse_livraison."'";
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
