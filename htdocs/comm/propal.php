@@ -589,6 +589,7 @@ if ($_GET['propalid'] > 0)
 
             if ($conf->projet->enabled) $rowspan++;
             if ($conf->global->PROPAL_ADD_SHIPPING_DATE) $rowspan++;
+            if ($conf->global->PROPAL_ADD_DELIVERY_ADDRESS) $rowspan++;
     
             // Notes
             print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';

@@ -162,7 +162,7 @@ if ($_GET["action"] == 'create')
 	if ($conf->global->PROPAL_ADD_SHIPPING_DATE)
 	{
 		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
-		print '<td>';
+		print '<td colspan="2">';
 		if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "")
 		{
 			$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
@@ -181,7 +181,8 @@ if ($_GET["action"] == 'create')
 	// Adresse de livraison
 	if ($conf->global->PROPAL_ADD_DELIVERY_ADDRESS)
 	{
-		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td><td>';
+		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
+		print '<td colspan="3">';
 		$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id');
 		if ($numaddress==0)
 		{
