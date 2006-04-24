@@ -579,6 +579,7 @@ if ($_GET['propalid'] > 0)
             print '</td>';
 
             if ($conf->projet->enabled) $rowspan++;
+            if ($conf->global->PROPAL_ADD_SHIPPING_DATE) $rowspan++;
     
             // Notes
             print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
@@ -627,7 +628,7 @@ if ($_GET['propalid'] > 0)
 				print '</td>';
 				if ($_GET['action'] != 'editdate_livraison' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDateLivraison'),1).'</a></td>';
 				print '</tr></table>';
-				print '</td><td colspan="5">';
+				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'editdate_livraison')
 				{
 					print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
