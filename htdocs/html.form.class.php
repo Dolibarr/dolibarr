@@ -1584,9 +1584,10 @@ class Form
      *    	\param      page        	Page
      *    	\param      selected    	Id condition présélectionnée
      *    	\param      htmlname    	Nom du formulaire select
-     *		\param		addempty		Ajoute entrée vide
+     *		  \param		  origin        origine de l'appel pour pouvoir créer un retour
+     *      \param      id            id de l'origine
      */
-    function form_adresse_livraison($page, $selected='', $socid, $htmlname='adresse_livraison_id')
+    function form_adresse_livraison($page, $selected='', $socid, $htmlname='adresse_livraison_id', $origin='', $id)
     {
         global $langs,$conf;
         if ($htmlname != "none")
@@ -1602,7 +1603,7 @@ class Form
             if ($numaddress==0)
             {
             	$langs->load("companies");
-              print ' &nbsp; <a href='.DOL_DOCUMENT_ROOT .'/comm/adresse_livraison.php?socid='.$socid.'&action=create>'.$langs->trans("AddAddress").'</a>';
+              print ' &nbsp; <a href='.DOL_DOCUMENT_ROOT .'/comm/adresse_livraison.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$id.'>'.$langs->trans("AddAddress").'</a>';
             }
             print '</td></tr></table></form>';
         }

@@ -47,6 +47,8 @@ if (! $user->rights->societe->creer)
 }
 
 $idl = isset($_GET["idl"])?$_GET["idl"]:'';
+$origin = isset($_GET["origin"])?$_GET["origin"]:'';
+$originid = isset($_GET["originid"])?$_GET["originid"]:'';
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if (! $socid && ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && $_REQUEST["action"] != 'update')) accessforbidden();
 
@@ -98,8 +100,16 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     
         if ($result >= 0)
         {
+        	if ($origin == commande)
+        	{
+        		Header("Location: ../commande/fiche.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
+        		exit;
+        	}
+        	else
+        	{
             Header("Location: adresse_livraison.php?socid=".$socid);
             exit;
+          }
         }
         else
         {
