@@ -107,6 +107,11 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         		Header("Location: ../commande/fiche.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
         		exit;
         	}
+        	elseif ($origin == propal)
+        	{
+        		Header("Location: ../comm/propal.php?action=editdelivery_adress&socidp=".$socid."&propalid=".$originid);
+        		exit;
+        	}
         	else
         	{
             Header("Location: adresse_livraison.php?socid=".$socid);
@@ -131,9 +136,13 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         {
         	if ($origin == commande)
         	{
-        		Header("Location: ../commande/fiche.php?&id=".$originid);
+        		Header("Location: ../commande/fiche.php?id=".$originid);
         		exit;
         	}
+        	elseif ($origin == propal)
+        	{
+        		Header("Location: ../comm/propal.php?propalid=".$originid);
+        		exit;
         	else
         	{
             Header("Location: adresse_livraison.php?socid=".$socid);
