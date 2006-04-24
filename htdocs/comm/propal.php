@@ -34,7 +34,6 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
 $user->getrights('propale');
-$user->getrights('user');
 
 if (!$user->rights->propale->lire)
 	accessforbidden();
@@ -116,7 +115,7 @@ if ($_POST['action'] == 'setdate_livraison')
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 
-if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propal->creer)
+if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
