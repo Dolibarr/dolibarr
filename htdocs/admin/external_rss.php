@@ -54,10 +54,18 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
     $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
 
     if(isset($_POST[$external_rss_urlrss])) {
+        $boxlabel='(ExternalRSSInformations)';
         $external_rss_title = "external_rss_title_" . $_POST["norss"];
         //$external_rss_url = "external_rss_url_" . $_POST["norss"];
 
         $db->begin();
+
+		// Ajoute boite box_external_rss dans définition des boites
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file, note) VALUES ('".$boxlabel."','box_external_rss.php','".addslashes($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
+        if (! $db->query($sql))
+        {
+            $err++;
+        }
 
 		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . $_POST["norss"],$_POST[$external_rss_title]);
 		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$_POST[$external_rss_urlrss]);
@@ -80,6 +88,15 @@ if ($_POST["delete"])
 {
     if(isset($_POST["norss"])) {
         $db->begin();
+
+		// Supprime boite box_external_rss de définition des boites
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
+        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
+        if (! $db->query($sql))
+        {
+			dolibarr_print_error($db,"sql=$sql");
+			exit;
+        }
 
 		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . $_POST["norss"]);
 		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . $_POST["norss"]);

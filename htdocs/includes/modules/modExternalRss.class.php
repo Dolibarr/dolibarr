@@ -74,8 +74,7 @@ class modExternalRss extends DolibarrModules
 
     // Boxes
     $this->boxes = array();
-    $this->boxes[0][0] = "Informations externes RSS";
-    $this->boxes[0][1] = "box_external_rss.php";
+	// Les boites sont ajoutées lors de la configuration des flux
 
     // Permissions
     $this->rights = array();
@@ -89,7 +88,27 @@ class modExternalRss extends DolibarrModules
   function init()
   {
     $sql = array();
-		
+	
+    // Recherche configuration de boites
+	$this->boxes=array();
+	$sql="select name, value from ".MAIN_DB_PREFIX."const";
+	$sql.= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
+	$result=$this->db->query($sql);
+	if ($result)
+	{
+	    while ($obj = $this->db->fetch_object($result))
+	    {
+		    if (eregi('EXTERNAL_RSS_TITLE_([0-9]+)',$obj->name,$reg))
+		    {
+				// Definie la boite si on a trouvée une ancienne configuration
+			    $this->boxes[$reg[1]][0] = "Informations externes RSS";
+			    $this->boxes[$reg[1]][1] = "box_external_rss.php";
+			    $this->boxes[$reg[1]][2] = $reg[1]." (".$obj->value.")";
+			}
+		}
+		$this->db->free($result);
+	}
+
     return $this->_init($sql);
   }
 
@@ -100,6 +119,9 @@ class modExternalRss extends DolibarrModules
   function remove()
   {
     $sql = array();
+
+	// Supprime anciennes delcarations de la boite RSS
+    $this->boxes[0][1] = "box_external_rss.php";
 
     return $this->_remove($sql);
   }

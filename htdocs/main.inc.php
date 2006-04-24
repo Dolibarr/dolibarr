@@ -463,7 +463,7 @@ function left_menu($menu_array, $help_url='', $form_search='')
         if ($helpbaseurl) print '<div class="help"><a class="help" target="_blank" href="'.sprintf($helpbaseurl,$help_url).'">'.$langs->trans("Help").'</a></div>';
     }
 
-    if (MAIN_SHOW_BUGTRACK_LINK == 1)
+    if ($conf->global->MAIN_SHOW_BUGTRACK_LINK == 1)
     {
         // Lien vers le bugtrack
         $bugbaseurl='http://savannah.nongnu.org/bugs/?';

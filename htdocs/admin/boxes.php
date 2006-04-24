@@ -168,63 +168,65 @@ print_titre($langs->trans("BoxesAvailable"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Box").'</td>';
+print '<td width="300">'.$langs->trans("Box").'</td>';
+print '<td>'.$langs->trans("Note").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
-print '<td align="center" width="180">'.$langs->trans("ActivateOn").'</td>';
-print '<td align="center" width="80">&nbsp;</td>';
+print '<td align="center" width="160">'.$langs->trans("ActivateOn").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, name, file FROM ".MAIN_DB_PREFIX."boxes_def";
+$sql = "SELECT rowid, name, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $resql = $db->query($sql);
 $var=True;
 
 if ($resql)
 {
-  $html=new Form($db);
-  
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
-  // Boucle sur toutes les boites
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object($resql);
-	  
-      $module=eregi_replace('.php$','',$obj->file);
-      include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
-      
-      $box=new $module();
-            
-      if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
+	$html=new Form($db);
+	
+	$num = $db->num_rows($resql);
+	$i = 0;
+	
+	// Boucle sur toutes les boites
+	while ($i < $num)
 	{
-	  // La boite est déjà activée
-	  // \todo
-	  // L'idéal serait de supprimer la valeur du tableau
+		$obj = $db->fetch_object($resql);
+	
+		$module=eregi_replace('.php$','',$obj->file);
+		include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
+	
+		$box=new $module();
+	
+		if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
+		{
+			// La boite est déjà activée
+			// \todo
+			// L'idéal serait de supprimer la valeur du tableau
+		}
+		else
+		{
+			$var = ! $var;
+	
+			print '<form action="boxes.php" method="POST">';
+			$logo=eregi_replace("^object_","",$box->boximg);
+			print '<tr '.$bc[$var].'>';
+			print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
+			print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
+			print '<td>' . $obj->file . '</td>';
+	
+			// Pour chaque position possible, on affiche un lien
+			// d'activation si boite non deja active pour cette position
+			print '<td align="center">';
+			print $html->select_array("pos",$pos_name);
+			print '<input type="hidden" name="action" value="add">';
+			print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
+			print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
+			print '</td>';
+	
+			print '</tr></form>';
+		}
+		$i++;
 	}
-      else
-	{
-	  $var = ! $var;
-	  
-	  print '<form action="boxes.php" method="POST">';
-	  $logo=eregi_replace("^object_","",$box->boximg);
-	  print '<tr '.$bc[$var].'><td>'.img_object("",$logo).' '.$box->boxlabel.'</td><td>' . $obj->file . '</td>';
-	  
-	  // Pour chaque position possible, on affiche un lien
-	  // d'activation si boite non deja active pour cette position
-	  print '<td align="center">';
-	  print $html->select_array("pos",$pos_name);
-	  print '<input type="hidden" name="action" value="add">';
-	  print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
-	  print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
-	  print '</td>';
-	  
-	  print '<td>&nbsp;</td>';      
-	  print '</tr></form>';
-	}      
-      $i++;
-    }
-  
-  $db->free($resql);
+	
+	$db->free($resql);
 }
 
 print '</table>';
@@ -239,14 +241,14 @@ print_titre($langs->trans("BoxesActivated"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Box").'</td>';
-print '<td>&nbsp;</td>';
-print '<td align="center" width="180">'.$langs->trans("ActiveOn").'</td>';
+print '<td width="300">'.$langs->trans("Box").'</td>';
+print '<td>'.$langs->trans("Note").'</td>';
+print '<td align="center" width="160">'.$langs->trans("ActiveOn").'</td>';
 print '<td align="center" width="60" colspan="2">'.$langs->trans("Position").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
 print "</tr>\n";
 
-$sql  = "SELECT b.rowid, b.box_id, b.position, d.name, d.file";
+$sql  = "SELECT b.rowid, b.box_id, b.position, d.name, d.file, d.note";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 $sql .= " where b.box_id = d.rowid";
 $sql .= " ORDER by position, box_order";
@@ -255,53 +257,54 @@ $resql = $db->query($sql);
 
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  $var=true;
-  
-  $box_order=1;
-  $foundrupture=1;
-  
-  // On lit avec un coup d'avance
-  $obj = $db->fetch_object($resql);
-  
-  while ($obj && $i < $num)
-    {
-      $var = ! $var;
-      $objnext = $db->fetch_object($resql);
-      
-      $module=eregi_replace('.php$','',$obj->file);
-      include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
-      $box=new $module();
-      
-      $logo=eregi_replace("^object_","",$box->boximg);
-      print '<tr '.$bc[$var].'><td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
-      print '<td>&nbsp;</td>';
-      print '<td align="center">' . $pos_name[$obj->position] . '</td>';
-      $hasnext=true;
-      $hasprevious=true;
-      if ($foundrupture) { $hasprevious=false; $foundrupture=0; }
-      if (! $objnext || $obj->position != $objnext->position) { $hasnext=false; $foundrupture=1; }
-      print '<td align="center" width="10">'.$box_order.'</td>';
-      print '<td align="center" width="50">';
-      print ($hasnext?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objnext->rowid.'">'.img_down().'</a>&nbsp;':'');
-      print ($hasprevious?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objprevious->rowid.'">'.img_up().'</a>':'');
-      print '</td>';
-      print '<td align="center">';
-      print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
-      print '</td>';
-      
-      print "</tr>\n";
-      $i++;
-      
-      $box_order++;
-      
-      if (! $foundrupture) $objprevious = $obj;
-      else $box_order=1;
-      $obj=$objnext;
-    }
-  
-  $db->free($resql);
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$var=true;
+	
+	$box_order=1;
+	$foundrupture=1;
+	
+	// On lit avec un coup d'avance
+	$obj = $db->fetch_object($resql);
+	
+	while ($obj && $i < $num)
+	{
+		$var = ! $var;
+		$objnext = $db->fetch_object($resql);
+	
+		$module=eregi_replace('.php$','',$obj->file);
+		include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
+		$box=new $module();
+	
+		$logo=eregi_replace("^object_","",$box->boximg);
+		print '<tr '.$bc[$var].'>';
+		print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
+		print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
+		print '<td align="center">' . $pos_name[$obj->position] . '</td>';
+		$hasnext=true;
+		$hasprevious=true;
+		if ($foundrupture) { $hasprevious=false; $foundrupture=0; }
+		if (! $objnext || $obj->position != $objnext->position) { $hasnext=false; $foundrupture=1; }
+		print '<td align="center">'.$box_order.'</td>';
+		print '<td align="center">';
+		print ($hasnext?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objnext->rowid.'">'.img_down().'</a>&nbsp;':'');
+		print ($hasprevious?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objprevious->rowid.'">'.img_up().'</a>':'');
+		print '</td>';
+		print '<td align="center">';
+		print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
+		print '</td>';
+	
+		print "</tr>\n";
+		$i++;
+	
+		$box_order++;
+	
+		if (! $foundrupture) $objprevious = $obj;
+		else $box_order=1;
+		$obj=$objnext;
+	}
+	
+	$db->free($resql);
 }
 
 print '</table><br>';

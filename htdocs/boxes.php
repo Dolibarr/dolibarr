@@ -51,7 +51,7 @@ class InfoBox
     
 
     /**
-     *      \brief      Retourne liste des boites elligibles pour la zone
+     *      \brief      Retourne tableau des boites elligibles pour la zone
      *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
      *      \return     array       Tableau des boites qualifiées
      */
