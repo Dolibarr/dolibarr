@@ -375,7 +375,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
     		
     		// Adresse de livraison
 		    print '<tr><td nowrap>'.$langs->trans('DeliveryAddress').'</td><td>';
-		    $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id');
+		    $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id');
 		    print '</td></tr>';
 	
 			
