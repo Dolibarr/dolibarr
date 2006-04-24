@@ -95,8 +95,10 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     
     if ($_POST["action"] == 'add')
     {
-        $socid = $_POST["socid"];
-        $result = $livraison->create($socid, $user);
+        $socid   = $_POST["socid"];
+        $origin  = $_POST["origin"];
+        $orignid = $_POST["origind"]
+        $result  = $livraison->create($socid, $user);
     
         if ($result >= 0)
         {
@@ -214,6 +216,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
     
         print '<form action="adresse_livraison.php" method="post" name="formsoc">';
         print '<input type="hidden" name="socid" value="'.$socid.'">';
+        print '<input type="hidden" name="origin" value="'.$origin.'">';
+        print '<input type="hidden" name="originid" value="'.$originid.'">';
         print '<input type="hidden" name="action" value="add">';
     
         print '<table class="border" width="100%">';
