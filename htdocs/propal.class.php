@@ -1600,6 +1600,7 @@ class Propal
         $this->cond_reglement_id = $src_propal->cond_reglement_id;
         $this->mode_reglement_id = $src_propal->mode_reglement_id;
 		$this->date_livraison 	 = $src_propal->date_livraison;
+		$this->adresse_livraison_id  = $src_propal->adresse_livraison_id;
 		$this->user_author_id    = $src_propal->user_author_id;
 		
         $this->cond_reglement    = $src_propal->cond_reglement;
