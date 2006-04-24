@@ -372,6 +372,11 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				$html->select_date(-1,'liv_','','',1,"crea_commande");
     		}
     		print "</td></tr>";
+    		
+    		// Adresse de livraison
+		    print '<tr><td nowrap>'.$langs->trans('DeliveryAddress').'</td><td>';
+		    $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id');
+		    print '</td></tr>';
 	
 			
 			// Conditions de réglement
@@ -711,6 +716,7 @@ else
 				print dolibarr_print_date($commande->date_livraison,'%a %d %B %Y');
 			}
 			print '</td></tr>';
+			
 			
 			// adresse de livraison
 			print '<tr><td height="10">';
