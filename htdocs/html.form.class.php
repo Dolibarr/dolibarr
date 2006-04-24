@@ -1614,7 +1614,7 @@ class Form
             	require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
             	$livraison=new Livraison($this->db);
 				      $livraison->fetch_adresse($selected);
-				      print $livraison->label;
+				      print '<a href=/comm/adresse_livraison.php?socid='.$socid.'>'.$livraison->label.'</a>';
             }
             else
             {
