@@ -195,11 +195,10 @@ if ($resql)
 	
 		$box=new $module();
 	
-		if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
+//		if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
+		if (in_array($obj->rowid, $actives))
 		{
 			// La boite est déjà activée
-			// \todo
-			// L'idéal serait de supprimer la valeur du tableau
 		}
 		else
 		{
