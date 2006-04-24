@@ -388,13 +388,13 @@ class Propal
 
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, remise_percent, remise_absolue,";
-        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison) ";
+        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
         $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
         $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
-        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."', $this->adresse_livraison_id)";
+        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."')";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -420,6 +420,13 @@ class Propal
                 if ($this->projetidp)
                 {
                     $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref'";
+                    $result=$this->db->query($sql);
+                }
+                
+                // Affectation de l'adresse de livraison
+                if ($this->adresse_livraison_id)
+                {
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison=$this->adresse_livraison_id WHERE ref='$this->ref'";
                     $result=$this->db->query($sql);
                 }
 
@@ -1616,13 +1623,13 @@ class Propal
 
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, remise_percent, remise_absolue,";
-        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
+        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison) ";
         $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
         $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
-        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."')";
+        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."', $this->adresse_livraison_id)";
 
         $resql=$this->db->query($sql);
         if ($resql)
