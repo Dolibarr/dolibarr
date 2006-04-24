@@ -110,6 +110,10 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }
+        elseif ($action == 'USER_NEW_PASSWORD')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+        }
         elseif ($action == 'USER_DISABLE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);

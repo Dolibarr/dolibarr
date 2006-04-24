@@ -212,7 +212,7 @@ if ($_POST["action"] == 'update' && $caneditperms)
     }
     if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
     {
-        $ret=$edituser->password($user,$password,$conf->password_encrypted);
+        $ret=$edituser->password($user,$password,$conf->password_encrypted,1);
         if ($ret < 0)
         {
             $message.='<div class="error">'.$edituser->error.'</div>';

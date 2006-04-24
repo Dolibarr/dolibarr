@@ -840,13 +840,13 @@ class User
    }
    
    
-  /**
-   *    \brief     Change le mot de passe d'un utilisateur
-   *    \param     user             Object user de l'utilisateur qui fait la modification
-   *    \param     password         Nouveau mot de passe (généré par defaut si non communiqué)
-   *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
-   *    \return    string           mot de passe, < 0 si erreur
-   */
+	/**
+	 *    \brief     Change le mot de passe d'un utilisateur
+	 *    \param     user             Object user de l'utilisateur qui fait la modification
+	 *    \param     password         Nouveau mot de passe (généré par defaut si non communiqué)
+	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
+	 *    \return    string           mot de passe, < 0 si erreur
+	 */
     function password($user, $password='', $isencrypted = 0)
     {
         global $langs;
@@ -865,7 +865,6 @@ class User
         {
             $sqlpass = $password;
         }
-        $this->pass=$password;
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".addslashes($sqlpass)."'";
         $sql.= " WHERE rowid = ".$this->id;
     
@@ -874,6 +873,15 @@ class User
         {
             if ($this->db->affected_rows())
             {
+		        $this->pass=$password;
+
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$lang,$conf);
+                if ($result < 0) $error++;
+                // Fin appel triggers
+
                 return $this->pass;
             }
             else {
