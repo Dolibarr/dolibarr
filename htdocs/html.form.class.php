@@ -1598,13 +1598,13 @@ class Form
             print '<tr><td>';
             $numaddress = $this->select_adresse_livraison($selected, $_GET['socid'], $htmlname);
             print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
             if ($numaddress==0)
             {
             	$langs->load("companies");
               print ' &nbsp; <a href='.DOL_DOCUMENT_ROOT .'/comm/adresse_livraison.php?socid='.$socid.'&action=create>'.$langs->trans("AddAddress").'</a>';
             }
-            print '</tr></table></form>';
+            print '</td></tr></table></form>';
         }
         else
         {
