@@ -375,7 +375,13 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
     		
     		// Adresse de livraison
 		    print '<tr><td nowrap>'.$langs->trans('DeliveryAddress').'</td><td>';
-		    $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id');
+		    $numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id');
+		    
+		    if ($numaddress==0)
+        {
+            print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
+        }
+        
 		    print '</td></tr>';
 	
 			

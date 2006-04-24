@@ -155,4 +155,5 @@ DeleteDeliveryAddress=Supprimer une adresse de livraison
 ConfirmDeleteDeliveryAddress=Êtes-vous sûr de vouloir supprimer cette adresse de livraison ?
 NewDeliveryAddress=Nouvelle adresse de livraison
 AddDeliveryAddress=Ajouter l'adresse
+AddAddress=Ajouter adresse
 NoOtherDeliveryAddress=Pas d'adresses alternatives définies

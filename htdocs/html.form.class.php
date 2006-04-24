@@ -792,6 +792,7 @@ class Form
                 }
             }
             print '</select>';
+            return $num;
         }
         else
         {
