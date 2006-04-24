@@ -352,7 +352,7 @@ class Livraison
 		global $langs;
 		global $conf;
 
-		$sql = 'SELECT a.rowid, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
+		$sql = 'SELECT a.rowid, a.fk_societe, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
 		$sql .= ','. $this->db->pdate('a.tms').' as date_update';
 		$sql .= ', a.cp,a.ville, a.note, a.fk_departement, a.fk_pays';
 		$sql .= ', p.code as pays_code, p.libelle as pays';
@@ -369,6 +369,7 @@ class Livraison
 				$obj = $this->db->fetch_object($resql);
 
 				$this->idl = $obj->rowid;
+				$this->socid = $obj->fk_societe;
 
 				$this->date_update = $obj->date_update;
 				$this->date_creation = $obj->date_creation;
