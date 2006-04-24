@@ -1588,7 +1588,7 @@ class Form
      */
     function form_adresse_livraison($page, $selected='', $socid, $htmlname='adresse_livraison_id')
     {
-        global $langs;
+        global $langs,$conf;
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
@@ -1596,9 +1596,14 @@ class Form
             print '<input type="hidden" name="socid" value="'.$socid.'">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_adresse_livraison($selected, $_GET['socid'], $htmlname);
+            $numaddress = $this->select_adresse_livraison($selected, $_GET['socid'], $htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            if ($numaddress==0)
+            {
+            	$langs->load("companies");
+              print ' &nbsp; <a href='.DOL_DOCUMENT_ROOT .'/comm/adresse_livraison.php?socid='.$socid.'&action=create>'.$langs->trans("AddAddress").'</a>';
+            }
             print '</tr></table></form>';
         }
         else
