@@ -1603,7 +1603,7 @@ class Form
             if ($numaddress==0)
             {
             	$langs->load("companies");
-              print ' &nbsp; <a href='.DOL_DOCUMENT_ROOT .'/comm/adresse_livraison.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$id.'>'.$langs->trans("AddAddress").'</a>';
+              print ' &nbsp; <a href=/comm/adresse_livraison.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$id.'>'.$langs->trans("AddAddress").'</a>';
             }
             print '</td></tr></table></form>';
         }
