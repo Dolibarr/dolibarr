@@ -761,7 +761,7 @@ class Form
      *    \param      selected        Id contact pré-sélectionn
      *    \param      htmlname        Nom champ formulaire
      */
-    function select_adresse_livraison($selected='', $socid, $htmlname='idl')
+    function select_adresse_livraison($selected='', $socid, $htmlname='adresse_livraison_id')
     {
         // On recherche les utilisateurs
         $sql = "SELECT a.rowid, a.label";
@@ -1597,7 +1597,7 @@ class Form
             print '<input type="hidden" name="socid" value="'.$socid.'">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $numaddress = $this->select_adresse_livraison($selected, $_GET['socid'], $htmlname);
+            $numaddress = $this->select_adresse_livraison($selected, $socid, $htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
             if ($numaddress==0)
