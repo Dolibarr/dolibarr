@@ -122,11 +122,23 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     
     if ($_POST["action"] == 'update')
     {
+        $socid   = $_POST["socid"];
+        $origin  = $_POST["origin"];
+        $orignid = $_POST["originid"];
         $result = $livraison->update($_POST["idl"], $socid, $user);
+        
         if ($result >= 0)
         {
+        	if ($origin == commande)
+        	{
+        		Header("Location: ../commande/fiche.php?&id=".$originid);
+        		exit;
+        	}
+        	else
+        	{
             Header("Location: adresse_livraison.php?socid=".$socid);
             exit;
+          }
 		}
 		else
 		{

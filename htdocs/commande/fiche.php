@@ -738,17 +738,13 @@ else
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			
-			//permet de revenir à la fiche commande une fois l'adresse de livraison modifiée
-			$origin   = commande;
-			$originid = $commande->id;
-			
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
 				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
 			}
 			else
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','','');
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
 			}
 			print '</td></tr>';
 			
