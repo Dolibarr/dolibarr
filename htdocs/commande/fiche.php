@@ -737,6 +737,11 @@ else
 			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
+			
+			//permet de revenir à la fiche commande une fois l'adresse de livraison modifiée
+			$origin   = commande;
+			$originid = $commande->id;
+			
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
 				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
