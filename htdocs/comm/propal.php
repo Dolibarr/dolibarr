@@ -656,14 +656,14 @@ if ($_GET['propalid'] > 0)
 			// adresse de livraison
 			if ($conf->global->PROPAL_ADD_DELIVERY_ADDRESS)
       {
-      	print '<tr><td height="10">';
+      	print '<tr><td>';
       	print '<table class="nobordernopadding" width="100%"><tr><td>';
       	print $langs->trans('DeliveryAddress');
       	print '</td>';
 					
-			  if ($_GET['action'] != 'editdelivery_adress' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$propal->socidp.'&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			  if ($_GET['action'] != 'editdelivery_adress' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socidp='.$propal->socidp.'&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			  print '</tr></table>';
-			  print '</td><td colspan="2">';
+			  print '</td><td colspan="3">';
 			
 			  if ($_GET['action'] == 'editdelivery_adress')
 			  {
