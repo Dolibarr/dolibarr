@@ -119,7 +119,8 @@ if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propal->creer)
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
-	$propal->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
+	$result=$propal->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
+	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 
 if ($_POST['action'] == 'add') 
