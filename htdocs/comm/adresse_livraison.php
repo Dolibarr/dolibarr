@@ -97,7 +97,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     {
         $socid   = $_POST["socid"];
         $origin  = $_POST["origin"];
-        $orignid = $_POST["originid"];
+        $originid = $_POST["originid"];
         $result  = $livraison->create($socid, $user);
     
         if ($result >= 0)
@@ -124,7 +124,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     {
         $socid   = $_POST["socid"];
         $origin  = $_POST["origin"];
-        $orignid = $_POST["originid"];
+        $originid = $_POST["originid"];
         $result = $livraison->update($_POST["idl"], $socid, $user);
         
         if ($result >= 0)
