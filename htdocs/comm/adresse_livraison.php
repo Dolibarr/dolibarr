@@ -332,6 +332,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<form action="adresse_livraison.php?socid='.$livraison->socid.'" method="post" name="formsoc">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="socid" value="'.$livraison->socid.'">';
+        print '<input type="hidden" name="origin" value="'.$origin.'">';
+        print '<input type="hidden" name="originid" value="'.$originid.'">';
         print '<input type="hidden" name="idl" value="'.$livraison->idl.'">';
 
         print '<table class="border" width="100%">';
