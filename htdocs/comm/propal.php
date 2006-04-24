@@ -667,11 +667,11 @@ if ($_GET['propalid'] > 0)
 			
 			  if ($_GET['action'] == 'editdelivery_adress')
 			  {
-				  $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->adresse_livraison_id,$_GET['socidp'],'adresse_livraison_id','propal',$propal->id);
+				  $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socidp'],'adresse_livraison_id','propal',$propal->id);
 			  }
 			  else
 			  {
-				  $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->adresse_livraison_id,$_GET['socidp'],'none','propal',$propal->id);
+				  $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socidp'],'none','propal',$propal->id);
 			  }
 			  print '</td></tr>';
 			}
