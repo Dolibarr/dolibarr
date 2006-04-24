@@ -97,7 +97,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     {
         $socid   = $_POST["socid"];
         $origin  = $_POST["origin"];
-        $orignid = $_POST["origind"]
+        $orignid = $_POST["origind"];
         $result  = $livraison->create($socid, $user);
     
         if ($result >= 0)
