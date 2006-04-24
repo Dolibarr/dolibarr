@@ -176,7 +176,19 @@ if ($_GET["action"] == 'create')
 			$html->select_date(-1,'liv_','','','',"addprop");
 		}
 		print '</td></tr>';
-	}  
+	}
+	
+	// Adresse de livraison
+	if ($conf->global->PROPAL_ADD_DELIVERY_ADDRESS)
+	{
+		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td><td>';
+		$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id');
+		if ($numaddress==0)
+		{
+			print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
+		}
+    print '</td></tr>';
+  }
 
     /*
      * Destinataire de la propale

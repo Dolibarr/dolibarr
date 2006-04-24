@@ -115,6 +115,12 @@ if ($_POST['action'] == 'setdate_livraison')
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 
+if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propal->creer)
+{
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+	$propal->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
+}
 
 if ($_POST['action'] == 'add') 
 {
@@ -131,7 +137,8 @@ if ($_POST['action'] == 'add')
     		$msg = '<div class="error">Impossible de copier la propal Id = ' . $_POST['copie_propal'] . '!</div>';
     	}
     	$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+      $propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+      $propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
 	    $propal->duree_validite = $_POST['duree_validite'];
 	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
 	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
@@ -151,7 +158,8 @@ if ($_POST['action'] == 'add')
     else
     {
 	    $propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+      $propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+      $propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
 	    $propal->duree_validite = $_POST['duree_validite'];
 	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
 	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
@@ -643,6 +651,29 @@ if ($_GET['propalid'] > 0)
 				}
 				print '</td>';
 				print '</tr>';
+			}
+			
+			// adresse de livraison
+			if ($conf->global->PROPAL_ADD_DELIVERY_ADDRESS)
+      {
+      	print '<tr><td height="10">';
+      	print '<table class="nobordernopadding" width="100%"><tr><td>';
+      	print $langs->trans('DeliveryAddress');
+      	print '</td>';
+					
+			  if ($_GET['action'] != 'editdelivery_adress' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$propal->socidp.'&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			  print '</tr></table>';
+			  print '</td><td colspan="2">';
+			
+			  if ($_GET['action'] == 'editdelivery_adress')
+			  {
+				  $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->adresse_livraison_id,$_GET['socidp'],'adresse_livraison_id','propal',$propal->id);
+			  }
+			  else
+			  {
+				  $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->adresse_livraison_id,$_GET['socidp'],'none','propal',$propal->id);
+			  }
+			  print '</td></tr>';
 			}
 						
 			// Conditions et modes de réglement

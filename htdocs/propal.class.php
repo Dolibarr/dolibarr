@@ -53,18 +53,19 @@ class Propal
     var $datep;
     var $products;
     var $products_qty;
-	var $price;
+    var $price;
     var $status;
     var $fin_validite;
     var $cond_reglement_id;
-	var $cond_reglement_code;
-	var $mode_reglement_id;
-	var $mode_reglement_code;
+    var $cond_reglement_code;
+    var $mode_reglement_id;
+    var $mode_reglement_code;
     var $remise;
-	var $remise_percent;
-	var $remise_absolue;
-	var $note;
-	var $note_public;
+    var $remise_percent;
+    var $remise_absolue;
+    var $note;
+    var $note_public;
+    var $adresse_livraison_id;
     
     var $labelstatut=array();
     var $labelstatut_short=array();
@@ -387,13 +388,13 @@ class Propal
 
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, remise_percent, remise_absolue,";
-        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
+        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison) ";
         $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
         $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
-        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."')";
+        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."', $this->adresse_livraison_id)";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -520,7 +521,7 @@ class Propal
         $sql.= ", ".$this->db->pdate("fin_validite")."as dfv, model_pdf";
         $sql.= ", note, note_public";
         $sql.= ", fk_projet, fk_statut, fk_user_author";
-        $sql.= ", fk_cond_reglement, fk_mode_reglement, date_livraison";
+        $sql.= ", fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison";
         $sql.= ", c.label as statut_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal,";
         $sql.= " ".MAIN_DB_PREFIX."c_propalst as c";
@@ -535,32 +536,33 @@ class Propal
             {
                 $obj = $this->db->fetch_object($resql);
     
-                $this->id                = $rowid;
+                $this->id                   = $rowid;
     
-                $this->datep             = $obj->dp;
-                $this->fin_validite      = $obj->dfv;
-                $this->date              = $obj->dp;
-                $this->ref               = $obj->ref;
-                $this->price             = $obj->price;
-                $this->remise            = $obj->remise;
-                $this->remise_percent    = $obj->remise_percent;
-                $this->remise_absolue    = $obj->remise_absolue;
-                $this->total             = $obj->total;
-                $this->total_ht          = $obj->price;
-                $this->total_tva         = $obj->tva;
-                $this->total_ttc         = $obj->total;
-                $this->socidp            = $obj->fk_soc;
-                $this->soc_id            = $obj->fk_soc;
-                $this->projetidp         = $obj->fk_projet;
-                $this->contactid         = $obj->fk_soc_contact;
-                $this->modelpdf          = $obj->model_pdf;
-                $this->note              = $obj->note;
-                $this->note_public       = $obj->note_public;
-                $this->statut            = $obj->fk_statut;
-                $this->statut_libelle    = $obj->statut_label;
-                $this->cond_reglement_id = $obj->fk_cond_reglement;
-                $this->mode_reglement_id = $obj->fk_mode_reglement;
-		        $this->date_livraison    = $obj->date_livraison;
+                $this->datep                = $obj->dp;
+                $this->fin_validite         = $obj->dfv;
+                $this->date                 = $obj->dp;
+                $this->ref                  = $obj->ref;
+                $this->price                = $obj->price;
+                $this->remise               = $obj->remise;
+                $this->remise_percent       = $obj->remise_percent;
+                $this->remise_absolue       = $obj->remise_absolue;
+                $this->total                = $obj->total;
+                $this->total_ht             = $obj->price;
+                $this->total_tva            = $obj->tva;
+                $this->total_ttc            = $obj->total;
+                $this->socidp               = $obj->fk_soc;
+                $this->soc_id               = $obj->fk_soc;
+                $this->projetidp            = $obj->fk_projet;
+                $this->contactid            = $obj->fk_soc_contact;
+                $this->modelpdf             = $obj->model_pdf;
+                $this->note                 = $obj->note;
+                $this->note_public          = $obj->note_public;
+                $this->statut               = $obj->fk_statut;
+                $this->statut_libelle       = $obj->statut_label;
+                $this->cond_reglement_id    = $obj->fk_cond_reglement;
+                $this->mode_reglement_id    = $obj->fk_mode_reglement;
+		            $this->date_livraison       = $obj->date_livraison;
+		            $this->adresse_livraison_id = $obj->fk_adresse_livraison;
     
                 $this->user_author_id = $obj->fk_user_author;
                 
@@ -798,6 +800,32 @@ class Propal
         }
     }
 
+    /**
+     *      \brief      Définit une adresse de livraison
+     *      \param      user        		Objet utilisateur qui modifie
+     *      \param      adresse_livraison      Adresse de livraison  
+     *      \return     int         		<0 si ko, >0 si ok
+     */
+    function set_adresse_livraison($user, $adresse_livraison)
+    {
+        if ($user->rights->propal->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$adresse_livraison."'";
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->adresse_livraison_id = $adresse_livraison;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dolibarr_syslog("Propal::set_adresse_livraison Erreur SQL");
+                return -1;
+            }
+        }
+    }
 
     /**
      *      \brief      Définit une remise globale relative sur la proposition

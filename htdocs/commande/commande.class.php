@@ -287,7 +287,7 @@ class Commande
 		$sql.= " '".addslashes($this->note)."', ";
 		$sql.= " '".$this->ref_client."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
 		$sql.= " '".($this->date_livraison?$this->db->idate($this->date_livraison):'null').'\',';
-		$sql.= " '".$this->adresse_reglement_id."')";
+		$sql.= " '".$this->adresse_livraison_id."')";
 
 		dolibarr_syslog("Commande.class.php::create sql=$sql");
 		if ( $this->db->query($sql) )
