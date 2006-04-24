@@ -810,7 +810,7 @@ class Propal
     {
         if ($user->rights->propal->creer)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$adresse_livraison."'";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$adresse_livraison."'";
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
     
             if ($this->db->query($sql) )
