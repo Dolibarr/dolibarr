@@ -35,8 +35,17 @@ $langs->load("products");
 $langs->load("stocks");
 
 
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+if (! $sortfield) $sortfield="p.ref";
+if (! $sortorder) $sortorder="DESC";
+
 $mesg = '';
 
+
+/*
+ * Actions
+ */
 
 // Ajout entrepot
 if ($_POST["action"] == 'add')
@@ -150,7 +159,7 @@ if ($_GET["action"] == 'create')
     print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%"><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
     
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-    $form->select_pays($entrepot->pays_id, 'pays_id');
+    $form->select_pays($entrepot->pays_id?$entrepot->pays_id:$mysoc->pays_code, 'pays_id');
     print '</td></tr>';
 
     print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
@@ -269,10 +278,10 @@ else
             print '<table class="noborder" width="100%">';
             print "<tr class=\"liste_titre\">";
 
-            print_liste_field_titre($langs->trans("Reference"),"", "p.ref","","","",$sortfield);
+            print_liste_field_titre($langs->trans("Reference"),"", "p.ref","&amp;id=".$_GET['id'],"","",$sortfield);
+            print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"","",$sortfield);
+            print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="right"',$sortfield);
             
-            print "<td>".$langs->trans("Label")."</td>";
-            print "<td align=\"center\">".$langs->trans("Units")."</td>";
             print "</tr>";
             $sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, ps.reel as value ";
             $sql .= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p ";
@@ -282,11 +291,14 @@ else
               $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
             }
             $sql .= " WHERE ps.fk_product = p.rowid ";
-            $sql .= " AND ps.reel >0 AND ps.fk_entrepot = ".$entrepot->id;
+            $sql .= " AND ps.reel >0";
+            $sql .= " AND ps.fk_entrepot = ".$entrepot->id;
             if ($conf->categorie->enabled && !$user->rights->categorie->voir)
             {
             	$sql.= ' AND IFNULL(c.visible,1)=1';
             }
+
+			$sql .=  " ORDER BY " . $sortfield . " " . $sortorder;
 
             //$sql .= $db->plimit($limit + 1 ,$offset);
 
@@ -316,13 +328,13 @@ else
 					         }
                     
                     $var=!$var;
-                    print "<tr $bc[$var]>";
                     //print '<td>'.dolibarr_print_date($objp->datem).'</td>';
+                    print "<tr $bc[$var]>";
                     print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
                     print img_object($langs->trans("ShowProduct"),"product").' '.$objp->ref;
                     print "</a></td>";
                     print '<td>'.$objp->produit.'</td>';
-                    print '<td align="center">'.$objp->value.'</td>';
+                    print '<td align="right">'.$objp->value.'</td>';
                     //print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
                     //print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
                     //print "</a></td>\n";
