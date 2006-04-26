@@ -194,20 +194,44 @@ if ($_GET['action'] == 'del_ligne')
 
 if ($_GET['action'] == 'add_ligne')
 {
-	$facfou = new FactureFournisseur($db, '', $_GET['facid']);
-	$tauxtva = price2num($_POST['tauxtva']);
-	if (strlen($_POST['label']) > 0 && !empty($_POST['amount']))
-	{
-		$ht = price2num($_POST['amount']);
-		$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
-	}
-	else
-	{
-		$ttc = price2num($_POST['amountttc']);
-		$ht = $ttc / (1 + ($tauxtva / 100));
-		$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
-	}
-	$_GET['action'] = 'edit';
+    $facfou = new FactureFournisseur($db, '', $_GET['facid']);
+
+    if ($_POST['idprod'])
+    {
+        $nv_prod = new Product($db);
+        $nv_prod->fetch($_POST['idprod']);
+       
+		// cas spécial pour lequel on a les meme référence que le fournisseur
+		// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
+        $label = $nv_prod->libelle;
+       
+        $result=$nv_prod->get_buyprice($_POST['fourn_id'], $_POST['qty']);
+        if ($result > 0)
+        {
+            $facfou->addline($label, $nv_prod->fourn_pu, $nv_prod->tva_tx, $_POST['qty'], $_POST['idprod']);
+        }
+        if ($result == -1)
+        {
+        	// \todo
+        	// Quantité insuffisante	
+        }
+    }
+    else
+    {
+        $tauxtva = price2num($_POST['tauxtva']);
+        if (strlen($_POST['label']) > 0 && !empty($_POST['amount']))
+        {
+            $ht = price2num($_POST['amount']);
+            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
+        }
+        else
+        {
+            $ttc = price2num($_POST['amountttc']);
+            $ht = $ttc / (1 + ($tauxtva / 100));
+            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
+        }
+    }   
+    $_GET['action'] = 'edit';
 }
 
 
@@ -340,13 +364,14 @@ else
 			print '<table class="border" width="100%">';
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 
-			print '<td>'.stripslashes($fac->socnom).'</td>';
+			print '<td>'.$societe->nom_url.'</td>';
 			print '<td width="50%" valign="top">'.$langs->trans('Comments').'</tr>';
 
 			print '<tr><td valign="top">'.$langs->trans('Ref').'</td><td valign="top">';
 			print '<input name="facnumber" type="text" value="'.$fac->ref.'"></td>';
 
-			print '<td rowspan="8" valign="top">';
+			$rownb=9;
+			print '<td rowspan="'.$rownb.'" valign="top">';
 			print '<textarea name="note" wrap="soft" cols="60" rows="10">';
 			print stripslashes($fac->note);
 			print '</textarea></td></tr>';
@@ -354,14 +379,17 @@ else
 			print '<tr><td valign="top">'.$langs->trans('Label').'</td><td>';
 			print '<input size="30" name="libelle" type="text" value="'.stripslashes($fac->libelle).'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans('AmountHT').' / '.$langs->trans('AmountTTC').'</td>';
-			print '<td>'.price($fac->total_ht).' / '.price($fac->total_ttc).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
+			print '<td nowrap="nowrap">'.price($fac->total_ht).'</td></tr>';
 
-			print '<tr><td>'.$langs->trans('DateBill').'</td><td>';
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
+			print '<td nowrap="nowrap">'.price($fac->total_ttc).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans('DateInvoice').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->datep,'','','','',"update");
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td>';
+			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->date_echeance,'ech','','','',"update");
 			print '</td></tr>';
 
@@ -373,7 +401,7 @@ else
 				$authorfullname=$author->fullname;
 			}
 			print '<tr><td>'.$langs->trans('Author').'</td><td>'.$authorfullname.'</td></tr>';
-			print '<tr><td>'.$langs->trans('Status').'</td><td>'.$fac->LibStatut($fac->paye,$fac->statut).'</td></tr>';
+			print '<tr><td>'.$langs->trans('Status').'</td><td>'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
 			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
 			print '</table>';
 			print '</form>';
@@ -399,13 +427,13 @@ else
 			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i][0].'</td>';
-				print '<td align="center">'.price($fac->lignes[$i][1]).'</td>';
-				print '<td align="center">'.price($fac->lignes[$i][1] * (1+($fac->lignes[$i][2]/100))).'</td>';
+				print '<td align="center" nowrap="nowrap">'.price($fac->lignes[$i][1]).'</td>';
+				print '<td align="center" nowrap="nowrap">'.price($fac->lignes[$i][1] * (1+($fac->lignes[$i][2]/100))).'</td>';
 				print '<td align="center">'.$fac->lignes[$i][3].'</td>';
-				print '<td align="center">'.price($fac->lignes[$i][4]).'</td>';
+				print '<td align="center" nowrap="nowrap">'.price($fac->lignes[$i][4]).'</td>';
 				print '<td align="center">'.$fac->lignes[$i][2].'</td>';
-				print '<td align="center">'.price($fac->lignes[$i][5]).'</td>';
-				print '<td align="right">'.price($fac->lignes[$i][6]).'</td>';
+				print '<td align="center" nowrap="nowrap">'.price($fac->lignes[$i][5]).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][6]).'</td>';
 				print '<td align="center">';
 				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a></td>';
 				print '</tr>';
@@ -432,8 +460,28 @@ else
 			print '</td><td align="center" colspan="2">';
 			print '&nbsp;';
 			print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
-			print '</table>';
-			print '</form>';
+
+            // Ajout de produits/services prédéfinis
+            if ($conf->produit->enabled)
+            {
+                print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
+                print '<input type="hidden" name="fourn_id" value="'. $fac->socidp .'">';
+                $var=! $var;
+                print '<tr '.$bc[$var].'>';
+                print '<td colspan="3">';
+                $html->select_produits_fournisseurs($fac->socidp,'','idprod',$filtre);
+                print '</td>';
+                print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+                print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+                print '</tr>';
+                print '</form>';
+            }
+
+            print '</table>';			
 		}
 		else
 		{
