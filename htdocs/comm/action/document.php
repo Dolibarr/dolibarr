@@ -228,7 +228,7 @@ if ($_GET["id"] > 0)
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=ationscomm&file='.$act->id.'/'.urlencode($file).'">'.$file.'</a>';
+				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=actions&file='.$act->id.'/'.urlencode($file).'">'.$file.'</a>';
 				print "</td>\n";
 				print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
 				print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';

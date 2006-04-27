@@ -40,10 +40,13 @@ $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 // Défini type et attachment
 $type = urldecode($_GET["type"]); $attachment = true;
-if (eregi('\.html',$original_file)) { $type='text/html'; $attachment = false; }
-if (eregi('\.csv',$original_file))  { $type='text/csv'; $attachment = true; }
-if (eregi('\.pdf',$original_file))  { $type='application/pdf'; $attachment = true; }
-if (eregi('\.xls',$original_file))  { $type='application/x-msexcel'; $attachment = true; }
+if (eregi('\.html',$original_file)) 	{ $type='text/html'; $attachment = false; }
+if (eregi('\.csv',$original_file))  	{ $type='text/csv'; $attachment = true; }
+if (eregi('\.pdf',$original_file))  	{ $type='application/pdf'; $attachment = true; }
+if (eregi('\.xls',$original_file))  	{ $type='application/x-msexcel'; $attachment = true; }
+if (eregi('\.jpg',$original_file)) 		{ $type='image/jpeg'; $attachment = true; }
+if (eregi('\.png',$original_file)) 		{ $type='image/jpeg'; $attachment = true; }
+if (eregi('\.tiff',$original_file)) 	{ $type='image/tiff'; $attachment = true; }
 
 //Suppression de la chaine de caractère ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
@@ -184,16 +187,15 @@ if ($modulepart)
         $original_file=$conf->telephonie->dir_output.'/'.$original_file;
     }
 
-
     // Wrapping pour les actions
-    if ($modulepart == 'actionscomm')
+    if ($modulepart == 'actions')
     {
         $user->getrights('commercial');
         //if ($user->rights->commercial->lire)      // Ce droit n'existe pas encore
         //{
         $accessallowed=1;
         //}
-        $original_file=$conf->commercial->dir_output.'/'.$original_file;
+        $original_file=$conf->actionscomm->dir_output.'/'.$original_file;
     }
 
     // Wrapping pour les produits et services
@@ -238,8 +240,9 @@ if (! $accessallowed)
 
 // Ouvre et renvoi fichier
 clearstatcache(); 
-
 $filename = basename($original_file);
+
+dolibarr_syslog("document.php download $original_file $filename content-type=$type");
 
 if (! file_exists($original_file)) 
 {
@@ -249,7 +252,6 @@ if (! file_exists($original_file))
 
 
 // Les drois sont ok et fichier trouvé, on l'envoie
-dolibarr_syslog("document.php download $filename content-type=$type");
 
 if ($type) header('Content-type: '.$type);
 if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
