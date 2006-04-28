@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,166 +91,166 @@ $html = new Form($db);
  * Mode creation
  *
  ************************************************************************/
-if ($_GET["action"] == 'create') 
+if ($_GET["action"] == 'create')
 {
-  print_titre("Créer une facture récurrente");
+	print_titre("Créer une facture récurrente");
 
-  $facture = new Facture($db);
+	$facture = new Facture($db);
 
-  if ($facture->fetch($_GET["facid"]) > 0) 
-    {
-       
-      print '<form action="fiche-rec.php" method="post">';
-      print '<input type="hidden" name="action" value="add">';
-      print '<input type="hidden" name="facid" value="'.$facture->id.'">';
-      
-      print '<table class="border" width="100%">';
-      
-      $facture->fetch_client();
-
-      print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$facture->client->nom.'</td>';
-      print '<td>'.$langs->trans("Comment").'</td></tr>';
-      
-      print '<tr><td>'.$langs->trans("Title").' :</td><td><input type="text" name="titre" size="16"></td>';
-
-      print '<td rowspan="4" valign="top">';
-      print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
-      
-      print "<tr><td>".$langs->trans("Author")." :</td><td>".$user->fullname."</td></tr>";
-      print "<tr><td>Conditions de réglement :</td><td>";
-      
-      print $facture->cond_reglement;
-      
-      print "</td></tr>";
-      
-      print "<tr><td>Projet :</td><td>";
-      if ($facture->projetid > 0)
+	if ($facture->fetch($_GET["facid"]) > 0)
 	{
-	  $proj = new Project($db);
-	  $proj->fetch($facture->projetid);
-	  print $proj->title;
+
+		print '<form action="fiche-rec.php" method="post">';
+		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
+
+		print '<table class="border" width="100%">';
+
+		$facture->fetch_client();
+
+		print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$facture->client->nom.'</td>';
+		print '<td>'.$langs->trans("Comment").'</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Title").' :</td><td><input type="text" name="titre" size="16"></td>';
+
+		print '<td rowspan="4" valign="top">';
+		print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';
+
+		print "<tr><td>".$langs->trans("Author")." :</td><td>".$user->fullname."</td></tr>";
+		print "<tr><td>Conditions de réglement :</td><td>";
+
+		print $facture->cond_reglement;
+
+		print "</td></tr>";
+
+		print "<tr><td>Projet :</td><td>";
+		if ($facture->projetid > 0)
+		{
+			$proj = new Project($db);
+			$proj->fetch($facture->projetid);
+			print $proj->title;
+		}
+		print "</td></tr></table>";
+
+
+
+		print '<br>';
+		print_titre('Services/Produits');
+
+		/*
+		* Lignes de factures
+		*
+		*/
+		print '<table class="noborder" width="100%">';
+		print '<tr><td colspan="3">';
+
+		$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $facture->id ORDER BY l.rowid";
+
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$num = $db->num_rows($result);
+			$i = 0; $total = 0;
+
+			echo '<table class="notopnoleftnoright" width="100%">';
+			if ($num)
+			{
+				print "<tr class=\"liste_titre\">";
+				print '<td width="54%">'.$langs->trans("Description").'</td>';
+				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
+				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
+				print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
+				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
+				print '<td width="12%" align="right">N.P.</td>';
+				print "</tr>\n";
+			}
+			$var=True;
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($result);
+
+				if ($objp->fk_product > 0)
+				{
+					$product = New Product($db);
+					$product->fetch($objp->fk_product);
+				}
+
+				$var=!$var;
+				print "<TR $bc[$var]>";
+				if ($objp->fk_product)
+				{
+					print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+				}
+				else
+				{
+					print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+				}
+				print '<TD align="center">'.$objp->tva_taux.' %</TD>';
+				print '<TD align="center">'.$objp->qty.'</TD>';
+				if ($objp->remise_percent > 0)
+				{
+					print '<td align="right">'.$objp->remise_percent." %</td>\n";
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+
+				print '<TD align="right">'.price($objp->subprice)."</td>\n";
+
+				if ($objp->fk_product > 0 && $objp->subprice <> $product->price)
+				{
+					print '<td align="right">'.price($product->price)."</td>\n";
+					$flag_different_price++;
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+
+				print "</tr>";
+
+				$i++;
+			}
+
+			$db->free($result);
+
+		}
+		else
+		{
+			print $db->error();
+		}
+		print "</table>";
+
+		print '</td></tr>';
+		if ($flag_different_price)
+		{
+			print '<tr><td colspan="3" align="left">';
+			print '<select name="deal_price">';
+			if ($flag_different_price>1)
+			{
+				print '<option value="new">Prendre en compte les nouveaux prix</option>';
+				print '<option value="old">Utiliser les anciens prix</option>';
+			}
+			else
+			{
+				print '<option value="new">Prendre en compte le nouveau prix</option>';
+				print '<option value="old">Utiliser l\'ancien prix</option>';
+			}
+			print '</select>';
+			print '</td></tr>';
+		}
+		print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
+		print "</form>\n";
+		print "</table>\n";
+
 	}
-      print "</td></tr></table>";
-
-
-    
-      print '<br>';
-      print_titre('Services/Produits');
-	  
-      print '<table class="noborder" width="100%">';
-      /*
-       * Lignes de factures
-       *
-       */
-      print '<tr><td colspan="3">';
-	
-      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $facture->id ORDER BY l.rowid";
-	  
-      $result = $db->query($sql);
-      if ($result)
+	else
 	{
-	  $num = $db->num_rows();
-	  $i = 0; $total = 0;
-	  
-	  echo '<table class="notopnoleftnoright" width="100%">';
-	  if ($num)
-	    {
-	      print "<tr class=\"liste_titre\">";
-	      print '<td width="54%">'.$langs->trans("Description").'</td>';
-	      print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
-	      print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-	      print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-	      print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
-	      print '<td width="12%" align="right">N.P.</td>';
-	      print "</tr>\n";
-	    }
-	  $var=True;
-	  while ($i < $num)
-	    {
-	      $objp = $db->fetch_object();
-
-	      if ($objp->fk_product > 0)
-		{
-		  $product = New Product($db);
-		  $product->fetch($objp->fk_product);
-		}
-
-	      $var=!$var;
-	      print "<TR $bc[$var]>";
-	      if ($objp->fk_product)
-		{
-		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
-		}
-	      else
-		{
-		  print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
-		}
-	      print '<TD align="center">'.$objp->tva_taux.' %</TD>';
-	      print '<TD align="center">'.$objp->qty.'</TD>';
-	      if ($objp->remise_percent > 0)
-		{
-		  print '<td align="right">'.$objp->remise_percent." %</td>\n";
-		}
-	      else
-		{
-		  print '<td>&nbsp;</td>';
-		}
-
-	      print '<TD align="right">'.price($objp->subprice)."</td>\n";
-
-	      if ($objp->fk_product > 0 && $objp->subprice <> $product->price)
-		{
-		  print '<td align="right">'.price($product->price)."</td>\n";
-		  $flag_different_price++;
-		}
-	      else
-		{
-		  print '<td>&nbsp;</td>';
-		}
-	      
-	      print "</tr>";
-	      
-	      $i++;
-	    }
-	  
-	  $db->free();
-	  
-	} 
-      else
-	{
-	  print $db->error();
+		print "Erreur facture $facture->id inexistante";
 	}
-      print "</table>";
-      
-      print '</td></tr>';
-      if ($flag_different_price)
-	{
-	  print '<tr><td colspan="3" align="left">';
-	  print '<select name="deal_price">';
-	  if ($flag_different_price>1)
-	    {
-	      print '<option value="new">Prendre en compte les nouveaux prix</option>';
-	      print '<option value="old">Utiliser les anciens prix</option>';
-	    }
-	  else
-	    {
-	      print '<option value="new">Prendre en compte le nouveau prix</option>';
-	      print '<option value="old">Utiliser l\'ancien prix</option>';
-	    }
-	  print '</select>';
-	  print '</td></tr>';
-	}
-      print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
-      print "</form>\n";
-      print "</table>\n";
-      
-    } 
-  else 
-    {
-      print "Erreur facture $facture->id inexistante";
-    }
-} 
+}
 else 
 /* *************************************************************************** */
 /*                                                                             */
@@ -424,7 +424,7 @@ else
       }
     if ($result)
       {
-	$num = $db->num_rows();
+	$num = $db->num_rows($result);
 	print_barre_liste($langs->trans("Bills"),$page,"fiche-rec.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	$i = 0;
@@ -441,7 +441,7 @@ else
 	    $var=True;
 	    while ($i < min($num,$limit))
 	      {
-		$objp = $db->fetch_object();
+		$objp = $db->fetch_object($result);
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
@@ -486,5 +486,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
