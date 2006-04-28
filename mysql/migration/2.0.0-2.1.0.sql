@@ -6,15 +6,7 @@
 -- 
 
 
-create table llx_commande_model_pdf
-(
-  nom         varchar(50) PRIMARY KEY,
-  libelle     varchar(255),
-  description text
-)type=innodb;
-
-insert into llx_commande_model_pdf(nom) values('azur');
-
+drop table llx_commande_model_pdf if exist;
 
 alter table llx_commande add column note_public text after note;
 
@@ -70,12 +62,8 @@ update llx_actioncomm set datec = datea where datec is null;
 update llx_actioncomm set datep = datea where datep is null;
 
 
-create table llx_expedition_model_pdf
-(
-  nom         varchar(50) PRIMARY KEY,
-  libelle     varchar(255),
-  description text
-)type=innodb;
+drop table llx_expedition_model_pdf if exists;
+
 
 create table llx_product_det
 (
@@ -107,12 +95,7 @@ ALTER TABLE llx_commande_fournisseur ADD CONSTRAINT fk_commande_fournisseur_soci
 alter table llx_commande_fournisseur add note_public text after note;
 
 
-create table llx_avoir_model_pdf
-(
-  nom         varchar(50) PRIMARY KEY,
-  libelle     varchar(255),
-  description text
-)type=innodb;
+drop table if exists llx_avoir_model_pdf;
 
 
 drop table if exists llx_soc_recontact;
@@ -164,3 +147,14 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (291, 5,  '10','0','VAT Rate 10',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (292, 5,   '0','0','VAT Rate 0',1);
 
+
+alter table llx_propal_model_pdf rename to llx_document_model;
+alter table llx_document_model add column type varchar(20) NOT NULL after nom;
+update llx_document_model set type='propal' where type='';
+
+insert into llx_document_model(nom,type) values('einstein','order');
+insert into llx_document_model(nom,type) values('soleil','ficheinter');
+insert into llx_document_model(nom,type) values('rouget','shipping');
+delete from llx_document_model where nom='adytek';
+delete from llx_document_model where nom='rouge' and type='order';
+delete from llx_document_model where nom='azur' and type='order';
