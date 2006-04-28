@@ -6,7 +6,6 @@ NewIntervention=New intervention
 EditIntervention=Editer intervention
 AddIntervention=Add intervention
 ListOfInterventions=List of interventions
-TemplatePDFInterventions=PDF template for intervention cards
 LastInterventions=Last %s interventions
 AllInterventions=All interventions
 CreateDaftIntervention=Create draft

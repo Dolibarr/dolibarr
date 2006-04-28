@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
 
         // Dimension page pour format A4
+        $this->type = 'pdf';
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
@@ -65,8 +66,6 @@ class pdf_crabe extends ModelePDFFactures
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
-        $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
-        $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
       		$this->franchise=1;
 

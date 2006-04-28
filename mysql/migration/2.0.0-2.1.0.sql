@@ -6,7 +6,7 @@
 -- 
 
 
-drop table llx_commande_model_pdf if exist;
+drop table if exists llx_commande_model_pdf;
 
 alter table llx_commande add column note_public text after note;
 
@@ -62,7 +62,7 @@ update llx_actioncomm set datec = datea where datec is null;
 update llx_actioncomm set datep = datea where datep is null;
 
 
-drop table llx_expedition_model_pdf if exists;
+drop table if exists llx_expedition_model_pdf;
 
 
 create table llx_product_det

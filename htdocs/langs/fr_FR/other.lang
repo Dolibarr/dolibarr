@@ -47,6 +47,9 @@ CanceledBy=Annulé par %s
 ClosedBy=Cloturé par %s
 FileWasRemoved=Le fichier a été supprimé
 FeatureNotYetAvailable=Fonctionnalité pas encore disponible dans cette version
+FeaturesSupported=Fonctionnalités supportées
+Width=Largeur
+Height=Hauteur
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier

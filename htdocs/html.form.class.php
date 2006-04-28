@@ -68,7 +68,7 @@ class Form
     {
         global $conf;
         $s ='';
-        if ($conf->use_javascript)
+        if ($conf->use_javascript && $htmltooltip)
         {
             $s.=' onmouseover="showtip(\''.$htmltooltip.'\')"';
             $s.=' onMouseout="hidetip()"';

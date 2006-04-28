@@ -58,8 +58,11 @@ class ModeleDon extends FPDF
      */
     function liste_modeles($db)
     {
+        $type='donation';
         $liste=array();
-        $sql ="";
+        $sql ="SELECT nom as id, nom as lib";
+        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
+        $sql.=" WHERE type = '".$type."'";
         
         $resql = $db->query($sql);
         if ($resql)

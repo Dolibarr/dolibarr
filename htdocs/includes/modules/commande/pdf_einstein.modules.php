@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 */
 
 /**
-       	\file       htdocs/includes/modules/commande/pdf_azur.modules.php
-		\ingroup    propale
-		\brief      Fichier de la classe permettant de générer les commandes au modèle Azur
+       	\file       htdocs/includes/modules/commande/pdf_einstein.modules.php
+		\ingroup    commande
+		\brief      Fichier de la classe permettant de générer les commandes au modèle Einstein
 		\author	    Laurent Destailleur
 		\version    $Revision$
 		\version    $Revision$
@@ -34,26 +34,27 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
 /**
-	    \class      pdf_propale_azur
-		\brief      Classe permettant de générer les commandes au modèle Azur
+	    \class      pdf_einstein
+		\brief      Classe permettant de générer les commandes au modèle Einstein
 */
 
-class pdf_azur extends ModelePDFCommandes
+class pdf_einstein extends ModelePDFCommandes
 {
     
     /**
 			\brief      Constructeur
     		\param	    db		Handler accès base de donnée
     */
-    function pdf_azur($db)
+    function pdf_einstein($db)
     {
         global $conf,$langs;
 
         $this->db = $db;
-        $this->name = "azur";
+        $this->name = "einstein";
         $this->description = "Modèle de commandes complet (logo...)";
 
         // Dimension page pour format A4
+        $this->type = 'pdf';
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
@@ -66,8 +67,6 @@ class pdf_azur extends ModelePDFCommandes
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
-        $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
-        $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
       		$this->franchise=1;
 

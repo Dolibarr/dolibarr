@@ -32,6 +32,7 @@ require("./pre.inc.php");
 
 $langs->load("admin");
 $langs->load("bills");
+$langs->load("other");
 
 if (!$user->admin)
   accessforbidden();
@@ -43,47 +44,49 @@ if (!$user->admin)
  
 if ($_GET["action"] == 'set')
 {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."avoir_model_pdf (nom) VALUES ('".$_GET["value"]."')";
-
+	$type='creditnote';
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom) VALUES ('".$_GET["value"]."','".$type."')";
     if ($db->query($sql))
     {
 
     }
 }
+
 if ($_GET["action"] == 'del')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."avoir_model_pdf WHERE nom='".$_GET["value"]."'";
-
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom='".$_GET["value"]."'";
     if ($db->query($sql))
     {
 
     }
 }
 
-
-$avoir_addon_var_pdf = $conf->global->AVOIR_ADDON_PDF;
-
-if ($_GET["action"] == 'setpdf')
+if ($_GET["action"] == 'setdoc')
 {
+	$db->begin();
+
     if (dolibarr_set_const($db, "AVOIR_ADDON_PDF",$_GET["value"]))
     {
         // La constante qui a été lue en avant du nouveau set
         // on passe donc par une variable pour avoir un affichage cohérent
-        $avoir_addon_var_pdf = $_GET["value"];
+        $conf->global->AVOIR_ADDON_PDF = $_GET["value"];
     }
 
     // On active le modele
-    $sql_del = "delete from ".MAIN_DB_PREFIX."avoir_model_pdf where nom = '".$_GET["value"]."';";
-    $db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."avoir_model_pdf (nom) VALUES ('".$_GET["value"]."')";
-    if ($db->query($sql))
+	$type='creditnote';
+    $sql_del = "delete from ".MAIN_DB_PREFIX."document_model where nom = '".$_GET["value"]."'";
+    $result1=$db->query($sql_del);
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+    $result2=$db->query($sql);
+    if ($result1 && $result2) 
     {
-
+		$db->commit();
+    }
+    else
+    {
+    	$db->rollback();
     }
 }
-
-$avoir_addon_var = $conf->global->AVOIR_ADDON;
 
 if ($_GET["action"] == 'setmod')
 {
@@ -96,7 +99,7 @@ if ($_GET["action"] == 'setmod')
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
-      $avoir_addon_var = $_GET["value"];
+      $conf->global->AVOIR_ADDON = $_GET["value"];
     }
 }
 
@@ -105,9 +108,10 @@ if ($_GET["action"] == 'setmod')
  * Affiche page
  */
 
-$dir = DOL_DOCUMENT_ROOT .'/avoir/modules/';
-
 llxHeader("","");
+
+$dir = DOL_DOCUMENT_ROOT .'/avoir/modules/';
+$html=new Form($db);
 
 $h = 0;
 
@@ -134,11 +138,14 @@ print '<td>'.$langs->trans("Name")."</td>\n";
 print '<td>'.$langs->trans("Description")."</td>\n";
 print '<td nowrap>'.$langs->trans("Example")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
 
 $handle = opendir($dir);
+
+$var=true;
 if ($handle)
 {
     $var=true;
@@ -150,30 +157,37 @@ if ($handle)
 
             require_once(DOL_DOCUMENT_ROOT ."/avoir/modules/".$file.".php");
 
-            $modAvoir = new $file;
+            $module = new $file;
 
             $var=!$var;
             print "<tr ".$bc[$var].">\n  <td width=\"140\">".$file."</td>";
-            print "\n  <td>".$modAvoir->info()."</td>\n";
-            print "\n  <td nowrap>".$modAvoir->getExample()."</td>\n";
+            print "\n  <td>".$module->info()."</td>\n";
 
-            print '<td align="center">';
-            if ($avoir_addon_var == "$file")
-            {
-                $title='';
-                if ($modAvoir->getNextValue() != $langs->trans("NotAvailable"))
-                {
-                    $title=$langs->trans("NextValue").': '.$modAvoir->getNextValue();
-                }
-                print img_tick($title);
-            }
-            else
-            {
-                print "<a href=\"avoir.php?action=setmod&amp;value=".$file."\">".$langs->trans("Activate")."</a>";
-            }
-            print '</td>';
-
-
+	        // Affiche example
+	        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
+	
+	        print '<td align="center">';
+	        if ($conf->global->FACTURE_ADDON == "$file")
+	        {
+	            print img_tick($langs->trans("Activated"));
+	        }
+	        else
+	        {
+	            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+	        }
+	        print '</td>';
+	
+			// Info
+			$htmltooltip='';
+	        $nextval=$module->getNextValue();
+	        if ($nextval != $langs->trans("NotAvailable"))
+	        {
+	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+	        }
+	    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
+	    	print ($htmltooltip?img_help(0):'');
+	    	print '</td>';
+    	
             print "</tr>\n";
         }
     }
@@ -183,29 +197,31 @@ print "</table><br>\n";
 
 
 /*
- * PDF
+ * Modeles de documents
  */
 
 print_titre($langs->trans("DiscountsPDFModules"));
 
+// Defini tableau def de modele invoice
 $def = array();
-
-$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."avoir_model_pdf";
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = 'creditnote'";
 $resql=$db->query($sql);
 if ($resql)
 {
-  $i = 0;
-  $num_rows=$db->num_rows($resql);
-  while ($i < $num_rows)
-    {
-      $array = $db->fetch_array($resql);
-      array_push($def, $array[0]);
-      $i++;
-    }
+	$i = 0;
+	$num_rows=$db->num_rows($resql);
+	while ($i < $num_rows)
+	{
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 $dir = DOL_DOCUMENT_ROOT .'/avoir/modules/pdf/';
@@ -214,8 +230,9 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td width=\"140\">".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
-print '  <td align="center" colspan="2">'.$langs->trans("Activated")."</td>\n";
-print '  <td align="center">'.$langs->trans("Default")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -236,35 +253,53 @@ while (($file = readdir($handle))!==false)
       print "</td>\n  <td>\n";
       require_once($dir.$file);
       $obj = new $classname($db);
-      
       print $obj->description;
+      print '</td>';
 
-      print "</td>\n  <td align=\"center\">\n";
+		// Activé
+		if (in_array($name, $def))
+		{
+			print "<td align=\"center\">\n";
+			if ($conf->global->FACTURE_AVOIR_ADDON_PDF != "$name") 
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+				print img_tick($langs->trans("Disable"));
+				print '</a>';
+			}
+			else
+			{
+				print img_tick($langs->trans("Enabled"));
+			}
+			print "</td>";
+		}
+		else
+		{
+			print "<td align=\"center\">\n";
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+			print "</td>";
+		}
 
-      if (in_array($name, $def))
-	{
-	  print img_tick();
-	  print "</td>\n  <td>";
-	  print '<a href="avoir.php?action=del&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
-	}
-      else
-	{
-	  print "&nbsp;";
-	  print "</td>\n  <td>";
-	  print '<a href="avoir.php?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-	}
+		// Defaut
+		print "<td align=\"center\">";
+		if ($conf->global->FACTURE_AVOIR_ADDON_PDF == "$name")
+		{
+			print img_tick($langs->trans("Default"));
+		}
+		else
+		{
+			print '<a href="propale.php?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+		}
+		print '</td>';
+		
+		// Info
+    	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($obj->type?$obj->type:$langs->trans("Unknown"));
+    	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$obj->page_largeur;
+    	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$obj->page_hauteur;
+    	$htmltooltip.='<br>'.$langs->trans("FeaturesSupported").':';
+    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($obj->option_logo);
+    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>'.img_help(0).'</td>';
 
-      print "</td>\n  <td align=\"center\">";
-
-      if ($avoir_addon_var_pdf == "$name")
-	{
-	  print img_tick();
-	}
-      else
-	{
-      print '<a href="avoir.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-	}
-      print '</td></tr>';
+		print '</tr>';
     }
 }
 closedir($handle);

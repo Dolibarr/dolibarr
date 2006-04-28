@@ -54,9 +54,11 @@ class ModelePDFPropales extends FPDF
      */
     function liste_modeles($db)
     {
+        $type='propal';
         $liste=array();
         $sql ="SELECT nom as id, nom as lib";
-        $sql.=" FROM ".MAIN_DB_PREFIX."propal_model_pdf";
+        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
+        $sql.=" WHERE type = '".$type."'";
         
         $resql = $db->query($sql);
         if ($resql)

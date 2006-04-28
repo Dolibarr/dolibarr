@@ -707,11 +707,12 @@ function img_disable($alt = "default")
         \brief      Affiche logo help avec curseur "?"
         \return     string      Retourne tag img
 */
-function img_help()
+function img_help($usehelpcursor=1)
 {
   global $conf,$langs;
-  return '<img style="cursor: help;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0" alt="" title="">';
+  return '<img '.($usehelpcursor?'style="cursor: help;" ':'').' src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0" alt="" title="">';
 }
+
 /**
         \brief      Affiche picto calendrier "?"
         \return     string      Retourne tag img

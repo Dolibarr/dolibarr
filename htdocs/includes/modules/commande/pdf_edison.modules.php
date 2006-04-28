@@ -22,9 +22,9 @@
  */
 
 /** 
-        \file       htdocs/includes/modules/commande/pdf_rouge.modules.php
-        \ingroup    propale
-        \brief      Fichier de la classe permettant de générer les commandes au modèle Rouge
+        \file       htdocs/includes/modules/commande/pdf_edison.modules.php
+        \ingroup    commande
+        \brief      Fichier de la classe permettant de générer les commandes au modèle Edison
         \version    $Revision$
 */
 
@@ -32,23 +32,24 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php
 
 
 /**
-        \class      pdf_propale_rouge
-        \brief      Classe permettant de générer les commandes au modèle Rouge
+        \class      pdf_edison
+        \brief      Classe permettant de générer les commandes au modèle Edison
 */
 
-class pdf_rouge extends ModelePDFCommandes
+class pdf_edison extends ModelePDFCommandes
 {
 
   /**	\brief      Constructeur
         \param	    db	    handler accès base de donnée
   */
-  function pdf_rouge($db=0)
+  function pdf_edison($db=0)
     { 
         $this->db = $db;
-        $this->name = "rouge";
+        $this->name = "edison";
         $this->description = "Modèle de commande simple";
 
         // Dimension page pour format A4
+        $this->type = 'pdf';
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);

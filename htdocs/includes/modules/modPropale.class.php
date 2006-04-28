@@ -153,8 +153,8 @@ class modPropale extends DolibarrModules
     $this->dirs[1] = $conf->propal->dir_images;
 
     $sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom = '".$this->const[0][2]."'",
-		 "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES('".$this->const[0][2]."');",
+		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."'",
+		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES('".$this->const[0][2]."','propal')",
 		 );
     
     return $this->_init($sql);

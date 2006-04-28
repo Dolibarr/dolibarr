@@ -33,35 +33,82 @@ require("./pre.inc.php");
 
 $langs->load("admin");
 $langs->load("bills");
+$langs->load("other");
 
 if (!$user->admin)
   accessforbidden();
 
-
-$facture_addon_var      = FACTURE_ADDON;
-$facture_addon_var_pdf  = FACTURE_ADDON_PDF;
-$facture_rib_number_var = FACTURE_RIB_NUMBER;
-$facture_chq_number_var = FACTURE_CHQ_NUMBER;
-$facture_tva_option     = FACTURE_TVAOPTION;
-
 $typeconst=array('yesno','texte','chaine');
 
 
+/*
+ * Actions
+ */
+
 if ($_GET["action"] == 'set')
 {
-  if (dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"]))
-    $facture_addon_var = $_GET["value"];
+	$type='invoice';
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+    if ($db->query($sql))
+    {
+
+    }
+}
+
+if ($_GET["action"] == 'del')
+{
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom='".$_GET["value"]."'";
+    if ($db->query($sql))
+    {
+
+    }
+}
+
+if ($_GET["action"] == 'setdoc')
+{
+	$db->begin();
+	
+    if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"]))
+    {
+        // La constante qui a été lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage cohérent
+        $conf->global->FACTURE_ADDON_PDF = $_GET["value"];
+    }
+
+    // On active le modele
+    $type='invoice';
+    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model where nom = '".$_GET["value"]."'";
+    $result1=$db->query($sql_del);
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+    $result2=$db->query($sql);
+    if ($result1 && $result2) 
+    {
+		$db->commit();
+    }
+    else
+    {
+    	$db->rollback();
+    }
+}
+
+if ($_GET["action"] == 'setmod')
+{
+    // \todo Verifier si module numerotation choisi peut etre activé
+    // par appel methode canBeActivated
+
+
+	if (dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"]))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      $conf->global->FACTURE_ADDON = $_GET["value"];
+    }
 }
 
 if ($_POST["action"] == 'setribchq')
 {
-  if (dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"])) $facture_rib_number_var = $_POST["rib"];
-  if (dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"])) $facture_chq_number_var = $_POST["chq"];
-}
-
-if ($_GET["action"] == 'setpdf')
-{
-  if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"])) $facture_addon_var_pdf = $_GET["value"];
+  if (dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"])) $conf->global->FACTURE_RIB_NUMBER = $_POST["rib"];
+  if (dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"])) $conf->global->FACTURE_CHQ_NUMBER = $_POST["chq"];
 }
 
 if ($_POST["action"] == 'setforcedate')
@@ -92,11 +139,10 @@ if ($_GET["action"] == 'delete')
  * Affiche page
  */
 
+llxHeader("","");
+
 $dir = "../includes/modules/facture/";
 $html=new Form($db);
-
-
-llxHeader("","");
 
 $h = 0;
 
@@ -123,13 +169,14 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td nowrap>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
 
 $handle=opendir($dir);
 
-$var=True;
+$var=true;
 while (($file = readdir($handle))!==false)
 {
     if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
@@ -145,29 +192,37 @@ while (($file = readdir($handle))!==false)
         $classname = "mod_facture_".$file;
         require_once($dir.$filebis);
 
-        $obj = new $classname($db);
-        print $obj->info();
+        $module = new $classname($db);
+        print $module->info();
 
         print '</td>';
 
         // Affiche example
-        print '<td>'.$obj->getExample().'</td>';
+        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
 
         print '<td align="center">';
-        if ($facture_addon_var == "$file")
+        if ($conf->global->FACTURE_ADDON == "$file")
         {
-            $title='';
-            if ($obj->getNextValue() != $langs->trans("NotAvailable"))
-            {
-                    $title=$langs->trans("NextValue").': '.$obj->getNextValue();
-            }
-            print img_tick($title);
+            print img_tick($langs->trans("Activated"));
         }
         else
         {
-            print '<a href="facture.php?action=set&amp;value='.$file.'">'.$langs->trans("Default").'</a>';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
         }
-        print "</td></tr>\n";
+        print '</td>';
+
+		// Info
+		$htmltooltip='';
+        $nextval=$module->getNextValue();
+        if ($nextval != $langs->trans("NotAvailable"))
+        {
+            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+        }
+    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
+    	print ($htmltooltip?img_help(0):'');
+    	print '</td>';
+
+        print "</tr>\n";
     }
 }
 closedir($handle);
@@ -176,10 +231,32 @@ print '</table>';
 
 
 /*
- *  PDF
+ *  Modeles de documents
  */
 print '<br>';
-print_titre("Modèles de facture pdf");
+print_titre($langs->trans("BillsPDFModules"));
+
+// Defini tableau def de modele invoice
+$def = array();
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = 'invoice'";
+$resql=$db->query($sql);
+if ($resql)
+{
+	$i = 0;
+	$num_rows=$db->num_rows($resql);
+	while ($i < $num_rows)
+	{
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
+}
+else
+{
+	dolibarr_print_error($db);
+}
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -187,6 +264,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -206,26 +284,56 @@ while (($file = readdir($handle))!==false)
         echo "$name";
         print "</td><td>\n";
         require_once($dir.$file);
-        $obj = new $classname($db);
+        $module = new $classname($db);
+        print $module->description;
+        print '</td>';
     
-        print $obj->description;
-    
-        print '</td><td align="center">';
-    
-        if ($facture_addon_var_pdf == "$name")
-        {
-            print '&nbsp;';
-            print '</td><td align="center">';
-            print img_tick();
-        }
-        else
-        {
-            print '&nbsp;';
-            print '</td><td align="center">';
-            print '<a href="facture.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
-        }
-        print "</td></tr>\n";
-    
+		// Activé
+		if (in_array($name, $def))
+		{
+			print "<td align=\"center\">\n";
+			if ($conf->global->FACTURE_ADDON_PDF != "$name") 
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+				print img_tick($langs->trans("Disable"));
+				print '</a>';
+			}
+			else
+			{
+				print img_tick($langs->trans("Enabled"));
+			}
+			print "</td>";
+		}
+		else
+		{
+			print "<td align=\"center\">\n";
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+			print "</td>";
+		}
+
+		// Defaut
+		print "<td align=\"center\">";
+		if ($conf->global->FACTURE_ADDON_PDF == "$name")
+		{
+			print img_tick($langs->trans("Default"));
+		}
+		else
+		{
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+		}
+		print '</td>';
+		
+		// Info
+    	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
+    	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
+    	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
+    	$htmltooltip.='<br>'.$langs->trans("FeaturesSupported").':';
+    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+    	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
+    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
+    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>'.img_help(0).'</td>';
+
+        print "</tr>\n";
     }
 }
 closedir($handle);
@@ -269,7 +377,7 @@ if ($db->query($sql))
 	$var=!$var;
 	$row = $db->fetch_row($i);
 	
-	if ($facture_rib_number_var == $row[0])
+	if ($conf->global->FACTURE_RIB_NUMBER == $row[0])
 	  {
 	    print '<option value="'.$row[0].'" selected="true">'.$row[1].'</option>';
 	  }
@@ -307,7 +415,7 @@ if ($db->query($sql))
 	  $var=!$var;
 	  $row = $db->fetch_row($i);
 	  
-	  if ($facture_chq_number_var == $row[0])
+	  if ($conf->global->FACTURE_CHQ_NUMBER == $row[0])
 	    {
 	      print '<option value="'.$row[0].'" selected="true">'.$row[1].'</option>';
 	    }

@@ -375,16 +375,24 @@ ErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to
 BillsSetup=Invoices module setup
 BillsDate=Invoices date
 BillsNumberingModule=Invoices numbering module
+BillsPDFModules=Invoice documents models
+DiscountSetup=Credit note module setup
+DiscountsNumberingModules=Credit note numbering modules
+DiscountsPDFModules=Credit note document models
+Discounts=Discounts
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
 NumberOfProductLines=Number of product lines
 PathToDocuments=Path to documents
 ProposalsNumberingModules=Commercial proposal numbering modules
-ProposalsPDFModules=Commercial proposal PDF modules
+ProposalsPDFModules=Commercial proposal documents models
 ##### Orders #####
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules
+OrdersModelModule=Order documents models
+##### Fiche inter #####
+TemplatePDFInterventions=Intervention card documents models
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
 ##### Bookmark4u #####
@@ -455,8 +463,3 @@ NewRSS=New RSS
 ##### Mailing #####
 MailingSetup=Mailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
-##### Discount setup #####
-DiscountSetup=Discount module setup
-DiscountsNumberingModules=Discount numbering modules
-DiscountsPDFModules=Discount PDF modules
-Discounts=Discounts
