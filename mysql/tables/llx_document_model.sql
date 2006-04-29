@@ -1,9 +1,6 @@
--- Generated from dolibarr_mysql2pgsql
--- (c) 2004, PostgreSQL Inc.
--- (c) 2005, Laurent Destailleur.
-
 -- ===================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,13 +19,14 @@
 -- $Id$
 -- $Source$
 --
--- Liste des modeles de propale pdf disponibles
+-- Liste des modeles de document disponibles
 --
 -- ===================================================================
 
-create table llx_propal_model_pdf
+create table document_model
 (
-  nom         varchar(50) PRIMARY KEY,
-  "libelle"     varchar(255),
-  "description" text
+  	nom         	varchar(50) PRIMARY KEY,
+  	type			varchar(12) NOT NULL,
+  	"libelle"		varchar(255),
+  	"description" 	text
 );
