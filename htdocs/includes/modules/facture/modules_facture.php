@@ -59,10 +59,12 @@ class ModelePDFFactures extends FPDF
 	 */
 	function liste_modeles($db)
 	{
-		$liste=array();
-		$sql ="SELECT value, value from ".MAIN_DB_PREFIX."const";
-		$sql.=" where name='FACTURE_ADDON_PDF'";
-
+        $type='invoice';
+        $liste=array();
+        $sql ="SELECT nom as id, nom as lib";
+        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
+        $sql.=" WHERE type = '".$type."'";
+        
 		$resql = $db->query($sql);
 		if ($resql)
 		{

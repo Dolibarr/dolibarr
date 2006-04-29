@@ -605,7 +605,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	$result=facture_pdf_create($db, $_REQUEST['facid'], '', '', $outputlangs);
+	$result=facture_pdf_create($db, $_REQUEST['facid'], '', $_REQUEST['model'], $outputlangs);
     if ($result <= 0)
     {
         exit;
@@ -1975,7 +1975,7 @@ else
 			$var=true;
 
 			print '<br>';
-			$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+			$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$conf->global->FACTURE_ADDON_PDF);
 
 			/*
 			 *   Propales rattachées
