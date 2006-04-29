@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,7 @@ if ($resql)
         {
             $var=!$var;
             $obj = $db->fetch_object($resql);
-            print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+            print "<tr $bc[$var]><td nowrap=\"nowrap\"><a href=\"fiche.php?id=$obj->rowid\">".$obj->ref."</a></td>";
             print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
             print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
             $i++;
@@ -116,7 +116,8 @@ if ( $db->query($sql) )
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"33%\">";
+	  print "<tr $bc[$var]>";
+	  print '<td nowrap="nowrap">';
 	  print "<a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,20).'</a></td></tr>';
 	  $i++;
