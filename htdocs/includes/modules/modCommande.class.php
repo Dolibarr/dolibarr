@@ -101,28 +101,46 @@ class modCommande extends DolibarrModules
     $this->rights_class = 'commande';
 
     $this->rights[1][0] = 81;
-    $this->rights[1][1] = 'Lire les commandes';
+    $this->rights[1][1] = 'Lire les commandes clients';
     $this->rights[1][2] = 'r';
     $this->rights[1][3] = 1;
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 82;
-    $this->rights[2][1] = 'Créer modifier les commandes';
+    $this->rights[2][1] = 'Créer modifier les commandes clients';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
 
     $this->rights[3][0] = 84;
-    $this->rights[3][1] = 'Valider les commandes';
+    $this->rights[3][1] = 'Valider les commandes clients';
     $this->rights[3][2] = 'd';
     $this->rights[3][3] = 0;    
     $this->rights[3][4] = 'valider';
-
-    $this->rights[4][0] = 89;
-    $this->rights[4][1] = 'Supprimer les commandes';
+    
+    $this->rights[4][0] = 86;
+    $this->rights[4][1] = 'Envoyer les commandes clients';
     $this->rights[4][2] = 'd';
     $this->rights[4][3] = 0;
-    $this->rights[4][4] = 'supprimer';
+    $this->rights[4][4] = 'envoyer';
+    
+    $this->rights[5][0] = 87;
+    $this->rights[5][1] = 'Clôturer les commandes clients';
+    $this->rights[5][2] = 'd';
+    $this->rights[5][3] = 0;
+    $this->rights[5][4] = 'cloturer';
+    
+    $this->rights[6][0] = 88;
+    $this->rights[6][1] = 'Annuler les commandes clients';
+    $this->rights[6][2] = 'd';
+    $this->rights[6][3] = 0;
+    $this->rights[6][4] = 'annuler';
+
+    $this->rights[7][0] = 89;
+    $this->rights[7][1] = 'Supprimer les commandes clients';
+    $this->rights[7][2] = 'd';
+    $this->rights[7][3] = 0;
+    $this->rights[7][4] = 'supprimer';
 
   }
 

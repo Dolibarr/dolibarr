@@ -1099,7 +1099,7 @@ else
 
 				if ($commande->statut == 1 || $commande->statut == 2)
 				{
-					if ($user->rights->commande->creer)
+					if ($user->rights->commande->cloturer)
 					{
 						print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=cloture">'.$langs->trans('Close').'</a>';
 					}
@@ -1108,7 +1108,7 @@ else
 				if ($commande->statut == 1)
 				{
 					$nb_expedition = $commande->nb_expedition();
-					if ($user->rights->commande->valider && $nb_expedition == 0)
+					if ($user->rights->commande->annuler && $nb_expedition == 0)
 					{
 						print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans('CancelOrder').'</a>';
 					}
