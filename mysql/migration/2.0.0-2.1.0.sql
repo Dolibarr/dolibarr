@@ -161,3 +161,4 @@ delete from llx_document_model where nom='azur' and type='order';
 
 
 update llx_const set value='neptune' where value='pluton' and name = 'FACTURE_ADDON';
+update llx_const set value='azur' where value='orange' and name = 'PROPALE_ADDON';
