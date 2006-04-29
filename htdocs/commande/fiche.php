@@ -1090,6 +1090,20 @@ else
 				{
 					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
 				}
+				
+				// Send
+        if ($commande->statut == 1)
+        {
+            if ($user->rights->commande->envoyer)
+            {
+                $comref = sanitize_string($commande->ref);
+                $file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
+                if (file_exists($file))
+                {
+                    print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+                }
+            }
+        }
 
 				// Ship
 				if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
@@ -1234,6 +1248,90 @@ else
 				dolibarr_print_error($db);
 			}
 			print '</td></tr></table>';
+			
+			  /*
+   * Liste des actions propres à la commande
+   */
+  $sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
+  $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
+  $sql .= ' WHERE a.fk_commande = '.$commande->id ;
+  if ($socidp) $sql .= ' AND a.fk_soc = '.$socidp;
+  $resql = $db->query($sql);
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      if ($num)
+	{
+	  print_titre($langs->trans('ActionsOnOrder'));
+	  $i = 0;
+	  $total = 0;
+	  $var=true;
+
+	  print '<table class="border" width="100%">';
+	  print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+	  print "\n";
+
+	  while ($i < $num)
+	    {
+	      $objp = $db->fetch_object($resql);
+	      $var=!$var;
+	      print '<tr '.$bc[$var].'>';
+	      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
+	      print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+	      print '<td>'.stripslashes($objp->label).'</td>';
+	      $authoract = new User($db);
+	      $authoract->id = $objp->fk_user_author;
+	      $authoract->fetch('');
+	      print '<td>'.$authoract->code.'</td>';
+	      print "</tr>\n";
+	      $i++;
+	    }
+	  print '</table>';
+	}
+    }
+  else
+    {
+      dolibarr_print_error($db);
+    }
+
+
+  /*
+   * Action presend
+   *
+   */
+  if ($_GET['action'] == 'presend')
+    {
+      print '<br>';
+      print_titre($langs->trans('SendOrderByMail'));
+
+      $liste[0]="&nbsp;";
+      foreach ($societe->contact_email_array() as $key=>$value)
+	{
+	  $liste[$key]=$value;
+	}
+
+      // Créé l'objet formulaire mail
+      include_once('../html.formmail.class.php');
+      $formmail = new FormMail($db);
+      $formmail->fromname = $user->fullname;
+      $formmail->frommail = $user->email;
+      $formmail->withfrom=1;
+      $formmail->withto=$liste;
+      $formmail->withcc=1;
+      $formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+      $formmail->withfile=1;
+      $formmail->withbody=1;
+      // Tableau des substitutions
+      $formmail->substit['__ORDERREF__']=$commande->ref;
+      // Tableau des paramètres complémentaires
+      $formmail->param['action']='send';
+      $formmail->param['models']='order_send';
+      $formmail->param['orderid']=$commande->id;
+      $formmail->param['returnurl']=DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+
+      $formmail->show_form();
+    }
+			
 		}
 		else
 		{

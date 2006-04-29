@@ -40,6 +40,7 @@ create table llx_actioncomm
   percent        smallint NOT NULL default 0,
   note           text,
   propalrowid    integer,
+  fk_commande    integer,
   fk_facture     integer
 )type=innodb;
 

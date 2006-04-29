@@ -60,6 +60,7 @@ OnProcessOrders=On process orders
 RefCustomer=Ref. customer
 RefCdeClient=Ref. customer order
 RefCdeClientShort=Ref. cust. order
+SendPropalByMail=Send order by mail
 # Sources
 OrderSource0=Commercial proposal
 OrderSource1=Internet
