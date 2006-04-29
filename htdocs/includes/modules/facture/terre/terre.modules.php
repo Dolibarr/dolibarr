@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Regis Houssin        <regis.houssin@cap-networks.com>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,8 +98,8 @@ class mod_facture_terre extends ModeleNumRefFactures
             if ($row) $fayymm = substr($row[0],0,6);
         }
 
-        // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('FA[0-9][0-9][0-9][0-9]',$fayymm))
+        // Si champ respectant le modèle a été trouvée
+        if (eregi('^FA[0-9][0-9][0-9][0-9]',$fayymm))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;

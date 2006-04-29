@@ -62,9 +62,10 @@ class mod_facture_neptune extends ModeleNumRefFactures
      */
     function getExample()
     {
-        if (defined("FACTURE_NEPTUNE_DELTA"))
+    	global $conf;
+        if ($conf->global->FACTURE_NEPTUNE_DELTA)
         {
-            return "FA0400".sprintf("%02d",FACTURE_NEPTUNE_DELTA);
+            return "FA04".sprintf("%04d",$conf->global->FACTURE_NEPTUNE_DELTA);
         }
         else 
         {
@@ -76,30 +77,53 @@ class mod_facture_neptune extends ModeleNumRefFactures
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
+	function getNextValue($objsoc=0)
+	{
+		global $db,$conf;
+	
+        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        $fayy='';
+        $sql = "SELECT MAX(facnumber)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) $fayy = substr($row[0],0,4);
+        }
+
+        // Si champ respectant le modèle a été trouvée
+        if (eregi('^FA[0-9][0-9]',$fayy))
+        {
+            // Recherche rapide car restreint par un like sur champ indexé
+            $posindice=5;
+            $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+            $sql.= " WHERE facnumber like '${fayy}%'";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $row = $db->fetch_row($resql);
+                $max = $row[0];
+            }
+        }
+        else
+        {
+        	$max=$conf->global->FACTURE_NEPTUNE_DELTA?$conf->global->FACTURE_NEPTUNE_DELTA:0;
+        }        
+        $yy = strftime("%y",time());
+        $num = sprintf("%04s",$max+1);
+        
+        return  "FA$yy$num";
+	}
+
+    /**     \brief      Renvoie la référence de facture suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
     function getNumRef($objsoc=0)
     { 
-      global $db;
-    
-      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0";
-    
-      if ( $db->query($sql) ) 
-        {
-          $row = $db->fetch_row(0);
-          
-          $num = $row[0];
-        }
-    
-      if (!defined("FACTURE_NEPTUNE_DELTA"))
-        {
-          define("FACTURE_NEPTUNE_DELTA", 0);
-        }
-    
-      $num = $num + FACTURE_NEPTUNE_DELTA;
-    
-      $y = strftime("%y",time());
-    
-      return  "FA" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
-    
+        return $this->getNextValue($objsoc);
     }
     
 }    

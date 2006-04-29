@@ -158,3 +158,6 @@ insert into llx_document_model(nom,type) values('rouget','shipping');
 delete from llx_document_model where nom='adytek';
 delete from llx_document_model where nom='rouge' and type='order';
 delete from llx_document_model where nom='azur' and type='order';
+
+
+update llx_const set value='neptune' where value='pluton' and name = 'FACTURE_ADDON';
