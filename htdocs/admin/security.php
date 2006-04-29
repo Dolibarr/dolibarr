@@ -106,7 +106,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("RuleForGeneratedPasswords").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td>&nbsp;</td>';
+print '<td align="center">'.$langs->trans("Activated").'</td>';
 print '</tr>';
 
 foreach ($arrayhandler as $key => $module)

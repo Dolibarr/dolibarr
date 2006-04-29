@@ -86,7 +86,7 @@ $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
 
-print_fiche_titre($langs->trans("GlobalSetup"));
+print_fiche_titre($langs->trans("CompanySetup"));
 
 
 if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
