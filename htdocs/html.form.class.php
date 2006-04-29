@@ -2254,6 +2254,16 @@ class Form
                     $modellist=$model->liste_modeles($this->db);
                 }
             }
+			else if ($modulepart == 'ficheinter')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
+                    $model=new ModelePDFFicheinter();
+                    $modellist=$model->liste_modeles($this->db);
+                }
+            }
             elseif ($modulepart == 'facture')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;

@@ -36,18 +36,21 @@ if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/mod
     require_once(DOL_DOCUMENT_ROOT ."/includes/modules/ficheinter/".FICHEINTER_ADDON.".php");
 }
 
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socidp = $user->societe_id;
-}
+$user->getrights("ficheinter");
+if (!$user->rights->ficheinter->lire) accessforbidden();
 
 
 if ($_GET["socidp"])
 {
 	$objsoc=new Societe($db);
 	$objsoc->fetch($_GET["socidp"]);
+}
+
+// Sécurité accés client
+if ($user->societe_id > 0)
+{
+    $action = '';
+    $socidp = $user->societe_id;
 }
 
 
@@ -94,13 +97,12 @@ if ($_POST["action"] == 'update')
   $_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre créée
 }
 
-/**
- *   Generation du pdf
- */
+// Generation du pdf
 if ($_GET["action"] == 'generate' && $_GET["id"])
 {
-  fichinter_pdf_create($db, $_GET["id"]);
+	fichinter_pdf_create($db, $_GET["id"], $_POST['model']);
 }
+
 
 
 llxHeader();
@@ -164,7 +166,7 @@ if ($_GET["action"] == 'create')
   
   if ($conf->projet->enabled)
     {
-      // Projet associ
+      // Projet associe
       $langs->load("project");
       print '<tr><td valign="top">'.$langs->trans("Project").'</td><td><select name="projetidp">';
       print '<option value="0"></option>';
@@ -352,7 +354,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$fichinter->id;
     //$genallowed=$user->rights->fichinter->creer;
     //$delallowed=$user->rights->fichinter->supprimer;
-    $genallowed=0;
+    $genallowed=1;
     $delallowed=0;
     
     $var=true;

@@ -59,9 +59,15 @@ class pdf_soleil extends ModelePDFFicheinter
     {
         global $user,$langs,$conf;
 
-        $fich = new Fichinter($this->db,"",$id);
-        if ($fich->fetch($id))
+        if ($conf->fichinter->dir_output)
         {
+	        $fich = new Fichinter($this->db,"",$id);
+	        $result=$fich->fetch($id);
+        	if ($result < 0)
+        	{
+        		dolibarr_print_error($db,$fich->error);
+        	}
+        
             $fichref = sanitize_string($fich->ref);
 
             $dir = $conf->fichinter->dir_output . "/" . $fichref;
@@ -79,12 +85,23 @@ class pdf_soleil extends ModelePDFFicheinter
                 $pdf->AddPage();
 
                 $pdf->SetXY(10,5);
-                if (defined("FAC_PDF_INTITULE"))
-                {
-                    $pdf->SetTextColor(0,0,200);
-                    $pdf->SetFont('Arial','B',14);
-                    $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
-                }
+				// Logo
+		        $logo=$mysoc->logo;
+		        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+		        if ($logo)
+		        {
+		            if (is_readable($logo))
+					{
+		                $pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+		            }
+		            else
+					{
+		                $pdf->SetTextColor(200,0,0);
+		                $pdf->SetFont('Arial','B',8);
+		                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
+		                $pdf->MultiCell(100, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
+		            }
+		        }
 
                 $pdf->SetTextColor(70,70,170);
                 if (defined("FAC_PDF_ADRESSE"))
@@ -161,7 +178,7 @@ class pdf_soleil extends ModelePDFFicheinter
         }
         else
         {
-            $this->error=$langs->trans("ErrorConstantNotDefined","FICHINTER_OUTPUTDIR");
+            $this->error=$langs->trans("ErrorConstantNotDefined","FICHEINTER_OUTPUTDIR");
             return 0;
         }
         $this->error=$langs->trans("ErrorUnknown");

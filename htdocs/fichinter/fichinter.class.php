@@ -81,7 +81,7 @@ class Fichinter
      */
     function create()
     {
-        if (!strlen($this->duree)) { $this->duree = 0; }
+        if (! is_numeric($this->duree)) { $this->duree = 0; }
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree";
         if ($this->projet_id) {
@@ -108,11 +108,12 @@ class Fichinter
     }
 
     /*
-     *
-     *
+     *	\brief		Met a jour une intervention
+     *	\return		int		<0 si ko, >0 si ok
      */
     function update($id)
     {
+        if (! is_numeric($this->duree)) { $this->duree = 0; }
         if (! strlen($this->projet_id))
         {
             $this->projet_id = 0;
@@ -122,17 +123,18 @@ class Fichinter
          *  Insertion dans la base
          */
         $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
-        $sql .= " datei = $this->date";
+        $sql .= " datei = ".$this->date;
         $sql .= ", note  = '".addslashes($this->note)."'";
-        $sql .= ", duree = $this->duree";
-        $sql .= ", fk_projet = $this->projet_id";
+        $sql .= ", duree = ".$this->duree;
+        $sql .= ", fk_projet = ".$this->projet_id;
         $sql .= " WHERE rowid = $id";
 
         if (! $this->db->query($sql) )
         {
-
-            print $this->db->error() . '<b><br>'.$sql;
+			$this->error=$this->db->error().' sql='.$sql;
+			return -1;
         }
+
         return 1;
     }
 
@@ -183,13 +185,15 @@ class Fichinter
     function fetch($rowid)
     {
 
-        $sql = "SELECT ref,note,fk_soc,fk_statut,duree,".$this->db->pdate(datei)."as di, fk_projet FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid=$rowid;";
+        $sql = "SELECT ref,note,fk_soc,fk_statut,duree,".$this->db->pdate(datei)." as di, fk_projet";
+        $sql.= " FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid=".$rowid;
 
-        if ($this->db->query($sql) )
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
-            if ($this->db->num_rows())
+            if ($this->db->num_rows($resql))
             {
-                $obj = $this->db->fetch_object();
+                $obj = $this->db->fetch_object($resql);
 
                 $this->id         = $rowid;
                 $this->date       = $obj->di;
@@ -200,14 +204,14 @@ class Fichinter
                 $this->projet_id  = $obj->fk_projet;
                 $this->statut     = $obj->fk_statut;
 
-                $this->db->free();
+                $this->db->free($resql);
                 return 1;
             }
         }
         else
         {
-            print $this->db->error();
-            return 0;
+            $this->error=$this->db->error().' sql='.$sql;
+            return -1;
         }
     }
 

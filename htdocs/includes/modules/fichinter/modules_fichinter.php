@@ -148,7 +148,7 @@ class ModeleNumRefFicheinter
 		\param		outputlangs		objet lang a utiliser pour traduction
         \return     int         	0 si KO, 1 si OK
 */
-function fichinter_pdf_create($db, $facid, $modele='', $outputlangs)
+function fichinter_pdf_create($db, $id, $modele='', $outputlangs='')
 {
 	global $conf,$langs;
 	$langs->load("ficheinter");
