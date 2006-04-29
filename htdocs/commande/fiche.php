@@ -935,7 +935,7 @@ else
 						print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
 
 						// Icone d'edition et suppression
-						if ($commande->statut == 0  && $user->rights->commande->creer && $_GET['action'] == '')
+						if ($commande->statut == 0  && $user->rights->commande->creer && $_GET['action'] == '' || $_GET['action'] == 'modif')
 						{
 							print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 							print img_edit();
@@ -998,7 +998,7 @@ else
 			/*
 			 * Ajouter une ligne
 			 */
-			if ($commande->statut == 0 && $user->rights->commande->creer && ($_GET['action'] == '' || $_GET['action'] == 'builddoc'))
+			if ($commande->statut == 0 && $user->rights->commande->creer && ($_GET['action'] == '' || $_GET['action'] == 'builddoc' || $_GET['action'] == 'modif'))
 			{
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans('Description').'</td>';
