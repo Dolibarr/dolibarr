@@ -1063,7 +1063,7 @@ else
 			/*
 			 * Boutons actions
 			 */
-			if ($user->societe_id == 0 && $commande->statut < 3 && ($_GET['action'] == '' || $_GET['action'] == 'builddoc'))
+			if ($user->societe_id == 0 && $commande->statut < 3 && ($_GET['action'] == '' || $_GET['action'] == 'builddoc' || $_GET['action'] == 'modif'))
 			{
 				print '<div class="tabsAction">';
 
