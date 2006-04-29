@@ -181,48 +181,49 @@ while (($file = readdir($handle))!==false)
 {
     if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-        $var = !$var;
-        print '<tr '.$bc[$var].'><td width="100">';
-        echo "$file";
-        print "</td><td>\n";
-
         $filebis = $file."/".$file.".modules.php";
-
-        // Chargement de la classe de numérotation
-        $classname = "mod_facture_".$file;
-        require_once($dir.$filebis);
-
-        $module = new $classname($db);
-        print $module->info();
-
-        print '</td>';
-
-        // Affiche example
-        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-
-        print '<td align="center">';
-        if ($conf->global->FACTURE_ADDON == "$file")
-        {
-            print img_tick($langs->trans("Activated"));
-        }
-        else
-        {
-            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-        }
-        print '</td>';
-
-		// Info
-		$htmltooltip='';
-        $nextval=$module->getNextValue();
-        if ($nextval != $langs->trans("NotAvailable"))
-        {
-            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
-        }
-    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
-    	print ($htmltooltip?img_help(0):'');
-    	print '</td>';
-
-        print "</tr>\n";
+		if (is_readable($dir.$filebis))
+		{
+	        $var = !$var;
+	        print '<tr '.$bc[$var].'><td width="100">';
+	        echo "$file";
+	        print "</td><td>\n";
+	
+	        // Chargement de la classe de numérotation
+	        require_once($dir.$filebis);
+	        $classname = "mod_facture_".$file;
+	        $module = new $classname($db);
+	        print $module->info();
+	
+	        print '</td>';
+	
+	        // Affiche example
+	        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
+	
+	        print '<td align="center">';
+	        if ($conf->global->FACTURE_ADDON == "$file")
+	        {
+	            print img_tick($langs->trans("Activated"));
+	        }
+	        else
+	        {
+	            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+	        }
+	        print '</td>';
+	
+			// Info
+			$htmltooltip='';
+	        $nextval=$module->getNextValue();
+	        if ($nextval != $langs->trans("NotAvailable"))
+	        {
+	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+	        }
+	    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
+	    	print ($htmltooltip?img_help(0):'');
+	    	print '</td>';
+	
+	        print "</tr>\n";
+		}
     }
 }
 closedir($handle);
