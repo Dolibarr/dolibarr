@@ -89,13 +89,14 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->note                 = $_POST['note'];
 	$commande->source               = $_POST['source_id'];
 	$commande->projetid             = $_POST['projetid'];
+	$commande->remise_absolue       = $_POST['remise_absolue'];
 	$commande->remise_percent       = $_POST['remise_percent'];
 	$commande->ref_client           = $_POST['ref_client'];
 	$commande->modelpdf             = $_POST['model'];
 	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
-  $commande->mode_reglement_id    = $_POST['mode_reglement_id'];
-  $commande->date_livraison       = $datelivraison;
-  $commande->adresse_livraison_id = $_POST['adresse_livraison_id'];
+	$commande->mode_reglement_id    = $_POST['mode_reglement_id'];
+	$commande->date_livraison       = $datelivraison;
+	$commande->adresse_livraison_id = $_POST['adresse_livraison_id'];
 
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
@@ -172,6 +173,22 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 	if ($result < 0) dolibarr_print_error($db,$commande->error);
 }
 
+if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_REQUEST['id']);
+	$result = $commande->set_remise($user, $_POST['remise_percent']);
+	$_GET['id']=$_REQUEST['id'];
+}
+
+if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_REQUEST['id']);
+	$result = $commande->set_remise_absolue($user, $_POST['remise_absolue']);
+	$_GET['id']=$_REQUEST['id'];
+}
+
 if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 {
 	/*
@@ -209,8 +226,8 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
 	$commande = new Commande($db,'',$_POST['id']);
-	if (! $commande->fetch($_POST['id']) > 0)
-		dolibarr_print_error($db);
+	if (! $commande->fetch($_POST['id']) > 0) dolibarr_print_error($db);
+
 	$result = $commande->update_line($_POST['elrowid'],
 		$_POST['eldesc'],
 		$_POST['elprice'],
@@ -314,7 +331,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 	print_titre($langs->trans('CreateOrder'));
 
 	if ($mesg) print $mesg.'<br>';
-	
+
 	$new_commande = new Commande($db);
 
 	if ($propalid)
@@ -332,7 +349,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 	}
 	$resql = $db->query($sql);
 	if ( $resql )
-    {
+	{
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
@@ -340,9 +357,8 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			$soc = new Societe($db);
 			$soc->fetch($obj->idp);
-			
-			$nbrow=8;
-			if ($conf->projet->enabled) $nbrow++;
+
+			$nbrow=7;
 
 			print '<form name="crea_commande" action="fiche.php" method="post">';
 			print '<input type="hidden" name="action" value="add">';
@@ -359,60 +375,94 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			// Reference client
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 			print '<input type="text" name="ref_client" value=""></td>';
-			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" wrap="soft" cols="50" rows="12"></textarea></td>';
+			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" wrap="soft" cols="50" rows="8"></textarea></td>';
 			print '</tr>';
 
 			// Client
-			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->nom_url.'</td>';
+			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.img_object($langs->trans("ShowCompany"),'company').' '.$soc->nom_url.'</td>';
 			print '</tr>';
 
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
 			$html->select_date('','re','','','',"crea_commande");
 			print '</td></tr>';
-			
+
 			// Date de livraison
 			print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
 			if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
 			{
-    			$tmpdte = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+				$tmpdte = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 				$html->select_date($tmpdte,'liv_','','',1,"crea_commande");
 			}
 			else
 			{
 				$html->select_date(-1,'liv_','','',1,"crea_commande");
-    		}
-    		print "</td></tr>";
-    		
-    		// Adresse de livraison
-		    print '<tr><td nowrap>'.$langs->trans('DeliveryAddress').'</td><td>';
-		    $numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id');
-		    
-		    if ($numaddress==0)
-        {
-            print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
-        }
-        
-		    print '</td></tr>';
-	
-			
-			// Conditions de réglement
-		    print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
-		    $html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
-		    print '</td></tr>';
-	
-		    // Mode de réglement
-		    print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-		    $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
-		    print '</td></tr>';
+			}
+			print "</td></tr>";
 
+			// Adresse de livraison
+			print '<tr><td nowrap>'.$langs->trans('DeliveryAddress').'</td><td>';
+			$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id');
+
+			if ($numaddress==0)
+			{
+				print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
+			}
+
+			print '</td></tr>';
+
+
+			// Conditions de réglement
+			print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
+			$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
+			print '</td></tr>';
+
+			// Mode de réglement
+			print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+			$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+			print '</td></tr>';
+
+			// Remise relative
+			$relative_discount=$soc->remise_client;
+			print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
+			print '<td>';
+			print '<input type="text" name="remise_percent" size="1" value="'.$relative_discount.'"> %';
+			print '</td><td>'.img_info().' ';
+			if ($relative_discount)
+			{
+				print $langs->trans("CompanyHasRelativeDiscount",$relative_discount);
+			}
+			else
+			{
+				print $langs->trans("CompanyHasNoRelativeDiscount");
+			}
+			print '</td></tr>';
+
+			// Remise avoirs
+			$absolute_discount=$soc->getCurrentDiscount();
+			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
+			print '<td>';
+			print '<input type="text" name="remise_absolue" size="1" value="0"> '.$langs->trans("Currency".$conf->monnaie);
+			print '</td><td>'.img_info().' ';
+			if ($absolute_discount)
+			{
+				print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+			}
+			else
+			{
+				print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			}
+			print '</td></tr>';
+
+
+			// Projet
 			if ($conf->projet->enabled)
 			{
 				print '<tr><td>'.$langs->trans('Project').'</td><td>';
 				$numprojet=$html->select_projects($soc->id,$projetid,'projetidp');
-        if ($numprojet==0)
-        {
-            print ' &nbsp; <a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
-        }
+				if ($numprojet==0)
+				{
+					print ' &nbsp; <a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
+				}
 				print '</td></tr>';
 			}
 
@@ -427,7 +477,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$liste=$model->liste_modeles($db);
 			$html->select_array("model",$liste,$conf->global->COMMANDE_ADDON_PDF);
 			print "</td></tr>";
-			
+
 			if ($propalid > 0)
 			{
 				$amount = ($obj->price);
@@ -459,9 +509,9 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 					print '<tr><td>';
 					// multiprix
 					if($conf->global->PRODUIT_MULTIPRICES == 1)
-						print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);
+					print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);
 					else
-						print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
+					print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
 					print '</td>';
 					print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 					print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="0">%</td></tr>';
@@ -472,11 +522,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			}
 
 			/*
-			 *
-			 */
+			*
+			*/
 			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans('CreateDraft').'"></td></tr>';
-			print '</form>';
 			print '</table>';
+
+			print '</form>';
 
 			if ($propalid)
 			{
@@ -649,16 +700,8 @@ else
 
             // Ref
 			print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
-			print '<td colspan="2">'.$commande->ref.'</td>';
-			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
-			if ($commande->source == 0)
-			{
-				// Si source = propal
-				$propal = new Propal($db);
-				$propal->fetch($commande->propale_id);
-				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
-			}
-			print '</td></tr>';
+			print '<td colspan="3">'.$commande->ref.'</td>';
+			print '</tr>';
 
 			// Ref commande client
 			print '<tr><td>';
@@ -667,7 +710,7 @@ else
             print '</td>';
             if ($_GET['action'] != 'refcdeclient') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
             print '</tr></table>';
-            print '</td><td colspan="2">';
+            print '</td><td colspan="3">';
 			if ($user->rights->commande->creer && $_GET['action'] == 'refcdeclient')
 			{
 				print '<form action="fiche.php?id='.$id.'" method="post">';
@@ -681,40 +724,29 @@ else
 				print $commande->ref_client;
 			}
 			print '</td>';
-			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
-			if ($commande->brouillon == 1 && $user->rights->commande->creer)
-			{
-				print '<form action="fiche.php?id='.$id.'" method="post">';
-				print '<input type="hidden" name="action" value="setnote">';
-				print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
-				print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
-				print '</form>';
-			}
-			else
-			{
-				print nl2br($commande->note);
-			}
-			
-			print '</td>';
 			print '</tr>';
 			
 
 			// Société
-			print '<tr><td>'.$langs->trans('Customer').'</td>';
+			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="2">';
 			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
 			print '</tr>';
 
-			// Statut
-			print '<tr><td>'.$langs->trans('Status').'</td>';
-			print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
-			print '</tr>';
-
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
+			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
+			if ($commande->source == 0)
+			{
+				// Si source = propal
+				$propal = new Propal($db);
+				$propal->fetch($commande->propale_id);
+				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+			}
+			print '</td>';
 			print '</tr>';
 			
-			// date de livraison
+			// Date de livraison
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DateDelivery');
@@ -733,12 +765,28 @@ else
 			}
 			else
 			{
-				print dolibarr_print_date($commande->date_livraison,'%a %d %B %Y');
+				print dolibarr_print_date($commande->date_livraison,'%A %d %B %Y');
 			}
-			print '</td></tr>';
+			print '</td>';
+			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
+			if ($commande->brouillon == 1 && $user->rights->commande->creer)
+			{
+				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<input type="hidden" name="action" value="setnote">';
+				print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
+				print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+				print '</form>';
+			}
+			else
+			{
+				print nl2br($commande->note);
+			}
+			
+			print '</td>';
+			print '</tr>';
 			
 			
-			// adresse de livraison
+			// Adresse de livraison
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DeliveryAddress');
@@ -758,7 +806,7 @@ else
 			}
 			print '</td></tr>';
 			
-						// Conditions et modes de réglement
+			// Conditions et modes de réglement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditions');
@@ -817,29 +865,6 @@ else
 
 			// Lignes de 3 colonnes
 
-			print '<tr><td>';
-            print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('GlobalDiscount').'</td><td align="right">';
-            print '</td>';
-            if ($_GET['action'] != 'setdiscount' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=setdiscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
-            print '</tr></table>';
-            print '</td>';
-			if ($user->rights->commande->creer && $_GET['action'] == 'setdiscount')
-			{
-				print '<td align="right">';
-				print '<form action="fiche.php?id='.$id.'" method="post">';
-				print '<input type="hidden" name="action" value="setremise">';
-				print '<input type="text" class="flat" name="remise" size="3" value="'.$commande->remise_percent.'">%';
-				print '</td><td><input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-				print '</form>';
-				print '</td>';
-			}
-			else
-			{
-				print '<td align="right">'.$commande->remise_percent.'</td><td>%</td>';
-			}
-			print '</tr>';
-
             // Total HT
 			print '<tr><td>'.$langs->trans('TotalHT').'</td>';
 			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
@@ -853,8 +878,14 @@ else
 			print '<tr><td>'.$langs->trans('TotalTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
+			// Statut
+			print '<tr><td>'.$langs->trans('Status').'</td>';
+			print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
+			print '</tr>';
+			
 			print '</table><br>';
-
+			print "\n";
+			
 			/*
 		 	 * Lignes de commandes
 			 */
@@ -887,7 +918,9 @@ else
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-					print '<td>&nbsp;</td><td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
 					print '</tr>';
 				}
 				$var=true;
@@ -943,10 +976,13 @@ else
 							print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 							print img_delete();
 							print '</a></td>';
+							print '<td>&nbsp;</td>';
 						}
 						else
 						{
-							print '<td>&nbsp;</td><td>&nbsp;</td>';
+							print '<td>&nbsp;</td>';
+							print '<td>&nbsp;</td>';
+							print '<td>&nbsp;</td>';
 						}
 						print '</tr>';
 					}
@@ -979,7 +1015,7 @@ else
 						print '<td align="right"><input size="5" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
 						print '<td align="right"><input size="2" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
 						print '<td align="right" nowrap><input size="1" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
-						print '<td align="center" colspan="3"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+						print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>';
 						print '</form>';
@@ -996,6 +1032,117 @@ else
 			}
 
 			/*
+			 * Lignes de remise
+			 */
+			
+			// Remise relative
+			$var=!$var;
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="setremisepercent">';
+			print '<input type="hidden" name="id" value="'.$commande->id.'">';
+			print '<tr class="liste_total"><td>';
+			print $langs->trans('CustomerRelativeDiscount');
+			if ($commande->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
+			print '</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] == 'editrelativediscount')
+			{
+				print '<input type="text" name="remise_percent" size="2" value="'.$commande->remise_percent.'">%';
+			}
+			else
+			{
+				print $commande->remise_percent?$commande->remise_percent.'%':'&nbsp;';
+			}
+			print '</font></td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] != 'editrelativediscount') print $commande->remise_percent?'-'.price($commande->remise_percent*$total/100):$langs->trans("DiscountNone");
+			else print '&nbsp;';
+			print '</font></td>';
+			if ($_GET['action'] != 'editrelativediscount')
+			{
+				if ($commande->brouillon && $user->rights->facture->creer)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				if ($commande->brouillon && $user->rights->facture->creer && $commande->remise_percent)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			else
+			{
+				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			}
+			print '</tr>';
+			print '</form>';
+
+			// Remise absolue
+			$var=!$var;
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="setremiseabsolue">';
+			print '<input type="hidden" name="id" value="'.$commande->id.'">';
+			print '<tr class="liste_total"><td>';
+			print $langs->trans('CustomerAbsoluteDiscount');
+			if ($commande->brouillon) print ' <font style="font-weight: normal">('.($avoir_en_cours?$langs->trans("CompanyHasAbsoluteDiscount",$avoir_en_cours,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
+			print '</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] == 'editabsolutediscount')
+			{
+				print '-<input type="text" name="remise_absolue" size="2" value="'.$commande->remise_absolue.'">';
+			}
+			else
+			{
+				print $commande->remise_absolue?'-'.price($commande->remise_absolue):$langs->trans("DiscountNone");
+			}
+			print '</font></td>';
+			if ($_GET['action'] != 'editabsolutediscount')
+			{
+				if ($commande->brouillon && $user->rights->facture->creer)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				if ($commande->brouillon && $user->rights->facture->creer && $commande->remise_absolue)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			else
+			{
+				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			}
+			print '</tr>';
+			print '</form>';
+
+			/*
 			 * Ajouter une ligne
 			 */
 			if ($commande->statut == 0 && $user->rights->commande->creer && ($_GET['action'] == '' || $_GET['action'] == 'builddoc' || $_GET['action'] == 'modif'))
@@ -1006,6 +1153,7 @@ else
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
 				print '<td align="right">'.$langs->trans('Discount').'</td>';
+				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
@@ -1028,7 +1176,7 @@ else
 				print '<td align="right"><input type="text" name="pu" size="5"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
 				print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
-				print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
+				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
 
 				print '</form>';
@@ -1052,7 +1200,7 @@ else
 				print '<td>&nbsp;</td>';
 				print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
 				print '<td align="right" nowrap><input type="text" size="2" name="remise_percent" value="0">%</td>';
-				print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
+				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
 
 				print '</form>';
@@ -1171,6 +1319,7 @@ else
 			*/
 			//$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+
 			/*
 			 * Liste des factures
 			 */

@@ -473,7 +473,8 @@ class Propal
         /*
          *  Liste des produits a ajouter
          */
-        $sql = "SELECT price, qty, tva_tx FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $this->id";
+        $sql = "SELECT price, qty, tva_tx FROM ".MAIN_DB_PREFIX."propaldet";
+        $sql.= " WHERE fk_propal = ".$this->id;
         if ( $this->db->query($sql) )
         {
             $num = $this->db->num_rows();

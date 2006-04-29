@@ -48,6 +48,10 @@ class Commande
 	var $mode_reglement_id;
 	var $mode_reglement_code;
 	var $adresse_livraison_id;
+	var $date;				// Date commande
+	var $date_livraison;	// Date livraison souhaitée
+    var $remise_percent;
+    var $remise_absolue;
 
 	// Pour board
 	var $nbtodo;
@@ -81,6 +85,9 @@ class Commande
 		$this->sources[3] = $langs->trans('OrderSource3');
 		$this->sources[4] = $langs->trans('OrderSource4');
 		$this->sources[5] = $langs->trans('OrderSource5');
+
+		$this->remise = 0;
+		$this->remise_percent = 0;
 
 		$this->products = array();
 	}
@@ -302,14 +309,18 @@ class Commande
 		}
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
-		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client, model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison) ';
+		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client,';
+		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
+		$sql.= ' remise_absolue, remise_percent)';
 		$sql.= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.',';
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";
 		$sql.= " '".$this->ref_client."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
 		$sql.= " '".($this->date_livraison?$this->db->idate($this->date_livraison):'null').'\',';
-		$sql.= " '".$this->adresse_livraison_id."')";
+		$sql.= " '".$this->adresse_livraison_id."',";
+		$sql.= " '".$this->remise_absolue."',";
+		$sql.= " '".$this->remise_percent."')";
 
 		dolibarr_syslog("Commande.class.php::create sql=$sql");
 		if ( $this->db->query($sql) )
@@ -629,10 +640,11 @@ class Commande
 	*/
 	function fetch($id)
 	{
-		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement';
-		$sql .= ', '.$this->db->pdate('c.date_commande').' as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note, c.ref_client, c.model_pdf, c.date_livraison, c.fk_adresse_livraison';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement,';
+		$sql.= ' '.$this->db->pdate('c.date_commande').' as date_commande, '.$this->db->pdate('c.date_livraison').' as date_livraison,';
+		$sql.= ' c.fk_projet, c.remise_percent, c.remise_absolue, c.source, c.facture, c.note, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
+		$sql.= ' WHERE c.rowid = '.$id;
 
 		$result = $this->db->query($sql) ;
 		if ( $result )
@@ -649,6 +661,7 @@ class Commande
 			$this->total_ttc            = $obj->total_ttc;
 			$this->date                 = $obj->date_commande;
 			$this->remise_percent       = $obj->remise_percent;
+			$this->remise_absolue       = $obj->remise_absolue;
 			$this->source               = $obj->source;
 			$this->facturee             = $obj->facture;
 			$this->note                 = $obj->note;
@@ -871,30 +884,129 @@ class Commande
 		}
 	}
 
-  /**
-   *
-   *
-   */
+	/**
+	 * 		\brief     	Applique une remise relative
+	 * 		\param     	user		User qui positionne la remise
+	 * 		\param     	remise
+	 *		\return		int 		<0 si ko, >0 si ok
+	 */
 	function set_remise($user, $remise)
 	{
+		$remise=trim($remise)?trim($remise):0;
+
 		if ($user->rights->commande->creer)
 		{
-			$remise = ereg_replace(',','.',$remise);
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET remise_percent = '.$remise;
-			$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-			if ($this->db->query($sql) )
+			$remise=price2num($remise);
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql.= ' SET remise_percent = '.$remise;
+			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+
+			if ($this->db->query($sql))
 			{
 				$this->remise_percent = $remise;
-				$this->update_price();
+				$this->update_price($this->id);
 				return 1;
 			}
 			else
 			{
-				dolibarr_syslog('Commande::set_remise Erreur SQL');
+				$this->error=$this->db->error();
+				return -1;
 			}
 		}
 	}
-/**
+
+
+	/**
+	 * 		\brief     	Applique une remise absolue
+	 * 		\param     	user 		User qui positionne la remise
+	 * 		\param     	remise
+	 *		\return		int 		<0 si ko, >0 si ok
+	 */
+	function set_remise_absolue($user, $remise)
+	{
+		$remise=trim($remise)?trim($remise):0;
+		
+		if ($user->rights->commande->creer)
+		{
+			$remise=price2num($remise);
+			
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql.= ' SET remise_absolue = '.$remise;
+			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+
+			dolibarr_syslog("Commande::set_remise_absolue sql=$sql");
+
+			if ($this->db->query($sql))
+			{
+				$this->remise_absolue = $remise;
+				$this->update_price($this->id);
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+	}
+
+    /**
+     *    \brief      Mets à jour le prix total de la proposition
+     *    \return     int     <0 si ko, >0 si ok
+     */
+    function update_price()
+    {
+        include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
+    
+        /*
+         *  Liste des produits a ajouter
+         */
+        $sql = "SELECT price, qty, tva_tx FROM ".MAIN_DB_PREFIX."commandedet";
+        $sql.= " WHERE fk_commande = ".$this->id;
+        if ( $this->db->query($sql) )
+        {
+            $num = $this->db->num_rows();
+            $i = 0;
+    
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object();
+                $products[$i][0] = $obj->price;
+                $products[$i][1] = $obj->qty;
+                $products[$i][2] = $obj->tva_tx;
+                $i++;
+            }
+        }
+        $calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
+    
+        $this->total_remise   = $calculs[3];
+		$this->amount_ht      = $calculs[4];
+        $this->total_ht       = $calculs[0];
+        $this->total_tva      = $calculs[1];
+        $this->total_ttc      = $calculs[2];
+		$tvas                 = $calculs[5];
+
+        // Met a jour en base
+        $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET";
+		$sql .= "  total_ht='". price2num($this->total_ht)."'";
+		$sql .= ", tva='".      price2num($this->total_tva)."'";
+		$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
+        $sql .= ", remise='".price2num($this->total_remise)."'";
+        $sql .=" WHERE rowid = ".$this->id;
+    
+        if ( $this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
+	/**
      *      \brief      Définit une date de livraison
      *      \param      user        		Objet utilisateur qui modifie
      *      \param      date_livraison      Date de livraison  
@@ -1146,61 +1258,7 @@ class Commande
 		}
 	}
 
-  /**
-   * Mettre à jour le prix
-   *
-   */
-	function update_price()
-	{
-		include_once DOL_DOCUMENT_ROOT . '/lib/price.lib.php';
-		/*
-		*  Liste des produits a ajouter
-		*/
-		$sql = 'SELECT price, qty, tva_tx FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id";
-		if ( $this->db->query($sql) )
-		{
-			$num = $this->db->num_rows();
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object();
-				$products[$i][0] = $obj->price;
-				$products[$i][1] = $obj->qty;
-				$products[$i][2] = $obj->tva_tx;
-				$i++;
-			}
-		}
-		$calculs = calcul_price($products, $this->remise_percent);
 
-		$totalht = $calculs[0];
-		$totaltva = $calculs[1];
-		$totalttc = $calculs[2];
-		$total_remise = $calculs[3];
-
-		$this->remise         = $total_remise;
-		$this->total_ht       = $totalht;
-		$this->total_tva      = $totaltva;
-		$this->total_ttc      = $totalttc;
-      /*
-       *
-       */
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande set';
-		$sql .= "  amount_ht ='".ereg_replace(',','.',$totalht)."'";
-		$sql .= ", total_ht  ='".ereg_replace(',','.',$totalht)."'";
-		$sql .= ", tva       ='".ereg_replace(',','.',$totaltva)."'";
-		$sql .= ", total_ttc ='".ereg_replace(',','.',$totalttc)."'";
-		$sql .= ", remise    ='".ereg_replace(',','.',$total_remise)."'";
-		$sql .= " WHERE rowid = $this->id";
-		if ( $this->db->query($sql) )
-		{
-			return 1;
-		}
-		else
-		{
-			print 'Erreur mise à jour du prix<p>'.$sql;
-			return -1;
-		}
-	}
 	/**
 	 *      \brief     Mets à jour une ligne de commande
 	 *      \param     rowid            Id de la ligne de facture

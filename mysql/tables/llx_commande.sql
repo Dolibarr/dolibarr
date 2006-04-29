@@ -40,6 +40,7 @@ create table llx_commande
   fk_statut             smallint  default 0,
   amount_ht             real      default 0,
   remise_percent        real      default 0,
+  remise_absolue      	real      default 0,
   remise                real      default 0,
   tva                   real      default 0,
   total_ht              real      default 0,
@@ -48,10 +49,10 @@ create table llx_commande
   note_public           text,
   model_pdf             varchar(50),
 
-  facture               tinyint default 0,
+  facture               tinyint   default 0,
   fk_cond_reglement     integer,                       -- condition de réglement
   fk_mode_reglement     integer,                       -- mode de réglement
-  date_livraison 	      date default NULL,
+  date_livraison 	    date 	  default NULL,
   fk_adresse_livraison  integer,                       -- adresse de livraison
 
   UNIQUE INDEX (ref)

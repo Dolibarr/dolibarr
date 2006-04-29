@@ -127,113 +127,197 @@ if ($_GET["id"] > 0)
         /*
          *   Commande
          */
+			$nbrow=8;
+			if ($conf->projet->enabled) $nbrow++;
 
-        $nbrow=8;
-        if ($conf->projet->enabled) $nbrow++;
+			print '<table class="border" width="100%">';
 
-        print '<table class="border" width="100%">';
+            // Ref
+			print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
+			print '<td colspan="3">'.$commande->ref.'</td>';
+			print '</tr>';
 
-        // Reference
-        print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
-        print '<td colspan="2">'.$commande->ref.'</td>';
-        print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
-        if ($commande->source == 0)
-        {
-            // Propale
-            $propal = new Propal($db);
-            $propal->fetch($commande->propale_id);
-            print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
-        }
-        print "</td></tr>";
-
-        // Ref cde client
-		print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-		print $langs->trans('RefCustomer').'</td><td align="left">';
-        print '</td>';
-        print '</tr></table>';
-		print '</td>';
-        print '<td colspan="2">';
-		print $commande->ref_client;
-        print '</td>';
-		print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('Note').' :<br>';
-        if ($commande->brouillon == 1 && $user->rights->commande->creer)
-        {
-            print '<form action="fiche.php?id='.$id.'" method="post">';
-            print '<input type="hidden" name="action" value="setnote">';
-            print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
-            print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
-            print '</form>';
-        }
-        else
-        {
-            print nl2br($commande->note);
-        }
-		print '</td>';
-		print '</tr>';
-
-        // Client
-        print "<tr><td>".$langs->trans("Customer")."</td>";
-        print '<td colspan="2">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a>';
-        print '</td>';
-        print '</tr>';
-
-        // Statut
-        print '<tr><td>'.$langs->trans("Status").'</td>';
-        print "<td colspan=\"2\">".$commande->getLibStatut(4)."</td>\n";
-        print '</tr>';
-
-        // Date
-        print '<tr><td>'.$langs->trans("Date").'</td>';
-        print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
-        print '</tr>';
-
-        // Projet
-        if ($conf->projet->enabled)
-        {
-            print '<tr>';
-            $langs->load("projects");
-            print '<td>';
-            print '<table class="nobordernopadding" width="100%"><tr><td>';
-            print $langs->trans("Project");
+			// Ref commande client
+			print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print $langs->trans('RefCustomer').'</td><td align="left">';
             print '</td>';
-            //if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+            if ($_GET['action'] != 'refcdeclient') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
             print '</tr></table>';
-            print '</td><td colspan="2">';
-            if ($_GET["action"] == "classer")
+            print '</td><td colspan="3">';
+			if ($user->rights->commande->creer && $_GET['action'] == 'refcdeclient')
+			{
+				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<input type="hidden" name="action" value="set_ref_client">';
+				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $commande->ref_client;
+			}
+			print '</td>';
+			print '</tr>';
+			
+
+			// Société
+			print '<tr><td>'.$langs->trans('Company').'</td>';
+			print '<td colspan="2">';
+			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+			print '</tr>';
+
+			print '<tr><td>'.$langs->trans('Date').'</td>';
+			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
+			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
+			if ($commande->source == 0)
+			{
+				// Si source = propal
+				$propal = new Propal($db);
+				$propal->fetch($commande->propale_id);
+				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+			}
+			print '</td>';
+			print '</tr>';
+			
+			// Date de livraison
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DateDelivery');
+			print '</td>';
+					
+			if (1 == 2 && $_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDateDelivery'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editdate_livraison')
+			{
+				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+                print '<input type="hidden" name="action" value="setdate_livraison">';
+                $html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+                print '</form>';
+			}
+			else
+			{
+				print dolibarr_print_date($commande->date_livraison,'%A %d %B %Y');
+			}
+			print '</td>';
+			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
+			if ($commande->brouillon == 1 && $user->rights->commande->creer)
+			{
+				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<input type="hidden" name="action" value="setnote">';
+				print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
+				print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+				print '</form>';
+			}
+			else
+			{
+				print nl2br($commande->note);
+			}
+			
+			print '</td>';
+			print '</tr>';
+			
+			
+			// Adresse de livraison
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DeliveryAddress');
+			print '</td>';
+					
+			if (1 == 2 && $_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			
+			if ($_GET['action'] == 'editdelivery_adress')
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+			}
+			else
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
+			}
+			print '</td></tr>';
+			
+			// Conditions et modes de réglement
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('PaymentConditions');
+			print '</td>';
+					
+			if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editconditions')
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'cond_reglement_id');
+			}
+			else
+			{
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'none');
+			}
+			print '</td></tr>';
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('PaymentMode');
+			print '</td>';
+			if ($_GET['action'] != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editmode')
+			{
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->mode_reglement_id,'mode_reglement_id');
+			}
+			else
+			{
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->mode_reglement_id,'none');
+			}
+			print '</td></tr>';
+
+            // Projet
+            if ($conf->projet->enabled)
             {
-                $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"projetid");
+                $langs->load('projects');
+                print '<tr><td height="10">';
+                print '<table class="nobordernopadding" width="100%"><tr><td>';
+                print $langs->trans('Project');
+                print '</td>';
+                if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="2">';
+                if ($_GET['action'] == 'classer')
+                {
+                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'projetid');
+                }
+                else
+                {
+                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'none');
+                }
+                print '</td></tr>';
             }
-            else
-            {
-                $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"none");
-            }
-            print "</td>";
-            print '</tr>';
-        }
-        
-        // Lignes de 3 colonnes
-        
-        // Discount
-        print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
-        print $commande->remise_percent.'%</td><td>&nbsp;';
-        print '</td></tr>';
 
-        // Total HT
-        print '<tr><td>'.$langs->trans("TotalHT").'</td>';
-        print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			// Lignes de 3 colonnes
 
-        // Total VAT
-        print '<tr><td>'.$langs->trans("TotalVAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-        
-        // Total TTC
-        print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+            // Total HT
+			print '<tr><td>'.$langs->trans('TotalHT').'</td>';
+			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
+			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
-        print '</table>';
+			// Total TVA
+			print '<tr><td>'.$langs->trans('TotalVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
+			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+			
+			// Total TTC
+			print '<tr><td>'.$langs->trans('TotalTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
+			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+
+			// Statut
+			print '<tr><td>'.$langs->trans('Status').'</td>';
+			print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
+			print '</tr>';
+			
+			print '</table>';
 
         /*
          * Lignes de commandes
@@ -263,7 +347,9 @@ if ($_GET["id"] > 0)
                 print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
                 print '<td align="right">'.$langs->trans('Discount').'</td>';
                 print '<td align="right">'.$langs->trans('AmountHT').'</td>';
-                print '<td>&nbsp;</td><td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
                 print "</tr>\n";
             }
 
@@ -305,9 +391,12 @@ if ($_GET["id"] > 0)
 
                 print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
 
-                print '<td>&nbsp;</td><td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
                 print '</tr>';
 
+				$total = $total + ($objp->qty * $objp->price);
                 $i++;
             }
             $db->free($resql);
@@ -316,6 +405,119 @@ if ($_GET["id"] > 0)
         {
             dolibarr_print_error($db);
         }
+
+			/*
+			 * Lignes de remise
+			 */
+			
+			// Remise relative
+			$var=!$var;
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="setremisepercent">';
+			print '<input type="hidden" name="id" value="'.$commande->id.'">';
+			print '<tr class="liste_total"><td>';
+			print $langs->trans('CustomerRelativeDiscount');
+			if ($commande->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
+			print '</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] == 'editrelativediscount')
+			{
+				print '<input type="text" name="remise_percent" size="2" value="'.$commande->remise_percent.'">%';
+			}
+			else
+			{
+				print $commande->remise_percent?$commande->remise_percent.'%':'&nbsp;';
+			}
+			print '</font></td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] != 'editrelativediscount') print $commande->remise_percent?'-'.price($commande->remise_percent*$total/100):$langs->trans("DiscountNone");
+			else print '&nbsp;';
+			print '</font></td>';
+			if ($_GET['action'] != 'editrelativediscount')
+			{
+				if (1 == 2 && $commande->brouillon && $user->rights->facture->creer)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				if (1 == 2 && $commande->brouillon && $user->rights->facture->creer && $commande->remise_percent)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			else
+			{
+				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			}
+			print '</tr>';
+			print '</form>';
+
+			// Remise absolue
+			$var=!$var;
+			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="setremiseabsolue">';
+			print '<input type="hidden" name="id" value="'.$commande->id.'">';
+			print '<tr class="liste_total"><td>';
+			print $langs->trans('CustomerAbsoluteDiscount');
+			if ($commande->brouillon) print ' <font style="font-weight: normal">('.($avoir_en_cours?$langs->trans("CompanyHasAbsoluteDiscount",$avoir_en_cours,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
+			print '</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td align="right"><font style="font-weight: normal">';
+			if ($_GET['action'] == 'editabsolutediscount')
+			{
+				print '-<input type="text" name="remise_absolue" size="2" value="'.$commande->remise_absolue.'">';
+			}
+			else
+			{
+				print $commande->remise_absolue?'-'.price($commande->remise_absolue):$langs->trans("DiscountNone");
+			}
+			print '</font></td>';
+			if ($_GET['action'] != 'editabsolutediscount')
+			{
+				if (1 == 2 && $commande->brouillon && $user->rights->facture->creer)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				if (1 == 2 && $commande->brouillon && $user->rights->facture->creer && $commande->remise_absolue)
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			else
+			{
+				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			}
+			print '</tr>';
+			print '</form>';
+
+
         print '</table>';
 
         print '</div>';
@@ -334,7 +536,7 @@ if ($_GET["id"] > 0)
                 print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("CreateBill").'</a>';
             }
 
-            if ($user->rights->commande->creer)
+            if ($commande->statut > 0 && $user->rights->commande->creer)
             {
                 print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande/fiche.php?action=facturee&amp;id='.$commande->id.'">'.$langs->trans("ClassifyBilled").'</a>';
             }

@@ -718,7 +718,7 @@ if ($_GET['action'] == 'create')
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
 	// Societe
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->nom_url.'</td>';
+	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.img_object($langs->trans("ShowCompany"),'company').' '.$soc->nom_url.'</td>';
 	print '</tr>';
 
 	// Date facture

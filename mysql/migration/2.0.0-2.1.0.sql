@@ -19,6 +19,8 @@ alter table llx_facture add column remise_absolue real DEFAULT 0 after remise_pe
 alter table llx_propal add column note_public text after note;
 alter table llx_propal add column remise_absolue real DEFAULT 0 after remise_percent;
 
+alter table llx_commande add column remise_absolue real DEFAULT 0 after remise_percent;
+
 ALTER TABLE llx_societe ADD mode_reglement INT( 11 ) DEFAULT NULL ;
 ALTER TABLE llx_societe ADD cond_reglement INT( 11 ) DEFAULT '1' NOT NULL ;
 ALTER TABLE llx_societe ADD tva_assuj tinyint DEFAULT '1';
@@ -148,6 +150,10 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (29
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (292, 5,   '0','0','VAT Rate 0',1);
 
 
+update llx_const set value='neptune' where value='pluton' and name = 'FACTURE_ADDON';
+update llx_const set value='azur' where value='orange' and name = 'PROPALE_ADDON';
+
+
 alter table llx_propal_model_pdf rename to llx_document_model;
 alter table llx_document_model add column type varchar(20) NOT NULL after nom;
 update llx_document_model set type='propal' where type='';
@@ -158,9 +164,6 @@ insert into llx_document_model(nom,type) values('rouget','shipping');
 delete from llx_document_model where nom='adytek';
 delete from llx_document_model where nom='rouge' and type='order';
 delete from llx_document_model where nom='azur' and type='order';
-
-
-update llx_const set value='neptune' where value='pluton' and name = 'FACTURE_ADDON';
-update llx_const set value='azur' where value='orange' and name = 'PROPALE_ADDON';
+delete from llx_document_model where nom='orange' and type='propal';
 
 alter table llx_actioncomm add column fk_commande integer after propalrowid;

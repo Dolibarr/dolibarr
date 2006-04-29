@@ -124,7 +124,7 @@ class Facture
 			$this->amount            = $_facrec->amount;
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
-			$this->remise_absolue    = $_facrec->remise;
+			$this->remise			 = $_facrec->remise;
 		}
 
 		// Definition de la date limite
@@ -1154,9 +1154,7 @@ class Facture
 			}
 
 			$this->db->free($result);
-			/*
-			*
-			*/
+
 			$calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
 			$this->total_remise   = $calculs[3];
 			$this->amount_ht      = $calculs[4];
@@ -1222,7 +1220,7 @@ class Facture
 	}
 
 	/**
-	 * 		\brief     	Applique une remise relative sur facture
+	 * 		\brief     	Applique une remise relative
 	 * 		\param     	user		User qui positionne la remise
 	 * 		\param     	remise
 	 *		\return		int 		<0 si ko, >0 si ok
@@ -1255,7 +1253,7 @@ class Facture
 
 
 	/**
-	 * 		\brief     	Applique une remise absolue sur facture
+	 * 		\brief     	Applique une remise absolue
 	 * 		\param     	user 		User qui positionne la remise
 	 * 		\param     	remise
 	 *		\return		int 		<0 si ko, >0 si ok
