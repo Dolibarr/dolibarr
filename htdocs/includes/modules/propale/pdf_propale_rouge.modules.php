@@ -46,7 +46,7 @@ class pdf_propale_rouge extends ModelePDFPropales
     { 
         $this->db = $db;
         $this->name = "rouge";
-        $this->description = "Modèle de propale par défaut";
+        $this->description = "Modèle de propale simple";
 
         // Dimension page pour format A4
         $this->page_largeur = 210;
