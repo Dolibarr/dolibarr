@@ -45,9 +45,9 @@ class mod_facture_deneb extends ModeleNumRefFactures
     function info()
     {
     
-      $texte = "Renvoie le numéro de facture sous la forme, PREF-03-06-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 03 juin 2004) et d'un compteur.<br>";
+      $texte = "Renvoie le numéro de facture sous la forme, PREF-31-12-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 31 décembre 2004) et d'un compteur.<br>";
       $texte.= "Si la constante FACTURE_DENEB_DELTA est définie, un offset est appliqué sur le compteur";
-      if (defined("FACTURE_NEPTUNE_DELTA"))
+      if (defined("FACTURE_DENEB_DELTA"))
         {
           $texte .= " (Définie et vaut : ".FACTURE_DENEB_DELTA.")";
         }
@@ -64,7 +64,7 @@ class mod_facture_deneb extends ModeleNumRefFactures
      */
     function getExample()
     {
-        return "PREF-31-12-04-10";
+        return "PREF-31-12-2004-01";
     }
 
     /**     \brief      Renvoie la référence de facture suivante non utilisée
