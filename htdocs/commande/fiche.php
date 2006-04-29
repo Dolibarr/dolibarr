@@ -1081,7 +1081,7 @@ else
         {
             if ($user->rights->commande->creer)
             {
-                print '<a class="butAction" href="fiche?id='.$commande->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
             }
         }
 

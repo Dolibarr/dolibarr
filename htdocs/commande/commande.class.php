@@ -181,6 +181,27 @@ class Commande
 		}
 		return $result ;
 	}
+	
+	/**
+   *
+   *
+   */
+    function reopen($userid)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
+    
+        $sql .= " WHERE rowid = $this->id;";
+    
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
+	
   /**
    *    \brief      Cloture la commande
    *    \param      user        Objet utilisateur qui cloture
