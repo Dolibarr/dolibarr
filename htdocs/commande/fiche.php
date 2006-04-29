@@ -272,6 +272,16 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	}
 }
 
+if ($_GET['action'] == 'modif' && $user->rights->commande->creer) 
+{
+  /*
+   *  Repasse la commande en mode brouillon
+   */
+  $commande = new Commande($db);
+  $commande->fetch($_GET['id']);
+  $commande->reopen($user->id);
+}
+
 if ($_POST['action'] == 'builddoc')
 {
 	/*
@@ -1065,6 +1075,15 @@ else
 						print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans('Valid').'</a>';
 					}
 				}
+				
+				// Edit
+        if ($commande->statut == 1)
+        {
+            if ($user->rights->commande->creer)
+            {
+                print '<a class="butAction" href="fiche?id='.$commande->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+            }
+        }
 
 				// Build PDF
 				if ($user->rights->commande->creer)
