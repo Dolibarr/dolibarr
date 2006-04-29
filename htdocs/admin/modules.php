@@ -180,7 +180,7 @@ print "  <td>".$langs->trans("Family")."</td>\n";
 print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
+//print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Action")."</td>\n";
 print "  <td>".$langs->trans("SetupShort")."</td>\n";
@@ -285,8 +285,8 @@ foreach ($orders as $key => $value)
         print $objMod->getDesc();
         print "</td>\n  <td align=\"center\" valign=\"top\">";
         print $objMod->getVersion();
-        print "</td>\n  <td align=\"center\" valign=\"top\">";
-        print $objMod->getDbVersion();
+//        print "</td>\n  <td align=\"center\" valign=\"top\">";
+//        print $objMod->getDbVersion();
         print "</td>\n  <td align=\"center\" valign=\"top\">";
 
         if ($conf->global->$const_name)
