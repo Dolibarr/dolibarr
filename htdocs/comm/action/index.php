@@ -35,6 +35,10 @@ require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 $langs->load("companies");
 
+$socidp = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -42,11 +46,6 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
-
-
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;

@@ -382,9 +382,10 @@ if ($socid > 0)
          * Liste des contacts
          *
          */
+		print_titre($langs->trans("ContactsForCompany"));
 		print '<table class="noborder" width="100%">';
 		
-		print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
 		print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
 		print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
 		print "<td align=\"center\">&nbsp;</td>";
@@ -447,8 +448,9 @@ if ($socid > 0)
          *      Listes des actions a faire
          *
          */
+		print_titre($langs->trans("ActionsOnCompany"));
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="10"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
+        print '<tr class="liste_titre"><td colspan="10"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td></tr>';
 
         $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -547,7 +549,7 @@ if ($socid > 0)
          *      Listes des actions effectuées
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="11"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
+        print '<tr class="liste_titre"><td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td></tr>';
 
         $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da,";
         $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
