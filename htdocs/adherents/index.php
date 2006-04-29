@@ -63,6 +63,7 @@ $var=True;
 $Adherents=array();
 $AdherentsAValider=array();
 $AdherentsResilies=array();
+$AdherentType=array();
 $Cotisants=array();
 
 # Liste les adherents
