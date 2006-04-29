@@ -315,6 +315,111 @@ if($_GET['action'] == 'builddoc')
 	commande_pdf_create($db, $_GET['id'],$commande->modelpdf);
 }
 
+/*
+ * Envoi de la commande par mail
+ */
+if ($_POST['action'] == 'send')
+{
+    $langs->load('mails');
+    $commande= new Commande($db);
+    if ( $commande->fetch($_POST['id']) )
+    {
+        $orderref = sanitize_string($commande->ref);
+        $file = $conf->commande->dir_output . '/' . $orderref . '/' . $orderref . '.pdf';
+        if (is_readable($file))
+        {
+            $soc = new Societe($db, $commande->soc_id);
+            if ($_POST['sendto'])
+            {
+                // Le destinataire a été fourni via le champ libre
+                $sendto = $_POST['sendto'];
+                $sendtoid = 0;
+            }
+            elseif ($_POST['receiver'])
+            {
+                // Le destinataire a été fourni via la liste déroulante
+                $sendto = $soc->contact_get_email($_POST['receiver']);
+                $sendtoid = $_POST['receiver'];
+            }
+
+            if (strlen($sendto))
+            {
+                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+                $message = $_POST['message'];
+                if ($_POST['action'] == 'send')
+                {
+                    $subject = $langs->trans('Order').' '.$commande->ref;
+                    $actiontypeid=3;
+                    $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
+                    if ($message)
+                    {
+                        $actionmsg.='Texte utilisé dans le corps du message:<br>';
+                        $actionmsg.=$message;
+                    }
+                    $actionmsg2='Envoi commande par mail';
+                }
+
+                $filepath[0] = $file;
+                $filename[0] = $commande->ref.'.pdf';
+                $mimetype[0] = 'application/pdf';
+                if ($_FILES['addedfile']['tmp_name'])
+                {
+                    $filepath[1] = $_FILES['addedfile']['tmp_name'];
+                    $filename[1] = $_FILES['addedfile']['name'];
+                    $mimetype[1] = $_FILES['addedfile']['type'];
+                }
+                // Envoi de la commande
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
+                if ($mailfile->sendfile())
+                {
+                    $msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+                    // Insertion action
+                    include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+                    $actioncomm = new ActionComm($db);
+                    $actioncomm->type_id     = $actiontypeid;
+                    $actioncomm->label       = $actionmsg2;
+                    $actioncomm->note        = $actionmsg;
+                    $actioncomm->date        = time();  // L'action est faite maintenant
+                    $actioncomm->percent     = 100;
+                    $actioncomm->contact     = new Contact($db,$sendtoid);
+                    $actioncomm->societe     = new Societe($db,$commande->soc_id);
+                    $actioncomm->user        = $user;   // User qui a fait l'action
+                    $actioncomm->orderrowid  = $commande->id;
+                    $ret=$actioncomm->add($user);       // User qui saisi l'action
+                    if ($ret < 0)
+                    {
+                        dolibarr_print_error($db);
+                    }
+                    else
+                    {
+                        // Renvoie sur la fiche
+                        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&msg='.urlencode($msg));
+                        exit;
+                    }
+                }
+                else
+                {
+                    $msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' - '.$actioncomm->error.'</div>';
+                }
+            }
+            else
+            {
+                $msg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+                dolibarr_syslog('Le mail du destinataire est vide');
+            }
+        }
+        else
+        {
+            dolibarr_syslog('Impossible de lire :'.$file);
+        }
+    }
+    else
+    {
+        dolibarr_syslog('Impossible de lire les données de la commande. Le fichier commande n\'a peut-être pas été généré.');
+    }
+}
+
 
 llxHeader('',$langs->trans('OrderCard'),'Commande');
 
