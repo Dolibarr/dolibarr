@@ -77,7 +77,7 @@ if ($_POST["action"] == 'vadd' &&
 	}
 	
 	// sauvegarde en base
-	if ( $product->update($product->id, $user) > 0 )
+	if ( $product->setMultiLangs() > 0 )
 	{
 		$_GET["action"] = '';
 		$mesg = 'Fiche mise à jour';
@@ -108,13 +108,13 @@ if ($_POST["action"] == 'vedit' &&
 		}
 		else
 		{
-			$value["libelle"]		= $_POST["libelle-".$key];
-			$value["description"]	= $_POST["desc-".$key];
-			$value["note"]			= $_POST["note-".$key];
+			$product->multilangs[$key]["libelle"]			= $_POST["libelle-".$key];
+			$product->multilangs[$key]["description"]	= $_POST["desc-".$key];
+			$product->multilangs[$key]["note"]				= $_POST["note-".$key];
 		}
 	}
 	
-	if ( $product->update($product->id, $user) > 0 )
+	if ( $product->setMultiLangs() > 0 )
 	{
 		$_GET["action"] = '';
 		$mesg = 'Fiche mise à jour';
@@ -271,16 +271,18 @@ if ($_GET["action"] == 'edit')
 }
 else
 {
+	$cnt_trans = 0;
 	foreach ( $product->multilangs as $key => $value)
 	{
+		$cnt_trans++;
 		print "<br /><b><u>$key :</u></b><br />";
 		print '<table class="border" width="100%">';
 		print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$product->multilangs[$key]["libelle"].'</td></tr>';
 		print '<tr><td width="15%">'.$langs->trans('Description').'</td><td>'.$product->multilangs[$key]["description"].'</td></tr>';
 		print '<tr><td width="15%">'.$langs->trans('Note').'</td><td>'.$product->multilangs[$key]["note"].'</td></tr>';
-		print '</tr>';
 		print '</table>';
 	}
+		if ( !$cnt_trans ) print '<br />'. $langs->trans('NoTranslation');
 }
 
 print "</div>\n";
@@ -322,10 +324,7 @@ if ($_GET["action"] == 'add' || $user->rights->produit->modifier)
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 	print '<table class="border" width="100%">';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Translation').'</td><td>'.$select.'</td></tr>';;
-	//print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
-	//print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc" rows="3" cols="80">'.$product->multilangs[$key]["description"].'</textarea></td></tr>';
-	//print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note" rows="3" cols="80">'.$product->multilangs[$key]["note"].'</textarea></td></tr>';
+	print '<tr><td valign="top" width="15%">'.$langs->trans('Translation').'</td><td>'.$select.'</td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc" rows="3" cols="80"></textarea></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note" rows="3" cols="80"></textarea></td></tr>';

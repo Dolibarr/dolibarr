@@ -353,49 +353,62 @@ class Product
     }
 
 	/**
-	 *		\brief   update ou crée les traductions des infos produits
-	 */
+		*		\brief   update ou crée les traductions des infos produits
+		*/
 	function setMultiLangs()
 	{
 		global $langs;
-        $langs_available = $langs->get_available_languages();
+		$langs_available = $langs->get_available_languages();
 		$current_lang = $langs->getDefaultLang();
 
 		foreach ($langs_available as $value)
 		{
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_det";
+			$sql.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+			
+			$result = $this->db->query($sql);
+			
 			if ($value == $current_lang)
 			{
-				$sqlU = "UPDATE ".MAIN_DB_PREFIX."product_det";
-				$sqlU.= " SET label='".$this->libelle."'";
-				$sqlU.= " description='".$this->description."'";
-				$sqlU.= " note='".$this->note."'";
-				$sqlU.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
-				
-				$sqlI = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
-				$sqlI.= " VALUES(".$this->id.",'".$value."','". $this->libelle;
-				$sqlI.= "','".$this->description;
-				$sqlI.= "','".$this->note."')";
-
+				if (mysql_num_rows($result)) // si aucune ligne dans la base
+				{
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
+					$sql2.= " SET label='".$this->libelle."',";
+					$sql2.= " description='".$this->description."',";
+					$sql2.= " note='".$this->note."'";
+					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+				}
+				else
+				{
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
+					$sql2.= " VALUES(".$this->id.",'".$value."','". $this->libelle;
+					$sql2.= "','".$this->description;
+					$sql2.= "','".$this->note."')";
+				}
+				if (!$this->db->query($sql2)) return -1;
 			}
 			else
 			{
-				$sqlU = "UPDATE ".MAIN_DB_PREFIX."product_det";
-				$sqlU.= " SET label='".$this->multilangs["$value"]["libelle"]."'";
-				$sqlU.= " description='".$this->multilangs["$value"]["libelle"]."'";
-				$sqlU.= " note='".$this->multilangs["$value"]["note"]."'";
-				$sqlU.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+				if (mysql_num_rows($result)) // si aucune ligne dans la base
+				{
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
+					$sql2.= " SET label='".$this->multilangs["$value"]["libelle"]."',";
+					$sql2.= " description='".$this->multilangs["$value"]["description"]."',";
+					$sql2.= " note='".$this->multilangs["$value"]["note"]."'";
+					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+				}
+				else
+				{
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
+					$sql2.= " VALUES(".$this->id.",'".$value."','". $this->multilangs["$value"]["libelle"];
+					$sql2.= "','".$this->multilangs["$value"]["description"];
+					$sql2.= "','".$this->multilangs["$value"]["note"]."')";
+				}
 
-				$sqlI = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
-				$sqlI.= " VALUES(".$this->id.",'".$value."','". $this->multilangs["$value"]["libelle"];
-				$sqlI.= "','".$this->multilangs["$value"]["description"];
-				$sqlI.= "','".$this->multilangs["$value"]["note"]."')";
-
+				 // on ne sauvegarde pas des champs vides
+				if ( $this->multilangs["$value"]["libelle"] || $this->multilangs["$value"]["description"] || $this->multilangs["$value"]["note"] ) 
+					if (!$this->db->query($sql2)) return -1;
 			}
-
-    // on ne sauvegarde pas des champs vides
-    if ( $this->multilangs["$value"]["libelle"] || $this->multilangs["$value"]["description"] || $this->multilangs["$value"]["note"] ) 
-			if (!$this->db->query($sqlU)) // si aucun champ n'est mis a jour
-				if (!$this->db->query($sqlI)) return -1;
 		}
 		return 1;
 	}
@@ -425,16 +438,16 @@ class Product
 		{
 			while ( $obj = $this->db->fetch_object($result) )
 			{
-				$this->multilangs["$obj->lang"]["libelle"]		= $obj->label;
-				$this->multilangs["$obj->lang"]["description"]	= $obj->description;
-				$this->multilangs["$obj->lang"]["note"]			= $obj->note;
-				
 				if( $obj->lang == $current_lang ) // si on a les traduct. dans la langue courant on les charge en infos principales.
 				{
 					$this->libelle		= $obj->label;
 					$this->description	= $obj->description;
 					$this->note			= $obj->note;
 				}
+				$this->multilangs["$obj->lang"]["libelle"]		= $obj->label;
+				$this->multilangs["$obj->lang"]["description"]	= $obj->description;
+				$this->multilangs["$obj->lang"]["note"]			= $obj->note;
+				
 			 }
 			}
 		else
