@@ -1559,7 +1559,7 @@ else
       print_titre($langs->trans('SendOrderByMail'));
 
       $liste[0]="&nbsp;";
-      foreach ($societe->contact_email_array() as $key=>$value)
+      foreach ($soc->contact_email_array() as $key=>$value)
 	{
 	  $liste[$key]=$value;
 	}

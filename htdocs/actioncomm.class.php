@@ -88,7 +88,7 @@ class ActionComm
         $sql.= "datep,";
         if ($this->percent == 100) $sql.= "datea,";
         $sql.= "fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
-        $sql.= "fk_facture,propalrowid)";
+        $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (now(),";
         $sql.= "'".$this->db->idate($this->date)."',";
         if ($this->percent == 100) $sql.= "'".$this->db->idate($this->date)."',";
@@ -97,6 +97,7 @@ class ActionComm
         $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percent."','".$this->priority."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null");
+        $sql.= ($this->orderrowid?$this->orderrowid:"null");
         $sql.= ");";
     
         if ($this->db->query($sql) )
@@ -127,7 +128,8 @@ class ActionComm
   {
     global $langs;
     
-    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, a.label, a.fk_action as type_id, c.code, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent";
+    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, a.label, a.fk_action as type_id";
+    $sql.= ", c.code, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent, a.fk_commande";
     $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
     $sql.= " WHERE a.id=$id AND a.fk_action=c.id;";
     
@@ -160,8 +162,14 @@ class ActionComm
             $this->fk_propal = $obj->propalrowid;
             if ($this->fk_propal)
             {
-                $this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/propal/fiche.php?rowid='.$this->fk_facture.'">'.$langs->trans("Propal").'</a>';
+                $this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/propal/fiche.php?rowid='.$this->fk_propal.'">'.$langs->trans("Propal").'</a>';
                 $this->objet_url_type = 'propal';
+            }
+            $this->fk_commande = $obj->fk_commande;
+            if ($this->fk_commande)
+            {
+                $this->objet_url = img_object($langs->trans("ShowOrder"),'order').' '.'<a href="'. DOL_URL_ROOT . '/commande/fiche.php?id='.$this->fk_commande.'">'.$langs->trans("Order").'</a>';
+                $this->objet_url_type = 'order';
             }
     
         }
