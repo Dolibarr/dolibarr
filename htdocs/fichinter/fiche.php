@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,10 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/ficheinter/".FICHEINTER_ADDON.".php"))
+{
+    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/ficheinter/".FICHEINTER_ADDON.".php");
+}
 
 // Sécurité accés client
 if ($user->societe_id > 0)
@@ -42,21 +46,8 @@ if ($user->societe_id > 0)
 
 if ($_GET["socidp"])
 {
-  $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s WHERE s.idp = ".$_GET["socidp"];
-  
-  $result = $db->query($sql);
-  if ($result)
-    {
-      if ( $db->num_rows($result) )
-        {
-	  $objsoc = $db->fetch_object($result);
-        }
-      $db->free($result);
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
+	$objsoc=new Societe($db);
+	$objsoc->fetch($_GET["socidp"]);
 }
 
 
@@ -126,9 +117,11 @@ if ($_GET["action"] == 'create')
 {
   print_titre($langs->trans("AddIntervention"));
   
-  $numpr = "FI-"."-" . strftime("%y%m%d", time());
+  // \todo Utiliser un module de numérotation
+  $numpr = "FI".strftime("%y%m%d", time());
   
-  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
+  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
+  $sql.= " WHERE ref like '".$numpr."%'";
   
   $resql=$db->query($sql);
   if ($resql)
@@ -142,7 +135,14 @@ if ($_GET["action"] == 'create')
     }
   
   $fix = new Fichinter($db);
-  $numpr = $fix->get_new_num($objsoc->prefix_comm);
+
+    $obj = $conf->global->FICHEINTER_ADDON;
+
+// \todo	Quand module numerotation fiche inter sera dispo
+//    $modFicheinter = new $obj;
+//    $numpr = $modFicheinter->getNextValue($soc);
+
+  $numpr = $fix->get_new_num($objsoc);
   
   print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
   
@@ -151,7 +151,7 @@ if ($_GET["action"] == 'create')
   print '<table class="border" width="100%">';
   
   print '<input type="hidden" name="socidp" value='.$_GET["socidp"].'>';
-  print "<tr><td>".$langs->trans("Company")."</td><td><b>".$objsoc->nom."</td></tr>";
+  print "<tr><td>".$langs->trans("Company")."</td><td>".img_object($langs->trans("ShowCompany"),'company').' '.$objsoc->nom_url."</td></tr>";
   
   print "<tr><td>".$langs->trans("Date")."</td><td>";
   $sel->select_date(time(),"p",'','','','fichinter');

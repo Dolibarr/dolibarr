@@ -137,20 +137,23 @@ class Fichinter
     }
 
     /*
-     *
+     *	\todo A virer quand module de numerotation dispo sur les fiches interventions
      *
      */
-    function get_new_num($prefix_comm)
+    function get_new_num($societe)
     {
 
-        $sql = "SELECT max(ref) FROM ".MAIN_DB_PREFIX."fichinter WHERE ref like 'FI-".$prefix_comm."-%'";
+        $sql = "SELECT max(ref) FROM ".MAIN_DB_PREFIX."fichinter";
+        $sql.= " WHERE ref like 'FI".$societe->prefix_comm."%'";
 
-        if ($this->db->query($sql) )
+        $result=$this->db->query($sql);
+        if ($result)
         {
-            if ($this->db->num_rows())
+            if ($this->db->num_rows($result))
             {
                 $row = $this->db->fetch_row(0);
                 $num = $row[0];
+
                 /*
                 *$num = substr($num, strlen($num) - 4, 4);
                 *$num = $num + 1;
@@ -163,7 +166,7 @@ class Fichinter
                 $num = $num + 1;
                 //$num = '0000' . $num;
                 //$num = 'FI-' . $prefix_comm . '-' . substr($num, strlen($num) - 4, 4);
-                $num = 'FI-' . $prefix_comm . '-' . $num;
+                $num = 'FI-' . $societe->prefix_comm . '-' . $num;
                 return $num;
             }
         }
