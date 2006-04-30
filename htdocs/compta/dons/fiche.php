@@ -226,7 +226,7 @@ if ($_GET["action"] == 'create')
     print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40"></td></tr>';
     print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40"></td></tr>';
     print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-    print "<tr>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+    print "<tr>".'<td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
     print "</table>\n";
     print "</form>\n";
 } 

@@ -1975,7 +1975,7 @@ else
 			$var=true;
 
 			print '<br>';
-			$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$conf->global->FACTURE_ADDON_PDF);
+			$somethingshown=$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$conf->global->FACTURE_ADDON_PDF);
 
 			/*
 			 *   Propales rattachées
@@ -1990,7 +1990,8 @@ else
 				if ($num)
 				{
 					$i = 0; $total = 0;
-					print '<br>';
+					if ($somethingshown) print '<br>';
+					$somethingshown=1;
 					print_titre($langs->trans('RelatedCommercialProposals'));
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre">';
@@ -2035,7 +2036,8 @@ else
 					if ($num)
 					{
 						$i = 0; $total = 0;
-						print '<br>';
+						if ($somethingshown) print '<br>';
+						$somethingshown=1;
 						print_titre($langs->trans('RelatedOrders'));
 						print '<table class="noborder" width="100%">';
 						print '<tr class="liste_titre">';

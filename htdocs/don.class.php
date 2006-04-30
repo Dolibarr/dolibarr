@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,16 +75,68 @@ class Don
         $this->labelstatut[2]=$langs->trans("DonationStatusPayed");
     }
 
-    /**
-     *    \brief      Retourne le libellé du statut d'une propale (brouillon, validée, ...)
-     *    \return     string      Libellé
-     */
-    function getLibStatut()
-    {
-        return $this->labelstatut[$this->statut];
-    }
     
-    /*
+	/**
+	 *    \brief      Retourne le libellé du statut d'un don (brouillon, validée, abandonnée, payée)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string        	Libellé du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			$prefix='';
+			return $this->labelstatut[$statut];
+		}
+		if ($mode == 1)
+		{
+			$prefix='Short';
+			return $this->labelstatut[$statut];
+		}
+		if ($mode == 2)
+		{
+			$prefix='Short';
+			if ($statut == 0) return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatut[$statut];
+			if ($statut == 1) return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
+			if ($statut == 2) return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
+		}
+		if ($mode == 3)
+		{
+			$prefix='Short';
+			if ($statut == 0) return img_picto($this->labelstatut[$statut],'statut0');
+			if ($statut == 1) return img_picto($this->labelstatut[$statut],'statut1');
+			if ($statut == 2) return img_picto($this->labelstatut[$statut],'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut == 0) return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatut[$statut];
+			if ($statut == 1) return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
+			if ($statut == 2) return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
+		}
+		if ($mode == 5)
+		{
+			$prefix='Short';
+			if ($statut == 0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
+			if ($statut == 1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
+			if ($statut == 2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+		}
+	}
+	
+	
+	/*
      *
      */
     function print_error_list()

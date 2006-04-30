@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,18 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
 
 $langs->load("donations");
 
 
+/*
+ * Affichage
+ */
+ 
 llxHeader();
+
+$donstatic=new Don($db);
 
 $sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -81,7 +88,7 @@ for ($i = 0 ; $i < 3 ; $i++)
 {
   $var=!$var;
   print "<tr $bc[$var]>";
-  print '<td><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></td>';
+  print '<td><a href="liste.php?statut='.$i.'">'.$donstatic->LibStatut($i,4).'</a></td>';
   print '<td align="right">'.$nb[$i].'</td>';
   print '<td align="right">'.($nb[$i]?price($somme[$i]):'&nbsp;').'</td>';
   print '<td align="right">'.($nb[$i]?(price($somme[$i])/$nb[$i]):'&nbsp;').'</td>';

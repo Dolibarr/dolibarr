@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,29 +29,38 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
 
 $langs->load("donations");
-
-llxHeader();
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
 $page=$_GET["page"];
 
-if ($sortorder == "") {  $sortorder="DESC"; }
-if ($sortfield == "") {  $sortfield="d.datedon"; }
-
+if (! $sortorder) {  $sortorder="DESC"; }
+if (! $sortfield) {  $sortfield="d.datedon"; }
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+
+/*
+ * Affichage
+ */
+ 
+llxHeader();
+
+$donstatic=new Don($db);
+
 // Genere requete de liste des dons
-$sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet";
-$sql .= " FROM ".MAIN_DB_PREFIX."don as d left join ".MAIN_DB_PREFIX."don_projet as p";
-$sql .= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
+$sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe,";
+$sql.= " d.amount, d.fk_statut as statut, ";
+$sql.= " p.libelle as projet";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."don_projet AS p";
+$sql.= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
 if ($statut >= 0)
 {
   $sql .= " AND d.fk_statut = ".$statut;
@@ -79,13 +88,13 @@ if ($result)
   print_liste_field_titre($langs->trans("Firstname"),"liste.php","d.prenom","&page=$page&statut=$statut","","",$sortfield);
   print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut","","",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield);
   if ($conf->projet->enabled) {
     $langs->load("projects");
     print_liste_field_titre($langs->trans("Project"),"liste.php","projet","&page=$page&statut=$statut","","",$sortfield);
   }
   print_liste_field_titre($langs->trans("Amount"),"liste.php","d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield);
-  print '<td>&nbsp;</td>';
+  print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut","",'align="right"',$sortfield);
   print "</tr>\n";
     
   $var=True;
@@ -98,11 +107,12 @@ if ($result)
       print "<td>".stripslashes($objp->prenom)."</td>\n";
       print "<td>".stripslashes($objp->nom)."</td>\n";
       print "<td>".stripslashes($objp->societe)."</td>\n";
-      print "<td>".dolibarr_print_date($objp->datedon).'</td>';
+      print '<td align="center">'.dolibarr_print_date($objp->datedon).'</td>';
       if ($conf->projet->enabled) {
           print "<td>$objp->projet</td>\n";
       }
-      print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
+      print '<td align="right">'.price($objp->amount).'</td>';
+      print '<td align="right">'.$donstatic->LibStatut($objp->statut,5).'</td>';
 
       print "</tr>";
       $i++;

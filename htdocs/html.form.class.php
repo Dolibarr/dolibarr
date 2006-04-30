@@ -2219,6 +2219,7 @@ class Form
      *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS défini
      *      \remarks    Le fichier de facture détaillée est de la forme
      *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
+     *		\return		int					<0 si ko, nbre de fichiers affichés si ok
      */
     function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0)
     {
@@ -2229,6 +2230,7 @@ class Form
  
         $filename = sanitize_string($filename);
         $headershown=0;
+        $i=0;
 
         // Affiche en-tete tableau
         if ($genallowed)
@@ -2342,8 +2344,6 @@ class Form
         // Affiche lignes
         if (is_dir($filedir))
         {
-            $i=0;
-            
             $handle=opendir($filedir);
             while (($file = readdir($handle))!==false)
             {
@@ -2408,6 +2408,7 @@ class Form
             }
         }
 
+		return $i;
     }
 
 }
