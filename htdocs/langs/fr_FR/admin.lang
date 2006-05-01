@@ -375,7 +375,7 @@ WebCalAddEventOnCreateCompany=Ajouter évênement dans calendrier sur création de 
 WebCalAddEventOnStatusContract=Ajouter évênement dans calendrier sur changement statut contrats
 WebCalAddEventOnStatusBill=Ajouter évênement dans calendrier sur changement statut factures
 ErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base webcalendar.
-##### Bills #####
+##### Invoices #####
 BillsSetup=Configuration du module Factures
 BillsDate=Date des factures
 BillsNumberingModule=Module de numérotation des factures
@@ -384,6 +384,8 @@ DiscountSetup=Configuration du module Avoirs
 DiscountsNumberingModules=Modules de numérotation des avoirs
 DiscountsPDFModules=Modèles de documents des avoirs
 Discounts=Avoirs
+ForceInvoiceDate=Forcer la date de facture à la date de validation
+DisableRepeatable=Désactiver les factures récurrentes
 ##### Proposals #####
 PropalSetup=Configuration du module Propositions Commerciales
 CreateForm=Création formulaire

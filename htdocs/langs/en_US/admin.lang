@@ -375,7 +375,7 @@ WebCalAddEventOnCreateCompany=Add calendar event on companies create
 WebCalAddEventOnStatusContract=Add calendar event on contract status change
 WebCalAddEventOnStatusBill=Add calendar event on bill status change
 ErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be a Webcalendar database.
-##### Bills #####
+##### Invoices #####
 BillsSetup=Invoices module setup
 BillsDate=Invoices date
 BillsNumberingModule=Invoices numbering module
@@ -384,6 +384,8 @@ DiscountSetup=Credit note module setup
 DiscountsNumberingModules=Credit note numbering modules
 DiscountsPDFModules=Credit note document models
 Discounts=Discounts
+ForceInvoiceDate=Force invoice date to validation date
+DisableRepeatable=Disable repeatable invoices
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms

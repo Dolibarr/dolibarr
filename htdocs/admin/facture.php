@@ -442,9 +442,10 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
+$var=true;
 
 // Force date validation
-$var=false;
+$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="setforcedate">';
 print '<tr '.$bc[$var].'><td>';
@@ -457,7 +458,7 @@ print "</td></tr>\n";
 print '</form>';
 
 // Active facture récurrentes
-$var=false;
+$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="set_disable_repeatable">';
 print '<tr '.$bc[$var].'><td>';
