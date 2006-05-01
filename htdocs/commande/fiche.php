@@ -1559,7 +1559,7 @@ else
       print_titre($langs->trans('SendOrderByMail'));
       
       $soc = new Societe($db);
-			$soc->fetch($commande->soc_id)
+			$soc->fetch($commande->soc_id);
 
       $liste[0]="&nbsp;";
       foreach ($soc->contact_email_array() as $key=>$value)
