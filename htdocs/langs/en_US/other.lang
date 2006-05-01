@@ -47,7 +47,7 @@ CanceledBy=Canceled by %s
 ClosedBy=Closed by %s
 FileWasRemoved=File was deleted
 FeatureNotYetAvailable=Feature not yet available in this version
-FeaturesSupported=Features not supported
+FeaturesSupported=Features supported
 Width=Width
 Height=Height
 ##### Webcal #####
