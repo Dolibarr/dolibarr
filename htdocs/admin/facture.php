@@ -96,33 +96,30 @@ if ($_GET["action"] == 'setmod')
     // \todo Verifier si module numerotation choisi peut etre activé
     // par appel methode canBeActivated
 
-
-	if (dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"]))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $conf->global->FACTURE_ADDON = $_GET["value"];
-    }
+	dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"]);
 }
 
 if ($_POST["action"] == 'setribchq')
 {
-  if (dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"])) $conf->global->FACTURE_RIB_NUMBER = $_POST["rib"];
-  if (dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"])) $conf->global->FACTURE_CHQ_NUMBER = $_POST["chq"];
+    dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"]);
+    dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"]);
 }
 
 if ($_POST["action"] == 'setforcedate')
 {
     dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"]);
-    Header("Location: facture.php");    
-    exit;
+}
+
+if ($_POST["action"] == 'set_disable_repeatable')
+{
+    dolibarr_set_const($db, "FACTURE_DISABLE_RECUR",$_POST["disable_repeatable"]);
 }
 
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''));
 	{
-	  	print $db->error();
+	   dolibarr_print_error($db);
 	}
 }
 
@@ -130,7 +127,7 @@ if ($_GET["action"] == 'delete')
 {
   if (! dolibarr_del_const($db, $_GET["rowid"]));
   {
-    print $db->error();
+    dolibarr_print_error($db);
   }
 }
 
@@ -352,7 +349,7 @@ print_titre( "Mode de règlement à afficher sur les factures");
 print '<table class="noborder" width="100%">';
 $var=True;
 
-print '<form action="facture.php" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="setribchq">';
 print '<tr class="liste_titre">';
 print '<td>Mode règlement à proposer</td>';
@@ -446,15 +443,27 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
+// Force date validation
 $var=false;
-print '<form action="facture.php" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="setforcedate">';
 print '<tr '.$bc[$var].'><td>';
-echo "Forcer la définition de la date des factures lors de la validation";
+print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
-$forcedate=(defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION)?1:0;
+print $html->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
-print $html->selectyesno("forcedate",$forcedate,1);
+// Active facture récurrentes
+$var=false;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="set_disable_repeatable">';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("DisableRepeatable");
+print '</td><td width="60" align="center">';
+print $html->selectyesno("disable_repeatable",$conf->global->FACTURE_DISABLE_RECUR,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
