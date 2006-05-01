@@ -96,7 +96,7 @@ class ActionComm
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
         $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percent."','".$this->priority."',";
         $sql.= ($this->facid?$this->facid:"null").",";
-        $sql.= ($this->propalrowid?$this->propalrowid:"null");
+        $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null");
         $sql.= ");";
     
