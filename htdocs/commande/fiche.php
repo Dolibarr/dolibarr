@@ -322,7 +322,7 @@ if ($_POST['action'] == 'send')
 {
     $langs->load('mails');
     $commande= new Commande($db);
-    if ( $commande->fetch($_POST['id']) )
+    if ( $commande->fetch($_POST['orderid']) )
     {
         $orderref = sanitize_string($commande->ref);
         $file = $conf->commande->dir_output . '/' . $orderref . '/' . $orderref . '.pdf';
