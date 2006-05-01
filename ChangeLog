@@ -6,7 +6,7 @@ English Dolibarr changelog
 - Support credit note and discounts (relative and absolute) on
   commercial proposal and invoices.
 - Added an export tool to export main dolibarr data.
-- Added product categories management.
+- Added product categories management with a categorie tree.
 - Graphical enhancements (picto to describe all status).
 - New permissions (can restrict access for a commercial user to elements
   of its companies only).
@@ -18,10 +18,14 @@ English Dolibarr changelog
 - Can make one payment for several supplier invoices.
 - Rule to suggests passwords when creating a user are in modules
   allowing to add easily other rules.
+- Add Dolibarr triggers support on users creation/change.
+- Add Dolibarr triggers support on payments.
+- Support optionnal new javascript date popup selector.
 
 - Code cleaner.
 - Better compatibility with different PHP version or setup.
-- Lot of fixes after 2.0 release not fixed in 2.0.1
+- Lot of fixes after 2.0 release not fixed in 2.0.1.
+- Traduction more complete.
 
 
 ***** Changelog for 2.0.1 compared to 2.0 *****
