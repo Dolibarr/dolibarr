@@ -1518,12 +1518,13 @@ else
       $num = $db->num_rows($resql);
       if ($num)
 	{
+		print '<br>';
 	  print_titre($langs->trans('ActionsOnOrder'));
 	  $i = 0;
 	  $total = 0;
 	  $var=true;
 
-	  print '<br><table class="border" width="100%">';
+	  print '<table class="border" width="100%">';
 	  print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
 	  print "\n";
 

@@ -61,6 +61,7 @@ RefCustomer=Ref. customer
 RefCdeClient=Ref. customer order
 RefCdeClientShort=Ref. cust. order
 SendPropalByMail=Send order by mail
+ActionsOnOrder=Actions on order
 # Sources
 OrderSource0=Commercial proposal
 OrderSource1=Internet
