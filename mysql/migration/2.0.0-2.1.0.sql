@@ -149,6 +149,8 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'TAS','',1,'','Tasmania');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'WA','',1,'','Western Australia');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'NT','',1,'','Northern Territory');
+delete from llx_c_tva where rowid=291;
+delete from llx_c_tva where rowid=292;
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (291, 29,  '10','0','VAT Rate 10',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (292, 29,   '0','0','VAT Rate 0',1);
 
