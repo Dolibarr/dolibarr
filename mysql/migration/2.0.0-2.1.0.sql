@@ -137,8 +137,6 @@ alter table llx_propal add column fk_adresse_livraison integer after date_livrai
 alter table llx_commande add column fk_adresse_livraison integer after date_livraison;
 
 
-delete from llx_c_tva where rowid='291' and fk_pays='5';
-delete from llx_c_tva where rowid='292' and fk_pays='5';
 insert into llx_c_pays (rowid,code,libelle) values (29, 'AU', 'Australie'      );
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2901,29,2901,     '',0,'Australia');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'NSW','',1,'','New South Wales');
@@ -149,8 +147,8 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901,'TAS','',1,'','Tasmania');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'WA','',1,'','Western Australia');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2901, 'NT','',1,'','Northern Territory');
-delete from llx_c_tva where rowid=291;
-delete from llx_c_tva where rowid=292;
+delete from llx_c_tva where rowid='291' and fk_pays='5';
+delete from llx_c_tva where rowid='292' and fk_pays='5';
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (291, 29,  '10','0','VAT Rate 10',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (292, 29,   '0','0','VAT Rate 0',1);
 
