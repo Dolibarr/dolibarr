@@ -40,8 +40,19 @@ if (!$user->rights->facture->lire)
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
+if ($page == -1)
+{
+$page = 0 ;
+}
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
 
-llxHeader('','Facture récurrente','ch-facture.html#s-fac-facture-rec');
+if ($sortorder == "")
+$sortorder="DESC";
+
+if ($sortfield == "")
+$sortfield="f.datef";
+
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -58,48 +69,55 @@ if ($user->societe_id > 0)
 // Ajout
 if ($_POST["action"] == 'add')
 {
-    $facturerec = new FactureRec($db, $facid);
-    $facturerec->titre = $_POST["titre"];
+	$facturerec = new FactureRec($db, $facid);
+	$facturerec->titre = $_POST["titre"];
 
-    if ($facturerec->create($user) > 0)
-    {
-        $facid = $facturerec->id;
-        $action = '';
-    }
-    else
-    {
-        $action = "create";
-    }
+	if ($facturerec->create($user) > 0)
+	{
+		$facid = $facturerec->id;
+		$action = '';
+	}
+	else
+	{
+		$_GET["action"] = "create";
+		$_GET["facid"] = $_POST["facid"];
+		$mesg = '<div class="error">'.$facturerec->error.'</div>';
+	}
 }
 
 // Suppression
-if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer) 
+if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer)
 {
-  $fac = new FactureRec($db);
-  $fac->delete($_REQUEST["facid"]);
-  $facid = 0 ;
+	$fac = new FactureRec($db);
+	$fac->delete($_REQUEST["facid"]);
+	$facid = 0 ;
 }
 
+
+
 /*
- *
+ *	Affichage page
  */
+
+llxHeader('','Facture récurrente','ch-facture.html#s-fac-facture-rec');
 
 $html = new Form($db);
 
 /*********************************************************************
- *
- * Mode creation
- *
- ************************************************************************/
+*
+* Mode creation
+*
+************************************************************************/
 if ($_GET["action"] == 'create')
 {
-	print_titre("Créer une facture récurrente");
+	print_titre($langs->trans("CreateRepeatableInvoice"));
 
+	if ($mesg) print $mesg.'<br>';
+	
 	$facture = new Facture($db);
 
 	if ($facture->fetch($_GET["facid"]) > 0)
 	{
-
 		print '<form action="fiche-rec.php" method="post">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
@@ -241,7 +259,7 @@ if ($_GET["action"] == 'create')
 			print '</select>';
 			print '</td></tr>';
 		}
-		print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
+		print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 		print "</form>\n";
 		print "</table>\n";
 
@@ -251,240 +269,208 @@ if ($_GET["action"] == 'create')
 		print "Erreur facture $facture->id inexistante";
 	}
 }
-else 
+else
 /* *************************************************************************** */
 /*                                                                             */
 /*                                                                             */
 /*                                                                             */
 /* *************************************************************************** */
 {
-  
-  if ($facid > 0)
-    {    
-      $fac = New FactureRec($db,0);
 
-      if ( $fac->fetch($facid, $user->societe_id) > 0)
-	{	  
-	  $soc = new Societe($db, $fac->socidp);
-	  $soc->fetch($fac->socidp);
-	  $author = new User($db);
-	  $author->id = $fac->user_author;
-	  $author->fetch();
-	  
-	  print_titre("Facture : ".$fac->titre);
-	  
-	  /*
-	   *   Facture
-	   */
-	  print '<table class="border" width="100%">';
-	  print '<tr><td>'.$langs->trans("Customer").'</td>';
-	  print "<td colspan=\"3\">";
-	  print '<b><a href="../fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-	  
-	  print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
-	  
-	  print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
-	  
-	  if ($fac->remise_percent > 0)
-	    {
-	      print '<td rowspan="5" valign="top">';
-	    }
-	  else
-	    {
-	      print '<td rowspan="4" valign="top">';
-	    }
-	  
-	print "</td></tr>";
-	
-	print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	if ($facid > 0)
+	{
+		$fac = New FactureRec($db,0);
 
-	print '<tr><td>'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	if ($fac->note)
-	  {
-	    print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
-	  }
+		if ( $fac->fetch($facid, $user->societe_id) > 0)
+		{
+			$soc = new Societe($db, $fac->socidp);
+			$soc->fetch($fac->socidp);
+			$author = new User($db);
+			$author->id = $fac->user_author;
+			$author->fetch();
 
-	print "</table><br>";
-	/*
-	 * Lignes
-	 *
-	 */
-	print_titre($langs->trans("Products"));
-	      
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
-	print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
-	
-	$num = sizeof($fac->lignes);
-	$i = 0;	
-	$var=True;	
-	while ($i < $num) 
-	  {
-	    $var=!$var;
-	    if ($fac->lignes[$i]->produit_id > 0)
-	      {
-		$prod = New Product($db);
-		$prod->fetch($fac->lignes[$i]->produit_id);
-		print "<tr $bc[$var]><td>";
-		print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$prod->id.'">';
-		print img_object($langs->trans("ShowProduct"),"product").' '.$prod->ref;
-		print '</a>';
-		print '</td>';
-		print '<td>'.$fac->lignes[$i]->desc.'</td>';
-	      }
-	    else
-	      {
-		print "<tr $bc[$var]><td>&nbsp;</td>";
-		print '<td>'.$fac->lignes[$i]->desc.'</td>';
-	      }
-	    print "<td align=\"right\">".price($fac->lignes[$i]->price)."</TD>";
-	    print '<td align="center">'.$fac->lignes[$i]->remise_percent.' %</td>';
-	    print "<td align=\"center\">".$fac->lignes[$i]->qty."</td></tr>\n";
-	    $i++;
-	  }
-	print '</table>';
+			print_titre($langs->trans("PredefinedInvoices").': '.$fac->titre);
 
-	/*
-	 * Actions
-	 *
-	 */
-	if ($user->societe_id == 0 && $fac->paye == 0)
-	  {
-	    print '<p><table id="actions" width="100%"><tr>';
-	
-	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
-	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"fiche-rec.php?facid=$facid&action=delete\">Supprimer</a>]</td>";
-	      } 
-	    else
-	      {
-		print "<td align=\"center\" width=\"25%\">-</td>";
-	      } 
-	    
+			/*
+			*   Facture
+			*/
+			print '<table class="border" width="100%">';
+			print '<tr><td>'.$langs->trans("Customer").'</td>';
+			print "<td colspan=\"3\">";
+			print '<b><a href="../fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 
-	    print "<td align=\"center\" width=\"25%\">-</td>";
+			print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
 
-	    
+			print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
 
-	    print '<td align="center" width="25%">-</td>';	    
-	    print '<td align="center" width="25%">-</td>';
+			if ($fac->remise_percent > 0)
+			{
+				print '<td rowspan="5" valign="top">';
+			}
+			else
+			{
+				print '<td rowspan="4" valign="top">';
+			}
 
-	    print "</tr></table>";
-	  }
-	print "<p>\n";
+			print "</td></tr>";
 
-	/*
-	 *
-	 *
-	 */       
-      }
-    else
-      {
-	/* Facture non trouvée */
-	print "Facture inexistante ou accés refusé";
-      }
-  } else {
-    /***************************************************************************
-     *                                                                         *
-     *                      Mode Liste                                         *
-     *                                                                         * 
-     *                                                                         *
-     ***************************************************************************/
-    if ($page == -1)
-      {
-	$page = 0 ;
-      }
+			print '<tr><td>'.$langs->trans("AmountHT").'</td>';
+			print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-    if ($user->rights->facture->lire)
-      {
-	$limit = $conf->liste_limit;
-	$offset = $limit * $page ;
+			print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			if ($fac->note)
+			{
+				print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
+			}
 
-	if ($sortorder == "")
-	  $sortorder="DESC";
+			print "</table><br>";
+			/*
+			* Lignes
+			*
+			*/
+			print_titre($langs->trans("Products"));
 
-	if ($sortfield == "")
-	  $sortfield="f.datef";
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
+			print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
 
-	$sql = "SELECT s.nom,s.idp,f.titre,f.total,f.rowid as facid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f WHERE f.fk_soc = s.idp";
-	
-	if ($socidp)
-	  $sql .= " AND s.idp = $socidp";
-		 	
-	//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
-	//	$sql .= $db->plimit($limit + 1,$offset);
-	
-	$result = $db->query($sql);
-      }
-    if ($result)
-      {
-	$num = $db->num_rows($result);
-	print_barre_liste($langs->trans("Bills"),$page,"fiche-rec.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+			$num = sizeof($fac->lignes);
+			$i = 0;
+			$var=True;
+			while ($i < $num)
+			{
+				$var=!$var;
+				if ($fac->lignes[$i]->produit_id > 0)
+				{
+					$prod = New Product($db);
+					$prod->fetch($fac->lignes[$i]->produit_id);
+					print "<tr $bc[$var]><td>";
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$prod->id.'">';
+					print img_object($langs->trans("ShowProduct"),"product").' '.$prod->ref;
+					print '</a>';
+					print '</td>';
+					print '<td>'.$fac->lignes[$i]->desc.'</td>';
+				}
+				else
+				{
+					print "<tr $bc[$var]><td>&nbsp;</td>";
+					print '<td>'.$fac->lignes[$i]->desc.'</td>';
+				}
+				print "<td align=\"right\">".price($fac->lignes[$i]->price)."</TD>";
+				print '<td align="center">'.$fac->lignes[$i]->remise_percent.' %</td>';
+				print "<td align=\"center\">".$fac->lignes[$i]->qty."</td></tr>\n";
+				$i++;
+			}
+			print '</table>';
 
-	$i = 0;
-	print "<table class=\"noborder\" width=\"100%\">";
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Ref").'</td>';
-	print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socidp=$socidp");
-	print '</td><td align="right">'.$langs->trans("Amount").'</td>';
-	print '<td>&nbsp;</td>';
-	print "</td>\n";
-      
-	if ($num > 0) 
-	  {
-	    $var=True;
-	    while ($i < min($num,$limit))
-	      {
-		$objp = $db->fetch_object($result);
-		$var=!$var;
 
-		print "<tr $bc[$var]>";
 
-		print '<td><a href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
-		print "</a></td>\n";
-		print '<td><a href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
-		
-		print "<td align=\"right\">".price($objp->total)."</td>\n";
-		
-		if (! $objp->paye)
-		  {
-		    if ($objp->fk_statut == 0)
-		      {
-			print '<td align="center">brouillon</td>';
-		      }
-		    else
-		      {
-			print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">impayée</a></td>';
-		      }
-		  }
+			/**
+			* Barre d'actions
+			*/
+			print '<div class="tabsAction">';
+
+			if ($fac->statut == 0 && $user->rights->facture->supprimer)
+			{
+				print '<a class="butActionDelete" href="fiche-rec.php?action=delete&facid='.$fac->id.'">'.$langs->trans('Delete').'</a>';
+			}
+
+			print '</div>';
+		}
 		else
-		  {
-		    print '<td>&nbsp;</td>';
-		  }
-		
-		print "</tr>\n";
-		$i++;
-	      }
-	  }
-	
-	print "</table>";
-	$db->free();
-      }
-    else
-      {
-	dolibarr_print_error($db);
-      }    
-  }
-  
-}
+		{
+			/* Facture non trouvée */
+			print "Facture inexistante ou accés refusé";
+		}
+		} else {
+			/***************************************************************************
+			*                                                                         *
+			*                      Mode Liste                                         *
+			*                                                                         *
+			*                                                                         *
+			***************************************************************************/
 
-$db->close();
+			if ($user->rights->facture->lire)
+			{
 
-llxFooter('$Date$ - $Revision$');
-?>
+				$sql = "SELECT s.nom,s.idp,f.titre,f.total,f.rowid as facid";
+				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f WHERE f.fk_soc = s.idp";
+
+				if ($socidp)
+				$sql .= " AND s.idp = $socidp";
+
+				//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
+				//	$sql .= $db->plimit($limit + 1,$offset);
+
+				$result = $db->query($sql);
+			}
+			if ($result)
+			{
+				$num = $db->num_rows($result);
+				print_barre_liste($langs->trans("RepeatableInvoice"),$page,"fiche-rec.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+
+				$i = 0;
+				print "<table class=\"noborder\" width=\"100%\">";
+				print '<tr class="liste_titre">';
+				print '<td>'.$langs->trans("Ref").'</td>';
+				print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socidp=$socidp");
+				print '</td><td align="right">'.$langs->trans("Amount").'</td>';
+				print '<td>&nbsp;</td>';
+				print "</td>\n";
+
+				if ($num > 0)
+				{
+					$var=True;
+					while ($i < min($num,$limit))
+					{
+						$objp = $db->fetch_object($result);
+						$var=!$var;
+
+						print "<tr $bc[$var]>";
+
+						print '<td><a href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
+						print "</a></td>\n";
+						print '<td><a href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+
+						print "<td align=\"right\">".price($objp->total)."</td>\n";
+
+						if (! $objp->paye)
+						{
+							if ($objp->fk_statut == 0)
+							{
+								print '<td align="center">brouillon</td>';
+							}
+							else
+							{
+								print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">impayée</a></td>';
+							}
+						}
+						else
+						{
+							print '<td>&nbsp;</td>';
+						}
+
+						print "</tr>\n";
+						$i++;
+					}
+				}
+
+				print "</table>";
+				$db->free();
+			}
+			else
+			{
+				dolibarr_print_error($db);
+			}
+		}
+
+	}
+
+	$db->close();
+
+	llxFooter('$Date$ - $Revision$');
+	?>

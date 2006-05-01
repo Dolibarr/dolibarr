@@ -1,5 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ create table llx_facture_rec
   amount             real     DEFAULT 0 NOT NULL,
   remise             real     DEFAULT 0,
   remise_percent     real     DEFAULT 0,
+  remise_absolue     real     DEFAULT 0,
   tva                real     DEFAULT 0,
   total              real     DEFAULT 0,
   total_ttc          real     DEFAULT 0,
@@ -36,8 +38,11 @@ create table llx_facture_rec
   fk_user_author     integer,   -- createur
   fk_projet          integer,   -- projet auquel est associé la facture
   fk_cond_reglement  integer,   -- condition de reglement
+  fk_mode_reglement   integer,                      -- mode de reglement (Virement, Prélèvement)
+  date_lim_reglement  date,                         -- date limite de reglement
 
   note               text,
+  note_public         text,
 
   frequency          char(2) DEFAULT NULL,
   last_gen           varchar(7) DEFAULT NULL,

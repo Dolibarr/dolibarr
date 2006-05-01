@@ -167,3 +167,16 @@ delete from llx_document_model where nom='azur' and type='order';
 delete from llx_document_model where nom='orange' and type='propal';
 
 alter table llx_actioncomm add column fk_commande integer after propalrowid;
+
+
+ALTER TABLE llx_facture ADD UNIQUE INDEX idx_facture_uk_facnumber (facnumber);
+
+
+ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_soc (fk_soc);
+ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_user_author (fk_user_author);
+ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_projet (fk_projet);
+
+ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+
+ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre);

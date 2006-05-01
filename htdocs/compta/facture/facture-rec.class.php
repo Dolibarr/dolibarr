@@ -29,13 +29,14 @@
 
 require_once(DOL_DOCUMENT_ROOT."/notify.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 
 /**
         \class      FactureRec
-        \brief      Classe de gestion des factures recurrentes
+        \brief      Classe de gestion des factures recurrentes/Modèles
 */
-class FactureRec
+class FactureRec extends Facture
 {
     var $id;
     var $db;
@@ -53,8 +54,9 @@ class FactureRec
     var $propalid;
     var $projetid;
 
+
     /**
-     * Initialisation de la class
+     * 		\brief		Initialisation de la class
      *
      */
     function FactureRec($DB, $facid=0)
@@ -62,26 +64,37 @@ class FactureRec
         $this->db = $DB ;
         $this->facid = $facid;
     }
+    
     /**
-     * Créé la facture
+     * 		\brief		Créé la facture recurrente/modele
+     *		\return		int			<0 si ko, id facture rec crée si ok
      */
     function create($user)
     {
-        $facsrc = new Facture($this->db);
+    	global $langs;
+    	
+		// Nettoyage parametere
+		$this->titre=trim($this->titre);
 
-        if ($facsrc->fetch($this->facid) > 0)
+		// Validation parameteres
+		if (! $this->titre)
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Title"));
+			return -3;
+		}
+
+    	// Charge facture modele
+    	$facsrc=new Facture($this->db);
+    	$result=$facsrc->fetch($this->facid);
+        if ($result > 0)
         {
-            /*
-             * On positionne en mode brouillon la facture
-             */
+            // On positionne en mode brouillon la facture
             $this->brouillon = 1;
-            if (! $facsrc->projetid)
-            {
-                $facsrc->projetid = "NULL";
-            }
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (titre, fk_soc, datec, amount, remise, remise_percent, note, fk_user_author,fk_projet, fk_cond_reglement) ";
-            $sql .= " VALUES ('$this->titre', '$facsrc->socidp', now(), '$facsrc->amount', '$facsrc->remise', '$facsrc->remise_percent', '$this->note','$user->id', '$facsrc->projetid', '$facsrc->cond_reglement_id')";
+            $sql.= " VALUES ('$this->titre', '$facsrc->socidp', now(), '$facsrc->amount', '$facsrc->remise', '$facsrc->remise_percent', '".addslashes($this->note)."','$user->id',";
+            $sql.= " ".($facsrc->projetid?"'".$facsrc->projetid."'":"null").", ";
+            $sql.= " '".$facsrc->cond_reglement_id."')";
             if ( $this->db->query($sql) )
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
@@ -97,7 +110,6 @@ class FactureRec
                         $prod->fetch($facsrc->lignes[$i]->produit_id);
                     }
 
-
                     $result_insert = $this->addline($this->id,
                     addslashes($facsrc->lignes[$i]->desc),
                     $facsrc->lignes[$i]->subprice,
@@ -109,7 +121,7 @@ class FactureRec
 
                     if ( $result_insert < 0)
                     {
-                        print '<br>' . $this->db->error() .'<br>';
+                        $this->error=$this->db->error().' sql='.$sql;
                     }
                 }
 
@@ -117,8 +129,8 @@ class FactureRec
             }
             else
             {
-                print $this->db->error() . '<b><br>'.$sql;
-                return 0;
+                $this->error=$this->db->error().' sql='.$sql;
+                return -2;
             }
         }
         else

@@ -1886,6 +1886,13 @@ else
 			if ($user->societe_id == 0 && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
 			{
 				print '<div class="tabsAction">';
+
+				// Récurrente
+				if (! defined('FACTURE_DISABLE_RECUR') || FACTURE_DISABLE_RECUR == 0) 	// Possibilité de désactiver les factures récurrentes
+				{
+					print '  <a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+				}
+
 				// Valider
 				if ($fac->statut == 0 && $num_lignes > 0)
 				{
@@ -1945,15 +1952,6 @@ else
 				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 				{
 					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
-				}
-
-				// Récurrente
-				if (! defined('FACTURE_DISABLE_RECUR') || FACTURE_DISABLE_RECUR == 0) 	// Possibilité de désactiver les factures récurrentes
-				{
-					if ($fac->statut > 0)
-					{
-						print '  <a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a>';
-					}
 				}
 
 				print '</div>';
