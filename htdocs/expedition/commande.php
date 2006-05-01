@@ -356,6 +356,10 @@ if ($_GET["id"] > 0)
             {
                 print '<td align="center">'.$langs->trans("Stock").'</td>';
             }
+            else
+            {
+            	print '<td>&nbsp;</td>';	
+            }
             print "</tr>\n";
 
             $var=true;
@@ -406,19 +410,23 @@ if ($_GET["id"] > 0)
                         print '<td align="center">'.$product->stock_reel.'</td>';
                     }
                 }
+                else
+                {
+                	print '<td>&nbsp;</td>';
+                }
                 print "</tr>";
 
                 $i++;
                 $var=!$var;
             }
             $db->free();
-            print "</table>";
             
             if (! $num)
             {
-                print $langs->trans("NoArticleOfTypeProduct").'<br>';
+                print '<tr '.$bc[false].'><td colspan="5">'.$langs->trans("NoArticleOfTypeProduct").'<br>';
             }
 
+            print "</table>";
         }
         else
         {
