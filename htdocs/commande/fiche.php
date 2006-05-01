@@ -1505,7 +1505,7 @@ else
 			}
 			print '</td></tr></table>';
 			
-			  /*
+  /*
    * Liste des actions propres à la commande
    */
   $sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
@@ -1523,7 +1523,7 @@ else
 	  $total = 0;
 	  $var=true;
 
-	  print '<table class="border" width="100%">';
+	  print '<br><table class="border" width="100%">';
 	  print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
 	  print "\n";
 
