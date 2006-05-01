@@ -35,6 +35,8 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 
 $langs->load('orders');
 $langs->load('sendings');
