@@ -105,6 +105,7 @@ drop table if exists llx_soc_recontact;
 
 update llx_const set name='MAIN_SIZE_LISTE_LIMIT' where name='SIZE_LISTE_LIMIT';
 update llx_const set name='SOCIETE_FISCAL_MONTH_START' where name='FISCAL_MONTH_START';
+update llx_const set visible=0 where name='FACTURE_DISABLE_RECUR';
 
 alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 
