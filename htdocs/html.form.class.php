@@ -622,22 +622,22 @@ class Form
 		<form>
 		<input type="text" size="5" name="ajkeyref" id="ajkeyref">
 		</form>
-		<div id="placeholderref"></div>
+		<div id="placeholder"></div>
 		<script type="text/javascript">
 		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
 		
-		 new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholderref'}, url, {method: 'get', parameters: "keyref="+$("ajkeyref").value});});
+		 new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholder'}, url, {method: 'get', parameters: "keyref="+$("ajkeyref").value});});
 		
 		</script>
 		<script type="text/javascript" src="<?=DOL_URL_ROOT?>/lib/prototype.js"></script>
 		<form>
 		<input type="text" size="5" name="ajkeylabel" id="ajkeylabel">
 		</form>
-		<div id="placeholderlabel"></div>
+		<div id="placeholder"></div>
 		<script type="text/javascript">
 		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
 		
-		 new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholderlabel'}, url, {method: 'get', parameters: "keylabel="+$("ajkeylabel").value});});
+		 new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholder'}, url, {method: 'get', parameters: "keylabel="+$("ajkeylabel").value});});
 		
 		</script>
 		<?

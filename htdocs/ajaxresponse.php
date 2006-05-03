@@ -19,7 +19,7 @@
  */
 require('./pre.inc.php');
 $form = new Form($db);
-$form->select_produits_do("","","","","",$_GET["key"]);
+$form->select_produits_do("","","","","",$_GET["keyref"],$_GET["keylabel"]);
 // print $_GET["key"];
  
  
