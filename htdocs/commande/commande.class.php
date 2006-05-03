@@ -169,7 +169,7 @@ class Commande
 					}
 					else
 					{
-						$num = $this->ref
+						$num = $this->ref;
 					}
 
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
