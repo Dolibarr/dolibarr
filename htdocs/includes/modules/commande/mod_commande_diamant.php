@@ -101,7 +101,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $cyy = substr($row[0],0,4);
+            if ($row) $cyy = substr($row[0],0,3);
         }
     
         // Si au moins un champ respectant le modèle a été trouvée

@@ -105,7 +105,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $cyymm = substr($row[0],0,6);
+            if ($row) $cyymm = substr($row[0],0,5);
         }
     
         // Si au moins un champ respectant le modèle a été trouvée

@@ -54,6 +54,14 @@ class mod_commande_opale extends ModeleNumRefCommandes
   {
     return "Renvoie le numéro sous la forme numérique COMhexa, où hexa représente un incrément global codé en héxadécimal. (COM-000-001 à COM-FFF-FFF)";
   }
+  
+  /**     \brief      Renvoi un exemple de numérotation
+   *      \return     string      Example
+   */
+    function getExample()
+    {
+        return "COM-000-001";
+    }
 
   
   /**   \brief      Renvoie le prochaine numéro de référence de commande non utilisé
