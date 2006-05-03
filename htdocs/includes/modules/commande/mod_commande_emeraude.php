@@ -80,31 +80,67 @@ class mod_commande_emeraude extends ModeleNumRefCommandes
    }
 
   
-  /**   \brief      Renvoie le prochaine numéro de référence de commande non utilisé
-        \param      obj_soc     objet société
-        \return     string      numéro de référence de commande non utilisé
+  /**     \brief      Renvoi prochaine valeur attribuée
+   *      \return     string      Valeur
    */
-  function commande_get_num($obj_soc=0)
-  { 
-    global $db,$conf;
-    
-    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut <> 0";
-    
-    $resql = $db->query($sql);
+    function getNextValue()
+    {
+        global $db;
 
-    if ( $resql ) 
-      {
-	$row = $db->fetch_row($resql);
-	
-	$num = $row[0];
-      }
-    $current_month = date("n");
-	if($current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
-        $y = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
-	else
-    $y = strftime("%y",time());
-
-    return 'C'.$y.substr("0000".($num+1),-5);
-  }
+        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        $cyy='';
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) $cyy = substr($row[0],0,3);
+        }
+    
+        // Si au moins un champ respectant le modèle a été trouvée
+        if (eregi('C[0-9][0-9]',$cyy))
+        {
+            // Recherche rapide car restreint par un like sur champ indexé
+            $posindice=4;
+            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+            $sql.= " WHERE ref like '${cyy}%'";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $row = $db->fetch_row($resql);
+                $max = $row[0];
+            }
+        }
+        else
+        {
+            $max=0;
+        }
+        
+        $current_month = date("n");
+        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+        {
+        	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+        }
+        else
+        {
+        	$yy = strftime("%y",time());
+        }
+        
+        $num = sprintf("%05s",$max+1);
+        
+        return  "C$yy$num";
+    }
+    
+  
+    /**     \brief      Renvoie la référence de commande suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function commande_get_num($objsoc=0)
+    {
+        return $this->getNextValue();
+    }
 }
 ?>
