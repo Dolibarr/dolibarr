@@ -64,11 +64,70 @@ class mod_commande_opale extends ModeleNumRefCommandes
     }
 
   
+    /**     \brief      Renvoi prochaine valeur attribuée
+     *      \return     string      Valeur
+     */
+    function getNextValue()
+    {
+        global $db;
+
+        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        $com='';
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row)
+            {
+            	$com = substr($row[0],0,3);
+            	$max = hexdec(substr($row[0],4,3)).(substr($row[0],8,3))
+        }
+/*    
+        // Si au moins un champ respectant le modèle a été trouvée
+        if (eregi('COM',$cyy))
+        {
+            // Recherche rapide car restreint par un like sur champ indexé
+            $posindice=4;
+            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+            $sql.= " WHERE ref like '${cyy}%'";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $row = $db->fetch_row($resql);
+                $max = $row[0];
+            }
+            */
+        }
+        else
+        {
+            $max=0;
+        }        
+        $yy = strftime("%y",time());
+        $hex = strtoupper(dechex($max+1));
+        $ref = substr("000000".($hex),-6);
+        
+        return 'COM-'.substr($ref,0,3)."-".substr($ref,3,3);
+    }
+    
+   /**     \brief      Renvoie la référence de commande suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function commande_get_num($objsoc=0)
+    {
+        return $this->getNextValue();
+    }
+
+
+  
   /**   \brief      Renvoie le prochaine numéro de référence de commande non utilisé
         \param      obj_soc     objet société
         \return     string      numéro de référence de commande non utilisé
    */
-  function commande_get_num($obj_soc=0)
+/*  function commande_get_num($obj_soc=0)
   { 
     global $db;
     
@@ -89,5 +148,6 @@ class mod_commande_opale extends ModeleNumRefCommandes
 
     return 'COM-'.substr($ref,0,3)."-".substr($ref,3,3);
   }
+  */
 }
 ?>
