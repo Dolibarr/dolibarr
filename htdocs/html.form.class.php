@@ -622,6 +622,9 @@ class Form
 		<form>
 		<input type="text" size="5" name="ajkeyref" id="ajkeyref">
 		</form>
+		<form>
+		<input type="text" size="5" name="ajkeylabel" id="ajkeylabel">
+		</form>
 		<div id="placeholder"></div>
 		<script type="text/javascript">
 		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
@@ -629,11 +632,6 @@ class Form
 		 new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholder'}, url, {method: 'get', parameters: "keyref="+$("ajkeyref").value});});
 		
 		</script>
-		<script type="text/javascript" src="<?=DOL_URL_ROOT?>/lib/prototype.js"></script>
-		<form>
-		<input type="text" size="5" name="ajkeylabel" id="ajkeylabel">
-		</form>
-		<div id="placeholder"></div>
 		<script type="text/javascript">
 		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
 		
