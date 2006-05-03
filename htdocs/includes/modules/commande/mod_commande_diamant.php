@@ -153,38 +153,5 @@ class mod_commande_diamant extends ModeleNumRefCommandes
     {
         return $this->getNextValue();
     }
-
- 
-  /**   \brief      Renvoie le prochaine numéro de référence de commande non utilisé
-        \param      obj_soc     objet société
-        \return     string      numéro de référence de commande non utilisé
-   
-  function commande_get_num($obj_soc=0)
-  { 
-    global $db;
-    
-    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut <> 0";
-    
-    $resql = $db->query($sql);
-
-    if ( $resql ) 
-      {
-	      $row = $db->fetch_row($resql);
-	
-	      $num = $row[0];
-      }
-      
-      if (!defined("COMMANDE_DIAMANT_DELTA"))
-        {
-          define("COMMANDE_DIAMANT_DELTA", 0);
-        }
-    
-      $num = $num + COMMANDE_DIAMANT_DELTA;
-    
-    $y = strftime("%y",time());
-
-    return 'C'.$y.substr("0000".$num, strlen("0000".$num)-5,5);
-  }
-*/
 }
 ?>
