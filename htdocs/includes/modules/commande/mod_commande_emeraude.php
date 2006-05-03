@@ -85,7 +85,7 @@ class mod_commande_emeraude extends ModeleNumRefCommandes
    */
     function getNextValue()
     {
-        global $db;
+        global $db,$conf;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
         $cyy='';
