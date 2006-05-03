@@ -55,6 +55,14 @@ class mod_commande_jade extends ModeleNumRefCommandes
     return "Renvoie le numéro sous la forme numérique CYY00001, CYY00002, CYY00003, ... où YY représente l'année. Le numéro d'incrément qui suit l'année n'est PAS remis à zéro en début d'année.";
   }
   
+      /**     \brief      Renvoi un exemple de numérotation
+     *      \return     string      Example
+     */
+    function getExample()
+    {
+        return "C0600001";
+    }
+  
   /**     \brief      Renvoi prochaine valeur attribuée
      *      \return     string      Valeur
      */
