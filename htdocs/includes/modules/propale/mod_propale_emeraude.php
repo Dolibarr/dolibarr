@@ -101,7 +101,7 @@ class mod_propale_emeraude extends ModeleNumRefPropales
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $pryy = substr($row[0],0,3);
+            if ($row) $pryy = substr($row[0],0,4);
         }
 
         // Si au moins un champ respectant le modèle a été trouvée

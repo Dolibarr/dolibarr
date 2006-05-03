@@ -99,7 +99,7 @@ function info()
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $fayy = substr($row[0],0,3);
+            if ($row) $fayy = substr($row[0],0,4);
         }
 
         // Si au moins un champ respectant le modèle a été trouvée
