@@ -615,7 +615,7 @@ class Form
     function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
     {
 		global $langs,$conf,$user;
-		if($regis=="je_te_laisse_faire_la_modif")
+		if($conf->use_ajax)
 		{
 		?>
 		<script type="text/javascript" src="<?=DOL_URL_ROOT?>/lib/prototype.js"></script>

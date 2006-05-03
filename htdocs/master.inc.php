@@ -362,6 +362,10 @@ if (isset($conf->global->MAIN_USE_PREVIEW_TABS)) $conf->use_preview_tabs=$conf->
 $conf->use_javascript=1;
 if (isset($conf->global->MAIN_DISABLE_JAVASCRIPT)) $conf->use_javascript=! $conf->global->MAIN_DISABLE_JAVASCRIPT;
 
+// conf->use_ajax
+$conf->use_ajax=""; // Pas d' Ajax par defaut
+if (isset($conf->global->MAIN_DISABLE_AJAX)) $conf->use_ajax=! $conf->global->MAIN_DISABLE_AJAX;
+
 // conf->use_popup_calendar
 $conf->use_popup_calendar="";	// Pas de date popup par defaut
 if (isset($conf->global->MAIN_POPUP_CALENDAR)) $conf->use_popup_calendar=$conf->global->MAIN_POPUP_CALENDAR;

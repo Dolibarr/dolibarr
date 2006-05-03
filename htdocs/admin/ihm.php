@@ -244,6 +244,11 @@ else
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td></tr>";
     
+    // Disable ajax
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';   
+    print yn($conf->global->MAIN_DISABLE_AJAX)."</td></tr>";
+    
     // Calendrier en popup
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';   
