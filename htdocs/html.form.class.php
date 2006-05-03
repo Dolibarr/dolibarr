@@ -633,7 +633,7 @@ class Form
 		<script type="text/javascript">
 		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
 		
-		 new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholder'}, url, {method: 'get', parameters: "keylabel="+$("ajkeylabel").value});});
+		 new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: '<?=$htmlname ?>'}, url, {method: 'get', parameters: "keylabel="+$("ajkeylabel").value});});
 		
 		</script>
 		<?
