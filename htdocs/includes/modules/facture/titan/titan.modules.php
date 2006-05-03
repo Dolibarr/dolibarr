@@ -70,37 +70,72 @@ function info()
         return "FA0600001";           
     }
 
-    /**     \brief      Renvoie la référence de facture suivante non utilisée
+  /**     \brief      Renvoi prochaine valeur attribuée
+   *      \return     string      Valeur
+   */
+    function getNextValue()
+    {
+        global $db,$conf;
+        
+        // D'abord on défini l'année fiscale
+        $prefix='FA';
+        $current_month = date("n");
+        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+        {
+        	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+        }
+        else
+        {
+        	$yy = strftime("%y",time());
+        }
+        
+        // On récupère la valeur max (réponse immédiate car champ indéxé)
+        $fisc=$prefix.$yy;
+        $fayy='';
+        $sql = "SELECT MAX(facnumber)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+        $sql.= " WHERE facnumber like '${fisc}%'";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) $fayy = substr($row[0],0,3);
+        }
+
+        // Si au moins un champ respectant le modèle a été trouvée
+        if (eregi('FA[0-9][0-9]',$fayy))
+        {
+            // Recherche rapide car restreint par un like sur champ indexé
+            $date = strftime("%Y%m", time());
+            $posindice=5;
+            $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+            $sql.= " WHERE facnumber like '${fayy}%'";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $row = $db->fetch_row($resql);
+                $max = $row[0];
+            }
+        }
+        else
+        {
+            $max=0;
+        }
+        
+        $num = sprintf("%05s",$max+1);
+        
+        return  "FA$yy$num";
+    }
+    
+  
+    /**     \brief      Renvoie la référence de commande suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
-    function getNumRef($objsoc=0)
-    { 
-      global $db,$conf;
-    
-      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0";
-    
-      if ( $db->query($sql) ) 
-        {
-          $row = $db->fetch_row(0);
-          
-          $num = $row[0];
-        }
-    
-      $num = $num + 1;
-      $current_month = date("n");
-		
-		  if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->FISCAL_MONTH_START)
-		  {
-			  $y = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
-		  }
-		  else
-		  {
-			  $y = strftime("%y",time());
-		  }
-		
-      return  "FA" . "$y" . substr("0000".$num, strlen("0000".$num)-5,5);
-    
+    function commande_get_num($objsoc=0)
+    {
+        return $this->getNextValue();
     }
     
 }    

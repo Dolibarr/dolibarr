@@ -72,36 +72,72 @@ class mod_propale_emeraude extends ModeleNumRefPropales
     }
 
 
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \param      objsoc      Objet société
-     *      \return     string      Valeur
-     */
-    function getNextValue($objsoc=0)
+  /**     \brief      Renvoi prochaine valeur attribuée
+   *      \return     string      Valeur
+   */
+    function getNextValue()
     {
         global $db,$conf;
-    
-        $sql = "SELECT count(*) FROM  ".MAIN_DB_PREFIX."propal";
-    
-        if ( $db->query($sql) )
-        {
-            $row = $db->fetch_row(0);
-    
-            $num = $row[0];
-        }
         
+        // D'abord on défini l'année fiscale
+        $prefix='PR';
         $current_month = date("n");
-        
-        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->FISCAL_MONTH_START)
+        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
         {
-        	$y = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+        	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
         }
         else
         {
-        	$y = strftime("%y",time());
+        	$yy = strftime("%y",time());
         }
         
-        $num = $num + 1;   
-        return  "PR" . "$y" . substr("0000".$num, strlen("0000".$num)-5,5);
+        // On récupère la valeur max (réponse immédiate car champ indéxé)
+        $fisc=$prefix.$yy;
+        $pryy='';
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= " WHERE ref like '${fisc}%'";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) $pryy = substr($row[0],0,3);
+        }
+
+        // Si au moins un champ respectant le modèle a été trouvée
+        if (eregi('PR[0-9][0-9]',$pryy))
+        {
+            // Recherche rapide car restreint par un like sur champ indexé
+            $date = strftime("%Y%m", time());
+            $posindice=5;
+            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+            $sql.= " WHERE ref like '${pryy}%'";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $row = $db->fetch_row($resql);
+                $max = $row[0];
+            }
+        }
+        else
+        {
+            $max=0;
+        }
+        
+        $num = sprintf("%05s",$max+1);
+        
+        return  "PR$yy$num";
+    }
+    
+  
+    /**     \brief      Renvoie la référence de commande suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function commande_get_num($objsoc=0)
+    {
+        return $this->getNextValue();
     }
     
 }

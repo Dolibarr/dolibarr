@@ -116,7 +116,6 @@ class mod_commande_emeraude extends ModeleNumRefCommandes
         if (eregi('C[0-9][0-9]',$cyy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $prefix='C';
             $date = strftime("%Y%m", time());
             $posindice=4;
             $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
