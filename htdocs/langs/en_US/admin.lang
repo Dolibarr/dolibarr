@@ -15,6 +15,7 @@ GUISetup=Display
 ErrorModuleRequirePHPVersion=Error, this module require PHP version %s or higher
 DictionnarySetup=Dictionnary setup
 DisableJavascript=Disable javascript functions
+DisableAjax=Disable ajax functions
 JavascriptDisabled=Javascript disabled
 UsePopupCalendar=Use popup for dates input
 NextValue=Next value

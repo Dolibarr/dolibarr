@@ -53,6 +53,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"]);
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"]);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["disable_javascript"]);
+	dolibarr_set_const($db, "MAIN_DISABLE_AJAX",       $_POST["disable_ajax"]);
 	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["popup_calendar"]);
 	
 	dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
@@ -126,6 +127,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     $html->selectyesnonum('disable_javascript',$conf->global->MAIN_DISABLE_JAVASCRIPT);
+    print '</td></tr>';
+    
+    // Désactiver ajax
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
+    $html->selectyesnonum('disable_ajax',$conf->global->MAIN_DISABLE_AJAX);
     print '</td></tr>';
     
     // Désactiver le calendrier popup
