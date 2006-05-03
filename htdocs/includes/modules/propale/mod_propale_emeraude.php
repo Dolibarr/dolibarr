@@ -88,12 +88,19 @@ class mod_propale_emeraude extends ModeleNumRefPropales
     
             $num = $row[0];
         }
-		$current_month = date("n");
-		if($current_month >= $conf->global->FISCAL_MONTH_START)
+        
+        $current_month = date("n");
+        
+        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->FISCAL_MONTH_START)
+        {
         	$y = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
-		else
-			$y = strftime("%y",time());
-			$num = $num + 1;   
+        }
+        else
+        {
+        	$y = strftime("%y",time());
+        }
+        
+        $num = $num + 1;   
         return  "PR" . "$y" . substr("0000".$num, strlen("0000".$num)-5,5);
     }
     
