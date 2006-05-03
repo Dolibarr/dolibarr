@@ -128,9 +128,18 @@ class mod_commande_diamant extends ModeleNumRefCommandes
         {
           define("COMMANDE_DIAMANT_DELTA", 0);
         }
-        $max = $max + COMMANDE_DIAMANT_DELTA;
+        
+        if ($max == 0)
+        {
+        	$delta = COMMANDE_DIAMANT_DELTA;
+        	$num = sprintf("%05s",$delta);
+        }
+        else
+        {
+        	$num = sprintf("%05s",$max+1);
+        }
+        
         $yy = strftime("%y",time());
-        $num = sprintf("%05s",$max+1);
         
         return  "C$yy$num";
     }
