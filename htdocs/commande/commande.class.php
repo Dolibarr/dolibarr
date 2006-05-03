@@ -160,7 +160,17 @@ class Commande
 					$objMod = new $modName($this->db);
 					$soc = new Societe($this->db);
 					$soc->fetch($this->soc_id);
-					$num = $objMod->commande_get_num($soc);
+					
+					// on vérifie si la commande est en numérotation provisoire
+					$comref = substr($this->ref, 1, 4);
+					if ($comref == PROV)
+					{
+						$num = $objMod->commande_get_num($soc);
+					}
+					else
+					{
+						$num = $this->ref
+					}
 
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 					$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
