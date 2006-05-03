@@ -75,7 +75,7 @@ class mod_propale_emeraude extends ModeleNumRefPropales
   /**     \brief      Renvoi prochaine valeur attribuée
    *      \return     string      Valeur
    */
-    function getNextValue()
+    function getNextValue($objsoc=0)
     {
         global $db,$conf;
         
@@ -128,16 +128,6 @@ class mod_propale_emeraude extends ModeleNumRefPropales
         $num = sprintf("%05s",$max+1);
         
         return  "PR$yy$num";
-    }
-    
-  
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function commande_get_num($objsoc=0)
-    {
-        return $this->getNextValue();
     }
     
 }

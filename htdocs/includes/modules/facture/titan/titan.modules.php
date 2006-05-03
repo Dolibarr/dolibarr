@@ -133,7 +133,7 @@ function info()
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
-    function commande_get_num($objsoc=0)
+    function getNumRef($objsoc=0)
     {
         return $this->getNextValue();
     }
