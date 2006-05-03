@@ -620,10 +620,8 @@ class Form
 		?>
 		<script type="text/javascript" src="<?=DOL_URL_ROOT?>/lib/prototype.js"></script>
 		<form>
-		<input type="text" size="5" name="ajkeyref" id="ajkeyref">
-		</form>
-		<form>
-		<input type="text" size="5" name="ajkeylabel" id="ajkeylabel">
+		<?=$langs->trans("Ref")?><input type="text" size="5" name="ajkeyref" id="ajkeyref">&nbsp;
+		<?=$langs->trans("Label")?><input type="text" size="5" name="ajkeylabel" id="ajkeylabel">
 		</form>
 		<div id="placeholder"></div>
 		<script type="text/javascript">
