@@ -82,25 +82,9 @@ class mod_commande_opale extends ModeleNumRefCommandes
             $row = $db->fetch_row($resql);
             if ($row)
             {
-            	$com = substr($row[0],0,3);
+            	//on extrait la valeur max et on la passe en décimale
             	$max = hexdec((substr($row[0],4,3)).(substr($row[0],8,3)));
-        }
-/*    
-        // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('COM',$cyy))
-        {
-            // Recherche rapide car restreint par un like sur champ indexé
-            $posindice=4;
-            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-            $sql.= " WHERE ref like '${cyy}%'";
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
             }
-            */
         }
         else
         {
@@ -121,34 +105,5 @@ class mod_commande_opale extends ModeleNumRefCommandes
     {
         return $this->getNextValue();
     }
-
-
-  
-  /**   \brief      Renvoie le prochaine numéro de référence de commande non utilisé
-        \param      obj_soc     objet société
-        \return     string      numéro de référence de commande non utilisé
-   */
-/*  function commande_get_num($obj_soc=0)
-  { 
-    global $db;
-    
-    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut <> 0";
-    
-    $resql = $db->query($sql);
-
-    if ( $resql ) 
-      {
-	$row = $db->fetch_row($resql);
-	
-	$num = $row[0];
-      }
-    
-    $hex = strtoupper(dechex($num+1));
-
-    $ref = substr("000000".($hex),-6);
-
-    return 'COM-'.substr($ref,0,3)."-".substr($ref,3,3);
-  }
-  */
 }
 ?>
