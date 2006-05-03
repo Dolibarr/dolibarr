@@ -75,6 +75,7 @@ class mod_commande_opale extends ModeleNumRefCommandes
         $com='';
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $sql.= " WHERE ref like 'COM%'";
         $resql=$db->query($sql);
         if ($resql)
         {
