@@ -1,6 +1,5 @@
-<?
-/* 
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+<?php
+/* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +15,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
  */
+
+/**
+        \file       htdocs/ajaxresponse.php
+        \brief      Fichier de reponse sur evenement ajax pour generation liste produits
+        \version    $Revision$
+*/
+
 require('./pre.inc.php');
 $form = new Form($db);
 $form->select_produits_do("","","","","",$_GET["keyref"],$_GET["keylabel"]);
 // print $_GET["key"];
  
- 
- 
- ?>
+?>

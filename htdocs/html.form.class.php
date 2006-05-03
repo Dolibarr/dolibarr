@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (c) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -617,40 +617,35 @@ class Form
 		global $langs,$conf,$user;
 		if($conf->use_ajax)
 		{
-		?>
-		<script type="text/javascript" src="<?=DOL_URL_ROOT?>/lib/prototype.js"></script>
-		<form>
-		<?=$langs->trans("Ref")?><input type="text" size="5" name="ajkeyref" id="ajkeyref">&nbsp;
-		<?=$langs->trans("Label")?><input type="text" size="5" name="ajkeylabel" id="ajkeylabel">
-		</form>
-		<div id='<?=$htmlname ?>'></div>
-		<script type="text/javascript">
-		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
-		
-		 new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: '<?=$htmlname ?>'}, url, {method: 'get', parameters: "keyref="+$("ajkeyref").value});});
-		
-		</script>
-		<script type="text/javascript">
-		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
-		
-		 new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: '<?=$htmlname ?>'}, url, {method: 'get', parameters: "keylabel="+$("ajkeylabel").value});});
-		
-		</script>
-		<?
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/prototype.js"></script>';
+			print '<form>';
+			print $langs->trans("Ref").'<input type="text" size="5" name="ajkeyref" id="ajkeyref">&nbsp;';
+			print $langs->trans("Label").'<input type="text" size="5" name="ajkeylabel" id="ajkeylabel">';
+			print '</form>';
+			print '<div id="'.$htmlname.'"></div>';
+			print '<script type="text/javascript">';
+			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
+			print 'new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: \''.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref").value});});';
+			print '</script>';
+			print '<script type="text/javascript">';
+			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
+			print 'new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: \''.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel").value});});';
+			print '</script>';
 		}
 		else
 		{
-			$this -> select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
+			$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
 		}
 		
 	}
+	
     /**
-    *    \brief      Retourne la liste des produits
-    *    \param      selected        Produit présélectionné
-    *    \param      htmlname        Nom de la zone select
-    *    \param      filtretype      Pour filtre sur type de produit
-    *    \param      limit           Limite sur le nombre de lignes retournées
-    */
+     *    \brief      Retourne la liste des produits
+     *    \param      selected        Produit présélectionné
+     *    \param      htmlname        Nom de la zone select
+     *    \param      filtretype      Pour filtre sur type de produit
+     *    \param      limit           Limite sur le nombre de lignes retournées
+     */
     function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeyref='',$ajaxkeylabel='')
     {
         global $langs,$conf,$user;
