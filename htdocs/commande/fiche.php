@@ -745,13 +745,13 @@ else
 				$head[$h][1] = $langs->trans('ComptaCard');
 				$h++;
 			}
-			
+
 			if ($conf->use_preview_tabs)
-		  	{
-	    		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
-	    		$head[$h][1] = $langs->trans("Preview");
-	    		$h++;
-     		}
+			{
+				$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
+				$head[$h][1] = $langs->trans("Preview");
+				$h++;
+			}
 
 			$head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
 			$head[$h][1] = $langs->trans('Info');
@@ -760,8 +760,8 @@ else
 			dolibarr_fiche_head($head, $hselected, $langs->trans('Order').': '.$commande->ref);
 
 			/*
-			 * Confirmation de la suppression de la commande
-			 */
+			* Confirmation de la suppression de la commande
+			*/
 			if ($_GET['action'] == 'delete')
 			{
 				$html->form_confirm('fiche.php?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete');
@@ -769,8 +769,8 @@ else
 			}
 
 			/*
-			 * Confirmation de la validation
-			 */
+			* Confirmation de la validation
+			*/
 			if ($_GET['action'] == 'valid')
 			{
 				//$numfa = commande_get_num($soc);
@@ -779,8 +779,8 @@ else
 			}
 
 			/*
-			 * Confirmation de la cloture
-			 */
+			* Confirmation de la cloture
+			*/
 			if ($_GET['action'] == 'cloture')
 			{
 				//$numfa = commande_get_num($soc);
@@ -789,8 +789,8 @@ else
 			}
 
 			/*
-			 * Confirmation de l'annulation
-			 */
+			* Confirmation de l'annulation
+			*/
 			if ($_GET['action'] == 'annuler')
 			{
 				$html->form_confirm('fiche.php?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
@@ -798,26 +798,26 @@ else
 			}
 
 			/*
-			 *   Commande
-			 */
+			*   Commande
+			*/
 			$nbrow=8;
 			if ($conf->projet->enabled) $nbrow++;
 
 			print '<table class="border" width="100%">';
 
-            // Ref
+			// Ref
 			print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 			print '<td colspan="3">'.$commande->ref.'</td>';
 			print '</tr>';
 
 			// Ref commande client
 			print '<tr><td>';
-            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
-            print '</td>';
-            if ($_GET['action'] != 'refcdeclient') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
-            print '</tr></table>';
-            print '</td><td colspan="3">';
+			print '</td>';
+			if ($_GET['action'] != 'refcdeclient') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
 			if ($user->rights->commande->creer && $_GET['action'] == 'refcdeclient')
 			{
 				print '<form action="fiche.php?id='.$id.'" method="post">';
@@ -832,9 +832,9 @@ else
 			}
 			print '</td>';
 			print '</tr>';
-			
 
-			// Société
+
+			// Sociét
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="2">';
 			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
@@ -852,23 +852,23 @@ else
 			}
 			print '</td>';
 			print '</tr>';
-			
+
 			// Date de livraison
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DateDelivery');
 			print '</td>';
-					
+
 			if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDateDelivery'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editdate_livraison')
 			{
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
-                print '<input type="hidden" name="action" value="setdate_livraison">';
-                $html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
-                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                print '</form>';
+				print '<input type="hidden" name="action" value="setdate_livraison">';
+				$html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
 			}
 			else
 			{
@@ -888,21 +888,21 @@ else
 			{
 				print nl2br($commande->note);
 			}
-			
+
 			print '</td>';
 			print '</tr>';
-			
-			
+
+
 			// Adresse de livraison
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
-					
+
 			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-			
+
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
 				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
@@ -912,13 +912,13 @@ else
 				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
 			}
 			print '</td></tr>';
-			
+
 			// Conditions et modes de réglement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditions');
 			print '</td>';
-					
+
 			if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
@@ -948,31 +948,31 @@ else
 			}
 			print '</td></tr>';
 
-            // Projet
-            if ($conf->projet->enabled)
-            {
-                $langs->load('projects');
-                print '<tr><td height="10">';
-                print '<table class="nobordernopadding" width="100%"><tr><td>';
-                print $langs->trans('Project');
-                print '</td>';
-                if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
-                print '</tr></table>';
-                print '</td><td colspan="2">';
-                if ($_GET['action'] == 'classer')
-                {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'projetid');
-                }
-                else
-                {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'none');
-                }
-                print '</td></tr>';
-            }
+			// Projet
+			if ($conf->projet->enabled)
+			{
+				$langs->load('projects');
+				print '<tr><td height="10">';
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans('Project');
+				print '</td>';
+				if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+				print '</tr></table>';
+				print '</td><td colspan="2">';
+				if ($_GET['action'] == 'classer')
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'projetid');
+				}
+				else
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'none');
+				}
+				print '</td></tr>';
+			}
 
 			// Lignes de 3 colonnes
 
-            // Total HT
+			// Total HT
 			print '<tr><td>'.$langs->trans('TotalHT').'</td>';
 			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
@@ -980,7 +980,7 @@ else
 			// Total TVA
 			print '<tr><td>'.$langs->trans('TotalVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			
+
 			// Total TTC
 			print '<tr><td>'.$langs->trans('TotalTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
@@ -989,21 +989,21 @@ else
 			print '<tr><td>'.$langs->trans('Status').'</td>';
 			print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
 			print '</tr>';
-			
+
 			print '</table><br>';
 			print "\n";
-			
+
 			/*
-		 	 * Lignes de commandes
-			 */
+			* Lignes de commandes
+			*/
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-			
+
 			if ($conf->global->COM_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
-                        {
-                        	$sql.= ', p.description as product_desc';
-                        }
-			
+			{
+				$sql.= ', p.description as product_desc';
+			}
+
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 			$sql.= ' WHERE l.fk_commande = '.$commande->id;
@@ -1047,12 +1047,12 @@ else
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
-							
+
 							if ($conf->global->COM_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
-                        {
-                        	print '<br>'.nl2br(stripslashes($objp->product_desc));
-                        }
-							
+							{
+								print '<br>'.nl2br(stripslashes($objp->product_desc));
+							}
+
 							print '</td>';
 						}
 						else
@@ -1060,7 +1060,7 @@ else
 							print '<td>'.stripslashes(nl2br($objp->description));
 							print '</td>';
 						}
-						
+
 						print '<td align="right">'.$objp->tva_tx.'%</td>';
 						print '<td align="right">'.price($objp->subprice).'</td>';
 						print '<td align="right">'.$objp->qty.'</td>';
@@ -1115,9 +1115,9 @@ else
 						print '<textarea name="eldesc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
 						print '<td align="right">';
 						if($soc->tva_assuj == "0")
-							print '<input type="hidden" name="eltva_tx" value="0">0';
+						print '<input type="hidden" name="eltva_tx" value="0">0';
 						else
-							print $html->select_tva('eltva_tx',$objp->tva_tx,$mysoc,$soc);
+						print $html->select_tva('eltva_tx',$objp->tva_tx,$mysoc,$soc);
 						print '</td>';
 						print '<td align="right"><input size="5" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
 						print '<td align="right"><input size="2" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
@@ -1139,9 +1139,9 @@ else
 			}
 
 			/*
-			 * Lignes de remise
-			 */
-			
+			* Lignes de remise
+			*/
+
 			// Remise relative
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -1250,8 +1250,8 @@ else
 			print '</form>';
 
 			/*
-			 * Ajouter une ligne
-			 */
+			* Ajouter une ligne
+			*/
 			if ($commande->statut == 0 && $user->rights->commande->creer && ($_GET['action'] == '' || $_GET['action'] == 'builddoc' || $_GET['action'] == 'modif'))
 			{
 				print '<tr class="liste_titre">';
@@ -1276,9 +1276,9 @@ else
 				print '  <td><textarea cols="50" name="desc" rows="1"></textarea></td>';
 				print '<td align="center">';
 				if($soc->tva_assuj == "0")
-					print '<input type="hidden" name="tva_tx" value="0">0';
+				print '<input type="hidden" name="tva_tx" value="0">0';
 				else
-					print $html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
+				print $html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="5"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
@@ -1298,9 +1298,9 @@ else
 				print '<td colspan="2">';
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
-						$html->select_produits('','p_idprod','',$conf->produit->limit_size,$soc->price_level);
+				$html->select_produits('','p_idprod','',$conf->produit->limit_size,$soc->price_level);
 				else
-					$html->select_produits('','p_idprod','',$conf->produit->limit_size);
+				$html->select_produits('','p_idprod','',$conf->produit->limit_size);
 				print '<br>';
 				print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
 				print '</td>';
@@ -1316,8 +1316,8 @@ else
 			print '</div>';
 
 			/*
-			 * Boutons actions
-			 */
+			* Boutons actions
+			*/
 			if ($user->societe_id == 0 && $commande->statut < 3 && ($_GET['action'] == '' || $_GET['action'] == 'builddoc' || $_GET['action'] == 'modif'))
 			{
 				print '<div class="tabsAction">';
@@ -1330,35 +1330,35 @@ else
 						print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans('Valid').'</a>';
 					}
 				}
-				
+
 				// Edit
-        if ($commande->statut == 1)
-        {
-            if ($user->rights->commande->creer)
-            {
-                print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
-            }
-        }
+				if ($commande->statut == 1)
+				{
+					if ($user->rights->commande->creer)
+					{
+						print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+					}
+				}
 
 				// Build PDF
 				if ($user->rights->commande->creer)
 				{
 					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
 				}
-				
+
 				// Send
-        if ($commande->statut == 1)
-        {
-            if ($user->rights->commande->envoyer)
-            {
-                $comref = sanitize_string($commande->ref);
-                $file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
-                if (file_exists($file))
-                {
-                    print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
-                }
-            }
-        }
+				if ($commande->statut == 1)
+				{
+					if ($user->rights->commande->envoyer)
+					{
+						$comref = sanitize_string($commande->ref);
+						$file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
+						if (file_exists($file))
+						{
+							print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+						}
+					}
+				}
 
 				// Ship
 				if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
@@ -1387,7 +1387,7 @@ else
 				{
 					print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 				}
-				
+
 				print '</div>';
 			}
 			print '<br>';
@@ -1396,9 +1396,9 @@ else
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 
 			/*
-			 * Documents générés
-			 *
-			 */
+			* Documents générés
+			*
+			*/
 			$comref = sanitize_string($commande->ref);
 			$comref = str_replace("(","",$comref);
 			$comref = str_replace(")","",$comref);
@@ -1407,29 +1407,29 @@ else
 			$filedir = $conf->commande->dir_output . '/' . $comref;
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
 			$genallowed=$user->rights->commande->creer;
-    		$delallowed=$user->rights->commande->supprimer;
+			$delallowed=$user->rights->commande->supprimer;
 
 			$var=true;
 			/*
 			if (file_exists($file))
 			{
-				print_titre($langs->trans('Documents'));
-				print '<table width="100%" class="border">';
-				print '<tr '.$bc[$var].'><td>'.$langs->trans('Order').' PDF</td>';
-				print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-				print '<td align="right">'.filesize($file). ' bytes</td>';
-				print '<td align="right">'.strftime('%d %b %Y %H:%M:%S',filemtime($file)).'</td>';
-				print '</tr>';
-				print '</table>';
-				print '<br>';
+			print_titre($langs->trans('Documents'));
+			print '<table width="100%" class="border">';
+			print '<tr '.$bc[$var].'><td>'.$langs->trans('Order').' PDF</td>';
+			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
+			print '<td align="right">'.filesize($file). ' bytes</td>';
+			print '<td align="right">'.strftime('%d %b %Y %H:%M:%S',filemtime($file)).'</td>';
+			print '</tr>';
+			print '</table>';
+			print '<br>';
 			}
 			*/
 			//$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
 			/*
-			 * Liste des factures
-			 */
+			* Liste des factures
+			*/
 			$sql = 'SELECT f.rowid,f.facnumber, f.total_ttc, '.$db->pdate('f.datef').' as df';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'co_fa as cf';
 			$sql .= ' WHERE f.rowid = cf.fk_facture AND cf.fk_commande = '. $commande->id;
@@ -1469,8 +1469,8 @@ else
 			print '</td><td valign="top" width="50%">';
 
 			/*
-			 * Liste des expéditions
-			 */
+			* Liste des expéditions
+			*/
 			$sql = 'SELECT e.rowid,e.ref,'.$db->pdate('e.date_expedition').' as de';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 			$sql .= ' WHERE e.fk_commande = '. $commande->id;
@@ -1504,99 +1504,99 @@ else
 				dolibarr_print_error($db);
 			}
 			print '</td></tr></table>';
-			
-  /*
-   * Liste des actions propres à la commande
-   */
-  $sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
-  $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-  $sql .= ' WHERE a.fk_commande = '.$commande->id ;
-  if ($socidp) $sql .= ' AND a.fk_soc = '.$socidp;
-  $resql = $db->query($sql);
-  if ($resql)
-    {
-      $num = $db->num_rows($resql);
-      if ($num)
-	{
-		print '<br>';
-	  print_titre($langs->trans('ActionsOnOrder'));
-	  $i = 0;
-	  $total = 0;
-	  $var=true;
 
-	  print '<table class="border" width="100%">';
-	  print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
-	  print "\n";
+			/*
+			* Liste des actions propres à la commande
+			*/
+			$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
+			$sql .= ' WHERE a.fk_commande = '.$commande->id ;
+			if ($socidp) $sql .= ' AND a.fk_soc = '.$socidp;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				if ($num)
+				{
+					print '<br>';
+					print_titre($langs->trans('ActionsOnOrder'));
+					$i = 0;
+					$total = 0;
+					$var=true;
 
-	  while ($i < $num)
-	    {
-	      $objp = $db->fetch_object($resql);
-	      $var=!$var;
-	      print '<tr '.$bc[$var].'>';
-	      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-	      print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
-	      print '<td>'.stripslashes($objp->label).'</td>';
-	      $authoract = new User($db);
-	      $authoract->id = $objp->fk_user_author;
-	      $authoract->fetch('');
-	      print '<td>'.$authoract->code.'</td>';
-	      print "</tr>\n";
-	      $i++;
-	    }
-	  print '</table>';
-	}
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
+					print '<table class="border" width="100%">';
+					print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+					print "\n";
+
+					while ($i < $num)
+					{
+						$objp = $db->fetch_object($resql);
+						$var=!$var;
+						print '<tr '.$bc[$var].'>';
+						print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
+						print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+						print '<td>'.stripslashes($objp->label).'</td>';
+						$authoract = new User($db);
+						$authoract->id = $objp->fk_user_author;
+						$authoract->fetch('');
+						print '<td>'.$authoract->code.'</td>';
+						print "</tr>\n";
+						$i++;
+					}
+					print '</table>';
+				}
+			}
+			else
+			{
+				dolibarr_print_error($db);
+			}
 
 
-  /*
-   * Action presend
-   *
-   */
-  if ($_GET['action'] == 'presend')
-    {
-      print '<br>';
-      print_titre($langs->trans('SendOrderByMail'));
-      
-      $soc = new Societe($db);
-			$soc->fetch($commande->soc_id);
+			/*
+			* Action presend
+			*
+			*/
+			if ($_GET['action'] == 'presend')
+			{
+				print '<br>';
+				print_titre($langs->trans('SendOrderByMail'));
 
-      $liste[0]="&nbsp;";
-      foreach ($soc->contact_email_array() as $key=>$value)
-      {
-      	$liste[$key]=$value;
-      }
+				$soc = new Societe($db);
+				$soc->fetch($commande->soc_id);
 
-      // Créé l'objet formulaire mail
-      include_once('../html.formmail.class.php');
-      $formmail = new FormMail($db);
-      $formmail->fromname = $user->fullname;
-      $formmail->frommail = $user->email;
-      $formmail->withfrom=1;
-      $formmail->withto=$liste;
-      $formmail->withcc=1;
-      $formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
-      $formmail->withfile=1;
-      $formmail->withbody=1;
-      // Tableau des substitutions
-      $formmail->substit['__ORDERREF__']=$commande->ref;
-      // Tableau des paramètres complémentaires
-      $formmail->param['action']='send';
-      $formmail->param['models']='order_send';
-      $formmail->param['orderid']=$commande->id;
-      $formmail->param['returnurl']=DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+				$liste[0]="&nbsp;";
+				foreach ($soc->contact_email_array() as $key=>$value)
+				{
+					$liste[$key]=$value;
+				}
 
-      $formmail->show_form();
-    }
-			
+				// Créé l'objet formulaire mail
+				include_once('../html.formmail.class.php');
+				$formmail = new FormMail($db);
+				$formmail->fromname = $user->fullname;
+				$formmail->frommail = $user->email;
+				$formmail->withfrom=1;
+				$formmail->withto=$liste;
+				$formmail->withcc=1;
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+				$formmail->withfile=1;
+				$formmail->withbody=1;
+				// Tableau des substitutions
+				$formmail->substit['__ORDERREF__']=$commande->ref;
+				// Tableau des paramètres complémentaires
+				$formmail->param['action']='send';
+				$formmail->param['models']='order_send';
+				$formmail->param['orderid']=$commande->id;
+				$formmail->param['returnurl']=DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+
+				$formmail->show_form();
+			}
+
 		}
 		else
 		{
-			/* Commande non trouvée */
-			print 'Commande inexistante ou accés refusé';
+			// Commande non trouvée
+			dolibarr_print_error($db);
 		}
 	}
 }
