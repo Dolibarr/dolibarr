@@ -620,13 +620,24 @@ class Form
 		?>
 		<script type="text/javascript" src="<?=DOL_URL_ROOT?>/lib/prototype.js"></script>
 		<form>
-		<input type="text" size="5" name="ajkey" id="ajkey">
+		<input type="text" size="5" name="ajkeyref" id="ajkeyref">
 		</form>
-		<div id="placeholder"></div>
+		<div id="placeholderref"></div>
 		<script type="text/javascript">
 		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
 		
-		 new Form.Element.Observer($("ajkey"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholder'}, url, {method: 'get', parameters: "key="+$("ajkey").value});});
+		 new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholderref'}, url, {method: 'get', parameters: "keyref="+$("ajkeyref").value});});
+		
+		</script>
+		<script type="text/javascript" src="<?=DOL_URL_ROOT?>/lib/prototype.js"></script>
+		<form>
+		<input type="text" size="5" name="ajkeylabel" id="ajkeylabel">
+		</form>
+		<div id="placeholderlabel"></div>
+		<script type="text/javascript">
+		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
+		
+		 new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholderlabel'}, url, {method: 'get', parameters: "keylabel="+$("ajkeylabel").value});});
 		
 		</script>
 		<?
@@ -644,7 +655,7 @@ class Form
     *    \param      filtretype      Pour filtre sur type de produit
     *    \param      limit           Limite sur le nombre de lignes retournées
     */
-    function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkey='')
+    function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeyref='',$ajaxkeylabel='')
     {
         global $langs,$conf,$user;
     
@@ -661,7 +672,8 @@ class Form
         	$sql.= ' AND IFNULL(c.visible,1)=1';
         }
         if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-        if ($ajaxkey && $ajaxkey != '') $sql.=" AND p.label like '%".$ajaxkey."%'";
+        if ($ajaxkeyref && $ajaxkeyref != '') $sql.=" AND p.label like '%".$ajaxkeyref."%'";
+        if ($ajaxkeylabel && $ajaxkeylabel != '') $sql.=" AND p.label like '%".$ajaxkeylabel."%'";
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
 
