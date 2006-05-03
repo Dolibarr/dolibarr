@@ -605,7 +605,38 @@ class Form
 			return -1;
 		}
 	}
-
+/**
+    *    \brief      Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
+    *    \param      selected        Produit présélectionné
+    *    \param      htmlname        Nom de la zone select
+    *    \param      filtretype      Pour filtre sur type de produit
+    *    \param      limit           Limite sur le nombre de lignes retournées
+    */
+    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
+    {
+		global $langs,$conf,$user;
+		if($regis=="je_te_laisse_faire_la_modif")
+		{
+		?>
+		<script type="text/javascript" src="<?=DOL_URL_ROOT?>/lib/prototype.js"></script>
+		<form>
+		<input type="text" size="5" name="ajkey" id="ajkey">
+		</form>
+		<div id="placeholder"></div>
+		<script type="text/javascript">
+		var url = '<?=DOL_URL_ROOT?>/ajaxresponse.php';
+		
+		 new Form.Element.Observer($("ajkey"), 1, function(){var myAjax = new Ajax.Updater( {success: 'placeholder'}, url, {method: 'get', parameters: "key="+$("ajkey").value});});
+		
+		</script>
+		<?
+		}
+		else
+		{
+			$this -> select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
+		}
+		
+	}
     /**
     *    \brief      Retourne la liste des produits
     *    \param      selected        Produit présélectionné
@@ -613,7 +644,7 @@ class Form
     *    \param      filtretype      Pour filtre sur type de produit
     *    \param      limit           Limite sur le nombre de lignes retournées
     */
-    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
+    function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
     {
         global $langs,$conf,$user;
     
