@@ -86,22 +86,38 @@ class mod_commande_emeraude extends ModeleNumRefCommandes
     function getNextValue()
     {
         global $db,$conf;
-
-        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        
+        // D'abord on défini l'année fiscale
+        $prefix='C';
+        $current_month = date("n");
+        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+        {
+        	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+        }
+        else
+        {
+        	$yy = strftime("%y",time());
+        }
+        
+        // On récupère la valeur max (réponse immédiate car champ indéxé)
+        $fisc=$prefix.$yy;
         $cyy='';
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $sql.= " WHERE ref like '${fisc}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
             if ($row) $cyy = substr($row[0],0,3);
         }
-    
+
         // Si au moins un champ respectant le modèle a été trouvée
         if (eregi('C[0-9][0-9]',$cyy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
+            $prefix='C';
+            $date = strftime("%Y%m", time());
             $posindice=4;
             $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."commande";
@@ -116,16 +132,6 @@ class mod_commande_emeraude extends ModeleNumRefCommandes
         else
         {
             $max=0;
-        }
-        
-        $current_month = date("n");
-        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
-        {
-        	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
-        }
-        else
-        {
-        	$yy = strftime("%y",time());
         }
         
         $num = sprintf("%05s",$max+1);
