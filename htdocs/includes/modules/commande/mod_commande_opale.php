@@ -83,7 +83,7 @@ class mod_commande_opale extends ModeleNumRefCommandes
             if ($row)
             {
             	$com = substr($row[0],0,3);
-            	$max = hexdec(substr($row[0],4,3)).(substr($row[0],8,3));
+            	$max = hexdec((substr($row[0],4,3)).(substr($row[0],8,3)));
         }
 /*    
         // Si au moins un champ respectant le modèle a été trouvée
