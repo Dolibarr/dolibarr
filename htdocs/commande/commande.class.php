@@ -687,7 +687,7 @@ class Commande
 				$this->brouillon = 1;
 			// exp pdf -----------
 			$this->lignes = array();
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.coef,';
 			$sql.= ' p.label, p.description as product_desc, p.ref, p.fk_product_type, p.rowid as prodid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
@@ -712,6 +712,7 @@ class Commande
                         $ligne->remise_percent = $objp->remise_percent;
                         $ligne->price          = $objp->price;
                         $ligne->product_id     = $objp->fk_product;
+                        $ligne->coef           = $objp->coef;
 
                         $ligne->libelle        = $objp->label;        // Label produit
                         $ligne->product_desc   = $objp->product_desc; // Description produit

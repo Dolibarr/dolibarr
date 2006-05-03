@@ -183,3 +183,5 @@ ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_user_author    FORE
 ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
 
 ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre);
+
+alter table llx_commandedet add column coef real;
