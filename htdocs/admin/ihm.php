@@ -126,13 +126,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Désactiver javascript
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
-    $html->selectyesnonum('disable_javascript',$conf->global->MAIN_DISABLE_JAVASCRIPT);
+    $html->selectyesnonum('disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0);
     print '</td></tr>';
     
     // Désactiver ajax
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
-    $html->selectyesnonum('disable_ajax',$conf->global->MAIN_DISABLE_AJAX);
+    $html->selectyesnonum('disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1);
     print '</td></tr>';
     
     // Désactiver le calendrier popup

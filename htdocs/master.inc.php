@@ -363,7 +363,7 @@ $conf->use_javascript=1;
 if (isset($conf->global->MAIN_DISABLE_JAVASCRIPT)) $conf->use_javascript=! $conf->global->MAIN_DISABLE_JAVASCRIPT;
 
 // conf->use_ajax
-$conf->use_ajax=""; // Pas d' Ajax par defaut
+$conf->use_ajax=0; // Pas d' Ajax par defaut
 if (isset($conf->global->MAIN_DISABLE_AJAX)) $conf->use_ajax=! $conf->global->MAIN_DISABLE_AJAX;
 
 // conf->use_popup_calendar
