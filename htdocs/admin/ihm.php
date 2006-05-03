@@ -247,7 +247,7 @@ else
     // Disable ajax
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';   
-    print yn($conf->global->MAIN_DISABLE_AJAX)."</td></tr>";
+    print yn(isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1)."</td></tr>";
     
     // Calendrier en popup
     $var=!$var;
