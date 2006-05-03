@@ -672,7 +672,7 @@ class Form
         	$sql.= ' AND IFNULL(c.visible,1)=1';
         }
         if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-        if ($ajaxkeyref && $ajaxkeyref != '') $sql.=" AND p.label like '%".$ajaxkeyref."%'";
+        if ($ajaxkeyref && $ajaxkeyref != '') $sql.=" AND p.ref like '%".$ajaxkeyref."%'";
         if ($ajaxkeylabel && $ajaxkeylabel != '') $sql.=" AND p.label like '%".$ajaxkeylabel."%'";
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
