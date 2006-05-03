@@ -644,7 +644,7 @@ class Form
     *    \param      filtretype      Pour filtre sur type de produit
     *    \param      limit           Limite sur le nombre de lignes retournées
     */
-    function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
+    function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkey='')
     {
         global $langs,$conf,$user;
     
@@ -661,6 +661,7 @@ class Form
         	$sql.= ' AND IFNULL(c.visible,1)=1';
         }
         if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+        if ($ajaxkey && $ajaxkey != '') $sql.=" AND p.label like '%".$ajaxkey."%'";
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
 
