@@ -488,8 +488,8 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 		$facref = sanitize_string($fac->ref);
 		$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
 
-		if (is_readable($file))
-		{
+		if (! is_readable($file))
+		{			
 			$soc = new Societe($db, $fac->socidp);
 
 			if ($_POST['sendto']) {
@@ -587,23 +587,29 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 				}
 				else
 				{
+					$langs->load("other");
 					$msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' !</div>';
 				}
 			}
 			else
 			{
+				$langs->load("other");
 				$msg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
-				dolibarr_syslog('Le mail du destinataire est vide');
+				dolibarr_syslog('Recipient email is empty');
 			}
 
 		}
 		else
 		{
-			dolibarr_syslog('Impossible de lire :'.$file);
+			$langs->load("other");
+			$msg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+			dolibarr_syslog('Failed to read file: '.$file);
 		}
 	}
 	else
 	{
+		$langs->load("other");
+		$msg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
 		dolibarr_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
 	}
 }
@@ -618,6 +624,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$result=facture_pdf_create($db, $_REQUEST['facid'], '', $_REQUEST['model'], $outputlangs);
     if ($result <= 0)
     {
+    	dolibarr_print_error($db,$result);
         exit;
     }    
 }
@@ -2137,6 +2144,22 @@ else
 			 */
 			if ($_GET['action'] == 'presend')
 			{
+				$facref = sanitize_string($fac->ref);
+				$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
+
+				// Construit PDF si non existant
+				if (! is_readable($file))
+				{
+					$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+					$result=facture_pdf_create($db, $_REQUEST['facid'], '', $_REQUEST['model'], $outputlangs);
+				    if ($result <= 0)
+				    {
+				    	dolibarr_print_error($db,$result);
+				        exit;
+				    }    
+				}			
+
 				print '<br>';
 				print_titre($langs->trans('SendBillByMail'));
 
@@ -2172,6 +2195,22 @@ else
 
 			if ($_GET['action'] == 'prerelance')
 			{
+				$facref = sanitize_string($fac->ref);
+				$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
+
+				// Construit PDF si non existant
+				if (! is_readable($file))
+				{
+					$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+					$result=facture_pdf_create($db, $_REQUEST['facid'], '', $_REQUEST['model'], $outputlangs);
+				    if ($result <= 0)
+				    {
+				    	dolibarr_print_error($db,$result);
+				        exit;
+				    }    
+				}	
+				
 				print '<br>';
 				print_titre($langs->trans('SendReminderBillByMail'));
 

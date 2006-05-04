@@ -1,11 +1,14 @@
 # Dolibarr language file - en_US - other
-Calendar=Calendar
 ErrorPasswordDiffers=Passwords differs, please type them again.
 ErrorForbidden=Access forbidden.<br>You try to access to a page, area or feature without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Permission for this login can be defined by your Dolibarr administrator from menu %s->%s.
 ErrorForbidden3=It seems that Dolibarr is not used through an authenticated session. Take a look at Dolibarr setup documentation to know how to manage authentications (htaccess, mod_auth or other...).
 ErrorNoImagickReadimage=Function imagick_readimage is not found in this PHP. No preview can be available.
 ErrorRecordAlreadyExists=Record already exists
+ErrorCantReadFile=Failed to read file '%s'
+ErrorCantReadDir=Failed to read directory '%s'
+ErrorFailedToFindEntity=Failed to read entity '%s'
+Calendar=Calendar
 AddTrip=Add trip
 Tools=Tools
 Birthday=Birthday
