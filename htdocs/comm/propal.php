@@ -1167,8 +1167,8 @@ if ($_GET['propalid'] > 0)
                     print '<td>&nbsp;</td>';
                     print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
                     print '<td align="right" nowrap><input type="text" size="2" name="remise" value="'.$societe->remise_client.'">%</td>';
-                    print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne"></td>';
-                    print "</tr>\n";
+                    print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne">';
+                    print '</td></tr>\n';
       
                     print '</form>';
                 }
