@@ -508,18 +508,28 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
 				$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 				$message = $_POST['message'];
+				$sendtocc = $_POST['sendtocc'];
+				
 				if ($_POST['action'] == 'send')
 				{
 					if(strlen($_POST['subject']))
+					{
 						$subject = $_POST['subject'];
+					}
 					else
+					{
 						$subject = $langs->trans('Bill').' '.$fac->ref;
+					}
+					
 					$actiontypeid=9;
 					$actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
-					if ($message) {
+					
+					if ($message)
+					{
 						$actionmsg.='Texte utilisé dans le corps du message:<br>';
 						$actionmsg.=$message;
 					}
+					
 					$actionmsg2='Envoi facture par mail';
 				}
 				if ($_POST['action'] == 'relance')

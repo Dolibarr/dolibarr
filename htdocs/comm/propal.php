@@ -256,19 +256,26 @@ if ($_POST['action'] == 'send')
                 $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
                 $message = $_POST['message'];
                 $sendtocc = $_POST['sendtocc'];
+                
                 if ($_POST['action'] == 'send')
                 {
-					$subject = $_POST['subject'];
-					if($subject == '')                	
-                    	$subject = $langs->trans('Propal').' '.$propal->ref;
-                    $actiontypeid=3;
-                    $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
-                    if ($message)
-                    {
-                        $actionmsg.='Texte utilisé dans le corps du message:<br>';
-                        $actionmsg.=$message;
-                    }
-                    $actionmsg2='Envoi Propal par mail';
+                	$subject = $_POST['subject'];
+                	
+                	if($subject == '')
+                	{
+                		$subject = $langs->trans('Propal').' '.$propal->ref;
+                	}
+                  
+                  $actiontypeid=3;
+                  $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
+                  
+                  if ($message)
+                  {
+                    $actionmsg.='Texte utilisé dans le corps du message:<br>';
+                    $actionmsg.=$message;
+                  }
+                  
+                  $actionmsg2='Envoi Propal par mail';
                 }
 
                 $filepath[0] = $file;
