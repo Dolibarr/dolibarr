@@ -1144,7 +1144,7 @@ if ($_GET['propalid'] > 0)
                 // Ajout de produits/services prédéfinis
                 if ($conf->produit->enabled)
                 {
-                    print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+                    print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
                     print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
                     print '<input type="hidden" name="action" value="addligne">';
         
