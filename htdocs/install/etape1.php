@@ -176,7 +176,7 @@ if ($_POST["action"] == "set")
 
         if (! is_dir($main_data_dir))
         {
-            print "<tr><td>".$langs->trans("DirDoesNotExists",$main_data_dir);
+            print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
             print "Vous devez créer ce dossier et permettre au serveur web d'écrire dans celui-ci";
             print '</td><td>';
             print $langs->trans("Error");
