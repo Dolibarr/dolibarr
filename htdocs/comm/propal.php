@@ -258,7 +258,9 @@ if ($_POST['action'] == 'send')
                 $sendtocc = $_POST['sendtocc'];
                 if ($_POST['action'] == 'send')
                 {
-                    $subject = $langs->trans('Propal').' '.$propal->ref;
+					$subject = $_POST['subject'];
+					if($subject == '')                	
+                    	$subject = $langs->trans('Propal').' '.$propal->ref;
                     $actiontypeid=3;
                     $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
                     if ($message)
