@@ -160,7 +160,7 @@ if ($handle)
             $module = new $file;
 
             $var=!$var;
-            print "<tr ".$bc[$var].">\n  <td width=\"140\">".$file."</td>";
+            print '<tr '.$bc[$var].'><td>'.$module->nom.'</td><td>\n';
             print "\n  <td>".$module->info()."</td>\n";
 
 	        // Affiche example
