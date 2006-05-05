@@ -54,6 +54,7 @@ class ModelePDFCommandes extends FPDF
 
     /** 
      *      \brief      Renvoi la liste des modèles actifs
+     *      \return    array        Tableau des modeles (cle=id, valeur=libelle)
      */
     function liste_modeles($db)
     {
@@ -150,24 +151,33 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
 	$langs->load("orders");
 	
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/commande/";
-	
+	$modelisok=0;
+    $liste=array();
+
 	// Positionne modele sur le nom du modele de commande à utiliser
-	if (! strlen($modele))
+	$file = "pdf_".$modele.".modules.php";
+	if ($modele && file_exists($dir.$file))   $modelisok=1;
+
+    // Si model pas encore bon 
+	if (! $modelisok)
 	{
-		if ($conf->global->COMMANDE_ADDON_PDF)
-		{
-			$modele = $conf->global->COMMANDE_ADDON_PDF;
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_PDF_NotDefined");
-			return 0;
-		}
+		if ($conf->global->COMMANDE_ADDON_PDF) $modele = $conf->global->COMMANDE_ADDON_PDF;
+      	$file = "pdf_".$modele.".modules.php";
+    	if (file_exists($dir.$file))   $modelisok=1;
+    }
+
+    // Si model pas encore bon 
+	if (! $modelisok)
+	{
+		$model=new ModelePDFCommandes();
+		$liste=$model->liste_modeles($db);
+        $modele=key($liste);        // Renvoie premiere valeur de clé trouvé dans le tableau
+      	$file = "pdf_".$modele.".modules.php";
+    	if (file_exists($dir.$file))   $modelisok=1;
 	}
 	
 	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+    if ($modelisok)
 	{
 		$classname = "pdf_".$modele;
 		require_once($dir.$file);
@@ -189,7 +199,14 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+        if (! $conf->global->COMMANDE_ADDON_PDF)
+        {
+			print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_PDF_NotDefined");
+        }
+        else
+        {
+    		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+        }
 		return 0;
    }
 }

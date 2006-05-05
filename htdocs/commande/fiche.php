@@ -301,20 +301,20 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
   $commande->reopen($user->id);
 }
 
-if ($_POST['action'] == 'builddoc')
+if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	/*
 	 * Generation de la commande
 	 * définit dans /includes/modules/commande/modules_commande.php
 	 */
-	commande_pdf_create($db, $_GET['id'],$_POST['model']);
-		
-}
-if($_GET['action'] == 'builddoc')
-{
-	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
-	commande_pdf_create($db, $_GET['id'],$commande->modelpdf);
+	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	$result=commande_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
+    if ($result <= 0)
+    {
+    	dolibarr_print_error($db,$result);
+        exit;
+    }    
 }
 
 /*
