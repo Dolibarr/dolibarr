@@ -133,7 +133,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $langs->load("main");
         $langs->load("bills");
         $langs->load("products");
-        $langs->load("deliveries");
+        $langs->load("sendings");
 
         if ($conf->livraison->dir_output)
         {
