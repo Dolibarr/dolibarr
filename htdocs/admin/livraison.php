@@ -259,7 +259,7 @@ if(is_dir($dir))
 			print $name;
 			print "</td><td>\n";
 			require_once($dir.$file);
-			$obj = new $classname();
+			$obj = new $classname($db);
 
 			print $obj->description;
 			print '</td>';

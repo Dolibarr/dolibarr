@@ -45,7 +45,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			\brief      Constructeur
     		\param	    db		Handler accès base de donnée
     */
-    function pdf_typhon($db=0)
+    function pdf_typhon($db)
     {
         global $conf,$langs;
 
