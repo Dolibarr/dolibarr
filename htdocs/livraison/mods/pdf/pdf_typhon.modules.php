@@ -29,7 +29,7 @@
 		\version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_commande.php");
+require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 
 
@@ -133,7 +133,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $langs->load("main");
         $langs->load("bills");
         $langs->load("products");
-        $langs->load("sendings");
+        $langs->load("deliveries");
 
         if ($conf->livraison->dir_output)
         {

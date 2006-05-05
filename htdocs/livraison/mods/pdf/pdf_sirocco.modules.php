@@ -271,7 +271,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
   function _pagehead(&$pdf, $delivery)
    {
 		global $langs;
-	 $langs->load("sendings");
+	 $langs->load("deliveries");
       $pdf->SetXY(10,5);
       if (defined("MAIN_INFO_SOCIETE_NOM"))
 	{

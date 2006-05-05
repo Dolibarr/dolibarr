@@ -37,6 +37,7 @@ $langs->load("admin");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("deliveries");
+$langs->load("sendings");
 
 if (!$user->admin) accessforbidden();
 

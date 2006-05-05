@@ -102,7 +102,7 @@ class ModeleNumRefDeliveryOrder
     function info()
     {
         global $langs;
-        $langs->load("sendings");
+        $langs->load("deliveries");
         return $langs->trans("NoDescription");
     }
 
@@ -112,7 +112,7 @@ class ModeleNumRefDeliveryOrder
     function getExample()
     {
         global $langs;
-        $langs->load("sendings");
+        $langs->load("deliveries");
         return $langs->trans("NoExample");
     }
 
@@ -138,7 +138,7 @@ class ModeleNumRefDeliveryOrder
 function delivery_order_pdf_create($db, $deliveryid, $modele='')
 {
   global $langs;
-  $langs->load("sendings");
+  $langs->load("deliveries");
  
   $dir = DOL_DOCUMENT_ROOT."/livraison/mods/pdf/";
 
