@@ -221,5 +221,6 @@ create table llx_livraisondet
   price          real               -- prix final
 )type=innodb;
 
+alter table llx_livraison add column fk_expedition integer after fk_commande;
 ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_soc (fk_soc);
 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);

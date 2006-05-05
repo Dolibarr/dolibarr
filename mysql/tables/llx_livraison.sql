@@ -27,6 +27,7 @@ create table llx_livraison
   fk_soc                integer NOT NULL,
   fk_soc_contact        integer,
   fk_commande           integer DEFAULT 0,             -- commande auquel est rattache le bon de livraison
+  fk_expedition         integer,                       -- expedition auquel est rattache le bon de livraison
   ref                   varchar(30) NOT NULL,          -- delivery number
   date_creation         datetime,                      -- date de creation 
   date_valid            datetime,                      -- date de validation

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +22,18 @@
  */
 
 /**
-        \file       htdocs/expedition/expedition.class.php
-        \ingroup    expedition
-        \brief      Fichier de la classe de gestion des expeditions
+        \file       htdocs/livraison/livraison.class.php
+        \ingroup    livraison
+        \brief      Fichier de la classe de gestion des bons de livraison
         \version    $Revision$
 */
 
 
 /** 
-        \class      Expedition
-		\brief      Classe de gestion des expeditions
+        \class      Livraison
+		\brief      Classe de gestion des bons de livraison
 */
-class Expedition 
+class Livraison 
 {
   var $db ;
   var $id ;
@@ -43,16 +44,10 @@ class Expedition
    * Initialisation
    *
    */
-  function Expedition($DB)
+  function Livraison($DB)
     {
       $this->db = $DB;
       $this->lignes = array();
-
-      $this->sources[0] = "Proposition commerciale";
-      $this->sources[1] = "Internet";
-      $this->sources[2] = "Courrier";
-      $this->sources[3] = "Téléphone";
-      $this->sources[4] = "Fax";
 
       $this->statuts[-1] = "Annulée";
       $this->statuts[0] = "Brouillon";
@@ -62,22 +57,22 @@ class Expedition
     }
 
   /**
-   *    \brief      Créé expédition en base
+   *    \brief      Créé bon de livraison en base
    *    \param      user        Objet du user qui cré
-   *    \return     int         <0 si erreur, id expédition créée si ok
+   *    \return     int         <0 si erreur, id livraison créée si ok
    */
   function create($user)
     {
         require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
         $error = 0;
-        /* On positionne en mode brouillon la commande */
+        /* On positionne en mode brouillon le bon de livraison */
         $this->brouillon = 1;
     
         $this->user = $user;
     
         $this->db->begin();
     
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (date_creation, fk_user_author, date_expedition, fk_commande";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (date_creation, fk_user_author, fk_expedition, fk_commande";
         if ($this->entrepot_id) $sql.= ", fk_entrepot";
         $sql.= ")";
         $sql.= " VALUES (now(), $user->id, ".$this->db->idate($this->date_expedition).",$this->commande_id";
