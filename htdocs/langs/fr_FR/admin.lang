@@ -451,7 +451,7 @@ ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)
 ##### Sendings #####
 SendingsSetup=Configuration du module Expéditions/Livraisons
-SendingsReceiptModel=Modèle du bordereau de livraison
+SendingsReceiptModel=Modèle du bordereau d'expédition
 ##### Syslog #####
 SyslogSetup=Configuration du module Syslog
 SyslogOutput=Sortie des log
