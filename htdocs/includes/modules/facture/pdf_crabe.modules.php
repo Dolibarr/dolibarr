@@ -329,7 +329,7 @@ class pdf_crabe extends ModelePDFFactures
                 /*
                  * Mode de règlement
                  */
-                if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
+                if ($conf->banque->enable && (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER))
 				{
                     $pdf->SetXY($this->marge_gauche, 228);
                     $pdf->SetTextColor(200,0,0);
@@ -342,12 +342,12 @@ class pdf_crabe extends ModelePDFFactures
                 /*
                  * Propose mode règlement par CHQ
                  */
-                if (defined("FACTURE_CHQ_NUMBER"))
+                if ($conf->global->FACTURE_CHQ_NUMBER)
                 {
-                    if (FACTURE_CHQ_NUMBER > 0)
+                    if ($conf->global->FACTURE_CHQ_NUMBER > 0)
                     {
                         $account = new Account($this->db);
-                        $account->fetch(FACTURE_CHQ_NUMBER);
+                        $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 
                         $pdf->SetXY($this->marge_gauche, 227);
                         $pdf->SetFont('Arial','B',8);
@@ -361,12 +361,12 @@ class pdf_crabe extends ModelePDFFactures
                 /*
                  * Propose mode règlement par RIB
                  */
-                if (defined("FACTURE_RIB_NUMBER"))
+                if ($conf->global->FACTURE_RIB_NUMBER)
                 {
-                    if (FACTURE_RIB_NUMBER > 0)
+                    if ($conf->global->FACTURE_RIB_NUMBER)
                     {
                         $account = new Account($this->db);
-                        $account->fetch(FACTURE_RIB_NUMBER);
+                        $account->fetch($conf->global->FACTURE_RIB_NUMBER);
 
                         $this->marges['g']=$this->marge_gauche;
                         
