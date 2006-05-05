@@ -165,7 +165,8 @@ if ($handle)
 
             $var=!$var;
             print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-            print "\n  <td>".$module->info()."</td>\n";
+            print $module->info();
+            print '</td>';
 
 	        // Affiche example
 	        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
