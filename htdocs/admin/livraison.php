@@ -138,9 +138,9 @@ print_titre($langs->trans("DeliveryOrderNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name")."</td>\n";
-print '<td>'.$langs->trans("Description")."</td>\n";
-print '<td nowrap>'.$langs->trans("Example")."</td>\n";
+print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td nowrap>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
 print '</tr>'."\n";
@@ -192,12 +192,12 @@ if ($handle)
 	    	print ($htmltooltip?img_help(0):'');
 	    	print '</td>';
     	
-            print "</tr>\n";
+            print '</tr>';
         }
     }
     closedir($handle);
 }
-print "</table><br>\n";
+print '</table><br>';
 
 
 /*
