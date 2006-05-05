@@ -193,14 +193,13 @@ create table llx_livraison
   fk_soc                integer NOT NULL,
   fk_soc_contact        integer,
   fk_commande           integer DEFAULT 0,
+  fk_expedition         integer,
   ref                   varchar(30) NOT NULL,
   date_creation         datetime,
   date_valid            datetime,
   fk_user_author        integer,
   fk_user_valid         integer,
   fk_statut             smallint  default 0,
-  total_ht              real      default 0,
-  total_ttc             real      default 0,
   note                  text,
   note_public           text,
   model_pdf             varchar(50),
@@ -212,15 +211,13 @@ create table llx_livraison
 
 create table llx_livraisondet
 (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_livraison   integer,
-  fk_product     integer,
-  label          varchar(255),
-  description    text,
-  qty            real,              -- quantité
-  price          real               -- prix final
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_livraison      integer,
+  fk_commande_ligne integer NOT NULL,
+  qty               real,
+  key(fk_livraison),
+  key(fk_commande_ligne)
 )type=innodb;
 
-alter table llx_livraison add column fk_expedition integer after fk_commande;
 ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_soc (fk_soc);
 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);

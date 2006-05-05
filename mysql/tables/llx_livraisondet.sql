@@ -21,11 +21,10 @@
 
 create table llx_livraisondet
 (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_livraison   integer,
-  fk_product     integer,
-  label          varchar(255),
-  description    text,
-  qty            real,              -- quantité
-  price          real               -- prix final
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_livraison      integer,
+  fk_commande_ligne integer NOT NULL,
+  qty               real,              -- quantité
+  key(fk_livraison),
+  key(fk_commande_ligne)
 )type=innodb;
