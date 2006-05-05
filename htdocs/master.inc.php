@@ -224,6 +224,10 @@ $conf->commande->dir_images=DOL_DATA_ROOT."/commande/images";
 $conf->expedition->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
 $conf->expedition->dir_output=DOL_DATA_ROOT."/expedition";
 $conf->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
+// Module expeditions
+$conf->livraison->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
+$conf->livraison->dir_output=DOL_DATA_ROOT."/livraison";
+$conf->livraison->dir_images=DOL_DATA_ROOT."/livraison/images";
 // Module societe
 $conf->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";

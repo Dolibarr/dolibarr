@@ -244,6 +244,10 @@ Permission1002=Créer/Modifier les stocks
 Permission1003=Supprimer les stocks
 Permission1004=Consulter les mouvements de stocks
 Permission1005=Créer/modifier les mouvements de stocks
+Permission1101=Consulter les bons de livraison
+Permission1102=Créer/modifier les bons de livraison
+Permission1104=Valider les bons de livraison
+Permission1109=Supprimer les bons de livraison
 DictionnaryCompanyType=Types de sociétés
 DictionnaryCompanyJuridicalType=Formes juridiques
 DictionnaryCanton=Départements/Provinces/Cantons
@@ -470,5 +474,6 @@ NewRSS=Syndication d'un nouveau flux RSS
 ##### Mailing #####
 MailingSetup=Configuration du module EMailing
 MailingEMailFrom=Email emetteur (From) des mails envoyés par EMailing
-
-
+##### Deliveries #####
+DeliveryOrderNumberingModules=Module de numérotation des bons de livraison
+DeliveryOrderModel=Modèle de bon de livraison

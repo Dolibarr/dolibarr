@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Eric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,22 +108,30 @@ if ($_GET["action"] == 'setmod')
 
 
 /*
- *
+ * Affiche page
  */
 
-llxHeader();
+llxHeader("","");
 
 $dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
 $html=new Form($db);
 
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
+$head[$h][1] = $langs->trans("Sending");
+$hselected=$h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
+$head[$h][1] = $langs->trans("Delivery");
+$h++;
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 // Méthode de livraison
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE statut = 1";
 $db->fetch_all_rows($sql, $mods);
-
-print_titre($langs->trans("SendingsSetup"));
-
-print "<br>";
 
 print_titre($langs->trans("SendingMethod"));
 

@@ -244,6 +244,10 @@ Permission1002=Create/modify stocks
 Permission1003=Delete stocks
 Permission1004=Read stock's movements
 Permission1005=Create/modify stock's movements
+Permission1101=Read delivery orders
+Permission1102=Create/modify delivery orders
+Permission1104=Validate delivery orders
+Permission1109=Delete delivery orders
 DictionnaryCompanyType=Company types
 DictionnaryCompanyJuridicalType=Juridical kinds of company
 DictionnaryCanton=Cantons
@@ -470,3 +474,6 @@ NewRSS=New RSS
 ##### Mailing #####
 MailingSetup=Mailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
+##### Deliveries #####
+DeliveryOrderNumberingModules=Delivery order numbering module
+DeliveryOrderModel=Delivery order model

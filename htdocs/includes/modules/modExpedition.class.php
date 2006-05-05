@@ -71,6 +71,17 @@ class modExpedition extends DolibarrModules
 
     // Constantes
     $this->const = array();
+	  $this->const[0][0] = "LIVRAISON_ADDON_PDF";
+    $this->const[0][1] = "chaine";
+    $this->const[0][2] = "typhon";
+    $this->const[0][3] = 'Nom du gestionnaire de génération des commandes en PDF';
+    $this->const[0][4] = 0;
+    
+    $this->const[1][0] = "LIVRAISON_ADDON";
+    $this->const[1][1] = "chaine";
+    $this->const[1][2] = "mod_livraison_jade";
+    $this->const[1][3] = 'Nom du gestionnaire de numérotation des bons de livraison';
+    $this->const[1][4] = 0;
     
     // Boxes
     $this->boxes = array();
@@ -99,6 +110,30 @@ class modExpedition extends DolibarrModules
 
     $this->rights[4][0] = 109;
     $this->rights[4][1] = 'Supprimer les expeditions';
+    $this->rights[4][2] = 'd';
+    $this->rights[4][3] = 0;
+    $this->rights[4][4] = 'supprimer';
+    
+    $this->rights[1][0] = 1101;
+    $this->rights[1][1] = 'Lire les bons de livraison';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+    $this->rights[1][4] = 'lire';
+
+    $this->rights[2][0] = 1102;
+    $this->rights[2][1] = 'Créer modifier les bons de livraison';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;
+    $this->rights[2][4] = 'creer';
+
+    $this->rights[3][0] = 1104;
+    $this->rights[3][1] = 'Valider les bons de livraison';
+    $this->rights[3][2] = 'd';
+    $this->rights[3][3] = 0;    
+    $this->rights[3][4] = 'valider';
+
+    $this->rights[4][0] = 1109;
+    $this->rights[4][1] = 'Supprimer les bons de livraison';
     $this->rights[4][2] = 'd';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'supprimer';

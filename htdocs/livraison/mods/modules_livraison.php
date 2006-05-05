@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2006      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,10 @@
  */
 
 /**
-            \file       htdocs/includes/modules/commande/modules_commande.php
-                \ingroup    commande
-                \brief      Fichier contenant la classe mère de generation des commandes en PDF
-                            et la classe mère de numérotation des commandes
+            \file       htdocs/expedition/mods/modules_livraison.php
+                \ingroup    expedition
+                \brief      Fichier contenant la classe mère de generation de bon de livraison en PDF
+                            et la classe mère de numérotation des bons de livraisons
                 \version    $Revision$
 */
 
@@ -36,16 +36,16 @@ require_once(FPDF_PATH.'fpdf.php');
 
 
 /**
-            \class      ModelePDFCommandes
-                \brief      Classe mère des modèles de commandes
+            \class      ModelePDFDeliveryOrder
+                \brief      Classe mère des modèles de bon de livraison
 */
 
-class ModelePDFCommandes extends FPDF
+class ModelePDFDeliveryOrder extends FPDF
 {
     var $error='';
 
    /** 
-        \brief Renvoi le dernier message d'erreur de création de PDF de commande
+        \brief Renvoi le dernier message d'erreur de création de PDF de bon de livraison
     */
     function pdferror()
     {
@@ -57,7 +57,7 @@ class ModelePDFCommandes extends FPDF
      */
     function liste_modeles($db)
     {
-        $type='order';
+        $type='delivery';
         $liste=array();
         $sql ="SELECT nom as id, nom as lib";
         $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
@@ -88,11 +88,11 @@ class ModelePDFCommandes extends FPDF
 
 
 /**
-        \class      ModeleNumRefCommandes
-            \brief      Classe mère des modèles de numérotation des références de commandes
+        \class      ModeleNumRefDeliveryOrder
+            \brief      Classe mère des modèles de numérotation des références de bon de livraison
 */
 
-class ModeleNumRefCommandes
+class ModeleNumRefDeliveryOrder
 {
     var $error='';
 
@@ -102,7 +102,7 @@ class ModeleNumRefCommandes
     function info()
     {
         global $langs;
-        $langs->load("orders");
+        $langs->load("sendings");
         return $langs->trans("NoDescription");
     }
 
@@ -112,7 +112,7 @@ class ModeleNumRefCommandes
     function getExample()
     {
         global $langs;
-        $langs->load("orders");
+        $langs->load("sendings");
         return $langs->trans("NoExample");
     }
 
@@ -135,80 +135,68 @@ class ModeleNumRefCommandes
     }
     
 }
-
-
-/*
-		\brief      Crée un bon de commande sur disque en fonction du modèle de COMMANDE_ADDON_PDF
-		\param	    db  			objet base de donnée
-		\param	    id				id de la propale à créer
-		\param	    modele			force le modele à utiliser ('' par defaut)
-		\param		outputlangs		objet lang a utiliser pour traduction
-*/
-function commande_pdf_create($db, $id, $modele='', $outputlangs='')
+function delivery_order_pdf_create($db, $deliveryid, $modele='')
 {
-	global $conf,$langs;
-	$langs->load("orders");
-	
-	$dir = DOL_DOCUMENT_ROOT."/includes/modules/commande/";
-	
-	// Positionne modele sur le nom du modele de commande à utiliser
-	if (! strlen($modele))
-	{
-		if ($conf->global->COMMANDE_ADDON_PDF)
-		{
-			$modele = $conf->global->COMMANDE_ADDON_PDF;
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_PDF_NotDefined");
-			return 0;
-		}
-	}
-	
-	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
-	{
-		$classname = "pdf_".$modele;
-		require_once($dir.$file);
-	
-		$obj = new $classname($db);
-	
-		if ( $obj->write_pdf_file($id, $outputlangs) > 0)
-		{
-			// on supprime l'image correspondant au preview
-			commande_delete_preview($db, $id);
-			return 1;
-		}
-		else
-		{
-			dolibarr_syslog("Erreur dans commande_pdf_create");
-			dolibarr_print_error($db,$obj->pdferror());
-			return 0;
-		}
-	}
-	else
-	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
-		return 0;
-   }
+  global $langs;
+  $langs->load("sendings");
+ 
+  $dir = DOL_DOCUMENT_ROOT."/livraison/mods/pdf/";
+
+  // Positionne modele sur le nom du modele de bon de livraison à utiliser
+  if (! strlen($modele))
+    {
+      if (defined("LIVRAISON_ADDON_PDF") && LIVRAISON_ADDON_PDF)
+        {
+          $modele = LIVRAISON_ADDON_PDF;
+        }
+      else
+        {
+      print $langs->trans("Error")." ".$langs->trans("Error_LIVRAISON_ADDON_PDF_NotDefined");
+          return 0;
+        }
+    }
+  // Charge le modele
+  $file = "pdf_".$modele.".modules.php";
+  if (file_exists($dir.$file))
+    {
+      $classname = "pdf_".$modele;
+      require_once($dir.$file);
+  
+      $obj = new $classname($db);
+
+      if ( $obj->write_pdf_file($deliveryid) > 0)
+        {
+          // on supprime l'image correspondant au preview
+           delivery_order_delete_preview($db, $deliveryid);
+          return 1;
+        }
+      else
+        {
+          dolibarr_syslog("Erreur dans delivery_order_pdf_create");
+          dolibarr_print_error($db,$obj->pdferror());
+          return 0;
+        }
+    }
+  else
+    {
+      print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+      return 0;
+    }
 }
-
-
-function commande_delete_preview($db, $propalid)
+function delivery_order_delete_preview($db, $deliveryid)
 {
         global $langs,$conf;
 
-        $com = new Commande($db,"",$propalid);
-        $com->fetch($propalid);  
+        $delivery = new Livraison($db,"",$deliveryid);
+        $delivery->fetch($deliveryid);  
         $client = new Societe($db);
-    $client->fetch($com->soc_id);
+        $client->fetch($delivery->soc_id);
 
-        if ($conf->commande->dir_output)
+        if ($conf->livraison->dir_output)
                 {
-                $comref = sanitize_string($com->ref); 
-                $dir = $conf->commande->dir_output . "/" . $comref ; 
-                $file = $dir . "/" . $comref . ".pdf.png";
+                $deliveryref = sanitize_string($delivery->ref); 
+                $dir = $conf->livraison->dir_output . "/" . $deliveryref ; 
+                $file = $dir . "/" . $deliveryref . ".pdf.png";
 
                 if ( file_exists( $file ) && is_writable( $file ) )
                         {

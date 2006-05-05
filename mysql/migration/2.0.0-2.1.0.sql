@@ -185,3 +185,41 @@ ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_projet         FORE
 ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre);
 
 alter table llx_commandedet add column coef real;
+
+create table llx_livraison
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  fk_soc                integer NOT NULL,
+  fk_soc_contact        integer,
+  fk_commande           integer DEFAULT 0,
+  ref                   varchar(30) NOT NULL,
+  date_creation         datetime,
+  date_valid            datetime,
+  fk_user_author        integer,
+  fk_user_valid         integer,
+  fk_statut             smallint  default 0,
+  total_ht              real      default 0,
+  total_ttc             real      default 0,
+  note                  text,
+  note_public           text,
+  model_pdf             varchar(50),
+  date_livraison 	      date 	  default NULL,
+  fk_adresse_livraison  integer,
+
+  UNIQUE INDEX (ref)
+)type=innodb;
+
+create table llx_livraisondet
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_livraison   integer,
+  fk_product     integer,
+  label          varchar(255),
+  description    text,
+  qty            real,              -- quantité
+  price          real               -- prix final
+)type=innodb;
+
+ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_soc (fk_soc);
+ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
