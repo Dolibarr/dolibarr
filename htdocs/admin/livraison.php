@@ -36,8 +36,8 @@ require("./pre.inc.php");
 $langs->load("admin");
 $langs->load("bills");
 $langs->load("other");
-$langs->load("deliveries");
 $langs->load("sendings");
+$langs->load("deliveries");
 
 if (!$user->admin) accessforbidden();
 
