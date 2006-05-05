@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_livraison.php");
         \brief      Classe permettant de générer les bons de livraison au modèle Sirocco
 */
 
-class pdf_sirocco extends ModelePDFCommandes
+class pdf_sirocco extends ModelePDFDeliveryOrder
 {
 
   /**	\brief      Constructeur

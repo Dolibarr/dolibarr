@@ -37,7 +37,7 @@ include_once("modules_livraison.php");
    \brief      Classe du modèle de numérotation de référence de bon de livraison Jade
 */
 
-class mod_livraison_jade extends ModeleNumRefCommandes
+class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
 
   /**   \brief      Constructeur

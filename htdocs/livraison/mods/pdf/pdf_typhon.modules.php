@@ -38,7 +38,7 @@ require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 		\brief      Classe permettant de générer les bons de livraison au modèle Typhon
 */
 
-class pdf_typhon extends ModelePDFCommandes
+class pdf_typhon extends ModelePDFDeliveryOrder
 {
     
     /**
@@ -133,7 +133,7 @@ class pdf_typhon extends ModelePDFCommandes
         $langs->load("main");
         $langs->load("bills");
         $langs->load("products");
-        $langs->load("sendings");
+        $langs->load("deliveries");
 
         if ($conf->livraison->dir_output)
         {
