@@ -121,7 +121,7 @@ class pdf_crabe extends ModelePDFFactures
     */
     function write_pdf_file($id)
     {
-        global $user,$langs,$conf;
+        global $user,$langs,$conf,$mysoc;
 
         $langs->load("main");
         $langs->load("bills");
@@ -329,13 +329,12 @@ class pdf_crabe extends ModelePDFFactures
                 /*
                  * Mode de règlement
                  */
-                if ($conf->banque->enable && (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER))
+                if (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER)
 				{
                     $pdf->SetXY($this->marge_gauche, 228);
                     $pdf->SetTextColor(200,0,0);
                     $pdf->SetFont('Arial','B',8);
                     $pdf->MultiCell(90, 3, $langs->trans("ErrorNoPaiementModeConfigured"),0,'L',0);
-                    $pdf->MultiCell(90, 3, $langs->trans("ErrorCreateBankAccount"),0,'L',0);
                     $pdf->SetTextColor(0,0,0);
                 }
 
@@ -355,6 +354,15 @@ class pdf_crabe extends ModelePDFFactures
                         $pdf->SetXY($this->marge_gauche, 231);
                         $pdf->SetFont('Arial','',8);
                         $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
+                    }
+                    if ($conf->global->FACTURE_CHQ_NUMBER == -1)
+                    {
+                        $pdf->SetXY($this->marge_gauche, 227);
+                        $pdf->SetFont('Arial','B',8);
+                        $pdf->MultiCell(90, 3, "Règlement par chèque à l'ordre de ".$mysoc->nom." envoyé à:",0,'L',0);
+                        $pdf->SetXY($this->marge_gauche, 231);
+                        $pdf->SetFont('Arial','',8);
+                        $pdf->MultiCell(80, 3, $mysoc->adresse_full, 0, 'L', 0);
                     }
                 }
 

@@ -484,6 +484,7 @@ $mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;
 $mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
 $mysoc->forme_juridique_code=$conf->global->MAIN_INFO_FORME_JURIDIQUE;
 $mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
+$mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
 
 /* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
  * (pour particuliers ou libéraux en franchise)

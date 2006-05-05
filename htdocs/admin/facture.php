@@ -344,93 +344,92 @@ print '</table>';
  *
  */
 print '<br>';
-print_titre( "Mode de règlement à afficher sur les factures");
+print_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"));
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 
 print '<table class="noborder" width="100%">';
 $var=True;
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="setribchq">';
 print '<tr class="liste_titre">';
-print '<td>Mode règlement à proposer</td>';
+print '<td>'.$langs->trans("PaymentMode").'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print "<td>Proposer paiement par RIB sur le compte</td>";
 print "<td>";
-$sql = "SELECT rowid, label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-$sql.= " where clos = 0";
-$sql.= " and courant = 1";
-if ($db->query($sql))
+if ($conf->banque->enabled)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  if ($num > 0) {
-    print "<select name=\"rib\">";
-    print '<option value="0">'.$langs->trans("DoNotShow").'</option>';
-    while ($i < $num)
-      {
-	$var=!$var;
-	$row = $db->fetch_row($i);
-	
-	if ($conf->global->FACTURE_RIB_NUMBER == $row[0])
-	  {
-	    print '<option value="'.$row[0].'" selected="true">'.$row[1].'</option>';
-	  }
-	else
-	  {
-	    print '<option value="'.$row[0].'">'.$row[1].'</option>';
-	  }
-		  $i++;
-      }
-    print "</select>";
-  } else {
-    print "<i>Aucun compte bancaire actif créé</i>";
-  }
+    $sql = "SELECT rowid, label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+    $sql.= " where clos = 0";
+    $sql.= " and courant = 1";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      if ($num > 0) {
+        print "<select name=\"rib\">";
+        print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+        while ($i < $num)
+          {
+    	$var=!$var;
+    	$row = $db->fetch_row($resql);
+    	
+        print '<option value="'.$row[0].'"';
+        print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected="true"':'';
+        print '>'.$row[1].'</option>';
+    
+        $i++;
+          }
+        print "</select>";
+        } else {
+            print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
+        }
+    }
+}
+else
+{
+    print $langs->trans("BankModuleNotActive");
 }
 print "</td></tr>";
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print "<td>Proposer paiement par chèque à l'ordre et adresse du titulaire du compte</td>";
+print "<td>Proposer paiement par chèque à l'ordre et adresse de</td>";
 print "<td>";
+print '<select name="chq">';
+print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="true"':'').'>'.$langs->trans("Company").' ('.$mysoc->nom.')</option>';
+
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 $sql.= " where clos = 0";
 $sql.= " and courant = 1";
 $var=True;
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
-  if ($num > 0)
-    {
-      print "<select name=\"chq\">";
-      print '<option value="0">'.$langs->trans("DoNotShow").'</option>';
       while ($i < $num)
 	{
 	  $var=!$var;
-	  $row = $db->fetch_row($i);
+	  $row = $db->fetch_row($resql);
 	  
-	  if ($conf->global->FACTURE_CHQ_NUMBER == $row[0])
-	    {
-	      print '<option value="'.$row[0].'" selected="true">'.$row[1].'</option>';
-	    }
-	  else
-	    {
-	      print '<option value="'.$row[0].'">'.$row[1].'</option>';
-	    }
+    print '<option value="'.$row[0].'"';
+    print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected="true"':'';
+    print '>'.$langs->trans("OwnerOfBankAccount",$row[1]).'</option>';
+
 	  $i++;
 	}
-      print "</select>";
-    } else {
-      print "<i>Aucun compte bancaire actif créé</i>";
-    }
 }
+print "</select>";
 print "</td></tr>";
-print "</form>";
 print "</table>";
+print "</form>";
 
 
 print "<br>";

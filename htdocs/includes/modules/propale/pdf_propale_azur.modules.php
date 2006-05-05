@@ -338,15 +338,16 @@ class pdf_propale_azur extends ModelePDFPropales
                 /*
                 * Mode de règlement
                 */
-                if ($conf->banque->enable && (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER))
+                /*
+                if (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER)
                 {
                     $pdf->SetXY ($this->marge_gauche, 228);
                     $pdf->SetTextColor(200,0,0);
                     $pdf->SetFont('Arial','B',8);
                     $pdf->MultiCell(90, 3, $langs->trans("ErrorNoPaiementModeConfigured"),0,'L',0);
-                    $pdf->MultiCell(90, 3, $langs->trans("ErrorCreateBankAccount"),0,'L',0);
                     $pdf->SetTextColor(0,0,0);
                 }
+                */
 
                 /*
                 * Propose mode règlement par CHQ
