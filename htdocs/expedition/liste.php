@@ -62,7 +62,7 @@ if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, 
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
 if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
-$sql_add = " WHERE ";
+$sql_add = " WHERE c.fk_soc = s.rowid";
 if ($socidp)
 { 
   $sql.= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = ".$socidp; 
@@ -109,7 +109,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
       print "<a href=\"fiche.php?id=$objp->rowid\">".$objp->ref."</a></td>\n";
-      print "<a href=\"..\comm\fiche.php?id=$objp->fk_soc\">".$objp->nom."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'\comm\fiche.php?id='.$objp->fk_soc.'">'.$objp->nom.'</a></td>'"\n";
       
       $now = time();
       $lim = 3600 * 24 * 15 ;
