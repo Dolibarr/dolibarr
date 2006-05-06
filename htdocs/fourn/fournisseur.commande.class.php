@@ -310,7 +310,14 @@ class CommandeFournisseur extends Commande
 		}
 		if ($mode == 3)
 		{
-			return $this->statuts[$statut];
+        	if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
+        	if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
+        	if ($statut==2) return img_picto($langs->trans('StatusOrderApproved'),'statut3');
+        	if ($statut==3) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
+        	if ($statut==4) return img_picto($langs->trans('StatusOrderReceivedPartially'),'statut3');
+        	if ($statut==5) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
+        	if ($statut==6) return img_picto($langs->trans('StatusOrderCanceled'),'statut5');
+        	if ($statut==9) return img_picto($langs->trans('StatusOrderRefused'),'statut5');
 		}
 		if ($mode == 4)
 		{

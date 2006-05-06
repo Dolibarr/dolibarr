@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print '<td>'.$commande->statuts[$row[1]].'</td>';
       print '<td align="center">'.$row[0].'</td>';
-      print '<td align="center"><a href="liste.php?statut='.$row[1].'"><img src="statut'.$row[1].'.png" border="0" alt="Statut"></a></td>';
+      print '<td align="center"><a href="liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
 
       print "</tr>\n";
       $i++;

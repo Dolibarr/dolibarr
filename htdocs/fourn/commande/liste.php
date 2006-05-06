@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,13 @@ if ($socid > 0)
   $title .= ' (<a href="liste.php">'.$fourn->nom.'</a>)';
 }
 
+/*
+ * Affichage
+ */
+
 llxHeader('',$title);
+
+$commandestatic=new Commande($db);
 
 
 if ($sortorder == "") $sortorder="DESC";
@@ -95,6 +101,7 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $resql = $db->query($sql);
 if ($resql)
 {
+   
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -106,7 +113,8 @@ if ($resql)
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref");
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
     print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"');
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="center"');
+//    print_liste_field_titre($langs->trans("OrderDateApproved"),$_SERVER["PHP_SELF"],"dc","","",'align="center"');
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="right"');
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
@@ -148,7 +156,7 @@ if ($resql)
         print '</td>';
 
         // Statut
-        print '<td align="center"><img src="statut'.$obj->fk_statut.'.png"></td>';
+        print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
 
         print "</tr>\n";
         $i++;
