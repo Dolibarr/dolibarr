@@ -23,7 +23,8 @@
 /**
 	    \file       htdocs/lib/company.lib.php
 		\brief      Ensemble de fonctions de base pour le module societe
-		\version    $Revision$
+        \ingroup    societe
+        \version    $Revision$
 
 		Ensemble de fonctions de base de dolibarr sous forme d'include
 */
@@ -34,8 +35,6 @@ function societe_prepare_head($objsoc)
 	$h = 0;
 	$head = array();
 	
-    $h = 0;
-
     $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
     $head[$h][1] = $langs->trans("Company");
     $head[$h][2] = 'company';

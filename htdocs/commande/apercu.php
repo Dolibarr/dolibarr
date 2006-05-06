@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 
 $user->getrights('commande');
 $user->getrights('expedition');
@@ -80,46 +81,9 @@ if ($_GET["id"] > 0) {
 		$soc = new Societe($db, $commande->socidp);
 		$soc->fetch($commande->socidp);
 
-		$h=0;
 
-		if ($conf->commande->enabled && $user->rights->commande->lire)
-			{
-				$head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-				$head[$h][1] = $langs->trans('OrderCard');
-				$h++;
-			}
-
-		if ($conf->expedition->enabled && $user->rights->expedition->lire)
-			{
-				$head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
-				$head[$h][1] = $langs->trans('SendingCard');
-				$h++;
-			}
-			
-		if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-			{
-				$head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
-				$head[$h][1] = $langs->trans('ComptaCard');
-				$h++;
-			}
-
-		if ($conf->use_preview_tabs)
-		 {
-    		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
-    		$head[$h][1] = $langs->trans("Preview");
-    		$hselected=$h;
-    		$h++;
-      }
-        
-		$head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans('Info');
-		$h++;
-		
-		$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans('OrderContact');
-		$h++;
-
-		dolibarr_fiche_head($head, $hselected, $langs->trans('Order').': '.$commande->ref);
+		$head = commande_prepare_head($commande);
+        dolibarr_fiche_head($head, 'preview', $langs->trans("CustomerOrder"));
 
 
 		/*
@@ -147,7 +111,7 @@ if ($_GET["id"] > 0) {
 
 				print '<table class="border" width="100%">';
 
-		        // Reference
+		        // Ref
 		        print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
 		        print '<td colspan="2">'.$commande->ref.'</td>';
 		        print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;

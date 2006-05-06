@@ -29,31 +29,28 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
 $langs->load("orders");
-$langs->load("sendings");
 $langs->load("companies");
 $langs->load("bills");
-$langs->load("propal");
 
-$user->getrights('facture');
+$user->getrights('commande');
 
 if (! $user->rights->commande->lire) accessforbidden();
 
-require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
+
 /*
- *
+ *	Actions
  */	
 
 if ($_GET["action"] == 'facturee') 
@@ -87,46 +84,8 @@ if ($_GET["id"] > 0)
         $author->id = $commande->user_author_id;
         $author->fetch();
 
-        $h=0;
-
-        if ($conf->commande->enabled && $user->rights->commande->lire)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-            $head[$h][1] = $langs->trans("OrderCard");
-            $h++;
-        }
-
-        if ($conf->expedition->enabled && $user->rights->expedition->lire)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
-            $head[$h][1] = $langs->trans("SendingCard");
-            $h++;
-        }
-
-        if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
-            $head[$h][1] = $langs->trans("ComptaCard");
-            $hselected = $h;
-            $h++;
-        }
-        
-        if ($conf->use_preview_tabs)
-		    {
-    		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
-    		$head[$h][1] = $langs->trans("Preview");
-    		$h++;
-        }
-
-        $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
-        $head[$h][1] = $langs->trans("Info");
-        $h++;
-        
-        $head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$commande->id;
-			  $head[$h][1] = $langs->trans('OrderContact');
-			  $h++;
-
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Order").": $commande->ref");
+		$head = commande_prepare_head($commande);
+        dolibarr_fiche_head($head, 'accountancy', $langs->trans("CustomerOrder"));
 
         /*
          *   Commande

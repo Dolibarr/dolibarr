@@ -29,7 +29,8 @@
 */
 
 require("./pre.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 
 $langs->load("orders");
 $langs->load("sendings");
@@ -45,49 +46,11 @@ llxHeader();
 $commande = new Commande($db);
 $commande->fetch($_GET["id"]);
 $commande->info($_GET["id"]);
-$soc = new Societe($db, $commande->socidp);
-$soc->fetch($commande->socidp);
+$soc = new Societe($db, $commande->soc_id);
+$soc->fetch($commande->soc_id);
 
-$h = 0;
-
-	  if ($conf->commande->enabled && $user->rights->commande->lire)
-	    {
-    	  $head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-    	  $head[$h][1] = $langs->trans("OrderCard");
-    	  $h++;
-        }
-        	 
-	  if ($conf->expedition->enabled && $user->rights->expedition->lire)
-	  {
-	      $head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
-	      $head[$h][1] = $langs->trans("SendingCard");
-	      $h++;
-	  }
-
-	  if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-	  {
-    	  $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
-    	  $head[$h][1] = $langs->trans("ComptaCard");
-    	  $h++;
-      }
-        
-    if ($conf->use_preview_tabs)
-		  {
-    		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
-    		$head[$h][1] = $langs->trans("Preview");
-    		$h++;
-      }
- 
-      $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("Info");
-  	  $hselected = $h;
-      $h++;
-      
-      $head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$commande->id;
-			$head[$h][1] = $langs->trans('OrderContact');
-			$h++;
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("Order").": $commande->ref");
+$head = commande_prepare_head($commande);
+dolibarr_fiche_head($head, 'info', $langs->trans("CustomerOrder"));
 
 
 print '<table width="100%"><tr><td>';
