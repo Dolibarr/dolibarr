@@ -46,12 +46,6 @@ create table llx_comfourn_facfourn
 )type=innodb;
 
 
-create table llx_commande_fournisseur_model_pdf
-(
-  nom         varchar(50) PRIMARY KEY,
-  libelle     varchar(255),
-  description text
-)type=innodb;
 
 alter table llx_categorie drop column fk_statut;
 alter table llx_categorie add visible tinyint DEFAULT 1 NOT NULL;
