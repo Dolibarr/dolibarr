@@ -99,7 +99,7 @@ if ($resql)
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
   print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", "&amp;socidp=$socidp",'width="25%" align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("Order"),"liste.php","c.ref", "", "&amp;socidp=$socidp",'width="25%" align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Order"),"liste.php","c.ref", "", "&amp;socidp=$socidp",'width="25%" align="left"',$sortfield);
   print_liste_field_titre($langs->trans("Date"),"liste.php","e.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
   print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
   print "</tr>\n";
