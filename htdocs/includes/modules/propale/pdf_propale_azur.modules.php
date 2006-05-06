@@ -65,7 +65,8 @@ class pdf_propale_azur extends ModelePDFPropales
  
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-        $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+        $this->option_modereg = 1;                 // Affiche mode règlement
+        $this->option_condreg = 1;                 // Affiche conditions règlement
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
       		$this->franchise=1;
