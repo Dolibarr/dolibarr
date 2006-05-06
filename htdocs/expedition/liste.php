@@ -62,7 +62,7 @@ if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, 
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
 if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
-$sql_add = " WHERE c.fk_soc = s.rowid";
+$sql_add = " WHERE ";
 if ($socidp)
 { 
   $sql.= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = ".$socidp; 
