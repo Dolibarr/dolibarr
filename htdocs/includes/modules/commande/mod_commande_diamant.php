@@ -145,7 +145,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
     }
     
     
-        /**     \brief      Renvoie la référence de commande suivante non utilisée
+    /**     \brief      Renvoie la référence de commande suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
