@@ -57,9 +57,9 @@ $offset = $limit * $_GET["page"] ;
 
 llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
-$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut";
+$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut, s.nom";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
 if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
 $sql_add = " WHERE ";
@@ -95,6 +95,7 @@ if ($resql)
   
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", "&amp;socidp=$socidp",'width="25%" align="left"',$sortfield);
   print_liste_field_titre($langs->trans("Date"),"liste.php","e.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
   print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
   print "</tr>\n";
@@ -108,6 +109,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
       print "<a href=\"fiche.php?id=$objp->rowid\">".$objp->ref."</a></td>\n";
+      print "<a href=\"..\comm\fiche.php?id=$objp->fk_soc\">".$objp->nom."</a></td>\n";
       
       $now = time();
       $lim = 3600 * 24 * 15 ;
