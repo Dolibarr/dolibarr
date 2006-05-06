@@ -193,7 +193,7 @@ print '</table><br>';
  */
 print_titre($langs->trans("OrdersModelModule"));
 
-// Defini tableau def de modele propal
+// Defini tableau def de modele
 $type='order';
 $def = array();
 $sql = "SELECT nom";

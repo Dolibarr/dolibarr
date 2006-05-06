@@ -7,6 +7,7 @@
 
 
 drop table if exists llx_commande_model_pdf;
+drop table if exists llx_commande_fournisseur_model_pdf;
 
 alter table llx_commande add column note_public text after note;
 
@@ -168,6 +169,7 @@ delete from llx_document_model where nom='adytek';
 delete from llx_document_model where nom='rouge' and type='order';
 delete from llx_document_model where nom='azur' and type='order';
 delete from llx_document_model where nom='orange' and type='propal';
+
 
 alter table llx_actioncomm add column fk_commande integer after propalrowid;
 

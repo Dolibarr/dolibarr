@@ -202,8 +202,6 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
     	$htmltooltip.='<br>'.$langs->trans("FeaturesSupported").':';
     	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
     	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>'.img_help(0).'</td>';
 
 		print '</tr>';
