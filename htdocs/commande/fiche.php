@@ -1573,6 +1573,22 @@ else
 			*/
 			if ($_GET['action'] == 'presend')
 			{
+		        $orderref = sanitize_string($commande->ref);
+		        $file = $conf->commande->dir_output . '/' . $orderref . '/' . $orderref . '.pdf';
+
+				// Construit PDF si non existant
+				if (! is_readable($file))
+				{
+					$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+					$result=commande_pdf_create($db, $_REQUEST['id'], '', $_REQUEST['model'], $outputlangs);
+				    if ($result <= 0)
+				    {
+				    	dolibarr_print_error($db,$result);
+				        exit;
+				    }    
+				}	
+
 				print '<br>';
 				print_titre($langs->trans('SendOrderByMail'));
 

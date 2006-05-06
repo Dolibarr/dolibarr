@@ -250,9 +250,46 @@ class Form
 		print '<option value="6"'.($selected=='6'?' selected="true"':'').'>'.$langs->trans('OrderSource6').'</option>';
 		print '</select>';
 	}
-
-
+	
+	
 	/**
+	*
+	*
+	*/
+	function select_methodes_commande($selected='',$htmlname='source_id',$addempty=0)
+	{
+	    global $conf,$langs;
+		$listemethodes=array();
+		
+		$sql = "SELECT rowid, libelle ";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
+		$sql.= " WHERE active = 1";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$i = 0;
+			$num = $this->db->num_rows();
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row();
+	
+				$listemethodes[$row[0]] = $row[1];
+	
+				$i++;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+		
+		print $this->select_array($htmlname,$listemethodes,$selected,$addempty);
+		return 1;
+	}
+  
+  	/**
 	 *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
 	 *    \param     selected         Code pays pré-sélectionné
 	 *    \param     htmlname         Nom de la liste deroulante
@@ -2070,7 +2107,7 @@ class Form
         \param	htmlname        Nom de la zone select
         \param	array           Tableau de key+valeur
         \param	id              Key pré-sélectionnée
-        \param	show_empty      1 si il faut un valeur " " dans la liste, 0 sinon
+        \param	show_empty      1 si il faut ajouter une valeur " " dans la liste, 0 sinon
         \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
         \param	value_as_key    1 pour utiliser la valeur comme clé
     */
@@ -2078,15 +2115,9 @@ class Form
     {
         print '<select class="flat" name="'.$htmlname.'">';
     
-        $i = 0;
-    
-        if (strlen($id))
+        if ($show_empty)
         {
-            if ($show_empty == 1)
-            {
-                $array[0] = "&nbsp;";
-            }
-            reset($array);
+            print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
         }
     
         while (list($key, $value) = each ($array))

@@ -64,6 +64,7 @@ RefCdeClientShort=Réf. com. client
 SendOrderByMail=Envoi commande par mail
 ActionsOnOrder=Actions sur la commande
 NoArticleOfTypeProduct=Pas d'article de type 'produit' et donc expédiable dans cette commande
+OrderMode=Méthode de commande
 # Sources
 OrderSource0=Proposition commerciale
 OrderSource1=Internet

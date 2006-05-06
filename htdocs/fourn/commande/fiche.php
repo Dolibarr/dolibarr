@@ -56,15 +56,6 @@ if ($_POST["action"] == 'classin')
   $commande->fetch($_GET["id"]);
   $commande->classin($_POST["projetid"]);
 }
-/*
- *
- */
-if ($_GET["action"] == 'pdf') 
-{
-  $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
-  $commande->generate_pdf();
-}
 
 if ($_POST["action"] == 'setremise' && $user->rights->commande->creer) 
 {
@@ -558,9 +549,9 @@ if ($_GET["id"] > 0)
 
 			if ($commande->statut == 2)
 			{
-				if ($user->rights->fournisseur->commande->approuver)
+				if ($user->rights->fournisseur->commande->annuler)
 				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
 				}
 			}
 
@@ -631,7 +622,7 @@ if ($_GET["id"] > 0)
 			print '<form method="post" action="fiche.php?id='.$commande->id.'">';
 			print '<input type="hidden" name="action" value="classin">';
 			print '<table class="border">';
-			print '<tr><td>Projet</td><td>';
+			print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
 			$proj = new Project($db);
 			$html->select_array("projetid",$proj->liste_array($commande->soc_id));
@@ -653,20 +644,17 @@ if ($_GET["id"] > 0)
 
 			print '<br>';
 			print '<form name="commande" action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
-			print '<table class="noborder">';
-			print '<tr class="liste_titre"><td colspan="2">Commander</td></tr>';
-			print '<tr><td>Date commande</td><td>';
+			print '<table class="border" width="100%">';
+			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
+			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 			print $form->select_date('','','','','',"commande");
 			print '</td></tr>';
 
-			$commande->get_methodes_commande();
-
-			print '<tr><td>Méthode de commande</td><td>';
-
-			print $form->select_array("methodecommande",$commande->methodes_commande);
-
+			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
+			$html->select_methodes_commande('',"methodecommande",1);
 			print '</td></tr>';
-			print '<tr><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
+
+			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="commentaire"></td></tr>';
 			print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
 			print '</table>';
 			print '</form>';

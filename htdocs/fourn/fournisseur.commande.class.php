@@ -400,45 +400,46 @@ class CommandeFournisseur extends Commande
 	  }
       }
   }
-  /**
-   * Approuve une commande
-   *
-   *
-   */
-  function approve($user)
-    {
-      dolibarr_syslog("CommandeFournisseur::Approve");
-      $result = 0;
-      if ($user->rights->fournisseur->commande->approuver)
+
+	/**
+	 * 		\brief	Approuve une commande
+	 *
+	 */
+	function approve($user)
 	{
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 2";
-	  $sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
-	  
-	  if ($this->db->query($sql) )
-	    {
-	      $result = 0;
-	      $this->log($user, 2, time());
-
-	      $subject = "Votre commande ".$this->ref." a été approuvée";
-	      $message = "Bonjour,\n\n";
-	      $message .= "Votre commande ".$this->ref." a été approuvée, par $user->fullname";
-	      $message .= "\n\nCordialement,\n\n";
-
-	      $this->_NotifyCreator($user, $subject, $message);
-
-	    }
-	  else
-	    {
-	      dolibarr_syslog("CommandeFournisseur::Approve Error -1");
-	      $result = -1;
-	    }	  
+		dolibarr_syslog("CommandeFournisseur::Approve");
+		$result = 0;
+		if ($user->rights->fournisseur->commande->approuver)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 2";
+			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
+	
+			if ($this->db->query($sql) )
+			{
+				$result = 0;
+				$this->log($user, 2, time());
+	
+				$subject = "Votre commande ".$this->ref." a été approuvée";
+				$message = "Bonjour,\n\n";
+				$message .= "Votre commande ".$this->ref." a été approuvée, par $user->fullname";
+				$message .= "\n\nCordialement,\n\n";
+	
+				$this->_NotifyCreator($user, $subject, $message);
+	
+			}
+			else
+			{
+				dolibarr_syslog("CommandeFournisseur::Approve Error -1");
+				$result = -1;
+			}
+		}
+		else
+		{
+			dolibarr_syslog("CommandeFournisseur::Approve Not Authorized");
+		}
+		return $result ;
 	}
-      else
-	{
-	  dolibarr_syslog("CommandeFournisseur::Approve Not Authorized");
-	}
-      return $result ;
-    }
+
   /**
    * Refuse une commande
    *

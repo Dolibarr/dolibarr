@@ -63,6 +63,8 @@ RefCdeClient=Ref. customer order
 RefCdeClientShort=Ref. cust. order
 SendPropalByMail=Send order by mail
 ActionsOnOrder=Actions on order
+NoArticleOfTypeProduct=No article of type 'product' so no shippable article for this order
+OrderMode=Order method
 # Sources
 OrderSource0=Commercial proposal
 OrderSource1=Internet
