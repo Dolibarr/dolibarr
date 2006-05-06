@@ -1386,22 +1386,6 @@ else
 			$genallowed=$user->rights->commande->creer;
 			$delallowed=$user->rights->commande->supprimer;
 
-			$var=true;
-			/*
-			if (file_exists($file))
-			{
-			print_titre($langs->trans('Documents'));
-			print '<table width="100%" class="border">';
-			print '<tr '.$bc[$var].'><td>'.$langs->trans('Order').' PDF</td>';
-			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-			print '<td align="right">'.filesize($file). ' bytes</td>';
-			print '<td align="right">'.strftime('%d %b %Y %H:%M:%S',filemtime($file)).'</td>';
-			print '</tr>';
-			print '</table>';
-			print '<br>';
-			}
-			*/
-			//$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
 			/*

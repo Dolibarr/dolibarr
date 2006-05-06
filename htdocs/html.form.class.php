@@ -2322,7 +2322,17 @@ class Form
                     $modellist=$model->liste_modeles($this->db);
                 }
             }
-			else if ($modulepart == 'ficheinter')
+            elseif ($modulepart == 'expedition')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once(DOL_DOCUMENT_ROOT.'/expedition/mods/pdf/ModelePdfExpedition.class.php');
+                    $model=new ModelePDFExpedition();
+                    $modellist=$model->liste_modeles($this->db);
+                }
+            }
+            else if ($modulepart == 'ficheinter')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
@@ -2424,58 +2434,57 @@ class Form
                     // Affiche en-tete tableau
                     $headershown=1;
 
-                    print_titre($langs->trans("Documents"));
-                    print '<table class="border" width="100%">';
-                }
-
-		        // Défini chemin relatif par rapport au module pour lien download
-		        $relativepath=$filename."/".$file;
-                if ($modulepart == 'expedition') { $relativepath = get_exdir($filename).$file; }
-                if ($modulepart == 'don')        { $relativepath = get_exdir($filename).$file; }
-                if ($modulepart == 'export')     { $relativepath = $file; }
-
-                // Défini le type MIME du document
-                if (eregi('\.([^\.]+)$',$file,$reg)) $extension=$reg[1];
-                $mimetype=strtoupper($extension);
-                if ($extension == 'pdf') $mimetype='PDF';
-                if ($extension == 'html') $mimetype='HTML';
-                if (eregi('\-detail\.pdf',$file)) $mimetype='PDF Détaillé';
-
-                print "<tr $bc[$var]>";
-
-                // Affiche colonne type MIME
-                print '<td nowrap>'.$mimetype.'</td>';
-                // Affiche nom fichier avec lien download
-		        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a>';
-				print '</td>';
-                // Affiche taille fichier
-                print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
-                // Affiche date fichier
-                print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
-
-  				if ($delallowed)
-				{
-                	print '<td><a href="'.$urlsource.'&action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.img_delete().'</a></td>';
-				}
-
-                print '</tr>';
-
-                $i++;
+                print_titre($langs->trans("Documents"));
+                print '<table class="border" width="100%">';
             }
-        }
-        
-        if ($headershown)
-        {
-            // Affiche pied du tableau
-            print "</table>\n";
-            if ($genallowed)
-            {
-                print '</form>';
-            }
-        }
 
-		return $i;
+	        // Défini chemin relatif par rapport au module pour lien download
+	        $relativepath=$filename."/".$file;
+            if ($modulepart == 'don')        { $relativepath = get_exdir($filename).$file; }
+            if ($modulepart == 'export')     { $relativepath = $file; }
+
+            // Défini le type MIME du document
+            if (eregi('\.([^\.]+)$',$file,$reg)) $extension=$reg[1];
+            $mimetype=strtoupper($extension);
+            if ($extension == 'pdf') $mimetype='PDF';
+            if ($extension == 'html') $mimetype='HTML';
+            if (eregi('\-detail\.pdf',$file)) $mimetype='PDF Détaillé';
+
+            print "<tr $bc[$var]>";
+
+            // Affiche colonne type MIME
+            print '<td nowrap>'.$mimetype.'</td>';
+            // Affiche nom fichier avec lien download
+	        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a>';
+			print '</td>';
+            // Affiche taille fichier
+            print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
+            // Affiche date fichier
+            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
+
+			if ($delallowed)
+			{
+            	print '<td><a href="'.$urlsource.'&action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.img_delete().'</a></td>';
+			}
+
+            print '</tr>';
+
+            $i++;
+        }
     }
+    
+    if ($headershown)
+    {
+        // Affiche pied du tableau
+        print "</table>\n";
+        if ($genallowed)
+        {
+            print '</form>';
+        }
+    }
+
+	return $i;
+}
 
 }
 

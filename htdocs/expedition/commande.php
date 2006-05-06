@@ -463,7 +463,7 @@ if ($_GET["id"] > 0)
          */
         if ($reste_a_livrer_total > 0 && $conf->stock->enabled)
         {
-            print '<br><table class="liste" width="100%"><tr>';
+            print '<br><table class="liste" width="100%">';
             foreach ($reste_a_livrer as $key => $value)
             {
                 if ($value > 0)
@@ -526,9 +526,9 @@ if ($_GET["id"] > 0)
                 print_titre($langs->trans("OtherSendingsForSameOrder"));
                 print '<table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
-                print '<td width="54%">'.$langs->trans("Description").'</td>';
-                print '<td align="center">Quan. livrée</td>';
-                print '<td align="center">'.$langs->trans("Sending").'</td>';
+                print '<td align="left">'.$langs->trans("Sending").'</td>';
+                print '<td>'.$langs->trans("Description").'</td>';
+                print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("Date").'</td>';
                 print "</tr>\n";
 
@@ -538,6 +538,7 @@ if ($_GET["id"] > 0)
                     $var=!$var;
 					$objp = $db->fetch_object($resql);
                     print "<tr $bc[$var]>";
+                    print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                     if ($objp->fk_product > 0)
                     {
             	      $product = new Product($db);
@@ -553,7 +554,6 @@ if ($_GET["id"] > 0)
                         print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
                     }
                     print '<td align="center">'.$objp->qty_livre.'</td>';
-                    print '<td align="center"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                     print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
                     $i++;
                 }

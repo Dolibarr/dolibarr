@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER  <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/expedition/mods/pdf/ModelePdfExpedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
@@ -119,12 +120,16 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 /*
  * Générer ou regénérer le PDF
  */
-
-if ($_GET["action"] == 'pdf')
+if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-  $expedition = new Expedition($db);
-  $expedition->fetch($_GET["id"]);
-  $expedition->PdfWrite();
+	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	$result=expedition_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
+    if ($result <= 0)
+    {
+    	dolibarr_print_error($db,$result);
+        exit;
+    }    
 }
 
 
@@ -427,9 +432,9 @@ else
                 $i = 0;
     
                 print '<tr class="liste_titre">';
-                print '<td width="54%">'.$langs->trans("Products").'</td>';
-                print '<td align="center">Quan. commandée</td>';
-                print '<td align="center">Quan. livrée</td>';
+                print '<td>'.$langs->trans("Products").'</td>';
+            	print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
+            	print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print "</tr>\n";
     
                 $var=true;
@@ -486,7 +491,7 @@ else
                     print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
                 }
     
-                print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
     
                 if ($expedition->brouillon && $user->rights->expedition->supprimer)
                 {
@@ -495,7 +500,9 @@ else
     
                 print '</div>';
             }
-    
+			print "\n";    
+
+            print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
     
             /*
              * Documents générés
@@ -512,15 +519,10 @@ else
             
             //$genallowed=$user->rights->expedition->creer;
             //$delallowed=$user->rights->expedition->supprimer;
-            $genallowed=0;
+            $genallowed=1;
             $delallowed=0;
     
-            $var=true;
-    
-            print "<br>\n";
-    
-            $html->show_documents('expedition',$filename,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
-    
+            $result=$html->show_documents('expedition',$filename,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
     
             /*
              * Déjà livre
@@ -550,9 +552,9 @@ else
                     print_titre($langs->trans("OtherSendingsForSameOrder"));
                     print '<table class="liste" width="100%">';
                     print '<tr class="liste_titre">';
-                    print '<td width="54%">'.$langs->trans("Description").'</td>';
-                    print '<td align="center">Quan. livrée</td>';
-                    print '<td align="center">'.$langs->trans("Sending").'</td>';
+                    print '<td align="left">'.$langs->trans("Sending").'</td>';
+                    print '<td>'.$langs->trans("Description").'</td>';
+                    print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                     print '<td align="center">'.$langs->trans("Date").'</td>';
                     print "</tr>\n";
     
@@ -562,6 +564,7 @@ else
                         $var=!$var;
                         $objp = $db->fetch_object($resql);
                         print "<tr $bc[$var]>";
+                        print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                         if ($objp->fk_product > 0)
                         {
                             $product = new Product($db);
@@ -577,8 +580,8 @@ else
                             print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
                         }
                         print '<td align="center">'.$objp->qty_livre.'</td>';
-                        print '<td align="center"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                         print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
+                        print '</tr>';
                         $i++;
                     }
     
@@ -591,7 +594,7 @@ else
             }
     
             /*
-            * Documents générés
+            * Commandes associées
             *
             */
             $file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
@@ -602,8 +605,7 @@ else
             if (file_exists($file))
             {
                 print '<br>';
-                print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-                print_titre("Documents");
+                print_titre("Orders");
                 print '<table width="100%" class="border">';
     
                 print "<tr $bc[$true]><td>".$langs->trans("Order")." PDF</td>";
@@ -613,57 +615,51 @@ else
                 print '</tr>';
     
                 print "</table>\n";
-                print '</td><td valign="top" width="50%">';
-                print_titre("Actions");
-                /*
-                * Liste des actions
-                *
-                */
-                $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-                $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-                $sql .= " WHERE a.fk_soc = ".$commande->soc_id." AND a.fk_action in (9,10)";
-                $sql .= " AND a.fk_commande = ".$expedition->id;
-    
-                $resql = $db->query($sql);
-                if ($resql)
-                {
-                    $num = $db->num_rows($resql);
-                    if ($num)
-                    {
-                        $i = 0;
-                        print '<table class="border" width="100%">';
-                        print "<tr $bc[$var]><td>".$langs->trans("Date")."</td><td>".$langs->trans("Action")."</td></tr>\n";
-    
-                        $var=True;
-                        while ($i < $num)
-                        {
-                            $objp = $db->fetch_object($resql);
-                            $var=!$var;
-                            print "<tr $bc[$var]>";
-                            print "<td>".strftime("%d %B %Y",$objp->da)."</td>\n";
-                            print '<td>'.stripslashes($objp->note).'</td>';
-                            print "</tr>";
-                            $i++;
-                        }
-                        print "</table>";
-                    }
-                    $db->free($resql);
-                }
-                else
-                {
-                    dolibarr_print_error($db);
-                }
-    
-                /*
-                *
-                *
-                */
-                print "</td></tr></table>";
-            }
+			}
+
+
+            print '</td><td valign="top" width="50%">';
+
+
+            print_titre("Actions");
             /*
-            *
+            * Liste des actions
             *
             */
+            $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
+            $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+            $sql .= " WHERE a.fk_soc = ".$commande->soc_id." AND a.fk_action in (9,10)";
+            $sql .= " AND a.fk_commande = ".$expedition->id;
+
+            $resql = $db->query($sql);
+            if ($resql)
+            {
+                $num = $db->num_rows($resql);
+                if ($num)
+                {
+                    $i = 0;
+                    print '<table class="border" width="100%">';
+                    print "<tr $bc[$var]><td>".$langs->trans("Date")."</td><td>".$langs->trans("Action")."</td></tr>\n";
+
+                    $var=True;
+                    while ($i < $num)
+                    {
+                        $objp = $db->fetch_object($resql);
+                        $var=!$var;
+                        print "<tr $bc[$var]>";
+                        print "<td>".strftime("%d %B %Y",$objp->da)."</td>\n";
+                        print '<td>'.stripslashes($objp->note).'</td>';
+                        print "</tr>";
+                        $i++;
+                    }
+                    print "</table>";
+                }
+                $db->free($resql);
+            }
+            else
+            {
+                dolibarr_print_error($db);
+            }
     
             if ($action == 'presend')
             {
@@ -691,6 +687,9 @@ else
     
                 print "<input type=\"submit\" value=\"Envoyer\"></form>";
             }
+            
+            print '</td></tr></table>';
+            
         }
         else
         {

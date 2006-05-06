@@ -66,7 +66,7 @@ class Expedition
    *    \param      user        Objet du user qui cré
    *    \return     int         <0 si erreur, id expédition créée si ok
    */
-  function create($user)
+	function create($user)
     {
         require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
         $error = 0;
@@ -451,42 +451,6 @@ class Expedition
 	}
     }
 
-    /**
-     * Genere le pdf
-     */
-    function PdfWrite()
-    {
-        global $conf;
-    
-        //EXPEDITION_ADDON_PDF
-        if (defined("EXPEDITION_ADDON_PDF") && strlen(EXPEDITION_ADDON_PDF) > 0)
-        {
-            $module_file_name = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition_".EXPEDITION_ADDON_PDF.".modules.php";
-    
-            $mod = "pdf_expedition_".EXPEDITION_ADDON_PDF;
-            $this->fetch_commande();
-    
-            require_once($module_file_name);
-    
-            $pdf = new $mod($this->db);
-    
-            //$dir = $conf->expedition->dir_output . "/" .get_exdir($this->id); //test
-            $dir = $conf->expedition->dir_output . "/" .$this->ref;
-    
-            if (! file_exists($dir))
-            {
-                create_exdir($dir);
-            }
-    
-            //$file = $dir . $this->id . ".pdf";  //test
-            $file = $dir . $this->ref . ".pdf";
-
-            if (file_exists($dir))
-            {
-                $pdf->generate($this, $file);
-            }
-        }
-    }
 
   /*
    * Lit la commande associée

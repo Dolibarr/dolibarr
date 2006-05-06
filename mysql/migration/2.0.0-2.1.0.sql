@@ -163,6 +163,7 @@ delete from llx_document_model where nom='adytek';
 delete from llx_document_model where nom='rouge' and type='order';
 delete from llx_document_model where nom='azur' and type='order';
 delete from llx_document_model where nom='orange' and type='propal';
+delete from llx_document_model where nom='transporteur' and type='shipping';
 
 
 alter table llx_actioncomm add column fk_commande integer after propalrowid;

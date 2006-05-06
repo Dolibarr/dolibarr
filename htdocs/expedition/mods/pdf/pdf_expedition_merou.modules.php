@@ -25,9 +25,11 @@
 require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
 require_once DOL_DOCUMENT_ROOT."/contact.class.php";
 
-Class pdf_expedition_merou extends ModelePdfExpedition{
+Class pdf_expedition_merou extends ModelePdfExpedition
+{
 
-	function pdf_expedition_merou($db=0){ 
+	function pdf_expedition_merou($db=0)
+	{ 
 		$this->db = $db;
 		$this->name = "Merou";
 		$this->description = "Modele Merou 2xA5 \n
@@ -37,6 +39,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition{
 	 |element->commande,source->external,code->EXPEDITEUR \n
 	 |element->commande,source->external,code->DESTINATAIRE \n
 ";
+        $this->type = 'pdf';
 	}
 
 	//*****************************
@@ -66,10 +69,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition{
 		//Creation du livreur
 		$idcontact = $this->expe->commande->getIdContact('internal','LIVREUR');
 		$this->livreur = new User($this->db,$idcontact[0]);
-		$this->livreur->fetch();
+		if ($idcontact[0]) $this->livreur->fetch();
 
-		//Verificatio nde la configuration
-        	if ($conf->expedition->dir_output){
+		//Verification de la configuration
+        if ($conf->expedition->dir_output)
+        {
 			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 			$expref = str_replace($forbidden_chars,"_",$this->expe->ref);
 			$dir = $conf->expedition->dir_output . "/" . $this->expe->ref . "/" ;
@@ -84,8 +88,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition{
 				}
 	    		}
 			//Si le dossier existe
-			if (file_exists($dir)){
-                		// Initialisation Bon vierge
+			if (file_exists($dir))
+			{
+            	// Initialisation Bon vierge
 				$this->FPDF('l','mm','A5');
 				$this->Open();
 				$this->AddPage();

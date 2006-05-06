@@ -139,7 +139,7 @@ class ModeleNumRefCommandes
 
 
 /*
-		\brief      Crée un bon de commande sur disque en fonction du modèle de COMMANDE_ADDON_PDF
+		\brief      Crée un bon de commande sur disque en fonction d'un modèle
 		\param	    db  			objet base de donnée
 		\param	    id				id de la propale à créer
 		\param	    modele			force le modele à utiliser ('' par defaut)
