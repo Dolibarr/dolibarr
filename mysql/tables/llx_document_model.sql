@@ -26,7 +26,7 @@
 create table llx_document_model
 (
   	nom         	varchar(50) PRIMARY KEY,
-  	type			    varchar(12) NOT NULL,
+  	type			varchar(12) NOT NULL,
   	libelle		    varchar(255),
   	description 	text
 )type=innodb;
