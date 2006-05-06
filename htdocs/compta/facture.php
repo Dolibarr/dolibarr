@@ -488,7 +488,7 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 		$facref = sanitize_string($fac->ref);
 		$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
 
-		if (! is_readable($file))
+		if (is_readable($file))
 		{			
 			$soc = new Societe($db, $fac->socidp);
 
