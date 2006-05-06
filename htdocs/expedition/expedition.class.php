@@ -470,15 +470,17 @@ class Expedition
     
             $pdf = new $mod($this->db);
     
-            $dir = $conf->expedition->dir_output . "/" .get_exdir($this->id);
+            //$dir = $conf->expedition->dir_output . "/" .get_exdir($this->id); //test
+            $dir = $conf->expedition->dir_output . "/" .$this->ref;
     
             if (! file_exists($dir))
             {
                 create_exdir($dir);
             }
     
-            $file = $dir . $this->id . ".pdf";
-    
+            //$file = $dir . $this->id . ".pdf";  //test
+            $file = $dir . $this->ref . ".pdf";
+
             if (file_exists($dir))
             {
                 $pdf->generate($this, $file);

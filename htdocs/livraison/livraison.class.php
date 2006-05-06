@@ -453,19 +453,19 @@ class Livraison
     {
         global $conf;
     
-        //EXPEDITION_ADDON_PDF
-        if (defined("EXPEDITION_ADDON_PDF") && strlen(EXPEDITION_ADDON_PDF) > 0)
+        //LIVRAISON_ADDON_PDF
+        if (defined("LIVRAISON_ADDON_PDF") && strlen(LIVRAISON_ADDON_PDF) > 0)
         {
-            $module_file_name = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition_".EXPEDITION_ADDON_PDF.".modules.php";
+            $module_file_name = DOL_DOCUMENT_ROOT."/livraison/mods/pdf/pdf_".LIVRAISON_ADDON_PDF.".modules.php";
     
-            $mod = "pdf_expedition_".EXPEDITION_ADDON_PDF;
+            $mod = "pdf_".LIVRAISON_ADDON_PDF;
             $this->fetch_commande();
     
             require_once($module_file_name);
     
             $pdf = new $mod($this->db);
     
-            $dir = $conf->expedition->dir_output . "/" .get_exdir($this->id);
+            $dir = $conf->livraison->dir_output . "/" .get_exdir($this->id);
     
             if (! file_exists($dir))
             {
@@ -496,13 +496,15 @@ class Livraison
   {
     $this->lignes = array();
 
-    $sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp";    
-    $sql .= ", c.fk_product";
-    $sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
+    $sql = "SELECT c.label, c.description, c.qty as qtycom, l.qty as qtyliv";    
+    $sql .= ", c.fk_product, c.price, p.ref";
+    $sql .= " FROM ".MAIN_DB_PREFIX."livraisondet as l";
     $sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
+    $sql .= " , ".MAIN_DB_PREFIX."product as p";
 
-    $sql .= " WHERE e.fk_expedition = ".$this->id;
-    $sql .= " AND e.fk_commande_ligne = c.rowid";
+    $sql .= " WHERE l.fk_livraison = ".$this->id;
+    $sql .= " AND l.fk_commande_ligne = c.rowid";
+    $sql .= " AND c.fk_product = p.rowid";
 
 
     $resql = $this->db->query($sql);
@@ -512,14 +514,17 @@ class Livraison
 	$i = 0;
 	while ($i < $num)
 	  {
-	    $ligne = new ExpeditionLigne();
+	    $ligne = new LivraisonLigne();
 
 	    $obj = $this->db->fetch_object($resql);
 
 	    $ligne->product_id     = $obj->fk_product;
 	    $ligne->qty_commande   = $obj->qtycom;
-	    $ligne->qty_expedition = $obj->qtyexp;
-	    $ligne->description    = stripslashes($obj->description);	    
+	    $ligne->qty_livre      = $obj->qtyliv;
+	    $ligne->ref            = $obj->ref;
+	    $ligne->label          = stripslashes($obj->label);
+	    $ligne->description    = stripslashes($obj->description);
+	    $ligne->price          = $obj->price;
 
 	    $this->lignes[$i] = $ligne;	    
 	    $i++;
@@ -533,7 +538,7 @@ class Livraison
 }
 
 
-class ExpeditionLigne
+class LivraisonLigne
 {
 
 }

@@ -766,6 +766,11 @@ else
 			$head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
 			$head[$h][1] = $langs->trans('Info');
 			$h++;
+			
+			$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$commande->id;
+			$head[$h][1] = $langs->trans('OrderContact');
+			$h++;
+
 
 			dolibarr_fiche_head($head, $hselected, $langs->trans('Order').': '.$commande->ref);
 

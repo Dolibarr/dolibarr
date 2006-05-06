@@ -1328,6 +1328,212 @@ class Commande
 			return -2;
 		}
 	}
+	
+	/**
+   *    \brief Liste les valeurs possibles de type de contacts pour les factures
+   *    \param source 'internal' ou 'external'
+   *    \return array Tableau des types de contacts
+   */
+   function liste_type_contact($source)
+   {
+   	global $langs;
+   	$element='commande';
+   	$tab = array();
+   	
+   	$sql = "SELECT distinct tc.rowid, tc.code, tc.libelle";
+   	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
+   	$sql.= " WHERE element='".$element."'";
+   	$sql.= " AND source='".$source."'";
+   	$sql.= " ORDER by tc.code";
+   	
+   	$resql=$this->db->query($sql);
+   	
+   	if ($resql)
+   	{
+   		$num=$this->db->num_rows($resql);
+   		$i=0;
+   		
+   		while ($i < $num)
+   		{
+   			$obj = $this->db->fetch_object($resql);
+   			$transkey="TypeContact_".$element."_".$source."_".$obj->code;
+   			$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
+   			$tab[$obj->rowid]=$libelle_type;
+   			$i++;
+   		}
+   		
+   		return $tab;
+   	 }
+   	 else
+   	 {
+   		 $this->error=$this->db->error();
+   		 return null;
+   	 }
+   	} 
+
+
+  /** 
+   *   \brief Récupère les lignes de contact de l'objet
+   *   \param statut Statut des lignes detail à récupérer
+   *   \param source Source du contact external (llx_socpeople) ou internal (llx_user)
+   *   \return array Tableau des rowid des contacts
+   */
+   function liste_contact($statut=-1,$source='external')
+   {
+   	global $langs;
+   	$element='commande';
+   	$tab=array();
+   	
+   	$sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id,";
+   	if ($source == 'internal') $sql.=" '-1' as socid,";
+   	if ($source == 'external') $sql.=" t.fk_soc as socid,";
+   	if ($source == 'internal') $sql.=" t.name as nom,";
+   	if ($source == 'external') $sql.=" t.name as nom,";
+   	$sql.= "tc.source, tc.element, tc.code, tc.libelle";
+   	$sql.= " FROM ".MAIN_DB_PREFIX."element_contact ec,";
+   	if ($source == 'internal') $sql.=" ".MAIN_DB_PREFIX."user t,";
+   	if ($source == 'external') $sql.=" ".MAIN_DB_PREFIX."socpeople t,";
+   	$sql.= " ".MAIN_DB_PREFIX."c_type_contact tc";
+   	$sql.= " WHERE element_id =".$this->id;
+   	$sql.= " AND ec.fk_c_type_contact=tc.rowid";
+   	$sql.= " AND tc.element='".$element."'";
+   	if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
+   	if ($source == 'external') $sql.= " AND tc.source = 'external'";
+   	$sql.= " AND tc.active=1";
+   	if ($source == 'internal') $sql.= " AND ec.fk_socpeople = t.rowid";
+   	if ($source == 'external') $sql.= " AND ec.fk_socpeople = t.idp";
+   	if ($statut >= 0) $sql.= " AND statut = '$statut'";
+   	$sql.=" ORDER BY t.name ASC";
+   	
+   	$resql=$this->db->query($sql);
+   	
+   	if ($resql)
+   	{
+   		$num=$this->db->num_rows($resql);
+   		$i=0;
+   		
+   		while ($i < $num)
+   		{
+   			$obj = $this->db->fetch_object($resql);
+   			$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+   			$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
+   			$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom,'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
+   			$i++;
+   		}
+   		
+   		return $tab;
+   	}
+   	else
+   	{
+   		$this->error=$this->db->error();
+   		dolibarr_print_error($this->db);
+   		return -1;
+   	}
+   }
+
+
+  /**
+   *   \brief Ajoute un contact associé une commande
+   *   \param fk_socpeople Id du contact a ajouter.
+   *   \param type_contact Type de contact
+   *   \param source extern=Contact externe (llx_socpeople), intern=Contact interne (llx_user)
+   *   \return int <0 si erreur, >0 si ok
+   */
+   function add_contact($fk_socpeople, $type_contact, $source='extern')
+   {
+   	dolibarr_syslog("Commande::add_contact $fk_socpeople, $type_contact, $source");
+   	
+   	if ($fk_socpeople <= 0) return -1;
+   	
+   	// Verifie type_contact
+   	if (! $type_contact || ! is_numeric($type_contact)) 
+   	{
+   		$this->error="Valeur pour type_contact incorrect";
+   		return -3;
+   	}
+   	
+   	$datecreate = time();
+   	
+   	// Insertion dans la base
+   	$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
+   	$sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
+   	$sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
+   	$sql.= $this->db->idate($datecreate);
+   	$sql.= ", 4, '". $type_contact . "' ";
+   	$sql.= ")";
+   	
+   	// Retour
+   	if ( $this->db->query($sql) )
+   	{
+   		return 1;
+   	}
+   	else
+   	{
+   		$this->error=$this->db->error()." - $sql";
+   		return -1;
+   	}
+   } 
+
+
+  /**
+   *   \brief Supprime une ligne de contact
+   *   \param rowid La reference du contact
+   *   \return statur >0 si ok, <0 si ko
+   */
+   function delete_contact($rowid)
+   {
+   	$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
+   	$sql.= " WHERE rowid =".$rowid;
+   	
+   	if ($this->db->query($sql))
+   	{
+   		return 1;
+   	}
+   	else
+   	{
+   		return -1;
+   	}
+   }
+   
+  /**
+   *   
+   *  
+   *  
+   */
+   function getIdContact($source,$code)
+   {
+   	$element='commande'; // Contact sur la facture
+   	$result=array();
+   	$i=0;
+   	
+   	$sql = "SELECT ec.fk_socpeople";
+   	$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
+   	$sql.= " WHERE ec.element_id = ".$this->id;
+   	$sql.= " AND ec.fk_c_type_contact=tc.rowid";
+   	$sql.= " AND tc.element = '".$element."'";
+   	$sql.= " AND tc.source = '".$source."'";
+   	$sql.= " AND tc.code = '".$code."'";
+   	
+   	$resql=$this->db->query($sql);
+   	
+   	if ($resql)
+   	{
+   		while ($obj = $this->db->fetch_object($resql))
+   		{
+   			$result[$i]=$obj->fk_socpeople;
+   			$i++;
+   		}
+   	}
+   	else
+   	{
+   		$this->error=$this->db->error();
+   		return null;
+   	}
+   	
+   	return $result;
+   } 
+
+
 
 	/**
 	* Supprime la commande

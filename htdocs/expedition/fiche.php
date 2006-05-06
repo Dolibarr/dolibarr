@@ -500,9 +500,16 @@ else
             /*
              * Documents générés
              */
-            $filename=sanitize_string($expedition->id);
-            $filedir=$conf->expedition->dir_output . "/" .get_exdir($expedition->id);
+             
+            //mis en commentaire pour test du patch
+            //$filename=sanitize_string($expedition->id);
+            //$filedir=$conf->expedition->dir_output . "/" .get_exdir($expedition->id);
+            
+            $filename=sanitize_string($expedition->ref);
+            $filedir=$conf->expedition->dir_output . "/" .$expedition->ref;
+            
             $urlsource=$_SERVER["PHP_SELF"]."?id=".$expedition->id;
+            
             //$genallowed=$user->rights->expedition->creer;
             //$delallowed=$user->rights->expedition->supprimer;
             $genallowed=0;
@@ -594,6 +601,7 @@ else
     
             if (file_exists($file))
             {
+                print '<br>';
                 print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
                 print_titre("Documents");
                 print '<table width="100%" class="border">';
