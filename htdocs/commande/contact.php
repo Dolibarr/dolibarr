@@ -414,9 +414,9 @@ if ($id > 0)
 				print '</a>';
 				print '</td>';
 
-				// Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
+				// Icon update et delete
 				print '<td align="center" nowrap>';
-				if ($commande->statut == 0 && $user->rights->facture->creer)
+				if ($commande->statut < 5 && $user->rights->commande->creer)
 				{
 					print '&nbsp;';
 					print '<a href="contact.php?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
