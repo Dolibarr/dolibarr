@@ -109,7 +109,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
       print "<a href=\"fiche.php?id=$objp->rowid\">".$objp->ref."</a></td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?id='.$objp->fk_soc.'">'.$objp->nom.'</a></td>'"\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?id='.$objp->fk_soc.'">'.$objp->nom.'</a></td>';
 
       $now = time();
       $lim = 3600 * 24 * 15 ;
