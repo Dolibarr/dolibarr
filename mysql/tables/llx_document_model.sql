@@ -23,7 +23,7 @@
 --
 -- ===================================================================
 
-create table document_model
+create table llx_document_model
 (
   	nom         	varchar(50) PRIMARY KEY,
   	type			    varchar(12) NOT NULL,
