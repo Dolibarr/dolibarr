@@ -98,24 +98,28 @@ class modExpedition extends DolibarrModules
     $this->rights[$r][3] = 1;
     $this->rights[$r][4] = 'lire';
 
+    $r++;
     $this->rights[$r][0] = 102;
     $this->rights[$r][1] = 'Créer modifier les expeditions';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'creer';
 
+    $r++;
     $this->rights[$r][0] = 104;
     $this->rights[$r][1] = 'Valider les expeditions';
     $this->rights[$r][2] = 'd';
     $this->rights[$r][3] = 0;    
     $this->rights[$r][4] = 'valider';
 
+    $r++;
     $this->rights[$r][0] = 109;
     $this->rights[$r][1] = 'Supprimer les expeditions';
     $this->rights[$r][2] = 'd';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'supprimer';
     
+    $r++;
     $this->rights[$r][0] = 1101;
     $this->rights[$r][1] = 'Lire les bons de livraison';
     $this->rights[$r][2] = 'r';
@@ -123,6 +127,7 @@ class modExpedition extends DolibarrModules
     $this->rights[$r][4] = 'livraison';
     $this->rights[$r][5] = 'lire';
 
+    $r++;
     $this->rights[$r][0] = 1102;
     $this->rights[$r][1] = 'Créer modifier les bons de livraison';
     $this->rights[$r][2] = 'w';
@@ -130,6 +135,7 @@ class modExpedition extends DolibarrModules
     $this->rights[$r][4] = 'livraison';
     $this->rights[$r][5] = 'creer';
 
+    $r++;
     $this->rights[$r][0] = 1104;
     $this->rights[$r][1] = 'Valider les bons de livraison';
     $this->rights[$r][2] = 'd';
@@ -137,6 +143,7 @@ class modExpedition extends DolibarrModules
     $this->rights[$r][4] = 'livraison';    
     $this->rights[$r][5] = 'valider';
 
+    $r++;
     $this->rights[$r][0] = 1109;
     $this->rights[$r][1] = 'Supprimer les bons de livraison';
     $this->rights[$r][2] = 'd';
