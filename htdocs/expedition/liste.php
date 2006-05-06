@@ -62,7 +62,7 @@ if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, 
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
 if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON c.rowid = e.fk_commande";
+if ($user->rights->commercial->client->voir && !$socidp) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON c.rowid = e.fk_commande";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = c.fk_soc";
 
 $sql_add = " WHERE ";
