@@ -113,7 +113,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Ref"),"liste.php","c.ref","",$param,'',$sortfield);
     print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","",$param,'',$sortfield);
     print_liste_field_titre($langs->trans("Date"),"liste.php","c.date_commande","",$param, 'align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"liste.php","c.fk_statut","",$param,'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","c.fk_statut","",$param,'align="right"',$sortfield);
     print "</tr>\n";
     $var=True;
 
@@ -143,7 +143,7 @@ if ($resql)
         print " <a href=\"liste.php?year=$y\">";
         print strftime("%Y",$objp->date_commande)."</a></td>\n";
 
-        print '<td align="center">'.$generic_commande->statuts[$objp->fk_statut].'</td>';
+		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,5).'</td>';
         print "</tr>\n";
 
         $total = $total + $objp->price;

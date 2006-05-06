@@ -167,16 +167,7 @@ if ($resql)
 		print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowOrder'),'order').' '.$objp->ref.'</a></td>';
 		print '<td><a href="../comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 		print '<td>'.$objp->ref_client.'</td>';
-		$now = time();
-		$lim = 3600 * 24 * 15 ;
-		if ( ($now - $objp->date_commande) > $lim && $objp->statutid == 1 )
-		{
-			print '<td><b> &gt; 15 jours</b></td>';
-		}
-		else
-		{
-			print '<td>&nbsp;</td>';
-		}
+		print '<td>&nbsp;</td>';
 		print '<td align="right">';
 		$y = strftime('%Y',$objp->date_commande);
 		$m = strftime('%m',$objp->date_commande);
