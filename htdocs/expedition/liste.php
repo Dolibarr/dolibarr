@@ -59,10 +59,11 @@ llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut, s.nom as socname, s.idp";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
 if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
-$sql_add = " WHERE e.fk_commande = c.rowid AND c.fk_soc = s.idp";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = c.fk_soc";
+$sql_add = " WHERE ";
 if ($socidp)
 { 
   $sql.= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = ".$socidp; 
