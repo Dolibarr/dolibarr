@@ -28,6 +28,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 
 /**	  
@@ -35,7 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
         \brief      Classe de gestion de commande fournisseur
 */
 
-class CommandeFournisseur
+class CommandeFournisseur extends Commande
 {
   var $db ;
   var $id ;
@@ -48,7 +49,6 @@ class CommandeFournisseur
     {
       $this->db = $DB;
 
-      $this->statuts[-1]= "Annulée";
       $this->statuts[0] = "Brouillon";
       $this->statuts[1] = "Validée";
       $this->statuts[2] = "Approuvée";
@@ -314,11 +314,25 @@ class CommandeFournisseur
 		}
 		if ($mode == 4)
 		{
-			return $this->statuts[$statut];
+        	if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$this->statuts[$statut];
+        	if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$this->statuts[$statut];
+        	if ($statut==2) return img_picto($langs->trans('StatusOrderApproved'),'statut3').' '.$this->statuts[$statut];
+        	if ($statut==3) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3').' '.$this->statuts[$statut];
+        	if ($statut==4) return img_picto($langs->trans('StatusOrderReceivedPartially'),'statut3').' '.$this->statuts[$statut];
+        	if ($statut==5) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$this->statuts[$statut];
+        	if ($statut==6) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$this->statuts[$statut];
+        	if ($statut==9) return img_picto($langs->trans('StatusOrderRefused'),'statut5').' '.$this->statuts[$statut];
 		}
 		if ($mode == 5)
 		{
-			return $this->statuts[$statut];
+        	if ($statut==0) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderDraft'),'statut0');
+        	if ($statut==1) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderValidated'),'statut1');
+        	if ($statut==2) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderApproved'),'statut3');
+        	if ($statut==3) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
+        	if ($statut==4) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderReceivedPartially'),'statut3');
+        	if ($statut==5) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderProcessed'),'statut6');
+        	if ($statut==6) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderCanceled'),'statut5');
+        	if ($statut==9) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderRefused'),'statut5');
 		}
 	}
 
@@ -1029,7 +1043,7 @@ class CommandeFournisseur
   }
 }
 
-class CommandeLigne
+class CommandeFournisseurLigne extends CommandeLigne
 {
 	// From llx_propaldet
 		var $qty;
@@ -1044,7 +1058,8 @@ class CommandeLigne
 		var $libelle;       // Label produit
 		var $product_desc;  // Description produit
 		var $ref;
-	function CommandeLigne()
+
+	function CommandeFournisseurLigne()
 	{
 		
 	}
