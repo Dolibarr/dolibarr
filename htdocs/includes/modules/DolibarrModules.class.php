@@ -384,7 +384,9 @@ class DolibarrModules
 	                if ($row[0] == 0)
 	                {
 	                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file, note)";
-	                    $sql.= " VALUES ('".$titre."','".$file."','".addslashes($note)."')";
+	                    $sql.= " VALUES ('".$titre."','".$file."',";
+	                    $sql.= $note?"'".addslashes($note)."'":"null";
+	                    $sql.= ")";
 	                    if (! $this->db->query($sql))
 	                    {
 	                        $err++;
