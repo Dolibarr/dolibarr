@@ -200,7 +200,7 @@ print '</td><td width="65%" valign="top" class="notopnoleftnoright">';
  * Dolibarr Work Board
  */
 
-if (MAIN_SHOW_WORKBOARD == 1)
+if ($conf->global->MAIN_SHOW_WORKBOARD == 1)
 {
 
   print '<table class="noborder" width="100%">';
