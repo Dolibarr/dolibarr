@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,85 +20,109 @@
  * $Source$
  */
 
-/**     \defgroup   webcalendar     Module webcalendar
-        \brief      Module pour inclure webcalendar dans Dolibarr et
-                    intégrer les évênement Dolibarr directement dans le calendrier
+/**     \defgroup   webcalendar     Module Webcalendar
+        \brief      Module to include Webcalendar into Dolibarr and
+                    add Dolibarr events directly inside a Webcalendar database.
 */
 
 /**
         \file       htdocs/includes/modules/modWebcalendar.class.php
         \ingroup    webcalendar
-        \brief      Fichier de description et activation du module webcalendar
+        \brief      Description and activation file for module Webcalendar
 */
 
 include_once "DolibarrModules.class.php";
 
 /**     \class      modWebcalendar
-        \brief      Classe de description et activation du module webcalendar
+        \brief      Description and activation class for module Webcalendar
 */
 
 class modWebcalendar extends DolibarrModules
 {
 
    /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \brief      Constructor. Define names, constants, directories, boxes, permissions
+    *   \param      DB      Database handler
     */
-  function modWebcalendar($DB)
-  {
-    $this->db = $DB ;
-    $this->id = 'webcalendar';   // Same value xxx than in file modXxx.class.php file
-    $this->numero = 410 ;
+	function modWebcalendar($DB)
+	{
+		$this->db = $DB;
+		
+		// Id of module (must be unique for all modules)
+		// Use same value here than in file modXxx.class.php
+		$this->id = 'webcalendar';   	
+		// Another id for module (must be unique).
+		// Use here a free id.
+		$this->numero = 410;
+		
+		// Family can be 'crm','financial','hr','projects','product','technic','other'
+		// It is used to sort modules in module setup page 
+		$this->family = "projects";		
+		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
+		$this->name = "Webcalendar";	
+		// Module descriptoin used translation string 'ModuleXXXDesc' not found (XXX is id value)
+		$this->description = "Interfaçage avec le calendrier Webcalendar";
+		// Possible values for version are: 'experimental' or 'dolibarr' or version
+		$this->version = 'dolibarr';    
+		// Id used in llx_const table to manage module status (enabled/disabled)	
+		$this->const_name = 'MAIN_MODULE_WEBCALENDAR';
+		// Where to store the module in setup page (0=common,1=interface,2=other)
+		$this->special = 1;
+		// Name of png file (without png) used for this module
+		$this->picto='calendar';
+		
+		// Data directories to create when module is enabled
+		$this->dirs = array();
+		
+		// Config pages
+		$this->config_page_url = array("webcalendar.php");
+		
+		// Dependencies
+		$this->depends = array();		// List of modules id that must be enabled
+		$this->requiredby = array();	// List of modules id to disable if this one is disabled
+		
+		// Constants
+		$this->const = array();			// List of parameters
+		
+		// Boxes
+		$this->boxes = array();			// List of boxes 
+		
+		// Permissions
+		$this->rights_class = 'webcal';	// Permission key
+		$this->rights = array();		// Permission array used by this module
+		// Example
+		// $r++;
+		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
+		// $this->rights[$r][1] = 'Permision label';	// Permission label
+		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+	}
 
-    $this->family = "projects";
-    $this->name = "Webcalendar";
-    $this->description = "Interfaçage avec le calendrier Webcalendar";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_WEBCALENDAR';
-    $this->special = 1;
-    $this->picto='calendar';
-
-    // Dir
-    $this->dirs = array();
-
-    // Config pages
-    $this->config_page_url = "webcalendar.php";
-
-    // Dépendences
-    $this->depends = array();
-    $this->requiredby = array();
-
-    // Constantes
-    $this->const = array();
+	/**
+     *		\brief      Function called when module is enabled.
+     *					Add constants, boxes and permissions into Dolibarr database.
+     *					It also creates data directories.
+     */
+	function init()
+  	{
+    	$sql = array();
     
-    // Boites
-    $this->boxes = array();
+    	return $this->_init($sql);
+  	}
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'webcal';
-  }
+	/**
+	 *		\brief		Function called when module is disabled.
+ 	 *              	Remove from database constants, boxes and permissions from Dolibarr database.
+ 	 *					Data directories are not deleted.
+ 	 */
+	function remove()
+	{
+    	$sql = array();
 
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    $sql = array();
-    
-    return $this->_init($sql);
-  }
+    	return $this->_remove($sql);
+  	}
 
-  /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
-
-    return $this->_remove($sql);
-  }
 }
+
 ?>
