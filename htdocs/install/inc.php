@@ -26,6 +26,7 @@
 		\version    $Revision$
 */
 
+
 $docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 $conffile = "../conf/conf.php";
 // Defini objet langs
@@ -43,6 +44,11 @@ function pHeader($soutitre,$next,$action='set')
     global $langs;
     $langs->load("main");
     $langs->load("admin");
+
+	// On force contenu en ISO-8859-1
+	header("Content-type: text/html; charset=iso-8859-1");
+    //header("Content-type: text/html; charset=UTF-8");
+
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
     print '<html>';
     print '<head>';
