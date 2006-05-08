@@ -36,6 +36,8 @@ if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/mod
     require_once(DOL_DOCUMENT_ROOT ."/includes/modules/ficheinter/".FICHEINTER_ADDON.".php");
 }
 
+$langs->load("interventions");
+
 $user->getrights("ficheinter");
 if (!$user->rights->ficheinter->lire) accessforbidden();
 
@@ -97,13 +99,26 @@ if ($_POST["action"] == 'update')
   $_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre créée
 }
 
-// Generation du pdf
-if ($_GET["action"] == 'generate' && $_GET["id"])
+/*
+ * Générer ou regénérer le document PDF
+ */
+if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	fichinter_pdf_create($db, $_GET["id"], $_POST['model']);
+	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	$result=fichinter_pdf_create($db, $_REQUEST['id'], '', $_REQUEST['model'], $outputlangs);
+    if ($result <= 0)
+    {
+    	dolibarr_print_error($db,$result);
+        exit;
+    }    
 }
 
 
+
+/*
+ * Affichage page
+ */
 
 llxHeader();
 
@@ -334,11 +349,16 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
             print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=valid">'.$langs->trans("Valid").'</a>';
         }
 
-        $file = $conf->fichinter->dir_output."/".$fichinter->ref."/".$fichinter->ref.pdf;
-        if ($fichinter->statut == 0 or !file_exists($file))
+        if ($fichinter->statut == 0)
         {
             $langs->load("bills");
-            print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=generate">'.$langs->trans("BuildPDF").'</a>';
+            print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=builddoc">'.$langs->trans("BuildPDF").'</a>';
+        }
+
+        if ($fichinter->statut >= 0)
+        {
+            $langs->load("bills");
+            print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=builddoc">'.$langs->trans("RebuildPDF").'</a>';
         }
 
     }

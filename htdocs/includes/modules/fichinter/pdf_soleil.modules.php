@@ -42,12 +42,23 @@ class pdf_soleil extends ModelePDFFicheinter
 
     /**
     		\brief      Constructeur
-            \param	    db		handler accès base de donnée
+            \param	    db		Handler accès base de donnée
     */
     function pdf_soleil($db=0)
     {
         $this->db = $db;
+        $this->name = 'soleil';
         $this->description = "Modèle de fiche d'intervention standard";
+
+        // Dimension page pour format A4
+        $this->type = 'pdf';
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
+        $this->marge_gauche=10;
+        $this->marge_droite=10;
+        $this->marge_haute=10;
+        $this->marge_basse=10;
     }
 
     /**
@@ -57,7 +68,7 @@ class pdf_soleil extends ModelePDFFicheinter
     */
     function write_pdf_file($id)
     {
-        global $user,$langs,$conf;
+        global $user,$langs,$conf,$mysoc;
 
         if ($conf->fichinter->dir_output)
         {
@@ -69,22 +80,29 @@ class pdf_soleil extends ModelePDFFicheinter
         	}
         
             $fichref = sanitize_string($fich->ref);
-
             $dir = $conf->fichinter->dir_output . "/" . $fichref;
             $file = $dir . "/" . $fichref . ".pdf";
 
-            if (! is_dir($dir))
+            if (! file_exists($dir))
             {
-                create_exdir($dir);
+                if (create_exdir($dir) < 0)
+                {
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                    return 0;
+                }
             }
 
-            if (is_dir($dir))
+            if (file_exists($dir))
             {
-                $pdf=new FPDF('P','mm','A4');
+                // Initialisation document vierge
+                $pdf=new FPDF('P','mm',$this->format);
                 $pdf->Open();
                 $pdf->AddPage();
 
-                $pdf->SetXY(10,5);
+		        $posy=$this->marge_haute;
+		
+		        $pdf->SetXY($this->marge_gauche,$posy);
+
 				// Logo
         		$logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
 		        if ($logo)
