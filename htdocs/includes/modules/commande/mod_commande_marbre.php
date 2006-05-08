@@ -36,21 +36,24 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php
 
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
+	var $prefix='CO';
     var $error='';
     
-   /**   \brief      Constructeur
-   */
-  function mod_commande_marbre()
+	/*
+	 *   \brief      Constructeur
+   	 */
+  	function mod_commande_marbre()
     {
-      $this->nom = "Marbre";
+    	$this->nom = "Marbre";
     }
+
     
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
     {
-      return "Renvoie le numéro sous la forme CYYMM-NNNN où YY est l'année, MM le mois et NNNN un compteur séquentiel sans rupture et sans remise à 0";
+		return "Renvoie le numéro sous la forme ".$this->prefix."yymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0";
     }
 
 
@@ -59,7 +62,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
      */
     function getExample()
     {
-        return "C0501-0001";
+        return $this->prefix."0501-0001";
     }
 
 
@@ -69,7 +72,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
      */
     function canBeActivated()
     {
-        $cyymm='';
+        $coyymm='';
         
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande";
@@ -77,15 +80,15 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $cyymm = substr($row[0],0,6);
+            if ($row) $coyymm = substr($row[0],0,6);
         }
-        if (! $cyymm || eregi('C[0-9][0-9][0-9][0-9]',$cyymm))
+        if (! $coyymm || eregi($this->prefix.'[0-9][0-9][0-9][0-9]',$coyymm))
         {
             return true;
         }
         else
         {
-            $this->error='Une commande commençant par $cyymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.';
+            $this->error='Une commande commençant par $coyymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.';
             return false;    
         }
     }
@@ -98,24 +101,24 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $cyymm='';
+        $coyymm='';
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $cyymm = substr($row[0],0,5);
+            if ($row) $coyymm = substr($row[0],0,6);
         }
     
-        // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('C[0-9][0-9][0-9][0-9]',$cyymm))
+        // Si champ respectant le modèle a été trouvée
+        if (eregi('^'+$this->prefix+'[0-9][0-9][0-9][0-9]',$coyymm))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
             $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-            $sql.= " WHERE ref like '${cyymm}%'";
+            $sql.= " WHERE ref like '${coyymm}%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -130,7 +133,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         $yymm = strftime("%y%m",time());
         $num = sprintf("%04s",$max+1);
         
-        return  "C$yymm-$num";
+        return $this->prefix."$yymm-$num";
     }
 
 
