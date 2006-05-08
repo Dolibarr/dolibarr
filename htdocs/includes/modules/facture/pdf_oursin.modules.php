@@ -82,26 +82,27 @@ class pdf_oursin extends ModelePDFFactures
     }
 
 
-  /**
-    \brief      Fonction générant la facture sur le disque
-    \param	    facid	id de la facture à générer
-    \return	    int     1=ok, 0=ko
-    \remarks    Variables utilisées
-	\remarks    MAIN_INFO_SOCIETE_NOM
-    \remarks    MAIN_INFO_SIRET
-    \remarks    MAIN_INFO_SIREN
-    \remarks    MAIN_INFO_CAPITAL
-    \remarks    MAIN_INFO_TVAINTRA
-    \remarks    FAC_PDF_LOGO
-    \remarks    FACTURE_CODEPRODUITSERVICE
-    \remarks    FACTURE_CHQ_NUMBER
-    \remarks    FACTURE_RIB_NUMBER
-    \remarks    FAC_PDF_INTITULE
-    \remarks    FAC_PDF_TEL
-    \remarks    FAC_PDF_ADRESSE
-  */
-  function write_pdf_file($facid)
-  {
+	/**
+     *		\brief      Fonction générant la facture sur le disque
+     *		\param	    facid	id de la facture à générer
+     *		\return	    int     1=ok, 0=ko
+     *		\remarks    Variables utilisées
+	 *		\remarks    MAIN_INFO_SOCIETE_NOM
+     *		\remarks    MAIN_INFO_SOCIETE_ADRESSE
+     *		\remarks    MAIN_INFO_SOCIETE_CP
+     *		\remarks    MAIN_INFO_SOCIETE_VILLE
+     *		\remarks    MAIN_INFO_SOCIETE_TEL
+     *		\remarks    MAIN_INFO_SOCIETE_FAX
+     *	 	\remarks    MAIN_INFO_SOCIETE_WEB
+     *      \remarks    MAIN_INFO_SOCIETE_LOGO
+     *		\remarks    MAIN_INFO_SIRET
+     *		\remarks    MAIN_INFO_SIREN
+     *		\remarks    MAIN_INFO_RCS
+     *		\remarks    MAIN_INFO_CAPITAL
+     *		\remarks    MAIN_INFO_TVAINTRA
+  	 */
+	function write_pdf_file($facid)
+	{
     global $user,$langs,$conf;
 
     $langs->load("main");
@@ -578,7 +579,7 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetXY($this->marges['g'],6);
 
     // Logo
-    if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+    $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
     if ($logo)  
       {
 				if (is_readable($logo)) 

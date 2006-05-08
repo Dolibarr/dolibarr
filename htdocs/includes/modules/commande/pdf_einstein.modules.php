@@ -640,8 +640,7 @@ class pdf_einstein extends ModelePDFCommandes
         $pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-        $logo=$mysoc->logo;
-        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+        $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
         if ($logo)
         {
             if (is_readable($logo))

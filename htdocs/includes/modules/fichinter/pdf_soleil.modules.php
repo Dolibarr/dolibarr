@@ -86,8 +86,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
                 $pdf->SetXY(10,5);
 				// Logo
-		        $logo=$mysoc->logo;
-		        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+        		$logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
 		        if ($logo)
 		        {
 		            if (is_readable($logo))

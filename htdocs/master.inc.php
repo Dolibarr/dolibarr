@@ -232,7 +232,8 @@ $conf->livraison->dir_images=DOL_DATA_ROOT."/livraison/images";
 $conf->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
 $conf->societe->dir_images=DOL_DATA_ROOT."/societe/images";
-if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par d?faut
+$conf->societe->dir_logos=DOL_DATA_ROOT."/societe/logos";
+if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 // Module commercial
 $conf->commercial->enabled=defined("MAIN_MODULE_COMMERCIAL")?MAIN_MODULE_COMMERCIAL:0;
 $conf->commercial->dir_output=DOL_DATA_ROOT."/rapport";
@@ -485,6 +486,7 @@ $mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
 $mysoc->forme_juridique_code=$conf->global->MAIN_INFO_FORME_JURIDIQUE;
 $mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
 $mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
+$mysoc->logo=$conf->global->MAIN_INFO_SOCIETE_LOGO;
 
 /* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
  * (pour particuliers ou libéraux en franchise)

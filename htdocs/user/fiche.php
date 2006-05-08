@@ -472,7 +472,7 @@ else
             }
             else
             {
-                print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+                print '<img width="100" src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
             }
             print '</td></tr>';
 

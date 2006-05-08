@@ -63,7 +63,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->marge_haute=10;
         $this->marge_basse=10;
  
-        $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
+        $this->option_logo = 1;                    // Affiche logo
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Affiche mode règlement
         $this->option_condreg = 1;                 // Affiche conditions règlement
@@ -114,18 +114,18 @@ class pdf_propale_azur extends ModelePDFPropales
     		\return	    int         1=ok, 0=ko
             \remarks    Variables utilisées
     		\remarks    MAIN_INFO_SOCIETE_NOM
-    		\remarks    MAIN_INFO_ADRESSE
-    		\remarks    MAIN_INFO_CP
-    		\remarks    MAIN_INFO_VILLE
-    		\remarks    MAIN_INFO_TEL
-    		\remarks    MAIN_INFO_FAX
-    		\remarks    MAIN_INFO_WEB
+    		\remarks    MAIN_INFO_SOCIETE_ADRESSE
+    		\remarks    MAIN_INFO_SOCIETE_CP
+    		\remarks    MAIN_INFO_SOCIETE_VILLE
+    		\remarks    MAIN_INFO_SOCIETE_TEL
+    		\remarks    MAIN_INFO_SOCIETE_FAX
+    		\remarks    MAIN_INFO_SOCIETE_WEB
+            \remarks    MAIN_INFO_SOCIETE_LOGO
     		\remarks    MAIN_INFO_SIRET
     		\remarks    MAIN_INFO_SIREN
     		\remarks    MAIN_INFO_RCS
     		\remarks    MAIN_INFO_CAPITAL
     		\remarks    MAIN_INFO_TVAINTRA
-            \remarks    MAIN_INFO_LOGO
     */
     function write_pdf_file($id)
     {
@@ -670,8 +670,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-        $logo=$mysoc->logo;
-        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+        $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
         if ($logo)
         {
             if (is_readable($logo))

@@ -64,7 +64,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
         $this->marge_haute=10;
         $this->marge_basse=10;
  
-        $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
+        $this->option_logo = 1;                    // Affiche logo
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Affiche mode règlement
         $this->option_condreg = 1;                 // Affiche conditions règlement
@@ -642,8 +642,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
         $pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-        $logo=$mysoc->logo;
-        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+        $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
         if ($logo)
         {
             if (is_readable($logo))

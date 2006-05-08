@@ -212,21 +212,28 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$tab4_hl = 6;
 		$tab4_sl = 4;
 		$ligne = 2;
+
 		//*********************LOGO****************************
-	        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO){
-            		$this->SetXY(10,5);
-            		if (file_exists(FAC_PDF_LOGO)) {
-                		$this->Image(FAC_PDF_LOGO, 10, 5,85.0, 17.0, 'PNG');
-            		}else {
-				//Cas Erreur Fichier introuvable
-				$this->SetTextColor(200,0,0);
-				$this->SetFont('Arial','B',8);
-				$this->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
-				$this->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
-			}
-        	}else if (defined("FAC_PDF_INTITULE")){
-            		$this->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
-        	}
+        $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
+        if ($logo)
+        {
+            if (is_readable($logo))
+            {
+                $pdf->Image($logo,10, 5, 0, 24);
+            }
+            else
+            {
+                $pdf->SetTextColor(200,0,0);
+                $pdf->SetFont('Arial','B',8);
+                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
+                $pdf->MultiCell(100, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
+            }
+        }
+        else if(defined("MAIN_INFO_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) 
+        {
+            $pdf->MultiCell(100, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+        }
+
 		//*********************Entete****************************
 		//Nom du Document
 		$Yoff = 0;

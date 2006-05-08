@@ -431,7 +431,7 @@ class pdf_huitre extends ModelePDFFactures {
       $ligne = 2;
 
 		// Logo
-        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO) $logo=DOL_DATA_ROOT.FAC_PDF_LOGO;
+        $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
         if ($logo)
         {
             if (is_readable($logo))

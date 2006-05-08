@@ -109,11 +109,6 @@ class modFacture extends DolibarrModules
         $this->const[5][2] = "www.masociete.com";
         $this->const[5][4] = 1;
     
-        $this->const[6][0] = "FAC_PDF_LOGO";
-        $this->const[6][1] = "chaine";
-        $this->const[6][2] = "/logo/mylogo.png";
-        $this->const[6][4] = 1;
-    
         $this->const[7][0] = "FACTURE_ADDON_PDF";
         $this->const[7][1] = "chaine";
         $this->const[7][2] = "bulot";

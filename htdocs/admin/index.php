@@ -53,11 +53,21 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
         if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
         {
             $original_file=$reg[1];
-            dolibarr_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".DOL_DATA_ROOT.'/logo/'.$original_file);
-            if (move_uploaded_file($_FILES["logo"]["tmp_name"],DOL_DATA_ROOT.'/logo/'.$original_file))
+
+            dolibarr_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_logos.'/'.$original_file);
+	        if (! is_dir($conf->societe->dir_logos))
+	        {
+	            create_exdir($conf->societe->dir_logos);
+    		}        
+            if (doliMoveFileUpload($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file))
             {
                 dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
             }
+			else
+            {
+                $message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+            }
+				
         }
     }
 
@@ -166,7 +176,18 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
-    print '<input type="file" class="flat" name="logo" size="30"></td></tr>';
+    print '<table width="100%"><tr><td valign="center">';
+    print '<input type="file" class="flat" name="logo" size="30">';
+    print '</td><td valign="center" align="right">';
+    if (file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
+    {
+        print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo.'">';
+    }
+    else
+    {
+        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+    }
+	print '</td></tr></table>';
     print '</td></tr>';
 
     $var=!$var;
@@ -343,7 +364,8 @@ else
     /*
      * Affichage des paramètres
      */
-
+	if ($message) print $message.'<br>';
+	
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=true;
@@ -383,7 +405,22 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_WEB . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_LOGO . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
+    
+    print '<table width="100%"><tr><td valign="center">';
+    print $mysoc->logo;
+    print '</td><td valign="center" align="right">';
+    if (file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
+    {
+        print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo.'">';
+    }
+    else
+    {
+        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+    }
+	print '</td></tr></table>';
+
+    print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%" valign="top">'.$langs->trans("Note").'</td><td>' . nl2br($conf->global->MAIN_INFO_SOCIETE_NOTE) . '</td></tr>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \file       htdocs/viewimage.php
@@ -28,7 +27,7 @@
 		\version    $Revision$
 */
 
-require_once("main.inc.php");
+require_once("master.inc.php");
 
 
 // C'est un wrapper, donc header vierge
@@ -47,6 +46,14 @@ $accessallowed=0;
 if ($modulepart)
 {
     // On fait une vérification des droits et on définit le répertoire concerné
+
+    // Wrapping pour les photo utilisateurs
+    if ($modulepart == 'companylogo')
+    {
+        $accessallowed=1;
+        //}
+        $original_file=$conf->societe->dir_logos.'/'.$original_file;
+    }
 
     // Wrapping pour les photo utilisateurs
     if ($modulepart == 'userphoto')

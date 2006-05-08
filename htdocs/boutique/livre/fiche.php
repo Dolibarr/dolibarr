@@ -35,7 +35,7 @@ if ( $_POST["sendit"] )
       mkdir($upload_dir, 0755);
     }
     
-  if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+  if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
     {
       print "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
       //print_r($_FILES);

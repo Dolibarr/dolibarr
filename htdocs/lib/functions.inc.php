@@ -1135,21 +1135,21 @@ function dolibarr_print_error($db='',$msg='')
 
 
 /**
-		\brief  Deplacer les fichiers telechargés
+		\brief  Deplacer les fichiers telechargés, apres quelques controles divers
 		\param	src_file	fichier source
 		\param	dest_file	fichier de destination
 		\return int         le resultat du move_uploaded_file
 */
 function doliMoveFileUpload($src_file, $dest_file)
 {
-  $file_name = $dest_file;
-
-  if (substr($file_name, strlen($file_name) -3 , 3) == 'php')
-    {
-      $file_name = $dest_file . ".txt";
-    }
-
-  return move_uploaded_file($src_file, $file_name);
+	$file_name = $dest_file;
+	
+	if (substr($file_name, strlen($file_name) -3 , 3) == 'php')
+	{
+		$file_name = $dest_file . ".txt";
+	}
+	
+	return move_uploaded_file($src_file, $file_name);
 }
 
 
