@@ -832,6 +832,18 @@ class Commande
    *
    */
 	 
+  function fetch_client()
+    {
+      $client = new Societe($this->db);
+      $client->fetch($this->socidp);
+      $this->client = $client;
+    }
+	
+	/**
+   *
+   *
+   */
+	 
   function fetch_adresse_livraison($id)
     {
     	$idadresse = $id;
