@@ -41,7 +41,7 @@ class mod_propale_ivoire extends ModeleNumRefPropales
 
     /**   \brief      Constructeur
      */
-    function mod_commande_ivoire()
+    function mod_propale_ivoire()
     {
       $this->nom = "Ivoire";
     }

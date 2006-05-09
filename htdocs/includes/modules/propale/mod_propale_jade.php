@@ -42,7 +42,7 @@ class mod_propale_jade extends ModeleNumRefPropales
 
   /**   \brief      Constructeur
    */
-  function mod_commande_ivoire()
+  function mod_propale_jade()
     {
       $this->nom = "Jade";
     }

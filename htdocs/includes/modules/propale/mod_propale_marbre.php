@@ -38,6 +38,13 @@ class mod_propale_marbre extends ModeleNumRefPropales
 {
     var $error='';
     
+    /**   \brief      Constructeur
+     */
+    function mod_propale_marbre()
+    {
+      $this->nom = "Marbre";
+    }
+    
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
