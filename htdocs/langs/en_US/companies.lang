@@ -148,6 +148,7 @@ DolibarrLogin=Dolibarr login
 NoDolibarrAccess=No Dolibarr access
 ExportDataset_company_1=Companies/fundations and properties
 ExportDataset_company_2=Contacts and properties
+DeliveriesAddress=Deliveries address
 DeliveryAddress=Delivery address
 DeliveryAddressLabel=Delivery address label
 DeleteDeliveryAddress=Delete a delivery address

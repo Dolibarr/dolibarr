@@ -332,7 +332,7 @@ if ($socidp > 0)
 	{
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-		print $langs->trans("DeliveryAddress");
+		print $langs->trans("DeliveriesAddress");
 		print '<td><td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 		print '</td></tr></table>';
