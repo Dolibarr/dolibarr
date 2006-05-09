@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - categories
+Category=Category
 Categorie=Category
 categories=categories
 TheCategorie=The catégorie
@@ -12,7 +13,7 @@ CatStatistics=Statistics
 CatList=List of catégories
 AllCats=All categories
 ViewCat=View category
-NewCat=New category
+NewCat=Add category
 ModifCat=Modify category
 CatCreated=Category added
 CreateCat=Create category
@@ -32,7 +33,8 @@ AddProductToCat=Add this product to a category?
 ImpossibleAddCat=Impossible to add the category
 ImpossibleAssociateCategory=Impossible to associate the category to
 WasAddedSuccessfully=was added successfully.
-ProductIsInCategories=Category contains products/services
+ProductIsInCategories=Product/service owns to categories
+ProductHasNoCategory=This product/service is not in any categories
 ClassifyInCategory=Classify in category
 ReturnInProduct=Back to product/service card
 ContentsVisibleByAll=The contents will be visible by all

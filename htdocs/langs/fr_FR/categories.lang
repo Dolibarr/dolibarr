@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - categories
+Category=Categorie
 Categorie=Catégorie
 categories=catégorie(s)
 TheCategorie=La catégorie
@@ -33,6 +34,7 @@ ImpossibleAddCat=Impossible d'ajouter la catégorie
 ImpossibleAssociateCategory=Impossible d'associer la catégorie
 WasAddedSuccessfully=a été ajoutée avec succès.
 ProductIsInCategories=Ce produit/service est dans les catégorie suivantes
+ProductHasNoCategory=Ce produit/service n'est dans aucune catégorie en particulier
 ClassifyInCategory=Classer dans la catégorie
 NoneCategory=Aucune
 CategoryExistsAtSameLevel=Cette catégorie existe déjà au même endroit
@@ -41,3 +43,4 @@ ContentsVisibleByAll=Le contenu sera visible par tous
 ContentsVisibleByAllShort=Contenu visible par tous
 ContentsNotVisibleByAllShort=Contenu non visible par tous
 Desc=Description
+

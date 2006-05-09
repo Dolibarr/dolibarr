@@ -210,11 +210,12 @@ if ($_GET["id"] || $_GET["ref"])
 
 
 		// Formulaire ajout dans une categorie
+		print '<br>';
 		print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
 		print '<table class="noborder" width="100%">';
-		print '<tr><td>';
-		print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"> '. $html->select_all_categories($categorie->id_mere);
-		print '</td>';
+		print '<tr class="liste_titre"><td>';
+		print $langs->trans("ClassifyInCategory").' ';
+		print $html->select_all_categories($categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 		print '</tr>';
 		print '</table>';
 		print '</form>';
@@ -235,8 +236,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 		if (sizeof($cats) > 0)
 		{
-			print $langs->trans("ProductIsInCategories");
-			print '<br/>';
+			print_fiche_titre($langs->trans("ProductIsInCategories"));
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td></tr>';
 
@@ -248,7 +248,7 @@ if ($_GET["id"] || $_GET["ref"])
 				{
 					$i = !$i;
 					print "<tr ".$bc[$i]."><td>".$way."</td>";
-					print "<td>".img_delete($langs->trans("DeleteFromCat"))." <a href= '".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
+					print '<td align="right">'.img_delete($langs->trans("DeleteFromCat"))." <a href= '".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
 
 				}
 
@@ -262,7 +262,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 		else
 		{
-			print $langs->trans("NoCat")."<br/>";
+			print $langs->trans("ProductHasNoCategory")."<br/>";
 		}
 
 	}

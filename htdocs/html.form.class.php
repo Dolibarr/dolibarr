@@ -1118,7 +1118,7 @@ class Form
 		$cat->get_categories_arbo();
 		$cate_arbo = $cat->get_arbo_each_cate();
 		$output = '<select name="'.$select_name.'">'; //creation des categories meres
-		$output.= '<option value="-1" id="choix">'.$langs->trans("NoneCategory").'</option>\n';
+		$output.= '<option value="-1" id="choix">&nbsp;</option>\n';
 		
 		if ($cate_arbo)
 		{

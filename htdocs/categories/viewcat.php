@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,13 +41,14 @@ $c = new Categorie ($db, $_REQUEST['id']);
  
 llxHeader ("","",$langs->trans("Categories"));
 
-print_fiche_titre($langs->trans("Categorie")." ".$c->label);
+print_fiche_titre($langs->trans("Category"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 $ways = $c->print_all_ways ();
 print "<div id='ways'>";
+print $langs->trans("Ref").': ';
 foreach ($ways as $way)
 {
   print $way."<br />\n";
@@ -72,7 +74,7 @@ else
 			$i++;
 			$var=!$var;
 			print "\t<tr ".$bc[$var].">\n";
-			print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
+			print "\t\t<td nowrap=\"nowrap\"><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
 			print "\t\t<td>".$cat->description."</td>\n";
 			
 			if ($cat->visible == 1)
@@ -116,10 +118,10 @@ else
 			$i++;
 			$var=!$var;
 			print "\t<tr ".$bc[$var].">\n";
-			print "\t\t<td>";
+			print "\t\t<td nowrap=\"nowrap\">";
 			if ($prod->type == 1) print img_object($langs->trans("ShowService"),"service");
-        else print img_object($langs->trans("ShowProduct"),"product");
-			print "<a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
+        	else print img_object($langs->trans("ShowProduct"),"product");
+			print " <a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
 			print "\t\t<td>".$prod->libelle."</td>\n";
 			print "\t\t<td>".$prod->description."</td>\n";
 			print "\t</tr>\n";
