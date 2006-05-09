@@ -130,6 +130,7 @@ AddGlobalDiscount=Ajouter avoir
 DiscountOfferedBy=Accordé par
 DiscountStillRemaining=Avoirs restant en cours
 DiscountAlreadyCounted=Remises déjà appliquées
+BillAddress=Adresse de facturation
 # PaymentConditions
 PaymentConditionShortRECEP=A réception
 PaymentConditionRECEP=A réception de facture

@@ -130,6 +130,7 @@ AddGlobalDiscount=Add discount
 DiscountOfferedBy=Granted by
 DiscountStillRemaining=Discount still remaining
 DiscountAlreadyCounted=Discount already counted
+BillAddress=Bill address
 # PaymentConditions
 PaymentConditionShortRECEP=After reception
 PaymentConditionRECEP=After invoice reception
