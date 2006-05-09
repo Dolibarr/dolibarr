@@ -683,6 +683,23 @@ class Commande
 			$this->adresse_livraison_id = $obj->fk_adresse_livraison;
 			
 			$this->db->free();
+			
+			if ($this->cond_reglement_id)
+      {
+              $sql = "SELECT rowid, libelle, code";
+              $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
+              $sql.= " WHERE rowid = ".$this->cond_reglement_id;
+                   
+              $resqlcond = $this->db->query($sql);
+                   
+              if ($resqlcond)
+              {
+                 $objc = $this->db->fetch_object($resqlcond);
+                 $this->cond_reglement      = $objc->libelle;
+                 $this->cond_reglement_code = $objc->code;
+              }
+      }
+			
 			if ($this->statut == 0)
 				$this->brouillon = 1;
 			// exp pdf -----------
