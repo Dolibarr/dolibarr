@@ -635,8 +635,8 @@ class Propal
                 	
                 	if ($resqlpays)
                 	{
-                		$obja = $this->db->fetch_object($resqlpays);
-                		$this->adresse_livraison_pays      = $obja->libelle;
+                		$objz = $this->db->fetch_object($resqlpays);
+                		$this->adresse_livraison_pays      = $objz->libelle;
                 	}
                 }
 
