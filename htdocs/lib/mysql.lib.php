@@ -41,6 +41,8 @@ class DoliDb
 {
     var $db;                    // Handler de base
     var $type='mysql';          // Nom du gestionnaire
+    var $forcecharset='latin1';
+	var $forcecollate='latin1_swedish_ci';
 
     var $results;               // Resultset de la dernière requete
 
@@ -55,6 +57,7 @@ class DoliDb
 
     var $ok;
     var $error;
+
     
     // Constantes pour conversion code erreur MySql en code erreur générique
     var $errorcode_map = array(
@@ -120,6 +123,11 @@ class DoliDb
 
         if ($this->db)
         {
+			// Si client connecté avec charset different de celui de Dolibarr
+			if (mysql_client_encoding ( $this->db ) != $this->forcecharset)
+			{
+				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+            }
             $this->connected = 1;
             $this->ok = 1;
         }
@@ -226,7 +234,7 @@ class DoliDb
     */
     function create_db($database)
     {
-        $ret=$this->query('CREATE DATABASE '.$database);
+        $ret=$this->query('CREATE DATABASE '.$database.' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate);
         //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysql_error($this->db);
         return $ret;
     }
