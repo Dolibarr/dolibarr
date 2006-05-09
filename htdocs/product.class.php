@@ -215,9 +215,9 @@ class Product
         $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
         $sql .= " SET label = '" . addslashes($this->libelle) ."'";
         if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
-        $sql .= ",tva_tx = " . $this->tva_tx ;
-        $sql .= ",envente = " . $this->status ;
-        $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
+        $sql .= ",tva_tx = '" . $this->tva_tx."'";
+        $sql .= ",envente = " . $this->status;
+        $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte;
         $sql .= ",description = '" . addslashes($this->description) ."'";
         $sql .= ",note = '" . addslashes($this->note) ."'";
         $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
