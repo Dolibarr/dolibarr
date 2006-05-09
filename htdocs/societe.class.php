@@ -592,7 +592,7 @@ class Societe
         $sql .= ", ".$this->db->pdate("l.tms")."as dm, ".$this->db->pdate("l.datec")."as dc";
         $sql .= ", l.ville, l.fk_departement, l.fk_pays, l.note";
         $sql .= ", d.nom as departement, p.libelle as pays, p.code, s.nom as socname";
-        $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison as l";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON l.fk_departement = d.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_societe = s.idp";
