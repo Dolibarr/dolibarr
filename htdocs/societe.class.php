@@ -618,9 +618,8 @@ class Societe
             $this->pays           = $obj->pays;
             $this->code_pays      = $obj->code;
             
-            $this->db->free();
-
-    
+            $this->db->free($result);
+            
             return 1;
         }
         else
