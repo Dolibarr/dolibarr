@@ -825,6 +825,33 @@ class Commande
 		}
 		return $this->lignes;
 	}
+	
+	
+	/**
+   *
+   *
+   */
+	 
+  function fetch_adresse_livraison($id)
+    {
+    	$idadresse = $id;
+      $adresse = new Societe($this->db);
+      $adresse->fetch_adresse_livraison($idadresse);
+      $this->adresse = $adresse;
+    }
+    
+ /**
+   *
+   *
+   */
+	 
+  function fetch_contact_commande($id)
+    {
+    	$idcontact = $id;
+      $contact = new Contact($this->db);
+      $contact->fetch($idcontact);
+      $this->contact = $contact;
+    }
 
     /**
      *      \brief      Renvoie un tableau avec les livraison par ligne
