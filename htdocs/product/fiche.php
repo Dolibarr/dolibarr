@@ -141,7 +141,7 @@ if ($_POST["action"] == 'update' &&
             {
                 $_GET["action"] = 're-edit';
                 $_GET["id"] = $_POST["id"];
-                $mesg = $product->mesg_error;
+                $mesg = $product->error;
             }
         }
         else
