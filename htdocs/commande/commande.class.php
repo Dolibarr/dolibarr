@@ -665,6 +665,7 @@ class Commande
 			$this->ref                  = $obj->ref;
 			$this->ref_client           = $obj->ref_client;
 			$this->soc_id               = $obj->fk_soc;
+			$this->socidp               = $obj->fk_soc;
 			$this->statut               = $obj->fk_statut;
 			$this->user_author_id       = $obj->fk_user_author;
 			$this->total_ht             = $obj->total_ht;
