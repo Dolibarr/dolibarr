@@ -241,7 +241,7 @@ while (($file = readdir($handle))!==false)
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">\n  <td>";
-		print "$name";
+		print "$classname";
 		print "</td>\n  <td>\n";
 		require_once($dir.$file);
 		$module = new $classname($db);
