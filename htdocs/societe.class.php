@@ -578,6 +578,57 @@ class Societe
 
 		return $result;
 	}
+	
+	/** 
+   *
+   * Lit une adresse de livraison
+   *
+   */
+    function fetch_adresse_livraison($id)
+    {
+        global $conf;
+    
+        $sql = "SELECT l.rowid, l.label, l.fk_societe, l.nom, l.address, l.cp";
+        $sql .= ", ".$this->db->pdate("l.tms")."as dm, ".$this->db->pdate("l.datec")."as dc";
+        $sql .= ", l.ville, l.fk_departement, l.fk_pays, l.note";
+        $sql .= ", d.nom as departement, p.libelle as pays, p.code, s.nom as socname";
+        $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON l.fk_departement = d.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_societe = s.idp";
+        $sql .= " WHERE l.rowid = $id";
+    
+        $result = $this->db->query($sql) ;
+    
+        if ( $result )
+        {
+            $obj = $this->db->fetch_object($result);
+    
+            $this->id             = $obj->rowid;
+            $this->datec          = $obj->dc;
+            $this->datem          = $obj->dm;
+            $this->label          = $obj->label;
+            $this->socid          = $obj->fk_societe;
+            $this->societe        = $obj->socname;
+            $this->nom            = $obj->nom;
+            $this->address        = $obj->address;
+            $this->cp             = $obj->cp;
+            $this->ville          = $obj->ville;
+            $this->departement    = $obj->departement;
+            $this->pays           = $obj->pays;
+            $this->code_pays      = $obj->code;
+            
+            $this->db->free();
+
+    
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
 
     /**
      *    \brief      Suppression d'une societe de la base avec ses dépendances (contacts, rib...)

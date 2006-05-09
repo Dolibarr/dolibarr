@@ -344,6 +344,21 @@ class Propal
       $client->fetch($this->socidp);
       $this->client = $client;
     }
+    
+    
+ /**
+   *
+   *
+   */
+	 
+  function fetch_adresse_livraison($id)
+    {
+      $adresse = new Societe($this->db);
+      $adresse->fetch_adresse_livraison($id);
+      $this->adresse = $adresse;
+    }
+    
+    
 		
     /**
      *      \brief      Supprime une ligne de detail
@@ -606,41 +621,6 @@ class Propal
                 	}
                 }
                 
-                if ($this->adresse_livraison_id)
-                {
-                	$sql = "SELECT name, address, cp, ville, fk_pays";
-                	$sql.= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
-                	$sql.= " WHERE rowid = ".$this->adresse_livraison_id;
-                	
-                	$resqladdress = $this->db->query($sql);
-                	
-                	if ($resqladdress)
-                	{
-                		$obja = $this->db->fetch_object($resqladdress);
-                		$this->adresse_livraison_nom      = $obja->name;
-                		$this->adresse_livraison_adresse  = $obja->address;
-                		$this->adresse_livraison_cp       = $obja->cp;
-                		$this->adresse_livraison_ville    = $obja->ville;
-                		$this->adresse_livraison_pays_id  = $obja->fk_pays;
-                	}
-                }
-                
-                if ($this->adresse_livraison_pays_id)
-                {
-                	$sql = "SELECT libelle";
-                	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-                	$sql.= " WHERE rowid = ".$this->adresse_livraison_pays_id;
-                	
-                	$resqlpays = $this->db->query($sql);
-                	
-                	if ($resqlpays)
-                	{
-                		$objz = $this->db->fetch_object($resqlpays);
-                		$this->adresse_livraison_pays      = $objz->libelle;
-                	}
-                }
-
-    
                 if ($obj->fk_statut == 0)
                 {
                     $this->brouillon = 1;
