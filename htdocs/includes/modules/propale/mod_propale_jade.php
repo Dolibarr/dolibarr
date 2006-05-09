@@ -40,6 +40,13 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 class mod_propale_jade extends ModeleNumRefPropales
 {
 
+  /**   \brief      Constructeur
+   */
+  function mod_commande_ivoire()
+    {
+      $this->nom = "Jade";
+    }
+    
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
