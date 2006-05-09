@@ -359,6 +359,19 @@ class Propal
       $this->adresse = $adresse;
     }
     
+ /**
+   *
+   *
+   */
+	 
+  function fetch_contact_propal($id)
+    {
+    	$idcontact = $id;
+      $contact = new Contact($this->db);
+      $contact->fetch($idcontact);
+      $this->contact = $contact;
+    }
+    
     
 		
     /**
