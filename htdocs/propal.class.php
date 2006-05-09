@@ -342,7 +342,7 @@ class Propal
   function fetch_client()
     {
       $client = new Societe($this->db);
-      $client->fetch($this->id);
+      $client->fetch($this->socidp);
       $this->client = $client;
     }
     
