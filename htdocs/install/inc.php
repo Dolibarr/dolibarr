@@ -26,6 +26,22 @@
 		\version    $Revision$
 */
 
+// Forcage du parametrage PHP magic_quots_gpc (Sinon il faudrait a chaque POST, conditionner
+// la lecture de variable par stripslashes selon etat de get_magic_quotes).
+// En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
+function stripslashes_deep($value)
+{
+   return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
+}
+if (get_magic_quotes_gpc())
+{
+   $_GET    = array_map('stripslashes_deep', $_GET);
+   $_POST  = array_map('stripslashes_deep', $_POST);
+   $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
+   $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+}
+@set_magic_quotes_runtime(0);
+
 
 $docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 $conffile = "../conf/conf.php";
@@ -89,13 +105,13 @@ function pFooter($nonext=0,$setuplang='')
 
 function dolibarr_syslog($message)
 {
-    // Les fonctions syslog ne sont pas toujours installés ou autorisées chez les hébergeurs
+    // Les fonctions syslog ne sont pas toujours installè± ou autorisè¤³ chez les hè¡¥rgeurs
     if (function_exists("define_syslog_variables"))
     {
-        // \todo    Désactiver sous Windows (gros problème mémoire et faute de protections)
+        // \todo    Dè²¡ctiver sous Windows (gros problç¬¥ mè¬¯ire et faute de protections)
         //  if (1 == 2) {
               define_syslog_variables();
-              openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les php
+              openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non acceptçŸ°ar tous les php
               syslog(LOG_WARNING, $message);
               closelog();
         //  }
