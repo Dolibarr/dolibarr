@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 
 if (!$user->rights->commande->lire) accessforbidden();
 
@@ -41,6 +42,8 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
+
+$commandestatic=new Commande($db);
 
 
 
@@ -143,7 +146,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 /*
  * Commandes en cours
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.idp";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -156,7 +159,7 @@ if ( $db->query($sql) )
 {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
+    print '<td colspan="3">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
 
     $num = $db->num_rows();
     if ($num)
@@ -169,7 +172,9 @@ if ( $db->query($sql) )
             $obj = $db->fetch_object();
             print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' ';
             print $obj->ref.'</a></td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
+            print '</tr>';
             $i++;
         }
     }
@@ -181,7 +186,7 @@ if ( $db->query($sql) )
  */
 $max=5;
 
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp,";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.idp,";
 $sql.= " ".$db->pdate("date_cloture")." as datec";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
@@ -197,7 +202,7 @@ if ($resql)
 {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="3">'.$langs->trans("LastClosedOrders",$max).'</td></tr>';
+    print '<td colspan="4">'.$langs->trans("LastClosedOrders",$max).'</td></tr>';
 
     $num = $db->num_rows($resql);
     if ($num)
@@ -212,6 +217,7 @@ if ($resql)
             print $obj->ref.'</a></td>';
             print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
             print '<td>'.dolibarr_print_date($obj->datec).'</td>';
+            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
             print '</tr>';
             $i++;
         }
