@@ -97,7 +97,8 @@ if (sizeof($export->array_export_code))
         print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
         print $export->array_export_module[$key]->getName();
         print '</td><td>';
-        print $export->array_export_label[$key];
+        $string=$langs->trans($export->array_export_label[$key]);
+        print ($string!=$export->array_export_label[$key]?$string:$export->array_export_label[$key]);
         print '</td><td width="24">';
         print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$export->array_export_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
         print '</td></tr>';

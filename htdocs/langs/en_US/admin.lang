@@ -154,6 +154,7 @@ Permission31=Read products/services
 Permission32=Create/modify products/services
 Permission33=Command products/services
 Permission34=Delete products/services
+Permission36=Export products/services
 Permission41=Read projects
 Permission42=Create/modify projects
 Permission44=Delete projects
