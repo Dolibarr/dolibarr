@@ -62,6 +62,8 @@ class Fichinter
         // Statut 0=brouillon, 1=validé
         $this->statuts[0]=$langs->trans("Draft");
         $this->statuts[1]=$langs->trans("Validated");
+        $this->statuts_short[0]=$langs->trans("Draft");
+        $this->statuts_short[1]=$langs->trans("Validated");
     }
 
 
@@ -294,9 +296,9 @@ class Fichinter
      *    \brief      Retourne le libellé du statut de l'intervantion
      *    \return     string      Libellé
      */
-    function getLibStatut()
+    function getLibStatut($mode=0)
     {
-		return $this->LibStatut($this->statut);
+		return $this->LibStatut($this->statut,$mode);
     }
 
     /**
@@ -304,9 +306,36 @@ class Fichinter
      *    \param      statut      id statut
      *    \return     string      Libellé
      */
-    function LibStatut($statut)
+    function LibStatut($statut,$mode=0)
     {
-        return $this->statuts[$statut];
+        if ($mode == 0)
+        {
+	        return $this->statuts[$statut];
+		}
+        if ($mode == 1)
+        {
+        	return $this->statuts_short[$statut];
+        }
+        if ($mode == 2)
+        {
+        	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts_short[$statut];
+        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut1').' '.$this->statuts_short[$statut];
+        }
+        if ($mode == 3)
+        {
+        	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0');
+        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut1');
+        }
+        if ($mode == 4)
+        {
+        	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts[$statut];
+        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut1').' '.$this->statuts[$statut];
+        }
+        if ($mode == 5)
+        {
+        	if ($statut==0) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut0');
+        	if ($statut==1) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut1');
+        }
     }
 }  
 ?>

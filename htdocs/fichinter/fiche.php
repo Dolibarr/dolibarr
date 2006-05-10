@@ -318,7 +318,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
         $fichinter->fetch_projet();
         print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>'.$fichinter->projet.'</td></tr>';
     }
-    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$fichinter->getLibStatut().'</td></tr>';
+    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$fichinter->getLibStatut(4).'</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
     print '<td>';

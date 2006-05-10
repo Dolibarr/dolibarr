@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = s
 
 if ($socid > 0)
 {
-  $sql .= " AND s.idp = " . $socid;
+	$sql .= " AND s.idp = " . $socid;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
@@ -86,7 +86,7 @@ if ($result)
     print '<td>'.$langs->trans("Description").'</td>';
     print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'align="center"',$sortfield);
     print '<td align="right">'.$langs->trans("Duration").'</td>';
-    print '<td align="center">'.$langs->trans("Status").'</td>';
+    print '<td align="right">'.$langs->trans("Status").'</td>';
     print "</tr>\n";
     $var=True;
     $total = 0;
@@ -100,7 +100,7 @@ if ($result)
         print '<td>'.nl2br($objp->note).'</td>';
         print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
         print '<td align="right">'.price($objp->duree).'</td>';
-        print '<td align="center">'.$fichinter_static->LibStatut($objp->fk_statut).'</td>';
+        print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
 
         print "</tr>\n";
         $total += $objp->duree;
