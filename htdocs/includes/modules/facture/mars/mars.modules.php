@@ -44,17 +44,20 @@ class mod_facture_mars extends ModeleNumRefFactures
      */
     function info()
     {
-    
-      $texte = "Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.";
-      $texte.= "Le nombre final est formaté sur 3 chiffres ou plus.<br>";
-      $texte.= "Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur";
+      global $langs;
+
+		$langs->load("bills");
+
+      $texte = $langs->trans('MarsNumRefModelDesc1');
+      $texte.= $langs->trans('MarsNumRefModelDesc2').'<br>';
+      $texte.= $langs->trans('MarsNumRefModelDesc3');
       if (defined("FACTURE_MARS_DELTA"))
         {
-          $texte .= " (Définie et vaut : ".FACTURE_MARS_DELTA.")";
+          $texte .= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.FACTURE_MARS_DELTA.')';
         }
       else
         {
-          $texte .= " (N'est pas définie)";
+          $texte .= ' ('.$langs->trans('IsNotDefined').')';
         }
       return $texte;
     

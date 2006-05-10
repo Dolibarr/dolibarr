@@ -44,8 +44,12 @@ class mod_facture_uranus extends ModeleNumRefFactures
      */
     function info()
     {
-      return "
-    Renvoie le numéro de facture sous une forme numérique simple, préfixé par l'année sur un seul chiffre";
+	 	global $langs;
+
+		$langs->load("bills");
+
+      return '
+    '.$langs->trans('UranusNumRefModelDesc1');
     }
 
     /*!     \brief      Renvoi un exemple de numérotation

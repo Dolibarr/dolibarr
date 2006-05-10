@@ -44,15 +44,19 @@ class mod_facture_neptune extends ModeleNumRefFactures
      */
     function info()
     {
-      $texte = "Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.<br>\n";
-      $texte.= "Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur";
+	   global $langs;
+
+		$langs->load("bills");
+		
+      $texte = $langs->trans('NeptuneNumRefModelDesc1')."<br>\n";
+      $texte.= $langs->trans('NeptuneNumRefModelDesc2');
       if (defined("FACTURE_NEPTUNE_DELTA"))
         {
-          $texte .= " (Définie et vaut: ".FACTURE_NEPTUNE_DELTA.")";
+          $texte .= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.FACTURE_NEPTUNE_DELTA.')';
         }
       else
         {
-          $texte .= " (N'est pas définie)";
+          $texte .= ' ('.$langs->trans('IsNotDefined').')';
         }
       return $texte;
     }

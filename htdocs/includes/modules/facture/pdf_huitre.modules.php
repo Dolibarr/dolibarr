@@ -44,10 +44,19 @@ class pdf_huitre extends ModelePDFFactures {
     */
     function pdf_huitre($db)
     {
+	     global $langs;
+
+        $langs->load("main");
+        $langs->load("bills");
+        $langs->load("products");
+
+		  
         $this->db = $db;
-        $this->description = "Modèle de facture avec remise et infos réglement";
+        $this->name = "huitre";
+        $this->description = $langs->trans('PDFHuitreDescription');
 
         // Dimension page pour format A4
+        $this->type = 'pdf';        
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
@@ -57,10 +66,6 @@ class pdf_huitre extends ModelePDFFactures {
     {
       global $user,$langs,$conf;
       
-        $langs->load("main");
-        $langs->load("bills");
-        $langs->load("products");
-
         if ($conf->facture->dir_output)
         {
       $fac = new Facture($this->db,"",$facid);
@@ -160,15 +165,15 @@ class pdf_huitre extends ModelePDFFactures {
 
 		      $pdf->SetXY (10, 40);
 		      $pdf->SetFont('Arial','U',8);
-		      $pdf->MultiCell(40, 4, "Coordonnées bancaire", 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("BankDetails"), 0, 'L', 0);
 		      $pdf->SetFont('Arial','',8);
-		      $pdf->MultiCell(40, 4, "Code banque : " . $account->code_banque, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "Code guichet : " . $account->code_guichet, 0, 'L', 0);
-		      $pdf->MultiCell(50, 4, "Numéro compte : " . $account->number, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "Clé RIB : " . $account->cle_rib, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "BIC : " . $account->bic, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("BankCode").' : ' . $account->code_banque, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("DeskCode").' : ' . $account->code_guichet, 0, 'L', 0);
+		      $pdf->MultiCell(50, 4, $langs->trans("BankAccountNumber").' : ' . $account->number, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("BankAccountNumberKey").' : ' . $account->cle_rib, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
 		    }
 		}
 
@@ -187,22 +192,22 @@ class pdf_huitre extends ModelePDFFactures {
 
 	      $pdf->SetFont('Arial','U',11);
 	      $pdf->SetXY(10, 225);
-	      $titre = "Conditions de réglement : ".$fac->cond_reglement_facture;
+	      $titre = $langs->trans("PaymentConditions").' : '.$fac->cond_reglement_facture;
 	      $pdf->MultiCell(190, 5, $titre, 0, 'J');
 
 	      $pdf->SetFont('Arial','',6);
 	      $pdf->SetXY(10, 265);
-	      $pdf->MultiCell(90, 2, "Par application de la loi 80.335 du 12/05/80", 0, 'J');
+	      $pdf->MultiCell(90, 2, $langs->trans('LawApplicationPart1'), 0, 'J');
 	      $pdf->SetXY(10, 267);
-	      $pdf->MultiCell(90, 2, "les marchandises demeurent la propriété du", 0, 'J');
+	      $pdf->MultiCell(90, 2, $langs->trans('LawApplicationPart2'), 0, 'J');
 	      $pdf->SetXY(10, 269);
-	      $pdf->MultiCell(90, 2, "vendeur jusqu'à complet encaissement de ", 0, 'J');
+	      $pdf->MultiCell(90, 2, $langs->trans('LawApplicationPart3'), 0, 'J');
 	      $pdf->SetXY(10, 271);
-	      $pdf->MultiCell(90, 2, "leurs prix.", 0, 'J');
+	      $pdf->MultiCell(90, 2, $langs->trans('LawApplicationPart4'), 0, 'J');
 
 	      $pdf->SetFont('Arial','',7);
 	      $pdf->SetXY(85, 271);
-	      $pdf->MultiCell(90, 3, "TVA acquittée sur les débits.", 0, 'J');
+	      $pdf->MultiCell(90, 3, $langs->trans('VATDischarged'), 0, 'J');
 
               $this->_pagefoot($pdf, $fac);
               $pdf->AliasNbPages();
@@ -295,13 +300,13 @@ class pdf_huitre extends ModelePDFFactures {
       
       $pdf->SetFont('Arial','',8);
       $pdf->SetXY (10, $tab3_top - 6);
-      $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
+      $pdf->MultiCell(60, 6, $langs->trans("ExtraInfos"), 0, 'L', 0);
       $pdf->SetXY (10, $tab3_top );
-      $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
+      $pdf->MultiCell(20, 6, $langs->trans("RegulatedOn"), 0, 'L', 0);
       $pdf->SetXY (10, $tab3_top + 6);
-      $pdf->MultiCell(60, 6, "Chèque/Virement N°", 0, 'L', 0);
+      $pdf->MultiCell(60, 6, $langs->trans("ChequeOrTransferNumber"), 0, 'L', 0);
       $pdf->SetXY (10, $tab3_top + 12);
-      $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
+      $pdf->MultiCell(20, 6, $langs->trans("Bank"), 0, 'L', 0);
     }
 
     /*
@@ -342,7 +347,7 @@ class pdf_huitre extends ModelePDFFactures {
 	  $pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
 
 	  $pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
-	  $pdf->MultiCell(42, $tab2_hl, "Total HT aprés remise", 0, 'R', 0);
+	  $pdf->MultiCell(42, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'R', 0);
 
 	  $pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
 	  $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
@@ -467,22 +472,22 @@ class pdf_huitre extends ModelePDFFactures {
       if (defined("FAC_PDF_TEL"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl + 2*$tab4_sl );
-        $pdf->MultiCell(80, 3, "Téléphone : " . FAC_PDF_TEL, '' , 'L');
+        $pdf->MultiCell(80, 3, $langs->trans('FullPhoneNumber').' : ' . FAC_PDF_TEL, '' , 'L');
       }
       if (defined("FAC_PDF_FAX"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl + 3*$tab4_sl );
-        $pdf->MultiCell(80, 3, "Télécopie : " . FAC_PDF_FAX, '' , 'L');
+        $pdf->MultiCell(80, 3, $langs->trans('TeleFax').' : ' . FAC_PDF_FAX, '' , 'L');
       }
       if (defined("FAC_PDF_MEL"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl + 4*$tab4_sl );
-        $pdf->MultiCell(80, 3, "E-mail : " . FAC_PDF_MEL, '' , 'L');
+        $pdf->MultiCell(80, 3, $langs->trans('Email').' : ' . FAC_PDF_MEL, '' , 'L');
       }
       if (defined("FAC_PDF_WWW"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl + 5*$tab4_sl );
-        $pdf->MultiCell(80, 3, "Internet : " . FAC_PDF_WWW, '' , 'L');
+        $pdf->MultiCell(80, 3, $langs->trans('Web').' : ' . FAC_PDF_WWW, '' , 'L');
       }
       $pdf->SetTextColor(70,70,170);
 
@@ -515,9 +520,9 @@ class pdf_huitre extends ModelePDFFactures {
 
       $pdf->SetTextColor(200,0,0);
       $pdf->SetFont('Arial','B',14);
-      $pdf->Text(11, 88, "Date");
+      $pdf->Text(11, 88, $langs->trans('Date'));
       $pdf->Text(35, 88, ": " . strftime("%d %b %Y", $fac->date));
-      $pdf->Text(11, 94, "Numéro");
+      $pdf->Text(11, 94, $langs->trans('Invoice'));
       $pdf->Text(35, 94, ": ".$fac->ref);
       /*
        */
@@ -548,7 +553,7 @@ class pdf_huitre extends ModelePDFFactures {
 
         $ligne="";
         if (defined('MAIN_INFO_CAPITAL') && MAIN_INFO_CAPITAL) {
-            $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne=$langs->trans('LimitedLiabilityCompanyCapital').' '. MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
             $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN;
@@ -576,7 +581,7 @@ class pdf_huitre extends ModelePDFFactures {
         }
         elseif (MAIN_INFO_TVAINTRA != '') {
             $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
+            $pdf->MultiCell(190, 3,  $langs->trans("IntracommunityVATNumber")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
         }
 
     $pdf->SetXY(-10,-10);

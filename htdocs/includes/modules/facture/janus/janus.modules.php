@@ -45,8 +45,12 @@ class mod_facture_janus extends ModeleNumRefFactures
      */
     function info()
     {
-      return "
-    Renvoie le numéro de facture sous une forme spéciale F50201 pour la 1ere facture de février 2005";
+	   global $langs;
+
+		$langs->load("bills");
+
+      return '
+    '.$langs->trans('JanusNumRefModelDesc1');
     }
 
     /*!     \brief      Renvoi un exemple de numérotation

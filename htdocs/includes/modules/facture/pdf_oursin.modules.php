@@ -49,8 +49,14 @@ class pdf_oursin extends ModelePDFFactures
     */
     function pdf_oursin($db)
     {
+        global $langs;
+		  
+		  $langs->load("main");
+		  $langs->load("bills");
+		  $langs->load("products");
+
         $this->db = $db;
-        $this->description = "Modèle de facture complet (basé sur crabe, gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, les remises, le nom du projet, la reference propal, logo...)";
+        $this->description = $langs->trans('PDFOursinDescription');
 
         // Dimension page pour format A4
         $this->page_largeur = 210;
@@ -253,7 +259,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		    $pdf->SetXY ($this->marges['g'], 225);
 		    $pdf->SetFont('Arial','B',8);
-		    $pdf->MultiCell(90, 3, "Règlement par chèque à l'ordre de ".$account->proprio." envoyé à:",0,'L',0);
+		    $pdf->MultiCell(90, 3, $langs->trans('PaymentByChequeOrderedTo').' '.$account->proprio.' '.$langs->trans('SendTo').':',0,'L',0);
 		    $pdf->SetXY ($this->marges['g'], 230);
 		    $pdf->SetFont('Arial','',8);
 		    $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
@@ -273,21 +279,21 @@ class pdf_oursin extends ModelePDFFactures
 		    $cury=240;
 		    $pdf->SetXY ($this->marges['g'], $cury);
 		    $pdf->SetFont('Arial','B',8);
-		    $pdf->MultiCell(90, 3, "Règlement par virement sur le compte ci-dessous:", 0, 'L', 0);
+		    $pdf->MultiCell(90, 3, $langs->trans('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
 		    $cury=245;
 		    $pdf->SetFont('Arial','B',6);
 		    $pdf->line($this->marges['g'], $cury, $this->marges['g'], $cury+10 );
 		    $pdf->SetXY ($this->marges['g'], $cury);
-		    $pdf->MultiCell(18, 3, "Code banque", 0, 'C', 0);
+		    $pdf->MultiCell(18, 3, $langs->trans("BankCode"), 0, 'C', 0);
 		    $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
 		    $pdf->SetXY ($this->marges['g']+18, $cury);
-		    $pdf->MultiCell(18, 3, "Code guichet", 0, 'C', 0);
+		    $pdf->MultiCell(18, 3, $langs->trans("DeskCode"), 0, 'C', 0);
 		    $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
 		    $pdf->SetXY ($this->marges['g']+36, $cury);
-		    $pdf->MultiCell(24, 3, "Numéro compte", 0, 'C', 0);
+		    $pdf->MultiCell(24, 3, $langs->trans("BankAccountNumber"), 0, 'C', 0);
 		    $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
 		    $pdf->SetXY ($this->marges['g']+60, $cury);
-		    $pdf->MultiCell(13, 3, "Clé RIB", 0, 'C', 0);
+		    $pdf->MultiCell(13, 3, $langs->trans("BankAccountNumberKey"), 0, 'C', 0);
 		    $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
 
 		    $pdf->SetFont('Arial','',8);
@@ -301,11 +307,11 @@ class pdf_oursin extends ModelePDFFactures
 		    $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
          
 		    $pdf->SetXY ($this->marges['g'], $cury+15);
-		    $pdf->MultiCell(90, 3, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
+		    $pdf->MultiCell(90, 3, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
 		    $pdf->SetXY ($this->marges['g'], $cury+25);
-		    $pdf->MultiCell(90, 3, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
+		    $pdf->MultiCell(90, 3, $langs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
 		    $pdf->SetXY ($this->marges['g'], $cury+30);
-		    $pdf->MultiCell(90, 3, "BIC : " . $account->bic, 0, 'L', 0);
+		    $pdf->MultiCell(90, 3, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
 		  }
 	      }
 
@@ -314,7 +320,7 @@ class pdf_oursin extends ModelePDFFactures
 	     */
 	    $pdf->SetFont('Arial','B',10);
 	    $pdf->SetXY($this->marges['g'], 217);
-	    $titre = "Conditions de réglement:";
+	    $titre = $langs->trans("PaymentConditions").':';
 	    $pdf->MultiCell(80, 5, $titre, 0, 'L');
 	    $pdf->SetFont('Arial','',10);
 	    $pdf->SetXY($this->marges['g']+44, 217);
@@ -367,7 +373,7 @@ class pdf_oursin extends ModelePDFFactures
 
     $pdf->SetFont('Arial','',8);
     $pdf->SetXY ($tab3_posx, $tab3_top - 5);
-    $pdf->MultiCell(60, 5, "Versements déjà effectués", 0, 'L', 0);
+    $pdf->MultiCell(60, 5, $langs->trans("PaymentsAlreadyDone"), 0, 'L', 0);
 
     $pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
 
@@ -460,7 +466,7 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetXY ($this->marges['g'], $tab2_top + 0);
     if ($this->franchise==1)
       {
-	$pdf->MultiCell(100, $tab2_hl, "* TVA non applicable art-293B du CGI", 0, 'L', 0);
+	$pdf->MultiCell(100, $tab2_hl, $langs->trans("VATIsNotUsed"), 0, 'L', 0);
       }
 
     // Tableau total
@@ -480,7 +486,7 @@ class pdf_oursin extends ModelePDFFactures
 	$pdf->MultiCell(26, $tab2_hl, "-".$fac->remise_percent."%", 0, 'R', 0);
 
 	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 0);
+	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'L', 0);
 
 	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
 	$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
@@ -682,7 +688,7 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetFont('Arial','B',13);
     $pdf->SetXY($this->marges['g'],$posy);
     $pdf->SetTextColor(0,0,0);
-    $pdf->MultiCell(100, 10, $langs->trans("Bill")." du ".dolibarr_print_date($fac->date,"%d %B %Y"), '' , 'L');
+    $pdf->MultiCell(100, 10, $langs->trans("Bill").' '.$langs->trans("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y"), '' , 'L');
     $pdf->SetFont('Arial','B',11);
     $pdf->SetXY($this->marges['g'],$posy+6);
     $pdf->SetTextColor(22,137,210);
@@ -742,7 +748,7 @@ class pdf_oursin extends ModelePDFFactures
 
         $ligne="";
         if (defined('MAIN_INFO_CAPITAL') && MAIN_INFO_CAPITAL) {
-            $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne=$langs->trans('LimitedLiabilityCompanyCapital').' '. MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
             $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN;
@@ -770,7 +776,7 @@ class pdf_oursin extends ModelePDFFactures
     }
     elseif (MAIN_INFO_TVAINTRA != '') {
       $pdf->SetY(-$footy);
-      $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
+      $pdf->MultiCell(190, 3,  $langs->trans("IntracommunityVATNumber")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
     }
 
     $pdf->SetXY(-15,-15);

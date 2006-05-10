@@ -44,7 +44,11 @@ class mod_facture_terre extends ModeleNumRefFactures
      */
     function info()
     {
-      return "Renvoie le numéro sous la forme ".$this->prefix."yymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0";
+	 	global $langs;
+
+		$langs->load("bills");
+		
+      return $langs->trans('TerreNumRefModelDesc1',$this->prefix);
     }
 
     /**     \brief      Renvoi un exemple de numérotation
@@ -61,7 +65,11 @@ class mod_facture_terre extends ModeleNumRefFactures
      */
     function canBeActivated()
     {
-        $fayymm='';
+        global $langs;
+
+		  $langs->load("bills");
+		  
+		  $fayymm='';
         
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
@@ -77,7 +85,7 @@ class mod_facture_terre extends ModeleNumRefFactures
         }
         else
         {
-            $this->error='Une facture commençant par $fayymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.';
+            $this->error=$langs->trans('TerreNumRefModelError');
             return false;    
         }
     }

@@ -42,8 +42,12 @@ class mod_facture_jupiter extends ModeleNumRefFactures
      */
     function info()
     {
+	 	global $langs;
+
+		$langs->load("bills");
+		
       return '
-    Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003';
+    '.$langs->trans('JupiterNumRefModelDesc1');
     }
 
     /*!     \brief      Renvoi un exemple de numérotation

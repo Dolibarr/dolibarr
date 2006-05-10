@@ -42,8 +42,12 @@ class mod_facture_mercure extends ModeleNumRefFactures
      */
     function info()
     {
+      global $langs;
+
+		$langs->load("bills");
+
       return '
-    Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15, le numéro est préfixé par la lettre F, ce module peut être utilisé avec dans le cas d\'une numérotaion double.';
+    '.$langs->trans('MercureNumRefModelDesc1');
     }
 
     /*!     \brief      Renvoi un exemple de numérotation

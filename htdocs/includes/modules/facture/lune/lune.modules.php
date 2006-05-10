@@ -44,8 +44,12 @@ class mod_facture_lune extends ModeleNumRefFactures
      */
     function info()
     {
+	 	global $langs;
+
+		$langs->load("bills");
+
       return '
-    Système de numérotation mensuel sous la forme F0501015, qui correspond à la 15ème facture du mois de Janvier 2005';
+    '.$langs->trans('LuneNumRefModelDesc1');
     }
 
     /**     \brief      Renvoi un exemple de numérotation

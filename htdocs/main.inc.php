@@ -36,7 +36,7 @@ if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=microtime(true);
 
 // Forcage du parametrage PHP magic_quots_gpc (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
-// En mode off (recommande il faut juste fait addslashes au moment d'un insert/update.
+// En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
 function stripslashes_deep($value)
 {
    return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));

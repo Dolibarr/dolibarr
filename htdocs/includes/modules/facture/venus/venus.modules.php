@@ -42,10 +42,13 @@ class mod_facture_venus extends ModeleNumRefFactures
      */
     function info()
     {
+	   global $langs;
+
+		$langs->load("bills");
 
       return '
-    Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour';
-    
+    '.$langs->trans('VenusNumRefModelDesc1');
+	   
     }
 
     /*!     \brief      Renvoi un exemple de numérotation

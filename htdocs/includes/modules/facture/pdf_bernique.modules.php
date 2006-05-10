@@ -41,8 +41,14 @@ class pdf_bernique extends ModelePDFFactures  {
 
   function pdf_bernique($db=0)
     { 
-        $this->db = $db;
-        $this->description = "Modèle pour les factures avec plusieurs taux de tva, inclus aussi le numéro de TVA Intracommunautaire";
+        global $langs;
+		  
+		  $langs->load("main");
+		  $langs->load("bills");
+		  $langs->load("products");
+		  
+		  $this->db = $db;
+        $this->description = $langs->trans('PDFBerniqueDescription');
 
         // Dimension page pour format A4
         $this->page_largeur = 210;
@@ -53,10 +59,6 @@ class pdf_bernique extends ModelePDFFactures  {
   function write_pdf_file($facid)
     {
       global $user,$langs,$conf;
-      
-      $langs->load("main");
-      $langs->load("bills");
-      $langs->load("products");
       
       $fac = new Facture($this->db,"",$facid);
       $fac->fetch($facid);  
@@ -159,15 +161,15 @@ class pdf_bernique extends ModelePDFFactures  {
 		      
 		      $pdf->SetXY (10, 49);  
 		      $pdf->SetFont('Arial','U',8);
-		      $pdf->MultiCell(40, 4, "Coordonnées bancaires", 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("BankDetails"), 0, 'L', 0);
 		      $pdf->SetFont('Arial','',8);
-		      $pdf->MultiCell(40, 4, "Code banque : " . $account->code_banque, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "Code guichet : " . $account->code_guichet, 0, 'L', 0);
-		      $pdf->MultiCell(50, 4, "Numéro compte : " . $account->number, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "Clé RIB : " . $account->cle_rib, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, "BIC : " . $account->bic, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("BankCode").' : ' . $account->code_banque, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("DeskCode").' : ' . $account->code_guichet, 0, 'L', 0);
+		      $pdf->MultiCell(50, 4, $langs->trans("BankAccountNumber").' : ' . $account->number, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("BankAccountNumberKey").' : ' . $account->cle_rib, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
 		    }
 		}
 	      
@@ -178,8 +180,8 @@ class pdf_bernique extends ModelePDFFactures  {
 	      	      
 	      $pdf->SetFont('Arial','',9);
 	      $pdf->SetXY(10, 260);
-	      $pdf->MultiCell(190, 5, "Numéro de TVA intracommunautaire : ".MAIN_INFO_TVAINTRA, 0, 'J');
-	      $pdf->MultiCell(190, 5, "Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.", 0, 'J');
+	      $pdf->MultiCell(190, 5, $langs->trans("IntracommunityVATNumber").' : '.MAIN_INFO_TVAINTRA, 0, 'J');
+	      $pdf->MultiCell(190, 5, $langs->trans("PrettyLittleSentence"), 0, 'J');
 
 	      $pdf->Close();
 	      
@@ -189,13 +191,13 @@ class pdf_bernique extends ModelePDFFactures  {
 	    }
 	  else
 	    {
-                $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                 return 0;
 	    }
 	}
       else
 	{
-            $this->error="Erreur: FAC_OUTPUTDIR non défini !";
+            $this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
             return 0;
 	}
     }
@@ -219,16 +221,16 @@ class pdf_bernique extends ModelePDFFactures  {
       
       $pdf->SetFont('Arial','',8);
       $pdf->SetXY (10, $tab3_top - 6);
-      $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
+      $pdf->MultiCell(60, 6, $langs->trans("ExtraInfos"), 0, 'L', 0);
       $pdf->SetXY (10, $tab3_top );
-      $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
+      $pdf->MultiCell(20, 6, $langs->trans("RegulatedOn"), 0, 'L', 0);
       $pdf->SetXY (10, $tab3_top + 6);
-      $pdf->MultiCell(20, 6, "Chèque N°", 0, 'L', 0);
+      $pdf->MultiCell(20, 6, $langs->trans("ChequeNumber"), 0, 'L', 0);
       $pdf->SetXY (10, $tab3_top + 12);
-      $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
+      $pdf->MultiCell(20, 6, $langs->trans("Bank"), 0, 'L', 0);
 
       $pdf->SetFont('Arial','U',12);
-      $titre = "Conditions de réglement : ".$fac->cond_reglement_facture;
+      $titre = $langs->trans("PaymentConditions").' : '.$fac->cond_reglement_facture;
       $pdf->SetXY(200 - $pdf->GetStringWidth($titre), $tab3_top + 10);
       $pdf->MultiCell(120, 5, $titre, 0, 'J');
     }
@@ -276,7 +278,7 @@ class pdf_bernique extends ModelePDFFactures  {
       $pdf->MultiCell(42, $tab2_hl, $langs->trans("Discount")." ". $fac->remise_percent . " %", 0, 'L', 0);
       
       $pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
-      $pdf->MultiCell(42, $tab2_hl, "Total HT aprés remise", 0, 'R', 0);
+      $pdf->MultiCell(42, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'R', 0);
       
       $pdf->SetXY (132, $tab2_top + $tab2_hl * 3);
       $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalVAT"), 0, 'R', 0);
@@ -356,7 +358,7 @@ class pdf_bernique extends ModelePDFFactures  {
       if (defined("FAC_PDF_TEL"))
 	{
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(40, 5, $langs->trans('PhoneNumber').' : '.FAC_PDF_TEL);
 	}  
       if (defined("MAIN_INFO_SIREN"))
 	{
@@ -387,8 +389,8 @@ class pdf_bernique extends ModelePDFFactures  {
       
       $pdf->SetTextColor(200,0,0);
       $pdf->SetFont('Arial','B',14);
-      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fac->date));
-      $pdf->Text(11, 94, "Facture : ".$fac->ref);
+      $pdf->Text(11, 88, $langs->trans('Date').' : ' . strftime("%d %b %Y", $fac->date));
+      $pdf->Text(11, 94, $langs->trans('Invoice').' : '.$fac->ref);
       
       /*
        */

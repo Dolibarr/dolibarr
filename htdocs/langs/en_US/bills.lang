@@ -143,3 +143,104 @@ PaymentCondition60D=Payment after 60 days
 PaymentConditionShort60DENDMONTH=60 days end of month
 PaymentCondition60DENDMONTH=Payment after 60 days end of month
 
+BankDetails=Coordonnées bancaires
+BankCode=Code banque
+DeskCode=Code guichet
+BankAccountNumber=Numéro compte
+BankAccountNumberKey=Clé RIB
+Residence=Domiciliation
+IbanPrefix=Prefix IBAN
+BIC=BIC
+ExtraInfos=Informations complémentaires
+RegulatedOn=Réglé le
+ChequeNumber=Chèque N°
+ChequeOrTransferNumber=Chèque/Virement N°
+PaymentConditions=Conditions de réglement
+WithDiscountTotalHT=Total HT aprés remise
+PhoneNumber=Tél
+FullPhoneNumber=Téléphone
+TeleFax=Télécopie
+PrettyLittleSentence=Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.
+IntracommunityVATNumber=Numéro de TVA intracommunautaire
+PaymentByChequeOrderedTo=Règlement par chèque à l'ordre de
+SendTo=envoyé à
+PaymentByTransferOnThisBankAccount=Règlement par virement sur le compte bancaire suivant
+VATIsNotUsed=* TVA non applicable art-293B du CGI
+LawApplicationPart1=Par application de la loi 80.335 du 12/05/80
+LawApplicationPart2=les marchandises demeurent la propriété du
+LawApplicationPart3=vendeur jusqu'à complet encaissement de 
+LawApplicationPart4=leurs prix.
+VATDischarged=TVA acquittée sur les débits.
+LimitedLiabilityCompanyCapital=SARL au Capital de
+
+# oursin PDF model
+Of=du
+
+# bernique PDF model
+PDFBerniqueDescription=Invoice model Bernique
+
+# bigorneau PDF Model
+PDFBigorneauDescription=Invoice model Bigorneau
+
+# bulot PDF Model
+PDFBulotDescription=Invoice model Bulot
+
+# crabe PDF Model
+PDFCrabeDescription=Invoice model Crabe. A complete invoice model (Support VAT option, discounts, payments conditions, logo, etc...)
+
+# huitre PDF Model
+PDFHuitreDescription=Invoice model Huitre
+
+# oursin PDF Model
+PDFOursinDescription=Invoice model oursin
+
+# tourteau PDF Model
+PDFTourteauDescription=Invoice model Tourteau
+
+
+
+
+# NumRef Modules
+DefinedAndHasThisValue=Définie et vaut
+IsNotDefined=N'est pas définie
+
+# deneb
+DenebNumRefModelDesc1=Renvoie le numéro de facture sous la forme, PREF-31-12-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 31 décembre 2004) et d'un compteur.
+DenebNumRefModelDesc2=Si la constante FACTURE_DENEB_DELTA est définie, un offset est appliqué sur le compteur
+
+# janus
+JanusNumRefModelDesc1=Renvoie le numéro de facture sous une forme spéciale F50201 pour la 1ere facture de février 2005
+
+# jupiter
+JupiterNumRefModelDesc1=Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003
+
+# lune
+LuneNumRefModelDesc1=Système de numérotation mensuel sous la forme F0501015, qui correspond à la 15ème facture du mois de Janvier 2005
+
+# mars
+MarsNumRefModelDesc1=Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.
+MarsNumRefModelDesc2=Le nombre final est formaté sur 3 chiffres ou plus.
+MarsNumRefModelDesc3=Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur
+
+# mercure
+MercureNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15, le numéro est préfixé par la lettre F, ce module peut être utilisé avec dans le cas d'une numérotaion double.
+
+# neptune
+NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.
+NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur
+
+# terre
+TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
+TerreNumRefModelError=Une facture commençant par $fayymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
+
+# titan
+TitanNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
+TitanNumRefModelDesc2=L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.
+TitanNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
+TitanNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700001.
+
+# uranus
+UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, préfixé par l'année sur un seul chiffre
+
+# venus
+VenusNumRefModelDesc1=Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour

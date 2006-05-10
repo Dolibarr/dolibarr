@@ -44,20 +44,22 @@ class mod_facture_titan extends ModeleNumRefFactures
      */
 function info()
     {
-    	global $conf;
+    	global $conf,$langs;
+
+		$langs->load("bills");
     	
-      $texte = "Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.<br>\n";
-      $texte.= "L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.<br>\n";
-      $texte.= "Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.<br>\n";
-      $texte.= "Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700001.<br>\n";
+      $texte = $langs->trans('TitanNumRefModelDesc1')."<br>\n";
+      $texte.= $langs->trans('TitanNumRefModelDesc2')."<br>\n";
+      $texte.= $langs->trans('TitanNumRefModelDesc3')."<br>\n";
+      $texte.= $langs->trans('TitanNumRefModelDesc4')."<br>\n";
       
       if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
-      	$texte.= "SOCIETE_FISCAL_MONTH_START est définie et vaut: ".$conf->global->SOCIETE_FISCAL_MONTH_START."";
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->SOCIETE_FISCAL_MONTH_START;
       }
       else
       {
-      	$texte.= "SOCIETE_FISCAL_MONTH_START n'est pas définie.";
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')';
       }
       return $texte;
     }

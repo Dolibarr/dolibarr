@@ -44,16 +44,19 @@ class mod_facture_deneb extends ModeleNumRefFactures
      */
     function info()
     {
-    
-      $texte = "Renvoie le numéro de facture sous la forme, PREF-31-12-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 31 décembre 2004) et d'un compteur.<br>";
-      $texte.= "Si la constante FACTURE_DENEB_DELTA est définie, un offset est appliqué sur le compteur";
+      global $langs;
+
+		$langs->load("bills");
+	 
+      $texte = $langs->trans('DenebNumRefModelDesc1')."<br>";
+      $texte.= $langs->trans('DenebNumRefModelDesc2');
       if (defined("FACTURE_DENEB_DELTA"))
         {
-          $texte .= " (Définie et vaut : ".FACTURE_DENEB_DELTA.")";
+          $texte .= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.FACTURE_DENEB_DELTA.')';
         }
       else
         {
-          $texte .= " (N'est pas définie)";
+          $texte .= ' ('.$langs->trans('IsNotDefined').')';
         }
       return $texte;
     

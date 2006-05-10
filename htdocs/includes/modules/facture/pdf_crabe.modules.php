@@ -48,9 +48,13 @@ class pdf_crabe extends ModelePDFFactures
     {
         global $conf,$langs;
         
+		  $langs->load("main");
+        $langs->load("bills");
+        $langs->load("products");
+		  
         $this->db = $db;
         $this->name = "crabe";
-		$this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
+		$this->description = $langs->trans('PDFCrabeDescription');
 
         // Dimension page pour format A4
         $this->type = 'pdf';
@@ -123,10 +127,6 @@ class pdf_crabe extends ModelePDFFactures
     function write_pdf_file($id)
     {
         global $user,$langs,$conf,$mysoc;
-
-        $langs->load("main");
-        $langs->load("bills");
-        $langs->load("products");
 
         if ($conf->facture->dir_output)
         {
@@ -351,7 +351,7 @@ class pdf_crabe extends ModelePDFFactures
 
                         $pdf->SetXY($this->marge_gauche, 227);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, "Règlement par chèque à l'ordre de ".$account->proprio." envoyé à:",0,'L',0);
+                        $pdf->MultiCell(90, 3, $langs->trans('PaymentByChequeOrderedTo').' '.$account->proprio.' '.$langs->trans('SendTo').':',0,'L',0);
                         $pdf->SetXY($this->marge_gauche, 231);
                         $pdf->SetFont('Arial','',8);
                         $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
@@ -360,7 +360,7 @@ class pdf_crabe extends ModelePDFFactures
                     {
                         $pdf->SetXY($this->marge_gauche, 227);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, "Règlement par chèque à l'ordre de ".$mysoc->nom." envoyé à:",0,'L',0);
+                        $pdf->MultiCell(90, 3, $langs->trans('PaymentByChequeOrderedTo').' '.$mysoc->nom.' '.$langs->trans('SendTo').':',0,'L',0);
                         $pdf->SetXY($this->marge_gauche, 231);
                         $pdf->SetFont('Arial','',8);
                         $pdf->MultiCell(80, 3, $mysoc->adresse_full, 0, 'L', 0);
@@ -382,21 +382,21 @@ class pdf_crabe extends ModelePDFFactures
                         $cury=242;
                         $pdf->SetXY ($this->marges['g'], $cury);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, "Règlement par virement sur le compte bancaire suivant:", 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, $langs->trans('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
                         $cury+=4;
                         $pdf->SetFont('Arial','B',6);
                         $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
                         $pdf->SetXY ($this->marges['g'], $cury);
-                        $pdf->MultiCell(18, 3, "Code banque", 0, 'C', 0);
+                        $pdf->MultiCell(18, 3, $langs->trans("BankCode"), 0, 'C', 0);
                         $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
                         $pdf->SetXY ($this->marges['g']+18, $cury);
-                        $pdf->MultiCell(18, 3, "Code guichet", 0, 'C', 0);
+                        $pdf->MultiCell(18, 3, $langs->trans("DeskCode"), 0, 'C', 0);
                         $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
                         $pdf->SetXY ($this->marges['g']+36, $cury);
-                        $pdf->MultiCell(24, 3, "Numéro compte", 0, 'C', 0);
+                        $pdf->MultiCell(24, 3, $langs->trans("BankAccountNumber"), 0, 'C', 0);
                         $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
                         $pdf->SetXY ($this->marges['g']+60, $cury);
-                        $pdf->MultiCell(13, 3, "Clé RIB", 0, 'C', 0);
+                        $pdf->MultiCell(13, 3, $langs->trans("BankAccountNumberKey"), 0, 'C', 0);
                         $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
                         
                         $pdf->SetFont('Arial','',8);
@@ -410,11 +410,11 @@ class pdf_crabe extends ModelePDFFactures
                         $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
          
                         $pdf->SetXY ($this->marges['g'], $cury+12);
-                        $pdf->MultiCell(90, 3, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
                         $pdf->SetXY ($this->marges['g'], $cury+22);
-                        $pdf->MultiCell(90, 3, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, $langs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
                         $pdf->SetXY ($this->marges['g'], $cury+25);
-                        $pdf->MultiCell(90, 3, "BIC : " . $account->bic, 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
 
                     }
                 }
@@ -574,7 +574,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY($this->marge_gauche, $tab2_top + 0);
     	if ($this->franchise==1)
       	{
-            $pdf->MultiCell(100, $tab2_hl, "* TVA non applicable art-293B du CGI", 0, 'L', 0);
+            $pdf->MultiCell(100, $tab2_hl, $langs->trans("VATIsNotUsed"), 0, 'L', 0);
         }
 
         // Tableau total
@@ -598,7 +598,7 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->MultiCell($largcol2, $tab2_hl, "-".$fac->remise_percent."%", 0, 'R', 1);
 
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 1);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
             $pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ht), 0, 'R', 1);
