@@ -327,8 +327,8 @@ if ($socidp > 0)
 		print '</tr>';
 	}
 	
-	// adresse de livraison
-	if ($conf->expedition->enabled || $conf->commande->enabled)
+	// Adresse de livraison
+	if ($conf->expedition->enabled)
 	{
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
