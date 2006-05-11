@@ -655,10 +655,8 @@ class Form
 		if($conf->use_ajax)
 		{
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/prototype.js"></script>';
-			// print '<form>';
 			print $langs->trans("Ref").'<input type="text" size="5" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp;';
 			print $langs->trans("Label").'<input type="text" size="5" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
-			// print '</form>';
 			print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
 			print '<script type="text/javascript">';
 			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
