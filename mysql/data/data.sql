@@ -509,6 +509,7 @@ insert into llx_c_pays (rowid,code,libelle) values (26, 'PT', 'Portugal'       )
 insert into llx_c_pays (rowid,code,libelle) values (27, 'SA', 'Arabie Saoudite');
 insert into llx_c_pays (rowid,code,libelle) values (28, 'MC', 'Monaco'         );
 insert into llx_c_pays (rowid,code,libelle) values (29, 'AU', 'Australie'      );
+insert into llx_c_pays (rowid,code,libelle) values (30, 'SG', 'Singapoure'     );
 
 
 --
