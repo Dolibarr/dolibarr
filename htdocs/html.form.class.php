@@ -655,19 +655,22 @@ class Form
 		if($conf->use_ajax)
 		{
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/prototype.js"></script>';
-			print '<form>';
+			// print '<form>';
 			print $langs->trans("Ref").'<input type="text" size="5" name="ajkeyref" id="ajkeyref">&nbsp;';
 			print $langs->trans("Label").'<input type="text" size="5" name="ajkeylabel" id="ajkeylabel">';
-			print '</form>';
-			print '<div id="'.$htmlname.'"></div>';
+			// print '</form>';
+			print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
 			print '<script type="text/javascript">';
 			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-			print 'new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: \''.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref").value});});';
+			print 'new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref").value+"&htmlname='.$htmlname.'"});});';
+			print 'function publish_selvalue(obj){$("'.$htmlname.'").value = obj.options[obj.selectedIndex].value;}';
 			print '</script>';
 			print '<script type="text/javascript">';
 			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-			print 'new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: \''.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel").value});});';
+			print 'new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel").value+"&htmlname='.$htmlname.'"});});';
 			print '</script>';
+			print '<div id="ajdynfield">';
+			print '</div>';
 		}
 		else
 		{
@@ -723,7 +726,10 @@ class Form
         
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            if($conf->use_ajax)
+				print '<select class="flat" name="'.$htmlname.'" onchange="publish_selvalue(this);">';
+			else
+				print '<select class="flat" name="'.$htmlname.'">';
             print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
     
             $num = $this->db->num_rows($result);
