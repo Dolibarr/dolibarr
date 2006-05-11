@@ -410,7 +410,7 @@ class Propal
      */
     function create()
     {
-		global $langs,$conf;
+    	global $langs,$conf;
         // Définition paramètres
         $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
     
@@ -1660,7 +1660,7 @@ class Propal
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
-        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."', $this->adresse_livraison_id)";
+        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."', '$this->adresse_livraison_id')";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1718,7 +1718,7 @@ class Propal
         else
         {
             $this->error=$this->db->error();
-            dolibarr_syslog("Propal::Create -1 ".$this->error);
+            dolibarr_syslog("Propal::Create_from -1 ".$this->error);
             $this->db->rollback();
             return -1;
         }
