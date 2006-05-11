@@ -64,11 +64,19 @@ class box_actions extends ModeleBoxes {
         $this->info_box_head = array('text' =>$langs->trans("ActionsToDo"));
    if ($user->rights->commercial->main->lire)
     {         
-          $sql = "SELECT label, id, ".$db->pdate("a.datea")." as da , percent ";
-          $sql .= "FROM `llx_actioncomm` AS a ";
-           $sql .= "WHERE percent <> 100 ";
+          $sql = "SELECT a.label, a.id, ".$db->pdate("a.datea")." as da , a.percent, s.nom, s.idp";
+          if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+          $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm AS a ";
+          if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+          $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_societe = s.idp";
+          $sql .= " WHERE percent <> 100 ";
+          if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+          if($user->societe_id)
+          {
+              $sql .= " AND s.idp = $user->societe_id";
+          }
           $sql .= " ORDER BY a.datec DESC";
-            $sql .= $db->plimit($max, 0);
+          $sql .= $db->plimit($max, 0);
    
             $result = $db->query($sql);
             if ($result)
@@ -87,11 +95,15 @@ class box_actions extends ModeleBoxes {
                     'text' => $objp->label,
                     'text2'=> $late,
                     'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
+                    
+                    $this->info_box_contents[$i][1] = array('align' => 'left',
+                    'text' => $objp->nom,
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
            
-                     $this->info_box_contents[$i][1] = array('align' => 'right',
+                     $this->info_box_contents[$i][2] = array('align' => 'right',
                     'text' => dolibarr_print_date($objp->da));
            
-                    $this->info_box_contents[$i][2] = array('align' => 'right',
+                    $this->info_box_contents[$i][3] = array('align' => 'right',
                     'text' => $objp->percent. "%");
                    
                     $i++;
