@@ -89,9 +89,9 @@ class mod_commande_diamant extends ModeleNumRefCommandes
     /**     \brief      Renvoi prochaine valeur attribuée
      *      \return     string      Valeur
      */
-    function getNextValue()
+    function getNextValue($objsoc=0)
     {
-        global $db;
+        global $db, $conf;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
         $cyy='';
@@ -121,24 +121,10 @@ class mod_commande_diamant extends ModeleNumRefCommandes
         }
         else
         {
-            $max=0;
+            $max=$conf->global->COMMANDE_DIAMANT_DELTA?$conf->global->COMMANDE_DIAMANT_DELTA:0;
         }
         
-        if (!defined("COMMANDE_DIAMANT_DELTA"))
-        {
-          define("COMMANDE_DIAMANT_DELTA", 0);
-        }
-        
-        if ($max == 0)
-        {
-        	$delta = COMMANDE_DIAMANT_DELTA;
-        	$num = sprintf("%05s",$delta);
-        }
-        else
-        {
-        	$num = sprintf("%05s",$max+1);
-        }
-        
+        $num = sprintf("%05s",$max+1);
         $yy = strftime("%y",time());
         
         return  "C$yy$num";
