@@ -68,7 +68,7 @@ class box_actions extends ModeleBoxes {
           if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
           $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm AS a ";
           if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-          $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_societe = s.idp";
+          $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.idp";
           $sql .= " WHERE percent <> 100 ";
           if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
           if($user->societe_id)
