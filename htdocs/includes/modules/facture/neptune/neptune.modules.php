@@ -86,13 +86,15 @@ class mod_facture_neptune extends ModeleNumRefFactures
 		global $db,$conf;
 	
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $fayy='';
+        $fayy = 'FA'.strftime("%y",time());
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+        $sql.= " WHERE facnumber like '${fayy}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
+            $fayy='';
             if ($row) $fayy = substr($row[0],0,4);
         }
 
