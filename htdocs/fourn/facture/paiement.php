@@ -352,7 +352,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 	if (! $sortorder) $sortorder='DESC';
 	if (! $sortfield) $sortfield='p.datep';
 
-	$sql  = 'SELECT p.rowid, '.$db->pdate('p.datep').' as dp, p.amount';
+	$sql  = 'SELECT p.rowid, '.$db->pdate('p.datep').' as dp, p.amount as pamount';
 	$sql .= ', f.amount, f.facnumber, s.nom';
 	$sql .= ', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
 	$sql .= ', ba.rowid as bid, ba.label';
@@ -430,7 +430,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 			if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dolibarr_trunc($objp->label,24).'</a>';
 			else print '&nbsp;';
 			print '</td>';
-			print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
+			print '<td align="right">'.price($objp->pamount).'</td><td>&nbsp;</td>';
 			print '</tr>';
 			$i++;
 		}
