@@ -746,7 +746,7 @@ class Product
         global $langs;
 		global $conf;
 
-		dolibarr_syslog("Product::fecth $id=$id ref=$ref");
+		dolibarr_syslog("Product::fetch id=$id ref=$ref");
 
         // Verification parametres
         if (! $id && ! $ref)
