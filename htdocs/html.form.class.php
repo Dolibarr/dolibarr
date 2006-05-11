@@ -656,20 +656,20 @@ class Form
 		{
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/prototype.js"></script>';
 			// print '<form>';
-			print $langs->trans("Ref").'<input type="text" size="5" name="ajkeyref" id="ajkeyref">&nbsp;';
-			print $langs->trans("Label").'<input type="text" size="5" name="ajkeylabel" id="ajkeylabel">';
+			print $langs->trans("Ref").'<input type="text" size="5" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp;';
+			print $langs->trans("Label").'<input type="text" size="5" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
 			// print '</form>';
 			print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
 			print '<script type="text/javascript">';
 			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-			print 'new Form.Element.Observer($("ajkeyref"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref").value+"&htmlname='.$htmlname.'"});});';
+			print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'"});});';
 			print 'function publish_selvalue(obj){$("'.$htmlname.'").value = obj.options[obj.selectedIndex].value;}';
 			print '</script>';
 			print '<script type="text/javascript">';
 			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-			print 'new Form.Element.Observer($("ajkeylabel"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel").value+"&htmlname='.$htmlname.'"});});';
+			print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'"});});';
 			print '</script>';
-			print '<div id="ajdynfield">';
+			print '<div id="ajdynfield'.$htmlname.'">';
 			print '</div>';
 		}
 		else
