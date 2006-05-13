@@ -5,11 +5,22 @@ Building packages
 
 All sub-directories of "build" directory contains files required to build
 automatically Dolibarr packages.
+There is serval tools:
 
-To build Dolibarr packages, launch the script
-> perl makepack-build.pl
+- To build full Dolibarr packages, launch the script
+> perl makepack-dolibarr.pl
+
+- To build a translaction packege, launch the script
+> perl makepack-dolibarrlang.pl
+
+- To build a theme package, launch the script
+> perl makepack-dolibarrtheme.pl
+
+- To build a package for a module, launch the script
+> perl makepack-dolibarrmodule.pl
 
 
+Note: 
 The build directory and all its contents is absolutely not required to make
 Dolibarr working. It is here only to build Dolibarr packages, and those
 generated packages will not contains this "build" directory.
