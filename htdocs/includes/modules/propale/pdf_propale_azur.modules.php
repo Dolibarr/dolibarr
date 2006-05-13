@@ -294,38 +294,47 @@ class pdf_propale_azur extends ModelePDFPropales
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva
-					$tvaligne=$prop->lignes[$i]->price * $prop->lignes[$i]->qty;
-					if ($prop->remise_percent) $tvaligne-=($tvaligne*$prop->remise_percent)/100;
-					$this->tva[ (string)$prop->lignes[$i]->tva_tx ] += $tvaligne;
-
+		    $tvaligne=$prop->lignes[$i]->price * $prop->lignes[$i]->qty;
+		    if ($prop->remise_percent) $tvaligne-=($tvaligne*$prop->remise_percent)/100;
+		    $this->tva[ (string)$prop->lignes[$i]->tva_tx ] += $tvaligne;
+		    
                     $nexY+=2;    // Passe espace entre les lignes
 
                     if ($nexY > 200 && $i < ($nblignes - 1))
                     {
-                        $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
-                        $this->_pagefoot($pdf);
-                        
-                        // Nouvelle page
-                        $pdf->AddPage();
-                        $pagenb++;
-                        $this->_pagehead($pdf, $prop, 0);
-
-                        $nexY = $tab_top_newpage + 8;
-                        $pdf->SetTextColor(0,0,0);
-                        $pdf->SetFont('Arial','', 10);
+		      //$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
+		      if ($pagenb == 1)
+			$this->_tableau($pdf, $tab_top, $nexY - $tab_top + 20, $nexY);
+		      else
+			$this->_tableau($pdf, $tab_top_newpage, $nexY - $tab_top_newpage + 20, $nexY);
+		      $this->_pagefoot($pdf);
+		      
+		      // Nouvelle page
+		      $pdf->AddPage();
+		      $pagenb++;
+		      $this->_pagehead($pdf, $prop, 0);
+		      
+		      $nexY = $tab_top_newpage + 8;
+		      $pdf->SetTextColor(0,0,0);
+		      $pdf->SetFont('Arial','', 10);
                     }
 
                 }
                 // Affiche cadre tableau
                 if ($pagenb == 1)
                 {
-                    $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-                    $bottomlasttab=$tab_top + $tab_height + 1;
+		  //$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+		  //$bottomlasttab=$tab_top + $tab_height + 1;
+
+		  $this->_tableau($pdf, $tab_top, $nexY - $tab_top + 20, $nexY);
+		  $bottomlasttab=$tab_top + $nexY - $tab_top + 20 + 1;
                 }
                 else 
                 {
-                    $this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY);
-                    $bottomlasttab=$tab_top_newpage + $tab_height + 1;
+		  //$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY);
+		  //$bottomlasttab=$tab_top_newpage + $tab_height + 1;
+		  $this->_tableau($pdf, $tab_top_newpage, $nexY - $tab_top_newpage + 20, $nexY);
+		  $bottomlasttab=$tab_top_newpage + $nexY - $tab_top_newpage + 20 + 1;
                 }
 
 				$deja_regle = "";
