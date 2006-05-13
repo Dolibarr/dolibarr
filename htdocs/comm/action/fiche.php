@@ -161,9 +161,10 @@ if ($_POST["action"] == 'update')
     {
         $action = new Actioncomm($db);
         $action->fetch($_POST["id"]);
-        $action->percent     = stripslashes($_POST["percent"]);
-        $action->contact->id = stripslashes($_POST["contactid"]);
-        $action->note        = stripslashes($_POST["note"]);
+        $action->label       = $_POST["label"];
+        $action->percent     = $_POST["percent"];
+        $action->contact->id = $_POST["contactid"];
+        $action->note        = $_POST["note"];
         $action->update();
     }
         
@@ -438,7 +439,7 @@ if ($_GET["id"])
         print '<table class="border" width="100%">';
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
         print '<tr><td>'.$langs->trans("Company").'</td>';
         print '<td><a href="../fiche.php?socid='.$act->societe->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom.'</a></td>';
 

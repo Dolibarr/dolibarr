@@ -203,10 +203,13 @@ class ActionComm
 	 */
     function update()
     {
+        $this->label=trim($this->label);
+        $this->note=trim($this->note);
         if ($this->percent > 100) $this->percent = 100;
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
         $sql.= " SET percent='".$this->percent."'";
+        if ($this->label) 			$sql.= ", label = '".addslashes($this->label)."'";
         if ($this->percent == 100) 	$sql.= ", datea = now()";
         if ($this->note) 			$sql.= ", note = '".addslashes($this->note)."'";
         if ($this->contact->id) 	$sql.= ", fk_contact =". $this->contact->id;
