@@ -352,49 +352,27 @@ if (! $_GET['action'] && ! $_POST['action'])
 	if (! $sortorder) $sortorder='DESC';
 	if (! $sortfield) $sortfield='p.datep';
 
-	$sql  = 'SELECT p.rowid, '.$db->pdate('p.datep').' as dp, p.amount as pamount';
-	$sql .= ', f.amount, f.facnumber, s.nom';
-	$sql .= ', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
-	$sql .= ', ba.rowid as bid, ba.label';
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn ';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.idp = f.fk_soc';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " WHERE s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql = 'SELECT p.rowid, '.$db->pdate('p.datep').' as dp, p.amount as pamount,';
+	$sql.= ' f.amount, f.facnumber, f.rowid as facid,';
+	$sql.= ' s.idp, s.nom,';
+	$sql.= ' c.libelle as paiement_type, p.num_paiement,';
+	$sql.= ' ba.rowid as bid, ba.label';
+	if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user ";
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
+	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn ';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.idp = f.fk_soc';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+	if (!$user->rights->commercial->client->voir) $sql .= " WHERE s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socidp)
 	{
 		$sql .= ' WHERE f.fk_soc = '.$socidp;
 	}
 	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
 	$sql .= $db->plimit($limit + 1 ,$offset);
-/*
-	$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
-	$sql.= " p.statut, p.num_paiement,";
-	$sql.= " c.libelle as paiement_type,";
-	$sql.= " ba.rowid as bid, ba.label";
-	$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-	if ($socidp)
-	{
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
-	}
-	$sql.= " WHERE p.fk_paiement = c.id";
-	if ($socidp)
-	{
-		$sql.= " AND f.fk_soc = ".$socidp;
-	}
-	if ($_GET["search_montant"])
-	{
-	  $sql .=" AND p.amount=".price2num($_GET["search_montant"]);
-	}
-*/
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -422,8 +400,14 @@ if (! $_GET['action'] && ! $_POST['action'])
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->rowid.'</a></td>';
-			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.dolibarr_trunc($objp->facnumber,16).'</a></td>';
-			print '<td>'.dolibarr_trunc($objp->nom,32).'</td>';
+			print '<td nowrap="nowrap">';
+			if ($objp->facid) print '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.dolibarr_trunc($objp->facnumber,16).'</a>';
+			else print '&nbsp;';
+			print '</td>';
+			print '<td>';
+			if ($objp->idp) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,32).'</a>';
+			else print '&nbsp;';
+			print '</td>';
 			print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
 			print '<td>'.dolibarr_trunc($objp->paiement_type.' '.$objp->num_paiement,32)."</td>\n";
 			print '<td>';
