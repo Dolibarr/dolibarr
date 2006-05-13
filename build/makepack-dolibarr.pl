@@ -3,16 +3,16 @@
 # \file         build/makepack-dolibarr.pl
 # \brief        Package builder (tgz, zip, rpm, deb, exe)
 # \version      $Revision$
-# \author       (c)2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
 use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="2";
-$MINOR="0";
-$BUILD="0-beta1";
-$RPMSUBVERSION="1";
+$MINOR="1";
+$BUILD="0-beta";		# Mettre x pour release, ou x-betay pour beta
+$RPMSUBVERSION="1";		# A incrementer au moment de la release
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE");   # Possible packages
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
