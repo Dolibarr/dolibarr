@@ -1,6 +1,7 @@
 build
 dev
 doc/dev/dolibarr-phpdoc
+doc/install
 document
 documents
 htdocs/document
