@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,7 @@ $user->getrights('projet');
 
 if (!$user->rights->projet->lire) accessforbidden();
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
@@ -57,16 +55,17 @@ if ($user->societe_id > 0)
 // Protection restriction commercial
 if ($projetid)
 {
-        $sql = "SELECT sc.fk_soc, p.rowid, p.fk_soc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."projet as p";
-        $sql .= " WHERE p.rowid = ".$projetid;
-        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND sc.fk_soc = p.fk_soc AND fk_user = ".$user->id;
-        if ($socidp) $sql .= " AND p.fk_soc = ".$socidp;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
+	$sql = "SELECT p.rowid, p.fk_soc";
+	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ";
+	$sql.= " WHERE p.rowid = ".$projetid;
+	if (!$user->rights->commercial->client->voir) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socidp) $sql .= " AND p.fk_soc = ".$socidp;
+	
+	if ( $db->query($sql) )
+	{
+		if ( $db->num_rows() == 0) accessforbidden();
+	}
 }
 
 
@@ -119,6 +118,8 @@ print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
 print '</table>';
 
+print '</div>';
+
 /*
  * Barre d'action
  *
@@ -164,11 +165,6 @@ if (sizeof($propales)>0 && is_array($propales))
     print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr></table>';
 }
 
-print '</div>';
-
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
-print '<div class="tabsAction">';
-print '</div>';
 
 $db->close();
 

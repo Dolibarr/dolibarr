@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/projet/tasks/fiche.php
-   \ingroup    projet
-   \brief      Fiche tâches d'un projet
-   \version    $Revision$
+		\file       htdocs/projet/tasks/fiche.php
+		\ingroup    projet
+		\brief      Fiche tâches d'un projet
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -49,10 +49,10 @@ if ($user->societe_id > 0)
 // Protection restriction commercial
 if ($projetid)
 {
-        $sql = "SELECT sc.fk_soc, p.rowid, p.fk_soc";
+        $sql = "SELECT p.rowid, p.fk_soc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."projet as p";
         $sql .= " WHERE p.rowid = ".$projetid;
-        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND sc.fk_soc = p.fk_soc AND fk_user = ".$user->id;
+        if (!$user->rights->commercial->client->voir) $sql .= " AND sc.fk_soc = p.fk_soc AND fk_user = ".$user->id;
         if ($socidp) $sql .= " AND p.fk_soc = ".$socidp;
 
         if ( $db->query($sql) )
