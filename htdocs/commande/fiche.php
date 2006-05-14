@@ -318,6 +318,20 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     }    
 }
 
+// Efface les fichiers
+if ($action=='remove_file')
+{
+	$com = new Commande($db);
+
+	if ($com->fetch($id))
+    {
+      $upload_dir = $conf->commande->dir_output . "/" . $com->ref;
+    	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+    	dol_delete_file($file);
+      $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+    }
+}
+
 /*
  * Envoi de la commande par mail
  */
