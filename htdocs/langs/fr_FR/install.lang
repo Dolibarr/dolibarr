@@ -19,6 +19,7 @@ DolibarrDatabase=Base de données Dolibarr
 DatabaseChoice=Choix de la base de données
 DatabaseType=Type de la base de données
 Server=Serveur
+ServerAdressDescription=Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web
 DatabaseName=Nom de la base de données
 Login=Login
 AdminLogin=Login de l'administrateur de la base de données Dolibarr. Laissez vide si vous vous connectez en anonymous
@@ -31,6 +32,7 @@ DatabaseSuperUserAccess=Base de données - Accès super utilisateur
 CheckToCreateDatabase=Cochez cette option si la base de données n'existe pas et doit être créée
 CheckToCreateUser=Cochez cette option si le login n'existe pas et doit être créé
 Experimental=(expérimental, non opérationnel)
+DatabaseRootLoginDescription=Login de l'utilisateur ayant les droits de création de la base de données, inutile si votre base est déjà créée (comme lorsque vous êtes chez un hébergeur). Laisser vide si vous vous connectez en anonymous
 KeepEmptyIfNoPassword=Laissez vide si l'utilisateur n'a pas de mot de passe
 SaveConfigurationFile=Enregistrement du fichier de configuration
 ConfigurationSaving=Enregistrement du fichier de configuration
@@ -57,6 +59,7 @@ AdminLoginCreatedSuccessfuly=Création du compte administrateur réussie.
 GoToSetupArea=Accès à l'espace de configuration
 Examples=Exemples
 WithNoSlashAtTheEnd=Sans le slash "/" à la fin
+DirectoryRecommendation=Il est recommandé de mettre ce répertoire en dehors du répertoire des pages web.
 LoginAlreadyExists=Existe déjà
 DolibarrAdminLogin=Login de l'administrateur Dolibarr
 FailedToCreateAdminLogin=Echec de la création du compte administrateur Dolibarr.
@@ -80,3 +83,53 @@ YouMustCreateWithPermission=Vous devez créer un fichier %s et donner les droits 
 CorrectProblemAndReloadPage=Corrigez le problème et <a href="index.php">rechargez la page</a> (Touche F5).
 AlreadyDone=Déjà migré
 DatabaseVersion=Version de la base
+
+
+
+
+#########
+# upgrade
+#########
+MigrationSuccessfullUpdate=Mise à jour réussie
+MigrationUpdateFailed=La mise à jour à échouée
+
+# Payments Update
+MigrationPaymentsUpdate=Mise a jour des paiments (lien n-n paiements-factures)
+MigrationPaymentsNumberToUpdate=%s paiement(s) à mettre à jour
+MigrationProcessPaymentUpdate=Mise a jour paiement(s) %s
+MigrationPaymentsNothingToUpdate=Pas ou plus de paiements orphelins à corriger.
+
+# Contracts Update
+MigrationContractsUpdate=Mise a jour des contrats sans details (gestion du contrat + detail de contrat)
+MigrationContractsNumberToUpdate=%s contrat(s) à mettre à jour
+MigrationContractsLineCreation=Création ligne contrat pour contrat ref %s
+MigrationContractsNothingToUpdate=Pas ou plus de contrats (liés à un produit) sans lignes de details à corriger.
+MigrationContractsFieldDontExist=Le champs fk_facture n'existe plus. Pas d'opération à faire.
+
+# Contracts Empty Dates Update
+MigrationContractsEmptyDatesUpdate=Mise a jour des dates de contrats non renseignées
+MigrationContractsEmptyDatesUpdateSuccess=Ok pour date de contrat
+MigrationContractsEmptyDatesNothingToUpdate=Pas ou plus de date de contrats à renseigner.
+MigrationContractsEmptyCreationDatesUpdateSuccess=Ok pour date création
+MigrationContractsEmptyCreationDatesNothingToUpdate=Pas ou plus de date de création à renseigner.
+
+# Contracts Invalid Dates Update
+MigrationContractsInvalidDatesUpdate=Mise a jour dates contrat incorrectes (pour contrats avec detail en service)
+MigrationContractsInvalidDateFix=Correction contrat %s (Date contrat=%s, Date mise service min=%s)
+MigrationContractsInvalidDatesNumber=%s contrats modifiés
+MigrationContractsInvalidDatesNothingToUpdate=Pas ou plus de contrats à corriger.
+
+# Contracts Incoherent Dates Update
+MigrationContractsIncoherentCreationDateUpdate=Mise a jour des dates de création de contrat qui ont une valeur incohérente
+MigrationContractsIncoherentCreationDateUpdateSuccess=Ok
+MigrationContractsIncoherentCreationDateNothingToUpdate=Pas ou plus de date de contrats à corriger.
+
+# Reopening Contracts
+MigrationReopeningContracts=Reouverture des contrats qui ont au moins un service actif non fermé
+MigrationReopenThisContract=Réouverture contrat %s
+MigrationReopenedContractsNumber=%s contrats modifiés
+MigrationReopeningContractsNothingToUpdate=Pas ou plus de contrats à réouvrir.
+
+
+
+

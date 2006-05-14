@@ -107,7 +107,7 @@ if(! isset($dolibarr_main_data_root) || strlen($dolibarr_main_data_root) == 0)
 </td><td class="comment">
 <?php
 print $langs->trans("WithNoSlashAtTheEnd")."<br>";
-print "Il est recommandé de mettre ce répertoire en dehors du répertoire des pages web.<br>";
+print $langs->trans("DirectoryRecommendation")."<br>";
 print $langs->trans("Examples").":<br>";
 ?>
 <li>/var/www/dolibarr/documents</li>
@@ -185,7 +185,7 @@ $dolibarr_main_db_host = "localhost";
 <input type="hidden" name="base" value="">
 </td>
 <td class="comment">
-Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web
+<?php echo $langs->trans("ServerAdressDescription"); ?>
 </td>
 
 </tr>
@@ -253,7 +253,9 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 <?php echo $langs->trans("Login"); ?>
 </td>
 <td class="label" valign="top"><input type="text" name="db_user_root" value="<?php if (isset($db_user_root)) print $db_user_root; ?>"></td>
-<td class="label"><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si votre base est déjà créée (comme lorsque vous êtes chez un hébergeur). Laisser vide si vous vous connectez en anonymous</div>
+<td class="label"><div class="comment">
+<?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
+</div>
 </td>
 </tr>
 

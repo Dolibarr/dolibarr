@@ -164,7 +164,7 @@ pFooter($error,$setuplang);
 function migrate_paiements($db,$langs,$conf)
 {
     print '<br>';
-    print "<b>Mise a jour des paiments (lien n-n paiements-factures)</b><br>\n";
+    print '<b>'.$langs->trans('MigrationPaymentsUpdate')."</b><br>\n";
     
     $sql = "SELECT p.rowid, p.fk_facture, p.amount";
     $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
@@ -192,7 +192,7 @@ function migrate_paiements($db,$langs,$conf)
     
     if ($num)
     {
-        print "$num paiement(s) à mettre à jour<br>\n";
+        print $langs->trans('MigrationPaymentsNumberToUpdate', $num)."<br>\n";
         if ($db->begin())
         {
           $res = 0;
@@ -207,24 +207,24 @@ function migrate_paiements($db,$langs,$conf)
               
               $res += $db->query($sql);
         
-              print "Mise a jour paiement(s) ".$row[$i]."<br>\n";
+              print $langs->trans('MigrationProcessPaymentUpdate', $row[$i])."<br>\n";
             } 
         }
         
         if ($res == (2 * sizeof($row)))
         {
           $db->commit();
-          print "Mise à jour réussie<br>";
+          print $langs->trans('MigrationSuccessfullUpdate')."<br>";
         }
         else
         {
           $db->rollback();
-          print "La mise à jour à échouée<br>";
+          print $langs->trans('MigrationUpdateFailed').'<br>';
         }
     }
     else
     {
-        print "Pas ou plus de paiements orphelins à corriger.<br>\n";
+        print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
     }  
 }
 
@@ -237,7 +237,7 @@ function migrate_contracts_det($db,$langs,$conf)
     $nberr=0;
     
     print '<br>';
-    print "<b>Mise a jour des contrats sans details (gestion du contrat + detail de contrat)</b><br>\n";
+    print '<b>'.$langs->trans('MigrationContractsUpdate')."</b><br>\n";
     
     $sql = "SELECT c.rowid as cref, c.date_contrat, c.statut, c.mise_en_service, c.fin_validite, c.date_cloture, c.fk_product, c.fk_facture, c.fk_user_author,";
     $sql.= " p.ref, p.label, p.description, p.price, p.tva_tx, p.duration, cd.rowid";
@@ -257,7 +257,7 @@ function migrate_contracts_det($db,$langs,$conf)
     
         if ($num)
         {
-            print "$num contrat(s) à mettre à jour<br>\n";
+            print $langs->trans('MigrationContractsNumberToUpdate', $num)."<br>\n";
             $db->begin();
             
             while ($i < $num)
@@ -282,7 +282,7 @@ function migrate_contracts_det($db,$langs,$conf)
     
                 if ($db->query($sql)) 
                 {
-                    print "Création ligne contrat pour contrat ref ".$obj->cref."<br>\n";
+                    print $langs->trans('MigrationContractsLineCreation', $obj->cref)."<br>\n";
                 }
                 else 
                 {            
@@ -297,21 +297,21 @@ function migrate_contracts_det($db,$langs,$conf)
             {
             //      $db->rollback();
                   $db->commit();
-                  print "Mise à jour réussie<br>";
+						print $langs->trans('MigrationSuccessfullUpdate')."<br>";
             }
             else
             {
                   $db->rollback();
-                  print "La mise à jour à échouée<br>";
+						print $langs->trans('MigrationUpdateFailed').'<br>';
             }
         }
         else {
-            print "Pas ou plus de contrats (liés à un produit) sans lignes de details à corriger.<br>\n";
+            print $langs->trans('MigrationContractsNothingToUpdate')."<br>\n";
         }
     }
     else
     {
-        print "Le champ fk_facture n'existe plus. Pas d'opération à faire.<br>\n";
+        print $langs->trans('MigrationContractsFieldDontExist')."<br>\n";
     //    dolibarr_print_error($db);   
     }    
 }
@@ -323,19 +323,23 @@ function migrate_contracts_det($db,$langs,$conf)
 function migrate_contracts_date1($db,$langs,$conf)
 {
     print '<br>';
-    print "<b>Mise a jour des dates de contrats non renseignées</b><br>\n";
+    print '<b>'.$langs->trans('MigrationContractsEmptyDatesUpdate')."</b><br>\n";
     
     $sql="update llx_contrat set date_contrat=tms where date_contrat is null";
     $resql = $db->query($sql);
     if (! $resql) dolibarr_print_error($db);
-    if ($db->affected_rows() > 0) print "Ok pour date de contrat<br>\n";
-    else print "Pas ou plus de date de contrats à renseigner.<br>\n";
+    if ($db->affected_rows() > 0) 
+	 	print $langs->trans('MigrationContractsEmptyDatesUpdateSuccess')."<br>\n";
+    else
+	 	print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
     
     $sql="update llx_contrat set datec=tms where datec is null";
     $resql = $db->query($sql);
     if (! $resql) dolibarr_print_error($db);
-    if ($db->affected_rows() > 0) print "Ok pour date création<br>\n";
-    else print "Pas ou plus de date de création à renseigner.<br>\n";
+    if ($db->affected_rows() > 0) 
+	 	print $langs->trans('MigrationContractsEmptyCreationDatesUpdateSuccess')."<br>\n";
+    else
+	 	print $langs->trans('MigrationContractsEmptyCreationDatesNothingToUpdate')."<br>\n";
 }
 
 
@@ -347,7 +351,7 @@ function migrate_contracts_date2($db,$langs,$conf)
     $nberr=0;
     
     print '<br>';
-    print "<b>Mise a jour dates contrat incorrectes (pour contrats avec detail en service)</b><br>\n";
+    print '<b>'.$langs->trans('MigrationContractsInvalidDatesUpdate')."</b><br>\n";
     
     $sql = "SELECT c.rowid as cref, c.datec, c.date_contrat, MIN(cd.date_ouverture) as datemin";
     $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c,";
@@ -372,7 +376,7 @@ function migrate_contracts_date2($db,$langs,$conf)
                 $obj = $db->fetch_object($resql);
                 if ($obj->date_contrat > $obj->datemin) 
                 {
-                    print "Correction contrat ".$obj->cref." (Date contrat=".$obj->date_contrat.", Date mise service min=".$obj->datemin.")<br>\n";
+                    print $langs->trans('MigrationContractsInvalidDateFix', $obj->cref, $obj->date_contrat, $obj->datemin)."<br>\n";
                     $sql ="UPDATE ".MAIN_DB_PREFIX."contrat";
                     $sql.=" SET date_contrat='".$obj->datemin."'";
                     $sql.=" WHERE rowid=".$obj->cref;
@@ -386,8 +390,10 @@ function migrate_contracts_date2($db,$langs,$conf)
     
             $db->commit();
     
-            if ($nbcontratsmodifie) print "$nbcontratsmodifie contrats modifiés<br>\n";
-            else print "Pas ou plus de contrats à corriger.<br>\n";
+            if ($nbcontratsmodifie)
+					print $langs->trans('MigrationContractsInvalidDatesNumber', $nbcontratsmodifie)."<br>\n";
+            else
+					print  $langs->trans('MigrationContractsInvalidDatesNothingToUpdate')."<br>\n";
         }
     }
     else
@@ -404,13 +410,15 @@ function migrate_contracts_date2($db,$langs,$conf)
 function migrate_contracts_date3($db,$langs,$conf)
 {
     print '<br>';
-    print "<b>Mise a jour des dates de création de contrat qui ont une valeur incohérente</b><br>\n";
+    print '<b>'.$langs->trans('MigrationContractsIncoherentCreationDateUpdate')."</b><br>\n";
     
     $sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
     $resql = $db->query($sql);
     if (! $resql) dolibarr_print_error($db);
-    if ($db->affected_rows() > 0) print "Ok<br>\n";
-    else print "Pas ou plus de date de contrats à corriger.<br>\n";
+    if ($db->affected_rows() > 0)
+	 	print $langs->trans('MigrationContractsIncoherentCreationDateUpdateSuccess')."<br>\n";
+    else
+	 	print $langs->trans('MigrationContractsIncoherentCreationDateNothingToUpdate')."<br>\n";
 }
 
 
@@ -420,7 +428,7 @@ function migrate_contracts_date3($db,$langs,$conf)
 function migrate_contracts_open($db,$langs,$conf)
 {
     print '<br>';
-    print "<b>Reouverture des contrats qui ont au moins un service actif non fermé</b><br>\n";
+    print '<b>'.$langs->trans('MigrationReopeningContracts')."</b><br>\n";
     
     $sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
     $sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
@@ -440,7 +448,7 @@ function migrate_contracts_open($db,$langs,$conf)
             {
                 $obj = $db->fetch_object($resql);
     
-                print "Réouverture contrat ".$obj->cref."<br>\n";
+                print $langs->trans('MigrationReopenThisContract', $obj->cref)."<br>\n";
                 $sql ="UPDATE ".MAIN_DB_PREFIX."contrat";
                 $sql.=" SET statut=1";
                 $sql.=" WHERE rowid=".$obj->cref;
@@ -454,11 +462,13 @@ function migrate_contracts_open($db,$langs,$conf)
     
             $db->commit();
     
-            if ($nbcontratsmodifie) print "$nbcontratsmodifie contrats modifiés<br>\n";
-            else print "Pas ou plus de contrats à corriger.<br>\n";
+            if ($nbcontratsmodifie)
+					print $langs->trans('MigrationReopenedContractsNumber', $nbcontratsmodifie)."<br>\n";
+            else
+					print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
         }
     }
-    else print "Pas ou plus de contrats à réouvrir.<br>\n";
+    else print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
 }
 
 
