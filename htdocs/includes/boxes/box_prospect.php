@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -30,6 +29,7 @@
 
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 
 
 class box_prospect extends ModeleBoxes {
@@ -66,7 +66,7 @@ class box_prospect extends ModeleBoxes {
 
         if ($user->rights->societe->lire) 
         {
-            $sql = "SELECT s.nom,s.idp";
+            $sql = "SELECT s.nom, s.idp, s.fk_stcomm";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -86,7 +86,7 @@ class box_prospect extends ModeleBoxes {
                 $num = $db->num_rows($result);
     
                 $i = 0;
-    
+    			$prospectstatic=new Prospect($db);
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
@@ -95,6 +95,9 @@ class box_prospect extends ModeleBoxes {
                     'logo' => $this->boximg,
                     'text' => stripslashes($objp->nom),
                     'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$objp->idp);
+
+                    $this->info_box_contents[$i][1] = array('align' => 'right',
+                    'text' => $prospectstatic->LibStatut($objp->fk_stcomm,3));
     
                     $i++;
                 }
@@ -106,9 +109,11 @@ class box_prospect extends ModeleBoxes {
                     {
                         $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedProspects"));
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
                     } else {
                         $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
                     }
                     $i++;
                 }

@@ -578,6 +578,7 @@ function img_action($alt = "default", $numaction)
         \param      num         Numéro statut
         \param      alt         Texte a afficher sur alt
         \return     string      Retourne tag img
+		\todo		A virer et remplacer par entitestatic->LibStatut
 */
 function img_statut($num,$alt = "default")
 {
