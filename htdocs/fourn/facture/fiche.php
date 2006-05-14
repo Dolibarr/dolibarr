@@ -460,6 +460,7 @@ else
 			print '</td><td align="center" colspan="2">';
 			print '&nbsp;';
 			print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
+			print '</form>';
 
             // Ajout de produits/services prédéfinis
             if ($conf->produit->enabled)
