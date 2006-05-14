@@ -325,7 +325,7 @@ if ($action=='remove_file')
 
 	if ($com->fetch($id))
     {
-      $upload_dir = $conf->commande->dir_output . "/" . $com->ref;
+      $upload_dir = $conf->commande->dir_output . "/";
     	$file = $upload_dir . '/' . urldecode($_GET['file']);
     	dol_delete_file($file);
       $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
