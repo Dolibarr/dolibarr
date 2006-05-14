@@ -201,11 +201,23 @@ if ($modulepart)
 }
 
 // Limite accès si droits non corrects
-if (! $accessallowed) { accessforbidden(); }
+if (! $accessallowed)
+{
+    accessforbidden();
+}
 
 
+// Ouvre et renvoi fichier
+clearstatcache(); 
 $filename = basename($original_file);
-if (! file_exists($original_file)) { dolibarr_print_error(0,$langs->trans("FileDoesNotExist",$original_file)); exit; }
+
+dolibarr_syslog("viewimage.php download $original_file $filename content-type=$type");
+
+if (! file_exists($original_file))
+{
+	dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+	exit;
+}
 
 // Les drois sont ok et fichier trouvé
 if ($type)

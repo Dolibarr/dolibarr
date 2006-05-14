@@ -191,12 +191,23 @@ if ($modulepart)
     if ($modulepart == 'actions')
     {
         $user->getrights('commercial');
-        //if ($user->rights->commercial->lire)      // Ce droit n'existe pas encore
+        //if ($user->rights->commercial->actions->lire)      // Ce droit n'existe pas encore
         //{
         $accessallowed=1;
         //}
         $original_file=$conf->actionscomm->dir_output.'/'.$original_file;
     }
+
+    // Wrapping pour les actions
+    if ($modulepart == 'actionsreport')
+    {
+        $user->getrights('commercial');
+        //if ($user->rights->commercial->actions->lire)      // Ce droit n'existe pas encore
+        //{
+        $accessallowed=1;
+        //}
+		$original_file = $conf->commercial->dir_output."/actions/".$original_file;
+	}
 
     // Wrapping pour les produits et services
     if ($modulepart == 'produit')
@@ -246,7 +257,7 @@ dolibarr_syslog("document.php download $original_file $filename content-type=$ty
 
 if (! file_exists($original_file)) 
 {
-    dolibarr_print_error(0,$langs->trans("FileDoesNotExist",$original_file)); 
+    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file)); 
     exit;
 }
 

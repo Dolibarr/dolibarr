@@ -25,7 +25,7 @@
 /**
 	    \file       htdocs/comm/action/rapport/index.php
         \ingroup    commercial
-		\brief      Page accueil des rapports des actions commerciales
+		\brief      Page accueil des rapports des actions
 		\version    $Revision$
 */
 
@@ -33,6 +33,9 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
+$page = $_GET["page"];
+$sortfield=$_GET["sortfield"];
+$sortorder=$_GET["sortorder"];
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -42,47 +45,50 @@ if (! $sortfield) $sortfield="a.datea";
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 
-if ($_GET["action"] == 'pdf')
-{
-  $cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
-  $cat->generate($_GET["id"]);
-}
 
 
 /*
  * Actions
  */
+if ($_GET["action"] == 'builddoc')
+{
+	$cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
+	$cat->generate($_GET["id"]);
+}
+
 if ($action=='delete_action')
 {
-  $actioncomm = new ActionComm($db);
-  $actioncomm->delete($actionid);
+	$actioncomm = new ActionComm($db);
+	$actioncomm->delete($actionid);
 }
 
 
 
-llxHeader();
-
 /*
- *  Liste
+ * Affichage liste
  */
+
+llxHeader();
 
 $sql = "SELECT count(*) as cc, date_format(a.datea, '%m/%Y') as df";
 $sql.= ", date_format(a.datea, '%m') as month";
 $sql.= ", date_format(a.datea, '%Y') as year";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+$sql.= " WHERE percent = 100";
 $sql.= " GROUP BY date_format(a.datea, '%m/%Y') ";
 $sql.= " ORDER BY a.datea DESC";
+$sql.= $db->plimit($limit+1,$offset);
 
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("DoneAndToDoActions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("DoneActions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print '<table class="noborder" width="100%">';
@@ -97,34 +103,36 @@ if ($resql)
 	$var=true;
 	while ($i < min($num,$limit))
 	{
-		$obj = $db->fetch_object($resql);
-
-		$var=!$var;
-
-		print "<tr $bc[$var]>";
-
-		print "<td>$obj->df</td>\n";
-		print '<td align="center">'.$obj->cc.'</td>';
-
-		print '<td><a href="index.php?action=pdf&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a></td>';
-
-		$name = "rapport-action-".$obj->month."-".$obj->year.".pdf";
-		$relativepath="comm/actions/" .$name;
-		$file = $conf->commercial->dir_output . "/comm/actions/" .$name;
-
-		if (file_exists($file))
+		$obj=$db->fetch_object($resql);
+		
+		if ($obj)
 		{
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?file='.urlencode($relativepath).'&modulepart=actionscomm">'.img_pdf().'</a></td>';
-			print '<td align="center">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-			print '<td align="center">'.filesize($file). ' '.$langs->trans("Bytes").'</td>';
+			$var=!$var;
+			print "<tr $bc[$var]>";
+	
+			print "<td>$obj->df</td>\n";
+			print '<td align="center">'.$obj->cc.'</td>';
+	
+			print '<td><a href="index.php?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a></td>';
+	
+			$name = "rapport-action-".$obj->month."-".$obj->year.".pdf";
+			$relativepath= $name;
+			$file = $conf->commercial->dir_output . "/actions/" .$name;
+	
+			if (file_exists($file))
+			{
+				print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a></td>';
+				print '<td align="center">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+				print '<td align="center">'.filesize($file). ' '.$langs->trans("Bytes").'</td>';
+			}
+			else {
+				print '<td>&nbsp;</td>';
+				print '<td>&nbsp;</td>';
+				print '<td>&nbsp;</td>';
+			}
+	
+			print "</tr>\n";
 		}
-		else {
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-		}
-
-		print "</tr>\n";
 		$i++;
 	}
 	print "</table>";

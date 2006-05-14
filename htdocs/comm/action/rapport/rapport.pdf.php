@@ -40,6 +40,12 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_html.php");
 
 class CommActionRapport
 {
+    var $db;
+    var $description;
+    var $date_edition;
+    var $year;
+    var $month;
+    
     var $title;
     var $subject;
     
@@ -50,7 +56,7 @@ class CommActionRapport
         
         $this->db = $db;
         $this->description = "";
-        $this->date_edition = dolibarr_print_date(time(),"%d %B %Y");
+        $this->date_edition = time();
         $this->month = $month;
         $this->year = $year;
 
@@ -62,9 +68,17 @@ class CommActionRapport
     {
         global $user,$conf,$langs;
 
-        $dir = $conf->commercial->dir_output."/comm/actions";
+        $dir = $conf->commercial->dir_output."/actions";
         $file = $dir . "/rapport-action-".$this->month."-".$this->year.".pdf";
-        create_exdir($dir);
+
+        if (! file_exists($dir))
+        {
+            if (create_exdir($dir) < 0)
+            {
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                return 0;
+            }
+        }
 
         if (file_exists($dir))
         {
@@ -77,8 +91,6 @@ class CommActionRapport
             $pdf->SetAuthor($user->fullname);
 
             $pdf->SetFillColor(220,220,220);
-
-            $pdf->SetFont('Arial','', 9);
 
             //	  $nbpage = $this->_cover($pdf);
             $nbpage = $this->_pages($pdf);
@@ -106,7 +118,7 @@ class CommActionRapport
 
         $pdf->SetFont('Arial','',30);
         $pdf->SetXY (10, 140);
-        $pdf->MultiCell(190, 20, $langs->trans("Date").': '.$this->date_edition, 0, 'C', 0);
+        $pdf->MultiCell(190, 20, $langs->trans("Date").': '.dolibarr_print_date($this->date_edition,"%d %B %Y"), 0, 'C', 0);
 
         $pdf->SetXY (10, 170);
         $pdf->SetFont('Arial','B',18);
@@ -134,7 +146,7 @@ class CommActionRapport
         $pdf->SetXY(5, $pdf->GetY());
         $pdf->MultiCell(80, 2, $this->title, 0, 'L', 0);
 
-        $pdf->SetFont('Arial','',9);
+        $pdf->SetFont('Arial','',8);
         $y=$pdf->GetY()+1;
         
         $sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$this->db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
