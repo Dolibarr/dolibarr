@@ -242,7 +242,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Action").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
 print "</tr>\n";

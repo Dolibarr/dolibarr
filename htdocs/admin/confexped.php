@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur       <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani          <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,19 +100,21 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
  * Formulaire parametres divers
  */
 
+$var=true;
 
 // expedition activation/desactivation
+$var=!$var;
+print "<form method=\"post\" action=\"confexped.php\">";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td align="center">&nbsp;</td>';
-print '<td align="center">'.$langs->trans("Active").'</td>';
+print '<td>'.$langs->trans("Feature").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
-print "<form method=\"post\" action=\"confexped.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"sending\">";
-print "<tr ".$bc[false].">";
-print '<td width="80%">'.$langs->trans("SendingsAbility").'</td>';
-print '<td align="center">';
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("SendingsAbility").'</td>';
+print '<td align="center" width="20">';
 
 if($conf->global->MAIN_SUBMODULE_EXPEDITION == 1)
 {
@@ -120,7 +122,7 @@ if($conf->global->MAIN_SUBMODULE_EXPEDITION == 1)
 }
 
 print '</td>';
-print "<td align=\"center\">";
+print '<td align="center" width="100">';
 
 if($conf->global->MAIN_SUBMODULE_EXPEDITION == 0)
 {
@@ -137,17 +139,13 @@ print '</table>';
 print '</form>';
 
 // Bon de livraison activation/desactivation
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td align="center">&nbsp;</td>';
-print '<td align="center">'.$langs->trans("Active").'</td>';
-print "</tr>\n";
+$var=!$var;
 print "<form method=\"post\" action=\"confexped.php\">";
+print '<table class="noborder" width="100%">';
 print "<input type=\"hidden\" name=\"action\" value=\"delivery\">";
-print "<tr ".$bc[false].">";
-print '<td width="80%">'.$langs->trans("DeliveriesOrderAbility").'</td>';
-print '<td align="center">';
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("DeliveriesOrderAbility").'</td>';
+print '<td align="center" width="20">';
 
 if($conf->global->MAIN_SUBMODULE_LIVRAISON == 1)
 {
@@ -155,7 +153,7 @@ if($conf->global->MAIN_SUBMODULE_LIVRAISON == 1)
 }
 
 print '</td>';
-print "<td align=\"center\">";
+print '<td align="center" width="100">';
 
 if($conf->global->MAIN_SUBMODULE_LIVRAISON == 0)
 {
