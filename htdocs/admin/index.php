@@ -176,7 +176,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
-    print '<table width="100%"><tr><td valign="center">';
+    print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
     print '<input type="file" class="flat" name="logo" size="30">';
     print '</td><td valign="center" align="right">';
     if (file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
@@ -407,7 +407,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
     
-    print '<table width="100%"><tr><td valign="center">';
+    print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
     print $mysoc->logo;
     print '</td><td valign="center" align="right">';
     if (file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
