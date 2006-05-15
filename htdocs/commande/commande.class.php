@@ -653,7 +653,7 @@ class Commande
 	{
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement,';
 		$sql.= ' '.$this->db->pdate('c.date_commande').' as date_commande, '.$this->db->pdate('c.date_livraison').' as date_livraison,';
-		$sql.= ' c.fk_projet, c.remise_percent, c.remise_absolue, c.source, c.facture, c.note, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
+		$sql.= ' c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture, c.note, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -672,6 +672,7 @@ class Commande
 			$this->total_tva            = $obj->tva;
 			$this->total_ttc            = $obj->total_ttc;
 			$this->date                 = $obj->date_commande;
+			$this->remise               = $obj->remise;
 			$this->remise_percent       = $obj->remise_percent;
 			$this->remise_absolue       = $obj->remise_absolue;
 			$this->source               = $obj->source;
