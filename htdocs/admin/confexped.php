@@ -39,7 +39,7 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'activate_sending')
 {
-    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", $_POST["value"]);
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1");
     Header("Location: confexped.php");
     exit;
 }
