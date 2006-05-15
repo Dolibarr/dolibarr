@@ -25,6 +25,7 @@ SalesRepresentative=Sales representative
 SalesRepresentatives=Sales representatives
 SalesRepresentativeFollowUp=Sales representative (follow-up)
 SalesRepresentativeSignature=Sales representative (signature)
+CommercialInterlocutor=Commercial interlocutor
 ErrorWrongCode=Wrong code
 NoSalesRepresentativeAffected=No particular sales representative affected
 ShowCustomer=Show customer

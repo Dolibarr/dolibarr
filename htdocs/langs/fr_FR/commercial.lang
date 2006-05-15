@@ -25,6 +25,7 @@ SalesRepresentative=Commercial
 SalesRepresentatives=Commerciaux
 SalesRepresentativeFollowUp=Commercial (suivi)
 SalesRepresentativeSignature=Commercial (signature)
+CommercialInterlocutor=Interlocuteur commercial
 ErrorWrongCode=Code incorrect
 NoSalesRepresentativeAffected=Aucun commercial particulier affecté
 ShowCustomer=Afficher client
