@@ -47,7 +47,6 @@ $resql = $db->query($sql);
 
 if ( $resql)
 {
-
   $row = $db->fetch_row($resql);
 
   $year = substr($row[0],0,4);
@@ -57,7 +56,22 @@ else
 {
   $error++;
 }
-  
+
+//loop through our arguments and see what the user selected
+for ($i = 1; $i < sizeof($GLOBALS["argv"]); $i++)
+{
+  switch($GLOBALS["argv"][$i])
+    {
+    case "--month":
+      $month  = $GLOBALS["argv"][$i+1];
+      break;
+    case "--year":
+      $year  = $GLOBALS["argv"][$i+1];
+      break;
+    }
+}
+
+ 
 dolibarr_syslog("Mois $month Année $year");  
 
 /*
