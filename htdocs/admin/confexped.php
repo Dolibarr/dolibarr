@@ -31,13 +31,14 @@ require("./pre.inc.php");
 
 $langs->load("admin");
 $langs->load("sendings");
+$langs->load("deliveries");
 
 if (!$user->admin)
   accessforbidden();
 
 
 
-if ($_POST["action"] == 'activate_sending')
+if ($_GET["action"] == 'activate_sending')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1");
     Header("Location: confexped.php");
@@ -145,7 +146,7 @@ print "</tr>\n";
 print "<form method=\"post\" action=\"confexped.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"delivery\">";
 print "<tr ".$bc[false].">";
-print '<td width="80%">'.$langs->trans("DeliveriesAbility").'</td>';
+print '<td width="80%">'.$langs->trans("DeliveriesOrderAbility").'</td>';
 print '<td align="center">';
 
 if($conf->global->MAIN_SUBMODULE_LIVRAISON == 1)
