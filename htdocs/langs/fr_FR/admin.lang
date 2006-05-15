@@ -58,6 +58,7 @@ TriggersDesc=Les triggers sont des composants qui, une fois activés, modifient l
 Required=Requis
 Security=Sécurité
 Passwords=Mots de passe
+Feature=Fonction
 ModuleSetup=Configuration du module
 ModuleFamilyBase=Système
 ModuleFamilyCrm=Gestion client (CRM)
@@ -458,7 +459,7 @@ NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (
 ##### Sendings #####
 SendingsSetup=Configuration du module Expéditions/Livraisons
 SendingsReceiptModel=Modèle du bordereau d'expédition
-SendingsAbility=Prise en charge des expéditions
+SendingsAbility=Prise en charge des bons d'expéditions
 ##### Syslog #####
 SyslogSetup=Configuration du module Syslog
 SyslogOutput=Sortie des log

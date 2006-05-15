@@ -222,7 +222,7 @@ if ($_GET["propalid"] > 0)
 			// Conditions et modes de réglement
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('PaymentConditions');
+			print $langs->trans('PaymentConditionsShort');
 			print '</td>';
 			if ($_GET['action'] != 'editconditions' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';

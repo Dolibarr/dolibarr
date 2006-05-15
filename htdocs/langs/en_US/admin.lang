@@ -58,6 +58,7 @@ TriggersDesc=Triggers are components that modify, once activated, the behaviour 
 Required=Required
 Security=Security
 Passwords=Passwords
+Feature=Feature
 ModuleSetup=Module setup
 ModuleFamilyBase=System
 ModuleFamilyCrm=Customer Ressource Management (CRM)
@@ -458,7 +459,7 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=no 
 ##### Sendings #####
 SendingsSetup=Sending module setup
 SendingsReceiptModel=Sending receipt model
-SendingsAbility=Sendings ability
+SendingsAbility=Support sendings sheets
 ##### Syslog #####
 SyslogSetup=Syslog module setup
 SyslogOutput=Log output
