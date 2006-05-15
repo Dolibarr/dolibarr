@@ -119,14 +119,21 @@ $html=new Form($db);
 
 $h = 0;
 
+$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
+$head[$h][1] = $langs->trans("Setup");
+$h++;
+
 $head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 $head[$h][1] = $langs->trans("Sending");
 $hselected=$h;
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
-$head[$h][1] = $langs->trans("Delivery");
-$h++;
+if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
+{
+	$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
+	$head[$h][1] = $langs->trans("Delivery");
+	$h++;
+}
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 

@@ -113,7 +113,7 @@ Module70Desc=Interventions' management
 Module75Name=Trips
 Module75Desc=Trips' management
 Module80Name=Sendings
-Module80Desc=Sendings' management
+Module80Desc=Sendings and delivery orders' management
 Module85Name=Banks and cash
 Module85Desc=Management of bank or cash accounts
 Module86Name=OSCommerce
@@ -458,6 +458,7 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=no 
 ##### Sendings #####
 SendingsSetup=Sending module setup
 SendingsReceiptModel=Sending receipt model
+SendingsAbility=Sendings ability
 ##### Syslog #####
 SyslogSetup=Syslog module setup
 SyslogOutput=Log output
@@ -483,3 +484,4 @@ MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Delivery order numbering module
 DeliveryOrderModel=Delivery order model
+DeliveriesOrderAbility=Deliveries order ability

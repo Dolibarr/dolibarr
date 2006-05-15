@@ -225,3 +225,5 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (101, 'commande',  'external', 'CUSTOMER',      'Contact client suivi commande', 1);
 
 insert into llx_c_pays (rowid,code,libelle) values (30, 'SG', 'Singapoure');
+
+update llx_const set name='MAIN_SUBMODULE_EXPEDITION' where name='MAIN_MODULE_EXPEDITION';

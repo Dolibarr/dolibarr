@@ -221,11 +221,11 @@ $conf->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;
 $conf->commande->dir_output=DOL_DATA_ROOT."/commande";
 $conf->commande->dir_images=DOL_DATA_ROOT."/commande/images";
 // Module expeditions
-$conf->expedition->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
+$conf->expedition->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
 $conf->expedition->dir_output=DOL_DATA_ROOT."/expedition";
 $conf->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
-// Module expeditions
-$conf->livraison->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
+// Module bon de livraison
+$conf->livraison->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
 $conf->livraison->dir_output=DOL_DATA_ROOT."/livraison";
 $conf->livraison->dir_images=DOL_DATA_ROOT."/livraison/images";
 // Module societe
