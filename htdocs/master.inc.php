@@ -220,14 +220,19 @@ $conf->externalrss->enabled=defined("MAIN_MODULE_EXTERNALRSS")?MAIN_MODULE_EXTER
 $conf->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;
 $conf->commande->dir_output=DOL_DATA_ROOT."/commande";
 $conf->commande->dir_images=DOL_DATA_ROOT."/commande/images";
-// Module expeditions
-$conf->expedition->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
-$conf->expedition->dir_output=DOL_DATA_ROOT."/expedition";
-$conf->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
-// Module bon de livraison
-$conf->livraison->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
-$conf->livraison->dir_output=DOL_DATA_ROOT."/livraison";
-$conf->livraison->dir_images=DOL_DATA_ROOT."/livraison/images";
+
+if (defined('MAIN_MODULE_EXPEDITION') && MAIN_MODULE_EXPEDITION)
+{
+	// Module expeditions
+  $conf->expedition->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
+  $conf->expedition->dir_output=DOL_DATA_ROOT."/expedition";
+  $conf->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
+  // Module bon de livraison
+  $conf->livraison->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
+  $conf->livraison->dir_output=DOL_DATA_ROOT."/livraison";
+  $conf->livraison->dir_images=DOL_DATA_ROOT."/livraison/images";
+}
+
 // Module societe
 $conf->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
