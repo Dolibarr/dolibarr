@@ -116,7 +116,7 @@ if ($_GET["action"] == 'create')
     print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
 
 	// Conditions de réglement
-	print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td colspan="2">';
+	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 

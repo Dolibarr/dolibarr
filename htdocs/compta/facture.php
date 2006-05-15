@@ -744,7 +744,7 @@ if ($_GET['action'] == 'create')
 	print '</td></tr>';
 
 	// Conditions de réglement
-	print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td colspan="2">';
+	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements($cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 
@@ -1389,7 +1389,7 @@ else
 			// Conditions de réglement
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('PaymentConditions');
+			print $langs->trans('PaymentConditionsShort');
 			print '</td>';
 			if ($_GET['action'] != 'editconditions' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';

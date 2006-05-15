@@ -544,7 +544,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 
 			// Conditions de réglement
-			print '<tr><td nowrap>'.$langs->trans('PaymentConditions').'</td><td>';
+			print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td>';
 			$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
 			print '</td></tr>';
 
@@ -907,7 +907,7 @@ else
 			// Conditions et modes de réglement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('PaymentConditions');
+			print $langs->trans('PaymentConditionsShort');
 			print '</td>';
 
 			if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
