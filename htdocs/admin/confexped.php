@@ -123,11 +123,11 @@ print "<td align=\"center\">";
 
 if($conf->global->MAIN_SUBMODULE_EXPEDITION == 0)
 {
-	print '<a href="produit.php?action=activate_sending">'.$langs->trans("Activate").'</a>';
+	print '<a href="confexped.php?action=activate_sending">'.$langs->trans("Activate").'</a>';
 }
 else if($conf->global->MAIN_SUBMODULE_EXPEDITION == 1)
 {
-	print '<a href="produit.php?action=disable_sending">'.$langs->trans("Disable").'</a>';
+	print '<a href="confexped.php?action=disable_sending">'.$langs->trans("Disable").'</a>';
 }
 
 print "</td>";
@@ -158,11 +158,11 @@ print "<td align=\"center\">";
 
 if($conf->global->MAIN_SUBMODULE_LIVRAISON == 0)
 {
-	print '<a href="produit.php?action=activate_delivery">'.$langs->trans("Activate").'</a>';
+	print '<a href="confexped.php?action=activate_delivery">'.$langs->trans("Activate").'</a>';
 }
 else if($conf->global->MAIN_SUBMODULE_LIVRAISON == 1)
 {
-	print '<a href="produit.php?action=disable_delivery">'.$langs->trans("Disable").'</a>';
+	print '<a href="confexped.php?action=disable_delivery">'.$langs->trans("Disable").'</a>';
 }
 
 print "</td>";
