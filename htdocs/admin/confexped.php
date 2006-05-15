@@ -40,25 +40,25 @@ if (!$user->admin)
 if ($_POST["action"] == 'activate_sending')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", $_POST["value"]);
-    Header("Location: produit.php");
+    Header("Location: confexped.php");
     exit;
 }
 else if ($_GET["action"] == 'disable_sending')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION");
-    Header("Location: produit.php");
+    Header("Location: confexped.php");
     exit;
 }
 else if ($_GET["action"] == 'activate_delivery')
 {
 			dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1");
-			Header("Location: produit.php");
+			Header("Location: confexped.php");
 			exit;
 }
 else if ($_GET["action"] == 'disable_delivery')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON");
-    Header("Location: produit.php");
+    Header("Location: confexped.php");
     exit;
 }
 
