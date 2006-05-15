@@ -24,7 +24,6 @@
  *
  *
  */
-print strftime("%H:%M:%S",time())."\n";
 require ("../../master.inc.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
@@ -187,6 +186,4 @@ $ObjectGraph->xaxis->SetTickLabels($Tlegends);
 $ObjectGraph->img->SetImgFormat("png");
 $ObjectGraph->Stroke($file);
 
-
-print strftime("%H:%M:%S",time())."\n";
 ?>
