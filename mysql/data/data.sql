@@ -385,7 +385,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'41','Établ
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'51','Société coopérative commerciale particulière');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'52','Société en nom collectif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'53','Société en commandite');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'54','Société à responsabilité limité (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'54','Société à responsabilité limitée (SARL)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'55','Société anonyme à conseil d\'administration');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'56','Société anonyme à directoire');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'57','Société par actions simplifiée');
@@ -440,7 +440,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '602', 'So
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '603', 'Société en commandite');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '604', 'Société anonyme (SA)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '605', 'Société en commandite par actions');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '606', 'Société à responsabilité limitées (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '606', 'Société à responsabilité limitée (SARL)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '607', 'Société coopérative');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '608', 'Association');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '609', 'Fondation');
