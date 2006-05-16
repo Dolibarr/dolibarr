@@ -60,7 +60,7 @@ class Project {
         if (trim($this->ref))
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
-            $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, ".$user->id.",now()) ;";
+            $sql .= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."', $this->socidp, ".$user->id.",now()) ;";
     
             if ($this->db->query($sql) )
             {
