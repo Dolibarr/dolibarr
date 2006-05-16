@@ -45,6 +45,7 @@ ProductStatusNotOnSellShort=Out of sell
 UpdatePrice=Update price
 AppliedPricesFrom=Applied prices from
 SellingPrice=Selling price
+PublicPrice=Public price
 CurrentPrice=Current price
 NewPrice=New price
 ContractStatus=Contract status

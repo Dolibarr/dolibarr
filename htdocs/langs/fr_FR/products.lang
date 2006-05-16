@@ -45,6 +45,7 @@ ProductStatusNotOnSellShort=Hors vente
 UpdatePrice=Changer le prix
 AppliedPricesFrom=Prix de vente pratiqués à partir du
 SellingPrice=Prix de vente
+PublicPrice=Prix public
 CurrentPrice=Prix actuel
 NewPrice=Nouveau prix
 ContractStatus=État du contrat
