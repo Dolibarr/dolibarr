@@ -1840,6 +1840,7 @@ class CommandeLigne
 		var $price;
 		var $product_id;
 		var $desc;          // Description ligne
+		var $coef;
 	
 		// From llx_product
 		var $libelle;       // Label produit
