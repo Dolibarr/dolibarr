@@ -19,6 +19,7 @@ CompanyName=Company name
 Companies=Companies
 ParentCompany=Parent company
 CivilityCode=Civility code
+RegisteredOffice=Registered office
 Name=Name
 Lastname=Lastname
 Firstname=Firstname

@@ -19,6 +19,7 @@ CompanyName=Raison sociale
 Companies=Sociétés
 ParentCompany=Maison mère
 CivilityCode=Code civilité
+RegisteredOffice=Siège sociale
 Name=Nom
 Lastname=Nom
 Firstname=Prénom
