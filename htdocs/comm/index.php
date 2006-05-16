@@ -277,7 +277,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  *
  */
 
-$sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -287,7 +287,7 @@ if ($socidp)
 {
     $sql .= " AND s.idp = $socidp";
 }
-$sql .= " ORDER BY a.datea DESC, a.id DESC";
+$sql .= " ORDER BY a.datep DESC, a.id DESC";
 
 $resql=$db->query($sql);
 if ($resql)
@@ -306,28 +306,28 @@ if ($resql)
             $var=!$var;
 
             print "<tr $bc[$var]>";
-                if ($oldyear == strftime("%Y",$obj->da) )
+                if ($oldyear == strftime("%Y",$obj->dp) )
                 {
                     print '<td width="30" align="center">|</td>';
                 }
                 else
                 {
-                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
-                    $oldyear = strftime("%Y",$obj->da);
+                    print '<td width="30" align="center">'.strftime("%Y",$obj->dp)."</td>\n";
+                    $oldyear = strftime("%Y",$obj->dp);
                 }
 
-                if ($oldmonth == strftime("%Y%b",$obj->da) )
+                if ($oldmonth == strftime("%Y%b",$obj->dp) )
                 {
                     print '<td width="30" align="center">|</td>';
                 }
                 else
                 {
-                    print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
-                    $oldmonth = strftime("%Y%b",$obj->da);
+                    print '<td width="30" align="center">' .strftime("%b",$obj->dp)."</td>\n";
+                    $oldmonth = strftime("%Y%b",$obj->dp);
                 }
 
-                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
-				if (date("U",$obj->da) < time())
+                print '<td width="20">'.strftime("%d",$obj->dp)."</td>\n";
+				if (date("U",$obj->dp) < time())
 				{
 					print "<td>".img_warning($langs->trans("Late"))."</td>";
 				} else {
