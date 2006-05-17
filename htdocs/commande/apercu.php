@@ -237,7 +237,7 @@ if ($_GET["id"] > 0) {
 				// ligne 7
 				// partie Gauche
 				print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-				print '<td align="right" colspan="1"><b>'.price($commande->price).'</b></td>';
+				print '<td align="right" colspan="1"><b>'.price($commande->total_ht).'</b></td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				print '</table>';
 			}

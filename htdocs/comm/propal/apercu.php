@@ -144,7 +144,7 @@ if ($_GET["propalid"] > 0) {
 				}
 				print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
 				// partie Droite
-				print '<td align="left">Conditions de réglement</td>';
+				print '<td align="left">'.$langs->trans("PaymentConditions").'</td>';
 				print '<td>'.'&nbsp;'.'</td>';
 				print '</tr>';
 
