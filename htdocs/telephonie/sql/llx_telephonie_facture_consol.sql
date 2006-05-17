@@ -54,5 +54,5 @@ create table llx_telephonie_facture_consol (
   distri            varchar(255),
   repre_ib          varchar(255)
   
-)type=innodb;
+)type=MyISAM;
 
