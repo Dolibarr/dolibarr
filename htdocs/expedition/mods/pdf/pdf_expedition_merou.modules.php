@@ -39,7 +39,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 |element->commande,source->external,code->EXPEDITEUR \n
 	 |element->commande,source->external,code->DESTINATAIRE \n
 ";
-        $this->type = 'pdf';
+        $pdf->type = 'pdf';
 	}
 
 	//*****************************
@@ -58,14 +58,14 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$this->expe = $objExpe;
 		$this->expe->fetch_commande();
 		//Creation du Client
-		$this->soc = new Societe($this->db);
-		$this->soc->fetch($this->expe->commande->soc_id);
+		$soc = new Societe($this->db);
+		$soc->fetch($this->expe->commande->soc_id);
 		//Creation de l expediteur
-		$this->expediteur = $this->soc;
+		$this->expediteur = $soc;
 		//Creation du destinataire
 		$this->destinataire = new Contact($this->db);
-//		$this->expe->commande->fetch($this->commande->id);
-//print_r($this->expe);
+//		$pdf->expe->commande->fetch($pdf->commande->id);
+//print_r($pdf->expe);
 		$idcontact = $this->expe->commande->getIdContact('external','DESTINATAIRE');
 		$this->destinataire->fetch($idcontact[0]);
 		//Creation du livreur
@@ -85,7 +85,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	      			umask(0);
 				//On tente de le creer
 	      			if (! mkdir($dir, 0755)){
-                    			$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                    			$pdf->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     			return 0;
 				}
 	    		}
@@ -93,30 +93,30 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			if (file_exists($dir))
 			{
             	// Initialisation Bon vierge
-				$this->FPDF('l','mm','A5');
-				$this->Open();
-				$this->AddPage();
+				$pdf = new FPDF('l','mm','A5');
+				$pdf->Open();
+				$pdf->AddPage();
 				//Generation de l entete du fichier
-				$this->SetTitle($this->expe->ref);
-				$this->SetSubject($langs->trans("Sending"));
-				$this->SetCreator("EXPRESSIV Dolibarr ".DOL_VERSION);
-				$this->SetAuthor($user->fullname);
-				$this->SetMargins(10, 10, 10);
-				$this->SetAutoPageBreak(1,0);
+				$pdf->SetTitle($this->expe->ref);
+				$pdf->SetSubject($langs->trans("Sending"));
+				$pdf->SetCreator("EXPRESSIV Dolibarr ".DOL_VERSION);
+				$pdf->SetAuthor($user->fullname);
+				$pdf->SetMargins(10, 10, 10);
+				$pdf->SetAutoPageBreak(1,0);
 				//Insertion de l entete
 				$this->_pagehead($pdf, $this->expe);
 				//Initiailisation des coordonnées
 				$tab_top = 53;
 				$tab_height = 70;
-				$this->SetFillColor(240,240,240);
-				$this->SetTextColor(0,0,0);
-				$this->SetFont('Arial','', 7);
-				$this->SetXY (10, $tab_top + 5 );
-				$iniY = $this->GetY();
-				$curY = $this->GetY();
-				$nexY = $this->GetY();
+				$pdf->SetFillColor(240,240,240);
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFont('Arial','', 7);
+				$pdf->SetXY (10, $tab_top + 5 );
+				$iniY = $pdf->GetY();
+				$curY = $pdf->GetY();
+				$nexY = $pdf->GetY();
 				//Generation du tableau
-				$this->_tableau($tab_top, $tab_height, $nexY);
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 				//Recuperation des produits de la commande.
 				$this->expe->commande->fetch_lignes();
 				$Produits = $this->expe->commande->lignes;
@@ -126,41 +126,41 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$Prod = new Product($this->db);
 					$Prod->fetch($Produits[$i]->product_id);
 					//Creation des cases à cocher
-					$this->rect(10+3, $curY+1, 3, 3);
-					$this->rect(20+3, $curY+1, 3, 3);
+					$pdf->rect(10+3, $curY+1, 3, 3);
+					$pdf->rect(20+3, $curY+1, 3, 3);
 					//Insertion de la reference du produit
-					$this->SetXY (30, $curY );
-					$this->SetFont('Arial','B', 7);			
-					$this->MultiCell(20, 5, $Prod->ref, 0, 'L', 0);
+					$pdf->SetXY (30, $curY );
+					$pdf->SetFont('Arial','B', 7);			
+					$pdf->MultiCell(20, 5, $Prod->ref, 0, 'L', 0);
 					//Insertion du libelle
-					$this->SetFont('Arial','', 7);			
-					$this->SetXY (50, $curY );
-					$this->MultiCell(130, 5, stripslashes($Prod->libelle), 0, 'L', 0);
+					$pdf->SetFont('Arial','', 7);			
+					$pdf->SetXY (50, $curY );
+					$pdf->MultiCell(130, 5, stripslashes($Prod->libelle), 0, 'L', 0);
 					//Insertion de la quantite
-					$this->SetFont('Arial','', 7);			
-					$this->SetXY (180, $curY );
-					$this->MultiCell(20, 5, $Produits[$i]->qty, 0, 'L', 0);
+					$pdf->SetFont('Arial','', 7);			
+					$pdf->SetXY (180, $curY );
+					$pdf->MultiCell(20, 5, $Produits[$i]->qty, 0, 'L', 0);
 					//Generation de la page 2
 					$curY += 4;
 					$nexY = $curY; 
 					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1){
-						$this->_tableau($tab_top, $tab_height, $nexY);
-						$this->_pagefoot();
-						$this->AliasNbPages();
-						$this->AddPage();
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+						$this->_pagefoot($pdf);
+						$pdf->AliasNbPages();
+						$pdf->AddPage();
 						$nexY = $iniY;
 						$this->_pagehead($pdf, $this->expe);
-						$this->SetTextColor(0,0,0);
-						$this->SetFont('Arial','', 7);
+						$pdf->SetTextColor(0,0,0);
+						$pdf->SetFont('Arial','', 7);
 					}
 				}
 			//Insertio ndu pied de page
-			$this->_pagefoot($propale);
-			$this->AliasNbPages();
+			$this->_pagefoot($pdf);
+			$pdf->AliasNbPages();
 			//Cloture du pdf
-			$this->Close();
+			$pdf->Close();
 			//Ecriture du pdf
-			$this->Output($file);
+			$pdf->Output($file);
 			return 1;
 			}
 		}
@@ -169,39 +169,43 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	//********************************
 	// Generation du tableau
 	//********************************
-	function _tableau($tab_top, $tab_height, $nexY){
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+	{
 		global $langs;
+		
 		$langs->load("main");
 		$langs->load("bills");
-		$this->SetFont('Arial','B',8);
-		$this->SetXY(10,$tab_top);
-		$this->MultiCell(10,5,"LS",0,'C',1);
-		$this->line(20, $tab_top, 20, $tab_top + $tab_height);
-		$this->SetXY(20,$tab_top);
-		$this->MultiCell(10,5,"LR",0,'C',1);
-		$this->line(30, $tab_top, 30, $tab_top + $tab_height);
-		$this->SetXY(30,$tab_top);
-		$this->MultiCell(20,5,$langs->trans("Ref"),0,'C',1);
-		$this->SetXY(50,$tab_top);
-		$this->MultiCell(130,5,$langs->trans("Description"),0,'L',1);
-		$this->SetXY(180,$tab_top);
-		$this->MultiCell(20,5,$langs->trans("Quantity"),0,'L',1);
-		$this->Rect(10, $tab_top, 190, $tab_height);
+		
+		$pdf->SetFont('Arial','B',8);
+		$pdf->SetXY(10,$tab_top);
+		$pdf->MultiCell(10,5,"LS",0,'C',1);
+		$pdf->line(20, $tab_top, 20, $tab_top + $tab_height);
+		$pdf->SetXY(20,$tab_top);
+		$pdf->MultiCell(10,5,"LR",0,'C',1);
+		$pdf->line(30, $tab_top, 30, $tab_top + $tab_height);
+		$pdf->SetXY(30,$tab_top);
+		$pdf->MultiCell(20,5,$langs->trans("Ref"),0,'C',1);
+		$pdf->SetXY(50,$tab_top);
+		$pdf->MultiCell(130,5,$langs->trans("Description"),0,'L',1);
+		$pdf->SetXY(180,$tab_top);
+		$pdf->MultiCell(20,5,$langs->trans("Quantity"),0,'L',1);
+		$pdf->Rect(10, $tab_top, 190, $tab_height);
 	}
 
 	//********************************
 	// Generation du Pied de page
 	//********************************
-	function _pagefoot(){
-		$this->SetFont('Arial','',8);
-		$this->SetY(-23);
-		$this->MultiCell(100, 3, "Déclare avoir reçu les marchandises ci-dessus en bon état,", 0, 'L');
-		$this->SetY(-13);
-		$this->MultiCell(100, 3, "A___________________________________ le ____/_____/__________" , 0, 'C');
-		$this->SetXY(120,-23);
-		$this->MultiCell(100, 3, "Nom et Signature : " , 0, 'C');
-		$this->SetXY(-10,-10);
-		$this->MultiCell(10, 3, $this->PageNo().'/{nb}', 0, 'R');
+	function _pagefoot(&$pdf)
+	{
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetY(-23);
+		$pdf->MultiCell(100, 3, "Déclare avoir reçu les marchandises ci-dessus en bon état,", 0, 'L');
+		$pdf->SetY(-13);
+		$pdf->MultiCell(100, 3, "A___________________________________ le ____/_____/__________" , 0, 'C');
+		$pdf->SetXY(120,-23);
+		$pdf->MultiCell(100, 3, "Nom et Signature : " , 0, 'C');
+		$pdf->SetXY(-10,-10);
+		$pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
 	}
 
 
@@ -241,98 +245,98 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//*********************Entete****************************
 		//Nom du Document
 		$Yoff = 0;
-		$this->SetXY(60,7);
-		$this->SetFont('Arial','B',14);
-		$this->SetTextColor(0,0,0);
-		$this->MultiCell(0, 8, "BON DE LIVRAISON", '' , 'L');
+		$pdf->SetXY(60,7);
+		$pdf->SetFont('Arial','B',14);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->MultiCell(0, 8, "BON DE LIVRAISON", '' , 'L');
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 115;
-//		$this->rect($Xoff, $Yoff, 85, 8);
-		$this->SetXY($Xoff,$Yoff);
-		$this->SetFont('Arial','',8);
-		$this->SetTextColor(0,0,0);
-		$this->MultiCell(0, 8, "Num Bon de Livraison : ".$exp->ref, '' , 'L');
-		$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
+//		$pdf->rect($Xoff, $Yoff, 85, 8);
+		$pdf->SetXY($Xoff,$Yoff);
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->MultiCell(0, 8, "Num Bon de Livraison : ".$exp->ref, '' , 'L');
+		//$this->Code39($Xoff+43, $Yoff+1, $pdf->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+10;
-//		$this->rect($Xoff, $Yoff, 85, 8);
-		$this->SetXY($Xoff,$Yoff);
-		$this->SetFont('Arial','',8);
-		$this->SetTextColor(0,0,0);
-		$this->MultiCell(0, 8, "Num Commande : ".$exp->commande->ref, '' , 'L');
-		$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
+//		$pdf->rect($Xoff, $Yoff, 85, 8);
+		$pdf->SetXY($Xoff,$Yoff);
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->MultiCell(0, 8, "Num Commande : ".$exp->commande->ref, '' , 'L');
+		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe
 		$blSocX=11;
 		$blSocY=25;
 		$blSocW=50;
 		$blSocX2=$blSocW+$blSocXs;
-		$this->SetTextColor(0,0,0);
+		$pdf->SetTextColor(0,0,0);
 		//Adresse Internet
 		if (defined("FAC_PDF_WWW")){
-			$this->SetXY($blSocX,$blSocY);
-			$this->SetFont('Arial','B',8);
-			$this->MultiCell($blSocW, 3, FAC_PDF_WWW, '' , 'L');
+			$pdf->SetXY($blSocX,$blSocY);
+			$pdf->SetFont('Arial','B',8);
+			$pdf->MultiCell($blSocW, 3, FAC_PDF_WWW, '' , 'L');
 		}
 		if (defined("FAC_PDF_ADRESSE")){
-			$this->SetFont('Arial','',7);
-			$this->SetXY($blSocX,$blSocY+3);
-			$this->MultiCell($blSocW, 3, FAC_PDF_ADRESSE, '' , 'L');
+			$pdf->SetFont('Arial','',7);
+			$pdf->SetXY($blSocX,$blSocY+3);
+			$pdf->MultiCell($blSocW, 3, FAC_PDF_ADRESSE, '' , 'L');
 		}
 		
 		if (defined("FAC_PDF_ADRESSE2")){
-			$this->SetFont('Arial','',7);
-			$this->SetXY($blSocX,$blSocY+6);
-			$this->MultiCell($blSocW, 3, FAC_PDF_ADRESSE2, '' , 'L');
+			$pdf->SetFont('Arial','',7);
+			$pdf->SetXY($blSocX,$blSocY+6);
+			$pdf->MultiCell($blSocW, 3, FAC_PDF_ADRESSE2, '' , 'L');
 		}
 		
 		if (defined("FAC_PDF_TEL")){
-			$this->SetFont('Arial','',7);
-			$this->SetXY($blSocX,$blSocY+10);
-			$this->MultiCell($blSocW, 3, "Tel : " . FAC_PDF_TEL, '' , 'L');
+			$pdf->SetFont('Arial','',7);
+			$pdf->SetXY($blSocX,$blSocY+10);
+			$pdf->MultiCell($blSocW, 3, "Tel : " . FAC_PDF_TEL, '' , 'L');
 		}
 		
 		if (defined("FAC_PDF_MEL")){
-			$this->SetFont('Arial','',7);
-			$this->SetXY($blSocX,$blSocY+13);
-			$this->MultiCell(40, 3, "Email : " . FAC_PDF_MEL, '' , 'L');
+			$pdf->SetFont('Arial','',7);
+			$pdf->SetXY($blSocX,$blSocY+13);
+			$pdf->MultiCell(40, 3, "Email : " . FAC_PDF_MEL, '' , 'L');
 		}
 		
 		if (defined("FAC_PDF_FAX")){
-			$this->SetFont('Arial','',7);
-			$this->SetXY($blSocX,$blSocY+16);
-			$this->MultiCell(40, 3, "Fax : " . FAC_PDF_FAX, '' , 'L');
+			$pdf->SetFont('Arial','',7);
+			$pdf->SetXY($blSocX,$blSocY+16);
+			$pdf->MultiCell(40, 3, "Fax : " . FAC_PDF_FAX, '' , 'L');
 		}
 		
 		if (defined("MAIN_INFO_SIRET")){
-			$this->SetFont('Arial','',7);
-			$this->SetXY($blSocX2,$blSocY+10);
-			$this->MultiCell($blSocW, 3, "SIRET : " . MAIN_INFO_SIRET, '' , 'L');
+			$pdf->SetFont('Arial','',7);
+			$pdf->SetXY($blSocX2,$blSocY+10);
+			$pdf->MultiCell($blSocW, 3, "SIRET : " . MAIN_INFO_SIRET, '' , 'L');
 		}
 		
 		if (defined("MAIN_INFO_APE")){
-			$this->SetFont('Arial','',7);
-			$this->SetXY($blSocX2,$blSocY+13);
-			$this->MultiCell($blSocW, 3, "APE : " . MAIN_INFO_APE, '' , 'L');
+			$pdf->SetFont('Arial','',7);
+			$pdf->SetXY($blSocX2,$blSocY+13);
+			$pdf->MultiCell($blSocW, 3, "APE : " . MAIN_INFO_APE, '' , 'L');
 		}
 		
 		if (defined("MAIN_INFO_TVAINTRA")){
-			$this->SetFont('Arial','',7);
-			$this->SetXY($blSocX2,$blSocY+16);
-			$this->MultiCell($blSocW, 3, "ICOMM : " . MAIN_INFO_TVAINTRA, '' , 'L');
+			$pdf->SetFont('Arial','',7);
+			$pdf->SetXY($blSocX2,$blSocY+16);
+			$pdf->MultiCell($blSocW, 3, "ICOMM : " . MAIN_INFO_TVAINTRA, '' , 'L');
 		}
 	
 		//Date Expedition
 		$Yoff = $Yoff+7;
-		$this->SetXY($blSocX,$blSocY+20);
-		$this->SetFont('Arial','B',8);
-		$this->SetTextColor(0,0,0);
-		$this->MultiCell(50, 8, "Date : " . strftime("%d %b %Y", $exp->date), '' , 'L');
+		$pdf->SetXY($blSocX,$blSocY+20);
+		$pdf->SetFont('Arial','B',8);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->MultiCell(50, 8, "Date : " . strftime("%d %b %Y", $exp->date), '' , 'L');
 		//Date Expedition
-		$this->SetXY($blSocX2,$blSocY+20);
-		$this->SetFont('Arial','B',8);
-		$this->SetTextColor(0,0,0);
-		$this->MultiCell(50, 8, "Livreur(s) : ".$this->livreur->fullname, '' , 'L');
+		$pdf->SetXY($blSocX2,$blSocY+20);
+		$pdf->SetFont('Arial','B',8);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->MultiCell(50, 8, "Livreur(s) : ".$livreur->fullname, '' , 'L');
 		/**********************************/
 		//Emplacement Informations Expediteur (Client)
 		/**********************************/
@@ -343,31 +347,31 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$Ydef = $Yoff;
 		$blSocY = 1;
 		//Titre
-		$this->SetXY($blExpX,$Yoff-3);
-		$this->SetFont('Arial','B',7);
-		$this->MultiCell($blW,3, 'Expéditeur', 0, 'L');
-		$this->Rect($blExpX, $Yoff, $blW, 20);
+		$pdf->SetXY($blExpX,$Yoff-3);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->MultiCell($blW,3, 'Expéditeur', 0, 'L');
+		$pdf->Rect($blExpX, $Yoff, $blW, 20);
 		//Nom Client
-		$this->SetXY($blExpX,$Yoff+$blSocY);
-		$this->SetFont('Arial','B',7);
-		$this->MultiCell($blW,3, $this->expediteur->nom, 0, 'C');
-		$this->SetFont('Arial','',7);
+		$pdf->SetXY($blExpX,$Yoff+$blSocY);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->MultiCell($blW,3, $this->expediteur->nom, 0, 'C');
+		$pdf->SetFont('Arial','',7);
 		$blSocY+=3;
 		//Adresse Client
 		//Gestion des Retours chariots
 		$Out=split("\n",$this->expediteur->adresse);
 		for ($i=0;$i<count($Out);$i++) {
-			$this->SetXY($blExpX,$Yoff+$blSocY);
-			$this->MultiCell($blW,5,urldecode($Out[$i]),  0, 'L');
+			$pdf->SetXY($blExpX,$Yoff+$blSocY);
+			$pdf->MultiCell($blW,5,urldecode($Out[$i]),  0, 'L');
 			$blSocY+=3;
 		}
-		$this->SetXY($blExpX,$Yoff+$blSocY);
-		$this->MultiCell($blW,5, $this->expediteur->cp . " " . $this->expediteur->ville,  0, 'L');
+		$pdf->SetXY($blExpX,$Yoff+$blSocY);
+		$pdf->MultiCell($blW,5, $this->expediteur->cp . " " . $this->expediteur->ville,  0, 'L');
 		$blSocY+=4;
 		//Tel Client
-		$this->SetXY($blExpX,$Yoff+$blSocY);
-		$this->SetFont('Arial','',7);
-		$this->MultiCell($blW,3, "Tel : ".$this->expediteur->tel, 0, 'L');
+		$pdf->SetXY($blExpX,$Yoff+$blSocY);
+		$pdf->SetFont('Arial','',7);
+		$pdf->MultiCell($blW,3, "Tel : ".$this->expediteur->tel, 0, 'L');
 	
 		/**********************************/
 		//Emplacement Informations Destinataire (Contact livraison)
@@ -377,31 +381,31 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$Yoff = $Ydef;
 		$blSocY = 1;
 		//Titre
-		$this->SetXY($blDestX,$Yoff-3);
-		$this->SetFont('Arial','B',7);
-		$this->MultiCell($blW,3, 'Destinataire', 0, 'L');
-		$this->Rect($blDestX, $Yoff, $blW, 20);
+		$pdf->SetXY($blDestX,$Yoff-3);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->MultiCell($blW,3, 'Destinataire', 0, 'L');
+		$pdf->Rect($blDestX, $Yoff, $blW, 20);
 		//Nom Client
-		$this->SetXY($blDestX,$Yoff+$blSocY);
-		$this->SetFont('Arial','B',7);
-		$this->MultiCell($blW,3, $this->destinataire->fullname, 0, 'C');
-		$this->SetFont('Arial','',7);
+		$pdf->SetXY($blDestX,$Yoff+$blSocY);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->MultiCell($blW,3, $this->destinataire->fullname, 0, 'C');
+		$pdf->SetFont('Arial','',7);
 		$blSocY+=3;
 		//Adresse Client
 		//Gestion des Retours chariots
 		$Out=split("\n",$this->destinataire->address);
 		for ($i=0;$i<count($Out);$i++) {
-			$this->SetXY($blDestX,$Yoff+$blSocY);
-			$this->MultiCell($blW,5,urldecode($Out[$i]),  0, 'L');
+			$pdf->SetXY($blDestX,$Yoff+$blSocY);
+			$pdf->MultiCell($blW,5,urldecode($Out[$i]),  0, 'L');
 			$blSocY+=3;
 		}
-		$this->SetXY($blDestX,$Yoff+$blSocY);
-		$this->MultiCell($blW,5, $this->destinataire->cp . " " . $this->destinataire->ville,  0, 'L');
+		$pdf->SetXY($blDestX,$Yoff+$blSocY);
+		$pdf->MultiCell($blW,5, $this->destinataire->cp . " " . $this->destinataire->ville,  0, 'L');
 		$blSocY+=4;
 		//Tel Client
-		$this->SetXY($blDestX,$Yoff+$blSocY);
-		$this->SetFont('Arial','',7);
-		$this->MultiCell($blW,3, "Tel : ".$this->destinataire->phone_pro, 0, 'L');
+		$pdf->SetXY($blDestX,$Yoff+$blSocY);
+		$pdf->SetFont('Arial','',7);
+		$pdf->MultiCell($blW,3, "Tel : ".$this->destinataire->phone_pro, 0, 'L');
 	}
 }
 ?>
