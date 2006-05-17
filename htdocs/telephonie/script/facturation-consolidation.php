@@ -109,7 +109,7 @@ if ( $resql )
 	  while ($rows = $db->fetch_row($resqls))
 	    {
 	      $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
-	      $sqlu .= " SET distri='".$paye[$rows[0]]."'";
+	      $sqlu .= " SET distri='".$rows[0]."'";
 	      $sqlu .= " WHERE ligne = '$row[2]'";
 	      if (!  $resqlu = $db->query($sqlu))
 		{
