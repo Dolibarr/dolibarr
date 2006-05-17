@@ -46,6 +46,7 @@ $langs->load('sendings');
 
 
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 
 if ($conf->projet->enabled) 
 {
