@@ -257,7 +257,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(0, 8, "Num Bon de Livraison : ".$exp->ref, '' , 'L');
-		//$this->Code39($Xoff+43, $Yoff+1, $pdf->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
+		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+10;
 //		$pdf->rect($Xoff, $Yoff, 85, 8);
