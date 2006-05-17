@@ -175,7 +175,9 @@ if ($resql)
 		print ' <a href="liste.php?year='.$y.'&amp;month='.$m.'">';
 		print strftime('%B',$objp->date_commande).'</a>';
 		print ' <a href="liste.php?year='.$y.'">';
-		print strftime('%Y',$objp->date_commande).'</a></td>';
+		print strftime('%Y',$objp->date_commande).'</a>';
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < (time() - $conf->commande->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		print '</td>';
 		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,5).'</td>';
 		print '</tr>';
 		$total = $total + $objp->price;
