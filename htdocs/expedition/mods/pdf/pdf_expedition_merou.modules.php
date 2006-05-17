@@ -207,7 +207,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	// Generation de l entete
 	//********************************
 	function _pagehead($exp){
-		GLOBAL $langs;
+		global $conf, $langs;
 		$tab4_top = 60;
 		$tab4_hl = 6;
 		$tab4_sl = 4;
