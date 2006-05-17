@@ -24,6 +24,7 @@
 --
 
 create table llx_telephonie_facture_consol (
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
   groupe            varchar(255),
   agence            varchar(255),
   ligne             varchar(255) NOT NULL,
