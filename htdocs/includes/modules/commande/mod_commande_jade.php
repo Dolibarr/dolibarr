@@ -71,13 +71,15 @@ class mod_commande_jade extends ModeleNumRefCommandes
         global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $cyy='';
+        $cyy = 'C'.strftime("%y",time());
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $sql.= " WHERE ref like '${cyy}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
+            $cyy='';
             if ($row) $cyy = substr($row[0],0,3);
         }
     
