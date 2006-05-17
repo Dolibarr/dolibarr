@@ -1797,22 +1797,34 @@ function create_exdir($dir)
     {
         if ($i > 0) $ccdir .= '/'.$cdir[$i];
         else $ccdir = $cdir[$i];
-        if (eregi("^.:$",$ccdir,$regs)) continue;     // Si chemin Windows incomplet, on poursuit par rep suivant
+        if (eregi("^.:$",$ccdir,$regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
 
-        //print "${ccdir}<br>\n";
-        if ($ccdir && ! is_dir($ccdir))
+		// Attention, le is_dir() peut échouer bien que le rep existe.
+		// (ex selon config de open_basedir)
+        if ($ccdir)
         {
-            umask(0);
-            if (! @mkdir($ccdir, 0755))
-            {
-                dolibarr_syslog("functions.inc.php::create_exdir Erreur: Le répertoire '$ccdir' n'existe pas et Dolibarr n'a pu le créer.");
-                $nberr++;
-            }
-            else
-            {
-                dolibarr_syslog("functions.inc.php::create_exdir Directory '$ccdir' created");
-                $nbcreated++;
-            }
+        	if (! is_dir($ccdir))
+        	{
+                dolibarr_syslog("functions.inc.php::create_exdir Directory '$ccdir' does not exists or is outside open_basedir PHP setting.");
+
+	            umask(0);
+	            if (! @mkdir($ccdir, 0755))
+	            {
+	                // Si le is_dir a renvoyé une fausse info, alors on passe ici.
+	                dolibarr_syslog("functions.inc.php::create_exdir Error: Fails to create directory '$ccdir'.");
+	                $nberr++;
+	            }
+	            else
+	            {
+	                dolibarr_syslog("functions.inc.php::create_exdir Directory '$ccdir' created");
+					$nberr=0;	// On remet à zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
+	                $nbcreated++;
+	            }
+			}
+			else
+			{
+				$nberr=0;	// On remet à zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
+			}
         }
     }
     return ($nberr ? -$nberr : $nbcreated);
