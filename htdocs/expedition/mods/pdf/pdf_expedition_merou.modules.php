@@ -39,7 +39,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 |element->commande,source->external,code->EXPEDITEUR \n
 	 |element->commande,source->external,code->DESTINATAIRE \n
 ";
-        $pdf->type = 'pdf';
+        $this->type = 'pdf';
 	}
 
 	//*****************************
