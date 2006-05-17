@@ -46,7 +46,6 @@ $langs->load('sendings');
 
 
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 
 if ($conf->projet->enabled) 
 {
@@ -237,7 +236,7 @@ if ($_GET["id"] > 0) {
 				// ligne 7
 				// partie Gauche
 				print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-				print '<td align="right" colspan="1"><b>'.price($commande->total_ht).'</b></td>';
+				print '<td align="right" colspan="1"><b>'.price($commande->amount_ht).'</b></td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				print '</table>';
 			}
