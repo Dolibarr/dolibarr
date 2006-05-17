@@ -203,7 +203,7 @@ if ($resql)
         print "<tr $bc[$var]>";
         print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->facnumber.'">'.img_object($langs->trans("ShowBill"),"bill").' '.dolibarr_trunc($obj->facnumber,12)."</a></td>\n";
         print '<td align="center" nowrap>'.dolibarr_print_date($obj->date_echeance);
-        if ($obj->datefin < (time() - $conf->facture->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+        if (($obj->fk_statut > 0) && $obj->datefin < (time() - $conf->facture->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
         print '</td>';
         print '<td>'.dolibarr_trunc(stripslashes("$obj->libelle"),36).'</td>';
         print '<td>';
