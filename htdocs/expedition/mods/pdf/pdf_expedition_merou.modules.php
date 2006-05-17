@@ -102,7 +102,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$this->SetMargins(10, 10, 10);
 				$this->SetAutoPageBreak(1,0);
 				//Insertion de l entete
-				$this->_pagehead($this->expe);
+				$this->_pagehead($pdf, $this->expe);
 				//Initiailisation des coordonnées
 				$tab_top = 53;
 				$tab_height = 70;
@@ -147,7 +147,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 						$this->AliasNbPages();
 						$this->AddPage();
 						$nexY = $iniY;
-						$this->_pagehead($this->expe);
+						$this->_pagehead($pdf, $this->expe);
 						$this->SetTextColor(0,0,0);
 						$this->SetFont('Arial','', 7);
 					}
@@ -206,7 +206,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	//********************************
 	// Generation de l entete
 	//********************************
-	function _pagehead($exp){
+	function _pagehead(&$pdf, $exp){
 		global $conf, $langs;
 		$tab4_top = 60;
 		$tab4_hl = 6;
