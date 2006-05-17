@@ -67,6 +67,11 @@ if (! $resql )
 $paye[0] = 'non';
 $paye[1] = 'oui';
 
+$fourn[1] = "STR";
+$fourn[2] = "BT";
+$fourn[3] = "BTP";
+$fourn[4] = "B3G";
+
 $sql = "SELECT groupe.nom, agence.nom, l.ligne, l.statut, u.firstname,u.name,u.rowid ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -209,6 +214,31 @@ if ( $resql )
 		    {
 		      $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
 		      $sqlu .= " SET paye_m".$m."='".$paye[$rows[0]]."'";
+		      $sqlu .= " WHERE ligne = '$row[2]'";
+		      if (!  $resqlu = $db->query($sqlu))
+			{
+			  die($db->error());
+			}
+		    }
+		}
+	      else
+		{
+		  die($db->error());
+		}
+
+	      /* Fournisseur */
+	      $sqls = "SELECT fk_fournisseur ";
+	      $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+	      $sqls .= " WHERE ligne = '$row[2]'";	  
+	      $sqls .= " ORDER BY date DESC LIMIT 1;";
+	      $resqls = $db->query($sqls);
+
+	      if ( $resqls )
+		{
+		  while ($rows = $db->fetch_row($resqls))
+		    {
+		      $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
+		      $sqlu .= " SET fournisseur='".$fourn[$rows[0]]."'";
 		      $sqlu .= " WHERE ligne = '$row[2]'";
 		      if (!  $resqlu = $db->query($sqlu))
 			{
