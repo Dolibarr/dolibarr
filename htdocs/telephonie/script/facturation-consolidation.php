@@ -64,8 +64,10 @@ if (! $resql )
   die();
 }
 
+$paye[0] = 'non';
+$paye[1] = 'oui';
 
-$sql = "SELECT groupe.nom, agence.nom, l.ligne, l.statut, u.firstname,u.name ";
+$sql = "SELECT groupe.nom, agence.nom, l.ligne, l.statut, u.firstname,u.name,u.rowid ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."societe as groupe";
@@ -75,21 +77,16 @@ $sql .= " WHERE l.fk_contrat = c.rowid";
 $sql .= " AND c.fk_client_comm = groupe.idp";
 $sql .= " AND c.fk_soc = agence.idp";
 $sql .= " AND c.fk_commercial_sign = u.rowid";
-$sql .= " LIMIT 10";
-
-print "$sql\n";
-
+//$sql .= " LIMIT 20";
 $resql = $db->query($sql);
   
 if ( $resql )
 {
   $num = $db->num_rows();
 
-  print "$num\n";
-
   while ($row = $db->fetch_row($resql))
     {
-      print $row[0]."\t".$row[1]."\t".$row[2]."\t".$ligne->statuts[$row[3]]."\t".$row[4]."\n";
+      //print $row[0]."\t".$row[1]."\t".$row[2]."\t".$ligne->statuts[$row[3]]."\t".$row[4]."\n";
 
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_facture_consol";
       $sqli .= " (groupe,agence,ligne,statut,repre_ib) VALUES ";
@@ -99,6 +96,32 @@ if ( $resql )
 
       $resqli = $db->query($sqli);
 
+      /* Distributeur */
+      $sqls = "SELECT d.nom ";
+      $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+      $sqls .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
+      $sqls .= " WHERE dc.fk_user = '$row[6]'";
+      $sqls .= " AND dc.fk_distributeur = d.rowid";
+      $resqls = $db->query($sqls);
+      
+      if ( $resqls )
+	{
+	  while ($rows = $db->fetch_row($resqls))
+	    {
+	      $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
+	      $sqlu .= " SET distri='".$paye[$rows[0]]."'";
+	      $sqlu .= " WHERE ligne = '$row[2]'";
+	      if (!  $resqlu = $db->query($sqlu))
+		{
+		  die($db->error());
+		}
+	    }
+	}
+      else
+	{
+	  die($db->error());
+	}
+      
       $m = 0;
       $mc = $month + 1;
       $yc = $year;
@@ -122,7 +145,7 @@ if ( $resql )
 	  $sqls .= " AND ym = '".$ysc.$msc."'";
 	  $sqls .= " AND num_prefix = '06'";
 	  $resqls = $db->query($sqls);
-	  print "$sqls\n";
+	  //print "$sqls\n";
 	  if ( $resqls )
 	    {
 	      while ($rows = $db->fetch_row($resqls))
@@ -161,7 +184,33 @@ if ( $resql )
 		    {
 		      die($db->error());
 		    }
+		}
+	    }
+	  else
+	    {
+	      die($db->error());
+	    }
 
+	  /* Facture Payé */
+	  $sqls = "SELECT paye ";
+	  $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
+	  $sqls .= " , ".MAIN_DB_PREFIX."facture as f";
+	  $sqls .= " WHERE ligne = '$row[2]'";	  
+	  $sqls .= " AND date_format(date,'%y%m') = '".$ysc.$msc."'";
+	  $sqls .= " AND tf.fk_facture = f.rowid";
+	  $resqls = $db->query($sqls);
+
+	  if ( $resqls )
+	    {
+	      while ($rows = $db->fetch_row($resqls))
+		{
+		  $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
+		  $sqlu .= " SET paye_m".$m."='".$paye[$rows[0]]."'";
+		  $sqlu .= " WHERE ligne = '$row[2]'";
+		  if (!  $resqlu = $db->query($sqlu))
+		    {
+		      die($db->error());
+		    }
 		}
 	    }
 	  else
@@ -171,7 +220,6 @@ if ( $resql )
 
 	  $m++;
 	}
-
     }
 }
 else
