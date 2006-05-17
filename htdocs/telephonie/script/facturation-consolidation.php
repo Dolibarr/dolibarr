@@ -90,7 +90,7 @@ if ( $resql )
 
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_facture_consol";
       $sqli .= " (groupe,agence,ligne,statut,repre_ib) VALUES ";
-      $sqli .= " ('$row[0]','$row[1]','$row[2]',";
+      $sqli .= " ('".addslashes($row[0])."','".addslashes($row[1])."','$row[2]',";
       $sqli .= "'".$ligne->statuts[$row[3]]."',";
       $sqli .= "'".$row[4]." ".$row[5]."')";
 
