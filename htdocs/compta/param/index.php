@@ -59,12 +59,12 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 /*
  * Zone recherche facture
  */
-print '<form method="post" action="facture.php">';
+print '<form method="get" action="../facture.php">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("SearchABill").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_ref"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form><br>";
 
 
