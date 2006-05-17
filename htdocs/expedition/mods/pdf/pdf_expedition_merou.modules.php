@@ -46,8 +46,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	//Creation du Document
 	//Initialisation des données
 	//*****************************
-	function generate(&$objExpe){
-      		global $user,$langs,$conf;
+	function generate(&$objExpe, $file)
+	{
+		global $user,$langs,$conf;
+		
 		//Initialisation des langues
 		$langs->load("main");
 		$langs->load("bills");
@@ -206,8 +208,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	//********************************
 	// Generation de l entete
 	//********************************
-	function _pagehead(&$pdf, $exp){
+	function _pagehead(&$pdf, $exp)
+	{
 		global $conf, $langs, $mysoc;
+		
 		$tab4_top = 60;
 		$tab4_hl = 6;
 		$tab4_sl = 4;
