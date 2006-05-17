@@ -1263,15 +1263,26 @@ class Propal
     }
 		
     /**
-     *    \brief      Renvoie un tableau contenant les numéros de factures associées
+     *    	\brief      Renvoie un tableau contenant les numéros de factures associées
+     *		\return		array		Tableau des id de factures
      */
-    function facture_liste_array ()
+    function getFactureListeArray ()
+    {
+		return $this->FactureListeArray($this->id);
+	}
+
+    /**
+     *    	\brief      Renvoie un tableau contenant les numéros de factures associées
+     *		\param		id			Id propal
+     *		\return		array		Tableau des id de factures
+     */
+    function FactureListeArray($id)
     {
         $ga = array();
         
         $sql = "SELECT fk_facture FROM ".MAIN_DB_PREFIX."fa_pr as fp";
-        $sql .= " WHERE fk_propal = " . $this->id;
-        if ($this->db->query($sql) )
+        $sql .= " WHERE fk_propal = " . $id;
+        if ($this->db->query($sql))
         {
             $nump = $this->db->num_rows();
             
@@ -1290,7 +1301,7 @@ class Propal
         }
         else
         {
-            dolibarr_print_error($this->db);
+            return -1;
         }
     }
 
@@ -1567,7 +1578,7 @@ class Propal
         global $conf, $user;
         
         $this->nbtodo=$this->nbtodolate=0;
-        $sql ="SELECT p.rowid,".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
+        $sql ="SELECT p.rowid, p.ref, ".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
         if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.=" FROM ".MAIN_DB_PREFIX."propal as p";
         if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1581,7 +1592,13 @@ class Propal
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-                if ($obj->datefin < (time() - $conf->propal->cloture->warning_delay)) $this->nbtodolate++;
+                if ($obj->datefin < (time() - $conf->propal->cloture->warning_delay)) 
+                {
+					if ($mode == 'opened') $this->nbtodolate++;
+        			if ($mode == 'signed') $this->nbtodolate++;
+// \todo Definir règle des propales à facturer en retard
+// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
+            	}
             }
             return 1;
         }

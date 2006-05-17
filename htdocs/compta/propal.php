@@ -579,7 +579,7 @@ if ($_GET["propalid"] > 0)
 			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create\">".$langs->trans("BuildBill")."</a>";
 		}
 	
-		if ($obj->statut == 2 && sizeof($propal->facture_liste_array()))
+		if ($obj->statut == 2 && sizeof($propal->getFactureListeArray()))
 		{
 			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4\">".$langs->trans("ClassifyBilled")."</a>";
 		}
@@ -603,7 +603,7 @@ if ($_GET["propalid"] > 0)
     
     $var=true;
     
-    $html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+    $somethingshown=$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
     
 
 	/*
@@ -618,7 +618,7 @@ if ($_GET["propalid"] > 0)
 			$staticcommande=new Commande($db);
 
 			$total=0;
-			print '<br>';
+			if ($somethingshown) { print '<br>'; $somethingshown=1; }
 			print_titre($langs->trans('RelatedOrders'));
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
@@ -655,7 +655,7 @@ if ($_GET["propalid"] > 0)
     {
 		$num_fac_asso = $db->num_rows($resql);
 		$i = 0; $total = 0;
-		print "<br>";
+		if ($somethingshown) { print '<br>'; $somethingshown=1; }
 		if ($num_fac_asso > 1) print_titre($langs->trans("RelatedBills"));
 		else print_titre($langs->trans("RelatedBill"));
 		print '<table class="noborder" width="100%">';
