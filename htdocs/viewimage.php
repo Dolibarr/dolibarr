@@ -28,6 +28,7 @@
 */
 
 require_once("master.inc.php");
+require_once("main.inc.php");
 
 
 // C'est un wrapper, donc header vierge
