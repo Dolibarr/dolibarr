@@ -96,129 +96,138 @@ if ( $resql )
 
       $resqli = $db->query($sqli);
 
-      /* Distributeur */
-      $sqls = "SELECT d.nom ";
-      $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
-      $sqls .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
-      $sqls .= " WHERE dc.fk_user = '$row[6]'";
-      $sqls .= " AND dc.fk_distributeur = d.rowid";
-      $resqls = $db->query($sqls);
-      
-      if ( $resqls )
+      if ($resqli)
 	{
-	  while ($rows = $db->fetch_row($resqls))
+
+	  /* Distributeur */
+	  $sqls = "SELECT d.nom ";
+	  $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+	  $sqls .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
+	  $sqls .= " WHERE dc.fk_user = '$row[6]'";
+	  $sqls .= " AND dc.fk_distributeur = d.rowid";
+	  $resqls = $db->query($sqls);
+      
+	  if ( $resqls )
 	    {
-	      $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
-	      $sqlu .= " SET distri='".$rows[0]."'";
-	      $sqlu .= " WHERE ligne = '$row[2]'";
-	      if (!  $resqlu = $db->query($sqlu))
+	      while ($rows = $db->fetch_row($resqls))
+		{
+		  $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
+		  $sqlu .= " SET distri='".$rows[0]."'";
+		  $sqlu .= " WHERE ligne = '$row[2]'";
+		  if (!  $resqlu = $db->query($sqlu))
+		    {
+		      die($db->error());
+		    }
+		}
+	    }
+	  else
+	    {
+	      die($db->error());
+	    }
+      
+	  $m = 0;
+	  $mc = $month + 1;
+	  $yc = $year;
+
+	  while ($m < 7)
+	    {
+	      $mc = $mc - 1;
+
+	      if ($mc == 0)
+		{
+		  $mc = 12;
+		  $yc = $yc - 1;
+		}
+
+	      $msc = substr("00".$mc, -2) ;
+	      $ysc = substr("00".$yc, -2) ;
+
+	      $sqls = "SELECT round(sum(cout_vente),2) ";
+	      $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";	  
+	      $sqls .= " WHERE ligne = '$row[2]'";	  
+	      $sqls .= " AND ym = '".$ysc.$msc."'";
+	      $sqls .= " AND num_prefix = '06'";
+	      $resqls = $db->query($sqls);
+	      //print "$sqls\n";
+	      if ( $resqls )
+		{
+		  while ($rows = $db->fetch_row($resqls))
+		    {
+		      $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
+		      $sqlu .= " SET mobi_m".$m."='".$rows[0]."'";
+		      $sqlu .= " WHERE ligne = '$row[2]'";
+		      if (!  $resqlu = $db->query($sqlu))
+			{
+			  die($db->error());
+			}
+
+		    }
+		}
+	      else
 		{
 		  die($db->error());
 		}
+
+	      /* Fixes */
+	      $sqls = "SELECT round(sum(cout_vente),2) ";
+	      $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";	  
+	      $sqls .= " WHERE ligne = '$row[2]'";	  
+	      $sqls .= " AND ym = '".$ysc.$msc."'";
+	      $sqls .= " AND num_prefix in ('01','02','03','04','05')";
+	      $resqls = $db->query($sqls);
+
+	      if ( $resqls )
+		{
+		  while ($rows = $db->fetch_row($resqls))
+		    {
+		      $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
+		      $sqlu .= " SET fixe_m".$m."='".$rows[0]."'";
+		      $sqlu .= " WHERE ligne = '$row[2]'";
+		      if (!  $resqlu = $db->query($sqlu))
+			{
+			  die($db->error());
+			}
+		    }
+		}
+	      else
+		{
+		  die($db->error());
+		}
+
+	      /* Facture Payé */
+	      $sqls = "SELECT paye ";
+	      $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
+	      $sqls .= " , ".MAIN_DB_PREFIX."facture as f";
+	      $sqls .= " WHERE ligne = '$row[2]'";	  
+	      $sqls .= " AND date_format(date,'%y%m') = '".$ysc.$msc."'";
+	      $sqls .= " AND tf.fk_facture = f.rowid";
+	      $resqls = $db->query($sqls);
+
+	      if ( $resqls )
+		{
+		  while ($rows = $db->fetch_row($resqls))
+		    {
+		      $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
+		      $sqlu .= " SET paye_m".$m."='".$paye[$rows[0]]."'";
+		      $sqlu .= " WHERE ligne = '$row[2]'";
+		      if (!  $resqlu = $db->query($sqlu))
+			{
+			  die($db->error());
+			}
+		    }
+		}
+	      else
+		{
+		  die($db->error());
+		}
+
+	      $m++;
 	    }
 	}
       else
 	{
-	  die($db->error());
-	}
-      
-      $m = 0;
-      $mc = $month + 1;
-      $yc = $year;
-
-      while ($m < 7)
-	{
-	  $mc = $mc - 1;
-
-	  if ($mc == 0)
-	    {
-	      $mc = 12;
-	      $yc = $yc - 1;
-	    }
-
-	  $msc = substr("00".$mc, -2) ;
-	  $ysc = substr("00".$yc, -2) ;
-
-	  $sqls = "SELECT round(sum(cout_vente),2) ";
-	  $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";	  
-	  $sqls .= " WHERE ligne = '$row[2]'";	  
-	  $sqls .= " AND ym = '".$ysc.$msc."'";
-	  $sqls .= " AND num_prefix = '06'";
-	  $resqls = $db->query($sqls);
-	  //print "$sqls\n";
-	  if ( $resqls )
-	    {
-	      while ($rows = $db->fetch_row($resqls))
-		{
-		  $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
-		  $sqlu .= " SET mobi_m".$m."='".$rows[0]."'";
-		  $sqlu .= " WHERE ligne = '$row[2]'";
-		  if (!  $resqlu = $db->query($sqlu))
-		    {
-		      die($db->error());
-		    }
-
-		}
-	    }
-	  else
-	    {
-	      die($db->error());
-	    }
-
-	  /* Fixes */
-	  $sqls = "SELECT round(sum(cout_vente),2) ";
-	  $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";	  
-	  $sqls .= " WHERE ligne = '$row[2]'";	  
-	  $sqls .= " AND ym = '".$ysc.$msc."'";
-	  $sqls .= " AND num_prefix in ('01','02','03','04','05')";
-	  $resqls = $db->query($sqls);
-
-	  if ( $resqls )
-	    {
-	      while ($rows = $db->fetch_row($resqls))
-		{
-		  $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
-		  $sqlu .= " SET fixe_m".$m."='".$rows[0]."'";
-		  $sqlu .= " WHERE ligne = '$row[2]'";
-		  if (!  $resqlu = $db->query($sqlu))
-		    {
-		      die($db->error());
-		    }
-		}
-	    }
-	  else
-	    {
-	      die($db->error());
-	    }
-
-	  /* Facture Payé */
-	  $sqls = "SELECT paye ";
-	  $sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
-	  $sqls .= " , ".MAIN_DB_PREFIX."facture as f";
-	  $sqls .= " WHERE ligne = '$row[2]'";	  
-	  $sqls .= " AND date_format(date,'%y%m') = '".$ysc.$msc."'";
-	  $sqls .= " AND tf.fk_facture = f.rowid";
-	  $resqls = $db->query($sqls);
-
-	  if ( $resqls )
-	    {
-	      while ($rows = $db->fetch_row($resqls))
-		{
-		  $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture_consol";
-		  $sqlu .= " SET paye_m".$m."='".$paye[$rows[0]]."'";
-		  $sqlu .= " WHERE ligne = '$row[2]'";
-		  if (!  $resqlu = $db->query($sqlu))
-		    {
-		      die($db->error());
-		    }
-		}
-	    }
-	  else
-	    {
-	      die($db->error());
-	    }
-
-	  $m++;
+	  print $db->error();
+	  die();
 	}
     }
 }
