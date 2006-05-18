@@ -166,18 +166,18 @@ if(is_dir($dir))
 
 			require_once($dir.$file);
 
-			$obj = new $classname();
+			$module = new $classname();
 
 			$var=!$var;
 			print "<tr $bc[$var]><td>";
-			echo $obj->name;
+			echo $module->name;
 			print "</td><td>\n";
 
-			print $obj->description;
+			print $module->description;
 
 			print '</td><td align="center">';
 
-			if (in_array($obj->id, $mods))
+			if (in_array($module->id, $mods))
 			{
 				print img_tick();
 				print '</td><td align="center">';
@@ -278,9 +278,9 @@ if(is_dir($dir))
 			print $name;
 			print "</td><td>\n";
 			require_once($dir.$file);
-			$obj = new $classname();
+			$module = new $classname();
 
-			print $obj->description;
+			print $module->description;
 			print '</td>';
 
 			// Activ

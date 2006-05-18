@@ -39,7 +39,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 |element->commande,source->external,code->EXPEDITEUR \n
 	 |element->commande,source->external,code->DESTINATAIRE \n
 ";
+
         $this->type = 'pdf';
+        $this->page_largeur = 148.5;
+        $this->page_hauteur = 210;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
+        
+        $this->option_logo = 1;                    // Affiche logo
 	}
 
 	//*****************************
