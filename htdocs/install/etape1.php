@@ -329,7 +329,7 @@ if ($_POST["action"] == "set")
     
                         // Affiche aide diagnostique
                         print '<tr><td colspan="2"><br>Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
-                        print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>", mot de passe "<b>'.$passroot.'</b>".<br>';
+                        print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
                         print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
                         print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
                         print '</td></tr>';
@@ -400,7 +400,7 @@ if ($_POST["action"] == "set")
     
                         // Affiche aide diagnostique
                         print '<tr><td colspan="2"><br>Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
-                        print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>", mot de passe "<b>'.$passroot.'</b>".<br>';
+                        print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
                         print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
                         print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
                         print '</td></tr>';
@@ -459,7 +459,7 @@ if ($_POST["action"] == "set")
 
                 // Affiche aide diagnostique
                 print '<tr><td colspan="2"><br>Vous avez demandé la création de la base Dolibarr "<b>'.$dolibarr_main_db_name.'</b>", mais pour cela, ';
-                print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>", mot de passe "<b>'.$passroot.'</b>".<br>';
+                print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
                 print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
                 print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
                 print '</td></tr>';
