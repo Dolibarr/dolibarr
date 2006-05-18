@@ -42,6 +42,14 @@ else
   $datetime = time();
 }
 
+$paye[0] = 'non';
+$paye[1] = 'oui';
+
+$fourn[1] = "STR";
+$fourn[2] = "BT";
+$fourn[3] = "BTP";
+$fourn[4] = "B3G";
+
 $month = strftime("%m", $datetime);
 $year = strftime("%y", $datetime);
 
@@ -55,22 +63,43 @@ else
   $month = substr("00".($month - 1), -2) ;
 }
 
-$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_facture_consol";
-$resql = $db->query($sql);
-  
-if (! $resql )
+if (! $db->query("DELETE FROM ".MAIN_DB_PREFIX."telephonie_facture_consol") )
 {
   print $db->error();
   die();
 }
 
-$paye[0] = 'non';
-$paye[1] = 'oui';
+if (! $db->query("DELETE FROM ".MAIN_DB_PREFIX."telephonie_fournisseur_consol") )
+{
+  print $db->error();
+  die();
+}
 
-$fourn[1] = "STR";
-$fourn[2] = "BT";
-$fourn[3] = "BTP";
-$fourn[4] = "B3G";
+
+/* Fournisseur */
+$sqls = "SELECT round(sum(fourn_montant)),date_format(date,'%y%m'),fk_fournisseur ";
+$sqls .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+$sqls .= " GROUP BY fk_fournisseur,date_format(date,'%y%m') DESC ;";
+$resqls = $db->query($sqls);
+
+if ( $resqls )
+{
+  while ($rows = $db->fetch_row($resqls))
+    {
+      $sqlu = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_fournisseur_consol";
+      $sqlu .= " (nom,mois,montant) VALUES ('";
+      $sqlu .= $fourn[$rows[2]]."','".$rows[1]."','".$rows[0]."');";
+      if (!  $resqlu = $db->query($sqlu))
+	{
+	  die($db->error());
+	}
+    }
+}
+else
+{
+  print $db->error();
+  die();
+}
 
 $sql = "SELECT groupe.nom, agence.nom, l.ligne, l.statut, u.firstname,u.name,u.rowid ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
