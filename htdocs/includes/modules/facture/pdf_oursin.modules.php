@@ -386,7 +386,7 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetXY ($tab3_posx+60, $tab3_top-1 );
     $pdf->MultiCell(20, 4, $langs->trans("Ref"), 0, 'L', 0);
 
-    $sql = "SELECT ".$this->db->pdate("p.datep")."as date, p.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
+    $sql = "SELECT ".$this->db->pdate("p.datep")."as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
     $sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
     $sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$fac->id." ";
     $sql.= "ORDER BY p.datep";
