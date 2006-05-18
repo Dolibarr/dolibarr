@@ -25,9 +25,9 @@
 
 create table llx_telephonie_fournisseur_consol (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  nom               varchar(255),
-  mois              varchar(255),
-  montant           real
+  nom               char(3),
+  mois              char(4),
+  montant           integer
   
 )type=MyISAM;
 
