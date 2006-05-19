@@ -7,6 +7,7 @@ OptionModeTrue=Option Recettes-Dépenses
 OptionModeVirtual=Option Créances-Dettes
 OptionModeTrueDesc=Dans ce mode, le CA est calculé sur la base des factures payées.\nLa validité des chiffres n'est donc assurée que si la tenue de la comptabilité passe rigoureusement par des entrées/sorties sur les comptes via des factures.\nRemarque : dans cette version, Dolibarr utilise la date de passage de la facture à l'état 'Validée' et non la date de passage à l'état 'Payée'.
 OptionModeVirtualDesc=Dans ce mode, le CA est calculé sur la base des factures validées. Payées ou non, elles apparaissent dans le résultat dès qu'elles sont dues.
+FeatureIsSupportedInInOutModeOnly=Fonction disponible uniquement en mode compta RECETTE-DEPENSE (Voir configuration du module compta)
 Param=Paramétrage
 BillsForSuppliers=Factures des fournisseurs
 Income=Recettes
