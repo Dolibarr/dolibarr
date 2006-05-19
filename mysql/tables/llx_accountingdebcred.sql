@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,16 +17,12 @@
 --
 -- $Id$
 -- $Source$
---
 -- ============================================================================
 
-create table llx_accountingsystem_det
+create table llx_accountingdebcred
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_pcg_version  varchar(12)  NOT NULL,
-  pcg_type        varchar(20)  NOT NULL,
-  pcg_subtype     varchar(20)  NOT NULL,
-  label           varchar(128) NOT NULL,
-  account_number  varchar(20)  NOT NULL,
-  account_parent  varchar(20)
+	fk_transaction  integer		NOT NULL,
+	fk_account      integer		NOT NULL,
+	amount          real		NOT NULL,
+	direction       varchar(1)	NOT NULL
 )type=innodb;

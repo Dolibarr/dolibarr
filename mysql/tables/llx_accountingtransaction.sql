@@ -19,13 +19,11 @@
 -- $Source$
 -- ============================================================================
 
-create table llx_accountingsystem
+create table llx_accountingtransaction
 (
-  pcg_version       varchar(12)     PRIMARY KEY,
-  fk_pays           integer         NOT NULL,
-  label             varchar(128)    NOT NULL,
-  datec             varchar(12)     NOT NULL,
-  fk_author         varchar(20),
-  tms               timestamp,
-  active            smallint        DEFAULT 0
+	rowid           integer 		AUTO_INCREMENT PRIMARY KEY,
+	label           varchar(128)    NOT NULL,
+	datec           date 			NOT NULL,
+	fk_author       varchar(20)		NOT NULL,
+	tms             timestamp
 )type=innodb;

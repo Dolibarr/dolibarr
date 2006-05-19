@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,15 +18,10 @@
 --
 -- $Id$
 -- $Source$
--- ============================================================================
+-- ===========================================================================
 
-create table llx_accountingsystem
-(
-  pcg_version       varchar(12)     PRIMARY KEY,
-  fk_pays           integer         NOT NULL,
-  label             varchar(128)    NOT NULL,
-  datec             varchar(12)     NOT NULL,
-  fk_author         varchar(20),
-  tms               timestamp,
-  active            smallint        DEFAULT 0
-)type=innodb;
+
+ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version);
+
+
+ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version  FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accountingsystem (pcg_version);
