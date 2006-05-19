@@ -234,7 +234,16 @@ class DoliDb
     */
     function create_db($database)
     {
-        $ret=$this->query('CREATE DATABASE '.$database.' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate);
+        $sql = 'CREATE DATABASE '.$database;
+        $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+        $ret=$this->query($sql);
+        if (! $ret)
+        {
+        	// On réessaie pour compatibilité avec Mysql < 5.0
+	        $sql = 'CREATE DATABASE '.$database;
+	        $ret=$this->query($sql);
+        }
+        
         //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysql_error($this->db);
         return $ret;
     }
