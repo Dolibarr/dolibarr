@@ -138,7 +138,7 @@ if ($_GET["action"] == 'create')
   $numpr = "FI".strftime("%y%m%d", time());
   
   $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
-  $sql.= " WHERE ref like "'.$numpr.'"%";
+  $sql.= " WHERE ref like ".$numpr."%";
   
   $resql=$db->query($sql);
   if ($resql)
