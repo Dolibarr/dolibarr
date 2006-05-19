@@ -263,7 +263,7 @@ $dolibarr_main_db_host = "localhost";
 <td class="label" valign="top">
 <?php echo $langs->trans("Password"); ?>
 </td>
-<td class="label" valign="top"><input type="text" name="db_pass_root" value="<?php if (isset($db_pass_root)) print $db_pass_root; ?>"></td>
+<td class="label" valign="top"><input type="password" name="db_pass_root" value="<?php if (isset($db_pass_root)) print $db_pass_root; ?>"></td>
 <td class="label"><div class="comment">
 <?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
 </div>
