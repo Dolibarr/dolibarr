@@ -25,5 +25,9 @@ create table llx_accountingtransaction
 	label           varchar(128)    NOT NULL,
 	datec           date 			NOT NULL,
 	fk_author       varchar(20)		NOT NULL,
-	tms             timestamp
+	tms             timestamp,
+	fk_facture			integer,
+	fk_facture_fourn	integer,
+	fk_paiement			integer,
+	fk_paiement_fourn	integer
 )type=innodb;
