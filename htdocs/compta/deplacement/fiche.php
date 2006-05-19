@@ -116,7 +116,7 @@ if ($_GET["action"] == 'create')
 
   print "<tr>";
   print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-  print $html->select_societes();
+  print $html->select_societes($_GET["socid"]);
   print '</td></tr>';
 
   print "<tr>";
