@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,7 @@ class Account
 {
     var $rowid;
 
+    var $ref;
     var $label;
     var $type;
     var $bank;
@@ -55,6 +56,9 @@ class Account
     var $adresse_proprio;
     var $type_lib=array();
 
+	var $account_number;
+
+	
     /**
      *  Constructeur
      */
@@ -264,9 +268,13 @@ class Account
             return 0;
         }
 
-        if (! $pcgnumber) $pcgnumber="51";
+        if (! $this->ref)
+        {
+        	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+        	return -1;
+        }
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label, account_number) values (now(),'" . addslashes($this->label) . "','$pcgnumber');";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, ref, label, account_number) values (now(),'" . addslashes($this->ref) . "', '" . addslashes($this->label) . "','" . addslashes($this->account_number) . "');";
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -296,24 +304,36 @@ class Account
     }
 
     /*
-     *    \brief      Mise a jour compte
-     *    \param      user        Object utilisateur qui modifie
+     *    	\brief      Mise a jour compte
+     *    	\param      user        Object utilisateur qui modifie
+	 *		\return		int			<0 si ko, >0 si ok
      */
     function update($user='')
     {
+        global $langs;
+        
         // Chargement librairie pour acces fonction controle RIB
-        require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
+        require_once(DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php');
 
+        // Verification parametres
         if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
             $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
             return 0;
         }
 
+        if (! $this->ref)
+        {
+        	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+        	return -1;
+        }
         if (! $this->label) $this->label = "???";
+		$this->account_number=trim($this->account_number);
+
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
 
-        $sql .= " bank = '" .addslashes($this->bank)."'";
+        $sql .= " bank  = '".addslashes($this->bank)."'";
+        $sql .= ",ref   = '".addslashes($this->ref)."'";
         $sql .= ",label = '".addslashes($this->label)."'";
 
         $sql .= ",code_banque='".$this->code_banque."'";
@@ -328,6 +348,7 @@ class Account
         $sql .= ",courant = ".$this->courant;
         $sql .= ",clos = ".$this->clos;
         $sql .= ",rappro = ".$this->rappro;
+        $sql .= ",account_number = '".$this->account_number."'";
 
         $sql .= " WHERE rowid = ".$this->id;
 
@@ -351,8 +372,11 @@ class Account
     function fetch($id)
     {
         $this->id = $id;
-        $sql = "SELECT rowid, label, bank, number, courant, clos, rappro,";
-        $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."bank_account";
+        $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro,";
+        $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
+        $sql.= " domiciliation, proprio, adresse_proprio,";
+        $sql.= " account_number";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
         $sql.= " WHERE rowid  = ".$id;
 
         $result = $this->db->query($sql);
@@ -363,6 +387,7 @@ class Account
             {
                 $obj = $this->db->fetch_object($result);
 
+                $this->ref           = $obj->ref;
                 $this->label         = $obj->label;
                 $this->type          = $obj->courant;
                 $this->courant       = $obj->courant;
@@ -379,6 +404,8 @@ class Account
                 $this->domiciliation = $obj->domiciliation;
                 $this->proprio       = $obj->proprio;
                 $this->adresse_proprio = $obj->adresse_proprio;
+
+                $this->account_number = $obj->account_number;
             }
             $this->db->free($result);
         }
@@ -407,7 +434,61 @@ class Account
     }
 
 
-    /*
+	/**
+	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->clos,$mode);
+	}
+
+	/**
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string        	Libellé du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('banks');
+
+		if ($mode == 0)
+		{
+			if ($statut==0) return $langs->trans("StatusAccountOpened");
+			if ($statut==1) return $langs->trans("StatusAccountClosed");
+		}
+		if ($mode == 1)
+		{
+			if ($statut==0) return $langs->trans("StatusAccountOpened");
+			if ($statut==1) return $langs->trans("StatusAccountClosed");
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($langs->trans("StatusAccountOpened"),'statut4').' '.$langs->trans("StatusAccountOpened");
+			if ($statut==1) return img_picto($langs->trans("StatusAccountClosed"),'statut5').' '.$langs->trans("StatusAccountClosed");
+		}
+		if ($mode == 3)
+		{
+			if ($statut==0) return img_picto($langs->trans("StatusAccountOpened"),'statut4');
+			if ($statut==1) return img_picto($langs->trans("StatusAccountClosed"),'statut5');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==0) return img_picto($langs->trans("StatusAccountOpened"),'statut4').' '.$langs->trans("StatusAccountOpened");
+			if ($statut==1) return img_picto($langs->trans("StatusAccountClosed"),'statut5').' '.$langs->trans("StatusAccountClosed");
+		}
+		if ($mode == 5)
+		{
+			if ($statut==0) return $langs->trans("StatusAccountOpened").' '.img_picto($langs->trans("StatusAccountOpened"),'statut4');
+			if ($statut==1) return $langs->trans("StatusAccountClosed").' '.img_picto($langs->trans("StatusAccountClosed"),'statut5');
+		}
+	}
+
+	
+	/*
      *    \brief      Renvoi si un compte peut etre supprimer ou non (sans mouvements)
      *    \return     boolean     vrai si peut etre supprimé, faux sinon
      */
@@ -443,7 +524,8 @@ class Account
      */
     function solde()
     {
-        $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
+        $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank";
+        $sql.= " WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
 
         $result = $this->db->query($sql);
 

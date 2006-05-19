@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ if ($_POST["action"] == 'add')
     // Creation compte
     $account = new Account($db,0);
     
+    $account->ref           = ereg_replace(' ','',trim($_POST["ref"]));
     $account->label         = trim($_POST["label"]);
     $account->courant       = $_POST["type"];
     $account->clos          = $_POST["clos"];
@@ -58,10 +59,12 @@ if ($_POST["action"] == 'add')
     $account->cle_rib       = $_POST["cle_rib"];
     $account->bic           = $_POST["bic"];
     $account->iban_prefix   = $_POST["iban_prefix"];
-    $account->domiciliation = $_POST["domiciliation"];
+    $account->domiciliation = trim($_POST["domiciliation"]);
     
-    $account->proprio 	  = $_POST["proprio"];
-    $account->adresse_proprio = $_POST["adresse_proprio"];
+    $account->proprio 	    = trim($_POST["proprio"]);
+    $account->adresse_proprio = trim($_POST["adresse_proprio"]);
+
+    $account->account_number = trim($_POST["account_number"]);
     
     $account->solde         = $_POST["solde"];
     $account->date_solde    = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
@@ -87,12 +90,13 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account = new Account($db, $_POST["id"]);
     $account->fetch($_POST["id"]);
 
+    $account->ref             = ereg_replace(' ','',trim($_POST["ref"]));
     $account->label           = trim($_POST["label"]);
     $account->courant         = $_POST["type"];
     $account->clos            = $_POST["clos"];
     $account->rappro          = (isset($_POST["norappro"]) && $_POST["norappro"]=='on')?0:1;
 
-    $account->bank            = $_POST["bank"];
+    $account->bank            = trim($_POST["bank"]);
     $account->code_banque     = $_POST["code_banque"];
     $account->code_guichet    = $_POST["code_guichet"];
     $account->number          = $_POST["number"];
@@ -100,8 +104,11 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->bic             = $_POST["bic"];
     $account->iban_prefix     = $_POST["iban_prefix"];
     $account->domiciliation   = $_POST["domiciliation"];
+
     $account->proprio 	    = $_POST["proprio"];
     $account->adresse_proprio = $_POST["adresse_proprio"];
+
+    $account->account_number = trim($_POST["account_number"]);
 
     if ($account->label)
     {
@@ -144,70 +151,81 @@ $form = new Form($db);
 
 if ($_GET["action"] == 'create')
 {
-  print_titre($langs->trans("NewFinancialAccount"));
-  print '<br>';
-  
-  if ($message) { print "$message<br>\n"; }
+	print_titre($langs->trans("NewFinancialAccount"));
+	print '<br>';
 
-  print '<form action="fiche.php" method="post">';
-  print '<input type="hidden" name="action" value="add">';
-  print '<input type="hidden" name="clos" value="0">';
+	if ($message) { print "$message<br>\n"; }
 
-  print '<table class="border" width="100%">';
+	print '<form action="fiche.php" method="post">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="clos" value="0">';
 
-  print '<tr><td valign="top">'.$langs->trans("LabelBankCashAccount").'</td>';
-  print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$_POST["label"].'"></td></tr>';
+	print '<table class="border" width="100%">';
 
-  print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
-  print '<td colspan="3">';
-  $form=new Form($db);
-  print $form->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
-  print '</td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("LabelBankCashAccount").'</td>';
+	print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$_POST["label"].'"></td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("InitialBankBalance").'</td>';
-  print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="0.00"></td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
+	print '<td colspan="3">';
+	$form=new Form($db);
+	print $form->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
+	print '</td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
-  print '<td colspan="3">'; $now=time();
-  print '<input type="text" size="2" maxlength="2" name="reday" value="'.strftime("%d",$now).'">/';
-  print '<input type="text" size="2" maxlength="2" name="remonth" value="'.strftime("%m",$now).'">/';
-  print '<input type="text" size="4" maxlength="4" name="reyear" value="'.strftime("%Y",$now).'">';
-  print '</td></tr>';
-  
-  print '<tr><td colspan="4"><b>'.$langs->trans("IfBankAccount").'...</b></td></tr>';
+	// Code compta
+	if ($conf->comptaexpert->enabled)
+	{
+		print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
+	}
+	else
+	{
+		print '<input type="hidden" name="account_number" value="'.$account->account_number.'">';
+	}
 
-  print '<tr><td valign="top">'.$langs->trans("Conciliation").'</td>';
-  print '<td colspan="3"><input type="checkbox" name="norappro" value="'.$_POST["norappro"].'"> '.$langs->trans("DisableConciliation").'</td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("InitialBankBalance").'</td>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="0.00"></td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
-  print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$_POST["bank"].'"></td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
+	print '<td colspan="3">'; $now=time();
+	print '<input type="text" size="2" maxlength="2" name="reday" value="'.strftime("%d",$now).'">/';
+	print '<input type="text" size="2" maxlength="2" name="remonth" value="'.strftime("%m",$now).'">/';
+	print '<input type="text" size="4" maxlength="4" name="reyear" value="'.strftime("%Y",$now).'">';
+	print '</td></tr>';
 
-  print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-  print '<tr><td><input size="8" type="text" class="flat" name="code_banque" value="'.$_POST["code_banque"].'"></td>';
-  print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$_POST["code_guichet"].'"></td>';
-  print '<td><input size="15" type="text" class="flat" name="number" value="'.$_POST["number"].'"></td>';
-  print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$_POST["cle_rib"].'"></td></tr>';
-  
-  print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-  print '<td colspan="3"><input size="24" type="text" class="flat" name="iban_prefix" value="'.$_POST["iban_prefix"].'"></td></tr>';
+	print '<tr><td colspan="4"><b>'.$langs->trans("IfBankAccount").'...</b></td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-  print '<td colspan="3"><input size="24" type="text" class="flat" name="bic" value="'.$_POST["bic"].'"></td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("Conciliation").'</td>';
+	print '<td colspan="3"><input type="checkbox" name="norappro" value="'.$_POST["norappro"].'"> '.$langs->trans("DisableConciliation").'</td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
-  print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">".$_POST["domiciliation"];
-  print "</textarea></td></tr>";
+	print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
+	print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$_POST["bank"].'"></td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
-  print '<td colspan="3"><input size="12" type="text" class="flat" name="proprio" value="'.$_POST["proprio"].'"></td></tr>';
+	print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
+	print '<tr><td><input size="8" type="text" class="flat" name="code_banque" value="'.$_POST["code_banque"].'"></td>';
+	print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$_POST["code_guichet"].'"></td>';
+	print '<td><input size="15" type="text" class="flat" name="number" value="'.$_POST["number"].'"></td>';
+	print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$_POST["cle_rib"].'"></td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
-  print "<textarea class=\"flat\" name=\"adresse_proprio\" rows=\"2\" cols=\"40\">".$_POST["adresse_proprio"];
-  print "</textarea></td></tr>";
+	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
+	print '<td colspan="3"><input size="24" type="text" class="flat" name="iban_prefix" value="'.$_POST["iban_prefix"].'"></td></tr>';
 
-  print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></td></tr>';
-  print '</form>';
-  print '</table>';
+	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
+	print '<td colspan="3"><input size="24" type="text" class="flat" name="bic" value="'.$_POST["bic"].'"></td></tr>';
+
+	print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
+	print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">".$_POST["domiciliation"];
+	print "</textarea></td></tr>";
+
+	print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="proprio" value="'.$_POST["proprio"].'"></td></tr>';
+
+	print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
+	print "<textarea class=\"flat\" name=\"adresse_proprio\" rows=\"2\" cols=\"40\">".$_POST["adresse_proprio"];
+	print "</textarea></td></tr>";
+
+	print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></td></tr>';
+	print '</form>';
+	print '</table>';
 }
 /* ************************************************************************** */
 /*                                                                            */
@@ -217,102 +235,113 @@ if ($_GET["action"] == 'create')
 else
 {
     if ($_GET["id"] && $_GET["action"] != 'edit') 
-    {
-      $account = new Account($db, $_GET["id"]);
-      $account->fetch($_GET["id"]);
-
-    /*
-     * Affichage onglets
-     */
-    $h = 0;
-    
-    $head[$h][0] = "fiche.php?id=$account->id";
-    $head[$h][1] = $langs->trans("AccountCard");
-    $h++;
-
-    dolibarr_fiche_head($head, $hselected, $langs->trans("FinancialAccount")." ".($account->number?$account->number:$account->label));
-
-    /*
-     * Confirmation de la suppression
-     */
-    if ($_GET["action"] == 'delete')
-    {
-        $form->form_confirm($_SERVER["PHP_SELF"]."?id=$account->id",$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-        print '<br />';
-    }
-
-    print '<table class="border" width="100%">';
-      
-    print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
-    print '<td colspan="3">'.$account->label.'</td></tr>';
-    
-    print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
-    print '<td colspan="3">'.$account->type_lib[$account->type].'</td></tr>';
-    
-    print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
-    print '<td colspan="3">'.$account->status[$account->clos].'</td></tr>';
-
-    print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
-    print '<td colspan="3">';
-    if ($account->type == 0 || $account->type == 1) print ($account->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
-    if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
-    print '</td></tr>';
-
-    if ($account->type == 0 || $account->type == 1)
-    {
-        print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
-        print '<td colspan="3">'.$account->bank.'</td></tr>';
-    
-        print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-        print '<tr><td>'.$account->code_banque.'</td>';
-        print '<td>'.$account->code_guichet.'</td>';
-        print '<td>'.$account->number.'</td>';
-        print '<td>'.$account->cle_rib.'</td></tr>';
-        
-        print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-        print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
-        
-        print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-        print '<td colspan="3">'.$account->bic.'</td></tr>';
-        
-        print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
-        print nl2br($account->domiciliation);
-        print "</td></tr>\n";
-        
-        print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="3">';
-        print $account->proprio;
-        print "</td></tr>\n";
-        
-        print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
-        print nl2br($account->adresse_proprio);
-        print "</td></tr>\n";
-    }
-        
-    print '</table>';
-    
-    print '</div>';
-
-
-    /*
-     * Barre d'actions
-     *
-     */
-    print '<div class="tabsAction">';
-
-    if ($user->rights->banque->configurer) 
 	{
-	  print '<a class="butAction" href="fiche.php?action=edit&id='.$account->id.'">'.$langs->trans("Edit").'</a>';
+		$account = new Account($db, $_GET["id"]);
+		$account->fetch($_GET["id"]);
+	
+		/*
+		* Affichage onglets
+		*/
+		$h = 0;
+	
+		$head[$h][0] = "fiche.php?id=$account->id";
+		$head[$h][1] = $langs->trans("AccountCard");
+		$h++;
+	
+		dolibarr_fiche_head($head, $hselected, $langs->trans("FinancialAccount"));
+	
+		/*
+		* Confirmation de la suppression
+		*/
+		if ($_GET["action"] == 'delete')
+		{
+			$form->form_confirm($_SERVER["PHP_SELF"]."?id=$account->id",$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
+			print '<br />';
+		}
+	
+		print '<table class="border" width="100%">';
+	
+		// Ref
+		print '<tr><td valign="top">'.$langs->trans("Ref").'</td>';
+		print '<td colspan="3">'.$account->ref.'</td></tr>';
+	
+		print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+		print '<td colspan="3">'.$account->label.'</td></tr>';
+	
+		print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
+		print '<td colspan="3">'.$account->type_lib[$account->type].'</td></tr>';
+	
+		print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+		print '<td colspan="3">'.$account->getLibStatut(4).'</td></tr>';
+	
+		print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
+		print '<td colspan="3">';
+		if ($account->type == 0 || $account->type == 1) print ($account->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
+		if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
+		print '</td></tr>';
+	
+		// Code compta
+		if ($conf->comptaexpert->enabled)
+		{
+			print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+			print '<td colspan="3">'.$account->account_number.'</td></tr>';
+		}
+		
+		if ($account->type == 0 || $account->type == 1)
+		{
+			print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
+			print '<td colspan="3">'.$account->bank.'</td></tr>';
+	
+			print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
+			print '<tr><td>'.$account->code_banque.'</td>';
+			print '<td>'.$account->code_guichet.'</td>';
+			print '<td>'.$account->number.'</td>';
+			print '<td>'.$account->cle_rib.'</td></tr>';
+	
+			print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
+			print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
+	
+			print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
+			print '<td colspan="3">'.$account->bic.'</td></tr>';
+	
+			print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
+			print nl2br($account->domiciliation);
+			print "</td></tr>\n";
+	
+			print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="3">';
+			print $account->proprio;
+			print "</td></tr>\n";
+	
+			print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
+			print nl2br($account->adresse_proprio);
+			print "</td></tr>\n";
+		}
+	
+		print '</table>';
+	
+		print '</div>';
+	
+	
+		/*
+		* Barre d'actions
+		*
+		*/
+		print '<div class="tabsAction">';
+	
+		if ($user->rights->banque->configurer)
+		{
+			print '<a class="butAction" href="fiche.php?action=edit&id='.$account->id.'">'.$langs->trans("Edit").'</a>';
+		}
+	
+		$canbedeleted=$account->can_be_deleted();   // Renvoi vrai si compte sans mouvements
+		if ($user->rights->banque->configurer && $canbedeleted)
+		{
+			print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$account->id.'">'.$langs->trans("Delete").'</a>';
+		}
+	
+		print '</div>';
+	
 	}
-
-    $canbedeleted=$account->can_be_deleted();   // Renvoi vrai si compte sans mouvements
-    if ($user->rights->banque->configurer && $canbedeleted) 
-	{
-	  print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$account->id.'">'.$langs->trans("Delete").'</a>';
-	}
-
-    print '</div>';
-
-    }
 
     /* ************************************************************************** */
     /*                                                                            */
@@ -336,6 +365,10 @@ else
         
         print '<table class="border" width="100%">';
         
+		// Ref
+		print '<tr><td valign="top">'.$langs->trans("Ref").'</td>';
+		print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.$account->ref.'"></td></tr>';
+
         print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
         print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$account->label.'"></td></tr>';
         
@@ -355,6 +388,17 @@ else
         if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
         print '</td></tr>';
         
+		// Code compta
+		if ($conf->comptaexpert->enabled)
+		{
+			print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+	        print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
+		}
+		else
+		{
+	        print '<input type="hidden" name="account_number" value="'.$account->account_number.'">';
+		}
+
         if ($account->type == 0 || $account->type == 1)
         {
             print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';

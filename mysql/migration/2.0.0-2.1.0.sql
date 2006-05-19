@@ -103,6 +103,9 @@ update llx_const set name='SOCIETE_FISCAL_MONTH_START' where name='FISCAL_MONTH_
 update llx_const set visible=0 where name='FACTURE_DISABLE_RECUR';
 update llx_const set visible=0 where name='MAILING_EMAIL_FROM';
 
+insert into llx_const(name,value,type,visible,note) values('MAIN_SHOW_DEVELOPMENT_MODULES','0','yesno',1,'Make development modules visible');
+
+
 alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 
 
@@ -225,3 +228,6 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (101, 'commande',  'external', 'CUSTOMER',      'Contact client suivi commande', 1);
 
 insert into llx_c_pays (rowid,code,libelle) values (30, 'SG', 'Singapoure');
+
+
+alter table llx_bank_account add column ref varchar(12) NOT NULL;
