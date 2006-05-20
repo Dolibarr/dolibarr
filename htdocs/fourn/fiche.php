@@ -115,7 +115,7 @@ if ( $societe->fetch($socid) )
 	// Assujeti à TVA ou pas
 	print '<tr>';
 	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-	print yn($objsoc->tva_assuj);
+	print yn($societe->tva_assuj);
 	print '</td>';
 	print '</tr>';
 
