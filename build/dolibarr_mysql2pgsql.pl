@@ -341,6 +341,9 @@ foreach my $file (keys %filelist) {
     
 }
 
+print "\n";
 print "Build ".(scalar keys %filelist)." file(s).\n";
+
+sleep(3);
 
 0;
