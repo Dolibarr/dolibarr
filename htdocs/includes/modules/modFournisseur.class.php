@@ -86,8 +86,19 @@ class modFournisseur extends DolibarrModules
     
 		// Boxes
 		$this->boxes = array();
-		$this->boxes[0][0] = "Derniers founisseurs";
-		$this->boxes[0][1] = "box_fournisseurs.php";
+		$r=0;
+		
+		$this->boxes[$r][0] = "Derniers founisseurs";
+		$this->boxes[$r][1] = "box_fournisseurs.php";
+		$r++;
+		
+        $this->boxes[$r][0] = "Factures fournisseurs récentes impayées";
+        $this->boxes[$r][1] = "box_factures_fourn_imp.php";
+		$r++;
+
+        $this->boxes[$r][0] = "Dernières factures fournisseurs saisies";
+        $this->boxes[$r][1] = "box_factures_fourn.php";
+		$r++;
 		
 		// Permissions
 		$this->rights = array();

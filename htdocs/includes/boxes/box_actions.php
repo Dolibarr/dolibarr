@@ -18,8 +18,8 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
  /**
     \file       htdocs/includes/boxes/box_actions.php
     \ingroup    actions
@@ -57,67 +57,75 @@ class box_actions extends ModeleBoxes {
      *      \param      $max        Nombre maximum d'enregistrements à charger
      */
     function loadBox($max=5)
-    {
-        global $user, $langs, $db, $conf;
-        $langs->load("boxes");
+	{
+		global $user, $langs, $db, $conf;
+	
+		include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+        $actionstatic=new ActionComm($db);
 
-        $this->info_box_head = array('text' =>$langs->trans("ActionsToDo"));
-   if ($user->rights->commercial->main->lire)
-    {         
-          $sql = "SELECT a.label, a.id, ".$db->pdate("a.datea")." as da , a.percent, s.nom, s.idp";
-          if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-          $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm AS a ";
-          if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-          $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.idp";
-          $sql .= " WHERE percent <> 100 ";
-          if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-          if($user->societe_id)
-          {
-              $sql .= " AND s.idp = $user->societe_id";
-          }
-          $sql .= " ORDER BY a.datec DESC";
-          $sql .= $db->plimit($max, 0);
-   
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-                $i = 0;
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object($result);
-                   
-         if (date("U",$objp->da)  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
-               
-   
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => ("task"),
-                    'text' => $objp->label,
-                    'text2'=> $late,
-                    'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
-                    
-                    $this->info_box_contents[$i][1] = array('align' => 'left',
-                    'text' => $objp->nom,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
-           
-                     $this->info_box_contents[$i][2] = array('align' => 'right',
-                    'text' => dolibarr_print_date($objp->da));
-           
-                    $this->info_box_contents[$i][3] = array('align' => 'right',
-                    'text' => $objp->percent. "%");
-                   
-                    $i++;
-                }
-            }
-            else {
-                dolibarr_print_error($db);
-            }
- }
-        else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
-        }
-    }
+		$this->info_box_head = array('text' =>$langs->trans("ActionsToDo"));
+		
+		if ($user->rights->commercial->main->lire)
+		{
+			$sql = "SELECT a.label, a.id, ".$db->pdate("a.datea")." as da , a.percent,";
+			$sql.= " s.nom, s.idp";
+			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+			$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm AS a ";
+			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.idp";
+			$sql.= " WHERE percent <> 100 ";
+			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->societe_id)
+			{
+				$sql .= " AND s.idp = $user->societe_id";
+			}
+			$sql.= " ORDER BY a.datec DESC";
+			$sql.= $db->plimit($max, 0);
+	
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$num = $db->num_rows($result);
+				$i = 0;
+				while ($i < $num)
+				{
+					$objp = $db->fetch_object($result);
+	
+					if (date("U",$objp->da)  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
+	
+	
+					$this->info_box_contents[$i][0] = array('align' => 'left',
+					'logo' => ("task"),
+					'text' => $objp->label,
+					'text2'=> $late,
+					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
+	
+					$this->info_box_contents[$i][1] = array('align' => 'left',
+					'text' => $objp->nom,
+					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+	
+					$this->info_box_contents[$i][2] = array('align' => 'right',
+					'text' => dolibarr_print_date($objp->da));
+	
+					$this->info_box_contents[$i][3] = array('align' => 'right',
+					'text' => $objp->percent. "%");
+	
+                    $this->info_box_contents[$i][4] = array(
+                    'align' => 'right',
+                    'text' => $actionstatic->LibStatut($objp->percent,3));
+
+					$i++;
+				}
+			}
+			else {
+				dolibarr_print_error($db);
+			}
+		}
+		else {
+			$this->info_box_contents[0][0] = array('align' => 'left',
+			'text' => $langs->trans("ReadPermissionNotAllowed"));
+		}
+	}
    
     function showBox()
     {

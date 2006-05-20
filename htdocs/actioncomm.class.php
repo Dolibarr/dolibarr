@@ -298,6 +298,65 @@ class ActionComm
 			dolibarr_print_error($this->db);
 		}
 	}
-	
+
+
+	/**
+	 *    	\brief      Retourne le libellé du statut de la commande
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string      Libellé
+	 */
+	function getLibStatut($mode)
+	{
+		return $this->LibStatut($this->percent,$mode);
+	}
+
+	/**
+	 *		\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      percent     Pourcentage avancement
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string		Libellé
+	 */
+	function LibStatut($percent,$mode)
+	{
+		global $langs;
+		
+        if ($mode == 0)
+        {
+        	if ($percent==0) return $langs->trans('StatusActionToDo');
+        	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess');
+        	if ($percent >= 100) return $langs->trans('StatusActionDone');
+		}
+        if ($mode == 1)
+        {
+        	if ($percent==0) return $langs->trans('StatusActionToDo');
+        	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess');
+        	if ($percent >= 100) return $langs->trans('StatusActionDone');
+        }
+        if ($mode == 2)
+        {
+        	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo');
+        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '.$langs->trans('StatusActionInProcess');
+        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut5').' '.$langs->trans('StatusActionDone');
+        }
+        if ($mode == 3)
+        {
+        	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1');
+        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3');
+        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut5');
+        }
+        if ($mode == 4)
+        {
+        	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo');
+        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '.$langs->trans('StatusActionInProcess');
+        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut5').' '.$langs->trans('StatusActionDone');
+        }
+        if ($mode == 5)
+        {
+        	if ($percent==0) return $langs->trans('StatusActionToDo').' '.img_picto($langs->trans('StatusActionToDo'),'statut1');
+        	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' '.img_picto($langs->trans('StatusActionInProcess'),'statut3');
+        	if ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'),'statut5');
+        }
+	}
+		
 }    
 ?>

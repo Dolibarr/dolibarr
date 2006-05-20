@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,13 +19,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-    \file       htdocs/includes/boxes/box_propales.php
-    \ingroup    propales
-    \brief      Module de génération de l'affichage de la box propales
+		\file       htdocs/includes/boxes/box_propales.php
+		\ingroup    propales
+		\brief      Module de génération de l'affichage de la box propales
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -62,14 +61,16 @@ class box_propales extends ModeleBoxes {
         
         global $user, $langs, $db;
 
-        $langs->load("boxes");
-
+		include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+        $propalstatic=new Propal($db);
+        
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));
 
         if ($user->rights->propale->lire)
         {
 
-            $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.datep")." as dp,p.rowid";
+            $sql = "SELECT s.nom, s.idp,";
+            $sql.= " p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp, p.rowid";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -102,6 +103,11 @@ class box_propales extends ModeleBoxes {
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+                    
+                    $this->info_box_contents[$i][2] = array(
+                    'align' => 'right',
+                    'text' => $propalstatic->LibStatut($objp->fk_statut,3));
+
                     $i++;
                 }
             }

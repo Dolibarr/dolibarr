@@ -438,11 +438,13 @@ if ($socidp > 0)
         
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, c.rowid as cid, c.total_ht, c.ref, c.fk_statut, ".$db->pdate("c.date_commande")." as dc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-        $sql .= " WHERE c.fk_soc = s.idp ";
-        $sql .= " AND s.idp = $objsoc->id";
-        $sql .= " ORDER BY c.date_commande DESC";
+        $sql = "SELECT s.nom, s.idp,";
+        $sql.= " c.rowid as cid, c.total_ht, c.ref, c.fk_statut, c.facture,";
+        $sql.= " ".$db->pdate("c.date_commande")." as dc";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+        $sql.= " WHERE c.fk_soc = s.idp ";
+        $sql.= " AND s.idp = $objsoc->id";
+        $sql.= " ORDER BY c.date_commande DESC";
 
         $resql=$db->query($sql);
         if ($resql)
@@ -464,7 +466,7 @@ if ($socidp > 0)
                 print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
                 print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
                 print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
-                print '<td align="right" width="100">'.$commande_static->LibStatut($objp->fk_statut,5).'</td></tr>';
+                print '<td align="right" width="100">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
                 $i++;
             }
             $db->free($resql);

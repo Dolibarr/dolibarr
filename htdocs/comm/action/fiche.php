@@ -457,7 +457,7 @@ if ($_GET["id"])
         // Date fin real
         print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
 
-        print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
+        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -500,7 +500,12 @@ if ($_GET["id"])
         // Date fin real
         print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
 
-        print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
+        // Statut
+        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+        print $act->getLibStatut(4);
+        print ' ('.$act->percent.' %)</td></tr>';
+
+		// Objet lié
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';

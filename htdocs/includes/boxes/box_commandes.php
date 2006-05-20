@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-    \file       htdocs/includes/boxes/box_commandes.php
-    \ingroup    commande
-    \brief      Module de génération de l'affichage de la box commandes
+		\file       htdocs/includes/boxes/box_commandes.php
+		\ingroup    commande
+		\brief      Module de génération de l'affichage de la box commandes
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -58,14 +57,18 @@ class box_commandes extends ModeleBoxes {
     function loadBox($max=5)
     {
         global $user, $langs, $db;
-        $langs->load("boxes");
             
+		include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+        $commandestatic=new Commande($db);
+
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));
 
         if ($user->rights->commande->lire)
         {
 
-            $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.date_commande")." as dp,p.rowid";
+            $sql = "SELECT s.nom, s.idp,";
+            $sql.= " p.ref, ".$db->pdate("p.date_commande")." as dp, p.rowid,";
+            $sql.= " p.fk_statut, p.facture";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -98,6 +101,11 @@ class box_commandes extends ModeleBoxes {
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+                    
+                    $this->info_box_contents[$i][2] = array(
+                    'align' => 'right',
+                    'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facturee,3));
+
                     $i++;
                 }
             }

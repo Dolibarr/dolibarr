@@ -1707,10 +1707,11 @@ class Commande
 	/**
 	 *		\brief      Renvoi le libellé d'un statut donné
 	 *    	\param      statut      Id statut
+	 *    	\param      facturee    Si facturee
 	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
 	 *    	\return     string		Libellé
 	 */
-	function LibStatut($statut,$facture,$mode)
+	function LibStatut($statut,$facturee,$mode)
 	{
 		global $langs;
 		

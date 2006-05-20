@@ -58,25 +58,26 @@ class box_factures extends ModeleBoxes {
     function loadBox($max=5)
     {
         global $user, $langs, $db;
-        
-        $langs->load("boxes");
+
+        $facturestatic=new Facture($db);
         
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerBills",$max));
         
         if ($user->rights->facture->lire)
         {
-            $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
+            $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,";
+            $sql.= " f.paye, f.fk_statut, f.rowid as facid";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE f.fk_soc = s.idp";
+            $sql.= " WHERE f.fk_soc = s.idp";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
             if($user->societe_id)
             {
-                $sql .= " AND s.idp = $user->societe_id";
+                $sql.= " AND s.idp = $user->societe_id";
             }
-            $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
-            $sql .= $db->plimit($max, 0);
+            $sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
+            $sql.= $db->plimit($max, 0);
         
             $result = $db->query($sql);
         
@@ -99,6 +100,11 @@ class box_factures extends ModeleBoxes {
                     'text' => $objp->nom,
                     'maxlength'=>44,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+
+                    $this->info_box_contents[$i][2] = array(
+                    'align' => 'right',
+                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
+
                     $i++;
                 }
             }
