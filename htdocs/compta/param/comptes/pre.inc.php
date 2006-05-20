@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \file   	htdocs/compta/param/pre.inc.php
@@ -41,9 +40,9 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
 
-  $menu->add(DOL_URL_ROOT."/compta/param/comptes/","Comptes généraux");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/param/comptes/liste.php","Liste");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/param/comptes/fiche.php?action=create","Nouveau");
+  $menu->add(DOL_URL_ROOT."/compta/param/comptes/",$langs->trans("AccountsGeneral"));
+  $menu->add_submenu(DOL_URL_ROOT."/compta/param/comptes/liste.php",$langs->trans("List"));
+  $menu->add_submenu(DOL_URL_ROOT."/compta/param/comptes/fiche.php?action=create",$langs->trans("New"));
 
   left_menu($menu->liste, $help_url);
 }

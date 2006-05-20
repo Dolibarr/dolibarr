@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,54 +18,67 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!
-  \file       htdocs/compta/export/index.php
-  \ingroup    compta
-  \brief      Page accueil zone export compta
-  \version    $Revision$
+/**
+		\file       htdocs/compta/export/index.php
+		\ingroup    compta
+		\brief      Page export ventilations
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
+require_once("./ComptaJournalPaiement.class.php");
+require_once("./ComptaJournalVente.class.php");
 
-require("./ComptaJournalPaiement.class.php");
-require("./ComptaJournalVente.class.php");
-
+/*
+ * Actions
+ */
+ 
 if ($_GET["action"] == 'export')
 {
-  include_once DOL_DOCUMENT_ROOT.'/compta/export/modules/compta.export.class.php';
-
-  $exc = new ComptaExport($db, $user, 'Poivre');
-
-  if($_GET["id"] > 0)
-    {
-      $exc->Export($_GET["id"]);
-    }
-  else
-    {
-      $exc->Export();
-    }
-
-  print $exc->error_message;
-
-  /* Génération du journal des Paiements */
-
-  $jp= new ComptaJournalPaiement($db);
-  $jp->GeneratePdf($user, $exc->id, $exc->ref);
-
-  /* Génération du journal des Ventes */
-
-  $jp= new ComptaJournalVente($db);
-  $jp->GeneratePdf($user, $exc->id, $exc->ref);
+	$modulename='Poivre';
+	
+	include_once DOL_DOCUMENT_ROOT.'/compta/export/modules/compta.export.class.php';
+	
+	$exc = new ComptaExport($db, $user, $modulename);
+	
+	if($_GET["id"] > 0)
+	{
+		$exc->Export($_GET["id"]);
+	}
+	else
+	{
+		$exc->Export();
+	}
+	
+	/* Génération du journal des Paiements */
+	
+	$jp= new ComptaJournalPaiement($db);
+	$jp->GeneratePdf($user, $exc->id, $exc->ref);
+	
+	/* Génération du journal des Ventes */
+	
+	$jp= new ComptaJournalVente($db);
+	$jp->GeneratePdf($user, $exc->id, $exc->ref);
 }
 
+
+/*
+ * Affichage page
+ */
+ 
 llxHeader('','Compta - Export');
 
 print_titre("Export Comptable");
 
-print '<table border="0" width="100%" cellspacing="4">';
+if ($exc->error_message);
+{
+   print $exc->error_message;
+}
+
+
+print '<table class="notopnoleftnoright" width="100%">';
 print '<tr><td valign="top" width="30%">';
 
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";

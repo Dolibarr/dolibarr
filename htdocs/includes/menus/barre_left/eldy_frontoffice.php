@@ -253,7 +253,7 @@ class MenuLeft {
         
         
             /*
-             * Menu COMPTA
+             * Menu Financial
              */
             if ($mainmenu == 'accountancy')
             {
@@ -309,6 +309,7 @@ class MenuLeft {
                     $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&type=c", $langs->trans("Contacts"),1,$user->rights->societe->lire);
                 }
                                 
+                // Factures
                 if ($conf->facture->enabled)
                 {
                     $langs->load("bills");

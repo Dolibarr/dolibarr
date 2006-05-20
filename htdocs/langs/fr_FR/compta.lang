@@ -2,6 +2,7 @@
 Accountancy=Compta
 AccountancyCard=Fiche Compta
 Treasury=Tréso
+MenuFinancial=Compta/Tréso
 OptionMode=Option de tenue de comptabilité
 OptionModeTrue=Option Recettes-Dépenses
 OptionModeVirtual=Option Créances-Dettes
@@ -9,6 +10,9 @@ OptionModeTrueDesc=Dans ce mode, le CA est calculé sur la base des factures payé
 OptionModeVirtualDesc=Dans ce mode, le CA est calculé sur la base des factures validées. Payées ou non, elles apparaissent dans le résultat dès qu'elles sont dues.
 FeatureIsSupportedInInOutModeOnly=Fonction disponible uniquement en mode compta RECETTE-DEPENSE (Voir configuration du module compta)
 Param=Paramétrage
+AccountsGeneral=Comptes généraux
+Account=Compte
+Accounts=Comptes
 BillsForSuppliers=Factures des fournisseurs
 Income=Recettes
 Outcome=Dépenses
