@@ -1712,6 +1712,16 @@ function get_each_prod()
 			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5').' '.$langs->trans('ProductStatusNotOnSell');
 			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4').' '.$langs->trans('ProductStatusOnSell');
 		}
+		if ($mode == 3)
+		{
+			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4');
+		}
+		if ($mode == 4)
+		{
+			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5').' '.$langs->trans('ProductStatusNotOnSell');
+			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4').' '.$langs->trans('ProductStatusOnSell');
+		}
 		if ($mode == 5)
 		{
 			if ($status == 0) return $langs->trans('ProductStatusNotOnSell').' '.img_picto($langs->trans('ProductStatusNotOnSell'),'statut5');
