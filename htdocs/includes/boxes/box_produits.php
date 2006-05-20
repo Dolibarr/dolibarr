@@ -61,17 +61,19 @@ class box_produits extends ModeleBoxes {
         global $user, $langs, $db, $conf;
         $langs->load("boxes");
 
+		$productstatic=new Product($db);
+		
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
 
         if ($user->rights->produit->lire)
         {
-            $sql = "SELECT p.label, p.rowid, p.price, p.fk_product_type";
+            $sql = "SELECT p.label, p.rowid, p.price, p.fk_product_type, p.envente";
             $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
             if ($conf->categorie->enabled && !$user->rights->categorie->voir)
             {
-            	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-              $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-              $sql.= " WHERE IFNULL(c.visible,1)=1";
+	            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+	            $sql.= " WHERE IFNULL(c.visible,1)=1";
             }
             $sql .= " ORDER BY p.datec DESC";
             $sql .= $db->plimit($max, 0);
@@ -100,13 +102,20 @@ class box_produits extends ModeleBoxes {
 						           }
 					          }
     
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    $this->info_box_contents[$i][0] = array(
+                    'align' => 'left',
                     'logo' => ($objp->fk_product_type?'object_service':'object_product'),
                     'text' => $objp->label,
                     'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
     
-                    $this->info_box_contents[$i][1] = array('align' => 'right',
+                    $this->info_box_contents[$i][1] = array(
+                    'align' => 'right',
                     'text' => price($objp->price));
+
+                    $this->info_box_contents[$i][2] = array(
+                    'align' => 'center',
+                    'text' => $productstatic->LibStatut($objp->envente,3));
+
                     $i++;
                 }
             }
