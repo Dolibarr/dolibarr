@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +19,14 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 
-/*!	    
-  \file       htdocs/compta/ventilation/liste.php
-  \ingroup    compta
-  \brief      Page de ventilation des lignes de facture
-  \version    $Revision$
+/**   
+		\file       htdocs/compta/ventilation/liste.php
+		\ingroup    compta
+		\brief      Page de ventilation des lignes de facture
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -38,9 +37,8 @@ $langs->load("bills");
 
 if (!$user->rights->facture->lire) accessforbidden();
 if (!$user->rights->compta->ventilation->creer) accessforbidden();
-/*
- * Sécurité accés client
- */
+
+// Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
 
 

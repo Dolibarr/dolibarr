@@ -32,11 +32,16 @@ require("./pre.inc.php");
 
 $user->getrights(); // On a besoin des permissions sur plusieurs modules
 
-if (!$user->rights->compta->general->lire)
-  accessforbidden();
+// L'espace compta/tréso doit toujours etre actif car c'est un espace partagé
+// par de nombreux modules (banque, facture, commande à facturer, etc...) indépendemment
+// de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
+// est protégé par le droit qui va bien du module concerné.
+//if (!$user->rights->compta->general->lire)
+//  accessforbidden();
 
 $langs->load("compta");
 $langs->load("bills");
+if ($conf->commande->enabled) $langs->load("orders");
 
 // Sécurité accés client
 $socidp='';
@@ -259,7 +264,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 /*
  * Commandes à facturer
  */
-if ($conf->commande->enabled && $user->rights->commande->lire)
+if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->commande->lire)
 {
   $langs->load("orders");
 
@@ -430,8 +435,8 @@ if ($resql)
 /*
  * Factures a payer
  */
-if ($conf->facture->enabled) {
-
+if ($conf->facture->enabled && $user->rights->facture->lire)
+{
     if ($user->societe_id == 0)
     {
       $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ht, ff.total_ttc, s.nom, s.idp";

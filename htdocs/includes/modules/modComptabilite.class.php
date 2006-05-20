@@ -67,9 +67,10 @@ class modComptabilite extends DolibarrModules
     $this->config_page_url = "compta.php";
 
     // Dépendances
-    $this->depends = array();
-    $this->requiredby = array("modFacture");
+    $this->depends = array("modFacture","modBanque");
+    $this->requiredby = array();
     $this->conflictwith = array("modComptabiliteExpert");
+	$this->langfiles = array("compta");
 
     // Constantes
     $this->const = array();
@@ -131,12 +132,26 @@ class modComptabilite extends DolibarrModules
 
     $r++;
     $this->rights[$r][0] = 97;
-    $this->rights[$r][1] = 'Ventiler les lignes de facture';
+    $this->rights[$r][1] = 'Lire les ventilations de factures';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 1;
+    $this->rights[$r][4] = 'ventilation';
+    $this->rights[$r][5] = 'lire';
+
+    $r++;
+    $this->rights[$r][0] = 98;
+    $this->rights[$r][1] = 'Ventiler les lignes de factures';
     $this->rights[$r][2] = 'r';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'ventilation';
     $this->rights[$r][5] = 'creer';
 
+    /*
+    Ce n'est pas un module en particulier qui doit conditionner l'accès à un espace 
+    partagé par plusieurs module. C'est au sein de l'espace compta/tréso que chaque zone
+    est protégée par le droit adéquat.
+    Sinon on bloque aussi utilisation du module banque, tva, des commandes à facturer,
+    ou d'un autre module de compta.
     $r++;
     $this->rights[$r][0] = 98;
     $this->rights[$r][1] = "Accès à l'espace compta/tréso";
@@ -144,6 +159,7 @@ class modComptabilite extends DolibarrModules
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'general';
     $this->rights[$r][5] = 'lire';
+    */
 
   }
 

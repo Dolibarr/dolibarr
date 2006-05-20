@@ -367,15 +367,20 @@ class MenuLeft {
                   if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1,$user->rights->compta->charges->lire);
                 }
                 
-                if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+                // Compta simple
+                if ($conf->compta->enabled)
                 {
-                    //$newmenu->add(DOL_URL_ROOT."/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Ventilations"));
-                    //if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"),1);
-                    //if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"),1);
-                    //if ($user->rights->compta->ventilation->param) {
-                    //    if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"),1);
-                    //}
+				    $newmenu->add(DOL_URL_ROOT."/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Ventilation"),0,$user->rights->compta->ventilation->lire);
+			        if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"),1,$user->rights->compta->ventilation->lire);
+			        if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"),1,$user->rights->compta->ventilation->lire);
+			        if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Setup"),1,$user->rights->compta->ventilation->parametrer);
                 }
+
+                // Compta expert
+                if ($conf->comptaexpert->enabled)
+                {
+
+				}
                         
                 // Prélèvements
                 if ($conf->prelevement->enabled)

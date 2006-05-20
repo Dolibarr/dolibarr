@@ -69,9 +69,10 @@ class modFacture extends DolibarrModules
         $this->dirs = array();
     
         // Dépendances
-        $this->depends = array("modSociete","modComptabilite");
-        $this->requiredby = array();
-        $this->langfiles = array("bills","companies");
+        $this->depends = array("modSociete");
+        $this->requiredby = array("modComptabilite","modComptabiliteExpert");
+        $this->conflictwith = array();
+		$this->langfiles = array("bills","companies");
     
         // Config pages
         $this->config_page_url = "facture.php";

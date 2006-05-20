@@ -64,8 +64,10 @@ class modBanque extends DolibarrModules
 
     // Dépendances
     $this->depends = array();
-    $this->requiredby = array();
-
+    $this->requiredby = array("modComptabilite","modComptabiliteExpert");
+	$this->conflictwith = array();
+	$this->langfiles = array("banks");
+	
     // Constantes
     $this->const = array();
 

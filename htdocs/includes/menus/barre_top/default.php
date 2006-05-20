@@ -143,11 +143,11 @@ class MenuTop {
 
         }
 
-        // Entrée compta
+        // Entrée compta/tréso (sert pour banque, tva, entités à facturer...)
         if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->caisse->enabled)
         {
-            if ($user->rights->compta->general->lire || $user->rights->comptaexpert->general->lire)
-            {
+//            if ($user->rights->compta->general->lire || $user->rights->comptaexpert->general->lire)
+//            {
                 $langs->load("compta");
 
                 $class="";
@@ -164,8 +164,8 @@ class MenuTop {
                     $class = 'class="tmenu"';
                 }
 
-                print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a></td>';
-            }
+                print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
+//            }
         }
 
         // Entrée projets
