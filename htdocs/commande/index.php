@@ -22,8 +22,8 @@
 
 /**
         \file       htdocs/commande/index.php
-        \ingroup    compta
-		\brief      Page acceuil zone comptabilité
+        \ingroup    commande
+		\brief      Page acceuil espace commandes
 		\version    $Revision$
 */
 
@@ -70,7 +70,7 @@ print "</form></table><br>\n";
 
 
 /*
- * Commandes à valider
+ * Commandes brouillons
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -146,7 +146,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 /*
  * Commandes en cours
  */
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.idp";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.idp";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -173,7 +173,7 @@ if ( $db->query($sql) )
             print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' ';
             print $obj->ref.'</a></td>';
             print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
+            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
             print '</tr>';
             $i++;
         }
@@ -186,7 +186,7 @@ if ( $db->query($sql) )
  */
 $max=5;
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.idp,";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.idp,";
 $sql.= " ".$db->pdate("date_cloture")." as datec";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
@@ -217,7 +217,7 @@ if ($resql)
             print $obj->ref.'</a></td>';
             print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
             print '<td>'.dolibarr_print_date($obj->datec).'</td>';
-            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
+            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
             print '</tr>';
             $i++;
         }
