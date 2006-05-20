@@ -3,7 +3,8 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,27 +26,11 @@
 -- ============================================================================
 
 
-create table llx_product
-(
-  rowid SERIAL PRIMARY KEY,
-  "datec"              timestamp,
-  "tms"                timestamp,
-  "ref"                varchar(16) NOT NULL,
-  "label"              varchar(128),
-  "description"        varchar(255),
-  "note"               text,
-  "price"              real,
-  "tva_tx"             real,
-  "fk_user_author"     integer,
-  "envente"            smallint DEFAULT 1,
-  "nbvente"            integer DEFAULT 0,
-  "fk_product_type"    integer DEFAULT 0,
-  "duration"           varchar(6),
-  "stock_propale"      integer DEFAULT 0,
-  "stock_commande"     integer DEFAULT 0,
-  "seuil_stock_alerte" integer DEFAULT 0,
-  "gencode"            varchar(255) DEFAULT NULL
-);
+ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_soc (fk_soc);
+ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_user_author (fk_user_author);
+ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_projet (fk_projet);
 
+ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
 
-
+ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre);

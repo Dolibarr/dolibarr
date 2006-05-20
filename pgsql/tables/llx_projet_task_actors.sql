@@ -35,4 +35,4 @@ create table llx_projet_task_actors
 );
 
 CREATE INDEX idx_llx_projet_task_actors_fk_projet_task_fk_user ON llx_projet_task_actors (fk_projet_task, fk_user);
-CREATE INDEX idx_llx_projet_task_actors_role ON llx_projet_task_actors (role)
+CREATE INDEX idx_llx_projet_task_actors_role ON llx_projet_task_actors (role);

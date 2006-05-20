@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,13 +24,9 @@
 --
 -- ============================================================================
 
-create table llx_accountingsystem_det
-(
-  rowid SERIAL PRIMARY KEY,
-  "fk_pcg_version"  varchar(12)  NOT NULL,
-  "pcg_type"        varchar(20)  NOT NULL,
-  "pcg_subtype"     varchar(20)  NOT NULL,
-  "label"           varchar(128) NOT NULL,
-  "account_number"  varchar(20)  NOT NULL,
-  "account_parent"  varchar(20)
-);
+
+-- Supprimme orphelins pour permettre montée de la clé
+-- V4 DELETE llx_commande_fournisseur FROM llx_commande_fournisseur LEFT JOIN llx_societe ON llx_commande_fournisseur.fk_soc = llx_societe.idp WHERE llx_societe.idp IS NULL; 
+
+ALTER TABLE llx_commande_fournisseur ADD INDEX idx_commande_fournisseur_fk_soc (fk_soc);
+ALTER TABLE llx_commande_fournisseur ADD CONSTRAINT fk_commande_fournisseur_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);

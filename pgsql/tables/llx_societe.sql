@@ -66,7 +66,7 @@ create table llx_societe
   "fk_user_creat"      integer,                             -- utilisateur qui a créé l'info
   "fk_user_modif"      integer,                             -- utilisateur qui a modifié l'info
   "remise_client"      real           DEFAULT 0,            -- remise systématique pour le client
-  "mode_reglement"     integer				DEFAULT 0 ,           -- mode de réglement
-  "cond_reglement"     integer				DEFAULT 1  NOT NULL   -- condition de réglement
+  "mode_reglement"     integer				DEFAULT 0,            -- mode de réglement
+  "cond_reglement"     integer				DEFAULT 1  NOT NULL,  -- condition de réglement
+  "tva_assuj"          smallint        DEFAULT 1	            -- assujéti ou non à la TVA
 );
-

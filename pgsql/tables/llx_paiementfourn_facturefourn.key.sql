@@ -3,7 +3,9 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+-- Copyright (C) 2005 Marc Barilley / Océbo <marc@ocebo.com>
+-- Copyright (C) 2005 Laurent Destailleur   <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,31 +23,7 @@
 --
 -- $Id$
 -- $Source$
---
--- ============================================================================
+-- ===========================================================================
 
-
-create table llx_product
-(
-  rowid SERIAL PRIMARY KEY,
-  "datec"              timestamp,
-  "tms"                timestamp,
-  "ref"                varchar(16) NOT NULL,
-  "label"              varchar(128),
-  "description"        varchar(255),
-  "note"               text,
-  "price"              real,
-  "tva_tx"             real,
-  "fk_user_author"     integer,
-  "envente"            smallint DEFAULT 1,
-  "nbvente"            integer DEFAULT 0,
-  "fk_product_type"    integer DEFAULT 0,
-  "duration"           varchar(6),
-  "stock_propale"      integer DEFAULT 0,
-  "stock_commande"     integer DEFAULT 0,
-  "seuil_stock_alerte" integer DEFAULT 0,
-  "gencode"            varchar(255) DEFAULT NULL
-);
-
-
-
+ALTER TABLE llx_paiementfourn_facturefourn ADD INDEX idx_paiementfourn_facturefourn_fk_facture(fk_facturefourn);
+ALTER TABLE llx_paiementfourn_facturefourn ADD INDEX idx_paiementfourn_facturefourn_fk_paiement(fk_paiementfourn);

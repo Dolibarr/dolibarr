@@ -4,6 +4,7 @@
 
 -- ===========================================================================
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,7 +29,6 @@
 
 
 
-
 create table llx_facture
 (
   rowid SERIAL PRIMARY KEY,
@@ -41,11 +41,12 @@ create table llx_facture
   "date_valid"          date,      -- date de validation
   "paye"                smallint DEFAULT 0 NOT NULL,
   "amount"              real     DEFAULT 0 NOT NULL,
-  "remise_percent"      real     DEFAULT 0,   -- remise globale en pourcent
-  "remise"              real     DEFAULT 0,
-  "tva"                 real     DEFAULT 0,   -- montant tva apres remise globale
-  "total"               real     DEFAULT 0,   -- montant total ht apres remise globale
-  "total_ttc"           real     DEFAULT 0,   -- montant total ttc apres remise globale
+  "remise_percent"      real     DEFAULT 0,   -- remise relative
+  "remise_absolue"      real     DEFAULT 0,   -- remise absolue
+  "remise"              real     DEFAULT 0,   -- remise totale calculee
+  "tva"                 real     DEFAULT 0,   -- montant tva apres remise totale
+  "total"               real     DEFAULT 0,   -- montant total ht apres remise totale
+  "total_ttc"           real     DEFAULT 0,   -- montant total ttc apres remise totale
   "fk_statut"           smallint DEFAULT 0 NOT NULL,
   "fk_user_author"      integer,   -- createur de la facture
   "fk_user_valid"       integer,   -- valideur de la facture
@@ -54,8 +55,6 @@ create table llx_facture
   "fk_mode_reglement"   integer,                      -- mode de reglement (Virement, Prélèvement)
   "date_lim_reglement"  date,                         -- date limite de reglement
   "note"                text,
-  "model"               varchar(50),
-  UNIQUE(facnumber)
+  "note_public"         text,
+  "model"               varchar(50)
 );
-
-CREATE INDEX idx_llx_facture_facnumber ON llx_facture (facnumber);

@@ -30,7 +30,10 @@
 create table llx_actioncomm
 (
   id SERIAL PRIMARY KEY,
-  "datea"          timestamp,            -- action date
+  "datec"          timestamp,             -- date creation
+  "datep"          timestamp,             -- date 0%
+  "datea"          timestamp,             -- date 100%
+  "tms"            timestamp,            -- date modif
   "fk_action"      integer,
   "label"          varchar(50) NOT NULL, -- libelle de l'action
   "fk_soc"         integer,
@@ -41,6 +44,7 @@ create table llx_actioncomm
   "percent"        smallint NOT NULL default 0,
   "note"           text,
   "propalrowid"    integer,
+  "fk_commande"    integer,
   "fk_facture"     integer
 );
 

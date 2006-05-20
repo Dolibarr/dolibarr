@@ -2,8 +2,8 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ============================================================================
--- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
+-- ===================================================================
+-- Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,15 +21,13 @@
 --
 -- $Id$
 -- $Source$
--- ============================================================================
+-- ===================================================================
 
-create table llx_accountingsystem
+
+create table llx_facture_stats
 (
-  pcg_version       varchar(12)     PRIMARY KEY,
-  "fk_pays"           integer         NOT NULL,
-  "label"             varchar(128)    NOT NULL,
-  "datec"             varchar(12)     NOT NULL,
-  "fk_author"         varchar(20),
-  "tms"               timestamp,
-  "active"            smallint        DEFAULT 0
+  "date_full"       timestamp,
+  "date_day"        date,
+  "data"            varchar(50),
+  "value"           real
 );

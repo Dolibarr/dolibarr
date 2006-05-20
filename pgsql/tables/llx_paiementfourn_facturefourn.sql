@@ -5,6 +5,7 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
 -- Copyright (C) 2005 Marc Barilley / Océbo <marc@ocebo.com>
+-- Copyright (C) 2005 Laurent Destailleur   <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,15 +23,12 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===========================================================================
 
 create table llx_paiementfourn_facturefourn
 (
   rowid SERIAL PRIMARY KEY,
-  "fk_paiementfourn" int4 default NULL,
-  "fk_facturefourn"  int4 default NULL,
-  "amount" real default '0',
-  UNIQUE(fk_facturefourn),
-  UNIQUE(fk_paiementfourn)
+  "fk_paiementfourn" INT(11) DEFAULT NULL,
+  "fk_facturefourn"  INT(11) DEFAULT NULL,
+  "amount" real DEFAULT '0'
 );

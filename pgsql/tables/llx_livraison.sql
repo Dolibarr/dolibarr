@@ -25,41 +25,28 @@
 -- ===================================================================
 
 
-
-create table llx_commande
+create table llx_livraison
 (
   rowid SERIAL PRIMARY KEY,
   "tms"                   timestamp,
   "fk_soc"                integer NOT NULL,
   "fk_soc_contact"        integer,
-  "fk_projet"             integer DEFAULT 0,             -- projet auquel est rattache la commande
-  "ref"                   varchar(30) NOT NULL,          -- order number
-  "ref_client"            varchar(30),                   -- customer order number
+  "fk_commande"           integer DEFAULT 0,             -- commande auquel est rattache le bon de livraison
+  "fk_expedition"         integer,                       -- expedition auquel est rattache le bon de livraison
+  "ref"                   varchar(30) NOT NULL,          -- delivery number
   "date_creation"         timestamp,                      -- date de creation 
   "date_valid"            timestamp,                      -- date de validation
-  "date_cloture"          timestamp,                      -- date de cloture
-  "date_commande"         date,                          -- date de la commande
-  "fk_user_author"        integer,                       -- createur de la commande
-  "fk_user_valid"         integer,                       -- valideur de la commande
-  "fk_user_cloture"       integer,                       -- auteur cloture
-  "source"                smallint NOT NULL,
+  "fk_user_author"        integer,                       -- createur du bon de livraison
+  "fk_user_valid"         integer,                       -- valideur du bon de livraison
   "fk_statut"             smallint  default 0,
-  "amount_ht"             real      default 0,
-  "remise_percent"        real      default 0,
-  "remise_absolue"      	real      default 0,
-  "remise"                real      default 0,
-  "tva"                   real      default 0,
   "total_ht"              real      default 0,
   "total_ttc"             real      default 0,
   "note"                  text,
   "note_public"           text,
   "model_pdf"             varchar(50),
-  "facture"               smallint   default 0,
-  "fk_cond_reglement"     integer,                       -- condition de réglement
-  "fk_mode_reglement"     integer,                       -- mode de réglement
-  "date_livraison" 	    date 	  default NULL,
+  "date_livraison" 	      date 	  default NULL,
   "fk_adresse_livraison"  integer,                       -- adresse de livraison
   UNIQUE(ref)
 );
 
-CREATE INDEX idx_llx_commande_ref ON llx_commande (ref);
+CREATE INDEX idx_llx_livraison_ref ON llx_livraison (ref);

@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,15 +19,14 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
+-- $Id: llx_livraison.key.sql,v 1.1 2006/05/05 15:28:06 hregis Exp $
+-- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_livraison.key.sql,v $
 --
 -- ============================================================================
 
 
-create table llx_livre_to_auteur
-(
-  "fk_livre"       integer NOT NULL,
-  "fk_auteur"      integer NOT NULL,
-  UNIQUE(fk_livre, fk_auteur)
-);
+-- Supprimme orphelins pour permettre montée de la clé
+-- V4 DELETE llx_livraison FROM llx_livraison LEFT JOIN llx_societe ON llx_livraison.fk_soc = llx_societe.idp WHERE llx_societe.idp IS NULL; 
+
+ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_soc (fk_soc);
+ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);

@@ -2,8 +2,9 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ============================================================================
--- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
+-- ===================================================================
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,15 +22,15 @@
 --
 -- $Id$
 -- $Source$
--- ============================================================================
+-- ===================================================================
 
-create table llx_accountingsystem
+
+create table llx_comfourn_facfourn
 (
-  pcg_version       varchar(12)     PRIMARY KEY,
-  "fk_pays"           integer         NOT NULL,
-  "label"             varchar(128)    NOT NULL,
-  "datec"             varchar(12)     NOT NULL,
-  "fk_author"         varchar(20),
-  "tms"               timestamp,
-  "active"            smallint        DEFAULT 0
+  rowid SERIAL PRIMARY KEY,
+  "fk_commande" integer NOT NULL,
+  "fk_facture"  integer NOT NULL
 );
+
+CREATE INDEX idx_llx_comfourn_facfourn_fk_commande ON llx_comfourn_facfourn (fk_commande);
+CREATE INDEX idx_llx_comfourn_facfourn_fk_facture ON llx_comfourn_facfourn (fk_facture);

@@ -34,5 +34,5 @@ create table llx_cond_reglement
   "libelle_facture" text,
   "fdm"             smallint,    -- reglement fin de mois
   "nbjour"          smallint,
-  "decalage"		smallint
+  "decalage"		  smallint
 );

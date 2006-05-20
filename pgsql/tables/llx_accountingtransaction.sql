@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,16 +21,17 @@
 --
 -- $Id$
 -- $Source$
---
 -- ============================================================================
 
-create table llx_lieu_concert
+create table llx_accountingtransaction
 (
   rowid SERIAL PRIMARY KEY,
-  "tms"              timestamp,
-  "nom"              varchar(64) NOT NULL,
-  "description"      text,
-  "ville"            varchar(64) NOT NULL,
-  "fk_user_author"   integer
+	"label"           varchar(128)    NOT NULL,
+	"datec"           date 			NOT NULL,
+	"fk_author"       varchar(20)		NOT NULL,
+	"tms"             timestamp,
+	"fk_facture"			integer,
+	"fk_facture_fourn"	integer,
+	"fk_paiement"			integer,
+	"fk_paiement_fourn"	integer
 );
-

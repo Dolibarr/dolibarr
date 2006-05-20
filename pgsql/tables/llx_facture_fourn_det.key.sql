@@ -2,8 +2,7 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- ===================================================================
 -- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -22,11 +21,11 @@
 --
 -- $Id$
 -- $Source$
---
--- ===========================================================================
+-- ===================================================================
 
 
-ALTER TABLE llx_accountingsystem_det ADD INDEX idx_accountingsystem_det_fk_pcg_version (fk_pcg_version);
+-- Supprimme orphelins pour permettre montée de la clé
+-- V4 DELETE llx_facture_fourn_det FROM llx_facture_fourn_det LEFT JOIN llx_facture_fourn ON llx_facture_fourn_det.fk_facture_fourn = llx_facture_fourn.rowid WHERE llx_facture_fourn.rowid IS NULL;
 
-
-ALTER TABLE llx_accountingsystem_det ADD CONSTRAINT fk_accountingsystem_det_fk_pcg_version  FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accountingsystem (pcg_version);
+ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk_facture_fourn);
+ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture FOREIGN KEY (fk_facture_fourn) REFERENCES llx_facture_fourn (rowid);

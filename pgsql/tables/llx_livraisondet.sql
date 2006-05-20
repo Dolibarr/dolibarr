@@ -2,8 +2,8 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ============================================================================
--- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
+-- ===================================================================
+-- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,15 +21,15 @@
 --
 -- $Id$
 -- $Source$
--- ============================================================================
+-- ===================================================================
 
-create table llx_accountingsystem
+create table llx_livraisondet
 (
-  pcg_version       varchar(12)     PRIMARY KEY,
-  "fk_pays"           integer         NOT NULL,
-  "label"             varchar(128)    NOT NULL,
-  "datec"             varchar(12)     NOT NULL,
-  "fk_author"         varchar(20),
-  "tms"               timestamp,
-  "active"            smallint        DEFAULT 0
+  rowid SERIAL PRIMARY KEY,
+  "fk_livraison"      integer,
+  "fk_commande_ligne" integer NOT NULL,
+  "qty"               real              -- quantité
 );
+
+CREATE INDEX idx_llx_livraisondet_fk_livraison ON llx_livraisondet (fk_livraison);
+CREATE INDEX idx_llx_livraisondet_fk_commande_ligne ON llx_livraisondet (fk_commande_ligne);

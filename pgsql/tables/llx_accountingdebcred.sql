@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,31 +21,12 @@
 --
 -- $Id$
 -- $Source$
---
 -- ============================================================================
 
-
-create table llx_product
+create table llx_accountingdebcred
 (
-  rowid SERIAL PRIMARY KEY,
-  "datec"              timestamp,
-  "tms"                timestamp,
-  "ref"                varchar(16) NOT NULL,
-  "label"              varchar(128),
-  "description"        varchar(255),
-  "note"               text,
-  "price"              real,
-  "tva_tx"             real,
-  "fk_user_author"     integer,
-  "envente"            smallint DEFAULT 1,
-  "nbvente"            integer DEFAULT 0,
-  "fk_product_type"    integer DEFAULT 0,
-  "duration"           varchar(6),
-  "stock_propale"      integer DEFAULT 0,
-  "stock_commande"     integer DEFAULT 0,
-  "seuil_stock_alerte" integer DEFAULT 0,
-  "gencode"            varchar(255) DEFAULT NULL
+	"fk_transaction"  integer		NOT NULL,
+	"fk_account"      integer		NOT NULL,
+	"amount"          real		NOT NULL,
+	"direction"       varchar(1)	NOT NULL
 );
-
-
-

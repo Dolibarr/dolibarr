@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,27 +25,8 @@
 -- ============================================================================
 
 
-create table llx_product
-(
-  rowid SERIAL PRIMARY KEY,
-  "datec"              timestamp,
-  "tms"                timestamp,
-  "ref"                varchar(16) NOT NULL,
-  "label"              varchar(128),
-  "description"        varchar(255),
-  "note"               text,
-  "price"              real,
-  "tva_tx"             real,
-  "fk_user_author"     integer,
-  "envente"            smallint DEFAULT 1,
-  "nbvente"            integer DEFAULT 0,
-  "fk_product_type"    integer DEFAULT 0,
-  "duration"           varchar(6),
-  "stock_propale"      integer DEFAULT 0,
-  "stock_commande"     integer DEFAULT 0,
-  "seuil_stock_alerte" integer DEFAULT 0,
-  "gencode"            varchar(255) DEFAULT NULL
-);
+-- Supprimme orphelins pour permettre montée de la clé
+-- V4 DELETE llx_commande FROM llx_commande LEFT JOIN llx_societe ON llx_commande.fk_soc = llx_societe.idp WHERE llx_societe.idp IS NULL; 
 
-
-
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_soc (fk_soc);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);

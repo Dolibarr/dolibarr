@@ -3,7 +3,8 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,14 +22,10 @@
 --
 -- $Id$
 -- $Source$
---
--- ============================================================================
+-- ===========================================================================
 
-create table llx_auteur
-(
-  rowid SERIAL PRIMARY KEY,
-  "oscid"           integer NOT NULL,
-  "tms"             timestamp,
-  "nom"		          varchar(255),
-  "fk_user_author"  integer
-);
+
+ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version);
+
+
+ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version  FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accountingsystem (pcg_version);
