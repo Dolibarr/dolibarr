@@ -36,8 +36,8 @@ class Translate {
     var $dir;
     var $defaultlang;
 
-    var $tab_loaded=array();
-    var $tab_translate=array();
+    var $tab_loaded=array();		// Tableau pour signaler les fichiers deja chargés
+    var $tab_translate=array();		// Tableau des traductions
 
 
     /**
@@ -48,6 +48,35 @@ class Translate {
     {
         $this->dir=$dir;
     }
+
+
+	/**
+	 *	\brief		Renvoie la chaine traduite pour une clé donnée.
+	 *				Le tableau des traductions doit avoir été chargé.
+	 *	\param		key			Clé de traduction
+	 *	\return		string		Chaine de traduction
+	 */
+	function getTransFromTab($key)
+	{
+		if (isset($this->tab_translate[$key]) && $this->tab_translate[$key])
+		{
+			return $this->tab_translate[$key];
+		}
+		else
+		{
+			return '';
+		}
+	}
+
+	/**
+	 *	\brief		Positionne la chaine traduite pour une clé donnée.
+	 *	\param		key			Clé de traduction
+	 *	\param		value		Chaine de traduction
+	 */
+	function setTransFromTab($key,$value)
+	{
+		$this->tab_translate[$key]=$value;
+	}
 
 
     /**
@@ -141,7 +170,7 @@ class Translate {
                     {
                         $tab=split('=',$ligne,2);
                         //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-                        if (! isset($this->tab_translate[$tab[0]])) $this->tab_translate[$tab[0]]=trim(isset($tab[1])?$tab[1]:'');
+                        if (! $this->getTransFromTab($tab[0])) $this->setTransFromTab($tab[0],trim(isset($tab[1])?$tab[1]:''));
                     }
                 }
                 fclose($fp);
@@ -173,6 +202,7 @@ class Translate {
      *  \brief       Retourne la version traduite du texte passé en paramètre
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
      *               et si toujours pas trouvé, il est retourné tel quel
+     *               Les paramètres de cette méthode peuvent contenir de balises HTML.
      *  \param       str         chaine a traduire
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
@@ -188,21 +218,22 @@ class Translate {
     /**
      *  \brief       Retourne la version traduite du texte passé en paramètre
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-     *               et si toujours pas trouvé, il est retourné tel quel
-     *  \param       str         chaine a traduire
+     *               et si toujours pas trouvé, il est retourné tel quel.
+     *               Les paramètres de cette méthode ne doivent pas contenir de balises HTML.
+     *  \param       key         clé de chaine a traduire
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
      *  \param       param3      chaine de param1
      *  \return      string      chaine traduite
      */
-    function transnoentities($str, $param1='', $param2='', $param3='')
+    function transnoentities($key, $param1='', $param2='', $param3='')
     {
-        if (isset($this->tab_translate[$str]) && $this->tab_translate[$str])
+        if ($this->getTransFromTab($key))
         {
             // Si la traduction est disponible
-            return sprintf($this->tab_translate[$str],$param1,$param2,$param3);
+            return sprintf($this->tab_translate[$key],$param1,$param2,$param3);
         }
-        return $str;
+        return $key;
     }
 
 

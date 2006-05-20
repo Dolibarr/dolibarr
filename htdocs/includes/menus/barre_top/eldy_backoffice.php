@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,11 @@ class MenuTop {
      */
     function MenuTop($db)
     {
+        global $langs;
         $this->db=$db;
+        
+        $langs->setTransFromTab("Company",$langs->trans("ThirdParty"));
+        $langs->setTransFromTab("NewCompany",$langs->trans("NewThirdParty"));
     }
     
     

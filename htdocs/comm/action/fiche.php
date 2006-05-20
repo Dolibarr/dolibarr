@@ -524,7 +524,7 @@ if ($_GET["id"])
 
     print '<div class="tabsAction">';
 
-    if ($_GET["action"] != 'edit')
+    if ($_GET["action"] != 'edit' && $_GET["action"] != 'delete')
     {
         print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
 

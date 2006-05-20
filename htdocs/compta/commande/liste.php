@@ -53,7 +53,9 @@ if ($user->societe_id > 0)
 llxHeader();
 
 
-$sql = "SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande, c.fk_statut";
+$sql = "SELECT s.nom, s.idp,";
+$sql.= " c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande,";
+$sql.= " c.fk_statut, c.facture";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -143,7 +145,7 @@ if ($resql)
         print " <a href=\"liste.php?year=$y\">";
         print strftime("%Y",$objp->date_commande)."</a></td>\n";
 
-		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,5).'</td>';
+		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facture,5).'</td>';
         print "</tr>\n";
 
         $total = $total + $objp->price;

@@ -175,7 +175,9 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
  */
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, a.fk_user_author, a.percent,";
+$sql.= " c.code, c.libelle,";
+$sql.= " s.nom as sname, s.idp";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -184,37 +186,39 @@ if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = 
 $sql .= " ORDER BY a.datea DESC";
 
 $resql=$db->query($sql);
-if ($resql) 
+if ($resql)
 {
-  $num = $db->num_rows($resql);
-  if ($num > 0)
-    {
-      $var=true;
-
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="4">'.$langs->trans("ActionsToDo").'</td>';
-      print "</tr>\n";
-      
-      $i = 0;
-      while ($i < $num ) 
+	$num = $db->num_rows($resql);
+	if ($num > 0)
 	{
-	  $obj = $db->fetch_object($resql);
-	  $var=!$var;
-	  
-	  print "<tr $bc[$var]><td>".dolibarr_print_date($obj->da)."</td>";
+		$var=true;
 
-      $transcode=$langs->trans("Action".$obj->code);
-      $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id."\">".img_object($langs->trans("ShowAction"),"task").' '.$libelle.'</a></td>';
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="4">'.$langs->trans("ActionsToDo").'</td>';
+		print "</tr>\n";
 
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->sname.'</a></td>';
-	  $i++;
+		$i = 0;
+		while ($i < $num )
+		{
+			$obj = $db->fetch_object($resql);
+			$var=!$var;
+
+			print "<tr $bc[$var]><td>".dolibarr_print_date($obj->da)."</td>";
+
+			// Action
+			$transcode=$langs->trans("Action".$obj->code);
+			$libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id."\">".img_object($langs->trans("ShowAction"),"task").' '.$libelle.'</a></td>';
+
+			// Tiers
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->sname.'</a></td>';
+			$i++;
+		}
+		print "</table><br>";
 	}
-      print "</table><br>";
-    }
-  $db->free($resql);
-} 
+	$db->free($resql);
+}
 else
 {
   dolibarr_print_error($db);

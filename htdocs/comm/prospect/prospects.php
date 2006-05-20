@@ -135,7 +135,7 @@ if ($resql)
     $urladd="page=$page";
     if (isset($stcomm)) $urladd.="&amp;stcomm=".$stcomm;
 
-    print_barre_liste($langs->trans("ListOfProspects"), $page, "prospects.php",'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
+    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],'&amp;stcomm='.$_GET["stcomm"],$sortfield,$sortorder,'',$num);
 
     $i = 0;
 

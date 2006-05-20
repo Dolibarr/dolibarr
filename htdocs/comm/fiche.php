@@ -461,10 +461,10 @@ if ($socidp > 0)
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
+                print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
                 print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
                 print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
-                print '<td align="center" width="100">'.$commande_static->status_label_short[$objp->fk_statut].'</td></tr>';
+                print '<td align="right" width="100">'.$commande_static->LibStatut($objp->fk_statut,5).'</td></tr>';
                 $i++;
             }
             $db->free($resql);

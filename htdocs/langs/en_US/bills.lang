@@ -121,7 +121,6 @@ ChangeIntoRepeatableInvoice=Change into repeatable
 CreateRepeatableInvoice=Create repeatable invoice
 ExportDataset_invoice_1=Customer invoices list and invoices' lines
 ProformaBill=Proforma Bill:
-VATIsUsed=Using VAT
 CreditNote=Credit note
 CreditNotes=Credit notes
 NewGlobalDiscount=New discount

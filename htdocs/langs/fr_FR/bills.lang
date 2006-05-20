@@ -121,7 +121,6 @@ ChangeIntoRepeatableInvoice=Modifier en récurrente
 CreateRepeatableInvoice=Créer facture récurrente
 ExportDataset_invoice_1=Factures clients et lignes de facture
 ProformaBill=Facture Proforma :
-VATIsUsed=Assujéti à TVA
 CreditNote=Avoir
 CreditNotes=Avoirs
 NewGlobalDiscount=Nouvel avoir
