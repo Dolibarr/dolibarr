@@ -49,7 +49,7 @@ if ($user->societe_id > 0)
 $max=5;
 
 
-$propalstatic=new Propal($db);
+if ($conf->propal->enabled) $propalstatic=new Propal($db);
 	
 
 
