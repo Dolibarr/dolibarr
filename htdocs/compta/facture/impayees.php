@@ -74,17 +74,18 @@ if ($user->rights->facture->lire)
   
   $sql = "SELECT s.nom,s.idp,f.facnumber,f.increment,f.total,f.total_ttc,";
   $sql.= $db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite, ";
-  $sql.= " f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+  $sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
+  $sql.= " ,sum(pf.amount) as am";
+  if (! $user->rights->commercial->client->voir && ! $socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
   $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+  if (! $user->rights->commercial->client->voir && ! $socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   $sql.= ",".MAIN_DB_PREFIX."facture as f";
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
   $sql.= " WHERE f.fk_soc = s.idp";
   $sql.= " AND f.paye = 0 AND f.fk_statut = 1";
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+  if (! $user->rights->commercial->client->voir && ! $socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
   if ($socidp) $sql .= " AND s.idp = $socidp";
-  
+
   if ($_GET["filtre"])
     {
       $filtrearr = split(",", $_GET["filtre"]);
