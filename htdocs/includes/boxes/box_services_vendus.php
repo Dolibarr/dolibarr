@@ -35,7 +35,7 @@ class box_services_vendus extends ModeleBoxes {
     var $boxcode="lastproductsincontract";
     var $boximg="object_product";
     var $boxlabel;
-    var $depends = array("produit");
+    var $depends = array("produit","service");
 
     var $info_box_head = array();
     var $info_box_contents = array();
@@ -62,7 +62,7 @@ class box_services_vendus extends ModeleBoxes {
 
         $this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract",$max));
 
-        if ($user->rights->produit->lire)
+        if ($user->rights->produit->lire && $user->rights->contrat->lire)
         {
             $sql  = "SELECT s.nom, s.idp, c.rowid, cd.rowid as cdid, p.rowid as pid, p.label, p.fk_product_type";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
