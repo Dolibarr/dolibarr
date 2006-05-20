@@ -336,25 +336,25 @@ class ActionComm
         {
         	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo');
         	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '.$langs->trans('StatusActionInProcess');
-        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut5').' '.$langs->trans('StatusActionDone');
+        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6').' '.$langs->trans('StatusActionDone');
         }
         if ($mode == 3)
         {
         	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1');
         	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3');
-        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut5');
+        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
         }
         if ($mode == 4)
         {
         	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo');
         	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '.$langs->trans('StatusActionInProcess');
-        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut5').' '.$langs->trans('StatusActionDone');
+        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6').' '.$langs->trans('StatusActionDone');
         }
         if ($mode == 5)
         {
         	if ($percent==0) return $langs->trans('StatusActionToDo').' '.img_picto($langs->trans('StatusActionToDo'),'statut1');
         	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' '.img_picto($langs->trans('StatusActionInProcess'),'statut3');
-        	if ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'),'statut5');
+        	if ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'),'statut6');
         }
 	}
 		
