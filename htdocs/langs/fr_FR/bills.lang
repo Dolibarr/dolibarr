@@ -126,6 +126,7 @@ GlobalDiscount=Remise globale
 CreditNote=Avoir
 CreditNotes=Avoirs
 NewGlobalDiscount=Nouvel avoir
+NoteReason=Note/Motif
 ReasonDiscount=Motif
 AddGlobalDiscount=Ajouter avoir
 DiscountOfferedBy=Accordé par

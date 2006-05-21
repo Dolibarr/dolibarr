@@ -126,6 +126,7 @@ GlobalDiscount=Global discount
 CreditNote=Credit note
 CreditNotes=Credit notes
 NewGlobalDiscount=New discount
+NoteReason=Note/Reason
 ReasonDiscount=Reason
 AddGlobalDiscount=Add discount
 DiscountOfferedBy=Granted by
