@@ -62,7 +62,9 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DO
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les envois automatiques Dolibarr (Notifications, ...)',1);
 
-insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
+insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_COMPANY','1','yesno',0,'Show form for quick company search');
+insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_CONTACT','1','yesno',0,'Show form for quick contact search');
+insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_PRODUCT','1','yesno',0,'Show form for quick product search');
 
 --
 -- IHM
@@ -78,14 +80,9 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','eldy','chaine','Thème par défaut',0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage formulaire de recherche des Contacts dans la barre de gauche',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage formulaire de recherche des Sociétés dans la barre de gauche',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_PRODUITSERVICE','1','yesno','Affichage formulaire de recherche des Produits et Services dans la barre de gauche',0);
-
 --
 -- Delai tolerance
 --
-
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_ACTIONS_TODO','7','chaine','Tolérance de retard avant alerte (en jours) sur actions planifiées non réalisées',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_ORDERS_TO_PROCESS','2','chaine','Tolérance de retard avant alerte (en jours) sur commandes non traitées',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_PROPALS_TO_CLOSE','31','chaine','Tolérance de retard avant alerte (en jours) sur propales à cloturer',0);
@@ -112,6 +109,11 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS_SUBJECT','Recu de votre cotisation','chaine','sujet du mail de validation de cotisation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_NEW_SUBJECT','Bienvenue sur %SERVEUR%','chaine','Sujet du mail de nouvelle adhesion',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_EDIT_SUBJECT','Votre fiche a ete editee sur %SERVEUR%','chaine','Sujet du mail d\'edition',0);
+
+--
+-- Module compta
+--
+insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
 --
 -- Mail Mailing
@@ -161,7 +163,7 @@ insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine'
 insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
 
 --
---
+-- Modeles de numerotation et generation document
 --
 insert into llx_const (name, value, type, visible) values ('DON_ADDON',           'html_cerfafr','chaine',0);
 insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',       'mod_propale_marbre','chaine',0);

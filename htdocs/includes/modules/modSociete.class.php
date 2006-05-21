@@ -24,21 +24,21 @@
  */
 
 /** 
-    \defgroup   societe     Module societe
-    \brief      Module pour gérer les societes et contacts clients
+		\defgroup   societe     Module societe
+		\brief      Module pour gérer les societes et contacts clients
 */
 
 /**
-   \file       htdocs/includes/modules/modSociete.class.php
-   \ingroup    societe
-   \brief      Fichier de description et activation du module Societe
+		\file       htdocs/includes/modules/modSociete.class.php
+		\ingroup    societe
+		\brief      Fichier de description et activation du module Societe
 */
 
 include_once "DolibarrModules.class.php";
 
 /** 
-    \class      modSociete
-    \brief      Classe de description et activation du module Societe
+		\class      modSociete
+		\brief      Classe de description et activation du module Societe
 */
 
 class modSociete extends DolibarrModules
@@ -76,12 +76,28 @@ class modSociete extends DolibarrModules
     
     // Constantes
     $this->const = array();
+    $r=0;
     
-    $this->const[0][0] = "SOCIETE_FISCAL_MONTH_START";
-    $this->const[0][1] = "chaine";
-    $this->const[0][2] = "0";
-    $this->const[0][3] = "Mettre le numéro du mois du début d\'année fiscale, ex: 9 pour septembre";
-    $this->const[0][4] = 1;
+    $this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
+    $this->const[$r][1] = "chaine";
+    $this->const[$r][2] = "0";
+    $this->const[$r][3] = "Mettre le numéro du mois du début d\'année fiscale, ex: 9 pour septembre";
+    $this->const[$r][4] = 1;
+	$r++;
+	
+    $this->const[$r][0] = "MAIN_SEARCHFORM_SOCIETE";
+    $this->const[$r][1] = "yesno";
+    $this->const[$r][2] = "1";
+    $this->const[$r][3] = "Affichage formulaire de recherche des Sociétés dans la barre de gauche";
+    $this->const[$r][4] = 0;
+	$r++;
+
+    $this->const[$r][0] = "MAIN_SEARCHFORM_CONTACT";
+    $this->const[$r][1] = "yesno";
+    $this->const[$r][2] = "1";
+    $this->const[$r][3] = "Affichage formulaire de recherche des Contacts dans la barre de gauche";
+    $this->const[$r][4] = 0;
+	$r++;
 
     // Boxes
     $this->boxes = array();
