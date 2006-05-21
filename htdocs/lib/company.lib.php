@@ -31,7 +31,7 @@
 
 function societe_prepare_head($objsoc)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 	
@@ -97,7 +97,7 @@ function societe_prepare_head($objsoc)
     $head[$h][2] = 'info';
     $h++;
 
-    if ($user->societe_id == 0)
+    if ($conf->bookmark->enabled && $user->rights->bookmark->creer)
     {
         $head[$h][0] = DOL_URL_ROOT."/bookmarks/fiche.php?action=add&amp;socid=".$objsoc->id."&amp;urlsource=".$_SERVER["PHP_SELF"]."?socid=".$objsoc->id;
         $head[$h][1] = img_object($langs->trans("BookmarkThisPage"),'bookmark');
