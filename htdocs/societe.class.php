@@ -864,32 +864,63 @@ class Societe
       }
   }
 
-  /**
-   *    \brief      Définit la société comme un client
-   *    \param      remise      montant de la remise
-   *    \param      user        utilisateur qui place la remise
-   */
-  function set_remise_client($remise, $user)
-  {
-    if ($this->id)
-      {
-	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	$sql .= " SET remise_client = '".$remise."'";
-	$sql .= " WHERE idp = " . $this->id .";";
+	/**
+	 *    	\brief      Définit la société comme un client
+	 *    	\param      remise		Valeur en % de la remise
+	 *    	\param      note		Note/Motif de modification de la remise
+	 *    	\param      user		Utilisateur qui définie la remise
+	 *		\return		int			<0 si ko, >0 si ok
+	 */
+	function set_remise_client($remise, $note, $user)
+	{
+		global $langs;
+		
+		// Nettoyage parametres
+		$note=trim($note);
+		if (! $note)
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Note"));
+			return -2;
+		}
 
-	$this->db->query($sql);
+		dolibarr_syslog("Societe::set_remise_client $remise, $note, $user");
 
-	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
-	$sql .= " ( datec, fk_soc, remise_client, fk_user_author )";
-	$sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
+		if ($this->id)
+		{
+			$this->db->begin();
+			
+			// Positionne remise courante
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
+			$sql.= " SET remise_client = '".$remise."'";
+			$sql.= " WHERE idp = " . $this->id .";";
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -1;
+			}
+		
+			// Ecrit trace dans historique des remises
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
+			$sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
+			$sql.= " VALUES (now(), ".$this->id.", '".$remise."',";
+			$sql.= " '".addslashes($note)."',";
+			$sql.= " ".$user->id;
+			$sql.= ")";
 
-	if (! $this->db->query($sql) )
-	  {
-	    dolibarr_print_error($this->db);
-	  }
-
-      }
-  }
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -1;
+			}
+		
+			$this->db->commit();
+			return 1;
+		}
+	}
 
 	/**
 	 *    	\brief      Ajoute un avoir pour la société

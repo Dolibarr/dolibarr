@@ -44,10 +44,17 @@ if ($_POST["action"] == 'setremise')
 {
     $soc = New Societe($db);
     $soc->fetch($_GET["id"]);
-    $soc->set_remise_client($_POST["remise"],$user);
-        
-    Header("Location: remise.php?id=".$_GET["id"]);
-    exit;
+    $result=$soc->set_remise_client($_POST["remise"],$_POST["note"],$user);
+
+	if ($result > 0)
+	{        
+    	Header("Location: remise.php?id=".$_GET["id"]);
+    	exit;
+	}
+	else
+	{
+		$errmesg=$soc->error;
+	}
 }
 
 
@@ -99,12 +106,19 @@ if ($_socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" width="100%">';
 
+    // Remise
     print '<tr><td colspan="2" width="25%">';
     print $langs->trans("CustomerRelativeDiscount").'</td><td colspan="2">'.$objsoc->remise_client."%</td></tr>";
 
+    // Nouvelle valeur
     print '<tr><td colspan="2">';
     print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.$objsoc->remise_client.'">%</td></tr>';
-    print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+
+    // Motif/Note
+    print '<tr><td colspan="2" width="25%">';
+    print $langs->trans("Note").'</td><td colspan="2"><input type="text" size="60" name="note" value=""></td></tr>';
+
+    print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 
     print "</table>";
     print "</form>";
@@ -120,7 +134,7 @@ if ($_socid > 0)
     /*
      * Liste de l'historique des avoirs
      */
-    $sql  = "SELECT rc.rowid,rc.remise_client,".$db->pdate("rc.datec")." as dc,";
+    $sql  = "SELECT rc.rowid,rc.remise_client,rc.note,".$db->pdate("rc.datec")." as dc,";
     $sql.= " u.rowid as user_id, u.code";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
     $sql.= " WHERE rc.fk_soc =". $objsoc->id;
@@ -133,8 +147,9 @@ if ($_socid > 0)
 	print '<table class="noborder" width="100%">';
 	$tag = !$tag;
 	print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Date").'</td>';
-    print '<td>'.$langs->trans("CreditNote").'</td>';
+    print '<td width="160">'.$langs->trans("Date").'</td>';
+    print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
+    print '<td align="left">'.$langs->trans("Note").'</td>';
     print '<td align="center">'.$langs->trans("User").'</td>';
 	print '</tr>';
 	$i = 0 ; 
@@ -146,7 +161,8 @@ if ($_socid > 0)
 	    $tag = !$tag;
 	    print '<tr '.$bc[$tag].'>';
 	    print '<td>'.dolibarr_print_date($obj->dc,"%d %B %Y %H:%M").'</td>';
-	    print '<td>'.$obj->remise_client.' %</td>';
+	    print '<td align="center">'.$obj->remise_client.' %</td>';
+	    print '<td align="left">'.$obj->note.'</td>';
 	    print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
 	    print '</tr>';
 	    $i++;
