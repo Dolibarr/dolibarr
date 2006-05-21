@@ -143,6 +143,12 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     
     if ($_POST["action"] == 'update')
     {
+        if ($_POST["cancel"])
+        {
+            Header("Location: soc.php?socid=".$socid);
+            exit;
+        }
+        
         $result = $soc->update($socid,$user);
         if ($result >= 0)
         {
@@ -609,7 +615,11 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
         print '</td></tr>';
 
-        print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+        print '<tr><td align="center" colspan="4">';
+        print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; ';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</td></tr>';
 
         print '</table>';
         print '</form>';
