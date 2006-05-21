@@ -121,13 +121,11 @@ if ($_socid > 0)
     print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 
     print "</table>";
-    print "</form>";
-
-    print "</td>\n";
-    
-
     print "</td></tr>";
-    print "</table></div>\n";    
+    print '</table>';
+    print "</form>";
+    
+    print "</div>\n";
     print '<br>';        
 
 
