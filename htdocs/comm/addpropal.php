@@ -125,7 +125,7 @@ if ($_GET["action"] == 'create')
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
 
-	// Remise relative
+    // Réductions relatives (Remises-Ristournes-Rabbais)
 	$relative_discount=$soc->remise_client;
 	print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
 	print '<td>';
@@ -141,7 +141,7 @@ if ($_GET["action"] == 'create')
 	}
 	print '</td></tr>';
 
-	// Remise avoirs
+    // Réductions absolues (Remises-Ristournes-Rabbais)
 	$absolute_discount=$soc->getCurrentDiscount();
 	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
 	print '<td>';

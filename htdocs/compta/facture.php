@@ -753,7 +753,7 @@ if ($_GET['action'] == 'create')
 	$html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
-	// Remise relative
+    // Réductions absolues (Remises-Ristournes-Rabbais)
 	print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
 	print '<td>';
 	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '<input type="text" name="remise_percent" size="1" value="';
@@ -772,7 +772,7 @@ if ($_GET['action'] == 'create')
 	}
 	print '</td></tr>';
 
-	// Remise avoirs
+    // Réductions absolues (Remises-Ristournes-Rabbais)
 	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
 	print '<td>';
 	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '<input type="text" name="remise_absolue" size="1" value="';

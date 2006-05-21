@@ -287,7 +287,7 @@ if ($socidp > 0)
 	print "</td>";
 	print '</tr>';
 
-    // Remise permanente
+    // Réductions relative (Remises-Ristournes-Rabbais)
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerRelativeDiscountShort");
@@ -297,7 +297,7 @@ if ($socidp > 0)
     print '</td><td colspan="3">'.($objsoc->remise_client?$objsoc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
     print '</tr>';
     
-    // Remise avoirs
+    // Réductions absolues (Remises-Ristournes-Rabbais)
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding">';
     print '<tr><td nowrap>';

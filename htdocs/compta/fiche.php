@@ -183,7 +183,7 @@ if ($socid > 0)
         print '</td><td colspan="3">'.($societe->remise_client?$societe->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
         print '</tr>';
         
-        // Remise avoirs
+        // Réductions (Remises-Ristournes-Rabbais)
         print '<tr><td nowrap>';
         print '<table width="100%" class="nobordernopadding">';
         print '<tr><td nowrap>';
