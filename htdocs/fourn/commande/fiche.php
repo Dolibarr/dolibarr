@@ -418,7 +418,7 @@ if ($_GET["id"] > 0)
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td align="center">'.$langs->trans("VAT").'</td>';
 				print '<td align="center">'.$langs->trans("Qty").'</td>';
-				print '<td align="right">'.$langs->trans("Discount").'</td>';
+				print '<td align="right">'.$langs->trans("ReductionShort").'</td>';
 				print '<td align="right">'.$langs->trans("PriceU").'</td>';
 				print '<td>&nbsp;</td><td width="10%">&nbsp;</td>';
 				print "</tr>\n";
@@ -497,7 +497,7 @@ if ($_GET["id"] > 0)
 			print '<td colspan="2">'.$langs->trans("Description").'</td>';
 			print '<td align="center">'.$langs->trans("VAT").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td>';
-			print '<td align="right">'.$langs->trans("Discount").'</td>';
+			print '<td align="right">'.$langs->trans("ReductionShort").'</td>';
 			print '<td align="right">'.$langs->trans("PriceU").'</td>';
 			print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
 

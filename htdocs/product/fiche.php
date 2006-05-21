@@ -812,7 +812,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
                     print "<td nowrap=\"nowrap\">".dolibarr_print_date($objp->dp,"%d %b")."</td>\n";
                     print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
-                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
+                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
                     print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
                     print " ".$product->stock_proposition;
                     print '</td><td align="right">';
@@ -851,7 +851,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				$html->select_array("propalid", $otherprop);
 				print '</td></tr>';
 				print '<tr '.$bc[$var].'><td nowrap="nowrap" colspan="2">'.$langs->trans("Qty");
-				print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
+				print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
 				print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
 				print '</td><td align="right">';
 				print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -920,7 +920,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     print "<td><a href=\"../comm/fiche.php?socid=$objc->idp\">".dolibarr_trunc($objc->nom,18)."</a></td>\n";
                     print "<td nowrap=\"nowrap\">".dolibarr_print_date($objc->dc,"%d %b")."</td>\n";
                     print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
-                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
+                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
                     print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
                     print " ".$product->stock_proposition;
                     print '</td><td align="right">';
@@ -959,7 +959,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
             $html->select_array("commandeid", $othercom);
             print '</td></tr>';
             print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("Qty");
-            print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
+            print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
             print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
             print '</td><td align="right">';
             print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -1024,7 +1024,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
                     print "<td nowrap=\"nowrap\">".dolibarr_print_date($objp->df,"%d %b")."</td>\n";
                     print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
+                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
                     print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
                     print '</td><td align="right">';
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -1082,7 +1082,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
                     print '<input type="hidden" name="action" value="addinfacture">';
                     print "</td>";
                     print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("Discount");
+                    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
                     print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
                     print '</td><td align="right">';
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';

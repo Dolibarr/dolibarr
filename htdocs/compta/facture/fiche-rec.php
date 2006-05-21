@@ -178,7 +178,7 @@ if ($_GET["action"] == 'create')
 				print '<td width="54%">'.$langs->trans("Description").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-				print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
+				print '<td width="8%" align="right">'.$langs->trans("ReductionShort").'</td>';
 				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 				print '<td width="12%" align="right">N.P.</td>';
 				print "</tr>\n";
@@ -336,7 +336,9 @@ else
 
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
-			print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
+			print '<td align="right">'.$langs->trans("Price").'</td>';
+			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
+			print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
 
 			$num = sizeof($fac->lignes);
 			$i = 0;

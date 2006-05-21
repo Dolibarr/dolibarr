@@ -201,7 +201,7 @@ class pdf_edison extends ModelePDFCommandes
 	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalHT"), 0, 'R', 0);
 	      
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh);
-	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("Discount"), 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("Reduction"), 0, 'R', 0);
 
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh*2);
 	      $pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);

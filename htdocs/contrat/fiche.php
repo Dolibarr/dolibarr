@@ -424,7 +424,9 @@ if ($_GET["action"] == 'create')
 
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
-                print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
+                print '<td align="right">'.$langs->trans("Price").'</td>';
+                print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
+                print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
 
                 $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
                 $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
@@ -647,7 +649,7 @@ else
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
-                print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
+                print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
                 print '<td width="30">&nbsp;</td>';
                 print '<td width="30" align="center">'.$langs->trans("Status").'</td>';
                 print "</tr>\n";
@@ -841,7 +843,7 @@ else
             print '<td align="center">'.$langs->trans("VAT").'</td>';
             print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
             print '<td align="center">'.$langs->trans("Qty").'</td>';
-            print '<td align="right">'.$langs->trans("Discount").'</td>';
+            print '<td align="right">'.$langs->trans("ReductionShort").'</td>';
             print '<td>&nbsp;</td>';
             print '<td>&nbsp;</td>';
             print "</tr>\n";

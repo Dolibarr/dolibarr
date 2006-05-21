@@ -725,7 +725,7 @@ class pdf_crabe extends ModelePDFFactures
         if ($this->atleastonediscount)
         {
             $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-            $pdf->MultiCell(16,2, $langs->trans("Discount"),'','C');
+            $pdf->MultiCell(16,2, $langs->trans("ReductionShort"),'','C');
         }
         
         if ($this->atleastonediscount)

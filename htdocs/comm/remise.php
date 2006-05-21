@@ -118,7 +118,7 @@ if ($_socid > 0)
 
 
     /*
-     * Liste de l'historique des remises
+     * Liste de l'historique des avoirs
      */
     $sql  = "SELECT rc.rowid,rc.remise_client,".$db->pdate("rc.datec")." as dc,";
     $sql.= " u.rowid as user_id, u.code";
@@ -134,7 +134,7 @@ if ($_socid > 0)
 	$tag = !$tag;
 	print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Date").'</td>';
-    print '<td>'.$langs->trans("Discount").'</td>';
+    print '<td>'.$langs->trans("CreditNote").'</td>';
     print '<td align="center">'.$langs->trans("User").'</td>';
 	print '</tr>';
 	$i = 0 ; 

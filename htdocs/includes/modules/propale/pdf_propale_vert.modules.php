@@ -266,7 +266,7 @@ class pdf_propale_vert extends ModelePDFPropales
       
       $pdf->line(166, $tab_top, 166, $tab_top + $tab_height);
       $pdf->SetXY(166, $yt);
-      $pdf->MultiCell(14,5,$langs->trans("Discount"),0,'C');
+      $pdf->MultiCell(14,5,$langs->trans("ReductionShort"),0,'C');
 
       $pdf->line(180, $tab_top, 180, $tab_top + $tab_height);
       $pdf->SetXY(180, $yt);

@@ -236,7 +236,7 @@ if ($id > 0)
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
-                print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
+                print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
                 print '<td width="16">&nbsp;</td>';
                 print '<td width="30" align="center">'.$langs->trans("Status").'</td>';
                 print "</tr>\n";

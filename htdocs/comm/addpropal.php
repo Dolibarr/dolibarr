@@ -305,7 +305,11 @@ if ($_GET["action"] == 'create')
         $lib=$langs->trans("ProductsAndServices");
 
         print '<table class="border">';
-        print '<tr><td>'.$lib.'</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td></tr>';
+        print '<tr>';
+        print '<td>'.$lib.'</td>';
+        print '<td>'.$langs->trans("Qty").'</td>';
+        print '<td>'.$langs->trans("ReductionShort").'</td>';
+        print '</tr>';
         for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
         {
             print '<tr><td>';

@@ -1057,7 +1057,7 @@ class Facture
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart, $dateend, $tva_tx)
 	{
-		dolibarr_syslog('Facture::UpdateLine');
+		dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend, $tva_tx");
 
 		if ($this->brouillon)
 		{
@@ -2206,13 +2206,19 @@ class FactureLigne
 {
     // From llx_facturedet
 	var $desc;
-	var $qty;
-	var $price;         	// Prix unitaire HT apres remise % de ligne
-	//var $price_ttc;
-	var $subprice;      	// Prix unitaire HT
-	var $tva_taux;			// Taux tva produit/service
-	var $remise_percent;	// % de la remise
-	var $remise;			// Montant unitaire calculé de la remise %
+
+	var $qty;				// Quantité (exemple 2)
+	var $subprice;      	// P.U. HT (exemple 100)
+	var $remise_percent;	// % de la remise ligne (exemple 20%)
+	var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
+	var $tva_taux;			// Taux tva produit/service (exemple 19.6)
+	var $remise;			// Montant calculé de la remise % sur PU HT (exemple 20)
+							// subprice = price + remise
+
+	var $total_ht;			// Total HT de la ligne toute quantité et incluant
+							// la remise ligne et remise globale.
+	var $total_ttc;
+
 	var $produit_id;
 	var $date_start;
 	var $date_end;

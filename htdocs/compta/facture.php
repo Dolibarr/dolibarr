@@ -904,7 +904,7 @@ if ($_GET['action'] == 'create')
 
 		// Zone de choix des produits prédéfinis à la création
 		print '<table class="noborder">';
-		print '<tr><td>'.$langs->trans('ProductsAndServices').'</td><td>'.$langs->trans('Qty').'</td><td>'.$langs->trans('Discount').'</td><td> &nbsp; &nbsp; </td>';
+		print '<tr><td>'.$langs->trans('ProductsAndServices').'</td><td>'.$langs->trans('Qty').'</td><td>'.$langs->trans('Reduction').'</td><td> &nbsp; &nbsp; </td>';
 		if ($conf->service->enabled)
 		{
 			print '<td>'.$langs->trans('ServiceLimitedDuration').'</td></tr>';
@@ -989,7 +989,7 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('Discount').'</td></tr>';
+		print '<td align="right">'.$langs->trans('Reduction').'</td></tr>';
 
 		// Lignes de propal produits prédéfinis
 		$sql = 'SELECT pt.rowid, p.label as product, p.ref, pt.tva_tx, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description';
@@ -1069,7 +1069,7 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('Discount').'</td></tr>';
+		print '<td align="right">'.$langs->trans('Reduction').'</td></tr>';
 
 		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description,';
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
@@ -1152,7 +1152,7 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('Discount').'</td></tr>';
+		print '<td align="right">'.$langs->trans('Reduction').'</td></tr>';
 
 		// Lignes de contrat produits prédéfinis
 		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description,';
@@ -1554,7 +1554,7 @@ else
 					print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 					print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+					print '<td align="right" width="50">'.$langs->trans('Reduction').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
 					print '<td width="16">&nbsp;</td>';
 					print '<td width="16">&nbsp;</td>';
@@ -1816,7 +1816,7 @@ else
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
-				print '<td align="right">'.$langs->trans('Discount').'</td>';
+				print '<td align="right">'.$langs->trans('Reduction').'</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
