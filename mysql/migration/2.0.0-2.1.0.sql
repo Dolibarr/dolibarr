@@ -100,7 +100,6 @@ drop table if exists llx_soc_recontact;
 
 update llx_const set name='PRODUIT_CHANGE_PROD_DESC' where name='CHANGE_PROD_DESC';
 update llx_const set name='COMMANDE_ADD_PROD_DESC' where name='COM_ADD_PROD_DESC';
-update llx_const set name='PROPALE_ADD_PROD_DESC' where name='PROP_ADD_PROD_DESC';
 update llx_const set name='DON_FORM' where name='DONS_FORM';
 update llx_const set name='MAIN_SIZE_LISTE_LIMIT' where name='SIZE_LISTE_LIMIT';
 update llx_const set name='SOCIETE_FISCAL_MONTH_START' where name='FISCAL_MONTH_START';
