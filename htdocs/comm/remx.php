@@ -148,7 +148,7 @@ if ($_socid > 0)
     print '<table class="border" width="100%">';
     print '<tr><td width="33%">'.$langs->trans("NewGlobalDiscount").'</td>';
     print '<td><input type="text" size="5" name="remise" value="'.$_POST["remise"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-    print '<tr><td width="33%">'.$langs->trans("ReasonDiscount").'</td>';
+    print '<tr><td width="33%">'.$langs->trans("NoteReason").'</td>';
     print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
     
     print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("AddGlobalDiscount").'"></td></tr>';

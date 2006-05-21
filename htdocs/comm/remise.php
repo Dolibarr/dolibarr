@@ -149,7 +149,7 @@ if ($_socid > 0)
 	print '<tr class="liste_titre">';
     print '<td width="160">'.$langs->trans("Date").'</td>';
     print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
-    print '<td align="left">'.$langs->trans("Note").'</td>';
+    print '<td align="left">'.$langs->trans("NoteReason").'</td>';
     print '<td align="center">'.$langs->trans("User").'</td>';
 	print '</tr>';
 	$i = 0 ; 
