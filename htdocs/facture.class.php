@@ -999,7 +999,7 @@ class Facture
 				$rangmax = $row[0];
 			}
 			
-			 if ($conf->global->CHANGE_PROD_DESC)
+			 if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
        {
           if (!$product_desc)
           {
@@ -1014,7 +1014,7 @@ class Facture
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet ';
 			$sql.= ' (fk_facture, description, price, qty, tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
 			
-			if ($conf->global->CHANGE_PROD_DESC)
+			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
 			{
 				$sql.= " VALUES ($facid, '".addslashes($product_desc)."','$price','$qty','$txtva',";
 			}

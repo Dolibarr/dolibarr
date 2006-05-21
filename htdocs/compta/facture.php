@@ -1529,7 +1529,7 @@ else
 			$sql .= ' '.$db->pdate('l.date_start').' as date_start,';
 			$sql .= ' '.$db->pdate('l.date_end').' as date_end, ';
 			$sql .= ' p.ref, p.fk_product_type, p.label as product';
-			if ($conf->global->FAC_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
+			if ($conf->global->FAC_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
             {
               	$sql.= ', p.description as product_desc';
             }
@@ -1582,7 +1582,7 @@ else
 							print_date_range($objp->date_start,$objp->date_end);
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 							
-							if ($conf->global->FAC_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
+							if ($conf->global->FAC_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                             {
                             	print '<br>'.nl2br(stripslashes($objp->product_desc));
                             }

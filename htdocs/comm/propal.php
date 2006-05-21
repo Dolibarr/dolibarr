@@ -857,7 +857,7 @@ if ($_GET['propalid'] > 0)
                             print ' '.$objp->ref.'</a>';
 							print ' - '.nl2br(stripslashes($objp->product));
 							              
-			              	if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->CHANGE_PROD_DESC)
+			              	if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                             {
                             	print '<br>'.nl2br(stripslashes($objp->product_desc));
                             }

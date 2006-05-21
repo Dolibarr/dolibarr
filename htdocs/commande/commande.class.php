@@ -436,7 +436,7 @@ class Commande
 			
 			// Bugfix 
 			/* 
-			if ($conf->global->CHANGE_PROD_DESC) 	 
+			if ($conf->global->PRODUIT_CHANGE_PROD_DESC) 	 
       {
 				$sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','".price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','".addslashes($p_product_desc)."', '$remise_percent', '$subprice') ; ";
 			}
@@ -523,7 +523,7 @@ class Commande
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)';
 		
-		if ($conf->global->CHANGE_PROD_DESC)
+		if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
      {
 		   $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($product_desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
 	   }
