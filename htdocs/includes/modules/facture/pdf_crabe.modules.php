@@ -789,7 +789,12 @@ class pdf_crabe extends ModelePDFFactures
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 4, $langs->trans("DateBill")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
+
+        $posy+=6;
+        $pdf->SetXY(100,$posy);
+        $pdf->SetTextColor(0,0,60);
+        $pdf->MultiCell(100, 4, $langs->trans("DateEcheance")." : " . dolibarr_print_date($fac->date_lim_reglement,"%d %b %Y"), '', 'R');
 
         if ($showadress)
         {

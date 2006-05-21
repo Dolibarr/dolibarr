@@ -58,6 +58,7 @@ class Facture
 	var $paye;
 	var $propalid;
 	var $projetid;
+	var $date_lim_reglement;
 	var $cond_reglement_id;
 	var $cond_reglement_code;
 	var $mode_reglement_id;
