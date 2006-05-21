@@ -98,12 +98,17 @@ drop table if exists llx_avoir_model_pdf;
 drop table if exists llx_soc_recontact;
 
 
+update llx_const set name='DON_FORM' where name='DONS_FORM';
 update llx_const set name='MAIN_SIZE_LISTE_LIMIT' where name='SIZE_LISTE_LIMIT';
 update llx_const set name='SOCIETE_FISCAL_MONTH_START' where name='FISCAL_MONTH_START';
 update llx_const set visible=0 where name='FACTURE_DISABLE_RECUR';
 update llx_const set visible=0 where name='MAILING_EMAIL_FROM';
 
 insert into llx_const(name,value,type,visible,note) values('MAIN_SHOW_DEVELOPMENT_MODULES','0','yesno',1,'Make development modules visible');
+
+insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_COMPANY','1','yesno',0,'Show form for quick company search');
+insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_CONTACT','1','yesno',0,'Show form for quick contact search');
+insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_PRODUCT','1','yesno',0,'Show form for quick product search');
 
 
 alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
