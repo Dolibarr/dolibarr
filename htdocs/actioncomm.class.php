@@ -85,12 +85,12 @@ class ActionComm
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
-        $sql.= "datep,";
+        if ($this->percent < 100) $sql.= "datep,";
         if ($this->percent == 100) $sql.= "datea,";
         $sql.= "fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
         $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (now(),";
-        $sql.= "'".$this->db->idate($this->date)."',";
+        if ($this->percent < 100) $sql.= "'".$this->db->idate($this->date)."',";
         if ($this->percent == 100) $sql.= "'".$this->db->idate($this->date)."',";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
@@ -128,10 +128,13 @@ class ActionComm
   {
     global $langs;
     
-    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, a.label, a.fk_action as type_id";
-    $sql.= ", c.code, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent, a.fk_commande";
+    $sql = "SELECT ".$this->db->pdate("a.datea")." as datea,";
+	$sql.= " ".$this->db->pdate("a.datep")." as datep,";
+	$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
+    $sql.= " a.note, a.label, a.fk_action as type_id,";
+    $sql.= " c.code, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent, a.fk_commande";
     $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
-    $sql.= " WHERE a.id=$id AND a.fk_action=c.id;";
+    $sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
     
     $resql=$this->db->query($sql);
     if ($resql)
@@ -147,7 +150,10 @@ class ActionComm
             $type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
             $this->type = $type_libelle;
             $this->label = $obj->label;
-            $this->date = $obj->da;
+            $this->date = $obj->datea;
+            $this->datep = $obj->datep;
+            $this->datec = $obj->datec;
+            $this->datem = $obj->datem;
             $this->note =$obj->note;
             $this->percent =$obj->percent;
             $this->societe->id = $obj->fk_soc;
@@ -213,7 +219,7 @@ class ActionComm
         if ($this->percent == 100) 	$sql.= ", datea = now()";
         if ($this->note) 			$sql.= ", note = '".addslashes($this->note)."'";
         if ($this->contact->id) 	$sql.= ", fk_contact =". $this->contact->id;
-        $sql.= " WHERE id=$this->id;";
+        $sql.= " WHERE id=".$this->id;
     
         if ($this->db->query($sql))
         {
