@@ -162,6 +162,10 @@ if ($_GET["action"] == 'create')
 
 	print '<table class="border" width="100%">';
 
+	// Ref
+	print '<tr><td valign="top">'.$langs->trans("Ref").'</td>';
+	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.$account->ref.'"></td></tr>';
+
 	print '<tr><td valign="top">'.$langs->trans("LabelBankCashAccount").'</td>';
 	print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$_POST["label"].'"></td></tr>';
 
