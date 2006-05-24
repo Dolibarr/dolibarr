@@ -27,7 +27,8 @@
     \brief      Module de génération de l'affichage de la box factures impayees
 */
 
-include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
+require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 
 
 class box_factures_imp extends ModeleBoxes {
