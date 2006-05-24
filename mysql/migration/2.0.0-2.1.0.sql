@@ -100,6 +100,7 @@ drop table if exists llx_soc_recontact;
 
 update llx_const set name='PRODUIT_CHANGE_PROD_DESC' where name='CHANGE_PROD_DESC';
 update llx_const set name='COMMANDE_ADD_PROD_DESC' where name='COM_ADD_PROD_DESC';
+update llx_const set name='PROPALE_ADD_PROD_DESC' where name='PROP_ADD_PROD_DESC';
 update llx_const set name='DON_FORM' where name='DONS_FORM';
 update llx_const set name='MAIN_SIZE_LISTE_LIMIT' where name='SIZE_LISTE_LIMIT';
 update llx_const set name='SOCIETE_FISCAL_MONTH_START' where name='FISCAL_MONTH_START';
@@ -237,3 +238,8 @@ alter table llx_bank_account add column ref varchar(12) NOT NULL;
 
 
 rename table llx_accountingsystem_det to llx_accountingaccount;
+
+
+insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (262,'Consulter tous les clients','commercial','r',1,'voir','client');
+insert into llx_user_rights(fk_user,fk_id) select distinct fk_user, '262' from llx_user_rights where fk_id = 261;
+
