@@ -760,12 +760,9 @@ class DoliDb
         \return     dsn
     */
 
-    function getdsn($db_type,$db_user,$db_pass,$db_host,$dbname)
+    function getdsn($db_type,$db_user,$db_pass,$db_host,$db_name)
     {
-        $pear = $db_type.'://'.$db_user.':'.$db_pass.'@'.
-        $db_host.'/'.$db_name;
-
-        return $pear;
+        return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
     }
 
     /**
