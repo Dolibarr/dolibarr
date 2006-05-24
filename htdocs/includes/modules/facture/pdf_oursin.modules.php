@@ -49,16 +49,18 @@ class pdf_oursin extends ModelePDFFactures
     */
     function pdf_oursin($db)
     {
-        global $langs;
+        global $conf,$langs;
 		  
 		  $langs->load("main");
 		  $langs->load("bills");
 		  $langs->load("products");
 
         $this->db = $db;
+        $this->name = "oursin";
         $this->description = $langs->trans('PDFOursinDescription');
 
         // Dimension page pour format A4
+        $this->type = 'pdf';
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
@@ -67,24 +69,23 @@ class pdf_oursin extends ModelePDFFactures
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
         $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
-        $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
-        $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
         if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
         $this->franchise=1;
         
-        // Recupere code pays
-        $this->code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+        // Recupere code pays de l'emmetteur
+        $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
         $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-        $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
+        $sql .= " WHERE rowid = '".$conf->global->MAIN_INFO_SOCIETE_PAYS."'";
         $result=$this->db->query($sql);
         if ($result) {
             $obj = $this->db->fetch_object($result);
-            if ($obj->code) $this->code_pays=$obj->code;
+            if ($obj->code) $this->emetteur->code_pays=$obj->code;
         }
         else {
             dolibarr_print_error($this->db);
         }
         $this->db->free($result);
+
     }
 
 
@@ -109,7 +110,7 @@ class pdf_oursin extends ModelePDFFactures
   	 */
 	function write_pdf_file($facid)
 	{
-    global $user,$langs,$conf;
+    global $user,$langs,$conf,$mysoc;
 
     $langs->load("main");
     $langs->load("bills");
@@ -136,7 +137,7 @@ class pdf_oursin extends ModelePDFFactures
 	if (file_exists($dir))
 	  {
 	    // Initialisation facture vierge
-	    $pdf=new FPDF('P','mm','A4');
+        $pdf=new FPDF('P','mm',$this->format);
 	    $pdf->Open();
 	    $pdf->AddPage();
 
@@ -318,14 +319,16 @@ class pdf_oursin extends ModelePDFFactures
 	    /*
 	     * Conditions de règlements
 	     */
-	    $pdf->SetFont('Arial','B',10);
-	    $pdf->SetXY($this->marges['g'], 217);
-	    $titre = $langs->trans("PaymentConditions").':';
-	    $pdf->MultiCell(80, 5, $titre, 0, 'L');
-	    $pdf->SetFont('Arial','',10);
-	    $pdf->SetXY($this->marges['g']+44, 217);
-	    $pdf->MultiCell(80, 5, $fac->cond_reglement_facture,0,'L');
-
+        if ($fac->cond_reglement_code)
+        {
+		    $pdf->SetFont('Arial','B',10);
+		    $pdf->SetXY($this->marges['g'], 217);
+		    $titre = $langs->trans("PaymentConditions").':';
+		    $pdf->MultiCell(80, 5, $titre, 0, 'L');
+		    $pdf->SetFont('Arial','',10);
+		    $pdf->SetXY($this->marges['g']+44, 217);
+		    $pdf->MultiCell(80, 5, $fac->cond_reglement_facture,0,'L');
+		}
 
 	    /*
 	     * Pied de page
@@ -573,7 +576,7 @@ class pdf_oursin extends ModelePDFFactures
    */
   function _pagehead(&$pdf, $fac)
   {
-    global $langs,$conf;
+    global $langs,$conf,$mysoc;
     $langs->load("main");
     $langs->load("bills");
     $langs->load("propal");
