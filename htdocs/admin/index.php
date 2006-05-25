@@ -88,7 +88,18 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     }
 }
 
+if ($_GET["action"] == 'removelogo')
+{
+	$logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
+	@unlink($logofile);
+    dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO");
+}
 
+
+
+/*
+ * Affichage page
+ */
 
 llxHeader();
 
@@ -178,9 +189,11 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
     print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
     print '<input type="file" class="flat" name="logo" size="30">';
-    print '</td><td valign="center" align="right">';
-    if (file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
+    print '</td><td valign="middle" align="right">';
+    if ($mysoc->logo && file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
     {
+        print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
+        print ' &nbsp; ';
         print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo.'">';
     }
     else
@@ -410,7 +423,7 @@ else
     print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
     print $mysoc->logo;
     print '</td><td valign="center" align="right">';
-    if (file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
+    if ($mysoc->logo && file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
     {
         print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo.'">';
     }

@@ -641,7 +641,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		// Logo
         $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-        if ($logo)
+        if ($mysoc->logo)
         {
             if (is_readable($logo))
             {
