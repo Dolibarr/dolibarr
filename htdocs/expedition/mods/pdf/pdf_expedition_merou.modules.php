@@ -229,7 +229,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		//*********************LOGO****************************
         $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-        if ($logo)
+        if ($mysoc->logo)
         {
             if (is_readable($logo))
             {

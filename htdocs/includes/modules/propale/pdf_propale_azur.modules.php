@@ -680,7 +680,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		// Logo
         $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-        if ($logo)
+        if ($mysoc->logo)
         {
             if (is_readable($logo))
             {

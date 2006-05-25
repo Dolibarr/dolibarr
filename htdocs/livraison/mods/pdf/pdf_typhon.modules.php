@@ -641,7 +641,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Logo
         $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-        if ($logo)
+        if ($mysoc->logo)
         {
             if (is_readable($logo))
             {

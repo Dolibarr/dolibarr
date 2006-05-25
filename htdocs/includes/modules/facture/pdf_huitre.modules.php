@@ -425,7 +425,7 @@ class pdf_huitre extends ModelePDFFactures {
     */
   function _pagehead(&$pdf, $fac)
     {
-        global $langs,$conf;
+        global $langs,$conf,$mysoc;
         $langs->load("main");
         $langs->load("bills");
 		$langs->load("companies");
@@ -437,7 +437,7 @@ class pdf_huitre extends ModelePDFFactures {
 
 		// Logo
         $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-        if ($logo)
+        if ($mysoc->logo)
         {
             if (is_readable($logo))
             {
