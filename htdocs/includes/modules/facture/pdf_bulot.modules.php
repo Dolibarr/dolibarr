@@ -209,42 +209,45 @@ class pdf_bulot extends ModelePDFFactures {
         $this->error=$langs->trans("ErrorUnknown");
         return 0;   // Erreur par defaut
     }
-  /*
-    *   \brief      Affiche tableau des versement
-    *   \param      pdf     objet PDF
-    *   \param      fac     objet facture
-   */
-  function _tableau_compl(&$pdf, $fac)
-    {
-      $tab3_top = 240;
-      $tab3_height = 18;
-      $tab3_width = 60;
-      
-      $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
-      
-      $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
-      $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
-      
-      $pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
-      
-      $pdf->SetFont('Arial','',8);
-      $pdf->SetXY (10, $tab3_top - 6);
-      $pdf->MultiCell(60, 6, $langs->trans("ExtraInfos"), 0, 'L', 0);
-      $pdf->SetXY (10, $tab3_top );
-      $pdf->MultiCell(20, 6, $langs->trans("RegulatedOn"), 0, 'L', 0);
-      $pdf->SetXY (10, $tab3_top + 6);
-      $pdf->MultiCell(20, 6, $langs->trans("ChequeNumber"), 0, 'L', 0);
-      $pdf->SetXY (10, $tab3_top + 12);
-      $pdf->MultiCell(20, 6, $langs->trans("Bank"), 0, 'L', 0);
-    }
 
-    /*
-    *   \brief      Affiche le total à payer
-    *   \param      pdf         objet PDF
-    *   \param      fac         objet facture
-    *   \param      deja_regle  montant deja regle
-    */
-  function _tableau_tot(&$pdf, $fac)
+	/**
+	 *   \brief      Affiche tableau des versement
+	 *   \param      pdf     objet PDF
+	 *   \param      fac     objet facture
+	 */
+	function _tableau_compl(&$pdf, $fac)
+	{
+		global $langs;
+	
+		$tab3_top = 240;
+		$tab3_height = 18;
+		$tab3_width = 60;
+	
+		$pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
+	
+		$pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
+		$pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
+	
+		$pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
+	
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetXY (10, $tab3_top - 6);
+		$pdf->MultiCell(60, 6, $langs->trans("ExtraInfos"), 0, 'L', 0);
+		$pdf->SetXY (10, $tab3_top );
+		$pdf->MultiCell(20, 6, $langs->trans("RegulatedOn"), 0, 'L', 0);
+		$pdf->SetXY (10, $tab3_top + 6);
+		$pdf->MultiCell(20, 6, $langs->trans("ChequeNumber"), 0, 'L', 0);
+		$pdf->SetXY (10, $tab3_top + 12);
+		$pdf->MultiCell(20, 6, $langs->trans("Bank"), 0, 'L', 0);
+	}
+
+    /**
+     *   \brief      Affiche le total à payer
+     *   \param      pdf         objet PDF
+     *   \param      fac         objet facture
+     *   \param      deja_regle  montant deja regle
+     */
+	function _tableau_tot(&$pdf, $fac)
     {
         global $langs;
         $langs->load("main");
