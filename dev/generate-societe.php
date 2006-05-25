@@ -26,6 +26,11 @@
 		\version    $Revision$
 */
 
+if (! file_exists("../htdocs/master.inc.php"))
+{
+	print "Error: This script must be run from its directory.\n"; 
+	exit -1;	
+}
 require ("../htdocs/master.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -65,23 +70,31 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     $soc->nom = "Société aléatoire num ".time()."$s";
     $villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
     $soc->ville = $villes[rand(0,sizeof($villes)-1)];
-    $soc->client = 1;
+	// Une societe sur 2 est prospect, l'autre client
+    $soc->client = rand(1,2);
+    // Un client sur 10 a une remise de 5%
+    $user_remise=rand(1,10); if ($user_remise==10) $soc->remise_client=5;
+	print "(client=".$soc->client.", remise=".$soc->remise_client.")\n";
     $socid = $soc->create();
 
-    if ($socid)
+    if ($socid >= 0)
     {
         $rand = rand(1,4);
-        print "-- génère $rand contact<br>";
+        print "-- Génère $rand contact\n";
         for ($c = 0 ; $c < $rand ; $c++)
         {
             $contact = new Contact($db);
-            $contact->socid = $socid;
+            $contact->socid = $soc->id;
             $contact->nom = "Nom aléa ".time()."-$c";
             if ( $contact->create($user) )
             {
 
             }
         }
+    }
+    else
+    {
+    	print "Error: ".$soc->error."\n";
     }
 }
 
