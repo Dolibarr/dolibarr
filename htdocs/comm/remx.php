@@ -137,18 +137,18 @@ if ($_socid > 0)
     	dolibarr_print_error($db);
     }
 
-    print '<tr><td width="33%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
+    print '<tr><td width="38%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
     print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-    print '<tr><td width="33%">'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
+    print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
     print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     print "</table>";
 	print '<br>';
 	
     print '<table class="border" width="100%">';
-    print '<tr><td width="33%">'.$langs->trans("NewGlobalDiscount").'</td>';
+    print '<tr><td width="38%">'.$langs->trans("NewGlobalDiscount").'</td>';
     print '<td><input type="text" size="5" name="remise" value="'.$_POST["remise"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-    print '<tr><td width="33%">'.$langs->trans("NoteReason").'</td>';
+    print '<tr><td>'.$langs->trans("NoteReason").'</td>';
     print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
     
     print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("AddGlobalDiscount").'"></td></tr>';
