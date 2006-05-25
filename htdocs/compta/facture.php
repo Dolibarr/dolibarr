@@ -1732,7 +1732,8 @@ else
 			 * Lignes de remise
 			 */
 			
-			// Remise relative
+    // Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremisepercent">';
@@ -1786,8 +1787,10 @@ else
 			}
 			print '</tr>';
 			print '</form>';
+*/
 
-			// Remise absolue
+		    // Réductions absolues (Remises-Ristournes-Rabbais)
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremiseabsolue">';
@@ -1838,7 +1841,7 @@ else
 			}
 			print '</tr>';
 			print '</form>';
-
+*/
 
 			/*
 			 * Ajouter une ligne
@@ -1874,7 +1877,7 @@ else
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="0">%</td>';
+				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
 				print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 				print '</tr>';
 				if ($conf->service->enabled)
@@ -1908,7 +1911,7 @@ else
                     print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
                     print '<td>&nbsp;</td>';
     				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-    				print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
+    				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
     				print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
     				print '</tr>';
     				if ($conf->service->enabled)
