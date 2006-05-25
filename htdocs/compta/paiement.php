@@ -231,7 +231,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2"><a href="fiche.php?socid='.$obj->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom."</a></td></tr>\n";
+			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2"><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom."</a></td></tr>\n";
 
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
 			if (!empty($_POST['remonth']) && !empty($_POST['reday']) && !empty($_POST['reyear']))
