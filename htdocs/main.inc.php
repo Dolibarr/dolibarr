@@ -239,6 +239,11 @@ if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
     define('ROWS_2',2);
     define('ROWS_3',3);
     define('ROWS_4',4);
+    define('ROWS_5',5);
+    define('ROWS_6',6);
+    define('ROWS_7',7);
+    define('ROWS_8',8);
+    define('ROWS_9',9);
 }
 else
 {
@@ -246,6 +251,11 @@ else
     define('ROWS_2',1);
     define('ROWS_3',2);
     define('ROWS_4',3);
+    define('ROWS_5',4);
+    define('ROWS_6',5);
+    define('ROWS_7',6);
+    define('ROWS_8',7);
+    define('ROWS_9',8);
 }
 
 

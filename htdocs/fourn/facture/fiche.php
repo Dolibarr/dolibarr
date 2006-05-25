@@ -212,24 +212,31 @@ if ($_GET['action'] == 'add_ligne')
         }
         if ($result == -1)
         {
-        	// \todo
         	// Quantité insuffisante	
+        	$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
         }
     }
     else
     {
         $tauxtva = price2num($_POST['tauxtva']);
-        if (strlen($_POST['label']) > 0 && !empty($_POST['amount']))
+        if (! $_POST['label'])
         {
-            $ht = price2num($_POST['amount']);
-            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
-        }
+        	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Label")).'</div>';
+        }	
         else
         {
-            $ttc = price2num($_POST['amountttc']);
-            $ht = $ttc / (1 + ($tauxtva / 100));
-            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
-        }
+	        if (!empty($_POST['amount']))
+	        {
+	            $ht = price2num($_POST['amount']);
+	            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
+	        }
+	        else
+	        {
+	            $ttc = price2num($_POST['amountttc']);
+	            $ht = $ttc / (1 + ($tauxtva / 100));
+	            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
+	        }
+		}
     }   
     $_GET['action'] = 'edit';
 }
@@ -264,11 +271,11 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 	print '<td>';
 	$html->select_societes(empty($_GET['socid'])?'':$_GET['socid'],'socidp','s.fournisseur = 1');
 	print '</td>';
-	print '<td width="50%">'.$langs->trans('Comments').'</td></tr>';
+	print '<td width="50%">'.$langs->trans('Note').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" type="text"></td>';
 
-	print '<td width="50%" rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
+	print '<td width="50%" rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="'.ROWS_8.'"></textarea></td></tr>';
 	if ($_GET['action'] == 'copy')
 	{
 		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
@@ -351,7 +358,7 @@ else
 
 		llxHeader('','', $addons);
 
-		if ($mesg) { print '<br>'.$mesg.'<br>'; }
+		if ($mesg) { print $mesg.'<br>'; }
 
 		if ($_GET['action'] == 'edit')
 		{
@@ -372,7 +379,7 @@ else
 
 			$rownb=9;
 			print '<td rowspan="'.$rownb.'" valign="top">';
-			print '<textarea name="note" wrap="soft" cols="60" rows="10">';
+			print '<textarea name="note" wrap="soft" cols="60" rows="'.ROWS_8.'">';
 			print stripslashes($fac->note);
 			print '</textarea></td></tr>';
 

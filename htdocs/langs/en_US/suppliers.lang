@@ -14,3 +14,4 @@ OrderDate=Order date
 BuyingPrice=Buying price
 AddSupplierPrice=Add supplier price
 ChangeSupplierPrice=Change supplier price
+ErrorQtyTooLowForThisSupplier=Quantity too low for this supplier

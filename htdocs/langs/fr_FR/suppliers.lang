@@ -14,3 +14,4 @@ OrderDate=Date commande
 BuyingPrice=Prix d'achat
 AddSupplierPrice=Ajouter prix fournisseur
 ChangeSupplierPrice=Modifier prix fournisseur
+ErrorQtyTooLowForThisSupplier=Quantité insuffisante pour ce fournisseur
