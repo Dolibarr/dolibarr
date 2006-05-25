@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,26 +113,12 @@ if ($_GET["facid"])
     print '<table class="border" width="100%">';
 
     // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
 
+    // Société
     print '<tr><td>'.$langs->trans("Company").'</td>';
     print '<td colspan="3">';
     print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
-
-    // Dates
-    print '<tr><td>'.$langs->trans("Date").'</td>';
-    print '<td>'.dolibarr_print_date($fac->date,"%A %d %B %Y").'</td>';
-    print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
-    if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
-    print "</td></tr>";
-
-    // Conditions et modes de réglement
-    print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td>';
-    $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->cond_reglement_id,"none");
-    print '</td>';
-    print '<td width="25%">'.$langs->trans("PaymentMode").'</td><td width="25%">';
-    $html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->mode_reglement_id,"none");
-    print '</td></tr>';
 
 	// Note publique
     print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
