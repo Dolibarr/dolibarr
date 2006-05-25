@@ -1592,7 +1592,7 @@ else
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
 					print '<td width="16">&nbsp;</td>';
 					print '<td width="16">&nbsp;</td>';
-					print '<td width="16">&nbsp;</td>';
+					print '<td width="12">&nbsp;</td>';
 					print "</tr>\n";
 
 				}
