@@ -49,6 +49,7 @@ if (!$user->rights->facture->lire)
     accessforbidden();
 
 $langs->load('bills');
+$langs->load('companies');
 $langs->load('products');
 $langs->load('main');
 
