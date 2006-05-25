@@ -70,6 +70,7 @@ class Form
         $s ='';
         if ($conf->use_javascript && $htmltooltip)
         {
+        	$htmltooltip=ereg_replace("'","\'",$htmltooltip);
             $s.=' onmouseover="showtip(\''.$htmltooltip.'\')"';
             $s.=' onMouseout="hidetip()"';
         }
