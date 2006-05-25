@@ -888,7 +888,9 @@ table.dp {
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#617389;color:#FFFFFF; font-weight:bold; 
+	background-color:#617389;
+	color:#FFFFFF;
+	font-weight:bold; 
 	border: 1px outset black;
 	cursor:pointer;	
 }

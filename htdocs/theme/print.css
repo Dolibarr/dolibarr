@@ -21,4 +21,4 @@
 /*
 Avec ces styles, on imprime pas les menus de gauches et celui du haut
 */
-.leftmenu,.menu,.noprint, #powered-by-dolibarr  {display:none;}
+.leftmenu,.menu,.noprint {display:none;}
