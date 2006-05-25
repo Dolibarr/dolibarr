@@ -2223,7 +2223,7 @@ class FactureLigne
 	var $produit_id;
 	var $date_start;
 	var $date_end;
-	var $info_bits;
+	var $info_bits;			// 0 si TVA normal, 1 si TVA NPR
 
 
 	/**
