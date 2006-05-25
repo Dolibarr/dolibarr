@@ -400,14 +400,6 @@ else
 			$html->select_date($fac->date_echeance,'ech','','','',"update");
 			print '</td></tr>';
 
-			$authorfullname='&nbsp;';
-			if ($fac->author)
-			{
-				$author = new User($db, $fac->author);
-				$author->fetch('');
-				$authorfullname=$author->fullname;
-			}
-			print '<tr><td>'.$langs->trans('Author').'</td><td>'.$authorfullname.'</td></tr>';
 			print '<tr><td>'.$langs->trans('Status').'</td><td>'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
 			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
 			print '</table>';
@@ -545,14 +537,6 @@ else
 			print '</td>';
 			print '</tr>';
 
-			$authorfullname='&nbsp;';
-			if ($fac->author)
-			{
-				$author = new User($db, $fac->author);
-				$author->fetch('');
-				$authorfullname=$author->fullname;
-			}
-			print '<tr><td>'.$langs->trans('Author').'</td><td colspan="3">'.$authorfullname.'</td>';
 			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans('AmountHT').'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
