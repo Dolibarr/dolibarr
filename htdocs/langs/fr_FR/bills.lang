@@ -101,7 +101,6 @@ RelatedCommercialProposals=Propositions commerciales associées
 MenuToValid=A valider
 DateMaxPayment=Date limite règlement
 DateEcheance=Date échéance
-DateBill=Date facturaction
 DateInvoice=Date facturation
 NoInvoice=Aucune facture
 ClassifyBill=Classer la facture

@@ -783,13 +783,13 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetFont('Arial','B',13);
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("Bill")." ".$fac->ref, '' , 'R');
+        $pdf->MultiCell(100, 4, $langs->trans("Invoice")." ".$fac->ref, '' , 'R');
         $pdf->SetFont('Arial','',12);
         
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("DateBill")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 4, $langs->trans("DateInvoice")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
 
         $posy+=6;
         $pdf->SetXY(100,$posy);
