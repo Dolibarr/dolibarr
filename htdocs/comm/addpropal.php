@@ -108,6 +108,17 @@ if ($_GET["action"] == 'create')
 	print '</td>';
 	print '</tr>';
 
+	// Ligne info remises tiers
+    print '<tr><td>'.$langs->trans('Info').'</td><td colspan="2">';
+	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+	else print $langs->trans("CompanyHasNoRelativeDiscount");
+	$absolute_discount=$soc->getCurrentDiscount();
+	print '. ';
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+	print '.';
+	print '</td></tr>';
+
 	// Date facture
 	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">';
 	$html->select_date('','','','','',"addprop");
@@ -324,7 +335,7 @@ if ($_GET["action"] == 'create')
             	$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
             print '</td>';
             print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-            print '<td><input type="text" size="2" name="remise'.$i.'" value="">%</td>';
+            print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_client.'">%</td>';
 			print '</tr>';
         }
 
