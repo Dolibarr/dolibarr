@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,11 +50,9 @@ $stcomm=isset($_GET["stcomm"])?$_GET["stcomm"]:$_POST["stcomm"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+if ($page == -1) { $page = 0 ; }
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
-
-$page = $user->page_param["page"];
-if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -86,9 +84,9 @@ $sql .= " LEFT join ".MAIN_DB_PREFIX."c_departements as d on d.rowid = s.fk_depa
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=2";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-if (isset($_GET["stcomm"]))
+if (isset($stcomm))
 {
-    $sql .= " AND s.fk_stcomm=".$_GET["stcomm"];
+    $sql .= " AND s.fk_stcomm=".$stcomm;
 }
 
 if ($user->societe_id)
@@ -132,10 +130,9 @@ if ($resql)
         llxHeader();
     }
 
-    $urladd="page=$page";
     if (isset($stcomm)) $urladd.="&amp;stcomm=".$stcomm;
 
-    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],'&amp;stcomm='.$_GET["stcomm"],$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num);
 
     $i = 0;
 
