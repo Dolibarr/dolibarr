@@ -589,8 +589,20 @@ if ($_GET['propalid'] > 0)
             {
                 $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
             }
-            print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
+            print '<a href="'.$url.'">'.$societe->nom.'</a>';
+            print '</td>';
             print '</tr>';
+    
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Info').'</td><td colspan="5">';
+			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$aboslute_discount=$societe->getCurrentDiscount();
+			print '. ';
+			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
     
             // Dates
             print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
@@ -832,7 +844,7 @@ if ($_GET['propalid'] > 0)
                     print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
                     print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
                     print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-                    print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+                    print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
                     print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
                     print '<td width="16">&nbsp;</td>';
                     print '<td width="16">&nbsp;</td>';
@@ -954,7 +966,7 @@ if ($_GET['propalid'] > 0)
                         print '</td>';
                         print '<td align="right"><input size="6" type="text" name="subprice" value="'.price($objp->subprice).'"></td>';
                         print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
-                        print '<td align="right" nowrap><input size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
+                        print '<td align="right" nowrap><input size="1" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
                         print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
                         print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
                         print '</tr>' . "\n";
@@ -989,7 +1001,8 @@ if ($_GET['propalid'] > 0)
 			 * Lignes de remise
 			 */
 			
-			// Remise relative
+		    // Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremisepercent">';
@@ -1004,7 +1017,7 @@ if ($_GET['propalid'] > 0)
 			print '<td align="right"><font style="font-weight: normal">';
 			if ($_GET['action'] == 'editrelativediscount')
 			{
-				print '<input type="text" name="remise_percent" size="2" value="'.$propal->remise_percent.'">%';
+				print '<input type="text" name="remise_percent" size="1" value="'.$propal->remise_percent.'">%';
 			}
 			else
 			{
@@ -1043,8 +1056,10 @@ if ($_GET['propalid'] > 0)
 			}
 			print '</tr>';
 			print '</form>';
+*/
 
-			// Remise absolue
+    // Réductions absolues (Remises-Ristournes-Rabbais)
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremiseabsolue">';
@@ -1095,7 +1110,7 @@ if ($_GET['propalid'] > 0)
 			}
 			print '</tr>';
 			print '</form>';
-			
+*/			
 			
             /*
              * Ajouter une ligne
@@ -1107,7 +1122,7 @@ if ($_GET['propalid'] > 0)
                 print '<td align="right">'.$langs->trans('VAT').'</td>';
                 print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
                 print '<td align="right">'.$langs->trans('Qty').'</td>';
-                print '<td align="right">'.$langs->trans('Discount').'</td>';
+                print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
@@ -1135,7 +1150,7 @@ if ($_GET['propalid'] > 0)
                 print "</td>\n";
                 print '<td align="right"><input type="text" size="5" name="np_price"></td>';
                 print '<td align="right"><input type="text" size="2" value="1" name="qty"></td>';
-                print '<td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';
+                print '<td align="right" nowrap><input type="text" size="1" value="'.$societe->remise_client.'" name="np_remise">%</td>';
                 print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
                 print '</tr>';
     
@@ -1166,7 +1181,8 @@ if ($_GET['propalid'] > 0)
                     print '</td>';
                     print '<td>&nbsp;</td>';
                     print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-                    print '<td align="right" nowrap><input type="text" size="2" name="remise" value="'.$societe->remise_client.'">%</td>';
+                    print '<td align="right" nowrap><input type="text" size="1" name="remise" value="'.$societe->remise_client.'">%</td>';
+
                     print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne">';
                     print '</td></tr>'."\n";
       
@@ -1538,6 +1554,8 @@ else
             {
                 $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp;
             }
+
+			// Société
             print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
         
             // Date propale

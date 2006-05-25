@@ -126,6 +126,8 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
     // Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
+   et non globalement car une tva est obligatoire meme sur une reduc
 	$relative_discount=$soc->remise_client;
 	print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
 	print '<td>';
@@ -140,8 +142,10 @@ if ($_GET["action"] == 'create')
 		print $langs->trans("CompanyHasNoRelativeDiscount");
 	}
 	print '</td></tr>';
+*/
 
     // Réductions absolues (Remises-Ristournes-Rabbais)
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 	$absolute_discount=$soc->getCurrentDiscount();
 	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
 	print '<td>';
@@ -156,7 +160,7 @@ if ($_GET["action"] == 'create')
 		print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	}
 	print '</td></tr>';
-
+*/
 
 	// Date de livraison
 	if ($conf->global->PROPAL_ADD_SHIPPING_DATE)
@@ -177,6 +181,7 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 	}
+*/
 	
 	// Adresse de livraison
 	if ($conf->global->PROPAL_ADD_DELIVERY_ADDRESS)
@@ -320,7 +325,8 @@ if ($_GET["action"] == 'create')
             	$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
             print '</td>';
             print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-            print '<td><input type="text" size="2" name="remise'.$i.'" value="">%</td></tr>';
+            print '<td><input type="text" size="2" name="remise'.$i.'" value="">%</td>';
+			print '</tr>';
         }
 
         print "</table>";

@@ -36,8 +36,9 @@ $user->getrights('commande');
 $user->getrights('projet');
 
 
-$langs->load("orders");
 $langs->load("companies");
+$langs->load("orders");
+$langs->load("bills");
 
 
 if ($_POST["action"] == 'setremise')

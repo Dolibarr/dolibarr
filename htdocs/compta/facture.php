@@ -739,6 +739,17 @@ if ($_GET['action'] == 'create')
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.img_object($langs->trans("ShowCompany"),'company').' '.$soc->nom_url.'</td>';
 	print '</tr>';
 
+	// Ligne info remises tiers
+    print '<tr><td>'.$langs->trans('Info').'</td><td colspan="2">';
+	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+	else print $langs->trans("CompanyHasNoRelativeDiscount");
+	$aboslute_discount=$soc->getCurrentDiscount();
+	print '. ';
+	if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+	print '.';
+	print '</td></tr>';
+
 	// Date facture
 	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">';
 	$html->select_date('','','','','',"add");
@@ -754,7 +765,9 @@ if ($_GET['action'] == 'create')
 	$html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
-    // Réductions absolues (Remises-Ristournes-Rabbais)
+    // Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
+   et non globalement
 	print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
 	print '<td>';
 	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '<input type="text" name="remise_percent" size="1" value="';
@@ -772,8 +785,10 @@ if ($_GET['action'] == 'create')
 		print $langs->trans("CompanyHasNoRelativeDiscount");
 	}
 	print '</td></tr>';
+*/
 
     // Réductions absolues (Remises-Ristournes-Rabbais)
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
 	print '<td>';
 	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '<input type="text" name="remise_absolue" size="1" value="';
@@ -791,6 +806,7 @@ if ($_GET['action'] == 'create')
 		print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	}
 	print '</td></tr>';
+*/
 	
 	// Projet
 	if ($conf->projet->enabled)
@@ -857,8 +873,8 @@ if ($_GET['action'] == 'create')
 		print '<input type="hidden" name="amount"         value="'.$propal->price.'">'."\n";
 		print '<input type="hidden" name="total"          value="'.$propal->total.'">'."\n";
 		print '<input type="hidden" name="tva"            value="'.$propal->tva.'">'."\n";
-		print '<input type="hidden" name="remise_absolue" value="'.$propal->remise_absolue.'">'."\n";
-		print '<input type="hidden" name="remise_percent" value="'.$propal->remise_percent.'">'."\n";
+//		print '<input type="hidden" name="remise_absolue" value="'.$propal->remise_absolue.'">'."\n";
+//		print '<input type="hidden" name="remise_percent" value="'.$propal->remise_percent.'">'."\n";
 		print '<input type="hidden" name="propalid"       value="'.$propal->id.'">';
 
 		print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2">'.$propal->ref.'</td></tr>';
@@ -871,8 +887,8 @@ if ($_GET['action'] == 'create')
 		print '<input type="hidden" name="amount"         value="'.$commande->total_ht.'">'."\n";
 		print '<input type="hidden" name="total"          value="'.$commande->total_ttc.'">'."\n";
 		print '<input type="hidden" name="tva"            value="'.$commande->tva.'">'."\n";
-		print '<input type="hidden" name="remise_absolue" value="'.$commande->remise_absolue.'">'."\n";
-		print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
+//		print '<input type="hidden" name="remise_absolue" value="'.$commande->remise_absolue.'">'."\n";
+//		print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
 		print '<input type="hidden" name="commandeid"     value="'.$commande->id.'">';
 
 		print '<tr><td>'.$langs->trans('Order').'</td><td colspan="2">'.$commande->ref.'</td></tr>';
@@ -890,8 +906,8 @@ if ($_GET['action'] == 'create')
 		print '<input type="hidden" name="amount"         value="'.$contrat->total_ht.'">'."\n";
 		print '<input type="hidden" name="total"          value="'.$contrat->total_ttc.'">'."\n";
 		print '<input type="hidden" name="tva"            value="'.$contrat->total_tva.'">'."\n";
-		print '<input type="hidden" name="remise_absolue" value="'.$contrat->remise_absolue.'">'."\n";
-		print '<input type="hidden" name="remise_percent" value="'.$contrat->remise_percent.'">'."\n";
+//		print '<input type="hidden" name="remise_absolue" value="'.$contrat->remise_absolue.'">'."\n";
+//		print '<input type="hidden" name="remise_percent" value="'.$contrat->remise_percent.'">'."\n";
 		print '<input type="hidden" name="contratid"      value="'.$contrat->id.'">';
 
 		print '<tr><td>'.$langs->trans('Contract').'</td><td colspan="2">'.$contrat->ref.'</td></tr>';
@@ -905,7 +921,10 @@ if ($_GET['action'] == 'create')
 
 		// Zone de choix des produits prédéfinis à la création
 		print '<table class="noborder">';
-		print '<tr><td>'.$langs->trans('ProductsAndServices').'</td><td>'.$langs->trans('Qty').'</td><td>'.$langs->trans('Reduction').'</td><td> &nbsp; &nbsp; </td>';
+		print '<tr><td>'.$langs->trans('ProductsAndServices').'</td>';
+		print '<td>'.$langs->trans('Qty').'</td>';
+		print '<td>'.$langs->trans('ReductionShort').'</td>';
+		print '<td> &nbsp; &nbsp; </td>';
 		if ($conf->service->enabled)
 		{
 			print '<td>'.$langs->trans('ServiceLimitedDuration').'</td></tr>';
@@ -920,7 +939,7 @@ if ($_GET['action'] == 'create')
 				$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
 			print '</td>';
 			print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-			print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="0">%</td>';
+			print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
 			print '<td>&nbsp;</td>';
 			// Si le module service est actif, on propose des dates de début et fin à la ligne
 			if ($conf->service->enabled)
@@ -942,35 +961,38 @@ if ($_GET['action'] == 'create')
 	/*
 	 * Factures récurrentes
 	 */
-	if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
+	if (! $conf->global->FACTURE_DISABLE_RECUR)
 	{
-		$sql = 'SELECT r.rowid, r.titre, r.amount FROM '.MAIN_DB_PREFIX.'facture_rec as r';
-		$sql .= ' WHERE r.fk_soc = '.$soc->id;
-		if ( $db->query($sql) )
+		if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
 		{
-			$num = $db->num_rows();
-			$i = 0;
-
-			if ($num > 0)
+			$sql = 'SELECT r.rowid, r.titre, r.amount FROM '.MAIN_DB_PREFIX.'facture_rec as r';
+			$sql .= ' WHERE r.fk_soc = '.$soc->id;
+			if ( $db->query($sql) )
 			{
-				print '<tr><td colspan="3">'.$langs->trans('RecurringBills').' : <select class="flat" name="fac_rec">';
-				print '<option value="0" selected="true"></option>';
-				while ($i < $num)
+				$num = $db->num_rows();
+				$i = 0;
+	
+				if ($num > 0)
 				{
-					$objp = $db->fetch_object();
-					print '<option value="'.$objp->rowid.'">'.$objp->titre.' : '.$objp->amount.'</option>';
-					$i++;
+					print '<tr><td colspan="3">'.$langs->trans('CreateFromRepeatableInvoice').' : <select class="flat" name="fac_rec">';
+					print '<option value="0" selected="true"></option>';
+					while ($i < $num)
+					{
+						$objp = $db->fetch_object();
+						print '<option value="'.$objp->rowid.'">'.$objp->titre.' : '.$objp->amount.'</option>';
+						$i++;
+					}
+					print '</select></td></tr>';
 				}
-				print '</select></td></tr>';
+				$db->free();
 			}
-			$db->free();
-		}
-		else
-		{
-			dolibarr_print_error($db);
+			else
+			{
+				dolibarr_print_error($db);
+			}
 		}
 	}
-
+	
 	// Bouton "Create Draft"
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></td></tr>';
 	print "</table>\n";
@@ -990,7 +1012,7 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('Reduction').'</td></tr>';
+		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
 		// Lignes de propal produits prédéfinis
 		$sql = 'SELECT pt.rowid, p.label as product, p.ref, pt.tva_tx, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description';
@@ -1070,7 +1092,7 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('Reduction').'</td></tr>';
+		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
 		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description,';
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
@@ -1153,7 +1175,7 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('Reduction').'</td></tr>';
+		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
 		// Lignes de contrat produits prédéfinis
 		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description,';
@@ -1317,6 +1339,17 @@ else
 			print '<a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
 			print '</tr>';
 
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Info').'</td><td colspan="5">';
+			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$aboslute_discount=$soc->getCurrentDiscount();
+			print '. ';
+			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+    
 			// Dates
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="3">'.dolibarr_print_date($fac->date,'%A %d %B %Y').'</td>';
@@ -1555,7 +1588,7 @@ else
 					print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 					print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('Reduction').'</td>';
+					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
 					print '<td width="16">&nbsp;</td>';
 					print '<td width="16">&nbsp;</td>';
@@ -1817,7 +1850,7 @@ else
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
-				print '<td align="right">'.$langs->trans('Reduction').'</td>';
+				print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
@@ -1906,7 +1939,7 @@ else
 				print '<div class="tabsAction">';
 
 				// Récurrente
-				if (! defined('FACTURE_DISABLE_RECUR') || FACTURE_DISABLE_RECUR == 0) 	// Possibilité de désactiver les factures récurrentes
+				if (! $conf->global->FACTURE_DISABLE_RECUR)
 				{
 					print '  <a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
 				}

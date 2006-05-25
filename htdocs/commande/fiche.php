@@ -495,14 +495,14 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<form name="crea_commande" action="fiche.php" method="post">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="soc_id" value="'.$soc->id.'">' ."\n";
-			print '<input type="hidden" name="remise_percent" value="0">';
+			print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
 			print '<input name="facnumber" type="hidden" value="provisoire">';
 
 			print '<table class="border" width="100%">';
 
 			// Reference
-			print '<tr><td>'.$langs->trans('Ref').'</td><td>Provisoire</td>';
-			print '<td>'.$langs->trans('Comments').'</td></tr>';
+			print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Provisoire").'</td>';
+			print '<td>'.$langs->trans('NotePublic').'</td></tr>';
 
 			// Reference client
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
@@ -514,6 +514,18 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.img_object($langs->trans("ShowCompany"),'company').' '.$soc->nom_url.'</td>';
 			print '</tr>';
 
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Info').'</td><td>';
+			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$aboslute_discount=$soc->getCurrentDiscount();
+			print '. ';
+			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+    
+			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
 			$html->select_date('','re','','','',"crea_commande");
 			print '</td></tr>';
@@ -554,6 +566,8 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '</td></tr>';
 
     		// Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
+   et non globalement
 			$relative_discount=$soc->remise_client;
 			print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
 			print '<td>';
@@ -568,8 +582,10 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				print $langs->trans("CompanyHasNoRelativeDiscount");
 			}
 			print '</td></tr>';
+*/
 
 	        // Réductions (Remises-Ristournes-Rabbais)
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 			$absolute_discount=$soc->getCurrentDiscount();
 			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
 			print '<td>';
@@ -584,7 +600,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			}
 			print '</td></tr>';
-
+*/
 
 			// Projet
 			if ($conf->projet->enabled)
@@ -601,7 +617,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<tr><td>'.$langs->trans('Source').'</td><td>';
 			$html->selectSourcesCommande('','source_id',1);
 			print '</td></tr>';
-			print '<tr><td>Modèle</td>';
+			print '<tr><td>'.$langs->trans("Model").'</td>';
 			print '<td>';
 			// pdf
 			include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
@@ -635,7 +651,10 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				print '<tr><td colspan="3">';
 
 				print '<table class="noborder">';
-				print '<tr><td>'.$langs->trans('ProductsAndServices').'</td><td>'.$langs->trans('Qty').'</td><td>'.$langs->trans('Discount').'</td></tr>';
+				print '<tr><td>'.$langs->trans('ProductsAndServices').'</td>';
+				print '<td>'.$langs->trans('Qty').'</td>';
+				print '<td>'.$langs->trans('ReductionShort').'</td>';
+				print '</tr>';
 				for ($i = 1 ; $i <= $NBLINES ; $i++)
 				{
 					print '<tr><td>';
@@ -646,7 +665,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 					print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
 					print '</td>';
 					print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-					print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="0">%</td></tr>';
+					print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td></tr>';
 				}
 
 				print '</table>';
@@ -669,7 +688,10 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				print_titre($langs->trans('Products'));
 				print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre"><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Product').'</td>';
-				print '<td align="right">'.$langs->trans('Price').'</td><td align="center">'.$langs->trans('Discount').'</td><td align="center">'.$langs->trans('Qty').'</td></tr>';
+				print '<td align="right">'.$langs->trans('Price').'</td>';
+				print '<td align="center">'.$langs->trans('Qty').'</td>';
+				print '<td align="center">'.$langs->trans('Reductionshort').'</td>';
+				print '</tr>';
 
 				$var=false;
 
@@ -688,8 +710,8 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 						print '<tr '.$bc[$var].'><td>['.$objp->ref.']</td>';
 						print '<td>'.img_object($langs->trans('ShowProduct'),'product').' '.$objp->product.'</td>';
 						print '<td align="right">'.price($objp->price).'</td>';
-						print '<td align="center">'.$objp->remise_percent.'%</td>';
 						print '<td align="center">'.$objp->qty.'</td></tr>';
+						print '<td align="center">'.$objp->remise_percent.'%</td>';
 						$i++;
 					}
 				}
@@ -708,8 +730,8 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 						print '<tr '.$bc[$var].'><td>&nbsp;</td>';
 						print '<td>'.img_object($langs->trans('ShowProduct'),'product').' '.$objp->product.'</td>';
 						print '<td align="right">'.price($objp->price).'</td>';
-						print '<td align="center">'.$objp->remise_percent.'%</td>';
 						print '<td align="center">'.$objp->qty.'</td></tr>';
+						print '<td align="center">'.$objp->remise_percent.'%</td>';
 						$i++;
 					}
 				}
@@ -825,12 +847,24 @@ else
 			print '</tr>';
 
 
-			// Sociét
+			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="2">';
+			print '<td colspan="3">';
 			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
 			print '</tr>';
 
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Info').'</td><td colspan="3">';
+			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$aboslute_discount=$soc->getCurrentDiscount();
+			print '. ';
+			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+
+			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
 			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
@@ -1014,7 +1048,7 @@ else
 					print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 					print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
 					print '<td>&nbsp;</td>';
 					print '<td>&nbsp;</td>';
@@ -1133,7 +1167,9 @@ else
 			* Lignes de remise
 			*/
 
-			// Remise relative
+    		// Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
+   et non globalement
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremisepercent">';
@@ -1187,8 +1223,10 @@ else
 			}
 			print '</tr>';
 			print '</form>';
+*/
 
 			// Remise absolue
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremiseabsolue">';
@@ -1239,6 +1277,7 @@ else
 			}
 			print '</tr>';
 			print '</form>';
+*/
 
 			/*
 			* Ajouter une ligne
@@ -1250,7 +1289,7 @@ else
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
-				print '<td align="right">'.$langs->trans('Discount').'</td>';
+				print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
@@ -1273,7 +1312,7 @@ else
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="5"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-				print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
+				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
 				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
 
@@ -1297,7 +1336,7 @@ else
 				print '</td>';
 				print '<td>&nbsp;</td>';
 				print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-				print '<td align="right" nowrap><input type="text" size="2" name="remise_percent" value="0">%</td>';
+				print '<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="'.$soc->remise_client.'">%</td>';
 				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
 

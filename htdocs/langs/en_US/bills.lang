@@ -118,6 +118,7 @@ RepeatableInvoices=Repeatable invoices
 Repeatable=Repeatable
 ChangeIntoRepeatableInvoice=Change into repeatable
 CreateRepeatableInvoice=Create repeatable invoice
+CreateFromRepeatableInvoice=Create from repeatable invoice
 ExportDataset_invoice_1=Customer invoices list and invoices' lines
 ProformaBill=Proforma Bill:
 Reduction=Reduction

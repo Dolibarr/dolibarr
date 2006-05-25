@@ -36,6 +36,7 @@ if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.cl
 $langs->load("contracts");
 $langs->load("orders");
 $langs->load("companies");
+$langs->load("bills");
 
 $user->getrights('contrat');
 $user->getrights('commercial');
@@ -248,6 +249,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && $_POST
 if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && $_POST["cancel"])
 {
     Header("Location: fiche.php?id=".$_GET["id"]);
+    exit;
 }
 
 if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
@@ -259,6 +261,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
     if ($result == 0)
     {
         Header("Location: fiche.php?id=".$contrat->id);
+        exit;
     }
 }
 
@@ -339,6 +342,17 @@ if ($_GET["action"] == 'create')
             // Customer
             print '<tr><td>'.$langs->trans("Customer").'</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$obj->nom.'</a></td></tr>';
 
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Info').'</td><td>';
+			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$aboslute_discount=$soc->getCurrentDiscount();
+			print '. ';
+			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+    
             // Commercial suivi
             print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</td><td>';
             print '<select name="commercial_suivi_id">';
@@ -425,8 +439,9 @@ if ($_GET["action"] == 'create')
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
                 print '<td align="right">'.$langs->trans("Price").'</td>';
+                print '<td align="center">'.$langs->trans("Qty").'</td>';
                 print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
-                print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
+                print '</tr>';
 
                 $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
                 $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
@@ -443,9 +458,10 @@ if ($_GET["action"] == 'create')
                         $var=!$var;
                         print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
                         print '<td>'.$objp->product.'</td>';
-                        print "<td align=\"right\">".price($objp->price)."</td>";
+                        print "<td align=\"right\">".price($objp->price).'</td>';
+                        print '<td align="center">'.$objp->qty.'</td>';
                         print '<td align="center">'.$objp->remise_percent.'%</td>';
-                        print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+                        print "</tr>\n";
                         $i++;
                     }
                 }
@@ -466,7 +482,8 @@ if ($_GET["action"] == 'create')
                         print '<td>'.$objp->product.'</td>';
                         print '<td align="right">'.price($objp->price).'</td>';
                         print '<td align="center">'.$objp->remise_percent.'%</td>';
-                        print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+                        print '<td align="center">'.$objp->qty.'</td>';
+                        print "</tr>\n";
                         $i++;
                     }
                 }
@@ -573,6 +590,17 @@ else
         print "<tr><td>".$langs->trans("Customer")."</td>";
         print '<td colspan="3">';
         print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
+
+		// Ligne info remises tiers
+        print '<tr><td>'.$langs->trans('Info').'</td><td>';
+		if ($contrat->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$contrat->societe->remise_client);
+		else print $langs->trans("CompanyHasNoRelativeDiscount");
+		$aboslute_discount=$contrat->societe->getCurrentDiscount();
+		print '. ';
+		if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+		print '.';
+		print '</td></tr>';
 
         // Statut contrat
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
@@ -793,8 +821,8 @@ else
                     print '<td align="right">';
                     print $html->select_tva("eltva_tx",$objp->tva_tx,$mysoc,$contrat->societe);
                     print '</td>';
-                    print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-                    print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+                    print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+                    print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
                     print '<td align="right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
                     print '<td align="center" colspan="3" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -868,7 +896,7 @@ else
             print '</td>';
 
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-            print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
+            print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$contrat->societe->remise_client.'">%</td>';
             print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
             print '</tr>'."\n";
             
@@ -899,7 +927,7 @@ else
             print '</td>';
             print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-            print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
+            print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$contrat->societe->remise_client.'">%</td>';
             print '<td align="center" rowspan="2" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 
             print '</tr>'."\n";

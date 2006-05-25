@@ -118,6 +118,7 @@ RepeatableInvoices=Factures récurrentes
 Repeatable=Récurrente
 ChangeIntoRepeatableInvoice=Modifier en récurrente
 CreateRepeatableInvoice=Créer facture récurrente
+CreateFromRepeatableInvoice=Créer depuis facture récurrente
 ExportDataset_invoice_1=Factures clients et lignes de facture
 ProformaBill=Facture Proforma :
 Reduction=Réduction

@@ -39,6 +39,7 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
 
+$langs->load('companies');
 $langs->load('compta');
 
 
@@ -192,6 +193,17 @@ if ($_GET["propalid"] > 0)
             }
             print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
             print '</tr>';
+    
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Info').'</td><td colspan="5">';
+			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$aboslute_discount=$societe->getCurrentDiscount();
+			print '. ';
+			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
     
             // Dates
             print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
@@ -448,7 +460,9 @@ if ($_GET["propalid"] > 0)
 			 * Lignes de remise
 			 */
 			
-			// Remise relative
+    		// Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
+   et non globalement
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremisepercent">';
@@ -502,8 +516,10 @@ if ($_GET["propalid"] > 0)
 			}
 			print '</tr>';
 			print '</form>';
+*/
 
 			// Remise absolue
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremiseabsolue">';
@@ -554,7 +570,7 @@ if ($_GET["propalid"] > 0)
 			}
 			print '</tr>';
 			print '</form>';
-
+*/
             print '</table>';
     
         }
