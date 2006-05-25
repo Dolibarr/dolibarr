@@ -495,7 +495,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<table class="border" width="100%">';
 
 			// Reference
-			print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Provisoire").'</td>';
+			print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td>';
 			print '<td>'.$langs->trans('NotePublic').'</td></tr>';
 
 			// Reference client
