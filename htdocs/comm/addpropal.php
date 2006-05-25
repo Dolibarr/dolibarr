@@ -181,7 +181,6 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 	}
-*/
 	
 	// Adresse de livraison
 	if ($conf->global->PROPAL_ADD_DELIVERY_ADDRESS)
