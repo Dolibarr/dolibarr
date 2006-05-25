@@ -24,17 +24,20 @@ create table llx_facturedet
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture      integer NOT NULL,
-  fk_product      integer NULL,      -- doit pouvoir etre nul pour ligne detail sans produits
+  fk_product      integer NULL,      	-- Doit pouvoir etre nul pour ligne detail sans produits
   description     text,
-  tva_taux        real DEFAULT 19.6, -- taux tva
-  qty             real,              -- quantité
-  remise_percent  real DEFAULT 0,    -- pourcentage de remise
-  remise          real DEFAULT 0,    -- montant de la remise
-  subprice        real,              -- prix avant remise
-  price           real,              -- prix final
-  date_start      datetime,          -- date debut si service
-  date_end        datetime,          -- date fin si service
-  info_bits		  integer DEFAULT 0,
+  tva_taux        real DEFAULT 19.6, 	-- Taux tva produit/service (exemple 19.6)
+  qty             real,              	-- Quantité (exemple 2)
+  remise_percent  real DEFAULT 0,    	-- % de la remise ligne (exemple 20%)
+  remise          real DEFAULT 0,    	-- Montant calculé de la remise % sur PU HT (exemple 20)
+  subprice        real,              	-- P.U. HT (exemple 100)
+  price           real,              	-- P.U. HT apres remise % de ligne
+  total_ht        real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva       real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc       real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  date_start      datetime,          	-- date debut si service
+  date_end        datetime,          	-- date fin si service
+  info_bits		  integer DEFAULT 0, 	-- TVA NPR ou non
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
   fk_export_compta    integer DEFAULT 0 NOT NULL,
   rang                integer DEFAULT 0

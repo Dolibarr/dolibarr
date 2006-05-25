@@ -75,6 +75,11 @@ function commande_prepare_head($commande)
    	$head[$h][2] = 'contact';
 	$h++;
 
+    $head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans('Note');
+   	$head[$h][2] = 'note';
+	$h++;
+
     $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
     $head[$h][1] = $langs->trans("Info");
   	$head[$h][2] = 'info';

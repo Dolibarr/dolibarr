@@ -140,12 +140,6 @@ if ($_POST['action'] == 'setremise' && $user->rights->commande->creer)
 	$commande->set_remise($user, $_POST['remise']);
 }
 
-if ($_POST['action'] == 'setnote' && $user->rights->commande->creer)
-{
-	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
-	$commande->set_note($user, $_POST['note']);
-}
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
@@ -901,19 +895,7 @@ else
 			}
 			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-			if ($commande->brouillon == 1 && $user->rights->commande->creer)
-			{
-				print '<form action="fiche.php?id='.$id.'" method="post">';
-				print '<input type="hidden" name="action" value="setnote">';
-				print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
-				print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
-				print '</form>';
-			}
-			else
-			{
-				print nl2br($commande->note);
-			}
-
+			print nl2br($commande->note);
 			print '</td>';
 			print '</tr>';
 

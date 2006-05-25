@@ -643,7 +643,7 @@ class Commande
 	{
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement,';
 		$sql.= ' '.$this->db->pdate('c.date_commande').' as date_commande, '.$this->db->pdate('c.date_livraison').' as date_livraison,';
-		$sql.= ' c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture, c.note, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
+		$sql.= ' c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture, c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -668,6 +668,7 @@ class Commande
 			$this->source               = $obj->source;
 			$this->facturee             = $obj->facture;
 			$this->note                 = $obj->note;
+			$this->note_public          = $obj->note_public;
 			$this->projet_id            = $obj->fk_projet;
 			$this->modelpdf             = $obj->model_pdf;
 			$this->cond_reglement_id    = $obj->fk_cond_reglement;
@@ -1083,6 +1084,52 @@ class Commande
     }
 
 	/**
+ 	 *    \brief      Mets à jour les commentaires privés
+	 *    \param      note        	Commentaire
+	 *    \return     int         	<0 si ko, >0 si ok
+	 */
+	function update_note($note)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+		$sql.= " SET note = '".addslashes($note)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		if ($this->db->query($sql))
+		{
+			$this->note = $note;
+			return 1;
+		}
+		else
+		{
+            $this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+ 	 *    \brief      Mets à jour les commentaires publiques
+	 *    \param      note_public	Commentaire
+	 *    \return     int         	<0 si ko, >0 si ok
+	 */
+	function update_note_public($note_public)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+		$sql.= " SET note_public = '".addslashes($note_public)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		if ($this->db->query($sql))
+		{
+			$this->note_public = $note_public;
+			return 1;
+		}
+		else
+		{
+            $this->error=$this->db->error();
+			return -1;
+		}
+	}
+	
+	/**
      *      \brief      Définit une date de livraison
      *      \param      user        		Objet utilisateur qui modifie
      *      \param      date_livraison      Date de livraison  
@@ -1290,36 +1337,11 @@ class Commande
 		}
 	}
 
+
 	/**
-	 *
-	 *
+	 *        \brief      Classe la commande comme facturée
+	 *        \return     int     <0 si ko, >0 si ok
 	 */
-	function set_note($user, $note)
-	{
-		if ($user->rights->commande->creer)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET note = '".addslashes($note)."'";
-			$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-			if ($this->db->query($sql))
-			{
-				$this->note = $note;
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				return 0;
-			}
-		}
-		else
-		{
-			return 0;
-		}
-	}
-  /**
-   *        \brief      Classe la facture comme facturée
-   *        \return     int     <0 si ko, >0 si ok
-   */
 	function classer_facturee()
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
