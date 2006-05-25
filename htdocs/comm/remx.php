@@ -230,9 +230,9 @@ if ($_socid > 0)
         print_titre($langs->trans("DiscountAlreadyCounted"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
+        print '<td align="left">'.$langs->trans("Bill").'</td>';
         print '<td>'.$langs->trans("ReasonDiscount").'</td>';
         print '<td width="120" align="right">'.$langs->trans("Amount").'</td>';
-        print '<td align="center">'.$langs->trans("Bill").'</td>';
         print '<td align="center" width="100">'.$langs->trans("Author").'</td>';
         print '<td width="20">&nbsp;</td>';
         print '</tr>';
@@ -246,9 +246,9 @@ if ($_socid > 0)
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dolibarr_print_date($obj->dc).'</td>';
+            print '<td align="left"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
             print '<td>'.$obj->description.'</td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
-            print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
             print '<td align="center">'.$obj->code.'</td>';
             print '<td>&nbsp;</td>';
             print '</tr>';
