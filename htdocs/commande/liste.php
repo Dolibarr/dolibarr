@@ -50,6 +50,10 @@ if ($user->societe_id > 0)
 }
 
 
+/*
+ * Affichage page
+ */
+ 
 llxHeader();
 
 $begin=$_GET['begin'];
@@ -62,7 +66,8 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET['page'] ;
 
-$sql = 'SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,'.$db->pdate('c.date_commande').' as date_commande, c.fk_statut';
+$sql = 'SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,';
+$sql.= ' '.$db->pdate('c.date_commande').' as date_commande, c.fk_statut, c.facture as facturee';
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -95,7 +100,7 @@ if (isset($_GET['status']))
 {
 	$sql .= " AND fk_statut = ".$_GET['status'];
 }
-if (isset($_GET['afacturer']))
+if (isset($_GET['afacturer']) && $_GET['afacturer'] == 1)
 {
 	$sql .= ' AND c.facture = 0';
 }
@@ -178,7 +183,7 @@ if ($resql)
 		print strftime('%Y',$objp->date_commande).'</a>';
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < (time() - $conf->commande->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
-		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,5).'</td>';
+		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 		print '</tr>';
 		$total = $total + $objp->price;
 		$subtotal = $subtotal + $objp->price;

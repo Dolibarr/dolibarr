@@ -77,7 +77,7 @@ if (isset($_GET["status"]))
 {
     $sql .= " AND fk_statut = ".$_GET["status"];
 }
-if (isset($_GET["afacturer"]))
+if (isset($_GET["afacturer"]) && $_GET['afacturer'] == 1)
 {
     $sql .= " AND fk_statut >=1	AND c.facture = 0";
 }

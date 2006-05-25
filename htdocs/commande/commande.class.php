@@ -643,7 +643,7 @@ class Commande
 	{
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement,';
 		$sql.= ' '.$this->db->pdate('c.date_commande').' as date_commande, '.$this->db->pdate('c.date_livraison').' as date_livraison,';
-		$sql.= ' c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture, c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
+		$sql.= ' c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee, c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -666,7 +666,7 @@ class Commande
 			$this->remise_percent       = $obj->remise_percent;
 			$this->remise_absolue       = $obj->remise_absolue;
 			$this->source               = $obj->source;
-			$this->facturee             = $obj->facture;
+			$this->facturee             = $obj->facturee;
 			$this->note                 = $obj->note;
 			$this->note_public          = $obj->note_public;
 			$this->projet_id            = $obj->fk_projet;
@@ -1723,7 +1723,7 @@ class Commande
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut,$this->facture,$mode);
+		return $this->LibStatut($this->statut,$this->facturee,$mode);
 	}
 
 	/**

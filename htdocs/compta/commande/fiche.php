@@ -126,10 +126,22 @@ if ($_GET["id"] > 0)
 
 			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="2">';
+			print '<td colspan="3">';
 			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
 			print '</tr>';
 
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Info').'</td><td colspan="3">';
+			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$aboslute_discount=$soc->getCurrentDiscount();
+			print '. ';
+			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+    
+			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
 			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
@@ -373,7 +385,9 @@ if ($_GET["id"] > 0)
 			 * Lignes de remise
 			 */
 			
-			// Remise relative
+    		// Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
+   et non globalement
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremisepercent">';
@@ -427,8 +441,10 @@ if ($_GET["id"] > 0)
 			}
 			print '</tr>';
 			print '</form>';
+*/
 
-			// Remise absolue
+	        // Réductions (Remises-Ristournes-Rabbais)
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="action" value="setremiseabsolue">';
@@ -479,7 +495,7 @@ if ($_GET["id"] > 0)
 			}
 			print '</tr>';
 			print '</form>';
-
+*/
 
         print '</table>';
 
