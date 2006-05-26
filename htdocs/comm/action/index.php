@@ -51,7 +51,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="a.datea";
+if (! $sortfield) $sortfield="a.datep";
 
 $status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
@@ -64,7 +64,7 @@ llxHeader();
  */
 
 $sql = "SELECT s.nom as societe, s.idp as socidp, s.client,";
-$sql.= " a.id,".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.percent as percent,";
+$sql.= " a.id,".$db->pdate("a.datep")." as dp, a.fk_contact, a.note, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle, u.code, u.rowid as userid";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
@@ -76,7 +76,7 @@ if ($_GET["type"])
 }
 if ($_GET["time"] == "today")
 {
-  $sql .= " AND date_format(a.datea, '%d%m%Y') = ".strftime("%d%m%Y",time());
+  $sql .= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
 }
 if ($socidp) 
 {
@@ -113,8 +113,8 @@ if ($resql)
     $i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-//    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datea","&status=$status",'','colspan="4"',$sortfield);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datea","&status=$status",'','',$sortfield);
+//    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep","&status=$status",'','colspan="4"',$sortfield);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep","&status=$status",'','',$sortfield);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent","&status=$status","","",$sortfield);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode","&status=$status","","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","&status=$status","","",$sortfield);
@@ -132,37 +132,37 @@ if ($resql)
         print "<tr $bc[$var]>";
 
 		print '<td align="right">';
-        if ($oldyear == strftime("%Y",$obj->da) )
+        if ($oldyear == strftime("%Y",$obj->dp) )
         {
         }
         else
         {
-            print strftime("%Y",$obj->da)."-";
-            $oldyear = strftime("%Y",$obj->da);
+            print strftime("%Y",$obj->dp)."-";
+            $oldyear = strftime("%Y",$obj->dp);
         }
 
-        if ($oldmonth == strftime("%Y%m",$obj->da) )
+        if ($oldmonth == strftime("%Y%m",$obj->dp) )
         {
         }
         else
         {
-            print strftime("%m",$obj->da)."-";
-            $oldmonth = strftime("%Y%m",$obj->da);
+            print strftime("%m",$obj->dp)."-";
+            $oldmonth = strftime("%Y%m",$obj->dp);
         }
 
-        if ($oldday == strftime("%Y%m%d",$obj->da) )
+        if ($oldday == strftime("%Y%m%d",$obj->dp) )
         {
         }
         else
         {
-	        print strftime("%d",$obj->da)." ";
-            $oldday = strftime("%Y%m%d",$obj->da);
+	        print strftime("%d",$obj->dp)." ";
+            $oldday = strftime("%Y%m%d",$obj->dp);
         }
 
-        print strftime("%H:%M",$obj->da);
+        print strftime("%H:%M",$obj->dp);
         print "</td>\n";
 
-//        print '<td align="center">'.dolibarr_print_date($obj->da)."</td>\n";
+//        print '<td align="center">'.dolibarr_print_date($obj->dp)."</td>\n";
 
         // Status/Percent
         if ($obj->percent < 100) {
