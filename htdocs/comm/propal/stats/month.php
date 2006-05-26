@@ -54,8 +54,16 @@ $data = $stats->getNbByMonth($year);
 
 if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
 
-$filename = $conf->propal->dir_images."/propale".$year.".png";
-$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale'.$year.'.png';
+if (!$user->rights->commercial->client->voir || $user->societe_id)
+{
+	$filename = $conf->propal->dir_images.'/propale-'.$user->id.'-'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filename = $conf->propal->dir_images.'/propale'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale'.$year.'.png';
+}
 
 $px = new BarGraph();
 $mesg = $px->isGraphKo();
@@ -76,8 +84,16 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
-$filename_amount = $conf->propal->dir_images."/propaleamount".$year.".png";
-$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount'.$year.'.png';
+if (!$user->rights->commercial->client->voir || $user->societe_id)
+{
+	$filename_amount = $conf->propal->dir_images.'/propaleamount-'.$user->id.'-'.$year.'.png';
+	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filename_amount = $conf->propal->dir_images.'/propaleamount'.$year.'.png';
+	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount'.$year.'.png';
+}
 
 $px = new BarGraph();
 $mesg = $px->isGraphKo();
@@ -97,8 +113,17 @@ for ($i = 1 ; $i < 13 ; $i++)
 {
   $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
-$filename_avg = $conf->propal->dir_images."/propaleaverage".$year.".png";
-$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage'.$year.'.png';
+
+if (!$user->rights->commercial->client->voir || $user->societe_id)
+{
+	$filename_avg = $conf->propal->dir_images.'/propaleaverage-'.$user->id.'-'.$year.'.png';
+	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filename_avg = $conf->propal->dir_images.'/propaleaverage'.$year.'.png';
+	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage'.$year.'.png';
+}
 
 $px = new BarGraph();
 $mesg = $px->isGraphKo();

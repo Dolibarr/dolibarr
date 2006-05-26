@@ -58,7 +58,7 @@ class PropaleStats extends Stats
     if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
     if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql .= " WHERE date_format(datep,'%Y') = $year AND fk_statut > 0";
+    $sql .= " WHERE date_format(p.datep,'%Y') = $year AND p.fk_statut > 0";
     if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if($user->societe_id)
     {
@@ -75,7 +75,17 @@ class PropaleStats extends Stats
    */
   function getNbByYear()
   {
-    $sql = "SELECT date_format(datep,'%Y') as dm, count(*) FROM ".MAIN_DB_PREFIX."propal GROUP BY dm DESC WHERE fk_statut > 0";
+    $sql = "SELECT date_format(p.datep,'%Y') as dm, count(*)";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+    $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE p.fk_statut > 0";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if($user->societe_id)
+    {
+      $sql .= " AND p.fk_soc = ".$user->societe_id;
+    }
+    $sql .= " GROUP BY dm DESC";
 
     return $this->_getNbByYear($sql);
   }
@@ -85,8 +95,16 @@ class PropaleStats extends Stats
    */
   function getAmountByMonth($year)
   {
-    $sql = "SELECT date_format(datep,'%m') as dm, sum(price)  FROM ".MAIN_DB_PREFIX."propal";
-    $sql .= " WHERE date_format(datep,'%Y') = $year AND fk_statut > 0";
+    $sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.price)";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+    $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE date_format(p.datep,'%Y') = $year AND p.fk_statut > 0";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if($user->societe_id)
+    {
+      $sql .= " AND p.fk_soc = ".$user->societe_id;
+    }
     $sql .= " GROUP BY dm DESC";
 
     return $this->_getAmountByMonth($year, $sql);
@@ -97,8 +115,16 @@ class PropaleStats extends Stats
    */
   function getAverageByMonth($year)
   {
-    $sql = "SELECT date_format(datep,'%m') as dm, avg(price)  FROM ".MAIN_DB_PREFIX."propal";
-    $sql .= " WHERE date_format(datep,'%Y') = $year AND fk_statut > 0";
+    $sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.price)";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+    $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE date_format(p.datep,'%Y') = $year AND p.fk_statut > 0";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if($user->societe_id)
+    {
+      $sql .= " AND p.fk_soc = ".$user->societe_id;
+    }
     $sql .= " GROUP BY dm DESC";
 
     return $this->_getAverageByMonth($year, $sql);
