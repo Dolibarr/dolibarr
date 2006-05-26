@@ -109,6 +109,7 @@ class Commande
 		}
 
 		$this->soc_id = $propal->soc_id;
+		$this->projetid = $propal->projetidp;
 		$this->cond_reglement_id = $propal->cond_reglement_id;
 		$this->mode_reglement_id = $propal->mode_reglement_id;
 		$this->date_livraison = $propal->date_livraison;
