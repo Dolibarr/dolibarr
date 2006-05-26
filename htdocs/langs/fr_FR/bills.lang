@@ -152,6 +152,7 @@ BankAccountNumber=Numéro compte
 BankAccountNumberKey=Clé RIB
 Residence=Domiciliation
 IbanPrefix=Prefix IBAN
+IBAN=IBAN
 BIC=BIC
 ExtraInfos=Informations complémentaires
 RegulatedOn=Réglé le

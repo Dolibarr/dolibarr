@@ -152,6 +152,7 @@ BankAccountNumber=Account number
 BankAccountNumberKey=Key
 Residence=Domiciliation
 IbanPrefix=IBAN number
+IBAN=IBAN
 BIC=BIC
 ExtraInfos=Extra infos
 RegulatedOn=Regulated on
