@@ -206,7 +206,7 @@ if ($_GET["id"] > 0)
 			// Conditions et modes de réglement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('PaymentConditions');
+			print $langs->trans('PaymentConditionsShort');
 			print '</td>';
 					
 			if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
