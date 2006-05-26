@@ -77,73 +77,84 @@ if ($db->query($sql))
 }
 $db->free();
 
-print_fiche_titre($langs->trans("ProductsAndServicesStatistics"), $mesg);
-print '<br>';
-
-print '<table class="noborder" width="100%">';
-
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Summary").'</td><td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-$var=True;
-print "<tr ".$bc[$var].">";
-print '<td width="40%">Nb de produit dans le catalogue</td>';
-print '<td>'.$nbproduct.'</td></tr>';
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td width="40%">Nb de produit dans le catalogue qui ne sont pas en vente</td>';
-print '<td>'.$nbhv.'</td></tr>';
-
-$sql = "SELECT count(*)";
-$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+if ($conf->service->enabled)
 {
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+	print_fiche_titre($langs->trans("ProductsAndServicesStatistics"), $mesg);
 }
-$sql .= " WHERE p.fk_product_type = 1";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+else
 {
-  $sql.= ' AND IFNULL(c.visible,1)=1';
-}
-if ($db->query($sql))
-{
-  $row = $db->fetch_row(0);
-  $nbproduct = $row[0];
-}
-$db->free();
-$sql = "SELECT count(*)";
-$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-}
-$sql .= " WHERE p.envente = 0 AND p.fk_product_type = 1";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-  $sql.= ' AND IFNULL(c.visible,1)=1';
+	print_fiche_titre($langs->trans("ProductsStatistics"), $mesg);
 }
 
-if ($db->query($sql))
+if ($conf->service->enabled)
 {
-  $row = $db->fetch_row(0);
-  $nbhv = $row[0];
+	print '<br>';
+	
+	print '<table class="noborder" width="100%">';
+
+  print '<tr class="liste_titre">';
+  print '<td>'.$langs->trans("Summary").'</td><td>'.$langs->trans("Value").'</td>';
+  print "</tr>\n";
+
+  $var=True;
+  print "<tr ".$bc[$var].">";
+  print '<td width="40%">Nb de produit dans le catalogue</td>';
+  print '<td>'.$nbproduct.'</td></tr>';
+  $var=!$var;
+  print "<tr ".$bc[$var].">";
+  print '<td width="40%">Nb de produit dans le catalogue qui ne sont pas en vente</td>';
+  print '<td>'.$nbhv.'</td></tr>';
+
+  $sql = "SELECT count(*)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+  if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+  {
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+  }
+  $sql .= " WHERE p.fk_product_type = 1";
+  if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+  {
+    $sql.= ' AND IFNULL(c.visible,1)=1';
+  }
+  if ($db->query($sql))
+  {
+    $row = $db->fetch_row(0);
+    $nbproduct = $row[0];
+  }
+  $db->free();
+  $sql = "SELECT count(*)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+  if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+  {
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+  }
+  $sql .= " WHERE p.envente = 0 AND p.fk_product_type = 1";
+  if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+  {
+    $sql.= ' AND IFNULL(c.visible,1)=1';
+  }
+
+  if ($db->query($sql))
+  {
+    $row = $db->fetch_row(0);
+    $nbhv = $row[0];
+  }
+  $db->free();
+
+  $var=!$var;
+  print "<tr ".$bc[$var].">";
+  print '<td width="40%">Nb de service dans le catalogue</td>';
+  print '<td>'.$nbproduct.'</td></tr>';
+
+  $var=!$var;
+  print "<tr ".$bc[$var].">";
+  print '<td width="40%">Nb de service dans le catalogue qui ne sont pas en vente</td>';
+  print '<td>'.$nbhv.'</td></tr>';
+
+  print '</table>';
 }
-$db->free();
-
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td width="40%">Nb de service dans le catalogue</td>';
-print '<td>'.$nbproduct.'</td></tr>';
-
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td width="40%">Nb de service dans le catalogue qui ne sont pas en vente</td>';
-print '<td>'.$nbhv.'</td></tr>';
-
-print '</table>';
 
 
 // Stats des produits en factures, propale, ...
