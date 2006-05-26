@@ -45,8 +45,16 @@ $data = $stats->getNbByMonthWithPrevYear($year);
 
 if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
 
-$filename = $conf->propal->dir_images."/nbpropale2year-$year.png";
-$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$year.'.png';
+if (!$user->rights->commercial->client->voir || $user->societe_id)
+{
+	$filename = $conf->propal->dir_images.'/nbpropale2year-'.$user->id.'-'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filename = $conf->propal->dir_images.'/nbpropale2year-'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year'.$year.'.png';
+}
 
 $px = new BarGraph();
 $mesg = $px->isGraphKo();
