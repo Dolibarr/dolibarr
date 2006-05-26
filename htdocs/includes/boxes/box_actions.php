@@ -105,7 +105,7 @@ class box_actions extends ModeleBoxes {
 					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 	
 					$this->info_box_contents[$i][2] = array('align' => 'right',
-					'text' => dolibarr_print_date($objp->dp));
+					'text' => dolibarr_print_date($objp->dp, "%d %b %Y - %H:%M"));
 	
 					$this->info_box_contents[$i][3] = array('align' => 'right',
 					'text' => $objp->percent. "%");
