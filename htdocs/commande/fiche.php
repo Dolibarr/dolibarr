@@ -895,7 +895,7 @@ else
 			}
 			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-			print nl2br($commande->note);
+			print nl2br($commande->note_public);
 			print '</td>';
 			print '</tr>';
 

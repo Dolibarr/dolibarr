@@ -35,6 +35,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 $langs->load("orders");
 $langs->load("sendings");
 
+$user->getrights('commande');
+if (!$user->rights->commande->lire)
+	accessforbidden();
+
 
 /*
  * Visualisation de la fiche

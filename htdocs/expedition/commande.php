@@ -182,7 +182,7 @@ if ($_GET["id"] > 0)
 			{
 				print '<form action="fiche.php?id='.$id.'" method="post">';
 				print '<input type="hidden" name="action" value="setnote">';
-				print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note.'</textarea><br>';
+				print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note_public.'</textarea><br>';
 				print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
 				print '</form>';
 			}
