@@ -67,7 +67,7 @@ class box_actions extends ModeleBoxes {
 		
 		if ($user->rights->commercial->main->lire)
 		{
-			$sql = "SELECT a.label, a.id, ".$db->pdate("a.datea")." as da , a.percent,";
+			$sql = "SELECT a.label, a.id, ".$db->pdate("a.datep")." as dp , a.percent,";
 			$sql.= " s.nom, s.idp";
 			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 			$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm AS a ";
@@ -91,7 +91,7 @@ class box_actions extends ModeleBoxes {
 				{
 					$objp = $db->fetch_object($result);
 	
-					if (date("U",$objp->da)  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
+					if (date("U",$objp->dp)  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
 	
 	
 					$this->info_box_contents[$i][0] = array('align' => 'left',
@@ -105,7 +105,7 @@ class box_actions extends ModeleBoxes {
 					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 	
 					$this->info_box_contents[$i][2] = array('align' => 'right',
-					'text' => dolibarr_print_date($objp->da));
+					'text' => dolibarr_print_date($objp->dp));
 	
 					$this->info_box_contents[$i][3] = array('align' => 'right',
 					'text' => $objp->percent. "%");
