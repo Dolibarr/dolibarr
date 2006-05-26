@@ -86,25 +86,24 @@ else
 	print_fiche_titre($langs->trans("ProductsStatistics"), $mesg);
 }
 
+print '<br>';
+print '<table class="noborder" width="100%">';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Summary").'</td><td>'.$langs->trans("Value").'</td>';
+print "</tr>\n";
+
+$var=True;
+print "<tr ".$bc[$var].">";
+print '<td width="40%">Nb de produit dans le catalogue</td>';
+print '<td>'.$nbproduct.'</td></tr>';
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="40%">Nb de produit dans le catalogue qui ne sont pas en vente</td>';
+print '<td>'.$nbhv.'</td></tr>';
+
 if ($conf->service->enabled)
 {
-	print '<br>';
-	
-	print '<table class="noborder" width="100%">';
-
-  print '<tr class="liste_titre">';
-  print '<td>'.$langs->trans("Summary").'</td><td>'.$langs->trans("Value").'</td>';
-  print "</tr>\n";
-
-  $var=True;
-  print "<tr ".$bc[$var].">";
-  print '<td width="40%">Nb de produit dans le catalogue</td>';
-  print '<td>'.$nbproduct.'</td></tr>';
-  $var=!$var;
-  print "<tr ".$bc[$var].">";
-  print '<td width="40%">Nb de produit dans le catalogue qui ne sont pas en vente</td>';
-  print '<td>'.$nbhv.'</td></tr>';
-
   $sql = "SELECT count(*)";
   $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
   if ($conf->categorie->enabled && !$user->rights->categorie->voir)
