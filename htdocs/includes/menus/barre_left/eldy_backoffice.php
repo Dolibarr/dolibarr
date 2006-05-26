@@ -509,14 +509,14 @@ class MenuLeft {
         
               if ($conf->societe->enabled && $conf->fournisseur->enabled) 
                 {
-                    $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 0, $user->rights->societe->lire);
+                    $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 0, $user->rights->societe->lire && $user->rights->fournisseur->lire);
             
                     // Sécurité accés client
                     if ($user->societe_id == 0) 
                     {
-                      $newmenu->add_submenu(DOL_URL_ROOT."/soc.php??leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer);
+                      $newmenu->add_submenu(DOL_URL_ROOT."/soc.php??leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);
                     }
-                    $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&type=f",$langs->trans("Contacts"), 1, $user->rights->societe->lire);
+                    $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&type=f",$langs->trans("Contacts"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
               }
               
               if ($conf->facture->enabled)

@@ -142,7 +142,7 @@ class MenuTop {
         }
 
         // Supplier
-        if ($conf->fournisseur->enabled)
+        if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
         {
             $langs->load("suppliers");
         
