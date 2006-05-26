@@ -201,6 +201,7 @@ Permission162=Créer/modifier les contrats de services
 Permission163=Activer les services d'un contrat
 Permission164=Désactiver les services d'un contrat
 Permission165=Supprimer les contrats
+Permission180=Consulter les fournisseurs
 Permission181=Consulter les commandes fournisseurs
 Permission182=Créer/modifier les commandes fournisseurs
 Permission183=Valider les commandes fournisseur

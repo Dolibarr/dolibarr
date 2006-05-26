@@ -201,6 +201,7 @@ Permission162=Create/modify contracts
 Permission163=Activate a service of a contract
 Permission164=Disable a service of a contract
 Permission165=Delete contracts
+Permission180=Read suppliers
 Permission181=Read supplier orders
 Permission182=Create/modify supplier orders
 Permission183=Validate supplier orders
