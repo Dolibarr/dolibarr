@@ -210,16 +210,19 @@ if ($_GET["id"] || $_GET["ref"])
 
 
 		// Formulaire ajout dans une categorie
-		print '<br>';
-		print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>';
-		print $langs->trans("ClassifyInCategory").' ';
-		print $html->select_all_categories($categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
-		print '</tr>';
-		print '</table>';
-		print '</form>';
-		print '<br/>';
+		if ($user->rights->produit->creer)
+		{
+			print '<br>';
+		  print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
+		  print '<table class="noborder" width="100%">';
+		  print '<tr class="liste_titre"><td>';
+		  print $langs->trans("ClassifyInCategory").' ';
+		  print $html->select_all_categories($categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
+		  print '</tr>';
+		  print '</table>';
+		  print '</form>';
+		  print '<br/>';
+		}
 
 
 		$c = new Categorie($db);
