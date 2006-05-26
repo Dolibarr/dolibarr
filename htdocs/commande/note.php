@@ -104,11 +104,8 @@ if ($_GET["id"])
     $soc->fetch($commande->socidp);
 
     $head = commande_prepare_head($commande);
-    $hselected = 2;
-    if ($conf->use_preview_tabs) $hselected++;
-    if ($fac->mode_reglement_code == 'PRE') $hselected++;
 
-    dolibarr_fiche_head($head, $hselected, $langs->trans("CustomerOrder"));
+    dolibarr_fiche_head($head, 'note', $langs->trans("CustomerOrder"));
 
 
     print '<table class="border" width="100%">';
