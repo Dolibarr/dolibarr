@@ -75,6 +75,8 @@ class PropaleStats extends Stats
    */
   function getNbByYear()
   {
+  	global $user;
+  	
     $sql = "SELECT date_format(p.datep,'%Y') as dm, count(*)";
     if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
@@ -95,6 +97,8 @@ class PropaleStats extends Stats
    */
   function getAmountByMonth($year)
   {
+  	global $user;
+  	
     $sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.price)";
     if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
@@ -115,6 +119,8 @@ class PropaleStats extends Stats
    */
   function getAverageByMonth($year)
   {
+  	global $user;
+  	
     $sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.price)";
     if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
