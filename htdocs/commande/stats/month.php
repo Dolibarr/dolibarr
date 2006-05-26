@@ -64,8 +64,16 @@ $data = $stats->getNbByMonth($year);
 
 if (! is_dir($conf->commande->dir_images)) { mkdir($conf->commande->dir_images); }
 
-$filename = $conf->commande->dir_images."/commande".$year.".png";
-$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande'.$year.'.png';
+if (!$user->rights->commercial->client->voir || $user->societe_id)
+{
+	$filename = $conf->commande->dir_images.'/commande-'.$user->id.'-'.$year.'.png';
+  $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filename = $conf->commande->dir_images.'/commande'.$year.'.png';
+  $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande'.$year.'.png';
+}
 
 $px = new BarGraph();
 $mesg = $px->isGraphKo();
@@ -87,8 +95,16 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
-$filename_amount = $conf->commande->dir_images."/commandeamount".$year.".png";
-$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount'.$year.'.png';
+if (!$user->rights->commercial->client->voir || $user->societe_id)
+{
+	$filename_amount = $conf->commande->dir_images.'/commandeamount-'.$user->id.'-'.$year.'.png';
+	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filename_amount = $conf->commande->dir_images.'/commandeamount'.$year.'.png';
+	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount'.$year.'.png';
+}
 
 $px = new BarGraph();
 $mesg = $px->isGraphKo();
@@ -109,8 +125,16 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
-$filename_avg = $conf->commande->dir_images."/commandeaverage".$year.".png";
-$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage'.$year.'.png';
+if (!$user->rights->commercial->client->voir || $user->societe_id)
+{
+	$filename_avg = $conf->commande->dir_images.'/commandeaverage-'.$user->id.'-'.$year.'.png';
+	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filename_avg = $conf->commande->dir_images.'/commandeaverage'.$year.'.png';
+	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage'.$year.'.png';
+}
 
 $px = new BarGraph();
 $mesg = $px->isGraphKo();

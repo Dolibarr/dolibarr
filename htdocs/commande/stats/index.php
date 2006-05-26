@@ -64,9 +64,16 @@ if (! file_exists($dir))
     }
 }
 
-
-$filename = $conf->commande->dir_images."/nbcommande2year-".$year.".png";
-$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';
+if (!$user->rights->commercial->client->voir || $user->societe_id)
+{
+	$filename = $conf->commande->dir_images.'/nbcommande2year-'.$user->id.'-'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filename = $conf->commande->dir_images.'/nbcommande2year-'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';
+}
 
 $px = new BarGraph();
 $mesg = $px->isGraphKo();
