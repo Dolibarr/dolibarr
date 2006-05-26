@@ -53,7 +53,7 @@ if (!$user->rights->commercial->client->voir || $user->societe_id)
 else
 {
 	$filename = $conf->propal->dir_images.'/nbpropale2year-'.$year.'.png';
-	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$year.'.png';
 }
 
 $px = new BarGraph();
