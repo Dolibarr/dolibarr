@@ -487,7 +487,7 @@ if ($_GET["id"])
         print '<td>'.$langs->trans("Contact").'</td>';
         print '<td>';
         
-        if ($act->contact->id)
+        if ($act->contact->id > 0)
         {
         	print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.$act->contact->fullname.'</a>';
         }
