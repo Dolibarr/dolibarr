@@ -178,19 +178,7 @@ if ($_GET["id"] > 0)
 			}
 			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-			if ($commande->brouillon == 1 && $user->rights->commande->creer)
-			{
-				print '<form action="fiche.php?id='.$id.'" method="post">';
-				print '<input type="hidden" name="action" value="setnote">';
-				print '<textarea name="note" rows="4" style="width:95%;">'.$commande->note_public.'</textarea><br>';
-				print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
-				print '</form>';
-			}
-			else
-			{
-				print nl2br($commande->note);
-			}
-			
+      print nl2br($commande->note_public);			
 			print '</td>';
 			print '</tr>';
 			
