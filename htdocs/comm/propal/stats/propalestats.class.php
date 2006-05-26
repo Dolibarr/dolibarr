@@ -52,8 +52,18 @@ class PropaleStats extends Stats
    */
   function getNbByMonth($year)
   {
-    $sql = "SELECT date_format(datep,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."propal";
+    global $user;
+    
+    $sql = "SELECT date_format(p.datep,'%m') as dm, count(*)";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+    $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE date_format(datep,'%Y') = $year AND fk_statut > 0";
+    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if($user->societe_id)
+    {
+      $sql .= " AND p.fk_soc = ".$user->societe_id;
+    }
     $sql .= " GROUP BY dm DESC";
     
     return $this->_getNbByMonth($year, $sql);
