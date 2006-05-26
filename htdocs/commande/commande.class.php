@@ -108,11 +108,11 @@ class Commande
 			$this->lines[$i] = $CommLigne;
 		}
 
-		$this->soc_id = $propal->soc_id;
-		$this->projetid = $propal->projetidp;
-		$this->cond_reglement_id = $propal->cond_reglement_id;
-		$this->mode_reglement_id = $propal->mode_reglement_id;
-		$this->date_livraison = $propal->date_livraison;
+		$this->soc_id               = $propal->soc_id;
+		$this->projetid             = $propal->projetidp;
+		$this->cond_reglement_id    = $propal->cond_reglement_id;
+		$this->mode_reglement_id    = $propal->mode_reglement_id;
+		$this->date_livraison       = $propal->date_livraison;
 		$this->adresse_livraison_id = $propal->adresse_livraison_id;
     
 		/* Définit la société comme un client */
