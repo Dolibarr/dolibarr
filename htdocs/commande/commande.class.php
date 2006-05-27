@@ -43,6 +43,7 @@ class Commande
 	var $id ;
 	var $socidp;
 	var $contactid;
+	var $projet_id;
 	var $statut;
 	var $facturee;
 	var $brouillon;
@@ -53,8 +54,8 @@ class Commande
 	var $adresse_livraison_id;
 	var $date;				// Date commande
 	var $date_livraison;	// Date livraison souhaitée
-    var $remise_percent;
-    var $remise_absolue;
+  var $remise_percent;
+  var $remise_absolue;
 
 	// Pour board
 	var $nbtodo;

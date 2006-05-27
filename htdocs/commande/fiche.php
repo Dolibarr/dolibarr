@@ -616,7 +616,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			if ($conf->projet->enabled)
 			{
 				print '<tr><td>'.$langs->trans('Project').'</td><td>';
-				$numprojet=$html->select_projects($soc->id,$projetid,'projetidp');
+				$numprojet=$html->select_projects($soc->id,$projetid,'projetid');
 				if ($numprojet==0)
 				{
 					print ' &nbsp; <a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
