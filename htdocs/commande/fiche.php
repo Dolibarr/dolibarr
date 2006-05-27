@@ -1113,7 +1113,7 @@ else
 								print img_up();
 								print '</a>';
 							}
-							if ($i < $num_lignes-1)
+							if ($i < $num-1)
 							{
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
 								print img_down();
