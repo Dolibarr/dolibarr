@@ -303,13 +303,25 @@ class Commande
 
 		// On positionne en mode brouillon la commande
 		$this->brouillon = 1;
+		
 		if (! $remise)
 		{
 			$remise = 0 ;
 		}
+		
 		if (! $this->projetid)
 		{
 			$this->projetid = 0;
+		}
+		
+		// On ne formate pas une date de livraison qui vient d'une propale
+		if ($this->propale_id)
+		{
+			$date_livraison = $this->date_livraison;
+		}
+		else
+		{
+			$date_livraison = $this->date_livraison?$this->db->idate($this->date_livraison):'null';
 		}
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
@@ -321,7 +333,7 @@ class Commande
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";
 		$sql.= " '".$this->ref_client."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
-		$sql.= " '".($this->date_livraison?$this->db->idate($this->date_livraison):'null').'\',';
+		$sql.= " '".$date_livraison.'\',';
 		$sql.= " '".$this->adresse_livraison_id."',";
 		$sql.= " '".$this->remise_absolue."',";
 		$sql.= " '".$this->remise_percent."')";
