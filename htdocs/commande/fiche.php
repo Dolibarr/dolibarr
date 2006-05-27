@@ -302,13 +302,13 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 
 if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
+	$commande = new Commande($db,'',$_GET['id']);
 	$commande->line_up($_GET['rowid']);
 }
 
 if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
+	$commande = new Commande($db,'',$_GET['id']);
 	$commande->line_down($_GET['rowid']);
 }
 
