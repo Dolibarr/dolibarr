@@ -846,7 +846,7 @@ if ($_GET['propalid'] > 0)
             $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
             $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
             $sql.= ' WHERE pt.fk_propal = '.$propal->id;
-            $sql.= ' ORDER BY pt.rowid ASC';
+            $sql.= ' ORDER BY pt.rang ASC, pt.rowid';
             $resql = $db->query($sql);
             if ($resql)
             {
