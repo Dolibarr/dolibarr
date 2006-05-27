@@ -64,11 +64,13 @@ class Commande
 	 *        \brief      Constructeur
 	 *        \param      DB      Handler d'accès base
 	 */
-	function Commande($DB)
+	function Commande($DB, $soc_idp="", $commandeid=0)
 	{
 		global $langs;
 		$langs->load('orders');
 		$this->db = $DB;
+		$this->socidp = $soc_idp;
+    $this->id = $commandeid;
 
 		$this->sources[0] = $langs->trans('OrderSource0');
 		$this->sources[1] = $langs->trans('OrderSource1');

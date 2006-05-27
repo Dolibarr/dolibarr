@@ -1030,7 +1030,7 @@ else
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 			$sql.= ' WHERE l.fk_commande = '.$commande->id;
-			$sql.= ' ORDER BY l.rowid';
+			$sql.= ' ORDER BY l.rang ASC, l.rowid';
 
 			$resql = $db->query($sql);
 			if ($resql)
