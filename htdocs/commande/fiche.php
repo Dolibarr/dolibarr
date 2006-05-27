@@ -1291,7 +1291,7 @@ else
 			/*
 			* Ajouter une ligne
 			*/
-			if ($commande->statut == 0 && $user->rights->commande->creer && ($_GET['action'] == '' || $_GET['action'] == 'builddoc' || $_GET['action'] == 'modif'))
+			if ($commande->statut == 0 && $user->rights->commande->creer && $_GET["action"] <> 'editline')
 			{
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans('Description').'</td>';
@@ -1357,7 +1357,7 @@ else
 			/*
 			* Boutons actions
 			*/
-			if ($user->societe_id == 0 && $commande->statut < 3 && ($_GET['action'] == '' || $_GET['action'] == 'builddoc' || $_GET['action'] == 'modif'))
+			if ($user->societe_id == 0 && $commande->statut < 3)
 			{
 				print '<div class="tabsAction">';
 
