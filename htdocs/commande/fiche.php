@@ -1098,7 +1098,7 @@ else
 						print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
 
 						// Icone d'edition et suppression
-						if ($commande->statut == 0  && $user->rights->commande->creer && $_GET['action'] == '' || $_GET['action'] == 'modif')
+						if ($commande->statut == 0  && $user->rights->commande->creer)
 						{
 							print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 							print img_edit();
