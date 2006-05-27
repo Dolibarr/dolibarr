@@ -641,7 +641,7 @@ class Propal
 			$rang = $row[0];
 		}
 
-		/* Lecture du rang max de la facture */
+		/* Lecture du rang max de la propale */
 		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'propaldet';
 		$sql .= ' WHERE fk_propal ='.$this->id;
 		$resql = $this->db->query($sql);
