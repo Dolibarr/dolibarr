@@ -7,7 +7,6 @@ SuppliersInvoice=Facture fournisseur
 SuppliersInvoices=Factures fournisseur
 NewSupplier=Nouveau fournisseur
 History=Historique
-OrderCard=Fiche commande
 ListOfSuppliers=Liste des fournisseurs
 ShowSupplier=Afficher fournisseur
 OrderDate=Date commande
