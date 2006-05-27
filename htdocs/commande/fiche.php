@@ -91,7 +91,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->date_commande        = $datecommande;
 	$commande->note                 = $_POST['note'];
 	$commande->source               = $_POST['source_id'];
-	$commande->projet_id            = $_POST['projetid'];
+	$commande->projetid            = $_POST['projetid'];
 	$commande->remise_absolue       = $_POST['remise_absolue'];
 	$commande->remise_percent       = $_POST['remise_percent'];
 	$commande->ref_client           = $_POST['ref_client'];
