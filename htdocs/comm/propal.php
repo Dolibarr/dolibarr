@@ -489,13 +489,13 @@ if ($_POST["action"] == 'setmode')
 
 if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db, $_GET["propalid"]);
+	$propal = new Propal($db, '', $_GET["propalid"]);
 	$propal->line_up($_GET['rowid']);
 }
 
 if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db, $_GET["propalid"]);
+	$propal = new Propal($db, '', $_GET["propalid"]);
 	$propal->line_down($_GET['rowid']);
 }
 
