@@ -296,6 +296,22 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
   $commande->reopen($user->id);
 }
 
+/*
+ * Ordonnancement des lignes
+ */
+
+if ($_GET['action'] == 'up' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->line_up($_GET['rowid']);
+}
+
+if ($_GET['action'] == 'down' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->line_down($_GET['rowid']);
+}
+
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	/*
@@ -1090,13 +1106,24 @@ else
 							print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 							print img_delete();
 							print '</a></td>';
-							print '<td>&nbsp;</td>';
+							print '<td align="right">';
+							if ($i > 0)
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
+								print img_up();
+								print '</a>';
+							}
+							if ($i < $num_lignes-1)
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
+								print img_down();
+								print '</a>';
+							}
+							print '</td>';
 						}
 						else
 						{
-							print '<td>&nbsp;</td>';
-							print '<td>&nbsp;</td>';
-							print '<td>&nbsp;</td>';
+							print '<td colspan="3">&nbsp;</td>';
 						}
 						print '</tr>';
 					}

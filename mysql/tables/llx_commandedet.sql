@@ -32,5 +32,6 @@ create table llx_commandedet
   remise         real DEFAULT 0,    -- montant de la remise
   subprice       real,              -- prix avant remise
   price          real,              -- prix final
-  coef           real               -- coefficient de marge
+  coef           real,              -- coefficient de marge
+  rang           integer DEFAULT 0
 )type=innodb;

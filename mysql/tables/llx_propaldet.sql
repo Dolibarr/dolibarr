@@ -30,5 +30,7 @@ create table llx_propaldet
   remise_percent real DEFAULT 0,    -- pourcentage de remise
   remise         real DEFAULT 0,    -- montant de la remise
   subprice       real,              -- prix avant remise
-  price          real               -- prix final
+  price          real,              -- prix final
+  coef           real,              -- coefficient de marge
+  rang           integer DEFAULT 0
 )type=innodb;

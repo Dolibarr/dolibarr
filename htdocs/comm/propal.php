@@ -947,13 +947,13 @@ if ($_GET['propalid'] > 0)
   							            print '<td align="right">';
 							              if ($i > 0)
 							              {
-							              	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
+							              	print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
 							              	print img_up();
 							              	print '</a>';
 							              }
 							              if ($i < $num_lignes-1)
 							              {
-							              	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
+							              	print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
 							              	print img_down();
 							              	print '</a>';
 							              }

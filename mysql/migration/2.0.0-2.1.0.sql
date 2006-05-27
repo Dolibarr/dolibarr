@@ -203,6 +203,7 @@ ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_projet         FORE
 ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre);
 
 alter table llx_commandedet add column coef real;
+alter table llx_propaldet add colmun coef real;
 
 create table llx_livraison
 (
@@ -257,3 +258,5 @@ rename table llx_accountingsystem_det to llx_accountingaccount;
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (262,'Consulter tous les clients','commercial','r',1,'voir','client');
 insert into llx_user_rights(fk_user,fk_id) select distinct fk_user, '262' from llx_user_rights where fk_id = 261;
 
+alter table llx_commandedet add column rang integer DEFAULT 0;
+alter table llx_propaldet add column rang integer DEFAULT 0;
