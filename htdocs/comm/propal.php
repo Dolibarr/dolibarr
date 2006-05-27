@@ -483,6 +483,22 @@ if ($_POST["action"] == 'setmode')
 	if ($resql < 0) dolibarr_print_error($db);
 }
 
+/*
+ * Ordonnancement des lignes
+ */
+
+if ($_GET['action'] == 'up' && $user->rights->propale->creer)
+{
+	$propal = new Propal($db);
+	$propal->line_up($_GET['rowid']);
+}
+
+if ($_GET['action'] == 'down' && $user->rights->propale->creer)
+{
+	$propal = new Propal($db);
+	$propal->line_down($_GET['rowid']);
+}
+
 
 llxHeader();
 
@@ -867,7 +883,7 @@ if ($_GET['propalid'] > 0)
                             if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
                             else print img_object($langs->trans('ShowProduct'),'product');
                             print ' '.$objp->ref.'</a>';
-							print ' - '.nl2br(stripslashes($objp->product));
+                            print ' - '.nl2br(stripslashes($objp->product));
 							              
 			              	if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                             {
@@ -928,15 +944,27 @@ if ($_GET['propalid'] > 0)
                             print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
                             print img_delete();
                             print '</a></td>';
-  							print '<td align="right">';
-  							print '&nbsp;';		// \todo Mettre critere ordre
-							print '</td>';  							
-						}
-                        else
-                        {
-							print '<td colspan="3">&nbsp;</td>';
-                        }
-                        print '</tr>';
+  							            print '<td align="right">';
+							              if ($i > 0)
+							              {
+							              	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
+							              	print img_up();
+							              	print '</a>';
+							              }
+							              if ($i < $num_lignes-1)
+							              {
+							              	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
+							              	print img_down();
+							              	print '</a>';
+							              }
+							              print '</td>';
+							           }
+                         else
+                         {
+                         	print '<td colspan="3">&nbsp;</td>';
+                         }
+                         
+                         print '</tr>';
                     }
     
                     // Ligne en mode update
