@@ -780,7 +780,7 @@ else
 			$author->fetch();
 
 			$head = commande_prepare_head($commande);
-	        dolibarr_fiche_head($head, 'order', $langs->trans("CustomerOrder"));
+	    dolibarr_fiche_head($head, 'order', $langs->trans("CustomerOrder"));
 
 			/*
 			* Confirmation de la suppression de la commande
