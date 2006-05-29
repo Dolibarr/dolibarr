@@ -289,8 +289,8 @@ class Livraison
             // \todo Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
             //       de décrémenter 2 fois le stock.
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-            $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+            $sql = 'UPDATE '.MAIN_DB_PREFIX.'livraison SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id';
+            $sql .= ' WHERE rowid = $this->id AND fk_statut = 0 ';
     
             if ($this->db->query($sql) )
             {
