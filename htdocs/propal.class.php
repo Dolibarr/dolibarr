@@ -188,18 +188,16 @@ class Propal
                         $remise = round(($prod->price * $remise_percent / 100), 2);
                         $price = $prod->price - $remise;
                     }
-                    
                     if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
 			              {
 			              	$sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-                      $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$txtva."','".addslashes($p_product_desc)."','".price2num($remise_percent)."','".price2num($subprice)."')";
+                      $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". price2num($price)."','".$txtva."','".addslashes($p_product_desc)."','".price2num($remise_percent)."','".price2num($subprice)."')";
                     }
                     else
                     {
                     	$sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-                      $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". $price."','".$txtva."','".addslashes($p_desc?$p_desc:$prod->label)."','".price2num($remise_percent)."','".price2num($subprice)."')";
+                      $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". price2num($price) ."','".$txtva."','".addslashes($p_desc?$p_desc:$prod->label)."','".price2num($remise_percent)."','".price2num($subprice)."')";
                     }
-        
                     if ($this->db->query($sql) )
                     {
                         $this->update_price();
