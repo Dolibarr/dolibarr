@@ -338,7 +338,7 @@ else
             $soc->fetch($commande->soc_id);
     
             $h=0;
-            if ($conf->expedition->enable)
+            if ($conf->expedition->enabled)
             {
             	$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$expedition->id;
             	$head[$h][1] = $langs->trans("SendingCard");

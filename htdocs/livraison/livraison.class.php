@@ -92,7 +92,7 @@ class Livraison
             if ($this->db->query($sql))
             {
     
-                if ($conf->expedition->enable)
+                if ($conf->expedition->enabled)
                 {
                 	$this->expedition = new Expedition($this->db);
                   $this->expedition->id = $this->expedition_id;
