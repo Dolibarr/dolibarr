@@ -98,7 +98,7 @@ else
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  print '<tr>';
 	  print '<td>'.$langs->trans("Ref")."</td><td>$album->ref</td>\n";
-	  print '<td>'.$langs->trans("Status").'</td><td>$album->status</td></tr>\n";
+	  print '<td>'.$langs->trans("Status").'</td><td>$album->status</td></tr>\n';
 	  print "<td>Titre</td><td>$album->titre</td>\n";
 	  print '<td>'.$langs->trans("Price").'</td><TD>'.price($album->price).'</td></tr>';    
 	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top">'.nl2br($album->description)."</td>";
