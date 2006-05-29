@@ -514,15 +514,14 @@ else
             //$filename=sanitize_string($expedition->id);
             //$filedir=$conf->expedition->dir_output . "/" .get_exdir($expedition->id);
             
-            $filename=sanitize_string($livraison->ref);
-            $filedir=$conf->livraison->dir_output . "/" .$livraison->ref;
-            
+            $filename=sanitize_string($livraison->ref);   
+            $filedir=$conf->livraison->dir_output . '/' . $filename;            
             $urlsource=$_SERVER["PHP_SELF"]."?id=".$livraison->id;
             
-            //$genallowed=$user->rights->expedition->creer;
-            //$delallowed=$user->rights->expedition->supprimer;
-            $genallowed=1;
-            $delallowed=0;
+            $genallowed=$user->rights->expedition->livraison->creer;
+            $delallowed=$user->rights->expedition->livraison->supprimer;
+            //$genallowed=1;
+            //$delallowed=0;
     
             $result=$html->show_documents('livraison',$filename,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf);
     
