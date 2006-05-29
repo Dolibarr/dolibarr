@@ -41,4 +41,5 @@ create table llx_livraison
   fk_adresse_livraison  integer,                       -- adresse de livraison
 
   UNIQUE INDEX (ref)
+  key(fk_commande)
 )type=innodb;

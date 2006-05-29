@@ -224,6 +224,7 @@ create table llx_livraison
   fk_adresse_livraison  integer,
 
   UNIQUE INDEX (ref)
+  key(fk_commande)
 )type=innodb;
 
 alter table llx_livraison drop column fk_soc;
