@@ -420,6 +420,9 @@ if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer)
   propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
 
+// Action obsolète ?
+
+/* 
 if ($_POST['action'] == 'set_discount' && $user->rights->propale->creer) 
 {
   $propal = new Propal($db);
@@ -427,6 +430,7 @@ if ($_POST['action'] == 'set_discount' && $user->rights->propale->creer)
   $propal->set_remise($user, $_POST['remise']);
   propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
+*/
 
 if ($_POST['action'] == 'set_project')
 {
