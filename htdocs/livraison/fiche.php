@@ -32,6 +32,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 
 
 $langs->load("bills");
@@ -121,7 +122,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	$result=livraison_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
+	$result=delivery_order_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);

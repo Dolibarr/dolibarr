@@ -2337,6 +2337,16 @@ class Form
                     $modellist=$model->liste_modeles($this->db);
                 }
             }
+            elseif ($modulepart == 'livraison')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once(DOL_DOCUMENT_ROOT.'/livraison/mods/modules_livraison.php');
+                    $model=new ModelePDFLivraison();
+                    $modellist=$model->liste_modeles($this->db);
+                }
+            }
             else if ($modulepart == 'ficheinter')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
