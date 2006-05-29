@@ -240,8 +240,6 @@ create table llx_livraisondet
   key(fk_commande_ligne)
 )type=innodb;
 
-ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_soc (fk_soc);
-ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (90, 'commande',  'internal', 'SALESREPSIGN',  'Commercial signataire de la commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (91, 'commande',  'internal', 'SALESREPFOLL',  'Commercial suivi de la commande', 1);

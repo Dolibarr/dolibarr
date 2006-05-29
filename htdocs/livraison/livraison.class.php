@@ -78,7 +78,7 @@ class Livraison
         if ($this->commande_id) $sql.= ", fk_commande";
         if ($this->expedition_id) $sql.= ", fk_expedition";
         $sql.= ")";
-        $sql.= " VALUES (now(), $user->id, $this->commande_id";
+        $sql.= " VALUES (now(), $user->id";
         if ($this->commande_id) $sql.= ", $this->commande_id";
         if ($this->expedition_id) $sql.= ", $this->expedition_id";
         $sql.= ")";
