@@ -266,7 +266,7 @@ class Livraison
         			require_once DOL_DOCUMENT_ROOT .'/livraison/mods/'.LIVRAISON_ADDON.'.php';
         			
         			// Definition du nom de module de numerotation de commande
-        			$modName=COMMANDE_ADDON;
+        			$modName=LIVRAISON_ADDON;
 
 					    // Recuperation de la nouvelle reference
 					    $objMod = new $modName($this->db);
@@ -274,10 +274,10 @@ class Livraison
 					    $soc->fetch($this->soc_id);
 					    
 					    // on vérifie si le bon de livraison est en numérotation provisoire
-					    $comref = substr($this->ref, 1, 4);
-					    if ($comref == PROV)
+					    $livref = substr($this->ref, 1, 4);
+					    if ($livref == PROV)
 					    {
-						    $num = $objMod->commande_get_num($soc);
+						    $num = $objMod->livraison_get_num($soc);
 					    }
 					    else
 					    {
