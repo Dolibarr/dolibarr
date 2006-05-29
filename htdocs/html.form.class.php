@@ -2343,7 +2343,7 @@ class Form
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/livraison/mods/modules_livraison.php');
-                    $model=new ModelePDFLivraison();
+                    $model=new ModelePDFDeliveryOrder();
                     $modellist=$model->liste_modeles($this->db);
                 }
             }
