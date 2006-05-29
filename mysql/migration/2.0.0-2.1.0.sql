@@ -203,7 +203,7 @@ ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_projet         FORE
 ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre);
 
 alter table llx_commandedet add column coef real;
-alter table llx_propaldet add colmun coef real;
+alter table llx_propaldet add column coef real after price;
 
 create table llx_livraison
 (
