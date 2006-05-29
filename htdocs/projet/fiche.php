@@ -48,7 +48,7 @@ if ($user->societe_id > 0)
 }
 
 // Protection restriction commercial
-if ($projetid)
+if ($projetid && !$user->rights->commercial->client->voir)
 {
 	$sql = "SELECT p.rowid, p.fk_soc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
