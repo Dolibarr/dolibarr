@@ -202,9 +202,10 @@ class Livraison
     
         $sql = "SELECT l.rowid, l.date_creation, l.ref, l.fk_user_author,";
         $sql .=" l.fk_statut, l.fk_commande, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
-        $sql .= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, fk_adresse_livraison, model_pdf";
-        $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l";
-        $sql .= " WHERE l.rowid = $id";
+        $sql .= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, l.fk_adresse_livraison, l.model_pdf";
+        $sql .= ", s.idp as socid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+        $sql .= " WHERE l.rowid = $id AND c.rowid = l.fk.commande AND c.fk_soc = s.idp";
     
         $result = $this->db->query($sql) ;
     
@@ -214,6 +215,7 @@ class Livraison
     
             $this->id                   = $obj->rowid;
             $this->ref                  = $obj->ref;
+            $this->soc_id               = $obj->socid;
             $this->statut               = $obj->fk_statut;
             $this->commande_id          = $obj->fk_commande;
             $this->expedition_id        = $obj->fk_expedition;
@@ -249,9 +251,9 @@ class Livraison
     {
         global $conf;
         
-        require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+        //require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
     
-        dolibarr_syslog("expedition.class.php::valid");
+        dolibarr_syslog("livraison.class.php::valid");
 
         $this->db->begin();
         

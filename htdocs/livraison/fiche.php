@@ -101,7 +101,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
   $livraison = new Livraison($db);
   $livraison->fetch($_GET["id"]);
   $result = $livraison->valid($user);
-  $livraison->PdfWrite();
+  //$livraison->PdfWrite();
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
