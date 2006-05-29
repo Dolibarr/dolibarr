@@ -336,6 +336,7 @@ class Livraison
                         $this->error=$this->db->error()." - sql=$sql";
                         dolibarr_syslog("expedition.class.php::valid ".$this->error);
                         return -2;
+                        
                     }
                 }
 */
@@ -348,11 +349,13 @@ class Livraison
                 dolibarr_syslog("expedition.class.php::valid ".$this->error);
                 return -1;
             }
+          }
+         }
         }
         else
         {
             $this->error="Non autorise";
-            dolibarr_syslog("expedition.class.php::valid ".$this->error);
+            dolibarr_syslog("livraison.class.php::valid ".$this->error);
             return -1;
         }
 
