@@ -254,7 +254,7 @@ if ($_GET["action"] == 'create')
 	   *
 	   */
 	  print '<td align="center">';
-	  $quantite_livree = $commande->livraisons[$ligne->product_id];
+	  $quantite_livree = $commande->expeditions[$ligne->product_id];
 	  print $quantite_livree;;
 	  print '</td>';
 
