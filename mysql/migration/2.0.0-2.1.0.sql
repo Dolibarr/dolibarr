@@ -223,7 +223,7 @@ create table llx_livraison
   date_livraison 	      date 	  default NULL,
   fk_adresse_livraison  integer,
 
-  UNIQUE INDEX (ref)
+  UNIQUE INDEX (ref),
   key(fk_commande)
 )type=innodb;
 
