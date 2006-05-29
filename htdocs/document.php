@@ -175,6 +175,17 @@ if ($modulepart)
         }
         $original_file=$conf->expedition->dir_output.'/'.$original_file;
     }
+    
+    // Wrapping pour les bons de livraison
+    if ($modulepart == 'livraison')
+    {
+        $user->getrights('livraison');
+        if ($user->rights->expedition->livraison->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->livraison->dir_output.'/'.$original_file;
+    }
 
     // Wrapping pour la telephonie
     if ($modulepart == 'telephonie')
