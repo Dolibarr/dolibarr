@@ -418,7 +418,7 @@ class Livraison
   function addline( $id, $qty )
     {
       $num = sizeof($this->lignes);
-      $ligne = new ExpeditionLigne();
+      $ligne = new livraisonLigne();
 
       $ligne->commande_ligne_id = $id;
       $ligne->qty = $qty;
