@@ -33,6 +33,9 @@
         \class      Livraison
 		\brief      Classe de gestion des bons de livraison
 */
+
+require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
+
 class Livraison 
 {
   var $db ;
