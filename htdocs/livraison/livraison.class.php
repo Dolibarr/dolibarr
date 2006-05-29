@@ -74,11 +74,11 @@ class Livraison
     
         $this->db->begin();
     
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (fk_soc, fk_soc_contact, date_creation, fk_user_author, fk_commande";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (date_creation, fk_user_author";
         if ($this->commande_id) $sql.= ", fk_commande";
         if ($this->expedition_id) $sql.= ", fk_expedition";
         $sql.= ")";
-        $sql.= " VALUES ($this->soc_id, $this->contactid, now(), $user->id, $this->commande_id";
+        $sql.= " VALUES (now(), $user->id, $this->commande_id";
         if ($this->commande_id) $sql.= ", $this->commande_id";
         if ($this->expedition_id) $sql.= ", $this->expedition_id";
         $sql.= ")";
@@ -197,7 +197,7 @@ class Livraison
     {
         global $conf;
     
-        $sql = "SELECT l.rowid, l.fk_soc, l.fk_soc_contact, l.date_creation, l.ref, l.fk_user_author,";
+        $sql = "SELECT l.rowid, l.date_creation, l.ref, l.fk_user_author,";
         $sql .=" l.fk_statut, l.fk_commande, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
         $sql .= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, fk_adresse_livraison, model_pdf";
         $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l";
@@ -210,8 +210,6 @@ class Livraison
             $obj = $this->db->fetch_object($result);
     
             $this->id                   = $obj->rowid;
-            $this->socid                = $obj->fk_soc;
-            $this->contact_id           = $obj->fk_soc_contact;
             $this->ref                  = $obj->ref;
             $this->statut               = $obj->fk_statut;
             $this->commande_id          = $obj->fk_commande;

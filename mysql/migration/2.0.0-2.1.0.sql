@@ -209,8 +209,6 @@ create table llx_livraison
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
-  fk_soc                integer NOT NULL,
-  fk_soc_contact        integer,
   fk_commande           integer DEFAULT 0,
   fk_expedition         integer,
   ref                   varchar(30) NOT NULL,
@@ -227,6 +225,9 @@ create table llx_livraison
 
   UNIQUE INDEX (ref)
 )type=innodb;
+
+alter table llx_livraison drop column fk_soc;
+alter table llx_livraison drop column fk_soc_contact;
 
 create table llx_livraisondet
 (
