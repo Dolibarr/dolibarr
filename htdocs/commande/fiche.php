@@ -92,8 +92,8 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->note                 = $_POST['note'];
 	$commande->source               = $_POST['source_id'];
 	$commande->projetid             = $_POST['projetid'];
-	$commande->remise_absolue       = $_POST['remise_absolue'];
-	$commande->remise_percent       = $_POST['remise_percent'];
+	//$commande->remise_absolue       = $_POST['remise_absolue']; //la remise était appliquée sur les lignes et sur le total
+	//$commande->remise_percent       = $_POST['remise_percent'];
 	$commande->ref_client           = $_POST['ref_client'];
 	$commande->modelpdf             = $_POST['model'];
 	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
