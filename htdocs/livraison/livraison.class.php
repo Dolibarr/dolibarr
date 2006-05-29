@@ -58,13 +58,15 @@ class Livraison
 
   /**
    *    \brief      Créé bon de livraison en base
-   *    \param      user        Objet du user qui cré
+   *    \param      user        Objet du user qui crée
    *    \return     int         <0 si erreur, id livraison créée si ok
    */
   function create($user)
     {
+        global $conf;
         require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
         $error = 0;
+        
         /* On positionne en mode brouillon le bon de livraison */
         $this->brouillon = 1;
     
@@ -72,25 +74,36 @@ class Livraison
     
         $this->db->begin();
     
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (date_creation, fk_user_author, fk_expedition, fk_commande";
-        if ($this->entrepot_id) $sql.= ", fk_entrepot";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (fk_soc, fk_soc_contact, date_creation, fk_user_author, fk_commande";
+        if ($this->commande_id) $sql.= ", fk_commande";
+        if ($this->expedition_id) $sql.= ", fk_expedition";
         $sql.= ")";
-        $sql.= " VALUES (now(), $user->id, ".$this->db->idate($this->date_expedition).",$this->commande_id";
-        if ($this->entrepot_id) $sql.= ", $this->entrepot_id";
+        $sql.= " VALUES ($this->soc_id, $this->contactid, now(), $user->id, $this->commande_id";
+        if ($this->commande_id) $sql.= ", $this->commande_id";
+        if ($this->expedition_id) $sql.= ", $this->expedition_id";
         $sql.= ")";
     
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."livraison");
     
-            $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
             if ($this->db->query($sql))
             {
     
-                $this->commande = new Commande($this->db);
-                $this->commande->id = $this->commande_id;
-                $this->commande->fetch_lignes();
+                if ($conf->expedition->enable)
+                {
+                	$this->expedition = new Expedition($this->db);
+                  $this->expedition->id = $this->expedition_id;
+                  $this->expedition->fetch_lignes();
+                }
+                else
+                {
+                	$this->commande = new Commande($this->db);
+                	$this->commande->id = $this->commande_id;
+                	$this->commande->fetch_lignes();
+                }
     
                 /*
                 *  Insertion des produits dans la base
@@ -162,7 +175,7 @@ class Livraison
 	$j++;
       }
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (fk_expedition, fk_commande_ligne, qty)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_commande_ligne, qty)";
     $sql .= " VALUES ($this->id,".$commande_ligne_id.",".$qty.")";
     
     if (! $this->db->query($sql) )
@@ -177,17 +190,18 @@ class Livraison
   }
   /** 
    *
-   * Lit une commande
+   * Lit un bon de livraison
    *
    */
     function fetch ($id)
     {
         global $conf;
     
-        $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
-        $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition ";
-        $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-        $sql .= " WHERE e.rowid = $id";
+        $sql = "SELECT l.rowid, l.fk_soc, l.fk_soc_contact, l.date_creation, l.ref, l.fk_user_author,";
+        $sql .=" l.fk_statut, l.fk_commande, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
+        $sql .= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, fk_adresse_livraison, model_pdf";
+        $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l";
+        $sql .= " WHERE l.rowid = $id";
     
         $result = $this->db->query($sql) ;
     
@@ -195,18 +209,25 @@ class Livraison
         {
             $obj = $this->db->fetch_object($result);
     
-            $this->id              = $obj->rowid;
-            $this->ref             = $obj->ref;
-            $this->statut          = $obj->fk_statut;
-            $this->commande_id     = $obj->fk_commande;
-            $this->user_author_id  = $obj->fk_user_author;
-            $this->date            = $obj->date_expedition;
-            $this->entrepot_id     = $obj->fk_entrepot;
+            $this->id                   = $obj->rowid;
+            $this->socid                = $obj->fk_soc;
+            $this->contact_id           = $obj->fk_soc_contact;
+            $this->ref                  = $obj->ref;
+            $this->statut               = $obj->fk_statut;
+            $this->commande_id          = $obj->fk_commande;
+            $this->expedition_id        = $obj->fk_expedition;
+            $this->user_author_id       = $obj->fk_user_author;
+            $this->user_valid_id        = $obj->fk_user_valid;
+            $this->date                 = $obj->date_livraison;
+            $this->adresse_livraison_id = $obj->fk_entrepot;
+            $this->note                 = $obj->note;
+            $this->note_public          = $obj->note_public;
+            $this->modelpdf            = $obj->model_pdf;
             $this->db->free();
     
             if ($this->statut == 0) $this->brouillon = 1;
     
-            $file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id) . "/" . $this->id.".pdf";
+            $file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id) . "/" . $this->id.".pdf";
             $this->pdf_filename = $file;
     
             return 1;
@@ -235,24 +256,49 @@ class Livraison
         
         $error = 0;
         
-        if ($user->rights->expedition->valider)
+        if ($user->rights->expedition->livraison->valider)
         {
-            $this->ref = "EXP".$this->id;
-    
+        	if (defined('LIVRAISON_ADDON'))
+        	{
+        		if (is_readable(DOL_DOCUMENT_ROOT .'/livraison/mods/'.LIVRAISON_ADDON.'.php'))
+        		{
+        			require_once DOL_DOCUMENT_ROOT .'/livraison/mods/'.LIVRAISON_ADDON.'.php';
+        			
+        			// Definition du nom de module de numerotation de commande
+        			$modName=COMMANDE_ADDON;
+
+					    // Recuperation de la nouvelle reference
+					    $objMod = new $modName($this->db);
+					    $soc = new Societe($this->db);
+					    $soc->fetch($this->soc_id);
+					    
+					    // on vérifie si le bon de livraison est en numérotation provisoire
+					    $comref = substr($this->ref, 1, 4);
+					    if ($comref == PROV)
+					    {
+						    $num = $objMod->commande_get_num($soc);
+					    }
+					    else
+					    {
+						    $num = $this->ref;
+					    }
+        		
             // \todo Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
             //       de décrémenter 2 fois le stock.
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='".$this->ref."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
             $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
     
             if ($this->db->query($sql) )
             {
+/*
+                
                 // Si module stock géré et que expedition faite depuis un entrepot
                 if ($conf->stock->enabled && $this->entrepot_id)
                 {
-                    /*
-                     * Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
-                     */
+                    
+                     //Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
+                     
 
                     dolibarr_syslog("expedition.class.php::valid enregistrement des mouvements");
 
@@ -292,6 +338,8 @@ class Livraison
                         return -2;
                     }
                 }
+*/
+                return 1;
             }
             else
             {
@@ -405,10 +453,10 @@ class Livraison
   {
     $this->db->begin();
 
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition = $this->id ;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet WHERE fk_livraison = $this->id ;";
     if ( $this->db->query($sql) ) 
       {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = $this->id;";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison WHERE rowid = $this->id;";
 	if ( $this->db->query($sql) ) 
 	  {
 	    $this->db->commit();
@@ -426,25 +474,7 @@ class Livraison
 	return -1;
       }
   }
-  /**
-   * Classe la commande
-   *
-   *
-   */
-  function classin($cat_id)
-    {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
-      $sql .= " WHERE rowid = $this->id;";
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
-      else
-	{
-	  print $this->db->error() . ' in ' . $sql;
-	}
-    }
+
 
     /**
      * Genere le pdf

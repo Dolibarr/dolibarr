@@ -1033,11 +1033,11 @@ class Commande
     }
 
     /**
-     *      \brief      Renvoie un tableau avec les livraison par ligne
+     *      \brief      Renvoie un tableau avec les expéditions par ligne
      *      \param      filtre_statut       Filtre sur statut
      *      \return     int                 0 si OK, <0 si KO
      */
-	function livraison_array($filtre_statut=-1)
+	function expedition_array($filtre_statut=-1)
 	{
 		$this->livraisons = array();
 		$sql = 'SELECT fk_product, sum(ed.qty)';
@@ -1046,6 +1046,54 @@ class Commande
 		$sql.=' AND cd.fk_commande =' .$this->id;
 		if ($filtre_statut >= 0) $sql.=' AND e.fk_statut = '.$filtre_statut;
 		$sql .= ' GROUP BY fk_product ';
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows();
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row( $i);
+				$this->expeditions[$row[0]] = $row[1];
+				$i++;
+			}
+			$this->db->free();
+		}
+	
+	    return 0;
+	}
+	
+  /**
+   * Renvoie un tableau avec les expeditions par ligne
+   *
+   */
+	function nb_expedition()
+	{
+		$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'expedition as e';
+		$sql .=" WHERE e.fk_commande = $this->id";
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$row = $this->db->fetch_row(0);
+			return $row[0];
+		}
+	}
+	
+	    /**
+     *      \brief      Renvoie un tableau avec les livraisons par ligne
+     *      \param      filtre_statut       Filtre sur statut
+     *      \return     int                 0 si OK, <0 si KO
+     */
+	function livraison_array($filtre_statut=-1)
+	{
+		$this->livraisons = array();
+		$sql = 'SELECT cd.fk_product, sum(ed.qty)';
+		$sql.=' FROM '.MAIN_DB_PREFIX.'livraisondet as ld, '.MAIN_DB_PREFIX.'livraison as l, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql.=' WHERE ld.fk_livraison = l.rowid AND ld.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid';
+		$sql.=' AND cd.fk_commande =' .$this->id;
+		if ($filtre_statut >= 0) $sql.=' AND l.fk_statut = '.$filtre_statut;
+		$sql .= ' GROUP BY cd.fk_product ';
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1063,22 +1111,6 @@ class Commande
 	    return 0;
 	}
 	
-  /**
-   * Renvoie un tableau avec les livraison par ligne
-   *
-   */
-	function nb_expedition()
-	{
-		$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'expedition as e';
-		$sql .=" WHERE e.fk_commande = $this->id";
-
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$row = $this->db->fetch_row(0);
-			return $row[0];
-		}
-	}
   /**
    *    \brief      Supprime une ligne de la commande
    *    \param      idligne     Id de la ligne à supprimer

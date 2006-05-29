@@ -21,25 +21,23 @@
  * $Source$
  */
 
-// Code identique a /expedition/commande.php
+
 
 /**
-        \file       htdocs/expedition/fiche.php
-        \ingroup    expedition
-        \brief      Fiche descriptive d'une expedition
+        \file       htdocs/livraison/fiche.php
+        \ingroup    livraison
+        \brief      Fiche descriptive d'un bon de livraison
         \version    $Revision$
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT ."/expedition/mods/pdf/ModelePdfExpedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+
 
 $langs->load("bills");
 
 $user->getrights('expedition');
-if (!$user->rights->expedition->lire)
+if (!$user->rights->expedition->livraison->lire)
   accessforbidden();
 
 
@@ -59,18 +57,17 @@ if ($_POST["action"] == 'add')
 {
     $db->begin();
     
-    // Creation de l'objet expedition
-    $expedition = new Expedition($db);
+    // Creation de l'objet livraison
+    $livraison = new Livraison($db);
     
-    $expedition->date_expedition  = time();
-    $expedition->note             = $_POST["note"];
-    $expedition->commande_id      = $_POST["commande_id"];
-    $expedition->entrepot_id      = $_POST["entrepot_id"];
+    $livraison->date_livraison  = time();
+    $livraison->note             = $_POST["note"];
+    $livraison->commande_id      = $_POST["commande_id"];
     
-    // On boucle sur chaque ligne de commande pour compléter objet expedition
+    // On boucle sur chaque ligne de commande pour compléter objet livraison
     // avec qté à livrer
     $commande = new Commande($db);
-    $commande->fetch($expedition->commande_id);
+    $commande->fetch($livraison->commande_id);
     $commande->fetch_lignes();
     for ($i = 0 ; $i < sizeof($commande->lignes) ; $i++)
     {
@@ -78,41 +75,41 @@ if ($_POST["action"] == 'add')
         $idl = "idl".$i;
         if ($_POST[$qty] > 0)
         {
-            $expedition->addline($_POST[$idl],$_POST[$qty]);
+            $livraison->addline($_POST[$idl],$_POST[$qty]);
         }
     }
     
-    $ret=$expedition->create($user);
+    $ret=$livraison->create($user);
     if ($ret > 0)
     {
         $db->commit();
-        Header("Location: fiche.php?id=".$expedition->id);
+        Header("Location: fiche.php?id=".$livraison->id);
         exit;
     }
     else
     {
         $db->rollback();
-        $mesg='<div class="error">'.$expedition->error.'</div>';
+        $mesg='<div class="error">'.$livraison->error.'</div>';
         $_GET["commande_id"]=$_POST["commande_id"];
         $_GET["action"]='create';
     }
 }
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->expedition->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->expedition->livraison->valider)
 {
-  $expedition = new Expedition($db);
-  $expedition->fetch($_GET["id"]);
-  $result = $expedition->valid($user);
-  //$expedition->PdfWrite();
+  $livraison = new Livraison($db);
+  $livraison->fetch($_GET["id"]);
+  $result = $livraison->valid($user);
+  $livraison->PdfWrite();
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-  if ($user->rights->expedition->supprimer ) 
+  if ($user->rights->expedition->livraison->supprimer ) 
     {
-      $expedition = new Expedition($db);
-      $expedition->id = $_GET["id"];
-      $expedition->delete();
+      $livraison = new Livraison($db);
+      $livraison->id = $_GET["id"];
+      $livraison->delete();
       Header("Location: liste.php");
     }
 }
@@ -124,7 +121,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	$result=expedition_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
+	$result=livraison_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);
@@ -148,7 +145,7 @@ if ($_GET["action"] == 'create')
 {
   llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
 
-  print_titre($langs->trans("CreateASending"));
+  print_titre($langs->trans("CreateADeliveryOrder"));
 
   if ($mesg)
   {
@@ -156,7 +153,7 @@ if ($_GET["action"] == 'create')
   }
   
   $commande = new Commande($db);
-  $commande->expedition_array();
+  $commande->livraison_array();
   
   if ( $commande->fetch($_GET["commande_id"]))
     {
@@ -166,14 +163,15 @@ if ($_GET["action"] == 'create')
       $author->id = $commande->user_author_id;
       $author->fetch();
       
-      $entrepot = new Entrepot($db);
+      //$entrepot = new Entrepot($db);
+      
       /*
        *   Commande
        */
       print '<form action="fiche.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-      print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
+      //print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
       print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -188,11 +186,14 @@ if ($_GET["action"] == 'create')
       print '<td>'.$langs->trans("Order").'</td><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a>';
       print "</td></tr>\n";
       
-      print '<tr><td>'.$langs->trans("Warehouse").'</td>';
+      print '<tr>';
+      /*
+      print '<td>'.$langs->trans("Warehouse").'</td>';
       print '<td>';
       $ents = $entrepot->list_array();
       print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
       print '</td>';
+      */
       print "<td>".$langs->trans("Author")."</td><td>$author->fullname</td>\n";
       
       if ($commande->note)
@@ -209,8 +210,8 @@ if ($_GET["action"] == 'create')
       
       $lignes = $commande->fetch_lignes(1);
       
-      /* Lecture des expeditions déjà effectuées */
-      $commande->expedition_array();
+      /* Lecture des livraisons déjà effectuées */
+      $commande->livraison_array();
       
       $num = sizeof($commande->lignes);
       $i = 0;
@@ -319,35 +320,35 @@ else
 {  
     if ($_GET["id"] > 0)
     {
-        $expedition = New Expedition($db);
-        $result = $expedition->fetch($_GET["id"]);
+        $livraison = New Livraison($db);
+        $result = $livraison->fetch($_GET["id"]);
     
-        if ( $expedition->id > 0)
+        if ( $livraison->id > 0)
         {
             $author = new User($db);
-            $author->id = $expedition->user_author_id;
+            $author->id = $livraison->user_author_id;
             $author->fetch();
     
             llxHeader('','Fiche expedition','ch-expedition.html',$form_search,$author);
     
             $commande = New Commande($db);
-            $commande->fetch($expedition->commande_id);
+            $commande->fetch($livraison->commande_id);
     
             $soc = new Societe($db);
             $soc->fetch($commande->soc_id);
     
             $h=0;
-            $head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$expedition->id;
-            $head[$h][1] = $langs->trans("SendingCard");
-            $hselected = $h;
-            $h++;
-            
-            if ($conf->livraison->enable)
+            if ($conf->expedition->enable)
             {
-            	$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$livraison->id;
-            	$head[$h][1] = $langs->trans("DeliveryCard");
+            	$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$expedition->id;
+            	$head[$h][1] = $langs->trans("SendingCard");
             	$h++;
             }
+            
+            $head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$livraison->id;
+            $head[$h][1] = $langs->trans("DeliveryCard");
+            $hselected = $h;
+            $h++;
     
             dolibarr_fiche_head($head, $hselected, $langs->trans("Sending"));
     
@@ -357,7 +358,7 @@ else
             */
             if ($_GET["action"] == 'delete')
             {
-                $html->form_confirm("fiche.php?id=$expedition->id","Supprimer l'expedition","Etes-vous sûr de vouloir supprimer cette expedition ?","confirm_delete");
+                $html->form_confirm("fiche.php?id=$livraison->id","Supprimer le bon de livraison","Etes-vous sûr de vouloir supprimer ce bon de livraison ?","confirm_delete");
                 print '<br>';
             }
     
@@ -367,33 +368,24 @@ else
             */
             if ($_GET["action"] == 'valid')
             {
-                $html->form_confirm("fiche.php?id=$expedition->id","Valider l'expédition","Etes-vous sûr de vouloir valider cette expédition ?","confirm_valid");
+                $html->form_confirm("fiche.php?id=$livraison->id","Valider le bon de livraison","Etes-vous sûr de vouloir valider ce bon de livraison ?","confirm_valid");
                 print '<br>';
             }
-            /*
-            * Confirmation de l'annulation
-            *
-            */
-            if ($_GET["action"] == 'annuler')
-            {
-                $html->form_confirm("fiche.php?id=$expedition->id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
-                print '<br>';
-            }
+            
     
             /*
             *   Commande
             */
             if ($commande->brouillon == 1 && $user->rights->commande->creer)
             {
-                print '<form action="fiche.php?id='.$expedition->id.'" method="post">';
-                print '<input type="hidden" name="action" value="setremise">';
+                print '<form action="fiche.php?id='.$livraison->id.'" method="post">';
             }
     
             print '<table class="border" width="100%">';
     
             // Ref
             print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-            print '<td colspan="3">'.$expedition->ref.'</td></tr>';
+            print '<td colspan="3">'.$livraison->ref.'</td></tr>';
     
             // Client
             print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
@@ -412,12 +404,14 @@ else
     
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print "<td>".strftime("%A %d %B %Y",$expedition->date)."</td>\n";
-    
+            print "<td>".strftime("%A %d %B %Y",$livraison->date)."</td>\n";
+/*    
             // Entrepot
             $entrepot = new Entrepot($db);
             $entrepot->fetch($expedition->entrepot_id);
-            print '<td width="20%">'.$langs->trans("Warehouse").'</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td></tr>';
+            print '<td width="20%">'.$langs->trans("Warehouse").'</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
+*/            
+            print '</tr>';
     
             print "</table>\n";
     
@@ -427,9 +421,9 @@ else
             echo '<br><table class="noborder" width="100%">';
     
             $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
-            $sql .= " , ed.qty as qty_livre";
-            $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
-            $sql .= " WHERE ed.fk_expedition = $expedition->id AND cd.rowid = ed.fk_commande_ligne ";
+            $sql .= " , ld.qty as qty_livre";
+            $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."livraisondet as ld";
+            $sql .= " WHERE ld.fk_livraison = $livraison->id AND cd.rowid = ld.fk_commande_ligne ";
     
             $resql = $db->query($sql);
     
@@ -493,16 +487,16 @@ else
             {
                 print '<div class="tabsAction">';
     
-                if ($expedition->statut == 0 && $user->rights->expedition->valider && $num_prod > 0)
+                if ($livraison->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
                 {
-                    print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+                    print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
                 }
     
-                print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
     
-                if ($expedition->brouillon && $user->rights->expedition->supprimer)
+                if ($livraison->brouillon && $user->rights->expedition->livraison->supprimer)
                 {
-                    print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                    print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
                 }
     
                 print '</div>';
@@ -519,31 +513,31 @@ else
             //$filename=sanitize_string($expedition->id);
             //$filedir=$conf->expedition->dir_output . "/" .get_exdir($expedition->id);
             
-            $filename=sanitize_string($expedition->ref);
-            $filedir=$conf->expedition->dir_output . "/" .$expedition->ref;
+            $filename=sanitize_string($livraison->ref);
+            $filedir=$conf->livraison->dir_output . "/" .$livraison->ref;
             
-            $urlsource=$_SERVER["PHP_SELF"]."?id=".$expedition->id;
+            $urlsource=$_SERVER["PHP_SELF"]."?id=".$livraison->id;
             
             //$genallowed=$user->rights->expedition->creer;
             //$delallowed=$user->rights->expedition->supprimer;
             $genallowed=1;
             $delallowed=0;
     
-            $result=$html->show_documents('expedition',$filename,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
+            $result=$html->show_documents('livraison',$filename,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf);
     
             /*
              * Déjà livre
              */
             $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
-            $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
-            $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
+            $sql .= " , ld.qty as qty_livre, l.ref, ld.fk_livraison as livraison_id";
+            $sql .= ",".$db->pdate("l.date_livraison")." as date_livraison";
             $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
-            $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-            $sql .= " WHERE cd.fk_commande = ".$expedition->commande_id;
-            $sql .= " AND e.rowid <> ".$expedition->id;
-            $sql .= " AND cd.rowid = ed.fk_commande_ligne";
-            $sql .= " AND ed.fk_expedition = e.rowid";
-            $sql .= " AND e.fk_statut > 0";
+            $sql .= " , ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l";
+            $sql .= " WHERE cd.fk_commande = ".$livraison->commande_id;
+            $sql .= " AND l.rowid <> ".$livraison->id;
+            $sql .= " AND cd.rowid = ld.fk_commande_ligne";
+            $sql .= " AND ld.fk_livraison = l.rowid";
+            $sql .= " AND l.fk_statut > 0";
             $sql .= " ORDER BY cd.fk_product";
     
             $resql = $db->query($sql);
@@ -571,7 +565,7 @@ else
                         $var=!$var;
                         $objp = $db->fetch_object($resql);
                         print "<tr $bc[$var]>";
-                        print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+                        print '<td align="left"><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                         if ($objp->fk_product > 0)
                         {
                             $product = new Product($db);
@@ -587,7 +581,7 @@ else
                             print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
                         }
                         print '<td align="center">'.$objp->qty_livre.'</td>';
-                        print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
+                        print '<td align="center">'.dolibarr_print_date($objp->date_livraison).'</td>';
                         print '</tr>';
                         $i++;
                     }
@@ -636,7 +630,7 @@ else
             $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
             $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
             $sql .= " WHERE a.fk_soc = ".$commande->soc_id." AND a.fk_action in (9,10)";
-            $sql .= " AND a.fk_commande = ".$expedition->id;
+            $sql .= " AND a.fk_commande = ".$livraison->id;
 
             $resql = $db->query($sql);
             if ($resql)
@@ -676,11 +670,11 @@ else
                 $replytomail = $user->email;
                 $from_mail = $replytomail;
     
-                print "<form method=\"post\" action=\"fiche.php?id=$expedition->id&amp;action=send\">\n";
+                print "<form method=\"post\" action=\"fiche.php?id=$livraison->id&amp;action=send\">\n";
                 print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
                 print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
     
-                print "<p><b>Envoyer la commande par mail</b>";
+                print "<p><b>Envoyer le bon de livraison par mail</b>";
                 print "<table cellspacing=0 border=1 cellpadding=3>";
                 print '<tr><td>Destinataire</td><td colspan="5">';
     
