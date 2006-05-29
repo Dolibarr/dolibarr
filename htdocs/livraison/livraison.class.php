@@ -205,7 +205,7 @@ class Livraison
         $sql .= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, l.fk_adresse_livraison, l.model_pdf";
         $sql .= ", s.idp as socid";
         $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-        $sql .= " WHERE l.rowid = $id AND c.rowid = l.fk.commande AND c.fk_soc = s.idp";
+        $sql .= " WHERE l.rowid = $id AND c.rowid = l.fk_commande AND c.fk_soc = s.idp";
     
         $result = $this->db->query($sql) ;
     
