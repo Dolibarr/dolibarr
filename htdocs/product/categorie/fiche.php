@@ -18,10 +18,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 require("./pre.inc.php");
+
+// \todo	Par qui est appelé ce fichier ?
+
 
 llxHeader();
 
@@ -96,12 +98,11 @@ else
 	  print '<div class="titre">Fiche Album : '.$album->titre.'</div><br>';
       
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-	  print '<tr>';
-	  print '<td>'.$langs->trans("Ref")."</td><td>$album->ref</td>\n";
-	  print '<td>'.$langs->trans("Status").'</td><td>$album->status</td></tr>\n';
-	  print "<td>Titre</td><td>$album->titre</td>\n";
-	  print '<td>'.$langs->trans("Price").'</td><TD>'.price($album->price).'</td></tr>';    
-	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top">'.nl2br($album->description)."</td>";
+	  print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$album->ref.'</td><tr>';
+	  print '<tr><td>'.$langs->trans("Status").'</td><td>'.$album->status.'</td><tr>';
+	  print '<tr><td>'.$langs->trans("Title").'</td><td>'.$album->titre.'</td><tr>';
+	  print '<tr><td>'.$langs->trans("Price").'</td><td>'.price($album->price).'</td><tr>';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top">'.nl2br($album->description).'</td>';
 
 	  $gas = $album->liste_groupart();
 	  print '<td valign="top">Artiste/Groupe</td><td><ul>';	      
