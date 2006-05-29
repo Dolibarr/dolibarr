@@ -343,7 +343,7 @@ if ($_GET["id"] > 0)
                 print '<td align="center">'.$objp->qty.'</td>';
 
                 print '<td align="center">';
-                $quantite_livree = $commande->livraisons[$objp->fk_product];
+                $quantite_livree = $commande->expeditions[$objp->fk_product];
                 print $quantite_livree;
                 print '</td>';
 
