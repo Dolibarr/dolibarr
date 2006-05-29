@@ -287,6 +287,10 @@ class pdf_huitre extends ModelePDFFactures {
 ///////////////////////////////
   function _tableau_compl(&$pdf, $fac)
     {
+    	global $langs;
+    	$langs->load("main");
+    	$langs->load("bills");
+    	
       $tab3_top = 240;
       $tab3_height = 18;
       $tab3_width = 60;
