@@ -962,11 +962,17 @@ class Commande
 		$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice';
 		if ($only_product==1)
 		{
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product) WHERE l.fk_commande = '.$this->id.' AND p.fk_product_type <> 1 ORDER BY l.rowid';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
+			$sql .= ' WHERE l.fk_commande = '.$this->id;
+			$sql .= ' AND p.fk_product_type <> 1';
+			$sql .= ' ORDER BY l.rowid';
 		}
 		else
 		{
-			$sql .= ' FROM '.MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande = $this->id ORDER BY l.rowid";
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+			$sql .= ' WHERE l.fk_commande = '.$this->id;
+			$sql .= ' ORDER BY l.rowid';
 		}
 		$result = $this->db->query($sql);
 		if ($result)
