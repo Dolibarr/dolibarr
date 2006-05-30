@@ -510,7 +510,7 @@ else
                 
                 if ($conf->livraison->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer)
                 {
-                    print '<a class="butAction" href="'.DOL_URL_ROOT.'"/livraison/fiche.php?id="'.$expedition->id.'"&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
+                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
                 }
     
                 print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
