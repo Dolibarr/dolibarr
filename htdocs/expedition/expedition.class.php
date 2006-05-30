@@ -194,10 +194,9 @@ class Expedition
         if ($conf->livraison->enabled) $sql.=", l.rowid as livraison_id";
         $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
         $sql .= ", ".MAIN_DB_PREFIX."commande as c";
-        if ($conf->livraison->enabled) $sql.=", ".MAIN_DB_PREFIX."livraison as l";
+        if ($conf->livraison->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
         $sql .= " WHERE e.rowid = $id";
         $sql .= " AND e.fk_commande = c.rowid";
-        if ($conf->livraison->enabled) $sql.=" AND e.rowid = l.fk_expedition";
     
         $result = $this->db->query($sql) ;
     
