@@ -361,7 +361,7 @@ else
             $h=0;
             if ($conf->expedition->enabled)
             {
-            	$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$expedition->id;
+            	$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$livraison->expedition_id;
             	$head[$h][1] = $langs->trans("SendingCard");
             	$h++;
             }
