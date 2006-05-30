@@ -105,7 +105,8 @@ if ($_POST["action"] == 'create_delivery' && $conf->livraison->enabled && $user-
 {
   $expedition = new Expedition($db);
   $expedition->fetch($_GET["id"]);
-  $expedition->create_delivery($user);
+  $result = $expedition->create_delivery($user);
+  Header("Location: ".DOL_URL_ROOT.'/livraison/fiche.php?id='.$result->id);
 }
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->expedition->valider)
@@ -510,7 +511,7 @@ else
                 
                 if ($conf->livraison->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer)
                 {
-                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/livraison/fiche.php?expid='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
+                    print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
                 }
     
                 print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';

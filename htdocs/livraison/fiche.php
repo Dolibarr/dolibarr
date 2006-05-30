@@ -141,16 +141,6 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     }    
 }
 
-/*
- * Génère un bon de livraison
- */
-if ($_POST["action"] == 'create_delivery' && $user->rights->expedition->livraison->creer)
-{
-  $expedition = new Expedition($db);
-  $expedition->fetch($_GET["expid"]);
-  $expedition->create_delivery($user);
-}
-
 
 /*
  *
