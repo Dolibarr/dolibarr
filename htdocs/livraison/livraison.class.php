@@ -396,6 +396,7 @@ class Livraison
 			$this->lines[$i] = $LivraisonLigne;
 		}
 
+		$this->commande_id          = $expedition->commande_id;
 		$this->note                 = $expedition->note;
 		$this->projetid             = $expedition->projetidp;
 		$this->date_livraison       = $expedition->date_livraison;
