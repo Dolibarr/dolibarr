@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,13 @@
         \version    $Revision$
 */
 
-
 require("./pre.inc.php");
+
+
+// Defini si peux lire/modifier utilisateurs et permisssions
+$canreadperms=($user->admin || $user->rights->user->user->lire);
+$caneditperms=($user->admin || $user->rights->user->user->creer);
+$candisableperms=($user->admin || $user->rights->user->user->supprimer);
 
 $langs->load("users");
 
@@ -48,7 +53,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 /**
  *  Action ajout groupe
  */
-if ($_POST["action"] == 'add' && $user->admin)
+if ($_POST["action"] == 'add' && $caneditperms)
 {
     $message="";
     if (! $_POST["nom"]) {
@@ -82,7 +87,7 @@ if ($_POST["action"] == 'add' && $user->admin)
     }
 }
 
-if ($_POST["action"] == 'adduser' && $user->admin)
+if ($_POST["action"] == 'adduser' && $caneditperms)
 {
     if ($_POST["user"])
     {
@@ -93,7 +98,7 @@ if ($_POST["action"] == 'adduser' && $user->admin)
     }
 }
 
-if ($_GET["action"] == 'removeuser' && $user->admin)
+if ($_GET["action"] == 'removeuser' && $caneditperms)
 {
     if ($_GET["user"])
     {
@@ -104,7 +109,7 @@ if ($_GET["action"] == 'removeuser' && $user->admin)
     }
 }
 
-if ($_POST["action"] == 'update' && $user->admin)
+if ($_POST["action"] == 'update' && $caneditperms)
 {
     $message="";
 
@@ -228,12 +233,12 @@ else
              */
             print '<div class="tabsAction">';
     
-            if ($user->admin)
+            if ($caneditperms)
             {
                 print '<a class="tabAction" href="fiche.php?id='.$group->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
     
-            if ($user->id <> $_GET["id"] && $user->admin)
+            if ($candisableperms)
             {
                 print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$group->id.'">'.$langs->trans("DeleteGroup").'</a>';
             }
@@ -381,8 +386,6 @@ else
             print '</form>';
     
             print '</div>';
-
-
         }
 
     }
@@ -390,5 +393,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
