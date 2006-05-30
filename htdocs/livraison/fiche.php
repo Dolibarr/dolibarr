@@ -122,7 +122,14 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
       $livraison = new Livraison($db);
       $livraison->id = $_GET["id"];
       $livraison->delete();
-      Header("Location: liste.php");
+      if ($conf->expedition->enabled)
+      {
+      	Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$expedition->id);
+      }
+      else
+      {
+      	Header("Location: liste.php");
+      }
     }
 }
 
