@@ -341,7 +341,7 @@ class Livraison
                         
                     }
                 }
-*/
+
                 return 1;
             }
             else

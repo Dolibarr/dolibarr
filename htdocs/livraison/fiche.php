@@ -34,6 +34,11 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 
+if (!$conf->expedition->enabled && $conf->stock->enabled)
+{
+	require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+}
+
 
 $langs->load("bills");
 
@@ -61,9 +66,14 @@ if ($_POST["action"] == 'add')
     // Creation de l'objet livraison
     $livraison = new Livraison($db);
     
-    $livraison->date_livraison  = time();
+    $livraison->date_livraison   = time();
     $livraison->note             = $_POST["note"];
     $livraison->commande_id      = $_POST["commande_id"];
+    
+    if (!$conf->expedition->enabled && $conf->stock->enabled)
+    {
+    	$expedition->entrepot_id     = $_POST["entrepot_id"];
+    }
     
     // On boucle sur chaque ligne de commande pour compléter objet livraison
     // avec qté à livrer
@@ -164,7 +174,10 @@ if ($_GET["action"] == 'create')
       $author->id = $commande->user_author_id;
       $author->fetch();
       
-      //$entrepot = new Entrepot($db);
+      if (!$conf->expedition->enabled && $conf->stock->enabled)
+      {
+      	$entrepot = new Entrepot($db);
+      }
       
       /*
        *   Commande
@@ -172,7 +185,10 @@ if ($_GET["action"] == 'create')
       print '<form action="fiche.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-      //print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
+      if (!$conf->expedition->enabled && $conf->stock->enabled)
+      {
+      	print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
+      }
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
       print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -188,13 +204,16 @@ if ($_GET["action"] == 'create')
       print "</td></tr>\n";
       
       print '<tr>';
-      /*
-      print '<td>'.$langs->trans("Warehouse").'</td>';
-      print '<td>';
-      $ents = $entrepot->list_array();
-      print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
-      print '</td>';
-      */
+      
+      if (!$conf->expedition->enabled && $conf->stock->enabled)
+      {
+      	print '<td>'.$langs->trans("Warehouse").'</td>';
+      	print '<td>';
+      	$ents = $entrepot->list_array();
+      	print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
+      	print '</td>';
+      }
+
       print "<td>".$langs->trans("Author")."</td><td>$author->fullname</td>\n";
       
       if ($commande->note)
