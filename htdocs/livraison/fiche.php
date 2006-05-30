@@ -387,7 +387,7 @@ else
             */
             if ($_GET["action"] == 'delete')
             {
-                $expedition_id = $_GET[$expid];
+                $expedition_id = $_GET["expid"];
                 $html->form_confirm("fiche.php?id=$livraison->id&amp;expid=$expedition_id","Supprimer le bon de livraison","Etes-vous sûr de vouloir supprimer ce bon de livraison ?","confirm_delete");
                 print '<br>';
             }
