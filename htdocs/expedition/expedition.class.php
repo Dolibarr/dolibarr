@@ -555,29 +555,26 @@ class Expedition
 
     $resql = $this->db->query($sql);
     if ($resql)
-      {
-	$num = $this->db->num_rows($resql);
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $ligne = new ExpeditionLigne();
-
-	    $obj = $this->db->fetch_object($resql);
-
-	    $ligne->product_id     = $obj->fk_product;
-	    $ligne->qty_commande   = $obj->qtycom;
-	    $ligne->qty_expedition = $obj->qtyexp;
-	    $ligne->description    = stripslashes($obj->description);	    
-
-	    $this->lignes[$i] = $ligne;	    
-	    $i++;
-	  }	      
-	$this->db->free($resql);
+    {
+      	$num = $this->db->num_rows($resql);
+      	$i = 0;
+      	while ($i < $num)
+      	{
+      		$ligne = new ExpeditionLigne();
+      		$obj = $this->db->fetch_object($resql);
+      		
+      		$ligne->product_id     = $obj->fk_product;
+      		$ligne->qty_commande   = $obj->qtycom;
+      		$ligne->qty_expedition = $obj->qtyexp;
+      		$ligne->description    = stripslashes($obj->description);
+      		
+      		$this->lignes[$i] = $ligne;
+      		$i++;
+      	}
+      	$this->db->free($resql);
       }
-
     return $this->lignes;
   }
-
 }
 
 

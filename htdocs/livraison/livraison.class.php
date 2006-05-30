@@ -172,29 +172,29 @@ class Livraison
   function create_line($transaction, $commande_ligne_id, $qty)
   {
     $error = 0;
-
     $idprod = 0;
     $j = 0;
+    
     while (($j < sizeof($this->commande->lignes)) && idprod == 0)
       {
-	if ($this->commande->lignes[$j]->id == $commande_ligne_id)
-	  {
-	    $idprod = $this->commande->lignes[$j]->product_id;
-	  }
-	$j++;
+      	if ($this->commande->lignes[$j]->id == $commande_ligne_id)
+      	{
+      		$idprod = $this->commande->lignes[$j]->product_id;
+      	}
+      	$j++;
       }
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_commande_ligne, qty)";
-    $sql .= " VALUES ($this->id,".$commande_ligne_id.",".$qty.")";
-    
-    if (! $this->db->query($sql) )
+      
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_commande_ligne, qty)";
+      $sql .= " VALUES ($this->id,".$commande_ligne_id.",".$qty.")";
+      
+      if (! $this->db->query($sql) )
       {
-	$error++;
+      	$error++;
       }
-
-    if ($error == 0 )
+      
+      if ($error == 0 )
       {
-	return 1;
+      	return 1;
       }
   }
   
