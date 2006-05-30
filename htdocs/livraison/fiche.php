@@ -121,10 +121,11 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     {
       $livraison = new Livraison($db);
       $livraison->id = $_GET["id"];
+      $expedition_id = $_GET["expid"];
       $livraison->delete();
       if ($conf->expedition->enabled)
       {
-      	Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$expedition->id);
+      	Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$expedition_id);
       }
       else
       {
@@ -386,7 +387,7 @@ else
             */
             if ($_GET["action"] == 'delete')
             {
-                $html->form_confirm("fiche.php?id=$livraison->id","Supprimer le bon de livraison","Etes-vous sûr de vouloir supprimer ce bon de livraison ?","confirm_delete");
+                $html->form_confirm("fiche.php?id=$livraison->id&amp;expid=$_GET[$expid]","Supprimer le bon de livraison","Etes-vous sûr de vouloir supprimer ce bon de livraison ?","confirm_delete");
                 print '<br>';
             }
     
@@ -527,7 +528,14 @@ else
     
                 if ($livraison->brouillon && $user->rights->expedition->livraison->supprimer)
                 {
-                    print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                    if ($conf->expedition->enabled)
+                    {
+                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;expid='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                    }
+                    else
+                    {
+                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                    }
                 }
     
                 print '</div>';
