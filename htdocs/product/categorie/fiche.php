@@ -24,6 +24,9 @@ require("./pre.inc.php");
 
 // \todo	Par qui est appelé ce fichier ?
 
+// Régis : ce répertoire catégorie et ses fichiers était pour OSCommerce
+// à mon avis ils ne sont plus utilisés
+
 
 llxHeader();
 
