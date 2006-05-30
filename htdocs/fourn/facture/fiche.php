@@ -729,7 +729,7 @@ else
 
 		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->supprimer)
 		{
-			print '<a class="butActionDelete" href="index.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="fiche.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
 		print '</div>';
 	}
