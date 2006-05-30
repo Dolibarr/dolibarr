@@ -147,7 +147,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 if ($_POST["action"] == 'create_delivery' && $user->rights->expedition->livraison->creer)
 {
   $expedition = new Expedition($db);
-  $expedition->fetch($_GET["id"]);
+  $expedition->fetch($_GET["expid"]);
   $expedition->create_delivery($user);
 }
 
