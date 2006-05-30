@@ -251,7 +251,7 @@ class Livraison
     {
         global $conf;
         
-        //require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+        require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
     
         dolibarr_syslog("livraison.class.php::valid");
 
@@ -294,20 +294,19 @@ class Livraison
     
             if ($this->db->query($sql) )
             {
-/*
-                
+
                 // Si module stock géré et que expedition faite depuis un entrepot
-                if ($conf->stock->enabled && $this->entrepot_id)
+                if (!$conf->expedition->enabled && $conf->stock->enabled && $this->entrepot_id)
                 {
                     
                      //Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
                      
 
-                    dolibarr_syslog("expedition.class.php::valid enregistrement des mouvements");
+                    dolibarr_syslog("livraison.class.php::valid enregistrement des mouvements");
 
-                    $sql = "SELECT cd.fk_product, ed.qty ";
-                    $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."expeditiondet as ed";
-                    $sql.= " WHERE ed.fk_expedition = $this->id AND cd.rowid = ed.fk_commande_ligne";
+                    $sql = "SELECT cd.fk_product, ld.qty ";
+                    $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
+                    $sql.= " WHERE ld.fk_livraison = $this->id AND cd.rowid = ld.fk_commande_ligne";
         
                     $resql=$this->db->query($sql);
                     if ($resql)
@@ -316,7 +315,7 @@ class Livraison
                         $i=0;
                         while($i < $num)
                         {
-                            dolibarr_syslog("expedition.class.php::valid movment $i");
+                            dolibarr_syslog("livraison.class.php::valid movment $i");
 
                             $obj = $this->db->fetch_object($resql);
 
@@ -326,7 +325,7 @@ class Livraison
                             {
                                 $this->db->rollback();
                                 $this->error=$this->db->error()." - sql=$sql";
-                                dolibarr_syslog("expedition.class.php::valid ".$this->error);
+                                dolibarr_syslog("livraison.class.php::valid ".$this->error);
                                 return -3;
                             }
                             $i++;
