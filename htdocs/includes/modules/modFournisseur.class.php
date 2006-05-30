@@ -199,14 +199,22 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'facture';
 		$this->rights[$r][5] = 'valider';
+		
+		$r++;
+		$this->rights[$r][0] = 234;
+		$this->rights[$r][1] = 'Supprimer une facture fournisseur';
+		$this->rights[$r][2] = 's';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'facture';
+		$this->rights[$r][5] = 'supprimer';
 
-        $r++;
-        $this->rights[$r][0] = 236;
-        $this->rights[$r][1] = 'Exporter les factures fournisseurs et attributs';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'facture';
-        $this->rights[$r][5] = 'export';
+    $r++;
+    $this->rights[$r][0] = 236;
+    $this->rights[$r][1] = 'Exporter les factures fournisseurs et attributs';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'facture';
+    $this->rights[$r][5] = 'export';
  
 
         // Exports
