@@ -424,7 +424,7 @@ else
     
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print "<td>".strftime("%A %d %B %Y",$livraison->date_creation)."</td>\n";
+            print "<td>".dolibarr_print_date($livraison->date_creation,'%A %d %B %Y')."</td>\n";
     
             if (!$conf->expedition->enabled && $conf->stock->enabled)
             {

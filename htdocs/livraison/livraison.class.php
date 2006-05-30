@@ -191,6 +191,7 @@ class Livraison
 	return 1;
       }
   }
+  
   /** 
    *
    * Lit un bon de livraison
