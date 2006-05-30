@@ -33,6 +33,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 
 if (!$conf->expedition->enabled && $conf->stock->enabled)
 {
@@ -138,6 +139,16 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     	dolibarr_print_error($db,$result);
         exit;
     }    
+}
+
+/*
+ * Génère un bon de livraison
+ */
+if ($_POST["action"] == 'create_delivery' && $user->rights->expedition->livraison->creer)
+{
+  $expedition = new Expedition($db);
+  $expedition->fetch($_GET["id"]);
+  $expedition->create_delivery($user);
 }
 
 
