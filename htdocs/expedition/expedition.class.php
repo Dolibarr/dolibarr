@@ -192,7 +192,7 @@ class Expedition
         $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
         $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, c.fk_adresse_livraison";
         $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-        $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
+        $sql .= ", ".MAIN_DB_PREFIX."commande as c";
         $sql .= " WHERE e.rowid = $id";
         $sql .= " AND e.fk_commande = c.rowid";
     
