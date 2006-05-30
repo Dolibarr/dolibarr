@@ -424,13 +424,16 @@ else
     
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print "<td>".strftime("%A %d %B %Y",$livraison->date)."</td>\n";
-/*    
-            // Entrepot
-            $entrepot = new Entrepot($db);
-            $entrepot->fetch($expedition->entrepot_id);
-            print '<td width="20%">'.$langs->trans("Warehouse").'</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
-*/            
+            print "<td>".strftime("%A %d %B %Y",$livraison->date_creation)."</td>\n";
+    
+            if (!$conf->expedition->enabled && $conf->stock->enabled)
+            {
+            	// Entrepot
+            	$entrepot = new Entrepot($db);
+            	$entrepot->fetch($expedition->entrepot_id);
+            	print '<td width="20%">'.$langs->trans("Warehouse").'</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
+            }
+           
             print '</tr>';
     
             print "</table>\n";

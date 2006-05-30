@@ -214,6 +214,7 @@ class Livraison
             $obj = $this->db->fetch_object($result);
     
             $this->id                   = $obj->rowid;
+            $this->date_creation        = $obj->date_creation;
             $this->ref                  = $obj->ref;
             $this->soc_id               = $obj->socid;
             $this->statut               = $obj->fk_statut;
@@ -221,11 +222,11 @@ class Livraison
             $this->expedition_id        = $obj->fk_expedition;
             $this->user_author_id       = $obj->fk_user_author;
             $this->user_valid_id        = $obj->fk_user_valid;
-            $this->date                 = $obj->date_livraison;
+            $this->date_livraison       = $obj->date_livraison;
             $this->adresse_livraison_id = $obj->fk_entrepot;
             $this->note                 = $obj->note;
             $this->note_public          = $obj->note_public;
-            $this->modelpdf            = $obj->model_pdf;
+            $this->modelpdf             = $obj->model_pdf;
             $this->db->free();
     
             if ($this->statut == 0) $this->brouillon = 1;
