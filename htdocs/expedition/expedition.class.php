@@ -182,7 +182,7 @@ class Expedition
   }
   /** 
    *
-   * Lit une commande
+   * Lit une expedition
    *
    */
     function fetch ($id)
@@ -190,9 +190,11 @@ class Expedition
         global $conf;
     
         $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
-        $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition ";
+        $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, c.fk_adresse_livraison";
         $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+        $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
         $sql .= " WHERE e.rowid = $id";
+        $sql .= " AND e.fk_commande = c.rowid";
     
         $result = $this->db->query($sql) ;
     
@@ -200,16 +202,59 @@ class Expedition
         {
             $obj = $this->db->fetch_object($result);
     
-            $this->id              = $obj->rowid;
-            $this->ref             = $obj->ref;
-            $this->statut          = $obj->fk_statut;
-            $this->commande_id     = $obj->fk_commande;
-            $this->user_author_id  = $obj->fk_user_author;
-            $this->date            = $obj->date_expedition;
-            $this->entrepot_id     = $obj->fk_entrepot;
+            $this->id                   = $obj->rowid;
+            $this->ref                  = $obj->ref;
+            $this->statut               = $obj->fk_statut;
+            $this->commande_id          = $obj->fk_commande;
+            $this->user_author_id       = $obj->fk_user_author;
+            $this->date                 = $obj->date_expedition;
+            $this->entrepot_id          = $obj->fk_entrepot;
+            $this->adresse_livraison_id = $obj->fk_adresse_livraison;
             $this->db->free();
     
             if ($this->statut == 0) $this->brouillon = 1;
+            
+            // ligne de produit associée à une expédition
+			      $this->lignes = array();
+			      $sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp";
+			      $sql .= ", c.fk_product, c.label, p.ref";
+			      $sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
+			      $sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
+			      $sql .= " , ".MAIN_DB_PREFIX."product as p";
+			      $sql .= " WHERE e.fk_expedition = ".$this->id;
+			      $sql .= " AND e.fk_commande_ligne = c.rowid";
+			      $sql .= " AND c.fk_product = p.rowid";
+			      
+			      $result = $this->db->query($sql);
+            
+            if ($result)
+            {
+                    $num = $this->db->num_rows($result);
+                    $i = 0;
+    
+                    while ($i < $num)
+                    {
+                        $objp                  = $this->db->fetch_object($result);
+    
+                        $ligne                 = new ExpeditionLigne();
+
+                        $ligne->product_desc   = $objp->description;  // Description ligne
+                        $ligne->qty_commande   = $objp->qtycom;
+                        $ligne->product_id     = $objp->fk_product;
+
+                        $ligne->libelle        = $objp->label;        // Label produit
+                        $ligne->ref            = $objp->ref;
+    
+                        $this->lignes[$i]      = $ligne;
+                        $i++;
+                    }
+                    $this->db->free($result);
+                }
+                else
+                {
+                    dolibarr_syslog("Propal::Fetch Erreur lecture des produits");
+                    return -1;
+                }
     
             $file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id) . "/" . $this->id.".pdf";
             $this->pdf_filename = $file;
@@ -365,6 +410,32 @@ class Expedition
 	    }
 	}
     }
+    
+   /**
+     *      \brief      Crée un bon de livraison à partir de l'expédition
+     *      \param      user        Utilisateur
+     *      \return     int         <0 si ko, >=0 si ok
+     */
+    function create_delivery($user)
+    {
+        global $conf;
+        
+        if ($conf->livraison->enabled)
+        {
+            if ($this->statut == 1)
+            {
+                // Expédition validée
+                include_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
+                $livraison = new Livraison($this->db);
+                $result=$livraison->create_from_sending($user, $this->id);
+    
+                return $result;
+            }
+            else return 0;
+        }
+        else return 0;
+    }
+    
   /**
    * Ajoute une ligne
    *
@@ -506,6 +577,21 @@ class Expedition
 
 class ExpeditionLigne
 {
+	// From llx_expeditiondet
+		var $qty;
+		var $qty_expedition;
+		var $product_id;
+	
+		// From llx_commandedet
+		var $qty_commande;
+		var $libelle;       // Label produit
+		var $product_desc;  // Description produit
+		var $ref;
+		
+	function ExpeditionLigne()
+	{
+		
+	}
 
 }
 

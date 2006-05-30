@@ -77,11 +77,11 @@ class Livraison
     
         $this->db->begin();
     
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (date_creation, fk_user_author";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (date_creation, fk_user_author, fk_adresse_livraison";
         if ($this->commande_id) $sql.= ", fk_commande";
         if ($this->expedition_id) $sql.= ", fk_expedition";
         $sql.= ")";
-        $sql.= " VALUES (now(), $user->id";
+        $sql.= " VALUES (now(), $user->id, $this->adresse_livraison_id";
         if ($this->commande_id) $sql.= ", $this->commande_id";
         if ($this->expedition_id) $sql.= ", $this->expedition_id";
         $sql.= ")";
@@ -95,6 +95,7 @@ class Livraison
             if ($this->db->query($sql))
             {
     
+             /*  //test 
                 if ($conf->expedition->enabled)
                 {
                 	$this->expedition = new Expedition($this->db);
@@ -102,6 +103,8 @@ class Livraison
                   $this->expedition->fetch_lignes();
                 }
                 else
+               */ 
+                if (!$conf->expedition->enabled)
                 {
                 	$this->commande = new Commande($this->db);
                 	$this->commande->id = $this->commande_id;
@@ -114,10 +117,10 @@ class Livraison
                 for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
                 {
                     //TODO
-                    if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
-                    {
-                        $error++;
-                    }
+                    	if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
+                    	{
+                    		$error++;
+                      }
                 }
 
                 /*
@@ -368,6 +371,35 @@ class Livraison
         return 1;
     }
 
+    /**     \brief      Créé le bon de livraison depuis une expédition existante
+            \param      user            Utilisateur qui crée
+            \param      sending_id      id de l'expédition qui sert de modèle
+    */
+	function create_from_sending($user, $sending_id)
+	{
+		$expedition = new Expedition($this->db);
+		$expedition->fetch($sending_id);
+		$this->lines = array();
+		$this->date_livraison = time();
+		$this->expedition_id = $sending_id;
+		for ($i = 0 ; $i < sizeof($expedition->lignes) ; $i++)
+		{
+			$LivraisonLigne = new LivraisonLigne();
+			$LivraisonLigne->libelle           = $expedition->lignes[$i]->libelle;
+			$LivraisonLigne->description       = $expedition->lignes[$i]->product_desc;
+			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_commande;
+			$LivraisonLigne->product_id        = $expedition->lignes[$i]->product_id;
+			$LivraisonLigne->ref               = $expedition->lignes[$i]->ref;
+			$this->lines[$i] = $LivraisonLigne;
+		}
+
+		$this->note                 = $expedition->note;
+		$this->projetid             = $expedition->projetidp;
+		$this->date_livraison       = $expedition->date_livraison;
+		$this->adresse_livraison_id = $expedition->adresse_livraison_id;
+
+		return $this->create($user);
+	}
 
   /**
    * Ajoute un produit
