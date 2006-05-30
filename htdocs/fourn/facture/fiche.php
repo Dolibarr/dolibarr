@@ -60,6 +60,17 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	exit;
 }
 
+if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
+{
+	if ($user->rights->fournisseur->facture->supprimer )
+	{
+		$facturefourn = new FactureFournisseur($db);
+		$factfournid = $_GET['facid'];
+		$facturefourn->delete($factfournid);
+		Header('Location: index.php');
+		exit;
+	}
+}
 
 if ($_GET['action'] == 'payed')
 {
@@ -359,6 +370,15 @@ else
 		llxHeader('','', $addons);
 
 		if ($mesg) { print $mesg.'<br>'; }
+		
+		 /*
+			* Confirmation de la suppression de la facture fournisseur
+			*/
+			if ($_GET['action'] == 'delete')
+			{
+				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete');
+				print '<br />';
+			}
 
 		if ($_GET['action'] == 'edit')
 		{
@@ -707,7 +727,7 @@ else
 				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=copy&amp;socid='.$fac->socidp.'">'.$langs->trans('Copy').'</a>';
 			}
 
-		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->creer)
+		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->supprimer)
 		{
 			print '<a class="butActionDelete" href="index.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
