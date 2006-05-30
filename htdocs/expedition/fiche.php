@@ -509,7 +509,7 @@ else
                     print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
                 }
                 
-                if ($conf->livraison->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer)
+                if ($conf->livraison->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer && !$expedition->livraison_id)
                 {
                     print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
                 }
