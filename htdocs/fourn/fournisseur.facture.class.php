@@ -254,14 +254,11 @@ class FactureFournisseur extends Facture
 	 */
 	function delete($rowid)
 	{
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid.' AND fk_statut = 0;';
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$num = $this->db->affected_rows($resql);
-			if ($num)
-			{
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid.' AND fk_statut = 0;';
 				$resql2 = $this->db->query($sql);
 				if ($resql2)
 				{
@@ -271,7 +268,6 @@ class FactureFournisseur extends Facture
 				{
 					dolibarr_print_error($this->db);
 				}
-			}
 		}
 		else
 		{
