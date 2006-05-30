@@ -198,7 +198,7 @@ class Expedition
     
         $result = $this->db->query($sql) ;
     
-        if ( $result )
+        if ($result)
         {
             $obj = $this->db->fetch_object($result);
     
@@ -210,7 +210,7 @@ class Expedition
             $this->date                 = $obj->date_expedition;
             $this->entrepot_id          = $obj->fk_entrepot;
             $this->adresse_livraison_id = $obj->fk_adresse_livraison;
-            $this->db->free();
+            $this->db->free($result);
     
             if ($this->statut == 0) $this->brouillon = 1;
             
@@ -225,16 +225,16 @@ class Expedition
 			      $sql .= " AND e.fk_commande_ligne = c.rowid";
 			      $sql .= " AND c.fk_product = p.rowid";
 			      
-			      $result = $this->db->query($sql);
+			      $resultp = $this->db->query($sql);
             
-            if ($result)
+            if ($resultp)
             {
-                    $num = $this->db->num_rows($result);
+                    $num = $this->db->num_rows($resultp);
                     $i = 0;
     
                     while ($i < $num)
                     {
-                        $objp                  = $this->db->fetch_object($result);
+                        $objp                  = $this->db->fetch_object($resultp);
     
                         $ligne                 = new ExpeditionLigne();
 
@@ -248,7 +248,7 @@ class Expedition
                         $this->lignes[$i]      = $ligne;
                         $i++;
                     }
-                    $this->db->free($result);
+                    $this->db->free($resultp);
                 }
                 else
                 {
