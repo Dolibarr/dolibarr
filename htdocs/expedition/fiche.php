@@ -353,7 +353,7 @@ else
             $hselected = $h;
             $h++;
             
-            if ($conf->livraison->enabled)
+            if ($conf->livraison->enabled && $expedition->livraison_id)
             {
             	$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$expedition->livraison_id;
             	$head[$h][1] = $langs->trans("DeliveryCard");

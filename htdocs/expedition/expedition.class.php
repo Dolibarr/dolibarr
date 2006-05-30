@@ -191,10 +191,13 @@ class Expedition
     
         $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
         $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, c.fk_adresse_livraison";
+        if ($conf->livraison->enabled) $sql.=", l.rowid as livraison_id";
         $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
         $sql .= ", ".MAIN_DB_PREFIX."commande as c";
+        if ($conf->livraison->enabled) $sql.=", ".MAIN_DB_PREFIX."livraison as l";
         $sql .= " WHERE e.rowid = $id";
         $sql .= " AND e.fk_commande = c.rowid";
+        if ($conf->livraison->enabled) $sql.=" AND e.rowid = l.fk_expedition";
     
         $result = $this->db->query($sql) ;
     
@@ -206,6 +209,10 @@ class Expedition
             $this->ref                  = $obj->ref;
             $this->statut               = $obj->fk_statut;
             $this->commande_id          = $obj->fk_commande;
+            if ($conf->livraison->enabled)
+            {
+            	$this->livraison_id       = $obj->livraison_id;
+            }
             $this->user_author_id       = $obj->fk_user_author;
             $this->date                 = $obj->date_expedition;
             $this->entrepot_id          = $obj->fk_entrepot;
