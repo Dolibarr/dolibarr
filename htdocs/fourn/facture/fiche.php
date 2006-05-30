@@ -370,15 +370,6 @@ else
 		llxHeader('','', $addons);
 
 		if ($mesg) { print $mesg.'<br>'; }
-		
-		 /*
-			* Confirmation de la suppression de la facture fournisseur
-			*/
-			if ($_GET['action'] == 'delete')
-			{
-				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete');
-				print '<br />';
-			}
 
 		if ($_GET['action'] == 'edit')
 		{
@@ -530,6 +521,15 @@ else
 			if ($_GET['action'] == 'valid')
 			{
 				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid');
+				print '<br />';
+			}
+			
+			/*
+			* Confirmation de la suppression de la facture fournisseur
+			*/
+			if ($_GET['action'] == 'delete')
+			{
+				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete');
 				print '<br />';
 			}
 

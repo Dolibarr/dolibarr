@@ -42,14 +42,6 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($_GET["action"] == 'delete')
-{
-  $fac = new FactureFournisseur($db);
-  $fac->delete($_GET["facid"]);
-  
-  $facid = 0 ;
-}
-
 $page=$_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
