@@ -530,7 +530,7 @@ else
                 {
                     if ($conf->expedition->enabled)
                     {
-                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;expid='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;expid='.$livraison->expedition_id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
                     }
                     else
                     {
