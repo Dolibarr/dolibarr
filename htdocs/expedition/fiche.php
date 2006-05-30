@@ -101,12 +101,12 @@ if ($_POST["action"] == 'add')
 /*
  * Génère un bon de livraison
  */
-if ($_POST["action"] == 'create_delivery' && $conf->livraison->enabled && $user->rights->expedition->livraison->creer)
+if ($_GET["action"] == 'create_delivery' && $conf->livraison->enabled && $user->rights->expedition->livraison->creer)
 {
   $expedition = new Expedition($db);
   $expedition->fetch($_GET["id"]);
   $result = $expedition->create_delivery($user);
-  Header("Location: ".DOL_URL_ROOT.'/livraison/fiche.php?id='.$result->id);
+  Header("Location: ".DOL_URL_ROOT.'/livraison/fiche.php?id='.$result);
 }
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->expedition->valider)

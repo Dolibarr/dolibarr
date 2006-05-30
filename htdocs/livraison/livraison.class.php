@@ -126,10 +126,13 @@ class Livraison
                 /*
                  *
                  */
-                $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->commande_id;
-                if (! $this->db->query($sql))
+                if (!$conf->expedition->enabled)
                 {
+                	$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->commande_id;
+                	if (! $this->db->query($sql))
+                	{
                     $error++;
+                  }
                 }
         
                 if ($error==0)
