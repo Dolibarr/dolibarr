@@ -533,7 +533,7 @@ if ($_GET["id"] > 0)
                     print "<tr $bc[$var]>";
                     print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                     
-                    if ($conf->livraison->enabled)
+                    if ($conf->livraison->enabled && $objp->livraison_id)
                     {
                     	print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
                     }
