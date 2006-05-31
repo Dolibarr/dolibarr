@@ -94,30 +94,19 @@ class Livraison
             $sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
             if ($this->db->query($sql))
             {
-    
-             /*  //test 
-                if ($conf->expedition->enabled)
-                {
-                	$this->expedition = new Expedition($this->db);
-                  $this->expedition->id = $this->expedition_id;
-                  $this->expedition->fetch_lignes();
-                }
-                else
-               */ 
-                if (!$conf->expedition->enabled)
-                {
-                	$this->commande = new Commande($this->db);
-                	$this->commande->id = $this->commande_id;
-                	$this->commande->fetch_lignes();
-                }
+
+                	$commande = new Commande($this->db);
+                	$commande->id = $this->commande_id;
+                	$lignes = $commande->fetch_lignes();
+
     
                 /*
                 *  Insertion des produits dans la base
                 */
-                for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+                for ($i = 0 ; $i < sizeof($lignes) ; $i++)
                 {
                     //TODO
-                    	if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
+                    	if (! $this->create_line(0, $lignes[$i]->id, $lignes[$i]->qty))
                     	{
                     		$error++;
                       }
