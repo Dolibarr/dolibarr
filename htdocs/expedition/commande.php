@@ -472,7 +472,9 @@ if ($_GET["id"] > 0)
                         {
                             $obja = $db->fetch_object($resql);
                             print "<tr $bc[$var]>";
-                            print '<td width="54%">'.$obja->label.'</td><td>'.$obja->entrepot.'</td><td><b>Stock : '.$obja->reel.'</b></td>';
+                            print '<td width="54%">';
+                            print img_warning($langs->trans("Late"));
+                            print $obja->label.'</td><td>'.$obja->entrepot.'</td><td><b>Stock : '.$obja->reel.'</b></td>';
                             print "</tr>\n";
                             $i++;
                         }
@@ -493,9 +495,12 @@ if ($_GET["id"] > 0)
         $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
         $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
         $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
+        if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
         $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
         $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
+        if ($conf->livraison->enabled) $sql .= " , ".MAIN_DB_PREFIX."livraison as l";
         $sql .= " WHERE cd.fk_commande = ".$commande->id;
+        if ($conf->livraison->enabled) $sql .= " AND l.fk_commande = cd.fk_commande";
         $sql .= " AND cd.rowid = ed.fk_commande_ligne";
         $sql .= " AND ed.fk_expedition = e.rowid";
         $sql .= " AND e.fk_statut > 0";
@@ -524,9 +529,15 @@ if ($_GET["id"] > 0)
                 while ($i < $num)
                 {
                     $var=!$var;
-					$objp = $db->fetch_object($resql);
+                    $objp = $db->fetch_object($resql);
                     print "<tr $bc[$var]>";
                     print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+                    
+                    if ($conf->livraison->enabled)
+                    {
+                    	print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
+                    }
+                    
                     if ($objp->fk_product > 0)
                     {
             	      $product = new Product($db);
