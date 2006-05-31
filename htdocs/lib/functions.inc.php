@@ -143,8 +143,10 @@ function unaccent($str)
 */
 function sanitize_string($str)
 {
-    $forbidden_chars=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
-    return str_replace($forbidden_chars,"_",$str);
+    $forbidden_chars_to_underscore=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
+    //$forbidden_chars_to_remove=array("(",")"); 
+    $forbidden_chars_to_remove=array();
+    return str_replace($forbidden_chars_to_underscore,"_",str_replace($forbidden_chars_to_remove,"",$str));
 }
 
 

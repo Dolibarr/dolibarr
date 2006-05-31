@@ -550,8 +550,6 @@ else
              */
             
             $livraisonref = sanitize_string($livraison->ref);
-            $livraisonref = str_replace("(","",$livraisonref);
-            $livraisonref = str_replace(")","",$livraisonref);   
             $filedir = $conf->livraison->dir_output . '/' . $livraisonref;            
             $urlsource = $_SERVER["PHP_SELF"]."?id=".$livraison->id;
             

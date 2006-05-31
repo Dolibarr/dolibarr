@@ -178,6 +178,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	                                        'DB_ERROR_RECORD_ALREADY_EXISTS',
 	                                        'DB_ERROR_NOSUCHTABLE',
 	                                        'DB_ERROR_NOSUCHFIELD',
+	                                        'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
 	                                        'DB_ERROR_CANNOT_CREATE'    // Qd contrainte deja existante
 	                                       );
 	                        if (in_array($errno,$okerror))

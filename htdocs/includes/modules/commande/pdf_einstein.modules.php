@@ -142,8 +142,6 @@ class pdf_einstein extends ModelePDFCommandes
             $nblignes = sizeof($com->lignes);
 
 			$comref = sanitize_string($com->ref);
-			$comref = str_replace("(","",$comref);
-			$comref = str_replace(")","",$comref);
 			$dir = $conf->commande->dir_output . "/" . $comref;
 			$file = $dir . "/" . $comref . ".pdf";
 

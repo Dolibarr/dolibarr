@@ -83,8 +83,6 @@ Class pdf_expedition_merou extends ModelePdfExpedition
         if ($conf->expedition->dir_output)
         {
         	$expeditionref = sanitize_string($this->expe->ref);
-        	$expeditionref = str_replace("(","",$expeditionref);
-        	$expeditionref = str_replace(")","",$expeditionref);
         	$dir = $conf->expedition->dir_output . "/" . $expeditionref;
         	$file = $dir . "/" . $expeditionref . ".pdf";
 			    //Si le dossier n existe pas 

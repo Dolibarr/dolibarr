@@ -345,8 +345,6 @@ class Livraison
 
               // On efface le répertoire de pdf provisoire
 							$livraisonref = sanitize_string($this->ref);
-							$livraisonref = str_replace("(","",$livraisonref);
-							$livraisonref = str_replace(")","",$livraisonref);
 							if ($conf->expedition->dir_output)
 							{
 								$dir = $conf->livraison->dir_output . "/" . $livraisonref ;

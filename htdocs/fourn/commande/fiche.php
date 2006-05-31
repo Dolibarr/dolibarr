@@ -583,8 +583,6 @@ if ($_GET["id"] > 0)
 		*
 		*/
 		$comfournref = sanitize_string($commande->ref);
-		$comfournref = str_replace("(","",$comfournref);
-		$comfournref = str_replace(")","",$comfournref);
 		$file = $conf->fournisseur->commande->dir_output . '/' . $comfournref . '/' . $comfournref . '.pdf';
 		$relativepath = $comfournref.'/'.$comfournref.'.pdf';
 		$filedir = $conf->fournisseur->commande->dir_output . '/' . $comfournref;

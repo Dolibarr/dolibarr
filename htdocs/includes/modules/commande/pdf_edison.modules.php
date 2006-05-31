@@ -80,8 +80,6 @@ class pdf_edison extends ModelePDFCommandes
       if ($com->fetch($id))
 	{
 	  	$comref = sanitize_string($com->ref);
-		$comref = str_replace("(","",$comref);
-		$comref = str_replace(")","",$comref);
 	  if ($conf->commande->dir_output)
 	    {
               

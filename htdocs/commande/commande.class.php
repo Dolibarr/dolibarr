@@ -174,8 +174,6 @@ class Commande
 					{
 							// On efface le répertoire de pdf provisoire
 							$comref = sanitize_string($this->ref);
-							$comref = str_replace("(","",$comref);
-							$comref = str_replace(")","",$comref);
 							if ($conf->commande->dir_output)
 							{
 								$dir = $conf->commande->dir_output . "/" . $comref ;

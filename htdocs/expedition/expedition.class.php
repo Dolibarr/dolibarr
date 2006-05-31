@@ -353,8 +353,6 @@ class Expedition
                
               // On efface le répertoire de pdf provisoire
 							$expeditionref = sanitize_string($provref);
-							$expeditionref = str_replace("(","",$expeditionref);
-							$expeditionref = str_replace(")","",$expeditionref);
 							if ($conf->expedition->dir_output)
 							{
 								$dir = $conf->expedition->dir_output . "/" . $expeditionref;

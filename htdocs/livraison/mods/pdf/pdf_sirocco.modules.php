@@ -81,8 +81,6 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
       if ($delivery->fetch($id))
 	{
 	  	$deliveryref = sanitize_string($delivery->ref);
-		$deliveryref = str_replace("(","",$deliveryref);
-		$deliveryref = str_replace(")","",$deliveryref);
 	  if ($conf->livraison->dir_output)
 	    {
               

@@ -124,8 +124,6 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 		$result=$expedition->fetch($id);
 
 		$expeditionref = sanitize_string($expedition->ref);
-		$expeditionref = str_replace("(","",$expeditionref);
-		$expeditionref = str_replace(")","",$expeditionref);
 		$dir = $conf->expedition->dir_output . "/" . $expeditionref;
 		$file = $dir . "/" . $expeditionref . ".pdf";
         if ($obj->generate($expedition, $file))

@@ -144,8 +144,6 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
             $nblignes = sizeof($com->lignes);
 
 			$comref = sanitize_string($com->ref);
-			$comref = str_replace("(","",$comref);
-			$comref = str_replace(")","",$comref);
 			$dir = $conf->fournisseur->commande->dir_output . "/" . $comref;
 			$file = $dir . "/" . $comref . ".pdf";
 

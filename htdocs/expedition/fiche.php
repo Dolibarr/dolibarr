@@ -532,8 +532,6 @@ else
              */
             
             $expeditionref = sanitize_string($expedition->ref);
-            $expeditionref = str_replace("(","",$expeditionref);
-            $expeditionref = str_replace(")","",$expeditionref);
             $filedir = $conf->expedition->dir_output . "/" .$expeditionref;
             
             $urlsource = $_SERVER["PHP_SELF"]."?id=".$expedition->id;
