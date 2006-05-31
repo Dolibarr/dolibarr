@@ -86,7 +86,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         if (eregi('BL[0-9][0-9]',$blyy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $posindice=4;
+            $posindice=5;
             $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
             $sql.= " WHERE ref like '${blyy}%'";
