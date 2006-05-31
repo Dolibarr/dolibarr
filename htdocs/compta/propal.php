@@ -651,7 +651,7 @@ if ($_GET["propalid"] > 0)
 				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
 				print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
 				print '<td align="right">'.$coms[$i]->total_ttc.'</td>';
-				print '<td align="right">'.$staticcommande->LibStatut($coms[$i]->statut,3).'</td>';
+				print '<td align="right">'.$staticcommande->LibStatut($coms[$i]->statut,$coms[$i]->facturee,3).'</td>';
 				print "</tr>\n";
 				$total = $total + $objp->total;
 			}
