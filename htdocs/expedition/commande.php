@@ -474,7 +474,7 @@ if ($_GET["id"] > 0)
                             print "<tr $bc[$var]>";
                             print '<td width="30%">';
                             print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$obja->ref.'</a> - '.$obja->label;
-                            print '<td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$objp->entrepot_id.'">'.$obja->entrepot.'</td>';
+                            print '<td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$obja->entrepot_id.'">'.$obja->entrepot.'</td>';
                             print '<td><b>Stock : '.$obja->reel.'</b>' .img_warning($langs->trans("Alert")).'</td>';
                             print "</tr>\n";
                             $i++;
