@@ -752,49 +752,51 @@ else
                     print "</tr>\n";
 
                     // Dates de en service prévues et effectives
-                    
-                    print '<tr '.$bc[$var].'>';
-                    print '<td colspan="7">';
-
-                    // Date prévues
-                    print $langs->trans("DateStartPlanned").': ';
-                    if ($objp->date_debut) {
-                        print dolibarr_print_date($objp->date_debut);
-                        // Warning si date prevu passée et pas en service
-                        if ($objp->statut == 0 && $objp->date_debut < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
-                    }
-                    else print $langs->trans("Unknown");
-                    print ' &nbsp;-&nbsp; ';
-                    print $langs->trans("DateEndPlanned").': ';
-                    if ($objp->date_fin) {
-                        print dolibarr_print_date($objp->date_fin);
-                        if ($objp->statut == 4 && $objp->date_fin < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
-                    }
-                    else print $langs->trans("Unknown");
-
-                    print '<br>';
-
-                    // Si pas encore activé
-                    if (! $objp->date_debut_reelle) {
-                        print $langs->trans("DateStartReal").': ';
-                        if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
-                        else print $langs->trans("ContractStatusNotRunning");
-                    }
-                    // Si activé et en cours
-                    if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
-                        print $langs->trans("DateStartReal").': ';
-                        print dolibarr_print_date($objp->date_debut_reelle);
-                    }
-                    // Si désactivé
-                    if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
-                        print $langs->trans("DateStartReal").': ';
-                        print dolibarr_print_date($objp->date_debut_reelle);
-                        print ' &nbsp;-&nbsp; ';
-                        print $langs->trans("DateEndReal").': ';
-                        print dolibarr_print_date($objp->date_fin_reelle);
-                    }
-                    print '</td>';
-                    print '</tr>';                    
+                    if ($objp->subprice >= 0)
+                    {
+	                    print '<tr '.$bc[$var].'>';
+	                    print '<td colspan="7">';
+	
+	                    // Date prévues
+	                    print $langs->trans("DateStartPlanned").': ';
+	                    if ($objp->date_debut) {
+	                        print dolibarr_print_date($objp->date_debut);
+	                        // Warning si date prevu passée et pas en service
+	                        if ($objp->statut == 0 && $objp->date_debut < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
+	                    }
+	                    else print $langs->trans("Unknown");
+	                    print ' &nbsp;-&nbsp; ';
+	                    print $langs->trans("DateEndPlanned").': ';
+	                    if ($objp->date_fin) {
+	                        print dolibarr_print_date($objp->date_fin);
+	                        if ($objp->statut == 4 && $objp->date_fin < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
+	                    }
+	                    else print $langs->trans("Unknown");
+	
+	                    print '<br>';
+	
+	                    // Si pas encore activé
+	                    if (! $objp->date_debut_reelle) {
+	                        print $langs->trans("DateStartReal").': ';
+	                        if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
+	                        else print $langs->trans("ContractStatusNotRunning");
+	                    }
+	                    // Si activé et en cours
+	                    if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
+	                        print $langs->trans("DateStartReal").': ';
+	                        print dolibarr_print_date($objp->date_debut_reelle);
+	                    }
+	                    // Si désactivé
+	                    if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
+	                        print $langs->trans("DateStartReal").': ';
+	                        print dolibarr_print_date($objp->date_debut_reelle);
+	                        print ' &nbsp;-&nbsp; ';
+	                        print $langs->trans("DateEndReal").': ';
+	                        print dolibarr_print_date($objp->date_fin_reelle);
+	                    }
+	                    print '</td>';
+	                    print '</tr>';
+	            	}                  
                 }
 
                 // Ligne en mode update
