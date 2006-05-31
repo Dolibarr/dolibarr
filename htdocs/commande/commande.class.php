@@ -959,7 +959,7 @@ class Commande
 	function fetch_lignes($only_product=0)
 	{
 		$this->lignes = array();
-		$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice';
+		$sql = 'SELECT l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice';
 		if ($only_product==1)
 		{
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
@@ -984,6 +984,7 @@ class Commande
 				$ligne = new CommandeLigne();
 				$objp = $this->db->fetch_object($result);
 				$ligne->id             = $objp->rowid;
+				$ligne->commande_id    = $objp->fk_commande;
 				$ligne->qty            = $objp->qty;
 				$ligne->price          = $objp->price;
 				$ligne->tva_tx         = $objp->tva_tx;
