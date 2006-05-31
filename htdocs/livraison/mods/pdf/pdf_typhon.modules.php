@@ -291,7 +291,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     }
 
                 }
-                /*
+
                 
                 // Affiche cadre tableau
                 if ($pagenb == 1)
@@ -304,7 +304,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY);
                     $bottomlasttab=$tab_top_newpage + $tab_height + 1;
                 }
-
+                /*
 				$deja_regle = "";
 
                 $posy=$this->_tableau_tot($pdf, $delivery, $deja_regle, $bottomlasttab);
