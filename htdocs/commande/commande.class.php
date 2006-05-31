@@ -184,7 +184,7 @@ class Commande
 								{
 									if (!dol_delete_file($file))
 									{
-                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$dir);
+                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
                     return 0;
                   }
                 }

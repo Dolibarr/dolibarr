@@ -346,12 +346,12 @@ class Livraison
 							if ($conf->expedition->dir_output)
 							{
 								$dir = $conf->livraison->dir_output . "/" . $livraisonref ;
-								$file = $conf->livraison->dir_output . "/" . $livraisonref . "/" . $livraisonref . ".pdf";
+								$file = $dir . "/" . $livraisonref . ".pdf";
 								if (file_exists($file))
 								{
 									if (!dol_delete_file($file))
 									{
-                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$dir);
+                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
                     return 0;
                   }
                 }

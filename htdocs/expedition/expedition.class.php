@@ -290,6 +290,7 @@ class Expedition
         $this->db->begin();
         
         $error = 0;
+        $provref = $this->ref;
         
         if ($user->rights->expedition->valider)
         {
@@ -350,18 +351,18 @@ class Expedition
                 }
                
               // On efface le répertoire de pdf provisoire
-							$expeditionref = sanitize_string($this->ref);
+							$expeditionref = sanitize_string($provref);
 							$expeditionref = str_replace("(","",$expeditionref);
 							$expeditionref = str_replace(")","",$expeditionref);
 							if ($conf->expedition->dir_output)
 							{
-								$dir = $conf->expedition->dir_output . "/" . $expeditionref ;
-								$file = $conf->expedition->dir_output . "/" . $expeditionref . "/" . $expeditionref . ".pdf";
+								$dir = $conf->expedition->dir_output . "/" . $expeditionref;
+								$file = $dir . "/" . $expeditionref . ".pdf";
 								if (file_exists($file))
 								{
 									if (!dol_delete_file($file))
 									{
-                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$dir);
+                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
                     return 0;
                   }
                 }
