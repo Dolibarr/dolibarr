@@ -85,6 +85,8 @@ create table llx_product_det
 
 ALTER TABLE `llx_propal` ADD `date_livraison` DATE;
 ALTER TABLE `llx_commande` ADD `date_livraison` DATE;
+update llx_commande set date_livraison = null where date_livraison = '0000-00-00';
+update llx_commande set date_livraison = null where date_livraison = '1970-01-01';
 
 ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk_facture_fourn);
 ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture FOREIGN KEY (fk_facture_fourn) REFERENCES llx_facture_fourn (rowid);
