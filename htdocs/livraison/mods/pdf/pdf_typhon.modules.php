@@ -253,7 +253,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 */
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 4, $lignesdelivery[$i]->qty, 0, 'R');
+                    $pdf->MultiCell(10, 4, $lignesdelivery[$i]->qty_livre, 0, 'R');
 /*
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
@@ -291,6 +291,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     }
 
                 }
+                /*
+                
                 // Affiche cadre tableau
                 if ($pagenb == 1)
                 {
@@ -310,10 +312,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                 if ($deja_regle) {            
                     $this->_tableau_versements($pdf, $fac, $posy);
                 }
-
+*/
                 /*
                 * Mode de règlement
                 */
+                /*
                 if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
                 {
                     $pdf->SetXY ($this->marge_gauche, 228);
@@ -323,7 +326,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $pdf->MultiCell(90, 3, $langs->trans("ErrorCreateBankAccount"),0,'L',0);
                     $pdf->SetTextColor(0,0,0);
                 }
-
+*/
                 /*
                 * Propose mode règlement par CHQ
                 */
@@ -591,7 +594,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
         $pdf->SetXY ($this->posxdesc-1, $tab_top+2);
         $pdf->MultiCell(108,2, $langs->trans("Designation"),'','L');
-
+/*
         $pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxtva-1, $tab_top+2);
         $pdf->MultiCell(12,2, $langs->trans("VAT"),'','C');
@@ -599,11 +602,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxup-1, $tab_top+2);
         $pdf->MultiCell(18,2, $langs->trans("PriceUHT"),'','C');
-
+*/
         $pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxqty-1, $tab_top+2);
         $pdf->MultiCell(11,2, $langs->trans("Qty"),'','C');
-
+/*
         $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
         if ($this->atleastonediscount)
         {
@@ -617,7 +620,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         }
         $pdf->SetXY ($this->postotalht-1, $tab_top+2);
         $pdf->MultiCell(23,2, $langs->trans("TotalHT"),'','C');
-
+*/
     }
 
     /*
