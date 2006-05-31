@@ -203,18 +203,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=$lignedelivery[$i]->label;
-                    if ($lignedelivery[$i]->description&&$lignedelivery[$i]->description!=$lignedelivery[$i]->label)
+                    $libelleproduitservice=$lignesdelivery[$i]->label;
+                    if ($lignesdelivery[$i]->description&&$lignesdelivery[$i]->description!=$lignesdelivery[$i]->label)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$lignedelivery[$i]->description;
+                        $libelleproduitservice.=$lignesdelivery[$i]->description;
                     }
                     // Si ligne associée à un code produit
-                    if ($lignedelivery[$i]->product_id)
+                    if ($lignesdelivery[$i]->product_id)
                     {
                         $prodser = new Product($this->db);
 
-                        $prodser->fetch($lignedelivery[$i]->product_id);
+                        $prodser->fetch($lignesdelivery[$i]->product_id);
                         if ($prodser->ref)
                         {
                             $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
@@ -223,17 +223,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                         // Ajoute description du produit
                         if ($conf->global->COMMANDE_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                         {
-                            if ($lignedelivery[$i]->product_desc&&$lignedelivery[$i]->product_desc!=$lignedelivery[$i]->libelle&&$lignedelivery[$i]->product_desc!=$lignedelivery[$i]->desc)
+                            if ($lignesdelivery[$i]->product_desc&&$lignesdelivery[$i]->product_desc!=$lignesdelivery[$i]->libelle&&$lignesdelivery[$i]->product_desc!=$lignesdelivery[$i]->desc)
                             {
                                 if ($libelleproduitservice) $libelleproduitservice.="\n";
-                                $libelleproduitservice.=$lignedelivery[$i]->product_desc;
+                                $libelleproduitservice.=$lignesdelivery[$i]->product_desc;
                             }
                         }                    
                     }
-                    if ($lignedelivery[$i]->date_start && $lignedelivery[$i]->date_end)
+                    if ($lignesdelivery[$i]->date_start && $lignesdelivery[$i]->date_end)
                     {
                         // Affichage durée si il y en a une
-                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($lignedelivery[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($lignedelivery[$i]->date_end).")";
+                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($lignesdelivery[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($lignesdelivery[$i]->date_end).")";
                     }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
@@ -253,7 +253,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 */
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 4, $lignedelivery[$i]->qty, 0, 'R');
+                    $pdf->MultiCell(10, 4, $lignesdelivery[$i]->qty, 0, 'R');
 /*
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
