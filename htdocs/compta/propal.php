@@ -198,9 +198,9 @@ if ($_GET["propalid"] > 0)
             print '<tr><td>'.$langs->trans('Info').'</td><td colspan="5">';
 			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$aboslute_discount=$societe->getCurrentDiscount();
+			$absolute_discount=$societe->getCurrentDiscount();
 			print '. ';
-			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';

@@ -134,9 +134,9 @@ if ($_GET["id"] > 0)
             print '<tr><td>'.$langs->trans('Info').'</td><td colspan="3">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$aboslute_discount=$soc->getCurrentDiscount();
+			$absolute_discount=$soc->getCurrentDiscount();
 			print '. ';
-			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';

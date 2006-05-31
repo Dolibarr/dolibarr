@@ -420,18 +420,6 @@ if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer)
   propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
 
-// Action obsolète ?
-
-/* 
-if ($_POST['action'] == 'set_discount' && $user->rights->propale->creer) 
-{
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->set_remise($user, $_POST['remise']);
-  propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
-}
-*/
-
 if ($_POST['action'] == 'set_project')
 {
   $propal = new Propal($db);
@@ -617,9 +605,9 @@ if ($_GET['propalid'] > 0)
             print '<tr><td>'.$langs->trans('Info').'</td><td colspan="5">';
 			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$aboslute_discount=$societe->getCurrentDiscount();
+			$absolute_discount=$societe->getCurrentDiscount();
 			print '. ';
-			if ($aboslute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount);
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';
