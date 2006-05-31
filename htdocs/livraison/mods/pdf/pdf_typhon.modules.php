@@ -191,7 +191,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                 $pagenb = 1;
                 $tab_top = 90;
                 $tab_top_newpage = 50;
-                $tab_height = 110;
+                $tab_height = 150;
 
                 $iniY = $tab_top + 8;
                 $curY = $tab_top + 8;
@@ -580,8 +580,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         // Montants exprimés en     (en tab_top - 1)
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
-        $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
-        $pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
+        //$titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+        //$pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
 
         $pdf->SetDrawColor(128,128,128);
 
