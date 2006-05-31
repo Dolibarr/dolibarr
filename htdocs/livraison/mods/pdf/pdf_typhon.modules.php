@@ -142,9 +142,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             
             $delivery->commande     = new Livraison($this->db);
             $delivery->commande->commande_id = $delivery->commande_id;
-            $delivery->commande->fetch_commande();
+            $lignecommande = $delivery->commande->fetch_commande();
             
-            $nblignes = sizeof($delivery->commande->lignes);
+            $nblignes = sizeof($lignecommande);
 
 			      $deliveryref = sanitize_string($delivery->ref);
 			      $deliveryref = str_replace("(","",$deliveryref);
@@ -205,18 +205,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=$delivery->commande->lignes[$i]->libelle;
-                    if ($delivery->commande->lignes[$i]->desc&&$delivery->commande->lignes[$i]->desc!=$delivery->commande->lignes[$i]->libelle)
+                    $libelleproduitservice=$lignecommande[$i]->label;
+                    if ($lignecommande[$i]->description&&$lignecommande[$i]->description!=$lignecommande[$i]->label)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$delivery->commande->lignes[$i]->desc;
+                        $libelleproduitservice.=$lignecommande[$i]->description;
                     }
                     // Si ligne associée à un code produit
-                    if ($delivery->commande->lignes[$i]->product_id)
+                    if ($lignecommande[$i]->product_id)
                     {
                         $prodser = new Product($this->db);
 
-                        $prodser->fetch($delivery->commande->lignes[$i]->product_id);
+                        $prodser->fetch($lignecommande[$i]->product_id);
                         if ($prodser->ref)
                         {
                             $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
@@ -225,17 +225,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                         // Ajoute description du produit
                         if ($conf->global->COMMANDE_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                         {
-                            if ($delivery->commande->lignes[$i]->product_desc&&$delivery->commande->lignes[$i]->product_desc!=$delivery->commande->lignes[$i]->libelle&&$delivery->commande->lignes[$i]->product_desc!=$delivery->commande->lignes[$i]->desc)
+                            if ($lignecommande[$i]->product_desc&&$lignecommande[$i]->product_desc!=$lignecommande[$i]->libelle&&$lignecommande[$i]->product_desc!=$lignecommande[$i]->desc)
                             {
                                 if ($libelleproduitservice) $libelleproduitservice.="\n";
-                                $libelleproduitservice.=$delivery->commande->lignes[$i]->product_desc;
+                                $libelleproduitservice.=$lignecommande[$i]->product_desc;
                             }
                         }                    
                     }
-                    if ($delivery->commande->lignes[$i]->date_start && $delivery->commande->lignes[$i]->date_end)
+                    if ($lignecommande[$i]->date_start && $lignecommande[$i]->date_end)
                     {
                         // Affichage durée si il y en a une
-                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($delivery->commande->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($delivery->commande->lignes[$i]->date_end).")";
+                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($lignecommande[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($lignecommande[$i]->date_end).")";
                     }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
@@ -255,7 +255,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 */
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 4, $delivery->commande->lignes[$i]->qty, 0, 'R');
+                    $pdf->MultiCell(10, 4, $lignecommande[$i]->qty, 0, 'R');
 /*
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
