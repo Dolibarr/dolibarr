@@ -41,7 +41,7 @@ class Livraison
   var $db ;
   var $id ;
   var $brouillon;
-  var $entrepot_id;
+  var $commande_id;
 
   /**
    * Initialisation
