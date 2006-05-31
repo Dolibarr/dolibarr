@@ -1487,6 +1487,15 @@ function dol_delete_file($file)
   return unlink($file);
 }
 
+/**
+		\brief  Effacement d'un répertoire
+		\param	file			répertoire a effacer
+*/
+function dol_delete_dir($dir)
+{
+  return rmdir($dir);
+}
+
 
 /**
 		\brief  Fonction print_barre_liste

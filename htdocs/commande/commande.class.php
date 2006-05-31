@@ -179,15 +179,24 @@ class Commande
 							if ($conf->commande->dir_output)
 							{
 								$dir = $conf->commande->dir_output . "/" . $comref ;
-								if (file_exists($dir))
+								$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+								if (file_exists($file))
 								{
-									if (!dol_delete_file($dir))
+									if (!dol_delete_file($file))
 									{
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$dir);
                     return 0;
                   }
-                 }
                 }
+                if (file_exists($dir))
+                {
+                	if (!dol_delete_dir($dir))
+                  {
+                  	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+                    return 0;
+                  }
+                }
+               }
 	    			$result = 1;
 					}
 					else
