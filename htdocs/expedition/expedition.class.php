@@ -222,7 +222,7 @@ class Expedition
             
             // ligne de produit associée à une expédition
 			      $this->lignes = array();
-			      $sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp";
+			      $sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp, e.fk_commande_ligne";
 			      $sql .= ", c.fk_product, c.label, p.ref";
 			      $sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
 			      $sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
@@ -240,18 +240,19 @@ class Expedition
     
                     while ($i < $num)
                     {
-                        $objp                  = $this->db->fetch_object($resultp);
+                        $objp                        = $this->db->fetch_object($resultp);
     
-                        $ligne                 = new ExpeditionLigne();
+                        $ligne                       = new ExpeditionLigne();
 
-                        $ligne->product_desc   = $objp->description;  // Description ligne
-                        $ligne->qty_commande   = $objp->qtycom;
-                        $ligne->product_id     = $objp->fk_product;
+                        $ligne->commande_ligne_id    = $objp->fk_commande_ligne;
+                        $ligne->product_desc         = $objp->description;  // Description ligne
+                        $ligne->qty_commande         = $objp->qtycom;
+                        $ligne->product_id           = $objp->fk_product;
 
-                        $ligne->libelle        = $objp->label;        // Label produit
-                        $ligne->ref            = $objp->ref;
+                        $ligne->libelle              = $objp->label;        // Label produit
+                        $ligne->ref                  = $objp->ref;
     
-                        $this->lignes[$i]      = $ligne;
+                        $this->lignes[$i]            = $ligne;
                         $i++;
                     }
                     $this->db->free($resultp);

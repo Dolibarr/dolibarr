@@ -109,7 +109,7 @@ class Livraison
                 for ($i = 0 ; $i < sizeof($lignes) ; $i++)
                 {
                     //TODO
-                    	if (! $this->create_line(0, $lignes[$i]->commande_ligne_id, $lignes[$i]->qty))
+                    	if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
                     	{
                     		$error++;
                       }
