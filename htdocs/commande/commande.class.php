@@ -172,7 +172,23 @@ class Commande
 
 					if ($this->db->query($sql) )
 					{
-							$result = 1;
+							// On efface le répertoire de pdf provisoire
+							$comref = sanitize_string($this->ref);
+							$comref = str_replace("(","",$comref);
+							$comref = str_replace(")","",$comref);
+							if ($conf->commande->dir_output)
+							{
+								$dir = $conf->commande->dir_output . "/" . $comref ;
+								if (file_exists($dir))
+								{
+									if (!dol_delete_file($dir))
+									{
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                    return 0;
+                  }
+                 }
+                }
+	    			$result = 1;
 					}
 					else
 					{
