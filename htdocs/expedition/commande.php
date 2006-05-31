@@ -456,7 +456,7 @@ if ($_GET["id"] > 0)
             {
                 if ($value > 0)
                 {
-                    $sql = "SELECT e.label as entrepot, ps.reel, p.label ";
+                    $sql = "SELECT e.label as entrepot, ps.reel, p.label, p.ref";
                     $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
                     $sql .= " WHERE e.rowid = ps.fk_entrepot AND ps.fk_product = p.rowid AND ps.fk_product = $key";
                     $sql .= " AND e.statut = 1 AND reel < $value";
@@ -473,8 +473,9 @@ if ($_GET["id"] > 0)
                             $obja = $db->fetch_object($resql);
                             print "<tr $bc[$var]>";
                             print '<td width="54%">';
-                            print img_warning($langs->trans("Late"));
-                            print $obja->label.'</td><td>'.$obja->entrepot.'</td><td><b>Stock : '.$obja->reel.'</b></td>';
+                            print img_warning($langs->trans("Alert"));
+                            print $obja->ref.'</td>';
+                            print '<td>'.$obja->label.'</td><td>'.$obja->entrepot.'</td><td><b>Stock : '.$obja->reel.'</b></td>';
                             print "</tr>\n";
                             $i++;
                         }
@@ -520,6 +521,7 @@ if ($_GET["id"] > 0)
                 print '<table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td align="left">'.$langs->trans("Sending").'</td>';
+                print '<td>'.$langs->trans("DeliveryOrder").'</td>';
                 print '<td>'.$langs->trans("Description").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("Date").'</td>';
