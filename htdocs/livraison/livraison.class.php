@@ -95,9 +95,12 @@ class Livraison
             if ($this->db->query($sql))
             {
 
-                	$commande = new Commande($this->db);
-                	$commande->id = $this->commande_id;
-                	$lignes = $commande->fetch_lignes(1); //on ne prend que les produits
+                	if (!$conf->expedition->enabled)
+                	{
+                		$commande = new Commande($this->db);
+                		$commande->id = $this->commande_id;
+                		$lignes = $commande->fetch_lignes();
+                	}
 
     
                 /*
@@ -106,7 +109,7 @@ class Livraison
                 for ($i = 0 ; $i < sizeof($lignes) ; $i++)
                 {
                     //TODO
-                    	if (! $this->create_line(0, $lignes[$i]->id, $lignes[$i]->qty))
+                    	if (! $this->create_line(0, $lignes[$i]->commande_ligne_id, $lignes[$i]->qty))
                     	{
                     		$error++;
                       }
@@ -404,12 +407,13 @@ class Livraison
 		for ($i = 0 ; $i < sizeof($expedition->lignes) ; $i++)
 		{
 			$LivraisonLigne = new LivraisonLigne();
+			$LivraisonLigne->commande_ligne_id = $expedition->lignes[$i]->commande_ligne_id;
 			$LivraisonLigne->libelle           = $expedition->lignes[$i]->libelle;
 			$LivraisonLigne->description       = $expedition->lignes[$i]->product_desc;
 			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_commande;
 			$LivraisonLigne->product_id        = $expedition->lignes[$i]->product_id;
 			$LivraisonLigne->ref               = $expedition->lignes[$i]->ref;
-			$this->lines[$i] = $LivraisonLigne;
+			$this->lignes[$i] = $LivraisonLigne;
 		}
 
 		$this->commande_id          = $expedition->commande_id;
