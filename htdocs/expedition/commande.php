@@ -520,7 +520,10 @@ if ($_GET["id"] > 0)
                 print '<table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td align="left">'.$langs->trans("Sending").'</td>';
-                print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+                if ($conf->livraison->enabled && $objp->livraison_id)
+                {
+                	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+                }
                 print '<td>'.$langs->trans("Description").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("Date").'</td>';
