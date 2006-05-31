@@ -508,41 +508,6 @@ class Livraison
   }
 
 
-    /**
-     * Genere le pdf
-     */
-    function PdfWrite()
-    {
-        global $conf;
-    
-        //LIVRAISON_ADDON_PDF
-        if (defined("LIVRAISON_ADDON_PDF") && strlen(LIVRAISON_ADDON_PDF) > 0)
-        {
-            $module_file_name = DOL_DOCUMENT_ROOT."/livraison/mods/pdf/pdf_".LIVRAISON_ADDON_PDF.".modules.php";
-    
-            $mod = "pdf_".LIVRAISON_ADDON_PDF;
-            $this->fetch_commande();
-    
-            require_once($module_file_name);
-    
-            $pdf = new $mod($this->db);
-    
-            $dir = $conf->livraison->dir_output . "/" .get_exdir($this->id);
-    
-            if (! file_exists($dir))
-            {
-                create_exdir($dir);
-            }
-    
-            $file = $dir . $this->id . ".pdf";
-    
-            if (file_exists($dir))
-            {
-                $pdf->generate($this, $file);
-            }
-        }
-    }
-
   /*
    * Lit la commande associée
    *
