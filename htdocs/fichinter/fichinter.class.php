@@ -146,9 +146,10 @@ class Fichinter
      */
     function get_new_num($societe)
     {
-
+        $socprefix = sanitize_string($societe->prefix_comm);
+        
         $sql = "SELECT max(ref) FROM ".MAIN_DB_PREFIX."fichinter";
-        $sql.= " WHERE ref like 'FI".$societe->prefix_comm."%'";
+        $sql.= " WHERE ref like 'FI".$socprefix."%'";
 
         $result=$this->db->query($sql);
         if ($result)
@@ -170,7 +171,7 @@ class Fichinter
                 $num = $num + 1;
                 //$num = '0000' . $num;
                 //$num = 'FI-' . $prefix_comm . '-' . substr($num, strlen($num) - 4, 4);
-                $num = 'FI-' . $societe->prefix_comm . '-' . $num;
+                $num = 'FI-' . $socprefix . '-' . $num;
                 return $num;
             }
         }
