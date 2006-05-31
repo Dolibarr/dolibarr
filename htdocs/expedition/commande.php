@@ -520,9 +520,13 @@ if ($_GET["id"] > 0)
                 print '<table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td align="left">'.$langs->trans("Sending").'</td>';
-                if ($conf->livraison->enabled && $objp->livraison_id)
+                if ($conf->livraison->enabled)
                 {
-                	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+                		$objt = $db->fetch_object($resql);
+                		if ($objt->livraison_id)
+                		{
+                			print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+                		}
                 }
                 print '<td>'.$langs->trans("Description").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
