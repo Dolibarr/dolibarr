@@ -250,7 +250,7 @@ class Livraison
         
         require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
     
-        dolibarr_syslog("livraison.class.php::valid");
+        dolibarr_syslog("livraison.class.php::valid begin");
 
         $this->db->begin();
         
@@ -333,19 +333,19 @@ class Livraison
                     {
                         $this->db->rollback();
                         $this->error=$this->db->error()." - sql=$sql";
-                        dolibarr_syslog("expedition.class.php::valid ".$this->error);
+                        dolibarr_syslog("livraison.class.php::valid ".$this->error);
                         return -2;
                         
                     }
                 }
 
-                return 1;
+                dolibarr_syslog("livraison.class.php::valid ok");
             }
             else
             {
                 $this->db->rollback();
                 $this->error=$this->db->error()." - sql=$sql";
-                dolibarr_syslog("expedition.class.php::valid ".$this->error);
+                dolibarr_syslog("livraison.class.php::valid ".$this->error);
                 return -1;
             }
           }
