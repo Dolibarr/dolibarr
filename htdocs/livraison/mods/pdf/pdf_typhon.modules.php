@@ -142,7 +142,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             $delivery->id = $id;
             $lignesdelivery = $delivery->fetch_lignes();
             
-            $nblignes = sizeof($lignedelivery);
+            $nblignes = sizeof($lignesdelivery);
 
 			      $deliveryref = sanitize_string($delivery->ref);
 			      $deliveryref = str_replace("(","",$deliveryref);
