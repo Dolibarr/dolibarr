@@ -106,7 +106,7 @@ class Livraison
                 /*
                 *  Insertion des produits dans la base
                 */
-                for ($i = 0 ; $i < sizeof($lignes) ; $i++)
+                for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
                 {
                     //TODO
                     	if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
