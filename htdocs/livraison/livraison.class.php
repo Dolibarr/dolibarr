@@ -339,6 +339,32 @@ class Livraison
                     }
                 }
 
+              // On efface le répertoire de pdf provisoire
+							$livraisonref = sanitize_string($this->ref);
+							$livraisonref = str_replace("(","",$livraisonref);
+							$livraisonref = str_replace(")","",$livraisonref);
+							if ($conf->expedition->dir_output)
+							{
+								$dir = $conf->livraison->dir_output . "/" . $livraisonref ;
+								$file = $conf->livraison->dir_output . "/" . $livraisonref . "/" . $livraisonref . ".pdf";
+								if (file_exists($file))
+								{
+									if (!dol_delete_file($file))
+									{
+                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$dir);
+                    return 0;
+                  }
+                }
+                if (file_exists($dir))
+                {
+                	if (!dol_delete_dir($dir))
+                  {
+                  	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+                    return 0;
+                  }
+                }
+               }
+                
                 dolibarr_syslog("livraison.class.php::valid ok");
             }
             else

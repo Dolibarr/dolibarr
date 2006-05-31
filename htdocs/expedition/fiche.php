@@ -530,22 +530,20 @@ else
             /*
              * Documents générés
              */
-             
-            //mis en commentaire pour test du patch
-            //$filename=sanitize_string($expedition->id);
-            //$filedir=$conf->expedition->dir_output . "/" .get_exdir($expedition->id);
             
-            $filename=sanitize_string($expedition->ref);
-            $filedir=$conf->expedition->dir_output . "/" .$expedition->ref;
+            $expeditionref = sanitize_string($expedition->ref);
+            $expeditionref = str_replace("(","",$expeditionref);
+            $expeditionref = str_replace(")","",$expeditionref);
+            $filedir = $conf->expedition->dir_output . "/" .$expeditionref;
             
-            $urlsource=$_SERVER["PHP_SELF"]."?id=".$expedition->id;
+            $urlsource = $_SERVER["PHP_SELF"]."?id=".$expedition->id;
             
-            //$genallowed=$user->rights->expedition->creer;
-            //$delallowed=$user->rights->expedition->supprimer;
-            $genallowed=1;
-            $delallowed=0;
+            $genallowed=$user->rights->expedition->creer;
+            $delallowed=$user->rights->expedition->supprimer;
+            //$genallowed=1;
+            //$delallowed=0;
     
-            $result=$html->show_documents('expedition',$filename,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
+            $result=$html->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
     
             /*
              * Déjà livre

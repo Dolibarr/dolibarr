@@ -82,18 +82,22 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Verification de la configuration
         if ($conf->expedition->dir_output)
         {
-			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-			$expref = str_replace($forbidden_chars,"_",$this->expe->ref);
-			$dir = $conf->expedition->dir_output . "/" . $this->expe->ref . "/" ;
-			$file = $dir .$this->expe->ref . ".pdf";
-			//Si le dossier n existe pas 
-	  		if (! file_exists($dir)){
-	      			umask(0);
-				//On tente de le creer
-	      			if (! mkdir($dir, 0755)){
-                    			$pdf->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                    			return 0;
-				}
+        	$expeditionref = sanitize_string($this->expe->ref);
+        	$expeditionref = str_replace("(","",$expeditionref);
+        	$expeditionref = str_replace(")","",$expeditionref);
+        	$dir = $conf->expedition->dir_output . "/" . $expeditionref;
+        	$file = $dir . "/" . $expeditionref . ".pdf";
+			    //Si le dossier n existe pas 
+	  		  if (! file_exists($dir))
+	  		  {
+	  		  	umask(0);
+	  		  	
+				    //On tente de le creer
+	      		if (! mkdir($dir, 0755))
+	      		{
+	      			$pdf->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+	      			return 0;
+	      		}
 	    		}
 			//Si le dossier existe
 			if (file_exists($dir))
