@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
@@ -54,8 +54,8 @@ class Commande
 	var $adresse_livraison_id;
 	var $date;				// Date commande
 	var $date_livraison;	// Date livraison souhaitée
-  var $remise_percent;
-  var $remise_absolue;
+	var $remise_percent;
+	var $remise_absolue;
 
 	// Pour board
 	var $nbtodo;
@@ -71,7 +71,7 @@ class Commande
 		$langs->load('orders');
 		$this->db = $DB;
 		$this->socidp = $soc_idp;
-    $this->id = $commandeid;
+    	$this->id = $commandeid;
 
 		$this->sources[0] = $langs->trans('OrderSource0');
 		$this->sources[1] = $langs->trans('OrderSource1');
@@ -312,7 +312,7 @@ class Commande
 
 	/**
 	 * 		\brief		Créé la commande
-	 *		\param		user		Id utilisateur qui crée
+	 *		\param		user		Objet utilisateur qui crée
 	 */
 	function create($user)
 	{
@@ -338,16 +338,6 @@ class Commande
 			$this->projetid = 0;
 		}
 		
-		// On ne formate pas une date de livraison qui vient d'une propale
-		if ($this->propale_id)
-		{
-			$date_livraison = $this->date_livraison;
-		}
-		else
-		{
-			$date_livraison = $this->date_livraison?$this->db->idate($this->date_livraison):'null';
-		}
-
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
 		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client,';
 		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
@@ -357,7 +347,7 @@ class Commande
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";
 		$sql.= " '".$this->ref_client."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
-		$sql.= " '".$date_livraison.'\',';
+		$sql.= ' '.($this->date_livraison?$this->db->idate($this->date_livraison):'null').',';
 		$sql.= " '".$this->adresse_livraison_id."',";
 		$sql.= " '".$this->remise_absolue."',";
 		$sql.= " '".$this->remise_percent."')";
