@@ -359,7 +359,7 @@ class Livraison
         }
 
         $this->db->commit();
-        //dolibarr_syslog("expedition.class.php::valid commit");
+        dolibarr_syslog("livraison.class.php::valid commit");
         return 1;
     }
 
