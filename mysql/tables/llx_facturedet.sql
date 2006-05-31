@@ -30,6 +30,7 @@ create table llx_facturedet
   qty             real,              	-- Quantité (exemple 2)
   remise_percent  real DEFAULT 0,    	-- % de la remise ligne (exemple 20%)
   remise          real DEFAULT 0,    	-- Montant calculé de la remise % sur PU HT (exemple 20)
+  fk_remise_except	integer NULL,    	-- Lien vers table des remises fixes
   subprice        real,              	-- P.U. HT (exemple 100)
   price           real,              	-- P.U. HT apres remise % de ligne
   total_ht        real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale

@@ -359,12 +359,24 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 }
 
 
+if ($_POST['action'] == "adddiscount" && $user->rights->propale->creer) 
+{
+    $propal = new Propal($db);
+    $ret=$propal->fetch($_POST['propalid']);
+	
+	if ($_POST["amount"])
+	{
+// \todo a completer
+//		$propal->insert_discount($_POST["amount"]);
+	}
+}
+
 /*
  *  Ajout d'une ligne produit dans la propale
  */
 if ($_POST['action'] == "addligne" && $user->rights->propale->creer) 
 {
-	if ($_POST['qty'] && (($_POST['np_price']>=0 && $_POST['np_desc']) || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['np_price']!=0 && $_POST['np_desc']) || $_POST['idprod']))
 	{
 	    $propal = new Propal($db);
 	    $ret=$propal->fetch($_POST['propalid']);
@@ -602,14 +614,17 @@ if ($_GET['propalid'] > 0)
             print '</tr>';
     
 			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Info').'</td><td colspan="5">';
+            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$societe->getCurrentDiscount();
 			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
+			if ($absolute_discount)
+			{
+				print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+				print '.';
+			}
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
     
             // Dates
@@ -1257,7 +1272,7 @@ if ($_GET['propalid'] > 0)
         // Valid
         if ($propal->statut == 0)
         {
-            if ($user->rights->propale->valider)
+            if ($user->rights->propale->valider && $propal->total_ttc > 0)
             {
                 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
             }

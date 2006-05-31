@@ -90,10 +90,11 @@ ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk
 ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture FOREIGN KEY (fk_facture_fourn) REFERENCES llx_facture_fourn (rowid);
 
 
-ALTER TABLE llx_facturedet ADD COLUMN total_ht        real after price;
+ALTER TABLE llx_facturedet ADD COLUMN fk_remise_except	integer NULL AFTER remise;
+ALTER TABLE llx_facturedet ADD COLUMN total_ht        real AFTER price;
 ALTER TABLE llx_facturedet ADD COLUMN total_tva       real;
 ALTER TABLE llx_facturedet ADD COLUMN total_ttc       real;
-ALTER TABLE llx_facturedet ADD COLUMN info_bits		  integer DEFAULT 0 after date_end;
+ALTER TABLE llx_facturedet ADD COLUMN info_bits		  integer DEFAULT 0 AFTER date_end;
 
   
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_soc (fk_soc);
@@ -202,8 +203,13 @@ ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_projet         FORE
 
 ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre);
 
-alter table llx_commandedet add column coef real;
-alter table llx_propaldet add column coef real after price;
+ALTER TABLE llx_commandedet ADD COLUMN fk_remise_except	integer NULL AFTER remise;
+ALTER TABLE llx_commandedet ADD COLUMN coef real;
+
+ALTER TABLE llx_propaldet ADD COLUMN fk_remise_except	integer NULL AFTER remise;
+ALTER TABLE llx_propaldet ADD COLUMN coef real after price;
+
+ALTER TABLE llx_contratdet ADD COLUMN fk_remise_except	integer NULL AFTER remise;
 
 create table llx_livraison
 (

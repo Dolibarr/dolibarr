@@ -43,6 +43,7 @@ create table llx_contratdet
   qty                   real,              -- quantité
   remise_percent        real DEFAULT 0,    -- pourcentage de remise
   remise                real DEFAULT 0,    -- montant de la remise
+  fk_remise_except		integer NULL,      -- Lien vers table des remises fixes
   subprice              real,              -- prix avant remise
   price_ht              real,              -- prix final
 

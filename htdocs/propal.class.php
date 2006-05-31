@@ -145,6 +145,21 @@ class Propal
      *    \return    int                 >0 si ok, <0 si ko
      *    \see       add_product
      */
+    function insert_discount($idproduct, $qty, $remise_percent=0, $p_desc='')
+    {
+
+
+	}
+	
+    /**
+     *    \brief     Ajout d'un produit dans la proposition, en base
+     *    \param     idproduct           Id du produit à ajouter
+     *    \param     qty                 Quantité
+     *    \param     remise_percent      Remise relative effectuée sur le produit
+     *    \param     p_desc              Descriptif optionnel
+     *    \return    int                 >0 si ok, <0 si ko
+     *    \see       add_product
+     */
     function insert_product($idproduct, $qty, $remise_percent=0, $p_desc='')
     {
         global $conf;
