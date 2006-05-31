@@ -140,9 +140,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             $delivery = new Livraison($this->db);
             $delivery->fetch($id);
             
-            $delivery->commande     = new Livraison($this->db);
+            $delivery = new Livraison($this->db);
             $delivery->commande->id = $delivery->commande_id;
-            $delivery->commande->fetch_commande();
+            $delivery->commande = fetch_commande();
             
             $nblignes = sizeof($delivery->commande->lignes);
 
