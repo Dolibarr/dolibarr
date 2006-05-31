@@ -196,7 +196,7 @@ class Livraison
     {
         global $conf;
     
-        $sql = "SELECT l.rowid, l.date_creation, l.ref, l.fk_user_author,";
+        $sql = "SELECT l.rowid, l.date_creation, l.date_valid, l.ref, l.fk_user_author,";
         $sql .=" l.fk_statut, l.fk_commande, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
         $sql .= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, l.fk_adresse_livraison, l.model_pdf";
         $sql .= ", s.idp as socid";
@@ -211,6 +211,7 @@ class Livraison
     
             $this->id                   = $obj->rowid;
             $this->date_creation        = $obj->date_creation;
+            $this->date_valid           = $obj->date_valid;
             $this->ref                  = $obj->ref;
             $this->soc_id               = $obj->socid;
             $this->statut               = $obj->fk_statut;
@@ -219,7 +220,7 @@ class Livraison
             $this->user_author_id       = $obj->fk_user_author;
             $this->user_valid_id        = $obj->fk_user_valid;
             $this->date_livraison       = $obj->date_livraison;
-            $this->adresse_livraison_id = $obj->fk_entrepot;
+            $this->adresse_livraison_id = $obj->fk_adresse_livraison;
             $this->note                 = $obj->note;
             $this->note_public          = $obj->note_public;
             $this->modelpdf             = $obj->model_pdf;

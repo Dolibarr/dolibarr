@@ -672,7 +672,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($delivery->date,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
 
         if ($showadress)
         {
