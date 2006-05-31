@@ -473,9 +473,8 @@ if ($_GET["id"] > 0)
                             $obja = $db->fetch_object($resql);
                             print "<tr $bc[$var]>";
                             print '<td width="30%">';
-                            print img_warning($langs->trans("Alert"));
                             print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$obja->ref.'</a> - '.$obja->label;
-                            print '<td>'.$obja->entrepot.'</td><td><b>Stock : '.$obja->reel.'</b>'.img_warning($langs->trans("Alert")).'</td>';
+                            print '<td>'.$obja->entrepot.'</td><td><b>Stock : '.$obja->reel.'</b>' .img_warning($langs->trans("Alert")).'</td>';
                             print "</tr>\n";
                             $i++;
                         }
