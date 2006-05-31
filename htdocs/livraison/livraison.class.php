@@ -97,7 +97,7 @@ class Livraison
 
                 	$commande = new Commande($this->db);
                 	$commande->id = $this->commande_id;
-                	$lignes = $commande->fetch_lignes();
+                	$lignes = $commande->fetch_lignes(1); //on ne prend que les produits
 
     
                 /*
