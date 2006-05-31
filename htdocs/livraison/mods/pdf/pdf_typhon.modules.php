@@ -138,20 +138,23 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         if ($conf->livraison->dir_output)
         {
             $delivery = new Livraison($this->db);
-            $ret=$delivery->fetch($id);
-            $nblignes = sizeof($delivery->lignes);
+            $delivery->fetch($id);
+            $delivery->commande->id = $delivery->commande_id;
+            $delivery->commande = fetch_commande();
+            
+            $nblignes = sizeof($delivery->commande->lignes);
 
-			$deliveryref = sanitize_string($delivery->ref);
-			$deliveryref = str_replace("(","",$deliveryref);
-			$deliveryref = str_replace(")","",$deliveryref);
-			$dir = $conf->livraison->dir_output . "/" . $deliveryref;
-			$file = $dir . "/" . $deliveryref . ".pdf";
+			      $deliveryref = sanitize_string($delivery->ref);
+			      $deliveryref = str_replace("(","",$deliveryref);
+			      $deliveryref = str_replace(")","",$deliveryref);
+			      $dir = $conf->livraison->dir_output . "/" . $deliveryref;
+			      $file = $dir . "/" . $deliveryref . ".pdf";
 
             if (! file_exists($dir))
             {
                 if (create_exdir($dir) < 0)
                 {
-					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					          $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
                 }
 				
@@ -173,7 +176,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
                 $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
                 $pdf->SetAutoPageBreak(1,0);
-
+/*
                 // Positionne $this->atleastonediscount si on a au moins une remise
                 for ($i = 0 ; $i < $nblignes ; $i++)
                 {
@@ -182,7 +185,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                         $this->atleastonediscount++;
                     }
                 }
-
+*/
                 $this->_pagehead($pdf, $delivery);
 
                 $pagenb = 1;
@@ -200,18 +203,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=$delivery->lignes[$i]->libelle;
-                    if ($delivery->lignes[$i]->desc&&$delivery->lignes[$i]->desc!=$delivery->lignes[$i]->libelle)
+                    $libelleproduitservice=$delivery->commande->lignes[$i]->libelle;
+                    if ($delivery->commande->lignes[$i]->desc&&$delivery->commande->lignes[$i]->desc!=$delivery->commande->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$delivery->lignes[$i]->desc;
+                        $libelleproduitservice.=$delivery->commande->lignes[$i]->desc;
                     }
                     // Si ligne associée à un code produit
-                    if ($delivery->lignes[$i]->product_id)
+                    if ($delivery->commande->lignes[$i]->product_id)
                     {
                         $prodser = new Product($this->db);
 
-                        $prodser->fetch($delivery->lignes[$i]->product_id);
+                        $prodser->fetch($delivery->commande->lignes[$i]->product_id);
                         if ($prodser->ref)
                         {
                             $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
@@ -220,17 +223,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                         // Ajoute description du produit
                         if ($conf->global->COMMANDE_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                         {
-                            if ($delivery->lignes[$i]->product_desc&&$delivery->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$delivery->lignes[$i]->product_desc!=$delivery->lignes[$i]->desc)
+                            if ($delivery->commande->lignes[$i]->product_desc&&$delivery->commande->lignes[$i]->product_desc!=$delivery->commande->lignes[$i]->libelle&&$delivery->commande->lignes[$i]->product_desc!=$delivery->commande->lignes[$i]->desc)
                             {
                                 if ($libelleproduitservice) $libelleproduitservice.="\n";
-                                $libelleproduitservice.=$delivery->lignes[$i]->product_desc;
+                                $libelleproduitservice.=$delivery->commande->lignes[$i]->product_desc;
                             }
                         }                    
                     }
-                    if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
+                    if ($delivery->commande->lignes[$i]->date_start && $delivery->commande->lignes[$i]->date_end)
                     {
                         // Affichage durée si il y en a une
-                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")";
+                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($delivery->commande->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($delivery->commande->lignes[$i]->date_end).")";
                     }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
@@ -239,7 +242,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
 
                     $nexY = $pdf->GetY();
-
+/*
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
                     $pdf->MultiCell(10, 4, ($delivery->lignes[$i]->tva_tx < 0 ? '*':'').abs($delivery->lignes[$i]->tva_tx), 0, 'R');
@@ -247,11 +250,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
                     $pdf->MultiCell(18, 4, price($delivery->lignes[$i]->subprice), 0, 'R', 0);
-
+*/
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 4, $delivery->lignes[$i]->qty, 0, 'R');
-
+                    $pdf->MultiCell(10, 4, $delivery->commande->lignes[$i]->qty, 0, 'R');
+/*
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($delivery->lignes[$i]->remise_percent)
@@ -269,7 +272,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$tvaligne=$delivery->lignes[$i]->price * $delivery->lignes[$i]->qty;
 					if ($delivery->remise_percent) $tvaligne-=($tvaligne*$delivery->remise_percent)/100;
 					$this->tva[ (string)$delivery->lignes[$i]->tva_tx ] += $tvaligne;
-
+*/
                     $nexY+=2;    // Passe espace entre les lignes
 
                     if ($nexY > 200 && $i < ($nblignes - 1))
