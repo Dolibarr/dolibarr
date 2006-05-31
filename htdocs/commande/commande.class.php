@@ -1331,7 +1331,8 @@ class Commande
     {
         if ($user->rights->commande->creer)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET date_livraison = '".$date_livraison."'";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+            $sql.= " SET date_livraison = ".' '.($this->date_livraison?$this->db->idate($this->date_livraison):'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
     
             if ($this->db->query($sql) )

@@ -66,6 +66,8 @@ class Propal
     var $remise_absolue;
     var $note;
     var $note_public;
+
+	var $date_livraison;
     var $adresse_livraison_id;
     
     var $labelstatut=array();
@@ -437,7 +439,8 @@ class Propal
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
-        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id, '".$this->date_livraison."')";
+        $sql.= " $this->cond_reglement_id, $this->mode_reglement_id,";
+        $sql.= " ".$this->db->idate($this->date_livraison).")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -692,11 +695,13 @@ class Propal
     function fetch($rowid)
     {
         $sql = "SELECT ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc,fk_soc_contact";
-        $sql.= ", ".$this->db->pdate("datep")."as dp";
-        $sql.= ", ".$this->db->pdate("fin_validite")."as dfv, model_pdf";
+        $sql.= ", ".$this->db->pdate("datep")." as dp";
+        $sql.= ", ".$this->db->pdate("fin_validite")." as dfv";
+        $sql.= ", ".$this->db->pdate("date_livraison")." as date_livraison";
+        $sql.= ", model_pdf";
         $sql.= ", note, note_public";
         $sql.= ", fk_projet, fk_statut, fk_user_author";
-        $sql.= ", fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison";
+        $sql.= ", fk_cond_reglement, fk_mode_reglement, fk_adresse_livraison";
         $sql.= ", c.label as statut_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal,";
         $sql.= " ".MAIN_DB_PREFIX."c_propalst as c";
@@ -736,8 +741,8 @@ class Propal
                 $this->statut_libelle       = $obj->statut_label;
                 $this->cond_reglement_id    = $obj->fk_cond_reglement;
                 $this->mode_reglement_id    = $obj->fk_mode_reglement;
-		            $this->date_livraison       = $obj->date_livraison;
-		            $this->adresse_livraison_id = $obj->fk_adresse_livraison;
+		        $this->date_livraison       = $obj->date_livraison;
+		        $this->adresse_livraison_id = $obj->fk_adresse_livraison;
     
                 $this->user_author_id = $obj->fk_user_author;
                 
@@ -949,18 +954,19 @@ class Propal
     
     /**
      *      \brief      Définit une date de livraison
-     *      \param      user        Objet utilisateur qui modifie
+     *      \param      user        		Objet utilisateur qui modifie
      *      \param      date_livraison      date de livraison  
-     *      \return     int         <0 si ko, >0 si ok
+     *      \return     int         		<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison)
     {
         if ($user->rights->propale->creer)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET date_livraison = '".$date_livraison."'";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
+            $sql.= " SET date_livraison = ".$this->db->idate($date_livraison);
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
     
-            if ($this->db->query($sql) )
+            if ($this->db->query($sql))
             {
                 $this->date_livraison = $date_livraison;
                 return 1;
@@ -1814,7 +1820,7 @@ class Propal
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf','".$this->db->idate($this->fin_validite)."',";
-        $sql.= " '$this->cond_reglement_id', '$this->mode_reglement_id', '".$this->date_livraison."', '$this->adresse_livraison_id')";
+        $sql.= " '$this->cond_reglement_id', '$this->mode_reglement_id', '".$this->db->idate($this->date_livraison)."', '$this->adresse_livraison_id')";
         $resql=$this->db->query($sql);
         if ($resql)
         {
