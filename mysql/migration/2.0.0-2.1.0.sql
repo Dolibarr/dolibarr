@@ -227,6 +227,7 @@ create table llx_livraison
   key(fk_commande)
 )type=innodb;
 
+alter table llx_livraison drop foreign key fk_livraison_societe;
 alter table llx_livraison drop column fk_soc;
 alter table llx_livraison drop column fk_soc_contact;
 
