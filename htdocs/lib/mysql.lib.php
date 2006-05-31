@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,6 +66,7 @@ class DoliDb
     1006 => 'DB_ERROR_CANNOT_CREATE',
     1007 => 'DB_ERROR_ALREADY_EXISTS',
     1008 => 'DB_ERROR_CANNOT_DROP',
+    1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
     1046 => 'DB_ERROR_NODBSELECTED',
     1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
     1051 => 'DB_ERROR_NOSUCHTABLE',
