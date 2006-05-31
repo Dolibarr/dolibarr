@@ -499,9 +499,8 @@ if ($_GET["id"] > 0)
         if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
         $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
         $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-        if ($conf->livraison->enabled) $sql .= " , ".MAIN_DB_PREFIX."livraison as l";
+        if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
         $sql .= " WHERE cd.fk_commande = ".$commande->id;
-        if ($conf->livraison->enabled) $sql .= " AND l.fk_commande = cd.fk_commande";
         $sql .= " AND cd.rowid = ed.fk_commande_ligne";
         $sql .= " AND ed.fk_expedition = e.rowid";
         $sql .= " AND e.fk_statut > 0";
