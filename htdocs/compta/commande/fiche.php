@@ -524,8 +524,8 @@ if ($_GET["id"] > 0)
 			$relativepath = $comref.'/'.$comref.'.pdf';
 			$filedir = $conf->commande->dir_output . '/' . $comref;
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
-			$genallowed=$user->rights->commande->creer;
-			$delallowed=$user->rights->commande->supprimer;
+			$genallowed=0;
+			$delallowed=0;
 
 			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
