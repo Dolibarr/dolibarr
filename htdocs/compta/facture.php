@@ -2042,7 +2042,7 @@ else
 			else
 			{
 				$sql .= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
-				$sql .= " WHERE cf.fk_facture = ".$fac->id." AND cf.fk_commande = cp.fk_commande AND cp.fk_propal = p.rowid";
+				$sql .= " WHERE cf.fk_facture = ".$fac->id." AND cf.fk_commande = cp.fk_commande AND cp.fk_propale = p.rowid";
 			}
 
 			$resql = $db->query($sql);
