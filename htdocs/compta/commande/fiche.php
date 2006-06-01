@@ -512,32 +512,22 @@ if ($_GET["id"] > 0)
         }
 
 
-        print "<table width=\"100%\"><tr><td width=\"50%\" valign=\"top\">";
+        print '<table width="100%"><tr><td width="50%" valign="top">';
 
 
-        /*
-        * Documents générés
-        *
-        */
-        $file = $conf->facture->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-        $relativepath = $commande->ref."/".$commande->ref.".pdf";
+     /*
+			* Documents générés
+			*
+			*/
+			$comref = sanitize_string($commande->ref);
+			$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
+			$relativepath = $comref.'/'.$comref.'.pdf';
+			$filedir = $conf->commande->dir_output . '/' . $comref;
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+			$genallowed=$user->rights->commande->creer;
+			$delallowed=$user->rights->commande->supprimer;
 
-        $var=true;
-
-        if (file_exists($file))
-        {
-            print_titre($langs->trans("Documents"));
-            print '<table width="100%" class="border">';
-
-            print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
-            print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-            print '<td align="right">'.filesize($file). ' bytes</td>';
-            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-            print '</tr>';
-
-            print "</table>\n";
-
-        }
+			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
         /*
         * Liste des factures
