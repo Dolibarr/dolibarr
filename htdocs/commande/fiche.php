@@ -1462,9 +1462,9 @@ else
 				$num = $db->num_rows($result);
 				if ($num)
 				{
+					print '<br>';
 					print_titre($langs->trans('RelatedBills'));
 					$i = 0; $total = 0;
-					print '<br>';
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre"><td>'.$langs->trans('Ref')."</td>";
 					print '<td align="center">'.$langs->trans('Date').'</td>';
