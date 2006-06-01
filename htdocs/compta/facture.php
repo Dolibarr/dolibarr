@@ -2033,7 +2033,17 @@ else
 			 *   Propales rattachées
 			 */
 			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.price, p.ref, p.rowid as propalid';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = '.$fac->id;
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
+			if (!$conf->commande->enabled)
+			{
+				$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
+				$sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
+			}
+			else
+			{
+				$sql .= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
+				$sql .= " WHERE cf.fk_facture = ".$fac->id." AND cf.fk_commande = cp.fk_commande AND cp.fk_propal = p.rowid";
+			}
 
 			$resql = $db->query($sql);
 			if ($resql)
@@ -2094,7 +2104,7 @@ else
 						print '<table class="noborder" width="100%">';
 						print '<tr class="liste_titre">';
 						print '<td>'.$langs->trans('Ref').'</td>';
-           			    print '<td>'.$langs->trans('RefCdeClientShort').'</td>';
+           	print '<td>'.$langs->trans('RefCdeClientShort').'</td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
 						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 						print '</tr>';
@@ -2105,7 +2115,7 @@ else
 							$var=!$var;
 							print '<tr '.$bc[$var].'><td>';
 							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
-   							print '<td>'.$objp->ref_client.'</td>';
+   						print '<td>'.$objp->ref_client.'</td>';
 							print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
 							print '<td align="right">'.price($objp->total_ht).'</td>';
 							print "</tr>\n";
@@ -2114,8 +2124,8 @@ else
 						}
 						print '<tr class="liste_total">';
 						print '<td align="left">'.$langs->trans('TotalHT').'</td>';
-   						print '<td>&nbsp;</td>';
-   						print '<td>&nbsp;</td>';
+   					print '<td>&nbsp;</td>';
+   					print '<td>&nbsp;</td>';
 						print '<td align="right">'.price($total).'</td></tr>';
 						print '</table>';
 					}

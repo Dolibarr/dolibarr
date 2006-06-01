@@ -544,12 +544,16 @@ class Commande
 		$remise = 0;
 		$price = round(ereg_replace(',','.',$pu), 2);
 		$subprice = $price;
+
+// appliquait la remise 2 fois : sur la ligne et le HT
+		
+/*		
 		if (trim(strlen($remise_percent)) > 0)
 		{
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;
 		}
-
+*/
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)';
 		
 		if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
@@ -600,12 +604,16 @@ class Commande
 		$remise = 0;
 		$price = round(ereg_replace(',','.',$pu), 2);
 		$subprice = $price;
+		
+// appliquait la remise 2 fois : sur la ligne et le HT
+		
+/*		
 		if (trim(strlen($remise_percent)) > 0)
 		{
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;
 		}
-
+*/
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)';
 		$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "','$fk_product',".price2num($price).", '$qty', '$txtva', $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
 
