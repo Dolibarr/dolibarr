@@ -257,7 +257,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
             {
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
-                print "<tr $bc[$var]><td><a href=\"../propal.php?propalid=".$obj->rowid."\">";
+                print "<tr $bc[$var]><td><a href=\"../propal.php?propalid=".$obj->propalid."\">";
                 print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
     
                 print "<td><a href=\"fiche.php?id=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
