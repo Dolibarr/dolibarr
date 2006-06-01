@@ -27,6 +27,6 @@
 
 require('./pre.inc.php');
 $form = new Form($db);
-$form->select_produits_do("",$_GET["htmlname"],"","","",$_GET["keyref"],$_GET["keylabel"]);
+$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keyref"],$_GET["keylabel"]);
  
 ?>

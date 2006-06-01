@@ -661,12 +661,12 @@ class Form
 			print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
 			print '<script type="text/javascript">';
 			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-			print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'"});});';
+			print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
 			print 'function publish_selvalue(obj){$("'.$htmlname.'").value = obj.options[obj.selectedIndex].value;}';
 			print '</script>';
 			print '<script type="text/javascript">';
 			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-			print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'"});});';
+			print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
 			print '</script>';
 			print '<div id="ajdynfield'.$htmlname.'">';
 			print '</div>';
