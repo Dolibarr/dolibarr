@@ -918,7 +918,8 @@ class Commande
 			* Propale associée
 			*/
 			$sql = 'SELECT cp.fk_propale';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'co_pr WHERE fk_commande = '.$this->id;
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'co_pr as cp';
+			$sql .= ' WHERE cp.fk_commande = '.$this->id;
 			if ($this->db->query($sql) )
 			{
 				if ($this->db->num_rows())
