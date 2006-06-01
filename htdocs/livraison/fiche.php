@@ -42,6 +42,7 @@ if (!$conf->expedition->enabled && $conf->stock->enabled)
 
 
 $langs->load("bills");
+$langs->load('deliveries');
 
 $user->getrights('expedition');
 if (!$user->rights->expedition->livraison->lire)

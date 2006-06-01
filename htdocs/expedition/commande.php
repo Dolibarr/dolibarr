@@ -539,6 +539,7 @@ if ($_GET["id"] > 0)
                     
                     if ($conf->livraison->enabled)
                     {
+                    	$langs->load('deliveries');
                     	if ($objp->livraison_id)
                     	{
                     		print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';

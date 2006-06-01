@@ -1493,7 +1493,9 @@ else
 			* Liste des expéditions
 			*/
 			$sql = 'SELECT e.rowid,e.ref,'.$db->pdate('e.date_expedition').' as de';
+			if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
+			if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
 			$sql .= ' WHERE e.fk_commande = '. $commande->id;
 
 			$result = $db->query($sql);
@@ -1505,7 +1507,12 @@ else
 					print_titre($langs->trans('Sendings'));
 					$i = 0; $total = 0;
 					print '<table class="border" width="100%">';
-					print '<tr '.$bc[$var].'><td>'.$langs->trans('Sendings').'</td><td>'.$langs->trans('Date').'</td></tr>';
+					print '<tr '.$bc[$var].'><td>'.$langs->trans('Sendings').'</td>';
+					if ($conf->livraison->enabled)
+          {
+           	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+          }
+					print '<td>'.$langs->trans('Date').'</td></tr>';
 
 					$var=True;
 					while ($i < $num)
@@ -1514,6 +1521,18 @@ else
 						$var=!$var;
 						print '<tr '.$bc[$var].'>';
 						print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowSending'),'sending').' '.$objp->ref.'</a></td>';
+						if ($conf->livraison->enabled)
+            {
+             	$langs->load('deliveries');
+             	if ($objp->livraison_id)
+             	{
+             		print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
+             	}
+             	else
+             	{
+             		print '<td><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'<a></td>';
+             	}
+            }
 						print '<td>'.dolibarr_print_date($objp->de).'</td></tr>';
 						$i++;
 					}

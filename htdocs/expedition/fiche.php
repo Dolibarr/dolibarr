@@ -37,6 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 $langs->load("bills");
+$langs->load('deliveries');
 
 $user->getrights('expedition');
 if (!$user->rights->expedition->lire)
