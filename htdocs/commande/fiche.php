@@ -839,7 +839,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
 			print '</td>';
-			if ($_GET['action'] != 'refcdeclient') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+			if ($_GET['action'] != 'refcdeclient' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($user->rights->commande->creer && $_GET['action'] == 'refcdeclient')
@@ -980,7 +980,7 @@ else
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+				if ($_GET['action'] != 'classer' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 				print '</tr></table>';
 				print '</td><td colspan="2">';
 				if ($_GET['action'] == 'classer')
