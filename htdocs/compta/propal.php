@@ -664,7 +664,10 @@ if ($_GET["propalid"] > 0)
 	 * Factures associees
 	 */
 	$sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= "LEFT JOIN ".MAIN_DB_PREFIX."fa_pr as fp ON fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
+	if ($conf->commande->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."co_pr as cp ON cp.fk_propale = ".$propal->id;
+	if ($conf->commande->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."co_fa as cf ON cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
 	
 	$resql = $db->query($sql);
 	if ($resql)

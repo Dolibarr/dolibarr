@@ -913,10 +913,12 @@ class Commande
 			
 			
 			// -------- exp pdf //
+			
 			/*
 			* Propale associée
 			*/
-			$sql = 'SELECT fk_propale FROM '.MAIN_DB_PREFIX.'co_pr WHERE fk_commande = '.$this->id;
+			$sql = 'SELECT cp.fk_propale';
+			$sql .= 'FROM '.MAIN_DB_PREFIX.'co_pr WHERE fk_commande = '.$this->id;
 			if ($this->db->query($sql) )
 			{
 				if ($this->db->num_rows())
@@ -1537,10 +1539,18 @@ class Commande
 	 */
 	function classer_facturee()
 	{
+		global $conf;
+		
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
 		if ($this->db->query($sql) )
 		{
+			if ($this->propale_id)
+			{
+				$propal = new Propal($this->db);
+				$propal->fetch($this->propale_id);
+				$propal->classer_facturee();				
+			}
 			return 1;
 		}
 		else

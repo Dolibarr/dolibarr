@@ -1228,6 +1228,24 @@ class Propal
             return -1;
         }
     }
+    
+ /**
+	 *        \brief      Classe la propale comme facturée
+	 *        \return     int     <0 si ko, >0 si ok
+	 */
+	function classer_facturee()
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = 4';
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
+		if ($this->db->query($sql) )
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
 
 
     /**
