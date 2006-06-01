@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - deliveries
 Delivery=Delivery
 Deliveries=Deliveries
+DeliveryCard=Delivery card
 DeliveryOrder=Delivery order
 DeliveryOrders=Delivery orders
 DeliveryDate=Delivery date
+CreateDeliveryOrder=Generate delivery order

@@ -1,6 +1,8 @@
 # Dolibarr language file - fr_FR - deliveries
 Delivery=Livraison
 Deliveries=Livraisons
+DeliveryCard=Fiche livraison
 DeliveryOrder=Bon de livraison
 DeliveryOrders=Bons de livraison
 DeliveryDate=Date de livraison
+CreateDeliveryOrder=Générer bon de livraison

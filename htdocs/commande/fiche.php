@@ -44,6 +44,7 @@ $langs->load('sendings');
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('propal');
+$langs->load('deliveries');
 
 $user->getrights('commande');
 $user->getrights('expedition');
@@ -1523,7 +1524,6 @@ else
 						print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowSending'),'sending').' '.$objp->ref.'</a></td>';
 						if ($conf->livraison->enabled)
             {
-             	$langs->load('deliveries');
              	if ($objp->livraison_id)
              	{
              		print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
