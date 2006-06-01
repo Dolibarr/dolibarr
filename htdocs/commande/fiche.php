@@ -1493,7 +1493,7 @@ else
 			/*
 			* Liste des expéditions
 			*/
-			$sql = 'SELECT e.rowid,e.ref,'.$db->pdate('e.date_expedition').' as de';
+			$sql = 'SELECT e.rowid as expedition_id, e.ref,'.$db->pdate('e.date_expedition').' as de';
 			if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 			if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
@@ -1521,7 +1521,7 @@ else
 						$objp = $db->fetch_object($result);
 						$var=!$var;
 						print '<tr '.$bc[$var].'>';
-						print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowSending'),'sending').' '.$objp->ref.'</a></td>';
+						print '<td><a href="../expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans('ShowSending'),'sending').' '.$objp->ref.'</a></td>';
 						if ($conf->livraison->enabled)
             {
              	if ($objp->livraison_id)
