@@ -522,11 +522,7 @@ if ($_GET["id"] > 0)
                 print '<td align="left">'.$langs->trans("Sending").'</td>';
                 if ($conf->livraison->enabled)
                 {
-                		$objt = $db->fetch_object($resql);
-                		if ($objt->livraison_id)
-                		{
-                			print '<td>'.$langs->trans("DeliveryOrder").'</td>';
-                		}
+                	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
                 }
                 print '<td>'.$langs->trans("Description").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
@@ -544,6 +540,10 @@ if ($_GET["id"] > 0)
                     if ($conf->livraison->enabled && $objp->livraison_id)
                     {
                     	print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
+                    }
+                    else
+                    {
+                    	print '<td></td>';
                     }
                     
                     if ($objp->fk_product > 0)
