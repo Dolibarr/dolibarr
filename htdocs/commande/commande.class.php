@@ -962,7 +962,7 @@ class Commande
 	     {
 
 	      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET model_pdf = '$modelpdf'";
-	      $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	      $sql .= " WHERE rowid = $this->id AND fk_statut < 2 ;";
 	  
 	     if ($this->db->query($sql) )
 	      {
