@@ -31,6 +31,7 @@
 require("./pre.inc.php");
 
 $langs->load("admin");
+$langs->load("companies");
 $langs->load("bills");
 $langs->load("other");
 
@@ -88,20 +89,6 @@ if ($_GET["action"] == 'setdoc')
     }
 }
 
-if ($_GET["action"] == 'setmod')
-{
-    // \todo Verifier si module numerotation choisi peut etre activé
-    // par appel methode canBeActivated
-
-
-
-	if (dolibarr_set_const($db, "AVOIR_ADDON",$_GET["value"]))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $conf->global->AVOIR_ADDON = $_GET["value"];
-    }
-}
 
 
 /*
@@ -125,75 +112,6 @@ $hselected=$h;
 $h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
-
-/*
- *  Module numérotation
- */
-
-print_titre($langs->trans("DiscountsNumberingModules"));
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name")."</td>\n";
-print '<td>'.$langs->trans("Description")."</td>\n";
-print '<td nowrap>'.$langs->trans("Example")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
-print '</tr>'."\n";
-
-clearstatcache();
-
-$handle = opendir($dir);
-
-$var=true;
-if ($handle)
-{
-    $var=true;
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 10) == 'mod_avoir_' && substr($file, strlen($file)-3, 3) == 'php')
-        {
-            $file = substr($file, 0, strlen($file)-4);
-
-            require_once(DOL_DOCUMENT_ROOT ."/avoir/modules/".$file.".php");
-
-            $module = new $file;
-
-            $var=!$var;
-            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-            print "\n  <td>".$module->info()."</td>\n";
-
-	        // Affiche example
-	        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-	
-	        print '<td align="center">';
-	        if ($conf->global->FACTURE_ADDON == "$file")
-	        {
-	            print img_tick($langs->trans("Activated"));
-	        }
-	        else
-	        {
-	            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-	        }
-	        print '</td>';
-	
-			// Info
-			$htmltooltip='';
-	        $nextval=$module->getNextValue();
-	        if ($nextval != $langs->trans("NotAvailable"))
-	        {
-	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
-	        }
-	    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
-	    	print ($htmltooltip?img_help(0):'');
-	    	print '</td>';
-    	
-            print "</tr>\n";
-        }
-    }
-    closedir($handle);
-}
-print "</table><br>\n";
 
 
 /*
