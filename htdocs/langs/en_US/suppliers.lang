@@ -14,3 +14,4 @@ BuyingPrice=Buying price
 AddSupplierPrice=Add supplier price
 ChangeSupplierPrice=Change supplier price
 ErrorQtyTooLowForThisSupplier=Quantity too low for this supplier
+ProductHasAlreadyReferenceInThisSupplier=This product has already a reference in this supplier

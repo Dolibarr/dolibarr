@@ -1354,7 +1354,7 @@ class Product
         $sql = "SELECT count(*) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
         $sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
-        $sql.= " AND ref_fourn = '".$ref_fourn."'";
+        //$sql.= " AND ref_fourn = '".$ref_fourn."'"; // crée des doublons
     
         $resql=$this->db->query($sql);
         if ($resql)
