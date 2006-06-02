@@ -893,6 +893,32 @@ class Facture
             }
         }
     }
+    
+  /*
+   *
+   *
+   *
+   */
+	 
+  function set_pdf_model($user, $modelpdf)
+   {
+      if ($user->rights->facture->creer)
+	     {
+
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET model_pdf = '$modelpdf'";
+	      $sql .= " WHERE rowid = $this->id AND fk_statut < 2 ;";
+	  
+	     if ($this->db->query($sql) )
+	      {
+	        return 1;
+	      }
+	     else
+	     {
+    	  dolibarr_print_error($this->db);
+	      return 0;
+	     }
+	  }
+  }
 
 	/**
 	* \brief     Ajoute un produit dans l'objet facture

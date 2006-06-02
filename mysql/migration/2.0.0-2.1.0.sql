@@ -269,3 +269,6 @@ insert into llx_user_rights(fk_user,fk_id) select distinct fk_user, '262' from l
 
 alter table llx_commandedet add column rang integer DEFAULT 0;
 alter table llx_propaldet add column rang integer DEFAULT 0;
+
+alter table llx_facture drop column model;
+alter table llx_facture add column model_pdf varchar(50) after note_public;

@@ -622,6 +622,8 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	$facture = new Facture($db, 0, $_GET['facid']);
+	$facture->set_pdf_model($user, $_POST['model']);
 	$result=facture_pdf_create($db, $_REQUEST['facid'], '', $_REQUEST['model'], $outputlangs);
     if ($result <= 0)
     {

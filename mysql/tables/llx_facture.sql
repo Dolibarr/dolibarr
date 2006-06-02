@@ -52,5 +52,5 @@ create table llx_facture
 
   note                text,
   note_public         text,
-  model               varchar(50)
+  model_pdf           varchar(50)
 )type=innodb;
