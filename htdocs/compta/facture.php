@@ -2029,7 +2029,7 @@ else
 			$var=true;
 
 			print '<br>';
-			$somethingshown=$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$conf->global->FACTURE_ADDON_PDF);
+			$somethingshown=$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
 
 			/*
 			 *   Propales rattachées

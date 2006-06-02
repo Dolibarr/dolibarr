@@ -295,7 +295,7 @@ class Facture
 		$sql = 'SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql .= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
 		$sql .= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
-		$sql .= ', f.note, f.note_public, f.paye, f.fk_statut, f.fk_user_author';
+		$sql .= ', f.note, f.note_public, f.paye, f.fk_statut, f.fk_user_author, f.model_pdf';
 		$sql .= ', f.fk_mode_reglement, f.ref_client, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c, '.MAIN_DB_PREFIX.'facture as f';
@@ -340,6 +340,7 @@ class Facture
 				$this->note                   = $obj->note;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
+				$this->modelpdf               = $obj->model_pdf;
 				$this->lignes                 = array();
 
 				if ($this->statut == 0)
