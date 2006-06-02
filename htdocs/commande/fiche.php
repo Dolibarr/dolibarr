@@ -321,8 +321,11 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	 */
 	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	$commande = new Commande($db, 0, $_GET['id']);
-	$commande->set_pdf_model($user, $_POST['model']);
+
+	// Sauvegarde le dernier modèle choisi pour générer un document
+	$commande = new Commande($db, 0, $_REQUEST['id']);
+	$commande->set_pdf_model($user, $_REQUEST['model']);
+
 	$result=commande_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
     if ($result <= 0)
     {
