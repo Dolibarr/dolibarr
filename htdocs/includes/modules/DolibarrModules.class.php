@@ -102,8 +102,11 @@ class DolibarrModules
         // Exécute les requetes sql complémentaires
         for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
         {
-            if (! $this->db->query($array_sql[$i]))
+            $sql=$array_sql[$i];
+            $result=$this->db->query($sql);
+            if (! $result)
             {
+            	dolibarr_syslog("Error sql=".$sql." - ".$this->db->error());
                 $err++;
             }
         }

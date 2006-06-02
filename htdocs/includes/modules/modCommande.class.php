@@ -73,15 +73,15 @@ class modCommande extends DolibarrModules
 
     // Constantes
     $this->const = array();
-	  $this->const[0][0] = "COMMANDE_ADDON_PDF";
+	$this->const[0][0] = "COMMANDE_ADDON_PDF";
     $this->const[0][1] = "chaine";
-    $this->const[0][2] = "azur";
+    $this->const[0][2] = "einstein";
     $this->const[0][3] = 'Nom du gestionnaire de génération des commandes en PDF';
     $this->const[0][4] = 0;
     
     $this->const[1][0] = "COMMANDE_ADDON";
     $this->const[1][1] = "chaine";
-    $this->const[1][2] = "mod_commande_jade";
+    $this->const[1][2] = "mod_commande_marbre";
     $this->const[1][3] = 'Nom du gestionnaire de numérotation des commandes';
     $this->const[1][4] = 0;
     
@@ -160,8 +160,8 @@ class modCommande extends DolibarrModules
     $this->dirs[0] = $conf->commande->dir_output;
     $this->dirs[1] = $conf->commande->dir_images;
 	$sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."commande_model_pdf WHERE nom = '".$this->const[0][2]."'",
-		 "INSERT INTO ".MAIN_DB_PREFIX."commande_model_pdf (nom) VALUES('".$this->const[0][2]."');",
+		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."'",
+		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES('".$this->const[0][2]."','order')"
 		 );
 
     return $this->_init($sql);
