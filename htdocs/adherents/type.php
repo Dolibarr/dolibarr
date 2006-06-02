@@ -44,10 +44,10 @@ if ($_POST["action"] == 'add' && $user->admin)
         $adht = new AdherentType($db);
           
         $adht->libelle     = trim($_POST["libelle"]);
-        $adht->cotisation  = $yesno[$_POST["cotisation"]];
+        $adht->cotisation  = trim($_POST["cotisation"]);
         $adht->commentaire = trim($_POST["comment"]);
         $adht->mail_valid  = trim($_POST["mail_valid"]);
-        $adht->vote        = $yesno[$_POST["vote"]];
+        $adht->vote        = trim($_POST["vote"]);
 
         if ($adht->libelle)
         {
@@ -65,11 +65,11 @@ if ($_POST["action"] == 'update' && $user->admin)
     if ($_POST["button"] != $langs->trans("Cancel")) {
         $adht = new AdherentType($db);
         $adht->id          = $_POST["rowid"];
-        $adht->libelle     = $_POST["libelle"];
-        $adht->cotisation  = $yesno[$_POST["cotisation"]];
-        $adht->commentaire = $_POST["comment"];
-        $adht->mail_valid  = $_POST["mail_valid"];
-        $adht->vote        = $yesno[$_POST["vote"]];
+        $adht->libelle     = trim($_POST["libelle"]);
+        $adht->cotisation  = trim($_POST["cotisation"]);
+        $adht->commentaire = trim($_POST["comment"]);
+        $adht->mail_valid  = trim($_POST["mail_valid"]);
+        $adht->vote        = trim($_POST["vote"]);
         
         $adht->update($user->id);
 
@@ -134,8 +134,8 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit') {
           print "<tr $bc[$var]>";
           print '<td><a href="type.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShwoType"),'group').' '.$objp->rowid.'</a></td>';
           print '<td>'.$objp->libelle.'</td>';
-          print '<td align="center">'.$langs->trans($objp->cotisation).'</td>';
-          print '<td align="center">'.$langs->trans($objp->vote).'</td>';
+          print '<td align="center">'.yn($objp->cotisation).'</td>';
+          print '<td align="center">'.yn($objp->vote).'</td>';
           print '<td><a href="type.php?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</td>';
           print "</tr>";
           $i++;

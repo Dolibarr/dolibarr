@@ -106,6 +106,30 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		}
 	}
 
+	// Chargement config
+	define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
+	$conf->setValues($db);
+
+
+	/*
+	 * Pour utiliser d'autres versions des librairies externes que les
+	 * versions embarquées dans Dolibarr, définir les constantes adequates:
+	 * Pour FPDF:           FPDF_PATH
+	 * Pour PEAR:           PEAR_PATH
+	 * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
+	 * Pour PHPlot:         PHPLOT_PATH
+	 * Pour MagpieRss:      MAGPIERSS_PATH
+	 */
+	if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
+	if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMENT_ROOT .'/includes/pear/'); }
+	if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
+	if (! defined('PHPLOT_PATH'))         { define('PHPLOT_PATH',        DOL_DOCUMENT_ROOT .'/includes/phplot/'); }
+	if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
+	if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
+	define('FPDF_FONTPATH', FPDF_PATH . 'font/');
+	define('MAGPIE_DIR', MAGPIERSS_PATH);
+
+
 	/***************************************************************************************
 	*
 	* Migration des données
@@ -117,6 +141,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		$db->begin();
 		
 		print '<tr><td colspan="4" nowrap="nowrap">&nbsp;</td></tr>';
+
 
         // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
         // dans la 1ere colonne, la description de l'action a faire
@@ -136,8 +161,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
         migrate_paiementfourn_facturefourn($db,$langs,$conf);
 
+        migrate_modeles($db,$langs,$conf);
+
+
     	// On commit dans tous les cas.
-    	// La procédure etant conçus pour pouvoir passer plusieurs fois quelquesoit la situation.
+    	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
     	$db->commit();
     	
     	$db->close();
@@ -403,7 +431,6 @@ function migrate_contracts_date2($db,$langs,$conf)
 }
 
 
-
 /*
  * Mise a jour des dates de création de contrat
  */
@@ -553,6 +580,46 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 	{
    		print '<tr><td colspan="3" nowrap="nowrap"><b>'.$langs->trans('SuppliersInvoices').'</b></td><td align="right">'.$langs->trans("Error").'</td></tr>';
     }
+}
+
+
+/*
+ * Mise a jour des modeles selectionnes
+ */
+function migrate_modeles($db,$langs,$conf)
+{
+    //print '<br>';
+    //print '<b>'.$langs->trans('UpdateModelsTable')."</b><br>\n";
+    
+    if ($conf->facture->enabled)
+    {
+	    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+	    $model=new ModelePDFFactures();
+	    $modellist=$model->liste_modeles($db);
+		if (sizeof($modellist)==0)
+		{
+	    	// Aucun model par defaut.
+		    $sql=" insert into llx_document_model(nom,type) values('crabe','invoice')";
+		    $resql = $db->query($sql);
+		    if (! $resql) dolibarr_print_error($db);
+		}
+	}
+
+    if ($conf->commande->enabled)
+    {
+	    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+	    $model=new ModelePDFCommandes();
+	    $modellist=$model->liste_modeles($db);
+		if (sizeof($modellist)==0)
+		{
+	    	// Aucun model par defaut.
+		    $sql=" insert into llx_document_model(nom,type) values('einstein','order')";
+		    $resql = $db->query($sql);
+		    if (! $resql) dolibarr_print_error($db);
+		}
+	}
+	
+	//print $langs->trans("AlreadyDone");
 }
 
 ?>

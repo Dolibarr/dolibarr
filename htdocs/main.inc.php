@@ -54,6 +54,12 @@ if (get_magic_quotes_gpc())
 require_once("master.inc.php");
 
 
+/*
+ */
+$bc[0]="class=\"impair\"";
+$bc[1]="class=\"pair\"";
+
+
 // Verification du login.
 // Cette verification est faite pour chaque accee Apres l'authentification,
 // l'objet $user est initialise Notament $user->id, $user->login et $user->nom, $user->prenom
