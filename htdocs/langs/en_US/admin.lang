@@ -409,6 +409,8 @@ NumberOfProductLines=Number of product lines
 PathToDocuments=Path to documents
 ProposalsNumberingModules=Commercial proposal numbering modules
 ProposalsPDFModules=Commercial proposal documents models
+ClassifiedInvoiced=Classified invoiced
+ClassifiedInvoicedWithOrder=Classified invoiced proposal at the same time as the order
 ##### Orders #####
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules

@@ -54,7 +54,7 @@ if ($_POST["action"] == 'nbprod')
 
 if ($_POST["action"] == 'activate_classifiedinvoiced')
 {
-    dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER", $_POST["value"]);
+    dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER", "1");
     Header("Location: propale.php");
     exit;
 }
