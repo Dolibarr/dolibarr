@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,6 @@
  * $Source$
  */
 
-
 /**
      	\file       htdocs/includes/modules/propale/mod_propale_ivoire.php
 		\ingroup    propale
@@ -31,6 +30,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
+
 
 /**	    \class      mod_propale_ivoire
 		\brief      Classe du modèle de numérotation de référence de propale Ivoire
@@ -85,7 +85,16 @@ class mod_propale_ivoire extends ModeleNumRefPropales
     
         return  "PR" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
     }
-    
+
+    /**     \brief      Renvoie la référence de propale suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function getNumRef($objsoc=0)
+    { 
+        return $this->getNextValue();
+    }
+        
 }
 
 ?>

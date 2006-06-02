@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,13 +74,13 @@ class modPropale extends DolibarrModules
 
     $this->const[0][0] = "PROPALE_ADDON_PDF";
     $this->const[0][1] = "chaine";
-    $this->const[0][2] = "rouge";
+    $this->const[0][2] = "azur";
     $this->const[0][3] = 'Nom du gestionnaire de génération des propales en PDF';
     $this->const[0][4] = 0;
 
     $this->const[1][0] = "PROPALE_ADDON";
     $this->const[1][1] = "chaine";
-    $this->const[1][2] = "mod_propale_ivoire";
+    $this->const[1][2] = "mod_propale_marbre";
     $this->const[1][3] = 'Nom du gestionnaire de numérotation des propales';
     $this->const[1][4] = 0;
     

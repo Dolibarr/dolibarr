@@ -48,7 +48,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		$langs->load("bills");
 		
-      return $langs->trans('TerreNumRefModelDesc1',$this->prefix);
+    	return $langs->trans('TerreNumRefModelDesc1',$this->prefix);
     }
 
     /**     \brief      Renvoi un exemple de numérotation

@@ -713,7 +713,7 @@ function img_disable($alt = "default")
 function img_help($usehelpcursor=1)
 {
   global $conf,$langs;
-  return '<img '.($usehelpcursor?'style="cursor: help;" ':'').' src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0" alt="" title="">';
+  return '<img '.($usehelpcursor?'style="cursor: help;" ':'').'src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0" alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info").'">';
 }
 
 /**

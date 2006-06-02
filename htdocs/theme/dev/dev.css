@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net> 
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /***** Style du fond *****/
@@ -741,3 +740,91 @@ td.small {
 tr.nonpayed { 
               font-size: 0.6em;
               font-weight: bold; }
+
+
+
+/* ============================================================================== */
+/* Tooltips                                                                       */
+/* ============================================================================== */
+
+#dhtmltooltip
+{
+position: absolute;
+width: 200px;
+border: 1px solid #444444;
+padding: 2px;
+background-color: lightyellow;
+visibility: hidden;
+z-index: 100;
+}
+
+
+/* ============================================================================== */
+/* Calendar                                                                       */
+/* ============================================================================== */
+.bodyline { 
+	-moz-border-radius:8px;
+	border: 1px #E4ECEC outset; 
+	padding:0px;
+	margin-bottom:5px;
+}
+table.dp { 
+    width: 180px;
+    background-color: #FFFFFF;
+    border-top: solid 2px #DDDDDD;
+    border-left: solid 2px #DDDDDD;
+    border-right: solid 1px #222222;
+    border-bottom: solid 1px #222222;
+}
+.dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
+/* Barre titre */
+.dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
+	font-weight:bold;
+	background-color:#b3c5cc;
+	color:white; 
+	font-size:11px;
+	cursor:auto;
+}
+/* Barre navigation */
+.dpButtons,.tpButtons {
+	text-align:center;
+	background-color:#617389;
+	color:#FFFFFF;
+	font-weight:bold; 
+	border: 1px outset black;
+	cursor:pointer;	
+}
+.dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
+.dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
+.dpExplanation{ font-weight:normal; font-size:11px;}
+.dpWeek td{text-align:center}
+
+.dpToday,.dpReg,.dpSelected{
+	cursor:pointer;
+}
+.dpToday{font-weight:bold; color:black; background-color:#DDDDDD;}
+.dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
+
+/* Jour courant */
+.dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
+
+.tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
+.tpHour td {border-left:1px solid #DDDDDD; border-bottom:1px solid #DDDDDD; cursor:pointer;}
+.tpHour td:Hover {background-color:black;color:white;}
+
+.tpMinute {margin-top:5px;}
+.tpMinute td:Hover {background-color:black; color:white; }
+.tpMinute td {background-color:#D9DBE1; text-align:center; cursor:pointer;}
+
+/* Bouton X fermer */	
+.dpInvisibleButtons
+{
+border-style:none;
+background-color:transparent;
+padding:0px;
+font-size:9px;
+border-width:0px;
+color:#0B63A2;
+vertical-align:middle;
+cursor: pointer; 
+}

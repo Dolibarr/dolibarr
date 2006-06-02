@@ -32,6 +32,7 @@
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
+
 /**
      	\class      mod_propale_jade
 		\brief      Classe du modèle de numérotation de référence de propale Jade
@@ -86,7 +87,16 @@ class mod_propale_jade extends ModeleNumRefPropales
     
         return  "PROP" . ($num+1);
     }
-    
+
+    /**     \brief      Renvoie la référence de propale suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function getNumRef($objsoc=0)
+    { 
+        return $this->getNextValue();
+    }
+        
 }
 
 ?>

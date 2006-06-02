@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,6 @@
  * $Source$
  */
 
-
 /**
      	\file       htdocs/includes/modules/propale/mod_propale_diamant.php
 		\ingroup    propale
@@ -31,6 +30,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
+
 
 /**	    \class      mod_propale_diamant
 		\brief      Classe du modèle de numérotation de référence de propale Diamant
@@ -49,21 +49,21 @@ class mod_propale_diamant extends ModeleNumRefPropales
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
-    function info()
-    {
-    $texte = "Renvoie le numéro sous la forme numérique PRYYNNNNN où YY représente l'année et NNNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
-    $texte.= "Si la constante PROPALE_DIAMANT_DELTA est définie, un offset est appliqué sur le compteur";
-    
-    if (defined("PROPALE_DIAMANT_DELTA"))
-        {
-          $texte .= " (Définie et vaut: ".PROPALE_DIAMANT_DELTA.")";
-        }
-      else
-        {
-          $texte .= " (N'est pas définie)";
-        }
-      return $texte;
-     }
+	function info()
+	{
+		$texte = "Renvoie le numéro sous la forme numérique PRYYNNNNN où YY représente l'année et NNNNN Le numéro d'incrément. Ce dernier n'est PAS remis à zéro en début d'année.<br>\n";
+		$texte.= "Si la constante PROPALE_DIAMANT_DELTA est définie, un offset est appliqué sur le compteur";
+	
+		if (defined("PROPALE_DIAMANT_DELTA"))
+		{
+			$texte .= " (Définie et vaut: ".PROPALE_DIAMANT_DELTA.")";
+		}
+		else
+		{
+			$texte .= " (N'est pas définie)";
+		}
+		return $texte;
+	}
 
 
     /**     \brief      Renvoi un exemple de numérotation
@@ -113,7 +113,17 @@ class mod_propale_diamant extends ModeleNumRefPropales
     
         return  "PR" .$y. substr("0000".$num, strlen("0000".$num)-5,5);
     }
-    
+ 
+ 
+    /**     \brief      Renvoie la référence de propale suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function getNumRef($objsoc=0)
+    { 
+        return $this->getNextValue();
+    }
+   
 }
 
 ?>

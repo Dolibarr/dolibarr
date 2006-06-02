@@ -135,7 +135,7 @@ class ModeleNumRefDeliveryOrder
     }
     
 }
-function delivery_order_pdf_create($db, $deliveryid, $modele='')
+function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs='')
 {
   global $langs;
   $langs->load("deliveries");
