@@ -1554,7 +1554,7 @@ class Commande
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
 		if ($this->db->query($sql) )
 		{
-			if ($this->propale_id)
+			if (($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 1) && $this->propale_id)
 			{
 				$propal = new Propal($this->db);
 				$propal->fetch($this->propale_id);

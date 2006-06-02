@@ -52,6 +52,19 @@ if ($_POST["action"] == 'nbprod')
     exit;
 }
 
+if ($_POST["action"] == 'activate_classifiedinvoiced')
+{
+    dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER", $_POST["value"]);
+    Header("Location: propale.php");
+    exit;
+}
+else if ($_POST["action"] == 'disable_classifiedinvoiced')
+{
+	dolibarr_del_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER");
+  Header("Location: propale.php");
+  exit;
+}
+
 if ($_GET["action"] == 'set')
 {
 	$type='propal';
@@ -343,6 +356,45 @@ print '</table>';
 print '</form>';
 
 print '<br>';
+
+/*
+ * Classé facturée une propale en même temps que la commande
+ *
+ */
+
+if ($conf->commande->enabled)
+{
+	print_titre($langs->trans("ClassifiedInvoiced"));
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td width="140">'.$langs->trans("Name").'</td>';
+	print '<td align="center">&nbsp;</td>';
+	print '<td align="center">'.$langs->trans("Active").'</td>';
+	print "</tr>\n";
+	print "<form method=\"post\" action=\"propale.php\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"classifiedinvoiced\">";
+	print "<tr ".$bc[false].">";
+	print '<td width="80%">'.$langs->trans("ClassifiedInvoicedWithOrder").'</td>';
+	print '<td align="center">';
+	if($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 1)
+	{
+		print img_tick();
+	}
+	print '</td>';
+	print "<td align=\"center\">";
+	if($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 0)
+	{
+		print '<a href="propale.php?action=activate_classifiedinvoiced">'.$langs->trans("Activate").'</a>';
+	}
+	else if($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 1)
+	{
+		print '<a href="propale.php?action=disable_classifiedinvoiced">'.$langs->trans("Disable").'</a>';
+	}
+	print "</td>";
+	print '</tr>';
+	print '</table>';
+	print '</form>';
+}
 
 $db->close();
 
