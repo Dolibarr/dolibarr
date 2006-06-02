@@ -317,11 +317,12 @@ print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
-print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("Directory")."</td>\n  <td>".$conf->societe->dir_avoir."</td>\n</tr>\n";
+print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->facture->dir_output."</td>\n</tr>\n";
 print "</table>\n";
 
 
 $db->close();
 
-llxFooter();
+
+llxFooter('$Date$ - $Revision$');
 ?>

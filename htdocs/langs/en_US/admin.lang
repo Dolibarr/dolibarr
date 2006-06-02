@@ -407,6 +407,7 @@ PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
 NumberOfProductLines=Number of product lines
 PathToDocuments=Path to documents
+PathDirectory=Directory
 ProposalsNumberingModules=Commercial proposal numbering modules
 ProposalsPDFModules=Commercial proposal documents models
 ClassifiedInvoiced=Classified invoiced

@@ -238,7 +238,6 @@ $conf->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
 $conf->societe->dir_images=DOL_DATA_ROOT."/societe/images";
 $conf->societe->dir_logos=DOL_DATA_ROOT."/societe/logos";
-$conf->societe->dir_avoir=DOL_DATA_ROOT."/societe/avoirs";
 if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 // Module commercial
 $conf->commercial->enabled=defined("MAIN_MODULE_COMMERCIAL")?MAIN_MODULE_COMMERCIAL:0;

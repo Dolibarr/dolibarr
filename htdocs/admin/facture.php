@@ -472,6 +472,23 @@ print '</form>';
 print '</table>';
 
 
+/*
+ *  Repertoire
+ */
+print '<br>';
+print_titre($langs->trans("PathToDocuments"));
+
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td>".$langs->trans("Name")."</td>\n";
+print "  <td>".$langs->trans("Value")."</td>\n";
+print "</tr>\n";
+print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->facture->dir_output."</td>\n</tr>\n";
+print "</table>\n";
+
+
+
+
 $db->close();
 
 llxFooter('$Date$ - $Revision$');

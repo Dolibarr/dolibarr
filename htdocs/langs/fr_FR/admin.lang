@@ -407,6 +407,7 @@ PropalSetup=Configuration du module Propositions Commerciales
 CreateForm=Création formulaire
 NumberOfProductLines=Nombre de lignes produits
 PathToDocuments=Chemins d'accès aux documents
+PathDirectory=Répertoire
 ProposalsNumberingModules=Modules de numérotation des propositions commerciales
 ProposalsPDFModules=Modèles de documents de propositions commerciales
 ClassifiedInvoiced=Classé facturée
