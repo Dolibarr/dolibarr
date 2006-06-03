@@ -90,6 +90,7 @@ if ($socidp > 0)
 	print "<form method=\"post\" action=\"socnote.php\">";
 	
 	print '<table class="border" width="100%">';
+
 	print '<tr><td width="50%" valign="top">'.$langs->trans("Note").'</td><td>'.$langs->trans("CurrentNote").'</td></tr>';
 	print '<tr><td width="50%" valign="top">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
@@ -98,6 +99,7 @@ if ($socidp > 0)
 	print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
 	print "</td></tr>";
 	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
+
 	print "</table>";
 	
 	print '</form>';
