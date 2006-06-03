@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
- * Copyright (C) 2005      Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -614,6 +614,20 @@ function migrate_modeles($db,$langs,$conf)
 		{
 	    	// Aucun model par defaut.
 		    $sql=" insert into llx_document_model(nom,type) values('einstein','order')";
+		    $resql = $db->query($sql);
+		    if (! $resql) dolibarr_print_error($db);
+		}
+	}
+	
+    if ($conf->expedition->enabled)
+    {
+	    include_once(DOL_DOCUMENT_ROOT.'/expedition/mods/pdf/ModelePdfExpedition.class.php');
+	    $model=new ModelePDFExpedition();
+	    $modellist=$model->liste_modeles($db);
+		if (sizeof($modellist)==0)
+		{
+	    	// Aucun model par defaut.
+		    $sql=" insert into llx_document_model(nom,type) values('rouget','shipping')";
 		    $resql = $db->query($sql);
 		    if (! $resql) dolibarr_print_error($db);
 		}
