@@ -86,6 +86,8 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             $contact = new Contact($db);
             $contact->socid = $soc->id;
             $contact->nom = "Nom aléa ".time()."-$c";
+		    $prenoms = array("Joe","Marc","Steve","Laurent","Nico");
+            $contact->prenom = $prenoms[rand(0,sizeof($prenoms)-1)];
             if ( $contact->create($user) )
             {
 
