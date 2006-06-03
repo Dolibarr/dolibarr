@@ -89,8 +89,7 @@ if ($_GET["facid"] > 0)
 
 		// Societe
         print '<tr><td>'.$langs->trans("Company").'</td>';
-        print '<td colspan="5">';
-        print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+        print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
         print '</tr>';
 
         // Dates

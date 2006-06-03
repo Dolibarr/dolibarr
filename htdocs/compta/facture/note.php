@@ -113,12 +113,11 @@ if ($_GET["facid"])
     print '<table class="border" width="100%">';
 
     // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
 
     // Société
     print '<tr><td>'.$langs->trans("Company").'</td>';
-    print '<td colspan="3">';
-    print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+    print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
 
 	// Note publique
     print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';

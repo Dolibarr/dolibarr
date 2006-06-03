@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005 Destailleur Laurent  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
+ * Copyright (C) 2005-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,7 +233,7 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 
 		// Reference du facture
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $facture->ref;
 		print "</td></tr>";
 
@@ -242,8 +242,7 @@ if ($id > 0)
 			$facture->fetch_client();
 			
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">';
-		print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$facture->client->id.'">'.$facture->client->nom.'</a></b></td></tr>';
+		print '<td colspan="3">'.$facture->client->getNomUrl(1,'compta').'</td></tr>';
 		print "</table>";
 
 		print '</div>';
