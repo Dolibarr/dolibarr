@@ -1078,9 +1078,10 @@ class Societe
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Sur quoi pointe le lien
 	 *		\return		string			Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
 		
@@ -1099,6 +1100,12 @@ class Societe
 		else
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">';
+			$lienfin='</a>';
+		}
+
+		if ($option == 'compta')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$this->id.'">';
 			$lienfin='</a>';
 		}
 

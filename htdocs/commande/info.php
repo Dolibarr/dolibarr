@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**

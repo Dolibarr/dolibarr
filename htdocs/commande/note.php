@@ -128,8 +128,7 @@ if ($_GET["id"])
 	
 	// Customer
 	print "<tr><td>".$langs->trans("Company")."</td>";
-	print '<td colspan="3">';
-	print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td></tr>';
+	print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
 
 	// Note publique
     print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';

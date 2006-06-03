@@ -127,12 +127,11 @@ if ($_GET["id"] > 0)
 
 			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="3">';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+			print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</a></td>';
 			print '</tr>';
 
 			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Info').'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$soc->getCurrentDiscount();

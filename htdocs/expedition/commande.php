@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 
+$langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');
 
@@ -139,10 +140,21 @@ if ($_GET["id"] > 0)
 
 			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="2">';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+			print '<td colspan="2">'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
 
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
+			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$absolute_discount=$soc->getCurrentDiscount();
+			print '. ';
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+
+			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
 			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
