@@ -30,6 +30,12 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
+if ($conf->projet->enabled) {
+	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+}
+
 
 $user->getrights('propale');
 
@@ -40,21 +46,14 @@ $langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
 
-
-require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
-if ($conf->projet->enabled) {
-	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-}
-
-
-/*
- * Sécurité accés client
-*/
+// Sécurité accés client
 if ($user->societe_id > 0)
 {
 	$action = '';
 	$socidp = $user->societe_id;
 }
+
+
 
 llxHeader();
 
@@ -66,45 +65,17 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($_GET["propalid"] > 0) {
+if ($_GET["propalid"] > 0)
+{
 	$propal = new Propal($db);
 
 	if ( $propal->fetch($_GET["propalid"], $user->societe_id) > 0)
-		{
+	{
 		$soc = new Societe($db, $propal->socidp);
 		$soc->fetch($propal->socidp);
 
-		$h=0;
-
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('CommercialCard');
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('AccountancyCard');
-		$h++;
-
-		if ($conf->use_preview_tabs)
-		{
-    		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
-    		$head[$h][1] = $langs->trans("Preview");
-    		$hselected=$h;
-    		$h++;
-        }
-        
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('Note');
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('Info');
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('Documents');
-		$h++;
-
-		dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal'));
+		$head = propal_prepare_head($propal);
+		dolibarr_fiche_head($head, 'preview', $langs->trans('Proposal'));
 
 
 		/*
@@ -131,18 +102,11 @@ if ($_GET["propalid"] > 0) {
 		        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
 
 				$rowspan=3;
+
 				// ligne 1
 				// partie Gauche
-				print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
-				if ($societe->client == 1)
-				{
-                    $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-				}
-				else
-				{
-					$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
-				}
-				print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
+				print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td>';
+
 				// partie Droite
 				print '<td align="left">'.$langs->trans("PaymentConditions").'</td>';
 				print '<td>'.'&nbsp;'.'</td>';

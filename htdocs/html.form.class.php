@@ -450,13 +450,13 @@ class Form
   }
   
   
-  /**
-   *    \brief      Retourne la liste déroulante des sociétés
-   *    \param      selected        Societe présélectionnée
-   *    \param      htmlname        Nom champ formulaire
-   *    \param      filter          Criteres optionnels de filtre
-   */
-  function select_societes($selected='',$htmlname='soc_id',$filter='')
+	/**
+	 *    \brief      Retourne la liste déroulante des sociétés
+	 *    \param      selected        Societe présélectionnée
+	 *    \param      htmlname        Nom champ formulaire
+	 *    \param      filter          Criteres optionnels de filtre
+	 */
+	function select_societes($selected='',$htmlname='soc_id',$filter='')
     {
         // On recherche les societes
         $sql = "SELECT s.idp, s.nom FROM";
@@ -494,6 +494,54 @@ class Form
     }
   
   
+	/**
+	 *    \brief      Retourne la liste déroulante des remises fixes
+	 *    \param      selected        Id remise fixe présélectionnée
+	 *    \param      htmlname        Nom champ formulaire
+	 *    \param      filter          Criteres optionnels de filtre
+	 */
+	function select_remises($selected='',$htmlname='remise_id',$filter='',$socid)
+    {
+        global $langs,$conf;
+        
+        // On recherche les societes
+        $sql = "SELECT re.rowid, re.amount_ht as amount, re.description FROM";
+        $sql.= " ".MAIN_DB_PREFIX ."societe_remise_except as re";
+        $sql.= " WHERE fk_soc = ".$socid;
+        if ($filter) $sql.= " AND $filter";
+        $sql.= " ORDER BY re.description ASC";
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                print '<option value="0">&nbsp;</option>';
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    if ($selected > 0 && $selected == $obj->rowid)
+                    {
+                        print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->description,40).' ('.$obj->amount.' '.$langs->trans("Currency".$conf->monnaie).')'.'</option>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->description,40).' ('.$obj->amount.' '.$langs->trans("Currency".$conf->monnaie).')'.'</option>';
+                    }
+                    $i++;
+                }
+            }
+            print '</select>';
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+    }
+    
+    
     /**
      *    	\brief      Retourne la liste déroulante des contacts d'une société donnée
      *    	\param      socid      	Id de la société
@@ -1588,23 +1636,24 @@ class Form
     
         
     /**
-     *    \brief      Affiche formulaire de selection de la remise avoir
+     *    \brief      Affiche formulaire de selection de la remise fixe
      *    \param      page        Page
      *    \param      selected    Valeur à appliquer
      *    \param      htmlname    Nom du formulaire select. Si none, non modifiable
      */
-    function form_remise($page, $selected='', $htmlname='remise')
+    function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid)
     {
         global $langs;
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setremise">';
-            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+			print '<input type="hidden" name="action" value="setabsolutediscount">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-			print '<input type="text" name="'.$htmlname.'" size="1" value="'.$selected.'">';
+			print $langs->trans("AvailableGlobalDiscounts").': ';
+			print $this->select_remises('',$htmlname,'fk_facture IS NULL',$socid);
             print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '<td align="left"> <input type="submit" class="button" value="'.$langs->trans("UseDiscount").'"></td>';
             print '</tr></table></form>';
         }
         else

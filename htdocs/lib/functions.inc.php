@@ -533,6 +533,27 @@ function dolibarr_trunc($string,$size=40)
 }
 
 /**
+        \brief      Complète une chaine à une taille donnée par des espaces
+        \param      string		Chaine à compléter
+        \param      size		Longueur de la chaine.
+        \param      side		0=Complétion à droite, 1=Complétion à gauche
+        \param		char		Chaine de complétion
+        \return     string		Chaine complétée
+*/
+function dolibarr_pad($string,$size,$side,$char=' ')
+{
+	$taille=sizeof($string);
+	$i=0;
+	while($i < ($size - $taille))
+	{
+		if ($side > 0) $string.=$char;
+		else $string=$char.$string;
+		$i++;
+	}
+	return $string;
+}
+
+/**
         \brief      Affiche picto propre à une notion/module (fonction générique)
         \param      alt         Texte sur le alt de l'image
         \param      object      Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)

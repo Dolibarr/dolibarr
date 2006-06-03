@@ -31,6 +31,7 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 
 $user->getrights('propale');
 
@@ -110,37 +111,8 @@ if ($propalid > 0)
         $societe = new Societe($db);
         $societe->fetch($propal->socidp);
 
-		$h=0;
-
-    	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-    	$head[$h][1] = $langs->trans('CommercialCard');
-    	$h++;
-    
-    	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
-    	$head[$h][1] = $langs->trans('AccountancyCard');
-    	$h++;
-    
-		if ($conf->use_preview_tabs)
-		{
-    		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
-    		$head[$h][1] = $langs->trans("Preview");
-    		$h++;
-        }
-        
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('Note');
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('Info');
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('Documents');
-		$hselected=$h;
-		$h++;
-
-		dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal'));
+		$head = propal_prepare_head($propal);
+		dolibarr_fiche_head($head, 'document', $langs->trans('Proposal'));
 
         // Construit liste des fichiers
         clearstatcache();
@@ -178,17 +150,7 @@ if ($propalid > 0)
         print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref_url.'</td></tr>';
 
         // Société
-        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
-        if ($societe->client == 1)
-        {
-            $url ='fiche.php?socid='.$societe->id;
-        }
-        else
-        {
-            $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
-        }
-        print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-        print '</tr>';
+        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
         print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';

@@ -30,6 +30,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
@@ -121,37 +122,9 @@ if ($_GET["propalid"] > 0)
 
     $propal = new Propal($db);
     $propal->fetch($_GET["propalid"]);
-    $h=0;
     
-    $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-    $head[$h][1] = $langs->trans('CommercialCard');
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
-    $head[$h][1] = $langs->trans('AccountancyCard');
-    $hselected=$h;
-    $h++;
-    
-    if ($conf->use_preview_tabs)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
-        $head[$h][1] = $langs->trans("Preview");
-        $h++;
-    }
-    
-    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-    $head[$h][1] = $langs->trans('Note');
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-    $head[$h][1] = $langs->trans('Info');
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
-    $head[$h][1] = $langs->trans('Documents');
-    $h++;
-    
-    dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal'));
+	$head = propal_prepare_head($propal);
+	dolibarr_fiche_head($head, 'compta', $langs->trans('Proposal'));
     
     
     /*
@@ -182,17 +155,7 @@ if ($_GET["propalid"] > 0)
             $rowspan=9;
             
             // Société
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
-            if ($societe->client == 1)
-            {
-                $url ='fiche.php?socid='.$societe->id;
-            }
-            else
-            {
-                $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
-            }
-            print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-            print '</tr>';
+            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
     
 			// Ligne info remises tiers
             print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';

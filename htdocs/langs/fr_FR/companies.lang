@@ -83,6 +83,7 @@ CompanyHasNoAbsoluteDiscount=Ce client n'a pas ou plus de remises fixes disponib
 CustomerAbsoluteDiscountAllUsers=Remises fixes en cours (accordées par tout utilisateur)
 CustomerAbsoluteDiscountMy=Remises fixes en cours (accordées personnellement)
 DefaultDiscount=Remise par défaut
+AvailableGlobalDiscounts=Remises fixes disponibles
 DiscountNone=Aucune
 Supplier=Fournisseur
 CompanyList=Liste des sociétés

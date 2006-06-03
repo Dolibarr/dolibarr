@@ -31,6 +31,7 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 
 $langs->load('propal');
 $langs->load('compta');
@@ -109,55 +110,27 @@ if ($_GET['propalid'])
 		$societe = new Societe($db);
 		if ( $societe->fetch($propal->soc_id) )
 		{
-			$h=0;
-
-        	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-        	$head[$h][1] = $langs->trans('CommercialCard');
-        	$h++;
-        
-        	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
-        	$head[$h][1] = $langs->trans('AccountancyCard');
-        	$h++;
-        
-			if ($conf->use_preview_tabs)
-			{
-    			$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
-    			$head[$h][1] = $langs->trans("Preview");
-    			$h++;
-            }
-            
-			$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-			$head[$h][1] = $langs->trans('Note');
-			$hselected=$h;
-			$h++;
-
-			$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-			$head[$h][1] = $langs->trans('Info');
-			$h++;
-
-			$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
-			$head[$h][1] = $langs->trans('Documents');
-			$h++;
-
-			dolibarr_fiche_head($head, $hselected, $langs->trans("Proposal"));
+			$head = propal_prepare_head($propal);
+			dolibarr_fiche_head($head, 'note', $langs->trans('Proposal'));
 
             print '<table class="border" width="100%">';
 
 	        print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref_url.'</td></tr>';
 
             // Société
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">';
-            if ($societe->client == 1)
-            {
-                $url ='fiche.php?socid='.$societe->id;
-            }
-            else
-            {
-                $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
-            }
-            print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-            print '</tr>';
+            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
             
+			// Ligne info remises tiers
+            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$absolute_discount=$societe->getCurrentDiscount();
+			print '. ';
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+    
 			// Date
             print '<tr><td>'.$langs->trans('Date').'</td><td>';
             print dolibarr_print_date($propal->date,'%a %d %B %Y');
