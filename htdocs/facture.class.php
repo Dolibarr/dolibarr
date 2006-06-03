@@ -33,7 +33,7 @@
 
 require_once(DOL_DOCUMENT_ROOT .'/notify.class.php');
 require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
-
+require_once(DOL_DOCUMENT_ROOT ."/client.class.php");
 
 /**
 	\class      Facture
@@ -42,9 +42,13 @@ require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 
 class Facture
 {
-	var $id;
 	var $db;
-	var $socidp;
+
+	var $id;
+
+	var $socidp;		// Id client
+	var $client;		// Objet societe client (à charger par fetch_client)
+	
 	var $number;
 	var $author;
 	var $date;
@@ -414,28 +418,9 @@ class Facture
 	*/
 	function fetch_client()
 	{
-		$client = new Societe($this->db);
+		$client = new Client($this->db);
 		$client->fetch($this->socidp);
 		$this->client = $client;
-	}
-
-
-	/**
-	 * 		\brief     	Valide la facture
-	 * 		\param     	userid      	Id de l'utilisateur qui valide
-	 *		\return		int				<0 si ko, >0 si ok
-	 *		\remarks	Utiliser set_valid directement plutot que cette methode
-	 *		\deprecated
-	 */
-	function valid($userid)
-	{
-		$user=new User($this->db);
-		$user->fetch($userid);
-		
-		$soc=new Societe($this->db);
-		$soc->fetch($this->socidp);
-		
-		return set_valid($this->rowid,$user,$soc,'');
 	}
 
 
@@ -1472,31 +1457,6 @@ class Facture
 
 	}
 
-	/**
-	*    \brief      Renvoi le libellé court d'un statut donné
-	*    \param      paye        etat paye
-	*    \param      statut      id statut
-	*    \param      amount      amount already payed
-	*    \return     string      Libellé court du statut
-	*/
-	function PayedLibStatut($paye,$statut,$amount=0)
-	{
-		global $langs;
-		$langs->load('bills');
-		if (! $paye)
-		{
-			if ($statut == 0) return $langs->trans('BillShortStatusDraft');
-			if ($statut == 3) return $langs->trans('BillStatusCanceled');
-			if ($amount) return $langs->trans('BillStatusStarted');
-			return $langs->trans('BillStatusNotPayed');
-		}
-		else
-		{
-			return $langs->trans('BillStatusPayed');
-		}
-	}
-
-
     /**
      *      \brief      Renvoie la référence de facture suivante non utilisée en fonction du module
      *                  de numérotation actif défini dans FACTURE_ADDON
@@ -1587,15 +1547,16 @@ class Facture
 	}
 	
 	/**
-	 *      \brief     Charge les informations d'ordre info dans l'objet facture
+	 *      \brief     Charge les informations de l'onglet info dans l'objet facture
 	 *      \param     id       	Id de la facture a charger
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec';
-		$sql .= ', fk_user_author, fk_user_valid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec,';
+		$sql.= ' '.$this->db->pdate('date_valid').' as datev,';
+		$sql.= ' fk_user_author, fk_user_valid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as c';
+		$sql.= ' WHERE c.rowid = '.$id;
 
 		$result=$this->db->query($sql);
 		if ($result)
@@ -1617,7 +1578,7 @@ class Facture
 					$this->user_validation = $vuser;
 				}
 				$this->date_creation     = $obj->datec;
-				//$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore gérée
+				$this->date_validation   = $obj->datev;
 			}
 			$this->db->free($result);
 		}
@@ -1782,14 +1743,14 @@ class Facture
 	}
 
 	/**
-	 *      \brief      Stocke un numéro de rand pour toutes les lignes de
+	 *      \brief      Stocke un numéro de rang pour toutes les lignes de
 	 *                  detail d'une facture qui n'en ont pas.
 	 */
 	function line_order()
 	{
 		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.'facturedet';
-		$sql .= ' WHERE fk_facture='.$this->id;
-		$sql .= ' AND rang = 0';
+		$sql.= ' WHERE fk_facture='.$this->id;
+		$sql.= ' AND rang = 0';
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1799,8 +1760,8 @@ class Facture
 		if ($nl > 0)
 		{
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facturedet';
-			$sql .= ' WHERE fk_facture='.$this->id;
-			$sql .= ' ORDER BY rang ASC, rowid ASC';
+			$sql.= ' WHERE fk_facture='.$this->id;
+			$sql.= ' ORDER BY rang ASC, rowid ASC';
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1816,7 +1777,7 @@ class Facture
 			for ($i = 0 ; $i < sizeof($li) ; $i++)
 			{
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet SET rang = '.($i+1);
-				$sql .= ' WHERE rowid = '.$li[$i];
+				$sql.= ' WHERE rowid = '.$li[$i];
 				if (!$this->db->query($sql) )
 				{
 					dolibarr_syslog($this->db->error());
@@ -1831,7 +1792,7 @@ class Facture
 
 		/* Lecture du rang de la ligne */
 		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'facturedet';
-		$sql .= ' WHERE rowid ='.$rowid;
+		$sql.= ' WHERE rowid ='.$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1842,12 +1803,12 @@ class Facture
 		if ($rang > 1 )
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet SET rang = '.$rang ;
-			$sql .= ' WHERE fk_facture  = '.$this->id;
-			$sql .= ' AND rang = '.($rang - 1);
+			$sql.= ' WHERE fk_facture  = '.$this->id;
+			$sql.= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql) )
 			{
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet SET rang  = '.($rang - 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql.= ' WHERE rowid = '.$rowid;
 				if (! $this->db->query($sql) )
 				{
 					dolibarr_print_error($this->db);
@@ -1866,7 +1827,7 @@ class Facture
 
 		/* Lecture du rang de la ligne */
 		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'facturedet';
-		$sql .= ' WHERE rowid ='.$rowid;
+		$sql.= ' WHERE rowid ='.$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1876,7 +1837,7 @@ class Facture
 
 		/* Lecture du rang max de la facture */
 		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'facturedet';
-		$sql .= ' WHERE fk_facture ='.$this->id;
+		$sql.= ' WHERE fk_facture ='.$this->id;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1887,12 +1848,12 @@ class Facture
 		if ($rang < $max )
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet SET rang = '.$rang;
-			$sql .= ' WHERE fk_facture  = '.$this->id;
-			$sql .= ' AND rang = '.($rang+1);
+			$sql.= ' WHERE fk_facture  = '.$this->id;
+			$sql.= ' AND rang = '.($rang+1);
 			if ($this->db->query($sql) )
 			{
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet SET rang = '.($rang+1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql.= ' WHERE rowid = '.$rowid;
 				if (! $this->db->query($sql) )
 				{
 					dolibarr_print_error($this->db);
