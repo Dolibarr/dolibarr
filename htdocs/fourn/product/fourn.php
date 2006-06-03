@@ -114,7 +114,7 @@ if ($_GET["id"])
       print '</td></tr>';
 
       print "<tr>";
-      print '<td width="20%">'.$langs->trans("Supplier").'</td><td width="40%">'.$product->fourn->nom_url.'</td>';
+      print '<td width="20%">'.$langs->trans("Supplier").'</td><td width="40%">'.$product->fourn->getNomUrl(1).'</td>';
       print '</tr><tr>';
       print '<td width="20%">'.$langs->trans("SupplierRef").'</td><td width="40%">'.$product->fourn_ref.'</td>';
       print '</tr><tr>';

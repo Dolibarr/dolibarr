@@ -44,8 +44,8 @@ if (!$user->rights->ficheinter->lire) accessforbidden();
 
 if ($_GET["socidp"])
 {
-	$objsoc=new Societe($db);
-	$objsoc->fetch($_GET["socidp"]);
+	$societe=new Societe($db);
+	$societe->fetch($_GET["socidp"]);
 }
 
 // Sécurité accés client
@@ -159,7 +159,7 @@ if ($_GET["action"] == 'create')
 //    $modFicheinter = new $obj;
 //    $numpr = $modFicheinter->getNextValue($soc);
 
-  $numpr = $fix->get_new_num($objsoc);
+  $numpr = $fix->get_new_num($societe);
   
   print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
   
@@ -168,7 +168,7 @@ if ($_GET["action"] == 'create')
   print '<table class="border" width="100%">';
   
   print '<input type="hidden" name="socidp" value='.$_GET["socidp"].'>';
-  print "<tr><td>".$langs->trans("Company")."</td><td>".img_object($langs->trans("ShowCompany"),'company').' '.$objsoc->nom_url."</td></tr>";
+  print "<tr><td>".$langs->trans("Company")."</td><td>".$societe->getNomUrl(1)."</td></tr>";
   
   print "<tr><td>".$langs->trans("Date")."</td><td>";
   $sel->select_date(time(),"p",'','','','fichinter');

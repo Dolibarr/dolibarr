@@ -199,18 +199,18 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   print '<table class="border" width="100%">';
   print '<input type="hidden" name="action" value="add">';
-  print '<tr><td>'.$langs->trans("Company").'</td><td>';
 
+  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
+  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
+
+  print '<tr><td>'.$langs->trans("Company").'</td><td>';
   $societe = new Societe($db);
   $societe->fetch($_GET["socidp"]); 
-  print $societe->nom_url;
-
+  print $societe->getNomUrl(1);
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
-  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
   print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
   print '</table>';
   print '</form>';
@@ -266,7 +266,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   print '<input type="hidden" name="action" value="createtask">';
   print '<table class="border" width="100%">';
   print '<tr><td>'.$langs->trans("Project").'</td><td>'.$projet->title.'</td>';
-  print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom_url.'</td></tr>';
+  print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
 
 
   /* Liste des acteurs */

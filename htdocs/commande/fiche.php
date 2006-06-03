@@ -527,7 +527,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '</tr>';
 
 			// Client
-			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.img_object($langs->trans("ShowCompany"),'company').' '.$soc->nom_url.'</td>';
+			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
 
 			// Ligne info remises tiers

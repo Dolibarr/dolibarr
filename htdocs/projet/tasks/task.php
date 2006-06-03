@@ -88,7 +88,7 @@ if ($_GET["id"] > 0)
       print '<input type="hidden" name="action" value="createtask">';
       print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans("Project").'</td><td>'.$projet->title.'</td>';
-      print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom_url.'</td></tr>';
+      print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
       print '<tr><td>'.$langs->trans("Task").'</td><td colspan="3">'.$task->title.'</td></tr>';
       
       /* Liste des tâches */

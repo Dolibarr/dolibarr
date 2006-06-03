@@ -538,19 +538,6 @@ class Societe
 				$this->client      = $obj->client;
 				$this->fournisseur = $obj->fournisseur;
 
-				if ($this->client == 1)
-				{
-					$this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">'.$obj->nom.'</a>';
-				}
-				elseif($this->client == 2)
-				{
-					$this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$this->id.'">'.$obj->nom.'</a>';
-				}
-				else
-				{
-					$this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
-				}
-
 				$this->rubrique = $obj->rubrique;
 				$this->note = $obj->note;
 				// multiprix
@@ -1087,10 +1074,44 @@ class Societe
       }
   }
 
+
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+		
+		$result='';
+		
+		if ($this->client == 1)
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">';
+			$lienfin='</a>';
+		}
+		elseif($this->client == 2)
+		{
+			$lien= '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+		}
+		else
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">';
+			$lienfin='</a>';
+		}
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany"),'company').$lienfin.' ');
+		$result.=$lien.$this->nom.$lienfin;
+		return $result;
+	}
+
+
   /**
    *    \brief      Renvoie le nom d'une societe a partir d'un id
-   *    \param      id      id de la société recherchée
-   *
+   *    \param      id      	id de la société recherchée
+   *	\return		string		Nom de la société
    */
   function get_nom($id)
   {

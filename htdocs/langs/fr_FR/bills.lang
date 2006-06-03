@@ -135,8 +135,8 @@ NoteReason=Note/Motif
 ReasonDiscount=Motif
 AddGlobalDiscount=Ajouter remise fixe
 DiscountOfferedBy=Accordé par
-DiscountStillRemaining=Remises absolues restant en cours
-DiscountAlreadyCounted=Remises absolues déjà appliquées
+DiscountStillRemaining=Remises fixes restant en cours
+DiscountAlreadyCounted=Remises fixes déjà appliquées
 BillAddress=Adresse de facturation
 # PaymentConditions
 PaymentConditionShortRECEP=A réception

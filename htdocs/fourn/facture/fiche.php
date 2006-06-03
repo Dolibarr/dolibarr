@@ -382,7 +382,7 @@ else
 			print '<table class="border" width="100%">';
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 
-			print '<td>'.$societe->nom_url.'</td>';
+			print '<td>'.$societe->getNomUrl(1).'</td>';
 			print '<td width="50%" valign="top">'.$langs->trans('Comments').'</tr>';
 
 			print '<tr><td valign="top">'.$langs->trans('Ref').'</td><td valign="top">';

@@ -137,18 +137,18 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   print '<table class="border" width="100%">';
   print '<input type="hidden" name="action" value="add">';
-  print '<tr><td>'.$langs->trans("Company").'</td><td>';
 
+  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
+  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
+
+  print '<tr><td>'.$langs->trans("Company").'</td><td>';
   $societe = new Societe($db);
   $societe->fetch($_GET["socidp"]); 
-  print $societe->nom_url;
-
+  print $societe->getNomUrl(1);
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
-  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
   print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
   print '</table>';
   print '</form>';
@@ -214,12 +214,12 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
-      print '<table class="border" width="50%">';
-      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom_url.'</td></tr>';
-
+      print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td><input name="title" value="'.$projet->title.'"></td></tr>';      
-      print '<tr><td align="center" colspan="2"><input name="update" type="submit" Value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
+
+      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->$projet->societe->getNomUrl(1).'</td></tr>';
+      print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
       print '</table>';
       print '</form>';
     }
@@ -227,10 +227,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
     {
       print '<table class="border" width="100%">';
 
-      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom_url.'</td></tr>';
-
       print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
+
+      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
       print '</table>';
     }
 

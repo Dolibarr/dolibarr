@@ -355,7 +355,7 @@ if ($user->rights->societe->contact->creer)
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
+        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
     }
     else
     {
@@ -449,7 +449,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
     }
     else
     {

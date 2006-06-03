@@ -220,7 +220,7 @@ if ($_GET["action"] == 'create')
 	{
           $societe = new Societe($db);
           $societe->fetch($_GET["socid"]);
-	  print $societe->nom_url;
+	  		print $societe->getNomUrl(1);
           print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
 	}
       else
@@ -312,7 +312,7 @@ if ($_GET["action"] == 'create')
 	{
           $societe = new Societe($db);
           $societe->fetch($_GET["socid"]);
-	      print img_object($langs->trans("ShowCompany"),'company').' '.$societe->nom_url;
+	      print $societe->getNomUrl(1);
           print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
 	}
       else 
@@ -481,9 +481,7 @@ if ($_GET["id"])
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-        print '<tr><td>'.$langs->trans("Company").'</td>';
-        print '<td>'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom_url.'</td>';
-
+        print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
         print '<td>'.$langs->trans("Contact").'</td>';
         print '<td>';
         

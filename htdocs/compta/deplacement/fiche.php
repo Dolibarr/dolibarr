@@ -204,7 +204,7 @@ else
 
 	      print '<table class="border" width="100%">';
 	      print '<tr><td width="20%">'.$langs->trans("Personn").'</td><td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->fullname.'</a></td></tr>';
-	      print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td><td>'.$soc->nom_url.'</td></tr>';
+	      print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print dolibarr_print_date($deplacement->date);
 	      print '</td></tr>';

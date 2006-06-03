@@ -21,42 +21,46 @@
  *
  */
 
-class OscCommande {
-  var $db ;
+class OscCommande
+{
+	var $db ;
+	
+	var $id ;
+	var $client_name ;
 
-  var $id ;
-  var $client_name ;
-
-  function OscCommande($DB, $id=0) {
-    $this->db = $DB;
-    $this->id   = $id ;
-  }  
-  /*
-   *
-   *
-   *
-   */
-  function fetch ($id)
-    {
-    
-      $sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".OSC_DB_NAME.".orders as o";
-      $sql .= " WHERE o.orders_id = $id";
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
+	
+	function OscCommande($DB, $id=0)
 	{
-	  $result = $this->db->fetch_array();
+		$this->db = $DB;
+		$this->id   = $id ;
+	}  
+	
 
-	  $this->id          = $result["rowid"];
-	  $this->client_name = $result["customers_name"];
-
-	  $this->nom_url     = '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
+	/*
+	 *
+	 *
+	 *
+	 */
+	function fetch ($id)
+	{
+		$sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".OSC_DB_NAME.".orders as o";
+		$sql .= " WHERE o.orders_id = $id";
+	
+		$result = $this->db->query($sql) ;
+	
+		if ( $result )
+		{
+			$result = $this->db->fetch_array();
+	
+			$this->id          = $result["rowid"];
+			$this->client_name = $result["customers_name"];
+		}
+		$this->db->free();
+	
+		return $result;
 	}
-      $this->db->free();
+    
 
-      return $result;
-    }
   /*
    *
    *

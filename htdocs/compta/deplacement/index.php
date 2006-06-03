@@ -103,7 +103,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
       print '<td>'.dolibarr_print_date($objp->dd).'</td>';
-      print '<td>' . img_object($langs->trans("ShowCompany"),"company").' '.$soc->nom_url . '</a></td>';
+      print '<td>'.$soc->getNomUrl(1).'</a></td>';
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
       print '<td align="right">'.$objp->km.'</td>';
       print "</tr>\n";

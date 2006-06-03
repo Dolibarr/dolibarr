@@ -80,31 +80,46 @@ class LieuConcert {
       print $this->db->error() . ' in ' . $sql;
     }
   }
-  /*
-   *
-   *
-   *
-   */
-  function fetch ($id) {
-    
-    $sql = "SELECT rowid, nom, ville, description FROM ".MAIN_DB_PREFIX."lieu_concert WHERE rowid = $id";
+  
+  
+	/*
+	 *
+	 *
+	 *
+	 */
+	function fetch ($id)
+	{
+		$sql = "SELECT rowid, nom, ville, description FROM ".MAIN_DB_PREFIX."lieu_concert WHERE rowid = $id";
+	
+		$result = $this->db->query($sql) ;
+	
+		if ( $result )
+		{
+			$result = $this->db->fetch_array();
+	
+			$this->id          = $result["rowid"];
+			$this->nom         = $result["nom"];
+			$this->ville       = $result["ville"];
+			$this->description = $result["description"];
+		}
+		$this->db->free();
+	
+		return $result;
+	}
 
-    $result = $this->db->query($sql) ;
 
-    if ( $result ) {
-      $result = $this->db->fetch_array();
-
-      $this->id          = $result["rowid"];
-      $this->nom         = $result["nom"];
-      $this->ville       = $result["ville"];
-      $this->description = $result["description"];
-
-      $this->nom_url     = '<a href="'.DOL_URL_ROOT.'/product/concert/fichelieu.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
-    }
-    $this->db->free();
-
-    return $result;
-  }
+	/**
+	 *    	\brief      Renvoie le nom clicable
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+		
+		$result='';
+		return '<a href="'.DOL_URL_ROOT.'/product/concert/fichelieu.php?id='.$this->rowid.'">'.$this->nom.'</a>';
+	}
 
 
   /*

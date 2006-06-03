@@ -79,32 +79,48 @@ class Groupart {
       print $this->db->error() . ' in ' . $sql;
     }
   }
-  /*
-   *
-   *
-   *
-   */
-  function fetch ($id) {
-    
-    $sql = "SELECT rowid, nom, groupart, description FROM ".MAIN_DB_PREFIX."groupart WHERE rowid = $id";
+  
+  
+	/*
+	 *
+	 *
+	 *
+	 */
+	function fetch ($id)
+	{
+		$sql = "SELECT rowid, nom, groupart, description FROM ".MAIN_DB_PREFIX."groupart WHERE rowid = $id";
+	
+		$result = $this->db->query($sql) ;
+	
+		if ( $result )
+		{
+			$result = $this->db->fetch_array();
+	
+			$this->id           = $result["rowid"];
+			$this->nom          = $result["nom"];
+			$this->desc         = $result["description"];
+			$this->grar         = $result["groupart"];
+		}
+		$this->db->free();
+	
+		return $result;
+	}
 
-    $result = $this->db->query($sql) ;
 
-    if ( $result ) {
-      $result = $this->db->fetch_array();
+	/**
+	 *    	\brief      Renvoie le nom clicable
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+		
+		$result='';
+		return '<a href="'.DOL_URL_ROOT.'/product/groupart/fiche.php?id='.$this->rowid.'">'.$this->nom.'</a>';
+	}
+	
 
-      $this->id           = $result["rowid"];
-      $this->nom          = $result["nom"];
-      $this->desc         = $result["description"];
-      $this->grar         = $result["groupart"];
-
-      $this->nom_url      = '<a href="'.DOL_URL_ROOT.'/product/groupart/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
-
-    }
-    $this->db->free();
-
-    return $result;
-  }
   /*
    *
    *

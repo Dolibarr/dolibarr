@@ -110,10 +110,10 @@ print '</td></tr></table>';
   
 if ($contact->socid > 0)
 {
-  $objsoc = new Societe($db);
-  $objsoc->fetch($contact->socid);
+  $societe = new Societe($db);
+  $societe->fetch($contact->socid);
   
-  print $langs->trans("Company").' : '.$objsoc->nom_url.'<br>';
+  print $langs->trans("Company").' : '.$societe->getNomUrl(0).'<br>';
 }
 
 dolibarr_print_object_info($contact);

@@ -114,9 +114,9 @@ else
 	  print "<tr>";
 	  print "<td>Date</td><td>".strftime("%A %d %B %Y",$concert->date)."</td>\n";
 
-	  print '<tr><td valign="top">Artiste/Groupe</td><td valign="top">'.$groupart->nom_url."</td>";
+	  print '<tr><td valign="top">Artiste/Groupe</td><td valign="top">'.$groupart->getNomUrl(0)."</td>";
 
-	  print '<tr><td valign="top">Lieu</td><td valign="top">'.$lieuconcert->nom_url."</td>";
+	  print '<tr><td valign="top">Lieu</td><td valign="top">'.$lieuconcert->getNomUrl(0)."</td>";
 
 	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top">'.nl2br($concert->description)."</td>";
 	  
