@@ -923,14 +923,31 @@ class Societe
 	}
 
 	/**
-	 *    	\brief      Ajoute un avoir pour la société
+	 *    	\brief      Ajoute une remise fixe pour la société
 	 *    	\param      remise      Montant de la remise
 	 *    	\param      user        Utilisateur qui accorde la remise
 	 *    	\param      desc		Motif de l'avoir
-	 *		\return		int			<0 si ko, id de l'avoir si ok
+	 *		\return		int			<0 si ko, id de la ligne de remise si ok
 	 */
 	function set_remise_except($remise, $user, $desc)
 	{
+		global $langs;
+		
+		// Nettoyage des parametres
+		$remise = price2num($remise);
+		$desc = trim($desc);
+		
+		if (! $remise > 0)
+		{
+			$this->error=$langs->trans("ErrorWrongValueForParameter","1");
+			return -1;
+		}
+		if (! $desc)
+		{
+			$this->error=$langs->trans("ErrorWrongValueForParameter","3");
+			return -2;
+		}
+		
 		if ($this->id)
 		{
 			$remise = price2num($remise);
@@ -942,7 +959,7 @@ class Societe
 			if (! $this->db->query($sql) )
 			{
 				$this->error=$this->db->lasterror();
-				return -1;
+				return -3;
 			}
 			else
 			{

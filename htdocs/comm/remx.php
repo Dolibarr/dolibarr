@@ -52,18 +52,29 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'setremise')
 {
-	$soc = New Societe($db);
-	$soc->fetch($_GET["id"]);
-	$soc->set_remise_except($_POST["remise"],$user,$_POST["desc"]);
-	
-	if ($result > 0)
+	if (! price2num($_POST["remise"]) > 0)
 	{
-		Header("Location: remx.php?id=".$_GET["id"]);
-		exit;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")).'</div>';
+	}
+	elseif (! $_POST["desc"]) 
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")).'</div>';
 	}
 	else
 	{
-		$mesg='<div class="error">'.$soc->error.'</div>';
+		$soc = New Societe($db);
+		$soc->fetch($_GET["id"]);
+		$soc->set_remise_except($_POST["remise"],$user,$_POST["desc"]);
+		
+		if ($result > 0)
+		{
+			Header("Location: remx.php?id=".$_GET["id"]);
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$soc->error.'</div>';
+		}
 	}
 }
 
@@ -86,7 +97,7 @@ if ($_GET["action"] == 'remove')
 
 
 /*
- * Fiche avoirs
+ * Fiche des remises fixes
  */
 
 llxHeader();

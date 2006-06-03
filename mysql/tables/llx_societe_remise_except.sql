@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,8 +20,6 @@
 -- $Source$
 --
 -- Remises exceptionnelles
---
---
 -- ============================================================================
 
 create table llx_societe_remise_except
@@ -31,6 +30,5 @@ create table llx_societe_remise_except
   amount_ht       real NOT NULL,
   fk_user         integer NOT NULL,
   fk_facture      integer,
-  description     text
-
+  description     varchar(255) NOT NULL
 )type=innodb;

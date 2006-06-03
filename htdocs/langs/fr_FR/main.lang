@@ -2,6 +2,7 @@
 charset=iso-8859-1
 Error=Erreur
 ErrorFieldRequired=Le champ '%s' est obligatoire
+ErrorFieldFormat=Le champ '%s' a une valeur incorrecte
 ErrorFileDoesNotExists=Le fichier %s n'existe pas
 ErrorFailedToOpenFile=Impossible d'ouvrir le fichier %s
 ErrorCanNotCreateDir=Impossible de créer le répertoire %s
@@ -21,6 +22,7 @@ ErrorWrongHostParameter=Mauvais paramètre Serveur
 ErrorYourCountryIsNotDefined=Votre pays n'est pas défini. Corriger en allant dans Configuration-Général-Editer.
 ErrorRecordIsUsedByChild=Impossible de supprimer cet enregistrement. Ce dernier est utilisé en tant que père par au moins un enregistrement fils.
 ErrorWrongValue=Valeur incorrecte
+ErrorWrongValueForParameterX=Valeur incorrecte pour le paramètre %s
 SeeAbove=Voir ci-dessus
 HomeArea=Espace accueil
 LastAccess=Dernière connexion

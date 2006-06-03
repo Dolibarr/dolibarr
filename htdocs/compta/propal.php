@@ -195,7 +195,7 @@ if ($_GET["propalid"] > 0)
             print '</tr>';
     
 			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Info').'</td><td colspan="5">';
+            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$societe->getCurrentDiscount();

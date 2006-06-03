@@ -270,3 +270,7 @@ alter table llx_propaldet add column rang integer DEFAULT 0;
 
 alter table llx_facture drop column model;
 alter table llx_facture add column model_pdf varchar(50) after note_public;
+
+
+update llx_societe_remise_except set description='Remise sans description' where description is NULL or description ='';
+alter table llx_societe_remise_except modify description varchar(255) NOT NULL;
