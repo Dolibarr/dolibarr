@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 # Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
 # Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
@@ -26,14 +25,10 @@
 # accessible à http://localhost/dolibarr/install/
 #
 # Pour une installation manuelle, créer la base dolibarr puis faire:
-# make table
-# make load
+# make pgsql.sql
+# mysql dolibarr < pgsql.sql
 #
-# Ou bien, toujours après avoir créer la base dolibarr:
-# make mysql.sql
-# mysql dolibarr < mysql.sql
-#
-# Le script mysql.sql cotient tous le ordres sql pour créer la base
+# Le script pgsql.sql cotient tous le ordres sql pour créer la base
 # Tables + Index et Clés + Données
 #
 # **********************************************************************
@@ -43,8 +38,8 @@ BASE=dolibarr
 OPTIONS=-U postgres
 OWNER=dolibarradm
 OWNERPASS=azaz
-#FIND=find
-FIND="c:/Program files/cygwin/bin/find"
+FIND=find
+#FIND="c:/Program files/cygwin/bin/find"
 
 
 TABLES=$(shell $(FIND) tables/ -name "*sql")
@@ -53,16 +48,6 @@ TABLES=$(shell $(FIND) tables/ -name "*sql")
 all:
 	cat README
 
-show:
-	cd tables \
-	&& make show
-
-drop:
-	$(SQL) $(OPTIONS) $(BASE) < drop.sql
-
-table:
-	cd tables \
-	&& make create
 load:
 	$(SQL) $(OPTIONS) $(BASE) < data/data.sql
 
@@ -70,9 +55,6 @@ dev:
 	cd data \
 	&& make dev
 
-
-
-fulldev: drop table load dev
 
 
 drop: droppriv dropdb dropuser
@@ -88,7 +70,7 @@ dropdb:
 
 
 
-create: drop createuser createdb createpriv
+create: createuser createdb createpriv
 
 createuser:
 	$(SQL) $(OPTIONS) template1 -c "create user $(OWNER) with UNENCRYPTED PASSWORD '$(OWNERPASS)' ; "

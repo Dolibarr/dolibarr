@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 # Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 #
@@ -25,10 +24,6 @@
 # accessible à http://localhost/dolibarr/install/
 #
 # Pour une installation manuelle, créer la base dolibarr puis faire:
-# make table
-# make load
-#
-# Ou bien, toujours après avoir créer la base dolibarr:
 # make mysql.sql
 # mysql dolibarr < mysql.sql
 #
@@ -51,18 +46,6 @@ TABLES=$(shell $(FIND) tables/ -name "*sql")
 all:
 	cat README
 
-
-show:
-	cd tables \
-	&& make show BASE=$(BASE) OPTIONS=$(OPTIONS)
-
-drop:
-	$(SQL) $(OPTIONS) $(BASE) < drop.sql
-
-table:
-	cd tables \
-	&& make create BASE=$(BASE) OPTIONS=$(OPTIONS)
-
 load:
 	$(SQL) $(OPTIONS) $(BASE) < data/data.sql
 
@@ -70,10 +53,6 @@ dev:
 	cd data \
 	&& make dev BASE=$(BASE) OPTIONS=$(OPTIONS)
 
-
-
-
-fulldev: drop table load dev
 
 
 dropall: dropdb droppriv
@@ -86,7 +65,7 @@ dropdb:
 
 
 
-create: drop createdb createpriv
+create: createdb createpriv
 
 createdb:
 	$(SQL) $(OPTIONS) mysql -e "create database $(BASE) ; "
