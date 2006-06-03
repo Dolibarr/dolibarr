@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -113,9 +112,9 @@ $propales = array();
 $projet->societe->fetch($projet->societe->id);
 
 print '<table class="border" width="100%">';
-print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
 print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
+print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
 print '</table>';
 
 print '</div>';

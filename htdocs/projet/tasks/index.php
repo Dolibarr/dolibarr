@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,13 +19,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/projet/index.php
+   \file       htdocs/projet/tasks/index.php
    \ingroup    projet
-   \brief      Page d'accueil du module projet
+   \brief      Page des taches du module projet
    \version    $Revision$
 */
 
@@ -33,9 +32,7 @@ require("./pre.inc.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -44,10 +41,11 @@ if ($user->societe_id > 0)
 
 llxHeader("",$langs->trans("Projects"),"Projet");
 
-print_titre($langs->trans("ProjectsArea"));
+print_fiche_titre($langs->trans("ProjectsArea"));
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td width="30%" valign="top">';
+
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 /*
  *
@@ -101,7 +99,7 @@ else
 }
 print "</table>";
 
-print '</td><td width="70%">';
+print '</td><td width="70%" valign="top" class="notopnoleft">';
 
 /*
  *

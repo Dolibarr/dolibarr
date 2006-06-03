@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +18,10 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/projet/tasks/fiche.php
+   \file       htdocs/projet/tasks/task.php
    \ingroup    projet
    \brief      Fiche tâches d'un projet
    \version    $Revision$
@@ -87,7 +87,10 @@ if ($_GET["id"] > 0)
       print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
       print '<input type="hidden" name="action" value="createtask">';
       print '<table class="border" width="100%">';
-      print '<tr><td>'.$langs->trans("Project").'</td><td>'.$projet->title.'</td>';
+
+	print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
+
       print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
       print '<tr><td>'.$langs->trans("Task").'</td><td colspan="3">'.$task->title.'</td></tr>';
       

@@ -122,8 +122,7 @@ if ($resql)
   print '<td valign="right">';
   print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';
   print '</td>';
-  print '<td align="center">';
-  print '<input class="button" type="submit" value="'.$langs->trans("Search").'">';
+  print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print "</td>";
   print "</tr>\n";
   

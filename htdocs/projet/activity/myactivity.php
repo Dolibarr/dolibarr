@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/projet/index.php
-   \ingroup    projet
-   \brief      Page d'accueil du module projet
-   \version    $Revision$
+		\file       htdocs/projet/activity/myactivity.php
+		\ingroup    projet
+		\brief      Page activite perso du module projet
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -47,10 +47,10 @@ llxHeader("",$langs->trans("MyActivity"));
 
 $now = time();
 
-print_titre($langs->trans("MyActivity"));
+print_fiche_titre($langs->trans("MyActivity"));
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td width="30%" valign="top">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 /*
  *
@@ -192,7 +192,7 @@ print '<td align="center">'.$total.'</td>';
 print "</tr>\n";
 print "</table>";
 
-print '</td><td width="70%" valign="top">';
+print '</td><td width="70%" valign="top" class="notopnoleft">';
 
 /* Affichage de la liste des projets de la semaine */
 print '<table class="noborder" width="100%">';

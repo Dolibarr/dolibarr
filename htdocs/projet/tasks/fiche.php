@@ -93,7 +93,7 @@ Function PLines(&$inc, $parent, $lines, &$level, $actors)
 	  if ($actors[$lines[$i][2]] == 'admin')
 	    {
 	      print '<td><input size="4" type="text" class="flat" name="task'.$lines[$i][2].'" value="">';
-	      print '&nbsp;<input type="submit" class="flat" value="'.$langs->trans("Save").'"></td>';
+	      print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
 	      print "\n<td>";
 	      print $form->select_date('',$lines[$i][2],'','','',"addtime");
 	      print '</td>';
@@ -265,7 +265,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
   print '<input type="hidden" name="action" value="createtask">';
   print '<table class="border" width="100%">';
-  print '<tr><td>'.$langs->trans("Project").'</td><td>'.$projet->title.'</td>';
+
+	print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
+
   print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
 
 
@@ -332,7 +335,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   print '<option value="0" selected="true">&nbsp;</option>';
   PLineSelect($j, 0, $tasks, $level);  
   print '</select>&nbsp;';
-  print '<input type="submit" class="flat">';
+  print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
   print '</td></tr>';
 
   print '</table></form><br />';
