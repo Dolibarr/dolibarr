@@ -180,23 +180,23 @@ class Expedition
 	return 1;
       }
   }
-  /** 
-   *
-   * Lit une expedition
-   *
-   */
+
+	/** 
+	 *		\brief		Lit une expedition
+	 *		\param		id
+	 */
     function fetch ($id)
     {
         global $conf;
     
         $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
-        $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, c.fk_adresse_livraison";
+        $sql.= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, c.fk_adresse_livraison";
         if ($conf->livraison->enabled) $sql.=", l.rowid as livraison_id";
-        $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-        $sql .= ", ".MAIN_DB_PREFIX."commande as c";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+        $sql.= ", ".MAIN_DB_PREFIX."expedition as e";
         if ($conf->livraison->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
-        $sql .= " WHERE e.rowid = $id";
-        $sql .= " AND e.fk_commande = c.rowid";
+        $sql.= " WHERE e.rowid = ".$id;
+        $sql.= " AND e.fk_commande = c.rowid";
     
         $result = $this->db->query($sql) ;
     
@@ -221,17 +221,17 @@ class Expedition
             if ($this->statut == 0) $this->brouillon = 1;
             
             // ligne de produit associée à une expédition
-			      $this->lignes = array();
-			      $sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp, e.fk_commande_ligne";
-			      $sql .= ", c.fk_product, c.label, p.ref";
-			      $sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
-			      $sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
-			      $sql .= " , ".MAIN_DB_PREFIX."product as p";
-			      $sql .= " WHERE e.fk_expedition = ".$this->id;
-			      $sql .= " AND e.fk_commande_ligne = c.rowid";
-			      $sql .= " AND c.fk_product = p.rowid";
-			      
-			      $resultp = $this->db->query($sql);
+			$this->lignes = array();
+			$sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp, e.fk_commande_ligne";
+			$sql .= ", c.fk_product, c.label, p.ref";
+			$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
+			$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
+			$sql .= " , ".MAIN_DB_PREFIX."product as p";
+			$sql .= " WHERE e.fk_expedition = ".$this->id;
+			$sql .= " AND e.fk_commande_ligne = c.rowid";
+			$sql .= " AND c.fk_product = p.rowid";
+	      
+	      $resultp = $this->db->query($sql);
             
             if ($resultp)
             {

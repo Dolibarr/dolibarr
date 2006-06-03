@@ -13,7 +13,6 @@ English Dolibarr changelog
 - Little enhancements to OSCommerce module.
 - Building a PDF document for invoices works like other modules. You
   can change model just before generating the PDF.
-- Provide PDF generation for orders.
 - Can generate documents (PDF) for customer orders. Can send them by mail.
 - Can make one payment for several supplier invoices.
 - Rule to suggests passwords when creating a user are in modules

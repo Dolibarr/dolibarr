@@ -149,6 +149,8 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
  *
  */
 
+llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
+
 $html = new Form($db);
 
 /*********************************************************************
@@ -158,7 +160,6 @@ $html = new Form($db);
  *********************************************************************/
 if ($_GET["action"] == 'create') 
 {
-  llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
 
   print_titre($langs->trans("CreateASending"));
 
@@ -334,13 +335,11 @@ else
         $expedition = New Expedition($db);
         $result = $expedition->fetch($_GET["id"]);
     
-        if ( $expedition->id > 0)
+        if ($expedition->id > 0)
         {
             $author = new User($db);
             $author->id = $expedition->user_author_id;
             $author->fetch();
-    
-            llxHeader('','Fiche expedition','ch-expedition.html',$form_search,$author);
     
             $commande = New Commande($db);
             $commande->fetch($expedition->commande_id);
@@ -409,8 +408,7 @@ else
     
             // Client
             print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-            print '<td width="30%">';
-            print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+            print '<td width="30%">'.$soc->getNomUrl(1).'</td>';
     
             // Auteur
             print '<td width="20%">'.$langs->trans("Author").'</td><td width="30%">'.$author->fullname.'</td>';
@@ -419,7 +417,7 @@ else
     
             // Commande liée
             print '<tr><td>'.$langs->trans("Order").'</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.$commande->ref."</a></td>\n";
+            print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref."</a></td>\n";
             print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
     
             // Date
@@ -713,15 +711,11 @@ else
         }
         else
         {
-            /* Expedition non trouvée */
-            llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
-            print "Expedition inexistante ou accés refusé";
+            dolibarr_print_error($db);
         }
     }
     else
     {
-        /* Expedition non trouvée */
-        llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
         print "Expedition inexistante ou accés refusé";
     }
 }
