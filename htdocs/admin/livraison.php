@@ -206,7 +206,7 @@ if ($handle)
     }
     closedir($handle);
 }
-print '</table><br>';
+print '</table>';
 
 
 /*
