@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
-# \brief        Package builder (tgz, zip, rpm, deb, exe)
+# \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe)
 # \version      $Revision$
 # \author       (c)2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
@@ -202,6 +202,7 @@ if ($nboftargetok) {
     	$ret=`cp -pr "$SOURCE" "$BUILDROOT"`;
     }
     print "Clean $BUILDROOT\n";
+    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/build`;
