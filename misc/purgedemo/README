@@ -1,5 +1,0 @@
-purgedemo.sh purge les factures, les propales, les produits et les sociétés de la base de démonstration
-faite un chmod 700 *.sh
-puis ./purgedemo.sh pour executer l'interface.
-
-l'installation du package "dialog" est indispensable.
