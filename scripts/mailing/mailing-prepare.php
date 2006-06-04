@@ -33,6 +33,7 @@
  * consommation. L'application du principe du consentement préalable en 
  * droit français résulte de la transposition de l'article 13 de la Directive 
  * européenne du 12 juillet 2002 « Vie privée et communications électroniques ». 
+
  */
 
 /**
@@ -41,7 +42,7 @@
         \brief      Script pour préparer les destinataires d'un mailing
 */
 
-require_once("../../htdocs/master.inc.php");
+require_once("../htdocs/master.inc.php");
 
 $error = 0;
 
