@@ -33,9 +33,24 @@ alter table llx_propal add column remise_absolue real DEFAULT 0 after remise_per
 
 alter table llx_commande add column remise_absolue real DEFAULT 0 after remise_percent;
 
-ALTER TABLE llx_societe ADD mode_reglement INT( 11 ) DEFAULT NULL ;
-ALTER TABLE llx_societe ADD cond_reglement INT( 11 ) DEFAULT '1' NOT NULL ;
-ALTER TABLE llx_societe ADD tva_assuj tinyint DEFAULT '1';
+ALTER TABLE llx_societe add mode_reglement tinyint;
+ALTER TABLE llx_societe add cond_reglement tinyint;
+ALTER TABLE llx_societe add tva_assuj      tinyint DEFAULT '1';
+
+ALTER TABLE llx_societe change active statut tinyint DEFAULT 0;
+
+ALTER TABLE llx_societe modify mode_reglement     tinyint NULL;
+ALTER TABLE llx_societe modify cond_reglement     tinyint NULL;
+ALTER TABLE llx_societe modify cond_reglement     tinyint NULL;
+ALTER TABLE llx_societe modify fk_stcomm          tinyint        DEFAULT 0;
+ALTER TABLE llx_societe modify services           tinyint        DEFAULT 0;
+ALTER TABLE llx_societe modify client             tinyint        DEFAULT 0;
+ALTER TABLE llx_societe modify fournisseur        tinyint        DEFAULT 0;
+
+ALTER TABLE llx_societe drop column id;
+
+ALTER TABLE llx_societe modify parent             integer;
+UPDATE llx_societe set parent = null where parent = 0;
 
 alter table llx_product add gencode varchar(255) DEFAULT NULL;
 
@@ -259,7 +274,7 @@ insert into llx_c_pays (rowid,code,libelle) values (30, 'SG', 'Singapoure');
 alter table llx_bank_account add column ref varchar(12) NOT NULL;
 
 
-rename table llx_accountingsystem_det to llx_accountingaccount;
+alter table llx_accountingsystem_det rename to llx_accountingaccount;
 
 
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (262,'Consulter tous les clients','commercial','r',1,'voir','client');

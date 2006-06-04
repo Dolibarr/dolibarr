@@ -67,6 +67,8 @@ class Societe
 	var $forme_juridique;
 	
 	var $remise_client;
+	var $mode_reglement;
+	var $cond_reglement;
 	
 	var $client;
 	var $prospect;
@@ -1243,7 +1245,7 @@ class Societe
 
 
     /**
-     *    \brief      Renvoie la liste des libellés traduits types actifs de sociétés
+     *    \brief      Renvoie la liste des libellés traduits des types actifs de sociétés
      *    \return     array      tableau des types
      */
     function typent_array()
