@@ -25,7 +25,7 @@
  * Vérifie que les sociétés qui doivent être prélevées ont bien un RIB correct
  */
  
-require_once("../htdocs/master.inc.php");
+require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 

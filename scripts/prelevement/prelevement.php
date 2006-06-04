@@ -22,7 +22,7 @@
  * Script de prelevement
  */
 
-require_once("../htdocs/master.inc.php");
+require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/bon-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");

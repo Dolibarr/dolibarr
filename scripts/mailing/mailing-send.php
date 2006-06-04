@@ -62,7 +62,7 @@ $id=$argv[1];
 $path=eregi_replace('mailing-send.php','',$_SERVER["PHP_SELF"]);
 
 
-require_once ($path."../htdocs/master.inc.php");
+require_once ($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
 

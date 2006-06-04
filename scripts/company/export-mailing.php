@@ -22,7 +22,7 @@
  * Export simple des contacts
  */
 
-require_once("../htdocs/master.inc.php");
+require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_workbook.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksheet.inc.php");
 

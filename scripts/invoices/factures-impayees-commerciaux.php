@@ -38,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 $path=eregi_replace('factures-impayees-commerciaux.php','',$_SERVER["PHP_SELF"]);
 
 
-require($path."../htdocs/master.inc.php");
+require($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
 
