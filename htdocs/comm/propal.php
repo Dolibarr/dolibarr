@@ -112,7 +112,7 @@ if ($_POST['action'] == 'setdate_livraison')
 {
 	$propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
-	$result=$propal->set_date_livraison($user,mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$result=$propal->set_date_livraison($user,mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 

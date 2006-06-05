@@ -145,7 +145,7 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
-	$commande->set_date_livraison($user,mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$commande->set_date_livraison($user,mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 }
 
 if ($_POST['action'] == 'setdeliveryadress' && $user->rights->commande->creer)
