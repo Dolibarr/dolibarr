@@ -127,7 +127,7 @@ if ($_GET["id"] > 0)
 
 			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</a></td>';
+			print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
 			print '</tr>';
 
 			// Ligne info remises tiers
