@@ -839,6 +839,9 @@ class Propal
                 /*
                  * Lignes propales liées à aucun produit
                  */
+
+/* // requête en double, du coup les "Lignes propales liées à aucun produit" n'était plus classé dans l'ordre
+
                 $sql = "SELECT d.qty, d.description, d.price, d.subprice, d.tva_tx, d.rowid, d.remise_percent";
                 $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = 0";
@@ -880,6 +883,7 @@ class Propal
     
                     return -1;
                 }
+*/
             }
             return 1;
         }
