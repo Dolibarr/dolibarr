@@ -950,3 +950,23 @@ cursor: pointer;
 	background: white;
 	color: black;
 }
+
+/* ============================================================================== */
+/*  Afficher/cacher                                                               */
+/* ============================================================================== */
+
+div.visible {
+    display: block;
+}
+
+div.hidden {
+    display: none;
+}
+
+tr.visible {
+    display: block;
+}
+
+td.hidden {
+    display: none;
+}

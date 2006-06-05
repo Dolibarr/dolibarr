@@ -265,6 +265,51 @@ function displaySelectBoxes() {
 }
 
 
+// Afficher/cacher les champs d'un formulaire
+function formDisplayHideId(baliseId,numField) 
+  {
+  //if (document.getElementById && document.getElementById(baliseId) != null) 
+    //{
+    	//var balise = document.getElementById(baliseId);
+
+    	var numDiv = 1
+    	
+      if (document.formsoc.typent_id.value == 8)
+    	  {
+
+    	  	while ( document.getElementById( baliseId + numDiv) ) {
+    	  	
+    	  	var balise = document.getElementById( baliseId + numDiv);
+   	  	
+    	  	if (balise && balise.className == "hidden") 
+              balise.className = "visible";
+              
+          if (balise && balise.className == "visible") 
+              balise.className = "hidden";
+              numDiv++
+
+            }
+    	  }
+      else
+    	  {
+
+    	  	while ( document.getElementById( baliseId + numDiv) ) {
+    	    
+    	    var balise = document.getElementById( baliseId + numDiv);
+
+    		  if (balise && balise.className == "visible") 
+              balise.className = "hidden";
+              
+          if (balise && balise.className == "hidden") 
+              balise.className = "visible";
+              numDiv++
+
+            }
+    	  }
+     //}
+  }
+
+
 
 /***********************************************
 * Cool DHTML tooltip script- © Dynamic Drive DHTML code library (www.dynamicdrive.com)

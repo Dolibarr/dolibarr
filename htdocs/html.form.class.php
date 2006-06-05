@@ -1272,6 +1272,7 @@ class Form
         $result=$this->db->query($sql);
         if ($result)
         {
+            print '<div id="particulier2" class="visible">';
             print '<select class="flat" name="forme_juridique_code">';
             if ($pays_code) print '<option value="0">&nbsp;</option>';
             $num = $this->db->num_rows($result);
@@ -1310,6 +1311,7 @@ class Form
                 }
             }
             print '</select>';
+            print '</div>';
         }
         else
         {
@@ -2165,9 +2167,16 @@ class Form
         \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
         \param	value_as_key    1 pour utiliser la valeur comme clé
     */
-    function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0)
+    function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $use_java=0, $fonction='')
     {
-        print '<select class="flat" name="'.$htmlname.'">';
+        if ($use_java == 1 && $fonction != '')
+        {
+        	print '<select class="flat" name="'.$htmlname.'" '.$fonction.'>';
+        }
+        else
+        {
+        	print '<select class="flat" name="'.$htmlname.'">';
+        }
     
         if ($show_empty)
         {
