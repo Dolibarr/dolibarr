@@ -792,9 +792,10 @@ class Propal
                 * Lignes propales liées à un produit
                 */
                 $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
-                $sql.= " p.rowid, p.label, p.description as product_desc, p.ref";
-                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."product as p";
-                $sql.= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid";
+                $sql.= " d.fk_product, p.label, p.description as product_desc, p.ref";
+                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d,";
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
+                $sql.= " WHERE d.fk_propal = ".$this->id;
                 $sql.= " ORDER by d.rang";
     
                 $result = $this->db->query($sql);
@@ -815,7 +816,8 @@ class Propal
                         $ligne->subprice       = $objp->subprice;
                         $ligne->remise_percent = $objp->remise_percent;
                         $ligne->price          = $objp->price;
-                        $ligne->product_id     = $objp->rowid;
+                        $ligne->product_id     = $objp->fk_product;
+                        $ligne->coef           = $objp->coef;
 
                         $ligne->libelle        = $objp->label;        // Label produit
                         $ligne->product_desc   = $objp->product_desc; // Description produit
