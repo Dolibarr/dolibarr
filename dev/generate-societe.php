@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,29 +65,34 @@ while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0]; 
 print "Génère ".GEN_NUMBER_SOCIETE." sociétés\n";
 for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
 {
+    $villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
+
     print "Société $s\n";
     $soc = new Societe($db);
-    $soc->nom = "Société aléatoire num ".time()."$s";
-    $villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
+    $soc->nom = "Société num ".time()."$s";
     $soc->ville = $villes[rand(0,sizeof($villes)-1)];
-	// Une societe sur 2 est prospect, l'autre client
-    $soc->client = rand(1,2);
-    // Un client sur 10 a une remise de 5%
+    $soc->client = rand(1,2);		// Une societe sur 2 est prospect, l'autre client
+    $soc->fournisseur = rand(0,1);	// Une societe sur 2 est fournisseur
+    $soc->tva_assuj=1;
+    $soc->pays_id=1;
+    $soc->pays_code='FR';
+	// Un client sur 10 a une remise de 5%
     $user_remise=rand(1,10); if ($user_remise==10) $soc->remise_client=5;
-	print "(client=".$soc->client.", remise=".$soc->remise_client.")\n";
+	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_client."\n";
+	$soc->note='Société fictive générée par le script generate-societe.php';
     $socid = $soc->create();
 
     if ($socid >= 0)
     {
         $rand = rand(1,4);
-        print "-- Génère $rand contact\n";
+        print "> Génère $rand contact\n";
         for ($c = 0 ; $c < $rand ; $c++)
         {
             $contact = new Contact($db);
             $contact->socid = $soc->id;
-            $contact->nom = "Nom aléa ".time()."-$c";
+            $contact->name = "NomFamille".$c;
 		    $prenoms = array("Joe","Marc","Steve","Laurent","Nico");
-            $contact->prenom = $prenoms[rand(0,sizeof($prenoms)-1)];
+            $contact->firstname = $prenoms[rand(0,sizeof($prenoms)-1)];
             if ( $contact->create($user) )
             {
 
