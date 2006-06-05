@@ -333,41 +333,46 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-        print '<tr><td>'.($langs->transcountry("ProfId1",$soc->pays_code) != '-'?$langs->transcountry('ProfId1',$soc->pays_code):'').'</td><td>';
+        print '<tr><td><div id="particulier10" class="visible">'.($langs->transcountry("ProfId1",$soc->pays_code) != '-'?$langs->transcountry('ProfId1',$soc->pays_code):'').'</div></td><td>';
         if ($soc->pays_id)
         {
-            if ($langs->transcountry("ProfId1",$soc->pays_code) != '-') print '<input type="text" name="siren" size="15" maxlength="9" value="'.$soc->siren.'">';
-            else print '&nbsp;';
+            if ($langs->transcountry("ProfId1",$soc->pays_code) != '-') print '<div id="particulier11" class="visible"><input type="text" name="siren" size="15" maxlength="9" value="'.$soc->siren.'"></div>';
+            else print '<div id="particulier11" class="visible">&nbsp;</div>';
         }
         else
         {
             print $countrynotdefined;
         }
         print '</td>';
-        print '<td>'.($langs->transcountry("ProfId2",$soc->pays_code) != '-'?$langs->transcountry('ProfId2',$soc->pays_code):'').'</td><td>';
+        print '<td><div id="particulier8" class="visible">'.($langs->transcountry("ProfId2",$soc->pays_code) != '-'?$langs->transcountry('ProfId2',$soc->pays_code):'').'</div></td><td>';
         if ($soc->pays_id)
         {
-            if ($langs->transcountry("ProfId2",$soc->pays_code) != '-') print '<input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'">';
-            else print '&nbsp;';
+            if ($langs->transcountry("ProfId2",$soc->pays_code) != '-') print '<div id="particulier9" class="visible"><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></div>';
+            else print '<div id="particulier9" class="visible">&nbsp;</div>';
         }
         else
         {
             print $countrynotdefined;
         }
         print '</td></tr>';
-        print '<tr><td>'.($langs->transcountry("ProfId3",$soc->pays_code) != '-'?$langs->transcountry('ProfId3',$soc->pays_code):'').'</td><td>';
+        
+        print '<tr><td><div id="particulier6" class="visible">'.($langs->transcountry("ProfId3",$soc->pays_code) != '-'?$langs->transcountry('ProfId3',$soc->pays_code):'').'</div></td><td>';
         if ($soc->pays_id)
         {
-            if ($langs->transcountry("ProfId3",$soc->pays_code) != '-') print '<input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'">';
-            else print '&nbsp;';
+            if ($langs->transcountry("ProfId3",$soc->pays_code) != '-') print '<div id="particulier7" class="visible"><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></div>';
+            else print '<div id="particulier7" class="visible">&nbsp;</div>';
         }
         else
         {
             print $countrynotdefined;
         }
-        print '</td><td colspan="2">&nbsp;</td></tr>';
+        print '</td><td colspan="2"><div id="particulier12" class="visible">&nbsp;</div></td></tr>'."\n";
 
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
+//        print '<div id="particulier" style="display:none">';
+       // print '<div id="particulier" style="visibility: hidden">';
+
+        print '<tr><td><div id="particulier1" class="visible">'.$langs->trans('JuridicalStatus').'</div></td>';
+        print '<td colspan="3">';
         if ($soc->pays_id)
         {
             $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
@@ -377,19 +382,22 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
             print $countrynotdefined;
         }
         print '</td></tr>';
+        //print '</div>'."\n";
 
-        print '<tr><td>'.$langs->trans("Type").'</td><td>';
-        $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
+        print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
+        $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id, 0, 0, 0, 1, 'onChange="formDisplayHideId(\'particulier\', 8)"');
         print '</td>';
-        print '<td>'.$langs->trans("Staff").'</td><td>';
+        print '<td><div id="particulier3" class="visible">'.$langs->trans("Staff").'</div></td><td>';
         $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
         print '</td></tr>';
 
-        print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
+        print '<tr><td nowrap><div id="particulier4" class="visible">'.$langs->trans('VATIntraShort').'</div></td><td colspan="3">';
 
+        print '<div id="particulier5" class="visible">';
         print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
         print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
         print ' <a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+        print '</div>';
         print '</td></tr>';
 
 
