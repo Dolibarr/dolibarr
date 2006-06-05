@@ -85,7 +85,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$datecommande='';
 	$datecommande  = @mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
 	$datelivraison = @mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
-	
+
 	$commande = new Commande($db);
 
 	$commande->soc_id               = $_POST['soc_id'];
@@ -143,9 +143,14 @@ if ($_POST['action'] == 'setremise' && $user->rights->commande->creer)
 
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
+	$datelivraison=@mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
-	$commande->set_date_livraison($user,mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+	$result=$commande->set_date_livraison($user,$datelivraison);
+	if ($result < 0)
+	{
+		$mesg='<div class="error">'.$commande->error.'</div>';
+	}
 }
 
 if ($_POST['action'] == 'setdeliveryadress' && $user->rights->commande->creer)

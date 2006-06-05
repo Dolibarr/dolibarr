@@ -1343,10 +1343,11 @@ class Commande
         if ($user->rights->commande->creer)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-            $sql.= " SET date_livraison = ".' '.($this->date_livraison?$this->db->idate($this->date_livraison):'null');
+            $sql.= " SET date_livraison = ".($date_livraison ? $this->db->idate($date_livraison) : 'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    
-            if ($this->db->query($sql) )
+
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
                 $this->date_livraison = $date_livraison;
                 return 1;
@@ -1354,9 +1355,13 @@ class Commande
             else
             {
                 $this->error=$this->db->error();
-                dolibarr_syslog("Commande::set_date_livraison Erreur SQL");
+                dolibarr_syslog("Commande::set_date_livraison Erreur SQL sql=$sql");
                 return -1;
             }
+        }
+        else
+        {
+        	return -2;
         }
     }
     
