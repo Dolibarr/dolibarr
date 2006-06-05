@@ -793,7 +793,7 @@ class Propal
                 */
                 $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
                 $sql.= " d.fk_product, p.label, p.description as product_desc, p.ref";
-                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d,";
+                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
                 $sql.= " WHERE d.fk_propal = ".$this->id;
                 $sql.= " ORDER by d.rang";
