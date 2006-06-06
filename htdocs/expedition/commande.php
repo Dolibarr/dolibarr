@@ -36,8 +36,10 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 
+$langs->load('orders');
 $langs->load("companies");
 $langs->load("bills");
+$langs->load('propal');
 $langs->load('deliveries');
 
 $user->getrights('commande');
