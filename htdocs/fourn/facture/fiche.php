@@ -309,10 +309,10 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 	print '<table class="border" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
-	print '<td align="center">'.$langs->trans('PriceUHT').'</td>';
-	print '<td align="center">'.$langs->trans('Qty').'</td>';
-	print '<td align="center">'.$langs->trans('VATRate').'</td>';
-	print '<td align="center">'.$langs->trans('PriceUTTC').'</td>';
+	print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+	print '<td align="right">'.$langs->trans('Qty').'</td>';
+	print '<td align="right">'.$langs->trans('VATRate').'</td>';
+	print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
 	print '</tr>';
 
 	for ($i = 1 ; $i < 9 ; $i++)
@@ -329,9 +329,9 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		}
 		print '<tr><td>'.$i.'</td>';
 		print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
-		print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
-		print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
-		print '<td align="center">';
+		print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
+		print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
+		print '<td align="right">';
 		$societe='';
 		if ($_GET['socid'])
 		{
@@ -340,7 +340,7 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		}
 		$html->select_tva('tauxtva'.$i,'',$societe,$mysoc);
 		print '</td>';
-		print '<td align="center"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
+		print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
 	}
 
 	print '</table>';
@@ -427,23 +427,23 @@ else
 			print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
-			print '<td align="center">'.$langs->trans('PriceUHT').'</td>';
-			print '<td align="center">'.$langs->trans('PriceUTTC').'</td>';
-			print '<td align="center">'.$langs->trans('Qty').'</td>';
-			print '<td align="center">'.$langs->trans('TotalHT').'</td>';
-			print '<td align="center">'.$langs->trans('VATRate').'</td>';
-			print '<td align="center">'.$langs->trans('VAT').'</td>';
+			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+			print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
+			print '<td align="right">'.$langs->trans('Qty').'</td>';
+			print '<td align="right">'.$langs->trans('TotalHT').'</td>';
+			print '<td align="right">'.$langs->trans('VATRate').'</td>';
+			print '<td align="right">'.$langs->trans('VAT').'</td>';
 			print '<td align="right">'.$langs->trans('TotalTTC').'</td><td>&nbsp;</td></tr>';
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i][0].'</td>';
-				print '<td align="center" nowrap="nowrap">'.price($fac->lignes[$i][1]).'</td>';
-				print '<td align="center" nowrap="nowrap">'.price($fac->lignes[$i][1] * (1+($fac->lignes[$i][2]/100))).'</td>';
-				print '<td align="center">'.$fac->lignes[$i][3].'</td>';
-				print '<td align="center" nowrap="nowrap">'.price($fac->lignes[$i][4]).'</td>';
-				print '<td align="center">'.$fac->lignes[$i][2].'</td>';
-				print '<td align="center" nowrap="nowrap">'.price($fac->lignes[$i][5]).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][1]).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][1] * (1+($fac->lignes[$i][2]/100))).'</td>';
+				print '<td align="right">'.$fac->lignes[$i][3].'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][4]).'</td>';
+				print '<td align="right">'.$fac->lignes[$i][2].'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][5]).'</td>';
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][6]).'</td>';
 				print '<td align="center">';
 				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a></td>';
@@ -456,17 +456,17 @@ else
 			print '<td>';
 			print '<input size="30" name="label" type="text">';
 			print '</td>';
-			print '<td align="center">';
-			print '<input size="8" name="amount" type="text">';
+			print '<td align="right">';
+			print '<input size="6" name="amount" type="text">';
 			print '</td>';
-			print '<td align="center">';
-			print '<input size="8" name="amountttc" type="text">';
+			print '<td align="right">';
+			print '<input size="6" name="amountttc" type="text">';
 			print '</td>';
-			print '<td align="center">';
-			print '<input size="2" name="qty" type="text" value="1">';
+			print '<td align="right">';
+			print '<input size="1" name="qty" type="text" value="1">';
 			print '</td>';
 			print '<td align="center">-</td>';
-			print '<td align="center">';
+			print '<td align="right">';
 			$html->select_tva('tauxtva','',$societe,$mysoc);
 			print '</td><td align="center" colspan="2">';
 			print '&nbsp;';
@@ -483,7 +483,7 @@ else
                 print '<td colspan="3">';
                 $html->select_produits_fournisseurs($fac->socidp,'','idprod',$filtre);
                 print '</td>';
-                print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
