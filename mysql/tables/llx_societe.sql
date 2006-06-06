@@ -41,6 +41,7 @@ create table llx_societe
   tel                varchar(20),                         -- phone number
   fax                varchar(20),                         -- fax number
   url                varchar(255),                        --
+  email              varchar(128),                        --
   fk_secteur         integer        DEFAULT 0,            --
   fk_effectif        integer        DEFAULT 0,            --
   fk_typent          integer        DEFAULT 0,            --

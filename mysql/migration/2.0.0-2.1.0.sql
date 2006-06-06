@@ -36,6 +36,8 @@ alter table llx_commande add column remise_absolue real DEFAULT 0 after remise_p
 ALTER TABLE llx_societe add mode_reglement tinyint;
 ALTER TABLE llx_societe add cond_reglement tinyint;
 ALTER TABLE llx_societe add tva_assuj      tinyint DEFAULT '1';
+ALTER TABLE llx_societe add email          varchar(128) after url;
+
 
 ALTER TABLE llx_societe change active statut tinyint DEFAULT 0;
 
