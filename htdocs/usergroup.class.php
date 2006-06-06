@@ -45,10 +45,9 @@ class UserGroup
 
   /**
    *    \brief Constructeur de la classe
-   *    \param  $DB         handler accès base de données
-   *    \param  $id         id du groupe (0 par défaut)
+   *    \param  DB         Handler accès base de données
+   *    \param  id         Id du groupe (0 par défaut)
    */
-	 
     function UserGroup($DB, $id=0)
     {
         $this->db = $DB;
@@ -62,7 +61,6 @@ class UserGroup
    *    \brief      Charge un objet user avec toutes ces caractéristiques
    *    \param      id      id du groupe à charger
    */
-	 
     function fetch($id)
     {
         $this->id = $id;
@@ -103,7 +101,6 @@ class UserGroup
    *    \param      allperms    Ajouter tous les droits du module allmodule, perms allperms
    *    \return     int         > 0 si ok, < 0 si erreur
    */
-	 
     function addrights($rid,$allmodule='',$allperms='')
     {
         $err=0;
@@ -200,7 +197,6 @@ class UserGroup
    *    \param      allperms    Retirer tous les droits du module allmodule, perms allperms
    *    \return     int         > 0 si ok, < 0 si erreur
    */
-	 
     function delrights($rid,$allmodule='',$allperms='')
     {
         $err=0;
@@ -290,10 +286,9 @@ class UserGroup
 
   /**
    *    \brief      Charge dans l'objet group, la liste des permissions auquels le groupe a droit
-   *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
+   *    \param      module    	Nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
    */
-	 
-  function getrights($module='')
+  	function getrights($module='')
     {
       if ($this->all_permissions_are_loaded)
       {
@@ -345,7 +340,6 @@ class UserGroup
    *        \brief      Efface un groupe de la base
    *        \return     < 0 si erreur, > 0 si ok
    */
-	 
   function delete()
   {
     $this->db->begin();
@@ -378,10 +372,8 @@ class UserGroup
    *        \brief      Crée un groupe en base
    *        \return     si erreur <0, si ok renvoie id groupe créé
    */
-	 
-  function create()
-  {
-
+  	function create()
+  	{
     $sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec,nom)";
     $sql .= " VALUES(now(),'".addslashes($this->nom)."')";
 
@@ -407,7 +399,7 @@ class UserGroup
    *    \brief      Mise à jour en base d'un utilisateur
    *    \return     <0 si echec, >=0 si ok
    */
-  function update()
+  	function update()
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
         $sql .= " nom = '".addslashes($this->nom)."',";

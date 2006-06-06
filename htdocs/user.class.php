@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
@@ -75,8 +75,8 @@ class User
 	
 	/**
 	 *    \brief Constructeur de la classe
-	 *    \param  $DB         handler accès base de données
-	 *    \param  $id         id de l'utilisateur (0 par défaut)
+	 *    \param  DB         Handler accès base de données
+	 *    \param  id         Id de l'utilisateur (0 par défaut)
 	 */
 	function User($DB, $id=0)
 	{
@@ -98,8 +98,7 @@ class User
    *    \brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
    *    \param      login       Si défini, login a utiliser pour recherche
    */
-	 
-  function fetch($login='')
+	function fetch($login='')
     {
         // Recupere utilisateur
         $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
@@ -217,7 +216,6 @@ class User
    *    \param      allperms    Ajouter tous les droits du module allmodule, perms allperms
    *    \return     int         > 0 si ok, < 0 si erreur
    */
-	 
     function addrights($rid,$allmodule='',$allperms='')
     {
         dolibarr_syslog("User::addrights $rid, $allmodule, $allperms");
@@ -311,7 +309,6 @@ class User
    *    \param      allperms    Retirer tous les droits du module allmodule, perms allperms
    *    \return     int         > 0 si ok, < 0 si erreur
    */
-	 
     function delrights($rid,$allmodule='',$allperms='')
     {
         $err=0;
@@ -398,8 +395,7 @@ class User
    *    \brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
    *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
    */
-	 
-  function getrights($module='')
+	function getrights($module='')
     {
         if ($this->all_permissions_are_loaded)
         {
@@ -713,8 +709,7 @@ class User
    *    \brief      Affectation des permissions par défaut
    *    \return     si erreur <0, si ok renvoi le nbre de droits par defaut positionnés
    */
-	 
-  function set_default_rights()
+	function set_default_rights()
     {
         $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
         
@@ -752,7 +747,7 @@ class User
    *    \param      create      1 si update durant le create, 0 sinon
    *    \return     int         <0 si echec, >=0 si ok
    */
-  function update($create=0)
+  	function update($create=0)
     {
         global $langs;
         
@@ -816,7 +811,7 @@ class User
    *    \brief      Mise à jour en base de la date de deniere connexion d'un utilisateur
    *    \return     <0 si echec, >=0 si ok
    */
-  function update_last_login_date()
+  	function update_last_login_date()
     {
         dolibarr_syslog ("Mise a jour date derniere connexion pour user->id=".$this->id);
 
@@ -937,8 +932,7 @@ class User
    * \brief     Renvoie la dernière erreur fonctionnelle de manipulation de l'objet
    * \return    string      chaine erreur
    */
-	 
-  function error()
+	function error()
     {
       return $this->error;
     }
@@ -947,7 +941,7 @@ class User
   /**
    *    \brief      Lecture des infos de click to dial
    */
-  function fetch_clicktodial()
+  	function fetch_clicktodial()
     {
       
       $sql = "SELECT login, pass, poste FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
@@ -985,7 +979,7 @@ class User
   /**
    *    \brief      Mise à jour des infos de click to dial
    */
-  function update_clicktodial()
+  	function update_clicktodial()
     {
       
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
@@ -1017,8 +1011,7 @@ class User
    *    \brief      Ajoute l'utilisateur dans un groupe
    *    \param      group       id du groupe
    */
-
-  function SetInGroup($group)
+  	function SetInGroup($group)
     {
 
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
@@ -1037,8 +1030,7 @@ class User
    *    \brief      Retire l'utilisateur d'un groupe
    *    \param      group       id du groupe
    */
-
-  function RemoveFromGroup($group)
+	function RemoveFromGroup($group)
     {
 
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
@@ -1047,6 +1039,7 @@ class User
   
       $result = $this->db->query($sql);
     }
+    
 }
 
 ?>

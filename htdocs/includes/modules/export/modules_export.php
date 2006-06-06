@@ -29,7 +29,7 @@
 
 
 /**
-   \class      ModeleExport
+   \class      ModeleExports
    \brief      Classe mère des modèles de format d'export
 */
 
