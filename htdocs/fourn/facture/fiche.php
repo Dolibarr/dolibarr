@@ -295,6 +295,7 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 	{
 		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" type="text"></td></tr>';
 	}
+
 	print '<tr><td>'.$langs->trans('Date').'</td><td>';
 	$html->select_date('','','','','',"add");
 	print '</td></tr>';
@@ -397,12 +398,6 @@ else
 			print '<tr><td valign="top">'.$langs->trans('Label').'</td><td>';
 			print '<input size="30" name="libelle" type="text" value="'.stripslashes($fac->libelle).'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-			print '<td nowrap="nowrap">'.price($fac->total_ht).'</td></tr>';
-
-			print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
-			print '<td nowrap="nowrap">'.price($fac->total_ttc).'</td></tr>';
-
 			print '<tr><td>'.$langs->trans('DateInvoice').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->datep,'','','','',"update");
 			print '</td></tr>';
@@ -410,6 +405,12 @@ else
 			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->date_echeance,'ech','','','',"update");
 			print '</td></tr>';
+
+			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
+			print '<td nowrap="nowrap">'.price($fac->total_ht).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
+			print '<td nowrap="nowrap">'.price($fac->total_ttc).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans('Status').'</td><td>'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
 			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
@@ -550,12 +551,17 @@ else
 			print '<td align="right"><a href="index.php?socid='.$fac->socidp.'">'.$langs->trans('OtherBills').'</a></td>';
 			print '</tr>';
 
-			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-			print dolibarr_print_date($fac->datep,'%A %d %B %Y').'</td></tr>';
 			print '<tr><td>'.$langs->trans('Label').'</td><td colspan="3">';
 			print $fac->libelle;
 			print '</td>';
 			print '</tr>';
+
+			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
+			print dolibarr_print_date($fac->datep,'%A %d %B %Y').'</td></tr>';
+
+			print '<tr>';
+			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
+			print dolibarr_print_date($fac->date_echeance,'%A %d %B %Y').'</td></tr>';
 
 			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
 
@@ -574,10 +580,6 @@ else
 
 
 			print '<table class="border" width="100%">';
-
-			print '<tr>';
-			print '<td>'.$langs->trans('DateEcheance').'</td><td>';
-			print dolibarr_print_date($fac->date_echeance,'%A %d %B %Y').'</td></tr>';
 
 			/*
 			 * Liste des paiements
@@ -664,22 +666,24 @@ else
             print '<br>';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
-			print '<td align="center">'.$langs->trans('PriceUHT').'</td>';
-			print '<td align="center">'.$langs->trans('Qty').'</td>';
-			print '<td align="center">'.$langs->trans('TotalHT').'</td>';
-			print '<td align="center">'.$langs->trans('VATRate').'</td>';
-			print '<td align="center">'.$langs->trans('VAT').'</td>';
+			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+			print '<td align="right">'.$langs->trans('Qty').'</td>';
+			print '<td align="right">'.$langs->trans('TotalHT').'</td>';
+			print '<td align="right">'.$langs->trans('VATRate').'</td>';
+			print '<td align="right">'.$langs->trans('VAT').'</td>';
 			print '<td align="right">'.$langs->trans('TotalTTC').'</td></tr>';
 			$var=1;
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i][0].'</td>';
-				print '<td align="center">'.price($fac->lignes[$i][1]).'</td>';
-				print '<td align="center">'.$fac->lignes[$i][3].'</td>';
-				print '<td align="center">'.price($fac->lignes[$i][4]).'</td>';
-				print '<td align="center">'.$fac->lignes[$i][2].' %</td>';
-				print '<td align="center">'.price($fac->lignes[$i][5]).'</td>';
+
+				print '<tr '.$bc[$var].'>';
+				print '<td>'.$fac->lignes[$i][0].'</td>';
+				print '<td align="right">'.price($fac->lignes[$i][1]).'</td>';
+				print '<td align="right">'.$fac->lignes[$i][3].'</td>';
+				print '<td align="right">'.price($fac->lignes[$i][4]).'</td>';
+				print '<td align="right">'.$fac->lignes[$i][2].' %</td>';
+				print '<td align="right">'.price($fac->lignes[$i][5]).'</td>';
 				print '<td align="right">'.price($fac->lignes[$i][6]).'</td>';
 				print '</tr>';
 			}
