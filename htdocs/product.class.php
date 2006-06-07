@@ -208,9 +208,9 @@ class Product
         if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
     
         $this->ref = trim(sanitize_string($this->ref));
-        $this->libelle = trim(addslashes($this->libelle));
-        $this->description = trim(addslashes($this->description));
-        $this->note = trim(addslashes($this->note));
+        $this->libelle = trim($this->libelle);
+        $this->description = trim($this->description);
+        $this->note = trim($this->note);
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
         $sql .= " SET label = '" . addslashes($this->libelle) ."'";

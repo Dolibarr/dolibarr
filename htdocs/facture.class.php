@@ -1007,8 +1007,7 @@ class Facture
 			if (! $ventil) $ventil=0;
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socidp);
-			if($soc->tva_assuj == "0")
-					$txtva ="0";
+			if($soc->tva_assuj == "0") $txtva ="0";
 			dolibarr_syslog("facture.class.php:: txtva : ".$txtva);
             if ($fk_product && ! $pu)
             {
@@ -1059,14 +1058,14 @@ class Facture
 				$rangmax = $row[0];
 			}
 			
-			 if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
-       {
-          if (!$product_desc)
-          {
-             $product_desc = $desc;
-          }
-       }
-			
+			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+			{
+				if (!$product_desc)
+				{
+					$product_desc = $desc;
+				}
+			}
+
 			// Formatage des prix
 			$price    = price2num($price);
 			$subprice  = price2num($subprice);
