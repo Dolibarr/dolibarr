@@ -123,7 +123,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
   if ($user->rights->expedition->supprimer ) 
     {
       $expedition = new Expedition($db);
-      $expedition->id = $_GET["id"];
+      $expedition->fectch($_GET["id"]);
       $expedition->delete();
       Header("Location: liste.php");
     }

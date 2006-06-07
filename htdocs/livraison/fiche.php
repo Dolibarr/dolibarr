@@ -121,7 +121,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
   if ($user->rights->expedition->livraison->supprimer ) 
     {
       $livraison = new Livraison($db);
-      $livraison->id = $_GET["id"];
+      $livraison->fetch($_GET["id"]);
       $expedition_id = $_GET["expid"];
       $livraison->delete();
       if ($conf->expedition->enabled)

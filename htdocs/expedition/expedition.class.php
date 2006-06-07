@@ -521,6 +521,31 @@ class Expedition
 	if ( $this->db->query($sql) ) 
 	  {
 	    $this->db->commit();
+	    
+	    // On efface le répertoire de pdf provisoire
+		$expref = sanitize_string($this->ref);
+		if ($conf->expedition->dir_output)
+		{
+				$dir = $conf->expedition->dir_output . "/" . $expref ;
+				$file = $conf->expedition->dir_output . "/" . $expref . "/" . $expref . ".pdf";
+				if (file_exists($file))
+				{
+					if (!dol_delete_file($file))
+					{
+              $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+              return 0;
+           }
+        }
+        if (file_exists($dir))
+        {
+         	if (!dol_delete_dir($dir))
+          {
+            	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+              return 0;
+          }
+        }
+     }
+	    
 	    return 1;
 	  }
 	else

@@ -1845,6 +1845,8 @@ class Commande
 	*/
 	function delete()
 	{
+		global $conf, $lang;
+		
 		$err = 0;
 		$this->db->begin();
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id ;";
@@ -1864,6 +1866,30 @@ class Commande
 		{
 			$err++;
 		}
+		
+		// On efface le répertoire de pdf provisoire
+		$comref = sanitize_string($this->ref);
+		if ($conf->commande->dir_output)
+		{
+				$dir = $conf->commande->dir_output . "/" . $comref ;
+				$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+				if (file_exists($file))
+				{
+					if (!dol_delete_file($file))
+					{
+              $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+              return 0;
+           }
+        }
+        if (file_exists($dir))
+        {
+         	if (!dol_delete_dir($dir))
+          {
+            	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+              return 0;
+          }
+        }
+     }
 
 		if ($err == 0)
 		{

@@ -521,6 +521,31 @@ class Livraison
 	if ( $this->db->query($sql) ) 
 	  {
 	    $this->db->commit();
+	    
+	      // On efface le répertoire de pdf provisoire
+		$livref = sanitize_string($this->ref);
+		if ($conf->livraison->dir_output)
+		{
+				$dir = $conf->livraison->dir_output . "/" . $livref ;
+				$file = $conf->livraison->dir_output . "/" . $livref . "/" . $livref . ".pdf";
+				if (file_exists($file))
+				{
+					if (!dol_delete_file($file))
+					{
+              $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+              return 0;
+           }
+        }
+        if (file_exists($dir))
+        {
+         	if (!dol_delete_dir($dir))
+          {
+            	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+              return 0;
+          }
+        }
+     }
+	    
 	    return 1;
 	  }
 	else
