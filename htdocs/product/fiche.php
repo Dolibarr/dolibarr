@@ -121,7 +121,7 @@ if ($_POST["action"] == 'update' &&
         $product->ref                = stripslashes($_POST["ref"]);
         $product->libelle            = stripslashes($_POST["libelle"]);
         if ( isset( $_POST["price"] ) )
-          $product->price              = stripslashes($_POST["price"]);
+        $product->price              = stripslashes($_POST["price"]);
         $product->tva_tx             = $_POST["tva_tx"];
         $product->description        = stripslashes($_POST["desc"]);
         $product->note               = stripslashes($_POST["note"]);
