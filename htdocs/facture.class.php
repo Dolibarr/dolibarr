@@ -412,7 +412,7 @@ class Facture
 		}
 	}
 
-	/**
+ /**
 	* \brief     Recupére l'objet client lié à la facture
 	*
 	*/
@@ -422,6 +422,19 @@ class Facture
 		$client->fetch($this->socidp);
 		$this->client = $client;
 	}
+	
+	/**
+   *
+   *
+   */
+	 
+  function fetch_contact_facture($id)
+  {
+    $idcontact = $id;
+    $contact = new Contact($this->db);
+    $contact->fetch($idcontact);
+    $this->contact = $contact;
+  }
 
 
 	/**
