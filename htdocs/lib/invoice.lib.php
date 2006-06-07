@@ -36,17 +36,19 @@ function facture_prepare_head($fac)
 	
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
 	$head[$h][1] = $langs->trans('CardBill');
-	$hselected = $h;
+	$head[$h][2] = 'compta';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$fac->id;
 	$head[$h][1] = $langs->trans('BillContacts');
+	$head[$h][2] = 'contact';
 	$h++;
 
 	if ($conf->use_preview_tabs)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
 		$head[$h][1] = $langs->trans('Preview');
+		$head[$h][2] = 'preview';
 		$h++;
 	}
 
@@ -54,14 +56,23 @@ function facture_prepare_head($fac)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
 		$head[$h][1] = $langs->trans('StandingOrders');
+		$head[$h][2] = 'standingorders';
 		$h++;
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
 	$head[$h][1] = $langs->trans('Note');
+	$head[$h][2] = 'note';
 	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/document.php?facid='.$fac->id;
+	$head[$h][1] = $langs->trans('Documents');
+	$head[$h][2] = 'documents';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
 	$head[$h][1] = $langs->trans('Info');
+	$head[$h][2] = 'info';
 	$h++;
 
 	return $head;

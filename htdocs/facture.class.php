@@ -792,79 +792,74 @@ class Facture
             if ($resql)
             {
                 $this->facnumber=$numfa;
+                dolibarr_syslog("Facture::set_valid() sql=$sql");
             }
             else
             {
-                dolibarr_syslog("Facture::set_valid() Echec update - 10");
+                dolibarr_syslog("Facture::set_valid() Echec update - 10 - sql=$sql");
                 dolibarr_print_error($this->db);
                 $error++;
             }
 
-			/*
-			 *	Lit les avoirs / remises absolues en cours et les décrémente
-			 */
-			$remise_a_decrementee=$this->remise_absolue;
-			if ($remise_a_decrementee)
+			// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
+			// afin de ne pas perdre les fichiers attachés
+			$facref = sanitize_string($this->ref);
+			$dirsource = $conf->facture->dir_output.'/'.$facref;
+			$dirdest = $conf->facture->dir_output.'/'.$numfa;
+
+            dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
+			if (rename($dirsource, $dirdest))
 			{
-				$sql = 'SELECT rowid, fk_soc, datec, rc.amount_ht as amount, fk_user, description';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
-				$sql.= ' WHERE rc.fk_soc ='. $this->socidp;
-				$sql.= ' AND fk_facture IS NULL';
-				$sql.= ' ORDER BY datec';
-				$resql = $this->db->query($sql) ;
-				if ($resql)
+				dolibarr_syslog("Renommage ok");
+				// Suppression ancien fichier PDF dans nouveau rep
+				dol_delete_file($conf->facture->dir_output.'/'.$numfa.'/'.$facref.'.*');
+			}
+
+
+			/*
+			 *	Tope les lignes de remises fixes avec id des lignes de facture au montant négatif
+			 */
+/* TODO Toper les lignes de remises fixes avec id des lignes de facture au montant négatif.
+
+				while ($i < $nurmx && $remise_a_decrementee && ! $error)
 				{
-					$nurmx = $this->db->num_rows($resql);
-					if ($nurmx > 0)
+					$obj = $this->db->fetch_object($resql);
+					$avoir=$obj->amount;
+				
+					// On met à jour avoir comme affecté à facture
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+					$sql.= ' SET fk_facture = '.$this->id.',';
+					$sql.= " amount_ht = '".price2num(min($remise_a_decrementee,$avoir))."'";
+					$sql.= ' WHERE rowid ='.$obj->rowid;
+					dolibarr_syslog("Societe::set_valid Mise a jour avoir sql=$sql");
+					if (! $this->db->query($sql))
 					{
-						$i=0;
-						while ($i < $nurmx && $remise_a_decrementee && ! $error)
+						$error++;
+					}
+
+					if ($remise_a_decrementee < $avoir)
+					{
+						// L'avoir n'a pas été complètement consommée, on insère ligne du reste
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'societe_remise_except';
+						$sql.= ' (fk_soc, datec, amount_ht, fk_user, fk_facture, description) ';
+						$sql.= ' VALUES ';
+						$sql.= ' ('.$this->socidp;
+						$sql.= ' ,'.$obj->datec;
+						$sql.= " ,'".price2num($avoir - $remise_a_decrementee)."'";
+						$sql.= ' ,'.$user->id;
+						$sql.= ' ,null';
+						$sql.= " ,'".addslashes($obj->description)."'";
+						$sql.= ')';
+						if (! $this->db->query( $sql))
 						{
-							$obj = $this->db->fetch_object($resql);
-							$avoir=$obj->amount;
-						
-							// On met à jour avoir comme affecté à facture
-							$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-							$sql.= ' SET fk_facture = '.$this->id.',';
-							$sql.= " amount_ht = '".price2num(min($remise_a_decrementee,$avoir))."'";
-							$sql.= ' WHERE rowid ='.$obj->rowid;
-							dolibarr_syslog("Societe::set_valid Mise a jour avoir sql=$sql");
-							if (! $this->db->query($sql))
-							{
-								$error++;
-							}
-
-							if ($remise_a_decrementee < $avoir)
-							{
-								// L'avoir n'a pas été complètement consommée, on insère ligne du reste
-								$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'societe_remise_except';
-								$sql.= ' (fk_soc, datec, amount_ht, fk_user, fk_facture, description) ';
-								$sql.= ' VALUES ';
-								$sql.= ' ('.$this->socidp;
-								$sql.= ' ,'.$obj->datec;
-								$sql.= " ,'".price2num($avoir - $remise_a_decrementee)."'";
-								$sql.= ' ,'.$user->id;
-								$sql.= ' ,null';
-								$sql.= " ,'".addslashes($obj->description)."'";
-								$sql.= ')';
-								if (! $this->db->query( $sql))
-								{
-									$error++;
-								}
-							}
-
-							$remise_a_decrementee-=min($remise_a_decrementee,$avoir);
-							$i++;
+							$error++;
 						}
 					}
-					$this->db->free($resql);
+
+					$remise_a_decrementee-=min($remise_a_decrementee,$avoir);
+					$i++;
 				}
-				else
-				{
-					dolibarr_syslog('Facture::set_valid() Erreur lecture Remise');
-					$error++;
-				}
-			}
+*/
 		
                 
             /*

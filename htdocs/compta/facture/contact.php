@@ -225,7 +225,7 @@ if ($id > 0)
 
 			$head = facture_prepare_head($facture);
 
-			dolibarr_fiche_head($head, 1, $langs->trans('InvoiceCustomer'));
+			dolibarr_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'));
 
 		/*
 		 *   Facture synthese pour rappel

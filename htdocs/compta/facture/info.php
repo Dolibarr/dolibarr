@@ -43,13 +43,12 @@ llxHeader();
 $fac = new Facture($db);
 $fac->fetch($_GET["facid"]);
 $fac->info($_GET["facid"]);
+
 $soc = new Societe($db, $fac->socidp);
 $soc->fetch($fac->socidp);
+
 $head = facture_prepare_head($fac);
-$hselected = 3;
-if ($conf->use_preview_tabs) $hselected++;
-if ($fac->mode_reglement_code == 'PRE') $hselected++;
-dolibarr_fiche_head($head, $hselected, $langs->trans("InvoiceCustomer"));
+dolibarr_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"));
 
 
 print '<table width="100%"><tr><td>';
