@@ -302,8 +302,10 @@ class Facture
 		$sql .= ', f.note, f.note_public, f.paye, f.fk_statut, f.fk_user_author, f.model_pdf';
 		$sql .= ', f.fk_mode_reglement, f.ref_client, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
+		$sql .= ', cf.fk_commande';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c, '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_fa as cf ON cf.fk_facture = f.rowid';
 		$sql .= ' WHERE f.rowid='.$rowid.' AND c.rowid = f.fk_cond_reglement';
 		if ($societe_id > 0)
 		{
@@ -345,6 +347,7 @@ class Facture
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
 				$this->modelpdf               = $obj->model_pdf;
+				$this->commande_id            = $obj->fk_commande;
 				$this->lignes                 = array();
 
 				
@@ -361,6 +364,21 @@ class Facture
                 $obju = $this->db->fetch_object($resqluser);
                 $this->user_author_name      = $obju->name;
                 $this->user_author_firstname = $obju->firstname;
+             }
+        }
+        
+        if ($this->commande_id)
+        {
+             $sql = "SELECT ref";
+             $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+             $sql.= " WHERE rowid = ".$this->commande_id;
+                	
+             $resqlcomm = $this->db->query($sql);
+                	
+             if ($resqlcomm)
+             {
+                $objc = $this->db->fetch_object($resqlcomm);
+                $this->commande_ref      = $objc->ref;
              }
         }
 				
