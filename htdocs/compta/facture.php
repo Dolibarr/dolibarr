@@ -1559,19 +1559,16 @@ else
 			/*
 			 * Lignes de factures
 			 */
-			$sql  = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,';
-			$sql .= ' l.remise_percent, l.subprice,';
-			$sql .= ' '.$db->pdate('l.date_start').' as date_start,';
-			$sql .= ' '.$db->pdate('l.date_end').' as date_end, ';
-			$sql .= ' p.ref, p.fk_product_type, p.label as product';
-			if ($conf->global->FAC_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
-            {
-              	$sql.= ', p.description as product_desc';
-            }
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l ';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
-			$sql .= ' WHERE l.fk_facture = '.$fac->id;
-			$sql .= ' ORDER BY l.rang ASC, l.rowid';
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,';
+			$sql.= ' l.remise_percent, l.subprice,';
+			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
+			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
+			$sql.= ' p.ref, p.fk_product_type, p.label as product,';
+          	$sql.= ' p.description as product_desc';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
+			$sql.= ' WHERE l.fk_facture = '.$fac->id;
+			$sql.= ' ORDER BY l.rang ASC, l.rowid';
 
 			$resql = $db->query($sql);
 			if ($resql)

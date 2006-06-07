@@ -496,28 +496,28 @@ class Commande
 		}
 	}
 
-  /**
-   * Ajoute une ligne de commande
-   *
-   */
+	/**
+	 * Ajoute une ligne de commande
+	 *
+	 */
 	function addline($desc, $product_desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
 	{
 		global $conf;
 		// Nettoyage parametres
-		$qty = ereg_replace(',','.',$qty);
-		$pu = ereg_replace(',','.',$pu);
+		$qty = price2num($qty);
+		$pu = price2num($pu);
 		$desc=trim($desc);
 		$product_desc=trim($product_desc);
 		if (strlen(trim($qty))==0)
 		{
 			$qty=1;
 		}
-
+	
 		// Verifs
 		if (! $this->brouillon) return -1;
-
+	
 		$this->db->begin();
-
+	
 		if ($fk_product > 0)
 		{
 			$prod = new Product($this->db, $fk_product);
@@ -526,45 +526,35 @@ class Commande
 				$desc  = $desc?$desc:$prod->libelle;
 				$product_desc = $prod->description;
 				$client = new Societe($this->db);
-     			$client->fetch($this->soc_id);
+				$client->fetch($this->soc_id);
 				if($client->tva_assuj == "0")
-					$txtva ="0";
+				$txtva ="0";
 				else
-					$txtva=$prod->tva_tx;
+				$txtva=$prod->tva_tx;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 				{
-						$pu    = $prod->multiprices[$client->price_level];
+					$pu    = $prod->multiprices[$client->price_level];
 				}
 				else
-					$pu    = $prod->price;
-			
+				$pu    = $prod->price;
+	
 			}
 		}
 		$remise = 0;
-		$price = round(ereg_replace(',','.',$pu), 2);
+		$price = round(price2num($pu), 2);
 		$subprice = $price;
-
-// appliquait la remise 2 fois : sur la ligne et le HT
-		
-/*		
-		if (trim(strlen($remise_percent)) > 0)
-		{
-			$remise = round(($pu * $remise_percent / 100), 2);
-			$price = $pu - $remise;
-		}
-*/
+	
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)';
-		
 		if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
-     {
-		   $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($product_desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
-	   }
-	  else
-	  {
-	  	 $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
-	  }
-
+		{
+			$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($product_desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
+		}
+		else
+		{
+			$sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."') ;";
+		}
+	
 		if ( $this->db->query( $sql) )
 		{
 			$this->update_price();

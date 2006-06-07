@@ -256,8 +256,8 @@ if ($_POST["action"] == 'addincommande')
     $commande = New Commande($db);
     $commande->fetch($_POST["commandeid"]);
 
-    $result =  $commande->addline(addslashes($product->libelle),
-                                  addslashes($product->description),
+    $result =  $commande->addline($product->libelle,
+                                  $product->description,
                                   $product->price,
                                   $_POST["qty"],
                                   $product->tva_tx,
@@ -281,13 +281,13 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
     $facture->fetch($_POST["factureid"]);
 
     $facture->addline($_POST["factureid"],
-    addslashes($product->libelle),
-    addslashes($product->description),
-    "", // volontairement laissé vide pour fonctionnement module multiprix
-    $_POST["qty"],
-    $product->tva_tx,
-    $product->id,
-    $_POST["remise_percent"]);
+				    $product->libelle,
+				    $product->description,
+				    "", // volontairement laissé vide pour fonctionnement module multiprix
+				    $_POST["qty"],
+				    $product->tva_tx,
+				    $product->id,
+				    $_POST["remise_percent"]);
 
     Header("Location: ../compta/facture.php?facid=".$facture->id);
     exit;
