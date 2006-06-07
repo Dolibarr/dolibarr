@@ -1503,16 +1503,24 @@ function print_fiche_titre($titre, $mesg='')
 
 /**
 		\brief  Effacement d'un fichier
-		\param	file			fichier a effacer
+		\param	file			Fichier a effacer ou masque de fichier a effacer
+		\param	int				true ou false
 */
 function dol_delete_file($file)
 {
-  return unlink($file);
+	$ok=true;
+	foreach (glob($file) as $filename)
+	{
+		$ok=unlink($filename);
+		if ($ok) dolibarr_syslog("Removed file $filename");
+		else dolibarr_syslog("Failed to remove file $filename");
+	}
+	return $ok;
 }
 
 /**
 		\brief  Effacement d'un répertoire
-		\param	file			répertoire a effacer
+		\param	file			Répertoire a effacer
 */
 function dol_delete_dir($dir)
 {
