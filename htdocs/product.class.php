@@ -225,7 +225,7 @@ class Product
         $sql .= ",note = '" . addslashes($this->note) ."'";
         $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
         $sql .= " WHERE rowid = " . $id;
-    
+
         if ( $this->db->query($sql) )
         {
         	// Multilangs
