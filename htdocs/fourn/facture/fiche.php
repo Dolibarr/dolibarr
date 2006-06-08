@@ -392,11 +392,11 @@ else
 			$rownb=9;
 			print '<td rowspan="'.$rownb.'" valign="top">';
 			print '<textarea name="note" wrap="soft" cols="60" rows="'.ROWS_8.'">';
-			print stripslashes($fac->note);
+			print $fac->note;
 			print '</textarea></td></tr>';
 
 			print '<tr><td valign="top">'.$langs->trans('Label').'</td><td>';
-			print '<input size="30" name="libelle" type="text" value="'.stripslashes($fac->libelle).'"></td></tr>';
+			print '<input size="30" name="libelle" type="text" value="'.$fac->libelle.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans('DateInvoice').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->datep,'','','','',"update");
@@ -404,6 +404,7 @@ else
 
 			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->date_echeance,'ech','','','',"update");
+	        if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
@@ -561,7 +562,9 @@ else
 
 			print '<tr>';
 			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
-			print dolibarr_print_date($fac->date_echeance,'%A %d %B %Y').'</td></tr>';
+			print dolibarr_print_date($fac->date_echeance,'%A %d %B %Y');
+	        if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
 
