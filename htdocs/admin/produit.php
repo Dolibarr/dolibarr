@@ -133,6 +133,18 @@ else if ($_GET["action"] == 'disable_sousproduits')
     Header("Location: produit.php");
     exit;
 }
+else if ($_GET["action"] == 'activate_confirmdelete')
+{
+    dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", "1");
+    Header("Location: produit.php");
+    exit;
+}
+else if ($_GET["action"] == 'disable_confirmdelete')
+{
+	dolibarr_del_const($db, "PRODUIT_CONFIRM_DELETE_LINE");
+    Header("Location: produit.php");
+    exit;
+}
 
 
 /*
@@ -233,6 +245,32 @@ if($conf->global->PRODUIT_SOUSPRODUITS == 0)
 print '<a href="produit.php?action=activate_sousproduits">'.$langs->trans("Activate").'</a>';
 else if($conf->global->PRODUIT_SOUSPRODUITS == 1)
 	print '<a href="produit.php?action=disable_sousproduits">'.$langs->trans("Disable").'</a>';
+print "</td>";
+print '</tr>';
+print '</table>';
+print '</form>';
+
+// confirmation de suppression ligne produit activation/desactivation
+print '<br>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="140">'.$langs->trans("Name").'</td>';
+print '<td align="center">&nbsp;</td>';
+print '<td align="center">'.$langs->trans("Active").'</td>';
+print "</tr>\n";
+print "<form method=\"post\" action=\"produit.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"confirmdeleteline\">";
+print "<tr ".$bc[false].">";
+print '<td width="80%">'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
+print '<td align="center">';
+if($conf->global->PRODUIT_CONFIRM_DELETE_LINE == 1)
+	print img_tick();
+print '</td>';
+print "<td align=\"center\">";
+if($conf->global->PRODUIT_CONFIRM_DELETE_LINE == 0)
+print '<a href="produit.php?action=activate_confirmdeleteline">'.$langs->trans("Activate").'</a>';
+else if($conf->global->PRODUIT_CONFIRM_DELETE_LINE == 1)
+	print '<a href="produit.php?action=disable_confirmdeleteline">'.$langs->trans("Disable").'</a>';
 print "</td>";
 print '</tr>';
 print '</table>';

@@ -936,7 +936,7 @@ if ($_GET['propalid'] > 0)
 							print '</a></td>';
 							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 							{
-								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete_product_ligne&amp;ligne='.$objp->rowid.'">';
+								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete_product_line&amp;ligne='.$objp->rowid.'">';
 							}
 							else
 							{
