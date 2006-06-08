@@ -190,7 +190,7 @@ Of=du
 PDFBerniqueDescription=Modèle pour les factures avec plusieurs taux de tva, inclus aussi le numéro de TVA Intracommunautaire
 
 # bigorneau PDF Model
-PDFBigorneauDescription=Modèle de facture sans boite info règlement
+PDFBigorneauDescription=Modèle de facture sans boîte info règlement
 
 # bulot PDF Model
 PDFBulotDescription=Modèle de facture avec remise et infos règlement
