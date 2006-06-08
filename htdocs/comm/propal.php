@@ -43,6 +43,7 @@ $langs->load('companies');
 $langs->load('propal');
 $langs->load('compta');
 $langs->load('bills');
+$langs->load('products');
 
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
@@ -87,7 +88,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
     exit;
 }
 
-if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes')
+if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
     if ($user->rights->propale->creer)
     {

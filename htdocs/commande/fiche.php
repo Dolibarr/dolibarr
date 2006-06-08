@@ -45,6 +45,7 @@ $langs->load('companies');
 $langs->load('bills');
 $langs->load('propal');
 $langs->load('deliveries');
+$langs->load('products');
 
 $user->getrights('commande');
 $user->getrights('expedition');
@@ -248,11 +249,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	exit;
 }
 
-if ($_GET['action'] == 'deleteline' && $user->rights->commande->creer)
+if ($_GET['action'] == 'deleteline' && $user->rights->commande->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$result = $commande->delete_line($_GET['lineid']);
+	commande_pdf_create($db, $_GET['id'], $commande->modelpdf);
 	Header('Location: fiche.php?id='.$_GET['id']);
 	exit;
 }
@@ -290,6 +292,19 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 		Header('Location: index.php');
 		exit;
 	}
+}
+
+if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+{
+    if ($user->rights->commande->creer)
+    {
+    	$commande = new Commande($db);
+    	$commande->fetch($_GET['id']);
+    	$commande->delete_line($_GET['lineid']);
+    	commande_pdf_create($db, $_GET['id'], $commande->modelpdf);
+    }
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
+    exit;
 }
 
 if ($_GET['action'] == 'modif' && $user->rights->commande->creer) 
@@ -798,7 +813,7 @@ else
 			*/
 			if ($_GET['action'] == 'delete')
 			{
-				$html->form_confirm('fiche.php?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete');
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete');
 				print '<br />';
 			}
 
@@ -808,7 +823,7 @@ else
 			if ($_GET['action'] == 'valid')
 			{
 				//$numfa = commande_get_num($soc);
-				$html->form_confirm('fiche.php?id='.$id, $langs->trans('ValidateOrder'), $langs->trans('ConfirmValidateOrder'), 'confirm_valid');
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $langs->trans('ConfirmValidateOrder'), 'confirm_valid');
 				print '<br />';
 			}
 
@@ -818,7 +833,7 @@ else
 			if ($_GET['action'] == 'cloture')
 			{
 				//$numfa = commande_get_num($soc);
-				$html->form_confirm('fiche.php?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close');
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close');
 				print '<br />';
 			}
 
@@ -827,9 +842,18 @@ else
 			*/
 			if ($_GET['action'] == 'annuler')
 			{
-				$html->form_confirm('fiche.php?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
 				print '<br />';
 			}
+			
+			/*
+			 * Confirmation de la suppression d'une ligne produit
+			 */
+			 if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+			 {
+			 	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+			 	print '<br>';
+			 }
 
 			/*
 			*   Commande
@@ -1110,10 +1134,17 @@ else
 						// Icone d'edition et suppression
 						if ($commande->statut == 0  && $user->rights->commande->creer)
 						{
-							print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 							print img_edit();
 							print '</a></td>';
-							print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+							{
+								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
+							}
+							else
+							{
+								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+							}
 							print img_delete();
 							print '</a></td>';
 							print '<td align="right">';
