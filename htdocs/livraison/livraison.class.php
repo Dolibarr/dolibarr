@@ -571,6 +571,19 @@ class Livraison
     $this->commande =& new Commande($this->db);
     $this->commande->fetch($this->commande_id);
   }
+  
+  /**
+   *
+   *
+   */
+	 
+  function fetch_adresse_livraison($id)
+    {
+    	$idadresse = $id;
+      $adresse = new Societe($this->db);
+      $adresse->fetch_adresse_livraison($idadresse);
+      $this->adresse = $adresse;
+    }
 
 
   function fetch_lignes()
