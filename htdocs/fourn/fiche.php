@@ -253,7 +253,7 @@ if ( $societe->fetch($socid) )
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("All").' ('.$societe->NbProduct().')';
-		print '</a></td></tr></table><br>';
+		print '</a></td></tr></table>';
 	}
 
 	print '</td></tr>';
