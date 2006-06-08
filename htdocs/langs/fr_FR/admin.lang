@@ -461,6 +461,7 @@ LDAPSetupForVersion2=Serveur LDAP configuré en version 2
 ##### Products #####
 ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)
+ConfirmDeleteProductLineAbility=Confirmation de suppression d'une ligne produit dans les formulaires
 ##### Sendings #####
 SendingsSetup=Configuration du module Expéditions/Livraisons
 SendingsReceiptModel=Modèle du bordereau d'expédition

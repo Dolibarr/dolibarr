@@ -133,13 +133,13 @@ else if ($_GET["action"] == 'disable_sousproduits')
     Header("Location: produit.php");
     exit;
 }
-else if ($_GET["action"] == 'activate_confirmdelete')
+else if ($_GET["action"] == 'activate_confirmdeleteline')
 {
     dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", "1");
     Header("Location: produit.php");
     exit;
 }
-else if ($_GET["action"] == 'disable_confirmdelete')
+else if ($_GET["action"] == 'disable_confirmdeleteline')
 {
 	dolibarr_del_const($db, "PRODUIT_CONFIRM_DELETE_LINE");
     Header("Location: produit.php");

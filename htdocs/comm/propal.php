@@ -96,7 +96,7 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
     	$propal->delete_product($_GET['ligne']);
     	propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
     }
-    Header('Location: '.$_SERVER["PHP_SELF"]);
+    Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
     exit;
 }
 
