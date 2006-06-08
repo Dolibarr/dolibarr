@@ -87,6 +87,19 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
     exit;
 }
 
+if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes')
+{
+    if ($user->rights->propale->creer)
+    {
+    	$propal = new Propal($db);
+    	$propal->fetch($_GET['propalid']);
+    	$propal->delete_product($_GET['ligne']);
+    	propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+    }
+    Header('Location: '.$_SERVER["PHP_SELF"]);
+    exit;
+}
+
 if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
 {
     if ($user->rights->propale->valider)
@@ -421,7 +434,7 @@ if ($_POST['action'] == 'builddoc' && $user->rights->propale->creer)
 }
 
 
-if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer) 
+if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE) 
 {
   /*
    *  Supprime une ligne produit dans la propale
@@ -532,6 +545,15 @@ if ($_GET['propalid'] > 0)
 	if ($_GET['action'] == 'delete')
 	{
 		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
+		print '<br>';
+	}
+	
+ /*
+	* Confirmation de la suppression d'une ligne produit
+	*/
+	if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+	{
+		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;ligne='.$objp->rowid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
 		print '<br>';
 	}
 
@@ -912,7 +934,14 @@ if ($_GET['propalid'] > 0)
 							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'">';
 							print img_edit();
 							print '</a></td>';
-							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
+							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+							{
+								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete_product_ligne&amp;ligne='.$objp->rowid.'">';
+							}
+							else
+							{
+								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
+							}
 							print img_delete();
 							print '</a></td>';
 							print '<td align="right">';
