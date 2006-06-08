@@ -117,6 +117,7 @@ class Commande
 		$this->mode_reglement_id    = $propal->mode_reglement_id;
 		$this->date_livraison       = $propal->date_livraison;
 		$this->adresse_livraison_id = $propal->adresse_livraison_id;
+		$this->contact_id           = $propal->contactid;
     
 		/* Définit la société comme un client */
 		$soc = new Societe($this->db);
