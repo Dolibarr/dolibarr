@@ -250,8 +250,11 @@ if ($id > 0)
 		print '</tr>';
 		
 		// Customer
+		if ( is_null($commande->client) )
+			$commande->fetch_client();
+			
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
+		print '<td colspan="3">'.$commande->client->getNomUrl(1).'</td></tr>';
 		print "</table>";
 
 		print '</div>';
