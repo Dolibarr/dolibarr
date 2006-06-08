@@ -74,7 +74,7 @@ class CMailFile
                        $filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
                        $addr_cc="",$addr_bcc="")
     {
-        dolibarr_syslog("CMailFile::CMailfile: from=$from, filename_list[0]=$filename_list[0], mimetype_list[0]=$mimetype_list[0] mimefilename_list[0]=$mimefilename_list[0]");
+        dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, filename_list[0]=$filename_list[0], mimetype_list[0]=$mimetype_list[0] mimefilename_list[0]=$mimefilename_list[0]");
 
         $this->mime_boundary = md5( uniqid("dolibarr") );
 
