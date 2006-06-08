@@ -65,14 +65,14 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
     $product = new Product($db);
 
-    $product->ref            = stripslashes($_POST["ref"]);
-    $product->libelle        = stripslashes($_POST["libelle"]);
-    $product->price          = stripslashes($_POST["price"]);
+    $product->ref            = $_POST["ref"];
+    $product->libelle        = $_POST["libelle"];
+    $product->price          = $_POST["price"];
     $product->tva_tx         = $_POST["tva_tx"];
     $product->type           = $_POST["type"];
     $product->status         = $_POST["statut"];
-    $product->description    = stripslashes($_POST["desc"]);
-    $product->note           = stripslashes($_POST["note"]);
+    $product->description    = $_POST["desc"];
+    $product->note           = $_POST["note"];
     $product->duration_value = $_POST["duration_value"];
     $product->duration_unit  = $_POST["duration_unit"];
     $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
@@ -88,9 +88,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 		}
 	}
 	
-			if ( $value != $current_lang )
- 
-    $e_product = $product;
+	if ( $value != $current_lang ) $e_product = $product;
 
     $id = $product->create($user);
 
@@ -101,12 +99,9 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     }
     else
     {
-        if ($id == -3)
-        {
-            $_error = 1;
-            $_GET["action"] = "create";
-            $_GET["type"] = $_POST["type"];
-        }
+    	$mesg='<div class="error">'.$product->error.'</div>';
+        $_GET["action"] = "create";
+        $_GET["type"] = $_POST["type"];
     }
 }
 
@@ -118,13 +113,13 @@ if ($_POST["action"] == 'update' &&
     $product = new Product($db);
     if ($product->fetch($_POST["id"]))
     {
-        $product->ref                = stripslashes($_POST["ref"]);
-        $product->libelle            = stripslashes($_POST["libelle"]);
+        $product->ref                = $_POST["ref"];
+        $product->libelle            = $_POST["libelle"];
         if ( isset( $_POST["price"] ) )
-        $product->price              = stripslashes($_POST["price"]);
+        $product->price              = $_POST["price"];
         $product->tva_tx             = $_POST["tva_tx"];
-        $product->description        = stripslashes($_POST["desc"]);
-        $product->note               = stripslashes($_POST["note"]);
+        $product->description        = $_POST["desc"];
+        $product->note               = $_POST["note"];
         $product->status             = $_POST["statut"];
         $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
         $product->duration_value     = $_POST["duration_value"];
@@ -330,6 +325,9 @@ $html = new Form($db);
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
     $product = new Product($db);
+    
+    if ($mesg) print "$mesg\n";
+    
     if ($_error == 1)
     {
         $product = $e_product;

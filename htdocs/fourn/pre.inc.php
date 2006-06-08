@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -89,7 +88,7 @@ function llxHeader($head = "", $title="", $addons='') {
   {
   	if ($user->rights->produit->lire)
   	{
-        $menu->add(DOL_URL_ROOT."/fourn/product/", $langs->trans("Products"));
+        $menu->add(DOL_URL_ROOT."/product/", $langs->trans("Products"));
     }
   }
   
