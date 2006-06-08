@@ -1789,6 +1789,64 @@ class Commande
    	}
    }
    
+   /** 
+     *    \brief      Le détail d'un contact
+     *    \param      rowid      L'identifiant du contact
+     *    \return     object     L'objet construit par DoliDb.fetch_object
+     */
+ 	function detail_contact($rowid)
+    {
+  		$element='commande';
+
+        $sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
+        $sql.= " tc.code, tc.libelle, s.fk_soc";
+        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc, ";
+        $sql.= " ".MAIN_DB_PREFIX."socpeople as s";
+        $sql.= " WHERE ec.rowid =".$rowid;
+        $sql.= " AND ec.fk_socpeople=s.idp";
+        $sql.= " AND ec.fk_c_type_contact=tc.rowid";
+        $sql.= " AND tc.element = '".$element."'";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            return $obj;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            dolibarr_print_error($this->db);
+            return null;
+        }
+    }
+    
+   /**
+	   *      \brief      Mise a jour du contact associé à une commande
+     *      \param      rowid               La reference du lien commande-contact
+     * 		\param		statut	            Le nouveau statut
+     *      \param      type_contact_id     Description du type de contact
+     *      \return     int                 <0 si erreur, =0 si ok
+     */
+	function update_contact($rowid, $statut, $type_contact_id)
+	{
+        // Insertion dans la base
+        $sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
+        $sql.= " statut = $statut,";
+        $sql.= " fk_c_type_contact = '".$type_contact_id ."'";
+        $sql.= " where rowid = ".$rowid;
+        // Retour
+        if (  $this->db->query($sql) )
+        {
+            return 0;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+	 }
+   
   /**
    *   
    *  
