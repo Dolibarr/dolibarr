@@ -146,6 +146,18 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	}
 }
 
+if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+{
+    if ($user->rights->facture->creer)
+    {
+    	$facture = new Facture($db);
+    	$facture->fetch($_GET['facid']);
+    	$facture->deleteline($_GET['rowid']);
+    }
+    Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
+    exit;
+}
+
 // Classe à "payée"
 if ($_POST['action'] == 'confirm_payed' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
@@ -431,7 +443,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	exit;
 }
 
-if ($_GET['action'] == 'deleteline' && $user->rights->facture->creer)
+if ($_GET['action'] == 'deleteline' && $user->rights->facture->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
 	$fac = new Facture($db,'',$_GET['facid']);
 	$fac->fetch($_GET['facid']);
@@ -1326,6 +1338,15 @@ else
 				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled');
 				print '<br />';
 			}
+			
+			/*
+			 * Confirmation de la suppression d'une ligne produit
+			 */
+			if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+			{
+				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;rowid='.$_GET["rowid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+				print '<br />';
+			}
 
 			/*
 			 *   Facture
@@ -1646,7 +1667,14 @@ else
 							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 							print img_edit();
 							print '</a></td>';
-							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+							{
+								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete_product_line&amp;rowid='.$objp->rowid.'">';
+							}
+							else
+							{
+								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+							}
 							print img_delete();
 							print '</a></td>';
 							print '<td align="right">';
