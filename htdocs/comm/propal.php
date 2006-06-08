@@ -553,7 +553,7 @@ if ($_GET['propalid'] > 0)
 	*/
 	if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;ligne='.$objp->rowid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
 		print '<br>';
 	}
 
