@@ -413,7 +413,7 @@ else
 			print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
 			print '<td nowrap="nowrap">'.price($fac->total_ttc).'</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Status').'</td><td>'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
+			print '<tr><td>'.$langs->trans('Status').'</td><td>'.$fac->getLibStatut(4).'</td></tr>';
 			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
 			print '</table>';
 			print '</form>';
@@ -566,7 +566,7 @@ else
 	        if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut,4).'</td></tr>';
+			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->getLibStatut(4).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans('AmountHT').'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
