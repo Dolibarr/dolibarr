@@ -114,6 +114,7 @@ class Product
      */
     function create($user)
     {
+    	global $langs;
     
         $this->ref = trim(sanitize_string($this->ref));
 
@@ -175,13 +176,15 @@ class Product
                 }
                 else
                 {
-                    $this->error=$this->db->error()." - ".$sql;
+                    $this->error=$this->db->error()." - sql=".$sql;
                     $this->db->rollback();
                     return -3;
                 }
             }
             else
             {
+                // Produit existe deja
+                $this->error=$langs->trans("ErrorProductAlreadyExists");
                 $this->db->rollback();
                 return -2;
             }
