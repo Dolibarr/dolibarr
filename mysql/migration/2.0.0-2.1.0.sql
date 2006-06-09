@@ -199,7 +199,6 @@ alter table llx_document_model add column rowid integer AUTO_INCREMENT PRIMARY K
 alter table llx_document_model add column type varchar(20) NOT NULL after nom;
 update llx_document_model set type='propal' where type='';
 
-insert into llx_document_model(nom,type) values('soleil','ficheinter');
 delete from llx_document_model where nom='adytek';
 delete from llx_document_model where nom='rouge' and type='order';
 delete from llx_document_model where nom='azur' and type='order';
