@@ -141,15 +141,15 @@ if ($_GET["id"] > 0) {
   				 * Documents
  				 */
 				$commanderef = sanitize_string($commande->ref);
-				$file = $conf->commande->dir_output . "/" . $commanderef . "/" . $commanderef . ".pdf";
-				$filedetail = $conf->commande->dir_output . "/" . $commanderef . "/" . $commanderef . "-detail.pdf";
+				$dir_output = $conf->commande->dir_output . "/";
+				$filepath = $dir_output . $commanderef . "/";
+				$file = $filepath . $commanderef . ".pdf";
+				$filedetail = $filepath . $commanderef . "-detail.pdf";
 				$relativepath = "${commanderef}/${commanderef}.pdf";
 				$relativepathdetail = "${commanderef}/${commanderef}-detail.pdf";
 
                 // Chemin vers png aperçus
 				$relativepathimage = "${commanderef}/${commanderef}.pdf.png";
-				$relativepathimagebis = "${commanderef}/${commanderef}.pdf.png.0";
-				$relativepathimagebis2 = "${commanderef}/${commanderef}.pdf.png.1";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
 
@@ -237,7 +237,7 @@ if ($_GET["id"] > 0) {
 				// ligne 7
 				// partie Gauche
 				print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-				print '<td align="right" colspan="1"><b>'.price($commande->amount_ht).'</b></td>';
+				print '<td align="right" colspan="1"><b>'.price($commande->total_ht).'</b></td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				print '</table>';
 			}
@@ -258,8 +258,17 @@ if (file_exists($fileimage))
 // Si fichier png PDF de plus d'1 page trouvé
 elseif (file_exists($fileimagebis))
 	{
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimagebis).'"><p>';
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimagebis2).'"></p>';
+		$multiple = $relativepathimage . ".";
+
+		for ($i = 0; $i < 20; $i++)
+		{
+			$preview = $multiple.$i;
+			
+			if (file_exists($dir_output.$preview))
+      {
+      	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($preview).'"><p>';
+      }
+		}
 	}
 
 

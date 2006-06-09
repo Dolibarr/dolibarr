@@ -268,6 +268,7 @@ elseif (file_exists($fileimagebis))
       	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($preview).'"><p>';
       }
 	}
+}
 
 
 print '</div>';

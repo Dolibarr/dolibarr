@@ -273,6 +273,7 @@ elseif (file_exists($fileimagebis))
       	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($preview).'"><p>';
       }
 	}
+}
 
 
 print '</div>';
