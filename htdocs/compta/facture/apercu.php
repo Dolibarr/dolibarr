@@ -130,18 +130,17 @@ if ($_GET["facid"] > 0)
          * Documents
          */
         $facref = sanitize_string($fac->ref);
-        $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
-        $filedetail = $conf->facture->dir_output . "/" . $facref . "/" . $facref . "-detail.pdf";
+        $dir_output = $conf->facture->dir_output . "/";
+				$filepath = $dir_output . $facref . "/";
+        $file = $filepath . $facref . ".pdf";
+        $filedetail = $filepath . $facref . "-detail.pdf";
         $relativepath = "${facref}/${facref}.pdf";
         $relativepathdetail = "${facref}/${facref}-detail.pdf";
 
         // Chemin vers png aperçus
-		$relativepathimage = "${facref}/${facref}.pdf.png";
-		$relativepathimagebis = "${facref}/${facref}.pdf.png.0";
-		$relativepathimagebis2 = "${facref}/${facref}.pdf.png.1";
-		
-		$fileimage = $file.".png";          // Si PDF d'1 page
-		$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
+        $relativepathimage = "${facref}/${facref}.pdf.png";
+        $fileimage = $file.".png";          // Si PDF d'1 page
+        $fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
 
 
         $var=true;
@@ -258,8 +257,16 @@ if (file_exists($fileimage))
 // Si fichier png PDF de plus d'1 page trouvé
 elseif (file_exists($fileimagebis))
 	{
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimagebis).'"><p>';
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimagebis2).'"></p>';
+		$multiple = $relativepathimage . ".";
+
+		for ($i = 0; $i < 20; $i++)
+		{
+			$preview = $multiple.$i;
+			
+			if (file_exists($dir_output.$preview))
+      {
+      	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($preview).'"><p>';
+      }
 	}
 
 

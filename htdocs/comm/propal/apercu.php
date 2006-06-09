@@ -163,15 +163,15 @@ if ($_GET["propalid"] > 0)
   				 * Documents
  				 */
 				$propalref = sanitize_string($propal->ref);
-				$file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
-				$filedetail = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . "-detail.pdf";
+				$dir_output = $conf->propal->dir_output . "/";
+				$filepath = $dir_output . $propalref . "/";
+				$file = $filepath . $propalref . ".pdf";
+				$filedetail = $filepath . $propalref . "-detail.pdf";
 				$relativepath = "${propalref}/${propalref}.pdf";
 				$relativepathdetail = "${propalref}/${propalref}-detail.pdf";
 
                 // Chemin vers png aperçus
 				$relativepathimage = "${propalref}/${propalref}.pdf.png";
-				$relativepathimagebis = "${propalref}/${propalref}.pdf.png.0";
-				$relativepathimagebis2 = "${propalref}/${propalref}.pdf.png.1";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
 
@@ -262,8 +262,16 @@ if (file_exists($fileimage))
 // Si fichier png PDF de plus d'1 page trouvé
 elseif (file_exists($fileimagebis))
 	{
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimagebis).'"><p>';
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimagebis2).'"></p>';
+		$multiple = $relativepathimage . ".";
+
+		for ($i = 0; $i < 20; $i++)
+		{
+			$preview = $multiple.$i;
+			
+			if (file_exists($dir_output.$preview))
+      {
+      	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($preview).'"><p>';
+      }
 	}
 
 
