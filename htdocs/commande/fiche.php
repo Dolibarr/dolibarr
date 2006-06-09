@@ -287,7 +287,8 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	if ($user->rights->commande->supprimer )
 	{
 		$commande = new Commande($db);
-		$commande->id = $_GET['id'];
+		//$commande->id = $_GET['id'];
+		$commande->fetch($_GET['id']);
 		$commande->delete();
 		Header('Location: index.php');
 		exit;
