@@ -807,17 +807,16 @@ class Facture
 			$facref = sanitize_string($this->ref);
 			$dirsource = $conf->facture->dir_output.'/'.$facref;
 			$dirdest = $conf->facture->dir_output.'/'.$numfa;
-
-      dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
-			
 			if (file_exists($dirsource))
 			{
+				dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
+
 				if (rename($dirsource, $dirdest))
 				{
 					dolibarr_syslog("Renommage ok");
-				// Suppression ancien fichier PDF dans nouveau rep
-				dol_delete_file($conf->facture->dir_output.'/'.$numfa.'/'.$facref.'.*');
-			  }
+					// Suppression ancien fichier PDF dans nouveau rep
+					dol_delete_file($conf->facture->dir_output.'/'.$numfa.'/'.$facref.'.*');
+				}
 			}
 
 
