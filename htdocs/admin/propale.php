@@ -76,7 +76,9 @@ if ($_GET["action"] == 'set')
 }
 if ($_GET["action"] == 'del')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom='".$_GET["value"]."'";
+    $type='propal';
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
     if ($db->query($sql))
     {
 
@@ -96,7 +98,8 @@ if ($_GET["action"] == 'setdoc')
 
     // On active le modele
     $type='propal';
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model where nom = '".$_GET["value"]."'";
+    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+    $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
     $result1=$db->query($sql_del);
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
     $result2=$db->query($sql);
