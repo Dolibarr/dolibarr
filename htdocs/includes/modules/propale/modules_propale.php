@@ -205,18 +205,32 @@ function propale_delete_preview($db, $propalid)
 
 	if ($conf->propal->dir_output)
 		{
-		$propalref = sanitize_string($propal->ref); 
-		$dir = $conf->propal->dir_output . "/" . $propalref ; 
-		$file = $dir . "/" . $propalref . ".pdf.png";
-
-		if ( file_exists( $file ) && is_writable( $file ) )
-			{
-			if ( ! unlink($file) )
-				{
-				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-				return 0;
-				}
-			}
-		}
+			$propalref = sanitize_string($propal->ref); 
+			$dir = $conf->propal->dir_output . "/" . $propalref ;
+			$file = $dir . "/" . $propalref . ".pdf.png";
+      $multiple = $file . ".";
+        	
+        	for ($i = 0; $i < 20; $i++)
+        	{
+        		$preview = $multiple.$i;
+        		
+        		if ( file_exists( $preview ) && is_writable( $preview ) )
+        		{
+        			if ( ! unlink($preview) )
+        			{
+        				$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
+        				return 0;
+        			}
+        		}
+        		else if ( file_exists( $file ) && is_writable( $file ) )
+        		{
+        			if ( ! unlink($file) )
+        			{
+        				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+        				return 0;
+        			}
+        		}
+        	}
+        }
 }
 ?>

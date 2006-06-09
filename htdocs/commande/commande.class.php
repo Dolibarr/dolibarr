@@ -181,6 +181,8 @@ class Commande
 								$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
 								if (file_exists($file))
 								{
+									commande_delete_preview($this->db, $this->id);
+									
 									if (!dol_delete_file($file))
 									{
                     $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
