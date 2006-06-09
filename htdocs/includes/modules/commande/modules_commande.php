@@ -211,7 +211,12 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
    }
 }
 
-
+/**
+   \brief      Supprime l'image de prévisualitation, pour le cas de régénération de commande
+   \param	    db  		objet base de donnée
+   \param	    commandeid	id de la commande à effacer
+   \param     commanderef référence de la commande si besoin
+*/
 function commande_delete_preview($db, $commandeid, $commanderef='')
 {
         global $langs,$conf;
@@ -222,9 +227,7 @@ function commande_delete_preview($db, $commandeid, $commanderef='')
         	$com->fetch($commandeid);
         	$commanderef = $com->ref;
         }
-        //$client = new Societe($db);
-        //$client->fetch($com->soc_id);
-
+        
         if ($conf->commande->dir_output)
         {
         	$comref = sanitize_string($commanderef);

@@ -194,25 +194,39 @@ function propale_pdf_create($db, $id, $modele='', $outputlangs='')
    \brief      Supprime l'image de prévisualitation, pour le cas de régénération de propal
    \param	    db  		objet base de donnée
    \param	    propalid	id de la propal à effacer
+   \param     propalref référence de la propal si besoin
 */
-function propale_delete_preview($db, $propalid)
+function propale_delete_preview($db, $propalid, $propalref='')
 {
-	global $langs,$conf;
+        global $langs,$conf;
 
-	$propal = new Propal($db,"",$propalid);
-	$propal->fetch($propalid);  
-	$propal->fetch_client();
-
-	if ($conf->propal->dir_output)
-		{
-			$propalref = sanitize_string($propal->ref); 
-			$dir = $conf->propal->dir_output . "/" . $propalref ;
-			$file = $dir . "/" . $propalref . ".pdf.png";
-      $multiple = $file . ".";
+        if (!$propalref)
+        {
+        	$propal = new Propal($db,"",$propalid);
+        	$propal->fetch($propalid);
+        	$propalref = $propal->ref;
+        }
+        
+        if ($conf->propal->dir_output)
+        {
+        	$propref = sanitize_string($propalref);
+        	$dir = $conf->propal->dir_output . "/" . $propalref ;
+        	$file = $dir . "/" . $propalref . ".pdf.png";
+        	$multiple = $file . ".";
         	
-        	for ($i = 0; $i < 20; $i++)
+        	if ( file_exists( $file ) && is_writable( $file ) )
         	{
-        		$preview = $multiple.$i;
+        		if ( ! unlink($file) )
+        			{
+        				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+        				return 0;
+        			}
+        	}
+        	else
+        	{
+        		for ($i = 0; $i < 20; $i++)
+        		{
+        			$preview = $multiple.$i;
         		
         		if ( file_exists( $preview ) && is_writable( $preview ) )
         		{
@@ -222,15 +236,8 @@ function propale_delete_preview($db, $propalid)
         				return 0;
         			}
         		}
-        		else if ( file_exists( $file ) && is_writable( $file ) )
-        		{
-        			if ( ! unlink($file) )
-        			{
-        				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-        				return 0;
-        			}
-        		}
         	}
         }
+      }
 }
 ?>

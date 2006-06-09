@@ -1478,12 +1478,41 @@ class Propal
    */
   function delete($user)
   {
+    global $conf;
+    
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
     if ( $this->db->query($sql) ) 
       {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
 	if ( $this->db->query($sql) ) 
 	  {
+	    
+	    // On efface le répertoire du pdf
+							$propalref = sanitize_string($this->ref);
+							if ($conf->propal->dir_output)
+							{
+								$dir = $conf->propal->dir_output . "/" . $propalref ;
+								$file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
+								if (file_exists($file))
+								{
+									propale_delete_preview($this->db, $this->id, $this->ref);
+									
+									if (!dol_delete_file($file))
+									{
+                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+                    return 0;
+                  }
+                }
+                if (file_exists($dir))
+                {
+                	if (!dol_delete_dir($dir))
+                  {
+                  	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+                    return 0;
+                  }
+                }
+              }
+	    
 	    dolibarr_syslog("Suppression de la proposition $this->id par $user->fullname ($user->id)");
 	    return 1;
 	  }
