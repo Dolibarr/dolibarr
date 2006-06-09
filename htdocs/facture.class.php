@@ -801,6 +801,9 @@ class Facture
                 $error++;
             }
 
+// ne sert à rien car il n'y a pas de document provisoire créé
+
+/*
 			// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
 			// afin de ne pas perdre les fichiers attachés
 			$facref = sanitize_string($this->ref);
@@ -814,7 +817,7 @@ class Facture
 				// Suppression ancien fichier PDF dans nouveau rep
 				dol_delete_file($conf->facture->dir_output.'/'.$numfa.'/'.$facref.'.*');
 			}
-
+*/
 
 			/*
 			 *	Tope les lignes de remises fixes avec id des lignes de facture au montant négatif
