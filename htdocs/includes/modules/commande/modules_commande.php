@@ -212,25 +212,39 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
 }
 
 
-function commande_delete_preview($db, $commandeid)
+function commande_delete_preview($db, $commandeid, $commanderef='')
 {
         global $langs,$conf;
 
-        $com = new Commande($db,"",$commandeid);
-        $com->fetch($commandeid);  
-        $client = new Societe($db);
-        $client->fetch($com->soc_id);
+        if (!$commanderef)
+        {
+        	$com = new Commande($db,"",$commandeid);
+        	$com->fetch($commandeid);
+        	$commanderef = $com->ref;
+        }
+        //$client = new Societe($db);
+        //$client->fetch($com->soc_id);
 
         if ($conf->commande->dir_output)
         {
-        	$comref = sanitize_string($com->ref);
+        	$comref = sanitize_string($commanderef);
         	$dir = $conf->commande->dir_output . "/" . $comref ;
         	$file = $dir . "/" . $comref . ".pdf.png";
         	$multiple = $file . ".";
         	
-        	for ($i = 0; $i < 20; $i++)
+        	if ( file_exists( $file ) && is_writable( $file ) )
         	{
-        		$preview = $multiple.$i;
+        		if ( ! unlink($file) )
+        			{
+        				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+        				return 0;
+        			}
+        	}
+        	else
+        	{
+        		for ($i = 0; $i < 20; $i++)
+        		{
+        			$preview = $multiple.$i;
         		
         		if ( file_exists( $preview ) && is_writable( $preview ) )
         		{
@@ -240,15 +254,8 @@ function commande_delete_preview($db, $commandeid)
         				return 0;
         			}
         		}
-        		else if ( file_exists( $file ) && is_writable( $file ) )
-        		{
-        			if ( ! unlink($file) )
-        			{
-        				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-        				return 0;
-        			}
-        		}
         	}
         }
+      }
 }
 ?>

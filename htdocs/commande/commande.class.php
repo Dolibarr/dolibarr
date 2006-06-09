@@ -41,6 +41,7 @@ class Commande
 {
 	var $db ;
 	var $id ;
+	var $ref;
 	var $socidp;
 	var $contactid;
 	var $projet_id;
@@ -1926,7 +1927,7 @@ class Commande
 				$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
 				if (file_exists($file))
 				{
-					commande_delete_preview($this->db, $this->id);
+					commande_delete_preview($this->db, $this->id, $this->ref);
 					
 					if (!dol_delete_file($file))
 					{
