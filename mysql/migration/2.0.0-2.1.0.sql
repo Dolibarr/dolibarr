@@ -292,3 +292,5 @@ alter table llx_facture add column model_pdf varchar(50) after note_public;
 
 update llx_societe_remise_except set description='Remise sans description' where description is NULL or description ='';
 alter table llx_societe_remise_except modify description varchar(255) NOT NULL;
+
+insert into llx_c_actioncomm (id, code, type, libelle) values ( 8, 'AC_COM',  'system', 'Envoi Commande');
