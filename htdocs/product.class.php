@@ -376,17 +376,17 @@ class Product
 				if (mysql_num_rows($result)) // si aucune ligne dans la base
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
-					$sql2.= " SET label='".$this->libelle."',";
-					$sql2.= " description='".$this->description."',";
-					$sql2.= " note='".$this->note."'";
+					$sql2.= " SET label='".addslashes($this->libelle)."',";
+					$sql2.= " description='".addslashes($this->description)."',";
+					$sql2.= " note='".addslashes($this->note)."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$value."','". $this->libelle;
-					$sql2.= "','".$this->description;
-					$sql2.= "','".$this->note."')";
+					$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->libelle);
+					$sql2.= "','".addslashes($this->description);
+					$sql2.= "','".addslashes($this->note)."')";
 				}
 				if (!$this->db->query($sql2)) return -1;
 			}
@@ -395,17 +395,17 @@ class Product
 				if (mysql_num_rows($result)) // si aucune ligne dans la base
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
-					$sql2.= " SET label='".$this->multilangs["$value"]["libelle"]."',";
-					$sql2.= " description='".$this->multilangs["$value"]["description"]."',";
-					$sql2.= " note='".$this->multilangs["$value"]["note"]."'";
+					$sql2.= " SET label='".addslashes($this->multilangs["$value"]["libelle"])."',";
+					$sql2.= " description='".addslashes($this->multilangs["$value"]["description"])."',";
+					$sql2.= " note='".addslashes($this->multilangs["$value"]["note"])."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$value."','". $this->multilangs["$value"]["libelle"];
-					$sql2.= "','".$this->multilangs["$value"]["description"];
-					$sql2.= "','".$this->multilangs["$value"]["note"]."')";
+					$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->multilangs["$value"]["libelle"]);
+					$sql2.= "','".addslashes($this->multilangs["$value"]["description"]);
+					$sql2.= "','".addslashes($this->multilangs["$value"]["note"])."')";
 				}
 
 				 // on ne sauvegarde pas des champs vides
