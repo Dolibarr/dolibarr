@@ -294,3 +294,4 @@ update llx_societe_remise_except set description='Remise sans description' where
 alter table llx_societe_remise_except modify description varchar(255) NOT NULL;
 
 insert into llx_c_actioncomm (id, code, type, libelle) values ( 8, 'AC_COM',  'system', 'Envoi Commande');
+update llx_actioncomm set fk_action = '8' where fk_action =  '3' and label = 'Envoi commande par mail'

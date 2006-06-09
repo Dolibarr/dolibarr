@@ -64,3 +64,4 @@ ActionAC_FAC=Envoi facture par mail
 ActionAC_REL=Relance facture par mail
 ActionAC_CLO=Close
 ActionAC_EMAILING=Envoi mailing masse
+ActionAC_COM=Envoi commande par mail

@@ -411,7 +411,7 @@ if ($_POST['action'] == 'send')
                 		$subject = $langs->trans('Order').' '.$commande->ref;
                 	}
                   
-                  $actiontypeid=3;
+                  $actiontypeid=8;
                   $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
                   
                   if ($message)
