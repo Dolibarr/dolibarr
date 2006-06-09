@@ -80,6 +80,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
     if ($user->rights->propale->supprimer)
     {
         $propal = new Propal($db, 0, $_GET['propalid']);
+        $propal->fetch($_GET['propalid']);
         $propal->delete($user);
         $propalid = 0;
         $brouillon = 1;
