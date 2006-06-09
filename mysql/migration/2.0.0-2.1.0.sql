@@ -194,6 +194,8 @@ update llx_const set value='azur' where value='orange' and name = 'PROPALE_ADDON
 
 
 alter table llx_propal_model_pdf rename to llx_document_model;
+alter table llx_document_model DROP PRIMARY KEY;
+alter table llx_document_model add column rowid integer AUTO_INCREMENT PRIMARY KEY FIRST;
 alter table llx_document_model add column type varchar(20) NOT NULL after nom;
 update llx_document_model set type='propal' where type='';
 
