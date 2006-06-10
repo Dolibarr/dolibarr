@@ -93,30 +93,48 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 
         $error=0;
 
-        if ($_POST["ref_fourn"]) {
-            $ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
-            if ($ret < 0) {
-                $error++;
-                $mesg='<div class="error">'.$product->error.'</div>';
-            }
+        if ($_POST["ref_fourn"])
+        {
+        	$ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
+        	if ($ret < 0)
+        	{
+        		$error++;
+        		$mesg='<div class="error">'.$product->error.'</div>';
+        	}
         }
-        else {
-            $error++;
-            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Ref")).'</div>';
-        }
-        
-        if ($_POST["qty"] && $_POST["price"] > 0) {
-            $ret=$product->update_buyprice($_POST["id_fourn"], $_POST["qty"], $_POST["price"], $user);
-            if ($ret < 0) {
-                $error++;
-                $mesg='<div class="error">'.$product->error.'</div>';
-                if ($ret == -2)
-                {
-                	$mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
-                }
-            }
+        else
+        {
+        	$error++;
+        	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Ref")).'</div>';
         }
         
+        if ($_POST["qty"])
+        {
+        	if ($_POST["price"] > 0)
+        	{
+        		$ret=$product->update_buyprice($_POST["id_fourn"], $_POST["qty"], $_POST["price"], $user);
+        		if ($ret < 0)
+        		{
+        			$error++;
+        			$mesg='<div class="error">'.$product->error.'</div>';
+        			if ($ret == -2)
+        			{
+        				$mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
+        			}
+        		}
+          }
+          else
+          {
+          	$error++;
+          	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Price")).'</div>';
+          }
+        }
+        else
+        {
+        	$error++;
+        	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Qty")).'</div>';
+        }
+        	        
         if (! $error)
         {
             $db->commit();
