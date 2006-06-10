@@ -2537,7 +2537,7 @@ class Form
 
 			if ($delallowed)
 			{
-            	print '<td><a href="'.$urlsource.'&action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.img_delete().'</a></td>';
+            	print '<td><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath).'&urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>';
 			}
 
             print '</tr>';

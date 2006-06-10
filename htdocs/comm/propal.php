@@ -219,13 +219,6 @@ if ($_POST['action'] == 'add')
     }
 }
 
-if ($_GET['action'] == 'builddoc')
-{
-    $propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
-    propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
-}
-
 /*
  *  Cloture de la propale
  */
@@ -428,11 +421,15 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
     propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
 
-if ($_POST['action'] == 'builddoc' && $user->rights->propale->creer) 
+/*
+ * Generation doc (depuis lien ou depuis cartouche doc)
+ */
+if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
-    $propal = new Propal($db, 0, $_GET['propalid']);
-    $propal->set_pdf_model($user, $_POST['model']);
-    propale_pdf_create($db, $_GET['propalid'], $_POST['model']);
+    $propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+    if ($_POST['model']) $propal->set_pdf_model($user, $_POST['model']);
+    propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
 
 
@@ -830,9 +827,8 @@ if ($_GET['propalid'] > 0)
 			print '</table><br>';
 
 			/*
-			* Lignes de propale
-			*
-			*/
+			 * Lignes de propale
+			 */
 			print '<table class="noborder" width="100%">';
 
 			$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice,';

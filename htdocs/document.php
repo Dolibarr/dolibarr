@@ -36,8 +36,10 @@ require_once("main.inc.php");
 function llxHeader() { }
 
 
+$action = $_GET["action"];
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
+$urlsource = urldecode($_GET["urlsource"]);
 // Défini type et attachment
 $type = urldecode($_GET["type"]); $attachment = true;
 if (eregi('\.html',$original_file)) 	{ $type='text/html'; $attachment = false; }
@@ -260,28 +262,53 @@ if (! $accessallowed)
 }
 
 
-// Ouvre et renvoi fichier
-clearstatcache(); 
-$filename = basename($original_file);
-
-dolibarr_syslog("document.php download $original_file $filename content-type=$type");
-
-if (! file_exists($original_file)) 
+if ($action == 'remove_file')
 {
-    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file)); 
-    exit;
+	/*
+	 * Suppression fichier
+	 */
+	clearstatcache(); 
+	$filename = basename($original_file);
+	
+	dolibarr_syslog("document.php remove $original_file $filename $urlsource");
+
+	if (! file_exists($original_file)) 
+	{
+	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file)); 
+	    exit;
+	}
+	unlink($original_file);
+
+	Header("Location: ".urldecode($urlsource));
+	return;
 }
-
-
-// Les drois sont ok et fichier trouvé, on l'envoie
-
-if ($type) header('Content-type: '.$type);
-if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-
-// Ajout directives pour résoudre bug IE
-header('Cache-Control: Public, must-revalidate');
-header('Pragma: public');
- 
-readfile($original_file);
+else
+{
+	/*
+	 * Ouvre et renvoi fichier
+	 */
+	clearstatcache(); 
+	$filename = basename($original_file);
+	
+	dolibarr_syslog("document.php download $original_file $filename content-type=$type");
+	
+	if (! file_exists($original_file)) 
+	{
+	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file)); 
+	    exit;
+	}
+	
+	
+	// Les drois sont ok et fichier trouvé, on l'envoie
+	
+	if ($type) header('Content-type: '.$type);
+	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+	
+	// Ajout directives pour résoudre bug IE
+	header('Cache-Control: Public, must-revalidate');
+	header('Pragma: public');
+	 
+	readfile($original_file);
+}
 
 ?>
