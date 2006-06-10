@@ -37,6 +37,7 @@ $langs->load("companies");
 $langs->load("commercial");
 $langs->load("other");
 $langs->load("bills");
+$langs->load("orders");
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
