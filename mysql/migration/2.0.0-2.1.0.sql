@@ -191,7 +191,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (29
 
 update llx_const set value='neptune' where value='pluton' and name = 'FACTURE_ADDON';
 update llx_const set value='azur' where value='orange' and name = 'PROPALE_ADDON';
-
+update llx_const set value='mod_commande_diamant' where value='mod_commande_jade' and name ='COMMANDE_ADDON';
 
 alter table llx_propal_model_pdf rename to llx_document_model;
 alter table llx_document_model DROP PRIMARY KEY;
