@@ -77,8 +77,6 @@ if ($_GET["action"] == 'delete' && $_GET["file"])
  *
  */
 
-llxHeader("","",$langs->trans("CardProduct0"));
-
 
 if ($_GET["id"] || $_GET["ref"])
 {
@@ -86,6 +84,8 @@ if ($_GET["id"] || $_GET["ref"])
     $product = new Product($db);
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+    
+    llxHeader("","",$langs->trans("CardProduct".$product->type));
 
     if ($result)
     {

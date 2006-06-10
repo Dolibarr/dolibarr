@@ -314,8 +314,6 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 }
 
 
-
-llxHeader("","",$langs->trans("ProductServiceCard"));
 $html = new Form($db);
 
 
@@ -333,6 +331,8 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
         $product = $e_product;
     }
 
+    llxHeader("","",$langs->trans("CardProduct".$product->type));
+    
     print '<form action="fiche.php" method="post">';
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
@@ -421,6 +421,7 @@ if ($_GET["id"] || $_GET["ref"])
         $product = new Product($db);
         if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
         if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+        llxHeader("","",$langs->trans("CardProduct".$product->type));
     }
 
     if ( $result )

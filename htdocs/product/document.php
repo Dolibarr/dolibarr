@@ -34,6 +34,7 @@ require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("other");
+$langs->load("products");
 
 $user->getrights('produit');
 
@@ -81,7 +82,7 @@ if ($_POST["sendit"] && $conf->upload)
 
 
 
-llxHeader();
+llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
 if ($product->id)

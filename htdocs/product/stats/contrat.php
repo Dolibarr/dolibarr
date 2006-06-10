@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("contracts");
+$langs->load("products");
 
 $mesg = '';
 
@@ -65,14 +66,14 @@ else
  *
  */
 
-llxHeader();
-
 
 if ($_GET["id"] || $_GET["ref"])
 {
     $product = new Product($db);
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+    
+    llxHeader("","",$langs->trans("CardProduct".$product->type));
 
     if ($result > 0)
     {

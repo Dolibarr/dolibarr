@@ -39,7 +39,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
 $langs->load("bills");
-$langs->load("product");
+$langs->load("products");
 
 
 $mesg = '';
@@ -134,7 +134,7 @@ if ($cancel == $langs->trans("Cancel"))
     exit;
 }
 
-llxHeader("","",$langs->trans("ProductServiceCard"));
+llxHeader("","",$langs->trans("CardProduct".$product->type));
 $html = new Form($db);
 
 

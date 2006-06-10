@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("bills");
+$langs->load("products");
 
 $mesg = '';
 
@@ -60,14 +61,14 @@ if ($user->societe_id > 0)
  *
  */
 
-llxHeader();
-
 
 if ($_GET["id"] || $_GET["ref"])
 {
     $product = new Product($db);
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+    
+    llxHeader("","",$langs->trans("CardProduct".$product->type));
 
     if ($result > 0)
     {

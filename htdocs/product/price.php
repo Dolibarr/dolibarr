@@ -88,12 +88,11 @@ if ($_POST["action"] == 'update_price' &&
  * Affiche historique prix
  */
 
-llxHeader("","",$langs->trans("Price"));
-
 $product = new Product($db);
 if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
+llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 $h=0;
 
