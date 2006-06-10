@@ -314,7 +314,8 @@ if ($_GET["id"] || $_GET["ref"])
             }
             			  
 		      print '<tr><td>'.$langs->trans("Qty").'</td>';
- 		      print '<td><input class="flat" name="qty" size="5" value="'.$_GET["qty"].'"></td>';
+		      $quantity = $_GET["qty"] ? $_GET["qty"] : "1";
+ 		      print '<td><input class="flat" name="qty" size="5" value="'.$quantity.'"></td>';
 		      print '<td>'.$langs->trans("Price").'</td>';
 		      print '<td><input class="flat" name="price" size="8" value="'.price($_GET["price"]).'"></td></tr>';
 
