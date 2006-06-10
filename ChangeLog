@@ -7,6 +7,7 @@ English Dolibarr changelog
   commercial proposal and invoices.
 - Added an export tool to export main dolibarr data.
 - Added product categories management with a categorie tree.
+- Support description in several languages for products.
 - Graphical enhancements (picto to describe all status).
 - New permissions (can restrict access for a commercial user to elements
   of its companies only).
@@ -21,7 +22,7 @@ English Dolibarr changelog
 - Add Dolibarr triggers support on payments.
 - Support optionnal new javascript date popup selector.
 
-- Code cleaner.
+- Code cleaner. Remove unused code.
 - Better compatibility with different PHP version or setup.
 - Lot of fixes after 2.0 release not fixed in 2.0.1.
 - Traduction more complete.
