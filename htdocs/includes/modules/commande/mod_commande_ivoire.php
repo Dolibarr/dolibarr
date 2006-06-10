@@ -52,7 +52,7 @@ class mod_commande_ivoire extends ModeleNumRefCommandes
      */
   function info()
     {
-      return "Renvoie le numéro sous la forme numérique C0M1, COM2, COM3, ...";      
+      return "Renvoie le numéro sous la forme numérique C0M1,COM2,COM3,...<br><b>OBSOLETE, NE PLUS UTILISER CAR BUGGUE. Sera supprimé dans prochaines versions</b>";
     }
 
 
