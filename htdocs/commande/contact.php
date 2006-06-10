@@ -21,9 +21,9 @@
  */
 
 /**
-        \file       htdocs/compta/contact.php
-        \ingroup    facture
-        \brief      Onglet de gestion des contacts des factures
+        \file       htdocs/commande/contact.php
+        \ingroup    commande
+        \brief      Onglet de gestion des contacts de commande
         \version    $Revision$
 */
 

@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 
 $langs->load('propal');
 $langs->load('compta');
+$langs->load('bills');
 
 $user->getrights('propale');
 if (!$user->rights->propale->lire)
