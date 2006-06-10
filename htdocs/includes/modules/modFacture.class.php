@@ -79,54 +79,29 @@ class modFacture extends DolibarrModules
     
         // Constantes
         $this->const = array();
+    	$r=0;
+    	
+        $this->const[$r][0] = "FACTURE_ADDON_PDF";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "bulot";
+    	$r++;
     
-        $this->const[0][0] = "FAC_PDF_INTITULE";
-        $this->const[0][1] = "chaine";
-        $this->const[0][2] = "Facture Dolibarr";
-        $this->const[0][4] = 1;
+        $this->const[$r][0] = "FACTURE_ADDON";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "pluton";
+    	$r++;
     
-        $this->const[1][0] = "FAC_PDF_ADRESSE";
-        $this->const[1][1] = "texte";
-        $this->const[1][2] = "Adresse";
-        $this->const[1][4] = 1;
+        $this->const[$r][0] = "FAC_FORCE_DATE_VALIDATION";
+        $this->const[$r][1] = "yesno";
+        $this->const[$r][2] = "0";
+    	$r++;
     
-        $this->const[2][0] = "FAC_PDF_TEL";
-        $this->const[2][1] = "chaine";
-        $this->const[2][2] = "02 97 42 42 42";
-        $this->const[2][4] = 1;
-    
-        $this->const[3][0] = "FAC_PDF_FAX";
-        $this->const[3][1] = "chaine";
-        $this->const[3][2] = "02 97 00 00 00";
-        $this->const[3][4] = 1;
-    
-        $this->const[4][0] = "FAC_PDF_MEL";
-        $this->const[4][1] = "chaine";
-        $this->const[4][2] = "02 97 00 00 00";
-        $this->const[4][4] = 1;
-    
-        $this->const[5][0] = "FAC_PDF_WWW";
-        $this->const[5][1] = "chaine";
-        $this->const[5][2] = "www.masociete.com";
-        $this->const[5][4] = 1;
-    
-        $this->const[7][0] = "FACTURE_ADDON_PDF";
-        $this->const[7][1] = "chaine";
-        $this->const[7][2] = "bulot";
-    
-        $this->const[8][0] = "FACTURE_ADDON";
-        $this->const[8][1] = "chaine";
-        $this->const[8][2] = "pluton";
-    
-        $this->const[9][0] = "FAC_FORCE_DATE_VALIDATION";
-        $this->const[9][1] = "yesno";
-        $this->const[9][2] = "0";
-    
-        $this->const[10][0] = "FAC_ADD_PROD_DESC";
-        $this->const[10][1] = "chaine";
-        $this->const[10][2] = "0";
-        $this->const[10][3] = "Mettre à 1 pour voir la description d\'un produit dans une facture";
-        $this->const[10][4] = 1;
+        $this->const[$r][0] = "FAC_ADD_PROD_DESC";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "0";
+        $this->const[$r][3] = "Mettre à 1 pour voir la description d'un produit dans une facture";
+        $this->const[$r][4] = 1;
+    	$r++;
     
         // Boites
         $this->boxes = array();
