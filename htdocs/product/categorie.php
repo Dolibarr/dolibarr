@@ -50,11 +50,11 @@ if ($_GET["id"] || $_GET["ref"])
 	$product = new Product($db);
 	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+	
+	llxHeader("","",$langs->trans("CardProduct".$product->type));
 }
 $html = new Form($db);
 
-
-llxHeader("","",$langs->trans("CardProduct0"));
 
 /*
  * Fiche produit
