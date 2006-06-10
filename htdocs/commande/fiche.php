@@ -1398,7 +1398,7 @@ else
 			/*
 			* Boutons actions
 			*/
-			if ($user->societe_id == 0 && $commande->statut < 3)
+			if ($user->societe_id == 0)
 			{
 				print '<div class="tabsAction">';
 
@@ -1421,13 +1421,19 @@ else
 				}
 
 				// Build PDF
-				if ($user->rights->commande->creer)
+				if ($user->rights->commande->creer && $commande->statut < 3)
 				{
 					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
 				}
 
+				// reBuild PDF
+				if ($user->rights->commande->creer && $commande->statut >= 3)
+				{
+					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("RebuildPDF").'</a>';
+				}
+
 				// Send
-				if ($commande->statut == 1)
+				if ($commande->statut > 0)
 				{
 					if ($user->rights->commande->envoyer)
 					{
