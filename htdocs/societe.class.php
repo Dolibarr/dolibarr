@@ -50,6 +50,7 @@ class Societe
 	var $pays_code;
 	var $tel;
 	var $fax;
+	var $email;
 	var $url;
 	var $siren;
 	var $siret;
@@ -278,6 +279,7 @@ class Societe
         $this->pays_id=trim($this->pays_id);
         $this->tel=trim($this->tel);
         $this->fax=trim($this->fax);
+        $this->email=trim($this->email);
         $this->url=trim($this->url);
         $this->siren=trim($this->siren);
         $this->siret=trim($this->siret);
@@ -323,6 +325,7 @@ class Societe
         
             $sql .= ",tel = ".($this->tel?"'".addslashes($this->tel)."'":"null");
             $sql .= ",fax = ".($this->fax?"'".addslashes($this->fax)."'":"null");
+            $sql .= ",email = ".($this->email?"'".addslashes($this->email)."'":"null");
             $sql .= ",url = ".($this->url?"'".addslashes($this->url)."'":"null");
         
             $sql .= ",siren = '". addslashes($this->siren) ."'";
@@ -445,7 +448,7 @@ class Societe
 		if($conf->global->PRODUIT_MULTIPRICES == 1)
 			$sql .= ', s.price_level';
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
-		$sql .= ', s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur';
+		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.siren, client, fournisseur';
 		$sql .= ', s.siret, s.capital, s.ape, s.tva_intra, s.rubrique';
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id, e.libelle as effectif';
@@ -491,6 +494,7 @@ class Societe
 				$this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
 				$this->statut_commercial = $libelle;    // libelle statut commercial
 
+				$this->email = $obj->email;
 				$this->url = $obj->url;
 				$this->tel = $obj->tel;
 				$this->fax = $obj->fax;

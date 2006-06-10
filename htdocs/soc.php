@@ -103,7 +103,8 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     $soc->departement_id        = $_POST["departement_id"];
     $soc->tel                   = $_POST["tel"];
     $soc->fax                   = $_POST["fax"];
-    $soc->url                   = ereg_replace( "http://", "", $_POST["url"] );
+    $soc->email                 = $_POST["email"];
+    $soc->url                   = $_POST["url"];
     $soc->siren                 = $_POST["siren"];
     $soc->siret                 = $_POST["siret"];
     $soc->ape                   = $_POST["ape"];
@@ -223,6 +224,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
             $soc->departement_id=$_POST["departement_id"];
             $soc->tel=$_POST["tel"];
             $soc->fax=$_POST["fax"];
+            $soc->email=$_POST["email"];
             $soc->url=$_POST["url"];
             $soc->capital=$_POST["capital"];
             $soc->siren=$_POST["siren"];
@@ -329,7 +331,9 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
         print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
+        print '<tr><td>'.$langs->trans('EMail').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
+        print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
+        
 
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
@@ -448,6 +452,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $soc->departement_id=$_POST["departement_id"];
             $soc->tel=$_POST["tel"];
             $soc->fax=$_POST["fax"];
+            $soc->email=$_POST["email"];
             $soc->url=$_POST["url"];
             $soc->capital=$_POST["capital"];
             $soc->siren=$_POST["siren"];
@@ -555,7 +560,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
         print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
+        print '<tr><td>'.$langs->trans('EMail').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
+        print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
 
         print '<tr>';
         // IdProf1
@@ -703,8 +709,13 @@ else
     print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
     print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
 
-    print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
-    if ($soc->url) { print '<a href="http://'.$soc->url.'" target="_blank">http://'.$soc->url.'</a>'; }
+    print '<tr><td>'.$langs->trans('EMail').'</td><td>';
+    if ($soc->email) { print '<a href="mailto:'.$soc->email.'" target="_blank">'.$soc->email.'</a>'; }
+    else print '&nbsp;';
+    print '</td>';
+    print '<td>'.$langs->trans('Web').'</td><td>';
+    if ($soc->url) { print '<a href="http://'.$soc->url.'" target="_blank">http://'.dolibarr_trunc($soc->url,32).'</a>'; }
+    else print '&nbsp;';
     print '</td></tr>';
 
     // ProfId1
