@@ -125,7 +125,7 @@ print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
 print $form->civilite_name($contact->civilite_id);
 print '</td></tr>';
 
-print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
 print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 print '</table>';

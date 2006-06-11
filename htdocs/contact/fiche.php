@@ -409,10 +409,17 @@ if ($user->rights->societe->contact->creer)
 
     $contact->load_ref_elements();
     
-    if ($conf->facture->enabled)
+    if ($conf->commande->enabled)
     {
-        print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
-        print $contact->ref_facturation?$contact->ref_facturation:$langs->trans("NoContactForAnyInvoice");
+        print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
+        print $contact->ref_commande?$contact->ref_commande:$langs->trans("NoContactForAnyOrder");
+        print '</td></tr>';
+    }
+    
+    if ($conf->propal->enabled)
+    {
+        print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
+        print $contact->ref_propal?$contact->ref_propal:$langs->trans("NoContactForAnyProposal");
         print '</td></tr>';
     }
     
@@ -420,6 +427,13 @@ if ($user->rights->societe->contact->creer)
     {
         print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
         print $contact->ref_contrat?$contact->ref_contrat:$langs->trans("NoContactForAnyContract");
+        print '</td></tr>';
+    }
+    
+    if ($conf->facture->enabled)
+    {
+        print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
+        print $contact->ref_facturation?$contact->ref_facturation:$langs->trans("NoContactForAnyInvoice");
         print '</td></tr>';
     }
     
@@ -462,7 +476,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
     print $form->civilite_name($contact->civilite_id);
     print '</td></tr>';
     
-    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
     
     print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';
@@ -512,10 +526,17 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
     
     $contact->load_ref_elements();
     
-    if ($conf->facture->enabled)
+    if ($conf->commande->enabled)
     {
-        print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
-        print $contact->ref_facturation?$contact->ref_facturation:$langs->trans("NoContactForAnyInvoice");
+        print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
+        print $contact->ref_commande?$contact->ref_commande:$langs->trans("NoContactForAnyOrder");
+        print '</td></tr>';
+    }
+    
+    if ($conf->propal->enabled)
+    {
+        print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
+        print $contact->ref_propal?$contact->ref_propal:$langs->trans("NoContactForAnyProposal");
         print '</td></tr>';
     }
     
@@ -523,6 +544,13 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
     {
         print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
         print $contact->ref_contrat?$contact->ref_contrat:$langs->trans("NoContactForAnyContract");
+        print '</td></tr>';
+    }
+    
+    if ($conf->facture->enabled)
+    {
+        print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
+        print $contact->ref_facturation?$contact->ref_facturation:$langs->trans("NoContactForAnyInvoice");
         print '</td></tr>';
     }
     

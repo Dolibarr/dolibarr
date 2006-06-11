@@ -143,11 +143,11 @@ if ($_GET["action"] == 'edit')
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td>';
     }
     else
     {
-        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
         print $langs->trans("ContactNotLinkedToCompany");
         print '</td></tr>';
     }
@@ -156,7 +156,7 @@ if ($_GET["action"] == 'edit')
     print $form->civilite_name($contact->civilite_id);
     print '</td></tr>';
     
-    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->nom.'</td>';
+    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->nom.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->prenom.'</td>';
     
 
@@ -198,12 +198,12 @@ else
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
     }
 
     else
     {
-        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
         print $langs->trans("ContactNotLinkedToCompany");
         print '</td></tr>';
     }
@@ -212,7 +212,7 @@ else
     print $form->civilite_name($contact->civilite_id);
     print '</td></tr>';
     
-    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
     if ($contact->birthday && $contact->birthday > 0) {
