@@ -41,7 +41,6 @@ if ($user->societe_id > 0)
 }
 
 
-llxHeader();
 
 function valeur($sql) 
 {
@@ -57,9 +56,12 @@ function valeur($sql)
   return $valeur;
 }
 
+
 /*
- *
+ *	Affichage zone prospect
  */
+
+llxHeader();
 
 print_fiche_titre($langs->trans("ProspectionArea"));
 
@@ -97,27 +99,27 @@ $sql .= " ORDER BY st.id";
 $resql=$db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  if ($num > 0 )
-    {
-      $var=true;
-
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
-      while ($i < $num)
+	$num = $db->num_rows($resql);
+	$i = 0;
+	if ($num > 0 )
 	{
-	  $obj = $db->fetch_object($resql);
-	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"prospects.php?page=0&amp;stcomm=".$obj->id."\">";
-	  print img_action($langs->trans("Show"),$obj->id).' ';
-	  print $langs->trans("StatusProspect".$obj->id);
-	  print "</a></td><td>".$obj->cc."</td></tr>";
-	  $i++;
+		$var=true;
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			$var=!$var;
+			print "<tr $bc[$var]><td><a href=\"prospects.php?page=0&amp;stcomm=".$obj->id."\">";
+			print img_action($langs->trans("Show"),$obj->id).' ';
+			print $langs->trans("StatusProspect".$obj->id);
+			print '</a></td><td align="right">'.$obj->cc.'</td></tr>';
+			$i++;
+		}
+		print "</table><br>";
 	}
-      print "</table><br>";
-    }
 }
 
 
