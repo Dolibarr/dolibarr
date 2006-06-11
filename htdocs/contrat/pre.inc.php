@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /** 
@@ -32,21 +31,22 @@ require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "")
 {
-  global $user, $conf, $langs;
-  $langs->load("contracts");
-  
-  top_menu($head);
-
-  $menu = new Menu();
-
-  $menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
-  $menu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"));
-  $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php", $langs->trans("MenuServices"));
-  $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=0", $langs->trans("MenuInactiveServices"), 2 , true);
-  $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4", $langs->trans("MenuRunningServices"), 2 , true);
-  $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4&filter=expired", $langs->trans("MenuExpiredServices"), 2 , true);
-  $menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=5", $langs->trans("MenuClosedServices"), 2 , true);
-
-  left_menu($menu->liste);
+	global $user, $conf, $langs;
+	$langs->load("contracts");
+	
+	top_menu($head);
+	
+	$menu = new Menu();
+	
+	$menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
+	$menu->add_submenu(DOL_URL_ROOT."/societe.php", $langs->trans("NewContract"));
+	$menu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"));
+	$menu->add_submenu(DOL_URL_ROOT."/contrat/services.php", $langs->trans("MenuServices"));
+	$menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=0", $langs->trans("MenuInactiveServices"), 2 , true);
+	$menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4", $langs->trans("MenuRunningServices"), 2 , true);
+	$menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=4&filter=expired", $langs->trans("MenuExpiredServices"), 2 , true);
+	$menu->add_submenu(DOL_URL_ROOT."/contrat/services.php?mode=5", $langs->trans("MenuClosedServices"), 2 , true);
+	
+	left_menu($menu->liste);
 }
 ?>
