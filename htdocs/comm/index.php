@@ -509,7 +509,7 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
 	      $obj = $db->fetch_object();
 	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
 	      print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";      
-	      print "<td align=\"right\">".$staticcontrat->LibStatut($obj->enservice,3)."</td></tr>\n";
+	      print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statu,3)."</td></tr>\n";
 	      $var=!$var;
 	      $i++;
 	    }

@@ -68,19 +68,21 @@ $staticcontratligne=new ContratLigne($db);
 llxHeader();
 
 
-$sql = "SELECT s.nom, c.rowid as cid, s.idp as sidp, cd.rowid, cd.label, cd.statut, p.rowid as pid,";
+$sql = "SELECT s.idp as sidp, s.nom, c.rowid as cid,";
+$sql.= " cd.rowid, cd.description, cd.statut, p.rowid as pid, p.label as label,";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_ouverture_prevue,";
 $sql.= " ".$db->pdate("cd.date_ouverture")." as date_ouverture,";
 $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin_validite,";
 $sql.= " ".$db->pdate("cd.date_cloture")." as date_cloture";
-$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
-$sql.= " , ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
-$sql.= " , ".MAIN_DB_PREFIX."contratdet as cd";
+$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c,";
+$sql.= " ".MAIN_DB_PREFIX."societe as s,";
+$sql.= " ".MAIN_DB_PREFIX."contratdet as cd";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql.= " WHERE c.statut > 0";
 $sql.= " AND c.rowid = cd.fk_contrat";
-$sql.= " AND c.fk_soc = s.idp AND cd.fk_product = p.rowid";
+$sql.= " AND c.fk_soc = s.idp";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
@@ -88,7 +90,7 @@ if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND date_fin_validite < sysdate()";
 if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
-if ($search_service)  $sql.= " AND (p.ref like '%".addslashes($search_service)."%' OR p.label like '%".addslashes($search_service)."%')";
+if ($search_service)  $sql.= " AND (p.ref like '%".addslashes($search_service)."%' OR p.description like '%".addslashes($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.idp = ".$socid;
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
@@ -112,7 +114,7 @@ if ($resql)
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid","$param","","",$sortfield);
-    print_liste_field_titre($langs->trans("Service"),"services.php", "p.label","$param","","",$sortfield);
+    print_liste_field_titre($langs->trans("Service"),"services.php", "p.description","$param","","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom","$param","","",$sortfield);
     // Date debut
     if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue","$param",'',' align="center"',$sortfield);
@@ -151,7 +153,16 @@ if ($resql)
         $var=!$var;
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->cid.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
-        print '<td><a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.dolibarr_trunc($obj->label,20).'</a></td>';
+        print '<td>';
+        if ($obj->pid)
+        {
+        	print '<a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.dolibarr_trunc($obj->label,20).'</a>';
+        }
+        else
+        {
+        	print dolibarr_trunc($obj->description,20);
+    	}
+        print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
         // Date debut
         if ($mode == "0") {
