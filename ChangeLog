@@ -23,6 +23,7 @@ English Dolibarr changelog
 - Support optionnal new javascript date popup selector.
 
 - Code cleaner. Remove unused code.
+- Works even on "UTF8 by default" systems (Mysql, Linux...)
 - Better compatibility with different PHP version or setup.
 - Lot of fixes after 2.0 release not fixed in 2.0.1.
 - Traduction more complete.
