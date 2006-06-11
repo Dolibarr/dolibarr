@@ -731,10 +731,15 @@ function img_disable($alt = "default")
         \brief      Affiche logo help avec curseur "?"
         \return     string      Retourne tag img
 */
-function img_help($usehelpcursor=1)
+function img_help($usehelpcursor=1,$usealttitle=1)
 {
-  global $conf,$langs;
-  return '<img '.($usehelpcursor?'style="cursor: help;" ':'').'src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0" alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info").'">';
+	global $conf,$langs;
+	$s ='<img ';
+	if ($usehelpcursor) $s.='style="cursor: help;" ';
+	$s.='src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0"';
+	if ($usealttitle) $s.=' alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info");
+	$s.='">';
+	return $s;
 }
 
 /**

@@ -57,158 +57,175 @@ class pdf_bulot extends ModelePDFFactures {
         $this->format = array($this->page_largeur,$this->page_hauteur);
     }
 
-
-  function write_pdf_file($facid)
-    {
-      global $user,$langs,$conf;
-      
-        if ($conf->facture->dir_output)
+    /**
+     *		\brief      Fonction générant la facture sur le disque
+     *		\param	    fac		Objet facture à générer (ou id si ancienne methode)
+     *		\return	    int     1=ok, 0=ko
+	 */
+	function write_pdf_file($fac,$outputlangs='')
 	{
-			$fac = new Facture($this->db,"",$facid);
-			$fac->fetch($facid);  
-
-			$facref = sanitize_string($fac->ref);
-			$dir = $conf->facture->dir_output . "/" . $facref;
-			$file = $dir . "/" . $facref . ".pdf";
-	  
-	  if (! file_exists($dir))
-        {
-            if (create_exdir($dir) < 0)
-            {
-                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                return 0;
-            }
-        }
-	  
-	  if (file_exists($dir))
-	    {
-                // Initialisation facture vierge
-	      $pdf=new FPDF('P','mm','A4');
-	      $pdf->Open();
-	      $pdf->AddPage();
-
-	      $this->_pagehead($pdf, $fac);
-
-	      $pdf->SetTitle($fac->ref);
-                $pdf->SetSubject($langs->trans("Bill"));
-	      $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-	      $pdf->SetAuthor($user->fullname);
-	      
-	      $tab_top = 100;
-	      $tab_height = 110;      	      
-
-	      /*
-	       *
-	       */  
-	      
-	      $pdf->SetFillColor(220,220,220);
-	      
-	      $pdf->SetFont('Arial','', 9);
-
-	      $pdf->SetXY (10, $tab_top + 10 );
-
-	      $iniY = $pdf->GetY();
-	      $curY = $pdf->GetY();
-	      $nexY = $pdf->GetY();
-	      $nblignes = sizeof($fac->lignes);
-
-	      for ($i = 0 ; $i < $nblignes ; $i++)
+		global $user,$langs,$conf,$mysoc;
+	
+		if ($conf->facture->dir_output)
 		{
-		  $curY = $nexY;
+			// Définition de l'objet $fac (pour compatibilite ascendante)
+        	if (! is_object($fac))
+        	{
+	            $fac = new Facture($this->db,"",$fac);
+	            $ret=$fac->fetch($fac);
+			}
 
-		  $pdf->SetXY (11, $curY );
-		  $pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
-
-		  $nexY = $pdf->GetY();
-		  
-		  $pdf->SetXY (133, $curY);
-		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
-		  
-		  $pdf->SetXY (145, $curY);
-		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');
-		  
-		  $pdf->SetXY (156, $curY);
-		  $pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
-	      
-		  $pdf->SetXY (174, $curY);
-		  $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
-		  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-
-		  if ($nexY > 200 && $i < $nblignes - 1)
-		    {
-		      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-		      $pdf->AddPage();
-		      $nexY = $iniY;
-		      $this->_pagehead($pdf, $fac);
-		      $pdf->SetTextColor(0,0,0);
-		      $pdf->SetFont('Arial','', 10);
-		    }
-		  
+			// Définition de $dir et $file
+			if ($fac->specimen)
+			{
+				$dir = $conf->facture->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$facref = sanitize_string($fac->ref);
+				$dir = $conf->facture->dir_output . "/" . $facref;
+				$file = $dir . "/" . $facref . ".pdf";
+			}
+				
+			if (! file_exists($dir))
+			{
+				if (create_exdir($dir) < 0)
+				{
+					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					return 0;
+				}
+			}
+	
+			if (file_exists($dir))
+			{
+				// Initialisation facture vierge
+				$pdf=new FPDF('P','mm','A4');
+				$pdf->Open();
+				$pdf->AddPage();
+	
+				$this->_pagehead($pdf, $fac);
+	
+				$pdf->SetTitle($fac->ref);
+				$pdf->SetSubject($langs->trans("Bill"));
+				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				$pdf->SetAuthor($user->fullname);
+	
+				$tab_top = 100;
+				$tab_height = 110;
+	
+				/*
+				*
+				*/
+	
+				$pdf->SetFillColor(220,220,220);
+	
+				$pdf->SetFont('Arial','', 9);
+	
+				$pdf->SetXY (10, $tab_top + 10 );
+	
+				$iniY = $pdf->GetY();
+				$curY = $pdf->GetY();
+				$nexY = $pdf->GetY();
+				$nblignes = sizeof($fac->lignes);
+	
+				for ($i = 0 ; $i < $nblignes ; $i++)
+				{
+					$curY = $nexY;
+	
+					$pdf->SetXY (11, $curY );
+					$pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
+	
+					$nexY = $pdf->GetY();
+	
+					$pdf->SetXY (133, $curY);
+					$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
+	
+					$pdf->SetXY (145, $curY);
+					$pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');
+	
+					$pdf->SetXY (156, $curY);
+					$pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
+	
+					$pdf->SetXY (174, $curY);
+					$total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
+					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+	
+					if ($nexY > 200 && $i < $nblignes - 1)
+					{
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+						$pdf->AddPage();
+						$nexY = $iniY;
+						$this->_pagehead($pdf, $fac);
+						$pdf->SetTextColor(0,0,0);
+						$pdf->SetFont('Arial','', 10);
+					}
+	
+				}
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+	
+				$this->_tableau_tot($pdf, $fac);
+	
+				$this->_tableau_compl($pdf, $fac);
+	
+				/*
+				*
+				*/
+				if (defined("FACTURE_RIB_NUMBER"))
+				{
+					if (FACTURE_RIB_NUMBER > 0)
+					{
+						$account = new Account($this->db);
+						$account->fetch(FACTURE_RIB_NUMBER);
+	
+						$pdf->SetXY (10, 40);
+						$pdf->SetFont('Arial','U',8);
+						$pdf->MultiCell(40, 4, $langs->trans("BankDetails"), 0, 'L', 0);
+						$pdf->SetFont('Arial','',8);
+						$pdf->MultiCell(40, 4, $langs->trans("BankCode").' : '. $account->code_banque, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $langs->trans("DeskCode").' : ' . $account->code_guichet, 0, 'L', 0);
+						$pdf->MultiCell(50, 4, $langs->trans("BankAccountNumber").' : ' . $account->number, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $langs->trans("BankAccountNumberKey").' : ' . $account->cle_rib, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $langs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
+					}
+				}
+	
+				/*
+				*
+				*
+				*/
+	
+				$pdf->SetFont('Arial','U',12);
+				$pdf->SetXY(10, 220);
+				$titre = $langs->trans("PaymentConditions").' : '.$fac->cond_reglement_facture;
+				$pdf->MultiCell(190, 5, $titre, 0, 'J');
+	
+				$pdf->SetFont('Arial','',9);
+				$pdf->SetXY(10, 265);
+				$pdf->MultiCell(190, 5, $langs->trans("PrettyLittleSentence"), 0, 'J');
+	
+				$pdf->Close();
+	
+				$pdf->Output($file);
+	
+				return 1;
+			}
+			else
+			{
+				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				return 0;
+			}
 		}
-	      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-
-	      $this->_tableau_tot($pdf, $fac);
-	  
-	      $this->_tableau_compl($pdf, $fac);	      
-
-	      /*
-	       *
-	       */
-	      if (defined("FACTURE_RIB_NUMBER"))
+		else
 		{
-		  if (FACTURE_RIB_NUMBER > 0)
-		    {
-		      $account = new Account($this->db);
-		      $account->fetch(FACTURE_RIB_NUMBER);
-		      
-		      $pdf->SetXY (10, 40);		  
-		      $pdf->SetFont('Arial','U',8);
-		      $pdf->MultiCell(40, 4, $langs->trans("BankDetails"), 0, 'L', 0);
-		      $pdf->SetFont('Arial','',8);
-		      $pdf->MultiCell(40, 4, $langs->trans("BankCode").' : '. $account->code_banque, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, $langs->trans("DeskCode").' : ' . $account->code_guichet, 0, 'L', 0);
-		      $pdf->MultiCell(50, 4, $langs->trans("BankAccountNumber").' : ' . $account->number, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, $langs->trans("BankAccountNumberKey").' : ' . $account->cle_rib, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, $langs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
-		      $pdf->MultiCell(40, 4, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
-		    }
+			$this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
+			return 0;
 		}
-	      
-	      /*
-	       *
-	       *
-	       */
-	      
-	      $pdf->SetFont('Arial','U',12);
-	      $pdf->SetXY(10, 220);
-	      $titre = $langs->trans("PaymentConditions").' : '.$fac->cond_reglement_facture;
-	      $pdf->MultiCell(190, 5, $titre, 0, 'J');
-	      
-	      $pdf->SetFont('Arial','',9);
-	      $pdf->SetXY(10, 265);
-	      $pdf->MultiCell(190, 5, $langs->trans("PrettyLittleSentence"), 0, 'J');
-
-	      $pdf->Close();
-	      
-	      $pdf->Output($file);
-
-	      return 1;
-	    }
-	  else
-	    {
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                    return 0;
-	    }
+		$this->error=$langs->trans("ErrorUnknown");
+		return 0;   // Erreur par defaut
 	}
-      else
-	{
-            $this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
-            return 0;
-	}
-        $this->error=$langs->trans("ErrorUnknown");
-        return 0;   // Erreur par defaut
-    }
 
 	/**
 	 *   \brief      Affiche tableau des versement

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 
 $langs->load("admin");
 $langs->load("companies");
@@ -40,11 +41,36 @@ if (!$user->admin)
   accessforbidden();
 
 $typeconst=array('yesno','texte','chaine');
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/facture/";
 
 
 /*
  * Actions
  */
+if ($_GET["action"] == 'specimen')
+{
+	$modele=$_GET["module"];
+
+	$facture = new Facture($db);
+	$facture->initAsSpecimen();
+
+	// Charge le modele
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+
+		if ($obj->write_pdf_file($facture) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
+			return;
+		}
+	}
+}
 
 if ($_GET["action"] == 'set')
 {
@@ -81,7 +107,7 @@ if ($_GET["action"] == 'setdoc')
     // On active le modele
     $type='invoice';
     $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+    $sql_del.= " WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
     $result1=$db->query($sql_del);
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
     $result2=$db->query($sql);
@@ -142,7 +168,6 @@ if ($_GET["action"] == 'delete')
 
 llxHeader("","");
 
-$dir = "../includes/modules/facture/";
 $html=new Form($db);
 
 $h = 0;
@@ -285,6 +310,7 @@ while (($file = readdir($handle))!==false)
         print '<tr '.$bc[$var].'><td width="100">';
         echo "$name";
         print "</td><td>\n";
+
         require_once($dir.$file);
         $module = new $classname($db);
         print $module->description;
@@ -333,7 +359,9 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
-    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>'.img_help(0).'</td>';
+    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
+    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" alt="" title="">'.img_help(0,0).'</a>';
+    	print '</td>';
 
         print "</tr>\n";
     }

@@ -48,7 +48,7 @@ class pdf_crabe extends ModelePDFFactures
     {
         global $conf,$langs;
         
-		  $langs->load("main");
+		$langs->load("main");
         $langs->load("bills");
         $langs->load("products");
 		  
@@ -105,7 +105,7 @@ class pdf_crabe extends ModelePDFFactures
 
     /**
      *		\brief      Fonction générant la facture sur le disque
-     *		\param	    id		Id de la facture à générer
+     *		\param	    fac		Objet facture à générer (ou id si ancienne methode)
      *		\return	    int     1=ok, 0=ko
      *      \remarks    Variables utilisées
 	 *		\remarks    MAIN_INFO_SOCIETE_NOM
@@ -124,19 +124,31 @@ class pdf_crabe extends ModelePDFFactures
 	 *		\remarks    FACTURE_CHQ_NUMBER
      *		\remarks    FACTURE_RIB_NUMBER
      */
-    function write_pdf_file($id)
+    function write_pdf_file($fac,$outputlangs='')
     {
         global $user,$langs,$conf,$mysoc;
 
         if ($conf->facture->dir_output)
         {
-            $fac = new Facture($this->db,"",$id);
-            $ret=$fac->fetch($id);
-            $nblignes = sizeof($fac->lignes);
+			// Définition de l'objet $fac (pour compatibilite ascendante)
+        	if (! is_object($fac))
+        	{
+	            $fac = new Facture($this->db,"",$fac);
+	            $ret=$fac->fetch($fac);
+			}
 
-			$facref = sanitize_string($fac->ref);
-			$dir = $conf->facture->dir_output . "/" . $facref;
-			$file = $dir . "/" . $facref . ".pdf";
+			// Définition de $dir et $file
+			if ($fac->specimen)
+			{
+				$dir = $conf->facture->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$facref = sanitize_string($fac->ref);
+				$dir = $conf->facture->dir_output . "/" . $facref;
+				$file = $dir . "/" . $facref . ".pdf";
+			}
 
             if (! file_exists($dir))
             {
@@ -149,6 +161,8 @@ class pdf_crabe extends ModelePDFFactures
 
             if (file_exists($dir))
             {
+	            $nblignes = sizeof($fac->lignes);
+
                 // Initialisation document vierge
                 $pdf=new FPDF('P','mm',$this->format);
                 $pdf->Open();
@@ -574,7 +588,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY($this->marge_gauche, $tab2_top + 0);
     	if ($this->franchise==1)
       	{
-            $pdf->MultiCell(100, $tab2_hl, $langs->trans("VATIsNotUsed"), 0, 'L', 0);
+            $pdf->MultiCell(100, $tab2_hl, $langs->trans("VATIsNotUsedForInvoice"), 0, 'L', 0);
         }
 
         // Tableau total
