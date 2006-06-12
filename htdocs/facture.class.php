@@ -2283,8 +2283,8 @@ class Facture
 		$this->socidp = $socids[$socid];
 		$this->date = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
-		$this->cond_reglement_id = 3;
-		$this->mode_reglement_id = 3;
+		$this->cond_reglement_code = 'RECEP';
+		$this->mode_reglement_code = 'CHQ';
 		$this->note_public='SPECIMEN';
 		$nbp = rand(1, 9);
 		$xnbp = 0;
