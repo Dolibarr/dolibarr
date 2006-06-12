@@ -31,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 $langs->load("admin");
 $langs->load("bills");
@@ -44,7 +45,32 @@ if (!$user->admin)
 /*
  * Actions
  */
- 
+
+if ($_GET["action"] == 'specimen')
+{
+	$modele=$_GET["module"];
+
+	$propal = new Propal($db);
+	$propal->initAsSpecimen();
+
+	// Charge le modele
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/propale/";
+	$file = "pdf_propale_".$modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = "pdf_propale_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+
+		if ($obj->write_pdf_file($propal) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
+			return;
+		}
+	}
+}
+
 if ($_POST["action"] == 'nbprod')
 {
     dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"]);
@@ -88,7 +114,7 @@ if ($_GET["action"] == 'del')
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
-	
+
     if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$_GET["value"]))
     {
         // La constante qui a été lue en avant du nouveau set
@@ -103,7 +129,7 @@ if ($_GET["action"] == 'setdoc')
     $result1=$db->query($sql_del);
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
     $result2=$db->query($sql);
-    if ($result1 && $result2) 
+    if ($result1 && $result2)
     {
 		$db->commit();
     }
@@ -175,7 +201,7 @@ if ($handle)
             print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
             print $module->info();
             print '</td>';
-            
+
             // Examples
             print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
 
@@ -273,7 +299,7 @@ while (($file = readdir($handle))!==false)
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";
-			if ($conf->global->PROPALE_ADDON_PDF != "$name") 
+			if ($conf->global->PROPALE_ADDON_PDF != "$name")
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
 				print img_tick($langs->trans("Disable"));
@@ -303,7 +329,7 @@ while (($file = readdir($handle))!==false)
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
 		}
 		print '</td>';
-		
+
 		// Info
     	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($obj->type?$obj->type:$langs->trans("Unknown"));
     	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$obj->page_largeur;
@@ -312,7 +338,9 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($obj->option_logo);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($obj->option_modereg);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($obj->option_condreg);
-    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>'.img_help(0).'</td>';
+    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
+    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" alt="" title="">'.img_help(0,0).'</a>';
+    	print '</td>';
 
         print "</tr>\n";
 	}
@@ -397,7 +425,7 @@ if ($conf->commande->enabled)
 	print '</tr>';
 	print '</table>';
 	print '</form>';
-	
+
 	print '<br>';
 }
 

@@ -32,7 +32,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 
-/** 	
+/**
     \class      pdf_bernique
     \brief      Classe permettant de générer les factures au modèle Bernique
 */
@@ -40,13 +40,13 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 class pdf_bernique extends ModelePDFFactures  {
 
   function pdf_bernique($db=0)
-    { 
+    {
         global $langs;
-		  
+
 		  $langs->load("main");
 		  $langs->load("bills");
 		  $langs->load("products");
-		  
+
 		  $this->db = $db;
         $this->description = $langs->trans('PDFBerniqueDescription');
 
@@ -65,7 +65,7 @@ class pdf_bernique extends ModelePDFFactures  {
 	function write_pdf_file($fac,$outputlangs='')
 	{
 		global $user,$langs,$conf,$mysoc;
-	
+
 		if ($conf->facture->dir_output)
 		{
 			// Définition de l'objet $fac (pour compatibilite ascendante)
@@ -88,7 +88,7 @@ class pdf_bernique extends ModelePDFFactures  {
 				$dir = $conf->facture->dir_output . "/" . $facref;
 				$file = $dir . "/" . $facref . ".pdf";
 			}
-	
+
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -97,61 +97,61 @@ class pdf_bernique extends ModelePDFFactures  {
 					return 0;
 				}
 			}
-	
+
 			if (file_exists($dir))
 			{
 				// Initialisation facture vierge
 				$pdf=new FPDF('P','mm','A4');
 				$pdf->Open();
 				$pdf->AddPage();
-	
+
 				$this->_pagehead($pdf, $fac);
-	
+
 				$pdf->SetTitle($fac->ref);
 				$pdf->SetSubject($langs->trans("Bill"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
-	
+
 				$tab_top = 100;
 				$tab_height = 110;
-	
+
 				/*
 				*
 				*/
-	
+
 				$pdf->SetFillColor(220,220,220);
-	
+
 				$pdf->SetFont('Arial','', 9);
-	
+
 				$pdf->SetXY (10, $tab_top + 10 );
-	
+
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
 				$nblignes = sizeof($fac->lignes);
-	
+
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-	
+
 					$pdf->SetXY (11, $curY );
 					$pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
-	
+
 					$nexY = $pdf->GetY();
-	
+
 					$pdf->SetXY (133, $curY);
 					$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
-	
+
 					$pdf->SetXY (145, $curY);
 					$pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');
-	
+
 					$pdf->SetXY (156, $curY);
 					$pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
-	
+
 					$pdf->SetXY (174, $curY);
 					$total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
 					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-	
+
 					if ($nexY > 200 && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
@@ -161,14 +161,14 @@ class pdf_bernique extends ModelePDFFactures  {
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 10);
 					}
-	
+
 				}
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 
 				$this->_tableau_tot($pdf, $fac, $tab_top, $tab_height);
-	
+
 				$this->_tableau_compl($pdf, $fac);
-	
+
 				/*
 				*
 				*/
@@ -178,7 +178,7 @@ class pdf_bernique extends ModelePDFFactures  {
 					{
 						$account = new Account($this->db);
 						$account->fetch(FACTURE_RIB_NUMBER);
-	
+
 						$pdf->SetXY (10, 40);
 						$pdf->SetFont('Arial','U',8);
 						$pdf->MultiCell(40, 4, $langs->trans("BankDetails"), 0, 'L', 0);
@@ -192,21 +192,21 @@ class pdf_bernique extends ModelePDFFactures  {
 						$pdf->MultiCell(40, 4, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
 					}
 				}
-	
+
 				/*
 				*
 				*
 				*/
-	
+
 				$pdf->SetFont('Arial','',9);
 				$pdf->SetXY(10, 260);
 				$pdf->MultiCell(190, 5, $langs->trans("IntracommunityVATNumber").' : '.MAIN_INFO_TVAINTRA, 0, 'J');
 				$pdf->MultiCell(190, 5, $langs->trans("PrettyLittleSentence"), 0, 'J');
-	
+
 				$pdf->Close();
-	
+
 				$pdf->Output($file);
-	
+
 				return 1;
 			}
 			else
@@ -221,7 +221,7 @@ class pdf_bernique extends ModelePDFFactures  {
 			return 0;
 		}
 	}
-	
+
 	/*
 	*
 	*
@@ -232,18 +232,18 @@ class pdf_bernique extends ModelePDFFactures  {
 		global $langs;
 		$langs->load("main");
 		$langs->load("bills");
-	
+
 		$tab3_top = 240;
 		$tab3_height = 18;
 		$tab3_width = 60;
-	
+
 		$pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
-	
+
 		$pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
 		$pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
-	
+
 		$pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
-	
+
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetXY (10, $tab3_top - 6);
 		$pdf->MultiCell(60, 6, $langs->trans("ExtraInfos"), 0, 'L', 0);
@@ -253,7 +253,7 @@ class pdf_bernique extends ModelePDFFactures  {
 		$pdf->MultiCell(20, 6, $langs->trans("ChequeNumber"), 0, 'L', 0);
 		$pdf->SetXY (10, $tab3_top + 12);
 		$pdf->MultiCell(20, 6, $langs->trans("Bank"), 0, 'L', 0);
-	
+
         /*
          * Conditions de règlements
          */
@@ -267,25 +267,25 @@ class pdf_bernique extends ModelePDFFactures  {
 			$pdf->MultiCell(120, 5, $titre.$lib_condition_paiement, 0, 'J');
 		}
 	}
-	
+
 	function _tableau_tot(&$pdf, $fac, $top, $height)
 	{
 		global $langs;
 		$langs->load("main");
 		$langs->load("bills");
-	
-	
+
+
 		$tab2_top = $top + $height;
 		$tab2_hl = 5;
 		$tab2_height = $tab2_hl * 4;
 		$pdf->SetFont('Arial','', 9);
-	
+
 		$tvas = $fac->getSumTva();
-	
+
 		$i = 0;
-	
+
 		$tab4_top = $tab2_top + 2 + ($tab2_hl * 2);
-	
+
 		foreach ($tvas as $key => $value)
 		{
 			$pdf->SetXY (10, $tab4_top + ( $i * $tab2_hl));
@@ -299,43 +299,43 @@ class pdf_bernique extends ModelePDFFactures  {
 		$pdf->line(10, $tab4_top, 10, $tab4_top + ($tab2_hl * $i));
 		$pdf->line(35, $tab4_top, 35, $tab4_top + ($tab2_hl * $i));
 		$pdf->line(55, $tab4_top, 55, $tab4_top + ($tab2_hl * $i));
-	
-	
+
+
 		$pdf->Rect(10, $tab2_top, 190, $tab2_hl * 2);
 		$pdf->line(10, $tab2_top + $tab2_hl, 200, $tab2_top + $tab2_hl);
-	
-	
+
+
 		$pdf->SetXY (132, $tab2_top + 0);
 		$pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalHT"), 0, 'R', 0);
-	
+
 		$pdf->SetXY (11, $tab2_top + $tab2_hl);
 		$pdf->MultiCell(42, $tab2_hl, $langs->trans("Discount")." ". $fac->remise_percent . " %", 0, 'L', 0);
-	
+
 		$pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
 		$pdf->MultiCell(42, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'R', 0);
-	
+
 		$pdf->SetXY (132, $tab2_top + $tab2_hl * 3);
 		$pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalVAT"), 0, 'R', 0);
-	
+
 		$pdf->SetXY (132, $tab2_top + $tab2_hl * 4);
 		$pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalTTC"), 0, 'R', 1);
-	
+
 		$pdf->SetXY (174, $tab2_top + 0);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
-	
+
 		$pdf->SetXY (174, $tab2_top + $tab2_hl);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
-	
+
 		$pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
-	
+
 		$pdf->SetXY (174, $tab2_top + $tab2_hl * 3);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
-	
+
 		$pdf->SetXY (174, $tab2_top + $tab2_hl * 4);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
 	}
-	
+
 	/*
 	*
 	*/
@@ -344,23 +344,23 @@ class pdf_bernique extends ModelePDFFactures  {
 		global $langs;
 		$langs->load("main");
 		$langs->load("bills");
-	
+
 		$pdf->SetFont('Arial','',10);
-	
+
 		$pdf->Text(11,$tab_top + 5,$langs->trans("Designation"));
-	
+
 		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
 		$pdf->Text(134,$tab_top + 5,$langs->trans("VAT"));
-	
+
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
 		$pdf->Text(147,$tab_top + 5,$langs->trans("Qty"));
-	
+
 		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
 		$pdf->Text(160,$tab_top + 5,$langs->trans("PriceU"));
-	
+
 		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
 		$pdf->Text(187,$tab_top + 5,$langs->trans("Total"));
-	
+
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 		$pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
 	}
@@ -375,7 +375,7 @@ class pdf_bernique extends ModelePDFFactures  {
 		global $langs,$conf;
 		$langs->load("main");
 		$langs->load("bills");
-	
+
 		$pdf->SetXY(10,5);
 		if (defined("FAC_PDF_INTITULE"))
 		{
@@ -383,7 +383,7 @@ class pdf_bernique extends ModelePDFFactures  {
 			$pdf->SetFont('Arial','B',14);
 			$pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
 		}
-	
+
 		$pdf->SetTextColor(70,70,170);
 		if (defined("FAC_PDF_ADRESSE"))
 		{
@@ -400,7 +400,7 @@ class pdf_bernique extends ModelePDFFactures  {
 			$pdf->SetFont('Arial','',10);
 			$pdf->MultiCell(40, 5, "SIREN : ".MAIN_INFO_SIREN);
 		}
-	
+
 		if (defined("FAC_PDF_INTITULE2"))
 		{
 			$pdf->SetXY(100,5);
@@ -420,13 +420,13 @@ class pdf_bernique extends ModelePDFFactures  {
 		$pdf->SetXY(102,$pdf->GetY());
 		$pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
 		$pdf->rect(100, 40, 100, 40);
-	
-	
+
+
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',14);
 		$pdf->Text(11, 88, $langs->trans('Date').' : ' . strftime("%d %b %Y", $fac->date));
 		$pdf->Text(11, 94, $langs->trans('Invoice').' : '.$fac->ref);
-	
+
 		/*
 		*/
 		$pdf->SetTextColor(0,0,0);
@@ -435,7 +435,7 @@ class pdf_bernique extends ModelePDFFactures  {
 		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 		/*
 		*/
-	
+
 	}
 }
 

@@ -51,12 +51,13 @@ class Propal
     var $projetidp;
     var $author;
     var $ref;
+    var $status;
     var $datep;
+    var $fin_validite;
+
     var $products;
     var $products_qty;
     var $price;
-    var $status;
-    var $fin_validite;
     var $cond_reglement_id;
     var $cond_reglement_code;
     var $mode_reglement_id;
@@ -69,20 +70,21 @@ class Propal
 
 	var $date_livraison;
     var $adresse_livraison_id;
-    
+
     var $labelstatut=array();
     var $labelstatut_short=array();
-    
+
     var $product=array();
 
     // Pour board
     var $nbtodo;
     var $nbtodolate;
-    
+
+    var $specimen;
     var $error;
 
 
-    /** 
+    /**
      *		\brief      Constructeur
      *      \param      DB          Handler d'accès base
      *      \param      soc_idp     Id de la société
@@ -91,7 +93,7 @@ class Propal
     function Propal($DB, $soc_idp="", $propalid=0)
     {
       global $langs;
-      
+
       $this->db = $DB ;
       $this->socidp = $soc_idp;
       $this->id = $propalid;
@@ -99,7 +101,7 @@ class Propal
       $this->remise = 0;
       $this->remise_percent = 0;
       $this->remise_absolue = 0;
-      
+
       $langs->load("propals");
       $this->labelstatut[0]=$langs->trans("PropalStatusDraft");
       $this->labelstatut[1]=$langs->trans("PropalStatusValidated");
@@ -122,7 +124,7 @@ class Propal
    * \return    void
    * \see       insert_product
    */
-	 
+
     function add_product($idproduct, $qty, $remise_percent=0)
     {
         if ($idproduct > 0)
@@ -152,7 +154,7 @@ class Propal
 
 
 	}
-	
+
     /**
      *    \brief     Ajout d'un produit dans la proposition, en base
      *    \param     idproduct           Id du produit à ajouter
@@ -171,7 +173,7 @@ class Propal
             // Nettoyage parametres
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
-            
+
             if ($idproduct)
             {
    		        $prod = new Product($this->db, $idproduct);
@@ -195,9 +197,9 @@ class Propal
                     	$subprice = price2num($prod->price);
 					}
 				   	/*
-                    
+
 					*/
-           
+
                     // Calcul remise et nouveau prix
         			$remise = 0;
                     if ($remise_percent > 0)
@@ -263,19 +265,19 @@ class Propal
 
             $price = $p_price;
             $subprice = $p_price;
-    
+
             if ($remise_percent > 0)
             {
                 $remise = round(($p_price * $remise_percent / 100), 2);
                 $price = $p_price - $remise;
             }
-            
+
             	$sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
               $sql .= " (".$this->id.", 0,'". $p_qty."','". price2num($price)."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '".price2num($subprice)."') ; ";
-    
+
             if ($this->db->query($sql) )
             {
-    
+
                 if ($this->update_price() > 0)
                 {
                     return 1;
@@ -291,8 +293,8 @@ class Propal
             }
         }
     }
-    
-    
+
+
   /**
    *    \brief      Mise à jour d'une ligne de produit
    *    \param      id              Id de la ligne
@@ -303,7 +305,7 @@ class Propal
    *    \param      desc            Description
    *    \return     int             0 en cas de succès
    */
-    	
+
     function UpdateLigne($id, $subprice, $qty, $remise_percent=0, $tva_tx, $desc='')
     {
         if ($this->statut == 0)
@@ -313,13 +315,13 @@ class Propal
             $price = $subprice;
             $remise_percent=price2num($remise_percent);
             $tva_tx=price2num($tva_tx);
-            
+
             if ($remise_percent > 0)
             {
                 $remise = round(($subprice * $remise_percent / 100), 2);
                 $price = $subprice - $remise;
             }
-    
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."propaldet ";
             $sql.= " SET qty='".$qty."'";
             $sql.= " , price='". price2num($price)."'";
@@ -328,7 +330,7 @@ class Propal
             $sql.= " , tva_tx='".$tva_tx."'";
             $sql.= " , description='".addslashes($desc)."'";
             $sql.= " WHERE rowid = '".$id."';";
-    
+
             if ($this->db->query($sql))
             {
                 $this->update_price();
@@ -347,8 +349,8 @@ class Propal
             return -2;
         }
     }
-    
-		
+
+
 	/**
 	*    \brief Liste les valeurs possibles de type de contacts pour les factures
 	*    \param source 'internal' ou 'external'
@@ -359,20 +361,20 @@ class Propal
 		global $langs;
 		$element='propal';
 		$tab = array();
-	
+
 		$sql = "SELECT distinct tc.rowid, tc.code, tc.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE element='".$element."'";
 		$sql.= " AND source='".$source."'";
 		$sql.= " ORDER by tc.code";
-	
+
 		$resql=$this->db->query($sql);
-	
+
 		if ($resql)
 		{
 			$num=$this->db->num_rows($resql);
 			$i=0;
-	
+
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
@@ -381,7 +383,7 @@ class Propal
 				$tab[$obj->rowid]=$libelle_type;
 				$i++;
 			}
-	
+
 			return $tab;
 		}
 		else
@@ -390,8 +392,8 @@ class Propal
 			return null;
 		}
 	}
-	
-	
+
+
 	/**
 	*   \brief Récupère les lignes de contact de l'objet
 	*   \param statut Statut des lignes detail à récupérer
@@ -403,7 +405,7 @@ class Propal
 		global $langs;
 		$element='propal';
 		$tab=array();
-	
+
 		$sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id,";
 		if ($source == 'internal') $sql.=" '-1' as socid,";
 		if ($source == 'external') $sql.=" t.fk_soc as socid,";
@@ -424,14 +426,14 @@ class Propal
 		if ($source == 'external') $sql.= " AND ec.fk_socpeople = t.idp";
 		if ($statut >= 0) $sql.= " AND statut = '$statut'";
 		$sql.=" ORDER BY t.name ASC";
-	
+
 		$resql=$this->db->query($sql);
-	
+
 		if ($resql)
 		{
 			$num=$this->db->num_rows($resql);
 			$i=0;
-	
+
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
@@ -440,7 +442,7 @@ class Propal
 				$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom,'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
 				$i++;
 			}
-	
+
 			return $tab;
 		}
 		else
@@ -450,8 +452,8 @@ class Propal
 			return -1;
 		}
 	}
-	
-	
+
+
 	/**
 	*   \brief Ajoute un contact associé une commande
 	*   \param fk_socpeople Id du contact a ajouter.
@@ -462,18 +464,18 @@ class Propal
 	function add_contact($fk_socpeople, $type_contact, $source='extern')
 	{
 		dolibarr_syslog("Commande::add_contact $fk_socpeople, $type_contact, $source");
-	
+
 		if ($fk_socpeople <= 0) return -1;
-	
+
 		// Verifie type_contact
 		if (! $type_contact || ! is_numeric($type_contact))
 		{
 			$this->error="Valeur pour type_contact incorrect";
 			return -3;
 		}
-	
+
 		$datecreate = time();
-	
+
 		// Insertion dans la base
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
 		$sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
@@ -481,7 +483,7 @@ class Propal
 		$sql.= $this->db->idate($datecreate);
 		$sql.= ", 4, '". $type_contact . "' ";
 		$sql.= ")";
-	
+
 		// Retour
 		if ( $this->db->query($sql) )
 		{
@@ -493,8 +495,8 @@ class Propal
 			return -1;
 		}
 	}
-	
-	
+
+
 	/**
 	*   \brief Supprime une ligne de contact
 	*   \param rowid La reference du contact
@@ -504,7 +506,7 @@ class Propal
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql.= " WHERE rowid =".$rowid;
-	
+
 		if ($this->db->query($sql))
 		{
 			return 1;
@@ -514,7 +516,7 @@ class Propal
 			return -1;
 		}
 	}
-	
+
 	/**
 	*    \brief      Le détail d'un contact
 	*    \param      rowid      L'identifiant du contact
@@ -523,7 +525,7 @@ class Propal
 	function detail_contact($rowid)
 	{
 		$element='propal';
-	
+
 		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
 		$sql.= " tc.code, tc.libelle, s.fk_soc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc, ";
@@ -532,7 +534,7 @@ class Propal
 		$sql.= " AND ec.fk_socpeople=s.idp";
 		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
-	
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -546,7 +548,7 @@ class Propal
 			return null;
 		}
 	}
-	
+
 	/**
 	*      \brief      Mise a jour du contact associé à une commande
 	*      \param      rowid               La reference du lien commande-contact
@@ -572,7 +574,7 @@ class Propal
 			return -1;
 		}
 	}
-   
+
 	/**
 	 *		\brief		Renvoi tableau des id des contacts d'un type donné
 	 *		\param		source		'internel' ou 'external'
@@ -584,7 +586,7 @@ class Propal
 		$element='propal'; 	// Contact sur propal
 		$result=array();
 		$i=0;
-	
+
 		$sql = "SELECT ec.fk_socpeople";
 		$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE ec.element_id = ".$this->id;
@@ -592,9 +594,9 @@ class Propal
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
 		$sql.= " AND tc.code = '".$code."'";
-	
+
 		$resql=$this->db->query($sql);
-	
+
 		if ($resql)
 		{
 			while ($obj = $this->db->fetch_object($resql))
@@ -608,29 +610,29 @@ class Propal
 			$this->error=$this->db->error();
 			return null;
 		}
-	
+
 		return $result;
-	} 
+	}
 
 
   /**
    *
    *
    */
-	 
+
   function fetch_client()
     {
       $client = new Societe($this->db);
       $client->fetch($this->socidp);
       $this->client = $client;
     }
-    
-    
+
+
  /**
    *
    *
    */
-	 
+
   function fetch_adresse_livraison($id)
     {
     	$idadresse = $id;
@@ -638,12 +640,12 @@ class Propal
       $adresse->fetch_adresse_livraison($idadresse);
       $this->adresse = $adresse;
     }
-    
+
  /**
    *
    *
    */
-	 
+
   function fetch_contact_propal($id)
     {
     	$idcontact = $id;
@@ -651,9 +653,9 @@ class Propal
       $contact->fetch($idcontact);
       $this->contact = $contact;
     }
-    
-    
-		
+
+
+
     /**
      *      \brief      Supprime une ligne de detail
      *      \param      idligne     Id de la ligne detail à supprimer
@@ -664,11 +666,11 @@ class Propal
         if ($this->statut == 0)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$idligne;
-    
+
             if ($this->db->query($sql) )
             {
                 $this->update_price();
-    
+
                 return 1;
             }
             else
@@ -682,7 +684,7 @@ class Propal
         }
     }
 
-		
+
     /**
      *      \brief      Crée une propal
      *      \return     int     <0 si ko, >=0 si ok
@@ -692,7 +694,7 @@ class Propal
     	global $langs,$conf;
         // Définition paramètres
         $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
-    
+
         $this->db->begin();
 
         // Insertion dans la base
@@ -710,7 +712,7 @@ class Propal
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal");
-    
+
             if ($this->id)
             {
                 /*
@@ -732,7 +734,7 @@ class Propal
                     $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref'";
                     $result=$this->db->query($sql);
                 }
-                
+
                 // Affectation de l'adresse de livraison
                 if ($this->adresse_livraison_id)
                 {
@@ -748,7 +750,7 @@ class Propal
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
                     // Fin appel triggers
-        
+
                     $this->db->commit();
                     return $this->id;
                 }
@@ -768,10 +770,10 @@ class Propal
             $this->db->rollback();
             return -1;
         }
-        
+
         return $this->id;
     }
-		
+
     /**
      *    \brief      Mets à jour le prix total de la proposition
      *    \return     int     <0 si ko, >0 si ok
@@ -779,7 +781,7 @@ class Propal
     function update_price()
     {
         include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
-    
+
         /*
          *  Liste des produits a ajouter
          */
@@ -789,7 +791,7 @@ class Propal
         {
             $num = $this->db->num_rows();
             $i = 0;
-    
+
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object();
@@ -800,7 +802,7 @@ class Propal
             }
         }
         $calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
-    
+
         $this->total_remise   = $calculs[3];
 		$this->amount_ht      = $calculs[4];
         $this->total_ht       = $calculs[0];
@@ -815,7 +817,7 @@ class Propal
         $sql .= ", total='". price2num($this->total_ttc)."'";
         $sql .= ", remise='".price2num($this->total_remise)."'";
         $sql .=" WHERE rowid = ".$this->id;
-    
+
         if ( $this->db->query($sql) )
         {
             return 1;
@@ -827,7 +829,7 @@ class Propal
         }
     }
 
-		
+
 		 /**
 	 *      \brief      Stocke un numéro de rang pour toutes les lignes de
 	 *                  detail d'une propale qui n'en ont pas.
@@ -951,7 +953,7 @@ class Propal
 			}
 		}
 	}
-		
+
     /**
      *    \brief      Recupère de la base les caractéristiques d'une propale
      *    \param      rowid       id de la propal à récupérer
@@ -973,15 +975,15 @@ class Propal
         $sql.= " AND rowid='".$rowid."';";
 
         $resql=$this->db->query($sql);
-    
+
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id                   = $rowid;
-    
+
                 $this->datep                = $obj->dp;
                 $this->fin_validite         = $obj->dfv;
                 $this->date                 = $obj->dp;
@@ -1007,17 +1009,17 @@ class Propal
                 $this->mode_reglement_id    = $obj->fk_mode_reglement;
 		        $this->date_livraison       = $obj->date_livraison;
 		        $this->adresse_livraison_id = $obj->fk_adresse_livraison;
-    
+
                 $this->user_author_id = $obj->fk_user_author;
-                
+
                 if ($this->cond_reglement_id)
                 {
                    $sql = "SELECT rowid, libelle, code";
                    $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
                    $sql.= " WHERE rowid = ".$this->cond_reglement_id;
-                   
+
                    $resqlcond = $this->db->query($sql);
-                   
+
                    if ($resqlcond)
                    {
                    	$objc = $this->db->fetch_object($resqlcond);
@@ -1025,15 +1027,15 @@ class Propal
                    	$this->cond_reglement_code = $objc->code;
                   }
                 }
-                
+
                 if ($this->user_author_id)
                 {
                 	$sql = "SELECT name, firstname";
                 	$sql.= " FROM ".MAIN_DB_PREFIX."user";
                 	$sql.= " WHERE rowid = ".$this->user_author_id;
-                	
+
                 	$resqluser = $this->db->query($sql);
-                	
+
                 	if ($resqluser)
                 	{
                 		$obju = $this->db->fetch_object($resqluser);
@@ -1041,37 +1043,37 @@ class Propal
                 		$this->user_author_firstname = $obju->firstname;
                 	}
                 }
-                
+
                 if ($obj->fk_statut == 0)
                 {
                     $this->brouillon = 1;
                 }
-    
+
                 $this->lignes = array();
                 $this->db->free($resql);
-    
+
                 $this->ref_url = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id.'">'.$this->ref.'</a>';
-    
+
                 /*
-                * Lignes propales liées à un produit
-                */
-                $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
-                $sql.= " d.fk_product, p.label, p.description as product_desc, p.ref";
+                 * Lignes propales liées à un produit ou non
+                 */
+                $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice, d.fk_product,";
+                $sql.= " p.label, p.description as product_desc, p.ref";
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
                 $sql.= " WHERE d.fk_propal = ".$this->id;
                 $sql.= " ORDER by d.rang";
-    
+
                 $result = $this->db->query($sql);
                 if ($result)
                 {
                     $num = $this->db->num_rows($result);
                     $i = 0;
-    
+
                     while ($i < $num)
                     {
                         $objp                  = $this->db->fetch_object($result);
-    
+
                         $ligne                 = new PropaleLigne();
 
                         $ligne->desc           = $objp->description;  // Description ligne
@@ -1086,10 +1088,10 @@ class Propal
                         $ligne->libelle        = $objp->label;        // Label produit
                         $ligne->product_desc   = $objp->product_desc; // Description produit
                         $ligne->ref            = $objp->ref;
-    
+
                         $this->lignes[$i]      = $ligne;
                         //dolibarr_syslog("1 ".$ligne->desc);
-                        //dolibarr_syslog("2 ".$ligne->product_desc);
+                        //print "xx $i ".$this->lignes[$i]->product_desc;
                         $i++;
                     }
                     $this->db->free($result);
@@ -1099,55 +1101,7 @@ class Propal
                     dolibarr_syslog("Propal::Fetch Erreur lecture des produits");
                     return -1;
                 }
-    
-                /*
-                 * Lignes propales liées à aucun produit
-                 */
 
-/* // requête en double, du coup les "Lignes propales liées à aucun produit" n'était plus classé dans l'ordre
-
-                $sql = "SELECT d.qty, d.description, d.price, d.subprice, d.tva_tx, d.rowid, d.remise_percent";
-                $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d";
-                $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = 0";
-    
-                $result = $this->db->query($sql);
-                if ($result)
-                {
-                    $num = $this->db->num_rows($result);
-                    $j = 0;
-    
-                    while ($j < $num)
-                    {
-                        $objp                  = $this->db->fetch_object($result);
-
-                        $ligne                 = new PropaleLigne();
-
-                        $ligne->desc           = $objp->description;
-                        $ligne->qty            = $objp->qty;
-                        $ligne->tva_tx         = $objp->tva_tx;
-                        $ligne->subprice       = $objp->subprice;
-                        $ligne->remise_percent = $objp->remise_percent;
-                        $ligne->price          = $objp->price;
-                        $ligne->product_id     = 0;
-
-                        $ligne->libelle        = $objp->description;
-                        $ligne->product_desc   = '';
-                        $ligne->ref            = '';
-    
-                        $this->lignes[$i]      = $ligne;
-                        $i++;
-                        $j++;
-                    }
-    
-                    $this->db->free($result);
-                }
-                else
-                {
-                    dolibarr_syslog("Propal::Fetch Erreur lecture des lignes de propale");
-    
-                    return -1;
-                }
-*/
             }
             return 1;
         }
@@ -1157,7 +1111,7 @@ class Propal
             return -1;
         }
     }
-  
+
     /**
      *      \brief      Passe au statut valider une propale
      *      \param      user        Objet utilisateur qui valide
@@ -1166,7 +1120,7 @@ class Propal
     function valid($user)
     {
         global $conf,$langs;
-        
+
         if ($user->rights->propale->valider)
         {
             $this->db->begin();
@@ -1174,7 +1128,7 @@ class Propal
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
             $sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    
+
             if ($this->db->query($sql))
             {
 
@@ -1194,7 +1148,7 @@ class Propal
             }
         }
     }
-	
+
 
     /**
      *      \brief      Définit la date de fin de validité
@@ -1221,11 +1175,11 @@ class Propal
             }
         }
     }
-    
+
     /**
      *      \brief      Définit une date de livraison
      *      \param      user        		Objet utilisateur qui modifie
-     *      \param      date_livraison      date de livraison  
+     *      \param      date_livraison      date de livraison
      *      \return     int         		<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison)
@@ -1235,7 +1189,7 @@ class Propal
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
             $sql.= " SET date_livraison = ".$this->db->idate($date_livraison);
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    
+
             if ($this->db->query($sql))
             {
                 $this->date_livraison = $date_livraison;
@@ -1253,7 +1207,7 @@ class Propal
     /**
      *      \brief      Définit une adresse de livraison
      *      \param      user        		Objet utilisateur qui modifie
-     *      \param      adresse_livraison      Adresse de livraison  
+     *      \param      adresse_livraison      Adresse de livraison
      *      \return     int         		<0 si ko, >0 si ok
      */
     function set_adresse_livraison($user, $adresse_livraison)
@@ -1262,7 +1216,7 @@ class Propal
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$adresse_livraison."'";
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    
+
             if ($this->db->query($sql) )
             {
                 $this->adresse_livraison_id = $adresse_livraison;
@@ -1280,7 +1234,7 @@ class Propal
     /**
      *      \brief      Définit une remise globale relative sur la proposition
      *      \param      user        Objet utilisateur qui modifie
-     *      \param      remise      Montant remise    
+     *      \param      remise      Montant remise
      *      \return     int         <0 si ko, >0 si ok
      */
     function set_remise_percent($user, $remise)
@@ -1290,10 +1244,10 @@ class Propal
         if ($user->rights->propale->creer)
         {
             $remise = price2num($remise);
-    
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".$remise;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    
+
             if ($this->db->query($sql) )
             {
                 $this->remise_percent = $remise;
@@ -1309,11 +1263,11 @@ class Propal
         }
     }
 
-  
+
     /**
      *      \brief      Définit une remise globale absolue sur la proposition
      *      \param      user        Objet utilisateur qui modifie
-     *      \param      remise      Montant remise    
+     *      \param      remise      Montant remise
      *      \return     int         <0 si ko, >0 si ok
      */
     function set_remise_absolue($user, $remise)
@@ -1323,11 +1277,11 @@ class Propal
         if ($user->rights->propale->creer)
         {
             $remise = price2num($remise);
-    
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
             $sql.= " SET remise_absolue = ".$remise;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    
+
             if ($this->db->query($sql) )
             {
                 $this->remise_absolue = $remise;
@@ -1342,7 +1296,7 @@ class Propal
             }
         }
     }
-    
+
 	/*
      *
      *
@@ -1368,7 +1322,7 @@ class Propal
 	  }
 	else
 	  {
-	    
+
 	    dolibarr_syslog("Propal::set_project Erreur SQL");
 	  }
       }
@@ -1379,7 +1333,7 @@ class Propal
    *
    *
    */
-  
+
   function set_contact($user, $contact_id)
   {
     if ($user->rights->propale->creer)
@@ -1404,7 +1358,7 @@ class Propal
 	  }
       }
   }
-  
+
 	/**
 	 *		\brief		Positionne modele derniere generation
 	 *		\param		user		Objet use qui modifie
@@ -1417,7 +1371,7 @@ class Propal
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 			$sql.= " SET model_pdf = '".$modelpdf."'";
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-	
+
 			if ($this->db->query($sql))
 			{
 				$this->modelpdf=$modelpdf;
@@ -1430,7 +1384,7 @@ class Propal
 			}
 		}
 	}
-	
+
     /**
      *      \brief      Cloture de la proposition commerciale
      *      \param      user        Utilisateur qui cloture
@@ -1441,13 +1395,13 @@ class Propal
     function cloture($user, $statut, $note)
     {
         $this->statut = $statut;
-    
+
         $this->db->begin();
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
         $sql.= " SET fk_statut = $statut, note = '".addslashes($note)."', date_cloture=now(), fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
-    
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1465,14 +1419,14 @@ class Propal
                     $soc->id = $this->socidp;
                     $result=$soc->set_as_client();
                 }
-                
+
                 if ($result < 0)
                 {
                     $this->error=$this->db->error();
                     $this->db->rollback();
                     return -2;
                 }
-                
+
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
@@ -1487,7 +1441,7 @@ class Propal
                 $result=$interface->run_triggers('PROPAL_CLOSE_REFUSED',$this,$user,$langs,$conf);
                 // Fin appel triggers
             }
-            
+
             $this->db->commit();
             return 1;
         }
@@ -1498,7 +1452,7 @@ class Propal
             return -1;
         }
     }
-    
+
  /**
 	 *        \brief      Classe la propale comme facturée
 	 *        \return     int     <0 si ko, >0 si ok
@@ -1526,7 +1480,7 @@ class Propal
     function create_commande($user)
     {
         global $conf;
-        
+
         if ($conf->commande->enabled)
         {
             if ($this->statut == 2)
@@ -1535,7 +1489,7 @@ class Propal
                 include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
                 $commande = new Commande($this->db);
                 $result=$commande->create_from_propale($user, $this->id);
-    
+
                 return $result;
             }
             else return 0;
@@ -1551,9 +1505,9 @@ class Propal
     function reopen($userid)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
-    
+
         $sql .= " WHERE rowid = $this->id;";
-    
+
         if ($this->db->query($sql) )
         {
             return 1;
@@ -1563,21 +1517,21 @@ class Propal
             dolibarr_print_error($this->db);
         }
     }
-    
-		
+
+
   /**
    *    \brief      Renvoi la liste des propal (éventuellement filtrée sur un user) dans un tableau
    *    \param      brouillon       0=non brouillon, 1=brouillon
    *    \param      user            Objet user de filtre
    *    \return     int             -1 si erreur, tableau résultat si ok
    */
-	 
+
     function liste_array ($brouillon=0, $user='')
     {
         $ga = array();
-    
+
         $sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."propal";
-    
+
         if ($brouillon)
         {
             $sql .= " WHERE fk_statut = 0";
@@ -1593,21 +1547,21 @@ class Propal
                 $sql .= " WHERE fk_user_author".$user;
             }
         }
-    
+
         $sql .= " ORDER BY datep DESC";
 
         $result=$this->db->query($sql);
         if ($result)
         {
             $nump = $this->db->num_rows($result);
-    
+
             if ($nump)
             {
                 $i = 0;
                 while ($i < $nump)
                 {
                     $obj = $this->db->fetch_object($result);
-    
+
                     $ga[$obj->rowid] = $obj->ref;
                     $i++;
                 }
@@ -1619,7 +1573,7 @@ class Propal
             return -1;
         }
     }
-		
+
     /**
      *    \brief        Renvoie un tableau contenant les numéros de commandes associées
      *    \remarks      Fonction plus light que associated_orders
@@ -1628,20 +1582,20 @@ class Propal
     function commande_liste_array ()
     {
         $ga = array();
-        
+
         $sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";
         $sql .= " WHERE fk_propale = " . $this->id;
         if ($this->db->query($sql) )
         {
             $nump = $this->db->num_rows();
-            
+
             if ($nump)
             {
                 $i = 0;
                 while ($i < $nump)
                 {
                     $obj = $this->db->fetch_object();
-                    
+
                     $ga[$i] = $obj->fk_commande;
                     $i++;
                 }
@@ -1653,7 +1607,7 @@ class Propal
             dolibarr_print_error($this->db);
         }
     }
-		
+
     /**
      *    \brief      Renvoie un tableau contenant les commandes associées
      *    \remarks    Fonction plus lourde que commande_liste_array
@@ -1662,13 +1616,13 @@ class Propal
     function associated_orders()
     {
         $ga = array();
-    
+
         $sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";
         $sql.= " WHERE fk_propale = " . $this->id;
         if ($this->db->query($sql) )
         {
             $nump = $this->db->num_rows();
-    
+
             if ($nump)
             {
                 $i = 0;
@@ -1692,7 +1646,7 @@ class Propal
             print $this->db->error();
         }
     }
-		
+
     /**
      *    	\brief      Renvoie un tableau contenant les numéros de factures associées
      *		\return		array		Tableau des id de factures
@@ -1710,20 +1664,20 @@ class Propal
     function FactureListeArray($id)
     {
         $ga = array();
-        
+
         $sql = "SELECT fk_facture FROM ".MAIN_DB_PREFIX."fa_pr as fp";
         $sql .= " WHERE fk_propal = " . $id;
         if ($this->db->query($sql))
         {
             $nump = $this->db->num_rows();
-            
+
             if ($nump)
             {
                 $i = 0;
                 while ($i < $nump)
                 {
                     $obj = $this->db->fetch_object();
-                    
+
                     $ga[$i] = $obj->fk_facture;
                     $i++;
                 }
@@ -1743,14 +1697,14 @@ class Propal
   function delete($user)
   {
     global $conf;
-    
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
-    if ( $this->db->query($sql) ) 
+    if ( $this->db->query($sql) )
       {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
-	if ( $this->db->query($sql) ) 
+	if ( $this->db->query($sql) )
 	  {
-	    
+
 	    // On efface le répertoire du pdf
 							$propalref = sanitize_string($this->ref);
 							if ($conf->propal->dir_output)
@@ -1760,7 +1714,7 @@ class Propal
 								if (file_exists($file))
 								{
 									propale_delete_preview($this->db, $this->id, $this->ref);
-									
+
 									if (!dol_delete_file($file))
 									{
                     $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
@@ -1776,7 +1730,7 @@ class Propal
                   }
                 }
               }
-	    
+
 	    dolibarr_syslog("Suppression de la proposition $this->id par $user->fullname ($user->id)");
 	    return 1;
 	  }
@@ -1790,7 +1744,7 @@ class Propal
 	return -1;
       }
   }
-	
+
 	/**
  	 *    \brief      Mets à jour les commentaires privés
 	 *    \param      note        	Commentaire
@@ -1840,7 +1794,7 @@ class Propal
 			return -1;
 		}
 	}
-  
+
 	/**
 	 *   \brief      Change les conditions de réglement de la facture
 	 *   \param      cond_reglement_id      Id de la nouvelle condition de réglement
@@ -1908,7 +1862,7 @@ class Propal
 		}
 	}
 
-  
+
   /**
    *      \brief      Information sur l'objet propal
    *      \param      id      id de la propale
@@ -1920,49 +1874,49 @@ class Propal
     $sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
     $sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
     $sql.= " WHERE c.rowid = $id";
-    
+
     if ($this->db->query($sql))
       {
 	if ($this->db->num_rows())
 	  {
 	    $obj = $this->db->fetch_object();
-	    
+
 	    $this->id                = $obj->rowid;
-	    
+
 	    $this->date_creation     = $obj->datec;
 	    $this->date_validation   = $obj->datev;
 	    $this->date_cloture      = $obj->dateo;
-	    
+
 	    $cuser = new User($this->db, $obj->fk_user_author);
 	    $cuser->fetch();
 	    $this->user_creation     = $cuser;
-	    
+
 	    if ($obj->fk_user_valid)
 	      {
 		$vuser = new User($this->db, $obj->fk_user_valid);
 		$vuser->fetch();
 		$this->user_validation     = $vuser;
 	      }
-	    
+
 	    if ($obj->fk_user_cloture)
 	      {
 		$cluser = new User($this->db, $obj->fk_user_cloture);
 		$cluser->fetch();
 		$this->user_cloture     = $cluser;
 	      }
-	    
-	    
+
+
 	  }
 	$this->db->free();
-	
+
       }
     else
       {
 	dolibarr_print_error($this->db);
       }
   }
-  
-  
+
+
 	/**
 	 *    	\brief      Retourne le libellé du statut d'une propale (brouillon, validée, ...)
 	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
@@ -1972,7 +1926,7 @@ class Propal
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
-  
+
 	/**
 	 *    	\brief      Renvoi le libellé d'un statut donné
 	 *    	\param      statut		id statut
@@ -2036,7 +1990,7 @@ class Propal
     function load_board($user,$mode)
     {
         global $conf, $user;
-        
+
         $this->nbtodo=$this->nbtodolate=0;
         $sql ="SELECT p.rowid, p.ref, ".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
         if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -2052,7 +2006,7 @@ class Propal
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-                if ($obj->datefin < (time() - $conf->propal->cloture->warning_delay)) 
+                if ($obj->datefin < (time() - $conf->propal->cloture->warning_delay))
                 {
 					if ($mode == 'opened') $this->nbtodolate++;
         			if ($mode == 'signed') $this->nbtodolate++;
@@ -2062,13 +2016,13 @@ class Propal
             }
             return 1;
         }
-        else 
+        else
         {
             $this->error=$this->db->error();
             return -1;
         }
     }
-	
+
 	 /**
      *    \brief     Charge l'objet propal en mémoire avec propal dont l'id est passé en argument
      *    \param     $src_propal_id      Id de la propal source
@@ -2109,14 +2063,14 @@ class Propal
 		$this->date_livraison 	 = $src_propal->date_livraison;
 		$this->adresse_livraison_id  = $src_propal->adresse_livraison_id;
 		$this->user_author_id    = $src_propal->user_author_id;
-		
+
         $this->cond_reglement    = $src_propal->cond_reglement;
         $this->cond_reglement_code=$src_propal->cond_reglement_code;
         $this->ref_url 			 = $src_propal->ref_url;
         $this->lignes 			 = $src_propal->lignes;
         return 1;
 	}
-	
+
 	/**
      *    \brief     Insert en base un objet propal complétement définie par ses données membres (resultant d'une copie par exemple).
      *    \return    int                 l'id du nouvel objet propal en base si ok, <0 si ko
@@ -2124,9 +2078,9 @@ class Propal
      */
 	function create_from()
 	{
-     
+
         $this->db->begin();
-        
+
         $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
         // Insertion dans la base
@@ -2142,7 +2096,7 @@ class Propal
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal");
-    
+
             if ($this->id)
             {
                 /*
@@ -2158,7 +2112,7 @@ class Propal
                   	}
                 	else
                 	{
-                		$this->insert_product_generic($ligne->desc, $ligne->price, 
+                		$this->insert_product_generic($ligne->desc, $ligne->price,
                 						$ligne->qty, $ligne->tva_tx, $ligne->remise_percent);
                 	}
                 }
@@ -2178,7 +2132,7 @@ class Propal
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
                     // Fin appel triggers
-        
+
                     $this->db->commit();
                     return $this->id;
                 }
@@ -2198,9 +2152,85 @@ class Propal
             $this->db->rollback();
             return -1;
         }
-        
+
         return $this->id;
 	}
+
+
+	/**
+	 *		\brief		Initialise la propale avec valeurs fictives aléatoire
+	 *					Sert à générer une facture pour l'aperu des modèles ou demo
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		// Charge tableau des id de société socids
+		$socids = array();
+		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_socs = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_socs)
+			{
+				$i++;
+
+				$row = $this->db->fetch_row($resql);
+				$socids[$i] = $row[0];
+			}
+		}
+
+		// Charge tableau des produits prodids
+		$prodids = array();
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_prods = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_prods)
+			{
+				$i++;
+				$row = $this->db->fetch_row($resql);
+				$prodids[$i] = $row[0];
+			}
+		}
+
+		// Initialise paramètres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$socid = rand(1, $num_socs);
+		$this->socidp = $socids[$socid];
+		$this->date = time();
+		$this->date_lim_reglement=$this->date+3600*24*30;
+		$this->cond_reglement_code = 'RECEP';
+		$this->mode_reglement_code = 'CHQ';
+		$this->note_public='SPECIMEN';
+		$nbp = rand(1, 9);
+		$xnbp = 0;
+		while ($xnbp < $nbp)
+		{
+			$ligne=new PropaleLigne($this->db);
+			$ligne->desc=$langs->trans("Description")." ".$xnbp;
+			$ligne->qty=1;
+			$ligne->subprice=100;
+			$ligne->price=100;
+			$ligne->tva_taux=19.6;
+			$prodid = rand(1, $num_prods);
+			$ligne->produit_id=$prodids[$prodid];
+			$this->lignes[$xnbp]=$ligne;
+			$xnbp++;
+		}
+
+		$this->amount_ht      = $xnbp*100;
+		$this->total_ht       = $xnbp*100;
+		$this->total_tva      = $xnbp*19.6;
+		$this->total_ttc      = $xnbp*119.6;
+	}
+
 }
 
 
@@ -2209,7 +2239,7 @@ class Propal
 		\brief      Classe permettant la gestion des lignes de propales
 */
 
-class PropaleLigne  
+class PropaleLigne
 {
     // From llx_propaldet
     var $qty;

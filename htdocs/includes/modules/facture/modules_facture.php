@@ -64,7 +64,7 @@ class ModelePDFFactures extends FPDF
         $sql ="SELECT nom as id, nom as lib";
         $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
         $sql.=" WHERE type = '".$type."'";
-        
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -189,7 +189,7 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 		else
 		{
 			dolibarr_print_error('',"facture_pdf_create Error: ".$obj->error);
-            $this->error=$langs->trans("Error")." ".$obj->error;			
+            $this->error=$langs->trans("Error")." ".$obj->error;
 			return -1;
 		}
 
@@ -210,17 +210,17 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 function facture_meta_create($db, $facid, $message="")
 {
   global $langs,$conf;
-  
+
   $fac = new Facture($db,"",$facid);
-  $fac->fetch($facid);  
+  $fac->fetch($facid);
   $fac->fetch_client();
-  
+
   if ($conf->facture->dir_output)
     {
-      $facref = sanitize_string($fac->ref); 
-      $dir = $conf->facture->dir_output . "/" . $facref ; 
+      $facref = sanitize_string($fac->ref);
+      $dir = $conf->facture->dir_output . "/" . $facref ;
       $file = $dir . "/" . $facref . ".meta";
-      
+
       if (! file_exists($dir))
         {
 	  umask(0);
@@ -230,7 +230,7 @@ function facture_meta_create($db, $facid, $message="")
 	      return 0;
             }
         }
-      
+
       if (file_exists($dir))
 	{
 	  $nblignes = sizeof($fac->lignes);
@@ -241,7 +241,7 @@ NB_ITEMS=\"" . $nblignes . "\"
 CLIENT=\"" . $client . "\"
 TOTAL_HT=\"" . $fac->total_ht . "\"
 TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
-	  
+
 	  for ($i = 0 ; $i < $nblignes ; $i++) {
 	    //Pour les articles
 	    $meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
@@ -268,13 +268,13 @@ function facture_delete_preview($db, $facid)
   global $langs,$conf;
 
   $fac = new Facture($db,"",$facid);
-  $fac->fetch($facid);  
+  $fac->fetch($facid);
   $fac->fetch_client();
 
   if ($conf->facture->dir_output)
     {
-      $facref = sanitize_string($fac->ref); 
-      $dir = $conf->facture->dir_output . "/" . $facref ; 
+      $facref = sanitize_string($fac->ref);
+      $dir = $conf->facture->dir_output . "/" . $facref ;
       $file = $dir . "/" . $facref . ".pdf.png";
 
       if ( file_exists( $file ) && is_writable( $file ) )

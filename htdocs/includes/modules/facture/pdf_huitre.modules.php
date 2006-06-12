@@ -50,7 +50,7 @@ class pdf_huitre extends ModelePDFFactures {
         $langs->load("bills");
         $langs->load("products");
 
-		  
+
         $this->db = $db;
         $this->name = "huitre";
         $this->description = $langs->trans('PDFHuitreDescription');
@@ -71,7 +71,7 @@ class pdf_huitre extends ModelePDFFactures {
 	function write_pdf_file($fac,$outputlangs='')
 	{
 		global $user,$langs,$conf,$mysoc;
-	
+
 		if ($conf->facture->dir_output)
 		{
 			// Définition de l'objet $fac (pour compatibilite ascendante)
@@ -94,7 +94,7 @@ class pdf_huitre extends ModelePDFFactures {
 				$dir = $conf->facture->dir_output . "/" . $facref;
 				$file = $dir . "/" . $facref . ".pdf";
 			}
-	
+
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -103,16 +103,16 @@ class pdf_huitre extends ModelePDFFactures {
 					return 0;
 				}
 			}
-	
+
 			if (file_exists($dir))
 			{
 				// Initialisation facture vierge
 				$pdf=new FPDF('P','mm','A4');
 				$pdf->Open();
 				$pdf->AddPage();
-	
+
 				$this->_pagehead($pdf, $fac);
-	
+
 				$pdf->SetTitle($fac->ref);
 				$pdf->SetSubject($langs->trans("Bill"));
 				$pdf->SetCreator("Dolibarr (By ADYTEK)".DOL_VERSION);
@@ -121,41 +121,41 @@ class pdf_huitre extends ModelePDFFactures {
 				$pdf->SetAutoPageBreak(1,0);
 				$tab_top = 100;
 				$tab_height = 110;
-	
+
 				$pdf->SetFillColor(242,239,119);
-	
+
 				$pdf->SetFont('Arial','', 9);
-	
+
 				$pdf->SetXY (10, $tab_top + 10 );
-	
+
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
 				$nblignes = sizeof($fac->lignes);
-	
+
 				// Boucle sur les lignes de factures
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-	
+
 					$pdf->SetXY (11, $curY );
 					$pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
-	
+
 					$nexY = $pdf->GetY();
-	
+
 					$pdf->SetXY (133, $curY);
 					$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
-	
+
 					$pdf->SetXY (145, $curY);
 					$pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');
-	
+
 					$pdf->SetXY (156, $curY);
 					$pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
-	
+
 					$pdf->SetXY (174, $curY);
 					$total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
 					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-	
+
 					if ($nexY > 200 && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
@@ -165,14 +165,14 @@ class pdf_huitre extends ModelePDFFactures {
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 10);
 					}
-	
+
 				}
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-	
+
 				$this->_tableau_tot($pdf, $fac);
-	
+
 				$this->_tableau_compl($pdf, $fac);
-	
+
 				/*
 				*
 				*/
@@ -182,7 +182,7 @@ class pdf_huitre extends ModelePDFFactures {
 					{
 						$account = new Account($this->db);
 						$account->fetch(FACTURE_RIB_NUMBER);
-	
+
 						$pdf->SetXY (10, 40);
 						$pdf->SetFont('Arial','U',8);
 						$pdf->MultiCell(40, 4, $langs->trans("BankDetails"), 0, 'L', 0);
@@ -196,12 +196,12 @@ class pdf_huitre extends ModelePDFFactures {
 						$pdf->MultiCell(40, 4, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
 					}
 				}
-	
+
 				/*
 				*
 				*
 				*/
-	
+
 				if ( $fac->note_public)
 				{
 					$pdf->SetFont('Arial','',7);
@@ -209,12 +209,12 @@ class pdf_huitre extends ModelePDFFactures {
 					$note = $langs->trans("Note").' : '.$fac->note_public;
 					$pdf->MultiCell(110, 3, $note, 0, 'J');
 				}
-	
+
 				$pdf->SetFont('Arial','U',11);
 				$pdf->SetXY(10, 225);
 				$titre = $langs->trans("PaymentConditions").' : '.$fac->cond_reglement_facture;
 				$pdf->MultiCell(190, 5, $titre, 0, 'J');
-	
+
 				$pdf->SetFont('Arial','',6);
 				$pdf->SetXY(10, 265);
 				$pdf->MultiCell(90, 2, $langs->trans('LawApplicationPart1'), 0, 'J');
@@ -224,27 +224,27 @@ class pdf_huitre extends ModelePDFFactures {
 				$pdf->MultiCell(90, 2, $langs->trans('LawApplicationPart3'), 0, 'J');
 				$pdf->SetXY(10, 271);
 				$pdf->MultiCell(90, 2, $langs->trans('LawApplicationPart4'), 0, 'J');
-	
+
 				$pdf->SetFont('Arial','',7);
 				$pdf->SetXY(85, 271);
 				$pdf->MultiCell(90, 3, $langs->trans('VATDischarged'), 0, 'J');
-	
+
 				$this->_pagefoot($pdf, $fac);
 				$pdf->AliasNbPages();
 				//----
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFillColor(242,239,119);
-	
+
 				$pdf->SetLineWidth(0.5);
-	
-	
-	
-	
-	
+
+
+
+
+
 				$pdf->Close();
-	
+
 				$pdf->Output($file);
-	
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -261,8 +261,8 @@ class pdf_huitre extends ModelePDFFactures {
 		$this->error=$langs->trans("ErrorUnknown");
 		return 0;   // Erreur par defaut
 	}
-	
-	
+
+
   /*
    *
    *
@@ -312,18 +312,18 @@ class pdf_huitre extends ModelePDFFactures {
     	global $langs;
     	$langs->load("main");
     	$langs->load("bills");
-    	
+
       $tab3_top = 240;
       $tab3_height = 18;
       $tab3_width = 60;
-      
+
       $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
 
       $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
       $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
-      
+
       $pdf->line(40, $tab3_top, 40, $tab3_top + $tab3_height );
-      
+
       $pdf->SetFont('Arial','',8);
       $pdf->SetXY (10, $tab3_top - 6);
       $pdf->MultiCell(60, 6, $langs->trans("ExtraInfos"), 0, 'L', 0);
@@ -345,15 +345,15 @@ class pdf_huitre extends ModelePDFFactures {
         global $langs;
         $langs->load("main");
         $langs->load("bills");
-        
+
       $tab2_top = 212;
       $tab2_hl = 5;
       $tab2_height = $tab2_hl * 4;
       $pdf->SetFont('Arial','', 9);
-      
+
       //	      $pdf->Rect(132, $tab2_top, 68, $tab2_height);
       //	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-      
+
       //	      $pdf->line(132, $tab2_top + $tab2_height - 21, 200, $tab2_top + $tab2_height - 21 );
       //	      $pdf->line(132, $tab2_top + $tab2_height - 14, 200, $tab2_top + $tab2_height - 14 );
       //	      $pdf->line(132, $tab2_top + $tab2_height - 7, 200, $tab2_top + $tab2_height - 7 );
@@ -390,10 +390,10 @@ class pdf_huitre extends ModelePDFFactures {
 
       $pdf->SetXY (174, $tab2_top + $tab2_hl * $index);
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
-            
+
       $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+1));
       $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalTTC"), 0, 'R', 1);
-      
+
       $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+1));
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
 
@@ -423,14 +423,14 @@ class pdf_huitre extends ModelePDFFactures {
         global $langs;
         $langs->load("main");
         $langs->load("bills");
-      
+
       $pdf->SetFont('Arial','',10);
-      
+
       $pdf->Text(11,$tab_top + 5,$langs->trans("Designation"));
 
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
       $pdf->Text(134,$tab_top + 5,$langs->trans("VAT"));
-      
+
       $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
       $pdf->Text(147,$tab_top + 5,$langs->trans("Qty"));
 
@@ -439,7 +439,7 @@ class pdf_huitre extends ModelePDFFactures {
 
       $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
       $pdf->Text(187,$tab_top + 5,$langs->trans("Total"));
-      
+
       $pdf->Rect(10, $tab_top, 190, $tab_height);
       $pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
     }
@@ -531,7 +531,7 @@ class pdf_huitre extends ModelePDFFactures {
        */
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFillColor(242,239,119);
-    
+
 //      $this->RoundedRect(100, 40, 100, 40, 3, 'F');
       $pdf->rect(100, 40, 100, 40, 'F');
       $pdf->SetFont('Arial','B',12);

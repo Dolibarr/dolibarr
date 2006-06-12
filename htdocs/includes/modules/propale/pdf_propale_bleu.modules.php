@@ -41,7 +41,7 @@ class pdf_propale_bleu extends ModelePDFPropales
     		\param	db		handler accès base de donnée
     */
   function pdf_propale_bleu($db=0)
-    { 
+    {
         $this->db = $db;
         $this->name = "bleu";
         $this->description = "Modèle de propale sans remise.";
@@ -60,12 +60,12 @@ class pdf_propale_bleu extends ModelePDFPropales
 		\brief      Renvoi dernière erreur
 	    \return     string      Dernière erreur
 	*/
-	function pdferror() 
+	function pdferror()
 	{
 		return $this->error;
 	}
 
-  
+ 
 	/**
 	    \brief      Fonction générant la propale sur le disque
 	    \param	    propale		Objet propal
@@ -85,10 +85,10 @@ class pdf_propale_bleu extends ModelePDFPropales
 		\remarks    MAIN_INFO_CAPITAL
 		\remarks    MAIN_INFO_TVAINTRA
 	*/
-	function write_pdf_file($propale)
+	function write_pdf_file($propale,$outputlangs='')
 	{
-		global $user,$conf,$langs;
-	
+		global $user,$conf,$langs,$mysoc;
+
 		if ($conf->propal->dir_output)
 		{
 			// Définition de l'objet $propal (pour compatibilite ascendante)
@@ -98,7 +98,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 				$propale = new Propal($this->db,"",$id);
 				$ret=$propale->fetch($id);
 			}
-	
+
 			// Définition de $dir et $file
 			if ($propale->specimen)
 			{
@@ -111,7 +111,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 				$dir = $conf->propal->dir_output . "/" . $propref;
 				$file = $dir . "/" . $propref . ".pdf";
 			}
-	
+
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -120,21 +120,21 @@ class pdf_propale_bleu extends ModelePDFPropales
 					return 0;
 				}
 			}
-	
+
 			if (file_exists($dir))
 			{
-	
+
 				$pdf=new FPDF('P','mm',$this->format);
 				$pdf->Open();
 				$pdf->AddPage();
-	
+
 				$pdf->SetTitle($propale->ref);
 				$pdf->SetSubject("Proposition commerciale");
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
-	
+
 				$this->_pagehead($pdf, $propale);
-	
+
 				/*
 				*/
 				$tab_top = 100;
@@ -142,49 +142,49 @@ class pdf_propale_bleu extends ModelePDFPropales
 				/*
 				*
 				*/
-	
+
 				$pdf->SetFillColor(220,220,220);
-	
+
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('Arial','', 10);
-	
+
 				$pdf->SetXY (10, $tab_top + 10 );
-	
+
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
 				$nblignes = sizeof($propale->lignes);
-	
+
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-	
+
 					$curY = $nexY;
-	
+
 					$pdf->SetXY (30, $curY );
-	
+
 					$pdf->MultiCell(100, 5, $propale->lignes[$i]->desc, 0, 'J', 0);
-	
+
 					$nexY = $pdf->GetY();
-	
+
 					$pdf->SetXY (10, $curY );
-	
+
 					$pdf->MultiCell(20, 5, $propale->lignes[$i]->ref, 0, 'C');
-	
+
 					$pdf->SetXY (133, $curY );
 					$pdf->MultiCell(10, 5, $propale->lignes[$i]->tva_tx, 0, 'C');
-	
+
 					$pdf->SetXY (145, $curY );
 					$pdf->MultiCell(10, 5, $propale->lignes[$i]->qty, 0, 'C');
-	
+
 					$pdf->SetXY (156, $curY );
 					$pdf->MultiCell(18, 5, price($propale->lignes[$i]->price), 0, 'R', 0);
-	
+
 					$pdf->SetXY (174, $curY );
 					$total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
 					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-	
+
 					$pdf->line(10, $curY, 200, $curY );
-	
+
 					if ($nexY > 240 && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
@@ -195,7 +195,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 						$pdf->SetFont('Arial','', 10);
 					}
 				}
-	
+
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 				/*
 				*
@@ -203,39 +203,39 @@ class pdf_propale_bleu extends ModelePDFPropales
 				$tab2_top = 254;
 				$tab2_lh = 7;
 				$tab2_height = $tab2_lh * 3;
-	
+
 				$pdf->SetFont('Arial','', 11);
-	
+
 				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
-	
+
 				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
 				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
 				$pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
-	
+
 				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-	
+
 				$pdf->SetXY (132, $tab2_top + 0);
 				$pdf->MultiCell(42, $tab2_lh, "Total HT", 0, 'R', 0);
-	
+
 				$pdf->SetXY (132, $tab2_top + $tab2_lh);
 				$pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);
-	
+
 				$pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
 				$pdf->MultiCell(42, $tab2_lh, "Total TTC", 1, 'R', 1);
-	
+
 				$pdf->SetXY (174, $tab2_top + 0);
 				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
-	
+
 				$pdf->SetXY (174, $tab2_top + $tab2_lh);
 				$pdf->MultiCell(26, $tab2_lh, price($propale->total_tva), 0, 'R', 0);
-	
+
 				$pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
 				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ttc), 1, 'R', 1);
-	
+
 				/*
 				*
 				*/
-	
+
 				$pdf->Output($file);
 				return 1;
 			}
@@ -249,21 +249,21 @@ class pdf_propale_bleu extends ModelePDFPropales
         $langs->load("bills");
 
       $pdf->SetFont('Arial','',11);
-            
+
       $pdf->Text(30,$tab_top + 5,$langs->trans("Designation"));
-      
+
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
       $pdf->Text(134,$tab_top + 5,$langs->trans("VAT"));
-      
+
       $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
       $pdf->Text(147,$tab_top + 5,$langs->trans("Qty"));
-      
+
       $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
       $pdf->Text(160,$tab_top + 5,$langs->trans("PriceU"));
-      
+
       $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
       $pdf->Text(187,$tab_top + 5,$langs->trans("Total"));
-      
+
       //      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
       $pdf->Rect(10, $tab_top, 190, $tab_height);
 
@@ -285,7 +285,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 	  $pdf->SetFont('Times','B',14);
 	  $pdf->MultiCell(76, 8, FAC_PDF_INTITULE, 0, 'L');
 	}
-      
+
       $pdf->SetTextColor(70,70,170);
       if (defined("FAC_PDF_ADRESSE"))
 	{
@@ -296,13 +296,13 @@ class pdf_propale_bleu extends ModelePDFPropales
 	{
 	  $pdf->SetFont('Times','',10);
 	  $pdf->MultiCell(76, 5, $langs->trans("Phone")." : ".FAC_PDF_TEL);
-	}  
+	}
       if (defined("MAIN_INFO_SIREN"))
 	{
 	  $pdf->SetFont('Times','',10);
 	  $pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
-	}  
-      
+	}
+
       if (defined("FAC_PDF_INTITULE2"))
 	{
 	  $pdf->SetXY(100,5);
@@ -322,14 +322,14 @@ class pdf_propale_bleu extends ModelePDFPropales
       $pdf->SetXY(102,47);
       $pdf->MultiCell(96,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
       $pdf->rect(100, 40, 100, 40);
-      
-      
+
+
       $pdf->SetTextColor(200,0,0);
       $pdf->SetFont('Courier','B',12);
       $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $propale->date));
       $pdf->Text(11, 94, "Proposition commerciale : ".$propale->ref);
-      
-      
+
+
     }
 
 }

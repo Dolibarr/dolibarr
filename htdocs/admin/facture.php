@@ -22,7 +22,7 @@
  * $Source$
  */
 
-/**	
+/**
         \file       htdocs/admin/facture.php
 		\ingroup    facture
 		\brief      Page d'administration/configuration du module Facture
@@ -96,7 +96,7 @@ if ($_GET["action"] == 'del')
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
-	
+
     if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"]))
     {
         // La constante qui a été lue en avant du nouveau set
@@ -111,7 +111,7 @@ if ($_GET["action"] == 'setdoc')
     $result1=$db->query($sql_del);
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
     $result2=$db->query($sql);
-    if ($result1 && $result2) 
+    if ($result1 && $result2)
     {
 		$db->commit();
     }
@@ -214,18 +214,18 @@ while (($file = readdir($handle))!==false)
 	        print '<tr '.$bc[$var].'><td width="100">';
 	        echo "$file";
 	        print "</td><td>\n";
-	
+
 	        // Chargement de la classe de numérotation
 	        require_once($dir.$filebis);
 	        $classname = "mod_facture_".$file;
 	        $module = new $classname($db);
 	        print $module->info();
-	
+
 	        print '</td>';
-	
+
 	        // Affiche example
 	        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-	
+
 	        print '<td align="center">';
 	        if ($conf->global->FACTURE_ADDON == "$file")
 	        {
@@ -236,7 +236,7 @@ while (($file = readdir($handle))!==false)
 	            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
 	        }
 	        print '</td>';
-	
+
 			// Info
 			$htmltooltip='';
 	        $nextval=$module->getNextValue();
@@ -247,7 +247,7 @@ while (($file = readdir($handle))!==false)
 	    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
 	    	print ($htmltooltip?img_help(0):'');
 	    	print '</td>';
-	
+
 	        print "</tr>\n";
 		}
     }
@@ -306,7 +306,7 @@ while (($file = readdir($handle))!==false)
         $var = !$var;
         $name = substr($file, 4, strlen($file) -16);
         $classname = substr($file, 0, strlen($file) -12);
-    
+
         print '<tr '.$bc[$var].'><td width="100">';
         echo "$name";
         print "</td><td>\n";
@@ -315,12 +315,12 @@ while (($file = readdir($handle))!==false)
         $module = new $classname($db);
         print $module->description;
         print '</td>';
-    
+
 		// Activé
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";
-			if ($conf->global->FACTURE_ADDON_PDF != "$name") 
+			if ($conf->global->FACTURE_ADDON_PDF != "$name")
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
 				print img_tick($langs->trans("Disable"));
@@ -350,7 +350,7 @@ while (($file = readdir($handle))!==false)
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
 		}
 		print '</td>';
-		
+
 		// Info
     	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
     	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
@@ -410,11 +410,11 @@ if ($conf->banque->enabled)
           {
     	$var=!$var;
     	$row = $db->fetch_row($resql);
-    	
+
         print '<option value="'.$row[0].'"';
         print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected="true"':'';
         print '>'.$row[1].'</option>';
-    
+
         $i++;
           }
         print "</select>";
@@ -450,7 +450,7 @@ if ($resql)
 	{
 	  $var=!$var;
 	  $row = $db->fetch_row($resql);
-	  
+
     print '<option value="'.$row[0].'"';
     print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected="true"':'';
     print '>'.$langs->trans("OwnerOfBankAccount",$row[1]).'</option>';

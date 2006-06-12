@@ -41,8 +41,8 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 class pdf_oursin extends ModelePDFFactures
 {
     var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
-    
-    
+
+
     /**
     	\brief  Constructeur
         \param	db		handler accès base de donnée
@@ -50,7 +50,7 @@ class pdf_oursin extends ModelePDFFactures
     function pdf_oursin($db)
     {
         global $conf,$langs;
-		  
+
 		  $langs->load("main");
 		  $langs->load("bills");
 		  $langs->load("products");
@@ -71,7 +71,7 @@ class pdf_oursin extends ModelePDFFactures
         $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
         if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
         $this->franchise=1;
-        
+
         // Recupere code pays de l'emmetteur
         $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
         $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
@@ -111,11 +111,11 @@ class pdf_oursin extends ModelePDFFactures
 	function write_pdf_file($fac,$outputlangs='')
 	{
 		global $user,$langs,$conf,$mysoc;
-	
+
 		$langs->load("main");
 		$langs->load("bills");
 		$langs->load("products");
-	
+
 		if ($conf->facture->dir_output)
 		{
 			// Définition de l'objet $fac (pour compatibilite ascendante)
@@ -138,7 +138,7 @@ class pdf_oursin extends ModelePDFFactures
 				$dir = $conf->facture->dir_output . "/" . $facref;
 				$file = $dir . "/" . $facref . ".pdf";
 			}
-			
+
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -147,49 +147,49 @@ class pdf_oursin extends ModelePDFFactures
 					return 0;
 				}
 			}
-	
+
 			if (file_exists($dir))
 			{
 				// Initialisation facture vierge
 				$pdf=new FPDF('P','mm',$this->format);
 				$pdf->Open();
 				$pdf->AddPage();
-	
+
 				$this->_pagehead($pdf, $fac);
-	
+
 				$pdf->SetTitle($fac->ref);
 				$pdf->SetSubject($langs->trans("Invoice"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
-	
+
 				$pdf->SetMargins(10, 10, 10);
 				$pdf->SetAutoPageBreak(1,0);
-	
+
 				$tab_top = $this->marges['h']+90;
 				$tab_height = 110;
-	
+
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetFont('Arial','', 9);
 				$pdf->SetXY ($this->marges['g'], $tab_top + $this->marges['g'] );
-	
+
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
 				$nblignes = sizeof($fac->lignes);
-	
+
 				// Boucle sur les lignes de factures
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-	
+
 					// Description produit
 					$codeproduitservice="";
 					$pdf->SetXY ($this->marges['g']+ 1, $curY );
 					if (defined("FACTURE_CODEPRODUITSERVICE") && FACTURE_CODEPRODUITSERVICE) {
 						// Affiche code produit si ligne associée à un code produit
-	
+
 						$prodser = new Product($this->db);
-	
+
 						$prodser->fetch($fac->lignes[$i]->produit_id);
 						if ($prodser->ref) {
 							$codeproduitservice=" - ".$langs->trans("ProductCode")." ".$prodser->ref;
@@ -200,9 +200,9 @@ class pdf_oursin extends ModelePDFFactures
 						$codeproduitservice.=" (".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
 					}
 					$pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
-	
+
 					$nexY = $pdf->GetY();
-	
+
 					// TVA
 					if ($this->franchise!=1)
 					{
@@ -212,23 +212,23 @@ class pdf_oursin extends ModelePDFFactures
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->marges['g']+132, $curY);
 					$pdf->MultiCell(16, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
-	
+
 					// Quantit
 					$pdf->SetXY ($this->marges['g']+150, $curY);
 					$pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'R');
-	
+
 					// Remise sur ligne
 					$pdf->SetXY ($this->marges['g']+160, $curY);
 					if ($fac->lignes[$i]->remise_percent) {
 						$pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
 					}
-	
+
 					// Total HT
 					$pdf->SetXY ($this->marges['g']+168, $curY);
 					$total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
 					$pdf->MultiCell(21, 5, $total, 0, 'R', 0);
-	
-	
+
+
 					if ($nexY > 200 && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
@@ -238,18 +238,18 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 10);
 					}
-	
+
 				}
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
-	
+
 				$deja_regle = $fac->getSommePaiement();
-	
+
 				$this->_tableau_tot($pdf, $fac, $deja_regle);
-	
+
 				if ($deja_regle) {
 					$this->_tableau_versements($pdf, $fac);
 				}
-	
+
 				/*
 				* Mode de règlement
 				*/
@@ -261,7 +261,7 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->MultiCell(90, 3, $langs->trans("ErrorCreateBankAccount"),0,'L',0);
 					$pdf->SetTextColor(0,0,0);
 				}
-	
+
 				/*
 				* Propose mode règlement par CHQ
 				*/
@@ -271,7 +271,7 @@ class pdf_oursin extends ModelePDFFactures
 					{
 						$account = new Account($this->db);
 						$account->fetch(FACTURE_CHQ_NUMBER);
-	
+
 						$pdf->SetXY ($this->marges['g'], 225);
 						$pdf->SetFont('Arial','B',8);
 						$pdf->MultiCell(90, 3, $langs->trans('PaymentByChequeOrderedTo').' '.$account->proprio.' '.$langs->trans('SendTo').':',0,'L',0);
@@ -280,7 +280,7 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
 					}
 				}
-	
+
 				/*
 				* Propose mode règlement par RIB
 				*/
@@ -290,7 +290,7 @@ class pdf_oursin extends ModelePDFFactures
 					{
 						$account = new Account($this->db);
 						$account->fetch(FACTURE_RIB_NUMBER);
-	
+
 						$cury=240;
 						$pdf->SetXY ($this->marges['g'], $cury);
 						$pdf->SetFont('Arial','B',8);
@@ -310,7 +310,7 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->SetXY ($this->marges['g']+60, $cury);
 						$pdf->MultiCell(13, 3, $langs->trans("BankAccountNumberKey"), 0, 'C', 0);
 						$pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
-	
+
 						$pdf->SetFont('Arial','',8);
 						$pdf->SetXY ($this->marges['g'], $cury+5);
 						$pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
@@ -320,7 +320,7 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
 						$pdf->SetXY ($this->marges['g']+60, $cury+5);
 						$pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-	
+
 						$pdf->SetXY ($this->marges['g'], $cury+15);
 						$pdf->MultiCell(90, 3, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
 						$pdf->SetXY ($this->marges['g'], $cury+25);
@@ -329,7 +329,7 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->MultiCell(90, 3, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
 					}
 				}
-	
+
 				/*
 				* Conditions de règlements
 				*/
@@ -343,17 +343,17 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->SetXY($this->marges['g']+44, 217);
 					$pdf->MultiCell(80, 5, $fac->cond_reglement_facture,0,'L');
 				}
-	
+
 				/*
 				* Pied de page
 				*/
 				$this->_pagefoot($pdf, $fac);
 				$pdf->AliasNbPages();
-	
+
 				$pdf->Close();
-	
+
 				$pdf->Output($file);
-	
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -382,7 +382,7 @@ class pdf_oursin extends ModelePDFFactures
     global $langs;
     $langs->load("main");
     $langs->load("bills");
-        
+
     $tab3_posx = $this->marges['g']+110;
     $tab3_top = $this->marges['h']+235;
     $tab3_width = 80;
@@ -415,7 +415,7 @@ class pdf_oursin extends ModelePDFFactures
 	while ($i < $num) {
 	  $y+=3;
 	  $row = $this->db->fetch_row();
-    
+
 	  $pdf->SetXY ($tab3_posx, $tab3_top+$y );
 	  $pdf->MultiCell(20, 4, strftime("%d/%m/%y",$row[0]), 0, 'L', 0);
 	  $pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
@@ -448,7 +448,7 @@ class pdf_oursin extends ModelePDFFactures
 	  $pdf->MultiCell(20, 4, $oper, 0, 'L', 0);
 	  $pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
 	  $pdf->MultiCell(20, 4, $row[3], 0, 'L', 0);
-    
+
 	  $pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
 
 	  $i++;
@@ -558,7 +558,7 @@ class pdf_oursin extends ModelePDFFactures
         global $langs;
         $langs->load("main");
         $langs->load("bills");
-        
+
     $pdf->line( $this->marges['g'], $tab_top+8, 210-$this->marges['d'], $tab_top+8 );
     $pdf->line( $this->marges['g'], $tab_top + $tab_height, 210-$this->marges['d'], $tab_top + $tab_height );
 
@@ -572,8 +572,8 @@ class pdf_oursin extends ModelePDFFactures
     $nblignes = sizeof($fac->lignes);
     $rem=0;
     for ($i = 0 ; $i < $nblignes ; $i++)
-      if ($fac->lignes[$i]->remise_percent) 
-	{ 
+      if ($fac->lignes[$i]->remise_percent)
+	{
 	  $rem=1;
 	}
     if ($rem==1)
@@ -595,7 +595,7 @@ class pdf_oursin extends ModelePDFFactures
     $langs->load("bills");
     $langs->load("propal");
     $langs->load("companies");
-        
+
     $pdf->SetTextColor(0,0,60);
     $pdf->SetFont('Arial','B',13);
 
@@ -603,15 +603,15 @@ class pdf_oursin extends ModelePDFFactures
 
     // Logo
     $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-    if ($mysoc->logo)  
+    if ($mysoc->logo)
       {
-				if (is_readable($logo)) 
+				if (is_readable($logo))
 	  			{
 	    			$taille=getimagesize($logo);
 	    			$longueur=$taille[0]/2.835;
 	    			$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 24);
 	  			}
-				else 
+				else
 				{
 						$pdf->SetTextColor(200,0,0);
 	  				$pdf->SetFont('Arial','B',8);
@@ -632,7 +632,7 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetTextColor(0,0,0);
     $pdf->SetFont('Arial','',8);
     $pdf->SetXY($this->marges['g'],$posy-5);
- 
+
 
     $pdf->SetXY($this->marges['g'],$posy);
     $pdf->SetFillColor(255,255,255);
@@ -652,7 +652,7 @@ class pdf_oursin extends ModelePDFFactures
       {
 	$pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
       }
-      
+
     // Caractéristiques emetteur
 	$pdf->SetFont('Arial','',9);
     if (defined("FAC_PDF_ADRESSE"))
@@ -722,7 +722,7 @@ class pdf_oursin extends ModelePDFFactures
 	$pdf->SetFont('Arial','',9);
 	$pdf->MultiCell(60, 4, $langs->trans("Project")." : ".$projet->title);
       }
-    	    
+
     /*
      * ref propal
      */
@@ -734,8 +734,8 @@ class pdf_oursin extends ModelePDFFactures
 	$objp = $fac->db->fetch_object();
 	$pdf->SetFont('Arial','',9);
 	$pdf->MultiCell(60, 4, $langs->trans("RefProposal")." : ".$objp->ref);
-      }  
- 
+      }
+
     /*
      * monnaie
      */
@@ -759,7 +759,7 @@ class pdf_oursin extends ModelePDFFactures
     $langs->load("main");
     $langs->load("bills");
     $langs->load("companies");
-        
+
     $footy=13;
     $pdf->SetFont('Arial','',8);
 

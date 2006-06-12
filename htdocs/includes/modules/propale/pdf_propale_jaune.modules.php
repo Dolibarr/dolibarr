@@ -41,7 +41,7 @@ class pdf_propale_jaune extends ModelePDFPropales
     		\param	db		handler accès base de donnée
     */
   	function pdf_propale_jaune($db=0)
-    { 
+    {
         $this->db = $db;
         $this->name = "jaune";
         $this->description = "Modèle de proposition Jaune";
@@ -51,7 +51,7 @@ class pdf_propale_jaune extends ModelePDFPropales
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
-        
+
         $this->error = "";
     }
 
@@ -59,21 +59,21 @@ class pdf_propale_jaune extends ModelePDFPropales
 	/**	\brief      Renvoi dernière erreur
 	    \return     string      Dernière erreur
 	*/
-	function pdferror() 
+	function pdferror()
 	{
 	  return $this->error;
 	}
-  
-  
+
+
 	/**
 	    \brief      Fonction générant la propale sur le disque
 	    \param	    propale		Objet propal
 		\return	    int     	1=ok, 0=ko
 	*/
-	function write_pdf_file($propale)
+	function write_pdf_file($propale,$outputlangs='')
 	{
-		global $user,$conf,$langs;
-	
+		global $user,$conf,$langs,$mysoc;
+
 		if ($conf->propal->dir_output)
 		{
 			// Définition de l'objet $propal (pour compatibilite ascendante)
@@ -83,7 +83,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$propale = new Propal($this->db,"",$id);
 				$ret=$propale->fetch($id);
 			}
-	
+
 			// Définition de $dir et $file
 			if ($propale->specimen)
 			{
@@ -96,7 +96,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$dir = $conf->propal->dir_output . "/" . $propref;
 				$file = $dir . "/" . $propref . ".pdf";
 			}
-	
+
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -105,22 +105,22 @@ class pdf_propale_jaune extends ModelePDFPropales
 					return 0;
 				}
 			}
-	
+
 			if (file_exists($dir))
 			{
-	
+
 				$pdf=new FPDF('P','mm',$this->format);
 				$pdf->Open();
-	
+
 				$pdf->SetTitle($propale->ref);
 				$pdf->SetSubject("Proposition commerciale");
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
-	
+
 				$pdf->AddPage();
-	
+
 				$this->_pagehead($pdf, $propale);
-	
+
 				/*
 				*/
 				$tab_top = 100;
@@ -128,46 +128,46 @@ class pdf_propale_jaune extends ModelePDFPropales
 				/*
 				*
 				*/
-	
+
 				$pdf->SetFillColor(242,239,119);
-	
+
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('Arial','', 10);
-	
+
 				$pdf->SetXY (10, $tab_top + 10 );
-	
+
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
 				$nblignes = sizeof($propale->lignes);
-	
+
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
 					$total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
-	
+
 					$pdf->SetXY (30, $curY );
 					$pdf->MultiCell(102, 5, $propale->lignes[$i]->desc, 0, 'J', 0);
-	
+
 					$nexY = $pdf->GetY();
-	
+
 					$pdf->SetXY (10, $curY );
 					$pdf->MultiCell(20, 5, $propale->lignes[$i]->ref, 0, 'C', 0);
-	
+
 					$pdf->SetXY (132, $curY );
 					$pdf->MultiCell(12, 5, $propale->lignes[$i]->tva_tx, 0, 'C', 0);
-	
+
 					$pdf->SetXY (144, $curY );
 					$pdf->MultiCell(10, 5, $propale->lignes[$i]->qty, 0, 'C', 0);
-	
+
 					$pdf->SetXY (154, $curY );
 					$pdf->MultiCell(22, 5, price($propale->lignes[$i]->price), 0, 'R', 0);
-	
+
 					$pdf->SetXY (176, $curY );
 					$pdf->MultiCell(24, 5, $total, 0, 'R', 0);
-	
+
 					$pdf->line(10, $curY, 200, $curY );
-	
+
 					if ($nexY > 240 && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
@@ -178,7 +178,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 						$pdf->SetFont('Arial','', 10);
 					}
 				}
-	
+
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 				/*
 				*
@@ -186,39 +186,39 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$tab2_top = 254;
 				$tab2_lh = 7;
 				$tab2_height = $tab2_lh * 3;
-	
+
 				$pdf->SetFont('Arial','', 11);
-	
+
 				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
-	
+
 				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
 				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
 				$pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
-	
+
 				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-	
+
 				$pdf->SetXY (132, $tab2_top + 0);
 				$pdf->MultiCell(42, $tab2_lh, "Total HT", 0, 'R', 0);
-	
+
 				$pdf->SetXY (132, $tab2_top + $tab2_lh);
 				$pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);
-	
+
 				$pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
 				$pdf->MultiCell(42, $tab2_lh, "Total TTC", 1, 'R', 1);
-	
+
 				$pdf->SetXY (174, $tab2_top + 0);
 				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
-	
+
 				$pdf->SetXY (174, $tab2_top + $tab2_lh);
 				$pdf->MultiCell(26, $tab2_lh, price($propale->total_tva), 0, 'R', 0);
-	
+
 				$pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
 				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ttc), 1, 'R', 1);
-	
+
 				/*
 				*
 				*/
-	
+
 				$pdf->Output($file);
 				return 1;
 			}
@@ -238,23 +238,23 @@ class pdf_propale_jaune extends ModelePDFPropales
 
       $pdf->SetXY(30,$tab_top);
       $pdf->MultiCell(102,10,$langs->trans("Designation"),0,'L',1);
-      
+
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
       $pdf->SetXY(132,$tab_top);
       $pdf->MultiCell(12, 10,$langs->trans("VAT"),0,'C',1);
-      
+
       $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
       $pdf->SetXY(144,$tab_top);
       $pdf->MultiCell(10,10,$langs->trans("Qty"),0,'C',1);
-      
+
       $pdf->line(154, $tab_top, 154, $tab_top + $tab_height);
       $pdf->SetXY(154,$tab_top);
       $pdf->MultiCell(22,10,$langs->trans("PriceU"),0,'R',1);
-      
+
       $pdf->line(176, $tab_top, 176, $tab_top + $tab_height);
       $pdf->SetXY(176,$tab_top);
       $pdf->MultiCell(24,10,$langs->trans("Total"),0,'R',1);
-      
+
       $pdf->Rect(10, $tab_top, 190, $tab_height);
 
       $pdf->SetTextColor(0,0,0);
@@ -272,7 +272,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 	  $pdf->SetFont('Arial','B',14);
 	  $pdf->MultiCell(76, 8, FAC_PDF_INTITULE, 0, 'L');
 	}
-      
+
       $pdf->SetTextColor(70,70,170);
       if (defined("FAC_PDF_ADRESSE"))
 	{
@@ -285,14 +285,14 @@ class pdf_propale_jaune extends ModelePDFPropales
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
 	  $pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
-	}  
+	}
       if (defined("MAIN_INFO_SIREN"))
 	{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
 	  $pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
-	}  
-      $pdf->rect(10, 40, 80, 40);      
+	}
+      $pdf->rect(10, 40, 80, 40);
 
       $pdf->SetXY(10,5);
       $pdf->SetFont('Arial','B',16);
@@ -311,7 +311,7 @@ class pdf_propale_jaune extends ModelePDFPropales
       $pdf->SetXY(102,47);
       $pdf->MultiCell(96,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
       $pdf->rect(100, 40, 100, 40);
-            
+
       $pdf->SetTextColor(200,0,0);
       $pdf->SetFont('Arial','B',12);
 
@@ -321,7 +321,7 @@ class pdf_propale_jaune extends ModelePDFPropales
       $pdf->SetXY(10,90);
       $pdf->MultiCell(110, 10, "Numéro : ".$propale->ref);
       $pdf->SetXY(110,90);
-      $pdf->MultiCell(100, 10, "Date : " . strftime("%d %B %Y", $propale->date));            
+      $pdf->MultiCell(100, 10, "Date : " . strftime("%d %B %Y", $propale->date));
     }
 }
 ?>

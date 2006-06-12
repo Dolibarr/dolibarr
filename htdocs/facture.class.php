@@ -48,7 +48,7 @@ class Facture
 
 	var $socidp;		// Id client
 	var $client;		// Objet societe client (à charger par fetch_client)
-	
+
 	var $number;
 	var $author;
 	var $date;
@@ -67,6 +67,14 @@ class Facture
 	var $cond_reglement_code;
 	var $mode_reglement_id;
 	var $mode_reglement_code;
+
+    // Pour board
+    var $nbtodo;
+    var $nbtodolate;
+
+	var $specimen;
+    var $error;
+
 
 	/**
 	*    \brief  Constructeur de la classe
@@ -260,7 +268,7 @@ class Facture
 	                $interface=new Interfaces($this->db);
 	                $result=$interface->run_triggers('BILL_CREATE',$this,$user,$langs,$conf);
 	                // Fin appel triggers
-	    
+
 	                $this->db->commit();
 	                return $this->id;
 	            }
@@ -350,15 +358,15 @@ class Facture
 				$this->commande_id            = $obj->fk_commande;
 				$this->lignes                 = array();
 
-				
+
 				if ($this->user_author)
         {
              $sql = "SELECT name, firstname";
              $sql.= " FROM ".MAIN_DB_PREFIX."user";
              $sql.= " WHERE rowid = ".$this->user_author;
-                	
+
              $resqluser = $this->db->query($sql);
-                	
+
              if ($resqluser)
              {
                 $obju = $this->db->fetch_object($resqluser);
@@ -366,22 +374,22 @@ class Facture
                 $this->user_author_firstname = $obju->firstname;
              }
         }
-        
+
         if ($this->commande_id)
         {
              $sql = "SELECT ref";
              $sql.= " FROM ".MAIN_DB_PREFIX."commande";
              $sql.= " WHERE rowid = ".$this->commande_id;
-                	
+
              $resqlcomm = $this->db->query($sql);
-                	
+
              if ($resqlcomm)
              {
                 $objc = $this->db->fetch_object($resqlcomm);
                 $this->commande_ref      = $objc->ref;
              }
         }
-				
+
 				if ($this->statut == 0)
 				{
 					$this->brouillon = 1;
@@ -457,12 +465,12 @@ class Facture
 		$client->fetch($this->socidp);
 		$this->client = $client;
 	}
-	
+
 	/**
    *
    *
    */
-	 
+
   function fetch_contact_facture($id)
   {
     $idcontact = $id;
@@ -520,7 +528,7 @@ class Facture
 	function delete($rowid)
 	{
 		global $user,$langs,$conf;
-		
+
         $this->db->begin();
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$rowid;
 
@@ -550,7 +558,7 @@ class Facture
                                 $interface=new Interfaces($this->db);
                                 $result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
                                 // Fin appel triggers
-                
+
                                 $this->db->commit();
                                 return 1;
                             }
@@ -622,12 +630,12 @@ class Facture
 			return -1;
 		}
 		$this->db->free($resqltemp);
-		
+
 		/* Definition de la date limite */
-		
+
 		// 1 : ajout du nombre de jours
 		$datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
-		
+
 		// 2 : application de la règle "fin de mois"
 		if ($cdr_fdm)
 		{
@@ -646,22 +654,22 @@ class Facture
 			$datelim=mktime(12,0,0,$mois,1,$annee);
 			$datelim -= (3600 * 24);
 		}
-		
+
 		// 3 : application du décalage
 		$datelim += ( $cdr_decalage * 3600 * 24);
-		
+
 		return $datelim;
 	}
 
 	/**
 	 *      \brief      Tag la facture comme payée complètement + appel trigger BILL_PAYED
-     *      \param      user        Objet utilisateur qui modifie 
+     *      \param      user        Objet utilisateur qui modifie
  	 *      \return     int         <0 si ok, >0 si ok
 	 */
 	function set_payed($user)
 	{
 		global $conf,$langs;
-	    
+
 	    dolibarr_syslog("Facture.class.php::set_payed rowid=".$this->id);
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET paye=1 WHERE rowid = '.$this->id ;
@@ -670,20 +678,20 @@ class Facture
         if ($resql)
         {
             $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-    
+
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
             // Fin appel triggers
         }
-        
+
         return 1;
 	}
-	
+
 	/**
 	 *      \brief      Tag la facture comme non payée complètement + appel trigger BILL_UNPAYED
-     *      \param      user        Objet utilisateur qui modifie 
+     *      \param      user        Objet utilisateur qui modifie
  	 *      \return     int         <0 si ok, >0 si ok
  	 */
 	function set_unpayed($user)
@@ -698,17 +706,17 @@ class Facture
         if ($resql)
         {
             $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-    
+
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('BILL_UNPAYED',$this,$user,$langs,$conf);
             // Fin appel triggers
         }
-        
+
         return 1;
 	}
-	
+
 	/**
 	*    \brief     Tag la facture comme payer partiellement
 	*    \param     rowid       id de la facture à modifier
@@ -721,7 +729,7 @@ class Facture
 
 	/**
  	 *      \brief      Tag la facture comme abandonnée + appel trigger BILL_CANCEL
-     *      \param      user        Objet utilisateur qui modifie 
+     *      \param      user        Objet utilisateur qui modifie
  	 *      \return     int         <0 si ok, >0 si ok
 	 */
 	function set_canceled($user)
@@ -758,7 +766,7 @@ class Facture
 	function set_valid($rowid, $user, $soc, $force_number='')
 	{
 		global $conf,$langs;
-		
+
 		$error = 0;
 		if ($this->brouillon)
 		{
@@ -829,7 +837,7 @@ class Facture
 				{
 					$obj = $this->db->fetch_object($resql);
 					$avoir=$obj->amount;
-				
+
 					// On met à jour avoir comme affecté à facture
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 					$sql.= ' SET fk_facture = '.$this->id.',';
@@ -864,8 +872,8 @@ class Facture
 					$i++;
 				}
 */
-		
-                
+
+
             /*
              * Pour chaque produit, on met a jour indicateur nbvente
              * On crée ici une dénormalisation des données pas forcément utilisée.
@@ -896,7 +904,7 @@ class Facture
                 $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
                 $this->ref = $numfa;
-                
+
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
@@ -926,13 +934,13 @@ class Facture
             }
         }
     }
-    
+
   /*
    *
    *
    *
    */
-	 
+
   function set_pdf_model($user, $modelpdf)
    {
       if ($user->rights->facture->creer)
@@ -940,7 +948,7 @@ class Facture
 
 	      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET model_pdf = '$modelpdf'";
 	      $sql .= " WHERE rowid = $this->id AND fk_statut < 2 ;";
-	  
+
 	     if ($this->db->query($sql) )
 	      {
 	        return 1;
@@ -1056,7 +1064,7 @@ class Facture
 				$row = $this->db->fetch_row($resql);
 				$rangmax = $row[0];
 			}
-			
+
 			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
 			{
 				if (!$product_desc)
@@ -1071,7 +1079,7 @@ class Facture
 
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet ';
 			$sql.= ' (fk_facture, description, price, qty, tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
-			
+
 			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
 			{
 				$sql.= " VALUES ($facid, '".addslashes($product_desc)."','$price','$qty','$txtva',";
@@ -1080,7 +1088,7 @@ class Facture
 			{
 				$sql.= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',";
 			}
-      
+
 			if ($fk_product) { $sql.= "'$fk_product',"; }
 			else { $sql.='0,'; }
 			$sql.= " '$remise_percent','$subprice','$remise',";
@@ -1322,11 +1330,11 @@ class Facture
 	function set_remise_absolue($user, $remise)
 	{
 		$remise=trim($remise)?trim($remise):0;
-		
+
 		if ($user->rights->facture->creer)
 		{
 			$remise=price2num($remise);
-			
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_absolue = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
@@ -1354,7 +1362,7 @@ class Facture
 	function getSumTva()
 	{
 		$tvs=array();
-		
+
 		$sql = 'SELECT amount, tva_tx FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$this->id;
 		if ($this->db->query($sql))
 		{
@@ -1518,22 +1526,22 @@ class Facture
     {
         global $db, $langs;
         $langs->load("bills");
-    
+
         $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
-    
+
         if (defined("FACTURE_ADDON") && FACTURE_ADDON)
         {
             $file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
-    
+
             // Chargement de la classe de numérotation
             $classname = "mod_facture_".FACTURE_ADDON;
             require_once($dir.$file);
-    
+
             $obj = new $classname();
-    
+
             $numref = "";
             $numref = $obj->getNumRef($soc,$this);
-    
+
             if ( $numref != "")
             {
                 return $numref;
@@ -1550,7 +1558,7 @@ class Facture
             return "";
         }
     }
-    
+
 	/**
  	 *    \brief      Mets à jour les commentaires privés
 	 *    \param      note        	Commentaire
@@ -1596,7 +1604,7 @@ class Facture
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *      \brief     Charge les informations de l'onglet info dans l'objet facture
 	 *      \param     id       	Id de la facture a charger
@@ -1712,7 +1720,7 @@ class Facture
    /**
 	*   \brief      Créé une demande de prélèvement
     *   \param      user        Utilisateur créant la demande
-    *   \return     int         <0 si ko, >0 si ok 
+    *   \return     int         <0 si ko, >0 si ok
 	*/
 	function demande_prelevement($user)
 	{
@@ -1967,14 +1975,14 @@ class Facture
         if ($fk_socpeople <= 0) return -1;
 
         // Verifie type_contact
-        if (! $type_contact || ! is_numeric($type_contact)) 
+        if (! $type_contact || ! is_numeric($type_contact))
         {
             $this->error="Valeur pour type_contact incorrect";
-            return -3;  
+            return -3;
         }
-        
+
         $datecreate = time();
-        
+
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
@@ -1982,7 +1990,7 @@ class Facture
 				$sql.= $this->db->idate($datecreate);
 				$sql.= ", 4, '". $type_contact . "' ";
         $sql.= ")";
-        
+
         // Retour
         if ( $this->db->query($sql) )
         {
@@ -1993,7 +2001,7 @@ class Facture
             $this->error=$this->db->error()." - $sql";
             return -1;
         }
-	}    
+	}
 
     /**
 	 *      \brief      Mise a jour du contact associé une facture
@@ -2019,16 +2027,16 @@ class Facture
             dolibarr_print_error($this->db);
             return -1;
         }
-	 }    
+	 }
 
-	/** 
+	/**
      *    \brief      Supprime une ligne de contact
      *    \param      rowid		La reference du contact
      *    \return     statur        >0 si ok, <0 si ko
      */
     function delete_contact($rowid)
     {
-    
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
         if ($this->db->query($sql))
@@ -2041,7 +2049,7 @@ class Facture
         }
     }
 
-    /** 
+    /**
      *    \brief      Récupère les lignes de contact de l'objet
      *    \param      statut        Statut des lignes detail à récupérer
      *    \param      source        Source du contact external (llx_socpeople) ou internal (llx_user)
@@ -2050,11 +2058,11 @@ class Facture
     function liste_contact($statut=-1,$source='external')
     {
         global $langs;
-        
+
   		$element='facture';
 
         $tab=array();
-     
+
         $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id,";
         if ($source == 'internal') $sql.=" '-1' as socid,";
         if ($source == 'external') $sql.=" t.fk_soc as socid,";
@@ -2075,7 +2083,7 @@ class Facture
         if ($source == 'external') $sql.= " AND ec.fk_socpeople = t.idp";
         if ($statut >= 0) $sql.= " AND statut = '$statut'";
         $sql.=" ORDER BY t.name ASC";
-        
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2084,7 +2092,7 @@ class Facture
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($resql);
-                
+
                 $transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
                 $libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
                 $tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom,
@@ -2101,7 +2109,7 @@ class Facture
         }
     }
 
-    /** 
+    /**
      *    \brief      Le détail d'un contact
      *    \param      rowid      L'identifiant du contact
      *    \return     object     L'objet construit par DoliDb.fetch_object
@@ -2131,9 +2139,9 @@ class Facture
             dolibarr_print_error($this->db);
             return null;
         }
-    }	
+    }
 
-    /** 
+    /**
      *      \brief      Liste les valeurs possibles de type de contacts pour les factures
      *      \param      source      'internal' ou 'external'
      *      \return     array       Tableau des types de contacts
@@ -2141,11 +2149,11 @@ class Facture
  	function liste_type_contact($source)
     {
         global $langs;
-        
+
   		$element='facture';
-  		
+
   		$tab = array();
-  		
+
         $sql = "SELECT distinct tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE element='".$element."'";
@@ -2173,7 +2181,7 @@ class Facture
             $this->error=$this->db->error();
             return null;
         }
-    }		 			
+    }
 
     /**
      *      \brief      Retourne id des contacts d'une source et d'un type donné
@@ -2181,14 +2189,14 @@ class Facture
      *                  Exemple: contact client de livraison ('external', 'SHIPPING')
      *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
      *      \return     array       Liste des id contacts
-     */   
+     */
     function getIdContact($source,$code)
     {
   		$element='facture';     // Contact sur la facture
-        
+
         $result=array();
         $i=0;
-        
+
         $sql = "SELECT ec.fk_socpeople";
         $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE ec.element_id = ".$this->id;
@@ -2211,14 +2219,14 @@ class Facture
             $this->error=$this->db->error();
             return null;
         }
-        
+
         return $result;
-    }    
+    }
 
     /**
      *      \brief      Retourne id des contacts clients de facturation
      *      \return     array       Liste des id contacts facturation
-     */   
+     */
     function getIdBillingContact()
     {
         return $this->getIdContact('external','BILLING');
@@ -2227,7 +2235,7 @@ class Facture
     /**
      *      \brief      Retourne id des contacts clients de livraison
      *      \return     array       Liste des id contacts livraison
-     */   
+     */
     function getIdShippingContact()
     {
         return $this->getIdContact('external','SHIPPING');
@@ -2253,12 +2261,12 @@ class Facture
 			while ($i < $num_socs)
 			{
 				$i++;
-	
+
 				$row = $this->db->fetch_row($resql);
 				$socids[$i] = $row[0];
 			}
 		}
-	
+
 		// Charge tableau des produits prodids
 		$prodids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
@@ -2274,7 +2282,7 @@ class Facture
 				$prodids[$i] = $row[0];
 			}
 		}
-	
+
 		// Initialise paramètres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
@@ -2301,7 +2309,7 @@ class Facture
 			$this->lignes[$xnbp]=$ligne;
 			$xnbp++;
 		}
-		
+
 		$this->amount_ht      = $xnbp*100;
 		$this->total_ht       = $xnbp*100;
 		$this->total_tva      = $xnbp*19.6;

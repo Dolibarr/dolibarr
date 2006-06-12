@@ -21,7 +21,7 @@
  * $Source$
  */
 
-/**	    
+/**
         \file       htdocs/includes/modules/propale/modules_propale.php
 		\ingroup    propale
 		\brief      Fichier contenant la classe mère de generation des propales en PDF
@@ -40,16 +40,16 @@ require_once(FPDF_PATH.'fpdf.php');
 class ModelePDFPropales extends FPDF
 {
     var $error='';
-    
-    /** 
+
+    /**
      *      \brief      Renvoi le dernier message d'erreur de création de propale
      */
     function pdferror()
     {
         return $this->error;
     }
-    
-    /** 
+
+    /**
      *      \brief      Renvoi la liste des modèles actifs
      */
     function liste_modeles($db)
@@ -59,7 +59,7 @@ class ModelePDFPropales extends FPDF
         $sql ="SELECT nom as id, nom as lib";
         $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
         $sql.=" WHERE type = '".$type."'";
-        
+
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -128,7 +128,7 @@ class ModeleNumRefPropales
         global $langs;
         return $langs->trans("NotAvailable");
     }
-    
+
 }
 
 
@@ -206,14 +206,14 @@ function propale_delete_preview($db, $propalid, $propalref='')
         	$propal->fetch($propalid);
         	$propalref = $propal->ref;
         }
-        
+
         if ($conf->propal->dir_output)
         {
         	$propref = sanitize_string($propalref);
         	$dir = $conf->propal->dir_output . "/" . $propalref ;
         	$file = $dir . "/" . $propalref . ".pdf.png";
         	$multiple = $file . ".";
-        	
+
         	if ( file_exists( $file ) && is_writable( $file ) )
         	{
         		if ( ! unlink($file) )
@@ -227,7 +227,7 @@ function propale_delete_preview($db, $propalid, $propalref='')
         		for ($i = 0; $i < 20; $i++)
         		{
         			$preview = $multiple.$i;
-        		
+
         		if ( file_exists( $preview ) && is_writable( $preview ) )
         		{
         			if ( ! unlink($preview) )

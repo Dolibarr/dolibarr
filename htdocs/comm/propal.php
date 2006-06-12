@@ -59,7 +59,7 @@ $month=isset($_GET["month"])?$_GET["month"]:"";
 // Sécurité accés client
 $socidp='';
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socidp = $user->societe_id;
@@ -139,10 +139,10 @@ if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propale->creer)
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 
-if ($_POST['action'] == 'add') 
+if ($_POST['action'] == 'add')
 {
     $propal = new Propal($db, $_POST['socidp']);
-    
+
     /*
      * Si on seléctionné une propal à copier, on réalise la copie
      */
@@ -180,15 +180,15 @@ if ($_POST['action'] == 'add')
 	    $propal->duree_validite = $_POST['duree_validite'];
 	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
 	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
-	
+
 	    $propal->contactid = $_POST['contactidp'];
 	    $propal->projetidp = $_POST['projetidp'];
 	    $propal->modelpdf  = $_POST['model'];
 	    $propal->author    = $user->id;
 	    $propal->note      = $_POST['note'];
-	
+
 	    $propal->ref = $_POST['ref'];
-	    
+
 	    for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
 	    {
 			if ($_POST['idprod'.$i])
@@ -199,7 +199,7 @@ if ($_POST['action'] == 'add')
 		        $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
 			}
 	    }
-	
+
 	    $id = $propal->create();
     }
     /*
@@ -208,7 +208,7 @@ if ($_POST['action'] == 'add')
     if ($id > 0)
     {
         propale_pdf_create($db, $id, $_POST['model']);
-        
+
         Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
         exit;
     }
@@ -222,7 +222,7 @@ if ($_POST['action'] == 'add')
 /*
  *  Cloture de la propale
  */
-if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer) 
+if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer)
 {
     if (! $_POST['cancel'])
     {
@@ -265,25 +265,25 @@ if ($_POST['action'] == 'send')
                 $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
                 $message = $_POST['message'];
                 $sendtocc = $_POST['sendtocc'];
-                
+
                 if ($_POST['action'] == 'send')
                 {
                 	$subject = $_POST['subject'];
-                	
+
                 	if($subject == '')
                 	{
                 		$subject = $langs->trans('Propal').' '.$propal->ref;
                 	}
-                  
+
                   $actiontypeid=3;
                   $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
-                  
+
                   if ($message)
                   {
                     $actionmsg.='Texte utilisé dans le corps du message:<br>';
                     $actionmsg.=$message;
                   }
-                  
+
                   $actionmsg2='Envoi Propal par mail';
                 }
 
@@ -357,7 +357,7 @@ if ($_GET['action'] == 'commande')
   $propal->create_commande($user);
 }
 
-if ($_GET['action'] == 'modif' && $user->rights->propale->creer) 
+if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 {
   /*
    *  Repasse la propale en mode brouillon
@@ -372,7 +372,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 {
     $propal = new Propal($db);
     $ret=$propal->fetch($_POST['propalid']);
-	
+
 	if ($_POST["remise_id"])
 	{
 		$propal->insert_discount($_POST["remise_id"]);
@@ -382,23 +382,23 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 /*
  *  Ajout d'une ligne produit dans la propale
  */
-if ($_POST['action'] == "addligne" && $user->rights->propale->creer) 
+if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 {
 	if ($_POST['qty'] && (($_POST['np_price']!=0 && $_POST['np_desc']) || $_POST['idprod']))
 	{
 	    $propal = new Propal($db);
 	    $ret=$propal->fetch($_POST['propalid']);
-	
+
 	    if (isset($_POST['np_tva_tx']))
 	    {
 	        $propal->insert_product_generic(
-					    $_POST['np_desc'], 
-					    $_POST['np_price'], 
+					    $_POST['np_desc'],
+					    $_POST['np_price'],
 					    $_POST['qty'],
 					    $_POST['np_tva_tx'],
 					    $_POST['np_remise']);
 	    }
-	    else 
+	    else
 	    {
 	        $propal->insert_product(
 	                    $_POST['idprod'],
@@ -410,7 +410,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 	}
 }
 
-if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save")) 
+if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
     /*
      *  Mise à jour d'une ligne dans la propale
@@ -433,7 +433,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 }
 
 
-if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE) 
+if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
   /*
    *  Supprime une ligne produit dans la propale
@@ -460,7 +460,7 @@ if ($_POST['action'] == 'set_contact')
 
 // Conditions de règlement
 if ($_POST["action"] == 'setconditions')
-{ 
+{
 	$propal = new Propal($db, $_GET["propalid"]);
 	$propal->cond_reglement_id = $_POST['cond_reglement_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -546,7 +546,7 @@ if ($_GET['propalid'] > 0)
 		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
 		print '<br>';
 	}
-	
+
  /*
 	* Confirmation de la suppression d'une ligne produit
 	*/
@@ -1490,7 +1490,7 @@ else
   if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
   $sql.= ' WHERE p.fk_soc = s.idp';
-  
+
   if (!$user->rights->commercial->client->voir && !$socidp) //restriction
     {
 	    $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -1508,10 +1508,10 @@ else
       $sql .= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
     }
   if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
-  if ($socidp) $sql .= ' AND s.idp = '.$socidp; 
+  if ($socidp) $sql .= ' AND s.idp = '.$socidp;
   if ($_GET['viewstatut'] <> '')
     {
-      $sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')'; 
+      $sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')';
     }
   if ($month > 0)
     {
@@ -1571,7 +1571,7 @@ else
             $var=!$var;
             print '<tr '.$bc[$var].'>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref."</a></td>\n";
-        
+
             if ($objp->client == 1)
             {
                 $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp;
@@ -1583,18 +1583,18 @@ else
 
 			// Société
             print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
-        
+
             // Date propale
             print '<td align="center">';
             $y = strftime('%Y',$objp->dp);
             $m = strftime('%m',$objp->dp);
-        
+
             print strftime('%d',$objp->dp)."\n";
             print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
             print dolibarr_print_date($objp->dp,'%b')."</a>\n";
             print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
             print strftime('%Y',$objp->dp)."</a></td>\n";
-        
+
             // Date fin validite
             if ($objp->dfv)
             {
@@ -1606,15 +1606,15 @@ else
             {
                 print '<td>&nbsp;</td>';
             }
-        
+
             print '<td align="right">'.price($objp->price)."</td>\n";
             $propal=New Propal($db);
             print '<td align="right">'.$propal->LibStatut($objp->fk_statut,5)."</td>\n";
             print "</tr>\n";
-        
+
             $total = $total + $objp->price;
             $subtotal = $subtotal + $objp->price;
-        
+
             $i++;
         }
       print '</table>';
