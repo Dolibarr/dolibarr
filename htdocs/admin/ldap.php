@@ -187,7 +187,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPPassword").'</td><td>';
 if ($conf->global->LDAP_ADMIN_PASS)
 {
-	print '<input size="25" type="password" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">';
+	print '<input size="25" type="text" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">';// je le met en visible pour test
 }
 else
 {
