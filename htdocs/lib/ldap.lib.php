@@ -70,12 +70,8 @@ function dolibarr_ldap_connect()
 	if ($ldapconnect)
 	{
 		ldap_set_option($ldapconnect, LDAP_OPT_PROTOCOL_VERSION, $conf->global->LDAP_SERVER_PROTOCOLVERSION);
-		return $ldapconnect;
 	}
-	else
-	{
-		$this->err = ldap_error($ldapconnect);
-	}
+	return $ldapconnect;
 }
 
 
@@ -90,7 +86,7 @@ function dolibarr_ldap_bind($ds)
 	
 	if (defined("LDAP_ADMIN_PASS") && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
     {
-    	$ldapbind = ldap_bind($ds, $conf->global->LDAP_ADMIN_DN, $conf->global->LDAP_ADMIN_PASS);
+    	$ldapbind = @ldap_bind($ds, $conf->global->LDAP_ADMIN_DN, $conf->global->LDAP_ADMIN_PASS);
     }
   
   if ($ldapbind)
@@ -110,7 +106,7 @@ function dolibarr_ldap_bind($ds)
 */
 function dolibarr_ldap_unbind($ds)
 {
-	$ldapunbind = ldap_unbind($ds);
+	$ldapunbind = @ldap_unbind($ds);
 
 	return $ldapunbind;
 }

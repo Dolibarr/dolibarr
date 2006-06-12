@@ -313,7 +313,7 @@ if (function_exists("ldap_connect"))
 		  // Test ldap_unbind
 		  $unbind = $ldap->dolibarr_ldap_unbind($ds);
 		  
-		  if ($unbind)
+		  if ($bind && $unbind)
 		  {
 		  	print img_picto('','info');
 		  	print "Déconnection du dn $dn réussi<br>";
