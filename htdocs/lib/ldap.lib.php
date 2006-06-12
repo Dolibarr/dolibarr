@@ -61,7 +61,7 @@ function dolibarr_ldap_connect()
 	}
 	else
 	{
-		$this->err .= ldap_error($ldapconnect);
+		$this->err = ldap_error($ldapconnect);
 	}
 }
 
@@ -79,8 +79,15 @@ function dolibarr_ldap_bind($ds)
     {
     	$ldapbind = ldap_bind($ds, $conf->global->LDAP_ADMIN_DN, $conf->global->LDAP_ADMIN_PASS);
     }
-
-	return $ldapbind;
+  
+  if ($ldapbind)
+  {
+  	return $ldapbind;
+  }
+  else
+  {
+  	$this->err = ldap_error($ldapbind);
+  }
 }
 
 /**

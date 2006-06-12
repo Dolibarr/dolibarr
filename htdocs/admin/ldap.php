@@ -277,9 +277,9 @@ if (function_exists("ldap_connect"))
 			print "<br>";
 		}
 
-		// Test ldap_getversion
 		if ($ds)
 		{
+			// Test ldap_getversion
 			if ((dolibarr_ldap_getversion($ds) == 3))
 			{
 				print img_picto('','info');
@@ -290,37 +290,37 @@ if (function_exists("ldap_connect"))
 				print img_picto('','info');
 				print $langs->trans("LDAPSetupForVersion2").'<br>';
 			}
-		}
 	
-		// Test ldap_bind
-		$bind = @dolibarr_ldap_bind($ds);
-		if ($bind)
-		{
-			print img_picto('','info');
-			print "Connexion au dn $dn réussi<br>";
-		}
-		else
-		{
-			print img_picto('','alerte');
-	
-			print "Connexion au dn $dn raté : ";
-			print ldap_error($ds);
-			print "<br>";
-		}
+		  // Test ldap_bind
+			$bind = @dolibarr_ldap_bind($ds);
+			
+			if ($bind)
+			{
+				print img_picto('','info');
+				print "Connexion au dn $dn réussi<br>";
+			}
+			else
+			{
+				print img_picto('','alerte');
+				print "Connexion au dn $dn raté : ";
+				print $bind->err;
+				print "<br>";
+			}
 
-		// Test ldap_unbind
-		$unbind = @dolibarr_ldap_unbind($ds);
-		if ($bind)
-		{
-			print img_picto('','info');
-			print "Déconnection du dn $dn réussi<br>";
-		}
-		else
-		{
-			print img_picto('','alerte');
-	
-			print "Déconnection du dn $dn raté";
-			print "<br>";
+		  // Test ldap_unbind
+		  $unbind = @dolibarr_ldap_unbind($ds);
+		  
+		  if ($bind)
+		  {
+		  	print img_picto('','info');
+		  	print "Déconnection du dn $dn réussi<br>";
+		  }
+		  else
+		  {
+			  print img_picto('','alerte');
+			  print "Déconnection du dn $dn raté";
+			  print "<br>";
+			}
 		}
 	}
 }
