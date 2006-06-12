@@ -179,7 +179,7 @@ class pdf_bernique extends ModelePDFFactures  {
 						$account = new Account($this->db);
 						$account->fetch(FACTURE_RIB_NUMBER);
 	
-						$pdf->SetXY (10, 49);
+						$pdf->SetXY (10, 40);
 						$pdf->SetFont('Arial','U',8);
 						$pdf->MultiCell(40, 4, $langs->trans("BankDetails"), 0, 'L', 0);
 						$pdf->SetFont('Arial','',8);
@@ -222,212 +222,221 @@ class pdf_bernique extends ModelePDFFactures  {
 		}
 	}
 	
-  /*
-   *
-   *
-   *
-   */
-  function _tableau_compl(&$pdf, $fac)
-    {
-    	global $langs;
-    	$langs->load("main");
-    	$langs->load("bills");
-    	
-      $tab3_top = 240;
-      $tab3_height = 18;
-      $tab3_width = 60;
-      
-      $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
-      
-      $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
-      $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
-      
-      $pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
-      
-      $pdf->SetFont('Arial','',8);
-      $pdf->SetXY (10, $tab3_top - 6);
-      $pdf->MultiCell(60, 6, $langs->trans("ExtraInfos"), 0, 'L', 0);
-      $pdf->SetXY (10, $tab3_top );
-      $pdf->MultiCell(20, 6, $langs->trans("RegulatedOn"), 0, 'L', 0);
-      $pdf->SetXY (10, $tab3_top + 6);
-      $pdf->MultiCell(20, 6, $langs->trans("ChequeNumber"), 0, 'L', 0);
-      $pdf->SetXY (10, $tab3_top + 12);
-      $pdf->MultiCell(20, 6, $langs->trans("Bank"), 0, 'L', 0);
-
-      $pdf->SetFont('Arial','U',12);
-      $titre = $langs->trans("PaymentConditions").' : '.$fac->cond_reglement_facture;
-      $pdf->SetXY(200 - $pdf->GetStringWidth($titre), $tab3_top + 10);
-      $pdf->MultiCell(120, 5, $titre, 0, 'J');
-    }
-
-  function _tableau_tot(&$pdf, $fac, $top, $height)
-  {
-    global $langs;
-    $langs->load("main");
-    $langs->load("bills"); 
-    
-    
-    $tab2_top = $top + $height;
-    $tab2_hl = 5;
-    $tab2_height = $tab2_hl * 4;
-    $pdf->SetFont('Arial','', 9);
-    
-    $tvas = $fac->getSumTva();
-
-    $i = 0;
-    
-    $tab4_top = $tab2_top + 2 + ($tab2_hl * 2);
-    
-    foreach ($tvas as $key => $value)
-      {
-	$pdf->SetXY (10, $tab4_top + ( $i * $tab2_hl));
-	$pdf->MultiCell(25, $tab2_hl, "TVA à ". $key."%", 0, 'L', 0);
-	$pdf->SetXY (35, $tab4_top + ( $i * $tab2_hl));
-	$pdf->MultiCell(20, $tab2_hl, price($tvas[$key]), 0, 'R', 0);
-	$i++;
-	$pdf->line(10, $tab4_top + ($tab2_hl * $i), 55, $tab4_top + ($tab2_hl * $i) );
-      }
-    $pdf->line(10, $tab4_top, 55, $tab4_top );
-    $pdf->line(10, $tab4_top, 10, $tab4_top + ($tab2_hl * $i));
-    $pdf->line(35, $tab4_top, 35, $tab4_top + ($tab2_hl * $i));
-    $pdf->line(55, $tab4_top, 55, $tab4_top + ($tab2_hl * $i));
-    
-      
-    $pdf->Rect(10, $tab2_top, 190, $tab2_hl * 2);
-    $pdf->line(10, $tab2_top + $tab2_hl, 200, $tab2_top + $tab2_hl);
-      
-    
-    $pdf->SetXY (132, $tab2_top + 0);
-    $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalHT"), 0, 'R', 0);
-      
-      $pdf->SetXY (11, $tab2_top + $tab2_hl);
-      $pdf->MultiCell(42, $tab2_hl, $langs->trans("Discount")." ". $fac->remise_percent . " %", 0, 'L', 0);
-      
-      $pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
-      $pdf->MultiCell(42, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'R', 0);
-      
-      $pdf->SetXY (132, $tab2_top + $tab2_hl * 3);
-      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalVAT"), 0, 'R', 0);
-      
-      $pdf->SetXY (132, $tab2_top + $tab2_hl * 4);
-      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalTTC"), 0, 'R', 1);
-      
-      $pdf->SetXY (174, $tab2_top + 0);
-      $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
-      
-      $pdf->SetXY (174, $tab2_top + $tab2_hl);
-      $pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
-      
-      $pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
-      $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
-      
-      $pdf->SetXY (174, $tab2_top + $tab2_hl * 3);
-      $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
-      
-      $pdf->SetXY (174, $tab2_top + $tab2_hl * 4);
-      $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
-    }
-  /*
-   *
-   */
-  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
-    {
-      global $langs;
-      $langs->load("main");
-      $langs->load("bills");
-      
-      $pdf->SetFont('Arial','',10);
-      
-      $pdf->Text(11,$tab_top + 5,$langs->trans("Designation"));
-      
-      $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-      $pdf->Text(134,$tab_top + 5,$langs->trans("VAT"));
-      
-      $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-      $pdf->Text(147,$tab_top + 5,$langs->trans("Qty"));
-      
-      $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-      $pdf->Text(160,$tab_top + 5,$langs->trans("PriceU"));
-      
-      $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-      $pdf->Text(187,$tab_top + 5,$langs->trans("Total"));
-      
-      $pdf->Rect(10, $tab_top, 190, $tab_height);
-      $pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
-    }
-  /*
-   *
-   *
-   *
-   *
-   */
-  function _pagehead(&$pdf, $fac)
-    {
-        global $langs,$conf;
-        $langs->load("main");
-        $langs->load("bills");
-      
-      $pdf->SetXY(10,5);
-      if (defined("FAC_PDF_INTITULE"))
+	/*
+	*
+	*
+	*
+	*/
+	function _tableau_compl(&$pdf, $fac)
 	{
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->SetFont('Arial','B',14);
-	  $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
+		global $langs;
+		$langs->load("main");
+		$langs->load("bills");
+	
+		$tab3_top = 240;
+		$tab3_height = 18;
+		$tab3_width = 60;
+	
+		$pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
+	
+		$pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
+		$pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
+	
+		$pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
+	
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetXY (10, $tab3_top - 6);
+		$pdf->MultiCell(60, 6, $langs->trans("ExtraInfos"), 0, 'L', 0);
+		$pdf->SetXY (10, $tab3_top );
+		$pdf->MultiCell(20, 6, $langs->trans("RegulatedOn"), 0, 'L', 0);
+		$pdf->SetXY (10, $tab3_top + 6);
+		$pdf->MultiCell(20, 6, $langs->trans("ChequeNumber"), 0, 'L', 0);
+		$pdf->SetXY (10, $tab3_top + 12);
+		$pdf->MultiCell(20, 6, $langs->trans("Bank"), 0, 'L', 0);
+	
+        /*
+         * Conditions de règlements
+         */
+        if ($fac->cond_reglement_code)
+        {
+			$pdf->SetFont('Arial','U',10);
+			$titre = $langs->trans("PaymentConditions").': ';
+	        $lib_condition_paiement=$langs->trans("PaymentCondition".$fac->cond_reglement_code)?$langs->trans("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+//	        $pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
+			$pdf->SetXY(200 - $pdf->GetStringWidth($titre.$lib_condition_paiement), $tab3_top + 10);
+			$pdf->MultiCell(120, 5, $titre.$lib_condition_paiement, 0, 'J');
+		}
 	}
-      
-      $pdf->SetTextColor(70,70,170);
-      if (defined("FAC_PDF_ADRESSE"))
+	
+	function _tableau_tot(&$pdf, $fac, $top, $height)
 	{
-	  $pdf->SetFont('Arial','',12);
-	  $pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
+		global $langs;
+		$langs->load("main");
+		$langs->load("bills");
+	
+	
+		$tab2_top = $top + $height;
+		$tab2_hl = 5;
+		$tab2_height = $tab2_hl * 4;
+		$pdf->SetFont('Arial','', 9);
+	
+		$tvas = $fac->getSumTva();
+	
+		$i = 0;
+	
+		$tab4_top = $tab2_top + 2 + ($tab2_hl * 2);
+	
+		foreach ($tvas as $key => $value)
+		{
+			$pdf->SetXY (10, $tab4_top + ( $i * $tab2_hl));
+			$pdf->MultiCell(25, $tab2_hl, "TVA à ". $key."%", 0, 'L', 0);
+			$pdf->SetXY (35, $tab4_top + ( $i * $tab2_hl));
+			$pdf->MultiCell(20, $tab2_hl, price($tvas[$key]), 0, 'R', 0);
+			$i++;
+			$pdf->line(10, $tab4_top + ($tab2_hl * $i), 55, $tab4_top + ($tab2_hl * $i) );
+		}
+		$pdf->line(10, $tab4_top, 55, $tab4_top );
+		$pdf->line(10, $tab4_top, 10, $tab4_top + ($tab2_hl * $i));
+		$pdf->line(35, $tab4_top, 35, $tab4_top + ($tab2_hl * $i));
+		$pdf->line(55, $tab4_top, 55, $tab4_top + ($tab2_hl * $i));
+	
+	
+		$pdf->Rect(10, $tab2_top, 190, $tab2_hl * 2);
+		$pdf->line(10, $tab2_top + $tab2_hl, 200, $tab2_top + $tab2_hl);
+	
+	
+		$pdf->SetXY (132, $tab2_top + 0);
+		$pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalHT"), 0, 'R', 0);
+	
+		$pdf->SetXY (11, $tab2_top + $tab2_hl);
+		$pdf->MultiCell(42, $tab2_hl, $langs->trans("Discount")." ". $fac->remise_percent . " %", 0, 'L', 0);
+	
+		$pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
+		$pdf->MultiCell(42, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'R', 0);
+	
+		$pdf->SetXY (132, $tab2_top + $tab2_hl * 3);
+		$pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalVAT"), 0, 'R', 0);
+	
+		$pdf->SetXY (132, $tab2_top + $tab2_hl * 4);
+		$pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalTTC"), 0, 'R', 1);
+	
+		$pdf->SetXY (174, $tab2_top + 0);
+		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
+	
+		$pdf->SetXY (174, $tab2_top + $tab2_hl);
+		$pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
+	
+		$pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
+		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
+	
+		$pdf->SetXY (174, $tab2_top + $tab2_hl * 3);
+		$pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
+	
+		$pdf->SetXY (174, $tab2_top + $tab2_hl * 4);
+		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
 	}
-      if (defined("FAC_PDF_TEL"))
+	
+	/*
+	*
+	*/
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
 	{
-	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(40, 5, $langs->trans('PhoneNumber').' : '.FAC_PDF_TEL);
-	}  
-      if (defined("MAIN_INFO_SIREN"))
-	{
-	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(40, 5, "SIREN : ".MAIN_INFO_SIREN);
-	}  
-      
-      if (defined("FAC_PDF_INTITULE2"))
-	{
-	  $pdf->SetXY(100,5);
-	  $pdf->SetFont('Arial','B',14);
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+		global $langs;
+		$langs->load("main");
+		$langs->load("bills");
+	
+		$pdf->SetFont('Arial','',10);
+	
+		$pdf->Text(11,$tab_top + 5,$langs->trans("Designation"));
+	
+		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
+		$pdf->Text(134,$tab_top + 5,$langs->trans("VAT"));
+	
+		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
+		$pdf->Text(147,$tab_top + 5,$langs->trans("Qty"));
+	
+		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
+		$pdf->Text(160,$tab_top + 5,$langs->trans("PriceU"));
+	
+		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
+		$pdf->Text(187,$tab_top + 5,$langs->trans("Total"));
+	
+		$pdf->Rect(10, $tab_top, 190, $tab_height);
+		$pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
 	}
-      /*
-       * Adresse Client
-       */
-      $pdf->SetTextColor(0,0,0);
-      $pdf->SetFont('Arial','B',12);
-      $fac->fetch_client();
-      $pdf->SetXY(102,42);
-      $pdf->MultiCell(66,5, $fac->client->nom);
-      $pdf->SetFont('Arial','B',11);
-      $pdf->SetXY(102,$pdf->GetY());
-      $pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
-      $pdf->rect(100, 40, 100, 40);
-      
-      
-      $pdf->SetTextColor(200,0,0);
-      $pdf->SetFont('Arial','B',14);
-      $pdf->Text(11, 88, $langs->trans('Date').' : ' . strftime("%d %b %Y", $fac->date));
-      $pdf->Text(11, 94, $langs->trans('Invoice').' : '.$fac->ref);
-      
-      /*
-       */
-      $pdf->SetTextColor(0,0,0);
-      $pdf->SetFont('Arial','',10);
-      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
-      $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
-      /*
-       */
-      
-    }  
+	/*
+	*
+	*
+	*
+	*
+	*/
+	function _pagehead(&$pdf, $fac)
+	{
+		global $langs,$conf;
+		$langs->load("main");
+		$langs->load("bills");
+	
+		$pdf->SetXY(10,5);
+		if (defined("FAC_PDF_INTITULE"))
+		{
+			$pdf->SetTextColor(0,0,200);
+			$pdf->SetFont('Arial','B',14);
+			$pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
+		}
+	
+		$pdf->SetTextColor(70,70,170);
+		if (defined("FAC_PDF_ADRESSE"))
+		{
+			$pdf->SetFont('Arial','',12);
+			$pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
+		}
+		if (defined("FAC_PDF_TEL"))
+		{
+			$pdf->SetFont('Arial','',10);
+			$pdf->MultiCell(40, 5, $langs->trans('PhoneNumber').' : '.FAC_PDF_TEL);
+		}
+		if (defined("MAIN_INFO_SIREN"))
+		{
+			$pdf->SetFont('Arial','',10);
+			$pdf->MultiCell(40, 5, "SIREN : ".MAIN_INFO_SIREN);
+		}
+	
+		if (defined("FAC_PDF_INTITULE2"))
+		{
+			$pdf->SetXY(100,5);
+			$pdf->SetFont('Arial','B',14);
+			$pdf->SetTextColor(0,0,200);
+			$pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+		}
+		/*
+		* Adresse Client
+		*/
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Arial','B',12);
+		$fac->fetch_client();
+		$pdf->SetXY(102,42);
+		$pdf->MultiCell(66,5, $fac->client->nom);
+		$pdf->SetFont('Arial','B',11);
+		$pdf->SetXY(102,$pdf->GetY());
+		$pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
+		$pdf->rect(100, 40, 100, 40);
+	
+	
+		$pdf->SetTextColor(200,0,0);
+		$pdf->SetFont('Arial','B',14);
+		$pdf->Text(11, 88, $langs->trans('Date').' : ' . strftime("%d %b %Y", $fac->date));
+		$pdf->Text(11, 94, $langs->trans('Invoice').' : '.$fac->ref);
+	
+		/*
+		*/
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Arial','',10);
+		$titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+		/*
+		*/
+	
+	}
 }
 
 ?>
