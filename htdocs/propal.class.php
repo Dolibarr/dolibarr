@@ -2205,7 +2205,7 @@ class Propal
 		$socid = rand(1, $num_socs);
 		$this->socidp = $socids[$socid];
 		$this->date = time();
-		$this->date_lim_reglement=$this->date+3600*24*30;
+		$this->fin_validite = $this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
 		$this->note_public='SPECIMEN';
