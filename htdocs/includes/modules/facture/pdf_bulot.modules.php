@@ -72,8 +72,9 @@ class pdf_bulot extends ModelePDFFactures {
 			// Définition de l'objet $fac (pour compatibilite ascendante)
         	if (! is_object($fac))
         	{
-	            $fac = new Facture($this->db,"",$fac);
-	            $ret=$fac->fetch($fac);
+	            $id = $fac
+	            $fac = new Facture($this->db,"",$id);
+	            $ret=$fac->fetch($id);
 			}
 
 			// Définition de $dir et $file
