@@ -261,11 +261,11 @@ if (function_exists("ldap_connect"))
 	
 	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS && $_GET["action"] == 'test')
 	{
-		$ldap = new Ldap();
+		$ldap = New Ldap();
 		// Test ldap_connect
 		// ce test n'est pas fiable car une ressource est constamment retournée
 		// il faut se fier au test ldap_bind
-		$ds = $ldap->dolibarr_ldap_connect();
+		$ds = $ldap->dolibarr_ldap_connect()
 		if ($ds)
 		{
 			print img_picto('','info');
@@ -276,7 +276,7 @@ if (function_exists("ldap_connect"))
 			print img_picto('','alerte');
 			print $langs->trans("LDAPTestKO").'<br>';
 			print "<br>";
-			print $ds->err;
+			print $ldap->err;
 			print "<br>";
 		}
 
@@ -306,7 +306,7 @@ if (function_exists("ldap_connect"))
 			{
 				print img_picto('','alerte');
 				print "Connexion au dn $dn raté : ";
-				print $bind->err;
+				print $ldap->err;
 				print "<br>";
 			}
 
