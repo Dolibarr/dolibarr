@@ -121,7 +121,7 @@ class pdf_oursin extends ModelePDFFactures
 			// Définition de l'objet $fac (pour compatibilite ascendante)
         	if (! is_object($fac))
         	{
-	            $id = $fac
+	            $id = $fac;
 	            $fac = new Facture($this->db,"",$id);
 	            $ret=$fac->fetch($id);
 			}
