@@ -56,173 +56,193 @@ class pdf_propale_bleu extends ModelePDFPropales
     }
 
 
-  /**	\brief      Renvoi dernière erreur
-        \return     string      Dernière erreur
-  */
-  function pdferror() 
-  {
-      return $this->error;
-  }
-  
-  
-  /**
-        	\brief      Fonction générant la propale sur le disque
-         	\param	    id		id de la propale à générer
-    		\return	    int     1=ok, 0=ko
-    */
-  function write_pdf_file($id)
-    {
-      global $user,$conf,$langs;
-      
-      $propale = new Propal($this->db,"",$id);
-      if ($propale->fetch($id))
+	/**
+		\brief      Renvoi dernière erreur
+	    \return     string      Dernière erreur
+	*/
+	function pdferror() 
 	{
-
-	  if ($conf->propal->dir_output)
-	    {
-              $propref = sanitize_string($propale->ref);
-              $dir = $conf->propal->dir_output . "/" . $propref ;
-
-            if (! file_exists($dir))
-            {
-                if (create_exdir($dir) < 0)
-                {
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                    return 0;
-                }
-            }
-	    }
-	  else
-	    {
-            $this->error=$langs->trans("ErrorConstantNotDefined","PROPALE_OUTPUTDIR");
-            return 0;
-	    }
-	  
-          $propref = sanitize_string($propale->ref);
-          $file = $dir . "/" . $propref . ".pdf";
-	  
-	  if (file_exists($dir))
-	    {
-
-	      $pdf=new FPDF('P','mm',$this->format);
-	      $pdf->Open();
-	      $pdf->AddPage();
-
-	      $pdf->SetTitle($propale->ref);
-	      $pdf->SetSubject("Proposition commerciale");
-	      $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-	      $pdf->SetAuthor($user->fullname);
-
-	      $this->_pagehead($pdf, $propale);
-
-	      /*
-	       */
-	      $tab_top = 100;
-	      $tab_height = 150;
-	      /*
-	       *
-	       */  
-	      
-	      $pdf->SetFillColor(220,220,220);
-
-	      $pdf->SetTextColor(0,0,0);
-	      $pdf->SetFont('Arial','', 10);
-
-	      $pdf->SetXY (10, $tab_top + 10 );
-
-	      $iniY = $pdf->GetY();
-	      $curY = $pdf->GetY();
-	      $nexY = $pdf->GetY();
-	      $nblignes = sizeof($propale->lignes);
-
-	      for ($i = 0 ; $i < $nblignes ; $i++)
-		{
-
-		  $curY = $nexY;
-
-		  $pdf->SetXY (30, $curY );
-
-		  $pdf->MultiCell(100, 5, $propale->lignes[$i]->desc, 0, 'J', 0);
-
-		  $nexY = $pdf->GetY();
-		 
-		  $pdf->SetXY (10, $curY );
-
-		  $pdf->MultiCell(20, 5, $propale->lignes[$i]->ref, 0, 'C');
-
-		  $pdf->SetXY (133, $curY );		  
-		  $pdf->MultiCell(10, 5, $propale->lignes[$i]->tva_tx, 0, 'C');
-		  
-		  $pdf->SetXY (145, $curY );
-		  $pdf->MultiCell(10, 5, $propale->lignes[$i]->qty, 0, 'C');
-
-		  $pdf->SetXY (156, $curY );
-		  $pdf->MultiCell(18, 5, price($propale->lignes[$i]->price), 0, 'R', 0);
-	      
-		  $pdf->SetXY (174, $curY );
-		  $total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
-		  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-		  
-		  $pdf->line(10, $curY, 200, $curY );
-
-		  if ($nexY > 240 && $i < $nblignes - 1)
-		    {
-		      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-		      $pdf->AddPage();
-		      $nexY = $iniY;
-		      $this->_pagehead($pdf, $propale);
-		      $pdf->SetTextColor(0,0,0);
-		      $pdf->SetFont('Arial','', 10);
-		    }
-		}
-	      
-	      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-	      /*
-	       *
-	       */
-	      $tab2_top = 254;
-	      $tab2_lh = 7;
-	      $tab2_height = $tab2_lh * 3;
-
-	      $pdf->SetFont('Arial','', 11);
-	      
-	      $pdf->Rect(132, $tab2_top, 68, $tab2_height);
-	      
-	      $pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
-	      $pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
-	      $pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
-	      
-	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-	      
-	      $pdf->SetXY (132, $tab2_top + 0);
-	      $pdf->MultiCell(42, $tab2_lh, "Total HT", 0, 'R', 0);
-	      
-	      $pdf->SetXY (132, $tab2_top + $tab2_lh);
-	      $pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);
-	      
-	      $pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
-	      $pdf->MultiCell(42, $tab2_lh, "Total TTC", 1, 'R', 1);
-	      
-	      $pdf->SetXY (174, $tab2_top + 0);
-	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
-	      
-	      $pdf->SetXY (174, $tab2_top + $tab2_lh);
-	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_tva), 0, 'R', 0);
-	      
-	      $pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
-	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ttc), 1, 'R', 1);
-	      
-	      /*
-	       *
-	       */
-	      	      
-	      $pdf->Output($file);
-	      return 1;		  
-	    }
+		return $this->error;
 	}
-    }
 
-  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+  
+	/**
+	    \brief      Fonction générant la propale sur le disque
+	    \param	    propale		Objet propal
+		\return	    int     	1=ok, 0=ko
+        \remarks    Variables utilisées
+		\remarks    MAIN_INFO_SOCIETE_NOM
+		\remarks    MAIN_INFO_SOCIETE_ADRESSE
+		\remarks    MAIN_INFO_SOCIETE_CP
+		\remarks    MAIN_INFO_SOCIETE_VILLE
+		\remarks    MAIN_INFO_SOCIETE_TEL
+		\remarks    MAIN_INFO_SOCIETE_FAX
+		\remarks    MAIN_INFO_SOCIETE_WEB
+        \remarks    MAIN_INFO_SOCIETE_LOGO
+		\remarks    MAIN_INFO_SIRET
+		\remarks    MAIN_INFO_SIREN
+		\remarks    MAIN_INFO_RCS
+		\remarks    MAIN_INFO_CAPITAL
+		\remarks    MAIN_INFO_TVAINTRA
+	*/
+	function write_pdf_file($propale)
+	{
+		global $user,$conf,$langs;
+	
+		if ($conf->propal->dir_output)
+		{
+			// Définition de l'objet $propal (pour compatibilite ascendante)
+			if (! is_object($propale))
+			{
+				$id = $propale;
+				$propale = new Propal($this->db,"",$id);
+				$ret=$propale->fetch($id);
+			}
+	
+			// Définition de $dir et $file
+			if ($propale->specimen)
+			{
+				$dir = $conf->propal->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$propref = sanitize_string($propale->ref);
+				$dir = $conf->propal->dir_output . "/" . $propref;
+				$file = $dir . "/" . $propref . ".pdf";
+			}
+	
+			if (! file_exists($dir))
+			{
+				if (create_exdir($dir) < 0)
+				{
+					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					return 0;
+				}
+			}
+	
+			if (file_exists($dir))
+			{
+	
+				$pdf=new FPDF('P','mm',$this->format);
+				$pdf->Open();
+				$pdf->AddPage();
+	
+				$pdf->SetTitle($propale->ref);
+				$pdf->SetSubject("Proposition commerciale");
+				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				$pdf->SetAuthor($user->fullname);
+	
+				$this->_pagehead($pdf, $propale);
+	
+				/*
+				*/
+				$tab_top = 100;
+				$tab_height = 150;
+				/*
+				*
+				*/
+	
+				$pdf->SetFillColor(220,220,220);
+	
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFont('Arial','', 10);
+	
+				$pdf->SetXY (10, $tab_top + 10 );
+	
+				$iniY = $pdf->GetY();
+				$curY = $pdf->GetY();
+				$nexY = $pdf->GetY();
+				$nblignes = sizeof($propale->lignes);
+	
+				for ($i = 0 ; $i < $nblignes ; $i++)
+				{
+	
+					$curY = $nexY;
+	
+					$pdf->SetXY (30, $curY );
+	
+					$pdf->MultiCell(100, 5, $propale->lignes[$i]->desc, 0, 'J', 0);
+	
+					$nexY = $pdf->GetY();
+	
+					$pdf->SetXY (10, $curY );
+	
+					$pdf->MultiCell(20, 5, $propale->lignes[$i]->ref, 0, 'C');
+	
+					$pdf->SetXY (133, $curY );
+					$pdf->MultiCell(10, 5, $propale->lignes[$i]->tva_tx, 0, 'C');
+	
+					$pdf->SetXY (145, $curY );
+					$pdf->MultiCell(10, 5, $propale->lignes[$i]->qty, 0, 'C');
+	
+					$pdf->SetXY (156, $curY );
+					$pdf->MultiCell(18, 5, price($propale->lignes[$i]->price), 0, 'R', 0);
+	
+					$pdf->SetXY (174, $curY );
+					$total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
+					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+	
+					$pdf->line(10, $curY, 200, $curY );
+	
+					if ($nexY > 240 && $i < $nblignes - 1)
+					{
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+						$pdf->AddPage();
+						$nexY = $iniY;
+						$this->_pagehead($pdf, $propale);
+						$pdf->SetTextColor(0,0,0);
+						$pdf->SetFont('Arial','', 10);
+					}
+				}
+	
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+				/*
+				*
+				*/
+				$tab2_top = 254;
+				$tab2_lh = 7;
+				$tab2_height = $tab2_lh * 3;
+	
+				$pdf->SetFont('Arial','', 11);
+	
+				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
+	
+				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
+				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
+				$pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
+	
+				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
+	
+				$pdf->SetXY (132, $tab2_top + 0);
+				$pdf->MultiCell(42, $tab2_lh, "Total HT", 0, 'R', 0);
+	
+				$pdf->SetXY (132, $tab2_top + $tab2_lh);
+				$pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);
+	
+				$pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
+				$pdf->MultiCell(42, $tab2_lh, "Total TTC", 1, 'R', 1);
+	
+				$pdf->SetXY (174, $tab2_top + 0);
+				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
+	
+				$pdf->SetXY (174, $tab2_top + $tab2_lh);
+				$pdf->MultiCell(26, $tab2_lh, price($propale->total_tva), 0, 'R', 0);
+	
+				$pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
+				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ttc), 1, 'R', 1);
+	
+				/*
+				*
+				*/
+	
+				$pdf->Output($file);
+				return 1;
+			}
+		}
+	}
+
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
         global $langs,$conf;
         $langs->load("main");
