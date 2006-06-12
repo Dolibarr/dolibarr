@@ -50,13 +50,13 @@ function dolibarr_ldap_connect()
 	else
 	{
 		// ex serveur: 	localhost
-		// ex port: 	329
+		// ex port: 	389
 		$ldapconnect = ldap_connect($conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT);
 	}
 	
 	if ($ldapconnect)
 	{
-		ldap_set_option($ldapconnect, $conf->global->LDAP_OPT_PROTOCOL_VERSION, $conf->global->LDAP_SERVER_PROTOCOLVERSION);
+		ldap_set_option($ldapconnect, LDAP_OPT_PROTOCOL_VERSION, $conf->global->LDAP_SERVER_PROTOCOLVERSION);
 	}
 	
 	return $ldapconnect;
@@ -103,7 +103,7 @@ function dolibarr_ldap_getversion($ds)
 	
 	$version = 0;
 	
-	ldap_get_option($ds, $conf->global->LDAP_OPT_PROTOCOL_VERSION, $version);
+	ldap_get_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
 	
 	return $version;
 }
@@ -118,7 +118,7 @@ function dolibarr_ldap_setversion($ds,$version)
 {
 	global $conf;
 	
-	$ldapsetversion = ldap_set_option($ds, $conf->global->LDAP_OPT_PROTOCOL_VERSION, $version);
+	$ldapsetversion = ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
   
 	return $ldapsetversion;
 }
