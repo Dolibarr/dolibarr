@@ -48,6 +48,7 @@ class pdf_propale_vert extends ModelePDFPropales
         $this->description = "Affichage de la remise par produit";
 
         // Dimension page pour format A4
+        $this->type = 'pdf';
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
