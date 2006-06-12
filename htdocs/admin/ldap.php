@@ -263,6 +263,8 @@ if (function_exists("ldap_connect"))
 	{
 		$ldap = new Ldap();
 		// Test ldap_connect
+		// ce test n'est pas fiable car une ressource est constamment retournée
+		// il faut se fier au test ldap_bind
 		$ds = $ldap->dolibarr_ldap_connect();
 		if ($ds)
 		{
