@@ -265,7 +265,7 @@ if (function_exists("ldap_connect"))
 		// Test ldap_connect
 		// ce test n'est pas fiable car une ressource est constamment retournée
 		// il faut se fier au test ldap_bind
-		$ds = $ldap->dolibarr_ldap_connect()
+		$ds = $ldap->dolibarr_ldap_connect();
 		if ($ds)
 		{
 			print img_picto('','info');
