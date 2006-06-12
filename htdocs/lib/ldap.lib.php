@@ -58,6 +58,10 @@ function dolibarr_ldap_connect()
 	{
 		ldap_set_option($ldapconnect, LDAP_OPT_PROTOCOL_VERSION, $conf->global->LDAP_SERVER_PROTOCOLVERSION);
 	}
+	else
+	{
+		$this->err .= ldap_error($ldapconnect);
+	}
 	
 	return $ldapconnect;
 }

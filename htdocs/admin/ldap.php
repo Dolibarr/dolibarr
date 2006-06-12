@@ -274,7 +274,7 @@ if (function_exists("ldap_connect"))
 			print img_picto('','alerte');
 			print $langs->trans("LDAPTestKO").'<br>';
 			print "<br>";
-			print ldap_error($ds);
+			print $ds->err;
 			print "<br>";
 		}
 
