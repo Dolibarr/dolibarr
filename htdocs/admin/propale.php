@@ -71,24 +71,25 @@ if ($_GET["action"] == 'specimen')
 	}
 }
 
-if ($_POST["action"] == 'nbprod')
+if ($_POST["action"] == 'setnbprod')
 {
     dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"]);
     Header("Location: propale.php");
     exit;
 }
 
-if ($_GET["action"] == 'activate_classifiedinvoiced')
+if ($_POST["action"] == 'setdefaultduration')
 {
-    dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER", "1");
+    dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"]);
     Header("Location: propale.php");
     exit;
 }
-else if ($_GET["action"] == 'disable_classifiedinvoiced')
+
+if ($_POST["action"] == 'setclassifiedinvoiced')
 {
-	dolibarr_del_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER");
-  Header("Location: propale.php");
-  exit;
+    dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"]);
+    Header("Location: propale.php");
+    exit;
 }
 
 if ($_GET["action"] == 'set')
@@ -348,6 +349,62 @@ while (($file = readdir($handle))!==false)
 closedir($handle);
 
 print '</table>';
+print '<br>';
+
+
+/*
+ * Autres options
+ *
+ */
+print_titre($langs->trans("OtherOptions"));
+
+$var=true;
+print "<table class=\"noborder\" width=\"100%\">";
+print "<tr class=\"liste_titre\">";
+print "<td>".$langs->trans("Parameter")."</td>\n";
+print "<td align=\"left\">".$langs->trans("Value")."</td>\n";
+print "<td>&nbsp;</td>\n";
+print "</tr>";
+
+$var=!$var;
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print "<input type=\"hidden\" name=\"action\" value=\"setnbprod\">";
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("NumberOfProductLines").'</td>';
+print "<td align=\"left\"><input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_NEW_FORM_NB_PRODUCT."\"></td>";
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
+
+$var=!$var;
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
+print "<td align=\"left\"><input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
+
+
+if ($conf->commande->enabled)
+{
+	$var=!$var;
+	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"setclassifiedinvoiced\">";
+	print "<tr ".$bc[$var].">";
+	print '<td>'.$langs->trans("ClassifiedInvoicedWithOrder").'</td>';
+	print "<td align=\"left\">";
+	print $html->selectyesno('value',$conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER,1);
+	print "</td>";
+	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print '</tr>';
+	print '</form>';
+}
+
+print '</table>';
+
+
 
 /*
  *  Repertoire
@@ -364,70 +421,6 @@ print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("Directory")."</
 print "</table>\n<br>";
 
 
-
-/*
- * Formulaire création
- *
- */
-print_titre($langs->trans("CreateForm"));
-
-print "<form method=\"post\" action=\"propale.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"nbprod\">";
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print "  <td>".$langs->trans("Name")."</td>\n";
-print "  <td align=\"left\">".$langs->trans("Value")."</td>\n";
-print "  <td>&nbsp;</td>\n";
-print "</tr><tr ".$bc[false].">";
-print '<td>'.$langs->trans("NumberOfProductLines").'</td>';
-print "<td align=\"left\"><input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\"></td>";
-print '<td><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</table>';
-print '</form>';
-
-print '<br>';
-
-/*
- * Classé facturée une propale en même temps que la commande
- *
- */
-
-if ($conf->commande->enabled)
-{
-	print_titre($langs->trans("ClassifiedInvoiced"));
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td width="140">'.$langs->trans("Name").'</td>';
-	print '<td align="center">&nbsp;</td>';
-	print '<td align="center">'.$langs->trans("Active").'</td>';
-	print "</tr>\n";
-	print "<form method=\"post\" action=\"propale.php\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"classifiedinvoiced\">";
-	print "<tr ".$bc[false].">";
-	print '<td width="80%">'.$langs->trans("ClassifiedInvoicedWithOrder").'</td>';
-	print '<td align="center">';
-	if($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 1)
-	{
-		print img_tick();
-	}
-	print '</td>';
-	print "<td align=\"center\">";
-	if($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 0)
-	{
-		print '<a href="propale.php?action=activate_classifiedinvoiced">'.$langs->trans("Activate").'</a>';
-	}
-	else if($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 1)
-	{
-		print '<a href="propale.php?action=disable_classifiedinvoiced">'.$langs->trans("Disable").'</a>';
-	}
-	print "</td>";
-	print '</tr>';
-	print '</table>';
-	print '</form>';
-
-	print '<br>';
-}
 
 $db->close();
 
