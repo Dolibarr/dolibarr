@@ -190,7 +190,7 @@ insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SET
 --
 -- Duree de validite des propales
 --
-insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 1, 'Durée de validitée des propales');
+insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 0, 'Durée de validitée des propales');
 
 
 --

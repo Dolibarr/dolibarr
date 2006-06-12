@@ -71,3 +71,4 @@ DateDelivery=Date de livraison
 SetDateLivraison=Définir la date de livraison
 CopyPropalFrom=Créer proposition/devis par recopie d'un proposition existante
 CreateEmptyPropal=Créer proposition/devis vierge ou depuis liste de produits prédéfinis
+DefaultProposalDurationValidity=Délai de validité par défaut (en jours)
