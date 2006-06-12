@@ -33,6 +33,19 @@
 		Ensemble des fonctions permettant d'accèder à un serveur LDAP.
 */
 
+class Ldap
+{
+	var $err; // erreur ldap
+	
+	
+	/**
+	*    \brief  Constructeur de la classe
+	*/
+	function Ldap()
+	{
+		$this->err = "";
+	}
+
 
 /**
 		\brief 		Ouverture d'une connection vers le serveur LDAP
@@ -86,7 +99,7 @@ function dolibarr_ldap_bind($ds)
   }
   else
   {
-  	$this->err = ldap_error($ldapbind);
+  	$this->err = ldap_error($ds);
   }
 }
 
@@ -148,6 +161,7 @@ function dolibarr_ldap_unacc($str)
 	$stu = ereg_replace("ï","i",$stu);
 	$stu = ereg_replace("ä","a",$stu);
 	return $stu;
+}
 }
 
 ?>

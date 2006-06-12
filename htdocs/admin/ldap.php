@@ -261,8 +261,9 @@ if (function_exists("ldap_connect"))
 	
 	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS && $_GET["action"] == 'test')
 	{
+		$ldap = new Ldap();
 		// Test ldap_connect
-		$ds = dolibarr_ldap_connect();
+		$ds = $ldap->dolibarr_ldap_connect();
 		if ($ds)
 		{
 			print img_picto('','info');
@@ -280,7 +281,7 @@ if (function_exists("ldap_connect"))
 		if ($ds)
 		{
 			// Test ldap_getversion
-			if ((dolibarr_ldap_getversion($ds) == 3))
+			if (($ldap->dolibarr_ldap_getversion($ds) == 3))
 			{
 				print img_picto('','info');
 				print $langs->trans("LDAPSetupForVersion3").'<br>';
@@ -292,7 +293,7 @@ if (function_exists("ldap_connect"))
 			}
 	
 		  // Test ldap_bind
-			$bind = @dolibarr_ldap_bind($ds);
+			$bind = $ldap->dolibarr_ldap_bind($ds);
 			
 			if ($bind)
 			{
@@ -308,9 +309,9 @@ if (function_exists("ldap_connect"))
 			}
 
 		  // Test ldap_unbind
-		  $unbind = @dolibarr_ldap_unbind($ds);
+		  $unbind = $ldap->dolibarr_ldap_unbind($ds);
 		  
-		  if ($bind)
+		  if ($unbind)
 		  {
 		  	print img_picto('','info');
 		  	print "Déconnection du dn $dn réussi<br>";
