@@ -263,7 +263,6 @@ if (function_exists("ldap_connect"))
 	{
 		// Test ldap_connect
 		$ds = dolibarr_ldap_connect();
-	print "x".$ds;
 		if ($ds)
 		{
 			print img_picto('','info');
@@ -279,15 +278,18 @@ if (function_exists("ldap_connect"))
 		}
 
 		// Test ldap_getversion
-		if ((dolibarr_ldap_getversion($ds) == 3))
+		if ($ds)
 		{
-			print img_picto('','info');
-			print $langs->trans("LDAPSetupForVersion3").'<br>';
-		}
-		else
-		{
-			print img_picto('','info');
-			print $langs->trans("LDAPSetupForVersion2").'<br>';
+			if ((dolibarr_ldap_getversion($ds) == 3))
+			{
+				print img_picto('','info');
+				print $langs->trans("LDAPSetupForVersion3").'<br>';
+			}
+			else
+			{
+				print img_picto('','info');
+				print $langs->trans("LDAPSetupForVersion2").'<br>';
+			}
 		}
 	
 		// Test ldap_bind
