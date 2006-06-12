@@ -120,7 +120,7 @@ if ($_POST['action'] == 'setecheance')
 {
 	$propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
-	$result=$propal->set_echeance($user,mktime(12, 1, 1, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
+	$result=$propal->set_echeance($user,@mktime(12, 1, 1, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 if ($_POST['action'] == 'setdate_livraison')
@@ -651,7 +651,7 @@ if ($_GET['propalid'] > 0)
 				}
 				else
 				{
-					print $langs->trans("Unknown");
+					print '&nbsp;';
 				}
 			}
 			print '</td>';
