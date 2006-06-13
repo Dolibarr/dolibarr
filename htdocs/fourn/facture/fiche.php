@@ -203,6 +203,18 @@ if ($_GET['action'] == 'del_ligne')
 	$_GET['action'] = 'edit';
 }
 
+// Modification d'une ligne
+if ($_GET['action'] == 'mod_ligne')
+{
+	if ($_GET['etat'] == '1' && !$_GET['cancel']) // si on valide la modification
+	{
+		$facfou = new FactureFournisseur($db,'',$_GET['facid']);
+		
+		$facfou->updateline($_GET['ligne_id'], $_POST['label'], $_POST['puht'], $_POST['tauxtva'], $_POST['qty']);
+	}
+	$_GET['action'] = 'edit';
+}
+
 if ($_GET['action'] == 'add_ligne')
 {
     $facfou = new FactureFournisseur($db, '', $_GET['facid']);
@@ -425,7 +437,6 @@ else
 			print '<br>';
 			$var=true;
 
-			print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
 			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
@@ -438,21 +449,46 @@ else
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i][0].'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][1]).'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][1] * (1+($fac->lignes[$i][2]/100))).'</td>';
-				print '<td align="right">'.$fac->lignes[$i][3].'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][4]).'</td>';
-				print '<td align="right">'.$fac->lignes[$i][2].'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][5]).'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][6]).'</td>';
-				print '<td align="center">';
-				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a></td>';
-				print '</tr>';
+				// Ligne en modification
+				if ($_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i][7])
+				{
+					print '<form action="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=1&amp;ligne_id='.$fac->lignes[$i][7].'" method="post">';
+					print '<input type="hidden" name="tauxtva" value="'.$fac->lignes[$i][2].'">';
+					print '<tr '.$bc[$var].'><td><input size="30" name="label" type="text" value="'.$fac->lignes[$i][0].'"></td>';
+					print '<td align="right" nowrap="nowrap"><input size="6" name="puht" type="text" value="'.price($fac->lignes[$i][1]).'"></td>';
+					print '<td align="right" nowrap="nowrap"></td>';
+					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lignes[$i][3].'"></td>';
+					print '<td align="right" nowrap="nowrap"><input size="6" name="totalht" type="text" value="'.price($fac->lignes[$i][4]).'"></td>';
+					print '<td align="right">';
+					$html->select_tva('tauxtva',$fac->lignes[$i][2],$societe,$mysoc);
+					print '</td>';
+					print '<td align="right" nowrap="nowrap"></td>';
+					print '<td align="right" nowrap="nowrap"></td>';
+					print '<td align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">';
+					print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+					print '</tr>';
+					print '</form>';
+				}
+				else // Affichage simple de la ligne
+				{
+					print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i][0].'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][1]).'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][1] * (1+($fac->lignes[$i][2]/100))).'</td>';
+					print '<td align="right">'.$fac->lignes[$i][3].'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][4]).'</td>';
+					print '<td align="right">'.$fac->lignes[$i][2].'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][5]).'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][6]).'</td>';
+					print '<td align="center">';
+					print '<a href="fiche.php?facid='.$fac->id.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a>';
+					print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_edit().'</a></td>';
+					print '</tr>';
+				}
 			}
 
 			/* Nouvelle ligne */
 			$var=!$var;
+			print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
 			print '<tr '.$bc[$var].'>';
 			print '<td>';
 			print '<input size="30" name="label" type="text">';
