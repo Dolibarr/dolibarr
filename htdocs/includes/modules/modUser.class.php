@@ -122,7 +122,7 @@ class modUser extends DolibarrModules
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 1;
     $this->rights[$r][4] = 'self';
-    $this->rights[$r][5] = 'supprimer';
+    $this->rights[$r][5] = 'creer';
 
     $r++;
     $this->rights[$r][0] = 256;

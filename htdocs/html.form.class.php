@@ -704,20 +704,16 @@ class Form
 		if($conf->use_ajax)
 		{
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/prototype.js"></script>';
-			print $langs->trans("Ref").'<input type="text" size="5" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp;';
-			print $langs->trans("Label").'<input type="text" size="5" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
+			print $langs->trans("Ref").':<input type="text" size="8" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp; &nbsp;';
+			print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
 			print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
 			print '<script type="text/javascript">';
 			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
 			print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
+			print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
 			print 'function publish_selvalue(obj){$("'.$htmlname.'").value = obj.options[obj.selectedIndex].value;}';
 			print '</script>';
-			print '<script type="text/javascript">';
-			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-			print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
-			print '</script>';
-			print '<div id="ajdynfield'.$htmlname.'">';
-			print '</div>';
+			print '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
 		}
 		else
 		{
@@ -736,16 +732,22 @@ class Form
     function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeyref='',$ajaxkeylabel='')
     {
         global $langs,$conf,$user;
-    
-        $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
-        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+    	$user->getrights("categorie");
+
+        $sql = "SELECT ";
+        if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
         {
-           $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-           $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+        	$sql.="DISTINCT";	
+        }
+        $sql.= " p.rowid, p.label, p.ref, p.price, p.duration";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+        if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
+        {
+           	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
         }
         $sql.= " WHERE p.envente = 1";
-        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+        if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
         {
         	$sql.= ' AND IFNULL(c.visible,1)=1';
         }
@@ -755,48 +757,61 @@ class Form
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
 
-        $result=$this->db->query($sql);
-        if (! $result) dolibarr_print_error($this->db);
-        
-        // Multilang : on construit une liste des traductions des produits listés
-        $sqld = "SELECT d.fk_product, d.label";
-        $sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
-        $sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
-		    $sqld.= " ORDER BY p.nbvente DESC";
-    
-		   // inutile de faire la requete si l'option n'est pas active
-		   if ($conf->global->MAIN_MULTILANGS)
-		   {
-			    $resultd = $this->db->query($sqld);
-			    if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
-		   }
+		$result=$this->db->query($sql);
+		if (! $result) dolibarr_print_error($this->db);
+		
+		// Multilang : on construit une liste des traductions des produits listés
+		if ($conf->global->MAIN_MULTILANGS)
+		{
+			$sqld = "SELECT d.fk_product, d.label";
+			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
+			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
+			$sqld.= " ORDER BY p.nbvente DESC";
+			$resultd = $this->db->query($sqld);
+			if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
+		}
         
         if ($result)
         {
-            if($conf->use_ajax)
-				print '<select class="flat" name="'.$htmlname.'" onchange="publish_selvalue(this);">';
-			else
-				print '<select class="flat" name="'.$htmlname.'">';
-            print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
-    
             $num = $this->db->num_rows($result);
+
+            if ($conf->use_ajax)
+            {
+				if (! $num)
+				{
+					print $langs->trans("NoProductMatching").' ';	
+				}
+//				else
+//				{
+					print '<select class="flat" name="'.$htmlname.'" onchange="publish_selvalue(this);">';
+		            print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
+//				}
+			}
+			else
+			{
+				print '<select class="flat" name="'.$htmlname.'">';
+	            print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
+            }
+    
             $i = 0;
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
                 
-        // Multilangs : modification des donnée si une traduction existe
+				// Multilangs : modification des donnée si une traduction existe
 				if ($conf->global->MAIN_MULTILANGS)
+				{
 					if ( $objp->rowid == $objtp->fk_product ) // si on a une traduction
 					{
 						if ( $objtp->label != '') $objp->label = $objtp->label;
 						if ( $resultd ) $objtp = $this->db->fetch_object($resultd); // on charge la traduction suivante
 					}
-                $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-                $opt.= dolibarr_trunc($objp->label,32).' - ';
+				}
+				$opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
+				$opt.= dolibarr_trunc($objp->label,32).' - ';
                 
-				//multiprix
-				if($price_level > 1)
+				// Multiprix
+				if ($price_level > 1)
 				{
 						$sql= "SELECT price ";
 						$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
@@ -816,8 +831,17 @@ class Form
                 print $opt;
                 $i++;
             }
-            print '</select>';
-    
+			if ($conf->use_ajax)
+            {
+//				if ($num)
+//				{
+					print '</select>';
+//    			}
+    		}
+    		else
+    		{
+					print '</select>';
+			}    			
             $this->db->free($result);
         }
         else

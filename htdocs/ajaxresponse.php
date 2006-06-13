@@ -25,8 +25,19 @@
         \version    $Revision$
 */
 
-require('./pre.inc.php');
+require('./main.inc.php');
+
+$langs->load("products");
+
+//header("Content-type: text/html; charset=UTF-8");
+header("Content-type: text/html; charset=iso-8859-1");
+print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+print "\n<html>";
+print "\n<body>";
+
 $form = new Form($db);
 $form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keyref"],$_GET["keylabel"]);
- 
+
+print "</body>"; 
+print "</html>"; 
 ?>

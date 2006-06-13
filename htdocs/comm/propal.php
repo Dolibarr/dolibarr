@@ -1236,7 +1236,7 @@ if ($_GET['propalid'] > 0)
 					{
 						$html->select_produits('','idprod','',$conf->produit->limit_size);
 					}
-					print '<br>';
+					if (! $conf->use_ajax) print '<br>';
 					print '<textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea>';
 					print '</td>';
 					print '<td>&nbsp;</td>';
