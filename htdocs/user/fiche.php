@@ -251,7 +251,7 @@ if ($_POST["action"] == 'update' && ($caneditperms || $caneditselfperms))
 
 // Action modif mot de passe
 if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
-      || $_GET["action"] == 'confirm_passwordsend') && ($caneditperms || $caneditpassword)
+      || $_GET["action"] == 'confirm_passwordsend') && ($caneditperms || $caneditpassword))
 {
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
