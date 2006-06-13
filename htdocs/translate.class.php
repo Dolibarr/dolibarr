@@ -83,7 +83,7 @@ class Translate {
      *  \brief      Accesseur de this->defaultlang
      *  \param      defaultlang     Langue par defaut à utiliser
      */
-    function setDefaultLang($defaultlang)
+    function setDefaultLang($defaultlang='fr_FR')
     {
         if ($defaultlang == 'auto')
         {
