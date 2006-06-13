@@ -466,7 +466,7 @@ else
 			print '<td align="right">'.$langs->trans('TotalHT').'</td>';
 			print '<td align="right">'.$langs->trans('VATRate').'</td>';
 			print '<td align="right">'.$langs->trans('VAT').'</td>';
-			print '<td align="right">'.$langs->trans('TotalTTC').'</td><td>&nbsp;</td></tr>';
+			print '<td align="right" colspan="2">'.$langs->trans('TotalTTC').'</td><td>&nbsp;</td></tr>';
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
 				$var=!$var;
@@ -534,7 +534,7 @@ else
 			$html->select_tva('tauxtva','',$societe,$mysoc);
 			print '</td><td align="center" colspan="2">';
 			print '&nbsp;';
-			print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
+			print '</td><td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
 			print '</form>';
 
             // Ajout de produits/services prédéfinis
