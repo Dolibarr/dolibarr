@@ -34,17 +34,18 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 
-// Defini si peux lire/modifier permisssions
+// Defini si peux creer un utilisateur ou gerer groupe sur un utilisateur
 $canadduser=($user->admin || $user->rights->user->user->creer);
+// Defini si peux lire/modifier permisssions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
-// Defini si peux lire/modifier fiche ou mot de passe
+// Defini si peux lire/modifier info user ou mot de passe
 if ($_GET["id"])
 {
+	// $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edité
 	$caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
 	                || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
-	
 	$caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
 	                || (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
 }
