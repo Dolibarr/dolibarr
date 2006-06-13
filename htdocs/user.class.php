@@ -759,10 +759,10 @@ class User
         $this->email=trim($this->email);
         $this->note=trim($this->note);
         $this->admin=$this->admin?$this->admin:0;
-        
-        $error=0;
-        
         if (!strlen($this->code)) $this->code = $this->login;
+        
+        dolibarr_syslog("User::update nom=".$this->nom.", prenom=".$this->prenom);
+        $error=0;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
         $sql .= " name = '".addslashes($this->nom)."'";
