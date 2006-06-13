@@ -139,6 +139,14 @@ if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propale->creer)
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 
+// Positionne ref client
+if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
+{
+	$propal = new Propal($db);
+	$propal->fetch($_GET['id']);
+	$propal->set_ref_client($user, $_POST['ref_client']);
+}
+
 if ($_POST['action'] == 'add')
 {
     $propal = new Propal($db, $_POST['socidp']);
@@ -167,8 +175,8 @@ if ($_POST['action'] == 'add')
 	    $propal->modelpdf  = $_POST['model'];
 	    $propal->author    = $user->id;
 	    $propal->note      = $_POST['note'];
-	    $propal->ref = $_POST['ref'];
-	    $propal->statut = 0;
+	    $propal->ref       = $_POST['ref'];
+	    $propal->statut    = 0;
 
 	    $id = $propal->create_from();
     }
@@ -181,11 +189,12 @@ if ($_POST['action'] == 'add')
 	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
 	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
 
-	    $propal->contactid = $_POST['contactidp'];
-	    $propal->projetidp = $_POST['projetidp'];
-	    $propal->modelpdf  = $_POST['model'];
-	    $propal->author    = $user->id;
-	    $propal->note      = $_POST['note'];
+	    $propal->contactid  = $_POST['contactidp'];
+	    $propal->projetidp  = $_POST['projetidp'];
+	    $propal->modelpdf   = $_POST['model'];
+	    $propal->author     = $user->id;
+	    $propal->note       = $_POST['note'];
+	    $propal->ref_client = $_POST['ref_client'];
 
 	    $propal->ref = $_POST['ref'];
 
@@ -590,6 +599,29 @@ if ($_GET['propalid'] > 0)
 
 			// Ref
 			print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
+			
+			// Ref client
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print $langs->trans('RefCustomer').'</td><td align="left">';
+			print '</td>';
+			if ($_GET['action'] != 'refcdeclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($user->rights->propale->creer && $_GET['action'] == 'refcdeclient')
+			{
+				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<input type="hidden" name="action" value="set_ref_client">';
+				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$propal->ref_client.'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $propal->ref_client;
+			}
+			print '</td>';
+			print '</tr>';
 
 			$rowspan=9;
 
