@@ -535,7 +535,7 @@ $html = new Form($db);
  */
 if ($_GET['propalid'] > 0)
 {
-	$propalid = $_GET['propalid']
+	$propalid = $_GET['propalid'];
 	
 	if ($msg) print "$msg<br>";
 
