@@ -407,6 +407,7 @@ else
 			 {
 			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
 			 	print '<br>';
+			 	$_GET['action'] = 'edit'; //renvoi sur l'édition
 			 }
 
 			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
