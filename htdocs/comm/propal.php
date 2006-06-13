@@ -143,7 +143,7 @@ if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propale->creer)
 if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	$propal->fetch($_GET['id']);
+	$propal->fetch($_GET['propalid']);
 	$propal->set_ref_client($user, $_POST['ref_client']);
 }
 
@@ -605,10 +605,10 @@ if ($_GET['propalid'] > 0)
 			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
 			print '</td>';
-			if ($_GET['action'] != 'refcdeclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+			if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-			if ($user->rights->propale->creer && $_GET['action'] == 'refcdeclient')
+			if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
 			{
 				print '<form action="fiche.php?id='.$id.'" method="post">';
 				print '<input type="hidden" name="action" value="set_ref_client">';

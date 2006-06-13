@@ -699,14 +699,15 @@ class Propal
 
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, remise_percent, remise_absolue,";
-        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison) ";
+        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite,";
+        $sql.= " fk_cond_reglement, fk_mode_reglement, date_livraison, ref_client) ";
         $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
         $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
         $sql.= " $this->cond_reglement_id, $this->mode_reglement_id,";
-        $sql.= " ".$this->db->idate($this->date_livraison).")";
+        $sql.= " ".$this->db->idate($this->date_livraison).",".addslashes($this->ref_client).")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -964,7 +965,7 @@ class Propal
         $sql.= ", ".$this->db->pdate("datep")." as dp";
         $sql.= ", ".$this->db->pdate("fin_validite")." as dfv";
         $sql.= ", ".$this->db->pdate("date_livraison")." as date_livraison";
-        $sql.= ", model_pdf";
+        $sql.= ", model_pdf, ref_client";
         $sql.= ", note, note_public";
         $sql.= ", fk_projet, fk_statut, fk_user_author";
         $sql.= ", fk_cond_reglement, fk_mode_reglement, fk_adresse_livraison";
@@ -988,6 +989,7 @@ class Propal
                 $this->fin_validite         = $obj->dfv;
                 $this->date                 = $obj->dp;
                 $this->ref                  = $obj->ref;
+                $this->ref_client           = $obj->ref_client;
                 $this->price                = $obj->price;
                 $this->remise               = $obj->remise;
                 $this->remise_percent       = $obj->remise_percent;
@@ -1007,8 +1009,8 @@ class Propal
                 $this->statut_libelle       = $obj->statut_label;
                 $this->cond_reglement_id    = $obj->fk_cond_reglement;
                 $this->mode_reglement_id    = $obj->fk_mode_reglement;
-		        $this->date_livraison       = $obj->date_livraison;
-		        $this->adresse_livraison_id = $obj->fk_adresse_livraison;
+		            $this->date_livraison       = $obj->date_livraison;
+		            $this->adresse_livraison_id = $obj->fk_adresse_livraison;
 
                 $this->user_author_id = $obj->fk_user_author;
 
@@ -1230,6 +1232,38 @@ class Propal
             }
         }
     }
+    
+    /**
+     *      \brief      Positionne numero reference client
+     *      \param      user            Utilisateur qui modifie
+     *      \param      ref_client      Reference client
+     *      \return     int             <0 si ko, >0 si ok
+     */
+	function set_ref_client($user, $ref_client)
+	{
+		if ($user->rights->propale->creer)
+		{
+    		dolibarr_syslog('Propale::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
+			$sql.= ' WHERE rowid = '.$this->id;
+			if ($this->db->query($sql) )
+			{
+				$this->ref_client = $ref_client;
+				return 1;
+			}
+			else
+			{
+        $this->error=$this->db->error();
+				dolibarr_syslog('Propale::set_ref_client Erreur '.$this->error.' - '.$sql);
+			  return -2;
+			}
+		}
+		else
+		{
+		    return -1;
+		}
+	}
 
     /**
      *      \brief      Définit une remise globale relative sur la proposition

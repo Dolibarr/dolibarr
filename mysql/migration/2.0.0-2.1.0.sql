@@ -297,3 +297,5 @@ insert into llx_c_actioncomm (id, code, type, libelle) values ( 8, 'AC_COM',  's
 update llx_actioncomm set fk_action = '8' where fk_action =  '3' and label = 'Envoi commande par mail';
 
 insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION', '15', 'chaine', 0, 'Durée de validitée des propales');
+
+alter table llx_propal add column ref_client varchar(30) after ref;

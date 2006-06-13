@@ -119,6 +119,7 @@ class Commande
 		$this->date_livraison       = $propal->date_livraison;
 		$this->adresse_livraison_id = $propal->adresse_livraison_id;
 		$this->contact_id           = $propal->contactid;
+		$this->ref_client           = $propal->ref_client;
     
 		/* Définit la société comme un client */
 		$soc = new Societe($this->db);
@@ -350,7 +351,7 @@ class Commande
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";
-		$sql.= " '".$this->ref_client."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
+		$sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
 		$sql.= ' '.($this->date_livraison?$this->db->idate($this->date_livraison):'null').',';
 		$sql.= " '".$this->adresse_livraison_id."',";
 		$sql.= " '".$this->remise_absolue."',";

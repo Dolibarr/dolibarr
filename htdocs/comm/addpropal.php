@@ -101,6 +101,11 @@ if ($_GET["action"] == 'create')
 
     // Ref
     print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
+    
+    // Reference client
+	  print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
+		print '<input type="text" name="ref_client" value=""></td>';
+		print '</tr>';
 
 	// Societe
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->getNomUrl(1);

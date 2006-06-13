@@ -27,6 +27,7 @@ create table llx_propal
   fk_soc_contact  integer,
   fk_projet       integer DEFAULT 0,     -- projet auquel est rattache la propale
   ref             varchar(30) NOT NULL,  -- propal number
+  ref_client      varchar(30),           -- customer order number
   datec           datetime,              -- date de creation 
   datep           date,                  -- date de la propal
   fin_validite    datetime,              -- date de fin de validite
