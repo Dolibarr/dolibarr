@@ -405,9 +405,8 @@ else
 			 */
 			 if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 			 {
-			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=edit&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
 			 	print '<br>';
-			 	$_GET['action'] = 'edit'; //renvoi sur l'édition
 			 }
 
 			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
@@ -534,7 +533,7 @@ else
 			$html->select_tva('tauxtva','',$societe,$mysoc);
 			print '</td><td align="center" colspan="2">';
 			print '&nbsp;';
-			print '</td><td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
+			print '</td><td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
 			print '</form>';
 
             // Ajout de produits/services prédéfinis
