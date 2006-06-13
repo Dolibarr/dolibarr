@@ -39,7 +39,6 @@ $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 $caneditselfperms=($user->rights->user->self->supprimer);
-$caneditpassword=($user->rights->user->self->password);
 
 if ($user->id <> $_GET["id"])
 {
