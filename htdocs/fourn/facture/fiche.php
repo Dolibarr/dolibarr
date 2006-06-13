@@ -72,6 +72,17 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	}
 }
 
+if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+{
+    if ($user->rights->fournisseur->facture->creer)
+    {
+    	$facturefourn = new FactureFournisseur($db);
+    	$facturefourn->fetch($_GET['facid']);
+    	$facturefourn->deleteline($_GET['ligne_id']);
+      $_GET['action'] = 'edit';
+    }
+}
+
 if ($_GET['action'] == 'payed')
 {
 	$facturefourn=new FactureFournisseur($db);
@@ -196,7 +207,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 	}
 }
 
-if ($_GET['action'] == 'del_ligne')
+if ($_GET['action'] == 'del_ligne' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
 	$facfou = new FactureFournisseur($db,'',$_GET['facid']);
 	$facfou->deleteline($_GET['ligne_id']);
@@ -387,6 +398,15 @@ else
 		if ($_GET['action'] == 'edit')
 		{
 
+			/*
+			 * Confirmation de la suppression d'une ligne produit
+			 */
+			 if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+			 {
+			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+			 	print '<br>';
+			 }
+			
 			print_titre($langs->trans('SupplierInvoice'));
 
 			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
@@ -479,10 +499,16 @@ else
 					print '<td align="right">'.$fac->lignes[$i][2].'</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][5]).'</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][6]).'</td>';
-					print '<td align="center">';
-					print '<a href="fiche.php?facid='.$fac->id.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a>';
-					print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_edit().'</a></td>';
-					print '</tr>';
+					print '<td align="right"><a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_edit().'</a></td>';
+					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+					{
+						print '<td align="right"><a href="fiche.php?facid='.$fac->id.'&amp;action=delete_product_line&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a></td>';
+					}
+					else
+					{
+						print '<td align="right"><a href="fiche.php?facid='.$fac->id.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a></td>';
+					}
+					print '</td></tr>';
 				}
 			}
 
