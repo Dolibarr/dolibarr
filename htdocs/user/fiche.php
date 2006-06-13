@@ -34,18 +34,24 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 
-// Defini si peux lire/modifier utilisateurs et permisssions
+// Defini si peux lire/modifier permisssions
+$canadduser=($user->admin || $user->rights->user->user->creer);
 $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
-$caneditselfperms=($user->rights->user->self->supprimer);
-
-if ($user->id <> $_GET["id"])
+// Defini si peux lire/modifier fiche ou mot de passe
+if ($_GET["id"])
 {
-    if (! $canreadperms)
-    {
-        accessforbidden();
-    }
+	$caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
+	                || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
+	
+	$caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
+	                || (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
+}
+
+if ($user->id <> $_GET["id"] && ! $canreadperms)
+{
+    accessforbidden();
 }
 
 $langs->load("users");
@@ -97,7 +103,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 }
 
 // Action ajout user
-if ($_POST["action"] == 'add' && $caneditperms)
+if ($_POST["action"] == 'add' && $canadduser)
 {
     $message="";
     if (! $_POST["nom"]) {
@@ -111,7 +117,7 @@ if ($_POST["action"] == 'add' && $caneditperms)
 
     if (! $message)
     {
-        $edituser = new User($db,0);
+        $edituser = new User($db);
 
         $edituser->nom           = trim($_POST["nom"]);
         $edituser->prenom        = trim($_POST["prenom"]);
@@ -154,7 +160,7 @@ if ($_POST["action"] == 'add' && $caneditperms)
 }
 
 // Action ajout groupe utilisateur
-if ($_POST["action"] == 'addgroup' && $caneditperms)
+if ($_POST["action"] == 'addgroup' && $caneditfield)
 {
     if ($_POST["group"])
     {
@@ -166,7 +172,7 @@ if ($_POST["action"] == 'addgroup' && $caneditperms)
     }
 }
 
-if ($_GET["action"] == 'removegroup' && $caneditperms)
+if ($_GET["action"] == 'removegroup' && $caneditfield)
 {
     if ($_GET["group"])
     {
@@ -178,7 +184,7 @@ if ($_GET["action"] == 'removegroup' && $caneditperms)
     }
 }
 
-if ($_POST["action"] == 'update' && ($caneditperms || $caneditselfperms))
+if ($_POST["action"] == 'update' && $caneditfield)
 {
     $message="";
 
@@ -187,17 +193,17 @@ if ($_POST["action"] == 'update' && ($caneditperms || $caneditselfperms))
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
 
-    $edituser->nom           = $_POST["nom"];
-    $edituser->prenom        = $_POST["prenom"];
-    $edituser->login         = $_POST["login"];
-    $edituser->pass          = $_POST["pass"];
-    $edituser->admin         = $_POST["admin"];
-    $edituser->office_phone  = $_POST["office_phone"];
- 	$edituser->office_fax    = $_POST["office_fax"];
- 	$edituser->user_mobile   = $_POST["user_mobile"];
-    $edituser->email         = $_POST["email"];
-    $edituser->note          = $_POST["note"];
-    $edituser->webcal_login  = $_POST["webcal_login"];
+    $edituser->nom           = trim($_POST["nom"]);
+    $edituser->prenom        = trim($_POST["prenom"]);
+    $edituser->login         = trim($_POST["login"]);
+    $edituser->pass          = trim($_POST["pass"]);
+    $edituser->admin         = trim($_POST["admin"]);
+    $edituser->office_phone  = trim($_POST["office_phone"]);
+ 	$edituser->office_fax    = trim($_POST["office_fax"]);
+ 	$edituser->user_mobile   = trim($_POST["user_mobile"]);
+    $edituser->email         = trim($_POST["email"]);
+    $edituser->note          = trim($_POST["note"]);
+    $edituser->webcal_login  = trim($_POST["webcal_login"]);
 
     $ret=$edituser->update();
     if ($ret < 0)
@@ -250,7 +256,11 @@ if ($_POST["action"] == 'update' && ($caneditperms || $caneditselfperms))
 
 // Action modif mot de passe
 if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
+<<<<<<< fiche.php
+      || $_GET["action"] == 'confirm_passwordsend') && $caneditpassword)
+=======
       || $_GET["action"] == 'confirm_passwordsend') && ($caneditperms || $caneditpassword))
+>>>>>>> 1.91
 {
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
@@ -373,12 +383,9 @@ else
 
     if ($_GET["id"])
     {
-        $fuser = new User($db, $_GET["id"]);
-        $fuser->fetch();
-        $fuser->getrights();
-
-        $caneditpassword=( (($user->id == $fuser->id) && $user->rights->user->self->password)
-                        || (($user->id != $fuser->id) && $user->rights->user->user->password) );
+		$fuser = new User($db, $_GET["id"]);
+		$fuser->fetch();
+		
 
         /*
          * Affichage onglets
@@ -577,14 +584,20 @@ else
 
             if ($message) { print $message; }
 
+
             /*
              * Barre d'actions
              */
+             
             print '<div class="tabsAction">';
 
-            if ($caneditperms || (($user->id == $fuser->id) && $caneditselfperms))
+            if ($caneditfield)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+            }
+            elseif ($caneditpassword)
+            {
+                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
             }
 
 	       	// Si on a un gestionnaire de generation de mot de passe actif
@@ -663,6 +676,8 @@ else
                 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                 print '</td></tr>'."\n";
                 print '</table></form>'."\n";
+
+                print '<br>';
             }
 
             /*
@@ -680,8 +695,6 @@ else
             {
                 $num = $db->num_rows($result);
                 $i = 0;
-
-                print '<br>';
 
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
@@ -703,7 +716,6 @@ else
 
                         if ($caneditperms)
                         {
-
                             print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$obj->rowid.'">';
                             print img_delete($langs->trans("RemoveFromGroup"));
                         }
@@ -742,7 +754,10 @@ else
             $rowspan=12;
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td width="50%" class="valeur"><input class="flat" size="30" type="text" name="nom" value="'.$fuser->nom.'"></td>';
+            print '<td width="50%" class="valeur">';
+            if ($caneditfield) print '<input class="flat" size="30" type="text" name="nom" value="'.$fuser->nom.'">';
+            else print $fuser->nom;
+            print '</td>';
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
@@ -752,11 +767,20 @@ else
             {
                 print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
             }
-            print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr><tr><td><input type="file" class="flat" name="photo"></td></tr></table>';
+            if ($caneditfield) 
+            {
+	            print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+	            print '<tr><td>';
+	            print '<input type="file" class="flat" name="photo">';
+	            print '</td></tr></table>';
+        	}
             print '</td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td><input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
+            print '<td>';
+            if ($caneditfield) print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
+            else print $fuser->prenom;
+            print '</td></tr>';
 
             // Login
             print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
@@ -837,29 +861,52 @@ else
 
             // Tel, fax, portable
  			print "<tr>".'<td valign="top">'.$langs->trans("Phone").'</td>';
-			print '<td><input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'"></td></tr>';
+			print '<td>';
+			if ($caneditfield) print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
+			else print $fuser->office_phone; 
+			print '</td></tr>';
 			
 			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
- 			print '<td><input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'"></td></tr>';
+ 			print '<td>';
+ 			if ($caneditfield) print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
+			else print $fuser->office_fax; 
+ 			print '</td></tr>';
 			
 			print "<tr>".'<td valign="top">'.$langs->trans("Mobile").'</td>';
-			print '<td><input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'"></td></tr>';
+			print '<td>';
+			if ($caneditfield) print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
+			else print $fuser->user_mobile; 
+			print '</td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td><input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'"></td></tr>';
+            print '<td>';
+            if ($caneditfield) print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
+			else print $fuser->email; 
+            print '</td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-            print '<textarea class="flat" name="note" rows="'.ROWS_3.'" cols="70">';
-            print $fuser->note;
-            print "</textarea></td></tr>";
+            if ($caneditfield) 
+            {
+	            print '<textarea class="flat" name="note" rows="'.ROWS_3.'" cols="70">';
+	            print $fuser->note;
+	            print '</textarea>';
+	        }
+	        else
+	        {
+	        	print nl2br($fuser->note);
+	    	}
+	        print '</td></tr>';
 
             // Autres caractéristiques issus des autres modules
             if ($conf->webcal->enabled)
-             {
+            {
             		$langs->load("other");
             		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-            		print '<td class="valeur" colspan="2"><input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
-            	}
+            		print '<td class="valeur" colspan="2">';
+            		if ($caneditfield) print '<input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'">';
+            		else print $fuser->webcal_login;
+            		print '</td></tr>';
+            }
             print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" class="button" type="submit"></td></tr>';
 
             print '</table>';
