@@ -38,6 +38,8 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
+$caneditselfperms=($user->rights->user->self->supprimer);
+$caneditpassword=($user->rights->user->self->password);
 
 if ($user->id <> $_GET["id"])
 {
@@ -177,7 +179,7 @@ if ($_GET["action"] == 'removegroup' && $caneditperms)
     }
 }
 
-if ($_POST["action"] == 'update' && $caneditperms)
+if ($_POST["action"] == 'update' && ($caneditperms || $caneditselfperms))
 {
     $message="";
 
@@ -249,7 +251,7 @@ if ($_POST["action"] == 'update' && $caneditperms)
 
 // Action modif mot de passe
 if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
-      || $_GET["action"] == 'confirm_passwordsend') && $caneditperms)
+      || $_GET["action"] == 'confirm_passwordsend') && ($caneditperms || $caneditpassword)
 {
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
@@ -581,7 +583,7 @@ else
              */
             print '<div class="tabsAction">';
 
-            if ($caneditperms || ($user->id == $fuser->id))
+            if ($caneditperms || (($user->id == $fuser->id) && $caneditselfperms))
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
