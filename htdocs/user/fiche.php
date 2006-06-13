@@ -257,11 +257,7 @@ if ($_POST["action"] == 'update' && $caneditfield)
 
 // Action modif mot de passe
 if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
-<<<<<<< fiche.php
       || $_GET["action"] == 'confirm_passwordsend') && $caneditpassword)
-=======
-      || $_GET["action"] == 'confirm_passwordsend') && ($caneditperms || $caneditpassword))
->>>>>>> 1.91
 {
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
