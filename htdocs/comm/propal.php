@@ -612,7 +612,7 @@ if ($_GET['propalid'] > 0)
 			print '</td><td colspan="3">';
 			if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
 			{
-				print '<form action="fiche.php?propalid='.$propalid.'" method="post">';
+				print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 				print '<input type="hidden" name="action" value="set_ref_client">';
 				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$propal->ref_client.'">';
 				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';

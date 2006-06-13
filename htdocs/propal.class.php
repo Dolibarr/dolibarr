@@ -51,6 +51,7 @@ class Propal
     var $projetidp;
     var $author;
     var $ref;
+    var $ref_client;
     var $status;
     var $datep;
     var $fin_validite;
@@ -68,7 +69,7 @@ class Propal
     var $note;
     var $note_public;
 
-	var $date_livraison;
+	  var $date_livraison;
     var $adresse_livraison_id;
 
     var $labelstatut=array();
