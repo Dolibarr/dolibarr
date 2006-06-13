@@ -708,7 +708,7 @@ class Propal
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
         $sql.= " $this->cond_reglement_id, $this->mode_reglement_id,";
-        $sql.= " ".$this->db->idate($this->date_livraison).",".addslashes($this->ref_client).")";
+        $sql.= " ".$this->db->idate($this->date_livraison).",'".addslashes($this->ref_client)."')";
 
         $resql=$this->db->query($sql);
         if ($resql)
