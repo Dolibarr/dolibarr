@@ -394,6 +394,8 @@ else
 		llxHeader('','', $addons);
 
 		if ($mesg) { print $mesg.'<br>'; }
+		
+		print_titre($langs->trans('SupplierInvoice'));
 
 		if ($_GET['action'] == 'edit' || $_GET['action'] == 'delete_product_line')
 		{
@@ -406,8 +408,6 @@ else
 			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
 			 	print '<br>';
 			 }
-			
-			print_titre($langs->trans('SupplierInvoice'));
 
 			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
 			print '<input type="hidden" name="action" value="update">';
