@@ -395,7 +395,7 @@ else
 
 		if ($mesg) { print $mesg.'<br>'; }
 
-		if ($_GET['action'] == 'edit')
+		if ($_GET['action'] == 'edit' || $_GET['action'] == 'delete_product_line')
 		{
 
 			/*
