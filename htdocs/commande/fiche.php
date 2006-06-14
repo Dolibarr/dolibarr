@@ -580,19 +580,19 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print "</td></tr>";
 
 			// Adresse de livraison
-			print '<tr><td nowrap>'.$langs->trans('DeliveryAddress').'</td><td>';
+			print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
 			$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id');
 
 			if ($numaddress==0)
 			{
-				print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
+				print ' &nbsp; <a href="../comm/adresse_livraison.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
 			}
 
 			print '</td></tr>';
 
 
 			// Conditions de réglement
-			print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td>';
+			print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 			$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
 			print '</td></tr>';
 
@@ -870,7 +870,7 @@ else
 
 			// Ref commande client
 			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
 			print '</td>';
 			if ($_GET['action'] != 'refcdeclient' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
@@ -1196,7 +1196,7 @@ else
 						print '</td>';
 						print '<td align="right"><input size="5" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
 						print '<td align="right"><input size="2" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
-						print '<td align="right" nowrap><input size="1" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+						print '<td align="right" nowrap="nowrap"><input size="1" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
 						print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>';
@@ -1362,7 +1362,7 @@ else
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="5"></td>';
 				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
+				print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
 				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
 
@@ -1378,15 +1378,15 @@ else
 				print '<td colspan="2">';
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
-				$html->select_produits('','p_idprod','',$conf->produit->limit_size,$soc->price_level);
+					$html->select_produits('','p_idprod','',$conf->produit->limit_size,$soc->price_level);
 				else
-				$html->select_produits('','p_idprod','',$conf->produit->limit_size);
-				print '<br>';
+					$html->select_produits('','p_idprod','',$conf->produit->limit_size);
+				if (! $conf->use_ajax) print '<br>';
 				print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
 				print '</td>';
 				print '<td>&nbsp;</td>';
 				print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-				print '<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="'.$soc->remise_client.'">%</td>';
+				print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="remise_percent" value="'.$soc->remise_client.'">%</td>';
 				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
 

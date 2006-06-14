@@ -736,3 +736,5 @@ function parseDate(val) {
 }
 
 
+// Fonction pour champ saisie en mode ajax
+function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; }

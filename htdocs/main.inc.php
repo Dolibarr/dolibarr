@@ -323,9 +323,13 @@ function top_htmlhead($head, $title="", $target="")
     print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
     print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.com/dev.fr.html">'."\n";
 
-    if ($conf->use_javascript)
+    if ($conf->use_javascript || $conf->use_ajax)
     {
         print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>';
+    }
+    if ($conf->use_ajax)
+    {
+        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/prototype.js"></script>';
     }
     
     print "</head>\n";
