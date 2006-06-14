@@ -151,6 +151,7 @@ if ($result)
 		print "</td></tr>\n";
 		$i++;
 	}
+	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
 	print "</table>";
 	$db->free($result);
 }

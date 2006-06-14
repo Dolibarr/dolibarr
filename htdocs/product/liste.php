@@ -261,6 +261,16 @@ if ($resql)
         print "</tr>\n";
         $i++;
     }
+    
+    if ($sref || $snom || $_POST["sall"] || $_POST["search"])
+    {
+        print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+    }
+    else
+    {
+        print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+    }
+    
     $db->free($resql);
 
     print "</table>";

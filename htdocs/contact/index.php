@@ -277,6 +277,9 @@ if ($result)
         print "</tr>\n";
         $i++;
     }
+    
+    print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
+    
     print "</table>";
 
     print '</form>';

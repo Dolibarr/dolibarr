@@ -198,6 +198,9 @@ if ($resql)
         print "</tr>\n";
         $i++;
     }
+    
+    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num);
+    
     print "</table>";
     $db->free($resql);
 }
