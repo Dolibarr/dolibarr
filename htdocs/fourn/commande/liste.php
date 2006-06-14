@@ -58,7 +58,7 @@ if ($socid > 0)
 
 llxHeader('',$title);
 
-$commandestatic=new Commande($db);
+$commandestatic=new CommandeFournisseur($db);
 
 
 if ($sortorder == "") $sortorder="DESC";
@@ -156,7 +156,7 @@ if ($resql)
         print '</td>';
 
         // Statut
-        print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, '', 5).'</td>';
+        print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
 
         print "</tr>\n";
         $i++;
