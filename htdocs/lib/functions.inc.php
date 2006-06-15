@@ -1657,30 +1657,30 @@ function print_duree_select($prefix)
 /**
 		\brief      Fonction qui retourne un montant monétaire formaté
 		\remarks    Fonction utilisée dans les pdf et les pages html
-		\param	    amount		montant a formater
-		\param	    html		formatage html ou pas (0 par defaut)
-
+		\param	    amount			Montant a formater
+		\param	    html			Formatage html ou pas (0 par defaut)
+		\seealso	price2num		Fonction inverse de price
 */
 function price($amount, $html=0)
 {
-  if ($html)
-    {
-
-      $dec='.'; $thousand=' ';
-      return ereg_replace(' ','&nbsp;',number_format($amount, 2, $dec, $thousand));
-
-    }
-  else
-    {
-      return number_format($amount, 2, '.', ' ');
-    }
-
+	if ($html)
+	{
+	
+		$dec='.'; $thousand=' ';
+		return ereg_replace(' ','&nbsp;',number_format($amount, 2, $dec, $thousand));
+	
+	}
+	else
+	{
+		return number_format($amount, 2, '.', ' ');
+	}
 }
 
 /**
 		\brief      Fonction qui retourne un numérique depuis un montant formaté
 		\remarks    Fonction à appeler sur montants saisi avant un insert
 		\param	    amount		montant a formater
+		\seealso	price		Fonction inverse de price2num
 */
 function price2num($amount)
 {

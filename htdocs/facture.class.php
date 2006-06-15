@@ -398,7 +398,9 @@ class Facture
 				/*
 				 * Lignes
 				 */
-				$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise, l.remise_percent, l.subprice, '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
+				$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, l.remise, l.remise_percent, l.subprice,';
+				$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
+				$sql.= ' l.info_bits, l.total_ht, l.total_ttc,';
 				$sql.= ' p.label as label, p.description as product_desc';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -413,9 +415,10 @@ class Facture
 					{
 						$objp = $this->db->fetch_object($result2);
 						$faclig = new FactureLigne($this->db);
-						$faclig->desc           = stripslashes($objp->description);     // Description ligne
-						$faclig->libelle        = stripslashes($objp->label);           // Label produit
-						$faclig->product_desc   = stripslashes($objp->product_desc);    // Description produit
+						$faclig->rowid			= $objp->rowid;
+						$faclig->desc           = $objp->description;     // Description ligne
+						$faclig->libelle        = $objp->label;           // Label produit
+						$faclig->product_desc   = $objp->product_desc;    // Description produit
 						$faclig->qty            = $objp->qty;
 						$faclig->price          = $objp->price;
 						$faclig->subprice       = $objp->subprice;
@@ -425,6 +428,11 @@ class Facture
 						$faclig->produit_id     = $objp->fk_product;
 						$faclig->date_start     = $objp->date_start;
 						$faclig->date_end       = $objp->date_end;
+						$faclig->date_start     = $objp->date_start;
+						$faclig->date_end       = $objp->date_end;
+						$faclig->info_bits      = $objp->info_bits;
+						$faclig->total_ht       = $objp->total_ht;
+						$faclig->total_ttc      = $objp->total_ttc;
 						$this->lignes[$i] = $faclig;
 						$i++;
 					}
@@ -878,8 +886,9 @@ class Facture
              * Pour chaque produit, on met a jour indicateur nbvente
              * On crée ici une dénormalisation des données pas forcément utilisée.
              */
-			$sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$this->id;
-			$sql .= ' AND fk_product > 0';
+			$sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet';
+			$sql.= ' WHERE fk_facture = '.$this->id;
+			$sql.= ' AND fk_product > 0';
 
             $resql = $this->db->query($sql);
             if ($resql)
@@ -999,23 +1008,26 @@ class Facture
 	* \param    datestart       date de debut de validité du service
 	* \param    dateend         date de fin de validité du service
 	* \param    ventil          code de ventilation comptable
+	* \remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
+	*			de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
+	*			par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	*/
 	function addline($facid, $desc, $product_desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
 	{
 		global $conf;
 		dolibarr_syslog("facture.class.php::addline($facid,$desc,$product_desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
 		{
+			$this->db->begin();
+
 			// Nettoyage paramètres
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
 			if (! $qty) $qty=1;
 			if (! $ventil) $ventil=0;
-			$soc = new Societe($this->db);
-			$soc->fetch($this->socidp);
-			if($soc->tva_assuj == "0") $txtva ="0";
-			dolibarr_syslog("facture.class.php:: txtva : ".$txtva);
+			if (! $info_bits) $info_bits=0;
             if ($fk_product && ! $pu)
             {
                 $prod = new Product($this->db, $fk_product);
@@ -1028,41 +1040,46 @@ class Facture
 				{
                 	$pu=$prod->price;
 				}
-				if($txtva == "")
-					$txtva=$prod->tva_tx;
             }
+			$pu = price2num($pu);
+			$txtva=price2num($txtva);
+
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+
+			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
 			$price = $pu;
 			$subprice = $pu;
-
-            // Calcul remise et nouveau prix
 			$remise = 0;
-			if ($this->socidp)
-			{
-				$soc = new Societe($this->db);
-				$soc->fetch($this->socidp);
-				$remise_client = $soc->remise_client;
-				/* La remise est client n'est pas a mettre au niveau ligne de produit mais globale
-				if ($remise_client > $remise_percent)
-				{
-					$remise_percent = $remise_client ;
-				}
-				*/
-			}
-
 			if ($remise_percent > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100),2);
 				$price = ($pu - $remise);
 			}
+			$price    = price2num($price);
+			$subprice  = price2num($subprice);
 
-			// Stockage du rang max de la facture dans rangmax
+			// Récupère rang max de la facture dans $rangmax
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'facturedet';
-			$sql .= ' WHERE fk_facture ='.$facid;
+			$sql.= ' WHERE fk_facture ='.$facid;
+
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$row = $this->db->fetch_row($resql);
 				$rangmax = $row[0];
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				$this->db->rollback();
+				return -1;
 			}
 
 			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
@@ -1073,39 +1090,62 @@ class Facture
 				}
 			}
 
-			// Formatage des prix
-			$price    = price2num($price);
-			$subprice  = price2num($subprice);
-
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet ';
-			$sql.= ' (fk_facture, description, price, qty, tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)';
-
+			// Insertion dans base de la ligne
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
+			$sql.= ' (fk_facture, description, price, qty, tva_taux,';
+			$sql.= ' fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang,';
+			$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
 			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
 			{
-				$sql.= " VALUES ($facid, '".addslashes($product_desc)."','$price','$qty','$txtva',";
+				$sql.= " VALUES ($facid, '".addslashes($product_desc)."',";
+				$sql.= "'".price2num($price)."',";
+				$sql.= "'".price2num($qty)."',";
+				$sql.= "'".price2num($txtva)."',";
 			}
 			else
 			{
-				$sql.= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',";
+				$sql.= " VALUES ($facid, '".addslashes($desc)."',";
+				$sql.= "'".price2num($price)."',";
+				$sql.= "'".price2num($qty)."',";
+				$sql.= "'".price2num($txtva)."',";
 			}
 
 			if ($fk_product) { $sql.= "'$fk_product',"; }
 			else { $sql.='0,'; }
-			$sql.= " '$remise_percent','$subprice','$remise',";
+			$sql.= " '".price2num($remise_percent)."',";
+			$sql.= " '".price2num($subprice)."',";
+			$sql.= " '".price2num($remise)."',";
 			if ($datestart) { $sql.= "'$datestart',"; }
 			else { $sql.='null,'; }
-			if ($dateend) { $sql.= "'$dateend'"; }
-			else { $sql.='null'; }
-			$sql.= ','.$ventil;
-			$sql.= ','.($rangmax + 1).')';
-			if ( $this->db->query( $sql) )
+			if ($dateend) { $sql.= "'$dateend',"; }
+			else { $sql.='null,'; }
+			$sql.= ' '.$ventil.',';
+			$sql.= ' '.($rangmax + 1).',';
+			$sql.= " '".$info_bits."',";
+			$sql.= " '".price2num($total_ht)."',";
+			$sql.= " '".price2num($total_tva)."',";
+			$sql.= " '".price2num($total_ttc)."'";
+			$sql.= ')';
+			if ( $this->db->query($sql) )
 			{
-				$this->updateprice($facid);
-				return 1;
+				// Mise a jour informations denormalisees au niveau de la facture meme
+				$result=$this->updateprice($facid);
+
+				if ($result > 0) 
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -1;
+				}
 			}
 			else
 			{
 				dolibarr_print_error($this->db);
+				$this->db->commit();
 			}
 		}
 	}
@@ -1122,58 +1162,80 @@ class Facture
 	 *      \param     tva_tx           Taux TVA
 	 *      \return    int              < 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart, $dateend, $tva_tx)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart, $dateend, $txtva)
 	{
-		dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend, $tva_tx");
+		dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend, $txtva");
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
 		{
 			$this->db->begin();
-			if (strlen(trim($qty))==0)
-			{
-				$qty=1;
-			}
-			$remise = 0;
-			$subprice = price2num($pu);
-			$price = $subprice;
-			if (trim(strlen($remise_percent)) > 0)
-			{
-				$remise = round(($subprice * $remise_percent / 100), 2);
-				$price = $subprice - $remise;
-			}
-			else
-			{
-				$remise_percent=0;
-			}
+			
+			// Nettoyage paramètres
+            $remise_percent=price2num($remise_percent);
+            $qty=price2num($qty);
+			if (! $qty) $qty=1;
+			$pu = price2num($pu);
+			$txtva=price2num($txtva);
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet set description=\''.addslashes($desc).'\'';
-			$sql .= ",price='"    .     price2num($price)."'";
-			$sql .= ",subprice='" .     price2num($subprice)."'";
-			$sql .= ",remise='".        price2num($remise)."'";
-			$sql .= ",remise_percent='".price2num($remise_percent)."'";
-			$sql .= ",tva_taux='".      price2num($tva_tx)."'";
-			$sql .= ",qty='$qty'";
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+
+			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
+			$price = $pu;
+			$subprice = $pu;
+			$remise = 0;
+			if ($remise_percent > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100),2);
+				$price = ($pu - $remise);
+			}
+			$price    = price2num($price);
+			$subprice  = price2num($subprice);
+
+			// Mise a jour ligne en base
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
+			$sql.= " set description='".addslashes($desc)."'";
+			$sql.= ",price='".price2num($price)."'";
+			$sql.= ",subprice='".price2num($subprice)."'";
+			$sql.= ",remise='".price2num($remise)."'";
+			$sql.= ",remise_percent='".price2num($remise_percent)."'";
+			$sql.= ",tva_taux='".price2num($txtva)."'";
+			$sql.= ",qty='".price2num($qty)."'";
 			if ($datestart) { $sql.= ",date_start='$datestart'"; }
 			else { $sql.=',date_start=null'; }
 			if ($dateend) { $sql.= ",date_end='$dateend'"; }
 			else { $sql.=',date_end=null'; }
-			$sql .= ' WHERE rowid = '.$rowid;
+			//$sql.= " info_bits=".$info_bits.",";
+			$sql.= ",total_ht='".price2num($total_ht)."'";
+			$sql.= ",total_tva='".price2num($total_tva)."'";
+			$sql.= ",total_ttc='".price2num($total_ttc)."'";
+			$sql.= " WHERE rowid = ".$rowid;
+
 			$result = $this->db->query( $sql);
 			if ($result)
 			{
+				// Mise a jour info denormalisees au niveau facture
 				$this->updateprice($this->id);
 				$this->db->commit();
 				return $result;
 			}
 			else
 			{
+				$this->error=$this->db->error();
 				$this->db->rollback();
-				dolibarr_print_error($this->db);
 				return -1;
 			}
 		}
 		else
 		{
+			$this->error="Invoice statut makes operation forbidden";
 			return -2;
 		}
 	}
@@ -1193,35 +1255,52 @@ class Facture
 	}
 
 	/**
-	 *		\brief     	Mise à jour des sommes de la facture
+	 *		\brief     	Mise à jour des sommes de la facture et calculs denormalises
 	 * 		\param     	facid      	id de la facture a modifier
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
 	function updateprice($facid)
 	{
-		include_once DOL_DOCUMENT_ROOT . '/lib/price.lib.php';
+		$tvas=array();
 		$err=0;
 
 		// Lit les lignes detail
-		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$facid;
+		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price, total_ht, total_ttc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
+		$sql.= ' WHERE fk_facture = '.$facid;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			$this->total_ht  = 0;
+			$this->total_tva = 0;
+			$this->total_ttc = 0;
+			
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
-				// qty, tva_taux, sub_price = prix unitaire HT, remise_percent, price = prix unitaire HT apres remise %
+
+				$this->total_ht    += $obj->total_ht;
+				$this->total_tva   += ($obj->total_ttc - $obj->total_ht);
+				$this->total_ttc   += $obj->total_ttc;
+
+				// Anciens indicateurs
+				$this->amount_ht      += $obj->price * $obj->qty;
+				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
+				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
+
+/* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
 				$products[$i][0] = $obj->price;
 				$products[$i][1] = $obj->qty;
 				$products[$i][2] = $obj->tva_taux;
+*/
 				$i++;
 			}
 
 			$this->db->free($result);
 
+/* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
 			$calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
 			$this->total_remise   = $calculs[3];
 			$this->amount_ht      = $calculs[4];
@@ -1229,11 +1308,9 @@ class Facture
 			$this->total_tva      = $calculs[1];
 			$this->total_ttc      = $calculs[2];
 			$tvas                 = $calculs[5];
+*/
 
-			/*
-			*
-			*/
-
+			// Met a jour indicateurs sur facture
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
 			$sql .= "SET amount ='".price2num($this->amount_ht)."'";
 			$sql .= ", remise='".   price2num($this->total_remise)."'";
@@ -1243,8 +1320,8 @@ class Facture
 			$sql .= ' WHERE rowid = '.$facid;
 			if ( $this->db->query($sql) )
 			{
-				// \TODO Supprimer l'utilisation de facture_tva_sum non utilisable
-				// dans un context compta propre.
+				// \TODO A supprimer car l'utilisation de facture_tva_sum non utilisable
+				// dans un context compta propre. On utilisera plutot les lignes.
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture='.$this->id;
 				if ( $this->db->query($sql) )
 				{
@@ -1253,9 +1330,6 @@ class Facture
 						$sql_del = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum where fk_facture ='.$this->id;
 						$this->db->query($sql_del);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) values ($this->id,'".price2num($tvas[$key])."','".price2num($key)."');";
-						//  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."facture_tva_sum SET fk_facture=".$this->id;
-						//		      $sql .= ", amount = '".$tvas[$key]."'";
-						//	      $sql .= ", tva_tx='".$key."'";
 						if (! $this->db->query($sql) )
 						{
 							dolibarr_print_error($this->db);
@@ -2323,12 +2397,15 @@ class Facture
 /**
 		\class      FactureLigne
 		\brief      Classe permettant la gestion des lignes de factures
+		\remarks	Gere des lignes de la table llx_facturedet
 */
-
 class FactureLigne
 {
-    // From llx_facturedet
+	var $db;
+
+	var $rowid;
 	var $desc;
+	var $produit_id;
 
 	var $qty;				// Quantité (exemple 2)
 	var $subprice;      	// P.U. HT (exemple 100)
@@ -2338,16 +2415,17 @@ class FactureLigne
 	var $remise;			// Montant calculé de la remise % sur PU HT (exemple 20)
 							// subprice = price + remise
 
-	var $total_ht;			// Total HT de la ligne toute quantité et incluant
-							// la remise ligne et remise globale.
-	var $total_ttc;
-
-	var $produit_id;
 	var $date_start;
 	var $date_end;
-	var $info_bits;			// 0 si TVA normal, 1 si TVA NPR
 
+	var $info_bits;			// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
+	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
+	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
 
+	var $error;
+	
+	
 	/**
 	 *      \brief     Constructeur d'objets ligne de facture
 	 *      \param     DB      handler d'accès base de donnée
@@ -2367,7 +2445,7 @@ class FactureLigne
 	{
 		$sql = 'SELECT fk_product, description, price, qty, rowid, tva_taux, remise, remise_percent,';
 		$sql.= ' subprice, '.$this->db->pdate('date_start').' as date_start,'.$this->db->pdate('date_end').' as date_end,';
-		$sql.= ' info_bits';
+		$sql.= ' info_bits, total_ht, total_tva, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
 		$result = $this->db->query($sql);
 		if ($result)
@@ -2376,7 +2454,6 @@ class FactureLigne
 			$this->desc           = stripslashes($objp->description);
 			$this->qty            = $objp->qty;
 			$this->price          = $objp->price;
-			//$this->price_ttc      = $objp->price_ttc;
 			$this->subprice       = $objp->subprice;
 			$this->tva_taux       = $objp->tva_taux;
 			$this->remise         = $objp->remise;
@@ -2385,6 +2462,9 @@ class FactureLigne
 			$this->date_start     = $objp->date_start;
 			$this->date_end       = $objp->date_end;
 			$this->info_bits      = $objp->info_bits;
+			$this->total_ht       = $objp->total_ht;
+			$this->total_tva      = $objp->total_tva;
+			$this->total_ttc      = $objp->total_ttc;
 			$this->db->free($result);
 		}
 		else

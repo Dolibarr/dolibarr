@@ -111,8 +111,8 @@ ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture
 
 ALTER TABLE llx_facturedet ADD COLUMN fk_remise_except	integer NULL AFTER remise;
 ALTER TABLE llx_facturedet ADD COLUMN total_ht        real AFTER price;
-ALTER TABLE llx_facturedet ADD COLUMN total_tva       real;
-ALTER TABLE llx_facturedet ADD COLUMN total_ttc       real;
+ALTER TABLE llx_facturedet ADD COLUMN total_tva       real AFTER total_ht;
+ALTER TABLE llx_facturedet ADD COLUMN total_ttc       real AFTER total_tva;
 ALTER TABLE llx_facturedet ADD COLUMN info_bits		  integer DEFAULT 0 AFTER date_end;
 
   
