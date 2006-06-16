@@ -190,13 +190,11 @@ class Propal
 					// multiprix
 					if ($conf->global->PRODUIT_MULTIPRICES == 1)
 					{
-						$price = price2num($prod->multiprices[$this->client->price_level]);
-                    	$subprice = price2num($prod->multiprices[$this->client->price_level]);
+						$pu = price2num($prod->multiprices[$this->client->price_level]);
 					}
 					else
 					{
-						$price = price2num($prod->price);
-                    	$subprice = price2num($prod->price);
+						$pu = price2num($prod->price);
 					}
 					$txtva = get_default_tva($mysoc,$this->client,$prod->tva_tx);
 					if (! $desc) $desc = $prod->description;
@@ -212,6 +210,8 @@ class Propal
 					$total_ttc = $tabprice[2];
 
 					// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
+		            $price = $pu;
+		            $subprice = $pu;
         			$remise = 0;
                     if ($remise_percent > 0)
                     {
