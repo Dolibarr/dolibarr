@@ -193,40 +193,70 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
 	$_GET['id']=$_REQUEST['id'];
 }
 
+/*
+ *  Ajout d'une ligne produit dans la commande
+ */
 if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 {
-	/*
-	 *  Ajout d'une ligne produit dans la commande
-	 */
-	if ($_POST['qty'] && (($_POST['pu'] && $_POST['desc']) || $_POST['p_idprod']))
+	if ($_POST['qty'] && (($_POST['pu'] && $_POST['desc']) || $_POST['idprod']))
 	{
 		$commande = new Commande($db);
 		$ret=$commande->fetch($_POST['id']);
 
-		if (isset($_POST['p_idprod']))
-		{
-			$result = $commande->addline(
-			$_POST['np_desc'],
-			$_POST['product_desc'],
-			$_POST['pu'],
+		// Ecrase $pu par celui du produit
+		// Ecrase $desc par celui du produit
+		// Ecrase $txtva par celui du produit
+        if ($_POST['idprod'])
+        {
+            $prod = new Product($db, $_POST['idprod']);
+            $prod->fetch($_POST['idprod']);
+            
+            // multiprix
+            if ($conf->global->PRODUIT_MULTIPRICES == 1)
+            {
+            	$pu = $prod->multiprices[$soc->price_level];
+            }
+            else
+            {
+            	$pu=$prod->price;
+            }
+            
+            // La description de la ligne est celle saisie ou
+            // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
+            $desc=$_POST['np_desc'];
+            if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
+            {
+            	$desc = $prod->description;
+            }
+            
+            $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+        }
+        else
+        {
+        	$pu=$_POST['pu'];
+        	$tva_tx=$_POST['tva_tx'];
+        	$desc=$_POST['desc'];
+        }
+		
+        $commande->addline(
+			$_POST['id'],
+			$desc,
+			$pu,
 			$_POST['qty'],
-			$_POST['tva_tx'],
-			$_POST['p_idprod'],
-			$_POST['remise_percent']);
-		}
-		else
-		{
-			$result = $commande->addline_libre(
-			$_POST['desc'],
-			$_POST['pu'],
-			$_POST['qty'],
-			$_POST['tva_tx'],
-			0,
-			$_POST['remise_percent']);
-		}
+			$tva_tx,
+			$_POST['idprod'],
+			$_POST['remise_percent']
+			);
+
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+  	    commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	}
 }
 
+/*
+ *  Mise à jour d'une ligne dans la propale
+ */
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
 	$commande = new Commande($db,'',$_POST['id']);
@@ -234,12 +264,24 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 
 	$result = $commande->update_line($_POST['elrowid'],
 		$_POST['eldesc'],
-		$_POST['elprice'],
-		$_POST['elqty'],
+		$_POST['pu'],
+		$_POST['qty'],
 		$_POST['elremise_percent'],
-		$_POST['eltva_tx']
+		$_POST['tva_tx']
 		);
 
+	if ($result >= 0)
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	    commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	}
+	else
+	{
+		dolibarr_print_error($db,$commande->error);
+		exit;
+	}
+	
 	$_GET['id']=$_POST['id'];   // Pour réaffichage de la fiche en cours d'édition
 }
 
@@ -1190,12 +1232,12 @@ else
 						print '<textarea name="eldesc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
 						print '<td align="right">';
 						if($soc->tva_assuj == "0")
-						print '<input type="hidden" name="eltva_tx" value="0">0';
+						print '<input type="hidden" name="tva_tx" value="0">0';
 						else
-						print $html->select_tva('eltva_tx',$objp->tva_tx,$mysoc,$soc);
+						print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$soc);
 						print '</td>';
-						print '<td align="right"><input size="5" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
-						print '<td align="right"><input size="2" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
+						print '<td align="right"><input size="5" type="text" class="flat" name="pu" value="'.price($objp->subprice).'"></td>';
+						print '<td align="right"><input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'"></td>';
 						print '<td align="right" nowrap="nowrap"><input size="1" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
 						print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
@@ -1378,9 +1420,9 @@ else
 				print '<td colspan="2">';
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
-					$html->select_produits('','p_idprod','',$conf->produit->limit_size,$soc->price_level);
+					$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
 				else
-					$html->select_produits('','p_idprod','',$conf->produit->limit_size);
+					$html->select_produits('','idprod','',$conf->produit->limit_size);
 				if (! $conf->use_ajax) print '<br>';
 				print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
 				print '</td>';
@@ -1557,9 +1599,9 @@ else
 					print '<table class="border" width="100%">';
 					print '<tr '.$bc[$var].'><td>'.$langs->trans('Sendings').'</td>';
 					if ($conf->livraison->enabled)
-          {
-           	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
-          }
+					{
+						print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+					}
 					print '<td>'.$langs->trans('Date').'</td></tr>';
 
 					$var=True;

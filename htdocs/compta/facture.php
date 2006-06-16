@@ -142,7 +142,9 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	$result = $fac->set_valid($fac->id, $user, $soc);
 	if ($result)
 	{
-		facture_pdf_create($db, $fac->id);
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 	}
 }
 
@@ -360,14 +362,17 @@ if ($_POST['action'] == 'add')
 	}
 }
 
+/*
+ *  Ajout d'une ligne produit dans la facture
+ */
 if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') && $user->rights->facture->creer)
 {
-	if ($_POST['qty'] && ( $_POST['desc'] || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['pu']!=0 && $_POST['desc']) || $_POST['idprod']))
 	{
 		$fac = new Facture($db);
-		$fac->fetch($_POST['facid']);
+		$ret=$fac->fetch($_POST['facid']);
 		$soc = new Societe($db);
-		$soc->fetch($fac->socidp);
+		$ret=$soc->fetch($fac->socidp);
 		
 		$datestart='';
 		$dateend='';
@@ -414,16 +419,10 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             	$pu=$prod->price;
             }
             
+            // La description de la ligne est celle saisie ou
+            // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
             $desc=$_POST['desc'];
-            
-            if (! $desc)
-            {
-            	$desc = $prod->description;
-            }
-            
-            // ceci n'a plus d'intérêt si on rajoute la description produit
-            // à chaque fois ???
-            if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+            if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
             {
             	$desc = $prod->description;
             }
@@ -457,7 +456,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
 {
 	$fac = new Facture($db,'',$_POST['facid']);
-	$fac->fetch($_POST['facid']);
+	if (! $fac->fetch($_POST['facid']) > 0) dolibarr_print_error($db);
 
 	$datestart='';
 	$dateend='';
@@ -477,6 +476,10 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$dateend,
 		$_POST['tva_tx']
 		);
+
+	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 
 	$_GET['facid']=$_POST['facid'];   // Pour réaffichage de la fiche en cours d'édition
 }
@@ -676,12 +679,12 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	$facture = new Facture($db, 0, $_GET['facid']);
 	$facture->fetch($_GET['facid']);
 	if ($_REQUEST['model']) $facture->set_pdf_model($user, $_REQUEST['model']);
-	$result=facture_pdf_create($db, $_REQUEST['facid'], '', $facture->modelpdf, $outputlangs);
+	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	$result=facture_pdf_create($db, $facture->id, '', $facture->modelpdf, $outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);
@@ -2174,7 +2177,7 @@ else
 						print '<table class="noborder" width="100%">';
 						print '<tr class="liste_titre">';
 						print '<td>'.$langs->trans('Ref').'</td>';
-           	print '<td>'.$langs->trans('RefCdeClientShort').'</td>';
+           				print '<td>'.$langs->trans('RefCdeClientShort').'</td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
 						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 						print '</tr>';
@@ -2185,7 +2188,7 @@ else
 							$var=!$var;
 							print '<tr '.$bc[$var].'><td>';
 							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
-   						print '<td>'.$objp->ref_client.'</td>';
+   							print '<td>'.$objp->ref_client.'</td>';
 							print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
 							print '<td align="right">'.price($objp->total_ht).'</td>';
 							print "</tr>\n";
@@ -2268,8 +2271,8 @@ else
 				if (! is_readable($file))
 				{
 					$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-					$result=facture_pdf_create($db, $_REQUEST['facid'], '', $_REQUEST['model'], $outputlangs);
+					if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 				    if ($result <= 0)
 				    {
 				    	dolibarr_print_error($db,$result);
@@ -2319,8 +2322,8 @@ else
 				if (! is_readable($file))
 				{
 					$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-					$result=facture_pdf_create($db, $_REQUEST['facid'], '', $_REQUEST['model'], $outputlangs);
+					if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 				    if ($result <= 0)
 				    {
 				    	dolibarr_print_error($db,$result);

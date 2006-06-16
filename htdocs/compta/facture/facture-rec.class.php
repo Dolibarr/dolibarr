@@ -447,7 +447,7 @@ class FactureRec extends Facture
 	
 	if ( $this->db->query( $sql) )
 	  {
-	    $this->updateprice($facid);
+	    $this->update_price($facid);
 	    return 1;
 	  }
 	else
@@ -492,7 +492,7 @@ class FactureRec extends Facture
 	
 	$result = $this->db->query( $sql);
 	
-	$this->updateprice($this->id);
+	$this->update_price($this->id);
       }
   }
   
@@ -506,14 +506,14 @@ class FactureRec extends Facture
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = $rowid;";
 	$result = $this->db->query( $sql);
 	
-	$this->updateprice($this->id);
+	$this->update_price($this->id);
       }
   }
   
   /**
    * Mise à jour des sommes de la facture
    */
-  function updateprice($facid)
+  function update_price($facid)
   {
     include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
     $err=0;
@@ -595,7 +595,7 @@ class FactureRec extends Facture
 	
 	if ($this->db->query($sql) )
 	  {
-	    $this->updateprice($this->id);
+	    $this->update_price($this->id);
 	    return 1;
 	  }
 	else

@@ -125,7 +125,7 @@ class FactureFournisseur extends Facture
 				}
 			}
 			// Mise à jour prix
-			if ($this->updateprice($this->id) > 0)
+			if ($this->update_price($this->id) > 0)
 			{
 				$this->db->commit();
 				return $this->id;
@@ -340,7 +340,7 @@ class FactureFournisseur extends Facture
 			dolibarr_print_error($this->db);
 		}
 		// Mise a jour prix facture
-		$this->updateprice($this->id);
+		$this->update_price($this->id);
 	}
 
 	/**
@@ -378,7 +378,7 @@ class FactureFournisseur extends Facture
 			if ($resql)
 			{
 				// Mise a jour prix facture
-				return $this->updateprice($this->id);
+				return $this->update_price($this->id);
 			}
 			else
 			{
@@ -403,7 +403,7 @@ class FactureFournisseur extends Facture
 			dolibarr_print_error($this->db);
 		}
 		// Mise a jour prix facture
-		$this->updateprice($this->id);
+		$this->update_price($this->id);
 		return 1;
 	}
 
@@ -412,7 +412,7 @@ class FactureFournisseur extends Facture
 	 *    \param      facid       id de la facture a modifier
 	 *    \return     int         <0 si ko, >0 si ok
 	 */
-	function updateprice($facid)
+	function update_price($facid)
 	{
 		$total_ht  = 0;
 		$total_tva = 0;

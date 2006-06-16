@@ -25,7 +25,7 @@ create table llx_propaldet
   fk_propal      integer,
   fk_product     integer,
   description    text,
-  tva_tx         real DEFAULT 19.6, -- taux tva
+  tva_tx         real, 				-- taux tva
   qty            real,              -- quantité
   remise_percent real DEFAULT 0,    -- pourcentage de remise
   remise         real DEFAULT 0,    -- montant de la remise

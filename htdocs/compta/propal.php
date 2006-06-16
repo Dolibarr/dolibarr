@@ -83,26 +83,26 @@ if ($_GET["action"] == 'setstatut')
 
 if ( $action == 'delete' )
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = $propalid;";
-  if ( $db->query($sql) )
-    {
-      
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $propalid ;";
-      if ( $db->query($sql) )
-        {
-	  print '<div class="ok">'.$langs->trans("Deleted").'</div>';
-        }
-      else
-        {
-	  dolibarr_print_error($db);
-        }
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
-  $propalid = 0;
-  $brouillon = 1;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = $propalid;";
+	if ( $db->query($sql) )
+	{
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $propalid ;";
+		if ( $db->query($sql) )
+		{
+			print '<div class="ok">'.$langs->trans("Deleted").'</div>';
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+	$propalid = 0;
+	$brouillon = 1;
 }
 
 
@@ -151,7 +151,7 @@ if ($_GET["propalid"] > 0)
 	print '</td>';
 	print '</tr>';
 	
-    $rowspan=9;
+    $rowspan=8;
     
     // Société
     print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
@@ -231,6 +231,7 @@ if ($_GET["propalid"] > 0)
 	print '</td></tr>';
 
     // Destinataire
+/* Remplacé par contacts de propal
     $langs->load('mails');
     print '<tr>';
     print '<td>'.$langs->trans('MailTo').'</td>';
@@ -253,6 +254,7 @@ if ($_GET["propalid"] > 0)
             print '<td colspan="3">&nbsp;</td>';
         }
     }
+*/
 
     // Projet
     if ($conf->projet->enabled)

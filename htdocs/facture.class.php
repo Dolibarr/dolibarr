@@ -109,8 +109,6 @@ class Facture
 	{
 		global $langs,$conf,$mysoc;
 
-		$this->db->begin();
-
 		// Nettoyage paramètres
 		$this->note=trim($this->note);
 		$this->note_public=trim($this->note_public);
@@ -121,6 +119,11 @@ class Facture
 		$this->brouillon = 1;
 
 		dolibarr_syslog("Facture::create");
+
+		$soc = new Societe($this->db);
+		$soc->fetch($this->socidp);
+
+		$this->db->begin();
 
 		// Facture récurrente
 		if ($this->fac_rec > 0)
@@ -196,8 +199,7 @@ class Facture
 			{
 				$prod = new Product($this->db, $this->products[$i]);
 				$res=$prod->fetch($this->products[$i]);
-				$soc = new Societe($this->db);
-				$soc->fetch($this->socidp);
+
 				$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
@@ -258,7 +260,7 @@ class Facture
 
             if ($resql)
             {
-	            $resql=$this->updateprice($this->id);
+	            $resql=$this->update_price($this->id);
 	            if ($resql)
 	            {
 	                // Appel des triggers
@@ -789,7 +791,7 @@ class Facture
 				$numfa = $this->getNextNumRef($soc);
 			}
 
-			$this->updateprice($this->id);
+			$this->update_price($this->id);
 
 			// Validation de la facture
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
@@ -970,13 +972,13 @@ class Facture
   }
 
 	/**
-	* \brief     Ajoute un produit dans les tableaux products, products_qty, products_date_start|end
-	* \param     idproduct
-	* \param     qty
-	* \param     remise_percent
-	* \param     datestart
-	* \param     dateend
-	*/
+	 * 	\brief     Ajoute un produit dans les tableaux products, products_qty, products_date_start|end
+	 * 	\param     idproduct
+	 * 	\param     qty
+	 * 	\param     remise_percent
+	 * 	\param     datestart
+	 * 	\param     dateend
+	 */
 	function add_product($idproduct, $qty, $remise_percent, $datestart='', $dateend='')
 	{
 		if ($idproduct > 0)
@@ -1014,7 +1016,7 @@ class Facture
 	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
 	{
 		global $conf;
-		dolibarr_syslog("facture.class.php::addline($facid,$desc,$product_desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
+		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1048,8 +1050,6 @@ class Facture
 				$remise = round(($pu * $remise_percent / 100),2);
 				$price = ($pu - $remise);
 			}
-			$price    = price2num($price);
-			$subprice  = price2num($subprice);
 
 			// Récupère rang max de la facture dans $rangmax
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'facturedet';
@@ -1096,7 +1096,7 @@ class Facture
 			if ( $this->db->query($sql) )
 			{
 				// Mise a jour informations denormalisees au niveau de la facture meme
-				$result=$this->updateprice($facid);
+				$result=$this->update_price($facid);
 
 				if ($result > 0) 
 				{
@@ -1105,14 +1105,18 @@ class Facture
 				}
 				else
 				{
+	            	$this->error=$this->db->error();
+    	        	dolibarr_syslog("Error sql=$sql, error=".$this->error);
 					$this->db->rollback();
 					return -1;
 				}
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
-				$this->db->commit();
+            	$this->error=$this->db->error();
+            	dolibarr_syslog("Error sql=$sql, error=".$this->error);
+				$this->db->rollback();
+                return -2;
 			}
 		}
 	}
@@ -1167,8 +1171,8 @@ class Facture
 			$subprice  = price2num($subprice);
 
 			// Mise a jour ligne en base
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
-			$sql.= " set description='".addslashes($desc)."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
+			$sql.= " description='".addslashes($desc)."'";
 			$sql.= ",price='".price2num($price)."'";
 			$sql.= ",subprice='".price2num($subprice)."'";
 			$sql.= ",remise='".price2num($remise)."'";
@@ -1186,10 +1190,10 @@ class Facture
 			$sql.= " WHERE rowid = ".$rowid;
 
 			$result = $this->db->query( $sql);
-			if ($result)
+			if ($result > 0)
 			{
 				// Mise a jour info denormalisees au niveau facture
-				$this->updateprice($this->id);
+				$this->update_price($this->id);
 				$this->db->commit();
 				return $result;
 			}
@@ -1202,7 +1206,7 @@ class Facture
 		}
 		else
 		{
-			$this->error="Invoice statut makes operation forbidden";
+			$this->error="Facture::UpdateLine Invoice statut makes operation forbidden";
 			return -2;
 		}
 	}
@@ -1217,7 +1221,7 @@ class Facture
 		{
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
 			$result = $this->db->query( $sql);
-			$this->updateprice($this->id);
+			$this->update_price($this->id);
 		}
 	}
 
@@ -1226,12 +1230,12 @@ class Facture
 	 * 		\param     	facid      	id de la facture a modifier
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
-	function updateprice($facid)
+	function update_price($facid)
 	{
 		$tvas=array();
 		$err=0;
 
-		// Lit les lignes detail
+        // Liste des lignes factures a sommer
 		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price, total_ht, total_tva, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' WHERE fk_facture = '.$facid;
@@ -1350,7 +1354,7 @@ class Facture
 			if ($this->db->query($sql))
 			{
 				$this->remise_percent = $remise;
-				$this->updateprice($this->id);
+				$this->update_price($this->id);
 				return 1;
 			}
 			else
@@ -1385,7 +1389,7 @@ class Facture
 			if ($this->db->query($sql))
 			{
 				$this->remise_absolue = $remise;
-				$this->updateprice($this->id);
+				$this->update_price($this->id);
 				return 1;
 			}
 			else

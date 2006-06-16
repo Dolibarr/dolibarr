@@ -117,14 +117,13 @@ class Propal
     }
 
 
-  /**
-   * \brief     Ajout d'un produit dans la proposition, en memoire dans l'objet
-   * \param     idproduct       	Id du produit à ajouter
-   * \param     qty             	Quantité
-   * \param     remise_percent  	Remise relative effectuée sur le produit
-   * \return    void
-   * \see       insert_product
-   */
+	/**
+	 * 	\brief     Ajout d'un produit dans la proposition, en memoire dans l'objet
+	 * 	\param     idproduct       	Id du produit à ajouter
+	 * 	\param     qty             	Quantité
+	 * 	\param     remise_percent  	Remise relative effectuée sur le produit
+	 * 	\return    void
+	 */
     function add_product($idproduct, $qty, $remise_percent=0)
     {
         if ($idproduct > 0)
@@ -157,137 +156,41 @@ class Propal
 
     /**
      *    	\brief     	Ajout d'un produit dans la proposition, en base
-     *    	\param     	idproduct           Id du produit à ajouter
-     *    	\param     	qty                 Quantité
-     *    	\param     	remise_percent      Remise relative effectuée sur le produit
-     *    	\param     	desc              Descriptif optionnel
-     *    	\return    	int                 >0 si ok, <0 si ko
+	 * 		\param    	propalid        id de la propale
+	 * 		\param    	desc            description de la ligne
+	 * 		\param    	pu              prix unitaire
+	 * 		\param    	qty             quantité
+	 * 		\param    	txtva           taux de tva forcé, sinon -1
+	 *		\param    	fk_product      id du produit/service predéfini
+	 * 		\param    	remise_percent  pourcentage de remise de la ligne
+     *    	\return    	int             >0 si ok, <0 si ko
      *    	\see       	add_product
 	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function insert_product($idproduct, $qty, $remise_percent=0, $desc='')
+    function addline($propalid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
-        global $conf,$mysoc;
-		dolibarr_syslog("propal.class.php::insert_product $idproduct, $qty, $remise_percent, $desc");
+    	dolibarr_syslog("propal.class.php::addline $propalid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         if ($this->statut == 0)
         {
-            // Nettoyage parametres
-            $remise_percent=price2num($remise_percent);
-            $qty=price2num($qty);
+			$this->db->begin();
 
-            if ($idproduct)
-            {
-   		        $prod = new Product($this->db, $idproduct);
-                if ($prod->fetch($idproduct) > 0)
-                {
-					$this->fetch_client();
-
-					// multiprix
-					if ($conf->global->PRODUIT_MULTIPRICES == 1)
-					{
-						$pu = price2num($prod->multiprices[$this->client->price_level]);
-					}
-					else
-					{
-						$pu = price2num($prod->price);
-					}
-					$txtva = get_default_tva($mysoc,$this->client,$prod->tva_tx);
-					if (! $desc) $desc = $prod->description;
-                    if ($conf->global->PRODUIT_CHANGE_PROD_DESC) $desc=$prod->description;
-
-					// Calcul du total TTC et de la TVA pour la ligne a partir de
-					// qty, pu, remise_percent et txtva
-					// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
-					// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-					$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
-					$total_ht  = $tabprice[0];
-					$total_tva = $tabprice[1];
-					$total_ttc = $tabprice[2];
-
-					// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
-		            $price = $pu;
-		            $subprice = $pu;
-        			$remise = 0;
-                    if ($remise_percent > 0)
-                    {
-                        $remise = round(($prod->price * $remise_percent / 100), 2);
-                        $price = $prod->price - $remise;
-                    }
-
-                   	$sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice,";
-                   	$sql.= " total_ht, total_tva, total_ttc)";
-                   	$sql.= " VALUES ";
-                    $sql.= " (".$this->id.",". $idproduct.",'". $qty."','". price2num($price) ."','".$txtva."','".addslashes($desc?$desc:$prod->label)."','".price2num($remise_percent)."','".price2num($subprice)."',";
-		            $sql.= " '".price2num($total_ht) ."',";
-		            $sql.= " '".price2num($total_tva)."',";
-		            $sql.= " '".price2num($total_ttc)."'";
-                    $sql.= ")";
-
-                    if ($this->db->query($sql))
-                    {
-                        $this->update_price();
-                        return 1;
-                    }
-                    else
-                    {
-                        $this->error=$this->db->error();
-		            	dolibarr_syslog("Error sql=$sql, error=".$this->error);
-                        return -1;
-                    }
-                }
-                else
-                {
-                    $this->error=$this->db->error();
-                    return -2;
-                }
-            }
-        }
-        else
-        {
-            return -3;
-        }
-    }
-
-
-    /**
-     *    	\brief     	Ajout d'un produit dans la proposition, en base
-     *    	\param     	desc             	Descriptif optionnel
-     *    	\param     	pu            		Prix
-     *    	\param     	qty              	Quantité
-     *    	\param     	tva_tx           	Taux tva
-     *    	\param     	remise_percent     	Remise effectuée sur le produit
-     *    	\return    	int                	>0 si ok, <0 si ko
-     *    	\see       	add_product
-	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
- 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
-     */
-    function insert_product_generic($desc, $pu, $qty, $tva_tx, $remise_percent=0)
-    {
-        global $conf,$mysoc;
-    	dolibarr_syslog("propal.class.php::insert_product_generic $desc, $pu, $qty, $tva_tx, $remise_percent");
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-
-        if ($this->statut == 0)
-        {
 			// Nettoyage paramètres
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
 			if (! $qty) $qty=1;
             $pu = price2num($pu);
-			$tva_tx = price2num($tva_tx);
+			$txtva = price2num($txtva);
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tva_tx);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -303,7 +206,10 @@ class Propal
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice, total_ht, total_tva, total_ttc)";
             $sql.= " VALUES ";
-            $sql.= " (".$this->id.", 0,'". $qty."','". price2num($price)."','".$tva_tx."','".addslashes($desc)."','$remise_percent', '".price2num($subprice)."',";
+            $sql.= " (".$this->id.", ";
+			if ($fk_product) { $sql.= "'$fk_product',"; }
+			else { $sql.='0,'; }
+            $sql.= " '". $qty."','". price2num($price)."','".$txtva."','".addslashes($desc)."','".price2num($remise_percent)."', '".price2num($subprice)."',";
             $sql.= " '".price2num($total_ht) ."',";
             $sql.= " '".price2num($total_tva)."',";
             $sql.= " '".price2num($total_ttc)."'";
@@ -311,20 +217,27 @@ class Propal
 
             if ($this->db->query($sql))
             {
+				// Mise a jour informations denormalisees au niveau de la facture meme
+				$result=$this->update_price($facid);
 
-                if ($this->update_price() > 0)
+                if ($result > 0)
                 {
-                    return 1;
+					$this->db->commit();
+					return 1;
                 }
                 else
                 {
-                    return -1;
+	            	$this->error=$this->db->error();
+	            	dolibarr_syslog("Error sql=$sql, error=".$this->error);
+					$this->db->rollback();
+					return -1;
                 }
             }
             else
             {
             	$this->error=$this->db->error();
             	dolibarr_syslog("Error sql=$sql, error=".$this->error);
+				$this->db->rollback();
                 return -2;
             }
         }
@@ -341,26 +254,27 @@ class Propal
    *    \param      desc            Description
    *    \return     int             0 en cas de succès
    */
-    function UpdateLigne($id, $pu, $qty, $remise_percent=0, $tva_tx, $desc='')
+    function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='')
     {
-        global $conf,$mysoc;
-    	dolibarr_syslog("propal.class.php::updateligne $id, $pu, $qty, $remise_percent, $tva_tx, $desc");
+    	dolibarr_syslog("propal.class.php::updateligne $rowid, $pu, $qty, $remise_percent, $txtva, $desc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         if ($this->statut == 0)
         {
+			$this->db->begin();
+
 			// Nettoyage paramètres
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
 			if (! $qty) $qty=1;
             $pu = price2num($pu);
-			$tva_tx = price2num($tva_tx);
+			$txtva = price2num($txtva);
 			
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tva_tx);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -379,21 +293,24 @@ class Propal
             $sql.= " , price='". price2num($price)."'";
             $sql.= " , remise_percent='".$remise_percent."'";
             $sql.= " , subprice='".$subprice."'";
-            $sql.= " , tva_tx='".$tva_tx."'";
+            $sql.= " , tva_tx='".$txtva."'";
             $sql.= " , description='".addslashes($desc)."'";
             $sql.= " , total_ht='".price2num($total_ht)."'";
             $sql.= " , total_tva='".price2num($total_tva)."'";
             $sql.= " , total_ttc='".price2num($total_ttc)."'";
-            $sql.= " WHERE rowid = '".$id."';";
+            $sql.= " WHERE rowid = '".$rowid."';";
 
-            if ($this->db->query($sql))
+            $result=$this->db->query($sql);
+            if ($result > 0)
             {
                 $this->update_price();
+				$this->db->commit();
                 return 0;
             }
             else
             {
                 $this->error=$this->db->error();
+				$this->db->rollback();
                 dolibarr_syslog("Propal::UpdateLigne Erreur sql=$sql, error=".$this->error);
                 return -1;
             }
@@ -744,14 +661,17 @@ class Propal
      *      \brief      Crée une propal
      *      \return     int     <0 si ko, >=0 si ok
      */
-    function create()
+    function create($user='')
     {
-    	global $langs,$conf;
+    	global $langs,$conf,$mysoc;
         
         // Nettoyage/définition paramètres
         $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
 		dolibarr_syslog("Propal::create ref=".$this->ref);
+
+		$soc = new Societe($this->db);
+		$soc->fetch($this->socidp);
 
         $this->db->begin();
 
@@ -760,7 +680,7 @@ class Propal
         $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite,";
         $sql.= " fk_cond_reglement, fk_mode_reglement, date_livraison, ref_client) ";
         $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
-        $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author,";
+        $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '".$this->ref."', ".$this->author.",";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf',".$this->db->idate($this->fin_validite).",";
@@ -779,48 +699,75 @@ class Propal
                  */
                 for ($i = 0 ; $i < sizeof($this->products) ; $i++)
                 {
-                    $prod = new Product($this->db, $this->products[$i]);
-                    $result=$prod->fetch($this->products[$i]);
-
-                    $result=$this->insert_product($this->products[$i],
-                                        $this->products_qty[$i],
-                                        $this->products_remise_percent[$i]);
+					$prod = new Product($this->db, $this->products[$i]);
+					if ($prod->fetch($this->products[$i]))
+					{
+						$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+						// multiprix
+						if($conf->global->PRODUIT_MULTIPRICES == 1)
+							$price = $prod->multiprices[$soc->price_level];
+						else
+							$price = $prod->price;
+		
+						$resql = $this->addline(
+							$this->id,
+							$prod->libelle,
+							$prod->description,
+							$price,
+							$this->products_qty[$i],
+							$tva_tx,
+							$this->products[$i],
+							$this->products_remise_percent[$i],
+							$this->products_date_start[$i],
+							$this->products_date_end[$i]
+							);
+							
+						if ($resql < 0)
+						{
+							$this->error=$this->db->error;
+							dolibarr_print_error($this->db);
+							break;
+						}
+					}
                 }
 
                 // Affectation au projet
-                if ($this->projetidp)
+                if ($resql && $this->projetidp)
                 {
                     $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref'";
                     $result=$this->db->query($sql);
                 }
 
                 // Affectation de l'adresse de livraison
-                if ($this->adresse_livraison_id)
+                if ($resql && $this->adresse_livraison_id)
                 {
                     $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison=$this->adresse_livraison_id WHERE ref='$this->ref'";
                     $result=$this->db->query($sql);
                 }
 
-				// Mise a journ infos dénormalisés
-                $resql=$this->update_price();
-                if ($resql)
-                {
-                    // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
-                    // Fin appel triggers
-
-                    $this->db->commit();
-                    return $this->id;
-                }
-                else
-                {
-                    $this->error=$this->db->error();
-                    dolibarr_syslog("Propal::Create -2 ".$this->error);
-                    $this->db->rollback();
-                    return -2;
-                }
+	            if ($resql)
+	            {
+   					// Mise a jour infos dénormalisés
+	                $resql=$this->update_price();
+	                if ($resql)
+	                {
+	                    // Appel des triggers
+	                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	                    $interface=new Interfaces($this->db);
+	                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
+	                    // Fin appel triggers
+	
+	                    $this->db->commit();
+	                    return $this->id;
+	                }
+	                else
+	                {
+	                    $this->error=$this->db->error();
+	                    dolibarr_syslog("Propal::Create -2 ".$this->error);
+	                    $this->db->rollback();
+	                    return -2;
+	                }
+	            }
             }
         }
         else
@@ -842,9 +789,7 @@ class Propal
     {
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
-        /*
-         *  Liste des produits a ajouter
-         */
+        // Liste des lignes factures a sommer
         $sql = "SELECT price, qty, tva_tx, total_ht, total_tva, total_ttc";
         $sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
         $sql.= " WHERE fk_propal = ".$this->id;
@@ -2221,17 +2166,23 @@ class Propal
                  */
                  foreach($this->lignes as $ligne)
                  {
-                	if($ligne->product_id != 0)
-                	{
-                    	$result=$this->insert_product($ligne->product_id,
-                                        $ligne->qty,
-                                        $ligne->remise_percent, $ligne->product_desc);
-                  	}
-                	else
-                	{
-                		$this->insert_product_generic($ligne->desc, $ligne->price,
-                						$ligne->qty, $ligne->tva_tx, $ligne->remise_percent);
-                	}
+					$resql = $this->addline(
+						$this->id,
+						$prod->libelle,
+						$prod->description,
+						$price,
+						$ligne->qty,
+						$tva_tx,
+						$ligne->product_id,
+						$ligne->remise_percent
+						);
+
+					if ($resql < 0)
+					{
+						$this->error=$this->db->error;
+						dolibarr_print_error($this->db);
+						break;
+					}
                 }
 
                 // Affectation au projet

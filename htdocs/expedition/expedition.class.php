@@ -396,53 +396,6 @@ class Expedition
         return 1;
     }
 
-
-  /**
-   * Ajoute un produit
-   *
-   */
-  function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $p_product_id=0, $remise_percent=0)
-    {
-      if ($this->statut == 0)
-	{
-	  if (strlen(trim($p_qty)) == 0)
-	    {
-	      $p_qty = 1;
-	    }
-
-	  $p_price = price2num($p_price);
-
-	  $price = $p_price;
-	  $subprice = $p_price;
-	  if ($remise_percent > 0)
-	    {
-	      $remise = round(($p_price * $remise_percent / 100), 2);
-	      $price = $p_price - $remise;
-	    }
-
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-	  $sql .= " (".$this->id.", $p_product_id,". $p_qty.",". $price.",".$p_tva_tx.",'". addslashes($p_desc) ."',$remise_percent, $subprice) ; ";
-	  
-	  if ($this->db->query($sql) )
-	    {
-	      
-	      if ($this->update_price() > 0)
-		{	      
-		  return 1;
-		}
-	      else
-		{
-		  return -1;
-		}
-	    }
-	  else
-	    {
-	      print $this->db->error();
-	      print "<br>".$sql;
-	      return -2;
-	    }
-	}
-    }
     
    /**
      *      \brief      Crée un bon de livraison à partir de l'expédition

@@ -228,16 +228,41 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
 if ($_POST["action"] == 'addinpropal')
 {
     $propal = New Propal($db);
-    $propal->fetch($_POST["propalid"]);
-
-    $result =  $propal->insert_product($_GET["id"], $_POST["qty"], $_POST["remise_percent"]);
-    if ( $result < 0)
+    $result=$propal->fetch($_POST["propalid"]);
+	if ($result <= 0) 
+	{
+		dolibarr_print_error($db,$propal->error);
+		exit;
+	}
+	
+    $prod = new Product($db, $_GET['id']);
+    $result=$prod->fetch($_GET['id']);
+	if ($result <= 0) 
+	{
+		dolibarr_print_error($db,$prod->error);
+		exit;
+	}
+    
+    // multiprix
+    if ($conf->global->PRODUIT_MULTIPRICES == 1)
     {
-        $mesg = $langs->trans("ErrorUnknown").": $result";
+    	$pu = $prod->multiprices[$soc->price_level];
     }
+    else
+    {
+    	$pu=$prod->price;
+    }
+   	$desc = $prod->desc;
+    $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
-    Header("Location: ../comm/propal.php?propalid=".$propal->id);
-    exit;
+    $result = $propal->addline($propal->id, $desc, $pu, $_POST["qty"], $tva_tx, $prod->id, $_POST["remise_percent"]);
+    if ($result > 0)
+    {
+   	    Header("Location: ../comm/propal.php?propalid=".$propal->id);
+		return;
+	}
+	
+    $mesg = $langs->trans("ErrorUnknown").": $result";
 }
 
 /*

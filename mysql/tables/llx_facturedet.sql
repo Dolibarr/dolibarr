@@ -26,7 +26,7 @@ create table llx_facturedet
   fk_facture      integer NOT NULL,
   fk_product      integer NULL,      	-- Doit pouvoir etre nul pour ligne detail sans produits
   description     text,
-  tva_taux        real DEFAULT 19.6, 	-- Taux tva produit/service (exemple 19.6)
+  tva_taux        real, 				-- Taux tva produit/service (exemple 19.6)
   qty             real,              	-- Quantité (exemple 2)
   remise_percent  real DEFAULT 0,    	-- % de la remise ligne (exemple 20%)
   remise          real DEFAULT 0,    	-- Montant calculé de la remise % sur PU HT (exemple 20)

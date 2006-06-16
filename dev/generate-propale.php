@@ -115,35 +115,34 @@ if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/module
 $i=0;
 while ($i < GEN_NUMBER_PROPAL)
 {
-  $i++;
-  $socid = rand(1, $num_socs);
-
-  $soc = new Societe($db);
-
-
-
-  $obj = PROPALE_ADDON;
-  $modPropale = new $obj;
-  $numpr = $modPropale->propale_get_num($soc);
-
-  $propal = new Propal($db, $socids[$socid]);
-
-  $propal->ref = $numpr;
-  $propal->contactid = $contids[$socids[$socid]][0];
-  $propal->datep = time();
-  $propal->author = $user->id;
-
-  $propal->create($user);
-
-  $nbp = rand(1, 9);
-  $xnbp = 0;
-
-  while ($xnbp < $nbp)
-    {
-      $prodid = rand(1, $num_prods);
-      $propal->insert_product($prodids[$prodid], rand(1,5));
-      $xnbp++;
-    }
+	$i++;
+	$socid = rand(1, $num_socs);
+	
+	$soc = new Societe($db);
+	
+	
+	$obj = $conf->global->PROPALE_ADDON;
+	$modPropale = new $obj;
+	$numpr = $modPropale->propale_get_num($soc);
+	
+	$propal = new Propal($db, $socids[$socid]);
+	
+	$propal->ref = $numpr;
+	$propal->contactid = $contids[$socids[$socid]][0];
+	$propal->datep = time();
+	$propal->author = $user->id;
+	
+	$propal->create($user);
+	
+	$nbp = rand(1, 9);
+	$xnbp = 0;
+	
+	while ($xnbp < $nbp)
+	{
+		$prodid = rand(1, $num_prods);
+		$propal->addline($propa->id, 'Description '.$xnbp, '100', rand(1,5), '19.6', $prodids[$prodid], 0);
+		$xnbp++;
+	}
 
 }
 

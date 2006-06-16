@@ -96,7 +96,9 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
     	$propal = new Propal($db);
     	$propal->fetch($_GET['propalid']);
     	$propal->delete_product($_GET['ligne']);
-    	propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+	    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
     }
     Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
     exit;
@@ -109,7 +111,9 @@ if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
         $propal = new Propal($db);
         $propal->fetch($_GET['propalid']);
         $result=$propal->update_price($_GET['propalid']);
-        propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+	    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+        propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
         $result=$propal->valid($user);
     }
     Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
@@ -147,13 +151,14 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 	$propal->set_ref_client($user, $_POST['ref_client']);
 }
 
+/*
+ * Creation propale
+ */
 if ($_POST['action'] == 'add')
 {
     $propal = new Propal($db, $_POST['socidp']);
 
-    /*
-     * Si on a selectionné une propal à copier, on réalise la copie
-     */
+    // Si on a selectionné une propal à copier, on réalise la copie
     if($_POST['createmode']=='copy' && $_POST['copie_propal'])
     {
     	if($propal->load_from($_POST['copie_propal']) == -1)
@@ -216,7 +221,9 @@ if ($_POST['action'] == 'add')
      */
     if ($id > 0)
     {
-        propale_pdf_create($db, $id, $_POST['model']);
+	    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+        propale_pdf_create($db, $id, $_POST['model'], $outputlangs);
 
         Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
         exit;
@@ -398,36 +405,75 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 	    $propal = new Propal($db);
 	    $ret=$propal->fetch($_POST['propalid']);
 
-	    if (isset($_POST['np_tva_tx']))
-	    {
-	        $propal->insert_product_generic(
-					    $_POST['np_desc'],
-					    $_POST['np_price'],
-					    $_POST['qty'],
-					    $_POST['np_tva_tx'],
-					    $_POST['np_remise']);
-	    }
-	    else
-	    {
-	        $propal->insert_product(
-	                    $_POST['idprod'],
-	                    $_POST['qty'],
-	                    $_POST['remise'],
-	                    $_POST['np_desc']);
-	    }
-	    propale_pdf_create($db, $_POST['propalid'], $propal->modelpdf);
+		// Ecrase $pu par celui du produit
+		// Ecrase $desc par celui du produit
+		// Ecrase $txtva par celui du produit
+        if ($_POST['idprod'])
+        {
+            $prod = new Product($db, $_POST['idprod']);
+            $prod->fetch($_POST['idprod']);
+            
+            // multiprix
+            if ($conf->global->PRODUIT_MULTIPRICES == 1)
+            {
+            	$pu = $prod->multiprices[$soc->price_level];
+            }
+            else
+            {
+            	$pu=$prod->price;
+            }
+            
+            // La description de la ligne est celle saisie ou
+            // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
+            $desc=$_POST['np_desc'];
+            if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
+            {
+            	$desc = $prod->description;
+            }
+            
+            $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+        }
+        else
+        {
+        	$pu=$_POST['np_price'];
+        	$tva_tx=$_POST['np_tva_tx'];
+        	$desc=$_POST['np_desc'];
+        }
+
+        $propal->addline(
+			$_POST['propalid'],
+			$desc,
+			$pu,
+			$_POST['qty'],
+			$tva_tx,
+			$_POST['idprod'],
+			$_POST['remise_percent']
+			);
+
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+  	    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	}
 }
 
+/*
+ *  Mise à jour d'une ligne dans la propale
+ */
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
-    /*
-     *  Mise à jour d'une ligne dans la propale
-     */
     $propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
-    $propal->UpdateLigne($_POST['ligne'], $_POST['subprice'], $_POST['qty'], $_POST['remise_percent'], $_POST['tva_tx'], $_POST['desc']);
-    propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+	if (! $propal->fetch($_POST['propalid']) > 0) dolibarr_print_error($db);
+
+    $result = $propal->updateline($_POST['ligne'],
+    	$_POST['subprice'],
+    	$_POST['qty'],
+    	$_POST['remise_percent'],
+    	$_POST['tva_tx'],
+    	$_POST['desc']);
+
+	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
 /*
@@ -435,24 +481,26 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
  */
 if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
-    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-    $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     $propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
     if ($_POST['model']) $propal->set_pdf_model($user, $_POST['model']);
-    propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf, $outputlangs);
+    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
 
 if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
-  /*
-   *  Supprime une ligne produit dans la propale
-   */
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->delete_product($_GET['ligne']);
-  propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+	/*
+	*  Supprime une ligne produit dans la propale
+	*/
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+	$propal->delete_product($_GET['ligne']);
+	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
 if ($_POST['action'] == 'set_project')
@@ -1197,7 +1245,7 @@ if ($_GET['propalid'] > 0)
 		print "</td>\n";
 		print '<td align="right"><input type="text" size="5" name="np_price"></td>';
 		print '<td align="right"><input type="text" size="2" value="1" name="qty"></td>';
-		print '<td align="right" nowrap><input type="text" size="1" value="'.$societe->remise_client.'" name="np_remise">%</td>';
+		print '<td align="right" nowrap><input type="text" size="1" value="'.$societe->remise_client.'" name="remise_percent">%</td>';
 		print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
 		print '</tr>';
 
@@ -1228,7 +1276,7 @@ if ($_GET['propalid'] > 0)
 			print '</td>';
 			print '<td>&nbsp;</td>';
 			print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-			print '<td align="right" nowrap><input type="text" size="1" name="remise" value="'.$societe->remise_client.'">%</td>';
+			print '<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="'.$societe->remise_client.'">%</td>';
 
 			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne">';
 			print '</td></tr>'."\n";

@@ -163,6 +163,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
         migrate_modeles($db,$langs,$conf);
 
+		migrate_price_facture($db,$langs,$conf);
+		
 
     	// On commit dans tous les cas.
     	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -582,6 +584,52 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
     }
 }
 
+
+
+/*
+ * Mise a jour des totaux facture
+ */
+function migrate_price_facture($db,$langs,$conf)
+{
+    if ($conf->facture->enabled)
+    {
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+		if ($db->query($sql))
+		{
+			$num = $db->num_rows();
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($i);
+				$facture = new Facture($db);
+				if ( $facture->fetch($row[0]) )
+				{
+					if ( $facture->update_price($row[0]) > 0 )
+					{
+						print "(ok $row[0]) ";
+					}
+					else
+					{
+						print "Erreur #2";
+						$err++;
+					}
+				}
+				else
+				{
+					print "Erreur #3";
+					$err++;
+				}
+				$i++;
+			}
+			$db->free();
+		}
+		else
+		{
+			print "Erreur #1";
+			$err++;
+		}
+	}
+}
 
 /*
  * Mise a jour des modeles selectionnes
