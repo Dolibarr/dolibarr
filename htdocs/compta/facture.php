@@ -403,19 +403,32 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
         {
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
-			// multiprix
-			if ($conf->global->PRODUIT_MULTIPRICES == 1)
-			{
-				$pu = $prod->multiprices[$soc->price_level];
-			}
-			else
-			{
+            
+            // multiprix
+            if ($conf->global->PRODUIT_MULTIPRICES == 1)
+            {
+            	$pu = $prod->multiprices[$soc->price_level];
+            }
+            else
+            {
             	$pu=$prod->price;
-			}
-        	$desc=$_POST['desc'];
-            if (! $desc) $desc = $prod->description;
-			if ($conf->global->PRODUIT_CHANGE_PROD_DESC) $prod->description;
-			$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+            }
+            
+            $desc=$_POST['desc'];
+            
+            if (! $desc)
+            {
+            	$desc = $prod->description;
+            }
+            
+            // ceci n'a plus d'intérêt si on rajoute la description produit
+            // à chaque fois ???
+            if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+            {
+            	$desc = $prod->description;
+            }
+            
+            $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
         }
         else
         {
