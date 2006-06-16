@@ -151,7 +151,7 @@ if ($_GET["propalid"] > 0)
 	print '</td>';
 	print '</tr>';
 	
-    $rowspan=8;
+    $rowspan=9;
     
     // Société
     print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
@@ -231,7 +231,6 @@ if ($_GET["propalid"] > 0)
 	print '</td></tr>';
 
     // Destinataire
-/* Remplacé par contacts de propal
     $langs->load('mails');
     print '<tr>';
     print '<td>'.$langs->trans('MailTo').'</td>';
@@ -254,7 +253,6 @@ if ($_GET["propalid"] > 0)
             print '<td colspan="3">&nbsp;</td>';
         }
     }
-*/
 
     // Projet
     if ($conf->projet->enabled)
