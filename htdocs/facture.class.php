@@ -107,7 +107,7 @@ class Facture
 	 */
 	function create($user)
 	{
-		global $langs,$conf;
+		global $langs,$conf,$mysoc;
 
 		$this->db->begin();
 
@@ -198,10 +198,7 @@ class Facture
 				$res=$prod->fetch($this->products[$i]);
 				$soc = new Societe($this->db);
 				$soc->fetch($this->socidp);
-				if($soc->tva_assuj == "0")
-						$tva_tx ="0";
-				else
-						$tva_tx=$prod->tva_tx;
+				$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
 					$price = $prod->multiprices[$soc->price_level];
@@ -239,8 +236,9 @@ class Facture
 					if ($_facrec->lignes[$i]->produit_id)
 					{
 						$prod = new Product($this->db, $_facrec->lignes[$i]->produit_id);
-						$prod->fetch($_facrec->lignes[$i]->produit_id);
+						$res=$prod->fetch($_facrec->lignes[$i]->produit_id);
 					}
+					$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
 					$result_insert = $this->addline(
 						$this->id,
@@ -400,7 +398,7 @@ class Facture
 				 */
 				$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, l.remise, l.remise_percent, l.subprice,';
 				$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
-				$sql.= ' l.info_bits, l.total_ht, l.total_ttc,';
+				$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
 				$sql.= ' p.label as label, p.description as product_desc';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -432,6 +430,7 @@ class Facture
 						$faclig->date_end       = $objp->date_end;
 						$faclig->info_bits      = $objp->info_bits;
 						$faclig->total_ht       = $objp->total_ht;
+						$faclig->total_tva      = $objp->total_tva;
 						$faclig->total_ttc      = $objp->total_ttc;
 						$this->lignes[$i] = $faclig;
 						$i++;
@@ -996,23 +995,23 @@ class Facture
 	}
 
 	/**
-	* \brief    Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)
-	* \param    facid           id de la facture
-	* \param    desc            description de la ligne
-	* \param	product_desc	surcharge description produit
-	* \param    pu              prix unitaire
-	* \param    qty             quantit
-	* \param    txtva           taux de tva
-	* \param    fk_product      id du produit/service predéfini
-	* \param    remise_percent  pourcentage de remise de la ligne
-	* \param    datestart       date de debut de validité du service
-	* \param    dateend         date de fin de validité du service
-	* \param    ventil          code de ventilation comptable
-	* \remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
-	*			de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
-	*			par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
-	*/
-	function addline($facid, $desc, $product_desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
+	 * 		\brief    	Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)
+	 * 		\param    	facid           id de la facture
+	 * 		\param    	desc            description de la ligne
+	 * 		\param    	pu              prix unitaire
+	 * 		\param    	qty             quantité
+	 * 		\param    	txtva           taux de tva forcé, sinon -1
+	 *		\param    	fk_product      id du produit/service predéfini
+	 * 		\param    	remise_percent  pourcentage de remise de la ligne
+	 * 		\param    	datestart       date de debut de validité du service
+	 * 		\param    	dateend         date de fin de validité du service
+	 * 		\param    	ventil          code de ventilation comptable
+	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
+	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
+	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
+ 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+ 	 */
+	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
 	{
 		global $conf;
 		dolibarr_syslog("facture.class.php::addline($facid,$desc,$product_desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
@@ -1028,19 +1027,6 @@ class Facture
 			if (! $qty) $qty=1;
 			if (! $ventil) $ventil=0;
 			if (! $info_bits) $info_bits=0;
-            if ($fk_product && ! $pu)
-            {
-                $prod = new Product($this->db, $fk_product);
-                $prod->fetch($fk_product);
-                $product_desc = $prod->description;
-				// multiprix
-				if($conf->global->PRODUIT_MULTIPRICES == 1)
-					$pu = $prod->multiprices[$soc->price_level];
-				else
-				{
-                	$pu=$prod->price;
-				}
-            }
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
 
@@ -1082,34 +1068,15 @@ class Facture
 				return -1;
 			}
 
-			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
-			{
-				if (!$product_desc)
-				{
-					$product_desc = $desc;
-				}
-			}
-
 			// Insertion dans base de la ligne
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 			$sql.= ' (fk_facture, description, price, qty, tva_taux,';
 			$sql.= ' fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang,';
 			$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
-			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
-			{
-				$sql.= " VALUES ($facid, '".addslashes($product_desc)."',";
-				$sql.= "'".price2num($price)."',";
-				$sql.= "'".price2num($qty)."',";
-				$sql.= "'".price2num($txtva)."',";
-			}
-			else
-			{
-				$sql.= " VALUES ($facid, '".addslashes($desc)."',";
-				$sql.= "'".price2num($price)."',";
-				$sql.= "'".price2num($qty)."',";
-				$sql.= "'".price2num($txtva)."',";
-			}
-
+			$sql.= " VALUES (".$facid.", '".addslashes($desc)."',";
+			$sql.= "'".price2num($price)."',";
+			$sql.= "'".price2num($qty)."',";
+			$sql.= "'".price2num($txtva)."',";
 			if ($fk_product) { $sql.= "'$fk_product',"; }
 			else { $sql.='0,'; }
 			$sql.= " '".price2num($remise_percent)."',";
@@ -1265,7 +1232,7 @@ class Facture
 		$err=0;
 
 		// Lit les lignes detail
-		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price, total_ht, total_ttc';
+		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price, total_ht, total_tva, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' WHERE fk_facture = '.$facid;
 		$result = $this->db->query($sql);

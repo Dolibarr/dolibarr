@@ -212,50 +212,20 @@ if ($_GET["action"] == 'create')
   }
 
     /*
-     * Destinataire de la propale
+     * Contact de la propale
      */
-    print "<tr><td>".$langs->trans("Contact")."</td><td colspan=\"2\">\n";
-    $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM ".MAIN_DB_PREFIX."socpeople as p";
-    $sql .= " WHERE p.fk_soc = ".$soc->id;
-
-    if ( $db->query($sql) )
-    {
-        $i = 0 ;
-        $numdest = $db->num_rows();
-
-        if ($numdest==0)
-        {
-            print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans("AddContact").'</a>';
-        }
-        else
-        {
-            print "<select name=\"contactidp\">\n";
-
-            while ($i < $numdest)
-            {
-                $contact = $db->fetch_object();
-                print '<option value="'.$contact->idp.'"';
-                if ($contact->idp == $setcontact)
-                {
-                    print ' selected="true"';
-                }
-                print '>'.$contact->firstname.' '.$contact->name;
-                if ($contact->email) { print ' &lt;'.$contact->email.'&gt;'; }
-                print '</option>';
-                $i++;
-            }
-            print '</select>';
-        }
-
-        $db->free();
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
-
+    print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
+    $html->select_contacts($soc->id,$setcontact,'contactidp',1);
     print '</td></tr>';
+
+    // Model
+    print '<tr>';
+    print '<td>'.$langs->trans("DefaultModel").'</td>';
+    print '<td colspan="2">';
+    $model=new ModelePDFPropales();
+    $liste=$model->liste_modeles($db);
+    $html->select_array("model",$liste,$conf->global->PROPALE_ADDON_PDF);
+    print "</td></tr>";
 
 	// Projet
     if ($conf->projet->enabled)
@@ -266,19 +236,11 @@ if ($_GET["action"] == 'create')
         $numprojet=$html->select_projects($soc->id,$projetid,'projetidp');
         if ($numprojet==0)
         {
-            print ' &nbsp; <a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
+            print ' &nbsp; <a href="../projet/fiche.php?socidp='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
         }
         print '</td>';
 		print '</tr>';
     }
-
-    print '<tr>';
-    print '<td>'.$langs->trans("Model").'</td>';
-    print '<td colspan="2">';
-    $model=new ModelePDFPropales();
-    $liste=$model->liste_modeles($db);
-    $html->select_array("model",$liste,$conf->global->PROPALE_ADDON_PDF);
-    print "</td></tr>";
 
     print "</table>";
 	print '<br>';
@@ -324,7 +286,7 @@ if ($_GET["action"] == 'create')
     {
         $lib=$langs->trans("ProductsAndServices");
 
-        print '<table class="border">';
+        print '<table class="border" width="100%">';
         print '<tr>';
         print '<td>'.$lib.'</td>';
         print '<td>'.$langs->trans("Qty").'</td>';
@@ -355,16 +317,11 @@ if ($_GET["action"] == 'create')
 	print '</table>';
     print '<br>';
 
-    /*
-    * Si il n'y a pas de contact pour la societe on ne permet pas la creation de propale
-    */
-    if ($numdest > 0)
-    {
-        $langs->load("bills");
-        print '<center>';
-        print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
-        print '</center>';
-    }
+    $langs->load("bills");
+    print '<center>';
+    print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
+    print '</center>';
+
     print "</form>";
 }
 

@@ -89,6 +89,7 @@ Supplier=Fournisseur
 CompanyList=Liste des sociétés
 AddContact=Créer contact
 Contact=Contact
+DefaultContact=Contact par défaut
 AddCompany=Créer société
 DeleteACompany=Supprimer une société
 PersonalInformations=Informations personnelles

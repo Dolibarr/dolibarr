@@ -174,7 +174,27 @@ $mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM;
 $mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
 $mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP;
 $mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE;
-$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+// Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
+if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
+{
+	$mysoc->pays_id=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+    $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+    $sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
+    $result=$db->query($sql);
+    if ($result)
+    {
+        $obj = $db->fetch_object();
+        $mysoc->pays_code=$obj->code;
+    }
+    else {
+        dolibarr_print_error($db);
+    }
+}
+// Si dans MAIN_INFO_SOCIETE_PAYS on a deja un code, tout est fait
+else
+{
+	$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+}
 $mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL;
 $mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
 $mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;

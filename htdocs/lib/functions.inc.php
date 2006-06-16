@@ -1702,10 +1702,13 @@ function price2num($amount)
  *      \param      taux_produit        Taux par defaut du produit vendu
  *      \return     float               Taux de tva de la ligne
  */
-function get_default_tva($societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
+function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 {
-	// Si vendeur non assujeti à TVA
-	if (! $societe_vendeuse->tva_assuj) return 0;
+	dolibarr_syslog("get_default_tva vendeur_assujeti=$societe_vendeuse->tva_assuj pays_vendeur=$societe_vendeuse->pays_id, pays_acheteur=$societe_acheteuse->pays_id, taux_produit=$taux_produit");
+
+	// Si vendeur non assujeti à TVA (tva_assuj vaut 0/1 ou franchise/reel)
+	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
+	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
 	
 	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.	
 	if ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id)

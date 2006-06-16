@@ -104,6 +104,7 @@ Family=Family
 Description=Description
 Designation=Description
 Model=Model
+DefaultModel=Default model
 Action=Action
 About=About
 WelcomeString=<font class="body">We are </font>%s<font class="body">, and you are connected as user</font> %s

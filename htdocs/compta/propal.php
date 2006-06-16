@@ -118,430 +118,425 @@ $html = new Form($db);
  */
 if ($_GET["propalid"] > 0)
 {
-  	if ($mesg) print "$mesg<br>";
+	if ($mesg) print "$mesg<br>";
 
-    $propal = new Propal($db);
-    $propal->fetch($_GET["propalid"]);
-    
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+
+	$societe = new Societe($db);
+	$societe->fetch($propal->soc_id);
+
 	$head = propal_prepare_head($propal);
 	dolibarr_fiche_head($head, 'compta', $langs->trans('Proposal'));
-    
+
     
     /*
     * Fiche propal
     *
     */
-    $sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref,'.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst, p.note,';
-    $sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture, p.fk_cond_reglement, p.fk_mode_reglement';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c, '.MAIN_DB_PREFIX.'socpeople as x';
-    $sql.= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = '.$propal->id;
-    if ($socidp) $sql .= ' AND s.idp = '.$socidp;
+    print '<table class="border" width="100%">';
+
+	// Ref
+    print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
+
+	// Ref client
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+	print $langs->trans('RefCustomer').'</td><td align="left">';
+	print '</td>';
+	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	print $propal->ref_client;
+	print '</td>';
+	print '</tr>';
+	
+    $rowspan=8;
     
-    $resql = $db->query($sql);
-    if ($resql)
+    // Société
+    print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
+
+	// Ligne info remises tiers
+    print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+	if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
+	else print $langs->trans("CompanyHasNoRelativeDiscount");
+	$absolute_discount=$societe->getCurrentDiscount();
+	print '. ';
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+	print '.';
+	print '</td></tr>';
+
+    // Dates
+    print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
+    print dolibarr_print_date($propal->date,'%a %d %B %Y');
+    print '</td>';
+
+    if ($conf->projet->enabled) $rowspan++;
+
+	// Note
+    print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
+    print '</tr>';
+
+	// Date fin propal
+	print '<tr>';
+    print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
+    if ($propal->fin_validite)
     {
-        if ($db->num_rows($resql))
+        print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
+        if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+    }
+    else
+    {
+        print $langs->trans("Unknown");
+    }
+    print '</td>';
+    print '</tr>';
+
+	// Conditions et modes de réglement
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('PaymentConditionsShort');
+	print '</td>';
+	if ($_GET['action'] != 'editconditions' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($_GET['action'] == 'editconditions')
+	{
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
+	}
+	else
+	{
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
+	}
+	print '</td>';
+
+	// Mode de paiement
+	print '<tr>';
+	print '<td width="25%">';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('PaymentMode');
+	print '</td>';
+	if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($_GET['action'] == 'editmode')
+	{
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
+	}
+	else
+	{
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'none');
+	}
+	print '</td></tr>';
+
+    // Destinataire
+/* Remplacé par contacts de propal
+    $langs->load('mails');
+    print '<tr>';
+    print '<td>'.$langs->trans('MailTo').'</td>';
+
+    if ($propal->statut == 0 && $user->rights->propale->creer)
+    {
+        print '<td colspan="3">';
+		$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
+        print '</td>';
+    }
+    else
+    {
+        if (!empty($propal->contactid))
         {
-            $obj = $db->fetch_object($resql);
-    
-            $societe = new Societe($db);
-            $societe->fetch($obj->idp);
-    
-            print '<table class="border" width="100%">';
-
-			// Ref
-	        print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
-
-            $rowspan=9;
-            
-            // Société
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
-    
-			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
-			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
-			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$societe->getCurrentDiscount();
-			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
-			print '</td></tr>';
-    
-            // Dates
-            print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-            print dolibarr_print_date($propal->date,'%a %d %B %Y');
+            print '<td colspan="3">';
+			$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
             print '</td>';
-    
-            if ($conf->projet->enabled) $rowspan++;
-    
-			// Note
-            print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
-            print '</tr>';
-    
-			// Date fin propal
-			print '<tr>';
-            print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
-            if ($propal->fin_validite)
-            {
-                print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
-                if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-            }
-            else
-            {
-                print $langs->trans("Unknown");
-            }
+        }
+        else {
+            print '<td colspan="3">&nbsp;</td>';
+        }
+    }
+*/
+
+    // Projet
+    if ($conf->projet->enabled)
+    {
+        $langs->load("projects");
+        print '<tr><td>'.$langs->trans('Project').'</td>';
+        $numprojet = $societe->has_projects();
+        if (! $numprojet)
+        {
+            print '<td colspan="2">';
+            print $langs->trans("NoProject").'</td><td>';
+            print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
             print '</td>';
-            print '</tr>';
-    
-			// Conditions et modes de réglement
-			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('PaymentConditionsShort');
-			print '</td>';
-			if ($_GET['action'] != 'editconditions' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			if ($_GET['action'] == 'editconditions')
-			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
-			}
-			else
-			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
-			}
-			print '</td>';
-
-			// Mode de paiement
-			print '<tr>';
-			print '<td width="25%">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('PaymentMode');
-			print '</td>';
-			if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			if ($_GET['action'] == 'editmode')
-			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
-			}
-			else
-			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'none');
-			}
-			print '</td></tr>';
-
-            // Destinataire
-            $langs->load('mails');
-            print '<tr>';
-            print '<td>'.$langs->trans('MailTo').'</td>';
- 
+        }
+        else
+        {
             if ($propal->statut == 0 && $user->rights->propale->creer)
             {
                 print '<td colspan="3">';
-				$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
+                $html->select_projects($societe->id, $propal->projetidp, 'projetidp');
                 print '</td>';
             }
             else
             {
-                if (!empty($propal->contactid))
+                if (!empty($propal->projetidp))
                 {
                     print '<td colspan="3">';
-					$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
+                    $proj = new Project($db);
+                    $proj->fetch($propal->projetidp);
+                    print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
+                    print $proj->title;
+                    print '</a>';
                     print '</td>';
                 }
                 else {
                     print '<td colspan="3">&nbsp;</td>';
                 }
             }
-    
-            // Projet
-            if ($conf->projet->enabled)
+        }
+        print '</tr>';
+    }
+
+    // Amount
+    print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
+    print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
+    print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+    print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
+    print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
+    print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+
+    // Statut
+    print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut(4).'</td></tr>';
+    print '</table><br>';
+
+    /*
+    * Lignes de propale
+    *
+    */
+    $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
+    $sql .= ' WHERE pt.fk_propal = '.$propal->id;
+    $sql .= ' ORDER BY pt.rowid ASC';
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num_lignes = $db->num_rows($resql);
+        $i = 0;
+        $total = 0;
+
+        print '<table class="noborder" width="100%">';
+        if ($num_lignes)
+        {
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans('Description').'</td>';
+            print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+            print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+            print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+            print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+            print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+            print '<td width="16">&nbsp;</td>';
+            print '<td width="16">&nbsp;</td>';
+			print '<td width="16">&nbsp;</td>';
+            print "</tr>\n";
+        }
+        $var=true;
+        while ($i < $num_lignes)
+        {
+            $objp = $db->fetch_object($resql);
+            $var=!$var;
+            if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
             {
-                $langs->load("projects");
-                print '<tr><td>'.$langs->trans('Project').'</td>';
-                $numprojet = $societe->has_projects();
-                if (! $numprojet)
+                print '<tr '.$bc[$var].'>';
+                if ($objp->fk_product > 0)
                 {
-                    print '<td colspan="2">';
-                    print $langs->trans("NoProject").'</td><td>';
-                    print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                    if ($objp->fk_product_type)
+                    print img_object($langs->trans('ShowService'),'service');
+                    else
+                    print img_object($langs->trans('ShowProduct'),'product');
+                    print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
+                    if ($objp->date_start && $objp->date_end)
+                    {
+                        print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+                    }
+                    if ($objp->date_start && ! $objp->date_end)
+                    {
+                        print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+                    }
+                    if (! $objp->date_start && $objp->date_end)
+                    {
+                        print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+                    }
+                    print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
                     print '</td>';
                 }
                 else
                 {
-                    if ($propal->statut == 0 && $user->rights->propale->creer)
+                    print '<td>'.stripslashes(nl2br($objp->description));
+                    if ($objp->date_start && $objp->date_end)
                     {
-                        print '<td colspan="3">';
-                        $html->select_projects($societe->id, $propal->projetidp, 'projetidp');
-                        print '</td>';
+                        print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
                     }
-                    else
+                    if ($objp->date_start && ! $objp->date_end)
                     {
-                        if (!empty($propal->projetidp))
-                        {
-                            print '<td colspan="3">';
-                            $proj = new Project($db);
-                            $proj->fetch($propal->projetidp);
-                            print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
-                            print $proj->title;
-                            print '</a>';
-                            print '</td>';
-                        }
-                        else {
-                            print '<td colspan="3">&nbsp;</td>';
-                        }
+                        print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
                     }
+                    if (! $objp->date_start && $objp->date_end)
+                    {
+                        print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+                    }
+                    print "</td>\n";
                 }
+                print '<td align="right">'.$objp->tva_tx.'%</td>';
+                print '<td align="right">'.price($objp->subprice)."</td>\n";
+                print '<td align="right">'.$objp->qty.'</td>';
+                if ($objp->remise_percent > 0)
+                {
+                    print '<td align="right">'.$objp->remise_percent."%</td>\n";
+                }
+                else
+                {
+                    print '<td>&nbsp;</td>';
+                }
+                print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+
+				print '<td colspan="3">&nbsp;</td>';
+
                 print '</tr>';
             }
-    
-            // Amount
-            print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-            print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
-            print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-    
-            print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
-            print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-            print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
-            print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 
-            // Statut
-            print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut(4).'</td></tr>';
-            print '</table><br>';
-    
-            /*
-            * Lignes de propale
-            *
-            */
-            $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-            $sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-            $sql .= ' WHERE pt.fk_propal = '.$propal->id;
-            $sql .= ' ORDER BY pt.rowid ASC';
-            $resql = $db->query($sql);
-            if ($resql)
-            {
-                $num_lignes = $db->num_rows($resql);
-                $i = 0;
-                $total = 0;
-    
-                print '<table class="noborder" width="100%">';
-                if ($num_lignes)
-                {
-                    print '<tr class="liste_titre">';
-                    print '<td>'.$langs->trans('Description').'</td>';
-                    print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-                    print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-                    print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-                    print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
-                    print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-                    print '<td width="16">&nbsp;</td>';
-                    print '<td width="16">&nbsp;</td>';
-					print '<td width="16">&nbsp;</td>';
-                    print "</tr>\n";
-                }
-                $var=true;
-                while ($i < $num_lignes)
-                {
-                    $objp = $db->fetch_object($resql);
-                    $var=!$var;
-                    if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
-                    {
-                        print '<tr '.$bc[$var].'>';
-                        if ($objp->fk_product > 0)
-                        {
-                            print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                            if ($objp->fk_product_type)
-                            print img_object($langs->trans('ShowService'),'service');
-                            else
-                            print img_object($langs->trans('ShowProduct'),'product');
-                            print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
-                            if ($objp->date_start && $objp->date_end)
-                            {
-                                print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
-                            }
-                            if ($objp->date_start && ! $objp->date_end)
-                            {
-                                print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-                            }
-                            if (! $objp->date_start && $objp->date_end)
-                            {
-                                print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
-                            }
-                            print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
-                            print '</td>';
-                        }
-                        else
-                        {
-                            print '<td>'.stripslashes(nl2br($objp->description));
-                            if ($objp->date_start && $objp->date_end)
-                            {
-                                print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
-                            }
-                            if ($objp->date_start && ! $objp->date_end)
-                            {
-                                print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-                            }
-                            if (! $objp->date_start && $objp->date_end)
-                            {
-                                print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
-                            }
-                            print "</td>\n";
-                        }
-                        print '<td align="right">'.$objp->tva_tx.'%</td>';
-                        print '<td align="right">'.price($objp->subprice)."</td>\n";
-                        print '<td align="right">'.$objp->qty.'</td>';
-                        if ($objp->remise_percent > 0)
-                        {
-                            print '<td align="right">'.$objp->remise_percent."%</td>\n";
-                        }
-                        else
-                        {
-                            print '<td>&nbsp;</td>';
-                        }
-                        print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
-    
-						print '<td colspan="3">&nbsp;</td>';
-    
-                        print '</tr>';
-                    }
-    
-    
-    
-                    $total = $total + ($objp->qty * $objp->price);
-                    $i++;
-                }
-                $db->free($resql);
-            }
-            else
-            {
-                dolibarr_print_error($db);
-            }
-    
-			/*
-			 * Lignes de remise
-			 */
-			
-    		// Réductions relatives (Remises-Ristournes-Rabbais)
-/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
-   et non globalement
-			$var=!$var;
-			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="action" value="setremisepercent">';
-			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
-			print '<tr class="liste_total"><td>';
-			print $langs->trans('CustomerRelativeDiscount');
-			if ($propal->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
-			print '</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] == 'editrelativediscount')
-			{
-				print '<input type="text" name="remise_percent" size="2" value="'.$propal->remise_percent.'">%';
-			}
-			else
-			{
-				print $propal->remise_percent?$propal->remise_percent.'%':'&nbsp;';
-			}
-			print '</font></td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] != 'editrelativediscount') print $propal->remise_percent?'-'.price($propal->remise_percent*$total/100):$langs->trans("DiscountNone");
-			else print '&nbsp;';
-			print '</font></td>';
-			if ($_GET['action'] != 'editrelativediscount')
-			{
-				if ($propal->brouillon && $user->rights->propale->creer)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-				if ($propal->brouillon && $user->rights->propale->creer && $propal->remise_percent)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
-					print img_delete();
-					print '</a></td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-				print '<td>&nbsp;</td>';
-			}
-			else
-			{
-				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
-			}
-			print '</tr>';
-			print '</form>';
-*/
 
-			// Remise absolue
-/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
-			$var=!$var;
-			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="action" value="setremiseabsolue">';
-			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
-			print '<tr class="liste_total"><td>';
-			print $langs->trans('CustomerAbsoluteDiscount');
-			if ($propal->brouillon) print ' <font style="font-weight: normal">('.($avoir_en_cours?$langs->trans("CompanyHasAbsoluteDiscount",$avoir_en_cours,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
-			print '</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] == 'editabsolutediscount')
-			{
-				print '-<input type="text" name="remise_absolue" size="2" value="'.$propal->remise_absolue.'">';
-			}
-			else
-			{
-				print $propal->remise_absolue?'-'.price($propal->remise_absolue):$langs->trans("DiscountNone");
-			}
-			print '</font></td>';
-			if ($_GET['action'] != 'editabsolutediscount')
-			{
-				if ($propal->brouillon && $user->rights->propale->creer)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-				if ($propal->brouillon && $user->rights->propale->creer && $propal->remise_absolue)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
-					print img_delete();
-					print '</a></td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-				print '<td>&nbsp;</td>';
-			}
-			else
-			{
-				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
-			}
-			print '</tr>';
-			print '</form>';
-*/
-            print '</table>';
-    
+            $total = $total + ($objp->qty * $objp->price);
+            $i++;
         }
+        $db->free($resql);
     }
     else
     {
         dolibarr_print_error($db);
     }
+
+	/*
+	 * Lignes de remise
+	 */
+	
+	// Réductions relatives (Remises-Ristournes-Rabbais)
+/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
+et non globalement
+	$var=!$var;
+	print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="action" value="setremisepercent">';
+	print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+	print '<tr class="liste_total"><td>';
+	print $langs->trans('CustomerRelativeDiscount');
+	if ($propal->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td align="right"><font style="font-weight: normal">';
+	if ($_GET['action'] == 'editrelativediscount')
+	{
+		print '<input type="text" name="remise_percent" size="2" value="'.$propal->remise_percent.'">%';
+	}
+	else
+	{
+		print $propal->remise_percent?$propal->remise_percent.'%':'&nbsp;';
+	}
+	print '</font></td>';
+	print '<td align="right"><font style="font-weight: normal">';
+	if ($_GET['action'] != 'editrelativediscount') print $propal->remise_percent?'-'.price($propal->remise_percent*$total/100):$langs->trans("DiscountNone");
+	else print '&nbsp;';
+	print '</font></td>';
+	if ($_GET['action'] != 'editrelativediscount')
+	{
+		if ($propal->brouillon && $user->rights->propale->creer)
+		{
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
+		if ($propal->brouillon && $user->rights->propale->creer && $propal->remise_percent)
+		{
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
+			print img_delete();
+			print '</a></td>';
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
+		print '<td>&nbsp;</td>';
+	}
+	else
+	{
+		print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+	}
+	print '</tr>';
+	print '</form>';
+*/
+
+	// Remise absolue
+/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
+	$var=!$var;
+	print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="action" value="setremiseabsolue">';
+	print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+	print '<tr class="liste_total"><td>';
+	print $langs->trans('CustomerAbsoluteDiscount');
+	if ($propal->brouillon) print ' <font style="font-weight: normal">('.($avoir_en_cours?$langs->trans("CompanyHasAbsoluteDiscount",$avoir_en_cours,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td align="right"><font style="font-weight: normal">';
+	if ($_GET['action'] == 'editabsolutediscount')
+	{
+		print '-<input type="text" name="remise_absolue" size="2" value="'.$propal->remise_absolue.'">';
+	}
+	else
+	{
+		print $propal->remise_absolue?'-'.price($propal->remise_absolue):$langs->trans("DiscountNone");
+	}
+	print '</font></td>';
+	if ($_GET['action'] != 'editabsolutediscount')
+	{
+		if ($propal->brouillon && $user->rights->propale->creer)
+		{
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
+		if ($propal->brouillon && $user->rights->propale->creer && $propal->remise_absolue)
+		{
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
+			print img_delete();
+			print '</a></td>';
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
+		print '<td>&nbsp;</td>';
+	}
+	else
+	{
+		print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+	}
+	print '</tr>';
+	print '</form>';
+*/
+    print '</table>';
+    
     
     print '</div>';
 
@@ -688,7 +683,7 @@ if ($_GET["propalid"] > 0)
    */
   $sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
   $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-  $sql .= ' WHERE a.fk_soc = '.$obj->idp.' AND a.propalrowid = '.$propal->id ;
+  $sql .= ' WHERE a.fk_soc = '.$societe->id.' AND a.propalrowid = '.$propal->id ;
   $resql = $db->query($sql);
   if ($resql)
     {

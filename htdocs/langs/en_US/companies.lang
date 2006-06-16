@@ -89,6 +89,7 @@ Supplier=Supplier
 CompanyList=Companies' list
 AddContact=Add contact
 Contact=Contact
+DefaultContact=Default contact
 AddCompany=Add company
 DeleteACompany=Delete a company
 PersonalInformations=Personal data

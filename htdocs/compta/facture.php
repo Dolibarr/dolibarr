@@ -242,12 +242,11 @@ if ($_POST['action'] == 'add')
 					{
 						for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
 						{
-							$liblignefac=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
+							$desc=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
 
 							$result = $facture->addline(
 								$facid,
-								addslashes($liblignefac),
-								$prop->lignes[$i]->desc,
+								$desc,
 								$prop->lignes[$i]->subprice,
 								$prop->lignes[$i]->qty,
 								$prop->lignes[$i]->tva_tx,
@@ -281,10 +280,11 @@ if ($_POST['action'] == 'add')
 						$lines = $comm->fetch_lignes();
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
+							$desc=($lignes[$i]->description ? $lignes[$i]->description : $lignes[$i]->libelle);
+
 							$result = $facture->addline(
 								$facid,
-								addslashes($lines[$i]->description),
-								$lines[$i]->desc,
+								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->qty,
 								$lines[$i]->tva_tx,
@@ -319,7 +319,7 @@ if ($_POST['action'] == 'add')
 
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
-							$liblignefac=($contrat->lignes[$i]->desc?$contrat->lignes[$i]->desc:$contrat->lignes[$i]->libelle);
+							$desc=($contrat->lignes[$i]->desc?$contrat->lignes[$i]->desc:$contrat->lignes[$i]->libelle);
 
 							// Plage de dates
 							$date_start=$contrat->lignes[$i]->date_debut_prevue;
@@ -329,8 +329,7 @@ if ($_POST['action'] == 'add')
 
 							$result = $facture->addline(
 								$facid,
-								addslashes($liblignefac),
-								'',
+								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->qty,
 								$lines[$i]->tva_tx,
@@ -367,6 +366,9 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 	{
 		$fac = new Facture($db);
 		$fac->fetch($_POST['facid']);
+		$soc = new Societe($db);
+		$soc->fetch($fac->socidp);
+		
 		$datestart='';
 		$dateend='';
 		// Si ajout champ produit libre
@@ -393,13 +395,42 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 				$dateend=$_POST['date_end_predefyear'].'-'.$_POST['date_end_predefmonth'].'-'.$_POST['date_end_predefday'];
 			}
 		}
+
+		// Ecrase $pu par celui du produit
+		// Ecrase $desc par celui du produit
+		// Ecrase $txtva par celui du produit
+        if ($_POST['idprod'])
+        {
+            $prod = new Product($db, $_POST['idprod']);
+            $prod->fetch($_POST['idprod']);
+			// multiprix
+			if ($conf->global->PRODUIT_MULTIPRICES == 1)
+			{
+				$pu = $prod->multiprices[$soc->price_level];
+			}
+			else
+			{
+            	$pu=$prod->price;
+			}
+        	$desc=$_POST['desc'];
+            if (! $desc) $desc = $prod->description;
+			if ($conf->global->PRODUIT_CHANGE_PROD_DESC) $prod->description;
+			$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+        }
+        else
+        {
+        	$pu=$_POST['pu'];
+        	$tva_tx=$_POST['tva_tx'];
+        	$desc=$_POST['desc'];
+        }
+
+		// Insere ligne
 		$result = $fac->addline(
 			$_POST['facid'],
-			$_POST['desc'],
-			$_POST['product_desc'],
-			$_POST['pu'],
+			$desc,
+			$pu,
 			$_POST['qty'],
-			$_POST['tva_tx'],
+			$tva_tx,
 			$_POST['idprod'],
 			$_POST['remise_percent'],
 			$datestart,
@@ -1933,7 +1964,7 @@ else
 						$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
 					else
                     	$html->select_produits('','idprod','',$conf->produit->limit_size);
-                    print '<br>';
+                    if (! $conf->use_ajax) print '<br>';
                     print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
                     print '<td>&nbsp;</td>';
     				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';

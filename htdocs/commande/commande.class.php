@@ -2158,20 +2158,21 @@ class Commande
 
 class CommandeLigne
 {
-	// From llx_propaldet
-		var $qty;
-		var $tva_tx;
-		var $subprice;
-		var $remise_percent;
-		var $price;
-		var $product_id;
-		var $desc;          // Description ligne
-		var $coef;
+	// From llx_commandedet
+	var $qty;
+	var $tva_tx;
+	var $subprice;
+	var $remise_percent;
+	var $price;
+	var $product_id;	// Id produit prédéfini
+	var $desc;          // Description ligne
+	var $coef;
 	
-		// From llx_product
-		var $libelle;       // Label produit
-		var $product_desc;  // Description produit
-		var $ref;
+	// From llx_product
+	var $libelle;       // Label produit
+	var $product_desc;  // Description produit
+	var $ref;			// Reference produit
+
 	function CommandeLigne()
 	{
 		

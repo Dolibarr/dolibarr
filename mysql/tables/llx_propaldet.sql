@@ -32,6 +32,10 @@ create table llx_propaldet
   fk_remise_except	integer NULL,   -- Lien vers table des remises fixes
   subprice       real,              -- prix avant remise
   price          real,              -- prix final
+  total_ht       real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva      real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc      real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  info_bits		 integer DEFAULT 0, 	-- TVA NPR ou non
   coef           real,              -- coefficient de marge
   rang           integer DEFAULT 0
 )type=innodb;

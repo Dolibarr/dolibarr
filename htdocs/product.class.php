@@ -780,6 +780,7 @@ class Product
         if (! $id && ! $ref)
         {
             $this->error=$langs->trans('ErrorWrongParameters');
+			dolibarr_error("Product::fetch ".$this->error);
             return -1;
         }
 

@@ -104,6 +104,7 @@ Description=Description
 Designation=Désignation
 Action=Action
 Model=Modèle
+DefaultModel=Modèle par défaut
 About=À propos
 WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connecté(e) en tant que </font> %s
 Number=Nombre

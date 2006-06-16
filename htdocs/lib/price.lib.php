@@ -33,22 +33,25 @@
 
 /**
 		\brief 		Permet de calculer les parts total HT, TVA et TTC d'une ligne de
-					facture, propale ou autre depuis son prix unitaire, quantité et remise ligne.
+					facture, propale ou autre depuis:
+					Prix unitaire, quantité, remise_percent_ligne, txtva, remise_percent_global.
 		\param 		qty
 		\param 		pu
-		\param 		remise_percent
+		\param 		remise_percent_ligne
 		\param 		txtva
+		\param 		remise_percent_global
 		\return 	result[0]	total_ht
 					result[1]	total_tva
 					result[2]	total_ttc
 */
-function calcul_price_total($qty, $pu, $remise_percent, $txtva)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_percent_global=0)
 {
 	$result=array();
 	$tot_sans_remise = $pu * $qty;
-	$tot_avec_remise = $tot_sans_remise - ($tot_sans_remise * $remise_percent / 100);
+	$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
+	$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
 	$result[0] = round($tot_avec_remise, 2);
-	$result[2] = round($tot_avec_remise + ($tot_avec_remise * $txtva / 100), 2);
+	$result[2] = round($tot_avec_remise * ( 1 + ($txtva / 100)), 2);
 	$result[1] = $result[2] - $result[0];
 	return $result;
 }
