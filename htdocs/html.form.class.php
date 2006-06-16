@@ -549,7 +549,7 @@ class Form
      *    	\param      htmlname  	Nom champ formulaire ('none' pour champ non editable)
      *		\return		int			<0 si ko, >=0 si ok
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid')
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0)
     {
 	        // On recherche les societes
 	        $sql = "SELECT s.idp, s.name, s.firstname FROM";
@@ -564,6 +564,7 @@ class Form
                 if ($num==0) return 0;
 	        	
 	            if ($htmlname != 'none') print '<select class="flat" name="'.$htmlname.'">';
+	            if ($showempty) print '<option value="1">&nbsp;</option>';
 	            $num = $this->db->num_rows();
 	            $i = 0;
 	            if ($num)
@@ -1867,13 +1868,13 @@ class Form
 		}
 		else
 		{
-			$code_pays=$mysoc->pays_code;
+			$code_pays=$mysoc->pays_code;	// Pour compatibilite ascendente
 		}
 		
 		// Recherche liste des codes TVA du pays vendeur
         $sql  = "SELECT t.taux,t.recuperableonly";
-        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva AS t";
-        $sql .= " WHERE t.fk_pays = '".$code_pays."'";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+        $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
         $sql .= " AND t.active = 1";
         $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
