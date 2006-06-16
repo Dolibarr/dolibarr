@@ -666,8 +666,9 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	$facture = new Facture($db, 0, $_GET['facid']);
-	$facture->set_pdf_model($user, $_POST['model']);
-	$result=facture_pdf_create($db, $_REQUEST['facid'], '', $_REQUEST['model'], $outputlangs);
+	$facture->fetch($_GET['facid']);
+	if ($_REQUEST['model']) $facture->set_pdf_model($user, $_REQUEST['model']);
+	$result=facture_pdf_create($db, $_REQUEST['facid'], '', $facture->modelpdf, $outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);

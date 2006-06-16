@@ -435,10 +435,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
  */
 if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
+    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+    $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     $propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
     if ($_POST['model']) $propal->set_pdf_model($user, $_POST['model']);
-    propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+    propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf, $outputlangs);
 }
 
 
