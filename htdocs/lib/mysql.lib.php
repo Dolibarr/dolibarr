@@ -326,7 +326,7 @@ class DoliDb
 
     function commit()
     {
-        if ($this->transaction_opened==1)
+        if ($this->transaction_opened<=1)
         {
             $ret=$this->query("COMMIT");
             if ($ret) $this->transaction_opened=0;
@@ -346,7 +346,7 @@ class DoliDb
 
     function rollback()
     {
-        if ($this->transaction_opened==1)
+        if ($this->transaction_opened<=1)
         {
             $ret=$this->query("ROLLBACK");
             $this->transaction_opened=0;
@@ -354,6 +354,7 @@ class DoliDb
         }
         else
         {
+            $this->transaction_opened--;
             return 1;
         }
     }
