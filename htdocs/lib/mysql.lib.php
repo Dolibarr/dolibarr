@@ -346,7 +346,7 @@ class DoliDb
 
     function rollback()
     {
-        if ($this->transaction_opened)
+        if ($this->transaction_opened==1)
         {
             $ret=$this->query("ROLLBACK");
             $this->transaction_opened=0;
