@@ -61,9 +61,9 @@ if ($_GET["action"] == 'specimen')
 		$classname = "pdf_propale_".$modele;
 		require_once($dir.$file);
 
-		$obj = new $classname($db);
+		$module = new $classname($db);
 
-		if ($obj->write_pdf_file($propal) > 0)
+		if ($module->write_pdf_file($propal) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
 			return;
@@ -292,8 +292,8 @@ while (($file = readdir($handle))!==false)
 		print "$name";
 		print "</td>\n  <td>\n";
 		require_once($dir.$file);
-		$obj = new $classname($db);
-		print $obj->description;
+		$module = new $classname($db);
+		print $module->description;
 		print '</td>';
 
 		// Activé
@@ -334,12 +334,11 @@ while (($file = readdir($handle))!==false)
 		// Info
     	$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
     	$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$obj->page_largeur;
-    	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$obj->page_hauteur;
+    	$htmltooltip.='<br><b>'.$langs->trans("Height").'/'.$langs->trans("Width").'</b>: '.$module->page_hauteur.'/'.$module->page_largeur;
     	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($obj->option_logo);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($obj->option_modereg);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($obj->option_condreg);
+    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+    	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
+    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
     	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
     	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
     	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" alt="" title="">'.img_help(0,0).'</a>';

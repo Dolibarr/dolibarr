@@ -39,23 +39,24 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 
 class pdf_bernique extends ModelePDFFactures  {
 
-  function pdf_bernique($db=0)
-    {
-        global $langs;
-
-		  $langs->load("main");
-		  $langs->load("bills");
-		  $langs->load("products");
-
-		  $this->db = $db;
-        $this->description = $langs->trans('PDFBerniqueDescription');
-
-        // Dimension page pour format A4
-        $this->type = 'pdf';
-        $this->page_largeur = 210;
-        $this->page_hauteur = 297;
-        $this->format = array($this->page_largeur,$this->page_hauteur);
-    }
+	function pdf_bernique($db=0)
+	{
+        global $conf,$langs,$mysoc;
+		
+		$langs->load("main");
+		$langs->load("bills");
+		$langs->load("products");
+		
+		$this->db = $db;
+		$this->name = "bernique";
+		$this->description = $langs->trans('PDFBerniqueDescription');
+		
+		// Dimension page pour format A4
+		$this->type = 'pdf';
+		$this->page_largeur = 210;
+		$this->page_hauteur = 297;
+		$this->format = array($this->page_largeur,$this->page_hauteur);
+	}
 
     /**
      *		\brief      Fonction générant la facture sur le disque

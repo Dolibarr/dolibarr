@@ -114,7 +114,7 @@ if ($_GET["action"] == 'create')
 	print '</tr>';
 
 	// Ligne info remises tiers
-    print '<tr><td>'.$langs->trans('Info').'</td><td colspan="2">';
+    print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
 	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	$absolute_discount=$soc->getCurrentDiscount();

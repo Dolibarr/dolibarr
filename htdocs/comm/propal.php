@@ -43,6 +43,7 @@ $langs->load('companies');
 $langs->load('propal');
 $langs->load('compta');
 $langs->load('bills');
+$langs->load('orders');
 $langs->load('products');
 
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
@@ -642,7 +643,7 @@ if ($_GET['propalid'] > 0)
 	print '</td>';
 	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td colspan="5">';
 	if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
 	{
 		print '<form action="propal.php?propalid='.$propal->id.'" method="post">';

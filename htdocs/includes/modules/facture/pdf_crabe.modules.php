@@ -46,11 +46,10 @@ class pdf_crabe extends ModelePDFFactures
     */
     function pdf_crabe($db)
     {
-        global $conf,$langs;
+        global $conf,$langs,$mysoc;
 
 		$langs->load("main");
         $langs->load("bills");
-        $langs->load("products");
 
         $this->db = $db;
         $this->name = "crabe";
@@ -71,24 +70,14 @@ class pdf_crabe extends ModelePDFFactures
         $this->option_modereg = 1;                 // Affiche mode règlement
         $this->option_condreg = 1;                 // Affiche conditions règlement
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
+        $this->option_multilang = 1;               // Dispo en plusieurs langues
+
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
 
         // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
-        $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-        $sql .= " WHERE rowid = '".$conf->global->MAIN_INFO_SOCIETE_PAYS."'";
-        $result=$this->db->query($sql);
-        if ($result) {
-            $obj = $this->db->fetch_object($result);
-            if ($obj->code) $this->emetteur->code_pays=$obj->code;
-        }
-        else {
-            dolibarr_print_error($this->db);
-        }
-        $this->db->free($result);
-
-        $this->tva=array();
+        $this->emetteur->code_pays=$mysoc->pays_code;
+        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
 
         // Defini position des colonnes
         $this->posxdesc=$this->marge_gauche+1;
@@ -98,6 +87,7 @@ class pdf_crabe extends ModelePDFFactures
         $this->posxdiscount=162;
         $this->postotalht=177;
 
+        $this->tva=array();
         $this->atleastoneratenotnull=0;
         $this->atleastonediscount=0;
     }
@@ -128,6 +118,14 @@ class pdf_crabe extends ModelePDFFactures
     {
         global $user,$langs,$conf,$mysoc;
 
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+        $outputlangs->load("companies");
+        $outputlangs->load("bills");
+        $outputlangs->load("products");
+		
+		$outputlangs->setPhpLang();
+		
         if ($conf->facture->dir_output)
         {
 			// Définition de l'objet $fac (pour compatibilite ascendante)
@@ -155,7 +153,7 @@ class pdf_crabe extends ModelePDFFactures
             {
                 if (create_exdir($dir) < 0)
                 {
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                    $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
                 }
             }
@@ -172,7 +170,7 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->SetDrawColor(128,128,128);
 
                 $pdf->SetTitle($fac->ref);
-                $pdf->SetSubject($langs->trans("Bill"));
+                $pdf->SetSubject($outputlangs->trans("Invoice"));
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
 
@@ -188,7 +186,7 @@ class pdf_crabe extends ModelePDFFactures
                     }
                 }
 
-                $this->_pagehead($pdf, $fac);
+                $this->_pagehead($pdf, $fac, 1, $outputlangs);
 
 				// Affiches lignes
                 $pagenb = 1;
@@ -244,9 +242,9 @@ class pdf_crabe extends ModelePDFFactures
                         if ($prodser->ref) {
                         	$prefix_prodserv = "";
                         	if($prodser->type == 0)
-                        		$prefix_prodserv = $langs->trans("Product")." ";
+                        		$prefix_prodserv = $outputlangs->trans("Product")." ";
                         	if($prodser->type == 1)
-                        		$prefix_prodserv = $langs->trans("Service")." ";
+                        		$prefix_prodserv = $outputlangs->trans("Service")." ";
 
                             $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
                         }
@@ -264,7 +262,7 @@ class pdf_crabe extends ModelePDFFactures
 
                     if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
                         // Affichage durée si il y en a une
-                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
+                        $libelleproduitservice.="\n(".$outputlangs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$outputlangs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
                     }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
@@ -308,13 +306,13 @@ class pdf_crabe extends ModelePDFFactures
 
                     if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
                     {
-                        $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
-                        $this->_pagefoot($pdf);
+                        $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+                        $this->_pagefoot($pdf,$outputlangs);
 
                         // Nouvelle page
                         $pdf->AddPage();
                         $pagenb++;
-                        $this->_pagehead($pdf, $fac, 0);
+                        $this->_pagehead($pdf, $fac, 0, $outputlangs);
 
                         $nexY = $tab_top_newpage + 8;
                         $pdf->SetTextColor(0,0,0);
@@ -325,21 +323,21 @@ class pdf_crabe extends ModelePDFFactures
                 // Affiche cadre tableau
                 if ($pagenb == 1)
                 {
-                    $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+                    $this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
                     $bottomlasttab=$tab_top + $tab_height + 1;
                 }
                 else
                 {
-                    $this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY);
+                    $this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
                     $bottomlasttab=$tab_top_newpage + $tab_height + 1;
                 }
 
                 $deja_regle = $fac->getSommePaiement();
 
-                $posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab);
+                $posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab, $outputlangs);
 
                 if ($deja_regle) {
-                    $this->_tableau_versements($pdf, $fac, $posy);
+                    $this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
                 }
 
                 /*
@@ -350,7 +348,7 @@ class pdf_crabe extends ModelePDFFactures
                     $pdf->SetXY($this->marge_gauche, 228);
                     $pdf->SetTextColor(200,0,0);
                     $pdf->SetFont('Arial','B',8);
-                    $pdf->MultiCell(90, 3, $langs->trans("ErrorNoPaiementModeConfigured"),0,'L',0);
+                    $pdf->MultiCell(90, 3, $outputlangs->trans("ErrorNoPaiementModeConfigured"),0,'L',0);
                     $pdf->SetTextColor(0,0,0);
                 }
 
@@ -366,7 +364,7 @@ class pdf_crabe extends ModelePDFFactures
 
                         $pdf->SetXY($this->marge_gauche, 227);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, $langs->trans('PaymentByChequeOrderedTo').' '.$account->proprio.' '.$langs->trans('SendTo').':',0,'L',0);
+                        $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
                         $pdf->SetXY($this->marge_gauche, 231);
                         $pdf->SetFont('Arial','',8);
                         $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
@@ -375,7 +373,7 @@ class pdf_crabe extends ModelePDFFactures
                     {
                         $pdf->SetXY($this->marge_gauche, 227);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, $langs->trans('PaymentByChequeOrderedTo').' '.$mysoc->nom.' '.$langs->trans('SendTo').':',0,'L',0);
+                        $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedTo').' '.$mysoc->nom.' '.$outputlangs->trans('SendTo').':',0,'L',0);
                         $pdf->SetXY($this->marge_gauche, 231);
                         $pdf->SetFont('Arial','',8);
                         $pdf->MultiCell(80, 3, $mysoc->adresse_full, 0, 'L', 0);
@@ -397,21 +395,21 @@ class pdf_crabe extends ModelePDFFactures
                         $cury=242;
                         $pdf->SetXY ($this->marges['g'], $cury);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, $langs->trans('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
                         $cury+=4;
                         $pdf->SetFont('Arial','B',6);
                         $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
                         $pdf->SetXY ($this->marges['g'], $cury);
-                        $pdf->MultiCell(18, 3, $langs->trans("BankCode"), 0, 'C', 0);
+                        $pdf->MultiCell(18, 3, $outputlangs->trans("BankCode"), 0, 'C', 0);
                         $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
                         $pdf->SetXY ($this->marges['g']+18, $cury);
-                        $pdf->MultiCell(18, 3, $langs->trans("DeskCode"), 0, 'C', 0);
+                        $pdf->MultiCell(18, 3, $outputlangs->trans("DeskCode"), 0, 'C', 0);
                         $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
                         $pdf->SetXY ($this->marges['g']+36, $cury);
-                        $pdf->MultiCell(24, 3, $langs->trans("BankAccountNumber"), 0, 'C', 0);
+                        $pdf->MultiCell(24, 3, $outputlangs->trans("BankAccountNumber"), 0, 'C', 0);
                         $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
                         $pdf->SetXY ($this->marges['g']+60, $cury);
-                        $pdf->MultiCell(13, 3, $langs->trans("BankAccountNumberKey"), 0, 'C', 0);
+                        $pdf->MultiCell(13, 3, $outputlangs->trans("BankAccountNumberKey"), 0, 'C', 0);
                         $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
 
                         $pdf->SetFont('Arial','',8);
@@ -425,11 +423,11 @@ class pdf_crabe extends ModelePDFFactures
                         $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
 
                         $pdf->SetXY ($this->marges['g'], $cury+12);
-                        $pdf->MultiCell(90, 3, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, $outputlangs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
                         $pdf->SetXY ($this->marges['g'], $cury+22);
-                        $pdf->MultiCell(90, 3, $langs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, $outputlangs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
                         $pdf->SetXY ($this->marges['g'], $cury+25);
-                        $pdf->MultiCell(90, 3, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, $outputlangs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
 
                     }
                 }
@@ -441,38 +439,42 @@ class pdf_crabe extends ModelePDFFactures
                 {
 	                $pdf->SetFont('Arial','B',8);
 	                $pdf->SetXY($this->marge_gauche, 217);
-	                $titre = $langs->trans("PaymentConditions").':';
+	                $titre = $outputlangs->trans("PaymentConditions").':';
 	                $pdf->MultiCell(80, 5, $titre, 0, 'L');
 	                $pdf->SetFont('Arial','',8);
 	                $pdf->SetXY(50, 217);
-	                $lib_condition_paiement=$langs->trans("PaymentCondition".$fac->cond_reglement_code)?$langs->trans("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+	                $lib_condition_paiement=$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code)?$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
 	                $pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
 				}
 
                 /*
                  * Pied de page
                  */
-                $this->_pagefoot($pdf);
+                $this->_pagefoot($pdf,$outputlangs);
                 $pdf->AliasNbPages();
 
                 $pdf->Close();
 
                 $pdf->Output($file);
 
+				$langs->setPhpLang();	// On restaure langue session
                 return 1;   // Pas d'erreur
             }
             else
             {
-                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+				$langs->setPhpLang();	// On restaure langue session
                 return 0;
             }
         }
         else
         {
-            $this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
+            $this->error=$outputlangs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
+			$langs->setPhpLang();	// On restaure langue session
             return 0;
         }
-        $this->error=$langs->trans("ErrorUnknown");
+        $this->error=$outputlangs->trans("ErrorUnknown");
+		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut
     }
 
@@ -482,12 +484,8 @@ class pdf_crabe extends ModelePDFFactures
      *   \param      pdf     objet PDF
      *   \param      fac     objet facture
      */
-    function _tableau_versements(&$pdf, $fac, $posy)
+    function _tableau_versements(&$pdf, $fac, $posy, $outputlangs)
     {
-        global $langs;
-        $langs->load("main");
-        $langs->load("bills");
-
         $tab3_posx = 120;
         $tab3_top = $posy + 8;
         $tab3_width = 80;
@@ -495,18 +493,18 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY ($tab3_posx, $tab3_top - 5);
-        $pdf->MultiCell(60, 5, $langs->trans("PaymentsAlreadyDone"), 0, 'L', 0);
+        $pdf->MultiCell(60, 5, $outputlangs->trans("PaymentsAlreadyDone"), 0, 'L', 0);
 
         $pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
 
         $pdf->SetXY ($tab3_posx, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, $langs->trans("Payment"), 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $outputlangs->trans("Payment"), 0, 'L', 0);
         $pdf->SetXY ($tab3_posx+21, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, $langs->trans("Amount"), 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $outputlangs->trans("Amount"), 0, 'L', 0);
         $pdf->SetXY ($tab3_posx+41, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, $langs->trans("Type"), 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $outputlangs->trans("Type"), 0, 'L', 0);
         $pdf->SetXY ($tab3_posx+60, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, $langs->trans("Num"), 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $outputlangs->trans("Num"), 0, 'L', 0);
 
         $sql = "SELECT ".$this->db->pdate("p.datep")."as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
         $sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
@@ -561,7 +559,7 @@ class pdf_crabe extends ModelePDFFactures
         }
         else
         {
-            $this->error=$langs->trans("ErrorSQL")." $sql";
+            $this->error=$outputlangs->trans("ErrorSQL")." $sql";
             return 0;
         }
 
@@ -574,12 +572,8 @@ class pdf_crabe extends ModelePDFFactures
      *   \param      deja_regle      Montant deja regle
      *   \return     y               Position pour suite
      */
-    function _tableau_tot(&$pdf, $fac, $deja_regle, $posy)
+    function _tableau_tot(&$pdf, $fac, $deja_regle, $posy, $outputlangs)
     {
-        global $langs;
-        $langs->load("main");
-        $langs->load("bills");
-
         $tab2_top = $posy;
         $tab2_hl = 5;
         $tab2_height = $tab2_hl * 4;
@@ -589,7 +583,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY($this->marge_gauche, $tab2_top + 0);
     	if ($this->franchise==1)
       	{
-            $pdf->MultiCell(100, $tab2_hl, $langs->trans("VATIsNotUsedForInvoice"), 0, 'L', 0);
+            $pdf->MultiCell(100, $tab2_hl, $outputlangs->trans("VATIsNotUsedForInvoice"), 0, 'L', 0);
         }
 
         // Tableau total
@@ -598,7 +592,7 @@ class pdf_crabe extends ModelePDFFactures
         // Total HT
         $pdf->SetFillColor(256,256,256);
         $pdf->SetXY ($col1x, $tab2_top + 0);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalHT"), 0, 'L', 1);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("TotalHT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
         $pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 1);
@@ -607,13 +601,13 @@ class pdf_crabe extends ModelePDFFactures
         if ($fac->remise > 0)
         {
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("GlobalDiscount"), 0, 'L', 1);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("GlobalDiscount"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
             $pdf->MultiCell($largcol2, $tab2_hl, "-".$fac->remise_percent."%", 0, 'R', 1);
 
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'L', 1);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("WithDiscountTotalHT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
             $pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ht), 0, 'R', 1);
@@ -635,8 +629,8 @@ class pdf_crabe extends ModelePDFFactures
 
                 $index++;
             	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-                $tvacompl = ( (float)$tvakey < 0 ) ? " (".$langs->trans("NonPercuRecuperable").")" : '' ;
-                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
+                $tvacompl = ( (float)$tvakey < 0 ) ? " (".$outputlangs->trans("NonPercuRecuperable").")" : '' ;
+                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
 
                 $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
                 $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval * (float)$tvakey / 100 ), 0, 'R', 1);
@@ -646,7 +640,7 @@ class pdf_crabe extends ModelePDFFactures
         {
             $index++;
         	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 1);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("TotalVAT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_tva), 0, 'R', 1);
@@ -658,7 +652,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFillColor(224,224,224);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), $useborder, 'L', 1);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("TotalTTC"), $useborder, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
         $pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ttc), $useborder, 'R', 1);
@@ -670,7 +664,7 @@ class pdf_crabe extends ModelePDFFactures
             $index++;
 
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("AlreadyPayed"), 0, 'L', 0);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("AlreadyPayed"), 0, 'L', 0);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
@@ -679,7 +673,7 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->SetTextColor(0,0,60);
             //$pdf->SetFont('Arial','B', 9);
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("RemainderToPay"), $useborder, 'L', 1);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("RemainderToPay"), $useborder, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($fac->total_ttc - $deja_regle), $useborder, 'R', 1);
@@ -690,7 +684,7 @@ class pdf_crabe extends ModelePDFFactures
 /* Ne semble pas requis par la réglementation
         $index++;
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell($col2x-$col1x+$largcol2, $tab2_hl, $langs->trans('DispenseMontantLettres'), 0, 'L' );
+        $pdf->MultiCell($col2x-$col1x+$largcol2, $tab2_hl, $outputlangs->trans('DispenseMontantLettres'), 0, 'L' );
 */
         $index++;
         return ($tab2_top + ($tab2_hl * $index));
@@ -700,16 +694,14 @@ class pdf_crabe extends ModelePDFFactures
      *   \brief      Affiche la grille des lignes de factures
      *   \param      pdf     objet PDF
      */
-    function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+    function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
     {
-        global $langs,$conf;
-        $langs->load("main");
-        $langs->load("bills");
+        global $conf;
 
         // Montants exprimés en     (en tab_top - 1)
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
-        $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+        $titre = $outputlangs->trans("AmountInCurrency",$outputlangs->trans("Currency".$conf->monnaie));
         $pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
 
         $pdf->SetDrawColor(128,128,128);
@@ -722,25 +714,25 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetFont('Arial','',10);
 
         $pdf->SetXY ($this->posxdesc-1, $tab_top+2);
-        $pdf->MultiCell(108,2, $langs->trans("Designation"),'','L');
+        $pdf->MultiCell(108,2, $outputlangs->trans("Designation"),'','L');
 
         $pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxtva-1, $tab_top+2);
-        $pdf->MultiCell(12,2, $langs->trans("VAT"),'','C');
+        $pdf->MultiCell(12,2, $outputlangs->trans("VAT"),'','C');
 
         $pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxup-1, $tab_top+2);
-        $pdf->MultiCell(18,2, $langs->trans("PriceUHT"),'','C');
+        $pdf->MultiCell(18,2, $outputlangs->trans("PriceUHT"),'','C');
 
         $pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxqty-1, $tab_top+2);
-        $pdf->MultiCell(11,2, $langs->trans("Qty"),'','C');
+        $pdf->MultiCell(11,2, $outputlangs->trans("Qty"),'','C');
 
         $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
         if ($this->atleastonediscount)
         {
             $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-            $pdf->MultiCell(16,2, $langs->trans("ReductionShort"),'','C');
+            $pdf->MultiCell(16,2, $outputlangs->trans("ReductionShort"),'','C');
         }
 
         if ($this->atleastonediscount)
@@ -748,7 +740,7 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
         }
         $pdf->SetXY ($this->postotalht-1, $tab_top+2);
-        $pdf->MultiCell(23,2, $langs->trans("TotalHT"),'','C');
+        $pdf->MultiCell(23,2, $outputlangs->trans("TotalHT"),'','C');
 
     }
 
@@ -758,14 +750,14 @@ class pdf_crabe extends ModelePDFFactures
      *      \param      fac             Objet facture
      *      \param      showadress      0=non, 1=oui
      */
-    function _pagehead(&$pdf, $fac, $showadress=1)
+    function _pagehead(&$pdf, $fac, $showadress=1, $outputlangs)
     {
-        global $langs,$conf,$mysoc;
+        global $conf,$mysoc;
 
-        $langs->load("main");
-        $langs->load("bills");
-        $langs->load("propal");
-        $langs->load("companies");
+        $outputlangs->load("main");
+        $outputlangs->load("bills");
+        $outputlangs->load("propal");
+        $outputlangs->load("companies");
 
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
@@ -786,8 +778,8 @@ class pdf_crabe extends ModelePDFFactures
 			{
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
-                $pdf->MultiCell(100, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
+                $pdf->MultiCell(100, 3, $outputlangs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
+                $pdf->MultiCell(100, 3, $outputlangs->trans("ErrorGoToModuleSetup"), 0, 'L');
             }
         }
         else if (defined("FAC_PDF_INTITULE"))
@@ -798,18 +790,26 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetFont('Arial','B',13);
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("Invoice")." ".$fac->ref, '' , 'R');
-        $pdf->SetFont('Arial','',12);
+        $pdf->MultiCell(100, 4, $outputlangs->trans("Invoice"), '' , 'R');
+
+        $pdf->SetFont('Arial','B',12);
+        
+        $posy+=6;
+        $pdf->SetXY(100,$posy);
+        $pdf->SetTextColor(0,0,60);
+        $pdf->MultiCell(100, 4, $outputlangs->trans("Ref")." : " . $fac->ref, '', 'R');
+        
+        $pdf->SetFont('Arial','B',12);
 
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("DateInvoice")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 4, $outputlangs->trans("DateInvoice")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
 
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("DateEcheance")." : " . dolibarr_print_date($fac->date_lim_reglement,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 4, $outputlangs->trans("DateEcheance")." : " . dolibarr_print_date($fac->date_lim_reglement,"%d %b %Y"), '', 'R');
 
         if ($showadress)
         {
@@ -819,7 +819,7 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->SetTextColor(0,0,0);
             $pdf->SetFont('Arial','',8);
             $pdf->SetXY($this->marge_gauche,$posy-5);
-            $pdf->MultiCell(66,5, $langs->trans("BillFrom").":");
+            $pdf->MultiCell(66,5, $outputlangs->trans("BillFrom").":");
 
 
             $pdf->SetXY($this->marge_gauche,$posy);
@@ -844,17 +844,17 @@ class pdf_crabe extends ModelePDFFactures
             }
             $carac_emetteur .= "\n";
             // Tel
-            if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".FAC_PDF_TEL;
-            elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".$mysoc->tel;
+            if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Phone").": ".FAC_PDF_TEL;
+            elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Phone").": ".$mysoc->tel;
             // Fax
-            if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".FAC_PDF_FAX;
-            elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".$mysoc->fax;
+            if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Fax").": ".FAC_PDF_FAX;
+            elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Fax").": ".$mysoc->fax;
             // EMail
-    		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".FAC_PDF_MEL;
-            elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".$mysoc->email;
+    		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Email").": ".FAC_PDF_MEL;
+            elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Email").": ".$mysoc->email;
             // Web
-    		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".FAC_PDF_WWW;
-            elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".$mysoc->url;
+    		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Web").": ".FAC_PDF_WWW;
+            elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Web").": ".$mysoc->url;
 
             $pdf->SetFont('Arial','',9);
             $pdf->SetXY($this->marge_gauche+2,$posy+8);
@@ -865,7 +865,7 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->SetTextColor(0,0,0);
             $pdf->SetFont('Arial','',8);
             $pdf->SetXY(102,$posy-5);
-            $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
+            $pdf->MultiCell(80,5, $outputlangs->trans("BillTo").":");
             $fac->fetch_client();
             // Cadre client destinataire
             $pdf->rect(100, $posy, 100, $hautcadre);
@@ -878,7 +878,7 @@ class pdf_crabe extends ModelePDFFactures
             // Caractéristiques client
             $carac_client=$fac->client->adresse;
             $carac_client.="\n".$fac->client->cp . " " . $fac->client->ville."\n";
-            if ($fac->client->tva_intra) $carac_client.="\n".$langs->trans("VATIntraShort").': '.$fac->client->tva_intra;
+            if ($fac->client->tva_intra) $carac_client.="\n".$outputlangs->trans("VATIntraShort").': '.$fac->client->tva_intra;
             $pdf->SetFont('Arial','',9);
             $pdf->SetXY(102,$posy+8);
             $pdf->MultiCell(86,4, $carac_client);
@@ -890,12 +890,9 @@ class pdf_crabe extends ModelePDFFactures
      *   \brief      Affiche le pied de page
      *   \param      pdf     objet PDF
      */
-    function _pagefoot(&$pdf)
+    function _pagefoot(&$pdf,$outputlangs)
     {
-        global $langs, $conf;
-        $langs->load("main");
-        $langs->load("bills");
-        $langs->load("companies");
+        global $conf;
 
         $html=new Form($this->db);
 
@@ -907,30 +904,30 @@ class pdf_crabe extends ModelePDFFactures
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
-            $ligne1.=($ligne1?" - ":"").$langs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne1.=($ligne1?" - ":"").$outputlangs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$outputlangs->trans("Currency".$conf->monnaie);
         }
         if ($conf->global->MAIN_INFO_SIRET)
         {
-            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
         }
         if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->code_pays != 'FR'))
         {
-            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
         }
 
         // Deuxieme ligne d'info réglementaires
         $ligne2="";
         if ($conf->global->MAIN_INFO_APE)
         {
-            $ligne2.=($ligne2?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
         }
         if ($conf->global->MAIN_INFO_RCS)
         {
-            $ligne2.=($ligne2?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
         }
         if ($conf->global->MAIN_INFO_TVAINTRA != '')
         {
-            $ligne2.=($ligne2?" - ":"").$langs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
         }
 
         $pdf->SetFont('Arial','',8);

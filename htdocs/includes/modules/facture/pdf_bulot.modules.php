@@ -40,23 +40,24 @@ class pdf_bulot extends ModelePDFFactures {
     /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
-  function pdf_bulot($db)
-    {
-        global $langs;
-
-		  $langs->load("main");
-        $langs->load("bills");
-        $langs->load("products");
-
-		  $this->db = $db;
-        $this->description = $langs->trans('PDFBulotDescription');
-
-        // Dimension page pour format A4
-        $this->type = 'pdf';
-        $this->page_largeur = 210;
-        $this->page_hauteur = 297;
-        $this->format = array($this->page_largeur,$this->page_hauteur);
-    }
+	function pdf_bulot($db)
+	{
+		global $conf,$langs,$mysoc;
+		
+		$langs->load("main");
+		$langs->load("bills");
+		$langs->load("products");
+		
+		$this->db = $db;
+		$this->name = "bulot";
+		$this->description = $langs->trans('PDFBulotDescription');
+		
+		// Dimension page pour format A4
+		$this->type = 'pdf';
+		$this->page_largeur = 210;
+		$this->page_hauteur = 297;
+		$this->format = array($this->page_largeur,$this->page_hauteur);
+	}
 
     /**
      *		\brief      Fonction générant la facture sur le disque
