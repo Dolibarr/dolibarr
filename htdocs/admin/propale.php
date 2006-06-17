@@ -332,13 +332,15 @@ while (($file = readdir($handle))!==false)
 		print '</td>';
 
 		// Info
-    	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($obj->type?$obj->type:$langs->trans("Unknown"));
+    	$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
+    	$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
     	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$obj->page_largeur;
     	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$obj->page_hauteur;
-    	$htmltooltip.='<br>'.$langs->trans("FeaturesSupported").':';
+    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
     	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($obj->option_logo);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($obj->option_modereg);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($obj->option_condreg);
+    	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
     	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
     	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" alt="" title="">'.img_help(0,0).'</a>';
     	print '</td>';
