@@ -206,18 +206,42 @@ class Propal
                 $price = $pu - $remise;
             }
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice, total_ht, total_tva, total_ttc)";
-            $sql.= " VALUES ";
-            $sql.= " (".$this->id.", ";
-			if ($fk_product) { $sql.= "'$fk_product',"; }
-			else { $sql.='0,'; }
-            $sql.= " '". $qty."','". price2num($price)."','".$txtva."','".addslashes($desc)."','".price2num($remise_percent)."', '".price2num($subprice)."',";
-            $sql.= " '".price2num($total_ht) ."',";
-            $sql.= " '".price2num($total_tva)."',";
-            $sql.= " '".price2num($total_ttc)."'";
-            $sql.= ")";
+			// Récupère rang max de la propale dans $rangmax
+			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'propaldet';
+			$sql.= ' WHERE fk_propal ='.$propalid;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$row = $this->db->fetch_row($resql);
+				$rangmax = $row[0];
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
 
-            if ($this->db->query($sql))
+			// Insertion ligne
+			$ligne=new PropaleLigne($this->db);
+
+			$ligne->fk_propal=$propalid;
+			$ligne->desc=$desc;
+			$ligne->price=$price;
+			$ligne->qty=$qty;
+			$ligne->txtva=$txtva;
+			$ligne->fk_product=$fk_product;
+			$ligne->remise_percent=$remise_percent;
+			$ligne->subprice=$subprice;
+			$ligne->remise=$remise;
+			$ligne->rang=($rangmax+1);
+			$ligne->info_bits=$info_bits;
+			$ligne->total_ht=$total_ht;
+			$ligne->total_tva=$total_tva;
+			$ligne->total_ttc=$total_ttc;
+
+			$result=$ligne->insert();			
+			if ($result > 0)
             {
 				// Mise a jour informations denormalisees au niveau de la facture meme
 				$result=$this->update_price($facid);
@@ -237,8 +261,7 @@ class Propal
             }
             else
             {
-            	$this->error=$this->db->error();
-            	dolibarr_syslog("Error sql=$sql, error=".$this->error);
+            	$this->error=$ligne->error;
 				$this->db->rollback();
                 return -2;
             }
@@ -2311,19 +2334,33 @@ class Propal
 
 class PropaleLigne
 {
+	var $db;
+	var $error;
+
     // From llx_propaldet
+	var $rowid;
+	var $fk_propal;
+    var $desc;          	// Description ligne
+    var $product_id;		// Id produit prédéfini
+
     var $qty;
     var $tva_tx;
     var $subprice;
+    var $remise;
     var $remise_percent;
     var $price;
-    var $desc;          // Description ligne
-    var $product_id;	// Id produit prédéfini
+	var $rang;
+	var $coef;
+
+	var $info_bits;			// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
+	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
+	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
 
     // From llx_product
-    var $libelle;       // Label produit
-    var $product_desc;  // Description produit
-    var $ref;			// Reference produit
+    var $ref;				// Reference produit
+    var $libelle;       	// Label produit
+    var $product_desc;  	// Description produit
 
 
 	/**
@@ -2371,7 +2408,105 @@ class PropaleLigne
 		{
 			dolibarr_print_error($this->db);
 		}
-	}    
+	}
+	
+	/**
+	 *      \brief     	Insère l'objet ligne de propal en base
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
+	function insert()
+	{
+		$this->db->begin();
+
+		// Insertion dans base de la ligne
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
+		$sql.= ' (fk_propal, description, price, qty, tva_tx,';
+		$sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except, ';
+		$sql.= ' rang, coef,';
+		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
+		$sql.= " VALUES (".$this->fk_propal.",";
+		$sql.= " '".addslashes($this->desc)."',";
+		$sql.= " '".price2num($this->price)."',";
+		$sql.= " '".price2num($this->qty)."',";
+		$sql.= " '".price2num($this->txtva)."',";
+		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
+		else { $sql.='0,'; }
+		$sql.= " '".price2num($this->remise_percent)."',";
+		$sql.= " '".price2num($this->subprice)."',";
+		$sql.= " '".price2num($this->remise)."',";
+		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
+		else $sql.= 'null,';
+		$sql.= ' '.$this->rang.',';
+		if (isset($this->coef)) $sql.= ' '.$this->coef.',';
+		else $sql.= ' null,';
+		$sql.= " '".$this->info_bits."',";
+		$sql.= " '".price2num($this->total_ht)."',";
+		$sql.= " '".price2num($this->total_tva)."',";
+		$sql.= " '".price2num($this->total_ttc)."'";
+		$sql.= ')';
+
+       	dolibarr_syslog("PropaleLigne::insert sql=$sql");
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+        	$this->error=$this->db->error();
+        	dolibarr_syslog("PropaleLigne::insert Error ".$this->error);
+			$this->db->rollback();
+            return -2;
+		}
+	}
+	
+	
+	/**
+	 *      \brief     	Mise a jour de l'objet ligne de propale en base
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
+	function update()
+	{
+		$this->db->begin();
+
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propaledet SET";
+		$sql.= " description='".addslashes($this->desc)."'";
+		$sql.= ",price='".price2num($this->price)."'";
+		$sql.= ",subprice='".price2num($this->subprice)."'";
+		$sql.= ",remise='".price2num($this->remise)."'";
+		$sql.= ",remise_percent='".price2num($this->remise_percent)."'";
+		if ($fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
+		else $sql.= ",fk_remise_except=null";
+		$sql.= ",tva_taux='".price2num($this->txtva)."'";
+		$sql.= ",qty='".price2num($this->qty)."'";
+		$sql.= ",rang='".$this->rang."'";
+		$sql.= ",coef='".$this->coef."'";
+		$sql.= ",info_bits='".$this->info_bits."'";
+		$sql.= ",total_ht='".price2num($this->total_ht)."'";
+		$sql.= ",total_tva='".price2num($this->total_tva)."'";
+		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
+		$sql.= " WHERE rowid = ".$this->rowid;
+
+       	dolibarr_syslog("PropaleLigne::update sql=$sql");
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+        	$this->error=$this->db->error();
+        	dolibarr_syslog("PropaleLigne::update Error ".$this->error);
+			$this->db->rollback();
+            return -2;
+		}
+	}
+		
 }
 
 ?>
