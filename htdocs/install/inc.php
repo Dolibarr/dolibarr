@@ -26,10 +26,20 @@
 		\version    $Revision$
 */
 
-define('DOL_DOCUMENT_ROOT','../');
-
 require_once('../translate.class.php');
 require_once('../lib/functions.inc.php');
+
+
+$docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
+$conffile = "../conf/conf.php";
+
+define('DOL_DOCUMENT_ROOT','../');
+
+
+// Forcage du log pour les install et mises a jour
+$conf->syslog->enabled=1;
+define('SYSLOG_FILE','/tmp/dolibarr_install.log');
+define('SYSLOG_FILE_NO_ERROR',1);
 
 
 
@@ -50,9 +60,6 @@ if (get_magic_quotes_gpc())
 @set_magic_quotes_runtime(0);
 
 
-$docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
-$conffile = "../conf/conf.php";
-
 // Defini objet langs
 $langs = new Translate('../langs');
 $langs->setDefaultLang('auto');
@@ -60,6 +67,7 @@ $langs->setPhpLang();
 
 $bc[false]=' class="bg1"';
 $bc[true]=' class="bg2"';
+
 
 function pHeader($soutitre,$next,$action='set')
 {
@@ -112,38 +120,7 @@ function pFooter($nonext=0,$setuplang='')
 
 function dolibarr_install_syslog($message)
 {
-    // Ajout user a la log
-    $login='install';
-    $message=sprintf("%-8s",$login)." ".$message;
-
-	$fileinstall="/tmp/dolibarr_install.log";
-    $file=@fopen($fileinstall,"a+");
-    if ($file) {
-        fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
-        fclose($file);
-    }
-}
-
-
-/**
-		\brief      Compare 2 versions
-		\param	    versionarray1       Tableau de version (vermajeur,vermineur,autre)
-		\param	    versionarray2       Tableau de version (vermajeur,vermineur,autre)
-        \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
-*/
-function aaversioncompare($versionarray1,$versionarray2)
-{
-    $ret=0;
-    $i=0;
-    while ($i < max(sizeof($versionarray1),sizeof($versionarray1)))
-    {
-        $operande1=isset($versionarray1[$i])?$versionarray1[$i]:0;
-        $operande2=isset($versionarray2[$i])?$versionarray2[$i]:0;
-        if ($operande1 < $operande2) { $ret = -1; break; }
-        if ($operande1 > $operande2) { $ret =  1; break; }
-        $i++;
-    }    
-    return $ret;
+	dolibarr_syslog($message);
 }
 
 ?>

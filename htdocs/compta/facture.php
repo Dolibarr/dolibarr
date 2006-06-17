@@ -374,18 +374,18 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$soc = new Societe($db);
 		$ret=$soc->fetch($fac->socidp);
 		
-		$datestart='';
-		$dateend='';
+		$date_start='';
+		$date_end='';
 		// Si ajout champ produit libre
 		if ($_POST['action'] == 'addligne')
 		{
 			if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
 			{
-				$datestart=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
+				$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
 			}
 			if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
 			{
-				$dateend=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
+				$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
 			}
 		}
 		// Si ajout champ produit prédéfini
@@ -393,11 +393,11 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		{
 			if ($_POST['date_start_predefyear'] && $_POST['date_start_predefmonth'] && $_POST['date_start_predefday'])
 			{
-				$datestart=$_POST['date_start_predefyear'].'-'.$_POST['date_start_predefmonth'].'-'.$_POST['date_start_predefday'];
+				$date_start=$_POST['date_start_predefyear'].'-'.$_POST['date_start_predefmonth'].'-'.$_POST['date_start_predefday'];
 			}
 			if ($_POST['date_end_predefyear'] && $_POST['date_end_predefmonth'] && $_POST['date_end_predefday'])
 			{
-				$dateend=$_POST['date_end_predefyear'].'-'.$_POST['date_end_predefmonth'].'-'.$_POST['date_end_predefday'];
+				$date_end=$_POST['date_end_predefyear'].'-'.$_POST['date_end_predefmonth'].'-'.$_POST['date_end_predefday'];
 			}
 		}
 
@@ -445,8 +445,8 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 			$tva_tx,
 			$_POST['idprod'],
 			$_POST['remise_percent'],
-			$datestart,
-			$dateend
+			$date_start,
+			$date_end
 			);
 	}
 
@@ -458,13 +458,13 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	$fac = new Facture($db,'',$_POST['facid']);
 	if (! $fac->fetch($_POST['facid']) > 0) dolibarr_print_error($db);
 
-	$datestart='';
-	$dateend='';
+	$date_start='';
+	$date_end='';
 	if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday']) {
-		$datestart=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
+		$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
 	}
 	if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday']) {
-		$dateend=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
+		$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
 	}
 
 	$result = $fac->updateline($_POST['rowid'],
@@ -472,8 +472,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$_POST['price'],
 		$_POST['qty'],
 		$_POST['remise_percent'],
-		$datestart,
-		$dateend,
+		$date_start,
+		$date_end,
 		$_POST['tva_tx']
 		);
 

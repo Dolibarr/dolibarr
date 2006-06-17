@@ -1529,9 +1529,9 @@ class Commande
 			$sql.= ",remise_percent='".price2num($remise_percent)."'";
 			$sql.= ",tva_tx='".price2num($txtva)."'";
 			$sql.= ",qty='".price2num($qty)."'";
-			//if ($datestart) { $sql.= ",date_start='$datestart'"; }
+			//if ($date_end) { $sql.= ",date_start='$date_end'"; }
 			//else { $sql.=',date_start=null'; }
-			//if ($dateend) { $sql.= ",date_end='$dateend'"; }
+			//if ($date_end) { $sql.= ",date_end='$date_end'"; }
 			//else { $sql.=',date_end=null'; }
 			//$sql.= " info_bits=".$info_bits.",";
 			$sql.= ",total_ht='".price2num($total_ht)."'";
@@ -2135,22 +2135,26 @@ class CommandeLigne
 	 */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT fk_commande, fk_product, description, price, qty, rowid, tva_tx,';
-		$sql.= ' label,';
-		$sql.= ' remise, remise_percent, fk_remise_except, subprice,';
-		$sql.= ' info_bits, total_ht, total_tva, total_ttc, coef, rang';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet WHERE rowid = '.$rowid;
+		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx,';
+		$sql.= ' cd.label,';
+		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
+		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.coef, cd.rang,';
+		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
+		$sql.= ' WHERE cd.rowid = '.$rowid;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$objp = $this->db->fetch_object($result);
+			$this->rowid          = $objp->rowid;
 			$this->fk_propal      = $objp->fk_propal;
 			$this->label          = $objp->label;
 			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
 			$this->price          = $objp->price;
 			$this->subprice       = $objp->subprice;
-			$this->tva_taux       = $objp->tva_taux;
+			$this->tva_tx         = $objp->tva_tx;
 			$this->remise         = $objp->remise;
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
@@ -2161,6 +2165,11 @@ class CommandeLigne
 			$this->total_ttc      = $objp->total_ttc;
 			$this->coef           = $objp->coef;
 			$this->rang           = $objp->rang;
+
+			$this->ref			  = $objp->product_ref;
+			$this->libelle		  = $objp->product_libelle;
+			$this->product_desc	  = $objp->product_desc;
+
 			$this->db->free($result);
 		}
 		else
@@ -2187,7 +2196,7 @@ class CommandeLigne
 		$sql.= " '".addslashes($this->desc)."',";
 		$sql.= " '".price2num($this->price)."',";
 		$sql.= " '".price2num($this->qty)."',";
-		$sql.= " '".price2num($this->txtva)."',";
+		$sql.= " '".price2num($this->tva_tx)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='0,'; }
 		$sql.= " '".price2num($this->remise_percent)."',";
@@ -2239,7 +2248,7 @@ class CommandeLigne
 		$sql.= ",remise_percent='".price2num($this->remise_percent)."'";
 		if ($fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
 		else $sql.= ",fk_remise_except=null";
-		$sql.= ",tva_taux='".price2num($this->txtva)."'";
+		$sql.= ",tva_tx='".price2num($this->tva_tx)."'";
 		$sql.= ",qty='".price2num($this->qty)."'";
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= ",coef='".$this->coef."'";

@@ -170,17 +170,15 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
         migrate_modeles($db,$langs,$conf);
 
-		migrate_price_commande($db,$langs,$conf);
+//		migrate_price_propal($db,$langs,$conf);
 
-		migrate_price_propal($db,$langs,$conf);
+//		migrate_price_commande($db,$langs,$conf);
 
-		
+//		migrate_price_facture($db,$langs,$conf);
 
     	// On commit dans tous les cas.
     	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
     	$db->commit();
-
-		migrate_price_facture($db,$langs,$conf);
     	
     	$db->close();
 	}
@@ -617,7 +615,7 @@ function migrate_price_facture($db,$langs,$conf)
 		$sql.= " f.rowid as facid, f.remise_percent as remise_percent_global";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " WHERE fd.fk_facture = f.rowid";
-		$sql.= " AND (fd.total_ttc = 0 or fd.total_ttc IS NULL) AND fd.remise_percent != 100";
+		$sql.= " AND (fd.total_ttc = 0 AND fd.remise_percent != 100) or fd.total_ttc IS NULL";
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -651,7 +649,7 @@ function migrate_price_facture($db,$langs,$conf)
 					
 					dolibarr_install_syslog("Line $rowid: facid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
 					print ". ";
-//					$facligne->update($rowid);
+					$facligne->update();
 															
 					
 					/* On touche pas a facture mere
@@ -720,7 +718,7 @@ function migrate_price_propal($db,$langs,$conf)
 		$sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
 		$sql.= " WHERE pd.fk_propal = p.rowid";
-		$sql.= " AND (pd.total_ttc = 0 or pd.total_ttc IS NULL) AND pd.remise_percent != 100";
+		$sql.= " AND (pd.total_ttc = 0 AND pd.remise_percent != 100) or pd.total_ttc IS NULL";
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -754,7 +752,7 @@ function migrate_price_propal($db,$langs,$conf)
 					
 					dolibarr_install_syslog("Line $rowid: propalid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
 					print ". ";
-//					$propalligne->update($rowid);
+					$propalligne->update($rowid);
 
 
 					/* On touche pas a propal mere
@@ -822,7 +820,7 @@ function migrate_price_commande($db,$langs,$conf)
 		$sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE cd.fk_commande = c.rowid";
-		$sql.= " AND (cd.total_ttc = 0 or cd.total_ttc IS NULL) AND cd.remise_percent != 100";
+		$sql.= " AND (cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL";
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -856,7 +854,7 @@ function migrate_price_commande($db,$langs,$conf)
 					
 					dolibarr_install_syslog("Line $rowid: commandeid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
 					print ". ";
-//					$commandeligne->update($rowid);
+					$commandeligne->update($rowid);
 
 					/* On touche pas a facture mere
 					$commande = new Commande($db);

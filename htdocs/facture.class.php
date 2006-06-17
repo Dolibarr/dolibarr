@@ -976,10 +976,10 @@ class Facture
 	 * 	\param     idproduct
 	 * 	\param     qty
 	 * 	\param     remise_percent
-	 * 	\param     datestart
-	 * 	\param     dateend
+	 * 	\param     date_start
+	 * 	\param     date_end
 	 */
-	function add_product($idproduct, $qty, $remise_percent, $datestart='', $dateend='')
+	function add_product($idproduct, $qty, $remise_percent, $date_start='', $date_end='')
 	{
 		if ($idproduct > 0)
 		{
@@ -991,32 +991,32 @@ class Facture
 			}
 			$this->products_qty[$i] = $qty;
 			$this->products_remise_percent[$i] = $remise_percent;
-			if ($datestart) { $this->products_date_start[$i] = $datestart; }
-			if ($dateend)   { $this->products_date_end[$i] = $dateend; }
+			if ($date_start) { $this->products_date_start[$i] = $date_start; }
+			if ($date_end)   { $this->products_date_end[$i] = $date_end; }
 		}
 	}
 
 	/**
 	 * 		\brief    	Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)
-	 * 		\param    	facid           id de la facture
-	 * 		\param    	desc            description de la ligne
-	 * 		\param    	pu              prix unitaire
-	 * 		\param    	qty             quantité
-	 * 		\param    	txtva           taux de tva forcé, sinon -1
-	 *		\param    	fk_product      id du produit/service predéfini
-	 * 		\param    	remise_percent  pourcentage de remise de la ligne
-	 * 		\param    	datestart       date de debut de validité du service
-	 * 		\param    	dateend         date de fin de validité du service
-	 * 		\param    	ventil          code de ventilation comptable
+	 * 		\param    	facid           Id de la facture
+	 * 		\param    	desc            Description de la ligne
+	 * 		\param    	pu              Prix unitaire
+	 * 		\param    	qty             Quantité
+	 * 		\param    	txtva           Taux de tva forcé, sinon -1
+	 *		\param    	fk_product      Id du produit/service predéfini
+	 * 		\param    	remise_percent  Pourcentage de remise de la ligne
+	 * 		\param    	date_start      Date de debut de validité du service
+	 * 		\param    	date_end        Date de fin de validité du service
+	 * 		\param    	ventil          Code de ventilation comptable
 	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
  	 */
-	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
+	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil = 0)
 	{
 		global $conf;
-		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
+		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil)");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1079,8 +1079,8 @@ class Facture
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$subprice;
 			$ligne->remise=$remise;
-			$ligne->datestart=$datestart;
-			$ligne->dateend=$dateend;				
+			$ligne->date_start=$date_start;
+			$ligne->date_end=$date_end;				
 			$ligne->ventil=$ventil;
 			$ligne->rang=($rangmax+1);
 			$ligne->info_bits=$info_bits;
@@ -1122,14 +1122,14 @@ class Facture
 	 *      \param     pu               Prix unitaire
 	 *      \param     qty              Quantité
 	 *      \param     remise_percent   Pourcentage de remise de la ligne
-	 *      \param     datestart        Date de debut de validité du service
-	 *      \param     dateend          Date de fin de validité du service
+	 *      \param     date_start        Date de debut de validité du service
+	 *      \param     date_end          Date de fin de validité du service
 	 *      \param     tva_tx           Taux TVA
 	 *      \return    int              < 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart, $dateend, $txtva)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva)
 	{
-		dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend, $txtva");
+		dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1176,8 +1176,8 @@ class Facture
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$subprice;
 			$ligne->remise=$remise;
-			$ligne->datestart=$datestart;
-			$ligne->dateend=$dateend;				
+			$ligne->date_start=$date_start;
+			$ligne->date_end=$date_end;				
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
@@ -2430,6 +2430,7 @@ class FactureLigne
 		if ($result)
 		{
 			$objp = $this->db->fetch_object($result);
+			$this->rowid          = $objp->rowid;
 			$this->fk_facture     = $objp->fk_facture;
 			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
@@ -2490,9 +2491,9 @@ class FactureLigne
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
-		if ($this->datestart) { $sql.= "'".$this->datestart."',"; }
+		if ($this->date_start) { $sql.= "'".$this->date_start."',"; }
 		else { $sql.='null,'; }
-		if ($this->dateend)   { $sql.= "'".$this->dateend."',"; }
+		if ($this->date_end)   { $sql.= "'".$this->date_end."',"; }
 		else { $sql.='null,'; }
 		$sql.= ' '.$this->fk_code_ventilation.',';
 		$sql.= ' '.$this->fk_export_compta.',';
@@ -2536,13 +2537,13 @@ class FactureLigne
 		$sql.= ",subprice='".price2num($this->subprice)."'";
 		$sql.= ",remise='".price2num($this->remise)."'";
 		$sql.= ",remise_percent='".price2num($this->remise_percent)."'";
-		if ($fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
+		if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
 		else $sql.= ",fk_remise_except=null";
-		$sql.= ",tva_taux='".price2num($this->txtva)."'";
+		$sql.= ",tva_taux='".price2num($this->tva_taux)."'";
 		$sql.= ",qty='".price2num($this->qty)."'";
-		if ($this->datestart) { $sql.= ",date_start='".$this->datestart."'"; }
+		if ($this->date_start) { $sql.= ",date_start='".$this->date_start."'"; }
 		else { $sql.=',date_start=null'; }
-		if ($this->dateend) { $sql.= ",date_end='".$this->dateend."'"; }
+		if ($this->date_end) { $sql.= ",date_end='".$this->date_end."'"; }
 		else { $sql.=',date_end=null'; }
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= ",info_bits='".$this->info_bits."'";

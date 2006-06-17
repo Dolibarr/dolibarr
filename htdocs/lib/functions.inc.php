@@ -151,15 +151,16 @@ function sanitize_string($str)
 
 
 /**
-   \brief       Envoi des messages dolibarr dans syslog ou dans un fichier
-                Pour syslog:    facility défini par SYSLOG_FACILITY
+   \brief       Envoi des messages dolibarr dans un fichier ou dans syslog
                 Pour fichier:   fichier défini par SYSLOG_FILE
-   \param       message		    Message a envoyer a syslog
+                Pour syslog:    facility défini par SYSLOG_FACILITY
+   \param       message		    Message a tracer
    \param       level           Niveau de l'erreur
    \remarks     Cette fonction n'a un effet que si le module syslog est activé.
                 Warning, les fonctions syslog sont buggués sous Windows et génèrent des
                 fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
                 au lieu du loggage syslog (configuration du module).
+                Si SYSLOG_FILE_NO_ERROR défini, on ne gère pas erreur ecriture log
 */
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
@@ -174,12 +175,15 @@ function dolibarr_syslog($message, $level=LOG_ERR)
 
         if (defined("SYSLOG_FILE") && SYSLOG_FILE)
         {
-            $file=fopen(SYSLOG_FILE,"a+");
-            if ($file) {
+        	if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen(SYSLOG_FILE,"a+");
+            else $file=fopen(SYSLOG_FILE,"a+");
+            if ($file)
+            {
                 fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
                 fclose($file);
             }
-            else {
+            elseif (! defined("SYSLOG_FILE_NO_ERROR"))
+            {
                 $langs->load("main");
                 print $langs->trans("ErrorFailedToOpenFile",SYSLOG_FILE);
             }

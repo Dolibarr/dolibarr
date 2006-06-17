@@ -2378,20 +2378,24 @@ class PropaleLigne
 	 */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT fk_propal, fk_product, description, price, qty, rowid, tva_tx,';
-		$sql.= ' remise, remise_percent, fk_remise_except, subprice,';
-		$sql.= ' info_bits, total_ht, total_tva, total_ttc, coef, rang';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet WHERE rowid = '.$rowid;
+		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_product, pd.description, pd.price, pd.qty, pd.tva_tx,';
+		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
+		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.coef, pd.rang,';
+		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
+		$sql.= ' WHERE pd.rowid = '.$rowid;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$objp = $this->db->fetch_object($result);
+			$this->rowid          = $objp->rowid;
 			$this->fk_propal      = $objp->fk_propal;
 			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
 			$this->price          = $objp->price;
 			$this->subprice       = $objp->subprice;
-			$this->tva_taux       = $objp->tva_taux;
+			$this->tva_tx         = $objp->tva_tx;
 			$this->remise         = $objp->remise;
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
@@ -2402,6 +2406,11 @@ class PropaleLigne
 			$this->total_ttc      = $objp->total_ttc;
 			$this->coef           = $objp->coef;
 			$this->rang           = $objp->rang;
+
+			$this->ref			  = $objp->product_ref;
+			$this->libelle		  = $objp->product_libelle;
+			$this->product_desc	  = $objp->product_desc;
+
 			$this->db->free($result);
 		}
 		else
@@ -2428,7 +2437,7 @@ class PropaleLigne
 		$sql.= " '".addslashes($this->desc)."',";
 		$sql.= " '".price2num($this->price)."',";
 		$sql.= " '".price2num($this->qty)."',";
-		$sql.= " '".price2num($this->txtva)."',";
+		$sql.= " '".price2num($this->tva_tx)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='0,'; }
 		$sql.= " '".price2num($this->remise_percent)."',";
@@ -2472,7 +2481,7 @@ class PropaleLigne
 		$this->db->begin();
 
 		// Mise a jour ligne en base
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propaledet SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
 		$sql.= " description='".addslashes($this->desc)."'";
 		$sql.= ",price='".price2num($this->price)."'";
 		$sql.= ",subprice='".price2num($this->subprice)."'";
@@ -2480,7 +2489,7 @@ class PropaleLigne
 		$sql.= ",remise_percent='".price2num($this->remise_percent)."'";
 		if ($fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
 		else $sql.= ",fk_remise_except=null";
-		$sql.= ",tva_taux='".price2num($this->txtva)."'";
+		$sql.= ",tva_tx='".price2num($this->tva_tx)."'";
 		$sql.= ",qty='".price2num($this->qty)."'";
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= ",coef='".$this->coef."'";

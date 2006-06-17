@@ -87,10 +87,10 @@ class Contrat
      *      \param      user        Objet User qui avtice le contrat
      *      \param      line_id     Id de la ligne de detail à activer
      *      \param      date        Date d'ouverture
-     *      \param      dateend     Date fin prévue
+     *      \param      date_end     Date fin prévue
      *      \return     int         < 0 si erreur, > 0 si ok
      */
-    function active_line($user, $line_id, $date, $dateend='')
+    function active_line($user, $line_id, $date, $date_end='')
     {
         global $langs,$conf;
         
@@ -98,7 +98,7 @@ class Contrat
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
         $sql.= " date_ouverture = '".$this->db->idate($date)."',";
-        if ($dateend) $sql.= " date_fin_validite = '".$this->db->idate($dateend)."',";
+        if ($date_end) $sql.= " date_fin_validite = '".$this->db->idate($date_end)."',";
         $sql.= " fk_user_ouverture = ".$user->id;
         $sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3) ";
     
@@ -125,17 +125,17 @@ class Contrat
      *      \brief      Active une ligne detail d'un contrat
      *      \param      user        Objet User qui avtice le contrat
      *      \param      line_id     Id de la ligne de detail à activer
-     *      \param      dateend     Date fin
+     *      \param      date_end     Date fin
      *      \return     int         <0 si erreur, >0 si ok
      */
-    function close_line($user, $line_id, $dateend)
+    function close_line($user, $line_id, $date_end)
     {
         global $langs,$conf;
         
         // statut actif : 4
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 5,";
-        $sql.= " date_cloture = '".$this->db->idate($dateend)."',";
+        $sql.= " date_cloture = '".$this->db->idate($date_end)."',";
         $sql.= " fk_user_cloture = ".$user->id;
         $sql.= " WHERE rowid = ".$line_id . " AND statut = 4";
     
@@ -567,16 +567,16 @@ class Contrat
      *      \param      txtva           Taux tva
      *      \param      fk_product      Id produit
      *      \param      remise_percent  Pourcentage de remise de la ligne
-     *      \param      datestart       Date de debut prévue
-     *      \param      dateend         Date de fin prévue
+     *      \param      date_start      Date de debut prévue
+     *      \param      date_end        Date de fin prévue
      *      \return     int             <0 si erreur, >0 si ok
      */
-    function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart, $dateend)
+    function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start, $date_end)
     {
         global $langs;
 		global $conf;
         
-        dolibarr_syslog("contrat.class.php::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $datestart, $dateend");
+        dolibarr_syslog("contrat.class.php::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end");
 
         if ($this->statut == 0)
         {
@@ -611,13 +611,13 @@ class Contrat
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
             $sql.= " (fk_contrat, label, description, fk_product, price_ht, qty, tva_tx,";
             $sql.= " remise_percent, subprice, remise";
-            if ($datestart > 0) { $sql.= ",date_ouverture_prevue"; }
-            if ($dateend > 0)  { $sql.= ",date_fin_validite"; }
+            if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
+            if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
             $sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',";
             $sql.= ($fk_product>0 ? $fk_product : "null");
             $sql.= ",".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."'";
-            if ($datestart > 0) { $sql.= ",".$this->db->idate($datestart); }
-            if ($dateend > 0) { $sql.= ",".$this->db->idate($dateend); }
+            if ($date_start > 0) { $sql.= ",".$this->db->idate($date_start); }
+            if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
             $sql.= ");";
             
             if ( $this->db->query($sql) )
@@ -644,15 +644,15 @@ class Contrat
      *      \param     pu               Prix unitaire
      *      \param     qty              Quantité
      *      \param     remise_percent   Pourcentage de remise de la ligne
-     *      \param     datestart        Date de debut prévue
-     *      \param     dateend          Date de fin prévue
+     *      \param     date_start       Date de debut prévue
+     *      \param     date_end         Date de fin prévue
      *      \param     tvatx            Taux TVA
      *      \param     date_debut_reel  Date de debut réelle
      *      \param     date_fin_reel    Date de fin réelle
      *      \return    int              < 0 si erreur, > 0 si ok
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0,
-         $datestart='', $dateend='', $tvatx,
+         $date_start='', $date_end='', $tvatx,
          $date_debut_reel='', $date_fin_reel='')
     {
         // Nettoyage parametres
@@ -673,7 +673,7 @@ class Contrat
             $remise_percent=0;
         }
 
-        dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend, $tvatx");
+        dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx");
     
         $this->db->begin();
 
@@ -685,9 +685,9 @@ class Contrat
         $sql .= ",qty='$qty'";
         $sql .= ",tva_tx='".        price2num($tvatx)."'";
 
-        if ($datestart > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($datestart); }
+        if ($date_start > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($date_start); }
         else { $sql.=",date_ouverture_prevue=null"; }
-        if ($dateend > 0) { $sql.= ",date_fin_validite=".$this->db->idate($dateend); }
+        if ($date_end > 0) { $sql.= ",date_fin_validite=".$this->db->idate($date_end); }
         else { $sql.=",date_fin_validite=null"; }
         if ($date_debut_reel > 0) { $sql.= ",date_ouverture=".$this->db->idate($date_debut_reel); }
         else { $sql.=",date_ouverture=null"; }
