@@ -1236,28 +1236,29 @@ class Facture
 		$err=0;
 
         // Liste des lignes factures a sommer
-		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price, total_ht, total_tva, total_ttc';
+		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price,';
+		$sql.= ' total_ht, total_tva, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' WHERE fk_facture = '.$facid;
-		$result = $this->db->query($sql);
-		if ($result)
+
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
 			$this->total_ht  = 0;
 			$this->total_tva = 0;
 			$this->total_ttc = 0;
-			
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj = $this->db->fetch_object($result);
+				$obj = $this->db->fetch_object($resql);
 
 				$this->total_ht    += $obj->total_ht;
 				$this->total_tva   += ($obj->total_ttc - $obj->total_ht);
 				$this->total_ttc   += $obj->total_ttc;
 
 				// Anciens indicateurs
-				$this->amount_ht      += $obj->price * $obj->qty;
+				$this->amount_ht      += ($obj->price * $obj->qty);
 				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
 				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
 
@@ -1269,7 +1270,7 @@ class Facture
 				$i++;
 			}
 
-			$this->db->free($result);
+			$this->db->free($resql);
 
 /* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
 			$calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
@@ -1289,7 +1290,9 @@ class Facture
 			$sql .= ", tva='".      price2num($this->total_tva)."'";
 			$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
 			$sql .= ' WHERE rowid = '.$facid;
-			if ( $this->db->query($sql) )
+			$resql=$this->db->query($sql);
+
+			if ($resql)
 			{
 				// \TODO A supprimer car l'utilisation de facture_tva_sum non utilisable
 				// dans un context compta propre. On utilisera plutot les lignes.

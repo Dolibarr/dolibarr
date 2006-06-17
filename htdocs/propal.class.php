@@ -55,7 +55,9 @@ class Propal
     var $status;
     var $datep;
     var $fin_validite;
-    var $price;
+    var $price;						// Total HT
+    var $tva;						// Total TVA
+    var $total;						// Total TTC
     var $cond_reglement_id;
     var $cond_reglement_code;
     var $mode_reglement_id;

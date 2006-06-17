@@ -26,7 +26,11 @@
 		\version    $Revision$
 */
 
+define('DOL_DOCUMENT_ROOT','../');
+
 require_once('../translate.class.php');
+require_once('../lib/functions.inc.php');
+
 
 
 // Forcage du parametrage PHP magic_quots_gpc (Sinon il faudrait a chaque POST, conditionner
@@ -106,7 +110,7 @@ function pFooter($nonext=0,$setuplang='')
 }
 
 
-function dolibarr_syslog($message)
+function xxdolibarr_syslog($message)
 {
     // Les fonctions syslog ne sont pas toujours install豠ou autoris褳 chez les h补rgeurs
     if (function_exists("define_syslog_variables"))
@@ -128,7 +132,7 @@ function dolibarr_syslog($message)
 		\param	    versionarray2       Tableau de version (vermajeur,vermineur,autre)
         \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
 */
-function versioncompare($versionarray1,$versionarray2)
+function aaversioncompare($versionarray1,$versionarray2)
 {
     $ret=0;
     $i=0;

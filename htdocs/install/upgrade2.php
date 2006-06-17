@@ -21,12 +21,15 @@
  */
 
 /**
-	\file       htdocs/install/paiementfourn_newstructure.php
-	\brief      Migre les données de l'ancienne table des paiements fournisseur vers la nouvelle structure
+	\file       htdocs/install/upgrade2.php
+	\brief      Effectue la migration de données diverses
 	\version    $Revision$
 */
 
 include_once('./inc.php');
+include_once('../facture.class.php');
+include_once('../propal.class.php');
+include_once('../commande/commande.class.php');
 
 $grant_query='';
 $etape = 2;
@@ -163,8 +166,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
         migrate_modeles($db,$langs,$conf);
 
+/*
+		migrate_price_commande($db,$langs,$conf);
+
+		migrate_price_propal($db,$langs,$conf);
+
 		migrate_price_facture($db,$langs,$conf);
-		
+*/		
 
     	// On commit dans tous les cas.
     	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -358,7 +366,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     $sql="update llx_contrat set date_contrat=tms where date_contrat is null";
     $resql = $db->query($sql);
     if (! $resql) dolibarr_print_error($db);
-    if ($db->affected_rows() > 0) 
+    if ($db->affected_rows($resql) > 0) 
 	 	print $langs->trans('MigrationContractsEmptyDatesUpdateSuccess')."<br>\n";
     else
 	 	print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
@@ -366,7 +374,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     $sql="update llx_contrat set datec=tms where datec is null";
     $resql = $db->query($sql);
     if (! $resql) dolibarr_print_error($db);
-    if ($db->affected_rows() > 0) 
+    if ($db->affected_rows($resql) > 0) 
 	 	print $langs->trans('MigrationContractsEmptyCreationDatesUpdateSuccess')."<br>\n";
     else
 	 	print $langs->trans('MigrationContractsEmptyCreationDatesNothingToUpdate')."<br>\n";
@@ -593,24 +601,38 @@ function migrate_price_facture($db,$langs,$conf)
 {
     if ($conf->facture->enabled)
     {
+	    print '<br>';
+	    print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
+
+		// TODO Ajout requete remplissage champ total_ht, totam_tva, total_ttc
+		// dans table det
+
+
+
+	
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
-		if ($db->query($sql))
+		$sql.= " WHERE total_ttc = 0 AND remise_percent != 100";
+		$resql=$db->query($sql);
+		if ($resql)
 		{
-			$num = $db->num_rows();
+			$num = $db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $db->fetch_row($i);
+				$obj = $db->fetch_object($resql);
+
 				$facture = new Facture($db);
-				if ( $facture->fetch($row[0]) )
+				$facture->id=$obj->rowid;
+
+				if ( $facture->fetch($facture->id) >= 0)
 				{
-					if ( $facture->update_price($row[0]) > 0 )
+					if ( $facture->update_price($facture->id) > 0 )
 					{
-						print "(ok $row[0]) ";
+						print ". ";
 					}
 					else
 					{
-						print "Erreur #2";
+						print "Error id=".$facture->id;
 						$err++;
 					}
 				}
@@ -628,8 +650,130 @@ function migrate_price_facture($db,$langs,$conf)
 			print "Erreur #1";
 			$err++;
 		}
+
+		print '<br>';
 	}
 }
+
+
+/*
+ * Mise a jour des totaux propal
+ */
+function migrate_price_propal($db,$langs,$conf)
+{
+    if ($conf->propal->enabled)
+    {
+	    print '<br>';
+	    print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
+
+		// TODO Ajout requete remplissage champ total_ht, totam_tva, total_ttc
+		// dans table det
+
+	
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal";
+		$sql.= " WHERE total = 0 AND remise_percent != 100";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$propal = new Propal($db);
+				$propal->id=$obj->rowid;
+				if ( $propal->fetch($propal->id) >= 0 )
+				{
+					if ( $propal->update_price($propal->id) > 0 )
+					{
+						print ". ";
+					}
+					else
+					{
+						print "Error id=".$propal->id;
+						$err++;
+					}
+				}
+				else
+				{
+					print "Erreur #3";
+					$err++;
+				}
+				$i++;
+			}
+			$db->free();
+		}
+		else
+		{
+			print "Erreur #1";
+			$err++;
+		}
+
+		print '<br>';
+	}
+}
+
+
+/*
+ * Mise a jour des totaux commande
+ */
+function migrate_price_commande($db,$langs,$conf)
+{
+    if ($conf->facture->enabled)
+    {
+	    print '<br>';
+	    print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
+
+		// TODO Ajout requete remplissage champ total_ht, totam_tva, total_ttc
+		// dans table det
+
+
+	
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " WHERE total_ttc = 0 AND remise_percent != 100";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$commande = new Commande($db);
+				$commande->id = $obj->rowid;
+				if ( $commande->fetch($commande->id) >= 0 )
+				{
+					if ( $commande->update_price($commande->id) > 0 )
+					{
+						print ". ";
+					}
+					else
+					{
+						print "Error id=".$commande->id;
+						$err++;
+					}
+				}
+				else
+				{
+					print "Erreur #3";
+					$err++;
+				}
+				$i++;
+			}
+			$db->free();
+		}
+		else
+		{
+			print "Erreur #1";
+			$err++;
+		}
+
+		print '<br>';
+	}
+}
+
 
 /*
  * Mise a jour des modeles selectionnes
