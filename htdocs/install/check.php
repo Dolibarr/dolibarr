@@ -40,6 +40,9 @@ $langs->setDefaultLang($setuplang);
 $langs->load("install");
 
 
+dolibarr_install_syslog("Dolibarr install/upgrade process started");
+
+
 pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
 
 print $langs->trans("InstallEasy")."<br>";

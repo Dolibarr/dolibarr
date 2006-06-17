@@ -326,20 +326,27 @@ class Commande
 		// Nettoyage parametres
 		$this->brouillon = 1;		// On positionne en mode brouillon la commande
 
+		dolibarr_syslog("Commande.class.php::create");
+
 		// Vérification paramètres
 		if ($this->source < 0)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
+			dolibarr_syslog("Commande.class.php::create ".$this->error);
 			return -1;
 		}
 		if (! $remise) $remise=0;
 		if (! $this->projetid) $this->projetid = 0;
 
-		dolibarr_syslog("Commande.class.php::create");
-
 		$soc = new Societe($this->db);
-		$soc->fetch($this->socidp);
-
+		$result=$soc->fetch($this->soc_id);
+		if ($result < 0)
+		{
+			$this->error="Failed to fetch company";
+			dolibarr_syslog("Commande.class.php::create ".$this->error);
+			return -2;
+		}
+			
         $this->db->begin();
 	
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
@@ -356,6 +363,8 @@ class Commande
 		$sql.= " '".$this->remise_absolue."',";
 		$sql.= " '".$this->remise_percent."')";
 
+		dolibarr_syslog("Commande.class.php::create sql=".$sql);
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -407,10 +416,12 @@ class Commande
 						$this->db->query($sql);
 					}
 
+			        $this->db->commit();
 					return $this->id;
 				}
 				else
 				{
+			        $this->db->rollback();
 					return -1;
 				}
 			}
@@ -418,7 +429,8 @@ class Commande
 		else
 		{
 			dolibarr_print_error($this->db);
-			return 0;
+	        $this->db->rollback();
+			return -1;
 		}
 	}
 
@@ -441,7 +453,7 @@ class Commande
      */
     function addline($commandeid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
-    	dolibarr_syslog("commande.class.php::addline $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+    	dolibarr_syslog("commande.class.php::addline this->id=$this->id, $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         if ($this->statut == 0)
@@ -676,10 +688,10 @@ class Commande
 		}
 	}
 
-	/**
-	* Lit une commande
-	*
-	*/
+    /**
+     *    \brief      Recupère de la base les caractéristiques d'une commande
+     *    \param      rowid       id de la commande à récupérer
+     */
 	function fetch($id)
 	{
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement,';
@@ -687,157 +699,168 @@ class Commande
 		$sql.= ' c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee, c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' WHERE c.rowid = '.$id;
-
+	
+		dolibarr_syslog("Commande::fetch sql=$sql");
+	
 		$result = $this->db->query($sql) ;
-		if ( $result )
+		if ($result)
 		{
 			$obj = $this->db->fetch_object($result);
-			$this->id                   = $obj->rowid;
-			$this->ref                  = $obj->ref;
-			$this->ref_client           = $obj->ref_client;
-			$this->soc_id               = $obj->fk_soc;
-			$this->socidp               = $obj->fk_soc;
-			$this->statut               = $obj->fk_statut;
-			$this->user_author_id       = $obj->fk_user_author;
-			$this->total_ht             = $obj->total_ht;
-			$this->total_tva            = $obj->tva;
-			$this->total_ttc            = $obj->total_ttc;
-			$this->date                 = $obj->date_commande;
-			$this->remise               = $obj->remise;
-			$this->remise_percent       = $obj->remise_percent;
-			$this->remise_absolue       = $obj->remise_absolue;
-			$this->source               = $obj->source;
-			$this->facturee             = $obj->facturee;
-			$this->note                 = $obj->note;
-			$this->note_public          = $obj->note_public;
-			$this->projet_id            = $obj->fk_projet;
-			$this->modelpdf             = $obj->model_pdf;
-			$this->cond_reglement_id    = $obj->fk_cond_reglement;
-			$this->mode_reglement_id    = $obj->fk_mode_reglement;
-			$this->date_livraison       = $obj->date_livraison;
-			$this->adresse_livraison_id = $obj->fk_adresse_livraison;
-			
-			$this->db->free();
-			
-			if ($this->cond_reglement_id)
-      {
-              $sql = "SELECT rowid, libelle, code";
-              $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
-              $sql.= " WHERE rowid = ".$this->cond_reglement_id;
-                   
-              $resqlcond = $this->db->query($sql);
-                   
-              if ($resqlcond)
-              {
-                 $objc = $this->db->fetch_object($resqlcond);
-                 $this->cond_reglement      = $objc->libelle;
-                 $this->cond_reglement_code = $objc->code;
-              }
-      }
-      
-      if ($this->user_author_id)
-      {
-             $sql = "SELECT name, firstname";
-             $sql.= " FROM ".MAIN_DB_PREFIX."user";
-             $sql.= " WHERE rowid = ".$this->user_author_id;
-                	
-             $resqluser = $this->db->query($sql);
-                	
-             if ($resqluser)
-             {
-                $obju = $this->db->fetch_object($resqluser);
-                $this->user_author_name      = $obju->name;
-                $this->user_author_firstname = $obju->firstname;
-             }
-      }
-			
-			if ($this->statut == 0)
-				$this->brouillon = 1;
-			// exp pdf -----------
-			$this->lignes = array();
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.coef,';
-			$sql.= ' p.label, p.description as product_desc, p.ref, p.fk_product_type, p.rowid as prodid';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
-			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
-			$sql.= ' WHERE l.fk_commande = '.$this->id;
-			$sql.= ' ORDER BY l.rang';
-			$result = $this->db->query($sql);
-                if ($result)
-                {
-                    $num = $this->db->num_rows($result);
-                    $i = 0;
-    
-                    while ($i < $num)
-                    {
-                        $objp                  = $this->db->fetch_object($result);
-    
-                        $ligne                 = new CommandeLigne($this->db);
-
-                        $ligne->desc           = $objp->description;  // Description ligne
-                        $ligne->qty            = $objp->qty;
-                        $ligne->tva_tx         = $objp->tva_tx;
-                        $ligne->subprice       = $objp->subprice;
-                        $ligne->remise_percent = $objp->remise_percent;
-                        $ligne->price          = $objp->price;
-                        $ligne->product_id     = $objp->fk_product;
-                        $ligne->coef           = $objp->coef;
-
-                        $ligne->libelle        = $objp->label;        // Label produit
-                        $ligne->product_desc   = $objp->product_desc; // Description produit
-                        $ligne->ref            = $objp->ref;
-    
-                        $this->lignes[$i]      = $ligne;
-                        //dolibarr_syslog("1 ".$ligne->desc);
-                        //dolibarr_syslog("2 ".$ligne->product_desc);
-                        $i++;
-                    }
-                    $this->db->free($result);
-                }
-                else
-                {
-                    dolibarr_syslog("Propal::Fetch Erreur lecture des produits");
-                    return -1;
-                }
-			
-			
-			// -------- exp pdf //
-			
-			/*
-			* Propale associée
-			*/
-			$sql = 'SELECT cp.fk_propale';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'co_pr as cp';
-			$sql .= ' WHERE cp.fk_commande = '.$this->id;
-			if ($this->db->query($sql) )
+			if ($obj)
 			{
-				if ($this->db->num_rows())
+				$this->id                   = $obj->rowid;
+				$this->ref                  = $obj->ref;
+				$this->ref_client           = $obj->ref_client;
+				$this->soc_id               = $obj->fk_soc;
+				$this->socidp               = $obj->fk_soc;
+				$this->statut               = $obj->fk_statut;
+				$this->user_author_id       = $obj->fk_user_author;
+				$this->total_ht             = $obj->total_ht;
+				$this->total_tva            = $obj->tva;
+				$this->total_ttc            = $obj->total_ttc;
+				$this->date                 = $obj->date_commande;
+				$this->remise               = $obj->remise;
+				$this->remise_percent       = $obj->remise_percent;
+				$this->remise_absolue       = $obj->remise_absolue;
+				$this->source               = $obj->source;
+				$this->facturee             = $obj->facturee;
+				$this->note                 = $obj->note;
+				$this->note_public          = $obj->note_public;
+				$this->projet_id            = $obj->fk_projet;
+				$this->modelpdf             = $obj->model_pdf;
+				$this->cond_reglement_id    = $obj->fk_cond_reglement;
+				$this->mode_reglement_id    = $obj->fk_mode_reglement;
+				$this->date_livraison       = $obj->date_livraison;
+				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
+		
+				$this->db->free();
+		
+				if ($this->cond_reglement_id)
 				{
-					$obj = $this->db->fetch_object();
-					$this->propale_id = $obj->fk_propale;
+					$sql = "SELECT rowid, libelle, code";
+					$sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
+					$sql.= " WHERE rowid = ".$this->cond_reglement_id;
+		
+					$resqlcond = $this->db->query($sql);
+		
+					if ($resqlcond)
+					{
+						$objc = $this->db->fetch_object($resqlcond);
+						$this->cond_reglement      = $objc->libelle;
+						$this->cond_reglement_code = $objc->code;
+					}
 				}
-				return 1;
+		
+				if ($this->user_author_id)
+				{
+					$sql = "SELECT name, firstname";
+					$sql.= " FROM ".MAIN_DB_PREFIX."user";
+					$sql.= " WHERE rowid = ".$this->user_author_id;
+		
+					$resqluser = $this->db->query($sql);
+		
+					if ($resqluser)
+					{
+						$obju = $this->db->fetch_object($resqluser);
+						$this->user_author_name      = $obju->name;
+						$this->user_author_firstname = $obju->firstname;
+					}
+				}
+		
+				if ($this->statut == 0) $this->brouillon = 1;
+	
+				// \todo Utiliser la classe CommandeLigne au lieu de ce code
+				$this->lignes = array();
+				$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.coef,';
+				$sql.= ' p.label, p.description as product_desc, p.ref, p.fk_product_type, p.rowid as prodid';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+				$sql.= ' WHERE l.fk_commande = '.$this->id;
+				$sql.= ' ORDER BY l.rang';
+				$result = $this->db->query($sql);
+				if ($result)
+				{
+					$num = $this->db->num_rows($result);
+					$i = 0;
+		
+					while ($i < $num)
+					{
+						$objp                  = $this->db->fetch_object($result);
+		
+						$ligne                 = new CommandeLigne($this->db);
+		
+						$ligne->desc           = $objp->description;  // Description ligne
+						$ligne->qty            = $objp->qty;
+						$ligne->tva_tx         = $objp->tva_tx;
+						$ligne->subprice       = $objp->subprice;
+						$ligne->remise_percent = $objp->remise_percent;
+						$ligne->price          = $objp->price;
+						$ligne->product_id     = $objp->fk_product;
+						$ligne->coef           = $objp->coef;
+		
+						$ligne->libelle        = $objp->label;        // Label produit
+						$ligne->product_desc   = $objp->product_desc; // Description produit
+						$ligne->ref            = $objp->ref;
+		
+						$this->lignes[$i]      = $ligne;
+						//dolibarr_syslog("1 ".$ligne->desc);
+						//dolibarr_syslog("2 ".$ligne->product_desc);
+						$i++;
+					}
+					$this->db->free($result);
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					dolibarr_syslog("Commande::Fetch Erreur sql=$sql, ".$this->error);
+					return -1;
+				}
+		
+		
+				// -------- exp pdf //
+		
+				/*
+				* Propale associée
+				*/
+				$sql = 'SELECT cp.fk_propale';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'co_pr as cp';
+				$sql .= ' WHERE cp.fk_commande = '.$this->id;
+				if ($this->db->query($sql))
+				{
+					if ($this->db->num_rows())
+					{
+						$obj = $this->db->fetch_object();
+						$this->propale_id = $obj->fk_propale;
+					}
+					return 1;
+				}
+				else
+				{
+					dolibarr_print_error($this->db);
+					return -1;
+				}
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
-				return -1;
+				$this->error="Order not found";
+				return -2;	
 			}
 		}
 		else
 		{
 			dolibarr_print_error($this->db);
-			return -1;
+			return -3;
 		}
 	}
+
 	
-	  /*
-   *
-   *
-   *
-   */
-	 
-  function set_pdf_model($user, $modelpdf)
-   {
+	/*
+	*
+	*
+	*
+	*/
+	function set_pdf_model($user, $modelpdf)
+	{
       if ($user->rights->commande->creer)
 	     {
 
@@ -2103,10 +2126,54 @@ class CommandeLigne
 	var $product_desc;  // Description produit
 	var $ref;			// Reference produit
 
-	function CommandeLigne()
+	/**
+	 *      \brief     Constructeur d'objets ligne de commande
+	 *      \param     DB      handler d'accès base de donnée
+	 */
+	function CommandeLigne($DB)
 	{
-		
+		$this->db= $DB ;
 	}
+
+	/**
+	 *      \brief     Recupére l'objet ligne de commande
+	 *      \param     rowid           id de la ligne de commande
+	 */
+	function fetch($rowid)
+	{
+		$sql = 'SELECT fk_commande, fk_product, description, price, qty, rowid, tva_tx,';
+		$sql.= ' label,';
+		$sql.= ' remise, remise_percent, fk_remise_except, subprice,';
+		$sql.= ' info_bits, total_ht, total_tva, total_ttc, coef, rang';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet WHERE rowid = '.$rowid;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+			$this->fk_propal      = $objp->fk_propal;
+			$this->label          = $objp->label;
+			$this->desc           = $objp->description;
+			$this->qty            = $objp->qty;
+			$this->price          = $objp->price;
+			$this->subprice       = $objp->subprice;
+			$this->tva_taux       = $objp->tva_taux;
+			$this->remise         = $objp->remise;
+			$this->remise_percent = $objp->remise_percent;
+			$this->fk_remise_except = $objp->fk_remise_except;
+			$this->produit_id     = $objp->fk_product;
+			$this->info_bits      = $objp->info_bits;
+			$this->total_ht       = $objp->total_ht;
+			$this->total_tva      = $objp->total_tva;
+			$this->total_ttc      = $objp->total_ttc;
+			$this->coef           = $objp->coef;
+			$this->rang           = $objp->rang;
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}    
 }
 
 ?>

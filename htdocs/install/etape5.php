@@ -36,6 +36,10 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
+
+dolibarr_install_syslog("Entering etape5.php page");
+
+
 $success=0;
 
 if (file_exists($conffile))
@@ -189,6 +193,9 @@ if ($_POST["action"] == "upgrade")
 print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup">';
 print $langs->trans("GoToSetupArea");
 print '</a>';
+
+
+dolibarr_install_syslog("Dolibarr install/setup finished");
 
 
 pFooter(1,$setuplang);

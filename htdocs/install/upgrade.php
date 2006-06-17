@@ -48,6 +48,9 @@ $langs->load("admin");
 $langs->load("install");
 
 
+dolibarr_install_syslog("Entering upgrade.php page");
+
+
 pHeader($langs->trans("DatabaseMigration"),"upgrade2","upgrade");
 
 
@@ -92,18 +95,20 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
     {
         print "<tr><td nowrap>";
         print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+		dolibarr_install_syslog($langs->trans("ServerConnection")." : $dolibarr_main_db_host ".$langs->trans("OK"));
         $ok = 1 ;
     }
     else
     {
-        print "<tr><td>Erreur lors de la création de : $dolibarr_main_db_name</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+        print "<tr><td>".$langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+		dolibarr_install_syslog($langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name));
     }
 
     if ($ok)
     {
         if($db->database_selected == 1)
         {
-            dolibarr_syslog("Connexion réussie à la base : $dolibarr_main_db_name");
+            dolibarr_install_syslog("Database connection successfull : $dolibarr_main_db_name");
         }
         else
         {
@@ -118,6 +123,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
         $versionarray=$db->getVersionArray();
         print '<tr><td>'.$langs->trans("DatabaseVersion").'</td>';
         print '<td align="right">'.$version.'</td></tr>';
+		dolibarr_install_syslog($langs->trans("DatabaseVersion")." : $version");
         //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
     }
 
@@ -189,9 +195,9 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
                 {
 					if ($sql)
 					{
-						// Ajout trace sur requete (eventuellement à commenter
-						// si beaucoup de requetes)
+						// Ajout trace sur requete (eventuellement à commenter si beaucoup de requetes)
 						print('<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$sql."'</td></tr>\n");
+						dolibarr_install_syslog($langs->trans("Request").' '.($i+1)." sql='".$sql);
 
     	                if ($db->query($sql))
         	            {
@@ -219,6 +225,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	                            print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1).'</td>';
 	                            print '<td valign="top">'.$langs->trans("Error")." ".$db->errno()." ".$sql."<br>".$db->error()."</td>";
 	                            print '</tr>';
+								dolibarr_install_syslog($langs->trans("Request").' '.($i+1)." ".$langs->trans("Error")." ".$db->errno()." ".$sql."<br>".$db->error());
 	                            $error++;
 	                        }
 	                    }
@@ -234,9 +241,15 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 
         if ($error == 0)
         {
-            print '<tr><td>';
-            print $langs->trans("ProcessMigrateScript").'</td><td align="right">'.$langs->trans("OK").'</td></tr>';
+            print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+            print '<td align="right">'.$langs->trans("OK").'</td></tr>';
             $ok = 1;
+        }
+        else
+        {
+            print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+            print '<td align="right"><div class="error">'.$langs->trans("KO").'</div></td></tr>';
+            $ok = 0;
         }
     }
 

@@ -2413,25 +2413,28 @@ class FactureLigne
 	/**
 	 *      \brief     Recupére l'objet ligne de facture
 	 *      \param     rowid           id de la ligne de facture
-	 *      \param     societe_id      id de la societe
 	 */
-	function fetch($rowid, $societe_id=0)
+	function fetch($rowid)
 	{
-		$sql = 'SELECT fk_product, description, price, qty, rowid, tva_taux, remise, remise_percent,';
-		$sql.= ' subprice, '.$this->db->pdate('date_start').' as date_start,'.$this->db->pdate('date_end').' as date_end,';
-		$sql.= ' info_bits, total_ht, total_tva, total_ttc';
+		$sql = 'SELECT fk_facture, fk_product, description, price, qty, rowid, tva_taux,';
+		$sql.= ' remise, remise_percent, fk_remise_except, subprice,';
+		$sql.= ' '.$this->db->pdate('date_start').' as date_start,'.$this->db->pdate('date_end').' as date_end,';
+		$sql.= ' info_bits, total_ht, total_tva, total_ttc, rang,';
+		$sql.= ' fk_code_ventilation, fk_export_compta';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$objp = $this->db->fetch_object($result);
-			$this->desc           = stripslashes($objp->description);
+			$this->fk_facture     = $objp->fk_facture;
+			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
 			$this->price          = $objp->price;
 			$this->subprice       = $objp->subprice;
 			$this->tva_taux       = $objp->tva_taux;
 			$this->remise         = $objp->remise;
 			$this->remise_percent = $objp->remise_percent;
+			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->produit_id     = $objp->fk_product;
 			$this->date_start     = $objp->date_start;
 			$this->date_end       = $objp->date_end;
@@ -2439,6 +2442,9 @@ class FactureLigne
 			$this->total_ht       = $objp->total_ht;
 			$this->total_tva      = $objp->total_tva;
 			$this->total_ttc      = $objp->total_ttc;
+			$this->fk_code_ventilation = $objp->fk_code_ventilation;
+			$this->fk_export_compta    = $objp->fk_export_compta;
+			$this->rang           = $objp->rang;
 			$this->db->free($result);
 		}
 		else

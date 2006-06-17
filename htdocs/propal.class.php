@@ -2325,9 +2325,53 @@ class PropaleLigne
     var $product_desc;  // Description produit
     var $ref;			// Reference produit
 
-    function PropaleLigne()
-    {
-    }
+
+	/**
+	 *      \brief     Constructeur d'objets ligne de propal
+	 *      \param     DB      handler d'accès base de donnée
+	 */
+	function PropaleLigne($DB)
+	{
+		$this->db= $DB ;
+	}
+
+	/**
+	 *      \brief     Recupére l'objet ligne de propal
+	 *      \param     rowid           id de la ligne de propal
+	 */
+	function fetch($rowid)
+	{
+		$sql = 'SELECT fk_propal, fk_product, description, price, qty, rowid, tva_tx,';
+		$sql.= ' remise, remise_percent, fk_remise_except, subprice,';
+		$sql.= ' info_bits, total_ht, total_tva, total_ttc, coef, rang';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet WHERE rowid = '.$rowid;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+			$this->fk_propal      = $objp->fk_propal;
+			$this->desc           = $objp->description;
+			$this->qty            = $objp->qty;
+			$this->price          = $objp->price;
+			$this->subprice       = $objp->subprice;
+			$this->tva_taux       = $objp->tva_taux;
+			$this->remise         = $objp->remise;
+			$this->remise_percent = $objp->remise_percent;
+			$this->fk_remise_except = $objp->fk_remise_except;
+			$this->produit_id     = $objp->fk_product;
+			$this->info_bits      = $objp->info_bits;
+			$this->total_ht       = $objp->total_ht;
+			$this->total_tva      = $objp->total_tva;
+			$this->total_ttc      = $objp->total_ttc;
+			$this->coef           = $objp->coef;
+			$this->rang           = $objp->rang;
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}    
 }
 
 ?>

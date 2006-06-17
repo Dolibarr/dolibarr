@@ -110,18 +110,17 @@ function pFooter($nonext=0,$setuplang='')
 }
 
 
-function xxdolibarr_syslog($message)
+function dolibarr_install_syslog($message)
 {
-    // Les fonctions syslog ne sont pas toujours install豠ou autoris褳 chez les h补rgeurs
-    if (function_exists("define_syslog_variables"))
-    {
-        // \todo    D財ctiver sous Windows (gros probl笥 m謯ire et faute de protections)
-        //  if (1 == 2) {
-              define_syslog_variables();
-              openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accept矰ar tous les php
-              syslog(LOG_WARNING, $message);
-              closelog();
-        //  }
+    // Ajout user a la log
+    $login='install';
+    $message=sprintf("%-8s",$login)." ".$message;
+
+	$fileinstall="/tmp/dolibarr_install.log";
+    $file=@fopen($fileinstall,"a+");
+    if ($file) {
+        fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
+        fclose($file);
     }
 }
 

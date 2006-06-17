@@ -202,6 +202,11 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 	{
 		$commande = new Commande($db);
 		$ret=$commande->fetch($_POST['id']);
+		if ($ret < 0)
+		{
+			dolibarr_print_error($db,$commande->error);
+			exit;
+		}
 
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
