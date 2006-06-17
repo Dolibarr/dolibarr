@@ -91,7 +91,7 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             $contact = new Contact($db);
             $contact->socid = $soc->id;
             $contact->name = "NomFamille".$c;
-		    $prenoms = array("Joe","Marc","Steve","Laurent","Nico");
+		    $prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
             $contact->firstname = $prenoms[rand(0,sizeof($prenoms)-1)];
             if ( $contact->create($user) )
             {
