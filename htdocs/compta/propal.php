@@ -42,7 +42,7 @@ if (!$user->rights->propale->lire)
 
 $langs->load('companies');
 $langs->load('compta');
-
+$langs->load('orders');
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
@@ -146,7 +146,7 @@ if ($_GET["propalid"] > 0)
 	print '</td>';
 	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td colspan="5">';
 	print $propal->ref_client;
 	print '</td>';
 	print '</tr>';
