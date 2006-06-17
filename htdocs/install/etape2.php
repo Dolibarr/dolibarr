@@ -114,7 +114,7 @@ if ($_POST["action"] == "set")
         $version=$db->getVersion();
         $versionarray=$db->getVersionArray();
         print '<tr><td>'.$langs->trans("DatabaseVersion").'</td>';
-        print '<td align="right">'.$version.'</td></tr>';
+        print '<td>'.$version.'</td></tr>';
         //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
     }
 
