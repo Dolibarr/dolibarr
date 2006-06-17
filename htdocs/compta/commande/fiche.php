@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -178,7 +178,7 @@ if ($_GET["id"] > 0)
 			}
 			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-      print nl2br($commande->note_public);			
+      		print nl2br($commande->note_public);			
 			print '</td>';
 			print '</tr>';
 			
@@ -291,7 +291,7 @@ if ($_GET["id"] > 0)
         $sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
         $sql.= " WHERE l.fk_commande = ".$commande->id;
-        $sql.= " ORDER BY l.rowid";
+        $sql.= " ORDER BY l.rang";
 
         $resql = $db->query($sql);
         if ($resql)
