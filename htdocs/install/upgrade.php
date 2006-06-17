@@ -103,7 +103,6 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
     {
         if($db->database_selected == 1)
         {
-
             dolibarr_syslog("Connexion réussie à la base : $dolibarr_main_db_name");
         }
         else
@@ -111,6 +110,17 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
             $ok = 0 ;
         }
     }
+
+    // Affiche version
+    if ($ok)
+    {
+        $version=$db->getVersion();
+        $versionarray=$db->getVersionArray();
+        print '<tr><td>'.$langs->trans("DatabaseVersion").'</td>';
+        print '<td align="right">'.$version.'</td></tr>';
+        //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+    }
+
 
 
     /***************************************************************************************
@@ -141,9 +151,27 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
                     while (!feof ($fp))
                     {
                         $buf = fgets($fp, 4096);
-                        $buf = ereg_replace('--(.*)','',$buf);  // Delete SQL comments
-                        //print $buf.'<br>';
-                        $buffer .= $buf;
+
+                        // Cas special de lignes autorisees pour certaines versions uniquement
+                        if (eregi('^-- V([0-9\.]+)',$buf,$reg))
+                        {
+                            $versioncommande=split('\.',$reg[1]);
+							//print var_dump($versioncommande);
+							//print var_dump($versionarray);
+                            if (sizeof($versioncommande) && sizeof($versionarray)
+                            	&& versioncompare($versioncommande,$versionarray) <= 0)
+                            {
+                            	// Version qualified, delete SQL comments
+                                $buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
+                                //print "Ligne $i qualifiée par version: ".$buf.'<br>';
+                            }                      
+                        }
+
+                        // Ajout ligne si non commentaire
+                        if (! eregi('^--',$buf)) $buffer .= $buf;
+
+//                        print $buf.'<br>';
+
                         if (eregi(';',$buffer))
                         {
                             // Found new request

@@ -207,6 +207,16 @@ class DoliDb
         
         
     /**
+            \brief          Renvoie la version du serveur dans un tableau
+            \return	        array  		Tableau de chaque niveau de version
+    */
+    function getVersionArray()
+    {
+        return split('\.',$this->getVersion());
+    }
+        
+        
+    /**
             \brief          Renvoie l'id de la connection
             \return	        string      Id connection
     */

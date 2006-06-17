@@ -57,7 +57,7 @@ function versiontostring($versionarray)
 		\brief      Compare 2 versions
 		\param	    versionarray1       Tableau de version (vermajeur,vermineur,autre)
 		\param	    versionarray2       Tableau de version (vermajeur,vermineur,autre)
-        \return     int                 <0 si versionarray1>versionarray2, 0 si =, >0 si versionarray1>versionarray2
+        \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
 */
 function versioncompare($versionarray1,$versionarray2)
 {

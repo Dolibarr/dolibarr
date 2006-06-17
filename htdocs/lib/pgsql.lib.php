@@ -177,6 +177,17 @@ class DoliDb
     {
         return '?';
     }
+
+
+    /**
+            \brief          Renvoie la version du serveur dans un tableau
+            \return	        array  		Tableau de chaque niveau de version
+    */
+    function getVersionArray()
+    {
+        return split('\.',$this->getVersion());
+    }
+        
         
         
     /**

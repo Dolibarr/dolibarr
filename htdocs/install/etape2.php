@@ -112,8 +112,10 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         $version=$db->getVersion();
-        print '<tr><td>';
-        print $langs->trans("DatabaseVersion").'</td><td>'.$version.'</td></tr>';
+        $versionarray=$db->getVersionArray();
+        print '<tr><td>'.$langs->trans("DatabaseVersion").'</td>';
+        print '<td align="right">'.$version.'</td></tr>';
+        //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
     }
 
     /**************************************************************************************
@@ -213,12 +215,17 @@ if ($_POST["action"] == "set")
                         $buf = fgets($fp, 4096);
 
                         // Cas special de lignes autorisees pour certaines versions uniquement
-                        if (eregi('^-- V([0-9]+)',$buf,$reg))
+                        if (eregi('^-- V([0-9\.]+)',$buf,$reg))
                         {
-                            if ($reg[1] && $reg[1] <= $version)
+                            $versioncommande=split('\.',$reg[1]);
+							//print var_dump($versioncommande);
+							//print var_dump($versionarray);
+                            if (sizeof($versioncommande) && sizeof($versionarray)
+                            	&& versioncompare($versioncommande,$versionarray) <= 0)
                             {
-                                $buf=eregi_replace('^-- V([0-9]+)','',$buf);
-                                //print $buf.'<br>';
+                            	// Version qualified, delete SQL comments
+                                $buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
+                                //print "Ligne $i qualifiée par version: ".$buf.'<br>';
                             }                      
                         }
 

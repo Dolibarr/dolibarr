@@ -26,6 +26,9 @@
 		\version    $Revision$
 */
 
+require_once('../translate.class.php');
+
+
 // Forcage du parametrage PHP magic_quots_gpc (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
 // En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
@@ -45,9 +48,8 @@ if (get_magic_quotes_gpc())
 
 $docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 $conffile = "../conf/conf.php";
-// Defini objet langs
-require_once('../translate.class.php');
 
+// Defini objet langs
 $langs = new Translate('../langs');
 $langs->setDefaultLang('auto');
 $langs->setPhpLang();
@@ -103,6 +105,7 @@ function pFooter($nonext=0,$setuplang='')
     print '</html>';
 }
 
+
 function dolibarr_syslog($message)
 {
     // Les fonctions syslog ne sont pas toujours install豠ou autoris褳 chez les h补rgeurs
@@ -117,4 +120,27 @@ function dolibarr_syslog($message)
         //  }
     }
 }
+
+
+/**
+		\brief      Compare 2 versions
+		\param	    versionarray1       Tableau de version (vermajeur,vermineur,autre)
+		\param	    versionarray2       Tableau de version (vermajeur,vermineur,autre)
+        \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
+*/
+function versioncompare($versionarray1,$versionarray2)
+{
+    $ret=0;
+    $i=0;
+    while ($i < max(sizeof($versionarray1),sizeof($versionarray1)))
+    {
+        $operande1=isset($versionarray1[$i])?$versionarray1[$i]:0;
+        $operande2=isset($versionarray2[$i])?$versionarray2[$i]:0;
+        if ($operande1 < $operande2) { $ret = -1; break; }
+        if ($operande1 > $operande2) { $ret =  1; break; }
+        $i++;
+    }    
+    return $ret;
+}
+
 ?>
