@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**	    \file       htdocs/fichinter/fichinter.class.php
@@ -27,16 +26,18 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 
 
 /**	    \class      Ficheinter
 		\brief      Classe des gestion des fiches interventions
 */
-class Fichinter
+class Fichinter extends CommonObject
 {
     var $id;
     var $db;
+    
     var $socidp;
     var $author;
     var $ref;
@@ -44,6 +45,7 @@ class Fichinter
     var $duree;
     var $note;
     var $projet_id;
+
 
     /**
      *    \brief      Constructeur de la classe

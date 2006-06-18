@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -27,23 +27,26 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
+
 
 /** 
         \class      Expedition
 		\brief      Classe de gestion des expeditions
 */
-class Expedition 
+class Expedition extends CommonObject
 {
-  var $db ;
-  var $id ;
-  var $brouillon;
-  var $entrepot_id;
+	var $db;
+	var $id;
+	var $brouillon;
+	var $entrepot_id;
 
-  /**
-   * Initialisation
-   *
-   */
-  function Expedition($DB)
+
+	/**
+	* Initialisation
+	*
+	*/
+	function Expedition($DB)
     {
       $this->db = $DB;
       $this->lignes = array();

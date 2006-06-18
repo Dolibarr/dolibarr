@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -28,26 +28,28 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
+
 
 /** 
         \class      Livraison
 		\brief      Classe de gestion des bons de livraison
 */
-
-require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
-
-class Livraison 
+class Livraison extends CommonObject
 {
-  var $db ;
-  var $id ;
-  var $brouillon;
-  var $commande_id;
+	var $db;
+	var $id;
+	
+	var $brouillon;
+	var $commande_id;
 
-  /**
-   * Initialisation
-   *
-   */
-  function Livraison($DB)
+
+	/**
+	* Initialisation
+	*
+	*/
+	function Livraison($DB)
     {
       $this->db = $DB;
       $this->lignes = array();
