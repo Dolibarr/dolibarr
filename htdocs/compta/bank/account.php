@@ -404,21 +404,29 @@ function _print_lines($db,$result,$sql,$acct)
             foreach($links as $key=>$val)
             {
                 print ' - ';
-                print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
                 if ($links[$key]['type']=='payment') {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
                     //print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("Payment");
+	                print '</a>';
                 }
                 else if ($links[$key]['type']=='payment_supplier') {
+                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
                     //print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("Payment");
+                	print '</a>';
                 }
                 else if ($links[$key]['type']=='company') {
+                    print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$links[$key]['url_id'].'">';
                     //print img_object($langs->trans('ShowCustomer'),'company').' ';
                     print $links[$key]['label'];
+                	print '</a>';
                 }
-                else print $links[$key]['label'];
-                print '</a>';
+                else {
+    			    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                   	print $links[$key]['label'];
+                	print '</a>';
+                }
             }
             print '</td>';
     
