@@ -65,21 +65,6 @@ function llxHeader($head = "", $urlp = "", $title="")
 		}
 	}
 	
-	if ($conf->boutique->enabled)
-	{
-		$menu->add(DOL_URL_ROOT."/product/osc-liste.php", "Osc");
-		$menu->add_submenu(DOL_URL_ROOT."/product/osc-liste.php?reqstock=epuise", "Produits Epuisés");
-	
-		$menu->add(DOL_URL_ROOT."/product/osc-reviews.php", $langs->trans("Criticals"));
-	
-		$menu->add_submenu(DOL_URL_ROOT."/product/osc-productsbyreviews.php", "Meilleurs produits");
-	
-		$menu->add(DOL_URL_ROOT."/product/album/", "Albums");
-		$menu->add(DOL_URL_ROOT."/product/groupart/", "Groupes/Artistes");
-	
-		$menu->add(DOL_URL_ROOT."/product/categorie/", $langs->trans("Categories"));
-	}
-	
 	if ($conf->fournisseur->enabled) {
 		$langs->load("suppliers");
 		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
