@@ -104,7 +104,7 @@ class box_propales extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
 
                     $this->info_box_contents[$i][1] = array('align' => 'left',
-                    'text' => $objp->nom,
+                    'text' => dolibarr_trunc($objp->nom,40),
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
                     
                     $this->info_box_contents[$i][2] = array(
