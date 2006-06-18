@@ -32,111 +32,115 @@ include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 class box_comptes extends ModeleBoxes {
 
-		var $boxcode="currentaccounts";
-		var $boximg="object_bill";
-		var $boxlabel;
- 		var $depends = array("banque");     // Box active si module banque actif
+	var $boxcode="currentaccounts";
+	var $boximg="object_bill";
+	var $boxlabel;
+	var $depends = array("banque");     // Box active si module banque actif
 
-		var $info_box_head = array();
-		var $info_box_contents = array();
+	var $db;
+	var $param;
 
-		/**
-		*      \brief      Constructeur de la classe
-		*/
-		function box_comptes()
+	var $info_box_head = array();
+	var $info_box_contents = array();
+
+
+	/**
+	*      \brief      Constructeur de la classe
+	*/
+	function box_comptes()
+	{
+		global $langs;
+		$langs->load("boxes");
+
+		$this->boxlabel=$langs->trans('BoxCurrentAccounts');
+	}
+
+	/**
+	*      \brief      Charge les données en mémoire pour affichage ultérieur
+	*      \param      $max        Nombre maximum d'enregistrements à charger
+	*/
+	function loadBox($max=5)
+	{
+		global $user, $langs, $db;
+		$langs->load("boxes");
+
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
+
+		if ($user->rights->banque->lire)
 		{
-			global $langs;
-			$langs->load("boxes");
+			$sql  = "SELECT rowid, label, bank, number";
+			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
+			$sql .= " WHERE clos = 0 AND courant = 1";
+			$sql .= " ORDER BY label";
+			$sql .= $db->plimit($max, 0);
 
-			$this->boxlabel=$langs->trans('BoxCurrentAccounts');
-		}
+			$result = $db->query($sql);
 
-		/**
-		*      \brief      Charge les données en mémoire pour affichage ultérieur
-		*      \param      $max        Nombre maximum d'enregistrements à charger
-		*/
-		function loadBox($max=5)
-		{
-			global $user, $langs, $db;
-			$langs->load("boxes");
-
-			$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
-
-			if ($user->rights->banque->lire)
+			if ($result)
 			{
-				$sql  = "SELECT rowid, label, bank, number";
-				$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-				$sql .= " WHERE clos = 0 AND courant = 1";
-				$sql .= " ORDER BY label";
-				$sql .= $db->plimit($max, 0);
+				$num = $db->num_rows($result);
 
-				$result = $db->query($sql);
+				$i = 0;
+				$solde_total = 0;
 
-				if ($result)
+				while ($i < $num)
 				{
-					$num = $db->num_rows($result);
+					$objp = $db->fetch_object($result);
+					$acc = new Account($db);
+					$acc->fetch($objp->rowid);
+					$solde_total += $acc->solde();
 
-					$i = 0;
-					$solde_total = 0;
+					$this->info_box_contents[$i][0] = array('align' => 'left',
+					'logo' => $this->boximg,
+					'text' => stripslashes($objp->label),
+					'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
 
-					while ($i < $num)
-					{
-						$objp = $db->fetch_object($result);
-						$acc = new Account($db);
-						$acc->fetch($objp->rowid);
-						$solde_total += $acc->solde();
-
-						$this->info_box_contents[$i][0] = array('align' => 'left',
-						'logo' => $this->boximg,
-						'text' => stripslashes($objp->label),
-						'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
-
-						$this->info_box_contents[$i][1] = array('align' => 'left',
-						'text' => stripslashes($objp->bank)
-						);
-
-						$this->info_box_contents[$i][2] = array('align' => 'left',
-						'text' => stripslashes($objp->number)
-						);
-
-						$this->info_box_contents[$i][3] = array('align' => 'right',
-						'text' => price( $acc->solde() )
-						);
-
-						$i++;
-					}
-
-                    // Total
-					$this->info_box_contents[$i][-1] = array('class' => 'liste_total');
-					
-					$this->info_box_contents[$i][0] = array('align' => 'right',
-					//'width' => '75%',
-          'colspan' => '4',
-					'class' => 'liste_total',
-					'text' => $langs->trans('Total')
+					$this->info_box_contents[$i][1] = array('align' => 'left',
+					'text' => stripslashes($objp->bank)
 					);
 
-					$this->info_box_contents[$i][1] = array('align' => 'right',
-					'class' => 'liste_total',
-					'text' => price($solde_total)
+					$this->info_box_contents[$i][2] = array('align' => 'left',
+					'text' => stripslashes($objp->number)
 					);
 
+					$this->info_box_contents[$i][3] = array('align' => 'right',
+					'text' => price( $acc->solde() )
+					);
+
+					$i++;
 				}
-				else {
-					dolibarr_print_error($db);
-				}
+
+                // Total
+				$this->info_box_contents[$i][-1] = array('class' => 'liste_total');
+				
+				$this->info_box_contents[$i][0] = array('align' => 'right',
+				//'width' => '75%',
+      			'colspan' => '4',
+				'class' => 'liste_total',
+				'text' => $langs->trans('Total')
+				);
+
+				$this->info_box_contents[$i][1] = array('align' => 'right',
+				'class' => 'liste_total',
+				'text' => price($solde_total)
+				);
+
 			}
 			else {
-				$this->info_box_contents[0][0] = array('align' => 'left',
-				'text' => $langs->trans("ReadPermissionNotAllowed"));
+				dolibarr_print_error($db);
 			}
-
+		}
+		else {
+			$this->info_box_contents[0][0] = array('align' => 'left',
+			'text' => $langs->trans("ReadPermissionNotAllowed"));
 		}
 
-		function showBox()
-		{
-			parent::showBox($this->info_box_head, $this->info_box_contents);
-		}
+	}
+
+	function showBox()
+	{
+		parent::showBox($this->info_box_head, $this->info_box_contents);
+	}
 
 }
 

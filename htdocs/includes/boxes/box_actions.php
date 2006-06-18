@@ -36,6 +36,9 @@ class box_actions extends ModeleBoxes {
     var $boximg="object_action";
     var $boxlabel;
     var $depends = array("action");
+
+	var $db;
+	var $param;
    
     var $info_box_head = array();
     var $info_box_contents = array();

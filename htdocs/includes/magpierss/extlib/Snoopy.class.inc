@@ -4,6 +4,7 @@
 
 Snoopy - the PHP net client
 Author: Monte Ohrt <monte@ispi.net>
+Modification: Laurent Destailleur (See LDR mark to find bug fix)
 Copyright (c): 1999-2000 ispi, all rights reserved
 Version: 1.0
 
@@ -260,7 +261,7 @@ class Snoopy
 		return true;
 	}
 
-	
+
 
 /*======================================================================*\
 	Private functions
@@ -497,7 +498,7 @@ class Snoopy
 				
 		//	if($currentHeader == "\r\n")
 			if(preg_match("/^\r?\n$/", $currentHeader) )
-				break;
+			      break;
 						
 			// if a header begins with Location: or URI:, set the redirect
 			if(preg_match("/^(Location:|URI:)/i",$currentHeader))
@@ -643,9 +644,10 @@ class Snoopy
 		if(!empty($this->user) || !empty($this->pass))	
 			$headers[] = "Authorization: BASIC ".base64_encode($this->user.":".$this->pass);
 			
-		for($curr_header = 0; $curr_header < count($headers); $curr_header++)
+		for($curr_header = 0; $curr_header < count($headers); $curr_header++) {
 			$cmdline_params .= " -H \"".$headers[$curr_header]."\"";
-		
+		}
+			  	                         
 		if(!empty($body))
 			$cmdline_params .= " -d \"$body\"";
 		
@@ -653,10 +655,10 @@ class Snoopy
 			$cmdline_params .= " -m ".$this->read_timeout;
 		
 		$headerfile = uniqid(time());
-
+		
 		# accept self-signed certs
-		$cmdline_params .= " -k";
-		exec($this->curl_path." -D \"/tmp/$headerfile\"".$cmdline_params." ".$URI,$results,$return);
+		$cmdline_params .= " -k"; 
+		exec($this->curl_path." -D \"/tmp/$headerfile\"".escapeshellcmd($cmdline_params)." ".escapeshellcmd($URI),$results,$return);
 		
 		if($return)
 		{
@@ -697,11 +699,11 @@ class Snoopy
 		
 			if(preg_match("|^HTTP/|",$result_headers[$currentHeader]))
 			{
-				$this->response_code = $result_headers[$currentHeader];
+			    $this->response_code = $result_headers[$currentHeader];
 			    if(preg_match("|^HTTP/[^\s]*\s(.*?)\s|",$this->response_code, $match))
 			    {
-					$this->status= $match[1];
-                }
+				$this->status= $match[1];
+                	    }
 			}
 			$this->headers[] = $result_headers[$currentHeader];
 		}

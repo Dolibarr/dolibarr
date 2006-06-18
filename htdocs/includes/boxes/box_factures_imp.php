@@ -38,6 +38,9 @@ class box_factures_imp extends ModeleBoxes {
     var $boxlabel;
     var $depends = array("facture");
 
+	var $db;
+	var $param;
+
     var $info_box_head = array();
     var $info_box_contents = array();
 

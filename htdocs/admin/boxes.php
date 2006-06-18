@@ -193,7 +193,7 @@ if ($resql)
 		$module=eregi_replace('.php$','',$obj->file);
 		include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
 	
-		$box=new $module();
+		$box=new $module($db,$obj->note);
 	
 //		if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
 		if (in_array($obj->rowid, $actives))
@@ -273,7 +273,7 @@ if ($resql)
 	
 		$module=eregi_replace('.php$','',$obj->file);
 		include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
-		$box=new $module();
+		$box=new $module($db,$obj->note);
 	
 		$logo=eregi_replace("^object_","",$box->boximg);
 		print '<tr '.$bc[$var].'>';

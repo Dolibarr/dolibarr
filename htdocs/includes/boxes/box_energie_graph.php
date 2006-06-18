@@ -17,21 +17,24 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 class box_energie_graph extends ModeleBoxes {
 
-  var $boxcode="energie_graph";
-  var $boximg="object_energie";
-  var $boxlabel;
-  
-  var $box_multiple = 1;
-  
-  var $info_box_head = array();
-  var $info_box_contents = array();
+	var $boxcode="energie_graph";
+	var $boximg="object_energie";
+	var $boxlabel;
+	var $depends = array("energie");     // Box active si module energie actif
+
+	var $db;
+	var $param;
+	
+	var $box_multiple = 1;
+	
+	var $info_box_head = array();
+	var $info_box_contents = array();
   
   /**
    *      \brief      Constructeur de la classe

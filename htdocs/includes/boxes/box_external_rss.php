@@ -39,17 +39,23 @@ class box_external_rss extends ModeleBoxes {
     var $boxlabel;
     var $depends = array();
 
+	var $db;
+	var $param;
+	
     var $info_box_head = array();
     var $info_box_contents = array();
 
     /**
      *      \brief      Constructeur de la classe
      */
-    function box_external_rss()
+    function box_external_rss($DB,$param)
     {
         global $langs;
         $langs->load("boxes");
 
+		$this->db=$DB;
+		$this->param=$param;
+		
         $this->boxlabel=$langs->trans("BoxLastRssInfos");
     }
 
@@ -59,38 +65,41 @@ class box_external_rss extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db;
+        global $user, $langs;
         $langs->load("boxes");
 
-        for($site = 0; $site < 1; $site++) {
-            $rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_" . $site) );
-            
-            $title=$langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site));
-            if ($rss->ERROR) {
-                // Affiche warning car il y a eu une erreur
-                $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",(isset($rss->date)?dolibarr_print_date($rss->date,"%d %b %Y %H:%M"):'unknown date')));
-	            $this->info_box_head = array('text' => $title,'limit' => 0);
-            }
-            else
-            {         
-            	$this->info_box_head = array('text' => $title);
-			}
-			
-            for($i = 0; $i < $max ; $i++){
-                $item = $rss->items[$i];
-                $href = $item['link'];
-                $title = utf8_decode(urldecode($item['title']));
-                $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
-                $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
-                $this->info_box_contents["$href"]="$title";
-                $this->info_box_contents[$i][0] = array('align' => 'left',
-                'logo' => $this->boximg,
-                'text' => $title,
-                'url' => $href,
-                'target' => 'newrss');
-            }
+		// On recupere numero de param de la boite
+		ereg('^([0-9]+) ',$this->param,$reg);
+		$site=$reg[1];
 
-
+		// Recupere flux RSS definie dans EXTERNAL_RSS_URLRSS_$site
+        $rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_".$site) );
+        
+        $title=$langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site));
+        if ($rss->ERROR)
+        {
+            // Affiche warning car il y a eu une erreur
+            $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",(isset($rss->date)?dolibarr_print_date($rss->date,"%d %b %Y %H:%M"):'unknown date')));
+            $this->info_box_head = array('text' => $title,'limit' => 0);
+        }
+        else
+        {         
+        	$this->info_box_head = array('text' => $title);
+		}
+		
+        for($i = 0; $i < $max ; $i++)
+        {
+            $item = $rss->items[$i];
+            $href = $item['link'];
+            $title = utf8_decode(urldecode($item['title']));
+            $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
+            $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
+            $this->info_box_contents["$href"]="$title";
+            $this->info_box_contents[$i][0] = array('align' => 'left',
+            'logo' => $this->boximg,
+            'text' => $title,
+            'url' => $href,
+            'target' => 'newrss');
         }
     }
 

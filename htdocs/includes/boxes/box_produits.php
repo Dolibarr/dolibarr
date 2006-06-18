@@ -36,6 +36,9 @@ class box_produits extends ModeleBoxes {
     var $boximg="object_product";
     var $boxlabel;
     var $depends = array("produit");
+
+	var $db;
+	var $param;
     
     var $info_box_head = array();
     var $info_box_contents = array();

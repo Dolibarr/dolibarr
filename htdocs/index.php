@@ -484,31 +484,30 @@ print '</td></tr></table>';
  */
 include_once("./boxes.php");
 $infobox=new InfoBox($db);
-$boxes=$infobox->listboxes("0");       // 0 = valeur pour la page accueil
+$boxarray=$infobox->listboxes("0");       // 0 = valeur pour la page accueil
 
 $NBCOLS=2;      // Nombre de colonnes pour les boites
 
-if (sizeof($boxes))
+if (sizeof($boxarray))
 {
-  print '<br>';
-  print_fiche_titre($langs->trans("OtherInformationsBoxes"));
-  print '<table width="100%" class="notopnoleftnoright">';
+	print '<br>';
+	print_fiche_titre($langs->trans("OtherInformationsBoxes"));
+	print '<table width="100%" class="notopnoleftnoright">';
 }
-for ($ii=0, $ni=sizeof($boxes); $ii<$ni; $ii++)
+for ($ii=0, $ni=sizeof($boxarray); $ii<$ni; $ii++)
 {
-  if ($ii % $NBCOLS == 0) print "<tr>\n";
-  print '<td valign="top" width="50%">';
-
-  // Affichage boite ii
-  include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxes[$ii].".php");
-  $box=new $boxes[$ii]();
-  $box->loadBox();
-  $box->showBox();
-
-  print "</td>";
-  if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
+	if ($ii % $NBCOLS == 0) print "<tr>\n";
+	print '<td valign="top" width="50%">';
+	
+	// Affichage boite ii
+	$box=$boxarray[$ii];
+	$box->loadBox();
+	$box->showBox();
+	
+	print "</td>";
+	if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
 }
-if (sizeof($boxes))
+if (sizeof($boxarray))
 {
     if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
     print "</table>";

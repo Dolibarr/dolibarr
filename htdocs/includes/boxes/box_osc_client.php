@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -36,6 +35,9 @@ class box_osc_clients extends ModeleBoxes {
     var $boximg="object_company";
     var $boxlabel;
     var $depends = array("boutique");
+
+	var $db;
+	var $param;
 
     var $info_box_head = array();
     var $info_box_contents = array();

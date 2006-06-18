@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -37,6 +36,9 @@ class box_factures_fourn extends ModeleBoxes {
     var $boximg="object_bill";
     var $boxlabel;
     var $depends = array("facture","fournisseur");
+
+	var $db;
+	var $param;
 
     var $info_box_head = array();
     var $info_box_contents = array();

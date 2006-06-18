@@ -53,17 +53,21 @@ class InfoBox
     /**
      *      \brief      Retourne tableau des boites elligibles pour la zone
      *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-     *      \return     array       Tableau des boites qualifiées
+     *      \return     array       Tableau d'objet box
      */
     function listBoxes($zone)
     {
         $boxes=array();
         
-        $sql  = "SELECT b.rowid, b.box_id, d.file";
-        $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
-        $sql .= " WHERE b.box_id = d.rowid";
-        $sql .= " AND position = ".$zone;
-        $sql .= " ORDER BY box_order";
+        $sql = "SELECT b.rowid, b.box_id,";
+        $sql.= " d.file, d.note";
+        $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
+        $sql.= " WHERE b.box_id = d.rowid";
+        $sql.= " AND position = ".$zone;
+        $sql.= " ORDER BY box_order";
+        
+        dolibarr_syslog("InfoBox::listBoxes sql=$sql");
+        
         $result = $this->db->query($sql);
         if ($result) 
         {
@@ -72,7 +76,12 @@ class InfoBox
           while ($j < $num)
             {
               $obj = $this->db->fetch_object($result);
-              $boxes[$j]=eregi_replace('.php$','',$obj->file);
+              $boxname=eregi_replace('.php$','',$obj->file);
+
+			  include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
+			  $box=new $boxname($this->db,$obj->note);
+              $boxes[$j]=$box;
+
               $j++;
             }
         }

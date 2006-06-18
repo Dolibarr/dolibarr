@@ -27,7 +27,11 @@ class box_energie_releve extends ModeleBoxes {
     var $boxcode="energie";
     var $boximg="object_energie";
     var $boxlabel;
+    var $depends = array("energie");
 
+	var $db;
+	var $param;
+	
     var $info_box_head = array();
     var $info_box_contents = array();
 

@@ -65,6 +65,7 @@ class ModeleBoxes
         $nbcol=sizeof($contents[0])+1;
         $nblines=sizeof($contents);
         
+        print "\n<!-- Box start -->\n";
         print '<table width="100%" class="noborder">';
     
         // Affiche titre de la boite
@@ -154,6 +155,9 @@ class ModeleBoxes
         }
     
         print "</table>";
+        
+        print "\n<!-- Box end -->\n";
+        
     }
     
 }

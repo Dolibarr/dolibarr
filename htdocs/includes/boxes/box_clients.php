@@ -36,6 +36,9 @@ class box_clients extends ModeleBoxes {
     var $boxlabel;
     var $depends = array("societe");
 
+	var $db;
+	var $param;
+
     var $info_box_head = array();
     var $info_box_contents = array();
 

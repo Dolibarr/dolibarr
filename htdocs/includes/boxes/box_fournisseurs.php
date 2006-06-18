@@ -36,6 +36,9 @@ class box_fournisseurs extends ModeleBoxes {
     var $boxlabel;
     var $depends = array("fournisseur");
 
+	var $db;
+	var $param;
+
     var $info_box_head = array();
     var $info_box_contents = array();
 
