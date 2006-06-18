@@ -149,6 +149,21 @@ PaymentConditionShort60D=60 jours
 PaymentCondition60D=Règlement à 60 jours
 PaymentConditionShort60DENDMONTH=60 jours fin de mois
 PaymentCondition60DENDMONTH=Règlement à 60 jours fin de mois
+# PaymentType
+PaymentTypeTYP=TIP
+PaymentTypeShortTYP=TIP
+PaymentTypeVIR=Virement bancaire
+PaymentTypeShortVIR=Virement
+PaymentTypePRE=Prélèvement bancaire
+PaymentTypeShortPRE=Prélèvement
+PaymentTypeLIQ=Liquide
+PaymentTypeShortLIQ=Liquide
+PaymentTypeVAD=Paiement en ligne
+PaymentTypeShortVAD=Paiement en ligne
+PaymentTypeCB=Carte bancaire
+PaymentTypeShortCB=Carte bancaire
+PaymentTypeCHQ=Cheque
+PaymentTypeShortCHQ=Cheque
 
 BankDetails=Coordonnées bancaires
 BankCode=Code banque

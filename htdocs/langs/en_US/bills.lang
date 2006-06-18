@@ -149,6 +149,21 @@ PaymentConditionShort60D=60 days
 PaymentCondition60D=Payment after 60 days
 PaymentConditionShort60DENDMONTH=60 days end of month
 PaymentCondition60DENDMONTH=Payment after 60 days end of month
+# PaymentType
+PaymentTypeTYP=TIP
+PaymentTypeShortTYP=TIP
+PaymentTypeVIR=Bank withdraw
+PaymentTypeShortVIR=Bank withdraw
+PaymentTypePRE=Standing order
+PaymentTypeShortPRE=Standing order
+PaymentTypeLIQ=Cash
+PaymentTypeShortLIQ=Cash
+PaymentTypeVAD=On line payment
+PaymentTypeShortVAD=On line payment
+PaymentTypeCB=Credit card
+PaymentTypeShortCB=Credit card
+PaymentTypeCHQ=Cheque
+PaymentTypeShortCHQ=Cheque
 
 BankDetails=Bank details
 BankCode=Bank code
