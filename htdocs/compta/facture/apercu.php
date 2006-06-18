@@ -223,8 +223,8 @@ if ($_GET["facid"] > 0)
 		// Projet
         if ($conf->projet->enabled)
         {
-	        print '<tr>';
             $langs->load("projects");
+	        print '<tr>';
             print '<td>'.$langs->trans("Project").'</td><td colspan="3">';
             if ($fac->projetid > 0)
             {

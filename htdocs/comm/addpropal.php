@@ -38,9 +38,10 @@ if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/module
 }
 
 $langs->load("propal");
-$langs->load("projects");
+if ($conf->projet->enabled) $langs->load("projects");
 $langs->load("companies");
 $langs->load("bills");
+$langs->load("orders");
 
 $user->getrights('propale');
 $user->getrights('fichinter');
@@ -179,6 +180,8 @@ if ($_GET["action"] == 'create')
 */
 
 	// Date de livraison
+	// A quoi sert une date de livraison sur une propale ?
+	// Si il y a date de livraison connue alors ne s'agit-il pas d'une commande plutot ?
 	if ($conf->global->PROPAL_ADD_SHIPPING_DATE)
 	{
 		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';

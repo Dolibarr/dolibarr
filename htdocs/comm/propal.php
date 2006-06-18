@@ -157,83 +157,97 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
  */
 if ($_POST['action'] == 'add')
 {
-    $propal = new Propal($db, $_POST['socidp']);
-
-    // Si on a selectionné une propal à copier, on réalise la copie
-    if($_POST['createmode']=='copy' && $_POST['copie_propal'])
-    {
-    	if($propal->load_from($_POST['copie_propal']) == -1)
-    	{
-    		//$msg = '<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-    		$msg = '<div class="error">Impossible de copier la propal Id = ' . $_POST['copie_propal'] . '!</div>';
-    	}
-    	$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-      $propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
-      $propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
-	    $propal->duree_validite = $_POST['duree_validite'];
-	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
-	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
-	    $propal->remise_percent = $_POST['remise_percent'];
-	    $propal->remise_absolue = $_POST['remise_absolue'];
-	    $propal->socidp    = $_POST['socidp'];
-	    $propal->contactid = $_POST['contactidp'];
-	    $propal->projetidp = $_POST['projetidp'];
-	    $propal->modelpdf  = $_POST['model'];
-	    $propal->author    = $user->id;
-	    $propal->note      = $_POST['note'];
-	    $propal->ref       = $_POST['ref'];
-	    $propal->statut    = 0;
-
-	    $id = $propal->create_from();
-    }
-    else
-    {
-	    $propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-      $propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
-      $propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
-	    $propal->duree_validite = $_POST['duree_validite'];
-	    $propal->cond_reglement_id = $_POST['cond_reglement_id'];
-	    $propal->mode_reglement_id = $_POST['mode_reglement_id'];
-
-	    $propal->contactid  = $_POST['contactidp'];
-	    $propal->projetidp  = $_POST['projetidp'];
-	    $propal->modelpdf   = $_POST['model'];
-	    $propal->author     = $user->id;
-	    $propal->note       = $_POST['note'];
-	    $propal->ref_client = $_POST['ref_client'];
-
-	    $propal->ref = $_POST['ref'];
-
-	    for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
-	    {
+	$propal = new Propal($db, $_POST['socidp']);
+	
+	$db->begin();
+	
+	// Si on a selectionné une propal à copier, on réalise la copie
+	if($_POST['createmode']=='copy' && $_POST['copie_propal'])
+	{
+		if ($propal->load_from($_POST['copie_propal']) == -1)
+		{
+			$msg = '<div class="error">'.$langs->trans("ErrorFailedToCopyProposal",$_POST['copie_propal']).'</div>';
+		}
+		$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+		$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
+		$propal->duree_validite = $_POST['duree_validite'];
+		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
+		$propal->mode_reglement_id = $_POST['mode_reglement_id'];
+		$propal->remise_percent = $_POST['remise_percent'];
+		$propal->remise_absolue = $_POST['remise_absolue'];
+		$propal->socidp    = $_POST['socidp'];
+		$propal->contactid = $_POST['contactidp'];
+		$propal->projetidp = $_POST['projetidp'];
+		$propal->modelpdf  = $_POST['model'];
+		$propal->author    = $user->id;
+		$propal->note      = $_POST['note'];
+		$propal->ref       = $_POST['ref'];
+		$propal->statut    = 0;
+	
+		$id = $propal->create_from();
+	}
+	else
+	{
+		$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+		$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
+		$propal->duree_validite = $_POST['duree_validite'];
+		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
+		$propal->mode_reglement_id = $_POST['mode_reglement_id'];
+	
+		$propal->contactid  = $_POST['contactidp'];
+		$propal->projetidp  = $_POST['projetidp'];
+		$propal->modelpdf   = $_POST['model'];
+		$propal->author     = $user->id;
+		$propal->note       = $_POST['note'];
+		$propal->ref_client = $_POST['ref_client'];
+	
+		$propal->ref = $_POST['ref'];
+	
+		for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+		{
 			if ($_POST['idprod'.$i])
 			{
-		        $xid = 'idprod'.$i;
-		        $xqty = 'qty'.$i;
-		        $xremise = 'remise'.$i;
-		        $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+				$xid = 'idprod'.$i;
+				$xqty = 'qty'.$i;
+				$xremise = 'remise'.$i;
+				$propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
 			}
-	    }
+		}
+	
+		$id = $propal->create();
+	}
+	
+	if ($id > 0)
+	{
+		// Insertion contact par defaut
+		$result=$propal->add_contact($_POST["contactidp"],'CUSTOMER','external');
 
-	    $id = $propal->create();
-    }
-    /*
-     *   Generation
-     */
-    if ($id > 0)
-    {
-	    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-        propale_pdf_create($db, $id, $_POST['model'], $outputlangs);
+		if ($result > 0)
+		{
+			$db->commit();
 
-        Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
-        exit;
-    }
-    else
-    {
-        dolibarr_print_error($db,$propal->error);
-        exit;
-    }
+			// Generation document PDF
+			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+			if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			propale_pdf_create($db, $id, $_POST['model'], $outputlangs);
+		
+			Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
+			exit;
+		}
+		else
+		{
+			$msg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db,$propal->error);
+		$db->rollback();
+		exit;
+	}
 }
 
 /*

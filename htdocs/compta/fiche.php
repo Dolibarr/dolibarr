@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
-if ($conf->projet->enabled) $langs->load("projects");
+if ($conf->projet->enabled)  $langs->load("projects");
 
 $user->getrights("commercial");
 

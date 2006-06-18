@@ -89,7 +89,8 @@ if ($result)
   print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut","","",$sortfield);
   print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield);
-  if ($conf->projet->enabled) {
+  if ($conf->projet->enabled)
+  {
     $langs->load("projects");
     print_liste_field_titre($langs->trans("Project"),"liste.php","projet","&page=$page&statut=$statut","","",$sortfield);
   }

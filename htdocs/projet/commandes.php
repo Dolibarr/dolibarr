@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
-$langs->load("projects");
+if ($conf->projet->enabled) $langs->load("projects");
 $langs->load("companies");
 $langs->load("orders");
 
