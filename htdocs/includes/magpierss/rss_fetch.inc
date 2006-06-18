@@ -5,7 +5,7 @@
                 to fetching and parsing RSS files, via the
                 function fetch_rss()
  * Author:      Kellan Elliott-McCrea <kellan@protest.net>
- * Modification: Laurent Destailleur (See LDR mark to find bug fix)
+ * Modified by: Laurent Destailleur (See LDR mark to find bug fix)
  * License:     GPL
  *
  * The lastest version of MagpieRSS can be obtained from:
@@ -86,9 +86,6 @@ define('MAGPIE_VERSION', '0.72');
 
 $MAGPIE_ERROR = "";
 
-// LDR Added cachedir parameter to replace use of MAGPIE_CACHE_RSS and
-// allow several call to different url with different a cache foreach of
-// inside same PHP session.
 function fetch_rss ($url) {
     // initialize constants
     init();
