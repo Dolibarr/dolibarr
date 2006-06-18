@@ -211,7 +211,6 @@ class Facture extends CommonObject
 
 				$resql = $this->addline(
 					$this->id,
-					$prod->libelle,
 					$prod->description,
 					$price,
 					$this->products_qty[$i],
