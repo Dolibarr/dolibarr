@@ -962,7 +962,8 @@ class Form
 
         if (sizeof($this->cache_conditions_paiements_code)) return 0;    // Cache déja chargé
 
-        dolibarr_syslog('html.form.class.php::load_cache_conditions_paiements');
+        //dolibarr_syslog('html.form.class.php::load_cache_conditions_paiements',LOG_DEBUG);
+
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
         $sql.= " WHERE active=1";
@@ -1000,7 +1001,8 @@ class Form
 
         if (sizeof($this->cache_types_paiements_code)) return 0;    // Cache déja chargé
 
-        dolibarr_syslog('html.form.class.php::load_cache_types_paiements');
+        //dolibarr_syslog('html.form.class.php::load_cache_types_paiements',LOG_DEBUG);
+
         $sql = "SELECT id, code, libelle, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";

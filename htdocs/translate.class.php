@@ -120,7 +120,7 @@ class Translate {
     */
     function setPhpLang()
     {
-        dolibarr_syslog("Translate::set_php_lang: ".$this->defaultlang);
+        //dolibarr_syslog("Translate::set_php_lang: ".$this->defaultlang,LOG_DEBUG);
        
         $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
         setlocale(LC_ALL, $this->defaultlang);    // Compenser pb de locale avec windows
