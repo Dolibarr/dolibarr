@@ -202,13 +202,23 @@ if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == yes && $user->r
 	 */
 if ($_POST['action'] == 'builddoc')
 {
-	commande_supplier_pdf_create($db, $_GET['id'],$_POST['model']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	commande_supplier_pdf_create($db, $_GET['id'],$_POST['model'],$outputlangs);
 }
 if($_GET['action'] == 'builddoc')
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($_GET['id']);
-	commande_supplier_pdf_create($db, $_GET['id'],$commande->modelpdf);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	commande_supplier_pdf_create($db, $_GET['id'],$commande->modelpdf,$outputlangs);
 }
 
 /*

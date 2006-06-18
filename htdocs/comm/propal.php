@@ -96,9 +96,12 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
     {
     	$propal = new Propal($db);
     	$propal->fetch($_GET['propalid']);
-    	$propal->delete_product($_GET['ligne']);
-	    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    	$result=$propal->delete_product($_GET['ligne']);
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
     	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
     }
     Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
@@ -112,8 +115,11 @@ if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
         $propal = new Propal($db);
         $propal->fetch($_GET['propalid']);
         $result=$propal->update_price($_GET['propalid']);
-	    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
         propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
         $result=$propal->valid($user);
     }
@@ -229,8 +235,11 @@ if ($_POST['action'] == 'add')
 			$db->commit();
 
 			// Generation document PDF
-			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-			if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			if ($_REQUEST['lang_id'])
+			{
+				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
 			propale_pdf_create($db, $id, $_POST['model'], $outputlangs);
 		
 			Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
@@ -465,8 +474,11 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$_POST['remise_percent']
 			);
 
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-		if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
   	    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	}
 }
@@ -486,8 +498,11 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
     	$_POST['tva_tx'],
     	$_POST['desc']);
 
-	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-	if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
     propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
@@ -499,8 +514,11 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
     $propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
     if ($_POST['model']) $propal->set_pdf_model($user, $_POST['model']);
-    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-	if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
     propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
@@ -513,8 +531,11 @@ if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer && !$conf->g
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
 	$propal->delete_product($_GET['ligne']);
-	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-	if ($_REQUEST['lang_id']) $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
 	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 

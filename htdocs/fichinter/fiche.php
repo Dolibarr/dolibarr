@@ -105,8 +105,11 @@ if ($_POST["action"] == 'update')
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
 	$result=fichinter_pdf_create($db, $_REQUEST['id'], $_REQUEST['model'], $outputlangs);
     if ($result <= 0)
     {

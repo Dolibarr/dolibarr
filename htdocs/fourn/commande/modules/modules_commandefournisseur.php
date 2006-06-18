@@ -135,7 +135,7 @@ class ModeleNumRefCommandesSuppliers
     }
     
 }
-function commande_supplier_pdf_create($db, $comid, $modele='')
+function commande_supplier_pdf_create($db, $comid, $modele='',$outputlangs='')
 {
   global $langs;
   $langs->load("suppliers");
@@ -164,7 +164,7 @@ function commande_supplier_pdf_create($db, $comid, $modele='')
   
       $obj = new $classname($db);
 
-      if ( $obj->write_pdf_file($comid) > 0)
+      if ($obj->write_pdf_file($comid,$outputlangs) > 0)
         {
           // on supprime l'image correspondant au preview
            commande_supplier_delete_preview($db, $comid);

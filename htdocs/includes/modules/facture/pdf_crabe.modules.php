@@ -799,7 +799,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell(100, 4, $outputlangs->trans("Ref")." : " . $fac->ref, '', 'R');
         
-        $pdf->SetFont('Arial','B',12);
+        $pdf->SetFont('Arial','',12);
 
         $posy+=6;
         $pdf->SetXY(100,$posy);
