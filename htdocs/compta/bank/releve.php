@@ -260,15 +260,23 @@ else
             {
                 if (! $newline) print ' - ';
                 else print '<br>';
-                if ($links[$key]['type']=='payment') {
-                    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                if ($links[$key]['type']=='payment')
+                {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowPayment'),'payment').' ';
+                    print $langs->trans("Payment");
+                    print '</a>';
+                    $newline=0;
+                }
+                elseif ($links[$key]['type']=='payment_supplier') {
+                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("Payment");
                     print '</a>';
                     $newline=0;
                 }
                 elseif ($links[$key]['type']=='company') {
-                    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowCustomer'),'company').' ';
                     print dolibarr_trunc($links[$key]['label'],24);
                     print '</a>';
