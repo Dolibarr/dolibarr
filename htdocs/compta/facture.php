@@ -285,7 +285,7 @@ if ($_POST['action'] == 'add')
 						$lines = $comm->fetch_lignes();
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
-							$desc=($lines[$i]->description ? $lines[$i]->description : $lines[$i]->libelle);
+							$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 
 							$result = $facture->addline(
 								$facid,
