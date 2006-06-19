@@ -242,12 +242,12 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
     print $account->adresse_proprio;
     print "</textarea></td></tr>";
 
-    print '<tr><td align="center" colspan="5"><input value="'.$langs->trans("Modify").'" type="submit">';
-    print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+    print '<tr><td align="center" colspan="5"><input class="button" value="'.$langs->trans("Modify").'" type="submit">';
+    print ' &nbsp; <input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
     print '</td></tr>';
 
     print '</form>';
-    print '</table><br>';
+    print '</table>';
 }
 
 
