@@ -935,19 +935,7 @@ class Commande extends CommonObject
       $adresse->fetch_adresse_livraison($idadresse);
       $this->adresse = $adresse;
     }
-    
- /**
-   *
-   *
-   */
-	 
-  function fetch_contact_commande($id)
-    {
-    	$idcontact = $id;
-      $contact = new Contact($this->db);
-      $contact->fetch($idcontact);
-      $this->contact = $contact;
-    }
+
 
     /**
      *      \brief      Renvoie un tableau avec les expéditions par ligne

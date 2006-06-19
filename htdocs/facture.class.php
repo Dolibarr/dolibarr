@@ -476,19 +476,6 @@ class Facture extends CommonObject
 		$this->client = $client;
 	}
 
-	/**
-   *
-   *
-   */
-
-  function fetch_contact_facture($id)
-  {
-    $idcontact = $id;
-    $contact = new Contact($this->db);
-    $contact->fetch($idcontact);
-    $this->contact = $contact;
-  }
-
 
 	/**
 	 *      \brief     Classe la facture dans un projet
