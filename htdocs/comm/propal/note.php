@@ -109,7 +109,7 @@ if ($_GET['propalid'])
 	if ( $propal->fetch($_GET['propalid']) )
 	{
 		$societe = new Societe($db);
-		if ( $societe->fetch($propal->soc_id) )
+		if ( $societe->fetch($propal->socidp) )
 		{
 			$head = propal_prepare_head($propal);
 			dolibarr_fiche_head($head, 'note', $langs->trans('Proposal'));

@@ -748,7 +748,7 @@ if ($_GET['action'] == 'create')
 	{
 		$propal = New Propal($db);
 		$propal->fetch($_GET['propalid']);
-		$societe_id = $propal->soc_id;
+		$societe_id = $propal->socidp;
 		$projetid=$propal->projetidp;
 
 		$soc->fetch($societe_id);
@@ -761,7 +761,7 @@ if ($_GET['action'] == 'create')
 	{
 		$commande = New Commande($db);
 		$commande->fetch($_GET['commandeid']);
-		$societe_id = $commande->soc_id;
+		$societe_id = $commande->socidp;
 		$projetid=$commande-> projet_id;
 		$ref_client=$commande->ref_client;
 

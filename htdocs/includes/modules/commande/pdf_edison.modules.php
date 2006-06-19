@@ -307,7 +307,7 @@ class pdf_edison extends ModelePDFCommandes
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','B',12);
 	  $client = new Societe($this->db);
-      $client->fetch($com->soc_id);
+      $client->fetch($com->socidp);
 	  $com->client = $client;
       $pdf->SetXY(102,42);
       $pdf->MultiCell(96,5, $com->client->nom);

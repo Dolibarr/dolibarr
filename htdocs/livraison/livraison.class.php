@@ -204,9 +204,9 @@ class Livraison extends CommonObject
         $sql = "SELECT l.rowid, l.date_creation, l.date_valid, l.ref, l.fk_user_author,";
         $sql .=" l.fk_statut, l.fk_commande, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
         $sql .= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, l.fk_adresse_livraison, l.model_pdf";
-        $sql .= ", s.idp as socid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-        $sql .= " WHERE l.rowid = $id AND c.rowid = l.fk_commande AND c.fk_soc = s.idp";
+        $sql .= ", c.fk_soc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."commande as c";
+        $sql .= " WHERE l.rowid = ".$id." AND c.rowid = l.fk_commande";
     
         $result = $this->db->query($sql) ;
     
@@ -218,7 +218,7 @@ class Livraison extends CommonObject
             $this->date_creation        = $obj->date_creation;
             $this->date_valid           = $obj->date_valid;
             $this->ref                  = $obj->ref;
-            $this->soc_id               = $obj->socid;
+            $this->socidp               = $obj->fk_soc;
             $this->statut               = $obj->fk_statut;
             $this->commande_id          = $obj->fk_commande;
             $this->expedition_id        = $obj->fk_expedition;
@@ -292,7 +292,7 @@ class Livraison extends CommonObject
 					    // Recuperation de la nouvelle reference
 					    $objMod = new $modName($this->db);
 					    $soc = new Societe($this->db);
-					    $soc->fetch($this->soc_id);
+					    $soc->fetch($this->socidp);
 					    
 					    // on vérifie si le bon de livraison est en numérotation provisoire
 					    $livref = substr($this->ref, 1, 4);

@@ -59,10 +59,10 @@ class Don
     
     /**
      *    \brief  Constructeur
-     *    \param  DB          handler d'accès base
-     *    \param  soc_idp     id sociét
+     *    \param  DB          	Handler d'accès base
+     *    \param  socidp		Id société
      */
-    function Don($DB, $soc_idp="")
+    function Don($DB, $socidp="")
     {
         global $langs;
         

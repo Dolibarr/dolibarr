@@ -69,12 +69,12 @@ class Commande extends CommonObject
 	 *        \brief      Constructeur
 	 *        \param      DB      Handler d'accès base
 	 */
-	function Commande($DB, $soc_idp="", $commandeid=0)
+	function Commande($DB, $socidp="", $commandeid=0)
 	{
 		global $langs;
 		$langs->load('orders');
 		$this->db = $DB;
-		$this->socidp = $soc_idp;
+		$this->socidp = $socidp;
     	$this->id = $commandeid;
 
 		$this->sources[0] = $langs->trans('OrderSource0');
@@ -98,12 +98,13 @@ class Commande extends CommonObject
 	{
 		$propal = new Propal($this->db);
 		$propal->fetch($propale_id);
+
 		$this->lines = array();
 		$this->date_commande = time();
 		$this->source = 0;
 		for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
 		{
-			$CommLigne = new CommandeLigne();
+			$CommLigne = new CommandeLigne($this->db);
 			$CommLigne->libelle           = $propal->lignes[$i]->libelle;
 			$CommLigne->description       = $propal->lignes[$i]->desc;
 			$CommLigne->price             = $propal->lignes[$i]->subprice;
@@ -113,9 +114,15 @@ class Commande extends CommonObject
 			$CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
 			$CommLigne->product_id        = $propal->lignes[$i]->product_id;
 			$this->lines[$i] = $CommLigne;
+			
+			// \todo La methode create doit utiliser le tableau products plutot que lines
+			// ce qui permettrait de virer ces lignes
+			$this->products[$i]=$propal->lignes[$i]->product_id;
+			$this->products_qty[$i]=$propal->lignes[$i]->qty;
+			$this->products_remise_percent[$i]=$propal->lignes[$i]->remise_percent;
 		}
 
-		$this->soc_id               = $propal->soc_id;
+		$this->socidp               = $propal->socidp;
 		$this->projetid             = $propal->projetidp;
 		$this->cond_reglement_id    = $propal->cond_reglement_id;
 		$this->mode_reglement_id    = $propal->mode_reglement_id;
@@ -126,7 +133,7 @@ class Commande extends CommonObject
     
 		/* Définit la société comme un client */
 		$soc = new Societe($this->db);
-		$soc->id = $this->soc_id;
+		$soc->id = $this->socidp;
 		$soc->set_as_client();
 		$this->propale_id = $propal->id;
 
@@ -160,7 +167,7 @@ class Commande extends CommonObject
 					// Recuperation de la nouvelle reference
 					$objMod = new $modName($this->db);
 					$soc = new Societe($this->db);
-					$soc->fetch($this->soc_id);
+					$soc->fetch($this->socidp);
 					
 					// on vérifie si la commande est en numérotation provisoire
 					$comref = substr($this->ref, 1, 4);
@@ -335,28 +342,28 @@ class Commande extends CommonObject
 		if ($this->source < 0)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
-			dolibarr_syslog("Commande.class.php::create ".$this->error);
+			dolibarr_syslog("Commande.class.php::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (! $remise) $remise=0;
 		if (! $this->projetid) $this->projetid = 0;
 
 		$soc = new Societe($this->db);
-		$result=$soc->fetch($this->soc_id);
+		$result=$soc->fetch($this->socidp);
 		if ($result < 0)
 		{
 			$this->error="Failed to fetch company";
-			dolibarr_syslog("Commande.class.php::create ".$this->error);
+			dolibarr_syslog("Commande.class.php::create ".$this->error, LOG_ERR);
 			return -2;
 		}
-			
+
         $this->db->begin();
 	
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
 		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client,';
 		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
 		$sql.= ' remise_absolue, remise_percent)';
-		$sql.= ' VALUES ('.$this->soc_id.', now(), '.$user->id.', '.$this->projetid.',';
+		$sql.= ' VALUES ('.$this->socidp.', now(), '.$user->id.', '.$this->projetid.',';
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";
@@ -737,7 +744,6 @@ class Commande extends CommonObject
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
-				$this->soc_id               = $obj->fk_soc;
 				$this->socidp               = $obj->fk_soc;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;

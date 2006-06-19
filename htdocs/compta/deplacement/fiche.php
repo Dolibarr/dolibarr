@@ -55,7 +55,7 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 			      $_POST["reyear"]);
   
   $deplacement->km = $_POST["km"];
-  $deplacement->socid = $_POST["soc_id"];
+  $deplacement->socidp = $_POST["socidp"];
   $deplacement->userid = $user->id; //$_POST["km"];
   $id = $deplacement->create($user);
 

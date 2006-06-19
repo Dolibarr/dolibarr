@@ -62,8 +62,8 @@ $socidp='';
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socidp = $user->societe_id;
+	$action = '';
+	$socidp = $user->societe_id;
 }
 
 // Nombre de ligne pour choix de produit/service prédéfinis
@@ -211,7 +211,7 @@ if ($_POST['action'] == 'add')
 	
 		$propal->ref = $_POST['ref'];
 	
-		for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+		for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
 		{
 			if ($_POST['idprod'.$i])
 			{
@@ -227,10 +227,25 @@ if ($_POST['action'] == 'add')
 	
 	if ($id > 0)
 	{
-		// Insertion contact par defaut
-		$result=$propal->add_contact($_POST["contactidp"],'CUSTOMER','external');
+		$error=0;
 
-		if ($result > 0)
+		// Insertion contact par defaut si défini
+		if ($_POST["contactidp"])
+		{
+			$result=$propal->add_contact($_POST["contactidp"],'CUSTOMER','external');
+	
+			if ($result > 0)
+			{
+				$error=0;
+			}
+			else
+			{
+				$msg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
+				$error=1;
+			}
+		}
+
+		if (! $error)
 		{
 			$db->commit();
 
@@ -241,13 +256,12 @@ if ($_POST['action'] == 'add')
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			propale_pdf_create($db, $id, $_POST['model'], $outputlangs);
-		
+			dolibarr_syslog('Redirect to '.$_SERVER["PHP_SELF"].'?propalid='.$id);
 			Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
 			exit;
 		}
 		else
 		{
-			$msg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
 			$db->rollback();
 		}
 	}
@@ -611,6 +625,8 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 }
 
 
+
+
 llxHeader();
 
 $html = new Form($db);
@@ -624,10 +640,16 @@ if ($_GET['propalid'] > 0)
 	if ($msg) print "$msg<br>";
 
 	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
+
+	$result=$propal->fetch($_GET['propalid']);
+	if (! $result > 0)
+	{
+		dolibarr_print_error($db,$propal->error);
+		exit;
+	}
 
 	$societe = new Societe($db);
-	$societe->fetch($propal->soc_id);
+	$societe->fetch($propal->socidp);
 
 	$head = propal_prepare_head($propal);
 	dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));

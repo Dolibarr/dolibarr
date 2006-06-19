@@ -80,7 +80,7 @@ if ($_GET["id"] > 0)
     if ( $commande->fetch($_GET["id"]) > 0)
     {
         $soc = new Societe($db);
-        $soc->fetch($commande->soc_id);
+        $soc->fetch($commande->socidp);
         $author = new User($db);
         $author->id = $commande->user_author_id;
         $author->fetch();
@@ -189,7 +189,7 @@ if ($_GET["id"] > 0)
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
 					
-			if (1 == 2 && $_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			if (1 == 2 && $_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socidp.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			
@@ -251,11 +251,11 @@ if ($_GET["id"] > 0)
                 print '</td><td colspan="2">';
                 if ($_GET['action'] == 'classer')
                 {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'projetid');
+                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'projetid');
                 }
                 else
                 {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'none');
+                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'none');
                 }
                 print '</td></tr>';
             }
@@ -500,7 +500,7 @@ if ($_GET["id"] > 0)
 
             if ($commande->statut > 0 && $user->rights->facture->creer)
             {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("CreateBill").'</a>';
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->socidp.'">'.$langs->trans("CreateBill").'</a>';
             }
 
             if ($commande->statut > 0 && $user->rights->commande->creer)

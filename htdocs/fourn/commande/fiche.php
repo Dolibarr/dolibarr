@@ -132,7 +132,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
     $commande = new CommandeFournisseur($db);
     $commande->fetch($_GET["id"]);
     $soc = new Societe($db);
-    $soc->fetch($commande->soc_id);
+    $soc->fetch($commande->socidp);
     $result = $commande->valid($user);
     Header("Location: fiche.php?id=".$_GET["id"]);
     exit;
@@ -263,7 +263,7 @@ if ($_GET["id"] > 0)
 	if ( $commande->fetch($_GET["id"]) == 0)
 	{
 		$soc = new Societe($db);
-		$soc->fetch($commande->soc_id);
+		$soc->fetch($commande->socidp);
 		$author = new User($db);
 		$author->id = $commande->user_author_id;
 		$author->fetch();
@@ -633,7 +633,7 @@ if ($_GET["id"] > 0)
 			print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
 			$proj = new Project($db);
-			$html->select_array("projetid",$proj->liste_array($commande->soc_id));
+			$html->select_array("projetid",$proj->liste_array($commande->socidp));
 
 			print "</td></tr>";
 			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Send").'"></td></tr></table></form>';

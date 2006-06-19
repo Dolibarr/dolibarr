@@ -89,7 +89,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
 	$commande = new Commande($db);
 
-	$commande->soc_id               = $_POST['soc_id'];
+	$commande->socidp               = $_POST['socidp'];
 	$commande->date_commande        = $datecommande;
 	$commande->note                 = $_POST['note'];
 	$commande->source               = $_POST['source_id'];
@@ -117,7 +117,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	if ($commande_id <= 0)
 	{
 		$_GET['action']='create';
-		$_GET['socidp']=$_POST['soc_id'];
+		$_GET['socidp']=$_POST['socidp'];
 		$mesg='<div class="error">'.$commande->error.'</div>';
 	}
 	else
@@ -322,7 +322,7 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$soc = new Societe($db);
-	$soc->fetch($commande->soc_id);
+	$soc->fetch($commande->socidp);
 	$result = $commande->valid($user);
 }
 
@@ -447,7 +447,7 @@ if ($_POST['action'] == 'send')
         $file = $conf->commande->dir_output . '/' . $orderref . '/' . $orderref . '.pdf';
         if (is_readable($file))
         {
-            $soc = new Societe($db, $commande->soc_id);
+            $soc = new Societe($db, $commande->socidp);
             if ($_POST['sendto'])
             {
                 // Le destinataire a été fourni via le champ libre
@@ -512,7 +512,7 @@ if ($_POST['action'] == 'send')
                     $actioncomm->date        = time();  // L'action est faite maintenant
                     $actioncomm->percent     = 100;
                     $actioncomm->contact     = new Contact($db,$sendtoid);
-                    $actioncomm->societe     = new Societe($db,$commande->soc_id);
+                    $actioncomm->societe     = new Societe($db,$commande->socidp);
                     $actioncomm->user        = $user;   // User qui a fait l'action
                     $actioncomm->orderrowid  = $commande->id;
                     $ret=$actioncomm->add($user);       // User qui saisi l'action
@@ -596,7 +596,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			print '<form name="crea_commande" action="fiche.php" method="post">';
 			print '<input type="hidden" name="action" value="add">';
-			print '<input type="hidden" name="soc_id" value="'.$soc->id.'">' ."\n";
+			print '<input type="hidden" name="socidp" value="'.$soc->id.'">' ."\n";
 			print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
 			print '<input name="facnumber" type="hidden" value="provisoire">';
 
@@ -865,7 +865,7 @@ else
 		if ( $commande->fetch($_GET['id']) > 0)
 		{
 			$soc = new Societe($db);
-			$soc->fetch($commande->soc_id);
+			$soc->fetch($commande->socidp);
 
 			$author = new User($db);
 			$author->id = $commande->user_author_id;
@@ -1022,7 +1022,7 @@ else
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
 
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socidp.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 
@@ -1084,11 +1084,11 @@ else
 				print '</td><td colspan="2">';
 				if ($_GET['action'] == 'classer')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'projetid');
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'projetid');
 				}
 				else
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'none');
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'none');
 				}
 				print '</td></tr>';
 			}
@@ -1734,7 +1734,7 @@ else
 				print_titre($langs->trans('SendOrderByMail'));
 
 				$soc = new Societe($db);
-				$soc->fetch($commande->soc_id);
+				$soc->fetch($commande->socidp);
 
 				$liste[0]="&nbsp;";
 				foreach ($soc->contact_email_array() as $key=>$value)

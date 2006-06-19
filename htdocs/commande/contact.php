@@ -220,8 +220,8 @@ if ($id > 0)
 	$commande = New Commande($db);
 	if ( $commande->fetch($_GET['id'], $user->societe_id) > 0)
 	{
-		$soc = new Societe($db, $commande->soc_id);
-		$soc->fetch($commande->soc_id);
+		$soc = new Societe($db, $commande->socidp);
+		$soc->fetch($commande->socidp);
 
 
 		$head = commande_prepare_head($commande);

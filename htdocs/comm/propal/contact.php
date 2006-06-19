@@ -220,8 +220,8 @@ if ($id > 0)
 	$propal = New Propal($db);
 	if ( $propal->fetch($_GET['propalid'], $user->societe_id) > 0)
 	{
-		$soc = new Societe($db, $propal->soc_id);
-		$soc->fetch($propal->soc_id);
+		$soc = new Societe($db, $propal->socidp);
+		$soc->fetch($propal->socidp);
 
 
 		$head = propal_prepare_head($propal);

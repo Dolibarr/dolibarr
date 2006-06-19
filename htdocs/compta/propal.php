@@ -124,7 +124,7 @@ if ($_GET["propalid"] > 0)
 	$propal->fetch($_GET['propalid']);
 
 	$societe = new Societe($db);
-	$societe->fetch($propal->soc_id);
+	$societe->fetch($propal->socidp);
 
 	$head = propal_prepare_head($propal);
 	dolibarr_fiche_head($head, 'compta', $langs->trans('Proposal'));

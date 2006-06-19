@@ -58,10 +58,10 @@ class Cotisation
     /*!
     		\brief Cotisation
     		\param DB				base de données
-    		\param soc_idp
+    		\param socidp
     */
 
-	function Cotisation($DB, $soc_idp="")
+	function Cotisation($DB, $socidp="")
     {
       $this->db = $DB ;
       $this->modepaiementid = 0;

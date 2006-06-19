@@ -82,7 +82,7 @@ class CommandeFournisseur extends Commande
     
             $this->id                  = $obj->rowid;
             $this->ref                 = $obj->ref;
-            $this->soc_id              = $obj->fk_soc;
+            $this->socidp              = $obj->fk_soc;
             $this->fourn_id            = $obj->fk_soc;
             $this->statut              = $obj->fk_statut;
             $this->user_author_id      = $obj->fk_user_author;
@@ -202,7 +202,7 @@ class CommandeFournisseur extends Commande
 					// Recuperation de la nouvelle reference
 					$objMod = new $modName($this->db);
 					$soc = new Societe($this->db);
-					$soc->fetch($this->soc_id);
+					$soc->fetch($this->socidp);
 					$num = $objMod->commande_get_num($soc);
 
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
@@ -539,7 +539,7 @@ class CommandeFournisseur extends Commande
      */
     function create($user)
     {
-        dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->soc_id);
+        dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->socidp);
 
         $this->db->begin();
         
@@ -547,7 +547,7 @@ class CommandeFournisseur extends Commande
         $this->brouillon = 1;
     
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (fk_soc, date_creation, fk_user_author, fk_statut) ";
-        $sql .= " VALUES (".$this->soc_id.", now(), ".$user->id.",0)";
+        $sql .= " VALUES (".$this->socidp.", now(), ".$user->id.",0)";
     
         if ( $this->db->query($sql) )
         {

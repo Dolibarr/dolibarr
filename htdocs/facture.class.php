@@ -80,16 +80,16 @@ class Facture extends CommonObject
 
 	/**
 	*    \brief  Constructeur de la classe
-	*    \param  DB          handler accès base de données
-	*    \param  soc_idp     id societe ('' par defaut)
-	*    \param  facid       id facture ('' par defaut)
+	*    \param  DB         handler accès base de données
+	*    \param  socidp		id societe ('' par defaut)
+	*    \param  facid      id facture ('' par defaut)
 	*/
-	function Facture($DB, $soc_idp='', $facid='')
+	function Facture($DB, $socidp='', $facid='')
 	{
 		$this->db = $DB ;
 
 		$this->id = $facid;
-		$this->socidp = $soc_idp;
+		$this->socidp = $socidp;
 
 		$this->amount = 0;
 		$this->remise = 0;

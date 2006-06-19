@@ -732,7 +732,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
 		//
 		$client = new Societe($this->db);
-     	$client->fetch($delivery->soc_id);
+     	$client->fetch($delivery->socidp);
 		$delivery->client = $client;
 		// 
 		

@@ -117,7 +117,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
     print "Commande $s";
     $com = new Commande($db);
     
-    $com->soc_id         = 4;
+    $com->socidp         = 4;
     $com->date_commande  = $dates[rand(1, sizeof($dates)-1)];
     $com->note           = $_POST["note"];
     $com->source         = 1;

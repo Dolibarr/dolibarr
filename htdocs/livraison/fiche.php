@@ -182,7 +182,7 @@ if ($_GET["action"] == 'create')
   if ( $commande->fetch($_GET["commande_id"]))
     {
       $soc = new Societe($db);
-      $soc->fetch($commande->soc_id);
+      $soc->fetch($commande->socidp);
       $author = new User($db);
       $author->id = $commande->user_author_id;
       $author->fetch();
@@ -368,7 +368,7 @@ else
             $commande->fetch($livraison->commande_id);
     
             $soc = new Societe($db);
-            $soc->fetch($commande->soc_id);
+            $soc->fetch($commande->socidp);
     
             $h=0;
             if ($conf->expedition->enabled)
@@ -668,7 +668,7 @@ else
             */
             $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
             $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-            $sql .= " WHERE a.fk_soc = ".$commande->soc_id." AND a.fk_action in (9,10)";
+            $sql .= " WHERE a.fk_soc = ".$commande->socidp." AND a.fk_action in (9,10)";
             $sql .= " AND a.fk_commande = ".$livraison->id;
 
             $resql = $db->query($sql);

@@ -87,7 +87,7 @@ if ($_GET["id"] > 0)
         $commande->expedition_array(1);
 
         $soc = new Societe($db);
-        $soc->fetch($commande->soc_id);
+        $soc->fetch($commande->socidp);
         $author = new User($db);
         $author->id = $commande->user_author_id;
         $author->fetch();
@@ -204,7 +204,7 @@ if ($_GET["id"] > 0)
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
 					
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->soc_id.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socidp.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			
@@ -266,11 +266,11 @@ if ($_GET["id"] > 0)
                 print '</td><td colspan="2">';
                 if ($_GET['action'] == 'classer')
                 {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'projetid');
+                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'projetid');
                 }
                 else
                 {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'none');
+                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'none');
                 }
                 print '</td></tr>';
             }

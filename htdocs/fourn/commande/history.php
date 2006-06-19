@@ -51,7 +51,7 @@ if ($_GET["id"] > 0)
 
 	if ( $commande->fetch($_GET["id"]) == 0)
 	{
-		$soc->fetch($commande->soc_id);
+		$soc->fetch($commande->socidp);
 
 		$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
 		$addons[0][1] = $soc->nom;

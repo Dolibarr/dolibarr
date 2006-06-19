@@ -308,7 +308,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','B',12);
 	  $client = new Societe($this->db);
-      $client->fetch($delivery->soc_id);
+      $client->fetch($delivery->socidp);
 	  $delivery->client = $client;
       $pdf->SetXY(102,42);
       $pdf->MultiCell(96,5, $delivery->client->nom);

@@ -726,7 +726,7 @@ class pdf_einstein extends ModelePDFCommandes
         $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
 		//
 		$client = new Societe($this->db);
-     	$client->fetch($com->soc_id);
+     	$client->fetch($com->socidp);
 		$com->client = $client;
 		// 
 		

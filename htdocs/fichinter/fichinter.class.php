@@ -50,14 +50,14 @@ class Fichinter extends CommonObject
     /**
      *    \brief      Constructeur de la classe
      *    \param      DB            Handler accès base de données
-     *    \param      soc_idp       Id societe
+     *    \param      socidp		Id societe
      */
-    function Fichinter($DB, $soc_idp="")
+    function Fichinter($DB, $socidp="")
     {
         global $langs;
 
         $this->db = $DB ;
-        $this->socidp = $soc_idp;
+        $this->socidp = $socidp;
         $this->products = array();
         $this->projet_id = 0;
 

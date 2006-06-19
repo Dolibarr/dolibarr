@@ -93,15 +93,15 @@ class Propal extends CommonObject
     /**
      *		\brief      Constructeur
      *      \param      DB          Handler d'accès base
-     *      \param      soc_idp     Id de la société
+     *      \param      socidp		Id de la société
      *      \param      propalid    Id de la propal
      */
-    function Propal($DB, $soc_idp="", $propalid=0)
+    function Propal($DB, $socidp="", $propalid=0)
     {
       global $langs;
 
       $this->db = $DB ;
-      $this->socidp = $soc_idp;
+      $this->socidp = $socidp;
       $this->id = $propalid;
       $this->products = array();
       $this->remise = 0;
@@ -131,14 +131,12 @@ class Propal extends CommonObject
 	 */
     function add_product($idproduct, $qty, $remise_percent=0)
     {
+        if (! $qty) $qty = 1;
+
         if ($idproduct > 0)
         {
             $i = sizeof($this->products);
             $this->products[$i] = $idproduct;
-            if (!$qty)
-            {
-                $qty = 1 ;
-            }
             $this->products_qty[$i] = $qty;
             $this->products_remise_percent[$i] = $remise_percent;
         }
@@ -424,10 +422,10 @@ class Propal extends CommonObject
         $this->db->begin();
 
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, remise_percent, remise_absolue,";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
         $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite,";
         $sql.= " fk_cond_reglement, fk_mode_reglement, date_livraison, ref_client) ";
-        $sql.= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
+        $sql.= " VALUES ($this->socidp, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
         $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '".$this->ref."', ".$this->author.",";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
@@ -456,10 +454,9 @@ class Propal extends CommonObject
 							$price = $prod->multiprices[$soc->price_level];
 						else
 							$price = $prod->price;
-		
+
 						$resql = $this->addline(
 							$this->id,
-							$prod->libelle,
 							$prod->description,
 							$price,
 							$this->products_qty[$i],
@@ -506,6 +503,7 @@ class Propal extends CommonObject
 	                    // Fin appel triggers
 	
 	                    $this->db->commit();
+			            dolibarr_syslog("Propal::Create done id=".$this->id);
 	                    return $this->id;
 	                }
 	                else
@@ -526,6 +524,8 @@ class Propal extends CommonObject
             return -1;
         }
 
+		$this->db->commit();
+        dolibarr_syslog("Propal::Create done id=".$this->id);
         return $this->id;
     }
 
@@ -725,12 +725,13 @@ class Propal extends CommonObject
 	}
 
     /**
-     *    \brief      Recupère de la base les caractéristiques d'une propale
-     *    \param      rowid       id de la propal à récupérer
+     *    	\brief      Recupère de la base les caractéristiques d'une propale
+     *    	\param      rowid       id de la propal à récupérer
+     *		\return		int			<0 si ko, 0 si non trouvé, >0 si ok
      */
     function fetch($rowid)
     {
-        $sql = "SELECT ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc,fk_soc_contact";
+        $sql = "SELECT rowid,ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc,fk_soc_contact";
         $sql.= ", ".$this->db->pdate("datep")." as dp";
         $sql.= ", ".$this->db->pdate("fin_validite")." as dfv";
         $sql.= ", ".$this->db->pdate("date_livraison")." as date_livraison";
@@ -742,7 +743,7 @@ class Propal extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."propal,";
         $sql.= " ".MAIN_DB_PREFIX."c_propalst as c";
         $sql.= " WHERE fk_statut = c.id";
-        $sql.= " AND rowid='".$rowid."';";
+        $sql.= " AND rowid='".$rowid."'";
 
 		dolibarr_syslog("Propal::fecth rowid=".$rowid);
 		
@@ -769,7 +770,6 @@ class Propal extends CommonObject
                 $this->total_tva            = $obj->tva;
                 $this->total_ttc            = $obj->total;
                 $this->socidp               = $obj->fk_soc;
-                $this->soc_id               = $obj->fk_soc;
                 $this->projetidp            = $obj->fk_projet;
                 $this->contactid            = $obj->fk_soc_contact;
                 $this->modelpdf             = $obj->model_pdf;
@@ -869,19 +869,21 @@ class Propal extends CommonObject
 
                         $this->lignes[$i]      = $ligne;
                         //dolibarr_syslog("1 ".$ligne->desc);
-                        //print "xx $i ".$this->lignes[$i]->product_desc;
+                        //print "xx $i ".$this->lignes[$i]->libelle;
                         $i++;
                     }
                     $this->db->free($result);
                 }
                 else
                 {
-                    dolibarr_syslog("Propal::Fetch Erreur lecture des produits sql=$sql");
+                	$this->error=$this->db->error();
+                    dolibarr_syslog("Propal::Fetch Error $this->error, sql=$sql");
                     return -1;
                 }
 
+	            return 1;
             }
-            return 1;
+            return 0;
         }
         else
         {
@@ -1860,7 +1862,6 @@ class Propal extends CommonObject
         $this->total_tva         = $src_propal->total_tva;
         $this->total_ttc         = $src_propal->total_ttc;
         $this->socidp            = $src_propal->socidp;
-        $this->soc_id            = $src_propal->soc_id;
         $this->projetidp         = $src_propal->projetidp;
         $this->contactid         = $src_propal->contactid;
         $this->modelpdf          = $src_propal->modelpdf;
@@ -1916,7 +1917,6 @@ class Propal extends CommonObject
                  {
 					$resql = $this->addline(
 						$this->id,
-						$prod->libelle,
 						$prod->description,
 						$price,
 						$ligne->qty,

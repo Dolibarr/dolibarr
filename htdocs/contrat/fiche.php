@@ -134,7 +134,7 @@ if ($_POST["action"] == 'add')
 
     $contrat = new Contrat($db);
 
-    $contrat->soc_id         = $_POST["soc_id"];
+    $contrat->socidp         = $_POST["socidp"];
     $contrat->date_contrat   = $datecontrat;
 
     $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
@@ -154,7 +154,7 @@ if ($_POST["action"] == 'add')
     else {
         $mesg='<div class="error">'.$contrat->error.'</div>';
     }
-    $_GET["socid"]=$_POST["soc_id"];
+    $_GET["socid"]=$_POST["socidp"];
     $_GET["action"]='create';
     $action = '';
 }
@@ -330,7 +330,7 @@ if ($_GET["action"] == 'create')
             print '<form name="contrat" action="fiche.php" method="post">';
 
             print '<input type="hidden" name="action" value="add">';
-            print '<input type="hidden" name="soc_id" value="'.$soc->id.'">'."\n";
+            print '<input type="hidden" name="socidp" value="'.$soc->id.'">'."\n";
             print '<input type="hidden" name="remise_percent" value="0">';
 
             print '<table class="border" width="100%">';

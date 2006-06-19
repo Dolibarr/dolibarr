@@ -21,26 +21,27 @@
 
 class CompanyBankAccount
 {
-  var $rowid;
-
-  var $bank;
-  var $courant;
-  var $clos;
-  var $code_banque;
-  var $code_guichet;
-  var $number;
-  var $cle_rib;
-  var $bic;
-  var $iban_prefix;
-  var $proprio;
-  var $adresse_proprio;
-
-  function CompanyBankAccount($DB, $soc_id)
-  {
+	var $rowid;
+	var $socidp;
+		
+	var $bank;
+	var $courant;
+	var $clos;
+	var $code_banque;
+	var $code_guichet;
+	var $number;
+	var $cle_rib;
+	var $bic;
+	var $iban_prefix;
+	var $proprio;
+	var $adresse_proprio;
+	
+	function CompanyBankAccount($DB, $socid)
+	{
     global $config;
     
     $this->db = $DB;
-    $this->soc_id = $soc_id;
+    $this->socidp = $socid;
 
     $this->clos = 0;
     $this->solde = 0;
@@ -55,8 +56,7 @@ class CompanyBankAccount
    */
   function create()
     {
-            
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->soc_id, now());";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socidp, now());";
       if ($this->db->query($sql))
 	{
 	  if ($this->db->affected_rows()) 
@@ -79,7 +79,7 @@ class CompanyBankAccount
   {      
     
     $sql = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."societe_rib ";
-    $sql .= " WHERE fk_soc = ".$this->soc_id;
+    $sql .= " WHERE fk_soc = ".$this->socidp;
 
     $result = $this->db->query($sql);
 
@@ -116,7 +116,7 @@ class CompanyBankAccount
     $sql .= ",proprio = '".addslashes($this->proprio)."'";
     $sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
     
-    $sql .= " WHERE fk_soc = ".$this->soc_id;
+    $sql .= " WHERE fk_soc = ".$this->socidp;
     
     $result = $this->db->query($sql);
     
@@ -139,7 +139,7 @@ class CompanyBankAccount
   {
 
     $sql = "SELECT rowid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."societe_rib";
-    $sql .= " WHERE fk_soc  = ".$this->soc_id;
+    $sql .= " WHERE fk_soc  = ".$this->socidp;
 
     $result = $this->db->query($sql);
 

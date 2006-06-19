@@ -62,14 +62,14 @@ class FactureFournisseur extends Facture
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler accès base de données
-	 *    \param  soc_idp     id societe ('' par defaut)
-	 *    \param  facid       id facture ('' par defaut)
+	 *    \param  DB          	Handler accès base de données
+	 *    \param  socidp		Id societe ('' par defaut)
+	 *    \param  facid       	Id facture ('' par defaut)
 	 */
-	function FactureFournisseur($DB, $soc_idp='', $facid='')
+	function FactureFournisseur($DB, $socidp='', $facid='')
 	{
 		$this->db = $DB ;
-		$this->socidp = $soc_idp;
+		$this->socidp = $socidp;
 		$this->products = array();
 		$this->amount = 0;
 		$this->remise = 0;
