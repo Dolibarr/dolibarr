@@ -319,6 +319,19 @@ class CommonObject
 
         return $result;
     }
+    
+   /** 	 
+    *      \brief      Retourne le détail d'un contact
+    *      \param      id          id du contact
+    *      \return     array       détail du contact 	 
+    */
+    function fetch_contact($id) 	 
+    { 	 
+       $idcontact = $id; 	 
+       $contact = new Contact($this->db); 	 
+       $contact->fetch($idcontact); 	 
+       $this->contact = $contact; 	 
+     }
 
 }
 
