@@ -165,7 +165,7 @@ class Facture extends CommonObject
 		$sql.= ' note_public,';
 	  $sql.= ' ref_client,';
 		$sql.= ' fk_user_author, fk_projet,';
-		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, ref_client) ';
+		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement) ';
 		$sql.= " VALUES (";
 		$sql.= "'$number','$socid', now(), '$totalht', '".$this->remise_absolue."'";
 		$sql.= ",'".$this->remise_percent."', ".$this->db->idate($this->date);
@@ -176,8 +176,7 @@ class Facture extends CommonObject
 		$sql.= ",".($this->projetid?$this->projetid:"null");
 		$sql.= ','.$this->cond_reglement_id;
 		$sql.= ",".$this->mode_reglement_id;
-		$sql.= ','.$this->db->idate($datelim);
-		$sql.= ", '".$this->ref_client."')";
+		$sql.= ','.$this->db->idate($datelim).")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
