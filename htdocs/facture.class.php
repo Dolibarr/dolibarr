@@ -55,6 +55,7 @@ class Facture extends CommonObject
 	var $author;
 	var $date;
 	var $ref;
+	var $ref_client;
 	var $amount;
 	var $remise;
 	var $tva;
@@ -70,12 +71,12 @@ class Facture extends CommonObject
 	var $mode_reglement_id;
 	var $mode_reglement_code;
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
+  // Pour board
+  var $nbtodo;
+  var $nbtodolate;
 
 	var $specimen;
-    var $error;
+  var $error;
 
 
 	/**

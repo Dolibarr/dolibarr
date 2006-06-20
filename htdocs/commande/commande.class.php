@@ -45,6 +45,7 @@ class Commande extends CommonObject
 
 	var $id ;
 	var $ref;
+	var $ref_client;
 	var $socidp;
 	var $contactid;
 	var $projet_id;
