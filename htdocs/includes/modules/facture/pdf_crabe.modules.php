@@ -193,6 +193,7 @@ class pdf_crabe extends ModelePDFFactures
                 $tab_top = 90;
                 $tab_top_newpage = 50;
                 $tab_height = 110;
+                $tab_height_newpage = 180;
 
 				// Affiche notes
                 if ($fac->note_public)
@@ -215,7 +216,7 @@ class pdf_crabe extends ModelePDFFactures
                	else
                	{
                		$height_note=0;
-				}
+               	}
 
                 $iniY = $tab_top + 8;
                 $curY = $tab_top + 8;
@@ -287,7 +288,7 @@ class pdf_crabe extends ModelePDFFactures
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($fac->lignes[$i]->remise_percent)
-					{
+                    {
                         $pdf->MultiCell(14, 4, $fac->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
@@ -298,15 +299,23 @@ class pdf_crabe extends ModelePDFFactures
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva
-					$tvaligne=$fac->lignes[$i]->price * $fac->lignes[$i]->qty;
-					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
-					$this->tva[ (string)$fac->lignes[$i]->tva_taux ] += $tvaligne;
+                    $tvaligne=$fac->lignes[$i]->price * $fac->lignes[$i]->qty;
+                    if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
+                    $this->tva[ (string)$fac->lignes[$i]->tva_taux ] += $tvaligne;
 
                     $nexY+=2;    // Passe espace entre les lignes
 
                     if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
                     {
-                        $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+                        if ($pagenb == 1)
+                        {
+                          $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+                        }
+                        else
+                        {
+                        	$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+                        }
+                        
                         $this->_pagefoot($pdf,$outputlangs);
 
                         // Nouvelle page

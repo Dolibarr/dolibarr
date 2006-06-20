@@ -187,6 +187,7 @@ class pdf_einstein extends ModelePDFCommandes
                 $tab_top = 90;
                 $tab_top_newpage = 50;
                 $tab_height = 110;
+                $tab_height_newpage = 170;
 
                 $iniY = $tab_top + 8;
                 $curY = $tab_top + 8;
@@ -264,23 +265,32 @@ class pdf_einstein extends ModelePDFCommandes
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva
-					$tvaligne=$com->lignes[$i]->price * $com->lignes[$i]->qty;
-					if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
-					$this->tva[ (string)$com->lignes[$i]->tva_tx ] += $tvaligne;
+                    $tvaligne=$com->lignes[$i]->price * $com->lignes[$i]->qty;
+                    if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
+                    $this->tva[ (string)$com->lignes[$i]->tva_tx ] += $tvaligne;
 
                     $nexY+=2;    // Passe espace entre les lignes
 
                     if ($nexY > 200 && $i < ($nblignes - 1))
-                    {
-                        $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
-						$this->_pagefoot($pdf);
+                    {   
+                        if ($pagenb == 1)
+                        {
+                          $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
+                        }
+                        else
+                        {
+                        	$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY);
+                        }
+                        
+                        $this->_pagefoot($pdf);
                         
                         // Nouvelle page
                         $pdf->AddPage();
                         $pagenb++;
                         $this->_pagehead($pdf, $com, 0);
-
-						$nexY = $tab_top_newpage + 8;
+                        
+                        $nexY = $tab_top_newpage + 8;
+     
                         $pdf->SetTextColor(0,0,0);
                         $pdf->SetFont('Arial','', 10);
                     }
