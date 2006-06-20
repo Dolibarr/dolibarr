@@ -1439,7 +1439,7 @@ else
 			}
 			else
 			{
-				print $commande->ref_client;
+				print $fac->ref_client;
 			}
 			print '</td>';
 			print '</tr>';
