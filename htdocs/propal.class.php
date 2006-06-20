@@ -830,7 +830,7 @@ class Propal extends CommonObject
                  * Lignes propales liées à un produit ou non
                  */
                 $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice, d.fk_product,";
-                $sql.= " d.total_ht, d.total_tva, d.total_ttc,";
+                $sql.= " d.total_ht, d.total_tva, d.total_ttc, d.coef, d.rang,";
                 $sql.= " p.ref, p.label, p.description as product_desc";
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -859,17 +859,18 @@ class Propal extends CommonObject
                         $ligne->total_ht       = $objp->total_ht;
                         $ligne->total_tva      = $objp->total_tva;
                         $ligne->total_ttc      = $objp->total_ttc;
+                        $ligne->coef           = $objp->coef;
+                        $ligne->rang           = $objp->rang;
 
                         $ligne->product_id     = $objp->fk_product;
-                        $ligne->coef           = $objp->coef;
 
                         $ligne->libelle        = $objp->label;        // Label produit
                         $ligne->product_desc   = $objp->product_desc; // Description produit
                         $ligne->ref            = $objp->ref;
 
                         $this->lignes[$i]      = $ligne;
-                        //dolibarr_syslog("1 ".$ligne->desc);
-                        //print "xx $i ".$this->lignes[$i]->libelle;
+                        //dolibarr_syslog("1 ".$ligne->product_id);
+                        //print "xx $i ".$this->lignes[$i]->product_id;
                         $i++;
                     }
                     $this->db->free($result);
@@ -1211,7 +1212,7 @@ class Propal extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET fk_statut = $statut, note = '".addslashes($note)."', date_cloture=now(), fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$statut.", note = '".addslashes($note)."', date_cloture=now(), fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         $resql=$this->db->query($sql);

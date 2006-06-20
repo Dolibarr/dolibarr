@@ -61,6 +61,8 @@ class Commande extends CommonObject
 	var $date_livraison;	// Date livraison souhaitée
 	var $remise_percent;
 	var $remise_absolue;
+	
+	var $lines = array();
 
 	// Pour board
 	var $nbtodo;
@@ -97,6 +99,8 @@ class Commande extends CommonObject
     */
 	function create_from_propale($user, $propale_id)
 	{
+		dolibarr_syslog("Commande.class.php::create_from_propale propale_id=$propale_id");
+
 		$propal = new Propal($this->db);
 		$propal->fetch($propale_id);
 
@@ -107,20 +111,14 @@ class Commande extends CommonObject
 		{
 			$CommLigne = new CommandeLigne($this->db);
 			$CommLigne->libelle           = $propal->lignes[$i]->libelle;
-			$CommLigne->description       = $propal->lignes[$i]->desc;
-			$CommLigne->price             = $propal->lignes[$i]->subprice;
+			$CommLigne->desc              = $propal->lignes[$i]->desc;
+			$CommLigne->price             = $propal->lignes[$i]->price;
 			$CommLigne->subprice          = $propal->lignes[$i]->subprice;
 			$CommLigne->tva_tx            = $propal->lignes[$i]->tva_tx;
 			$CommLigne->qty               = $propal->lignes[$i]->qty;
 			$CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
-			$CommLigne->product_id        = $propal->lignes[$i]->product_id;
+			$CommLigne->fk_product        = $propal->lignes[$i]->product_id;
 			$this->lines[$i] = $CommLigne;
-			
-			// \todo La methode create doit utiliser le tableau products plutot que lines
-			// ce qui permettrait de virer ces lignes
-			$this->products[$i]=$propal->lignes[$i]->product_id;
-			$this->products_qty[$i]=$propal->lignes[$i]->qty;
-			$this->products_remise_percent[$i]=$propal->lignes[$i]->remise_percent;
 		}
 
 		$this->socidp               = $propal->socidp;
@@ -276,7 +274,7 @@ class Commande extends CommonObject
 								require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 								for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 								{
-										$prod = new Product($this->db, $this->lignes[$i]->product_id);
+										$prod = new Product($this->db, $this->lignes[$i]->fk_product);
 										$prod -> get_sousproduits_arbo ();
 										$prods_arbo = $prod->get_each_prod();
 										if(sizeof($prods_arbo) > 0)
@@ -291,7 +289,7 @@ class Commande extends CommonObject
 											}
 										}
 										// on décompte pas le stock du produit principal, ça serait fait manuellement avec l'expédition
-										// $result=$mouvS->livraison($user, $this->lignes[$i]->product_id, $entrepot_id, $this->lignes[$i]->qty);
+										// $result=$mouvS->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 									}
 							
 							}
@@ -368,7 +366,7 @@ class Commande extends CommonObject
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";
-		$sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf.'\', \''.$this->cond_reglement_id.'\', \''.$this->mode_reglement_id.'\',';
+		$sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
 		$sql.= ' '.($this->date_livraison?$this->db->idate($this->date_livraison):'null').',';
 		$sql.= " '".$this->adresse_livraison_id."',";
 		$sql.= " '".$this->remise_absolue."',";
@@ -386,34 +384,23 @@ class Commande extends CommonObject
 				/*
 				 *  Insertion des produits dans la base
 				 */
-				for ($i = 0 ; $i < sizeof($this->products) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					$prod = new Product($this->db, $this->products[$i]);
-					if ($prod->fetch($this->products[$i]))
+					$resql = $this->addline(
+						$this->id,
+						$this->lines[$i]->desc,
+						$this->lines[$i]->price,
+						$this->lines[$i]->qty,
+						$this->lines[$i]->tva_tx,
+						$this->lines[$i]->fk_product,
+						$this->lines[$i]->remise_percent
+						);
+
+					if ($resql < 0)
 					{
-						$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
-						// multiprix
-						if($conf->global->PRODUIT_MULTIPRICES == 1)
-							$price = $prod->multiprices[$soc->price_level];
-						else
-							$price = $prod->price;
-		
-						$resql = $this->addline(
-							$this->id,
-							$prod->description,
-							$price,
-							$this->products_qty[$i],
-							$tva_tx,
-							$this->products[$i],
-							$this->products_remise_percent[$i]
-							);
-							
-						if ($resql < 0)
-						{
-							$this->error=$this->db->error;
-							dolibarr_print_error($this->db);
-							break;
-						}
+						$this->error=$this->db->error;
+						dolibarr_print_error($this->db);
+						break;
 					}
 				}
 				
@@ -464,7 +451,7 @@ class Commande extends CommonObject
      */
     function addline($commandeid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
-    	dolibarr_syslog("commande.class.php::addline this->id=$this->id, $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+    	dolibarr_syslog("Commande.class.php::addline this->id=$this->id, $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         if ($this->statut == 0)
@@ -566,16 +553,19 @@ class Commande extends CommonObject
 	function add_product($idproduct, $qty, $remise_percent=0)
 	{
 		global $conf;
+
+		if (!$qty) $qty = 1 ;
+			
 		if ($idproduct > 0)
 		{
-			$i = sizeof($this->products);
-			$this->products[$i] = $idproduct;
-			if (!$qty)
-			{
-				$qty = 1 ;
-			}
-			$this->products_qty[$i] = $qty;
-			$this->products_remise_percent[$i] = $remise_percent;
+			$ligne=new CommandeLigne($this->db);
+			$ligne->fk_product=$idproduct;
+			$ligne->qty=$qty;
+			$ligne->remise_percent=$remise_percent;
+			
+			$i = sizeof($this->lines);
+			$this->lines[$i] = $ligne;
+
 			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS À LA COMMANDE
 			if($conf->global->PRODUIT_SOUSPRODUITS == 1)
 			{
@@ -866,14 +856,15 @@ class Commande extends CommonObject
 		
     /**
      *      \brief      Reinitialise le tableau lignes
-     *		\param		only_product	Ne renvoie que ligne liées à des produits physiques
+     *		\param		only_product	Ne renvoie que ligne liées à des produits physiques prédéfinis
      *		\return		array			Tableau de CommandeLigne
      */
 	function fetch_lignes($only_product=0)
 	{
 		$this->lignes = array();
-		$sql = 'SELECT l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.rowid, l.tva_tx,';
-		$sql.= ' l.remise_percent, l.subprice, l.rang, l.coef, l.label';
+		$sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
+		$sql.= ' l.remise_percent, l.subprice, l.rang, l.coef, l.label,';
+		$sql.= ' p.ref as product_ref, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -900,15 +891,13 @@ class Commande extends CommonObject
 				$ligne->subprice       = $objp->subprice;
 				$ligne->remise_percent = $objp->remise_percent;
 				$ligne->price          = $objp->price;
-				$ligne->product_id     = $objp->fk_product;
+				$ligne->fk_product     = $objp->fk_product;
 				$ligne->coef           = $objp->coef;
 				$ligne->rang           = $objp->rang;
 
-				$ligne->libelle        = $objp->label;        // Label ligne
-				
+				$ligne->libelle        = $objp->label;        // Label produit
 				$ligne->product_desc   = $objp->product_desc; // Description produit
 				$ligne->ref            = $objp->product_ref;
-
 
 				$this->lignes[$i] = $ligne;
 				$i++;
@@ -1125,6 +1114,9 @@ class Commande extends CommonObject
         $sql = "SELECT price, qty, tva_tx, total_ht, total_tva, total_ttc";
         $sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
         $sql.= " WHERE fk_commande = ".$this->id;
+
+		dolibarr_syslog("Commande.class.php::update_price this->id=".$this->id);
+		
 		$result = $this->db->query($sql);
 		if ($result)
         {
@@ -1826,24 +1818,24 @@ class Commande extends CommonObject
 
 class CommandeLigne
 {
-  var $db;
+	var $db;
 	var $error;
-    
-    // From llx_commandedet
+	
+	// From llx_commandedet
 	var $rowid;
 	var $fk_facture;
-  var $desc;          	// Description ligne
-  var $product_id;		// Id produit prédéfini
-  var $label;
-
+	var $desc;          	// Description ligne
+	
 	var $qty;
 	var $tva_tx;
 	var $subprice;
-  var $remise;
+	var $remise;
 	var $remise_percent;
 	var $price;
 	var $rang;
 	var $coef;
+
+	var $fk_product;		// Id produit prédéfini
 
 	var $info_bits;			// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
@@ -1934,7 +1926,7 @@ class CommandeLigne
 		$sql.= " '".price2num($this->qty)."',";
 		$sql.= " '".price2num($this->tva_tx)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
-		else { $sql.='0,'; }
+		else { $sql.='null,'; }
 		$sql.= " '".price2num($this->remise_percent)."',";
 		$sql.= " '".price2num($this->subprice)."',";
 		$sql.= " '".price2num($this->remise)."',";
@@ -1949,7 +1941,7 @@ class CommandeLigne
 		$sql.= " '".price2num($this->total_ttc)."'";
 		$sql.= ')';
 
-       	dolibarr_syslog("CommandeLigne::insert sql=$sql");
+       	dolibarr_syslog("CommandeLigne.class.php::insert sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1960,7 +1952,7 @@ class CommandeLigne
 		else
 		{
         	$this->error=$this->db->error();
-        	dolibarr_syslog("CommandeLigne::insert Error ".$this->error);
+        	dolibarr_syslog("CommandeLigne.class.php::insert Error ".$this->error);
 			$this->db->rollback();
             return -2;
 		}
@@ -1994,7 +1986,7 @@ class CommandeLigne
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-       	dolibarr_syslog("CommandeLigne::update sql=$sql");
+       	dolibarr_syslog("CommandeLigne.class.php::update sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2005,7 +1997,7 @@ class CommandeLigne
 		else
 		{
         	$this->error=$this->db->error();
-        	dolibarr_syslog("CommandeLigne::update Error ".$this->error);
+        	dolibarr_syslog("CommandeLigne.class.php::update Error ".$this->error);
 			$this->db->rollback();
             return -2;
 		}
