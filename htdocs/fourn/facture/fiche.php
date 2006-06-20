@@ -297,19 +297,35 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		$fac_ori->fetch($_GET['facid']);
 	}
 
+	$societe='';
+	if ($_GET['socid'])
+	{
+		$societe=new Societe($db);
+		$societe->fetch($_GET['socid']);
+	}
+
 	print '<form name="add" action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<table class="border" width="100%">';
 	print '<tr><td>'.$langs->trans('Company').'</td>';
 
 	print '<td>';
-	$html->select_societes(empty($_GET['socid'])?'':$_GET['socid'],'socidp','s.fournisseur = 1');
+
+	if ($_GET['socid'])
+	{
+		print $societe->getNomUrl(1);
+		print '<input type="hidden" name="socidp" value="'.$_GET['socid'].'">';
+	}
+	else
+	{
+		$html->select_societes(empty($_GET['socid'])?'':$_GET['socid'],'socidp','s.fournisseur = 1');
+	}
 	print '</td>';
 	print '<td width="50%">'.$langs->trans('Note').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" type="text"></td>';
 
-	print '<td width="50%" rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="'.ROWS_8.'"></textarea></td></tr>';
+	print '<td width="50%" rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td></tr>';
 	if ($_GET['action'] == 'copy')
 	{
 		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
@@ -355,12 +371,6 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
 		print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
 		print '<td align="right">';
-		$societe='';
-		if ($_GET['socid'])
-		{
-			$societe=new Societe($db);
-			$societe->fetch($_GET['socid']);
-		}
 		$html->select_tva('tauxtva'.$i,'',$societe,$mysoc);
 		print '</td>';
 		print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
@@ -384,8 +394,7 @@ else
 		$fac->fetch($_GET['facid']);
 
 		$societe = new Fournisseur($db);
-
-		if ( $societe->fetch($fac->socidp) )
+		if ($societe->fetch($fac->socidp))
 		{
 			$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$fac->socidp;
 			$addons[0][1] = $societe->nom;
@@ -395,10 +404,10 @@ else
 
 		if ($mesg) { print $mesg.'<br>'; }
 		
-		print_titre($langs->trans('SupplierInvoice'));
 
 		if ($_GET['action'] == 'edit' || $_GET['action'] == 'delete_product_line')
 		{
+			print_titre($langs->trans('SupplierInvoice'));
 
 			/*
 			 * Confirmation de la suppression d'une ligne produit
@@ -423,7 +432,7 @@ else
 
 			$rownb=9;
 			print '<td rowspan="'.$rownb.'" valign="top">';
-			print '<textarea name="note" wrap="soft" cols="60" rows="'.ROWS_8.'">';
+			print '<textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'">';
 			print $fac->note;
 			print '</textarea></td></tr>';
 
@@ -610,7 +619,7 @@ else
             print "</tr>\n";
 
             // Societe
-			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2"><a href="../fiche.php?socid='.$fac->socidp.'">'.dolibarr_trunc($fac->socnom,24).'</a></td>';
+			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$societe->getNomUrl(1).'</a></td>';
 			print '<td align="right"><a href="index.php?socid='.$fac->socidp.'">'.$langs->trans('OtherBills').'</a></td>';
 			print '</tr>';
 
