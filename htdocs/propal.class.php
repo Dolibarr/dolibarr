@@ -230,7 +230,7 @@ class Propal extends CommonObject
 			$ligne->desc=$desc;
 			$ligne->price=$price;
 			$ligne->qty=$qty;
-			$ligne->txtva=$txtva;
+			$ligne->tva_tx=$txtva;
 			$ligne->fk_product=$fk_product;
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$subprice;
