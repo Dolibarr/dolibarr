@@ -813,8 +813,9 @@ class Facture extends CommonObject
 			// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
 			// afin de ne pas perdre les fichiers attachés
 			$facref = sanitize_string($this->ref);
+			$snumfa = sanitize_string($numfa);
 			$dirsource = $conf->facture->dir_output.'/'.$facref;
-			$dirdest = $conf->facture->dir_output.'/'.$numfa;
+			$dirdest = $conf->facture->dir_output.'/'.$snumfa;
 			if (file_exists($dirsource))
 			{
 				dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
@@ -823,7 +824,7 @@ class Facture extends CommonObject
 				{
 					dolibarr_syslog("Renommage ok");
 					// Suppression ancien fichier PDF dans nouveau rep
-					dol_delete_file($conf->facture->dir_output.'/'.$numfa.'/'.$facref.'.*');
+					dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
 				}
 			}
 
