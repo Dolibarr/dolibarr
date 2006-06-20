@@ -547,21 +547,40 @@ class Commande extends CommonObject
 
 
 	/**
- 	 * Ajoute un produit dans la commande
-	 *
+ 	 * 		\brief				Ajoute une ligne produit prédéfini dans tableau lines
+	 *		\param				idproduct			Id du produit à ajouter
+	 *		\param				qty					Quantité
+	 *		\remise_percent		remise_percent		Remise ligne en pourcentage
+	 *		\remarks			$this->client doit etre chargé
 	 */
 	function add_product($idproduct, $qty, $remise_percent=0)
 	{
 		global $conf;
 
-		if (!$qty) $qty = 1 ;
+		if (!$qty) $qty = 1;
 			
 		if ($idproduct > 0)
 		{
+			$prod=new Product($this->db);
+			$prod->fetch($idproduct);
+			
+			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			// multiprix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+				$price = $prod->multiprices[$this->client->price_level];
+			else
+				$price = $prod->price;
+
 			$ligne=new CommandeLigne($this->db);
 			$ligne->fk_product=$idproduct;
+			$ligne->desc=$prod->description;
 			$ligne->qty=$qty;
+			$ligne->price=$price;
 			$ligne->remise_percent=$remise_percent;
+			$ligne->tva_tx=$tva_tx;
+			$ligne->ref=$prod->ref;
+			$ligne->libelle=$prod->libelle;
+			$ligne->product_desc=$prod->description;
 			
 			$i = sizeof($this->lines);
 			$this->lines[$i] = $ligne;
@@ -1825,13 +1844,12 @@ class CommandeLigne
 	var $rowid;
 	var $fk_facture;
 	var $desc;          	// Description ligne
-	
 	var $qty;
 	var $tva_tx;
+	var $price;
 	var $subprice;
 	var $remise;
 	var $remise_percent;
-	var $price;
 	var $rang;
 	var $coef;
 

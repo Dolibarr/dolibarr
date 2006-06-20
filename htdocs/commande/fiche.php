@@ -103,6 +103,8 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->date_livraison       = $datelivraison;
 	$commande->adresse_livraison_id = $_POST['adresse_livraison_id'];
 
+	$commande->fetch_client();
+	
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
 	$commande->add_product($_POST['idprod3'],$_POST['qty3'],$_POST['remise_percent3']);
