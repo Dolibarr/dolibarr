@@ -202,6 +202,9 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 	{
 		$commande = new Commande($db);
 		$ret=$commande->fetch($_POST['id']);
+		$soc = new Societe($db, $commande->socidp);
+		$soc->fetch($commande->socidp);
+		
 		if ($ret < 0)
 		{
 			dolibarr_print_error($db,$commande->error);
