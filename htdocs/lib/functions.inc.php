@@ -509,6 +509,7 @@ function dolibarr_print_phone($phone,$country="FR")
         }
         elseif (strlen($phone) == 7)
         {
+
             return substr($phone,0,3)."&nbsp;".substr($phone,3,2)."&nbsp;".substr($phone,5,2);
         }
         elseif (strlen($phone) == 9)
@@ -536,8 +537,13 @@ function dolibarr_print_phone($phone,$country="FR")
 function dolibarr_trunc($string,$size=40)
 {
 	if ($size==0) return $string;
-	if (strlen($string) > $size)
-		return substr($string,0,$size).'...';
+	if ((!defined('USE_SHORT_TITLE')) || defined('USE_SHORT_TITLE') &&  USE_SHORT_TITLE)
+	{
+		if (strlen($string) > $size)
+			return substr($string,0,$size).'...';
+		else
+			return $string;
+	}
 	else
 		return $string;
 }
@@ -1716,6 +1722,8 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 {
 	dolibarr_syslog("get_default_tva vendeur_assujeti=$societe_vendeuse->tva_assuj pays_vendeur=$societe_vendeuse->pays_id, pays_acheteur=$societe_acheteuse->pays_id, taux_produit=$taux_produit");
 
+	if (!is_object($societe_vendeuse))
+		return 0;
 	// Si vendeur non assujeti à TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
 	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
