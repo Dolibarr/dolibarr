@@ -1426,7 +1426,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
 			print '</td>';
-			if ($_GET['action'] != 'refcdeclient' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+			if ($_GET['action'] != 'refcdeclient' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($user->rights->facture->creer && $_GET['action'] == 'refcdeclient')

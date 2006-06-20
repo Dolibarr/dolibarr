@@ -114,6 +114,7 @@ class Facture extends CommonObject
 		// Nettoyage paramètres
 		$this->note=trim($this->note);
 		$this->note_public=trim($this->note_public);
+		$this->ref_client=trim($this->ref_client);
 		if (! $this->remise) $this->remise = 0 ;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 
@@ -142,7 +143,7 @@ class Facture extends CommonObject
 			$this->amount            = $_facrec->amount;
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
-			$this->remise			 = $_facrec->remise;
+			$this->remise			       = $_facrec->remise;
 		}
 
 		// Definition de la date limite
@@ -161,6 +162,7 @@ class Facture extends CommonObject
 		$sql.= ' datef,';
 		$sql.= ' note,';
 		$sql.= ' note_public,';
+	  $sql.= ' ref_client,';
 		$sql.= ' fk_user_author, fk_projet,';
 		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, ref_client) ';
 		$sql.= " VALUES (";
@@ -168,6 +170,7 @@ class Facture extends CommonObject
 		$sql.= ",'".$this->remise_percent."', ".$this->db->idate($this->date);
 		$sql.= ",".($this->note?"'".addslashes($this->note)."'":"null");
 		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
+		$sql.= ",".($this->ref_client?"'".addslashes($this->ref_client)."'":"null");
 		$sql.= ",".$user->id;
 		$sql.= ",".($this->projetid?$this->projetid:"null");
 		$sql.= ','.$this->cond_reglement_id;
@@ -504,7 +507,7 @@ class Facture extends CommonObject
 		if (empty($ref_client))
 			$sql .= ' SET ref_client = NULL';
 		else
-			$sql .= ' SET ref_client = \''.$ref_client.'\'';
+			$sql .= ' SET ref_client = \''.addslashes($ref_client).'\'';
 		$sql .= ' WHERE rowid = '.$this->id;
 		if ($this->db->query($sql))
 		{
