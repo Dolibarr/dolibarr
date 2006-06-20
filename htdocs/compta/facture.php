@@ -184,6 +184,7 @@ if ($_POST['action'] == 'add')
 	$facture->date           = $datefacture;
 	$facture->note_public    = $_POST['note_public'];
 	$facture->note           = $_POST['note'];
+	$facture->ref_client     = $_POST['ref_client'];
 
 	if ($_POST['fac_rec'] > 0)
 	{
@@ -750,6 +751,7 @@ if ($_GET['action'] == 'create')
 		$propal->fetch($_GET['propalid']);
 		$societe_id = $propal->socidp;
 		$projetid=$propal->projetidp;
+		$ref_client=$propal->ref_client;
 
 		$soc->fetch($societe_id);
 		$cond_reglement_id = $propal->cond_reglement_id;
@@ -805,6 +807,11 @@ if ($_GET['action'] == 'create')
 
     // Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
+	
+	// Reference client
+	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
+	print '<input type="text" name="ref_client" value=""></td>';
+	print '</tr>';
 
 	// Societe
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->getNomUrl(1).'</td>';
@@ -1331,7 +1338,8 @@ if ($_GET['action'] == 'create')
 }
 else
 {
-	if ($_GET['facid'] > 0)
+	$id = $_GET['facid'];
+	if ($id > 0)
 	{
 		/* *************************************************************************** */
 		/*                                                                             */
@@ -1410,8 +1418,31 @@ else
 			 */
 			print '<table class="border" width="100%">';
 			
-            // Reference
-        	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+      // Reference
+      print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+      
+      // Ref client
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+			print $langs->trans('RefCustomer').'</td><td align="left">';
+			print '</td>';
+			if ($_GET['action'] != 'refcdeclient' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($user->rights->facture->creer && $_GET['action'] == 'refcdeclient')
+			{
+				print '<form action="facture.php?facid='.$id.'" method="post">';
+				print '<input type="hidden" name="action" value="set_ref_client">';
+				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$fac->ref_client.'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $commande->ref_client;
+			}
+			print '</td>';
+			print '</tr>';
 
 			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
