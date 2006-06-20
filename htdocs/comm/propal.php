@@ -442,6 +442,8 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 	{
 	    $propal = new Propal($db);
 	    $ret=$propal->fetch($_POST['propalid']);
+	    $soc = new Societe($db, $propal->socidp);
+	    $soc->fetch($propal->socidp);
 
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
