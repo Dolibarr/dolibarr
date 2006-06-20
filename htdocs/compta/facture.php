@@ -809,8 +809,9 @@ if ($_GET['action'] == 'create')
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 	
 	// Reference client
+	$refclient = $ref_client ? $ref_client : '';
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
-	print '<input type="text" name="ref_client" value=""></td>';
+	print '<input type="text" name="ref_client" value="'.$refclient.'"></td>';
 	print '</tr>';
 
 	// Societe
