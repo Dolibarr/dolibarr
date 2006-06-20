@@ -350,7 +350,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<tr><td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$livraison->ville.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($livraison->pays_id,'pays_id',$conf->use_javascript?' onChange="autofilltownfromzip_save_refresh_edit()"':'');
+        $form->select_pays($livraison->pays_id,'pays_id');
         print '</td></tr>';
         
         print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3"><textarea name="note" cols="40" rows="6" wrap="soft">';
@@ -405,7 +405,7 @@ else
       print '<table class="border" width="100%">';
 
       print '<tr><td width="20%">'.$langs->trans('DeliveryAddressLabel').'</td><td colspan="3">'.$livraison->lignes[$i]->label.'</td>';
-      print '<td valign="top" colspan="2" width="50%" rowspan="7">'.$langs->trans('Note').' :<br>'.nl2br($livraison->lignes[$i]->note).'</td></tr>';
+      print '<td valign="top" colspan="2" width="50%" rowspan="6">'.$langs->trans('Note').' :<br>'.nl2br($livraison->lignes[$i]->note).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$livraison->lignes[$i]->nom.'</td></tr>';
     
       print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($livraison->lignes[$i]->adresse)."</td></tr>";
