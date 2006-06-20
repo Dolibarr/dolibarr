@@ -361,7 +361,7 @@ class Commande extends CommonObject
         $this->db->begin();
 	
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
-		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, ref_client,';
+		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_public, ref_client,';
 		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
 		$sql.= ' remise_absolue, remise_percent)';
 		$sql.= ' VALUES ('.$this->socidp.', now(), '.$user->id.', '.$this->projetid.',';
