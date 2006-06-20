@@ -32,7 +32,6 @@ create table llx_societe_adresse_livraison
   address            varchar(255),                        -- company adresse
   cp                 varchar(10),                         -- zipcode
   ville              varchar(50),                         -- town
-  fk_departement     integer        DEFAULT 0,            --
   fk_pays            integer        DEFAULT 0,            --
   note               text,                                --
   fk_user_creat      integer,                             -- utilisateur qui a créé l'info

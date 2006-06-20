@@ -45,7 +45,6 @@ class Livraison
 	var $adresse;
 	var $cp;
 	var $ville;
-	var $departement_id;
 	var $pays_id;
 	var $pays_code;
 	var $note;
@@ -176,7 +175,6 @@ class Livraison
         $this->adresse=trim($this->adresse);
         $this->cp=trim($this->cp);
         $this->ville=trim($this->ville);
-        $this->departement_id=trim($this->departement_id);
         $this->pays_id=trim($this->pays_id);
         $this->note=trim($this->note);
 
@@ -196,8 +194,7 @@ class Livraison
         
             if ($this->ville)
             { $sql .= ",ville = '" . addslashes($this->ville) ."'"; }
-        
-            $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
+
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
             $sql.= ",note = '" . addslashes($this->note) ."'";
 
@@ -268,12 +265,10 @@ class Livraison
              {
              	  $sql = 'SELECT a.rowid as idl, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
              	  $sql .= ','. $this->db->pdate('a.tms').' as date_update, a.fk_societe';
-             	  $sql .= ', a.cp, a.ville, a.note, a.fk_departement, a.fk_pays';
+             	  $sql .= ', a.cp, a.ville, a.note, a.fk_pays';
              	  $sql .= ', p.code as pays_code, p.libelle as pays';
-             	  $sql .= ', d.code_departement as departement_code, d.nom as departement';
              	  $sql .= ' FROM '.MAIN_DB_PREFIX.'societe_adresse_livraison as a';
              	  $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
-             	  $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON a.fk_departement = d.rowid';
              	  $sql .= ' WHERE a.fk_societe = '.$this->socid;
              	  
              	  $resql=$this->db->query($sql);
@@ -299,8 +294,6 @@ class Livraison
 				            $ligne->pays_id         = $objp->fk_pays;
 				            $ligne->pays_code       = $objp->fk_pays?$objp->pays_code:'';
 				            $ligne->pays            = $objp->fk_pays?($langs->trans('Country'.$objp->pays_code)!='Country'.$objp->pays_code?$langs->trans('Country'.$objp->pays_code):$objp->pays):'';
-				            $ligne->departement_id  = $objp->fk_departement;
-				            $ligne->departement     = $objp->fk_departement?$objp->departement:'';
 				            $ligne->note            = $objp->note;
 				            
 				            $this->lignes[$i]      = $ligne;
@@ -341,12 +334,10 @@ class Livraison
 
 		$sql = 'SELECT a.rowid, a.fk_societe, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
 		$sql .= ','. $this->db->pdate('a.tms').' as date_update';
-		$sql .= ', a.cp,a.ville, a.note, a.fk_departement, a.fk_pays';
+		$sql .= ', a.cp,a.ville, a.note, a.fk_pays';
 		$sql .= ', p.code as pays_code, p.libelle as pays';
-		$sql .= ', d.code_departement as departement_code, d.nom as departement';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_adresse_livraison as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON a.fk_departement = d.rowid';
 		$sql .= ' WHERE a.rowid = '.$idl;
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -371,9 +362,6 @@ class Livraison
 				$this->pays_id = $obj->fk_pays;
 				$this->pays_code = $obj->fk_pays?$obj->pays_code:'';
 				$this->pays = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
-
-				$this->departement_id = $obj->fk_departement;
-				$this->departement= $obj->fk_departement?$obj->departement:'';
 
 				$this->note = $obj->note;
 
@@ -510,8 +498,6 @@ class AdresseLivraisonLigne
     var $pays_id;
     var $pays_code;
     var $pays;
-    var $departement_id;
-    var $departement;
     var $note;
 
     function AdresseLivraisonLigne()

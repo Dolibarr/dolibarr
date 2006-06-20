@@ -90,7 +90,6 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $livraison->cp                    = $_POST["cp"];
     $livraison->ville                 = $_POST["ville"];
     $livraison->pays_id               = $_POST["pays_id"];
-    $livraison->departement_id        = $_POST["departement_id"];
     $livraison->note                  = $_POST["note"];
     
     if ($_POST["action"] == 'add')
@@ -204,7 +203,6 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $livraison->adresse=$_POST["adresse"];
             $livraison->cp=$_POST["cp"];
             $livraison->ville=$_POST["ville"];
-            $livraison->departement_id=$_POST["departement_id"];
             $livraison->note=$_POST["note"];
         }
 
@@ -259,18 +257,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '<tr><td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$livraison->ville.'"></td></tr>';
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($livraison->pays_id,'pays_id',$conf->use_javascript?' onChange="autofilltownfromzip_save_refresh_create()"':'');
-        print '</td></tr>';
-
-        print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-        if ($livraison->pays_id)
-        {
-            $form->select_departement($livraison->departement_id,$livraison->pays_code);
-        }
-        else
-        {
-            print $countrynotdefined;
-        }
+        $form->select_pays($livraison->pays_id,'pays_id');
         print '</td></tr>';
         
         print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3"><textarea name="note" cols="40" rows="6" wrap="soft">';
@@ -311,7 +298,6 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $livraison->zip=$_POST["zip"];
             $livraison->ville=$_POST["ville"];
             $livraison->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
-            $livraison->departement_id=$_POST["departement_id"];
             $livraison->note=$_POST["note"];
 
             // On positionne pays_id, pays_code et libelle du pays choisi
@@ -365,10 +351,6 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($livraison->pays_id,'pays_id',$conf->use_javascript?' onChange="autofilltownfromzip_save_refresh_edit()"':'');
-        print '</td></tr>';
-
-        print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-        $form->select_departement($livraison->departement_id,$livraison->pays_code);
         print '</td></tr>';
         
         print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3"><textarea name="note" cols="40" rows="6" wrap="soft">';
@@ -433,8 +415,6 @@ else
 
       print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$livraison->lignes[$i]->pays.'</td>';
       print '</td></tr>';
-
-      print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$livraison->lignes[$i]->departement.'</td></tr>';
 
       print '</table>';
     
