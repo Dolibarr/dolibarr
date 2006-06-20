@@ -874,7 +874,6 @@ class Commande extends CommonObject
 		$this->lignes = array();
 		$sql = 'SELECT l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.rowid, l.tva_tx,';
 		$sql.= ' l.remise_percent, l.subprice, l.rang, l.coef, l.label';
-		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -893,7 +892,6 @@ class Commande extends CommonObject
 				$ligne = new CommandeLigne($this->db);
 				$ligne->rowid          = $objp->rowid;
 				$ligne->id             = $objp->rowid;				// \deprecated
-				$ligne->label          = $objp->label;
 				$ligne->fk_commande    = $objp->fk_commande;
 				$ligne->commande_id    = $objp->fk_commande;		// \deprecated
 				$ligne->desc           = $objp->description;  // Description ligne
@@ -906,7 +904,8 @@ class Commande extends CommonObject
 				$ligne->coef           = $objp->coef;
 				$ligne->rang           = $objp->rang;
 
-				$ligne->libelle        = $objp->product_libelle;        // Label produit
+				$ligne->libelle        = $objp->label;        // Label ligne
+				
 				$ligne->product_desc   = $objp->product_desc; // Description produit
 				$ligne->ref            = $objp->product_ref;
 
@@ -1827,19 +1826,20 @@ class Commande extends CommonObject
 
 class CommandeLigne
 {
-    var $db;
+  var $db;
 	var $error;
     
     // From llx_commandedet
 	var $rowid;
 	var $fk_facture;
-    var $desc;          	// Description ligne
-    var $product_id;		// Id produit prédéfini
+  var $desc;          	// Description ligne
+  var $product_id;		// Id produit prédéfini
+  var $label;
 
 	var $qty;
 	var $tva_tx;
 	var $subprice;
-    var $remise;
+  var $remise;
 	var $remise_percent;
 	var $price;
 	var $rang;
