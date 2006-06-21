@@ -1729,7 +1729,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
 	
 	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.	
-	if ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id)
+	if (($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && $societe_acheteuse->tva_assuj == 1)
 	{
 	    return $taux_produit;
 	}
@@ -1738,7 +1738,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	// Non géré
 	
  	// Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
-	if ($societe_vendeuse->isInEEC() && $societe_vendeuse->isInEEC())
+	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_assuj == 1)
 	{
 	    return $taux_produit;
 	}
