@@ -34,6 +34,7 @@
 require('./pre.inc.php');
 require('./paiementfourn.class.php');
 
+$langs->load('companies');
 $langs->load('bills');
 $langs->load('banks');
 
@@ -215,7 +216,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			$obj = $db->fetch_object($resql);
 			$total = $obj->total;
 
-			print_titre($langs->trans('DoPayment'));
+			print_fiche_titre($langs->trans('DoPayment'));
 			print '<form name="addpaiement" action="paiement.php" method="post">';
 			print '<input type="hidden" name="action" value="add_paiement">';
 			print '<input type="hidden" name="facid" value="'.$facid.'">';
