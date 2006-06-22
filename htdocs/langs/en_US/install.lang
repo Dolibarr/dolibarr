@@ -11,10 +11,6 @@ ErrorGoBackAndCorrectParameters=Go backward and correct wrong parameters.
 ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
 ErrorFaileToCreateDatabase=Failed to create database '%'.
 ErrorFaileToConnectToDatabase=Failed to connect to database '%'.
-MigrationOrder=Data migration for customers' orders
-MigrationProposal=Data migration for commercial proposals
-MigrationInvoice=Data migration for customers' invoices
-MigrationContract=Data migration for contracts
 YouCanContinue=You can continue...
 License=Using license
 ConfigurationFile=Configuration file
@@ -86,3 +82,51 @@ YouMustCreateWithPermission=You must create file %s and set write permissions on
 CorrectProblemAndReloadPage=Correct problem and <a href="index.php">reload page</a> (Press F5 key).
 AlreadyDone=Already migrated
 DatabaseVersion=Database version
+
+
+
+
+
+
+#########
+# upgrade
+#########
+MigrationOrder=Data migration for customers' orders
+MigrationProposal=Data migration for commercial proposals
+MigrationInvoice=Data migration for customers' invoices
+MigrationContract=Data migration for contracts
+MigrationSuccessfullUpdate=Upgrade successful
+MigrationUpdateFailed=Falied upgrade process
+
+# Payments Update
+MigrationPaymentsUpdate=Payment data correction
+MigrationPaymentsNumberToUpdate=%s payment(s) to update
+MigrationProcessPaymentUpdate=Update payment(s) %s
+MigrationPaymentsNothingToUpdate=No more things to do
+
+# Contracts Update
+MigrationContractsUpdate=Contract data correction
+MigrationContractsNothingToUpdate=No more things to do
+
+# Contracts Empty Dates Update
+MigrationContractsEmptyDatesUpdate=Contract empty date correction
+MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfuly
+MigrationContractsEmptyDatesNothingToUpdate=No contract empty date to correct
+MigrationContractsEmptyCreationDatesNothingToUpdate=No contract creation date to correct
+
+# Contracts Invalid Dates Update
+MigrationContractsInvalidDatesUpdate=Bad value date contract correction
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=%s)
+MigrationContractsInvalidDatesNumber=%s contracts modified
+MigrationContractsInvalidDatesNothingToUpdate=No date with bad value to correct
+
+# Contracts Incoherent Dates Update
+MigrationContractsIncoherentCreationDateUpdate=Bad value contract creation date correction
+MigrationContractsIncoherentCreationDateUpdateSuccess=Bad value contract creation date correction done succesfuly
+MigrationContractsIncoherentCreationDateNothingToUpdate=No bad value for contract creation date to correct
+
+# Reopening Contracts
+MigrationReopeningContracts=Open contract closed by error
+MigrationReopenThisContract=Reopen contract %s
+MigrationReopenedContractsNumber=%s contracts modified
+MigrationReopeningContractsNothingToUpdate=No closed contract to open

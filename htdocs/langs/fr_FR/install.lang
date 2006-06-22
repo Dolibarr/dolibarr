@@ -11,10 +11,6 @@ ErrorGoBackAndCorrectParameters=Revenez en arrière et corrigez les paramètres in
 ErrorWrongValueForParameter=Vous avez peut-être saisi une mauvaise valeur pour le paramètre '%s'.
 ErrorFaileToCreateDatabase=Echec de création de la base '%'.
 ErrorFaileToConnectToDatabase=Echec de connection à la base '%'.
-MigrationOrder=Migration de données sur les commandes clients
-MigrationProposal=Migration de données sur les propositions commerciales
-MigrationInvoice=Migration de données sur les factures clients
-MigrationContract=Migration de données sur les contrats
 YouCanContinue=Vous pouvez continuer...
 License=Licence d'utilisation
 ConfigurationFile=Fichier de configuration
@@ -90,12 +86,13 @@ CorrectProblemAndReloadPage=Corrigez le problème et <a href="index.php">recharge
 AlreadyDone=Déjà migré
 DatabaseVersion=Version de la base
 
-
-
-
 #########
 # upgrade
 #########
+MigrationOrder=Migration de données sur les commandes clients
+MigrationProposal=Migration de données sur les propositions commerciales
+MigrationInvoice=Migration de données sur les factures clients
+MigrationContract=Migration de données sur les contrats
 MigrationSuccessfullUpdate=Mise à jour réussie
 MigrationUpdateFailed=La mise à jour à échouée
 
