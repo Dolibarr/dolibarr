@@ -887,6 +887,14 @@ function migrate_price_commande($db,$langs,$conf)
 
 			$db->free();
 
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
+			$sql.= " WHERE price = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
+			$resql=$db->query($sql);
+			if (! $resql)
+			{
+				dolibarr_print_error($db);	
+			}
+			
 			$db->rollback();
 		}
 		else
