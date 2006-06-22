@@ -557,7 +557,7 @@ class Commande extends CommonObject
 	 */
 	function add_product($idproduct, $qty, $remise_percent=0)
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		if (!$qty) $qty = 1;
 			
