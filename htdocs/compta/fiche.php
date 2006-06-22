@@ -444,20 +444,26 @@ if ($socid > 0)
 
         print "<br>";
 
+
+		$actionstatic=new ActionComm($db);
+
         /*
          *      Listes des actions a faire
          *
          */
 		print_titre($langs->trans("ActionsOnCompany"));
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="10"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td></tr>';
+        print '<tr class="liste_titre">';
+        print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+        print '</tr>';
 
-        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-        $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-        $sql .= " WHERE a.fk_soc = ".$societe->id;
-        $sql .= " AND u.rowid = a.fk_user_author";
-        $sql .= " AND c.id=a.fk_action AND a.percent < 100";
-        $sql .= " ORDER BY a.datea DESC, a.id DESC";
+        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
+        $sql.= " c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+        $sql.= " WHERE a.fk_soc = ".$societe->id;
+        $sql.= " AND u.rowid = a.fk_user_author";
+        $sql.= " AND c.id=a.fk_action AND a.percent < 100";
+        $sql.= " ORDER BY a.datea DESC, a.id DESC";
 
         $result=$db->query($sql);
         if ($result)
@@ -535,6 +541,10 @@ if ($socid > 0)
 
                 // Auteur
                 print '<td width="50" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code.'</a></td>';
+
+				// Statut
+                print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+
                 print "</tr>\n";
                 $i++;
             }
@@ -549,9 +559,11 @@ if ($socid > 0)
          *      Listes des actions effectuées
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td></tr>';
+        print '<tr class="liste_titre">';
+        print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a>';
+        print '</td></tr>';
 
-        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da,";
+        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
         $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.code, u.rowid";
@@ -641,6 +653,10 @@ if ($socid > 0)
 
 				// Auteur
                 print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+
+				// Statut
+                print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+
                 print "</tr>\n";
                 $i++;
             }
