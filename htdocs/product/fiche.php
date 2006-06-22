@@ -227,16 +227,19 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
  */
 if ($_POST["action"] == 'addinpropal')
 {
-    $propal = New Propal($db);
-    $result=$propal->fetch($_POST["propalid"]);
+  $propal = New Propal($db);
+  $result=$propal->fetch($_POST["propalid"]);
 	if ($result <= 0) 
 	{
 		dolibarr_print_error($db,$propal->error);
 		exit;
 	}
-	
-    $prod = new Product($db, $_GET['id']);
-    $result=$prod->fetch($_GET['id']);
+
+  $soc = new Societe($db);
+  $soc->fetch($propal->socidp,$user);
+  
+  $prod = new Product($db, $_GET['id']);
+  $result=$prod->fetch($_GET['id']);
 	if ($result <= 0) 
 	{
 		dolibarr_print_error($db,$prod->error);
@@ -252,10 +255,17 @@ if ($_POST["action"] == 'addinpropal')
     {
     	$pu=$prod->price;
     }
-   	$desc = $prod->desc;
+    
+   	$desc = $prod->description;
     $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
-    $result = $propal->addline($propal->id, $desc, $pu, $_POST["qty"], $tva_tx, $prod->id, $_POST["remise_percent"]);
+    $result = $propal->addline($propal->id,
+                               $desc,
+                               $pu,
+                               $_POST["qty"],
+                               $tva_tx,
+                               $prod->id,
+                               $_POST["remise_percent"]);
     if ($result > 0)
     {
    	    Header("Location: ../comm/propal.php?propalid=".$propal->id);
@@ -275,12 +285,28 @@ if ($_POST["action"] == 'addincommande')
     
     $commande = New Commande($db);
     $commande->fetch($_POST["commandeid"]);
+    
+    $soc = new Societe($db);
+    $soc->fetch($commande->socidp,$user);
+    
+    // multiprix
+    if ($conf->global->PRODUIT_MULTIPRICES == 1)
+    {
+    	$pu = $product->multiprices[$soc->price_level];
+    }
+    else
+    {
+    	$pu=$product->price;
+    }
+    
+    $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
 
-    $result =  $commande->addline($product->libelle,
+    $result =  $commande->addline($commande->id,
+                                  $product->libelle,
                                   $product->description,
-                                  $product->price,
+                                  $pu,
                                   $_POST["qty"],
-                                  $product->tva_tx,
+                                  $tva_tx,
                                   $product->id, 
                                   $_POST["remise_percent"]);
 
@@ -295,17 +321,30 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 {
     $product = new Product($db);
     $result = $product->fetch($_GET["id"]);
-
+    
     $facture = New Facture($db);
-
     $facture->fetch($_POST["factureid"]);
+    
+    $soc = new Societe($db);
+    $soc->fetch($facture->socidp,$user);
+    
+    // multiprix
+    if ($conf->global->PRODUIT_MULTIPRICES == 1)
+    {
+    	$pu = $product->multiprices[$soc->price_level];
+    }
+    else
+    {
+    	$pu=$product->price;
+    }
+    
+    $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
 
-    $facture->addline($_POST["factureid"],
-				    $product->libelle,
+    $facture->addline($facture->id,
 				    $product->description,
-				    "", // volontairement laissé vide pour fonctionnement module multiprix
+				    $pu,
 				    $_POST["qty"],
-				    $product->tva_tx,
+				    $tva_tx,
 				    $product->id,
 				    $_POST["remise_percent"]);
 
