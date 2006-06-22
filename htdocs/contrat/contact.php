@@ -239,6 +239,9 @@ if ($id > 0)
 	{
 		if ($mesg) print $mesg;
 
+		$soc = new Societe($db);
+		$soc->fetch($contrat->socidp);
+
 	    $head = contract_prepare_head($contrat);
 		
 		$hselected=1;
@@ -257,8 +260,18 @@ if ($id > 0)
 
 		// Customer
 		print "<tr><td>".$langs->trans("Customer")."</td>";
-		print '<td colspan="3">';
-		print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
+        print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
+
+		// Ligne info remises tiers
+	    print '<tr><td>'.$langs->trans('Discount').'</td><td>';
+		if ($contrat->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$contrat->societe->remise_client);
+		else print $langs->trans("CompanyHasNoRelativeDiscount");
+		$absolute_discount=$contrat->societe->getCurrentDiscount();
+		print '. ';
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+		print '.';
+		print '</td></tr>';
 
 		print "</table>";
 

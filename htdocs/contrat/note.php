@@ -136,9 +136,20 @@ if ($_GET["id"])
     // Reference
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$contrat->ref.'</td></tr>';
 
+    // Societe
     print '<tr><td>'.$langs->trans("Customer").'</td>';
-    print '<td colspan="3">';
-    print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+    print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
+
+	// Ligne info remises tiers
+    print '<tr><td>'.$langs->trans('Discount').'</td><td>';
+	if ($contrat->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$contrat->societe->remise_client);
+	else print $langs->trans("CompanyHasNoRelativeDiscount");
+	$absolute_discount=$contrat->societe->getCurrentDiscount();
+	print '. ';
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+	print '.';
+	print '</td></tr>';
 
 	// Note publique
     print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';

@@ -340,10 +340,10 @@ if ($_GET["action"] == 'create')
 			print '<td><input type="text" maxlength="30" name="ref" size="20"></td></tr>';
 			
             // Customer
-            print '<tr><td>'.$langs->trans("Customer").'</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$obj->nom.'</a></td></tr>';
+            print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 
 			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Info').'</td><td>';
+            print '<tr><td>'.$langs->trans('Discount').'</td><td>';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$soc->getCurrentDiscount();
@@ -588,11 +588,10 @@ else
 
         // Customer
         print "<tr><td>".$langs->trans("Customer")."</td>";
-        print '<td colspan="3">';
-        print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
+        print '<td colspan="3">'.$contrat->societe->getNomUrl(1).'</td></tr>';
 
 		// Ligne info remises tiers
-        print '<tr><td>'.$langs->trans('Info').'</td><td>';
+        print '<tr><td>'.$langs->trans('Discount').'</td><td>';
 		if ($contrat->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$contrat->societe->remise_client);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		$absolute_discount=$contrat->societe->getCurrentDiscount();

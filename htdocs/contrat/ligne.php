@@ -111,6 +111,9 @@ if ($id > 0)
     $contrat = New Contrat($db);
     if ( $contrat->fetch($id) > 0)
     {
+        $soc = new Societe($db);
+        $soc->fetch($contrat->socidp);
+
         $author = new User($db);
         $author->id = $contrat->user_author_id;
         $author->fetch();
@@ -161,8 +164,18 @@ if ($id > 0)
 
         // Customer
         print "<tr><td>".$langs->trans("Customer")."</td>";
-        print '<td colspan="3">';
-        print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
+        print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
+
+		// Ligne info remises tiers
+        print '<tr><td>'.$langs->trans('Discount').'</td><td>';
+		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		else print $langs->trans("CompanyHasNoRelativeDiscount");
+		$absolute_discount=$soc->getCurrentDiscount();
+		print '. ';
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+		print '.';
+		print '</td></tr>';
 
         // Statut contrat
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
