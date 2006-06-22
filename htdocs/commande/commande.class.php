@@ -449,7 +449,7 @@ class Commande extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($commandeid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+    function addline($commandeid, $libelle, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
     	dolibarr_syslog("Commande.class.php::addline this->id=$this->id, $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -503,6 +503,7 @@ class Commande extends CommonObject
 			$ligne=new CommandeLigne($this->db);
 
 			$ligne->fk_commande=$commandeid;
+			$ligne->libelle=$libelle;
 			$ligne->desc=$desc;
 			$ligne->price=$price;
 			$ligne->qty=$qty;
@@ -1934,11 +1935,12 @@ class CommandeLigne
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
-		$sql.= ' (fk_commande, description, price, qty, tva_tx,';
+		$sql.= ' (fk_commande, label, description, price, qty, tva_tx,';
 		$sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except, ';
 		$sql.= ' rang, coef,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
 		$sql.= " VALUES (".$this->fk_commande.",";
+		$sql.= " '".addslashes($this->libelle)."',";
 		$sql.= " '".addslashes($this->desc)."',";
 		$sql.= " '".price2num($this->price)."',";
 		$sql.= " '".price2num($this->qty)."',";

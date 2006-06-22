@@ -221,6 +221,8 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
             
+            $libelle = $prod->libelle;
+            
             // multiprix
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
@@ -250,6 +252,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		
         $commande->addline(
 			$_POST['id'],
+			$libelle,
 			$desc,
 			$pu,
 			$_POST['qty'],

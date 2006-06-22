@@ -206,11 +206,11 @@ class pdf_einstein extends ModelePDFCommandes
                         $libelleproduitservice.=$com->lignes[$i]->desc;
                     }
                     // Si ligne associée à un code produit
-                    if ($com->lignes[$i]->product_id)
+                    if ($com->lignes[$i]->fk_product)
                     {
                         $prodser = new Product($this->db);
 
-                        $prodser->fetch($com->lignes[$i]->product_id);
+                        $prodser->fetch($com->lignes[$i]->fk_product);
                         if ($prodser->ref)
                         {
                             $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;

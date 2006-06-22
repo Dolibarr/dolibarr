@@ -1722,14 +1722,14 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 {
 	dolibarr_syslog("get_default_tva vendeur_assujeti=$societe_vendeuse->tva_assuj pays_vendeur=$societe_vendeuse->pays_id, pays_acheteur=$societe_acheteuse->pays_id, taux_produit=$taux_produit");
 
-	if (!is_object($societe_vendeuse))
-		return 0;
+	if (!is_object($societe_vendeuse)) return 0;
+	
 	// Si vendeur non assujeti à TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
 	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
 	
 	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.	
-	if (($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && $societe_acheteuse->tva_assuj == 1)
+	if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && $societe_acheteuse->tva_assuj == 1)
 	{
 	    return $taux_produit;
 	}
@@ -1738,7 +1738,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	// Non géré
 	
  	// Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
-	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_assuj == 1)
+	if (is_object($societe_acheteuse) && ($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_assuj == 1)
 	{
 	    return $taux_produit;
 	}
