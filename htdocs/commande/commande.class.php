@@ -388,6 +388,7 @@ class Commande extends CommonObject
 				{
 					$resql = $this->addline(
 						$this->id,
+						$this->lines[$i]->libelle,
 						$this->lines[$i]->desc,
 						$this->lines[$i]->price,
 						$this->lines[$i]->qty,
