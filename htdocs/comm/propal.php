@@ -197,7 +197,7 @@ if ($_POST['action'] == 'add')
 	else
 	{
 		$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+		$propal->date_livraison = mktime(12, 1, 1, $_POST['liv_month']."-".$_POST['liv_day']."-".$_POST['liv_year']);
 		$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
 		$propal->duree_validite = $_POST['duree_validite'];
 		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
@@ -209,8 +209,7 @@ if ($_POST['action'] == 'add')
 		$propal->author     = $user->id;
 		$propal->note       = $_POST['note'];
 		$propal->ref_client = $_POST['ref_client'];
-	
-		$propal->ref = $_POST['ref'];
+		$propal->ref        = $_POST['ref'];
 	
 		for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
 		{
@@ -556,7 +555,7 @@ if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer && !$conf->g
 	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
-if ($_POST['action'] == 'set_project')
+if ($_POST['action'] == 'classin')
 {
   $propal = new Propal($db);
   $propal->fetch($_GET['propalid']);
@@ -900,10 +899,13 @@ if ($_GET['propalid'] > 0)
 	if ($conf->projet->enabled)
 	{
 		$langs->load("projects");
-		print '<tr><td>'.$langs->trans('Project').'</td>';
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('Project').'</td>';
 		$numprojet = $societe->has_projects();
 		if (! $numprojet)
 		{
+			print '</td></tr></table>';
 			print '<td colspan="2">';
 			print $langs->trans("NoProject").'</td><td>';
 			print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
@@ -913,19 +915,24 @@ if ($_GET['propalid'] > 0)
 		{
 			if ($propal->statut == 0 && $user->rights->propale->creer)
 			{
-				print '<td colspan="2">';
-				print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-				print '<input type="hidden" name="action" value="set_project">';
-				$form->select_projects($societe->id, $propal->projetidp, 'projetidp');
-				print '</td><td>';
-				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-				print '</form>';
-				print '</td>';
+				if ($_GET['action'] != 'classer' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+				if ($_GET['action'] == 'classer')
+				{
+					$form->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socidp, $propal->projetidp, 'projetidp');
+				}
+				else
+				{
+					$form->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socidp, $propal->projetidp, 'none');
+				}
+				print '</td></tr>';
 			}
 			else
 			{
 				if (!empty($propal->projetidp))
 				{
+					print '</td></tr></table>';
 					print '<td colspan="3">';
 					$proj = new Project($db);
 					$proj->fetch($propal->projetidp);
@@ -935,6 +942,7 @@ if ($_GET['propalid'] > 0)
 					print '</td>';
 				}
 				else {
+					print '</td></tr></table>';
 					print '<td colspan="3">&nbsp;</td>';
 				}
 			}
