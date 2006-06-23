@@ -38,15 +38,18 @@ print_titre("Dolibarr");
 
 print "<br>\n";
 
-print $langs->trans("Dolibarr est publié sous licence GNU/GPL");
+print $langs->trans("DolibarrLicense").': GNU/GPL<br>';
 
-print '<p>';
-print $langs->trans("Dolibarr est développé par :");
+print "<br>\n";
 
+print $langs->trans("DolibarrProjectLeader").':';
 print '<ul>';
 print '<li><a target="blank" href="http://rodolphe.quiedeville.org">Rodolphe Quiédeville</a>';
 print '</ul>';
-print $langs->trans("D'autres développeurs y contribuent activement :");
+
+print "<br>\n";
+
+print $langs->trans("OtherDeveloppers").':';
 print '<ul>';
 print '<li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>';
 print '<li><a target="blank" href="http://www.destailleur.fr/">Laurent Destailleur</a></li>';
@@ -54,35 +57,44 @@ print '<li>Eric Seigne</li>';
 print '<li>Benoit Mortier</li>';
 print '</ul>';
 
-print '<p>';
+print "<br>\n";
 
-print $langs->trans("Informations").' :';
+print $langs->trans("Informations").':';
 
 print '<ul>';
 print '<li>';
-print '<a target="blank" href="http://www.dolibarr.com/">Site officiel</a>';
+if (eregi('^fr_',$langs->getDefaultLang()))
+{
+	print '<a target="blank" href="http://www.dolibarr.com/">'.$langs->trans("OfficialWebSite").'</a>';
+}
+else
+{
+	print '<a target="blank" href="http://www.dolibarr.org/">'.$langs->trans("OfficialWebSite").'</a>';
+}
 print '<li>';
-print '<a target="blank" href="http://freshmeat.net/projects/dolibarr/">Page sur Freshmeat</a>';
+print '<a target="blank" href="http://freshmeat.net/projects/dolibarr/">Freshmeat</a>';
+print '</li>';
 
-
+if (eregi('^fr_',$langs->getDefaultLang()))
+{
 print '<li>';
 print 'Les tâches en cours de réalisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
 print '</li>';
 
 print '<li>';
 print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les développeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">système de gestion des bogues</a> de Savannah.';
-
 print '</li>';
 
 print '<li>';
 print 'Le code source de Dolibarr est consultable par l\'<a target="blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.';
 print '</li>';
+}
+
 print '</ul>';
 
 
-// \todo Faut-il inviter l'utilisateur à aller sur le site en français si sa langue n'est pas le français ?
-//if (eregi('^fr_',$langs->getDefaultLang())
-//{
+if (eregi('^fr_',$langs->getDefaultLang()))
+{
     print '<p>';
     print 'Vente / Support';
     print '<ul>';
@@ -90,7 +102,7 @@ print '</ul>';
     print 'Contactez Rodolphe Quiédeville sur <a target="blank" href="http://www.dolibarr.com/">www.dolibarr.com</a>';
     print '</li>';
     print '</ul>';
-//}
+}
 
 
 llxFooter('$Date$ - $Revision$');
