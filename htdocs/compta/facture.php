@@ -2218,7 +2218,7 @@ else
 						print '<table class="noborder" width="100%">';
 						print '<tr class="liste_titre">';
 						print '<td>'.$langs->trans('Ref').'</td>';
-           				print '<td>'.$langs->trans('RefCdeClientShort').'</td>';
+           				print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
 						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 						print '</tr>';
