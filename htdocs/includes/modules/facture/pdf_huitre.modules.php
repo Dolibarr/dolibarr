@@ -60,6 +60,20 @@ class pdf_huitre extends ModelePDFFactures {
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
+        
+        // Recupere code pays de l'emmetteur
+        $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
+        $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+        $sql .= " WHERE rowid = '".$conf->global->MAIN_INFO_SOCIETE_PAYS."'";
+        $result=$this->db->query($sql);
+        if ($result) {
+            $obj = $this->db->fetch_object($result);
+            if ($obj->code) $this->emetteur->code_pays=$obj->code;
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+        $this->db->free($result);
     }
 
 
@@ -580,13 +594,13 @@ class pdf_huitre extends ModelePDFFactures {
             $ligne=$langs->trans('LimitedLiabilityCompanyCapital').' '. MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".MAIN_INFO_SIREN;
         }
         if (defined('MAIN_INFO_SIRET') && MAIN_INFO_SIRET) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->code_pays).": ".MAIN_INFO_SIRET;
         }
         if (defined('MAIN_INFO_RCS') && MAIN_INFO_RCS) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->code_pays).": ".MAIN_INFO_RCS;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".MAIN_INFO_RCS;
         }
         if ($ligne) {
             $pdf->SetY(-$footy);
