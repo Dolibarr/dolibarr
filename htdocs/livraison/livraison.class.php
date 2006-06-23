@@ -173,7 +173,7 @@ class Livraison extends CommonObject
       {
       	if ($this->commande->lignes[$j]->id == $commande_ligne_id)
       	{
-      		$idprod = $this->commande->lignes[$j]->product_id;
+      		$idprod = $this->commande->lignes[$j]->fk_product;
       	}
       	$j++;
       }
@@ -427,7 +427,7 @@ class Livraison extends CommonObject
 			$LivraisonLigne->libelle           = $expedition->lignes[$i]->libelle;
 			$LivraisonLigne->description       = $expedition->lignes[$i]->product_desc;
 			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_commande;
-			$LivraisonLigne->product_id        = $expedition->lignes[$i]->product_id;
+			$LivraisonLigne->fk_product        = $expedition->lignes[$i]->fk_product;
 			$LivraisonLigne->ref               = $expedition->lignes[$i]->ref;
 			$this->lignes[$i] = $LivraisonLigne;
 		}
@@ -585,7 +585,7 @@ class Livraison extends CommonObject
 
 	    $obj = $this->db->fetch_object($resql);
 
-	    $ligne->product_id     = $obj->fk_product;
+	    $ligne->fk_product     = $obj->fk_product;
 	    $ligne->qty_commande   = $obj->qtycom;
 	    $ligne->qty_livre      = $obj->qtyliv;
 	    $ligne->ref            = $obj->ref;

@@ -208,11 +208,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                         $libelleproduitservice.=$lignesdelivery[$i]->description;
                     }
                     // Si ligne associée à un code produit
-                    if ($lignesdelivery[$i]->product_id)
+                    if ($lignesdelivery[$i]->fk_product)
                     {
                         $prodser = new Product($this->db);
 
-                        $prodser->fetch($lignesdelivery[$i]->product_id);
+                        $prodser->fetch($lignesdelivery[$i]->fk_product);
                         if ($prodser->ref)
                         {
                             $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;

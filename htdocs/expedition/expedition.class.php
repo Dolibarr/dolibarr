@@ -165,7 +165,7 @@ class Expedition extends CommonObject
       {
 	if ($this->commande->lignes[$j]->id == $commande_ligne_id)
 	  {
-	    $idprod = $this->commande->lignes[$j]->product_id;
+	    $idprod = $this->commande->lignes[$j]->fk_product;
 	  }
 	$j++;
       }
@@ -250,7 +250,7 @@ class Expedition extends CommonObject
                         $ligne->commande_ligne_id    = $objp->fk_commande_ligne;
                         $ligne->product_desc         = $objp->description;  // Description ligne
                         $ligne->qty_commande         = $objp->qtycom;
-                        $ligne->product_id           = $objp->fk_product;
+                        $ligne->fk_product           = $objp->fk_product;
 
                         $ligne->libelle              = $objp->label;        // Label produit
                         $ligne->ref                  = $objp->ref;
@@ -571,7 +571,7 @@ class Expedition extends CommonObject
       		$ligne = new ExpeditionLigne();
       		$obj = $this->db->fetch_object($resql);
       		
-      		$ligne->product_id     = $obj->fk_product;
+      		$ligne->fk_product     = $obj->fk_product;
       		$ligne->qty_commande   = $obj->qtycom;
       		$ligne->qty_expedition = $obj->qtyexp;
       		$ligne->description    = stripslashes($obj->description);
@@ -588,20 +588,22 @@ class Expedition extends CommonObject
 
 class ExpeditionLigne
 {
-	// From llx_expeditiondet
-		var $qty;
-		var $qty_expedition;
-		var $product_id;
+	var $db;
 	
-		// From llx_commandedet
-		var $qty_commande;
-		var $libelle;       // Label produit
-		var $product_desc;  // Description produit
-		var $ref;
+	// From llx_expeditiondet
+	var $qty;
+	var $qty_expedition;
+	var $fk_product;
+	
+	// From llx_commandedet
+	var $qty_commande;
+	var $libelle;       // Label produit
+	var $product_desc;  // Description produit
+	var $ref;
 		
-	function ExpeditionLigne()
+	function ExpeditionLigne($DB)
 	{
-		
+		$this->db=$DB;	
 	}
 
 }

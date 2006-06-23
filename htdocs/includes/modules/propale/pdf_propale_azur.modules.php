@@ -232,11 +232,11 @@ class pdf_propale_azur extends ModelePDFPropales
 						$libelleproduitservice.=$propale->lignes[$i]->desc;
 					}
 					// Si ligne associée à un code produit
-					if ($propale->lignes[$i]->product_id)
+					if ($propale->lignes[$i]->fk_product)
 					{
 						$prodser = new Product($this->db);
 
-						$prodser->fetch($propale->lignes[$i]->product_id);
+						$prodser->fetch($propale->lignes[$i]->fk_product);
 						if ($prodser->ref)
 						{
 							$prefix_prodserv = "";

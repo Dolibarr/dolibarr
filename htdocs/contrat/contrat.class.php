@@ -364,7 +364,7 @@ class Contrat extends CommonObject
                 $ligne->statut 		= $objp->statut;
                 $ligne->remise_percent = $objp->remise_percent;
                 $ligne->price          = $objp->price;
-                $ligne->product_id     = $objp->rowid;
+                $ligne->fk_product     = $objp->rowid;
                     
                 $ligne->date_debut_prevue = $objp->date_ouverture_prevue;
                 $ligne->date_debut_reel   = $objp->date_ouverture;
@@ -412,7 +412,7 @@ class Contrat extends CommonObject
                 $ligne->subprice       = $objp->subprice;
                 $ligne->remise_percent = $objp->remise_percent;
                 $ligne->price          = $objp->price;
-                $ligne->product_id     = 0;
+                $ligne->fk_product     = 0;
         
                 $ligne->date_debut_prevue = $objp->date_ouverture_prevue;
                 $ligne->date_debut_reel   = $objp->date_ouverture;
@@ -1096,7 +1096,7 @@ class ContratLigne
     var $subprice;
     var $remise_percent;
     var $price;
-    var $product_id;
+    var $fk_product;
                 
     var $statut;  
     var $date_debut_prevue;

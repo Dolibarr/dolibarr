@@ -862,15 +862,15 @@ class Propal extends CommonObject
                         $ligne->coef           = $objp->coef;
                         $ligne->rang           = $objp->rang;
 
-                        $ligne->product_id     = $objp->fk_product;
+                        $ligne->fk_product     = $objp->fk_product;
 
                         $ligne->libelle        = $objp->label;        // Label produit
                         $ligne->product_desc   = $objp->product_desc; // Description produit
                         $ligne->ref            = $objp->ref;
 
                         $this->lignes[$i]      = $ligne;
-                        //dolibarr_syslog("1 ".$ligne->product_id);
-                        //print "xx $i ".$this->lignes[$i]->product_id;
+                        //dolibarr_syslog("1 ".$ligne->fk_product);
+                        //print "xx $i ".$this->lignes[$i]->fk_product;
                         $i++;
                     }
                     $this->db->free($result);
@@ -1922,7 +1922,7 @@ class Propal extends CommonObject
 						$price,
 						$ligne->qty,
 						$tva_tx,
-						$ligne->product_id,
+						$ligne->fk_product,
 						$ligne->remise_percent
 						);
 
@@ -2065,7 +2065,7 @@ class PropaleLigne
 	var $rowid;
 	var $fk_propal;
     var $desc;          	// Description ligne
-    var $product_id;		// Id produit prédéfini
+    var $fk_product;		// Id produit prédéfini
 
     var $qty;
     var $tva_tx;
@@ -2239,7 +2239,39 @@ class PropaleLigne
             return -2;
 		}
 	}
-		
+
+	/**
+	 *      \brief     	Mise a jour an base des champs total_xxx de ligne de propale
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
+	function update_total()
+	{
+		$this->db->begin();
+
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
+		$sql.= " total_ht='".price2num($this->total_ht)."'";
+		$sql.= ",total_tva='".price2num($this->total_tva)."'";
+		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
+		$sql.= " WHERE rowid = ".$this->rowid;
+
+       	dolibarr_syslog("PropaleLigne::update_total sql=$sql");
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+        	$this->error=$this->db->error();
+        	dolibarr_syslog("PropaleLigne::update_total Error ".$this->error);
+			$this->db->rollback();
+            return -2;
+		}
+	}
+	
 }
 
 ?>

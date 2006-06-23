@@ -117,7 +117,7 @@ class Commande extends CommonObject
 			$CommLigne->tva_tx            = $propal->lignes[$i]->tva_tx;
 			$CommLigne->qty               = $propal->lignes[$i]->qty;
 			$CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
-			$CommLigne->fk_product        = $propal->lignes[$i]->product_id;
+			$CommLigne->fk_product        = $propal->lignes[$i]->fk_product;
 			$this->lines[$i] = $CommLigne;
 		}
 
@@ -1984,30 +1984,18 @@ class CommandeLigne
 	 *      \brief     	Mise a jour de l'objet ligne de commande en base
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
-	function update()
+	function update_total()
 	{
 		$this->db->begin();
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
-		$sql.= " description='".addslashes($this->desc)."'";
-		$sql.= ",price='".price2num($this->price)."'";
-		$sql.= ",subprice='".price2num($this->subprice)."'";
-		$sql.= ",remise='".price2num($this->remise)."'";
-		$sql.= ",remise_percent='".price2num($this->remise_percent)."'";
-		if ($fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
-		else $sql.= ",fk_remise_except=null";
-		$sql.= ",tva_tx='".price2num($this->tva_tx)."'";
-		$sql.= ",qty='".price2num($this->qty)."'";
-		$sql.= ",rang='".$this->rang."'";
-		$sql.= ",coef='".$this->coef."'";
-		$sql.= ",info_bits='".$this->info_bits."'";
-		$sql.= ",total_ht='".price2num($this->total_ht)."'";
+		$sql.= " total_ht='".price2num($this->total_ht)."'";
 		$sql.= ",total_tva='".price2num($this->total_tva)."'";
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-       	dolibarr_syslog("CommandeLigne.class.php::update sql=$sql");
+       	dolibarr_syslog("CommandeLigne.class.php::update_total sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2018,7 +2006,7 @@ class CommandeLigne
 		else
 		{
         	$this->error=$this->db->error();
-        	dolibarr_syslog("CommandeLigne.class.php::update Error ".$this->error);
+        	dolibarr_syslog("CommandeLigne.class.php::update_total Error ".$this->error);
 			$this->db->rollback();
             return -2;
 		}

@@ -250,13 +250,13 @@ if ($_GET["action"] == 'create')
 	  $ligne = $commande->lignes[$i];
 	  $var=!$var;
 	  print "<tr $bc[$var]>\n";
-	  if ($ligne->product_id > 0)
+	  if ($ligne->fk_product > 0)
 	    {      
 	      $product = new Product($db);
-	      $product->fetch($ligne->product_id);
+	      $product->fetch($ligne->fk_product);
 	      
 	      print '<td>';
-	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
 	      if ($ligne->description) print nl2br($ligne->description);
 	      print '</td>';
 	    }
@@ -270,7 +270,7 @@ if ($_GET["action"] == 'create')
 	   *
 	   */
 	  print '<td align="center">';
-	  $quantite_livree = $commande->expeditions[$ligne->product_id];
+	  $quantite_livree = $commande->expeditions[$ligne->fk_product];
 	  print $quantite_livree;;
 	  print '</td>';
 

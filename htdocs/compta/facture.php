@@ -256,7 +256,7 @@ if ($_POST['action'] == 'add')
 								$prop->lignes[$i]->subprice,
 								$prop->lignes[$i]->qty,
 								$prop->lignes[$i]->tva_tx,
-								$prop->lignes[$i]->product_id,
+								$prop->lignes[$i]->fk_product,
 								$prop->lignes[$i]->remise_percent);
 						}
 					}
@@ -339,7 +339,7 @@ if ($_POST['action'] == 'add')
 								$lines[$i]->subprice,
 								$lines[$i]->qty,
 								$lines[$i]->tva_tx,
-								$lines[$i]->product_id,
+								$lines[$i]->fk_product,
 								$lines[$i]->remise_percent,
 								$date_start,
 								$date_end);

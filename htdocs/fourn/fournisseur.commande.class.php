@@ -133,7 +133,7 @@ class CommandeFournisseur extends Commande
                         $ligne->subprice       = $objp->subprice;
                         $ligne->remise_percent = $objp->remise_percent;
                         $ligne->price          = $objp->price;
-                        $ligne->product_id     = $objp->fk_product;
+                        $ligne->fk_product     = $objp->fk_product;
 
                         $ligne->libelle        = $objp->label;        // Label produit
                         $ligne->product_desc   = $objp->product_desc; // Description produit
@@ -1014,7 +1014,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 		var $subprice;
 		var $remise_percent;
 		var $price;
-		var $product_id;
+		var $fk_product;
 		var $desc;          // Description ligne
 	
 		// From llx_product

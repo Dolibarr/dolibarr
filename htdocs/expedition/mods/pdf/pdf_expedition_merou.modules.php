@@ -132,7 +132,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				for ($i = 0 ; $i < $nblignes ; $i++){
 					//Generation du produit
 					$Prod = new Product($this->db);
-					$Prod->fetch($Produits[$i]->product_id);
+					$Prod->fetch($Produits[$i]->fk_product);
 					//Creation des cases à cocher
 					$pdf->rect(10+3, $curY+1, 3, 3);
 					$pdf->rect(20+3, $curY+1, 3, 3);

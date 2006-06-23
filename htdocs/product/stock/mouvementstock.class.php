@@ -44,20 +44,20 @@ class MouvementStock
      *      \brief      Crée un mouvement en base
      *      \return     int     <0 si ko, >0 si ok
      */
-    function _create($user, $product_id, $entrepot_id, $qty, $type)
+    function _create($user, $fk_product, $entrepot_id, $qty, $type)
     {
-        dolibarr_syslog("mouvementstock.class.php::create $user, $product_id, $entrepot_id, $qty, $type");
+        dolibarr_syslog("mouvementstock.class.php::create $user, $fk_product, $entrepot_id, $qty, $type");
     
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
-        $sql .= " VALUES (now(), $product_id, $entrepot_id, $qty, $type, $user->id)";
+        $sql .= " VALUES (now(), $fk_product, $entrepot_id, $qty, $type, $user->id)";
 
         if ($this->db->query($sql))
         {
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + $qty";
-            $sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $product_id";
+            $sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $fk_product";
 
             if ($this->db->query($sql))
             {
@@ -87,10 +87,10 @@ class MouvementStock
      *
      *
      */
-    function livraison($user, $product_id, $entrepot_id, $qty) 
+    function livraison($user, $fk_product, $entrepot_id, $qty) 
     {
     
-      return $this->_create($user, $product_id, $entrepot_id, (0 - $qty), 2);
+      return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2);
     
     }
 

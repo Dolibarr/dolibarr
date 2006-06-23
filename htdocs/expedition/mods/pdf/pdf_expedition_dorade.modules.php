@@ -115,7 +115,7 @@ Class pdf_expedition_dorade extends ModelePdfExpedition
 		{
 			$a = $this->pdf->tableau_top + 14 + ($i * 16);
 	
-			$this->pdf->i25(8, ($a - 2), "000000".$this->expe->lignes[$i]->product_id, 1, 8);
+			$this->pdf->i25(8, ($a - 2), "000000".$this->expe->lignes[$i]->fk_product, 1, 8);
 	
 			$this->pdf->Text(40, $a, $this->expe->lignes[$i]->description);
 	

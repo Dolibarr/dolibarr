@@ -471,7 +471,7 @@ if ($_GET["id"] > 0)
             {
                 if ($value > 0)
                 {
-                    $sql = "SELECT e.rowid as entrepot_id, e.label as entrepot, ps.reel, p.label, p.ref, p.rowid as product_id";
+                    $sql = "SELECT e.rowid as entrepot_id, e.label as entrepot, ps.reel, p.label, p.ref, p.rowid as fk_product";
                     $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
                     $sql .= " WHERE e.rowid = ps.fk_entrepot AND ps.fk_product = p.rowid AND ps.fk_product = $key";
                     $sql .= " AND e.statut = 1 AND reel < $value";
@@ -488,7 +488,7 @@ if ($_GET["id"] > 0)
                             $obja = $db->fetch_object($resql);
                             print "<tr $bc[$var]>";
                             print '<td width="30%">';
-                            print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->product_id.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$obja->ref.'</a> - '.$obja->label;
+                            print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$obja->ref.'</a> - '.$obja->label;
                             print '<td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$obja->entrepot_id.'">'.$obja->entrepot.'</td>';
                             print '<td><b>Stock : '.$obja->reel.'</b>' .img_warning($langs->trans("Alert")).'</td>';
                             print "</tr>\n";

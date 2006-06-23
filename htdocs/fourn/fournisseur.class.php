@@ -131,7 +131,7 @@ class Fournisseur extends Societe
     }
 
 
-  function ProductCommande($user, $product_id)
+  function ProductCommande($user, $fk_product)
   {
     include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
     include_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -158,7 +158,7 @@ class Fournisseur extends Societe
     if ($idc > 0)
       {
 	$prod = new Product($this->db);
-	$prod->fetch($product_id);
+	$prod->fetch($fk_product);
 	$prod->fetch_fourn_data($this->id);
 
 	$commf->fetch($idc);

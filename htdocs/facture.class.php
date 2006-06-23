@@ -2104,9 +2104,8 @@ class FactureLigne
 
     // From llx_facturedet
 	var $rowid;
-	var $fk_facture;
     var $desc;          	// Description ligne
-    var $product_id;		// Id produit prédéfini
+	var $fk_facture;		// Id produit prédéfini
 
 	var $qty;				// Quantité (exemple 2)
 	var $subprice;      	// P.U. HT (exemple 100)
@@ -2300,6 +2299,38 @@ class FactureLigne
             return -2;
 		}
 	}
+	
+	/**
+	 *      \brief     	Mise a jour en base des champs total_xxx de ligne de facture
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
+	function update_total()
+	{
+		$this->db->begin();
+
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
+		$sql.= " total_ht='".price2num($this->total_ht)."'";
+		$sql.= ",total_tva='".price2num($this->total_tva)."'";
+		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
+		$sql.= " WHERE rowid = ".$this->rowid;
+
+       	dolibarr_syslog("FactureLigne::update_total sql=$sql");
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+        	$this->error=$this->db->error();
+        	dolibarr_syslog("FactureLigne::update_total Error ".$this->error);
+			$this->db->rollback();
+            return -2;
+		}
+	}	
 }
 
 ?>
