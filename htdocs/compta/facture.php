@@ -294,7 +294,7 @@ if ($_POST['action'] == 'add')
 								$lines[$i]->subprice,
 								$lines[$i]->qty,
 								$lines[$i]->tva_tx,
-								$lines[$i]->product_id,
+								$lines[$i]->fk_product,
 								$lines[$i]->remise_percent);
 						}
 					}
