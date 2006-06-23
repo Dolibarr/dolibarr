@@ -176,7 +176,7 @@ if ($_POST['action'] == 'add')
 			$msg = '<div class="error">'.$langs->trans("ErrorFailedToCopyProposal",$_POST['copie_propal']).'</div>';
 		}
 		$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$propal->date_livraison = $_POST['liv_year']."-".$_POST['liv_month']."-".$_POST['liv_day'];
+		$propal->date_livraison = mktime(12, 1, 1, $_POST['liv_month']."-".$_POST['liv_day']."-".$_POST['liv_year']);
 		$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
 		$propal->duree_validite = $_POST['duree_validite'];
 		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
