@@ -333,6 +333,27 @@ class CommonObject
        $this->contact = $contact; 	 
      }
 
+    /*
+     *    \brief      Charge l'objet client depuis la base
+     */
+    function fetch_client()
+    {
+        $client = new Societe($this->db);
+        $client->fetch($this->societe_id);
+        $this->client = $client;
+    }
+
+    /*
+     *    \brief      Charge l'objet projet depuis la base
+     *
+     */
+    function fetch_projet()
+    {
+        $projet = new Project($this->db);
+        $projet->fetch($this->projet_id);
+        $this->projet = $projet;
+    }
+    
 }
 
 ?>

@@ -49,7 +49,10 @@ class Propal extends CommonObject
 	var $element='propal';
 
     var $id;
-    var $socidp;
+
+	var $socidp;		// Id client
+	var $client;		// Objet societe client (à charger par fetch_client)
+
     var $contactid;
     var $projetidp;
     var $author;
@@ -346,18 +349,6 @@ class Propal extends CommonObject
             dolibarr_syslog("Propal::UpdateLigne Erreur -2 Propal en mode incompatible pour cette action");
             return -2;
         }
-    }
-
-
-	/**
-	*
-	*
-	*/
-	function fetch_client()
-    {
-      $client = new Societe($this->db);
-      $client->fetch($this->socidp);
-      $this->client = $client;
     }
 
 

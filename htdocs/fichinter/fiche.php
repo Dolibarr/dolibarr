@@ -330,7 +330,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
     if ($conf->projet->enabled)
     {
         $fichinter->fetch_projet();
-        print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>'.$fichinter->projet.'</td></tr>';
+        print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>'.$fichinter->projet->title.'</td></tr>';
     }
     
     // Statut

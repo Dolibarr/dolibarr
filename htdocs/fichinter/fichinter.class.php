@@ -35,10 +35,14 @@ require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 */
 class Fichinter extends CommonObject
 {
-    var $id;
     var $db;
+	var $element='ficheinter';
+
+    var $id;
     
-    var $socidp;
+	var $socidp;		// Id client
+	var $client;		// Objet societe client (à charger par fetch_client)
+
     var $author;
     var $ref;
     var $date;
@@ -272,28 +276,6 @@ class Fichinter extends CommonObject
         }
 
     }
-
-    /*
-     *    \brief      Charge la liste des clients depuis la base
-     */
-    function fetch_client()
-    {
-        $client = new Societe($this->db);
-        $client->fetch($this->societe_id);
-        $this->client = $client;
-    }
-
-    /*
-     *    \brief      Charge les infos du projet depuis la base
-     *
-     */
-    function fetch_projet()
-    {
-        $projet = new Project($this->db);
-        $projet->fetch($this->projet_id);
-        $this->projet = $projet->title;
-    }
-
 
     /**
      *    \brief      Retourne le libellé du statut de l'intervantion

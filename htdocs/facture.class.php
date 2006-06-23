@@ -71,12 +71,12 @@ class Facture extends CommonObject
 	var $mode_reglement_id;
 	var $mode_reglement_code;
 
-  // Pour board
-  var $nbtodo;
-  var $nbtodolate;
-
+	// Pour board
+	var $nbtodo;
+	var $nbtodolate;
+	
 	var $specimen;
-  var $error;
+	var $error;
 
 
 	/**
@@ -466,17 +466,6 @@ class Facture extends CommonObject
 			$this->error=$this->db->error();
 			return -1;
 		}
-	}
-
- /**
-	* \brief     Recupére l'objet client lié à la facture
-	*
-	*/
-	function fetch_client()
-	{
-		$client = new Client($this->db);
-		$client->fetch($this->socidp);
-		$this->client = $client;
 	}
 
 

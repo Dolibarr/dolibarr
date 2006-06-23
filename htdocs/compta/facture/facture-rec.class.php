@@ -38,9 +38,14 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 */
 class FactureRec extends Facture
 {
-    var $id;
-    var $db;
-    var $socidp;
+	var $db ;
+	var $element='commande';
+
+	var $id ;
+
+	var $socidp;		// Id client
+	var $client;		// Objet societe client (à charger par fetch_client)
+
     var $number;
     var $author;
     var $date;
@@ -237,17 +242,6 @@ class FactureRec extends Facture
             print $this->db->error();
             return -3;
         }
-    }
-
-    /**
-     * Recupére l'objet client lié à la facture
-     */
-    function fetch_client()
-    {
-        $client = new Societe($this->db);
-        $client->fetch($this->socidp);
-        $this->client = $client;
-
     }
 
     /**

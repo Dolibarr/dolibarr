@@ -269,7 +269,6 @@ function facture_delete_preview($db, $facid)
 
   $fac = new Facture($db,"",$facid);
   $fac->fetch($facid);
-  $fac->fetch_client();
 
   if ($conf->facture->dir_output)
     {

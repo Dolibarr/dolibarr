@@ -44,9 +44,12 @@ class Commande extends CommonObject
 	var $element='commande';
 
 	var $id ;
+
+	var $socidp;		// Id client
+	var $client;		// Objet societe client (à charger par fetch_client)
+
 	var $ref;
 	var $ref_client;
-	var $socidp;
 	var $contactid;
 	var $projet_id;
 	var $statut;
@@ -928,18 +931,6 @@ class Commande extends CommonObject
 		return $this->lignes;
 	}
 	
-	
-	/**
-   *
-   *
-   */
-	 
-  function fetch_client()
-    {
-      $client = new Societe($this->db);
-      $client->fetch($this->socidp);
-      $this->client = $client;
-    }
 	
 	/**
    *
