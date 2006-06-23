@@ -30,6 +30,7 @@
 require("./pre.inc.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 if (!$user->rights->commercial->main->lire)
   accessforbidden();
@@ -300,39 +301,14 @@ if ($resql)
         $var = true;
         $i = 0;
 
+	    $staticaction=new ActionComm($db);
+
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
             $var=!$var;
 
             print "<tr $bc[$var]>";
-                if ($oldyear == strftime("%Y",$obj->dp) )
-                {
-                    print '<td width="30" align="center">|</td>';
-                }
-                else
-                {
-                    print '<td width="30" align="center">'.strftime("%Y",$obj->dp)."</td>\n";
-                    $oldyear = strftime("%Y",$obj->dp);
-                }
-
-                if ($oldmonth == strftime("%Y%b",$obj->dp) )
-                {
-                    print '<td width="30" align="center">|</td>';
-                }
-                else
-                {
-                    print '<td width="30" align="center">' .strftime("%b",$obj->dp)."</td>\n";
-                    $oldmonth = strftime("%Y%b",$obj->dp);
-                }
-
-                print '<td width="20">'.strftime("%d",$obj->dp)."</td>\n";
-				if (date("U",$obj->dp) < time())
-				{
-					print "<td>".img_warning($langs->trans("Late"))."</td>";
-				} else {
-					print "<td>&nbsp;</td>";	
-				}
             print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
             $transcode=$langs->trans("Action".$obj->code);
             $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
@@ -341,6 +317,20 @@ if ($resql)
             print "<td>$obj->label</td>";
 
             print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
+
+			// Date
+			print '<td width="100">'.dolibarr_print_date($obj->dp).'&nbsp;';
+			if (date("U",$obj->dp) < time())
+			{
+				print img_warning($langs->trans("Late"));
+			}
+			print "</td>";	
+
+			// Statut
+			print "<td align=\"center\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+
+			print "</tr>\n";
+			
             $i++;
         }
         // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
@@ -359,7 +349,7 @@ else
  * Dernières actions commerciales effectuées
  */
 
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -381,9 +371,11 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastDoneTasks",$max).'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastDoneTasks",$max).'</td></tr>';
 	$var = true;
 	$i = 0;
+
+    $staticaction=new ActionComm($db);
 
 	while ($i < $num)
 	{
@@ -397,8 +389,16 @@ if ($resql)
 		print $libelle;
 		print '</a></td>';
 
-		print "<td>".dolibarr_print_date($obj->da)."</td>";
 		print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
+
+		// Date
+		print '<td width="100">'.dolibarr_print_date($obj->da);
+		print "</td>";	
+
+		// Statut
+		print "<td align=\"center\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+
+		print "</tr>\n";
 		$i++;
 	}
 	// TODO Ajouter rappel pour "il y a des contrats à mettre en service"
