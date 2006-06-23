@@ -610,6 +610,8 @@ class pdf_propale_azur extends ModelePDFPropales
     */
     function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
     {
+    	global $conf;
+    	
         // Montants exprimés en     (en tab_top - 1)
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
