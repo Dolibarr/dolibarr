@@ -562,7 +562,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";
                 print "<td align=\"right\">".price($obj->price)."</td>";
-				print "<td align=\"center\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
+				print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
                 print "</tr>\n";
                 $i++;
                 $total += $obj->price;
@@ -620,7 +620,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		print "<td align=\"right\">";
 		print dolibarr_print_date($objp->dp)."</td>\n";	  
 		print "<td align=\"right\">".price($objp->price)."</td>\n";
-		print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
+		print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
 		print "</tr>\n";
 		$i++;
 		$var=!$var;
