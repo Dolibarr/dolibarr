@@ -339,7 +339,7 @@ class CommonObject
     function fetch_client()
     {
         $client = new Societe($this->db);
-        $client->fetch($this->societe_id);
+        $client->fetch($this->socidp);
         $this->client = $client;
     }
 
