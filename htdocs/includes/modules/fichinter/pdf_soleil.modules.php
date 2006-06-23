@@ -46,6 +46,8 @@ class pdf_soleil extends ModelePDFFicheinter
     */
     function pdf_soleil($db=0)
     {
+		global $conf,$langs,$mysoc;
+
         $this->db = $db;
         $this->name = 'soleil';
         $this->description = "Modèle de fiche d'intervention standard";
@@ -59,6 +61,10 @@ class pdf_soleil extends ModelePDFFicheinter
         $this->marge_droite=10;
         $this->marge_haute=10;
         $this->marge_basse=10;
+        
+        // Recupere code pays de l'emmetteur
+        $this->emetteur->code_pays=$mysoc->pays_code;
+        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
     }
 
     /**

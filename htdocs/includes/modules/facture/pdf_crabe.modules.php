@@ -77,7 +77,7 @@ class pdf_crabe extends ModelePDFFactures
 
         // Recupere code pays de l'emmetteur
         $this->emetteur->code_pays=$mysoc->pays_code;
-        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
+        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 
         // Defini position des colonnes
         $this->posxdesc=$this->marge_gauche+1;

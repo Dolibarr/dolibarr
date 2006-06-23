@@ -44,7 +44,7 @@ class pdf_huitre extends ModelePDFFactures {
     */
     function pdf_huitre($db)
     {
-	     global $langs;
+	     global $conf,$langs,$mysoc;
 
         $langs->load("main");
         $langs->load("bills");

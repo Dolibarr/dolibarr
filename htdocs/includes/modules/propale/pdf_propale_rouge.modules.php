@@ -56,6 +56,10 @@ class pdf_propale_rouge extends ModelePDFPropales
         $this->format = array($this->page_largeur,$this->page_hauteur);
 
         $this->error = "";
+        
+        // Recupere code pays de l'emmetteur
+        $this->emetteur->code_pays=$mysoc->pays_code;
+        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
     }
 
 

@@ -56,6 +56,10 @@ class pdf_bernique extends ModelePDFFactures  {
 		$this->page_largeur = 210;
 		$this->page_hauteur = 297;
 		$this->format = array($this->page_largeur,$this->page_hauteur);
+
+        // Recupere code pays de l'emmetteur
+        $this->emetteur->code_pays=$mysoc->pays_code;
+        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 	}
 
     /**

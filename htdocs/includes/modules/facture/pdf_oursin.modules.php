@@ -49,7 +49,7 @@ class pdf_oursin extends ModelePDFFactures
     */
     function pdf_oursin($db)
     {
-        global $conf,$langs;
+        global $conf,$langs,$mysoc;
 
 		  $langs->load("main");
 		  $langs->load("bills");

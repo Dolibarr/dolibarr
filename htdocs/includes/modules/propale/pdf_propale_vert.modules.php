@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Regis Houssin             <regis.houssin@cap-networks.com>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,10 @@ class pdf_propale_vert extends ModelePDFPropales
         $this->format = array($this->page_largeur,$this->page_hauteur);
 
         $this->error = "";
+        
+        // Recupere code pays de l'emmetteur
+        $this->emetteur->code_pays=$mysoc->pays_code;
+        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
     }
 
 
