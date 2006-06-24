@@ -758,88 +758,90 @@ class Societe
     return $facimp;
   }
 
-  /**
-   *    \brief      Attribut le prefix de la société en base
-   *
-   */
-  function attribute_prefix()
-  {
-    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '$this->id'";
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->num_rows() )
-	  {
-	    $nom = preg_replace("/[[:punct:]]/","",$this->db->result(0,0));
-	    $this->db->free();
-
-	    $prefix = $this->genprefix($nom,4);
-
-	    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
-	    if ( $this->db->query( $sql) )
-	      {
-		if ( $this->db->result(0, 0) )
-		  {
-		    $this->db->free();
-		  }
-		else
-		  {
-		    $this->db->free();
-
-		    $sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='$prefix' WHERE idp='$this->id'";
-
-		    if ( $this->db->query( $sql) )
-		      {
-
-		      }
-		    else
-		      {
-			dolibarr_print_error($this->db);
-		      }
-		  }
-	      }
-	    else
-	      {
-	        dolibarr_print_error($this->db);
-	      }
-	  }
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-      }
-    return $prefix;
-  }
-
-  /**
-   *    \brief      Génère le préfix de la société
-   *    \param      nom         nom de la société
-   *    \param      taille      taille du prefix à retourner
-   *    \param      mot         l'indice du mot à utiliser
-   *
-   */
-  function genprefix($nom, $taille=4,$mot=0)
-  {
-    $retour = "";
-    $tab = explode(" ",$nom);
-    if($mot < count($tab)) {
-      $prefix = strtoupper(substr($tab[$mot],0,$taille));
-      //On vérifie que ce prefix n'a pas déjà été pris ...
-      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
-      if ( $this->db->query( $sql) )
+	/**
+	 *    \brief      Attribut le prefix de la société en base
+	 *
+	 */
+	function attribute_prefix()
 	{
-	  if ( $this->db->result(0, 0) )
-	    {
-	      $this->db->free();
-	      $retour = $this->genprefix($nom,$taille,$mot+1);
-	    }
-	  else
-	    {
-	      $retour = $prefix;
-	    }
+		$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '".$this->id."'";
+		$resql=$this->db->query( $sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj=$this->db->fetch_object($resql);
+				$nom = preg_replace("/[[:punct:]]/","",$obj->nom);
+				$this->db->free();
+	
+				$prefix = $this->genprefix($nom,4);
+	
+				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$obj=$this->db->fetch_object($resql);
+					$this->db->free($resql);
+					if (! $obj->nb)
+					{
+						$sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='$prefix' WHERE idp='$this->id'";
+	
+						if ( $this->db->query( $sql) )
+						{
+	
+						}
+						else
+						{
+							dolibarr_print_error($this->db);
+						}
+					}
+				}
+				else
+				{
+					dolibarr_print_error($this->db);
+				}
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+		return $prefix;
 	}
-    }
-    return $retour;
-  }
+
+	/**
+	 *    \brief      Génère le préfix de la sociét
+	 *    \param      nom         nom de la sociét
+	 *    \param      taille      taille du prefix à retourner
+	 *    \param      mot         l'indice du mot à utiliser
+	 */
+	function genprefix($nom, $taille=4, $mot=0)
+	{
+		$retour = "";
+		$tab = explode(" ",$nom);
+
+		if ($mot < count($tab))
+		{
+			$prefix = strtoupper(substr($tab[$mot],0,$taille));
+			// On vérifie que ce prefix n'a pas déjà été pris ...
+			$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
+			$resql=$this->db->query( $sql);
+			if ($resql)
+			{
+				$obj=$this->db->fetch_object($resql);
+				if ($obj->nb)
+				{
+					$this->db->free();
+					$retour = $this->genprefix($nom,$taille,$mot+1);
+				}
+				else
+				{
+					$retour = $prefix;
+				}
+			}
+		}
+		return $retour;
+	}
 
   /**
    *    \brief     Définit la société comme un client

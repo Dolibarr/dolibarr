@@ -58,32 +58,33 @@ class DoliDb
     var $ok;
     var $error;
 
-    
+
     // Constantes pour conversion code erreur MySql en code erreur générique
     var $errorcode_map = array(
-    1004 => 'DB_ERROR_CANNOT_CREATE',
-    1005 => 'DB_ERROR_CANNOT_CREATE',
-    1006 => 'DB_ERROR_CANNOT_CREATE',
-    1007 => 'DB_ERROR_ALREADY_EXISTS',
-    1008 => 'DB_ERROR_CANNOT_DROP',
-    1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
-    1046 => 'DB_ERROR_NODBSELECTED',
-    1048 => 'DB_ERROR_CONSTRAINT',
-    1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
-    1051 => 'DB_ERROR_NOSUCHTABLE',
-    1054 => 'DB_ERROR_NOSUCHFIELD',
-    1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
-    1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS', 
-    1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-    1064 => 'DB_ERROR_SYNTAX',
-    1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
-    1091 => 'DB_ERROR_NOSUCHFIELD',
-    1100 => 'DB_ERROR_NOT_LOCKED',
-    1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
-    1146 => 'DB_ERROR_NOSUCHTABLE',
-    1216 => 'DB_ERROR_NO_PARENT',
-    1217 => 'DB_ERROR_CHILD_EXISTS'
+	    1004 => 'DB_ERROR_CANNOT_CREATE',
+	    1005 => 'DB_ERROR_CANNOT_CREATE',
+	    1006 => 'DB_ERROR_CANNOT_CREATE',
+	    1007 => 'DB_ERROR_ALREADY_EXISTS',
+	    1008 => 'DB_ERROR_CANNOT_DROP',
+	    1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
+	    1046 => 'DB_ERROR_NODBSELECTED',
+	    1048 => 'DB_ERROR_CONSTRAINT',
+	    1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
+	    1051 => 'DB_ERROR_NOSUCHTABLE',
+	    1054 => 'DB_ERROR_NOSUCHFIELD',
+	    1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
+	    1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+	    1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
+	    1064 => 'DB_ERROR_SYNTAX',
+	    1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
+	    1091 => 'DB_ERROR_NOSUCHFIELD',
+	    1100 => 'DB_ERROR_NOT_LOCKED',
+	    1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
+	    1146 => 'DB_ERROR_NOSUCHTABLE',
+	    1216 => 'DB_ERROR_NO_PARENT',
+	    1217 => 'DB_ERROR_CHILD_EXISTS'
     );
+
 
     /**
             \brief      Ouverture d'une connection vers le serveur et éventuellement une database.
@@ -168,6 +169,7 @@ class DoliDb
         return $this->ok;
     }
 
+
     /**
             \brief      Selectionne une database.
             \param	    database		Nom de la database
@@ -177,6 +179,7 @@ class DoliDb
     {
         return mysql_select_db($database, $this->db);
     }
+
 
     /**
             \brief      Connection vers le serveur
@@ -204,8 +207,8 @@ class DoliDb
         $row=$this->fetch_row($resql);
         return $row[0];
     }
-        
-        
+
+
     /**
             \brief          Renvoie la version du serveur dans un tableau
             \return	        array  		Tableau de chaque niveau de version
@@ -214,30 +217,8 @@ class DoliDb
     {
         return split('\.',$this->getVersion());
     }
-        
-        
-    /**
-            \brief          Renvoie l'id de la connection
-            \return	        string      Id connection
-    */
-    function getConnectId()
-    {
-        $resql=$this->query('SELECT CONNECTION_ID()');
-        $row=$this->fetch_row($resql);
-        return $row[0];
-    }
 
 
-    /**
-            \brief          Renvoie la commande sql qui donne les droits sur les tables
-            \return	        string      Requete sql
-    */
-    function getGrantForUserQuery($databaseuser)
-    {
-        return '';
-    }
-        
-        
     /**
             \brief          Création d'une nouvelle base de donnée
             \param	        database		nom de la database à créer
@@ -255,44 +236,16 @@ class DoliDb
 	        $sql = 'CREATE DATABASE '.$database;
 	        $ret=$this->query($sql);
         }
-        
+
         //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysql_error($this->db);
         return $ret;
     }
-        
-       
-    /**
-        \brief      Copie d'un handler de database.
-        \return	    resource
-    */
 
-    function dbclone()
-    {
-        $db2 = new DoliDb("", "", "", "", "");
-        $db2->db = $this->db;
-        return $db2;
-    }
-
-    /**
-        	\brief      Ouverture d'une connection vers une database.
-        	\param	    host		Adresse de la base de données
-            \param		login		Nom de l'utilisateur autorisé
-        	\param	    passwd		Mot de passe
-            \param		name		Nom de la database (ne sert pas sous mysql, sert sous pgsql)
-        	\return		resource	Handler d'accès à la base
-    */
-
-    function pconnect($host, $login, $passwd, $name)
-    {
-        $this->db  = mysql_pconnect($host, $login, $passwd);
-        return $this->db;
-    }
 
     /**
         \brief      Fermeture d'une connection vers une database.
         \return	    resource
     */
-
     function close()
     {
         return mysql_close($this->db);
@@ -303,7 +256,6 @@ class DoliDb
         \brief      Debut d'une transaction.
         \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
     */
-
     function begin()
     {
         if (! $this->transaction_opened)
@@ -323,7 +275,6 @@ class DoliDb
         \brief      Validation d'une transaction
         \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
     */
-
     function commit()
     {
         if ($this->transaction_opened<=1)
@@ -343,7 +294,6 @@ class DoliDb
         \brief      Annulation d'une transaction et retour aux anciennes valeurs
         \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
     */
-
     function rollback()
     {
         if ($this->transaction_opened<=1)
@@ -358,16 +308,78 @@ class DoliDb
             return 1;
         }
     }
+
+    /**
+        \brief      Effectue une requete et renvoi le resultset de réponse de la base
+        \param	    query	    Contenu de la query
+        \return	    resource    Resultset de la reponse
+    */
+    function query($query)
+    {
+        $query = trim($query);
+
+        if (! $this->database_name)
+        {
+            // Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
+            $ret = mysql_query($query, $this->db);
+        }
+        else
+        {
+            $ret = mysql_db_query($this->database_name, $query, $this->db);
+        }
+
+        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
+        {
+            // Si requete utilisateur, on la sauvegarde ainsi que son resultset
+			if (! $ret)
+			{
+				$this->lastqueryerror = $query;
+            	$this->lasterror = $this->error();
+            	$this->lasterrno = $this->errno();
+            }
+            $this->lastquery=$query;
+            $this->results = $ret;
+        }
+
+        return $ret;
+    }
+    
+    
+
+	// Next function are not required. Only minor features use them.
+
+
+
+    /**
+            \brief          Renvoie l'id de la connection
+            \return	        string      Id connection
+    */
+    function getConnectId()
+    {
+        $resql=$this->query('SELECT CONNECTION_ID()');
+        $row=$this->fetch_row($resql);
+        return $row[0];
+    }
+
+    /**
+            \brief          Renvoie la commande sql qui donne les droits sur les tables
+            \return	        string      Requete sql
+    */
+    function getGrantForUserQuery($databaseuser)
+    {
+        return '';
+    }
+
 	/**
-        \brief      Crée une table
-        \param	    table Nom de la table
-		    \param	    fields tableau associatif [nom champ][tableau des descriptions] 
-			 	\param	    primary_key Nom du champ qui sera la clef primaire 
-				\param	    unique_keys tableau associatifs Nom de champs qui seront clef unique => valeur
-				\param	    fulltext tableau des Nom de champs qui seront indexés en fulltext
-				\param	    key tableau des champs clés noms => valeur
-				\param	    type type de la table
-        \return	    true/false    selon si requête a provoqué un erreur mysql ou pas
+		\brief      Crée une table
+		\param	    table Nom de la table
+		\param	    fields tableau associatif [nom champ][tableau des descriptions]
+		\param	    primary_key Nom du champ qui sera la clef primaire
+		\param	    unique_keys tableau associatifs Nom de champs qui seront clef unique => valeur
+		\param	    fulltext tableau des Nom de champs qui seront indexés en fulltext
+		\param	    key tableau des champs clés noms => valeur
+		\param	    type type de la table
+		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
     */
 	function create_table($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
@@ -392,14 +404,14 @@ class DoliDb
 			}
 			else if( eregi("^[^ ]",$field_desc['null']))
 				$sqlfields[$i]  .= " ".$field_desc['null'];
-			
+
 			else if( eregi("^[^ ]",$field_desc['extra']))
 				$sqlfields[$i]  .= " ".$field_desc['extra'];
 			$i++;
 		}
 		if($primary_key != "")
 			$pk = "primary key(".$primary_key.")";
-		
+
 		if($unique_keys != "")
 		{
 			$i = 0;
@@ -432,13 +444,14 @@ class DoliDb
 		else
 			return true;
 	}
+
 	/**
-        \brief      Insère un nouveau champ dans une table
-        \param	    table Nom de la table
-		    \param			field_name Nom du champ à insérer
-		    \param	    field_desc tableau associatif de description duchamp à insérer[nom du paramètre][valeur du paramètre] 
-				\param	    field_position Optionnel ex.: "after champtruc" 
-				\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
+		\brief      Insère un nouveau champ dans une table
+		\param	    table Nom de la table
+		\param			field_name Nom du champ à insérer
+		\param	    field_desc tableau associatif de description duchamp à insérer[nom du paramètre][valeur du paramètre]
+		\param	    field_position Optionnel ex.: "after champtruc"
+		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
     */
 	function add_field($table,$field_name,$field_desc,$field_position="")
 	{
@@ -460,65 +473,19 @@ class DoliDb
 		if( eregi("^[^ ]",$field_desc['extra']))
 			$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
-		
+
 		if(! $this -> query($sql))
 			return false;
 		else
 			return true;
 	}
-    /**
-        \brief      Effectue une requete et renvoi le resultset de réponse de la base
-        \param	    query	    Contenu de la query
-        \return	    resource    Resultset de la reponse
-    */
-    function query($query)
-    {
-        $query = trim($query);
-
-        if (! $this->database_name)
-        {
-            // Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
-            $ret = mysql_query($query, $this->db);
-        }
-        else
-        {
-            $ret = mysql_db_query($this->database_name, $query, $this->db);
-        }
-        
-        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
-        {
-            // Si requete utilisateur, on la sauvegarde ainsi que son resultset
-			if (! $ret) 
-			{
-				$this->lastqueryerror = $query;
-            	$this->lasterror = $this->error();
-            	$this->lasterrno = $this->errno();
-            }
-            $this->lastquery=$query;
-            $this->results = $ret;
-        }
-
-        return $ret;
-    }
-
-    /**
-        \brief      Renvoie les données de la requete.
-        \param	    nb			Contenu de la query
-        \param	    fieldname	Nom du champ
-        \return	    resource
-    */
-
-    function result($nb, $fieldname)
-    {
-        return mysql_result($this->results, $nb, $fieldname);
-    }
+	
 
     /**
         \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
         \param      resultset   Curseur de la requete voulue
         \return	    resource
     */
-
     function fetch_object($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -685,7 +652,7 @@ class DoliDb
     {
         return 'IF('.$test.','.$resok.','.$resko.')';
     }
-    
+
 
     /**
         \brief      Renvoie la derniere requete soumise par la methode query()
@@ -818,13 +785,13 @@ class DoliDb
     function fetch_all_rows($sql, &$datas)
     {
         $datas = array();
-    
+
         $resql = $this->query($sql);
         if ($resql)
         {
             $i = 0;
             $num = $this->num_rows($resql);
-    
+
             while ($i < $num)
             {
                 $row = $this->fetch_row($resql);

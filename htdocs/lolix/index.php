@@ -28,24 +28,9 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader("","","Lolix");
 
-function valeur($sql) 
-{
-  global $db;
-  if ( $db->query($sql) ) 
-    {
-      if ( $db->num_rows() ) 
-	{
-	  $valeur = $db->result(0,0);
-	}
-      $db->free();
-    }
-  return $valeur;
-}
-/*
- *
- */
+
+llxHeader("","","Lolix");
 
 print_titre("Espace Lolix");
 

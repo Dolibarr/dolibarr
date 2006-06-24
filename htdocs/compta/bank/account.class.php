@@ -524,20 +524,19 @@ class Account
      */
     function solde()
     {
-        $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank";
-        $sql.= " WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
+        $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank";
+        $sql.= " WHERE fk_account=".$this->id." AND dateo <= ".$this->db->idate(time());
 
-        $result = $this->db->query($sql);
-
-        if ($result)
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
-            if ($this->db->num_rows())
+            if ($this->db->num_rows($resql))
             {
-                $solde = $this->db->result(0,0);
-
-                return $solde;
+            	$obj=$this->db->fetch_object($resql);
+                $solde = $obj->amount;
             }
-            $this->db->free();
+            $this->db->free($resql);
+            return $solde;
         }
     }
 

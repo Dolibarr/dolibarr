@@ -1819,6 +1819,81 @@ class Commande extends CommonObject
 		}
 	}
 
+
+	/**
+	 *		\brief		Initialise la commande avec valeurs fictives aléatoire
+	 *					Sert à générer une commande pour l'aperu des modèles ou demo
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		// Charge tableau des id de société socids
+		$socids = array();
+		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_socs = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_socs)
+			{
+				$i++;
+
+				$row = $this->db->fetch_row($resql);
+				$socids[$i] = $row[0];
+			}
+		}
+
+		// Charge tableau des produits prodids
+		$prodids = array();
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_prods = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_prods)
+			{
+				$i++;
+				$row = $this->db->fetch_row($resql);
+				$prodids[$i] = $row[0];
+			}
+		}
+
+		// Initialise paramètres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$socid = rand(1, $num_socs);
+		$this->socidp = $socids[$socid];
+		$this->date = time();
+		$this->date_lim_reglement=$this->date+3600*24*30;
+		$this->cond_reglement_code = 'RECEP';
+		$this->mode_reglement_code = 'CHQ';
+		$this->note_public='SPECIMEN';
+		$nbp = rand(1, 9);
+		$xnbp = 0;
+		while ($xnbp < $nbp)
+		{
+			$ligne=new CommandeLigne($this->db);
+			$ligne->desc=$langs->trans("Description")." ".$xnbp;
+			$ligne->qty=1;
+			$ligne->subprice=100;
+			$ligne->price=100;
+			$ligne->tva_taux=19.6;
+			$prodid = rand(1, $num_prods);
+			$ligne->produit_id=$prodids[$prodid];
+			$this->lignes[$xnbp]=$ligne;
+			$xnbp++;
+		}
+
+		$this->amount_ht      = $xnbp*100;
+		$this->total_ht       = $xnbp*100;
+		$this->total_tva      = $xnbp*19.6;
+		$this->total_ttc      = $xnbp*119.6;
+	}
+
 }
 
 

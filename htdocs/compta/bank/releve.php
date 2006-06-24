@@ -181,18 +181,6 @@ else
     print '<td>&nbsp;</td>';
     print "</tr>\n";
     
-    // Recherche date valeur minimum pour ce relevé
-/*
-	$datemin=0;
-    $sql = "SELECT MIN(datev) FROM ".MAIN_DB_PREFIX."bank";
-    $sql.= " WHERE num_releve = '".$num."' AND fk_account = ".$acct->id;
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $datemin = $db->result(0, 0);
-        $db->free($resql);
-    }
-*/    
     // Calcul du solde de départ du relevé
     $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE num_releve < ".$num." AND fk_account = ".$acct->id;

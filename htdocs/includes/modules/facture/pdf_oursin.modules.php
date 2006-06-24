@@ -101,6 +101,14 @@ class pdf_oursin extends ModelePDFFactures
 	{
 		global $user,$langs,$conf,$mysoc;
 
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+        $outputlangs->load("companies");
+        $outputlangs->load("bills");
+        $outputlangs->load("products");
+		
+		$outputlangs->setPhpLang();
+
 		$langs->load("main");
 		$langs->load("bills");
 		$langs->load("products");
@@ -133,6 +141,7 @@ class pdf_oursin extends ModelePDFFactures
 				if (create_exdir($dir) < 0)
 				{
 					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					$langs->setPhpLang();	// On restaure langue session
 					return 0;
 				}
 			}
@@ -330,7 +339,8 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->MultiCell(80, 5, $titre, 0, 'L');
 					$pdf->SetFont('Arial','',10);
 					$pdf->SetXY($this->marges['g']+44, 217);
-					$pdf->MultiCell(80, 5, $fac->cond_reglement_facture,0,'L');
+	                $lib_condition_paiement=$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code)?$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+					$pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
 				}
 
 				/*
@@ -343,20 +353,24 @@ class pdf_oursin extends ModelePDFFactures
 
 				$pdf->Output($file);
 
+				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
 			else
 			{
 				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				$langs->setPhpLang();	// On restaure langue session
 				return 0;
 			}
 		}
 		else
 		{
 			$this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
+			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
 		$this->error=$langs->trans("ErrorUnknown");
+		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}
 

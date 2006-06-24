@@ -42,21 +42,6 @@ if ($user->societe_id > 0)
 
 
 
-function valeur($sql) 
-{
-  global $db;
-  if ( $db->query($sql) ) 
-    {
-      if ( $db->num_rows() ) 
-	{
-	  $valeur = $db->result(0,0);
-	}
-      $db->free();
-    }
-  return $valeur;
-}
-
-
 /*
  *	Affichage zone prospect
  */

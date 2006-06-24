@@ -30,19 +30,6 @@ require("./pre.inc.php");
 
 $langs->load("compta");
 
-llxHeader();
-
-
-function valeur($sql) {
-  global $db;
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() ) {
-      $valeur = $db->result(0,0);
-    }
-    $db->free();
-  }
-  return $valeur;
-}
 
 /*
  * Action ajout en bookmark
@@ -59,6 +46,9 @@ if ($action == 'del_bookmark') {
   $result = $db->query($sql);
 }
 
+
+
+llxHeader();
 
 print_titre("Charges");
 

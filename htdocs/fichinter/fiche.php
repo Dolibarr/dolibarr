@@ -141,13 +141,14 @@ if ($_GET["action"] == 'create')
 	// \todo Utiliser un module de numérotation
 	$numpr = "FI".strftime("%y%m%d", time());
 
-	$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
+	$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."propal";
 	$sql.= " WHERE ref like '${numpr}%'";
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$num = $db->result(0, 0);
+		$obj=$db->fetch_object($resql);
+		$num = $obj->nb;
 		$db->free($resql);
 		if ($num > 0)
 		{

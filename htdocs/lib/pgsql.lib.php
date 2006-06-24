@@ -188,99 +188,15 @@ class DoliDb
         return split('\.',$this->getVersion());
     }
         
-        
-        
-    /**
-            \brief          Renvoie l'id de la connection
-            \return	        string      Id connection
-    */
-    function getConnectId()
-    {
-        return '?';
-    }
-
-
-    /**
-            \brief          Renvoie la commande sql qui donne les droits à user sur les tables
-            \param          databaseuse     User à autoriser
-            \return	        string          Requete sql
-    */
-    function getGrantForUserQuery($databaseuser)
-    {
-        // Scan tables pour générer le grant
-        $dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
-        
-        $handle=opendir($dir);
-        $table_list="";
-        while (($file = readdir($handle))!==false)
-        {
-            if (! ereg("\.key\.sql",$file) && ereg("^(.*)\.sql",$file,$reg))
-            {
-                if ($table_list) {
-                    $table_list.=", ".$reg[0];
-                }
-                else {
-                    $table_list.=$reg[0];
-                }
-            }
-        }
-        
-        // Genere le grant_query
-        $grant_query = 'GRANT ALL ON '.$table_list.' TO "'.$databaseuser.'";';
-        return $grant_query;
-    }
-        
-      
-    /**
-            \brief          Création d'une nouvelle base de donnée
-            \param	        database		nom de la database à créer
-            \return	        resource		resource définie si ok, null si ko
-            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
-    */
-    function create_db($database)
-    {
-        $ret=$this->query('CREATE DATABASE '.$database.';');
-        return $ret;
-    }
-        
-    
-    /**
-            \brief      Copie d'un handler de database.
-            \return	    resource
-    */
-    
-    function dbclone()
-    {
-        $db2 = new DoliDb("", "", "", "", "");
-        $db2->db = $this->db;
-        return $db2;
-    }
-    
-    /**
-            \brief      Ouverture d'une connection vers une database.
-            \param		host		Adresse de la base de données
-            \param		login		Nom de l'utilisateur autorisé
-            \param		passwd		Mot de passe
-            \param		name		Nom de la database
-            \return		resource	handler d'accès à la base
-    */
-    
-    function pconnect($host, $login, $passwd, $name)
-    {
-        $con_string = "host=$host dbname=$name user=$login password=$passwd";
-        $this->db = pg_pconnect($con_string);
-        return $this->db;
-    }
-    
     /**
             \brief      Fermeture d'une connection vers une database.
             \return	    resource
     */
-    
     function close()
     {
         return pg_close($this->db);
     }
+    
     
     /**
         \brief      Debut d'une transaction.
@@ -338,6 +254,7 @@ class DoliDb
             return 1;
         }
     }
+
     
     /**
         \brief      Effectue une requete et renvoi le resultset de réponse de la base
@@ -360,15 +277,64 @@ class DoliDb
         return $ret;
     }
     
+    
+    
+
+	// Next function are not required. Only minor features use them.
+
+            
+        
     /**
-        \brief      Renvoie les données de la requete.
-        \param	    nb			Contenu de la query
-        \param	    fieldname	Nom du champ
-        \return		resource
+            \brief          Renvoie l'id de la connection
+            \return	        string      Id connection
     */
-    function result($nb, $fieldname)
+    function getConnectId()
     {
-        return pg_fetch_result($this->results, $nb, $fieldname);
+        return '?';
+    }
+
+
+    /**
+            \brief          Renvoie la commande sql qui donne les droits à user sur les tables
+            \param          databaseuse     User à autoriser
+            \return	        string          Requete sql
+    */
+    function getGrantForUserQuery($databaseuser)
+    {
+        // Scan tables pour générer le grant
+        $dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
+        
+        $handle=opendir($dir);
+        $table_list="";
+        while (($file = readdir($handle))!==false)
+        {
+            if (! ereg("\.key\.sql",$file) && ereg("^(.*)\.sql",$file,$reg))
+            {
+                if ($table_list) {
+                    $table_list.=", ".$reg[0];
+                }
+                else {
+                    $table_list.=$reg[0];
+                }
+            }
+        }
+        
+        // Genere le grant_query
+        $grant_query = 'GRANT ALL ON '.$table_list.' TO "'.$databaseuser.'";';
+        return $grant_query;
+    }
+        
+      
+    /**
+            \brief          Création d'une nouvelle base de donnée
+            \param	        database		nom de la database à créer
+            \return	        resource		resource définie si ok, null si ko
+            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+    */
+    function create_db($database)
+    {
+        $ret=$this->query('CREATE DATABASE '.$database.';');
+        return $ret;
     }
     
     /**

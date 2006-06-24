@@ -84,15 +84,17 @@ if ($_GET["action"] == 'create')
 
 	// Si numero deja pris (ne devrait pas arriver)
 	// on incremente par .num+1
-    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
-    if ( $db->query($sql) )
+    $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
+    $resql=$db->query($sql);
+    if ($resql)
     {
-        $num = $db->result(0, 0);
-        $db->free();
-        if ($num > 0)
-        {
-            $numpr .= "." . ($num + 1);
-        }
+        $obj=$db->fetch_object($resql);
+        $num = $obj->nb;
+        $db->free($resql);
+	    if ($num > 0)
+	    {
+	        $numpr .= "." . ($num + 1);
+	    }
     }
 
     print "<form name='addprop' action=\"propal.php?socidp=".$soc->id."\" method=\"post\">";

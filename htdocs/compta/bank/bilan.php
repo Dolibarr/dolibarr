@@ -26,22 +26,22 @@ require("./pre.inc.php");
 if (!$user->rights->banque->lire)
   accessforbidden();
 
-llxHeader();
 
 function valeur($sql)
 {
-  global $db;
-  if ( $db->query($sql) )
-    {
-      if ( $db->num_rows() )
+	global $db;
+	$resql=$db->query($sql);
+	if ($resql)
 	{
-	  $valeur = $db->result(0,0);
+		$obj=$db->fetch_object($resql);
+		$valeur = $obj->amount;
+		$db->free($resql);
 	}
-      $db->free();
-    }
-  return $valeur;
+	return $valeur;
 }
 
+
+llxHeader();
 
 print_titre("Bilan");
 print '<br>';
@@ -52,22 +52,22 @@ echo '<td colspan="2">Résumé</td>';
 print "</tr>\n";
 
 $var=!$var;
-$sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."paiement";
+$sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."paiement";
 $paiem = valeur($sql);
 print "<tr $bc[$var]><td>Somme des paiements (associés à une facture)</td><td align=\"right\">".price($paiem)."</td></tr>";
 
 $var=!$var;
-$sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE amount > 0";
+$sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank WHERE amount > 0";
 $credits = valeur($sql);
 print "<tr $bc[$var]><td>Somme des credits</td><td align=\"right\">".price($credits)."</td></tr>";
 
 $var=!$var;
-$sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE amount < 0";
+$sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank WHERE amount < 0";
 $debits = valeur($sql);
 print "<tr $bc[$var]><td>Somme des debits</td><td align=\"right\">".price($debits)."</td></tr>";
 
 $var=!$var;
-$sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank ";
+$sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank ";
 $solde = valeur($sql);
 print "<tr $bc[$var]><td>".$langs->trans("BankBalance")."</td><td align=\"right\">".price($solde)."</td></tr>";
 

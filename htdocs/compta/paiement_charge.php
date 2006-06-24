@@ -181,10 +181,14 @@ if ($_GET["action"] == 'create')
 
       print '<tr><td>'.$langs->trans("AmountTTC").":</td><td colspan=\"2\">".price($charge->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-      $sql = "SELECT sum(p.amount) FROM ".MAIN_DB_PREFIX."paiementcharge as p WHERE p.fk_charge = $chid;";
-      $result = $db->query($sql);
-      if ($result) {
-	    $sumpayed = $db->result(0,0);
+      $sql = "SELECT sum(p.amount) as total";
+      $sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
+      $sql.= " WHERE p.fk_charge = ".$chid;
+      $resql = $db->query($sql);
+      if ($resql)
+      {
+      	$obj=$db->fetch_object($resql);
+	    $sumpayed = $obj->total;
 	    $db->free();
       }
       print '<tr><td>'.$langs->trans("AlreadyPayed").'</td><td colspan="2"><b>'.price($sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
