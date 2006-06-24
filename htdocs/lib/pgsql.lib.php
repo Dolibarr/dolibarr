@@ -40,24 +40,24 @@
 		\brief      Classe permettant de gérér la database de dolibarr
 */
 
-class DoliDb 
+class DoliDb
 {
     var $db;                      // Handler de base
     var $type='pgsql';            // Nom du gestionnaire
 
     var $results;                 // Resultset de la dernière requete
-    
+
     var $connected;               // 1 si connecté, 0 sinon
     var $database_selected;       // 1 si base sélectionné, 0 sinon
     var $database_name;			  // Nom base sélectionnée
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
     var $lastquery;
 	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
-    
+
     var $ok;
     var $error;
-    
-    
+
+
     /**
         \brief      Ouverture d'une connection vers le serveur et une database.
         \param		type		type de base de données (mysql ou pgsql)
@@ -71,7 +71,7 @@ class DoliDb
     {
         global $conf,$langs;
         $this->transaction_opened=0;
-    
+
         //print "Name DB: $host,$user,$pass,$name<br>";
 
         if (! function_exists("pg_connect"))
@@ -91,10 +91,10 @@ class DoliDb
         	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
             return $this->ok;
         }
-    
+
         // Essai connexion serveur
         $this->db = $this->connect($host, $user, $pass, $name);
-    
+
         if ($this->db)
         {
             $this->connected = 1;
@@ -107,7 +107,7 @@ class DoliDb
             $this->ok = 0;
             dolibarr_syslog("DoliDB::DoliDB : Erreur Connect");
         }
-    
+
         // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
         if ($this->connected && $name)
         {
@@ -130,10 +130,10 @@ class DoliDb
             // Pas de selection de base demandée, ok ou ko
             $this->database_selected = 0;
         }
-    
+
         return $this->ok;
     }
-    
+
     /**
         \brief      Selectionne une database.
         \param		database		nom de la database
@@ -148,7 +148,7 @@ class DoliDb
         else
         	return false;
     }
-    
+
     /**
         \brief      Connection vers le serveur
         \param		host		addresse de la base de données
@@ -167,8 +167,8 @@ class DoliDb
         }
         return $this->db;
     }
-    
-    
+
+
     /**
             \brief          Renvoie la version du serveur
             \return	        string      Chaine version
@@ -187,7 +187,7 @@ class DoliDb
     {
         return split('\.',$this->getVersion());
     }
-        
+
     /**
             \brief      Fermeture d'une connection vers une database.
             \return	    resource
@@ -196,8 +196,8 @@ class DoliDb
     {
         return pg_close($this->db);
     }
-    
-    
+
+
     /**
         \brief      Debut d'une transaction.
         \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
@@ -216,7 +216,7 @@ class DoliDb
             return 1;
         }
     }
-    
+
     /**
         \brief      Validation d'une transaction
         \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
@@ -235,7 +235,7 @@ class DoliDb
             return 1;
         }
     }
-    
+
     /**
         \brief      Annulation d'une transaction et retour aux anciennes valeurs
         \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
@@ -255,7 +255,7 @@ class DoliDb
         }
     }
 
-    
+
     /**
         \brief      Effectue une requete et renvoi le resultset de réponse de la base
         \param		query		Contenu de la query
@@ -273,10 +273,10 @@ class DoliDb
             $this->lastquery=$query;
             $this->results = $ret;
         }
-    
+
         return $ret;
     }
-    
+
     /**
         \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
         \param      resultset   Curseur de la requete voulue
@@ -288,14 +288,14 @@ class DoliDb
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_object($resultset);
     }
-    
-    
-    
+
+
+
 
 	// Next function are not required. Only minor features use them.
 
-            
-        
+
+
     /**
             \brief          Renvoie l'id de la connection
             \return	        string      Id connection
@@ -315,7 +315,7 @@ class DoliDb
     {
         // Scan tables pour générer le grant
         $dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
-        
+
         $handle=opendir($dir);
         $table_list="";
         while (($file = readdir($handle))!==false)
@@ -330,13 +330,13 @@ class DoliDb
                 }
             }
         }
-        
+
         // Genere le grant_query
         $grant_query = 'GRANT ALL ON '.$table_list.' TO "'.$databaseuser.'";';
         return $grant_query;
     }
-        
-      
+
+
     /**
             \brief          Création d'une nouvelle base de donnée
             \param	        database		nom de la database à créer
@@ -348,7 +348,7 @@ class DoliDb
         $ret=$this->query('CREATE DATABASE '.$database.';');
         return $ret;
     }
-    
+
     /**
         \brief      Renvoie les données dans un tableau.
         \param      resultset   Curseur de la requete voulue
@@ -360,7 +360,7 @@ class DoliDb
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_array($resultset);
     }
-    
+
     /**
         \brief      Renvoie les données comme un tableau.
         \param      resultset   Curseur de la requete voulue
@@ -372,7 +372,7 @@ class DoliDb
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_row($resultset);
     }
-    
+
     /**
         \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
         \see    	affected_rows
@@ -385,7 +385,7 @@ class DoliDb
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_num_rows($resultset);
     }
-    
+
     /**
         \brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
         \see    	num_rows
@@ -400,8 +400,8 @@ class DoliDb
         // a mysql qui prend un link de base
         return pg_affected_rows($resultset);
     }
-    
-    
+
+
     /**
         \brief      Libère le dernier resultset utilisé sur cette connexion.
         \param      resultset   Curseur de la requete voulue
@@ -413,7 +413,7 @@ class DoliDb
         // Si resultset en est un, on libere la mémoire
         if (is_resource($resultset)) pg_free_result($resultset);
     }
-    
+
 
     /**
         \brief      Défini les limites de la requète.
@@ -428,8 +428,8 @@ class DoliDb
         if ($offset > 0) return " LIMIT $offset,$limit ";
         else return " LIMIT $limit ";
     }
-    
-    
+
+
     /**
         \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date tms unix.
@@ -475,7 +475,7 @@ class DoliDb
     {
         return $this->lastquery;
     }
-    
+
     /**
         \brief      Renvoie la derniere requete en erreur()
         \return	    lastqueryerror
@@ -512,23 +512,21 @@ class DoliDb
         $errno=pg_last_error($this->db);
         return ($errno?'DB_ERROR':'0');
     }
-    
+
     /**
         \brief 		Renvoie le texte de l'erreur pgsql de l'operation precedente.
         \return		error_text
     */
-    
     function error()
     {
         return pg_last_error($this->db);
     }
-    
+
     /**
         \brief      Récupère l'id genéré par le dernier INSERT.
         \param     	tab     Nom de la table concernée par l'insert. Ne sert pas sous MySql mais requis pour compatibilité avec Postgresql
         \return     int     id
     */
-    
     function last_insert_id($tab)
     {
         $result = pg_query($this->db,"SELECT MAX(rowid) FROM ".$tab." ;");
@@ -536,12 +534,11 @@ class DoliDb
         $row = pg_fetch_result($result,0,0);
         return $row;
     }
-    
+
     /**
         \brief      Retourne le dsn pear
         \return     dsn
     */
-    
     function getdsn($db_type,$db_user,$db_pass,$db_host,$db_name)
     {
         return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
@@ -552,17 +549,10 @@ class DoliDb
         \param	    database	Nom de la database
         \return		resource
     */
-    
     function list_tables($database)
     {
         $this->results = pg_query($this->db, "SHOW TABLES;");
         return  $this->results;
-    }
-	
-
-    function setLastQuery($s)
-    {
-        $this->lastquery=$s;
     }
 
 }

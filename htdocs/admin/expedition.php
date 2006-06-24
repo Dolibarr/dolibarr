@@ -95,6 +95,25 @@ if ($_GET["action"] == 'setdoc')
     }
 }
 
+// \todo A quoi servent les methode d'expedition ?
+if ($_GET["action"] == 'setmethod')
+{
+	$db->begin();
+	
+    $value=$_GET["value"];
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (code,libelle,description,statut)";
+    $sql.= " VALUES ('".$_GET["value"]."','".$_GET["value"]."','',1)";
+    $result=$db->query($sql);
+    if ($result) 
+    {
+		$db->commit();
+    }
+    else
+    {
+    	$db->rollback();
+    }
+}
+
 if ($_GET["action"] == 'setmod')
 {
     // \todo Verifier si module numerotation choisi peut etre activé
@@ -141,8 +160,20 @@ if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 // Méthode de livraison
+$mods=array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE statut = 1";
-$db->fetch_all_rows($sql, $mods);
+$resql = $db->query($sql);
+if ($resql)
+{
+    $i = 0;
+    $num = $db->num_rows($resql);
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($resql);
+        $mods[$i]=$obj->rowid;
+        $i++;
+    }
+}
 
 print_titre($langs->trans("SendingMethod"));
 
@@ -184,13 +215,13 @@ if(is_dir($dir))
 			{
 				print img_tick();
 				print '</td><td align="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;statut=0&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=0&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
 
 			}
 			else
 			{
 				print '&nbsp;</td><td align="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;statut=1&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=1&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
 			}
 
 			print '</td>';

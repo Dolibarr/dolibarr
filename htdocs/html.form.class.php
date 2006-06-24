@@ -1102,7 +1102,7 @@ class Form
     {
         global $langs;
 		
-		dolibarr_syslog("html.form.class.php::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
+//		dolibarr_syslog("html.form.class.php::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
         
         $filterarray=array();
 		if ($filtertype == 'CRDT')  	$filterarray=array(0,2);

@@ -343,7 +343,7 @@ class DoliDb
 
         return $ret;
     }
-    
+
     /**
         \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
         \param      resultset   Curseur de la requete voulue
@@ -356,7 +356,7 @@ class DoliDb
         return mysql_fetch_object($resultset);
     }
 
-    
+
 
 	// Next function are not required. Only minor features use them.
 
@@ -491,7 +491,7 @@ class DoliDb
 		else
 			return true;
 	}
-	
+
 
     /**
         \brief      Renvoie les données dans un tableau.
@@ -689,7 +689,6 @@ class DoliDb
         \param     tab     Nom de la table concernée par l'insert. Ne sert pas sous MySql mais requis pour compatibilité avec Postgresql
         \return    int     id
     */
-
     function last_insert_id($tab)
     {
         return mysql_insert_id($this->db);
@@ -699,7 +698,6 @@ class DoliDb
         \brief      Retourne le dsn pear
         \return     dsn
     */
-
     function getdsn($db_type,$db_user,$db_pass,$db_host,$db_name)
     {
         return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
@@ -710,7 +708,6 @@ class DoliDb
         \param	    database	Nom de la database
         \return	    resource
     */
-
     function list_tables($database)
     {
         $this->results = mysql_list_tables($database, $this->db);
@@ -727,12 +724,6 @@ class DoliDb
 		// $this->results = $this->query("DESC ".$table." ".$field);
 		$this->results = $this->query("DESC ".$table." ".$field);
 		return $this->results;
-    }
-
-
-    function setLastQuery($s)
-    {
-        $this->lastquery=$s;
     }
 
 }
