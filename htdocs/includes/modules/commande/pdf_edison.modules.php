@@ -54,6 +54,8 @@ class pdf_edison extends ModelePDFCommandes
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
 
+        $this->option_multilang = 0;               // Dispo en plusieurs langues
+
         $this->error = "";
     }
   
@@ -67,170 +69,198 @@ class pdf_edison extends ModelePDFCommandes
   }
   
   
-  /**
-        \brief      Fonction générant la commande sur le disque
-        \param	    id		id de la propale à générer
-   		\return	    int     1=ok, 0=ko
-  */
-  function write_pdf_file($id)
-    {
-      global $user,$conf,$langs;
-      
-      $com = new Commande($this->db);
-      if ($com->fetch($id))
+	/**
+			\brief      Fonction générant la commande sur le disque
+			\param	    id		id de la propale à générer
+			\return	    int     1=ok, 0=ko
+	*/
+	function write_pdf_file($com,$outputlangs='')
 	{
-	  	$comref = sanitize_string($com->ref);
-	  if ($conf->commande->dir_output)
-	    {
-              
-              $dir = $conf->commande->dir_output . "/" . $comref ;
+		global $user,$conf,$langs,$mysco;
 
-            if (! file_exists($dir))
-            {
-                if (create_exdir($dir) < 0)
-                {
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                    return 0;
-                }
-            }
-	    }
-	  else
-	    {
-            $this->error=$langs->trans("ErrorConstantNotDefined","PROPALE_OUTPUTDIR");
-            return 0;
-	    }
-
-          $file = $dir . "/" . $comref . ".pdf";
-	  
-	  if (file_exists($dir))
-	    {
-
-	      $pdf=new FPDF('P','mm',$this->format);
-	      $pdf->Open();
-	      $pdf->AddPage();
-
-	      $pdf->SetTitle($com->ref);
-	      $pdf->SetSubject("Proposition commerciale");
-	      $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-	      $pdf->SetAuthor($user->fullname);
-
-	      $this->_pagehead($pdf, $com);
-
-	      /*
-	       */
-	      $tab_top = 100;
-	      $tab_height = 140;
-	      /*
-	       *
-	       */  
-	      
-	      $pdf->SetFillColor(220,220,220);
-
-	      $pdf->SetTextColor(0,0,0);
-	      $pdf->SetFont('Arial','', 10);
-
-	      $pdf->SetXY (10, $tab_top + 10 );
-
-	      $iniY = $pdf->GetY();
-	      $curY = $pdf->GetY();
-	      $nexY = $pdf->GetY();
-	      $nblignes = sizeof($com->lignes);
-
-	      for ($i = 0 ; $i < $nblignes ; $i++)
-		{
-
-		  $curY = $nexY;
-
-		  $pdf->SetXY (30, $curY );
-
-		  $pdf->MultiCell(100, 5, $com->lignes[$i]->desc, 0, 'J', 0);
-
-		  $nexY = $pdf->GetY();
-		 
-		  $pdf->SetXY (10, $curY );
-
-		  $pdf->MultiCell(20, 5, $com->lignes[$i]->ref, 0, 'C');
-
-		  $pdf->SetXY (133, $curY );		  
-		  $pdf->MultiCell(10, 5, $com->lignes[$i]->tva_tx, 0, 'C');
-		  
-		  $pdf->SetXY (145, $curY );
-		  $pdf->MultiCell(10, 5, $com->lignes[$i]->qty, 0, 'C');
-
-		  $pdf->SetXY (156, $curY );
-		  $pdf->MultiCell(18, 5, price($com->lignes[$i]->price), 0, 'R', 0);
-	      
-		  $pdf->SetXY (174, $curY );
-		  $total = price($com->lignes[$i]->price * $com->lignes[$i]->qty);
-		  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-		  
-		  $pdf->line(10, $curY, 200, $curY );
-
-		  if ($nexY > 240 && $i < $nblignes - 1)
-		    {
-		      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-		      $pdf->AddPage();
-		      $nexY = $iniY;
-		      $this->_pagehead($pdf, $com);
-		      $pdf->SetTextColor(0,0,0);
-		      $pdf->SetFont('Arial','', 10);
-		    }
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+        $outputlangs->load("companies");
+        $outputlangs->load("bills");
+        $outputlangs->load("products");
+		
+		$outputlangs->setPhpLang();
+		
+		// Définition de l'objet $com (pour compatibilite ascendante)
+    	if (! is_object($com))
+    	{
+            $id = $com;
+            $com = new Commande($this->db,"",$id);
+            $ret=$com->fetch($id);
 		}
-	      
-	      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-	      /*
-	       *
-	       */
-	      $tab2_top = 241;
-	      $tab2_lh = 7;
-	      $tab2_height = $tab2_lh * 4;
 
-	      $pdf->SetFont('Arial','', 11);
-	      
-	      $pdf->Rect(132, $tab2_top, 68, $tab2_height);
-	      
-	      $pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
-	      $pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
-	      $pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
-	      
-	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-	      
-	      $pdf->SetXY (132, $tab2_top + 0);
-	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalHT"), 0, 'R', 0);
-	      
-	      $pdf->SetXY (132, $tab2_top + $tab2_lh);
-	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("Reduction"), 0, 'R', 0);
+        if ($conf->commande->dir_output)
+        {
+			// Définition de $dir et $file
+			if ($com->specimen)
+			{
+				$dir = $conf->commande->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$comref = sanitize_string($com->ref);
+				$dir = $conf->commande->dir_output . "/" . $comref;
+				$file = $dir . "/" . $comref . ".pdf";
+			}
+	
+			if (! file_exists($dir))
+			{
+				if (create_exdir($dir) < 0)
+				{
+					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					$langs->setPhpLang();	// On restaure langue session
+					return 0;
+				}
+			}
+	
+            if (file_exists($dir))
+            {
+				// Initialisation document vierge
+                $pdf=new FPDF('P','mm',$this->format);
+                
+                $pdf->Open();
+                $pdf->AddPage();
 
-	      $pdf->SetXY (132, $tab2_top + $tab2_lh*2);
-	      $pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
+                $pdf->SetDrawColor(128,128,128);
 
-	      $pdf->SetXY (132, $tab2_top + $tab2_lh*3);
-	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalVAT"), 0, 'R', 0);
-	      
-	      $pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
-	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalTTC"), 1, 'R', 1);
+                $pdf->SetTitle($com->ref);
+                $pdf->SetSubject($langs->trans("Order"));
+                $pdf->SetCreator("Dolibarr ".DOL_VERSION);
+                $pdf->SetAuthor($user->fullname);
 
-	      $pdf->SetXY (174, $tab2_top + 0);
-	      $pdf->MultiCell(26, $tab2_lh, price($com->total_ht + $com->remise), 0, 'R', 0);
-	      
-	      $pdf->SetXY (174, $tab2_top + $tab2_lh);
-	      $pdf->MultiCell(26, $tab2_lh, price($com->remise), 0, 'R', 0);
+                $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+                $pdf->SetAutoPageBreak(1,0);
 
-	      $pdf->SetXY (174, $tab2_top + $tab2_lh*2);
-	      $pdf->MultiCell(26, $tab2_lh, price($com->total_ht), 0, 'R', 0);
-
-	      $pdf->SetXY (174, $tab2_top + $tab2_lh*3);
-	      $pdf->MultiCell(26, $tab2_lh, price($com->total_tva), 0, 'R', 0);
-	      
-	      $pdf->SetXY (174, $tab2_top + ($tab2_lh*4));
-	      $pdf->MultiCell(26, $tab2_lh, price($com->total_ttc), 1, 'R', 1);
+                $this->_pagehead($pdf, $com, 1, $outputlangs);
 
 
-	      $pdf->Output($file);
-	      return 1;
-	    }
+				$tab_top = 100;
+				$tab_height = 140;
+	
+				$pdf->SetFillColor(220,220,220);
+	
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFont('Arial','', 10);
+	
+				$pdf->SetXY (10, $tab_top + 10 );
+	
+				$iniY = $pdf->GetY();
+				$curY = $pdf->GetY();
+				$nexY = $pdf->GetY();
+				$nblignes = sizeof($com->lignes);
+	
+				for ($i = 0 ; $i < $nblignes ; $i++)
+				{
+	
+					$curY = $nexY;
+	
+					$pdf->SetXY (30, $curY );
+	
+					$pdf->MultiCell(100, 5, $com->lignes[$i]->desc, 0, 'J', 0);
+	
+					$nexY = $pdf->GetY();
+	
+					$pdf->SetXY (10, $curY );
+	
+					$pdf->MultiCell(20, 5, $com->lignes[$i]->ref, 0, 'C');
+	
+					$pdf->SetXY (133, $curY );
+					$pdf->MultiCell(10, 5, $com->lignes[$i]->tva_tx, 0, 'C');
+	
+					$pdf->SetXY (145, $curY );
+					$pdf->MultiCell(10, 5, $com->lignes[$i]->qty, 0, 'C');
+	
+					$pdf->SetXY (156, $curY );
+					$pdf->MultiCell(18, 5, price($com->lignes[$i]->price), 0, 'R', 0);
+	
+					$pdf->SetXY (174, $curY );
+					$total = price($com->lignes[$i]->price * $com->lignes[$i]->qty);
+					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+	
+					$pdf->line(10, $curY, 200, $curY );
+	
+					if ($nexY > 240 && $i < $nblignes - 1)
+					{
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+						$pdf->AddPage();
+						$nexY = $iniY;
+						$this->_pagehead($pdf, $com, 0, $outputlangs);
+						$pdf->SetTextColor(0,0,0);
+						$pdf->SetFont('Arial','', 10);
+					}
+				}
+	
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+				/*
+				*
+				*/
+				$tab2_top = 241;
+				$tab2_lh = 7;
+				$tab2_height = $tab2_lh * 4;
+	
+				$pdf->SetFont('Arial','', 11);
+	
+				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
+	
+				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
+				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
+				$pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
+	
+				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
+	
+				$pdf->SetXY (132, $tab2_top + 0);
+				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalHT"), 0, 'R', 0);
+	
+				$pdf->SetXY (132, $tab2_top + $tab2_lh);
+				$pdf->MultiCell(42, $tab2_lh, $langs->trans("Reduction"), 0, 'R', 0);
+	
+				$pdf->SetXY (132, $tab2_top + $tab2_lh*2);
+				$pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
+	
+				$pdf->SetXY (132, $tab2_top + $tab2_lh*3);
+				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalVAT"), 0, 'R', 0);
+	
+				$pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
+				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalTTC"), 1, 'R', 1);
+	
+				$pdf->SetXY (174, $tab2_top + 0);
+				$pdf->MultiCell(26, $tab2_lh, price($com->total_ht + $com->remise), 0, 'R', 0);
+	
+				$pdf->SetXY (174, $tab2_top + $tab2_lh);
+				$pdf->MultiCell(26, $tab2_lh, price($com->remise), 0, 'R', 0);
+	
+				$pdf->SetXY (174, $tab2_top + $tab2_lh*2);
+				$pdf->MultiCell(26, $tab2_lh, price($com->total_ht), 0, 'R', 0);
+	
+				$pdf->SetXY (174, $tab2_top + $tab2_lh*3);
+				$pdf->MultiCell(26, $tab2_lh, price($com->total_tva), 0, 'R', 0);
+	
+				$pdf->SetXY (174, $tab2_top + ($tab2_lh*4));
+				$pdf->MultiCell(26, $tab2_lh, price($com->total_ttc), 1, 'R', 1);
+	
+	
+				$pdf->Output($file);
+				$langs->setPhpLang();	// On restaure langue session
+				return 1;
+			}
+		}
+        else
+        {
+            $this->error=$langs->trans("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
+			$langs->setPhpLang();	// On restaure langue session
+            return 0;
+        }
+			
+        $this->error=$outputlangs->trans("ErrorUnknown");
+		$langs->setPhpLang();	// On restaure langue session
+        return 0;   // Erreur par defaut		
 	}
-    }
 
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
@@ -267,7 +297,7 @@ class pdf_edison extends ModelePDFCommandes
 
   function _pagehead(&$pdf, $com)
    {
-		global $langs;
+		global $langs,$mysoc;
 	 $langs->load("orders");
       $pdf->SetXY(10,5);
       if (defined("MAIN_INFO_SOCIETE_NOM"))

@@ -31,6 +31,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
+
 
 $langs->load("admin");
 $langs->load("bills");
@@ -45,6 +47,30 @@ if (!$user->admin)
 /*
  * Actions
  */
+if ($_GET["action"] == 'specimen')
+{
+	$modele=$_GET["module"];
+
+	$commande = new Commande($db);
+	$commande->initAsSpecimen();
+
+	// Charge le modele
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande/";
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+
+		if ($obj->write_pdf_file($commande) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
+			return;
+		}
+	}
+}
 
 if ($_GET["action"] == 'set')
 {
@@ -287,14 +313,17 @@ while (($file = readdir($handle))!==false)
 		print '</td>';
 		
 		// Info
-    	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
-    	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
-    	$htmltooltip.='<br>'.$langs->trans("FeaturesSupported").':';
+    	$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
+    	$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
+    	$htmltooltip.='<br><b>'.$langs->trans("Height").'/'.$langs->trans("Width").'</b>: '.$module->page_hauteur.'/'.$module->page_largeur;
+    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
     	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
-    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>'.img_help(0).'</td>';
+    	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
+    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
+    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" alt="" title="">'.img_help(0,0).'</a>';
+    	print '</td>';
 
 		print "</tr>\n";
 	}
