@@ -1896,4 +1896,82 @@ function create_exdir($dir)
     return ($nberr ? -$nberr : $nbcreated);
 }
 
+
+/**
+ *		\brief		Scan a directory and return a list of files/directories
+ *		\param		$path        	Starting path from which to search
+ *		\param		$types        	Can be "directories", "files", or "all"
+ *		\param		$recursive		Determines whether subdirectories are searched
+ *		\param		$filter        	Regex for filter
+ *		\param		$exludefilter  	Regex for exclude filter
+ *		\param		$sortcriteria	Sort criteria ("date","size")
+ *		\param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ *		\return		array			Array of array('name'=>xxx,'date'=>yyy,'size'=>zzz)
+ */
+function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="", $sortorder=SORT_ASC)
+{
+	if ($dir = opendir($path))
+	{
+		$file_list = array();
+		while (false !== ($file = readdir($dir)))
+		{
+			$qualified=1;
+	
+			// Check if file is qualified
+			if (eregi('^\.',$file)) $qualified=0;
+			if ($filter && ! eregi($filter,$file)) $qualified=0;
+			if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
+	
+			if ($qualified)
+			{
+				// Check whether this is a file or directory and whether we're interested in that type
+				if ((is_dir($path."/".$file)) && (($types=="directories") || ($types=="all")))
+				{
+					// Add file into file_list array
+					if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
+					if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
+					$file_list[] = array(
+                                       "name" => $file,
+                                       "date" => $filedate,
+                                       "size" => $filesize
+                                 	);
+					// if we're in a directory and we want recursive behavior, call this function again
+					if ($recursive)
+					{
+						$file_list = array_merge($file_list, dolibarr_dir_list($path."/".$file."/", $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder));
+					}
+				}
+				else if (($types == "files") || ($types == "all"))
+				{
+					// Add file into file_list array
+					if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
+					if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
+					$file_list[] = array(
+                                       "name" => $file,
+                                       "date" => $filedate,
+                                       "size" => $filesize
+                                 	);
+				}
+			}
+		}
+		closedir($dir);
+		
+		// Obtain a list of columns
+		foreach ($file_list as $key => $row)
+		{
+			$myarray[$key]  = $row['date'];
+		   	//$myarray2[$key]  = $row['size'];
+		}
+		
+		// Sort the data
+		array_multisort($myarray, $sortorder, $file_list);
+		
+		return $file_list;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 ?>
