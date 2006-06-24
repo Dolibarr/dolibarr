@@ -315,6 +315,7 @@ class FactureRec extends Facture
 
             $notify = New Notify($this->db);
             $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
+
             /*
             * Update Stats
             *
@@ -323,24 +324,25 @@ class FactureRec extends Facture
             $sql .= " AND fk_product IS NOT NULL";
 
             $result = $this->db->query($sql);
-
             if ($result)
             {
-                $num = $this->db->num_rows();
+                $num = $this->db->num_rows($result);
                 $i = 0;
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($result);
 
-                    $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
-                    $db2 = $this->db->dbclone();
-                    $result = $db2->query($sql);
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."product";
+                    $sql.= " SET nbvente=nbvente+1";
+                    $sql.= " WHERE rowid = ".$obj->fk_product;
+                    $result2 = $db->query($sql);
                     $i++;
                 }
             }
+
             /*
-            * Contrats
-            */
+             * Contrats
+             */
             $contrat = new Contrat($this->db);
             $contrat->create_from_facture($this->id, $user, $this->socidp);
 
