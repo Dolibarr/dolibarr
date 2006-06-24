@@ -29,7 +29,7 @@
         \version    $Revision$
 */
 
-require_once (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
+require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
 
 
 
