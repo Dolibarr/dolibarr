@@ -2515,50 +2515,45 @@ class Form
             print '</td></tr>';
         }
 
-        // Affiche lignes
-        if (is_dir($filedir))
-        {
-            $handle=opendir($filedir);
-            while (($file = readdir($handle))!==false)
-            {
-                // Si fichier non lisible ou mauvaise extension, on passe au suivant
-                if (! is_readable($filedir."/".$file) ||
-                    eregi('\.meta$',$file) ||
-                    eregi('\.$',$file)
-                    ) continue;
-
-                if (! $headershown)
-                {
-                    // Affiche en-tete tableau
-                    $headershown=1;
-
-                print_titre($langs->trans("Documents"));
-                print '<table class="border" width="100%">';
-            }
-
+        // Recupe liste des fichiers
+		$file_list=dolibarr_dir_list($filedir,'files',0,'','\.meta$','date',SORT_DESC);
+		
+        // Affiche en-tete tableau si non deja affiché
+		if (sizeof($file_list) && ! $headershown)
+		{
+			$headershown=1;
+			
+		    print_titre($langs->trans("Documents"));
+		    print '<table class="border" width="100%">';
+		}	
+		
+		// Boucle sur chaque ligne trouvée
+		foreach($file_list as $i => $file)
+		{
+		
 	        // Défini chemin relatif par rapport au module pour lien download
-	        $relativepath=$filename."/".$file;
-            if ($modulepart == 'don')        { $relativepath = get_exdir($filename).$file; }
-            if ($modulepart == 'export')     { $relativepath = $file; }
+	        $relativepath=$filename."/".$file["name"];
+            if ($modulepart == 'don')        { $relativepath = get_exdir($filename).$file["name"]; }
+            if ($modulepart == 'export')     { $relativepath = $file["name"]; }
 
             // Défini le type MIME du document
-            if (eregi('\.([^\.]+)$',$file,$reg)) $extension=$reg[1];
+            if (eregi('\.([^\.]+)$',$file["name"],$reg)) $extension=$reg[1];
             $mimetype=strtoupper($extension);
             if ($extension == 'pdf') $mimetype='PDF';
             if ($extension == 'html') $mimetype='HTML';
-            if (eregi('\-detail\.pdf',$file)) $mimetype='PDF Détaillé';
+            if (eregi('\-detail\.pdf',$file["name"])) $mimetype='PDF Détaillé';
 
             print "<tr $bc[$var]>";
 
             // Affiche colonne type MIME
             print '<td nowrap>'.$mimetype.'</td>';
             // Affiche nom fichier avec lien download
-	        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a>';
+	        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file["name"].'</a>';
 			print '</td>';
             // Affiche taille fichier
-            print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
+            print '<td align="right">'.filesize($filedir."/".$file["name"]). ' bytes</td>';
             // Affiche date fichier
-            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
+            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file["name"])).'</td>';
 
 			if ($delallowed)
 			{
@@ -2568,21 +2563,21 @@ class Form
             print '</tr>';
 
             $i++;
-        }
-    }
-    
-    if ($headershown)
-    {
-        // Affiche pied du tableau
-        print "</table>\n";
-        if ($genallowed)
-        {
-            print '</form>';
-        }
-    }
-
-	return $i;
-}
+    	}
+        
+  
+	    if ($headershown)
+	    {
+	        // Affiche pied du tableau
+	        print "</table>\n";
+	        if ($genallowed)
+	        {
+	            print '</form>';
+	        }
+	    }
+	
+		return $i;
+	}
 
 }
 
