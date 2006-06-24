@@ -817,9 +817,9 @@ class Form
 						$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
 						$sql.= " order by date_price DESC limit 1";
 						$result2 = $this->db->query($sql) ;
-						$result2 = $this->db->fetch_array($result2);
-						if($result2["price"])
-							$opt.= $result2["price"].' '.$langs->trans("Currency".$conf->monnaie);
+						$objp2 = $this->db->fetch_object($result2);
+						if ($objp2->price)
+							$opt.= $objp2->price.' '.$langs->trans("Currency".$conf->monnaie);
 						else
 							$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
 				}
