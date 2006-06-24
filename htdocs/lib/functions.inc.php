@@ -1910,6 +1910,10 @@ function create_exdir($dir)
  */
 function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="", $sortorder=SORT_ASC)
 {
+	dolibarr_syslog("functions.inc.php::dolibarr_dir_list $path");
+	
+	if (! is_dir($path)) return array();
+	
 	if ($dir = opendir($path))
 	{
 		$file_list = array();
