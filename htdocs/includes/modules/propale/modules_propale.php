@@ -175,7 +175,7 @@ function propale_pdf_create($db, $id, $modele='', $outputlangs='')
 	// Charge le modele
     if ($modelisok)
 	{
-		$classname = "pdf_expedition_".$modele;
+		$classname = "pdf_propale_".$modele;
 		require_once($dir.$file);
 
 		$obj = new $classname($db);

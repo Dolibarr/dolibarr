@@ -317,11 +317,20 @@ if (($action == 'create') || ($action == 'adduserldap'))
      {
      	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
      	{     		
+     		$name = $conf->global->LDAP_FIELD_NAME;
+     		$firstname = $conf->global->LDAP_FIELD_FIRSTNAME;
+     		$mail = $conf->global->LDAP_FIELD_MAIL;
+     		$phone = $conf->global->LDAP_FIELD_PHONE;
+     		$fax = $conf->global->LDAP_FIELD_FAX;
+     		$mobile = $conf->global->LDAP_FIELD_MOBILE;
+     		$login = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+     		$SID = "objectsid";
+     		
      		$ldap = new AuthLdap();
      		
      		if ($ldap->connect())
      		{
-     			$justthese = array( "sn", "givenname", "samaccountname");
+     			$justthese = array( $name, $firstname, $login);
      			$ldapusers = $ldap->getUsers('*', $justthese);
      			
      			if ($ldapusers)
@@ -330,8 +339,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
      				
      				foreach ($ldapusers as $key => $ldapuser)
           	{
-       				if($ldapuser["sn"] != "")
-          			$liste[$ldapuser["samaccountname"]] = utf8_decode($ldapuser["sn"])." ".utf8_decode($ldapuser["givenname"]);
+       				if($ldapuser[$name] != "")
+          			$liste[$ldapuser[$login]] = utf8_decode($ldapuser[$name])." ".utf8_decode($ldapuser[$firstname]);
           	}
            
            print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -344,17 +353,15 @@ if (($action == 'create') || ($action == 'adduserldap'))
           
           if ($action == 'adduserldap')
           {
-          	 
-          
-          $selecteduser = $_POST['users'];
-          $justthese = array( "samaccountname",
-                              "sn",
-                              "givenname",
-                              "mail",
-                              "telephonenumber",
-                              "facsimiletelephonenumber",
-                              "mobile",
-                              "objectsid");
+          	$selecteduser = $_POST['users'];
+          	$justthese = array( $login,
+                                $name,
+                                $firstname,
+                                $mail,
+                                $phone,
+                                $fax,
+                                $mobile,
+                                $SID);
 
           $selectedUser = $ldap->getUsers($selecteduser, $justthese);
           
@@ -362,14 +369,14 @@ if (($action == 'create') || ($action == 'adduserldap'))
           {
           	foreach ($selectedUser as $key => $attribute)
           	{
-					  	$ldap_nom = utf8_decode($attribute["sn"]?$attribute["sn"]:'');
-					  	$ldap_prenom = utf8_decode($attribute["givenname"]?$attribute["givenname"]:'');
-					  	$ldap_login = utf8_decode($attribute["samaccountname"]?$attribute["samaccountname"]:'');
-					  	$ldap_phone = utf8_decode($attribute["telephonenumber"]?$attribute["telephonenumber"]:'');
-					  	$ldap_fax = utf8_decode($attribute["facsimiletelephonenumber"]?$attribute["facsimiletelephonenumber"]:'');
-					  	$ldap_mobile = utf8_decode($attribute["mobile"]?$attribute["mobile"]:'');
-					  	$ldap_mail = utf8_decode($attribute["mail"]?$attribute["mail"]:'');
-              $ldap_SID = bin2hex($attribute["objectsid"]);
+					  	$ldap_nom = utf8_decode($attribute[$name]?$attribute[$name]:'');
+					  	$ldap_prenom = utf8_decode($attribute[$firstname]?$attribute[$firstname]:'');
+					  	$ldap_login = utf8_decode($attribute[$login]?$attribute[$login]:'');
+					  	$ldap_phone = utf8_decode($attribute[$phone]?$attribute[$phone]:'');
+					  	$ldap_fax = utf8_decode($attribute[$fax]?$attribute[$fax]:'');
+					  	$ldap_mobile = utf8_decode($attribute[$mobile]?$attribute[$mobile]:'');
+					  	$ldap_mail = utf8_decode($attribute[$mail]?$attribute[$mail]:'');
+              $ldap_SID = bin2hex($attribute[$SID]);
           }
 				}
 			}

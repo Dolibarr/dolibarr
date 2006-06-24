@@ -511,7 +511,7 @@ else
     
                         print '<td>';
                         print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-                        if ($objp->description) print nl2br($objp->description);
+                        if ($objp->description) print '<br>'.nl2br($objp->description);
                         print '</td>';
                     }
                     else

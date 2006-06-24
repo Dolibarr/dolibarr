@@ -1770,7 +1770,7 @@ class Form
             if ($selected)
             {
             	require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
-            	$livraison=new Livraison($this->db);
+            	$livraison=new AdresseLivraison($this->db);
 				      $livraison->fetch_adresse($selected);
 				      print '<a href=/comm/adresse_livraison.php?socid='.$livraison->socid.'&idl='.$livraison->idl.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$livraison->label.'</a>';
             }
