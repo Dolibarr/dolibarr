@@ -1960,7 +1960,7 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 		$myarray=array();
 		foreach ($file_list as $key => $row)
 		{
-			$myarray[$key]  = $row['date'];
+			$myarray[$key]  = $row[$sortcriteria];
 		   	//$myarray2[$key]  = $row['size'];
 		}
 		
