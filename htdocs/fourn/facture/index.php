@@ -32,6 +32,7 @@ require("./pre.inc.php");
 if (!$user->rights->fournisseur->facture->lire)
   accessforbidden();
 
+$langs->load("companies");
 
 $socidp = $_GET["socidp"];
 
