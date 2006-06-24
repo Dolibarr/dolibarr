@@ -796,6 +796,7 @@ if ($_GET['action'] == 'create')
 		$remise_percent = $soc->remise_client;
 		$remise_absolue = 0;
 	}
+	$absolute_discount=$soc->getCurrentDiscount();
 
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -822,7 +823,6 @@ if ($_GET['action'] == 'create')
     print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
 	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
-	$absolute_discount=$soc->getCurrentDiscount();
 	print '. ';
 	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
@@ -1355,7 +1355,7 @@ else
 		{
 			$soc = new Societe($db, $fac->socidp);
 			$soc->fetch($fac->socidp);
-			$avoir_en_cours=$soc->getCurrentDiscount();
+			$absolute_discount=$soc->getCurrentDiscount();
 			
 			$author = new User($db);
 			if ($fac->user_author)
@@ -1454,7 +1454,6 @@ else
             print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$soc->getCurrentDiscount();
 			print '. ';
 			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
@@ -1912,7 +1911,7 @@ else
 			print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 			print '<tr class="liste_total"><td>';
 			print $langs->trans('CustomerAbsoluteDiscount');
-			if ($fac->brouillon) print ' <font style="font-weight: normal">('.($avoir_en_cours?$langs->trans("CompanyHasAbsoluteDiscount",$avoir_en_cours,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
+			if ($fac->brouillon) print ' <font style="font-weight: normal">('.($absolute_discount?$langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
 			print '</td>';
 			print '<td>&nbsp;</td>';
 			print '<td>&nbsp;</td>';
