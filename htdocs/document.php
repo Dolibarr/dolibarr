@@ -279,6 +279,7 @@ if ($action == 'remove_file')
 	}
 	unlink($original_file);
 
+	dolibarr_syslog("document.php back to ".urldecode($urlsource));
 	Header("Location: ".urldecode($urlsource));
 	return;
 }

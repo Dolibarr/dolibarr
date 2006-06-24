@@ -180,7 +180,7 @@ if ($step == 1 || ! $datatoexport)
             print '</td><td>';
             print $objexport->array_export_label[$key];
             print '</td><td align="right">';
-            print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+            print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
             print '</td></tr>';
         }
     }
@@ -206,7 +206,7 @@ if ($step == 2 && $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport;
     $head[$h][1] = $langs->trans("Step")." 2";
     $hselected=$h;
     $h++;
@@ -265,14 +265,14 @@ if ($step == 2 && $datatoexport)
         {
             // Champ sélectionné
             print '<td>&nbsp;</td>';
-            print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&amp;datatoexport='.$datatoexport.'&amp;action=unselectfield&amp;field='.$code.'">'.img_left().'</a></td>';
+            print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
         }
         else
         {
         	// Champ non sélectionné
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
-            print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&amp;datatoexport='.$datatoexport.'&amp;action=selectfield&amp;field='.$code.'">'.img_right().'</a></td>';
+            print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
         }
 
@@ -291,7 +291,7 @@ if ($step == 2 && $datatoexport)
 
     if (sizeof($array_selected))
     {
-        print '<a class="butAction" href="export.php?step=3&amp;datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+        print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
     }
 
     print '</div>';    
@@ -312,11 +312,11 @@ if ($step == 3 && $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport;
     $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&amp;datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
     $head[$h][1] = $langs->trans("Step")." 3";
     $hselected=$h;
     $h++;
@@ -377,8 +377,8 @@ if ($step == 3 && $datatoexport)
         print '<td align="right" width="100">';
         print $value.' ';
         print '</td><td align="center" width="20">';
-        if ($value < sizeof($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&amp;datatoexport='.$datatoexport.'&amp;action=downfield&amp;field='.$code.'">'.img_down().'</a>';
-        if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&amp;datatoexport='.$datatoexport.'&amp;action=upfield&amp;field='.$code.'">'.img_up().'</a>';
+        if ($value < sizeof($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
+        if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
         print '</td>';
 
         print '<td>&nbsp;</td>';
@@ -400,7 +400,7 @@ if ($step == 3 && $datatoexport)
 
     if (sizeof($array_selected))
     {
-        print '<a class="butAction" href="export.php?step=4&amp;datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+        print '<a class="butAction" href="export.php?step=4&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
     }
 
     print '</div>';    
@@ -421,15 +421,15 @@ if ($step == 4 && $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 1";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport;
     $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&amp;datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
     $head[$h][1] = $langs->trans("Step")." 3";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=4&amp;datatoexport='.$datatoexport;
+    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=4&datatoexport='.$datatoexport;
     $head[$h][1] = $langs->trans("Step")." 4";
     $hselected=$h;
     $h++;
@@ -492,7 +492,7 @@ if ($step == 4 && $datatoexport)
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1
-    $htmlform->show_documents('export','',$conf->export->dir_ouput.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&amp;datatoexport='.$datatoexport,$liste,1,'csv','',1);
+    $htmlform->show_documents('export','',$conf->export->dir_ouput.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,'csv','',1);
     
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
