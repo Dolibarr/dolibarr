@@ -434,34 +434,60 @@ AdherentMailRequired=EMail required to create a new member
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPFunctionsNotAvailableOnPHP=LDAP functions are not availbale on your PHP
-LDAPSynchronizeUsersAndGroup=Synchronize Dolibarr users and groups to LDAP
+LDAPSynchronizeUsersAndGroup=Synchronize Dolibarr or LDAP users and groups
+LDAPToDolibarr=LDAP -> Dolibarr
+DolibarrToLDAP=Dolibarr -> LDAP
 LDAPSynchronizeContacts=Synchronize Dolibarr contacts to LDAP
 LDAPTypeExample=OpenLdap, Egroupware or Active Directory
-LDAPServer=LDAP Server
+LDAPPrimaryServer=LDAP primary server
+LDAPSecondaryServer=LDAP secondary server
 LDAPServerPort=LDAP server port
 LDAPServerPortExample=Default port : 389
-#LDAPSuffix=LDAP suffix
-DNAdmin=Administrator DN
+LDAPServerProtocolVersion=LDAP protocol version
+LDAPServerUseTLS=Use TLS
+LDAPServerUseTLSExample=Your LDAP server use TLS
+LDAPServerDn=Server DN
+LDAPAdminDn=Administrator DN
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
 LDAPPassword=administrator password
-DNUser=Dolibarr users' DN
-DNGroup=Dolibarr groups' DN
+LDAPUserDn=Users' DN
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=com)
+LDAPGroupDn=Groups' DN
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=com)
 LDAPServerExample=Server address (ex: localhost, 192.168.0.2, ldaps://ldap.example.com/)
-#LDAPSuffixExample=Complete DN (ex: dc=company,dc=com)
-DNAdminExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=com)
 LDAPPasswordExample=Admin password
-DNUserGroupActive=Users and groups synchronization
-DNUserExample=Complete DN (ex: ou=users,dc=society,dc=com)
-DNGroupExample=Complete DN (ex: ou=groups,dc=society,dc=com)
-DNContactActive=Contacts' synchronization
-DNContactActiveYes=Activated synchronization
-DNContactActiveExample=Activated/Unactivated synchronization
-DNContact=Dolibarr contacts' DN
-DNContactExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
+LDAPDnSynchroActive=Users and groups synchronization
+LDAPDnSynchroActiveExample=LDAP to Dolibarr or Dolibarr to LDAP synchronization
+LDAPDnContactActive=Contacts' synchronization
+LDAPDnContactActiveYes=Activated synchronization
+LDAPDnContactActiveExample=Activated/Unactivated synchronization
+LDAPContactDn=Dolibarr contacts' DN
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
 LDAPTestConnect=Test LDAP connection
 LDAPTestOK=Connect to LDAP server successful
 LDAPTestKO=Connect to LDAP server failed
 LDAPSetupForVersion3=LDAP server configured for version 3
 LDAPSetupForVersion2=LDAP server configured for version 2
+LDAPFieldLogin=Login attribute
+LDAPFieldLoginExample=Default attribute : uid
+LDAPFilterConnection=Search filter
+LDAPFilterConnectionExample=Default filter : &(objectClass=user)(objectCategory=person)
+LDAPAttributes=LDAP attributes
+LDAPFieldLoginSamba=Login
+LDAPFieldLoginSambaExample=Default attribute : samaccountname (Samba and ActiveDirectory)
+LDAPFieldName=Name
+LDAPFieldNameExample=Default attribute : sn
+LDAPFieldFirstName=Firstname
+LDAPFieldFirstNameExample=Default attribute : givenname
+LDAPFieldMail=E-Mail address
+LDAPFieldMailExample=Default attribute : mail
+LDAPFieldPhone=Phone number
+LDAPFieldPhoneExample=Default attribute : telephonenumber
+LDAPFieldFax=Fax number
+LDAPFieldFaxExample=Default attribute : facsimiletelephonenumber
+LDAPFieldMobile=Cellular phone
+LDAPFieldMobileExample=Default attribute : mobile
 ##### Products #####
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)

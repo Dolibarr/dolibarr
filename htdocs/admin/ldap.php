@@ -86,10 +86,6 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	{
 		print $db->error();
 	}
-	if (! dolibarr_set_const($db, 'LDAP_ADMIN_DN',$_POST["admin"]))
-	{
-		print $db->error();
-	}
 	if (! dolibarr_set_const($db, 'LDAP_USER_DN',$_POST["user"]))
 	{
 		print $db->error();
@@ -102,6 +98,10 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	{
 		print $db->error();
 	}
+	if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',$_POST["activesynchro"]))
+	{
+		print $db->error();
+	}
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',$_POST["contact"]))
 	{
 		print $db->error();
@@ -110,11 +110,15 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	{
 		print $db->error();
 	}
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"]))
+	{
+		print $db->error();
+	}
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"]))
 	{
 		print $db->error();
 	}
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_REALNAME',$_POST["fieldrealname"]))
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"]))
 	{
 		print $db->error();
 	}
@@ -126,11 +130,19 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	{
 		print $db->error();
 	}
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"]))
+	{
+		print $db->error();
+	}
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"]))
+	{
+		print $db->error();
+	}
 	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',$_POST["filterconnection"]))
 	{
 		print $db->error();
 	}
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"]))
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"]))
 	{
 		print $db->error();
 	}
@@ -190,19 +202,19 @@ $arraylist=array();
 $arraylist['3']='Version 3';
 $arraylist['2']='Version 2';
 $html->select_array('version',$arraylist,$conf->global->LDAP_SERVER_PROTOCOLVERSION);
-print '</td><td>&nbsp;</td></tr>';
+print '</td><td>'.$langs->trans("LDAPServerProtocolVersion").'</td></tr>';
 
-// Serveur
+// Serveur primaire
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("LDAPServer").'</td><td>';
+print $langs->trans("LDAPPrimaryServer").'</td><td>';
 print '<input size="25" type="text" name="host" value="'.$conf->global->LDAP_SERVER_HOST.'">';
 print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
 
-// Serveur
+// Serveur secondaire
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("LDAPServerSlave").'</td><td>';
+print $langs->trans("LDAPSecondaryServer").'</td><td>';
 print '<input size="25" type="text" name="slave" value="'.$conf->global->LDAP_SERVER_HOST_SLAVE.'">';
 print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
 
@@ -221,15 +233,15 @@ print '</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
 
 // DNserver
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("DNServer").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerDn").'</td><td>';
 print '<input size="25" type="text" name="dn" value="'.$conf->global->LDAP_SERVER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPServerDnExample").'</td></tr>';
 
 // DNAdmin
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("DNAdmin").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPAdminDn").'</td><td>';
 print '<input size="25" type="text" name="admin" value="'.$conf->global->LDAP_ADMIN_DN.'">';
-print '</td><td>&nbsp;</td></tr>';
+print '</td><td>'.$langs->trans("LDAPAdminDnExample").'</td></tr>';
 
 // Pass
 $var=!$var;
@@ -246,7 +258,7 @@ print '</td><td>&nbsp;</td></tr>';
 
 // Utiliser TLS
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPUseTLS").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerUseTLS").'</td><td>';
 $arraylist=array();
 $arraylist['0']=$langs->trans("No");
 $arraylist['1']=$langs->trans("Yes");
@@ -260,18 +272,19 @@ print "</tr>\n";
 
 // Synchro utilisateurs/groupes active
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("DNUserGroupActive").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPDnSynchroActive").'</td><td>';
 $arraylist=array();
 $arraylist['0']=$langs->trans("No");
-$arraylist['1']=$langs->trans("Yes");
-$html->select_array('activecontact',$arraylist,$conf->global->LDAP_USERGROUP_ACTIVE);
-print '</td><td>'.$langs->trans("NotYetAvailable").'</td></tr>';
+$arraylist['ldap2dolibarr']=$langs->trans("LDAPToDolibarr");
+$arraylist['dolibarr2ldap']=$langs->trans("DolibarrToLDAP");
+$html->select_array('activesynchro',$arraylist,$conf->global->LDAP_SYNCHRO_ACTIVE);
+print '</td><td>'.$langs->trans("LDAPDnSynchroActiveExample").'</td></tr>';
 
 // DN Pour les utilisateurs
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("DNUser").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPUserDn").'</td><td>';
 print '<input size="25" type="text" name="user" value="'.$conf->global->LDAP_USER_DN.'">';
-print '</td><td>'.$langs->trans("DNUserExample").'</td></tr>';
+print '</td><td>'.$langs->trans("LDAPUserDnExample").'</td></tr>';
 
 // Champ de login
 $var=!$var;
@@ -301,9 +314,9 @@ print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td></tr>';
 
 // DN pour les groupes
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("DNGroup").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPGroupDn").'</td><td>';
 print '<input size="25" type="text" name="group" value="'.$conf->global->LDAP_GROUP_DN.'">';
-print '</td><td>'.$langs->trans("DNGroupExample").'</td></tr>';
+print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td></tr>';
 
 
 print '<tr class="liste_titre">';
@@ -312,24 +325,37 @@ print "</tr>\n";
 
 // Synchro contact active
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("DNContactActive").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
 $arraylist=array();
 $arraylist['0']=$langs->trans("No");
 $arraylist['1']=$langs->trans("Yes");
 $html->select_array('activecontact',$arraylist,$conf->global->LDAP_CONTACT_ACTIVE);
-print '</td><td>'.$langs->trans("DNContactActiveExample").'</td></tr>';
+print '</td><td>'.$langs->trans("LDAPDnContactActiveExample").'</td></tr>';
 
 // DN Pour les contacts
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("DNContact").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPContactDn").'</td><td>';
 print '<input size="25" type="text" name="contact" value="'.$conf->global->LDAP_CONTACT_DN.'">';
-print '</td><td>'.$langs->trans("DNContactExample").'</td></tr>';
+print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td></tr>';
 
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("ConnectionDolibarrLdap").'</td>';
+print '<td colspan="3">'.$langs->trans("LDAPAttributes").'</td>';
 print "</tr>\n";
 
-// SAMAccountName
+// Login
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
+if ($conf->global->LDAP_FIELD_LOGIN_SAMBA)
+{
+  print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
+}
+else
+{
+  print '<input size="25" type="text" name="fieldloginsamba" value="samaccountname">';
+}
+print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td></tr>';
+
+// Name
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 if ($conf->global->LDAP_FIELD_NAME)
@@ -338,22 +364,22 @@ if ($conf->global->LDAP_FIELD_NAME)
 }
 else
 {
-  print '<input size="25" type="text" name="fieldname" value="samaccountname">';
+  print '<input size="25" type="text" name="fieldname" value="sn">';
 }
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td></tr>';
 
-// RealName
+// Firstname
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldRealName").'</td><td>';
-if ($conf->global->LDAP_FIELD_REALNAME)
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
+if ($conf->global->LDAP_FIELD_FIRSTNAME)
 {
-  print '<input size="25" type="text" name="fieldrealname" value="'.$conf->global->LDAP_FIELD_REALNAME.'">';
+  print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 }
 else
 {
-  print '<input size="25" type="text" name="fieldrealname" value="name">';
+  print '<input size="25" type="text" name="fieldfirstname" value="givenname">';
 }
-print '</td><td>'.$langs->trans("LDAPFieldRealNameExample").'</td></tr>';
+print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td></tr>';
 
 // Mail
 $var=!$var;
@@ -380,6 +406,32 @@ else
   print '<input size="25" type="text" name="fieldphone" value="telephonenumber">';
 }
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td></tr>';
+
+// Fax
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
+if ($conf->global->LDAP_FIELD_FAX)
+{
+  print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
+}
+else
+{
+  print '<input size="25" type="text" name="fieldfax" value="facsimiletelephonenumber">';
+}
+print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td></tr>';
+
+// Mobile
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
+if ($conf->global->LDAP_FIELD_MOBILE)
+{
+  print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
+}
+else
+{
+  print '<input size="25" type="text" name="fieldmobile" value="mobile">';
+}
+print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td></tr>';
 
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
