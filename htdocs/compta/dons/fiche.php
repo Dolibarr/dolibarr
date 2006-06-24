@@ -31,10 +31,12 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
+$langs->load("companies");
 $langs->load("donations");
 $langs->load("bills");
 
 $mesg="";
+
 
 /*
  * Actions
@@ -195,12 +197,10 @@ if ($_GET["action"] == 'create')
     
     print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
     print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
+
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-    
-    $paiement = new Paiement($db);
-    
-    $paiement->select("modepaiement","CRDT");
-    
+	$form = new Form($db);
+	$form->select_types_paiements('', 'modepaiement', 'CRDT', 0);
     print "</td></tr>\n";
     
     if ($conf->projet->enabled)
@@ -216,7 +216,6 @@ if ($_GET["action"] == 'create')
     $html->selectyesno("public",1,1);
     print "</td></tr>\n";
     
-    $langs->load("companies");
     print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
     print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
     print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40"></td></tr>';
@@ -310,8 +309,8 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-    $paiement = new Paiement($db);
-    $paiement->select("modepaiement","CRDT");
+	$form = new Form($db);
+	$form->select_types_paiements('', 'modepaiement', 'CRDT', 0);
     print "</td></tr>\n";
 
     print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut().'</td></tr>';

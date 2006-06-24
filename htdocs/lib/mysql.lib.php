@@ -344,6 +344,18 @@ class DoliDb
         return $ret;
     }
     
+    /**
+        \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
+        \param      resultset   Curseur de la requete voulue
+        \return	    resource
+    */
+    function fetch_object($resultset=0)
+    {
+        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        if (! is_resource($resultset)) { $resultset=$this->results; }
+        return mysql_fetch_object($resultset);
+    }
+
     
 
 	// Next function are not required. Only minor features use them.
@@ -480,18 +492,6 @@ class DoliDb
 			return true;
 	}
 	
-
-    /**
-        \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
-        \param      resultset   Curseur de la requete voulue
-        \return	    resource
-    */
-    function fetch_object($resultset=0)
-    {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_fetch_object($resultset);
-    }
 
     /**
         \brief      Renvoie les données dans un tableau.

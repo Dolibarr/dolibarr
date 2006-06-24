@@ -270,13 +270,11 @@ class Form
 		if ($resql)
 		{
 			$i = 0;
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row();
-	
-				$listemethodes[$row[0]] = $row[1];
-	
+				$obj = $this->db->fetch_object($resql);
+				$listemethodes[$obj->rowid] = $obj->libelle;
 				$i++;
 			}
 		}
@@ -1103,9 +1101,13 @@ class Form
     function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0)
     {
         global $langs;
-
+		
+		dolibarr_syslog("html.form.class.php::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
+        
         $filterarray=array();
-        if ($filtertype && $filtertype != '-1') $filterarray=split(',',$filtertype);
+		if ($filtertype == 'CRDT')  	$filterarray=array(0,2);
+		elseif ($filtertype == 'DBIT') 	$filterarray=array(1,2);
+        elseif ($filtertype != '-1')   	$filterarray=split(',',$filtertype);
         
         $this->load_cache_types_paiements();
 
@@ -2150,39 +2152,6 @@ class Form
 
     }
 	
-    /**
-     *      \brief      Affiche liste déroulante depuis requete SQL
-     *      \param      name        Nom de la zone select
-     *      \param      sql         Requete sql
-     *      \param      id          Id présélectionné
-     */
-    function select($name, $sql, $id='')
-    {
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            print '<select class="flat" name="'.$name.'">';
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $this->db->fetch_row($resql);
-                print '<option value="'.$row[0].'"';
-                if ($id != '' && $id == $row[0])
-                {
-                    print ' selected="true"';
-                }
-                print '>'.$row[1].'</option>';
-                $i++;
-            }
-            print "</select>\n";
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-        }
-    }
-    
     /**
         \brief  Affiche un select à partir d'un tableau
         \param	htmlname        Nom de la zone select
