@@ -40,7 +40,7 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
 
 $langs->load("admin");
 
@@ -66,7 +66,15 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	{
 		print $db->error();
 	}
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE',$_POST["slave"]))
+	{
+		print $db->error();
+	}
 	if (! dolibarr_set_const($db, 'LDAP_SERVER_PORT',$_POST["port"]))
+	{
+		print $db->error();
+	}
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_DN',$_POST["dn"]))
 	{
 		print $db->error();
 	}
@@ -191,6 +199,13 @@ print $langs->trans("LDAPServer").'</td><td>';
 print '<input size="25" type="text" name="host" value="'.$conf->global->LDAP_SERVER_HOST.'">';
 print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
 
+// Serveur
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("LDAPServerSlave").'</td><td>';
+print '<input size="25" type="text" name="slave" value="'.$conf->global->LDAP_SERVER_HOST_SLAVE.'">';
+print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
+
 // Port
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerPort").'</td><td>';
@@ -204,6 +219,12 @@ else
 }
 print '</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
 
+// DNserver
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("DNServer").'</td><td>';
+print '<input size="25" type="text" name="dn" value="'.$conf->global->LDAP_SERVER_DN.'">';
+print '</td><td>'.$langs->trans("LDAPServerDnExample").'</td></tr>';
+
 // DNAdmin
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("DNAdmin").'</td><td>';
@@ -215,7 +236,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPPassword").'</td><td>';
 if ($conf->global->LDAP_ADMIN_PASS)
 {
-	print '<input size="25" type="text" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">';// je le met en visible pour test
+	print '<input size="25" type="password" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">';// je le met en visible pour test
 }
 else
 {
@@ -274,7 +295,7 @@ if ($conf->global->LDAP_FILTER_CONNECTION)
 }
 else
 {
-  print '<input size="25" type="text" name="filterconnection" value="(&(objectClass=user)(objectCategory=person))">';
+  print '<input size="25" type="text" name="filterconnection" value="&(objectClass=user)(objectCategory=person)">';
 }
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td></tr>';
 
@@ -381,11 +402,11 @@ if (function_exists("ldap_connect"))
 	
 	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS && $_GET["action"] == 'test')
 	{
-		$ldap = New Ldap();
+		$ldap = New AuthLdap();
 		// Test ldap_connect
 		// ce test n'est pas fiable car une ressource est constamment retournée
 		// il faut se fier au test ldap_bind
-		$ds = $ldap->dolibarr_ldap_connect();
+		$ds = $ldap->connect();
 		if ($ds)
 		{
 			print img_picto('','info');
@@ -396,14 +417,14 @@ if (function_exists("ldap_connect"))
 			print img_picto('','alerte');
 			print $langs->trans("LDAPTestKO").'<br>';
 			print "<br>";
-			print $ldap->err;
+			print $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
 			print "<br>";
 		}
 
 		if ($ds)
 		{
 			// Test ldap_getversion
-			if (($ldap->dolibarr_ldap_getversion($ds) == 3))
+			if (($ldap->getVersion() == 3))
 			{
 				print img_picto('','info');
 				print $langs->trans("LDAPSetupForVersion3").'<br>';
@@ -415,7 +436,7 @@ if (function_exists("ldap_connect"))
 			}
 	
 		  // Test ldap_bind
-			$bind = $ldap->dolibarr_ldap_bind($ds);
+			$bind = $ldap->bind();
 			
 			if ($bind)
 			{
@@ -426,14 +447,14 @@ if (function_exists("ldap_connect"))
 			{
 				print img_picto('','alerte');
 				print "Connexion au dn $dn raté : ";
-				print $ldap->err;
+				print $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
 				print "<br>";
 			}
 
 		  // Test ldap_unbind
-		  $unbind = $ldap->dolibarr_ldap_unbind($ds);
+		  $unbind = $ldap->unbind();
 		  
-		  if ($bind && $unbind)
+		  if ($unbind)
 		  {
 		  	print img_picto('','info');
 		  	print "Déconnection du dn $dn réussi<br>";
@@ -443,6 +464,7 @@ if (function_exists("ldap_connect"))
 			  print img_picto('','alerte');
 			  print "Déconnection du dn $dn raté";
 			  print "<br>";
+			  print $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
 			}
 		}
 	}

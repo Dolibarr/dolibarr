@@ -311,3 +311,5 @@ insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDI
 alter table llx_propal add column ref_client varchar(30) after ref;
 
 alter table llx_societe_adresse_livraison drop column fk_departement;
+
+alter table llx_user add column ldap_sid varchar(255)DEFAULT NULL;

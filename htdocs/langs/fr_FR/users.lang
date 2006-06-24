@@ -73,3 +73,4 @@ GuiLanguage=Langage de l'interface
 InternalUser=Utilisateur interne
 MyInformations=Mes informations
 ExportDataset_user_1=Utilisateurs Dolibarr et attributs
+DomainUser=Utilisateur du domaine

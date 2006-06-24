@@ -186,17 +186,14 @@ class Contact
     dolibarr_syslog("Contact::update_ldap",LOG_DEBUG);
     
     $this->fetch($this->id);
+    $ldap = New AuthLdap();
     
-    $ds = dolibarr_ldap_connect();
-    
-    if ($ds)
-      {
-	$ldapbind = dolibarr_ldap_bind($ds);
-	
-	if ($ldapbind)
-	  {
-	    if (LDAP_SERVER_TYPE == 'activedirectory') //enlever utf8 pour etre compatible Windows
-	     {
+    if ($ldap->connect())
+    {
+    	if (bind())
+    	{
+    		if (LDAP_SERVER_TYPE == 'activedirectory') //enlever utf8 pour etre compatible Windows
+    		{
 	       $info["objectclass"][0] = "top";
 	       $info["objectclass"][1] = "person";
 	       $info["objectclass"][2] = "organizationalPerson";
@@ -207,33 +204,41 @@ class Contact
 	       $info["sn"] = $this->name;
 	       $info["givenName"] = $this->firstname;
 	       
-	       if ($this->poste)
-		 $info["title"] = $this->poste;
+	       if ($this->poste) $info["title"] = $this->poste;
 	       
 	       if ($this->socid > 0)
-		 {
-		   $soc = new Societe($this->db);
-		   $soc->fetch($this->socid);
-		   $info["o"] = $soc->nom;
-		   $info["company"] = $soc->nom;
-		   
-		   if ($soc->client == 1)
-		     $info["businessCategory"] = "Clients";
-		   elseif ($soc->client == 2)
-		     $info["businessCategory"] = "Prospects";
-		   
-		   if ($soc->fournisseur == 1)
-		     $info["businessCategory"] = "Fournisseurs";
-		   
-		   if ($soc->ville)
-		     {
-		       if ($soc->adresse)
-			 $info["streetAddress"] = $soc->adresse;
-		       
-		       if ($soc->cp)
-			 $info["postalCode"] = $soc->cp;
-		       
-		       $info["l"] = $soc->ville;
+	       {
+	       	$soc = new Societe($this->db);
+	       	$soc->fetch($this->socid);
+	       	$info["o"] = $soc->nom;
+	       	$info["company"] = $soc->nom;
+	       	
+	       	if ($soc->client == 1)
+	       	{
+	       		$info["businessCategory"] = "Clients";
+	       	}
+	       	elseif ($soc->client == 2)
+	       	{
+	       		$info["businessCategory"] = "Prospects";
+	       	}
+	       	
+	       	if ($soc->fournisseur == 1)
+	       	{
+	       		$info["businessCategory"] = "Fournisseurs";
+	       	}
+	       	
+	       	if ($soc->ville)
+	       	{
+	       		if ($soc->adresse)
+	       		{
+	       			$info["streetAddress"] = $soc->adresse;
+	       		}
+	       		if ($soc->cp)
+	       		{
+	       			$info["postalCode"] = $soc->cp;
+	       		}
+	       		
+	       		$info["l"] = $soc->ville;
 		     }
 		 }
 	       
@@ -370,7 +375,7 @@ class Contact
 	    dolibarr_syslog("Contact::update_ldap bind failed",LOG_DEBUG);
 	  }
 	
-	dolibarr_ldap_unbind($ds);
+	   $ldap->unbind();
 	
       }
     else
@@ -636,46 +641,42 @@ class Contact
 	{
 	  if (defined('LDAP_CONTACT_ACTIVE')  && LDAP_CONTACT_ACTIVE == 1)
 	    {
+	      $ldap = New AuthLdap();
 	      
-	      $ds = dolibarr_ldap_connect();
-	      
-	      if ($ds)
-		{
-		  $ldapbind = dolibarr_ldap_bind($ds);
-		  
-		  if ($ldapbind)
-		    {	      
-		      // delete from ldap directory
-		      if (LDAP_SERVER_TYPE == 'activedirectory')
-			{
-			  $userdn = $this->old_firstname." ".$this->old_name; //enlever utf8 pour etre compatible Windows
-			}
-		      else
-			{
-			  $userdn = utf8_encode($this->old_firstname." ".$this->old_name);
-			}		      
-		      $dn = "cn=".$userdn.",".LDAP_CONTACT_DN;
-		      
-		      $r = @ldap_delete($ds, $dn);
-		      
-		    }
-		  else
-		    {
-		      echo "LDAP bind failed...";
-		    }	      	      
-		  ldap_close($ds);
-		  
-		}
+	      if ($ldap->connect())
+	      {
+	      	if ($ldap->bind())
+	      	{
+	      		// delete from ldap directory
+	      		if (LDAP_SERVER_TYPE == 'activedirectory')
+	      		{
+	      			$userdn = $this->old_firstname." ".$this->old_name; //enlever utf8 pour etre compatible Windows
+	      		}
+	      		else
+	      		{
+	      			$userdn = utf8_encode($this->old_firstname." ".$this->old_name);
+	      		}
+	      		
+	      		$dn = "cn=".$userdn.",".LDAP_CONTACT_DN;
+	      		$r = @ldap_delete($ds, $dn);
+	      	}
+	      	else
+	      	{
+	      		echo "LDAP bind failed...";
+	      	}
+	      	
+	      	$ldap->close();
+	      }
 	      else
-		{
-		  echo "Unable to connect to LDAP server";
-		}
-	      
+	      {
+	      	echo "Unable to connect to LDAP server";
+	      }
 	      
 	      return $result;
 	    }
+	  }
 	}
-    }
+
   
     /*
      *    \brief      Charge les informations sur le contact, depuis la base

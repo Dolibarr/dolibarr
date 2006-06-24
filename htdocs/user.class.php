@@ -49,6 +49,7 @@ class User
 	var $db;
 	
 	var $id;
+	var $ldap_sid;
 	var $fullname;
 	var $nom;
 	var $prenom;
@@ -102,7 +103,7 @@ class User
     {
         // Recupere utilisateur
         $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
-        $sql.= " u.fk_societe, u.fk_socpeople, ";
+        $sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
         $sql.= " ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem,";
         $sql.= " ".$this->db->pdate("u.datelastaccess")." as datel";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -122,6 +123,7 @@ class User
             if ($obj)
             {
                 $this->id = $obj->rowid;
+                $this->ldap_sid = $obj->ldap_sid;
                 $this->nom = stripslashes($obj->name);
                 $this->prenom = stripslashes($obj->firstname);
         
@@ -129,9 +131,9 @@ class User
                 $this->code = $obj->code;
                 $this->login = $obj->login;
                 $this->pass  = $obj->pass;
- 				$this->office_phone  = $obj->office_phone;
- 				$this->office_fax  = $obj->office_fax;
- 				$this->user_mobile  = $obj->user_mobile;
+                $this->office_phone  = $obj->office_phone;
+                $this->office_fax  = $obj->office_fax;
+                $this->user_mobile  = $obj->user_mobile;
                 $this->email = $obj->email;
                 $this->admin = $obj->admin;
                 $this->contact_id = $obj->fk_socpeople;
@@ -574,7 +576,7 @@ class User
             }
             else
             {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login) VALUES(now(),'".addslashes($this->login)."')";
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
                 $result=$this->db->query($sql);
     
                 if ($result)

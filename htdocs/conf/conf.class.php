@@ -275,6 +275,8 @@ class Conf
 		// Module export
 		$this->export->enabled=defined("MAIN_MODULE_EXPORT")?MAIN_MODULE_EXPORT:0;
 		$this->export->dir_ouput=DOL_DATA_ROOT."/export";
+		// Module ldap
+		$this->ldap->enabled=defined("MAIN_MODULE_LDAP")?MAIN_MODULE_LDAP:0;
 		
 		
 		/*

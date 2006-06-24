@@ -43,6 +43,7 @@ create table llx_user
   note              text,
   datelastaccess    datetime,
   egroupware_id     integer,
+  ldap_sid          varchar(255) DEFAULT NULL,
   
   UNIQUE INDEX(login)
 )type=innodb;

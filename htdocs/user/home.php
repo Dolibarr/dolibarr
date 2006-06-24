@@ -81,7 +81,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=10;
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.code, u.fk_societe, ".$db->pdate("u.datec")." as datec,";
-$sql.= " s.nom";
+$sql.= " u.ldap_sid, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe=s.idp";
 $sql.= " ORDER BY u.datec";
@@ -110,6 +110,10 @@ if ($resql)
         if ($obj->fk_societe)
         {
             print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+        }
+        else if ($obj->ldap_sid)
+        {
+        	print $langs->trans("DomainUser");
         }
         else print $langs->trans("InternalUser");
         print '</td>';

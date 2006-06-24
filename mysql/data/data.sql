@@ -518,6 +518,17 @@ insert into llx_c_pays (rowid,code,libelle) values (27, 'SA', 'Arabie Saoudite')
 insert into llx_c_pays (rowid,code,libelle) values (28, 'MC', 'Monaco'         );
 insert into llx_c_pays (rowid,code,libelle) values (29, 'AU', 'Australie'      );
 insert into llx_c_pays (rowid,code,libelle) values (30, 'SG', 'Singapoure'     );
+insert into llx_c_pays (rowid,code,libelle) values (31, 'AF', 'Afghanistan'    );
+insert into llx_c_pays (rowid,code,libelle) values (32, 'AX', 'Aland Islands'     );
+insert into llx_c_pays (rowid,code,libelle) values (33, 'AL', 'Albanie'           );
+insert into llx_c_pays (rowid,code,libelle) values (34, 'AS', 'American Samoa'    );
+insert into llx_c_pays (rowid,code,libelle) values (35, 'AD', 'Andorre'        );
+insert into llx_c_pays (rowid,code,libelle) values (36, 'AO', 'Angola'         );
+insert into llx_c_pays (rowid,code,libelle) values (37, 'AI', 'Anguilla'          );
+insert into llx_c_pays (rowid,code,libelle) values (38, 'AQ', 'Antartique'        );
+insert into llx_c_pays (rowid,code,libelle) values (39, 'AG', 'Antigua et Barbuda');
+insert into llx_c_pays (rowid,code,libelle) values (40, 'AM', 'Armenie'        );
+insert into llx_c_pays (rowid,code,libelle) values (41, 'AW', 'Aruba'             );
 
 
 --

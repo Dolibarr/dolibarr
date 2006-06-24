@@ -32,6 +32,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
 
 
 // Defini si peux creer un utilisateur ou gerer groupe sur un utilisateur
@@ -124,12 +125,13 @@ if ($_POST["action"] == 'add' && $canadduser)
         $edituser->prenom        = trim($_POST["prenom"]);
         $edituser->login         = trim($_POST["login"]);
         $edituser->admin         = trim($_POST["admin"]);
- 		$edituser->office_phone  = trim($_POST["office_phone"]);
- 		$edituser->office_fax    = trim($_POST["office_fax"]);
- 		$edituser->user_mobile   = trim($_POST["user_mobile"]);
+        $edituser->office_phone  = trim($_POST["office_phone"]);
+        $edituser->office_fax    = trim($_POST["office_fax"]);
+        $edituser->user_mobile   = trim($_POST["user_mobile"]);
         $edituser->email         = trim($_POST["email"]);
         $edituser->webcal_login  = trim($_POST["webcal_login"]);
         $edituser->note          = trim($_POST["note"]);
+        $edituser->ldap_sid      = trim($_POST["ldap_sid"]);
 
         $db->begin();
 
@@ -295,7 +297,7 @@ if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
 
 llxHeader('',$langs->trans("UserCard"));
 
-if ($action == 'create')
+if (($action == 'create') || ($action == 'adduserldap'))
 {
     /* ************************************************************************** */
     /*                                                                            */
@@ -307,33 +309,154 @@ if ($action == 'create')
 
     print "<br>";
     if ($message) { print $message.'<br>'; }
+    
+    /*
+     * ajout utilisateur ldap
+     */
+     if ($conf->ldap->enabled)
+     {
+     	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+     	{     		
+     		$ldap = new AuthLdap();
+     		
+     		if ($ldap->connect())
+     		{
+     			$justthese = array( "sn", "givenname", "samaccountname");
+     			$ldapusers = $ldap->getUsers('*', $justthese);
+     			
+     			if ($ldapusers)
+     			{
+     				$html = new Form($db);
+     				
+     				foreach ($ldapusers as $key => $ldapuser)
+          	{
+       				if($ldapuser["sn"] != "")
+          			$liste[$ldapuser["samaccountname"]] = utf8_decode($ldapuser["sn"])." ".utf8_decode($ldapuser["givenname"]);
+          	}
+           
+           print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+           print '<input type="hidden" name="action" value="adduserldap">';
+           print $html->select_array('users', $liste, '', 1);
+           print '<input type="submit" class="button" value="'.$langs->trans('Add').'">';
+           print '</form>';
+           print "<br>";
+          }
+          
+          if ($action == 'adduserldap')
+          {
+          	 
+          
+          $selecteduser = $_POST['users'];
+          $justthese = array( "samaccountname",
+                              "sn",
+                              "givenname",
+                              "mail",
+                              "telephonenumber",
+                              "facsimiletelephonenumber",
+                              "mobile",
+                              "objectsid");
+
+          $selectedUser = $ldap->getUsers($selecteduser, $justthese);
+          
+          if ($selectedUser)
+          {
+          	foreach ($selectedUser as $key => $attribute)
+          	{
+					  	$ldap_nom = utf8_decode($attribute["sn"]?$attribute["sn"]:'');
+					  	$ldap_prenom = utf8_decode($attribute["givenname"]?$attribute["givenname"]:'');
+					  	$ldap_login = utf8_decode($attribute["samaccountname"]?$attribute["samaccountname"]:'');
+					  	$ldap_phone = utf8_decode($attribute["telephonenumber"]?$attribute["telephonenumber"]:'');
+					  	$ldap_fax = utf8_decode($attribute["facsimiletelephonenumber"]?$attribute["facsimiletelephonenumber"]:'');
+					  	$ldap_mobile = utf8_decode($attribute["mobile"]?$attribute["mobile"]:'');
+					  	$ldap_mail = utf8_decode($attribute["mail"]?$attribute["mail"]:'');
+              $ldap_SID = bin2hex($attribute["objectsid"]);
+          }
+				}
+			}
+		}
+		else
+		{
+			print $ldap->ldapErrorCode;
+			print $ldap->ldapErrorText;
+		}
+		if (!$ldap->close())
+		{
+			print $ldap->ldapErrorCode;
+			print $ldap->ldapErrorText;
+		}
+	}
+ }
 
     print '<form action="fiche.php" method="post" name="createuser">';
     print '<input type="hidden" name="action" value="add">';
+    if ($ldap_SID) print '<input type="hidden" name="ldap_sid" value="'.$ldap_SID.'">';
 
     print '<table class="border" width="100%">';
 
     print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
-    print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
+    print '<td class="valeur">';
+    if ($ldap_nom)
+    {
+    	print '<input type="hidden" name="nom" value="'.$ldap_nom.'">';
+    	print $ldap_nom;
+    }
+    else
+    {
+    	print '<input size="30" type="text" name="nom" value="">';
+    }
+    print '</td></tr>';
 
     print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
-    print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
+    print '<td class="valeur">';
+    if ($ldap_prenom)
+    {
+    	print '<input type="hidden" name="prenom" value="'.$ldap_prenom.'">';
+    	print $ldap_prenom;
+    }
+    else
+    {
+    	print '<input size="30" type="text" name="prenom" value="">';
+    }
+    print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
-    print '<td class="valeur"><input size="20" maxsize="24" type="text" name="login" value=""></td></tr>';
-
-    $generated_password='';
-    if ($conf->global->USER_PASSWORD_GENERATED)
+    print '<td class="valeur">';
+    if ($ldap_login)
     {
-		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
-		$nomfichier=$nomclass.".class.php";
-    	//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
-    	require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
-    	$genhandler=new $nomclass($db,$conf,$lang,$user);
-    	$generated_password=$genhandler->getNewGeneratedPassword();
+    	print '<input type="hidden" name="login" value="'.$ldap_login.'">';
+    	print $ldap_login;
     }
-    print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
-    print '<td class="valeur"><input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'"></td></tr>';
+    else
+    {
+    	print '<input size="20" maxsize="24" type="text" name="login" value="">';
+    }
+    print '</td></tr>';
+
+    if (!$ldap_SID)
+    {
+    	$generated_password='';
+    	if ($conf->global->USER_PASSWORD_GENERATED)
+    	{
+    		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+    		$nomfichier=$nomclass.".class.php";
+    		//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
+    		require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+    		$genhandler=new $nomclass($db,$conf,$lang,$user);
+    		$generated_password=$genhandler->getNewGeneratedPassword();
+    	 }
+    	}
+    	
+    	print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
+    	print '<td class="valeur">';
+    	if ($ldap_SID)
+    	{
+    		print 'mot de passe du domaine';
+    	}
+    	else
+    	{
+    		print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
+    	}
+    	print '</td></tr>';
 
     if ($user->admin)
     {
@@ -344,16 +467,56 @@ if ($action == 'create')
     }
     
     print '<tr><td valign="top">'.$langs->trans("Phone").'</td>';
-    print '<td class="valeur"><input size="20" type="text" name="office_phone" value=""></td></tr>';
+    print '<td class="valeur">';
+    if ($ldap_phone)
+    {
+    	print '<input type="hidden" name="office_phone" value="'.$ldap_phone.'">';
+    	print $ldap_phone;
+    }
+    else
+    {
+    	print '<input size="20" type="text" name="office_phone" value="">';
+    }
+    print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
-    print '<td class="valeur"><input size="20" type="text" name="office_fax" value=""></td></tr>';
+    print '<td class="valeur">';
+    if ($ldap_fax)
+    {
+    	print '<input type="hidden" name="office_fax" value="'.$ldap_fax.'">';
+    	print $ldap_fax;
+    }
+    else
+    {
+    	print '<input size="20" type="text" name="office_fax" value="">';
+    }
+    print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Mobile").'</td>';
-    print '<td class="valeur"><input size="20" type="text" name="user_mobile" value=""></td></tr>';
+    print '<td class="valeur">';
+    if ($ldap_mobile)
+    {
+    	print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
+    	print $ldap_mobile;
+    }
+    else
+    {
+    	print '<input size="20" type="text" name="user_mobile" value="">';
+    }
+    print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
-    print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
+    print '<td class="valeur">';
+    if ($ldap_mail)
+    {
+    	print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
+    	print $ldap_mail;
+    }
+    else
+    {
+    	print '<input size="40" type="text" name="email" value="">';
+    }
+    print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
     print "<textarea name=\"note\" rows=\"6\" cols=\"40\">";
@@ -497,8 +660,15 @@ else
 
             // Password
             print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
-            print '<td width="50%" class="valeur">'.eregi_replace('.','*',$fuser->pass).'</td>';
-            print "</tr>\n";
+            if ($fuser->ldap_sid)
+            {
+            	print '<td>Mot de passe du domaine</td>';
+            }
+            else
+            {
+            	print '<td width="50%" class="valeur">'.eregi_replace('.','*',$fuser->pass);
+            }
+            print "</td></tr>\n";
 
             // Administrateur
             print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
@@ -513,6 +683,10 @@ else
             if ($fuser->societe_id)
             {
                 print $langs->trans("External");
+            }
+            else if ($fuser->ldap_sid)
+            {
+            	print $langs->trans("DomainUser");
             }
             else
             {
@@ -600,12 +774,12 @@ else
 	       	// Si on a un gestionnaire de generation de mot de passe actif
 			if ($conf->global->USER_PASSWORD_GENERATED != 'none')
 			{
-	            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login)
+	            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid)
 	            {
 	                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
 	            }
 			
-	            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login)
+	            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid)
 	            {
 	                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
 	            }
@@ -787,17 +961,20 @@ else
             print '</td></tr>';
 
             // Pass
-            if ($caneditpassword) 
+            print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
+            if ($fuser->ldap_sid)
             {
-                print "<tr>".'<td valign="top">'.$langs->trans("Password").'</td>';
-                print '<td><input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'"></td></tr>';
+            	print '<td>Mot de passe du domaine</td>';
+            }
+            else if ($caneditpassword) 
+            {
+                print '<td><input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'"></td>';
             }
             else
             {
-                print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
-                print '<td width="50%" class="valeur">'.eregi_replace('.','*',$fuser->pass).'</td>';
-                print "</tr>\n";
+                print '<td width="50%" class="valeur">'.eregi_replace('.','*',$fuser->pass);
             }
+            print "</td></tr>\n";
             
             // Administrateur
             print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
@@ -827,6 +1004,10 @@ else
             if ($fuser->societe_id)
             {
                 print $langs->trans("External");
+            }
+            else if ($fuser->ldap_sid)
+            {
+            	print $langs->trans("DomainUser");
             }
             else
             {
