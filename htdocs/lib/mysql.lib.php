@@ -520,25 +520,11 @@ class DoliDb
     }
 
     /**
-        \brief      Obtient les données d'un colonne et renvoie les données sous forme d'objet.
-        \param      resultset   Curseur de la requete voulue
-        \return     array
-    */
-
-    function fetch_field($resultset=0)
-    {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_fetch_field($resultset);
-    }
-
-    /**
         \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
         \see    	affected_rows
         \param      resultset   Curseur de la requete voulue
         \return     int		    Nombre de lignes
     */
-
     function num_rows($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -564,23 +550,9 @@ class DoliDb
 
 
     /**
-        \brief      Renvoie le nombre de champs dans le resultat de la requete.
-        \param      resultset   Curseur de la requete voulue
-        \return	    int
-    */
-
-    function num_fields($resultset=0)
-    {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_num_fields($resultset);
-    }
-
-    /**
         \brief      Libère le dernier resultset utilisé sur cette connexion.
         \param      resultset   Curseur de la requete voulue
     */
-
     function free($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
@@ -589,13 +561,13 @@ class DoliDb
         if (is_resource($resultset)) mysql_free_result($resultset);
     }
 
+
     /**
         \brief      Défini les limites de la requète.
         \param	    limit       nombre maximum de lignes retournées
         \param	    offset      numéro de la ligne à partir de laquelle recupérer les lignes
         \return	    string      chaine exprimant la syntax sql de la limite
     */
-
     function plimit($limit=0,$offset=0)
     {
         global $conf;
@@ -608,7 +580,7 @@ class DoliDb
     /**
         \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date tms unix.
-                    Fonction à utiliser générer les SELECT.
+                    Fonction à utiliser pour générer les SELECT.
         \param	    param       Date au format text à convertir
         \return	    date        Date au format tms.
     */
@@ -618,19 +590,7 @@ class DoliDb
     }
 
     /**
-        \brief      Formatage (par la base de données) d'un champ tms
-                    afin de retourner une donnée au format text YYYYMMDDHHMMSS.
-                    Fonction à utiliser pour générer les INSERT.
-        \param	    param       Date tms à convertir
-        \return	    string      Date au format text YYYYMMDDHHMMSS.
-    */
-    function qdate($param)
-    {
-        return "from_unixtime(".$param.")";
-    }
-
-    /**
-        \brief      Formatage (par PHP) de la date en texte.
+        \brief      Formatage (par PHP) de la date en texte qui s'insere dans champ date.
                     Fonction à utiliser pour générer les INSERT.
         \param	    param       Date tms à convertir
         \return	    date        Date au format text YYYYMMDDHHMMSS.
@@ -773,38 +733,6 @@ class DoliDb
     function setLastQuery($s)
     {
         $this->lastquery=$s;
-    }
-
-
-    /**
-        \brief      Renvoie toutes les données comme un tableau.
-        \param      sql         Requete sql
-        \param      datas       Tableau de données pour retour
-        \return	    int         >0 si ok, <0 si ko
-    */
-    function fetch_all_rows($sql, &$datas)
-    {
-        $datas = array();
-
-        $resql = $this->query($sql);
-        if ($resql)
-        {
-            $i = 0;
-            $num = $this->num_rows($resql);
-
-            while ($i < $num)
-            {
-                $row = $this->fetch_row($resql);
-                array_push($datas, $row[0]);
-                $i++;
-            }
-        }
-        else
-        {
-            print $this->error();
-            return -1;
-        }
-        return 1;
     }
 
 }
