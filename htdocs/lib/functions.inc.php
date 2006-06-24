@@ -1957,6 +1957,7 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 		closedir($dir);
 		
 		// Obtain a list of columns
+		$myarray=array();
 		foreach ($file_list as $key => $row)
 		{
 			$myarray[$key]  = $row['date'];
