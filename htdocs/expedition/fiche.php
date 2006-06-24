@@ -36,8 +36,10 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
+$langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');
+$langs->load('orders');
 
 $user->getrights('expedition');
 if (!$user->rights->expedition->lire)
@@ -183,6 +185,7 @@ if ($_GET["action"] == 'create')
       $author->fetch();
       
       $entrepot = new Entrepot($db);
+
       /*
        *   Commande
        */
@@ -190,32 +193,62 @@ if ($_GET["action"] == 'create')
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
       print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
-      print '<table class="border" width="100%">';
-      print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-      print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-      
-      print '<td width="50%" colspan="2">';
 
-      print "</td></tr>";
+      print '<table class="border" width="100%">';
+
+      	// Ref commande
+      	print '<tr><td>'.$langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a></td>';
+      	print "</tr>\n";
+
+		// Ref commande client
+		print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+		print $langs->trans('RefCustomerOrderShort').'</td><td align="left">';
+        print '</td>';
+        if ($_GET['action'] != 'refcdeclient' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+		if ($user->rights->commande->creer && $_GET['action'] == 'refcdeclient')
+		{
+			print '<form action="fiche.php?id='.$id.'" method="post">';
+			print '<input type="hidden" name="action" value="set_ref_client">';
+			print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
+			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '</form>';
+		}
+		else
+		{
+			print $commande->ref_client;
+		}
+		print '</td>';
+		print '</tr>';
+			
+		// Société
+		print '<tr><td>'.$langs->trans('Company').'</td>';
+		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+		print '</tr>';
+		
+		// Date
+		print "<tr><td>".$langs->trans("Date")."</td>";
+		print '<td colspan="3">'.dolibarr_print_date($commande->date,"%A %d %B %Y")."</td></tr>\n";
       
-      print "<tr><td>".$langs->trans("Date")."</td>";
-      print "<td>".strftime("%A %d %B %Y",$commande->date)."</td>\n";
       
-      print '<td>'.$langs->trans("Order").'</td><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a>';
-      print "</td></tr>\n";
-      
-      print '<tr><td>'.$langs->trans("Warehouse").'</td>';
-      print '<td>';
-      $ents = $entrepot->list_array();
-      print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
-      print '</td>';
-      print "<td>".$langs->trans("Author")."</td><td>$author->fullname</td>\n";
-      
-      if ($commande->note)
-	{
-	  print '<tr><td colspan="3">Note : '.nl2br($commande->note)."</td></tr>";
-	}
-      print "</table>";
+      	
+      	if ($conf->stock->enabled)
+      	{
+			print '<tr><td>'.$langs->trans("Warehouse").'</td>';
+			print '<td colspan="3">';
+			$ents = $entrepot->list_array();
+			print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
+			print '</td></tr>';
+		}
+		      
+		if ($commande->note)
+		{
+			print '<tr><td colspan="3">Note : '.nl2br($commande->note)."</td></tr>";
+		}
+
+		print "</table>";
       
       /*
        * Lignes de commandes
@@ -411,27 +444,34 @@ else
     
             // Client
             print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-            print '<td width="30%">'.$soc->getNomUrl(1).'</td>';
-    
-            // Auteur
-            print '<td width="20%">'.$langs->trans("Author").'</td><td width="30%">'.$author->fullname.'</td>';
-    
+            print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
             print "</tr>";
     
             // Commande liée
-            print '<tr><td>'.$langs->trans("Order").'</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref."</a></td>\n";
-            print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+            print '<tr><td>'.$langs->trans("RefOrder").'</td>';
+            print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref."</a></td>\n";
+            print '</tr>';
+    
+            // Commande liée
+            print '<tr><td>'.$langs->trans("RefCustomerOrderShort").'</td>';
+            print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.$commande->ref_client."</a></td>\n";
+            print '</tr>';
     
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print "<td>".strftime("%A %d %B %Y",$expedition->date)."</td>\n";
-    
-            // Entrepot
-            $entrepot = new Entrepot($db);
-            $entrepot->fetch($expedition->entrepot_id);
-            print '<td width="20%">'.$langs->trans("Warehouse").'</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td></tr>';
-    
+            print '<td colspan="3">'.dolibarr_print_date($expedition->date,"%A %d %B %Y")."</td>\n";
+   			print '</tr>';    
+   			
+            if (!$conf->expedition->enabled && $conf->stock->enabled)
+            {
+            	// Entrepot
+				$entrepot = new Entrepot($db);
+				$entrepot->fetch($expedition->entrepot_id);
+				print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
+				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
+				print '</tr>';
+			}
+			    
             print "</table>\n";
     
             /*
@@ -439,10 +479,10 @@ else
              */
             echo '<br><table class="noborder" width="100%">';
     
-            $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
-            $sql .= " , ed.qty as qty_livre";
+            $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande,";
+            $sql .= " ed.qty as qty_livre";
             $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
-            $sql .= " WHERE ed.fk_expedition = $expedition->id AND cd.rowid = ed.fk_commande_ligne ";
+            $sql .= " WHERE ed.fk_expedition = ".$expedition->id." AND cd.rowid = ed.fk_commande_ligne ";
     
             $resql = $db->query($sql);
     
@@ -573,7 +613,7 @@ else
                     print_titre($langs->trans("OtherSendingsForSameOrder"));
                     print '<table class="liste" width="100%">';
                     print '<tr class="liste_titre">';
-                    print '<td align="left">'.$langs->trans("Sending").'</td>';
+                    print '<td align="left">'.$langs->trans("Ref").'</td>';
                     print '<td>'.$langs->trans("Description").'</td>';
                     print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                     print '<td align="center">'.$langs->trans("Date").'</td>';
@@ -585,7 +625,7 @@ else
                         $var=!$var;
                         $objp = $db->fetch_object($resql);
                         print "<tr $bc[$var]>";
-                        print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+                        print '<td align="left" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                         if ($objp->fk_product > 0)
                         {
                             $product = new Product($db);
@@ -601,7 +641,7 @@ else
                             print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
                         }
                         print '<td align="center">'.$objp->qty_livre.'</td>';
-                        print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
+                        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->date_expedition).'</td>';
                         print '</tr>';
                         $i++;
                     }
@@ -629,7 +669,7 @@ else
                 print_titre("Orders");
                 print '<table width="100%" class="border">';
     
-                print "<tr $bc[$true]><td>".$langs->trans("Order")." PDF</td>";
+                print "<tr $bc[$true]><td>PDF</td>";
                 print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
                 print '<td align="right">'.filesize($file). ' bytes</td>';
                 print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';

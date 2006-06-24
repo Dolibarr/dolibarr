@@ -66,10 +66,19 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	
 	}
 	
-	function generate(&$objExpe, $filename)
+	function generate(&$objExpe, $filename, $outputlangs='')
 	{
-		global $langs;
+		global $user,$conf,$langs,$mysoc;
 	
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+        $outputlangs->load("companies");
+        $outputlangs->load("bills");
+        $outputlangs->load("propal");
+        $outputlangs->load("products");
+
+		$outputlangs->setPhpLang();
+
 		$this->expe = $objExpe;
 	
 		$this->pdf = new FPDF();

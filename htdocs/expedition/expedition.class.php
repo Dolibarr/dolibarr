@@ -223,18 +223,20 @@ class Expedition extends CommonObject
     
             if ($this->statut == 0) $this->brouillon = 1;
             
-            // ligne de produit associée à une expédition
 			$this->lignes = array();
-			$sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp, e.fk_commande_ligne";
-			$sql .= ", c.fk_product, c.label, p.ref";
-			$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
-			$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
-			$sql .= " , ".MAIN_DB_PREFIX."product as p";
-			$sql .= " WHERE e.fk_expedition = ".$this->id;
-			$sql .= " AND e.fk_commande_ligne = c.rowid";
-			$sql .= " AND c.fk_product = p.rowid";
+            // TODO Supprimer cette partie. L'appelant qui fetch doit
+            // en fait appeler fetch_lignes pour charges ceci.
+			$sql = "SELECT c.description, c.qty as qtycom, c.fk_product, c.label, ";
+			$sql.= " e.qty as qtyexp, e.fk_commande_ligne,";
+			$sql.= " p.ref";
+			$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
+			$sql.= " , ".MAIN_DB_PREFIX."commandedet as c";
+			$sql.= " , ".MAIN_DB_PREFIX."product as p";
+			$sql.= " WHERE e.fk_expedition = ".$this->id;
+			$sql.= " AND e.fk_commande_ligne = c.rowid";
+			$sql.= " AND c.fk_product = p.rowid";
 	      
-	      $resultp = $this->db->query($sql);
+	      	$resultp = $this->db->query($sql);
             
             if ($resultp)
             {
@@ -245,10 +247,11 @@ class Expedition extends CommonObject
                     {
                         $objp                        = $this->db->fetch_object($resultp);
     
-                        $ligne                       = new ExpeditionLigne();
+                        $ligne                       = new ExpeditionLigne($this->db);
 
                         $ligne->commande_ligne_id    = $objp->fk_commande_ligne;
                         $ligne->product_desc         = $objp->description;  // Description ligne
+                        $ligne->qty_expedition       = $objp->qtyexp;
                         $ligne->qty_commande         = $objp->qtycom;
                         $ligne->fk_product           = $objp->fk_product;
 
@@ -432,7 +435,7 @@ class Expedition extends CommonObject
   function addline( $id, $qty )
     {
       $num = sizeof($this->lignes);
-      $ligne = new ExpeditionLigne();
+      $ligne = new ExpeditionLigne($this->db);
 
       $ligne->commande_ligne_id = $id;
       $ligne->qty = $qty;
@@ -568,13 +571,13 @@ class Expedition extends CommonObject
       	$i = 0;
       	while ($i < $num)
       	{
-      		$ligne = new ExpeditionLigne();
+      		$ligne = new ExpeditionLigne($this->db);
       		$obj = $this->db->fetch_object($resql);
       		
       		$ligne->fk_product     = $obj->fk_product;
       		$ligne->qty_commande   = $obj->qtycom;
       		$ligne->qty_expedition = $obj->qtyexp;
-      		$ligne->description    = stripslashes($obj->description);
+      		$ligne->description    = $obj->description;
       		
       		$this->lignes[$i] = $ligne;
       		$i++;

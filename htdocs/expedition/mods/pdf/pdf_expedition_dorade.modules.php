@@ -85,12 +85,47 @@ Class pdf_expedition_dorade extends ModelePdfExpedition
 	
 	}
 	
-	function generate(&$objExpe, $filename)
+	function generate(&$objExpe, $filename, $outputlangs='')
 	{
+		global $user,$conf,$langs,$mysoc;
+
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+        $outputlangs->load("companies");
+        $outputlangs->load("bills");
+        $outputlangs->load("propal");
+        $outputlangs->load("products");
+
+		$outputlangs->setPhpLang();
+
 		$this->expe = $objExpe;
 	
 		$this->expe->fetch_commande();
 	
+		// Définition de $dir et $file
+		if ($this->expe->specimen)
+		{
+			$dir = $conf->propal->dir_output;
+			$file = $dir . "/SPECIMEN.pdf";
+		}
+		else
+		{
+			$expref = sanitize_string($this->expe->ref);
+			$dir = $conf->expedition->dir_output . "/" . $expref;
+			$file = $dir . "/" . $expref . ".pdf";
+		}
+
+		if (! file_exists($dir))
+		{
+			if (create_exdir($dir) < 0)
+			{
+				$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+				return 0;
+			}
+		}
+
+		$filename=$file;
+
 		$this->pdf = new ModelePdfExpedition();
 		$this->pdf->expe = &$this->expe;
 	

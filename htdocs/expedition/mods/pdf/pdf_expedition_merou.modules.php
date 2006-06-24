@@ -52,10 +52,19 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	//Creation du Document
 	//Initialisation des données
 	//*****************************
-	function generate(&$objExpe, $file)
+	function generate(&$objExpe, $file, $outputlangs='')
 	{
-		global $user,$langs,$conf;
+		global $user,$conf,$langs,$mysoc;
 		
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+        $outputlangs->load("companies");
+        $outputlangs->load("bills");
+        $outputlangs->load("propal");
+        $outputlangs->load("products");
+
+		$outputlangs->setPhpLang();
+
 		//Initialisation des langues
 		$langs->load("main");
 		$langs->load("bills");
@@ -63,9 +72,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Generation de la fiche
 		$this->expe = $objExpe;
 		$this->expe->fetch_commande();
+
 		//Creation du Client
 		$soc = new Societe($this->db);
 		$soc->fetch($this->expe->commande->socidp);
+
 		//Creation de l expediteur
 		$this->expediteur = $soc;
 		//Creation du destinataire
@@ -74,6 +85,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 //print_r($pdf->expe);
 		$idcontact = $this->expe->commande->getIdContact('external','DESTINATAIRE');
 		$this->destinataire->fetch($idcontact[0]);
+
 		//Creation du livreur
 		$idcontact = $this->expe->commande->getIdContact('internal','LIVREUR');
 		$this->livreur = new User($this->db,$idcontact[0]);
@@ -85,7 +97,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
         	$expeditionref = sanitize_string($this->expe->ref);
         	$dir = $conf->expedition->dir_output . "/" . $expeditionref;
         	$file = $dir . "/" . $expeditionref . ".pdf";
-			    //Si le dossier n existe pas 
+
+			  //Si le dossier n existe pas 
 	  		  if (! file_exists($dir))
 	  		  {
 	  		  	umask(0);
@@ -101,7 +114,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			if (file_exists($dir))
 			{
             	// Initialisation Bon vierge
-				$pdf = new FPDF('l','mm','A5');
+				$pdf = new FPDF('l','mm',$this->format);
 				$pdf->Open();
 				$pdf->AddPage();
 				//Generation de l entete du fichier
@@ -111,9 +124,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->SetAuthor($user->fullname);
 				$pdf->SetMargins(10, 10, 10);
 				$pdf->SetAutoPageBreak(1,0);
+
+				$pdf->SetFont('Arial','', 7);
+
 				//Insertion de l entete
 				$this->_pagehead($pdf, $this->expe);
-				//Initiailisation des coordonnées
+
+				//Initialisation des coordonnées
 				$tab_top = 53;
 				$tab_height = 70;
 				$pdf->SetFillColor(240,240,240);
@@ -264,7 +281,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, "Num Bon de Livraison : ".$exp->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $langs->trans("Ref: ").$exp->ref, '' , 'L');
 		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+10;
@@ -272,7 +289,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, "Num Commande : ".$exp->commande->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $langs->trans("RefOrder").': '.$exp->commande->ref, '' , 'L');
 		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe
 		$blSocX=11;
@@ -345,12 +362,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, "Livreur(s) : ".$livreur->fullname, '' , 'L');
+
 		/**********************************/
 		//Emplacement Informations Expediteur (Client)
 		/**********************************/
 		$Ydef = $Yoff;
 		$blExpX=$Xoff-20;
-		$blW=50;
+		$blW=52;
 		$Yoff = $Yoff+5;
 		$Ydef = $Yoff;
 		$blSocY = 1;

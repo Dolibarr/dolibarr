@@ -466,10 +466,6 @@ LDAPSetupForVersion2=LDAP server configured for version 2
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
 ConfirmDeleteProductLineAbility=Confirmation of removal of a line produces in the forms 
-##### Sendings #####
-SendingsSetup=Sending module setup
-SendingsReceiptModel=Sending receipt model
-SendingsAbility=Support sendings sheets
 ##### Syslog #####
 SyslogSetup=Syslog module setup
 SyslogOutput=Log output
@@ -492,7 +488,11 @@ NewRSS=New RSS
 ##### Mailing #####
 MailingSetup=Mailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
+##### Sendings #####
+SendingsSetup=Sending module setup
+SendingsReceiptModel=Sending receipt model
+SendingsAbility=Support sendings sheets for customer deliveries
 ##### Deliveries #####
-DeliveryOrderNumberingModules=Delivery order numbering module
-DeliveryOrderModel=Delivery order model
-DeliveriesOrderAbility=Deliveries order ability
+DeliveryOrderNumberingModules=Products deliveries receipt numbering module
+DeliveryOrderModel=Products deliveries receipt model
+DeliveriesOrderAbility=Products deliveries receipt ability

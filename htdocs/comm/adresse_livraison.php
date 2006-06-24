@@ -73,7 +73,6 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
         }
 }
 
-$livraison = new Livraison($db);
 
 
 
@@ -83,6 +82,7 @@ $livraison = new Livraison($db);
 
 if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 {
+	$livraison = new AdresseLivraison($db);
     $livraison->socid                 = $_POST["socid"];
     $livraison->label                 = $_POST["label"];
     $livraison->nom                   = $_POST["nom"];
@@ -161,7 +161,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
 {
-  $livraison = new Livraison($db);
+  $livraison = new AdresseLivraison($db);
   $result = $livraison->delete($_GET["idl"], $socid);
  
   if ($result == 0)
@@ -194,6 +194,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         /*
          * Fiche adresse de livraison en mode création
          */
+
+		$livraison = new AdresseLivraison($db);
 
         if ($_POST["label"] && $_POST["nom"])
         {
@@ -277,6 +279,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
     /*
      * Fiche societe en mode edition
      */
+	$livraison = new AdresseLivraison($db);
 
     print_titre($langs->trans("EditDeliveyAdress"));
 
@@ -284,7 +287,6 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
     {
         if ($reload || ! $_POST["nom"])
         {
-            $livraison = new Livraison($db);
             $livraison->socid = $socid;
             $livraison->fetch_adresse($idl);
         }
@@ -365,92 +367,105 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 }
 else
 {
-    /*
-     * Fiche société en mode visu
-     */
-    $livraison = new Livraison($db);
-    $result=$livraison->fetch($socid);
-    $nblignes = sizeof($livraison->lignes);
-    if ($result < 0)
-    {
-        dolibarr_print_error($db,$livraison->error);
-        //exit;     
-    }
+	/*
+	* Fiche société en mode visu
+	*/
+	$livraison = new AdresseLivraison($db);
+	$result=$livraison->fetch($socid);
+	if ($result < 0)
+	{
+		dolibarr_print_error($db,$livraison->error);
+		exit;
+	}
+
+	$societe=new Societe($db);
+	$societe->fetch($livraison->socid);
+	$head = societe_prepare_head($societe);
+	
+	dolibarr_fiche_head($head, 'customer', $societe->nom);
 
 
-	  $head = societe_prepare_head($livraison);
-    
-    dolibarr_fiche_head($head, 'company', $livraison->nom_societe);
+	// Confirmation de la suppression de la facture
+	if ($_GET["action"] == 'delete')
+	{
+		$html = new Form($db);
+		$html->form_confirm("adresse_livraison.php?socid=".$livraison->socid."&amp;idl=".$_GET["idl"],$langs->trans("DeleteDeliveryAddress"),$langs->trans("ConfirmDeleteDeliveryAdress"),"confirm_delete");
+		print "<br />\n";
+	}
+
+	if ($livraison->error)
+	{
+		print '<div class="error">';
+		print $livraison->error;
+		print '</div>';
+	}
+
+	$nblignes = sizeof($livraison->lignes);
+	if ($nblignes)
+	{
+		for ($i = 0 ; $i < $nblignes ; $i++)
+		{
+	
+			print '<table class="border" width="100%">';
+	
+			print '<tr><td width="20%">'.$langs->trans('DeliveryAddressLabel').'</td><td colspan="3">'.$livraison->lignes[$i]->label.'</td>';
+			print '<td valign="top" colspan="2" width="50%" rowspan="6">'.$langs->trans('Note').' :<br>'.nl2br($livraison->lignes[$i]->note).'</td></tr>';
+			print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$livraison->lignes[$i]->nom.'</td></tr>';
+	
+			print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($livraison->lignes[$i]->adresse)."</td></tr>";
+	
+			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$livraison->lignes[$i]->cp."</td></tr>";
+			print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$livraison->lignes[$i]->ville."</td></tr>";
+	
+			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$livraison->lignes[$i]->pays.'</td>';
+			print '</td></tr>';
+	
+			print '</table>';
+	
+	
+			/*
+			*
+			*/
+	
+			print '<div class="tabsAction">';
+	
+			if ($user->rights->societe->creer)
+			{
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+			}
+	
+			if ($user->rights->societe->supprimer)
+			{
+				print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+			}
+	
+	
+			print '</div>';
+			print '<br>';
+		}
+	}
+	else
+	{
+		print $langs->trans("None");	
+	}
+	print '</div>';
 
 
-    // Confirmation de la suppression de la facture
-    if ($_GET["action"] == 'delete')
-    {
-        $html = new Form($db);
-        $html->form_confirm("adresse_livraison.php?socid=".$livraison->socid."&amp;idl=".$_GET["idl"],$langs->trans("DeleteDeliveryAddress"),$langs->trans("ConfirmDeleteDeliveryAdress"),"confirm_delete");
-        print "<br />\n";
-    }
+	/*
+	 * Bouton actions
+	 */
+	 
+	if ($_GET["action"] == '')
+	{
+		print '<div class="tabsAction">';
 
+		if ($user->rights->societe->creer)
+		{
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;action=create">'.$langs->trans("Add").'</a>';
+		}
+		print '</div>';
+	}
 
-    if ($livraison->error)
-    {
-        print '<div class="error">';
-        print $livraison->error;
-        print '</div>';
-    }
-
-    for ($i = 0 ; $i < $nblignes ; $i++)
-    {
-    
-      print '<table class="border" width="100%">';
-
-      print '<tr><td width="20%">'.$langs->trans('DeliveryAddressLabel').'</td><td colspan="3">'.$livraison->lignes[$i]->label.'</td>';
-      print '<td valign="top" colspan="2" width="50%" rowspan="6">'.$langs->trans('Note').' :<br>'.nl2br($livraison->lignes[$i]->note).'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$livraison->lignes[$i]->nom.'</td></tr>';
-    
-      print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($livraison->lignes[$i]->adresse)."</td></tr>";
-
-      print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$livraison->lignes[$i]->cp."</td></tr>";
-      print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$livraison->lignes[$i]->ville."</td></tr>";
-
-      print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$livraison->lignes[$i]->pays.'</td>';
-      print '</td></tr>';
-
-      print '</table>';
-    
-    
-    /*
-    *
-    */
-
-        print '<div class="tabsAction">';
-      
-        if ($user->rights->societe->creer)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-        }
-        
-        if ($user->rights->societe->supprimer)
-        {
-	        print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-        }
-
-        
-        print '</div>';
-        print '<br>';
-   }
-    print '</div>';
-    if ($_GET["action"] == '')
-    {
-        print '<div class="tabsAction">';
-
-        if ($user->rights->societe->creer)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;action=create">'.$langs->trans("Add").'</a>';
-        }
-        print '</div>';
-    }
-        
 }
 
 $db->close();

@@ -88,28 +88,28 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 	
 	$dir = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/";
 	$modelisok=0;
-    $liste=array();
 
 	// Positionne modele sur le nom du modele de commande à utiliser
 	$file = "pdf_expedition_".$modele.".modules.php";
-	if ($modele && file_exists($dir.$file))   $modelisok=1;
+	if ($modele && file_exists($dir.$file)) $modelisok=1;
 
     // Si model pas encore bon 
 	if (! $modelisok)
 	{
 		if ($conf->global->EXPEDITION_ADDON_PDF) $modele = $conf->global->EXPEDITION_ADDON_PDF;
       	$file = "pdf_expedition_".$modele.".modules.php";
-    	if (file_exists($dir.$file))   $modelisok=1;
+    	if (file_exists($dir.$file)) $modelisok=1;
     }
 
     // Si model pas encore bon 
 	if (! $modelisok)
 	{
+	    $liste=array();
 		$model=new ModelePDFExpedition();
 		$liste=$model->liste_modeles($db);
         $modele=key($liste);        // Renvoie premiere valeur de clé trouvé dans le tableau
       	$file = "pdf_expedition_".$modele.".modules.php";
-    	if (file_exists($dir.$file))   $modelisok=1;
+    	if (file_exists($dir.$file)) $modelisok=1;
 	}
 	
 	// Charge le modele
@@ -126,11 +126,12 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 		$expeditionref = sanitize_string($expedition->ref);
 		$dir = $conf->expedition->dir_output . "/" . $expeditionref;
 		$file = $dir . "/" . $expeditionref . ".pdf";
-        if ($obj->generate($expedition, $file))
+
+        if ($obj->generate($expedition, $file) > 0)
 //		if ( $obj->write_pdf_file($id, $outputlangs) > 0)
 		{
 			// on supprime l'image correspondant au preview
-//			commande_delete_preview($db, $id);
+//			expedition_delete_preview($db, $id);
 			return 1;
 		}
 		else
@@ -144,7 +145,7 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 	{
         if (! $conf->global->EXPEDITION_ADDON_PDF)
         {
-			print $langs->trans("Error")." ".$langs->trans("Error_EPXEDITION_ADDON_PDF_NotDefined");
+			print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_PDF_NotDefined");
         }
         else
         {

@@ -23,18 +23,18 @@
 
 /**
         \file       htdocs/comm/adresse_livraison.class.php
-        \ingroup    societe
+        \ingroup    societe, expedition
         \brief      Fichier de la classe des adresses de livraison
         \version    $Revision$
 */
 
 
 /**
-        \class 		Societe
+        \class 		AdresseLivraison
         \brief 		Classe permettant la gestion des adresses de livraison
 */
 
-class Livraison
+class AdresseLivraison
 {
 	var $db;
 	
@@ -55,7 +55,7 @@ class Livraison
    *    \param  DB     handler accès base de données
    *    \param  id     id societe (0 par defaut)
    */
-  function Livraison($DB, $id=0)
+  function AdresseLivraison($DB, $id=0)
   {
 	global $conf;
 	

@@ -146,31 +146,41 @@ function propale_pdf_create($db, $id, $modele='', $outputlangs='')
 	$langs->load("propale");
 
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/propale/";
+	$modelisok=0;
 
-	// Positionne modele sur le nom du modele de facture à utiliser
-	if (! strlen($modele))
+	// Positionne modele sur le nom du modele de propale à utiliser
+	$file = "pdf_propale_".$modele.".modules.php";
+	if ($modele && file_exists($dir.$file)) $modelisok=1;
+
+    // Si model pas encore bon 
+	if (! $modelisok)
 	{
-		if ($conf->global->PROPALE_ADDON_PDF)
-		{
-			$modele = $conf->global->PROPALE_ADDON_PDF;
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
-			return 0;
-		}
+		if ($conf->global->PROPALE_ADDON_PDF) $modele = $conf->global->PROPALE_ADDON_PDF;
+      	$file = "pdf_propale_".$modele.".modules.php";
+    	if (file_exists($dir.$file)) $modelisok=1;
 	}
 
-	// Charge le modele
-	$file = "pdf_propale_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+    // Si model pas encore bon 
+	if (! $modelisok)
 	{
-		$classname = "pdf_propale_".$modele;
+	    $liste=array();
+		$model=new ModelePDFPropales();
+		$liste=$model->liste_modeles($db);
+        $modele=key($liste);        // Renvoie premiere valeur de clé trouvé dans le tableau
+      	$file = "pdf_propale_".$modele.".modules.php";
+    	if (file_exists($dir.$file)) $modelisok=1;
+	}
+	
+
+	// Charge le modele
+    if ($modelisok)
+	{
+		$classname = "pdf_expedition_".$modele;
 		require_once($dir.$file);
 
 		$obj = new $classname($db);
 
-		if ( $obj->write_pdf_file($id, $outputlangs) > 0)
+		if ($obj->write_pdf_file($id, $outputlangs) > 0)
 		{
 			// on supprime l'image correspondant au preview
 			propale_delete_preview($db, $id);
@@ -185,7 +195,14 @@ function propale_pdf_create($db, $id, $modele='', $outputlangs='')
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+        if (! $conf->global->PROPALE_ADDON_PDF)
+        {
+			print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
+        }
+        else
+        {
+    		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+        }
 		return 0;
 	}
 }

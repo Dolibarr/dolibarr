@@ -21,8 +21,6 @@
  * $Source$
  */
 
-
-
 /**
         \file       htdocs/livraison/fiche.php
         \ingroup    livraison
@@ -34,13 +32,9 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
+if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
-if (!$conf->expedition->enabled && $conf->stock->enabled)
-{
-	require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
-}
-
-
+$langs->load("sendings");
 $langs->load("bills");
 $langs->load('deliveries');
 
@@ -423,33 +417,34 @@ else
     
             // Client
             print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-            print '<td width="30%">';
-            print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-    
-            // Auteur
-            print '<td width="20%">'.$langs->trans("Author").'</td><td width="30%">'.$author->fullname.'</td>';
-    
+            print '<td align="3">'.$soc->getNomUrl(1).'</td>';
             print "</tr>";
     
             // Commande liée
-            print '<tr><td>'.$langs->trans("Order").'</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.$commande->ref."</a></td>\n";
-            print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+            print '<tr><td>'.$langs->trans("RefOrder").'</td>';
+            print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref."</a></td>\n";
+            print '</tr>';
+    
+            // Commande liée
+            print '<tr><td>'.$langs->trans("RefCustomerOrderShort").'</td>';
+            print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.$commande->ref_client."</a></td>\n";
+            print '</tr>';
     
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print "<td>".dolibarr_print_date($livraison->date_creation,'%A %d %B %Y')."</td>\n";
-    
+            print '<td colspan="3">'.dolibarr_print_date($livraison->date_creation,'%A %d %B %Y')."</td>\n";
+    		print '</tr>';
+    		
             if (!$conf->expedition->enabled && $conf->stock->enabled)
             {
             	// Entrepot
             	$entrepot = new Entrepot($db);
-            	$entrepot->fetch($expedition->entrepot_id);
-            	print '<td width="20%">'.$langs->trans("Warehouse").'</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
+            	$entrepot->fetch($livraison->entrepot_id);
+            	print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
+            	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
+            	print '</tr>';
             }
            
-            print '</tr>';
-    
             print "</table>\n";
     
             /*
@@ -457,10 +452,10 @@ else
              */
             echo '<br><table class="noborder" width="100%">';
     
-            $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
-            $sql .= " , ld.qty as qty_livre";
+            $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande,";
+            $sql .= " ld.qty as qty_livre";
             $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."livraisondet as ld";
-            $sql .= " WHERE ld.fk_livraison = $livraison->id AND cd.rowid = ld.fk_commande_ligne ";
+            $sql .= " WHERE ld.fk_livraison = ".$livraison->id." AND cd.rowid = ld.fk_commande_ligne ";
     
             $resql = $db->query($sql);
     
@@ -472,7 +467,7 @@ else
                 print '<tr class="liste_titre">';
                 print '<td>'.$langs->trans("Products").'</td>';
             	print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-            	print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
+            	print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
                 print "</tr>\n";
     
                 $var=true;

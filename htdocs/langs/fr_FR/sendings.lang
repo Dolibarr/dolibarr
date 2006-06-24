@@ -15,6 +15,7 @@ CreateASending=Créer une expedition
 CreateSending=Créer expedition
 QtyOrdered=Qté commandée
 QtyShipped=Qté expédiée
+QtyReceived=Qté reçue
 KeepToShip=Reste à expédier
 OtherSendingsForSameOrder=Autres expéditions déjà envoyés
 SendingsToValidate=Expéditions à valider

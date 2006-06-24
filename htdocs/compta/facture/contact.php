@@ -212,20 +212,18 @@ $html = new Form($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-if ( isset($mesg))
-	print $mesg;
+if (isset($mesg)) print $mesg;
 $id = $_GET["facid"];
 if ($id > 0)
 {
-		$facture = New Facture($db);
-		if ( $facture->fetch($_GET['facid'], $user->societe_id) > 0)
-		{
-			$soc = new Societe($db, $facture->socidp);
-			$soc->fetch($facture->socidp);
+	$facture = New Facture($db);
+	if ( $facture->fetch($_GET['facid'], $user->societe_id) > 0)
+	{
+		$facture->fetch_client();
+		
+		$head = facture_prepare_head($facture);
 
-			$head = facture_prepare_head($facture);
-
-			dolibarr_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'));
+		dolibarr_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'));
 
 		/*
 		 *   Facture synthese pour rappel
@@ -238,9 +236,6 @@ if ($id > 0)
 		print "</td></tr>";
 
 		// Customer
-		if ( is_null($facture->client) )
-			$facture->fetch_client();
-			
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">'.$facture->client->getNomUrl(1,'compta').'</td></tr>';
 		print "</table>";
@@ -281,7 +276,7 @@ if ($id > 0)
             print '</td>';			
 			
 			print '<td colspan="1">';
-			print $conf->global->MAIN_INFO_SOCIETE_NOM;
+			print $mysoc->nom;
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -338,12 +333,12 @@ if ($id > 0)
 		print "</tr>\n";
 
 		$societe = new Societe($db);
-    		$var = true;
+    	$var = true;
 
 		foreach(array('internal','external') as $source)
 		{
-    			$tab = $facture->liste_contact(-1,$source);
-            	$num=sizeof($tab);
+			$tab = $facture->liste_contact(-1,$source);
+        	$num=sizeof($tab);
 
 			$i = 0;
 			while ($i < $num)
@@ -368,7 +363,7 @@ if ($id > 0)
                 }
 				if ($tab[$i]['socid'] < 0)
 				{
-                    print $conf->global->MAIN_INFO_SOCIETE_NOM;
+                    print $mysoc->nom;
                 }
 				if (! $tab[$i]['socid'])
                 {

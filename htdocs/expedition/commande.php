@@ -424,9 +424,8 @@ if ($_GET["id"] > 0)
         }
 
 		// Bouton expedier avec gestion des stocks
-        if ($conf->stock->enabled && $reste_a_livrer_total > 0 && ! $commande->brouillon && $user->rights->expedition->creer)
+        if ($conf->stock->enabled && $reste_a_livrer_total > 0 && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
         {
-
             print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
             print '<input type="hidden" name="action" value="create">';
             print '<input type="hidden" name="id" value="'.$commande->id.'">';
@@ -587,7 +586,8 @@ if ($_GET["id"] > 0)
             }
 	      $db->free($resql);
         }
-        else {
+        else
+        {
             dolibarr_print_error($db);
         }
     }

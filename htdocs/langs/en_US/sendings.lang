@@ -15,6 +15,7 @@ CreateASending=Create a sending
 CreateSending=Create sending
 QtyOrdered=Qty ordered
 QtyShipped=Qty shipped
+QtyReceived=Qty received
 KeepToShip=Keep to ship
 OtherSendingsForSameOrder=Other sendings already shipped
 SendingsToValidate=Sending to validate

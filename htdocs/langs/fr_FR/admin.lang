@@ -116,7 +116,7 @@ Module70Desc=Gestion des interventions
 Module75Name=Déplacements
 Module75Desc=Gestion des déplacements
 Module80Name=Expéditions
-Module80Desc=Gestion des expéditions et bons de livraison
+Module80Desc=Gestion des expéditions et réceptions client
 Module85Name=Banques et caisses
 Module85Desc=Gestion des comptes financiers de type Comptes bancaires, postaux ou Caisses liquides
 Module86Name=OSCommerce
@@ -466,10 +466,6 @@ LDAPSetupForVersion2=Serveur LDAP configuré en version 2
 ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)
 ConfirmDeleteProductLineAbility=Confirmation de suppression d'une ligne produit dans les formulaires
-##### Sendings #####
-SendingsSetup=Configuration du module Expéditions/Livraisons
-SendingsReceiptModel=Modèle du bordereau d'expédition
-SendingsAbility=Prise en charge des bons d'expéditions
 ##### Syslog #####
 SyslogSetup=Configuration du module Syslog
 SyslogOutput=Sortie des log
@@ -492,7 +488,11 @@ NewRSS=Syndication d'un nouveau flux RSS
 ##### Mailing #####
 MailingSetup=Configuration du module EMailing
 MailingEMailFrom=Email emetteur (From) des mails envoyés par EMailing
+##### Sendings #####
+SendingsSetup=Configuration du module Expéditions/Livraisons
+SendingsReceiptModel=Modèle du bordereau d'expédition
+SendingsAbility=Prise en charge des bons d'expéditions vers le client
 ##### Deliveries #####
-DeliveryOrderNumberingModules=Module de numérotation des bons de livraison
-DeliveryOrderModel=Modèle de bon de livraison
-DeliveriesOrderAbility=Prise en charge des bons de livraison
+DeliveryOrderNumberingModules=Module de numérotation des bons de réception client
+DeliveryOrderModel=Modèle de bon de réception client
+DeliveriesOrderAbility=Prise en charge des bons de réception client

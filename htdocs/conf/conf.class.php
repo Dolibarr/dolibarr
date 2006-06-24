@@ -157,17 +157,16 @@ class Conf
 		$this->commande->dir_output=DOL_DATA_ROOT."/commande";
 		$this->commande->dir_images=DOL_DATA_ROOT."/commande/images";
 		
-		if (defined('MAIN_MODULE_EXPEDITION') && MAIN_MODULE_EXPEDITION)
-		{
-			// Module expeditions
-		  $this->expedition->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
-		  $this->expedition->dir_output=DOL_DATA_ROOT."/expedition";
-		  $this->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
-		  // Module bon de livraison
-		  $this->livraison->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
-		  $this->livraison->dir_output=DOL_DATA_ROOT."/livraison";
-		  $this->livraison->dir_images=DOL_DATA_ROOT."/livraison/images";
-		}
+		// Module expeditions
+		$this->expedition->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
+		// Sous module bons d'expedition
+		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
+		$this->expedition->dir_output=DOL_DATA_ROOT."/expedition";
+		$this->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
+		// Sous module bons de livraison
+		$this->livraison->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
+		$this->livraison->dir_output=DOL_DATA_ROOT."/livraison";
+		$this->livraison->dir_images=DOL_DATA_ROOT."/livraison/images";
 		
 		// Module societe
 		$this->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;

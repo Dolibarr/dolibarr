@@ -1500,7 +1500,7 @@ else
 					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
 				}
 
-				// reBuild PDF
+				// ReBuild PDF
 				if ($user->rights->commande->creer && $commande->statut >= 3)
 				{
 					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("RebuildPDF").'</a>';
@@ -1521,7 +1521,7 @@ else
 				}
 
 				// Ship
-				if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
+				if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
 				}
