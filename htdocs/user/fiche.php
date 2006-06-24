@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,6 +101,32 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
         $edituser->delete();
         Header("Location: index.php");
         exit;
+    }
+}
+
+//reactive un compte ldap
+if ($_GET["action"] == 'reactivate' && $canadduser)
+{
+    if ($_GET["id"] <> $user->id)
+    {
+        $reactiveuser = new User($db, $_GET["id"]);
+        $reactiveuser->fetch();
+        $ldap = New AuthLdap();
+        if ($ldap->connect())
+        {
+        	$login = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+        	$justthese = array($login);
+        	$ldap_sid = $reactiveuser->ldap_sid;
+        	$result = $ldap->getAttributeWithSID($ldap_sid, $justthese);
+        	$message = '<div class="error">'.$ldap_sid.'</div><br>';
+        	$message .= '<div class="error">'.$ldap->ldapErrorCode." - ".$ldap->ldapErrorText.'</div>';
+          //Header("Location: index.php");
+          //exit;
+        }
+        else
+        {
+        	print $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
+        }
     }
 }
 
@@ -317,14 +343,14 @@ if (($action == 'create') || ($action == 'adduserldap'))
      {
      	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
      	{     		
-     		$name = $conf->global->LDAP_FIELD_NAME;
+     		$name      = $conf->global->LDAP_FIELD_NAME;
      		$firstname = $conf->global->LDAP_FIELD_FIRSTNAME;
-     		$mail = $conf->global->LDAP_FIELD_MAIL;
-     		$phone = $conf->global->LDAP_FIELD_PHONE;
-     		$fax = $conf->global->LDAP_FIELD_FAX;
-     		$mobile = $conf->global->LDAP_FIELD_MOBILE;
-     		$login = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
-     		$SID = "objectsid";
+     		$mail      = $conf->global->LDAP_FIELD_MAIL;
+     		$phone     = $conf->global->LDAP_FIELD_PHONE;
+     		$fax       = $conf->global->LDAP_FIELD_FAX;
+     		$mobile    = $conf->global->LDAP_FIELD_MOBILE;
+     		$login     = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+     		$SID       = "objectsid";
      		
      		$ldap = new AuthLdap();
      		
@@ -369,14 +395,14 @@ if (($action == 'create') || ($action == 'adduserldap'))
           {
           	foreach ($selectedUser as $key => $attribute)
           	{
-					  	$ldap_nom = utf8_decode($attribute[$name]?$attribute[$name]:'');
+					  	$ldap_nom    = utf8_decode($attribute[$name]?$attribute[$name]:'');
 					  	$ldap_prenom = utf8_decode($attribute[$firstname]?$attribute[$firstname]:'');
-					  	$ldap_login = utf8_decode($attribute[$login]?$attribute[$login]:'');
-					  	$ldap_phone = utf8_decode($attribute[$phone]?$attribute[$phone]:'');
-					  	$ldap_fax = utf8_decode($attribute[$fax]?$attribute[$fax]:'');
+					  	$ldap_login  = utf8_decode($attribute[$login]?$attribute[$login]:'');
+					  	$ldap_phone  = utf8_decode($attribute[$phone]?$attribute[$phone]:'');
+					  	$ldap_fax    = utf8_decode($attribute[$fax]?$attribute[$fax]:'');
 					  	$ldap_mobile = utf8_decode($attribute[$mobile]?$attribute[$mobile]:'');
-					  	$ldap_mail = utf8_decode($attribute[$mail]?$attribute[$mail]:'');
-              $ldap_SID = bin2hex($attribute[$SID]);
+					  	$ldap_mail   = utf8_decode($attribute[$mail]?$attribute[$mail]:'');
+              $ldap_SID    = bin2hex($attribute[$SID]);
           }
 				}
 			}
@@ -658,12 +684,17 @@ else
             print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
             if ($fuser->login)
             {
-            	print '<td width="50%" class="valeur">'.$fuser->login.'</td></tr>';
+            	print '<td width="50%" class="valeur">'.$fuser->login;
+            }
+            else if ($fuser->ldap_sid)
+            {
+            	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisableInDolibarr");
             }
             else
             {
-            	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisable").'</td></tr>';
+            	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisable");
             }
+            print '</td></tr>';
 
             // Password
             print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
@@ -769,11 +800,18 @@ else
              
             print '<div class="tabsAction">';
 
-            if ($caneditfield)
+            if ($caneditfield && (!$fuser->ldap_sid || !$fuser->login))
             {
-                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+                if ($canadduser && $fuser->ldap_sid && !$fuser->login)
+                {
+                	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=reactivate">'.$langs->trans("Reactivate").'</a>';
+                }
+                else
+                {
+                	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+                }
             }
-            elseif ($caneditpassword)
+            elseif ($caneditpassword && !$fuser->ldap_sid)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
             }
@@ -922,7 +960,7 @@ else
         /*
          * Fiche en mode edition
          */
-        if ($_GET["action"] == 'edit' && ($caneditperms || ($user->id == $fuser->id)))
+        if ($_GET["action"] == 'edit' && (($caneditperms && (!$fuser->ldap_sid || !$fuser->login)) || ($user->id == $fuser->id)))
         {
 
             print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';

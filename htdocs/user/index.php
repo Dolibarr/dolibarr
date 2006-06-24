@@ -76,8 +76,8 @@ if ($result)
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Lastname"),"index.php","u.name",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Firstname"),"index.php","u.firstname",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("LastName"),"index.php","u.name",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("FirstName"),"index.php","u.firstname",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Code"),"index.php","u.code",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"","",$sortfield);

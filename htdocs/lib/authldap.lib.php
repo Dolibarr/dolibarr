@@ -433,6 +433,47 @@ class AuthLdap {
         // Return an array containing the attributes.
         return $values;
     }
+    
+    /**
+     * 2.4.1.1 : Returns an array containing a set of attribute values.
+     * For most searches, this will just be one row, but sometimes multiple
+     * results are returned (eg:- multiple email addresses)
+     */
+    function getAttributeWithSID ( $SID,$attribute) {
+       
+        // builds the appropriate dn, based on whether $this->people and/or $this->group is set
+        //$checkDn = $this->setDn( true);
+        $checkDn = $this->people;
+        $results[0] = $attribute;
+
+        // if the directory is AD, then bind first with the search user first
+        if ($this->serverType == "activedirectory") {
+            $this->authBind($this->searchUser, $this->searchPassword);
+        }
+        
+        // We need to search for this user in order to get their entry.
+        $this->result = @ldap_search( $this->connection,$checkDn,"objectsid=$SID",$results);
+        $info = ldap_get_entries( $this->connection, $this->result);
+
+        // Only one entry should ever be returned (no user will have the same sid)
+        $entry = ldap_first_entry( $this->connection, $this->result);
+
+        if ( !$entry) {
+            $this->ldapErrorCode = -1;
+            $this->ldapErrorText = "Couldn't find user";
+            return false;  // Couldn't find the user...
+        }
+
+        // Get all the member DNs
+        if ( !$values = @ldap_get_values( $this->connection, $entry, $attribute)) {
+            $this->ldapErrorCode = ldap_errno( $this->connection);
+            $this->ldapErrorText = ldap_error( $this->connection);
+            return false; // No matching attributes
+        }
+        
+        // Return an array containing the attributes.
+        return $values;
+    }
 
     /**
      * 2.4.2 : Allows an attribute value to be set.
