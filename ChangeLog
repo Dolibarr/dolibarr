@@ -4,13 +4,13 @@ English Dolibarr changelog
 ***** Changelog for 2.1 compared to 2.0.1 *****
 
 - Support credit note and discounts (relative and absolute) on
-  commercial proposal and invoices.
+  commercial proposal, orders and invoices.
 - Added an export tool to export main dolibarr data.
 - Added product categories management with a categorie tree.
 - Support description in several languages for products.
 - Graphical enhancements (picto to describe all status).
-- New permissions (can restrict access for a commercial user to elements
-  of its companies only).
+- Addes more permissions (ie: can restrict access for a commercial user
+  to elements of its companies only).
 - Little enhancements to OSCommerce module.
 - Building a PDF document for invoices works like other modules. You
   can change model just before generating the PDF.
@@ -21,8 +21,11 @@ English Dolibarr changelog
 - Add Dolibarr triggers support on users creation/change.
 - Add Dolibarr triggers support on payments.
 - Support optionnal new javascript date popup selector.
-
-- Code cleaner. Remove unused code.
+- Added new Dolibarr triggers.
+- Support for several RSS boxes in external RSS module.
+- Can attach documents on Action, Orders, Invoices, Commercial proposals.
+- Can attach contact on proposals, orders, contracts, invoices.
+- Code cleaner. Remove unused or duplicate code.
 - Works even on "UTF8 by default" systems (Mysql, Linux...)
 - Better compatibility with different PHP version or setup.
 - Lot of fixes after 2.0 release not fixed in 2.0.1.
