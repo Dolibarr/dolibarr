@@ -440,47 +440,7 @@ class AuthLdap {
         // Return an array containing the attributes.
         return $values;
     }
-    
-    /**
-     * 2.4.1.1 : Returns an array containing a set of attribute values.
-     * For most searches, this will just be one row, but sometimes multiple
-     * results are returned (eg:- multiple email addresses)
-     */
-    function getAttributeWithSID ( $SID,$attribute) {
-       
-        // builds the appropriate dn, based on whether $this->people and/or $this->group is set
-        //$checkDn = $this->setDn( true);
-        $checkDn = $this->people;
-        $results[0] = $attribute;
 
-        // if the directory is AD, then bind first with the search user first
-        if ($this->serverType == "activedirectory") {
-            $this->authBind($this->searchUser, $this->searchPassword);
-        }
-        $filtre = 'objectsid='.$SID;
-        // We need to search for this user in order to get their entry.
-        $this->result = @ldap_search( $this->connection,$checkDn,$filtre,$results);
-        $info = ldap_get_entries( $this->connection, $this->result);
-
-        // Only one entry should ever be returned (no user will have the same sid)
-        $entry = ldap_first_entry( $this->connection, $this->result);
-
-        if ( !$entry) {
-            $this->ldapErrorCode = -1;
-            $this->ldapErrorText = "Couldn't find user";
-            return false;  // Couldn't find the user...
-        }
-
-        // Get all the member DNs
-        if ( !$values = @ldap_get_values( $this->connection, $entry, $attribute)) {
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
-            return false; // No matching attributes
-        }
-        
-        // Return an array containing the attributes.
-        return $values;
-    }
 
     /**
      * 2.4.2 : Allows an attribute value to be set.
@@ -653,6 +613,38 @@ class AuthLdap {
         	return $result;
         }
       }
+      
+   /**
+     * \brief récupère les attributs de l'utilisateur
+     * \param $user : utilisateur ldap
+     */
+    function fetch( $user) {
+    	global $conf;
+
+        // Perform the search and get the entry handles
+        
+        // if the directory is AD, then bind first with the search user first
+        if ($this->serverType == "activedirectory") {
+            $this->authBind($this->searchUser, $this->searchPassword);
+        }
+        $checkDn = $this->people;
+        $filter = '('.$conf->global->LDAP_FILTER_CONNECTION.'('.$this->getUserIdentifier().'='.$user.'))';
+
+        $this->result = @ldap_search( $this->connection, $checkDn, $filter);
+        
+        $result = @ldap_get_entries( $this->connection, $this->result);
+
+        if (!$result)
+        {
+        	$this->ldapErrorCode = ldap_errno( $this->connection);
+        	$this->ldapErrorText = ldap_error( $this->connection);
+        }
+        else
+        {
+        	//ldap_free_result($this->result);
+        	return $result;
+        }
+      }
 
 
     // 2.6 helper methods
@@ -686,10 +678,11 @@ class AuthLdap {
      * Returns the correct user identifier to use, based on the ldap server type
      */
     function getUserIdentifier() {
+    	global $conf;
         if ($this->serverType == "activedirectory") {
-            return "samaccountname";
+            return $conf->global->LDAP_FIELD_LOGIN_SAMBA;
         } else {
-            return "uid";
+            return $conf->global->LDAP_FIELD_LOGIN;
         }
     }
     
@@ -743,7 +736,7 @@ class AuthLdap {
     while (list($flag, $val) = each($flags)) {
         if ($uacf >= $val) {
             $uacf -= $val;
-            $retval[] = $flag;
+            $retval[$val] = $flag;
         }
     }
     

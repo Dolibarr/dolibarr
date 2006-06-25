@@ -58,6 +58,7 @@ if ($user->id <> $_GET["id"] && ! $canreadperms)
 
 $langs->load("users");
 $langs->load("companies");
+$langs->load("ldap");
 
 
 $form = new Form($db);
@@ -119,11 +120,12 @@ if ($_GET["action"] == 'reactivate' && $canadduser)
         	$filter = $conf->global->LDAP_FIELD_NAME.'=*';
         	$user_sid = $reactiveuser->ldap_sid;
         	$entries = $ldap->search($checkDn, $filter);
+        	$identifier = $ldap->getUserIdentifier();
         	
         	for ($i = 0; $i < $entries["count"] ; $i++) {
-        		$objectsid = $ldap->getObjectSid($entries[$i]["samaccountname"][0]);
+        		$objectsid = $ldap->getObjectSid($entries[$i][$identifier][0]);
         		 	if ($user_sid == $objectsid){
-        		 		$reactiveuser->login = $entries[$i]["samaccountname"][0];
+        		 		$reactiveuser->login = $entries[$i][$identifier][0];
         		 	}
         	}
         	
@@ -587,9 +589,36 @@ else
 
     if ($_GET["id"])
     {
-		$fuser = new User($db, $_GET["id"]);
-		$fuser->fetch();
-		
+    	$fuser = new User($db, $_GET["id"]);
+    	$fuser->fetch();
+    	
+    	// Connexion ldap
+    	if ($conf->ldap->enabled && $fuser->ldap_sid)
+    	{
+    		
+    		$ldap = New AuthLdap();
+    		if ($ldap->connect())
+    		{
+    			$entries = $ldap->fetch($fuser->login);
+    			if (!$entries)
+    			{
+    				$message .= $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
+    			}
+    		}
+    		//On vérifie les options du compte
+    		$control = $ldap->parseUACF(utf8_decode($entries[0]["useraccountcontrol"][0]));
+    		foreach ($control as $key => $statut)
+    		{
+    			if ($key == 65536)
+    			{
+    				$passDoNotExpire = $langs->trans("LdapUacf_".$statut);
+    			}
+    		}
+    		if (utf8_decode($entries[0]["pwdlastset"][0]) == 0 && utf8_decode($entries[0]["pwdlastset"][0]) != "")
+    		{
+    			$userChangePassNextLogon = $langs->trans("UserMustChangePassNextLogon");
+    		}
+    	}
 
         /*
          * Affichage onglets
@@ -711,7 +740,14 @@ else
             print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
             if ($fuser->ldap_sid)
             {
-            	print '<td>Mot de passe du domaine</td>';
+            	if ($passDoNotExpire)
+            	{
+            		print '<td>'.$passDoNotExpire.'</td>';
+            	}
+            	else if($userChangePassNextLogon)
+            	{
+            		print '<td>'.$userChangePassNextLogon.'</td>';
+            	}
             }
             else
             {
@@ -1148,6 +1184,7 @@ else
         }
 
         print '</div>';
+        $ldap->close;
     }
 }
 
