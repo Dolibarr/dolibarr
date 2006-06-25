@@ -177,6 +177,10 @@ class Conf
 		// Module commercial
 		$this->commercial->enabled=defined("MAIN_MODULE_COMMERCIAL")?MAIN_MODULE_COMMERCIAL:0;
 		$this->commercial->dir_output=DOL_DATA_ROOT."/rapport";
+		// Module charges sociales
+		$this->charges->enabled=1;
+		$this->charges->dir_output=DOL_DATA_ROOT."/socialcontrib";
+		$this->charges->dir_images=DOL_DATA_ROOT."/socialcontrib/images";
 		// Module comptaexpert
 		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
 		$this->comptaexpert->dir_output=DOL_DATA_ROOT."/comptaexpert";

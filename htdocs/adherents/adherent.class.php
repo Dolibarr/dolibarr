@@ -919,7 +919,7 @@ class Adherent
 	  defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
 	  ){
 	$mdpass=md5($this->pass);
-	$htpass=crypt($this->pass,initialiser_sel());
+	$htpass=crypt($this->pass,makesalt());
 	$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
 	//      $mydb=new Db('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
       $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);

@@ -92,7 +92,7 @@ class MailingTargets
      */
     function formFilter()
     {
-        return '&nbsp;';
+        return '';
     }
     
     /**

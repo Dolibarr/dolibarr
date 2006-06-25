@@ -959,6 +959,23 @@ function img_allow($allow)
     }
 }
 
+
+/**
+        \brief      Affiche info admin
+        \param      text		Texte info
+*/
+function info_admin($texte)
+{
+	global $conf,$langs;
+	$s='<div class="info">';
+	$s.=img_picto($langs->trans("InfoAdmin"),'star');
+	$s.=' ';
+	$s.=$texte;
+	$s.='</div>';
+	return $s;
+}
+
+
 /**
 		\brief      Affiche formulaire de login
 		\remarks    il faut changer le code html dans cette fonction pour changer le design
@@ -1792,13 +1809,25 @@ function creer_pass_aleatoire($longueur = 8, $sel = "") {
 }
 
 /**
-		\brief      Fonction pour initialiser sel
-		\remarks    la fonction a été prise sur http://www.uzine.net/spip
+		\brief      Fonction pour initialiser un salt pour la fonction crypt
+		\param		$type		2=>renvoi un salt pour cryptage DES
+		                        8=>renvoi un salt pour cryptage MD5
+		                        0=>renvoi un salt pour cryptage par defaut
+		\return		string		Chaine salt
 */
-function initialiser_sel() {
-  global $htsalt;
-
-  $htsalt = '$1$'.creer_pass_aleatoire();
+function makesalt($type=CRYPT_SALT_LENGTH)
+{
+	switch($type)
+	{
+		case 8:
+			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
+		case 2:
+		default: 	// by default, fall back on Standard DES (should work everywhere)
+			$saltlen=2; $saltprefix=''; $saltsuffix=''; break;
+	}
+	$salt='';
+	while(strlen($salt) < $saltlen) $salt.=chr(rand(64,126));
+	return $saltprefix.$salt.$saltsuffix;
 }
 
 /**

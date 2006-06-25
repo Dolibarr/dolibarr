@@ -49,9 +49,10 @@ NoTargetYet=No recipients defined yet
 AddRecipients=Add recipients
 RemoveRecipient=Remove recipient
 CommonSubstitutions=Common substitutions
+YouCanAddYourOwnPredefindedListHere=You can add your own mails selector module here. For this take a look at the file htdocs/includes/mailings/README.
 
 # Libelle des modules de liste de destinataires mailing
-MailingModuleDescContactCompanies=Unique contacts with emails, in all companies
+MailingModuleDescContactCompanies=Unique contacts of all third parties
 MailingModuleDescDolibarrUsers=All Dolibarr users with emails
 MailingModuleDescFundationMembers=Fundation members with emails
 

@@ -784,6 +784,13 @@ div.error {
   border: 1px solid #8C9CAB;
 }
 
+div.info {
+  color: #999999;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  margin: 0.5em 0em 0.5em 0em;
+  border: 1px solid #ACACAB;
+}
+
 
 /*
  *   Liens Payes/Non payes
