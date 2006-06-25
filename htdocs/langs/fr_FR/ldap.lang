@@ -1,0 +1,4 @@
+# Dolibarr language file - fr_FR - ldap
+LdapUacf_NORMAL_ACCOUNT=Compte Utilisateur
+LdapUacf_DONT_EXPIRE_PASSWORD=Le mot de passe n'expire jamais
+LdapUacf_ACCOUNTDISABLE=Le compte est désactivé sur le domaine

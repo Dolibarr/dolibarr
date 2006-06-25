@@ -109,24 +109,34 @@ if ($_GET["action"] == 'reactivate' && $canadduser)
 {
     if ($_GET["id"] <> $user->id)
     {
-        $reactiveuser = new User($db, $_GET["id"]);
+        $userid = $_GET["id"];
+        $reactiveuser = new User($db, $userid);
         $reactiveuser->fetch();
         $ldap = New AuthLdap();
         if ($ldap->connect())
         {
-        	$login = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
-        	$justthese = array($login);
-        	$ldap_sid = $reactiveuser->ldap_sid;
-        	$result = $ldap->getAttributeWithSID($ldap_sid, $justthese);
-        	$message = '<div class="error">'.$ldap_sid.'</div><br>';
-        	$message .= '<div class="error">'.$ldap->ldapErrorCode." - ".$ldap->ldapErrorText.'</div>';
-          //Header("Location: index.php");
-          //exit;
+        	$checkDn = $conf->global->LDAP_USER_DN;
+        	$filter = $conf->global->LDAP_FIELD_NAME.'=*';
+        	$user_sid = $reactiveuser->ldap_sid;
+        	$entries = $ldap->search($checkDn, $filter);
+        	
+        	for ($i = 0; $i < $entries["count"] ; $i++) {
+        		$objectsid = $ldap->getObjectSid($entries[$i]["samaccountname"][0]);
+        		 	if ($user_sid == $objectsid){
+        		 		$reactiveuser->login = $entries[$i]["samaccountname"][0];
+        		 	}
+        	}
+        	
+        	$reactiveuser->update();
+        	
+          Header("Location: fiche.php?id=$userid");
+          exit;
         }
         else
         {
         	print $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
         }
+        $ldap->close();
     }
 }
 
@@ -402,7 +412,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
 					  	$ldap_fax    = utf8_decode($attribute[$fax]?$attribute[$fax]:'');
 					  	$ldap_mobile = utf8_decode($attribute[$mobile]?$attribute[$mobile]:'');
 					  	$ldap_mail   = utf8_decode($attribute[$mail]?$attribute[$mail]:'');
-              $ldap_SID    = bin2hex($attribute[$SID]);
+              $ldap_SID    = $attribute[$SID];
+              //$ldap_SID    = bin2hex($attribute[$SID]);
           }
 				}
 			}

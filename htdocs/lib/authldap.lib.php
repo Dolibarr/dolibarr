@@ -135,6 +135,7 @@ class AuthLdap {
           if ( $this->connection) {
           	$this->setVersion();
           	if ($this->serverType == "activedirectory") {
+          		$this->setReferrals();
           		return true;
           	} else {
                     // Connected, now try binding anonymously
@@ -222,13 +223,20 @@ class AuthLdap {
     
     /**
 		 * \brief changement de la version du serveur ldap.
-		 * \param	ds
-		 * \param	version
 		 * \return	version
      */
      function setVersion() {
      	$ldapsetversion = ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
      	return $ldapsetversion;
+    }
+    
+    /**
+		 * \brief changement du referrals.
+		 * \return	referrals
+     */
+     function setReferrals() {
+     	$ldapreferrals = ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
+     	return $ldapreferrals;
     }
 
     // 2.2 Password methods ------------------------------------------------------
@@ -403,15 +411,14 @@ class AuthLdap {
      */
     function getAttribute ( $uname,$attribute) {
     	
-        global $conf;
-       
         // builds the appropriate dn, based on whether $this->people and/or $this->group is set
         //$checkDn = $this->setDn( true);
         $checkDn = $this->people;
         $results[0] = $attribute;
+        $filtre = $this->getUserIdentifier()."=$uname";
 
         // We need to search for this user in order to get their entry.
-        $this->result = @ldap_search( $this->connection,$checkDn,$this->getUserIdentifier()."=$uname",$results);
+        $this->result = @ldap_search( $this->connection,$checkDn,$filtre,$results);
         $info = ldap_get_entries( $this->connection, $this->result);
 
         // Only one entry should ever be returned (no user will have the same uid)
@@ -450,9 +457,9 @@ class AuthLdap {
         if ($this->serverType == "activedirectory") {
             $this->authBind($this->searchUser, $this->searchPassword);
         }
-        
+        $filtre = 'objectsid='.$SID;
         // We need to search for this user in order to get their entry.
-        $this->result = @ldap_search( $this->connection,$checkDn,"objectsid=$SID",$results);
+        $this->result = @ldap_search( $this->connection,$checkDn,$filtre,$results);
         $info = ldap_get_entries( $this->connection, $this->result);
 
         // Only one entry should ever be returned (no user will have the same sid)
@@ -548,7 +555,8 @@ class AuthLdap {
                 else if (strtolower($attributeArray[$j]) == "objectsid")
                 {
                 	  	$objectsid = $this->getObjectSid($uname);
-                	  	$userslist["$uname"]["$attributeArray[$j]"]    = $objectsid[0];
+                	  	$userslist["$uname"]["$attributeArray[$j]"]    = $objectsid;
+                	  	//$userslist["$uname"]["$attributeArray[$j]"]    = $objectsid[0];
                 }
                 else
                 {
@@ -585,9 +593,66 @@ class AuthLdap {
   		
     	$entry = ldap_first_entry($this->connection, $ldapSearchResult);
     	$ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid");
-    		
+    	$SIDText = $this->binSIDtoText($ldapBinary[0]);
+    	return $SIDText;
     	return $ldapBinary;
     }
+    
+    /**
+     *  Converts a little-endian hex-number to one, that 'hexdec' can convert
+     */
+    function littleEndian($hex) {
+    	for ($x=strlen($hex)-2; $x >= 0; $x=$x-2) {
+    		$result .= substr($hex,$x,2);
+    	}
+    	return $result;
+    }
+    
+    /**
+     * Returns the textual SID
+     */
+     function binSIDtoText($binsid) {
+     	$hex_sid=bin2hex($binsid);
+     	$rev = hexdec(substr($hex_sid,0,2));          // Get revision-part of SID
+     	$subcount = hexdec(substr($hex_sid,2,2));    // Get count of sub-auth entries
+     	$auth = hexdec(substr($hex_sid,4,12));      // SECURITY_NT_AUTHORITY
+     	$result = "$rev-$auth";
+     	for ($x=0;$x < $subcount; $x++) {
+     		$subauth[$x] = hexdec($this->littleEndian(substr($hex_sid,16+($x*8),8)));  // get all SECURITY_NT_AUTHORITY
+     		$result .= "-".$subauth[$x];
+     	}
+     	return $result;
+    }
+    
+    /**
+     * \brief fonction de recherche avec filtre
+     * \param dn de recherche
+     * \param filtre de recherche (ex: sn=nom_personne)
+     */
+    function search( $checkDn, $filter) {
+
+        // Perform the search and get the entry handles
+        
+        // if the directory is AD, then bind first with the search user first
+        if ($this->serverType == "activedirectory") {
+            $this->authBind($this->searchUser, $this->searchPassword);
+        }
+        
+        $this->result = @ldap_search( $this->connection, $checkDn, $filter);
+        
+        $result = @ldap_get_entries( $this->connection, $this->result);
+
+        if (!$result)
+        {
+        	$this->ldapErrorCode = ldap_errno( $this->connection);
+        	$this->ldapErrorText = ldap_error( $this->connection);
+        }
+        else
+        {
+        	ldap_free_result($this->result);
+        	return $result;
+        }
+      }
 
 
     // 2.6 helper methods
@@ -644,6 +709,96 @@ class AuthLdap {
     	$stu = ereg_replace("ä","a",$stu);
     	return $stu;
     }
+    
+   /**
+		* \brief UserAccountControl Flgs to more human understandable form...
+		*
+		*/
+    function parseUACF($uacf) {
+    //All flags array
+    $flags = array( "TRUSTED_TO_AUTH_FOR_DELEGATION"  =>    16777216,
+                    "PASSWORD_EXPIRED"                =>    8388608,
+                    "DONT_REQ_PREAUTH"                =>    4194304,
+                    "USE_DES_KEY_ONLY"                =>    2097152,
+                    "NOT_DELEGATED"                   =>    1048576,
+                    "TRUSTED_FOR_DELEGATION"          =>    524288,
+                    "SMARTCARD_REQUIRED"              =>    262144,
+                    "MNS_LOGON_ACCOUNT"               =>    131072,
+                    "DONT_EXPIRE_PASSWORD"            =>    65536,
+                    "SERVER_TRUST_ACCOUNT"            =>    8192,
+                    "WORKSTATION_TRUST_ACCOUNT"       =>    4096,
+                    "INTERDOMAIN_TRUST_ACCOUNT"       =>    2048,
+                    "NORMAL_ACCOUNT"                  =>    512,
+                    "TEMP_DUPLICATE_ACCOUNT"          =>    256,
+                    "ENCRYPTED_TEXT_PWD_ALLOWED"      =>    128,
+                    "PASSWD_CANT_CHANGE"              =>    64,
+                    "PASSWD_NOTREQD"                  =>    32,
+                    "LOCKOUT"                         =>    16,
+                    "HOMEDIR_REQUIRED"                =>    8,
+                    "ACCOUNTDISABLE"                  =>    2,
+                    "SCRIPT"                          =>    1);
+
+    //Parse flags to text
+    $retval = array();
+    while (list($flag, $val) = each($flags)) {
+        if ($uacf >= $val) {
+            $uacf -= $val;
+            $retval[] = $flag;
+        }
+    }
+    
+    //Return human friendly flags
+    return($retval);
+  }
+  
+   /**
+		* \brief SamAccountType value to text
+		*
+		*/
+		function parseSAT($samtype) {
+    $stypes = array(    805306368    =>    "NORMAL_ACCOUNT",
+                        805306369    =>    "WORKSTATION_TRUST",
+                        805306370    =>    "INTERDOMAIN_TRUST",
+                        268435456    =>    "SECURITY_GLOBAL_GROUP",
+                        268435457    =>    "DISTRIBUTION_GROUP",
+                        536870912    =>    "SECURITY_LOCAL_GROUP",
+                        536870913    =>    "DISTRIBUTION_LOCAL_GROUP");
+    
+    $retval = "";
+    while (list($sat, $val) = each($stypes)) {
+        if ($samtype == $sat) {
+            $retval = $val;
+            break;
+        }
+    }
+    if (empty($retval)) $retval = "UNKNOWN_TYPE_" . $samtype;
+    
+    return($retval);
+  }
+  
+  /**
+		* \Parse GroupType value to text
+		*
+		*/
+		function parseGT($grouptype) {
+    $gtypes = array(    -2147483643    =>    "SECURITY_BUILTIN_LOCAL_GROUP",
+                        -2147483644    =>    "SECURITY_DOMAIN_LOCAL_GROUP",
+                        -2147483646    =>    "SECURITY_GLOBAL_GROUP",
+                        2              =>    "DISTRIBUTION_GLOBAL_GROUP",
+                        4              =>    "DISTRIBUTION_DOMAIN_LOCAL_GROUP",
+                        8              =>    "DISTRIBUTION_UNIVERSAL_GROUP");
+
+    $retval = "";
+    while (list($gt, $val) = each($gtypes)) {
+        if ($grouptype == $gt) {
+            $retval = $val;
+            break;
+        }
+    }
+    if (empty($retval)) $retval = "UNKNOWN_TYPE_" . $grouptype;
+
+    return($retval);
+  }
     
 } // End of class
 ?>
