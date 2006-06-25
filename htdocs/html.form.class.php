@@ -1107,7 +1107,7 @@ class Form
         $filterarray=array();
 		if ($filtertype == 'CRDT')  	$filterarray=array(0,2);
 		elseif ($filtertype == 'DBIT') 	$filterarray=array(1,2);
-        elseif ($filtertype != '-1')   	$filterarray=split(',',$filtertype);
+        elseif ($filtertype != '' && $filtertype != '-1') $filterarray=split(',',$filtertype);
         
         $this->load_cache_types_paiements();
 
