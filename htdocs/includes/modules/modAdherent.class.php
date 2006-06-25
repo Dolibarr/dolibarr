@@ -162,7 +162,7 @@ class modAdherent extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 75;
-        $this->rights[$r][1] = 'Configurer les types et caractéristiques des adherents';
+        $this->rights[$r][1] = 'Configurer les types et attributs des adherents';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'configurer';
