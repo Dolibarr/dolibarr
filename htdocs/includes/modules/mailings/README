@@ -6,9 +6,9 @@ to add you own email predefined selector:
 ***** STEP 1 *****
 
 Copy file
-htdocs/includes/mailings/example.modules.php
+htdocs/includes/modules/mailings/example.modules.php
 into
-htdocs/includes/mailings/myselector.modules.php
+htdocs/includes/modules/mailings/myselector.modules.php
 
 You can choose value of your choice instead of "myselector" in name
 of new file.
@@ -43,5 +43,5 @@ $target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n')
 ***** STEP 3 *****
 
 Once this file has been edited, you can go to the Dolibarr emailing feature,
-you will see a new line selector in the "target" editor of an emailing.
+you will see a new line selector in the "target" editor of emailings.
 
