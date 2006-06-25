@@ -182,12 +182,13 @@ else
     print "</tr>\n";
     
     // Calcul du solde de départ du relevé
-    $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank";
+    $sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE num_releve < ".$num." AND fk_account = ".$acct->id;
     $resql=$db->query($sql);
     if ($resql)
     {
-        $total = $db->result(0, 0);
+        $obj=$db->fetch_object($resql);
+        $total = $obj->amount;
         $db->free($resql);
     }
     
