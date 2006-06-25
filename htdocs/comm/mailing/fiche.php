@@ -46,7 +46,7 @@ if ($_GET["action"] == 'sendall')
     // Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
     // on affiche donc juste un message
     $message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-    $message.="php ./scripts/mailing-send.php ".$_GET["id"];
+    $message.='<br><textarea cols="50" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
     $_GET["action"]='';
 }
 
