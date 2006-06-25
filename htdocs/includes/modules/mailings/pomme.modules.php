@@ -58,30 +58,42 @@ class mailing_pomme extends MailingTargets
     var $picto='user';
 
     var $db;
-    var $statssql=array();
 
 
     function mailing_pomme($DB)
     {
+        $this->db=$DB;
+    }
+
+
+	function getSqlArrayForStats()
+	{
         global $langs;
         $langs->load("users");
-        
-        $this->db=$DB;
 
-        // Liste des tableaux des stats espace mailing
+	    $statssql=array();
         $sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label, count(distinct(email)) as nb FROM ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
-        $this->statssql[0]=$sql;
-        
-    }
+        $statssql[0]=$sql;
+
+		return $statssql;
+	}
+
     
+    /*
+     *		\brief		Return here number of distinct emails returned by your selector.
+     *					For example if this selector is used to extract 500 different
+     *					emails from a text file, this function must return 500.
+     *		\return		int
+     */
     function getNbOfRecipients()
     {
-        // La requete doit retourner: nb
         $sql  = "SELECT count(distinct(u.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
 
+        // La requete doit retourner un champ "nb" pour etre comprise
+        // par parent::getNbOfRecipients
         return parent::getNbOfRecipients($sql); 
     }
 
@@ -104,13 +116,52 @@ class mailing_pomme extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
+        $cibles = array();
+
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT u.rowid as id, u.email as email, null as fk_contact, u.name as name, u.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
         $sql .= " ORDER BY u.email";
 
-        return parent::add_to_target($mailing_id, $sql);
+        // Stocke destinataires dans cibles
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            $j = 0;
+
+            dolibarr_syslog("pomme.modules.php: mailing $num cibles trouvées");
+
+            $old = '';
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                if ($old <> $obj->email)
+                {
+                    $cibles[$j] = array(
+                    			'email' => $obj->email,
+                    			'fk_contact' => $obj->fk_contact,
+                    			'name' => $obj->name,
+                    			'firstname' => $obj->firstname,
+                    			'url' => $this->url($obj->id)
+                    			);
+                    $old = $obj->email;
+                    $j++;
+                }
+
+                $i++;
+            }
+        }
+        else
+        {
+            dolibarr_syslog($this->db->error());
+            $this->error=$this->db->error();
+            return -1;
+        }
+
+        return parent::add_to_target($mailing_id, $cibles);
     }
 
 }

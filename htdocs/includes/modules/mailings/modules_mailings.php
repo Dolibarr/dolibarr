@@ -132,41 +132,8 @@ class MailingTargets
      *    \param      sql           Requete sql de selection des destinataires
      *    \return     int           < 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id, $sql)
+    function add_to_target($mailing_id, $cibles)
     {
-        $cibles = array();
-
-        // Stocke destinataires dans cibles
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            $j = 0;
-
-            dolibarr_syslog("mailing-prepare: mailing $num cibles trouvées");
-
-            $old = '';
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-                if ($old <> $obj->email)
-                {
-                    $cibles[$j] = array($obj->email,$obj->fk_contact,$obj->name,$obj->firstname,$this->url($obj->id));
-                    $old = $obj->email;
-                    $j++;
-                }
-
-                $i++;
-            }
-        }
-        else
-        {
-            dolibarr_syslog($this->db->error());
-            $this->error=$this->db->error();
-            return -1;
-        }
-
         $this->db->begin();
         
         // Insère destinataires de cibles dans table
@@ -176,14 +143,14 @@ class MailingTargets
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
             $sql .= " (fk_mailing, ";
-            if ($cibles[$i][1]) $sql .= "fk_contact, ";
+            if ($cibles[$i]['fk_contact']) $sql .= "fk_contact, ";
             $sql .= "nom, prenom, email, url)";
             $sql .= " VALUES (".$mailing_id.",";
-            if ($cibles[$i][1]) $sql .=  $cibles[$i][1] .",";
-            $sql .=  "'".addslashes($cibles[$i][2])."',";
-            $sql .=  "'".addslashes($cibles[$i][3])."',";
-            $sql .=  "'".addslashes($cibles[$i][0])."',";
-            $sql .=  "'".addslashes($cibles[$i][4])."')";
+            if ($cibles[$i]['fk_contact']) $sql .=  $cibles[$i]['fk_contact'] .",";
+            $sql .=  "'".addslashes($cibles[$i]['name'])."',";
+            $sql .=  "'".addslashes($cibles[$i]['firstname'])."',";
+            $sql .=  "'".addslashes($cibles[$i]['email'])."',";
+            $sql .=  "'".addslashes($cibles[$i]['url'])."')";
 
             $result=$this->db->query($sql);
             if ($result)

@@ -281,7 +281,68 @@ class Mailing
     $this->db->query($sql);
     return 1;
   }
-   
+ 
+ 
+	/**
+	 *    \brief      Retourne le libellé du statut d'un mailing (brouillon, validée, ...)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string        	Libellé du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('mails');
+
+		if ($mode == 0)
+		{
+			return $this->statuts[$statut];
+		}
+		if ($mode == 1)
+		{
+			return $this->statuts[$statut];
+		}
+		if ($mode == 2)
+		{
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$this->statuts[$statut];
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$this->statuts[$statut];
+			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$this->statuts[$statut];
+			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$this->statuts[$statut];
+		}
+		if ($mode == 3)
+		{
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
+			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$this->statuts[$statut];
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$this->statuts[$statut];
+			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$this->statuts[$statut];
+			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$this->statuts[$statut];
+		}
+		if ($mode == 5)
+		{
+			if ($statut == 0) return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut == 1) return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
+			if ($statut == 2) return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut == 3) return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+		}
+
+	}
+	   
 }
 
 ?>

@@ -237,7 +237,9 @@ if ($mil->fetch($_GET["id"]) == 0)
                         print '<td align="center">'.($obj->getNbOfRecipients()).'</td>';
 
                         print '<td align="center">';
-                        print $obj->formFilter();
+                        $filter=$obj->formFilter();
+                        if ($filter) print $filter;
+                        else print $langs->trans("None");
                         print '</td>';
         
                         print '<td align="center">';

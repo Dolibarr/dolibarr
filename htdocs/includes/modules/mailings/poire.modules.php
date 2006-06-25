@@ -53,39 +53,51 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 class mailing_poire extends MailingTargets
 {
     var $name='ContactCompanies';                       // Identifiant du module mailing
-    var $desc='Contacts avec emails des sociétés';      // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Contacts des sociétés';      			// Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
     var $require_admin=0;                               // Module mailing actif pour user admin ou non
     var $picto='contact';
     
     var $db;
-    var $statssql=array();
     
 
     function mailing_poire($DB)
     {
+        $this->db=$DB;
+    }
+
+
+	function getSqlArrayForStats()
+	{
         global $langs;
         $langs->load("commercial");
 
-        $this->db=$DB;
+	    $statssql=array();
+        $statssql[0]="SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 1 AND c.email != ''";
 
-        // Liste des tableaux des stats espace mailing
-        //$this->statssql[0]="SELECT '".$langs->trans("Customers")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE client = 1";
-        $this->statssql[0]="SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 1 AND c.email != ''";
-    }
+		return $statssql;
+	}
+
     
+    /*
+     *		\brief		Return here number of distinct emails returned by your selector.
+     *					For example if this selector is used to extract 500 different
+     *					emails from a text file, this function must return 500.
+     *		\return		int
+     */
     function getNbOfRecipients()
     {
-        // La requete doit retourner: nb
         $sql  = "SELECT count(distinct(c.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE s.idp = c.fk_soc";
-        $sql .= " AND s.client = 1";
         $sql .= " AND c.email != ''";
 
+        // La requete doit retourner un champ "nb" pour etre comprise
+        // par parent::getNbOfRecipients
         return parent::getNbOfRecipients($sql); 
     }
+    
     
     /**
      *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
@@ -102,9 +114,10 @@ class mailing_poire extends MailingTargets
         $s='';
         $s.='<select name="filter" class="flat">';
         $s.='<option value="all">'.$langs->trans("ContactsAllShort").'</option>';
-        $s.='<option value="prospects">'.$langs->trans("Prospects").'</option>';
-        $s.='<option value="customers">'.$langs->trans("Customers").'</option>';
-        $s.='<option value="suppliers">'.$langs->trans("Suppliers").'</option>';
+        $s.='<option value="prospects">'.$langs->trans("ThirdPartyProspects").'</option>';
+        $s.='<option value="customers">'.$langs->trans("ThirdPartyCustomers").'</option>';
+        //$s.='<option value="customersidprof">'.$langs->trans("ThirdPartyCustomersWithIdProf12",$langs->trans("ProfId1"),$langs->trans("ProfId2")).'</option>';
+        $s.='<option value="suppliers">'.$langs->trans("ThirdPartySuppliers").'</option>';
         $s.='</select>';
         return $s;
     }
@@ -124,10 +137,12 @@ class mailing_poire extends MailingTargets
      *    \brief      Ajoute destinataires dans table des cibles
      *    \param      mailing_id    Id du mailing concerné
      *    \param      filterarray   Requete sql de selection des destinataires
-     *    \return     int           < 0 si erreur, nb ajout si ok
+     *    \return     int           <0 si erreur, nb ajout si ok
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
+        $cibles = array();
+
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT c.idp as id, c.email as email, c.idp as fk_contact, c.name as name, c.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
@@ -142,7 +157,45 @@ class mailing_poire extends MailingTargets
         }
         $sql .= " ORDER BY c.email";
 
-        return parent::add_to_target($mailing_id, $sql);
+
+        // Stocke destinataires dans cibles
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            $j = 0;
+
+            dolibarr_syslog("poire.modules.php: mailing $num cibles trouvées");
+
+            $old = '';
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                if ($old <> $obj->email)
+                {
+                    $cibles[$j] = array(
+                    		'email' => $obj->email,
+                    		'fk_contact' => $obj->fk_contact,
+                    		'name' => $obj->name,
+                    		'firstname' => $obj->firstname,
+                    		'url' => $this->url($obj->id)
+                    		);
+                    $old = $obj->email;
+                    $j++;
+                }
+
+                $i++;
+            }
+        }
+        else
+        {
+            dolibarr_syslog($this->db->error());
+            $this->error=$this->db->error();
+            return -1;
+        }
+
+        return parent::add_to_target($mailing_id, $cibles);
     }
 
 }

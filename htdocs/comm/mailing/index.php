@@ -81,6 +81,7 @@ while (($file = readdir($handle))!==false)
         if (eregi("(.*)\.(.*)\.(.*)",$file,$reg))
         {
             $modulename=$reg[1];
+   			if ($modulename == 'example') continue;
 
             // Chargement de la classe
             $file = $dir."/".$modulename.".modules.php";
@@ -104,7 +105,7 @@ while (($file = readdir($handle))!==false)
             {
                 $var = !$var;
 
-                foreach ($mailmodule->statssql as $sql) 
+                foreach ($mailmodule->getSqlArrayForStats() as $sql) 
                 {
                     print '<tr '.$bc[$var].'>';
         
@@ -157,7 +158,7 @@ if ($result)
   print '<tr class="liste_titre">';
   print '<td colspan="2">'.$langs->trans("LastMailings",10).'</td>';
   print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
-  print '<td align="center">'.$langs->trans("Status").'</td></tr>';
+  print '<td align="right">'.$langs->trans("Status").'</td></tr>';
 
   $num = $db->num_rows($result);
   if ($num > 0)
@@ -174,8 +175,8 @@ if ($result)
 	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
 	  print '<td>'.$obj->titre.'</td>';
 	  print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
-	  $mail=new Mailing($db);
-	  print '<td align="center">'.$mail->statuts[$obj->statut].'</td>';
+	  $mailstatic=new Mailing($db);
+	  print '<td align="right">'.$mailstatic->LibStatut($obj->statut,5).'</td>';
       print '</tr>';
 	  $i++;
 	}
