@@ -159,8 +159,8 @@ if ($mil->fetch($_GET["id"]) == 0)
     print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
+    print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>').'</td></tr>';
-    print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->statuts[$mil->statut].'</td></tr>';
     print '</table>';
     
     print "</div>";
@@ -196,7 +196,8 @@ if ($mil->fetch($_GET["id"]) == 0)
             {
                 if (eregi("(.*)\.(.*)\.(.*)",$file,$reg)) {
                     $modulename=$reg[1];
-        
+        			if ($modulename == 'example') continue;
+        			
                     // Chargement de la classe
                     $file = $dir."/".$modulename.".modules.php";
                     $classname = "mailing_".$modulename;
@@ -224,6 +225,7 @@ if ($mil->fetch($_GET["id"]) == 0)
                         if ($mil->statut == 0) print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST">';
                         
                         print '<td>';
+                        if (! $obj->picto) $obj->picto='generic';
                         print img_object('',$obj->picto).' '.$obj->getDesc();
                         print '</td>';
             
@@ -259,7 +261,12 @@ if ($mil->fetch($_GET["id"]) == 0)
         }
         closedir($handle);
 
-        print '</table><br>';
+        print '</table>';
+        if ($user->admin)
+        {
+        	print info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"));
+        }
+		print '<br>';
     }
     
 
