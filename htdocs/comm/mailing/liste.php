@@ -78,8 +78,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Title"),"liste.php","m.titre",$addu,"","",$sortfield);
   print_liste_field_titre($langs->trans("DateCreation"),"liste.php","m.date_creat",$addu,"",'align="center"',$sortfield);
   print_liste_field_titre($langs->trans("NbOfEMails"),"liste.php","m.nbemail",$addu,"",'align="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","m.statut",$addu,"",'align="center"',$sortfield);
-  print '<td class="liste_titre">&nbsp;</td>';
+  print_liste_field_titre($langs->trans("Status"),"liste.php","m.statut",$addu,"",'align="right"',$sortfield);
   print "</tr>\n";
 
   print '<form method="get" action="clients.php">';
@@ -91,8 +90,7 @@ if ($result)
   print '</td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+  print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print "</td>";
   print "</tr>\n";
   print '</form>';
@@ -113,8 +111,7 @@ if ($result)
       print '<td>'.$obj->titre.'</td>';
       print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
       print '<td align="center">'.$obj->nbemail.'</td>';
-      print '<td align="center">'.$email->statuts[$obj->statut].($obj->statut==2?' '.img_warning():'').'</td>';
-      print '<td align="center">&nbsp;</td>';
+      print '<td align="right">'.$email->LibStatut($obj->statut,5).'</td>';
       print "</tr>\n";
       $i++;
     }
