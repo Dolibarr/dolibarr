@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -33,60 +32,62 @@ require("./pre.inc.php");
 if (!$user->rights->banque->lire)
   accessforbidden();
 
-llxHeader();
+
 
 /*
- *
+ *	Affichage page
  *
  */
 
+llxHeader();
+
 if ($_GET["bid"] == 0)
 {
-  /*
-   *    Liste mouvements par catégories d'écritures financières
-   */
-  print_titre("Ecritures bancaires par catégories");
-  print '<br>';
-  
-  print '<table class="noborder" width="100%">';
-  print "<tr class=\"liste_titre\">";
-  print '<td>'.$langs->trans("Description").'</td><td align="center">'.$langs->trans("Nb").'</td><td align="right">'.$langs->trans("Total").'</td><td align="right">'.$langs->trans("Average").'</td>';
-  print "</tr>\n";
+	/*
+	*    Liste mouvements par catégories d'écritures financières
+	*/
+	print_titre("Ecritures bancaires par catégories");
+	print '<br>';
 
-  $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
-  $sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c, ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as d";
-  $sql .= " WHERE d.rowid=l.lineid AND c.rowid = l.fk_categ GROUP BY c.label, c.rowid ORDER BY c.label";
-  
-  $result = $db->query($sql);
-  if ($result)
-    {
-      $num = $db->num_rows($result);
-      $i = 0; $total = 0;
-      
-      $var=true;
-      while ($i < $num)
+	print '<table class="noborder" width="100%">';
+	print "<tr class=\"liste_titre\">";
+	print '<td>'.$langs->trans("Description").'</td><td align="center">'.$langs->trans("Nb").'</td><td align="right">'.$langs->trans("Total").'</td><td align="right">'.$langs->trans("Average").'</td>';
+	print "</tr>\n";
+
+	$sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c, ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as d";
+	$sql .= " WHERE d.rowid=l.lineid AND c.rowid = l.fk_categ GROUP BY c.label, c.rowid ORDER BY c.label";
+
+	$result = $db->query($sql);
+	if ($result)
 	{
-	  $objp = $db->fetch_object($result);
-	  $var=!$var;
-	  print "<tr ".$bc[$var].">";
-	  print "<td><a href=\"budget.php?bid=$objp->rowid\">$objp->label</a></td>";
-	  print '<td align="center">'.$objp->nombre.'</td>';
-	  print "<td align=\"right\">".price(abs($objp->somme))."</td>";
-	  print "<td align=\"right\">".price(abs($objp->somme / $objp->nombre))."</td>";
-	  print "</tr>";
-	  $i++;
-	  $total = $total + abs($objp->somme);
-	}
-      $db->free($result);
+		$num = $db->num_rows($result);
+		$i = 0; $total = 0;
 
-      print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-      print '<td align="right"><b>'.price($total).'</b></td><td colspan="2">&nbsp;</td></tr>';
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
-  print "</table>";
+		$var=true;
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($result);
+			$var=!$var;
+			print "<tr ".$bc[$var].">";
+			print "<td><a href=\"budget.php?bid=$objp->rowid\">$objp->label</a></td>";
+			print '<td align="center">'.$objp->nombre.'</td>';
+			print "<td align=\"right\">".price(abs($objp->somme))."</td>";
+			print "<td align=\"right\">".price(abs($objp->somme / $objp->nombre))."</td>";
+			print "</tr>";
+			$i++;
+			$total = $total + abs($objp->somme);
+		}
+		$db->free($result);
+
+		print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").'</td>';
+		print '<td align="right"><b>'.price($total).'</b></td><td colspan="2">&nbsp;</td></tr>';
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+	print "</table>";
 
 }
 else
@@ -137,7 +138,16 @@ else
 			print "<td align=\"center\">".dolibarr_print_date($objp->do)."</td>\n";
 	
 			print "<td><a href=\"account.php?account=$objp->bankid\">$objp->labelcompte</a></td>";
-			print "<td><a href=\"ligne.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowPayment"),"payment").' '.$objp->label.'</a></td>';
+			
+			// Description
+			print "<td><a href=\"ligne.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowPayment"),"payment").' ';
+			$reg=array();
+			eregi('\((.+)\)',$objp->label,$reg);	// Si texte entouré de parenthèe on tente recherche de traduction
+			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
+			else print $objp->label;
+			print '</a></td>';
+			
+			// Montant
 			print "<td align=\"right\">".price(0 - $objp->amount)."</td><td>&nbsp;</td>";
 			print "</tr>";
 			$i++;
