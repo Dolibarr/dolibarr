@@ -76,6 +76,7 @@ class Propal extends CommonObject
 
 	  var $date_livraison;
     var $adresse_livraison_id;
+    var $adresse;
 
     var $products;
     var $products_qty;

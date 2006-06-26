@@ -60,6 +60,7 @@ class Commande extends CommonObject
 	var $mode_reglement_id;
 	var $mode_reglement_code;
 	var $adresse_livraison_id;
+	var $adresse;
 	var $date;				// Date commande
 	var $date_livraison;	// Date livraison souhaitée
 	var $remise_percent;
