@@ -580,17 +580,16 @@ class Societe
     function fetch_adresse_livraison($id)
     {
         global $conf;
-    
+
         $sql = "SELECT l.rowid, l.label, l.fk_societe, l.nom, l.address, l.cp";
         $sql .= ", ".$this->db->pdate("l.tms")."as dm, ".$this->db->pdate("l.datec")."as dc";
-        $sql .= ", l.ville, l.fk_departement, l.fk_pays, l.note";
-        $sql .= ", d.nom as departement, p.libelle as pays, p.code, s.nom as socname";
+        $sql .= ", l.ville, l.fk_pays, l.note";
+        $sql .= ", p.libelle as pays, p.code, s.nom as socname";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison as l";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON l.fk_departement = d.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_societe = s.idp";
-        $sql .= " WHERE l.rowid = $id";
-    
+        $sql .= " WHERE l.rowid = ".$id;
+
         $result = $this->db->query($sql) ;
     
         if ( $result )
@@ -607,10 +606,9 @@ class Societe
             $this->address        = $obj->address;
             $this->cp             = $obj->cp;
             $this->ville          = $obj->ville;
-            $this->departement    = $obj->departement;
             $this->pays           = $obj->pays;
             $this->code_pays      = $obj->code;
-            
+
             $this->db->free($result);
             
             return 1;
