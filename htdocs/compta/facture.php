@@ -576,6 +576,7 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 				$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 				$message = $_POST['message'];
 				$sendtocc = $_POST['sendtocc'];
+				$deliveryreceipt = $_POST['deliveryreceipt'];
 				
 				if ($_POST['action'] == 'send')
 				{
@@ -619,7 +620,7 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 				$mimetype[1] = $_FILES['addedfile']['type'];
 
 				// Envoi de la facture
-				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
+				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 
 				if ($mailfile->sendfile())
 				{
@@ -2343,6 +2344,7 @@ else
 				$formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
 				$formmail->withfile=1;
 				$formmail->withbody=1;
+				$formmail->withdeliveryreceipt=1;
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$fac->ref;
 				// Tableau des paramètres complémentaires du post
@@ -2397,6 +2399,7 @@ else
 				$formmail->withtopic=$langs->trans('SendReminderBillRef','__FACREF__');
 				$formmail->withfile=1;
 				$formmail->withbody=1;
+				$formmail->withdeliveryreceipt=1;
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$fac->ref;
 				// Tableau des paramètres complémentaires

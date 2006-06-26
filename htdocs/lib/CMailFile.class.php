@@ -57,6 +57,7 @@ class CMailFile
     var $mime_headers;
     var $mime_boundary;
     var $smtp_headers;
+    var $deliveryreceipt;
 
     /**
             \brief CMailFile
@@ -72,7 +73,7 @@ class CMailFile
     */
     function CMailFile($subject,$to,$from,$msg,
                        $filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-                       $addr_cc="",$addr_bcc="")
+                       $addr_cc="",$addr_bcc="",$deliveryreceipt=0)
     {
         dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, filename_list[0]=$filename_list[0], mimetype_list[0]=$mimetype_list[0] mimefilename_list[0]=$mimefilename_list[0]");
 
@@ -92,6 +93,7 @@ class CMailFile
         $this->addr_to = $to;
         $this->addr_cc = $addr_cc;
         $this->addr_bcc = $addr_bcc;
+        $this->deliveryreceipt = $deliveryreceipt;
         $this->smtp_headers = $this->write_smtpheaders();
         $this->text_body = $this->write_body($msg, $filename_list);
         if (count($filename_list))
@@ -266,6 +268,10 @@ class CMailFile
         if (isset($this->addr_cc)  && $this->addr_cc)  $out .= "Cc: ".$this->addr_cc."\n";
         if (isset($this->addr_bcc) && $this->addr_bcc) $out .= "Bcc: ".$this->addr_bcc."\n";
         if (isset($this->reply_to) && $this->reply_to) $out .= "Reply-To: ".$this->reply_to."\n";
+        
+        //accusé réception
+        if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".$this->addr_from_email."\n";
+        
         //    if($this->errors_to != "")
         //$out = $out . "Errors-to: ".$this->errors_to."\n";
 

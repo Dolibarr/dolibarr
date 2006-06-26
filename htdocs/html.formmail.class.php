@@ -58,6 +58,7 @@ class FormMail
   var $withtoreadonly;
   var $withtoccreadonly;
   var $withtopicreadonly;
+  var $withdeliveryreceipt;
 
   var $substit=array();
   var $param=array();
@@ -85,6 +86,7 @@ class FormMail
     $this->withtoccreadonly=0;
     $this->withtopicreadonly=0;
     $this->withbodyreadonly=0;
+    $this->withdeliveryreceiptreadonly=0;
    
     return 1;
   }
@@ -174,6 +176,22 @@ class FormMail
                 $form->select_array("receivercc",$this->withtocc);
             }
         }
+        print "</td></tr>\n";
+    }
+    
+    // Accusé réception
+    if ($this->withdeliveryreceipt) 
+    {
+        print '<tr><td width="180">'.$langs->trans("DeliveryReceipt").'</td><td>';
+        
+        if ($this->withdeliveryreceiptreadonly) {
+            print yn($this->withdeliveryreceipt);
+        }
+        else
+        {
+        	print $form->select_YesNo(0,'deliveryreceipt');
+        }
+        
         print "</td></tr>\n";
     }
 

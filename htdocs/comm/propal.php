@@ -319,6 +319,7 @@ if ($_POST['action'] == 'send')
                 $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
                 $message = $_POST['message'];
                 $sendtocc = $_POST['sendtocc'];
+                $deliveryreceipt = $_POST['deliveryreceipt'];
 
                 if ($_POST['action'] == 'send')
                 {
@@ -351,7 +352,7 @@ if ($_POST['action'] == 'send')
                     $mimetype[1] = $_FILES['addedfile']['type'];
                 }
                 // Envoi de la propal
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->sendfile())
                 {
                     $msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
@@ -1585,6 +1586,7 @@ if ($_GET['propalid'] > 0)
 		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
 		$formmail->withfile=1;
 		$formmail->withbody=1;
+		$formmail->withdeliveryreceipt=1;
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$propal->ref;
 		// Tableau des paramètres complémentaires

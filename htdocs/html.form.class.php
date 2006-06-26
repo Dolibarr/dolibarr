@@ -1063,11 +1063,11 @@ class Form
     }
     
 	/**
-     *      \brief      Retourne la liste des types de paiements possibles
-     *      \param      selected        Id du type de paiement présélectionné
+     *      \brief      Selection oui ou non
+     *      \param      selected        Id présélectionné
      *      \param      htmlname        Nom de la zone select
      */
-    function select_assujetti_tva($selected='',$htmlname='')
+    function select_YesNo($selected='',$htmlname='')
     {
         global $langs;
         print '<select class="flat" name="'.$htmlname.'">';
