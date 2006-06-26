@@ -382,7 +382,7 @@ class pdf_crabe extends ModelePDFFactures
                     {
                         $pdf->SetXY($this->marge_gauche, 227);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedTo').' '.$mysoc->nom.' '.$outputlangs->trans('SendTo').':',0,'L',0);
+                        $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedToShort').' '.$mysoc->nom.' '.$outputlangs->trans('SendTo').':',0,'L',0);
                         $pdf->SetXY($this->marge_gauche, 231);
                         $pdf->SetFont('Arial','',8);
                         $pdf->MultiCell(80, 3, $mysoc->adresse_full, 0, 'L', 0);

@@ -188,6 +188,7 @@ TeleFax=Fax
 PrettyLittleSentence=Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.
 IntracommunityVATNumber=Intracommunity number of VAT
 PaymentByChequeOrderedTo=Cheque payment are payable to %s send to
+PaymentByChequeOrderedToShort=Cheque payment are payable to
 SendTo=envoyé à
 PaymentByTransferOnThisBankAccount=Payment by transfer on the following bank account
 VATIsNotUsedForInvoice=* TVA non applicable art-293B du CGI
