@@ -73,3 +73,4 @@ ToClearAllRecipientsClickHere=To clear recipients' list for this emailing, click
 ToAddRecipientsChooseHere=To add recipients, choose in those lists
 NbOfEMailingsReceived=Mass emailings received
 IdRecord=ID record
+DeliveryReceipt=Delivery Receipt
