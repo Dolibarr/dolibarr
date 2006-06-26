@@ -390,6 +390,12 @@ class Commande extends CommonObject
 				 */
 				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
+					// on récupère le subprice de la propale
+					if ($this->propale_id)
+					{
+						$this->lines[$i]->price = $this->lines[$i]->subprice;
+					}
+					
 					$resql = $this->addline(
 						$this->id,
 						$this->lines[$i]->libelle,
