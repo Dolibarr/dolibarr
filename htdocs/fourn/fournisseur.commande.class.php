@@ -125,7 +125,7 @@ class CommandeFournisseur extends Commande
                     {
                         $objp                  = $this->db->fetch_object($result);
     
-                        $ligne                 = new CommandeLigne();
+                        $ligne                 = new CommandeFournisseurLigne();
 
                         $ligne->desc           = $objp->description;  // Description ligne
                         $ligne->qty            = $objp->qty;
