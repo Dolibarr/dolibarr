@@ -416,20 +416,15 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$commande->fetch($_REQUEST['id']);
 	if ($_REQUEST['modelpdf'])
 	{
-		$modelpdf = $_REQUEST['modelpdf'];
+		$commande->set_pdf_model($user, $_REQUEST['modelpdf']);
 	}
-	else
-	{
-		$modelpdf = $commande->modelpdf;
-	}
-	$commande->set_pdf_model($user, $modelpdf);
 
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	$result=commande_pdf_create($db, $_REQUEST['id'],$modelpdf,$outputlangs);
+	$result=commande_pdf_create($db, $commande->id,$commande->modelpdf;,$outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);
