@@ -414,9 +414,9 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	// Sauvegarde le dernier modèle choisi pour générer un document
 	$commande = new Commande($db, 0, $_REQUEST['id']);
 	$commande->fetch($_REQUEST['id']);
-	if ($_REQUEST['model'])
+	if ($_REQUEST['modelpdf'])
 	{
-		$modelpdf = $_REQUEST['model'];
+		$modelpdf = $_REQUEST['modelpdf'];
 	}
 	else
 	{
@@ -429,7 +429,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	$result=commande_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
+	$result=commande_pdf_create($db, $_REQUEST['id'],$modelpdf,$outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);

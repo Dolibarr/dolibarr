@@ -65,6 +65,7 @@ class Commande extends CommonObject
 	var $date_livraison;	// Date livraison souhaitée
 	var $remise_percent;
 	var $remise_absolue;
+	var $modelpdf;
 	
 	var $lines = array();
 
