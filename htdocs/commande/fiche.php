@@ -413,7 +413,16 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 
 	// Sauvegarde le dernier modèle choisi pour générer un document
 	$commande = new Commande($db, 0, $_REQUEST['id']);
-	$commande->set_pdf_model($user, $_REQUEST['model']);
+	$commande->fetch($_REQUEST['id']);
+	if ($_REQUEST['model'])
+	{
+		$modelpdf = $_REQUEST['model'];
+	}
+	else
+	{
+		$modelpdf = $commande->modelpdf;
+	}
+	$commande->set_pdf_model($user, $modelpdf);
 
 	if ($_REQUEST['lang_id'])
 	{
