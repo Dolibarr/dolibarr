@@ -147,7 +147,7 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
-		facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
+		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
 }
 
@@ -185,6 +185,7 @@ if ($_POST['action'] == 'add')
 	$facture->note_public    = $_POST['note_public'];
 	$facture->note           = $_POST['note'];
 	$facture->ref_client     = $_POST['ref_client'];
+	$facture->modelpdf       = $_POST['modelpdf'];
 
 	if ($_POST['fac_rec'] > 0)
 	{
@@ -896,6 +897,15 @@ if ($_GET['action'] == 'create')
 		$html->select_projects($societe_id, $projetid, 'projetid');
 		print '</td></tr>';
 	}
+	
+	print '<tr><td>'.$langs->trans("Model").'</td>';
+  print '<td>';
+	// pdf
+	include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+	$model=new ModelePDFFactures();
+	$liste=$model->liste_modeles($db);
+	$html->select_array("modelpdf",$liste,$conf->global->FACTURE_ADDON_PDF);
+	print "</td></tr>";
 
 	// Note publique
 	print '<tr>';
@@ -2135,8 +2145,8 @@ else
 			$filename=sanitize_string($fac->ref);
 			$filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-            $genallowed=($fac->statut == 1 && $user->rights->facture->creer);
-            $delallowed=$user->rights->facture->supprimer;
+      $genallowed=($fac->statut == 1 && $user->rights->facture->creer);
+      $delallowed=$user->rights->facture->supprimer;
 
 			$var=true;
 

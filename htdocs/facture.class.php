@@ -70,6 +70,7 @@ class Facture extends CommonObject
 	var $cond_reglement_code;
 	var $mode_reglement_id;
 	var $mode_reglement_code;
+	var $modelpdf;
 
 	// Pour board
 	var $nbtodo;
@@ -165,7 +166,7 @@ class Facture extends CommonObject
 		$sql.= ' note_public,';
 	  $sql.= ' ref_client,';
 		$sql.= ' fk_user_author, fk_projet,';
-		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement) ';
+		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf) ';
 		$sql.= " VALUES (";
 		$sql.= "'$number','$socid', now(), '$totalht', '".$this->remise_absolue."'";
 		$sql.= ",'".$this->remise_percent."', ".$this->db->idate($this->date);
@@ -176,7 +177,7 @@ class Facture extends CommonObject
 		$sql.= ",".($this->projetid?$this->projetid:"null");
 		$sql.= ','.$this->cond_reglement_id;
 		$sql.= ",".$this->mode_reglement_id;
-		$sql.= ','.$this->db->idate($datelim).")";
+		$sql.= ",".$this->db->idate($datelim).", '".$this->modelpdf."')";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
