@@ -424,7 +424,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	$result=commande_pdf_create($db, $commande->id,$commande->modelpdf;,$outputlangs);
+	$result=commande_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);
