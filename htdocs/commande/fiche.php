@@ -1740,7 +1740,7 @@ else
 						$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 					}
-					$result=commande_pdf_create($db, $_REQUEST['id'], '', $_REQUEST['model'], $outputlangs);
+					$result=commande_pdf_create($db, $_REQUEST['id'], '', $_REQUEST['modelpdf'], $outputlangs);
 				    if ($result <= 0)
 				    {
 				    	dolibarr_print_error($db,$result);

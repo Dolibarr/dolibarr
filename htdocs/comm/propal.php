@@ -186,7 +186,7 @@ if ($_POST['action'] == 'add')
 		$propal->socidp    = $_POST['socidp'];
 		$propal->contactid = $_POST['contactidp'];
 		$propal->projetidp = $_POST['projetidp'];
-		$propal->modelpdf  = $_POST['model'];
+		$propal->modelpdf  = $_POST['modelpdf'];
 		$propal->author    = $user->id;
 		$propal->note      = $_POST['note'];
 		$propal->ref       = $_POST['ref'];
@@ -205,7 +205,7 @@ if ($_POST['action'] == 'add')
 	
 		$propal->contactid  = $_POST['contactidp'];
 		$propal->projetidp  = $_POST['projetidp'];
-		$propal->modelpdf   = $_POST['model'];
+		$propal->modelpdf   = $_POST['modelpdf'];
 		$propal->author     = $user->id;
 		$propal->note       = $_POST['note'];
 		$propal->ref_client = $_POST['ref_client'];
@@ -255,7 +255,7 @@ if ($_POST['action'] == 'add')
 				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
-			propale_pdf_create($db, $id, $_POST['model'], $outputlangs);
+			propale_pdf_create($db, $id, $_POST['modelpdf'], $outputlangs);
 			dolibarr_syslog('Redirect to '.$_SERVER["PHP_SELF"].'?propalid='.$id);
 			Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
 			exit;
@@ -530,7 +530,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
     $propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
-    if ($_POST['model']) $propal->set_pdf_model($user, $_POST['model']);
+    if ($_POST['modelpdf']) $propal->set_pdf_model($user, $_POST['modelpdf']);
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
