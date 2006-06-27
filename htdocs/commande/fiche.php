@@ -97,7 +97,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	//$commande->remise_absolue       = $_POST['remise_absolue']; //la remise était appliquée sur les lignes et sur le total
 	//$commande->remise_percent       = $_POST['remise_percent'];
 	$commande->ref_client           = $_POST['ref_client'];
-	$commande->modelpdf             = $_POST['model'];
+	$commande->modelpdf             = $_POST['modelpdf'];
 	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
 	$commande->mode_reglement_id    = $_POST['mode_reglement_id'];
 	$commande->date_livraison       = $datelivraison;
@@ -734,7 +734,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
 			$model=new ModelePDFCommandes();
 			$liste=$model->liste_modeles($db);
-			$html->select_array("model",$liste,$conf->global->COMMANDE_ADDON_PDF);
+			$html->select_array("modelpdf",$liste,$conf->global->COMMANDE_ADDON_PDF);
 			print "</td></tr>";
 
 			if ($propalid > 0)
