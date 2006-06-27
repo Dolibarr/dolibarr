@@ -530,7 +530,11 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
     $propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
-    if ($_POST['modelpdf']) $propal->set_pdf_model($user, $_POST['modelpdf']);
+    if ($_POST['modelpdf'])
+    {
+    	$propal->set_pdf_model($user, $_POST['modelpdf']);
+    }
+    
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");

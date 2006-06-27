@@ -230,7 +230,7 @@ if ($_GET["action"] == 'create')
     print '<td colspan="2">';
     $model=new ModelePDFPropales();
     $liste=$model->liste_modeles($db);
-    $html->select_array("model",$liste,$conf->global->PROPALE_ADDON_PDF);
+    $html->select_array("modelpdf",$liste,$conf->global->PROPALE_ADDON_PDF);
     print "</td></tr>";
 
 	// Projet
