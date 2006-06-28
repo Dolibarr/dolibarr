@@ -72,18 +72,43 @@ class mod_propale_ivoire extends ModeleNumRefPropales
     {
         global $db;
     
-        $sql = "SELECT count(*) FROM  ".MAIN_DB_PREFIX."propal";
-    
-        if ( $db->query($sql) )
+    // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        $pryy = 'PR'.strftime("%y",time());
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= " WHERE ref like '${pryy}%'";
+        $resql=$db->query($sql);
+        if ($resql)
         {
-            $row = $db->fetch_row(0);
-    
-            $num = $row[0];
+            $row = $db->fetch_row($resql);
+            $pryy='';
+            if ($row) $pryy = substr($row[0],0,4);
         }
     
-        $y = strftime("%y",time());
-    
-        return  "PR" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
+        // Si au moins un champ respectant le modèle a été trouvée
+        if (eregi('PR[0-9][0-9]',$pryy))
+        {
+            // Recherche rapide car restreint par un like sur champ indexé
+            $posindice=5;
+            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+            $sql.= " WHERE ref like '${pryy}%'";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $row = $db->fetch_row($resql);
+                $max = $row[0];
+            }
+        }
+        else
+        {
+            $max=0;
+        }
+        
+        $num = sprintf("%04s",$max+1);
+        $yy = strftime("%y",time());
+        
+        return  "PR$yy$num";
     }
 
     /**     \brief      Renvoie la référence de propale suivante non utilisée

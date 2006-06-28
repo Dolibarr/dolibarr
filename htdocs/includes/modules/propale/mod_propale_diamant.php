@@ -89,31 +89,48 @@ class mod_propale_diamant extends ModeleNumRefPropales
      *      \param      objsoc      Objet société
      *      \return     string      Valeur
      */
-    function getNextValue($objsoc=0)
+     function getNextValue($objsoc=0)
     {
-        global $db;
-    
-        $sql = "SELECT count(*) FROM  ".MAIN_DB_PREFIX."propal";
-    
-        if ( $db->query($sql) )
+        global $db, $conf;
+
+        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        $pryy = 'PR'.strftime("%y",time());
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= " WHERE ref like '${pryy}%'";
+        $resql=$db->query($sql);
+        if ($resql)
         {
-            $row = $db->fetch_row(0);
+            $row = $db->fetch_row($resql);
+            $pryy='';
+            if ($row) $pryy = substr($row[0],0,4);
+        }
     
-            $num = $row[0];
+        // Si au moins un champ respectant le modèle a été trouvée
+        if (eregi('PR[0-9][0-9]',$pryy))
+        {
+            // Recherche rapide car restreint par un like sur champ indexé
+            $posindice=5;
+            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+            $sql.= " WHERE ref like '${pryy}%'";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $row = $db->fetch_row($resql);
+                $max = $row[0];
+            }
+        }
+        else
+        {
+            $max=$conf->global->PROPALE_DIAMANT_DELTA?$conf->global->PROPALE_DIAMANT_DELTA:0;
         }
         
-        if (!defined("PROPALE_DIAMANT_DELTA"))
-        {
-          define("PROPALE_DIAMANT_DELTA", 0);
-        }
-    
-        $num = $num + PROPALE_DIAMANT_DELTA;
-    
-        $y = strftime("%y",time());
-    
-        return  "PR" .$y. substr("0000".$num, strlen("0000".$num)-5,5);
+        $num = sprintf("%05s",$max+1);
+        $yy = strftime("%y",time());
+        
+        return  "PR$yy$num";
     }
- 
  
     /**     \brief      Renvoie la référence de propale suivante non utilisée
      *      \param      objsoc      Objet société
