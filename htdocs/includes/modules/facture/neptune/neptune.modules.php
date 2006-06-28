@@ -98,6 +98,10 @@ class mod_facture_neptune extends ModeleNumRefFactures
             if ($row) $fayy = substr($row[0],0,4);
         }
 
+        //on vérifie si il y a une année précédente
+        //sinon le delta sera appliqué de nouveau sur la nouvelle année
+        $pryy = 'PR'.strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
+        
         // Si champ respectant le modèle a été trouvée
         if (eregi('^FA[0-9][0-9]',$fayy))
         {
