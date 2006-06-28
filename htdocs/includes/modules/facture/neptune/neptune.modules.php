@@ -100,7 +100,17 @@ class mod_facture_neptune extends ModeleNumRefFactures
 
         //on vérifie si il y a une année précédente
         //sinon le delta sera appliqué de nouveau sur la nouvelle année
-        $pryy = 'PR'.strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
+        $lastyy = 'FA'.strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
+        $sql = "SELECT MAX(facnumber)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+        $sql.= " WHERE facnumber like '${lastyy}%'";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            $lastyy='';
+            if ($row) $lastyy = substr($row[0],0,4);
+        }
         
         // Si champ respectant le modèle a été trouvée
         if (eregi('^FA[0-9][0-9]',$fayy))
@@ -117,7 +127,7 @@ class mod_facture_neptune extends ModeleNumRefFactures
                 $max = $row[0];
             }
         }
-        else
+        else if (!eregi('PR[0-9][0-9]',$lastyy))
         {
         	$max=$conf->global->FACTURE_NEPTUNE_DELTA?$conf->global->FACTURE_NEPTUNE_DELTA:0;
         }        
