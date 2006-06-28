@@ -108,7 +108,17 @@ class mod_propale_diamant extends ModeleNumRefPropales
 
         //on vérifie si il y a une année précédente
         //sinon le delta sera appliqué de nouveau sur la nouvelle année
-        $pryy = 'PR'.strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
+        $lastyy = 'PR'.strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= " WHERE ref like '${lastyy}%'";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            $lastyy='';
+            if ($row) $lastyy = substr($row[0],0,4);
+        }
 
         // Si au moins un champ respectant le modèle a été trouvée
         if (eregi('PR[0-9][0-9]',$pryy))
@@ -125,7 +135,7 @@ class mod_propale_diamant extends ModeleNumRefPropales
                 $max = $row[0];
             }
         }
-        else
+        else if (!eregi('PR[0-9][0-9]',$lastyy))
         {
             $max=$conf->global->PROPALE_DIAMANT_DELTA?$conf->global->PROPALE_DIAMANT_DELTA:0;
         }
