@@ -152,7 +152,7 @@ if ($facid > 0)
         print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$facture->ref.'</td></tr>';
 
         // Société
-        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
+        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
         print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -190,7 +190,12 @@ if ($facid > 0)
         print_titre($langs->trans("AttachedFiles"));
 
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td>'.$langs->trans("Document").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td></tr>';
+        print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans("Document").'</td>';
+        print '<td align="right">'.$langs->trans("Size").'</td>';
+        print '<td align="center">'.$langs->trans("Date").'</td>';
+        print '<td>&nbsp;</td>';
+        print '</tr>';
 
         if (is_dir($upload_dir))
         {
