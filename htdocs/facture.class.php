@@ -2206,7 +2206,7 @@ class FactureLigne
 		$sql.= " '".price2num($this->qty)."',";
 		$sql.= " '".price2num($this->txtva)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
-		else { $sql.='0,'; }
+		else { $sql.='null,'; }
 		$sql.= " '".price2num($this->remise_percent)."',";
 		$sql.= " '".price2num($this->subprice)."',";
 		$sql.= " '".price2num($this->remise)."',";

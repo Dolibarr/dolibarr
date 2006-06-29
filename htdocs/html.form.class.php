@@ -1670,16 +1670,17 @@ class Form
      *    \param      selected    Valeur à appliquer
      *    \param      htmlname    Nom du formulaire select. Si none, non modifiable
      */
-    function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid)
+    function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $absolute_discount)
     {
-        global $langs;
+        global $conf,$langs;
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-			print $langs->trans("AvailableGlobalDiscounts").': ';
+			print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie)).': ';
+//			print $langs->trans("AvailableGlobalDiscounts").': ';
 			print $this->select_remises('',$htmlname,'fk_facture IS NULL',$socid);
             print '</td>';
             print '<td align="left"> <input type="submit" class="button" value="'.$langs->trans("UseDiscount").'"></td>';

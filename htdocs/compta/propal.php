@@ -544,16 +544,16 @@ et non globalement
 	/*
  	 * Boutons Actions
  	 */
-	if ($obj->statut <> 4 && $user->societe_id == 0)
+	if ($propal->statut <> 4 && $user->societe_id == 0)
 	{
 		print '<div class="tabsAction">';
-	
-		if ($obj->statut == 2 && $user->rights->facture->creer)
+
+		if ($propal->statut == 2 && $user->rights->facture->creer)
 		{
 			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create\">".$langs->trans("BuildBill")."</a>";
 		}
 	
-		if ($obj->statut == 2 && sizeof($propal->getFactureListeArray()))
+		if ($propal->statut == 2 && sizeof($propal->getFactureListeArray()))
 		{
 			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4\">".$langs->trans("ClassifyBilled")."</a>";
 		}

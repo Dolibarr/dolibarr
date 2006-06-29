@@ -198,6 +198,7 @@ LawApplicationPart3=vendeur jusqu'à complet encaissement de
 LawApplicationPart4=leurs prix.
 VATDischarged=TVA acquittée sur les débits.
 LimitedLiabilityCompanyCapital=SARL au Capital de
+UseDiscount=Use discount
 
 # oursin PDF model
 Of=du

@@ -425,12 +425,19 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 
 if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 {
-    $propal = new Propal($db);
-    $ret=$propal->fetch($_POST['propalid']);
-
 	if ($_POST["remise_id"])
 	{
-		$propal->insert_discount($_POST["remise_id"]);
+	    $propal = new Propal($db);
+	    $propal->id=$_GET['propalid'];
+	    $ret=$propal->fetch($_GET['propalid']);
+		if ($ret > 0)
+		{
+			$propal->insert_discount($_POST["remise_id"]);
+		}
+		else
+		{
+			dolibarr_print_error($db,$propal->error);
+		}
 	}
 }
 
@@ -737,9 +744,9 @@ if ($_GET['propalid'] > 0)
 	print '. ';
 	if ($absolute_discount)
 	{
-		print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-		print '.';
-//				print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?propalid='.$propal->id,0,'remise_id',$societe->id);
+		print '<br>';
+		//print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?propalid='.$propal->id,0,'remise_id',$societe->id,$absolute_discount);
 	}
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 	print '</td></tr>';
@@ -878,28 +885,6 @@ if ($_GET['propalid'] > 0)
 	}
 	print '</td></tr>';
 
-	// Destinataire
-/* On gère les contacts sur onglet contact
-	$langs->load('mails');
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('MailTo');
-	print '</td>';
-	if ($_GET['action'] != 'editcontact' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcontact&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetReceiver'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editcontact')
-	{
-		$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'contactidp');
-	}
-	else
-	{
-		$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
-	}
-	print '</td>';
-	print '</tr>';
-*/
-
 	// Projet
 	if ($conf->projet->enabled)
 	{
@@ -974,7 +959,8 @@ if ($_GET['propalid'] > 0)
 	 */
 	print '<table class="noborder" width="100%">';
 
-	$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice,';
+	$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
+	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
@@ -1013,7 +999,8 @@ if ($_GET['propalid'] > 0)
 				print '<tr '.$bc[$var].'>';
 				if ($objp->fk_product > 0)
 				{
-					print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+					print '<td>';
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 					if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$objp->ref.'</a>';
@@ -1041,7 +1028,18 @@ if ($_GET['propalid'] > 0)
 				}
 				else
 				{
-					print '<td>'.stripslashes(nl2br($objp->description));
+					print '<td>';
+					if ($objp->info_bits == 2)
+					{
+						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socidp.'">';
+						print $langs->trans("Discount");
+						print '</a>';
+						if ($objp->description) print ': '.nl2br($objp->description);
+					}
+					else
+					{
+						print nl2br($objp->description);
+					}
 					if ($objp->date_start && $objp->date_end)
 					{
 						print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';

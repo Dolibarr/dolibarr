@@ -155,10 +155,66 @@ class Propal extends CommonObject
      *    \return    int                 >0 si ok, <0 si ko
      *    \see       add_product
      */
-    function insert_discount($idproduct, $qty, $remise_percent=0, $desc='')
+    function insert_discount($idremise)
     {
+		global $langs;
 
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
+		$this->db->begin();
+
+		$remise=new DiscountAbsolute($this->db);
+		$result=$remise->fetch($idremise);
+
+		if ($result > 0)
+		{
+			$propalligne=new PropaleLigne($this->db);
+			$propalligne->fk_propal=$this->id;
+			$propalligne->fk_remise_except=$remise->id;
+			$propalligne->desc=$remise->description;   	// Description ligne
+			$propalligne->tva_tx=$remise->tva_tx;
+			$propalligne->subprice=-$remise->amount_ht;
+			$propalligne->price=-$remise->amount_ht;
+			$propalligne->fk_product=0;					// Id produit prédéfini
+			$propalligne->qty=1;
+			$propalligne->remise=0;
+			$propalligne->remise_percent=0;
+			$propalligne->rang=-1;
+			$propalligne->info_bits=2;
+
+			$tabprice=calcul_price_total($propalligne->qty, $propalligne->subprice, 0,$propalligne->tva_tx);
+			$propalligne->total_ht  = $tabprice[0];
+			$propalligne->total_tva = $tabprice[1];
+			$propalligne->total_ttc = $tabprice[2];
+
+			$result=$propalligne->insert();
+			if ($result > 0)
+			{
+				$result=$this->update_price();
+				if ($result > 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();	
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$propalligne->error;
+				$this->db->rollback();	
+				return -2;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+			return -2;	
+		}
 	}
 
     /**
@@ -211,22 +267,6 @@ class Propal extends CommonObject
                 $price = $pu - $remise;
             }
 
-			// Récupère rang max de la propale dans $rangmax
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'propaldet';
-			$sql.= ' WHERE fk_propal ='.$propalid;
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$row = $this->db->fetch_row($resql);
-				$rangmax = $row[0];
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				$this->db->rollback();
-				return -1;
-			}
-
 			// Insertion ligne
 			$ligne=new PropaleLigne($this->db);
 
@@ -239,7 +279,7 @@ class Propal extends CommonObject
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$subprice;
 			$ligne->remise=$remise;
-			$ligne->rang=($rangmax+1);
+			$ligne->rang=-1;
 			$ligne->info_bits=$info_bits;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
@@ -553,25 +593,12 @@ class Propal extends CommonObject
 				// Anciens indicateurs
 				$this->amount_ht      += $obj->price * $obj->qty;
 				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
-/* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
-                $products[$i][0] = $obj->price;
-                $products[$i][1] = $obj->qty;
-                $products[$i][2] = $obj->tva_tx;
-*/
                 $i++;
             }
 
 			$this->db->free($result);
         }
-/* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
-        $calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
-        $this->total_remise   = $calculs[3];
-		$this->amount_ht      = $calculs[4];
-        $this->total_ht       = $calculs[0];
-        $this->total_tva      = $calculs[1];
-        $this->total_ttc      = $calculs[2];
-		$tvas                 = $calculs[5];
-*/
+
         // Met a jour en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
         $sql .= " price='".  price2num($this->total_ht)."'";
@@ -592,7 +619,7 @@ class Propal extends CommonObject
     }
 
 
-		 /**
+	/**
 	 *      \brief      Stocke un numéro de rang pour toutes les lignes de
 	 *                  detail d'une propale qui n'en ont pas.
 	 */
@@ -876,6 +903,8 @@ class Propal extends CommonObject
 
 	            return 1;
             }
+            
+            $this->error="Record Not Found";
             return 0;
         }
         else
@@ -2069,6 +2098,7 @@ class PropaleLigne
 	var $coef;
 
 	var $info_bits;			// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+							// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
 	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
@@ -2141,7 +2171,28 @@ class PropaleLigne
 	 */
 	function insert()
 	{
+		dolibarr_syslog("PropaleLigne::insert rang=".$this->rang);
 		$this->db->begin();
+
+		$rangtouse=$this->rang;
+		if ($rangtouse == -1)
+		{
+			// Récupère rang max de la propale dans $rangmax
+			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'propaldet';
+			$sql.= ' WHERE fk_propal ='.$this->fk_propal;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$rangtouse = $obj->max + 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}	
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
@@ -2155,13 +2206,13 @@ class PropaleLigne
 		$sql.= " '".price2num($this->qty)."',";
 		$sql.= " '".price2num($this->tva_tx)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
-		else { $sql.='0,'; }
+		else { $sql.='null,'; }
 		$sql.= " '".price2num($this->remise_percent)."',";
 		$sql.= " '".price2num($this->subprice)."',";
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
-		$sql.= ' '.$this->rang.',';
+		$sql.= ' '.$rangtouse.',';
 		if (isset($this->coef)) $sql.= ' '.$this->coef.',';
 		else $sql.= ' null,';
 		$sql.= " '".$this->info_bits."',";
@@ -2175,15 +2226,16 @@ class PropaleLigne
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$this->rang=$rangmax;
 			$this->db->commit();
 			return 1;	
 		}
 		else
 		{
-        	$this->error=$this->db->error();
+        	$this->error=$this->db->error()." sql=".$sql;
         	dolibarr_syslog("PropaleLigne::insert Error ".$this->error);
 			$this->db->rollback();
-            return -2;
+            return -1;
 		}
 	}
 	
