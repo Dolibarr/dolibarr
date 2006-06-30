@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
   
 $sql = "SELECT p.rowid, p.label as produit, s.label as stock, m.value, ".$db->pdate("m.datem")." as datem, s.rowid as entrepot_id";
-$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m";
+$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
