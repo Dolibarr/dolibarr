@@ -115,6 +115,13 @@ if ($_GET["action"] == 'create')
 	print '<input type="hidden" name="socidp" value="'.$soc->id.'">';
 	print '</td>';
 	print '</tr>';
+	
+	/*
+   * Contact de la propale
+   */
+    print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
+    $html->select_contacts($soc->id,$setcontact,'contactidp',1);
+    print '</td></tr>';
 
 	// Ligne info remises tiers
     print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
@@ -216,13 +223,6 @@ if ($_GET["action"] == 'create')
 		}
     print '</td></tr>';
   }
-
-    /*
-     * Contact de la propale
-     */
-    print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
-    $html->select_contacts($soc->id,$setcontact,'contactidp',1);
-    print '</td></tr>';
 
     // Model
     print '<tr>';

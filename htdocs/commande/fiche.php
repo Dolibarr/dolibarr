@@ -102,6 +102,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->mode_reglement_id    = $_POST['mode_reglement_id'];
 	$commande->date_livraison       = $datelivraison;
 	$commande->adresse_livraison_id = $_POST['adresse_livraison_id'];
+	$commande->contactid            = $_POST['contactidp'];
 
 	$commande->fetch_client();
 	
@@ -124,6 +125,22 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	}
 	else
 	{
+		// Insertion contact par defaut si défini
+		if ($_POST["contactidp"])
+		{
+			$result=$commande->add_contact($_POST["contactidp"],'CUSTOMER','external');
+	
+			if ($result > 0)
+			{
+				$error=0;
+			}
+			else
+			{
+				$msg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
+				$error=1;
+			}
+		}
+		
 		$_GET['id'] = $commande->id;
 		$action = '';
 	}
@@ -628,6 +645,13 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			// Client
 			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
+			
+			/*
+       * Contact de la propale
+       */
+      print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
+      $html->select_contacts($soc->id,$setcontact,'contactidp',1);
+      print '</td></tr>';
 
 			// Ligne info remises tiers
             print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
