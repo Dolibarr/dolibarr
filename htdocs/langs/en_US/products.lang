@@ -30,7 +30,6 @@ CardProduct1=Service card
 CardContract=Contract card
 Warehouse=Warehouse
 Warehouses=Warehouses
-NewWarehouse=New warehouse
 WarehouseOpened=Warehouse opened
 WarehouseClosed=Warehouse closed
 Stock=Stock

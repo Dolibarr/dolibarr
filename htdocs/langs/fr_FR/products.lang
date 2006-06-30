@@ -30,7 +30,6 @@ CardProduct1=Fiche service
 CardContract=Fiche contrat
 Warehouse=Entrepôt
 Warehouses=Entrepôts
-NewWarehouse=Nouvel entrepôt
 WarehouseOpened=Entrepôt ouvert
 WarehouseClosed=Entrepôt fermé
 Stock=Stock

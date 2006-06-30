@@ -1,7 +1,8 @@
 # Dolibarr language file - fr_FR - stocks
 WarehouseCard=Fiche entrepôt
 Warehouse=Entrepôt
-NewWarehouse=Nouvel entrepôt
+NewWarehouse=Nouvel entrepôt ou zone de stockage
+MenuNewWarehouse=Nouvel entrepôt
 WarehouseOpened=Entrepôt ouvert
 WarehouseClosed=Entrepôt fermé
 Stock=Stock

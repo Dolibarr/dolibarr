@@ -21,7 +21,6 @@ CardProduct0=Cartão de Produto
 CardProduct1=Cartão de Serviço
 CardContract=Cartão de Contracto
 Warehouse=Armazém
-NewWarehouse=Novo armazém
 WarehouseOpened=Armazém aberto
 WarehouseClosed=Armazém fechado
 Stock=Stock

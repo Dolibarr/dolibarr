@@ -1,7 +1,8 @@
 # Dolibarr language file - en_US - stocks
 WarehouseCard=Warehouse card
 Warehouse=Warehouse
-NewWarehouse=New warehouse
+NewWarehouse=New warehouse / Stock area
+MenuNewWarehouse=New warehouse
 WarehouseOpened=Warehouse opened
 WarehouseClosed=Warehouse closed
 Stock=Stock
