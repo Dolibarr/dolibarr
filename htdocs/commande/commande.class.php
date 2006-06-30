@@ -391,9 +391,9 @@ class Commande extends CommonObject
 				 */
 				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					// on récupère le subprice de la propale
 					if ($this->propale_id)
 					{
+						// On récupère le subprice de la propale
 						$this->lines[$i]->price = $this->lines[$i]->subprice;
 					}
 					
@@ -424,9 +424,30 @@ class Commande extends CommonObject
 					{
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
 						$this->db->query($sql);
+					  
+					  // On récupère les différents contact interne et externe
+					  $prop = New Propal($this->db, $this->socidp, $this->propale_id);
+					  
+					  // On récupère le commercial suivi propale
+						$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
+						
+						if ($this->userid)
+						{
+							//On passe le commercial suivi propale en commercial suivi commande
+							$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+						}
+					  
+					  // On récupère le contact client suivi propale
+						$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
+						
+						if ($this->contactid)
+						{
+							//On passe le contact client suivi propale en contact client suivi commande
+							$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+						}
 					}
 
-			        $this->db->commit();
+			    $this->db->commit();
 					return $this->id;
 				}
 				else
