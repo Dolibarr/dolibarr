@@ -516,22 +516,6 @@ class Commande extends CommonObject
                 $price = $pu - $remise;
             }
 
-			// Récupère rang max de la commande dans $rangmax
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'commandedet';
-			$sql.= ' WHERE fk_commande ='.$commandeid;
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$row = $this->db->fetch_row($resql);
-				$rangmax = $row[0];
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				$this->db->rollback();
-				return -1;
-			}
-
 			// Insertion ligne
 			$ligne=new CommandeLigne($this->db);
 
@@ -545,7 +529,7 @@ class Commande extends CommonObject
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$subprice;
 			$ligne->remise=$remise;
-			$ligne->rang=($rangmax+1);
+			$ligne->rang=-1;
 			$ligne->info_bits=$info_bits;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
@@ -881,6 +865,73 @@ class Commande extends CommonObject
 		}
 	}
 
+	
+    /**
+     *    \brief     Ajout d'une ligne remise fixe dans la commande, en base
+     *    \param     idremise			Id de la remise fixe
+     *    \return    int          		>0 si ok, <0 si ko
+     */
+    function insert_discount($idremise)
+    {
+		global $langs;
+
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+
+		$this->db->begin();
+
+		$remise=new DiscountAbsolute($this->db);
+		$result=$remise->fetch($idremise);
+
+		if ($result > 0)
+		{
+			$comligne=new CommandeLigne($this->db);
+			$comligne->fk_commande=$this->id;
+			$comligne->fk_remise_except=$remise->id;
+			$comligne->desc=$remise->description;   	// Description ligne
+			$comligne->tva_tx=$remise->tva_tx;
+			$comligne->subprice=-$remise->amount_ht;
+			$comligne->price=-$remise->amount_ht;
+			$comligne->fk_product=0;					// Id produit prédéfini
+			$comligne->qty=1;
+			$comligne->remise=0;
+			$comligne->remise_percent=0;
+			$comligne->rang=-1;
+			$comligne->info_bits=2;
+
+			$tabprice=calcul_price_total($comligne->qty, $comligne->subprice, 0,$comligne->tva_tx);
+			$comligne->total_ht  = $tabprice[0];
+			$comligne->total_tva = $tabprice[1];
+			$comligne->total_ttc = $tabprice[2];
+
+			$result=$comligne->insert();
+			if ($result > 0)
+			{
+				$result=$this->update_price($this->id);
+				if ($result > 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();	
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$comligne->error;
+				$this->db->rollback();	
+				return -2;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+			return -2;	
+		}
+	}
 	
 	/*
 	*
@@ -2027,8 +2078,29 @@ class CommandeLigne
 	 */
 	function insert()
 	{
+		dolibarr_syslog("CommandeLigne.class::insert rang=".$this->rang);
 		$this->db->begin();
 
+		$rangtouse=$this->rang;
+		if ($rangtouse == -1)
+		{
+			// Récupère rang max de la commande dans $rangmax
+			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'commandedet';
+			$sql.= ' WHERE fk_commande ='.$this->fk_commande;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$rangtouse = $obj->max + 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql.= ' (fk_commande, label, description, price, qty, tva_tx,';
@@ -2048,7 +2120,7 @@ class CommandeLigne
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
-		$sql.= ' '.$this->rang.',';
+		$sql.= ' '.$rangtouse.',';
 		if (isset($this->coef)) $sql.= ' '.$this->coef.',';
 		else $sql.= ' null,';
 		$sql.= " '".$this->info_bits."',";

@@ -278,16 +278,16 @@ if ($_GET["id"] > 0)
 			// Lignes de 3 colonnes
 
             // Total HT
-			print '<tr><td>'.$langs->trans('TotalHT').'</td>';
+			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Total TVA
-			print '<tr><td>'.$langs->trans('TotalVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			
 			// Total TTC
-			print '<tr><td>'.$langs->trans('TotalTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Statut

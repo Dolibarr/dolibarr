@@ -147,13 +147,9 @@ class Propal extends CommonObject
     }
 
     /**
-     *    \brief     Ajout d'un produit dans la proposition, en base
-     *    \param     idproduct           Id du produit à ajouter
-     *    \param     qty                 Quantité
-     *    \param     remise_percent      Remise relative effectuée sur le produit
-     *    \param     p_desc              Descriptif optionnel
-     *    \return    int                 >0 si ok, <0 si ko
-     *    \see       add_product
+     *    \brief     Ajout d'une ligne remise fixe dans la proposition, en base
+     *    \param     idremise			Id de la remise fixe
+     *    \return    int          		>0 si ok, <0 si ko
      */
     function insert_discount($idremise)
     {
@@ -1857,52 +1853,6 @@ class Propal extends CommonObject
         }
     }
 
-	 /**
-     *    \brief     Charge l'objet propal en mémoire avec propal dont l'id est passé en argument
-     *    \param     $src_propal_id      Id de la propal source
-     *    \return    int                 >0 si ok, <0 si ko
-     *    \see       fetch
-     */
-	function load_from($src_propal_id)
-	{
-		$src_propal = new Propal($this->db);
-		if($src_propal->fetch($src_propal_id) < 0)
-		{
-			dolibarr_syslog("Propal::load_from: Erreur de lecture de la propal source.");
-            return -1;
-		}
-		$this->datep             = $src_propal->datep;
-		$this->fin_validite      = $src_propal->fin_validite;
-		$this->date              = $src_propal->date;
-        $this->ref               = $src_propal->ref;
-        $this->price             = $src_propal->price;
-        $this->remise            = $src_propal->remise;
-        $this->remise_percent    = $src_propal->remise_percent;
-        $this->remise_absolue    = $src_propal->remise_absolue;
-        $this->total             = $src_propal->total;
-        $this->total_ht          = $src_propal->total_ht;
-        $this->total_tva         = $src_propal->total_tva;
-        $this->total_ttc         = $src_propal->total_ttc;
-        $this->socidp            = $src_propal->socidp;
-        $this->projetidp         = $src_propal->projetidp;
-        $this->contactid         = $src_propal->contactid;
-        $this->modelpdf          = $src_propal->modelpdf;
-        $this->note              = $src_propal->note;
-        $this->note_public       = $src_propal->note_public;
-        $this->statut            = $src_propal->statut;
-        $this->statut_libelle    = $src_propal->statut_libelle;
-        $this->cond_reglement_id = $src_propal->cond_reglement_id;
-        $this->mode_reglement_id = $src_propal->mode_reglement_id;
-		$this->date_livraison 	 = $src_propal->date_livraison;
-		$this->adresse_livraison_id  = $src_propal->adresse_livraison_id;
-		$this->user_author_id    = $src_propal->user_author_id;
-
-        $this->cond_reglement    = $src_propal->cond_reglement;
-        $this->cond_reglement_code=$src_propal->cond_reglement_code;
-        $this->ref_url 			 = $src_propal->ref_url;
-        $this->lignes 			 = $src_propal->lignes;
-        return 1;
-	}
 
 	/**
      *    \brief     Insert en base un objet propal complétement définie par ses données membres (resultant d'une copie par exemple).
@@ -2171,7 +2121,7 @@ class PropaleLigne
 	 */
 	function insert()
 	{
-		dolibarr_syslog("PropaleLigne::insert rang=".$this->rang);
+		dolibarr_syslog("PropaleLigne.class::insert rang=".$this->rang);
 		$this->db->begin();
 
 		$rangtouse=$this->rang;
@@ -2221,7 +2171,7 @@ class PropaleLigne
 		$sql.= " '".price2num($this->total_ttc)."'";
 		$sql.= ')';
 
-       	dolibarr_syslog("PropaleLigne::insert sql=$sql");
+       	dolibarr_syslog("PropaleLigne.class::insert sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)

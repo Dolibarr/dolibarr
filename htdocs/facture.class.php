@@ -164,7 +164,7 @@ class Facture extends CommonObject
 		$sql.= ' datef,';
 		$sql.= ' note,';
 		$sql.= ' note_public,';
-	  $sql.= ' ref_client,';
+	  	$sql.= ' ref_client,';
 		$sql.= ' fk_user_author, fk_projet,';
 		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf) ';
 		$sql.= " VALUES (";
@@ -470,6 +470,74 @@ class Facture extends CommonObject
 	}
 
 
+    /**
+     *    \brief     Ajout d'une ligne remise fixe dans la facture, en base
+     *    \param     idremise			Id de la remise fixe
+     *    \return    int          		>0 si ok, <0 si ko
+     */
+    function insert_discount($idremise)
+    {
+		global $langs;
+
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+
+		$this->db->begin();
+
+		$remise=new DiscountAbsolute($this->db);
+		$result=$remise->fetch($idremise);
+
+		if ($result > 0)
+		{
+			$facligne=new FactureLigne($this->db);
+			$facligne->fk_facture=$this->id;
+			$facligne->fk_remise_except=$remise->id;
+			$facligne->desc=$remise->description;   	// Description ligne
+			$facligne->tva_tx=$remise->tva_tx;
+			$facligne->subprice=-$remise->amount_ht;
+			$facligne->price=-$remise->amount_ht;
+			$facligne->fk_product=0;					// Id produit prédéfini
+			$facligne->qty=1;
+			$facligne->remise=0;
+			$facligne->remise_percent=0;
+			$facligne->rang=-1;
+			$facligne->info_bits=2;
+
+			$tabprice=calcul_price_total($facligne->qty, $facligne->subprice, 0,$facligne->tva_tx);
+			$facligne->total_ht  = $tabprice[0];
+			$facligne->total_tva = $tabprice[1];
+			$facligne->total_ttc = $tabprice[2];
+
+			$result=$facligne->insert();
+			if ($result > 0)
+			{
+				$result=$this->update_price($this->id);
+				if ($result > 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();	
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$facligne->error;
+				$this->db->rollback();	
+				return -2;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+			return -2;	
+		}
+	}
+	
+	
 	/**
 	 *      \brief     Classe la facture dans un projet
 	 *      \param     projid       Id du projet dans lequel classer la facture
@@ -1033,22 +1101,6 @@ class Facture extends CommonObject
 				$price = ($pu - $remise);
 			}
 
-			// Récupère rang max de la facture dans $rangmax
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'facturedet';
-			$sql.= ' WHERE fk_facture ='.$facid;
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$row = $this->db->fetch_row($resql);
-				$rangmax = $row[0];
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				$this->db->rollback();
-				return -1;
-			}
-
 			// Insertion ligne
 			$ligne=new FactureLigne($this->db);
 
@@ -1064,7 +1116,7 @@ class Facture extends CommonObject
 			$ligne->date_start=$date_start;
 			$ligne->date_end=$date_end;				
 			$ligne->ventil=$ventil;
-			$ligne->rang=($rangmax+1);
+			$ligne->rang=-1;
 			$ligne->info_bits=$info_bits;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
@@ -2191,8 +2243,29 @@ class FactureLigne
 	 */
 	function insert()
 	{
+		dolibarr_syslog("FactureLigne.class::insert rang=".$this->rang);
 		$this->db->begin();
 
+		$rangtouse=$this->rang;
+		if ($rangtouse == -1)
+		{
+			// Récupère rang max de la facture dans $rangmax
+			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'facturedet';
+			$sql.= ' WHERE fk_facture ='.$this->fk_facture;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$rangtouse = $obj->max + 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' (fk_facture, description, price, qty, tva_taux,';
@@ -2218,14 +2291,14 @@ class FactureLigne
 		else { $sql.='null,'; }
 		$sql.= ' '.$this->fk_code_ventilation.',';
 		$sql.= ' '.$this->fk_export_compta.',';
-		$sql.= ' '.$this->rang.',';
+		$sql.= ' '.$rangtouse.',';
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " '".price2num($this->total_ht)."',";
 		$sql.= " '".price2num($this->total_tva)."',";
 		$sql.= " '".price2num($this->total_ttc)."'";
 		$sql.= ')';
 
-       	dolibarr_syslog("FactureLigne::insert sql=$sql");
+       	dolibarr_syslog("FactureLigne.class::insert sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)

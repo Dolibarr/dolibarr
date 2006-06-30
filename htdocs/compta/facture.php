@@ -110,12 +110,22 @@ if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 	$_GET['facid']=$_REQUEST['facid'];
 }
 
-if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
+if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 {
-	$fac = new Facture($db);
-	$fac->fetch($_REQUEST['facid']);
-	$result = $fac->set_remise_absolue($user, $_POST['remise_absolue']);
-	$_GET['facid']=$_REQUEST['facid'];
+	if ($_POST["remise_id"])
+	{
+	    $fac = new Facture($db);
+	    $fac->id=$_GET['facid'];
+	    $ret=$fac->fetch($_GET['facid']);
+		if ($ret > 0)
+		{
+			$fac->insert_discount($_POST["remise_id"]);
+		}
+		else
+		{
+			dolibarr_print_error($db,$fac->error);
+		}
+	}
 }
 
 if ($_POST['action'] == 'classin')
@@ -1023,11 +1033,13 @@ if ($_GET['action'] == 'create')
 		print '<td> &nbsp; &nbsp; </td>';
 		if ($conf->service->enabled)
 		{
-			print '<td>'.$langs->trans('ServiceLimitedDuration').'</td></tr>';
+			print '<td>'.$langs->trans('ServiceLimitedDuration').'</td>';
 		}
+		print '</tr>';
 		for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
-			print '<tr><td>';
+			print '<tr>';
+			print '<td>';
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
 				$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);
@@ -1110,10 +1122,12 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
-		// Lignes de propal produits prédéfinis
-		$sql = 'SELECT pt.rowid, p.label as product, p.ref, pt.tva_tx, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt, '.MAIN_DB_PREFIX.'product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = '.$_GET['propalid'];
-		$sql .= ' ORDER BY pt.rowid ASC';
+		// Lignes de propal
+		$sql = 'SELECT p.label as product, p.ref, p.rowid as prodid,';
+		$sql.= ' pt.rowid, pt.tva_tx, pt.price, pt.qty, pt.remise_percent, pt.description, pt.info_bits';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
+		$sql.= ' WHERE pt.fk_propal = '.$_GET['propalid'];
+		$sql.= ' ORDER BY pt.rowid ASC';
 		$result = $db->query($sql);
 		if ($result)
 		{
@@ -1124,16 +1138,30 @@ if ($_GET['action'] == 'create')
 			{
 				$objp = $db->fetch_object($result);
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(''),'product').' '.$objp->ref.'</a>';
-				print $objp->product?' - '.$objp->product:'';
+				print '<tr '.$bc[$var].'><td>';
+				if ($objp->info_bits == 2)
+				{
+					print img_object($langs->trans(''),'reduc').' '.$langs->trans("Discount");
+				}
+				else if ($objp->prodid)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(''),'product').' '.$objp->ref.'</a>';
+					print $objp->product?' - '.$objp->product:'';
+				}
+				else
+				{
+					print '&nbsp;';
+				}
 				print "</td>\n";
 				print '<td>';
-				print stripslashes(nl2br(dolibarr_trunc($objp->description,60)));
+				print nl2br(dolibarr_trunc($objp->description,60));
 				print '</td>';
 				print '<td align="right">'.$objp->tva_tx.'%</td>';
 				print '<td align="right">'.price($objp->price).'</td>';
 				print '<td align="right">'.$objp->qty.'</td>';
-				print '<td align="right">'.$objp->remise_percent.'%</td>';
+				print '<td align="right">';
+				print $objp->info_bits != 2 ? $objp->remise_percent.'%' : '&nbsp;';
+				print '</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -1142,36 +1170,6 @@ if ($_GET['action'] == 'create')
 		{
 			dolibarr_print_error($db);
 		}
-		// Lignes de propal non produits prédéfinis
-		$sql = 'SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.price, pt.qty, pt.remise_percent';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt ';
-		$sql .= ' WHERE  pt.fk_propal = '.$_GET['propalid'];
-		$sql .= ' AND (pt.fk_product = 0 or pt.fk_product is null)';
-		$sql .= ' ORDER BY pt.rowid ASC';
-		$result=$db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
-			$i = 0;
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>&nbsp;</td>';
-				print '<td>'.dolibarr_trunc($objp->product,60).'</td>';
-				print '<td align="right">'.$objp->tva_tx.'%</td>';
-				print '<td align="right">'.price($objp->price).'</td>';
-				print '<td align="right">'.$objp->qty.'</td>';
-				print '<td align="right">'.$objp->remise_percent.'%</td>';
-				print '</tr>';
-				$i++;
-			}
-		}
-		else
-		{
-			dolibarr_print_error($db);
-		}
-
 		print '</table>';
 	}
 
@@ -1190,10 +1188,10 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
-		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description,';
+		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description, pt.info_bits,';
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt, '.MAIN_DB_PREFIX.'product as p';
-		$sql.= ' WHERE pt.fk_product = p.rowid AND pt.fk_commande = '.$commande->id;
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
+		$sql.= ' WHERE pt.fk_commande = '.$commande->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 
 		$result = $db->query($sql);
@@ -1206,16 +1204,30 @@ if ($_GET['action'] == 'create')
 			{
 				$objp = $db->fetch_object($result);
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(''),'product').' '.$objp->ref.'</a>';
-				print $objp->product?' - '.$objp->product:'';
+				print '<tr '.$bc[$var].'><td>';
+				if ($objp->info_bits == 2)
+				{
+					print img_object($langs->trans(''),'reduc').' '.$langs->trans("Discount");
+				}
+				else if ($objp->prodid)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(''),'product').' '.$objp->ref.'</a>';
+					print $objp->product?' - '.$objp->product:'';
+				}
+				else
+				{
+					print '&nbsp;';
+				}
 				print "</td>\n";
 				print '<td>';
-				print stripslashes(nl2br(dolibarr_trunc($objp->description,60)));
+				print nl2br(dolibarr_trunc($objp->description,60));
 				print '</td>';
 				print '<td align="right">'.$objp->tva_tx.'%</td>';
 				print '<td align="right">'.price($objp->subprice).'</td>';
 				print '<td align="right">'.$objp->qty.'</td>';
-				print '<td align="right">'.$objp->remise_percent.'%</td>';
+				print '<td align="right">';
+				print $objp->info_bits != 2 ? $objp->remise_percent.'%' : '&nbsp;';
+				print '</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -1224,37 +1236,6 @@ if ($_GET['action'] == 'create')
 		{
 			dolibarr_print_error($db);
 		}
-		// Lignes de commande non produits prédéfinis
-		$sql  = 'SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.subprice, pt.qty, pt.remise_percent';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
-		$sql .= ' WHERE  pt.fk_commande = '.$commande->id;
-		$sql .= ' AND (pt.fk_product = 0 or pt.fk_product is null)';
-		$sql .= ' ORDER BY pt.rowid ASC';
-
-		$result=$db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
-			$i = 0;
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>&nbsp;</td>';
-				print '<td>'.dolibarr_trunc($objp->product,60).'</td>';
-				print '<td align="right">'.$objp->tva_tx.'%</td>';
-				print '<td align="right">'.price($objp->subprice).'</td>';
-				print '<td align="right">'.$objp->qty.'</td>';
-				print '<td align="right">'.$objp->remise_percent.'%</td>';
-				print '</tr>';
-				$i++;
-			}
-		}
-		else
-		{
-			dolibarr_print_error($db);
-		}
-
 		print '</table>';
 	}
 
@@ -1274,12 +1255,12 @@ if ($_GET['action'] == 'create')
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
 		// Lignes de contrat produits prédéfinis
-		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description,';
+		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description, pt.info_bits,';
 		$sql.= ' pt.date_ouverture_prevue as date_debut_prevue, pt.date_ouverture as date_debut_reel,';
 		$sql.= ' pt.date_fin_validite as date_fin_prevue, pt.date_cloture as date_fin_reel,';
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'contratdet as pt, '.MAIN_DB_PREFIX.'product as p';
-		$sql.= ' WHERE pt.fk_product = p.rowid AND pt.fk_contrat = '.$contrat->id;
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'contratdet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
+		$sql.= ' WHERE pt.fk_contrat = '.$contrat->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 
 		$result = $db->query($sql);
@@ -1292,15 +1273,26 @@ if ($_GET['action'] == 'create')
 			{
 				$objp = $db->fetch_object($result);
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(''),'service').' '.$objp->ref.'</a>';
-				print $objp->product?' - '.$objp->product:'';
-				// Plage de dates
-				$date_start=$objp->date_debut_prevue;
-				if ($objp->date_debut_reel) $date_start=$objp->date_debut_reel;
-				$date_end=$objp->date_fin_prevue;
-				if ($objp->date_fin_reel) $date_end=$objp->date_fin_reel;
-				print_date_range($date_start,$date_end);
-
+				print '<tr '.$bc[$var].'><td>';
+				if ($objp->info_bits == 2)
+				{
+					print img_object($langs->trans(''),'reduc').' '.$langs->trans("Discount");
+				}
+				else if ($objp->prodid)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(''),'service').' '.$objp->ref.'</a>';
+					print $objp->product?' - '.$objp->product:'';
+					// Plage de dates
+					$date_start=$objp->date_debut_prevue;
+					if ($objp->date_debut_reel) $date_start=$objp->date_debut_reel;
+					$date_end=$objp->date_fin_prevue;
+					if ($objp->date_fin_reel) $date_end=$objp->date_fin_reel;
+					print_date_range($date_start,$date_end);
+				}
+				else
+				{
+					print '&nbsp;';
+				}
 				print "</td>\n";
 				print '<td>';
 				print dolibarr_trunc($objp->description,60);
@@ -1308,39 +1300,9 @@ if ($_GET['action'] == 'create')
 				print '<td align="right">'.$objp->tva_tx.'%</td>';
 				print '<td align="right">'.price($objp->subprice).'</td>';
 				print '<td align="right">'.$objp->qty.'</td>';
-				print '<td align="right">'.$objp->remise_percent.'%</td>';
-				print '</tr>';
-				$i++;
-			}
-		}
-		else
-		{
-			dolibarr_print_error($db);
-		}
-		// Lignes de contrat non produits prédéfinis
-		$sql  = 'SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.subprice, pt.qty, pt.remise_percent,';
-		$sql.= ' pt.date_ouverture_prevue as date_debut_prevue, pt.date_ouverture as date_debut_reel,';
-		$sql.= ' pt.date_fin_validite as date_fin_prevue, pt.date_cloture as date_fin_reel';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'contratdet as pt';
-		$sql.= ' WHERE  pt.fk_contrat = '.$contrat->id;
-		$sql.= ' AND (pt.fk_product = 0 or pt.fk_product is null)';
-		$sql.= ' ORDER BY pt.rowid ASC';
-
-		$result=$db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
-			$i = 0;
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>&nbsp;</td>';
-				print '<td>'.dolibarr_trunc($objp->product,60).'</td>';
-				print '<td align="right">'.$objp->tva_tx.'%</td>';
-				print '<td align="right">'.price($objp->subprice).'</td>';
-				print '<td align="right">'.$objp->qty.'</td>';
-				print '<td align="right">'.$objp->remise_percent.'%</td>';
+				print '<td align="right">';
+				print $objp->info_bits != 2 ? $objp->remise_percent.'%' : '&nbsp;';
+				print '</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -1436,17 +1398,17 @@ else
 			 */
 			print '<table class="border" width="100%">';
 			
-      // Reference
-      print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
-      
-      // Ref client
+			// Reference
+			print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+			
+			// Ref client
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
 			print '</td>';
 			if ($_GET['action'] != 'refcdeclient' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="3">';
+			print '</td><td colspan="5">';
 			if ($user->rights->facture->creer && $_GET['action'] == 'refcdeclient')
 			{
 				print '<form action="facture.php?facid='.$id.'" method="post">';
@@ -1468,13 +1430,24 @@ else
 			print '</tr>';
 
 			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$absolute_discount=$soc->getCurrentDiscount();
 			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
+			if ($absolute_discount)
+			{
+				if ($fac->statut > 0)
+				{
+					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+				}
+				else
+				{
+					print '<br>';
+					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount);
+				}
+			}
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
     
 			// Dates
@@ -1686,7 +1659,7 @@ else
 			 * Lignes de factures
 			 */
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,';
-			$sql.= ' l.remise_percent, l.subprice,';
+			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
 			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
 			$sql.= ' p.ref, p.fk_product_type, p.label as product,';
@@ -1749,13 +1722,30 @@ else
 						}
 						else
 						{
-							print '<td>'.stripslashes(nl2br($objp->description));
-							print_date_range($objp->date_start,$objp->date_end);
+							print '<td>';
+							if (($objp->info_bits & 2) == 2)
+							{
+								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$fac->socidp.'">';
+								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
+								print '</a>';
+								if ($objp->description) print ': '.nl2br($objp->description);
+							}
+							else
+							{
+								print nl2br($objp->description);
+								print_date_range($objp->date_start,$objp->date_end);
+							}
 							print "</td>\n";
 						}
 						print '<td align="right">'.$objp->tva_taux.'%</td>';
 						print '<td align="right">'.price($objp->subprice)."</td>\n";
-						print '<td align="right">'.$objp->qty.'</td>';
+						print '<td align="right">';
+						if (($objp->info_bits & 2) != 2)
+						{
+							print $objp->qty;
+						}
+						else print '&nbsp;';
+						print '</td>';
 						if ($objp->remise_percent > 0)
 						{
 							print '<td align="right">'.$objp->remise_percent."%</td>\n";
@@ -1819,19 +1809,31 @@ else
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a>';
-							print ' - '.stripslashes(nl2br($objp->product));
+							print ' - '.nl2br($objp->product);
 							print '<br>';
 						}
-						print '<textarea name="desc" cols="70" rows="'.ROWS_2.'">'.stripslashes($objp->description).'</textarea></td>';
+						print '<textarea name="desc" class="flat" cols="70" rows="'.ROWS_2.'">'.$objp->description.'</textarea></td>';
 						print '<td align="right">';
 						if(! $soc->tva_assuj)
 							print '<input type="hidden" name="tva_tx" value="0">0';
 						else
 							print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
 						print '</td>';
-						print '<td align="right"><input size="6" type="text" name="price" value="'.price($objp->subprice).'"></td>';
-						print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
-						print '<td align="right" nowrap><input size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
+						print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice).'"></td>';
+						print '<td align="right">';
+						if (($objp->info_bits & 2) != 2)
+						{
+							print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
+						}
+						else print '&nbsp;';
+						print '</td>';
+						print '<td align="right" nowrap>';
+						if (($objp->info_bits & 2) != 0)
+						{
+							print '<input size="2" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
+						}
+						else print '&nbsp;';
+						print '</td>';
 						print '<td align="center" rowspan="1" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>' . "\n";
@@ -2111,13 +2113,13 @@ else
 				// Envoyer
 				if ($fac->statut == 1 && $user->rights->facture->envoyer)
 				{
-					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
 				}
 
 				// Envoyer une relance
 				if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
 				{
-					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance">'.$langs->trans('SendRemind').'</a>';
+					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance">'.$langs->trans('SendRemindByMail').'</a>';
 				}
 
 				// Emettre paiement

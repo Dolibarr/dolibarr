@@ -171,28 +171,31 @@ if ($_POST['action'] == 'add')
 	// Si on a selectionné une propal à copier, on réalise la copie
 	if($_POST['createmode']=='copy' && $_POST['copie_propal'])
 	{
-		if ($propal->load_from($_POST['copie_propal']) == -1)
+		if ($propal->fetch($_POST['copie_propal']) > 0)
+		{
+			$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$propal->date_livraison = mktime(12, 1, 1, $_POST['liv_month']."-".$_POST['liv_day']."-".$_POST['liv_year']);
+			$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
+			$propal->duree_validite = $_POST['duree_validite'];
+			$propal->cond_reglement_id = $_POST['cond_reglement_id'];
+			$propal->mode_reglement_id = $_POST['mode_reglement_id'];
+			$propal->remise_percent = $_POST['remise_percent'];
+			$propal->remise_absolue = $_POST['remise_absolue'];
+			$propal->socidp    = $_POST['socidp'];
+			$propal->contactid = $_POST['contactidp'];
+			$propal->projetidp = $_POST['projetidp'];
+			$propal->modelpdf  = $_POST['modelpdf'];
+			$propal->author    = $user->id;
+			$propal->note      = $_POST['note'];
+			$propal->ref       = $_POST['ref'];
+			$propal->statut    = 0;
+			
+			$id = $propal->create_from();
+		}
+		else
 		{
 			$msg = '<div class="error">'.$langs->trans("ErrorFailedToCopyProposal",$_POST['copie_propal']).'</div>';
 		}
-		$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$propal->date_livraison = mktime(12, 1, 1, $_POST['liv_month']."-".$_POST['liv_day']."-".$_POST['liv_year']);
-		$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
-		$propal->duree_validite = $_POST['duree_validite'];
-		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
-		$propal->mode_reglement_id = $_POST['mode_reglement_id'];
-		$propal->remise_percent = $_POST['remise_percent'];
-		$propal->remise_absolue = $_POST['remise_absolue'];
-		$propal->socidp    = $_POST['socidp'];
-		$propal->contactid = $_POST['contactidp'];
-		$propal->projetidp = $_POST['projetidp'];
-		$propal->modelpdf  = $_POST['modelpdf'];
-		$propal->author    = $user->id;
-		$propal->note      = $_POST['note'];
-		$propal->ref       = $_POST['ref'];
-		$propal->statut    = 0;
-	
-		$id = $propal->create_from();
 	}
 	else
 	{
@@ -641,7 +644,7 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 
 
 
-llxHeader();
+llxHeader('',$langs->trans('Proposal'),'Proposition');
 
 $html = new Form($db);
 
@@ -744,9 +747,15 @@ if ($_GET['propalid'] > 0)
 	print '. ';
 	if ($absolute_discount)
 	{
-		print '<br>';
-		//print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-		print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?propalid='.$propal->id,0,'remise_id',$societe->id,$absolute_discount);
+		if ($propal->statut > 0)
+		{
+			print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		}
+		else
+		{
+			print '<br>';
+			print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?propalid='.$propal->id,0,'remise_id',$societe->id,$absolute_discount);
+		}
 	}
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 	print '</td></tr>';
@@ -1004,11 +1013,10 @@ if ($_GET['propalid'] > 0)
 					if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$objp->ref.'</a>';
-					print ' - '.nl2br(stripslashes($objp->product));
-
+					print ' - '.nl2br($objp->product);
 					if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
 					{
-						print '<br>'.nl2br(stripslashes($objp->product_desc));
+						print '<br>'.nl2br($objp->product_desc);
 					}
 
 					if ($objp->date_start && $objp->date_end)
@@ -1029,34 +1037,40 @@ if ($_GET['propalid'] > 0)
 				else
 				{
 					print '<td>';
-					if ($objp->info_bits == 2)
+					if (($objp->info_bits & 2) == 2)
 					{
 						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socidp.'">';
-						print $langs->trans("Discount");
+						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
 						if ($objp->description) print ': '.nl2br($objp->description);
 					}
 					else
 					{
 						print nl2br($objp->description);
-					}
-					if ($objp->date_start && $objp->date_end)
-					{
-						print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
-					}
-					if ($objp->date_start && ! $objp->date_end)
-					{
-						print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-					}
-					if (! $objp->date_start && $objp->date_end)
-					{
-						print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+						if ($objp->date_start && $objp->date_end)
+						{
+							print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+						}
+						if ($objp->date_start && ! $objp->date_end)
+						{
+							print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+						}
+						if (! $objp->date_start && $objp->date_end)
+						{
+							print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+						}
 					}
 					print "</td>\n";
 				}
 				print '<td align="right">'.$objp->tva_tx.'%</td>';
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
-				print '<td align="right">'.$objp->qty.'</td>';
+				print '<td align="right">';
+				if (($objp->info_bits & 2) != 2)
+				{
+					print $objp->qty;
+				}
+				else print '&nbsp;';
+				print '</td>';
 				if ($objp->remise_percent > 0)
 				{
 					print '<td align="right">'.$objp->remise_percent."%</td>\n";
@@ -1121,19 +1135,31 @@ if ($_GET['propalid'] > 0)
 					if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$objp->ref.'</a>';
-					print ' - '.stripslashes(nl2br($objp->product));
+					print ' - '.nl2br($objp->product);
 					print '<br>';
 				}
-				print '<textarea name="desc" cols="50" rows="'.ROWS_2.'">'.stripslashes($objp->description).'</textarea></td>';
+				print '<textarea name="desc" cols="50" class="flat" rows="'.ROWS_2.'">'.$objp->description.'</textarea></td>';
 				print '<td align="right">';
 				if($societe->tva_assuj == "0")
 				print '<input type="hidden" name="tva_tx" value="0">0';
 				else
 				print $html->select_tva("tva_tx",$objp->tva_tx,$mysoc,$societe);
 				print '</td>';
-				print '<td align="right"><input size="6" type="text" name="subprice" value="'.price($objp->subprice).'"></td>';
-				print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
-				print '<td align="right" nowrap><input size="1" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
+				print '<td align="right"><input size="6" type="text" class="flat" name="subprice" value="'.price($objp->subprice).'"></td>';
+				print '<td align="right">';
+				if (($objp->info_bits & 2) != 2)
+				{
+					print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
+				}
+				else print '&nbsp;';
+				print '</td>';
+				print '<td align="right" nowrap>';
+				if (($objp->info_bits & 2) != 2)
+				{
+					print '<input size="1" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
+				}
+				else print '&nbsp;';
+				print '</td>';
 				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 				print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 				print '</tr>' . "\n";
@@ -1436,7 +1462,7 @@ if ($_GET['propalid'] > 0)
 				$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
 				if (file_exists($file))
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
 				}
 			}
 		}

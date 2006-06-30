@@ -20,9 +20,9 @@
  * $Id$
  * $Source$
  */
- 
+
 /**
-       \file       htdocs/compta/fiche.php
+       \file       htdocs/compta/commande/fiche.php
        \ingroup    commande
        \brief      Fiche commande
        \version    $Revision$
@@ -43,7 +43,7 @@ $user->getrights('commande');
 if (! $user->rights->commande->lire) accessforbidden();
 
 // Sécurité accés client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socidp = $user->societe_id;
@@ -52,9 +52,9 @@ if ($user->societe_id > 0)
 
 /*
  *	Actions
- */	
+ */
 
-if ($_GET["action"] == 'facturee') 
+if ($_GET["action"] == 'facturee')
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
@@ -73,7 +73,7 @@ $html = new Form($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-  
+
 if ($_GET["id"] > 0)
 {
     $commande = new Commande($db);
@@ -123,7 +123,7 @@ if ($_GET["id"] > 0)
 			}
 			print '</td>';
 			print '</tr>';
-			
+
 
 			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
@@ -136,11 +136,21 @@ if ($_GET["id"] > 0)
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$soc->getCurrentDiscount();
 			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
+			if ($absolute_discount)
+			{
+				if ($commande->statut > 0)
+				{
+					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+				}
+				else
+				{
+					print '<br>';
+					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount);
+				}
+			}
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
-    
+
 			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
@@ -154,13 +164,13 @@ if ($_GET["id"] > 0)
 			}
 			print '</td>';
 			print '</tr>';
-			
+
 			// Date de livraison
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DateDelivery');
 			print '</td>';
-					
+
 			if (1 == 2 && $_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDateDelivery'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
@@ -178,21 +188,21 @@ if ($_GET["id"] > 0)
 			}
 			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-      		print nl2br($commande->note_public);			
+      		print nl2br($commande->note_public);
 			print '</td>';
 			print '</tr>';
-			
-			
+
+
 			// Adresse de livraison
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
-					
+
 			if (1 == 2 && $_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socidp.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-			
+
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
 				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
@@ -202,13 +212,13 @@ if ($_GET["id"] > 0)
 				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
 			}
 			print '</td></tr>';
-			
+
 			// Conditions et modes de réglement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
 			print '</td>';
-					
+
 			if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
@@ -263,36 +273,36 @@ if ($_GET["id"] > 0)
 			// Lignes de 3 colonnes
 
             // Total HT
-			print '<tr><td>'.$langs->trans('TotalHT').'</td>';
+			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Total TVA
-			print '<tr><td>'.$langs->trans('TotalVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			
+
 			// Total TTC
-			print '<tr><td>'.$langs->trans('TotalTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Statut
 			print '<tr><td>'.$langs->trans('Status').'</td>';
 			print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
 			print '</tr>';
-			
+
 			print '</table>';
 
-        /*
-         * Lignes de commandes
-         *
-         */
-        $sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
-        $sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-        $sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
-        $sql.= " WHERE l.fk_commande = ".$commande->id;
-        $sql.= " ORDER BY l.rang";
-
+		/*
+		 * Lignes de commandes
+		 */
+		$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.info_bits,';
+		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
+		$sql.= ' p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+		$sql.= " WHERE l.fk_commande = ".$commande->id;
+		$sql.= " ORDER BY l.rang, l.rowid";
+		
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -308,8 +318,8 @@ if ($_GET["id"] > 0)
                 print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
                 print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
                 print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-                print '<td align="right">'.$langs->trans('Discount').'</td>';
-                print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+				print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+				print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
@@ -328,21 +338,38 @@ if ($_GET["id"] > 0)
                     print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
                     if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
                     else print img_object($langs->trans('ShowProduct'),'product');
-                    print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
+                    print ' '.$objp->ref.'</a> - '.nl2br($objp->product);
                     print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
                     print '</td>';
                 }
                 else
                 {
-                    print '<td>'.stripslashes(nl2br($objp->description));
+                    print '<td>';
+					if (($objp->info_bits & 2) == 2)
+					{
+						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socidp.'">';
+						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
+						print '</a>';
+						if ($objp->description) print ': '.nl2br($objp->description);
+					}
+					else
+					{
+						print nl2br($objp->description);
+					}
                     print "</td>\n";
                 }
                 print '<td align="right">'.$objp->tva_tx.'%</td>';
 
                 print '<td align="right">'.price($objp->subprice)."</td>\n";
 
-                print '<td align="right">'.$objp->qty.'</td>';
-
+                print '<td align="right">';
+				if (($objp->info_bits & 2) != 2)
+				{
+					print $objp->qty;
+				}
+				else print '&nbsp;';
+				print '</td>';
+									
                 if ($objp->remise_percent > 0)
                 {
                     print '<td align="right">'.$objp->remise_percent."%</td>\n";
@@ -372,7 +399,7 @@ if ($_GET["id"] > 0)
 			/*
 			 * Lignes de remise
 			 */
-			
+
     		// Réductions relatives (Remises-Ristournes-Rabbais)
 /* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
    et non globalement
@@ -431,7 +458,7 @@ if ($_GET["id"] > 0)
 			print '</form>';
 */
 
-	        // Réductions (Remises-Ristournes-Rabbais)
+	        // Remises absolue
 /* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
 			$var=!$var;
 			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';

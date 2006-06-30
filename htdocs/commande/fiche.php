@@ -105,7 +105,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->contactid            = $_POST['contactidp'];
 
 	$commande->fetch_client();
-	
+
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
 	$commande->add_product($_POST['idprod3'],$_POST['qty3'],$_POST['remise_percent3']);
@@ -159,6 +159,24 @@ if ($_POST['action'] == 'setremise' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$commande->set_remise($user, $_POST['remise']);
+}
+
+if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
+{
+	if ($_POST["remise_id"])
+	{
+	    $com = new Commande($db);
+	    $com->id=$_GET['id'];
+	    $ret=$com->fetch($_GET['id']);
+		if ($ret > 0)
+		{
+			$com->insert_discount($_POST["remise_id"]);
+		}
+		else
+		{
+			dolibarr_print_error($db,$com->error);
+		}
+	}
 }
 
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
@@ -223,7 +241,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		$ret=$commande->fetch($_POST['id']);
 		$soc = new Societe($db, $commande->socidp);
 		$soc->fetch($commande->socidp);
-		
+
 		if ($ret < 0)
 		{
 			dolibarr_print_error($db,$commande->error);
@@ -237,9 +255,9 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
         {
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
-            
+
             $libelle = $prod->libelle;
-            
+
             // multiprix
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
@@ -249,7 +267,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
             {
             	$pu=$prod->price;
             }
-            
+
             // La description de la ligne est celle saisie ou
             // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
             $desc=$_POST['np_desc'];
@@ -257,7 +275,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
             {
             	$desc = $prod->description;
             }
-            
+
             $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
         }
         else
@@ -266,7 +284,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
         	$tva_tx=$_POST['tva_tx'];
         	$desc=$_POST['desc'];
         }
-		
+
         $commande->addline(
 			$_POST['id'],
 			$libelle,
@@ -317,7 +335,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		dolibarr_print_error($db,$commande->error);
 		exit;
 	}
-	
+
 	$_GET['id']=$_POST['id'];   // Pour réaffichage de la fiche en cours d'édition
 }
 
@@ -395,7 +413,7 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
     exit;
 }
 
-if ($_GET['action'] == 'modif' && $user->rights->commande->creer) 
+if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 {
   /*
    *  Repasse la commande en mode brouillon
@@ -446,7 +464,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     {
     	dolibarr_print_error($db,$result);
         exit;
-    }    
+    }
 }
 
 // Efface les fichiers
@@ -497,25 +515,25 @@ if ($_POST['action'] == 'send')
                 $message = $_POST['message'];
                 $sendtocc = $_POST['sendtocc'];
                 $deliveryreceipt = $_POST['deliveryreceipt'];
-                
+
                 if ($_POST['action'] == 'send')
                 {
                 	$subject = $_POST['subject'];
-                	
+
                 	if($subject == '')
                 	{
                 		$subject = $langs->trans('Order').' '.$commande->ref;
                 	}
-                  
+
                   $actiontypeid=8;
                   $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
-                  
+
                   if ($message)
                   {
                     $actionmsg.='Texte utilisé dans le corps du message:<br>';
                     $actionmsg.=$message;
                   }
-                  
+
                   $actionmsg2='Envoi commande par mail';
                 }
 
@@ -580,7 +598,7 @@ if ($_POST['action'] == 'send')
 }
 
 
-llxHeader('',$langs->trans('OrderCard'),'Commande');
+llxHeader('',$langs->trans('Order'),'Commande');
 
 
 $html = new Form($db);
@@ -663,7 +681,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';
-    
+
 			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
 			$html->select_date('','re','','','',"crea_commande");
@@ -948,7 +966,7 @@ else
 				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
 				print '<br />';
 			}
-			
+
 			/*
 			 * Confirmation de la suppression d'une ligne produit
 			 */
@@ -1001,14 +1019,24 @@ else
 			print '</tr>';
 
 			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$soc->getCurrentDiscount();
 			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
+			if ($absolute_discount)
+			{
+				if ($commande->statut > 0)
+				{
+					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+				}
+				else
+				{
+					print '<br>';
+					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount);
+				}
+			}
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
 
 			// Date
@@ -1133,16 +1161,16 @@ else
 			// Lignes de 3 colonnes
 
 			// Total HT
-			print '<tr><td>'.$langs->trans('TotalHT').'</td>';
+			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Total TVA
-			print '<tr><td>'.$langs->trans('TotalVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Total TTC
-			print '<tr><td>'.$langs->trans('TotalTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Statut
@@ -1154,16 +1182,11 @@ else
 			print "\n";
 
 			/*
-			* Lignes de commandes
-			*/
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
-			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-
-			if ($conf->global->COM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
-			{
-				$sql.= ', p.description as product_desc';
-			}
-
+			 * Lignes de commandes
+			 */
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.info_bits,';
+			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid, ';
+			$sql.= ' p.description as product_desc';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 			$sql.= ' WHERE l.fk_commande = '.$commande->id;
@@ -1188,7 +1211,7 @@ else
 					print '<td>&nbsp;</td>';
 					print '<td>&nbsp;</td>';
 					print '<td>&nbsp;</td>';
-					print '</tr>';
+					print "</tr>\n";
 				}
 				$var=true;
 				while ($i < $num)
@@ -1205,25 +1228,40 @@ else
 							print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
-							print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
-							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
-
+							print ' '.$objp->ref.'</a> - '.nl2br($objp->product);
+							print ($objp->description && $objp->description!=$objp->product)?'<br>'.nl2br($objp->description):'';
 							if ($conf->global->COM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
 							{
-								print '<br>'.nl2br(stripslashes($objp->product_desc));
+								print '<br>'.nl2br($objp->product_desc);
 							}
-
 							print '</td>';
 						}
 						else
 						{
-							print '<td>'.stripslashes(nl2br($objp->description));
+							print '<td>';
+							if (($objp->info_bits & 2) == 2)
+							{
+								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socidp.'">';
+								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
+								print '</a>';
+								if ($objp->description) print ': '.nl2br($objp->description);
+							}
+							else
+							{
+								print nl2br($objp->description);
+							}
 							print '</td>';
 						}
 
 						print '<td align="right">'.$objp->tva_tx.'%</td>';
 						print '<td align="right">'.price($objp->subprice).'</td>';
-						print '<td align="right">'.$objp->qty.'</td>';
+						print '<td align="right">';
+						if (($objp->info_bits & 2) != 2)
+						{
+							print $objp->qty;
+						}
+						else print '&nbsp;';
+						print '</td>';
 						if ($objp->remise_percent > 0)
 						{
 							print '<td align="right">'.$objp->remise_percent.'%</td>';
@@ -1287,10 +1325,10 @@ else
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a>';
-							print ' - '.stripslashes(nl2br($objp->product));
+							print ' - '.nl2br($objp->product);
 							print '<br>';
 						}
-						print '<textarea name="eldesc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
+						print '<textarea name="eldesc" class="flat" cols="50" rows="1">'.$objp->description.'</textarea></td>';
 						print '<td align="right">';
 						if($soc->tva_assuj == "0")
 						print '<input type="hidden" name="tva_tx" value="0">0';
@@ -1298,8 +1336,20 @@ else
 						print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$soc);
 						print '</td>';
 						print '<td align="right"><input size="5" type="text" class="flat" name="pu" value="'.price($objp->subprice).'"></td>';
-						print '<td align="right"><input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'"></td>';
-						print '<td align="right" nowrap="nowrap"><input size="1" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+						print '<td align="right">';
+						if (($objp->info_bits & 2) != 2)
+						{
+							print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
+						}
+						else print '&nbsp;';
+						print '</td>';
+						print '<td align="right" nowrap="nowrap">';
+						if (($objp->info_bits & 2) != 2)
+						{
+							print '<input size="1" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%';
+						}
+						else print '&nbsp;';
+						print '</td>';
 						print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>';
@@ -1544,7 +1594,7 @@ else
 						$file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
 						if (file_exists($file))
 						{
-							print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+							print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
 						}
 					}
 				}
@@ -1764,8 +1814,8 @@ else
 				    {
 				    	dolibarr_print_error($db,$result);
 				        exit;
-				    }    
-				}	
+				    }
+				}
 
 				print '<br>';
 				print_titre($langs->trans('SendOrderByMail'));
