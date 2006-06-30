@@ -354,6 +354,19 @@ class CommonObject
         $this->projet = $projet;
     }
     
+   /** 	 
+    *      \brief      Retourne le détail d'un utilisateur
+    *      \param      id          id du contact
+    *      \return     array       détail du contact 	 
+    */
+    function fetch_user($id) 	 
+    { 	 
+       $iduser = $id; 	 
+       $user = new User($this->db, $iduser); 	 
+       $user->fetch(); 	 
+       $this->user = $user; 	 
+     }
+    
 }
 
 ?>
