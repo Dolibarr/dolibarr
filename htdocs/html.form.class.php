@@ -911,7 +911,7 @@ class Form
      *    \param      selected        Id contact pré-sélectionn
      *    \param      htmlname        Nom champ formulaire
      */
-    function select_adresse_livraison($selected='', $socid, $htmlname='adresse_livraison_id')
+    function select_adresse_livraison($selected='', $socid, $htmlname='adresse_livraison_id',$showempty=0)
     {
         // On recherche les utilisateurs
         $sql = "SELECT a.rowid, a.label";
@@ -922,6 +922,7 @@ class Form
         if ($this->db->query($sql))
         {
             print '<select class="flat" name="'.$htmlname.'">';
+            if ($showempty) print '<option value="0">&nbsp;</option>';
             $num = $this->db->num_rows();
             $i = 0;
             if ($num)
@@ -1756,7 +1757,7 @@ class Form
             print '<input type="hidden" name="action" value="setdeliveryadress">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $numaddress = $this->select_adresse_livraison($selected, $socid, $htmlname);
+            $numaddress = $this->select_adresse_livraison($selected, $socid, $htmlname, 1);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
             if ($numaddress==0)
