@@ -262,7 +262,7 @@ if ($resql)
         $i++;
     }
     
-    if ($num)
+    if ($num > $conf->liste_limit)
     {
 	    if ($sref || $snom || $_POST["sall"] || $_POST["search"])
 	    {
