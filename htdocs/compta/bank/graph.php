@@ -45,16 +45,16 @@ if ($account > 0)
     $acct = new Account($db);
     $acct->fetch($account);
     
-    print_fiche_titre("Journal de trésorerie du compte : " .$acct->label,$mesg);
+    print_fiche_titre("Journal de trésorerie du compte: " .$acct->getNomUrl(0),$mesg);
     
     print '<table class="notopnoleftnoright" width="100%">';
     print '<tr><td>';
     $file = "solde.$account.$year.png";
 
     /* Bug
-    if (! file_exists($file))
+    if (! file_exists($conf->$file))
       {
-	print "Pour générer ou regénérer les graphiques, lancer le script scripts/banque/graph-solde.php en ligne de commande.<br>";
+	print "Pour générer ou regénérer les graphiques, lancer le script ./scripts/banque/graph-solde.php en ligne de commande.<br>";
       print '<br>';
       }
     else

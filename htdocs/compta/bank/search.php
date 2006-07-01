@@ -166,9 +166,14 @@ if ($result)
     $var=!$var;
 
     print "<tr $bc[$var]>";
-    print "<td>".dolibarr_print_date($objp->do,"%d %b %y")."</td>\n";
+    print '<td align="center">'.dolibarr_print_date($objp->do,"%d %b %y")."</td>\n";
       
-    print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">$objp->label</a>&nbsp;";
+    print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
+	$reg=array();
+	eregi('\((.+)\)',$objp->label,$reg);	// Si texte entouré de parenthèe on tente recherche de traduction
+	if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
+	else print $objp->label;
+    print "</a>&nbsp;";
     
     if ($objp->amount < 0)
       {
