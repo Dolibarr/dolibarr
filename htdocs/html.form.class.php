@@ -1745,8 +1745,8 @@ class Form
      *    	\param      page        	Page
      *    	\param      selected    	Id condition présélectionnée
      *    	\param      htmlname    	Nom du formulaire select
-     *		  \param		  origin        origine de l'appel pour pouvoir créer un retour
-     *      \param      originid      id de l'origine
+     *		\param		origin        	Origine de l'appel pour pouvoir créer un retour
+     *      \param      originid      	Id de l'origine
      */
     function form_adresse_livraison($page, $selected='', $socid, $htmlname='adresse_livraison_id', $origin='', $originid='')
     {

@@ -664,12 +664,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
 			
-			/*
-       * Contact de la propale
-       */
-      print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
-      $html->select_contacts($soc->id,$setcontact,'contactidp',1);
-      print '</td></tr>';
+	/*
+     * Contact de la propale
+     */
+    print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
+    $html->select_contacts($soc->id,$setcontact,'contactidp',1);
+    print '</td></tr>';
 
 			// Ligne info remises tiers
             print '<tr><td>'.$langs->trans('Discounts').'</td><td>';

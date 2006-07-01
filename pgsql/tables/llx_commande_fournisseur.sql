@@ -32,7 +32,6 @@ create table llx_commande_fournisseur
   rowid SERIAL PRIMARY KEY,
   "tms"                 timestamp,
   "fk_soc"              integer NOT NULL,
-  "fk_soc_contact"      integer,
   "fk_projet"           integer DEFAULT 0,     -- projet auquel est rattache la commande
   "ref"                 varchar(30) NOT NULL,  -- order number
   "date_creation"       timestamp,              -- date de creation 

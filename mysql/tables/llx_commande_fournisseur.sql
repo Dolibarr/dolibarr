@@ -25,7 +25,6 @@ create table llx_commande_fournisseur
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   tms                 timestamp,
   fk_soc              integer NOT NULL,
-  fk_soc_contact      integer,
   fk_projet           integer DEFAULT 0,     -- projet auquel est rattache la commande
   ref                 varchar(30) NOT NULL,  -- order number
 

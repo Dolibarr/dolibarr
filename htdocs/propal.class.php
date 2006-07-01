@@ -746,7 +746,7 @@ class Propal extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT rowid,ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc,fk_soc_contact";
+        $sql = "SELECT rowid,ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc";
         $sql.= ", ".$this->db->pdate("datep")." as dp";
         $sql.= ", ".$this->db->pdate("fin_validite")." as dfv";
         $sql.= ", ".$this->db->pdate("date_livraison")." as date_livraison";
@@ -786,7 +786,6 @@ class Propal extends CommonObject
                 $this->total_ttc            = $obj->total;
                 $this->socidp               = $obj->fk_soc;
                 $this->projetidp            = $obj->fk_projet;
-                $this->contactid            = $obj->fk_soc_contact;
                 $this->modelpdf             = $obj->model_pdf;
                 $this->note                 = $obj->note;
                 $this->note_public          = $obj->note_public;
@@ -1132,62 +1131,32 @@ class Propal extends CommonObject
      *
      *
      */
-  	function set_project($user, $project_id)
-  	{
-    if ($user->rights->propale->creer)
-      {
-	//verif que le projet et la société concordent
-	$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socidp.' AND p.rowid='.$project_id;
-	$sqlres = $this->db->query($sql);
-	if ($sqlres)
-	  {
-	    $numprojet = $this->db->num_rows($sqlres);
-	    if ($numprojet > 0)
-	      {
-		$this->projetidp=$project_id;
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_projet = '.$project_id;
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
-		$this->db->query($sql);
-	      }
-	  }
-	else
-	  {
+	function set_project($user, $project_id)
+	{
+		if ($user->rights->propale->creer)
+		{
+			//verif que le projet et la société concordent
+			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socidp.' AND p.rowid='.$project_id;
+			$sqlres = $this->db->query($sql);
+			if ($sqlres)
+			{
+				$numprojet = $this->db->num_rows($sqlres);
+				if ($numprojet > 0)
+				{
+					$this->projetidp=$project_id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_projet = '.$project_id;
+					$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+					$this->db->query($sql);
+				}
+			}
+			else
+			{
+	
+				dolibarr_syslog("Propal::set_project Erreur SQL");
+			}
+		}
+	}
 
-	    dolibarr_syslog("Propal::set_project Erreur SQL");
-	  }
-      }
-  }
-
-  /*
-   *
-   *
-   *
-   */
-
-  function set_contact($user, $contact_id)
-  {
-    if ($user->rights->propale->creer)
-      {
-	//verif que le contact et la société concordent
-	$sql = 'SELECT p.idp FROM '.MAIN_DB_PREFIX.'socpeople as p WHERE p.fk_soc = '.$this->socidp.' AND p.idp='.$contact_id;
-	$sqlres = $this->db->query($sql);
-	if ($sqlres)
-	  {
-	    $numprojet = $this->db->num_rows($sqlres);
-	    if ($numprojet > 0)
-	      {
-		$this->projetidp=$project_id;
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_soc_contact = '.$contact_id;
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
-		$this->db->query($sql);
-	      }
-	  }
-	else
-	  {
-	    dolibarr_syslog("Propal::set_contact Erreur SQL");
-	  }
-      }
-  }
 
 	/**
 	 *		\brief		Positionne modele derniere generation
@@ -1867,9 +1836,9 @@ class Propal extends CommonObject
         $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, remise_percent, remise_absolue,";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
         $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison) ";
-        $sql.= " VALUES ('$this->socidp', '$this->contactid', '0', '$this->remise', '$this->remise_percent', '$this->remise_absolue',";
+        $sql.= " VALUES ('$this->socidp', '0', '$this->remise', '$this->remise_percent', '$this->remise_absolue',";
         $sql.= " '0','0','".$this->db->idate($this->datep)."', now(), '$this->ref', '$this->author',";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";

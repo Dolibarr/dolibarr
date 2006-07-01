@@ -230,32 +230,6 @@ if ($_GET["propalid"] > 0)
 	}
 	print '</td></tr>';
 
-    // Destinataire
-/* Remplacé par contacts de propal
-    $langs->load('mails');
-    print '<tr>';
-    print '<td>'.$langs->trans('MailTo').'</td>';
-
-    if ($propal->statut == 0 && $user->rights->propale->creer)
-    {
-        print '<td colspan="3">';
-		$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
-        print '</td>';
-    }
-    else
-    {
-        if (!empty($propal->contactid))
-        {
-            print '<td colspan="3">';
-			$html->form_contacts($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$societe,$propal->contactid,'none');
-            print '</td>';
-        }
-        else {
-            print '<td colspan="3">&nbsp;</td>';
-        }
-    }
-*/
-
     // Projet
     if ($conf->projet->enabled)
     {

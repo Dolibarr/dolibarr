@@ -89,12 +89,10 @@ if ($_GET["id"] > 0) {
 		/*
 		 *   Commande
 		 */
-		
 		$sql = 'SELECT s.nom, s.idp, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, '.$db->pdate('c.date_commande').' as dp, c.note,';
-		$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, c.fk_user_author, c.fk_user_valid, c.fk_user_cloture, c.date_creation, c.date_valid, c.date_cloture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'socpeople as x';
+		$sql.= ' c.fk_user_author, c.fk_user_valid, c.fk_user_cloture, c.date_creation, c.date_valid, c.date_cloture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' WHERE c.fk_soc = s.idp';
-		//$sql.= ' AND c.fk_soc_contact = x.idp'; //le champs fk_soc_contact est vide dans la base llx_commande
 		$sql.= ' AND c.rowid = '.$commande->id;
 		if ($socidp) $sql .= ' AND s.idp = '.$socidp;
 

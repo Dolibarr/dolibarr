@@ -577,13 +577,6 @@ if ($_POST['action'] == 'classin')
   $propal->set_project($user, $_POST['projetidp']);
 }
 
-if ($_POST['action'] == 'set_contact')
-{
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->set_contact($user, $_POST['contactidp']);
-}
-
 // Conditions de règlement
 if ($_POST["action"] == 'setconditions')
 {
@@ -1042,7 +1035,7 @@ if ($_GET['propalid'] > 0)
 						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socidp.'">';
 						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
-						if ($objp->description) print ': '.nl2br($objp->description);
+						if ($objp->description) print ' - '.nl2br($objp->description);
 					}
 					else
 					{

@@ -268,7 +268,7 @@ create table llx_livraison
 
 alter table llx_livraison drop foreign key fk_livraison_societe;
 alter table llx_livraison drop column fk_soc;
-alter table llx_livraison drop column fk_soc_contact;
+
 
 create table llx_livraisondet
 (
@@ -319,3 +319,9 @@ alter table llx_propal add column ref_client varchar(30) after ref;
 alter table llx_societe_adresse_livraison drop column fk_departement;
 
 alter table llx_user add column ldap_sid varchar(255)DEFAULT NULL;
+
+
+alter table llx_commande_fournisseur drop column fk_soc_contact;
+alter table llx_commande drop column fk_soc_contact;
+alter table llx_livraison drop column fk_soc_contact;
+alter table llx_propal drop column fk_soc_contact;

@@ -29,7 +29,6 @@ create table llx_propal
 (
   rowid SERIAL PRIMARY KEY,
   "fk_soc"          integer,
-  "fk_soc_contact"  integer,
   "fk_projet"       integer DEFAULT 0,     -- projet auquel est rattache la propale
   "ref"             varchar(30) NOT NULL,  -- propal number
   "datec"           timestamp,              -- date de creation 
