@@ -46,6 +46,10 @@ create table llx_contratdet
   fk_remise_except		integer NULL,      -- Lien vers table des remises fixes
   subprice              real,              -- prix avant remise
   price_ht              real,              -- prix final
+  total_ht              real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva             real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc             real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  info_bits		        integer DEFAULT 0, 	    -- TVA NPR ou non
 
   fk_user_author        integer NOT NULL default 0,
   fk_user_ouverture     integer,
