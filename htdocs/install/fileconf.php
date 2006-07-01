@@ -185,7 +185,7 @@ $dolibarr_main_db_host = "localhost";
 <input type="hidden" name="base" value="">
 </td>
 <td class="comment">
-<?php echo $langs->trans("ServerAdressDescription"); ?>
+<?php echo $langs->trans("ServerAddressDescription"); ?>
 </td>
 
 </tr>
