@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
@@ -26,7 +26,7 @@
 /**
         \file       htdocs/product/stock/product.php
         \ingroup    product
-        \brief      Page de la fiche produit
+        \brief      Page de la fiche stock d'un produit
         \version    $Revision$
 */
 
@@ -298,7 +298,7 @@ if ($_GET["id"] || $_GET["ref"])
      */
     if ($_GET["action"] == "transfert")
     {
-        print_titre ("Transfert de stock");
+        print_titre($langs->trans("Transfer"));
         print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
         print '<input type="hidden" name="action" value="transfert_stock">';
         print '<table class="border" width="100%"><tr>';
@@ -341,7 +341,7 @@ if ($_GET["id"] || $_GET["ref"])
             }
         }
         print '</select></td>';
-        print '<td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
+        print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
         print '<tr><td colspan="6" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
         print '</table>';

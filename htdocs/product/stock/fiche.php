@@ -278,7 +278,7 @@ else
             print '<table class="noborder" width="100%">';
             print "<tr class=\"liste_titre\">";
 
-            print_liste_field_titre($langs->trans("Reference"),"", "p.ref","&amp;id=".$_GET['id'],"","",$sortfield);
+            print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$_GET['id'],"","",$sortfield);
             print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"","",$sortfield);
             print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="right"',$sortfield);
             
