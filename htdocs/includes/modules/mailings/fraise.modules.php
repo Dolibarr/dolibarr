@@ -109,7 +109,7 @@ class mailing_fraise extends MailingTargets
         
         $s='';
         $s.='<select name="filter" class="flat">';
-        $s.='<option value="-1">'.$langs->trans("MemberStatusShortDraft").'</option>';
+        $s.='<option value="-1">'.$langs->trans("MemberStatusDraftShort").'</option>';
         $s.='<option value="1" selected="true">'.$langs->trans("MemberStatusActive").'</option>';
         $s.='<option value="0">'.$langs->trans("MemberStatusResiliated").'</option>';
         $s.='</select>';
