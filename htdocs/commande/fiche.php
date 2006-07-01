@@ -1244,7 +1244,7 @@ else
 								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socidp.'">';
 								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 								print '</a>';
-								if ($objp->description) print ': '.nl2br($objp->description);
+								if ($objp->description) print ' - '.nl2br($objp->description);
 							}
 							else
 							{
