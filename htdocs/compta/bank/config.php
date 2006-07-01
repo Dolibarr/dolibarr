@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
  */
 
 /**
-   \file       htdocs/compta/bank/config.php
-   \ingroup    banque
-   \brief      Page de configuration des comptes bancaires
-   \version    $Revision$
+		\file       htdocs/compta/bank/config.php
+		\ingroup    banque
+		\brief      Page de configuration des comptes bancaires
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -42,7 +42,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref")."</td><td>".$langs->trans("Type")."</td><td>".$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("AccountIdShort").'</a></td>';
 print '<td align="center">'.$langs->trans("Conciliable").'</a></td>';
-print '<td align="center">'.$langs->trans("Status").'</a></td>';
+print '<td align="right">'.$langs->trans("Status").'</a></td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, label, number, bank, courant as type, clos, rappro";
@@ -53,27 +53,31 @@ $result = $db->query($sql);
 $var=false;
 if ($result)
 {
-  $account=new Account($db);
-  
-  $var=True;  
-  $num = $db->num_rows($result);
-  $i = 0; $total = 0;
-
-  $sep = 0;
-
-  while ($i < $num) {
-    $objp = $db->fetch_object($result);
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</td>';
-    print '<td>'.$account->type_lib[$objp->type].'</td>';
-    print '<td>'.$objp->bank.'&nbsp;</td><td>'.$objp->number.'&nbsp;</td>';
-    print '<td align="center">'.yn($objp->rappro).'</td>';
-    print '<td align="center">'.$account->status[$objp->clos].'</td></tr>';
-
-    $i++;
-  }
-  $db->free($result);
+	$accountstatic=new Account($db);
+	
+	$var=True;
+	$num = $db->num_rows($result);
+	$i = 0; $total = 0;
+	
+	$sep = 0;
+	
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
+	
+		$var=!$var;
+		print '<tr '.$bc[$var].'>';
+		$accountstatic->id=$objp->rowid;
+		$accountstatic->label=$objp->label;
+		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+		print '<td>'.$accountstatic->type_lib[$objp->type].'</td>';
+		print '<td>'.$objp->bank.'&nbsp;</td><td>'.$objp->number.'&nbsp;</td>';
+		print '<td align="center">'.yn($objp->rappro).'</td>';
+		print '<td align="right">'.$accountstatic->LibStatut($objp->clos,5).'</td></tr>';
+	
+		$i++;
+	}
+	$db->free($result);
 }
 print "</table>";
 

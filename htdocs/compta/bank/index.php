@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("AccountIdShort").'</td>';
-print '<td align="center" width="100">'.$langs->trans("Conciliable").'</a></td>';
+print '<td align="center" width="100">'.$langs->trans("Conciliable").'</td>';
 print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
@@ -96,24 +96,27 @@ $total = 0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
-  if ($type == 1)
-    {
-      $acc = new Account($db);
-      $acc->fetch($key);
-      
-      $var = !$var;
-      $solde = $acc->solde();
-      
-      print '<tr '.$bc[$var].'><td width="30%">';
-      print '<a href="account.php?account='.$acc->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$acc->label.'</a>';
-      print '</td><td>'.$acc->bank."</td><td>$acc->number</td>";
-      print '<td align="center">'.yn($acc->rappro).'</td>';
-      print '<td align="center">'.$acc->status[$acc->clos].'</td>';
-      print '<td align="right">'.price($solde).'</td>';
-      print '</tr>';
-      
-      $total += $solde;
-    }
+	if ($type == 1)
+	{
+		$acc = new Account($db);
+		$acc->fetch($key);
+
+		$var = !$var;
+		$solde = $acc->solde();
+
+		print '<tr '.$bc[$var].'>';
+		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+		print '<td>'.$acc->bank.'</td>';
+		print '<td>'.$acc->number.'</td>';
+		print '<td align="center">'.yn($acc->rappro).'</td>';
+		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
+		print '<td align="right">';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+		print '</td>';
+		print '</tr>';
+
+		$total += $solde;
+	}
 }
 
 // Total
@@ -126,10 +129,11 @@ print '<tr><td colspan="5">&nbsp;</td></tr>';
 /*
  * Comptes placements
  */
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="30%">'.$langs->trans("SavingAccounts").'</td><td width="20%">'.$langs->trans("Bank").'</td>';
+print '<tr class="liste_titre">';
+print '<td width="30%">'.$langs->trans("SavingAccounts").'</td>';
+print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("Numero").'</td>';
-print '<td align="center" width="100">'.$langs->trans("Conciliable").'</a></td>';
+print '<td align="center" width="100">'.$langs->trans("Conciliable").'</td>';
 print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
@@ -138,24 +142,27 @@ $total = 0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
-  if ($type == 0)
-    {
-      $acc = new Account($db);
-      $acc->fetch($key);
-      
-      $var = !$var;
-      $solde = $acc->solde();
-  
-      print "<tr ".$bc[$var]."><td>";
-      print '<a href="account.php?account='.$acc->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$acc->label.'</a>';
-      print "</td><td>$acc->bank</td><td>$acc->number</td>";
-      print '<td align="center">'.yn($acc->rappro).'</td>';
-      print '<td align="center">'.$acc->status[$acc->clos].'</td>';
-      print '<td align="right">'.price($solde).'</td>';
-      print '</tr>';
-  
-      $total += $solde;
-    }
+	if ($type == 0)
+	{
+		$acc = new Account($db);
+		$acc->fetch($key);
+
+		$var = !$var;
+		$solde = $acc->solde();
+
+		print "<tr ".$bc[$var].">";
+		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+		print '<td>'.$acc->bank.'</td>';
+		print '<td>'.$acc->number.'</td>';
+		print '<td align="center">'.yn($acc->rappro).'</td>';
+		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
+		print '<td align="right">';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+		print '</td>';
+		print '</tr>';
+
+		$total += $solde;
+	}
 }
 
 // Total
@@ -168,7 +175,6 @@ print '<tr><td colspan="5">&nbsp;</td></tr>';
 /*
  * Comptes caisse/liquide
  */
-print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CashAccounts").'</td><td width="20%">&nbsp;</td>';
 print '<td align="left">&nbsp;</td>';
 print '<td align="left" width="100">&nbsp;</td>';
@@ -188,53 +194,20 @@ foreach ($accounts as $key=>$type)
         $var = !$var;
         $solde = $acc->solde();
 
-        print "<tr ".$bc[$var]."><td>";
-        print '<a href="account.php?account='.$acc->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$acc->label.'</a>';
-        print '</td><td>'.$acc->bank.'</td>';
+        print "<tr ".$bc[$var].">";
+		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+        print '<td>'.$acc->bank.'</td>';
         print '<td>&nbsp;</td>';
         print '<td>&nbsp;</td>';
-        print '<td align="center">'.$acc->status[$acc->clos].'</td>';
-        print '<td align="right">'.price($solde).'</td>';
+        print '<td align="center">'.$acc->getLibStatut(2).'</td>';
+		print '<td align="right">';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+		print '</td>';
         print '</tr>';
 
         $total += $solde;
     }
 }
-
-// Total
-print '<tr class="liste_total"><td colspan="4">&nbsp;</td><td align="center"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td></tr>';
-
-
-/*
- * Dettes
- */
-print '<tr><td colspan="5">&nbsp;</td></tr>';
-print '<tr class="liste_titre"><td colspan="7">'.$langs->trans("Debts").'</td></tr>';
-
-// TVA
-if ($conf->compta->tva)
-{
-    $var=true;
-    $var = !$var;
-    $tva = new Tva($db);
-    
-    $tva_solde = $tva->solde();
-    
-    $total = $total + $tva_solde;
-    
-    print "<tr ".$bc[$var].">".'<td colspan="5">'.$langs->trans("VAT").'</td><td align="right">'.price($tva_solde).'</td></tr>';
-}
-
-
-// Charges sociales
-$var = !$var;
-$chs = new ChargeSociales($db);
-
-$chs_a_payer = $chs->solde();
-
-$total = $total - $chs_a_payer;
-
-print "<tr ".$bc[$var].">".'<td colspan="5">'.$langs->trans("SocialContributions").'</td><td align="right">'.price($chs_a_payer).'</td></tr>';
 
 // Total
 print '<tr class="liste_total"><td colspan="4">&nbsp;</td><td align="center"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td></tr>';

@@ -326,7 +326,7 @@ else
 		}
 
 		print '<tr><td valign="top">'.$langs->trans("Web").'</td><td colspan="3">';
-		print '<a href="'.$account->url.'">'.$account->url.'</a>';
+		print '<a href="'.$account->url.'" target="_gobank">'.$account->url.'</a>';
 		print "</td></tr>\n";
 	
 		print '</table>';

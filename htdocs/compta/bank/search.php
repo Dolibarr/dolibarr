@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,16 +92,18 @@ print '</tr>';
 
 
 // Compte le nombre total d'écritures
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank";
-if ($account) { $sql .= " WHERE b.fk_account=$account"; }
+$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."bank";
+if ($account) { $sql .= " WHERE b.fk_account=".$account; }
 
 $resql=$db->query($sql);
 if ($resql)
 {
-    $nbline = $db->result (0, 0);
+    $obj = $db->fetch_object($resql);
+    $nbline = $obj->nb;
     $db->free($resql);
 }
-else {
+else
+{
     dolibarr_print_error($db);    
 }
 
@@ -164,7 +166,7 @@ if ($result)
     $var=!$var;
 
     print "<tr $bc[$var]>";
-    print "<td>".strftime("%d %b %y",$objp->do)."</td>\n";
+    print "<td>".dolibarr_print_date($objp->do,"%d %b %y")."</td>\n";
       
     print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">$objp->label</a>&nbsp;";
     

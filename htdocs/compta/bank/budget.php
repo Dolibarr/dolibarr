@@ -51,7 +51,10 @@ if ($_GET["bid"] == 0)
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
-	print '<td>'.$langs->trans("Description").'</td><td align="center">'.$langs->trans("Nb").'</td><td align="right">'.$langs->trans("Total").'</td><td align="right">'.$langs->trans("Average").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td align="right">'.$langs->trans("Nb").'</td>';
+	print '<td align="right">'.$langs->trans("Total").'</td>';
+	print '<td align="right">'.$langs->trans("Average").'</td>';
 	print "</tr>\n";
 
 	$sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
@@ -71,9 +74,9 @@ if ($_GET["bid"] == 0)
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
 			print "<td><a href=\"budget.php?bid=$objp->rowid\">$objp->label</a></td>";
-			print '<td align="center">'.$objp->nombre.'</td>';
-			print "<td align=\"right\">".price(abs($objp->somme))."</td>";
-			print "<td align=\"right\">".price(abs($objp->somme / $objp->nombre))."</td>";
+			print '<td align="right">'.$objp->nombre.'</td>';
+			print '<td align="right">'.price(abs($objp->somme))."</td>";
+			print '<td align="right">'.price(abs($objp->somme / $objp->nombre))."</td>";
 			print "</tr>";
 			$i++;
 			$total = $total + abs($objp->somme);
