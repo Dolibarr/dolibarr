@@ -226,7 +226,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Stock
         if ($product->type == 0 && $conf->stock->enabled)
         {
-            print '<tr><td><a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
+            print '<tr><td>'.$langs->trans("TotalStock").'</td>';
             if ($product->no_stock)
             {
                 print "<td>Pas de définition de stock pour ce produit";
@@ -247,30 +247,6 @@ if ($_GET["id"] || $_GET["ref"])
         
         print "</table>";
 
-        /*
-         * Contenu des stocks
-         */
-        print '<br><table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td><td width="60%">Valeur du stock</td></tr>';
-        $sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
-        $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = ".$product->id;
-        $sql .= " ORDER BY lower(e.label)";
-
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0; $total = 0;
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                print '<tr><td width="40%">'.$obj->label.'</td><td>'.$obj->reel.'</td></tr>'; ;
-                $total = $total + $obj->reel;
-                $i++;
-            }
-        }
-        print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td><td class="liste_total">'.$total."</td></tr></table>";
-
     }
     print '</div>';
 
@@ -279,12 +255,14 @@ if ($_GET["id"] || $_GET["ref"])
      */
     if ($_GET["action"] == "correction")
     {
-        print_titre ("Correction du stock");
+        print_titre($langs->trans("StockCorrection"));
         print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
         print '<input type="hidden" name="action" value="correct_stock">';
         print '<table class="border" width="100%"><tr>';
-        print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="20%"><select name="id_entrepot">';
-
+        print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
+        
+        // Entrepot
+        print '<td width="20%"><select class="flat" name="id_entrepot">';
         $sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
         $sql .= " WHERE statut = 1";
         $sql .= " ORDER BY lower(e.label)";
@@ -302,11 +280,12 @@ if ($_GET["id"] || $_GET["ref"])
             }
         }
         print '</select></td>';
-        print '<td width="20%"><select name="mouvement">';
+        print '<td width="20%">';
+        print '<select name="mouvement" class="flat">';
         print '<option value="0">'.$langs->trans("Add").'</option>';
         print '<option value="1">'.$langs->trans("Delete").'</option>';
         print '</select></td>';
-        print '<td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
+        print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td></tr>';
         print '<tr><td colspan="5" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
         print '</table>';
@@ -419,17 +398,56 @@ print "<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '' )
 {
-  if ($user->rights->stock->mouvement->creer)
-  {
-  	print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=transfert">Transfert</a>';
-  }
-  
-  if ($user->rights->stock->creer)
-  {
-  	print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
-  }
+	if ($user->rights->stock->mouvement->creer)
+	{
+		print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
+	}
+	
+	if ($user->rights->stock->creer)
+	{
+		print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
+	}
 }
 print '</div>';
+
+
+
+
+/*
+ * Contenu des stocks
+ */
+print '<br><table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td>';
+print '<td align="right">'.$langs->trans("NumberOfUnit").'</td></tr>';
+
+$sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
+$sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = ".$product->id;
+$sql .= " ORDER BY lower(e.label)";
+
+$entrepotstatic=new Entrepot($db);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+    $num = $db->num_rows($resql);
+    $i=0; $total=0; $var=false;
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($resql);
+        $entrepotstatic->id=$obj->rowid;
+        $entrepotstatic->libelle=$obj->label;
+        print '<tr '.$bc[$var].'>';
+        print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
+        print '<td align="right">'.$obj->reel.'</td>';
+        print '</tr>'; ;
+        $total = $total + $obj->reel;
+        $i++;
+        $var=!$var;
+    }
+}
+print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td><td class="liste_total" align="right">'.$total."</td></tr>";
+print "</table>";
+
 
 
 $db->close();
