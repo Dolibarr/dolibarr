@@ -49,7 +49,7 @@ NoTargetYet=Aucun destinataire défini
 AddRecipients=Ajout de destinataires
 RemoveRecipient=Supprime destinataire
 CommonSubstitutions=Substitutions communes
-YouCanAddYourOwnPredefindedListHere=Vous pouvez ajouter votre propre module de sélection/import de mails. Pour cela, voir le fichier htdocs/includes/mailings/README.
+YouCanAddYourOwnPredefindedListHere=Vous pouvez ajouter votre propre module de sélection/import de mails. Pour cela, voir le fichier htdocs/includes/modules/mailings/README.
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts des tiers (prospects, clients, fournisseurs...)

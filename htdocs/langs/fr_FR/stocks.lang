@@ -21,3 +21,7 @@ NumberOfProducts=Nombre total de produits
 LastMovement=Dernier mouvement
 LastMovements=Derniers mouvements
 Units=Unités
+StockCorrection=Correction stock
+StockMovement=Transfert
+NumberOfUnit=Nombre de pièces
+TotalStock=Total en stock
