@@ -41,15 +41,23 @@ $path=eregi_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
 require_once($path."../../htdocs/master.inc.php");
 
 // Vérifie que chemin vers JPGRAHP est connu et defini $jpgraph
-if (! defined('JPGRAPH_DIR') && ! defined('JPGRAPH_PATH'))
+if (! $conf->global->JPGRAPH_DIR && ! defined('JPGRAPH_PATH'))
 {
     print 'Erreur: Définissez la constante JPGRAPH_PATH sur la valeur du répertoire contenant JPGraph';
     exit;
 }    
-if (! defined('JPGRAPH_DIR')) define('JPGRAPH_DIR', JPGRAPH_PATH);
-$jpgraphdir=JPGRAPH_DIR;
+if (! $conf->global->JPGRAPH_DIR) $conf->global->JPGRAPH_DIR=JPGRAPH_PATH;
+$jpgraphdir=$conf->global->JPGRAPH_DIR;
 if (! eregi('[\\\/]$',$jpgraphdir)) $jpgraphdir.='/';
 
+if (! file_exists($jpgraphdir."jpgraph.php"))
+{
+	print 'Erreur: Impossible de trouver les librairies graphiques.'."\n";
+	print 'Vérifier la variable JPGRAPH_PATH';
+	if ($conf->global->JPGRAPH_DIR) print ' ('.$conf->global->JPGRAPH_DIR.')'."\n";
+	elseif (defined('JPGRAPH_PATH')) print ' ('.JPGRAPH_PATH.')'."\n";
+	exit;	
+}
 
 include_once($jpgraphdir."jpgraph.php");
 include_once($jpgraphdir."jpgraph_line.php");
