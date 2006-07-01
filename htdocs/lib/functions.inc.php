@@ -1132,11 +1132,12 @@ function dolibarr_print_error($db='',$msg='')
     $syslog = '';
     
     // Si erreur intervenue avant chargement langue
-    if (! $langs) {
+    if (! $langs)
+    {
         require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
         $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", "en_US");
-        $langs->load("main");
     }
+    $langs->load("main");
     
     if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
     {
