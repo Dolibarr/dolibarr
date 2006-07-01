@@ -51,6 +51,7 @@ if ($_POST["action"] == 'add')
     $account->courant       = $_POST["type"];
     $account->clos          = $_POST["clos"];
     $account->rappro        = $_POST["norappro"]?1:0;
+    $account->url           = $_POST["url"];
     
     $account->bank          = trim($_POST["bank"]);
     $account->code_banque   = $_POST["code_banque"];
@@ -95,6 +96,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->courant         = $_POST["type"];
     $account->clos            = $_POST["clos"];
     $account->rappro          = (isset($_POST["norappro"]) && $_POST["norappro"]=='on')?0:1;
+    $account->url             = $_POST["url"];
 
     $account->bank            = trim($_POST["bank"]);
     $account->code_banque     = $_POST["code_banque"];
@@ -156,7 +158,7 @@ if ($_GET["action"] == 'create')
 
 	if ($message) { print "$message<br>\n"; }
 
-	print '<form action="fiche.php" method="post">';
+	print '<form action="fiche.php" name="createbankaccount" method="post">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
 
@@ -190,10 +192,9 @@ if ($_GET["action"] == 'create')
 	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="0.00"></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
-	print '<td colspan="3">'; $now=time();
-	print '<input type="text" size="2" maxlength="2" name="reday" value="'.strftime("%d",$now).'">/';
-	print '<input type="text" size="2" maxlength="2" name="remonth" value="'.strftime("%m",$now).'">/';
-	print '<input type="text" size="4" maxlength="4" name="reyear" value="'.strftime("%Y",$now).'">';
+	print '<td colspan="3">';
+	$html=new Form($db);
+	$html->select_date(time(), 're', 0, 0, 0, 'createbankaccount');
 	print '</td></tr>';
 
 	print '<tr><td colspan="4"><b>'.$langs->trans("IfBankAccount").'...</b></td></tr>';
@@ -221,11 +222,14 @@ if ($_GET["action"] == 'create')
 	print "</textarea></td></tr>";
 
 	print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="proprio" value="'.$_POST["proprio"].'"></td></tr>';
+	print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.$_POST["proprio"].'"></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
 	print "<textarea class=\"flat\" name=\"adresse_proprio\" rows=\"2\" cols=\"40\">".$_POST["adresse_proprio"];
 	print "</textarea></td></tr>";
+
+	print '<tr><td valign="top">'.$langs->trans("Web").'</td>';
+	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
 
 	print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></td></tr>';
 	print '</form>';
@@ -320,6 +324,10 @@ else
 			print nl2br($account->adresse_proprio);
 			print "</td></tr>\n";
 		}
+
+		print '<tr><td valign="top">'.$langs->trans("Web").'</td><td colspan="3">';
+		print '<a href="'.$account->url.'">'.$account->url.'</a>';
+		print "</td></tr>\n";
 	
 		print '</table>';
 	
@@ -433,6 +441,11 @@ else
             print "<textarea class=\"flat\" name=\"adresse_proprio\" rows=\"2\" cols=\"40\">";
             print $account->adresse_proprio;
             print "</textarea></td></tr>";
+
+	        print '<tr><td valign="top">'.$langs->trans("Web").'</td>';
+	        print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$account->url.'">';
+	        print '</td></tr>';
+	
         }
         
         print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit" class="button">';

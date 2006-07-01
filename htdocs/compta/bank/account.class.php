@@ -45,6 +45,7 @@ class Account
     var $bank;
     var $clos;
     var $rappro;
+    var $url;
     
     var $code_banque;
     var $code_guichet;
@@ -348,6 +349,7 @@ class Account
         $sql .= ",courant = ".$this->courant;
         $sql .= ",clos = ".$this->clos;
         $sql .= ",rappro = ".$this->rappro;
+        $sql .= ",url = ".($this->url?"'".$this->url."'":"null");
         $sql .= ",account_number = '".$this->account_number."'";
 
         $sql .= " WHERE rowid = ".$this->id;
@@ -372,7 +374,7 @@ class Account
     function fetch($id)
     {
         $this->id = $id;
-        $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro,";
+        $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
         $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
         $sql.= " domiciliation, proprio, adresse_proprio,";
         $sql.= " account_number";
@@ -394,6 +396,7 @@ class Account
                 $this->bank          = $obj->bank;
                 $this->clos          = $obj->clos;
                 $this->rappro        = $obj->rappro;
+                $this->url           = $obj->url;
                 
                 $this->code_banque   = $obj->code_banque;
                 $this->code_guichet  = $obj->code_guichet;

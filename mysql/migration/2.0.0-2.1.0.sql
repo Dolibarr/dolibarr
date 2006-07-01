@@ -290,6 +290,7 @@ insert into llx_c_pays (rowid,code,libelle) values (30, 'SG', 'Singapoure');
 
 
 alter table llx_bank_account add column ref varchar(12) NOT NULL;
+alter table llx_bank_account add column url varchar(128);
 
 
 alter table llx_accountingsystem_det rename to llx_accountingaccount;
