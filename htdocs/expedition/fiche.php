@@ -583,7 +583,7 @@ else
             //$genallowed=1;
             //$delallowed=0;
     
-            $result=$html->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
+            $somethingshown=$html->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
     
             /*
              * Déjà livre

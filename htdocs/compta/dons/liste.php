@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -31,6 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
 
+$langs->load("companies");
 $langs->load("donations");
 
 $sortorder=$_GET["sortorder"];

@@ -195,7 +195,7 @@ if ($_POST['action'] == 'add')
 	$facture->note_public    = $_POST['note_public'];
 	$facture->note           = $_POST['note'];
 	$facture->ref_client     = $_POST['ref_client'];
-	$facture->modelpdf       = $_POST['modelpdf'];
+	$facture->modelpdf       = $_POST['model'];
 
 	if ($_POST['fac_rec'] > 0)
 	{
@@ -701,9 +701,9 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	$facture = new Facture($db, 0, $_GET['facid']);
 	$facture->fetch($_GET['facid']);
 	
-	if ($_REQUEST['modelpdf'])
+	if ($_REQUEST['model'])
 	{
-		$facture->set_pdf_model($user, $_REQUEST['modelpdf']);
+		$facture->set_pdf_model($user, $_REQUEST['model']);
 	}
 	
 	if ($_REQUEST['lang_id'])
@@ -914,13 +914,13 @@ if ($_GET['action'] == 'create')
 		print '</td></tr>';
 	}
 	
-	print '<tr><td>'.$langs->trans("Model").'</td>';
-  print '<td>';
+	print '<tr><td>'.$langs->trans('Model').'</td>';
+	print '<td>';
 	// pdf
 	include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 	$model=new ModelePDFFactures();
 	$liste=$model->liste_modeles($db);
-	$html->select_array("modelpdf",$liste,$conf->global->FACTURE_ADDON_PDF);
+	$html->select_array('model',$liste,$conf->global->FACTURE_ADDON_PDF);
 	print "</td></tr>";
 
 	// Note publique
@@ -2334,7 +2334,7 @@ else
 						$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 					}
-					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['modelpdf'], $outputlangs);
+					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 				    if ($result <= 0)
 				    {
 				    	dolibarr_print_error($db,$result);
@@ -2389,7 +2389,7 @@ else
 						$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 					}
-					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['modelpdf'], $outputlangs);
+					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 				    if ($result <= 0)
 				    {
 				    	dolibarr_print_error($db,$result);

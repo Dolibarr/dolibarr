@@ -553,7 +553,7 @@ if ($_GET["id"] > 0)
 			$genallowed=0;
 			$delallowed=0;
 
-			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+			$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
         /*
         * Liste des factures

@@ -22,14 +22,34 @@
  * $Source$
  */
 
+/**
+       	\file       htdocs/expedition/mods/pdf/pdf_expedition_dorade.modules.php
+		\ingroup    expedition
+		\brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Dorade
+		\version    $Revision$
+*/
+
 require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
 
 
+/**
+	    \class      pdf_expedition_dorade
+		\brief      Classe permettant de générer les borderaux envoi au modèle Dorade
+*/
+
 Class pdf_expedition_dorade extends ModelePdfExpedition
 {
+	var $emetteur;	// Objet societe qui emet
+
 	
+    /**
+    		\brief  Constructeur
+    		\param	db		Handler accès base de donnée
+    */
 	function pdf_expedition_dorade($db=0)
 	{
+        global $conf,$langs,$mysoc;
+
 		$this->db = $db;
 		$this->name = "dorade";
 		$this->description = "Modèle identique au rouget utilisé pour debug uniquement.";
@@ -40,6 +60,10 @@ Class pdf_expedition_dorade extends ModelePdfExpedition
         $this->format = array($this->page_largeur,$this->page_hauteur);
 
         $this->option_logo = 0;
+        
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 	}
 	
 	
@@ -87,7 +111,7 @@ Class pdf_expedition_dorade extends ModelePdfExpedition
 	
 	function generate(&$objExpe, $filename, $outputlangs='')
 	{
-		global $user,$conf,$langs,$mysoc;
+		global $user,$conf,$langs;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
@@ -98,70 +122,92 @@ Class pdf_expedition_dorade extends ModelePdfExpedition
 
 		$outputlangs->setPhpLang();
 
-		$this->expe = $objExpe;
-	
-		$this->expe->fetch_commande();
-	
-		// Définition de $dir et $file
-		if ($this->expe->specimen)
+		if ($conf->expedition->dir_output)
 		{
-			$dir = $conf->propal->dir_output;
-			$file = $dir . "/SPECIMEN.pdf";
-		}
-		else
-		{
-			$expref = sanitize_string($this->expe->ref);
-			$dir = $conf->expedition->dir_output . "/" . $expref;
-			$file = $dir . "/" . $expref . ".pdf";
-		}
+			$this->expe = $objExpe;
+			$this->expe->fetch_commande();
 
-		if (! file_exists($dir))
-		{
-			if (create_exdir($dir) < 0)
+			// Définition de $dir et $file
+			if ($this->expe->specimen)
 			{
-				$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
-				return 0;
+				$dir = $conf->expedition->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
 			}
-		}
-
-		$filename=$file;
-
-		$this->pdf = new ModelePdfExpedition();
-		$this->pdf->expe = &$this->expe;
+			else
+			{
+				$expref = sanitize_string($this->expe->ref);
+				$dir = $conf->expedition->dir_output . "/" . $expref;
+				$file = $dir . "/" . $expref . ".pdf";
+			}
 	
-		$this->pdf->Open();
-		$this->pdf->AliasNbPages();
-		$this->pdf->AddPage();
+			if (! file_exists($dir))
+			{
+				if (create_exdir($dir) < 0)
+				{
+					$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+					return 0;
+				}
+			}
 	
-		$this->pdf->SetTitle($objExpe->ref);
-		$this->pdf->SetSubject("Bordereau d'expedition");
-		$this->pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		//$this->pdf->SetAuthor($user->fullname);
-	
-		/*
-		*
-		*/
-		$this->pdf->SetTextColor(0,0,0);
-		$this->pdf->SetFont('Arial','', 16);
-	
-		$this->expe->fetch_lignes();
-	
-		for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
-		{
-			$a = $this->pdf->tableau_top + 14 + ($i * 16);
-	
-			$this->pdf->i25(8, ($a - 2), "000000".$this->expe->lignes[$i]->fk_product, 1, 8);
-	
-			$this->pdf->Text(40, $a, $this->expe->lignes[$i]->description);
-	
-			$this->pdf->Text(170, $a, $this->expe->lignes[$i]->qty_commande);
-	
-			$this->pdf->Text(194, $a, $this->expe->lignes[$i]->qty_expedition);
-		}
-
-		$this->pdf->Output($filename);
+            if (file_exists($dir))
+            {
+				$filename=$file;
 		
-		return 1;
+				$this->pdf = new ModelePdfExpedition();
+				$this->pdf->expe = &$this->expe;
+			
+				$this->pdf->Open();
+				$this->pdf->AliasNbPages();
+				$this->pdf->AddPage();
+			
+				$this->pdf->SetTitle($objExpe->ref);
+				$this->pdf->SetSubject("Bordereau d'expedition");
+				$this->pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				//$this->pdf->SetAuthor($user->fullname);
+			
+				/*
+				*
+				*/
+				$this->pdf->SetTextColor(0,0,0);
+				$this->pdf->SetFont('Arial','', 16);
+			
+				$this->expe->fetch_lignes();
+			
+				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
+				{
+					$a = $this->pdf->tableau_top + 14 + ($i * 16);
+			
+					$this->pdf->i25(8, ($a - 2), "000000".$this->expe->lignes[$i]->fk_product, 1, 8);
+			
+					$this->pdf->Text(40, $a, $this->expe->lignes[$i]->description);
+			
+					$this->pdf->Text(170, $a, $this->expe->lignes[$i]->qty_commande);
+			
+					$this->pdf->Text(194, $a, $this->expe->lignes[$i]->qty_expedition);
+				}
+		
+				$this->pdf->Output($filename);
+	
+				$langs->setPhpLang();	// On restaure langue session
+				return 1;
+			}
+            else
+            {
+                $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+				$langs->setPhpLang();	// On restaure langue session
+                return 0;
+            }
+		}
+        else
+        {
+            $this->error=$outputlangs->trans("ErrorConstantNotDefined","EXP_OUTPUTDIR");
+			$langs->setPhpLang();	// On restaure langue session
+            return 0;
+        }
+        $this->error=$outputlangs->trans("ErrorUnknown");
+		$langs->setPhpLang();	// On restaure langue session
+        return 0;   // Erreur par defaut
+		
 	}
 }
 ?>

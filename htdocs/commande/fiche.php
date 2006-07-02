@@ -97,7 +97,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	//$commande->remise_absolue       = $_POST['remise_absolue']; //la remise était appliquée sur les lignes et sur le total
 	//$commande->remise_percent       = $_POST['remise_percent'];
 	$commande->ref_client           = $_POST['ref_client'];
-	$commande->modelpdf             = $_POST['modelpdf'];
+	$commande->modelpdf             = $_POST['model'];
 	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
 	$commande->mode_reglement_id    = $_POST['mode_reglement_id'];
 	$commande->date_livraison       = $datelivraison;
@@ -449,9 +449,9 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	// Sauvegarde le dernier modèle choisi pour générer un document
 	$commande = new Commande($db, 0, $_REQUEST['id']);
 	$commande->fetch($_REQUEST['id']);
-	if ($_REQUEST['modelpdf'])
+	if ($_REQUEST['model'])
 	{
-		$commande->set_pdf_model($user, $_REQUEST['modelpdf']);
+		$commande->set_pdf_model($user, $_REQUEST['model']);
 	}
 
 	if ($_REQUEST['lang_id'])
@@ -774,13 +774,13 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<tr><td>'.$langs->trans('Source').'</td><td>';
 			$html->selectSourcesCommande('','source_id',1);
 			print '</td></tr>';
-			print '<tr><td>'.$langs->trans("Model").'</td>';
+			print '<tr><td>'.$langs->trans('Model').'</td>';
 			print '<td>';
 			// pdf
 			include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
 			$model=new ModelePDFCommandes();
 			$liste=$model->liste_modeles($db);
-			$html->select_array("modelpdf",$liste,$conf->global->COMMANDE_ADDON_PDF);
+			$html->select_array('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
 			print "</td></tr>";
 
 			if ($propalid > 0)
@@ -1646,7 +1646,7 @@ else
 			$genallowed=$user->rights->commande->creer;
 			$delallowed=$user->rights->commande->supprimer;
 
-			$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+			$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
 			/*
 			* Liste des factures
@@ -1809,7 +1809,7 @@ else
 						$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 					}
-					$result=commande_pdf_create($db, $_REQUEST['id'], '', $_REQUEST['modelpdf'], $outputlangs);
+					$result=commande_pdf_create($db, $_REQUEST['id'], '', $_REQUEST['model'], $outputlangs);
 				    if ($result <= 0)
 				    {
 				    	dolibarr_print_error($db,$result);

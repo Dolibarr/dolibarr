@@ -126,7 +126,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 
 llxHeader();
 
-$sel = new Form($db);
+$html = new Form($db);
 
 /*
  *
@@ -176,7 +176,7 @@ if ($_GET["action"] == 'create')
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$societe->getNomUrl(1)."</td></tr>";
 
 	print "<tr><td>".$langs->trans("Date")."</td><td>";
-	$sel->select_date(time(),"p",'','','','fichinter');
+	$html->select_date(time(),"p",'','','','fichinter');
 	print "</td></tr>";
 
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
@@ -265,7 +265,7 @@ if ($_GET["action"] == 'edit')
 
 	// Date
     print "<tr><td>".$langs->trans("Date")."</td><td>";
-    $sel->select_date($fichinter->date,'','','','','update');
+    $html->select_date($fichinter->date,'','','','','update');
     print "</td></tr>";
 
     print '<tr><td>'.$langs->trans("Duration")." (".$langs->trans("days").')</td><td><input name="duree" value="'.$fichinter->duree.'"></td></tr>';
@@ -274,7 +274,7 @@ if ($_GET["action"] == 'edit')
       {
         // Projet associé
         print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-        $sel->select_projects($fichinter->societe_id,$fichinter->projet_id,"projetidp");
+        $html->select_projects($fichinter->societe_id,$fichinter->projet_id,"projetidp");
         print '</td></tr>';
       }
 
@@ -397,7 +397,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
     $var=true;
 
     print "<br>\n";
-    $sel->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$ficheinter->modelpdf);
+    $somethingshown=$html->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$ficheinter->modelpdf);
 
 
     print "</td><td>";

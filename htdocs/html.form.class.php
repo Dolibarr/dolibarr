@@ -2468,7 +2468,7 @@ class Form
             print '<tr '.$bc[$var].'>';
             print '<td>'.$langs->trans('Model').'</td>';
             print '<td align="center">';
-            $this->select_array('modelpdf',$modellist,$modelselected,0,0,1);
+            $this->select_array('model',$modellist,$modelselected,0,0,1);
             $texte=$langs->trans('Generate');
             print '</td>';
             print '<td align="center">';

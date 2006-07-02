@@ -117,7 +117,7 @@ if ($step == 1 || $action == 'cleanselect')
 if ($action == 'builddoc')
 {
     // Genère le fichier
-	$result=$objexport->build_file($user, $_POST["model"], $datatoexport, $array_selected);
+	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected);
 	if ($result < 0)
 	{
 	    $mesg='<div class="error">'.$objexport->error.'</div>';

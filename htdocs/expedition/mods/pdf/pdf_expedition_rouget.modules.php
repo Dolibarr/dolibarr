@@ -21,14 +21,34 @@
  * $Source$
  */
 
+/**
+       	\file       htdocs/expedition/mods/pdf/pdf_expedition_rouget.modules.php
+		\ingroup    expedition
+		\brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Rouget
+		\version    $Revision$
+*/
+
 require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
 
 
+/**
+	    \class      pdf_expedition_dorade
+		\brief      Classe permettant de générer les borderaux envoi au modèle Rouget
+*/
+
 Class pdf_expedition_rouget extends ModelePdfExpedition
 {
+	var $emetteur;	// Objet societe qui emet
+
 	
+    /**
+    		\brief  Constructeur
+    		\param	db		Handler accès base de donnée
+    */
 	function pdf_expedition_rouget($db=0)
 	{
+        global $conf,$langs,$mysoc;
+
 		$this->db = $db;
 		$this->name = "rouget";
 		$this->description = "Modèle simple.";
@@ -39,6 +59,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
         $this->format = array($this->page_largeur,$this->page_hauteur);
 
         $this->option_logo = 0;
+
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 	}
 	
 	function Header()
@@ -68,7 +92,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	
 	function generate(&$objExpe, $filename, $outputlangs='')
 	{
-		global $user,$conf,$langs,$mysoc;
+		global $user,$conf,$langs;
 	
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
@@ -79,43 +103,87 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		$outputlangs->setPhpLang();
 
-		$this->expe = $objExpe;
-	
-		$this->pdf = new FPDF();
-		$this->pdf->expe = &$this->expe;
-	
-		$this->pdf->Open();
-		$this->pdf->AliasNbPages();
-		$this->pdf->AddPage();
-	
-		$this->pdf->SetTitle($objExpe->ref);
-		$this->pdf->SetSubject($langs->trans("Sending"));
-		$this->pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		//$this->pdf->SetAuthor($user->fullname);
-	
-		/*
-		*
-		*/
-	
-		$this->pdf->SetTextColor(0,0,0);
-		$this->pdf->SetFont('Arial','', 14);
-	
-		$this->expe->fetch_lignes();
-	
-		for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
+		if ($conf->expedition->dir_output)
 		{
-			$a = $this->pdf->tableau_top + 14 + ($i * 7);
-	
-			$this->pdf->Text(8, $a, $this->expe->lignes[$i]->description);
-	
-			$this->pdf->Text(170, $a, $this->expe->lignes[$i]->qty_commande);
-	
-			$this->pdf->Text(194, $a, $this->expe->lignes[$i]->qty_expedition);
-		}
-	
-		$this->pdf->Output($filename);
+			$this->expe = $objExpe;
 		
-		return 1;
+			// Définition de $dir et $file
+			if ($this->expe->specimen)
+			{
+				$dir = $conf->expedition->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$expref = sanitize_string($this->expe->ref);
+				$dir = $conf->expedition->dir_output . "/" . $expref;
+				$file = $dir . "/" . $expref . ".pdf";
+			}
+	
+			if (! file_exists($dir))
+			{
+				if (create_exdir($dir) < 0)
+				{
+					$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+					return 0;
+				}
+			}
+			
+            if (file_exists($dir))
+            {
+				$this->pdf = new FPDF();
+				$this->pdf->expe = &$this->expe;
+			
+				$this->pdf->Open();
+				$this->pdf->AliasNbPages();
+				$this->pdf->AddPage();
+			
+				$this->pdf->SetTitle($objExpe->ref);
+				$this->pdf->SetSubject($langs->trans("Sending"));
+				$this->pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				//$this->pdf->SetAuthor($user->fullname);
+			
+				/*
+				*
+				*/
+			
+				$this->pdf->SetTextColor(0,0,0);
+				$this->pdf->SetFont('Arial','', 14);
+			
+				$this->expe->fetch_lignes();
+			
+				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
+				{
+					$a = $this->pdf->tableau_top + 14 + ($i * 7);
+			
+					$this->pdf->Text(8, $a, $this->expe->lignes[$i]->description);
+			
+					$this->pdf->Text(170, $a, $this->expe->lignes[$i]->qty_commande);
+			
+					$this->pdf->Text(194, $a, $this->expe->lignes[$i]->qty_expedition);
+				}
+			
+				$this->pdf->Output($filename);
+	
+				$langs->setPhpLang();	// On restaure langue session
+				return 1;
+			}
+            else
+            {
+                $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+				$langs->setPhpLang();	// On restaure langue session
+                return 0;
+            }
+		}
+        else
+        {
+            $this->error=$outputlangs->trans("ErrorConstantNotDefined","EXP_OUTPUTDIR");
+			$langs->setPhpLang();	// On restaure langue session
+            return 0;
+        }
+        $this->error=$outputlangs->trans("ErrorUnknown");
+		$langs->setPhpLang();	// On restaure langue session
+        return 0;   // Erreur par defaut
 	}
 }
 

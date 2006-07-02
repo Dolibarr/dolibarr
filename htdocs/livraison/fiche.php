@@ -557,7 +557,7 @@ else
             //$genallowed=1;
             //$delallowed=0;
     
-            $result=$html->show_documents('livraison',$livraisonref,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf);
+            $somethingshown=$html->show_documents('livraison',$livraisonref,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf);
     
             /*
              * Déjà livre

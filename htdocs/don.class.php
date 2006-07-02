@@ -70,9 +70,12 @@ class Don
         $this->modepaiementid = 0;
     
         $langs->load("donations");
-        $this->labelstatut[0]=$langs->trans("DonationStatusPromessNotValidated");
-        $this->labelstatut[1]=$langs->trans("DonationStatusPromessValidated");
+        $this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
+        $this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
         $this->labelstatut[2]=$langs->trans("DonationStatusPayed");
+        $this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
+        $this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
+        $this->labelstatutshort[2]=$langs->trans("DonationStatusPayedShort");
     }
 
     
@@ -98,20 +101,17 @@ class Don
 
 		if ($mode == 0)
 		{
-			$prefix='';
 			return $this->labelstatut[$statut];
 		}
 		if ($mode == 1)
 		{
-			$prefix='Short';
-			return $this->labelstatut[$statut];
+			return $this->labelstatutshort[$statut];
 		}
 		if ($mode == 2)
 		{
-			$prefix='Short';
-			if ($statut == 0) return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatut[$statut];
-			if ($statut == 1) return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
-			if ($statut == 2) return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
+			if ($statut == 0) return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatutshort[$statut];
+			if ($statut == 1) return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatutshort[$statut];
+			if ($statut == 2) return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatutshort[$statut];
 		}
 		if ($mode == 3)
 		{
@@ -129,9 +129,9 @@ class Don
 		if ($mode == 5)
 		{
 			$prefix='Short';
-			if ($statut == 0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
-			if ($statut == 1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
-			if ($statut == 2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+			if ($statut == 0) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
+			if ($statut == 1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
+			if ($statut == 2) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
 		}
 	}
 	
