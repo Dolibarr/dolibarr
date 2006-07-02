@@ -54,7 +54,6 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',0);
 
-insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
 --
 -- IHM
