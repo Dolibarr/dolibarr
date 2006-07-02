@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -94,6 +93,8 @@ $sql .= $db->plimit( $limit + 1, $offset);
 $resql=$db->query($sql);
 if ($resql)
 {
+    $actionstatic=new ActionComm($db);
+    
     $num = $db->num_rows($resql);
     $title="DoneAndToDoActions";
     if ($status == 'done') $title="DoneActions";
@@ -115,12 +116,12 @@ if ($resql)
     print '<tr class="liste_titre">';
 //    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep","&status=$status",'','colspan="4"',$sortfield);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep","&status=$status",'','',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent","&status=$status","","",$sortfield);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode","&status=$status","","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","&status=$status","","",$sortfield);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact","&status=$status","","",$sortfield);
     print '<td>'.$langs->trans("Comments").'</td>';
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.code","&status=$status","","",$sortfield);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent","&status=$status","","",$sortfield);
     print "</tr>\n";
     $var=true;
     while ($i < min($num,$limit))
@@ -164,14 +165,6 @@ if ($resql)
 
 //        print '<td align="center">'.dolibarr_print_date($obj->dp)."</td>\n";
 
-        // Status/Percent
-        if ($obj->percent < 100) {
-            print "<td align=\"center\">".$obj->percent."%</td>";
-        }
-        else {
-            print "<td align=\"center\">".$langs->trans("Done")."</td>";
-        }
-
         // Action
         print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' ';
         $transcode=$langs->trans("Action".$obj->acode);
@@ -205,6 +198,9 @@ if ($resql)
 
         // Auteur
         print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+
+        // Status/Percent
+        print '<td align="right">'.$actionstatic->LibStatut($obj->percent,5).'</td>';
 
         print "</tr>\n";
         $i++;

@@ -510,7 +510,7 @@ if ($_GET["id"])
         // Statut
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
         print $act->getLibStatut(4);
-        print ' ('.$act->percent.' %)</td></tr>';
+        print '</td></tr>';
 
 		// Objet lié
         if ($act->objet_url)

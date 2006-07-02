@@ -329,37 +329,37 @@ class ActionComm
         if ($mode == 0)
         {
         	if ($percent==0) return $langs->trans('StatusActionToDo');
-        	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess');
-        	if ($percent >= 100) return $langs->trans('StatusActionDone');
+        	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
+        	if ($percent >= 100) return $langs->trans('StatusActionDone').' (100%)';
 		}
         if ($mode == 1)
         {
         	if ($percent==0) return $langs->trans('StatusActionToDo');
-        	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess');
+        	if ($percent > 0 && $percent < 100) return $percent.'%';
         	if ($percent >= 100) return $langs->trans('StatusActionDone');
         }
         if ($mode == 2)
         {
         	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo');
-        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '.$langs->trans('StatusActionInProcess');
+        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '. $percent.'%';
         	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6').' '.$langs->trans('StatusActionDone');
         }
         if ($mode == 3)
         {
         	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1');
-        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3');
+        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess').' ('.$percent.'%)','statut3');
         	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
         }
         if ($mode == 4)
         {
-        	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo');
-        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '.$langs->trans('StatusActionInProcess');
-        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6').' '.$langs->trans('StatusActionDone');
+        	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo').' (0%)';
+        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)';;
+        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6').' '.$langs->trans('StatusActionDone').' (100%)';
         }
         if ($mode == 5)
         {
-        	if ($percent==0) return $langs->trans('StatusActionToDo').' '.img_picto($langs->trans('StatusActionToDo'),'statut1');
-        	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' '.img_picto($langs->trans('StatusActionInProcess'),'statut3');
+        	if ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
+        	if ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess'),'statut3');
         	if ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'),'statut6');
         }
 	}
