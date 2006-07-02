@@ -31,15 +31,21 @@ if (!empty ($_SERVER["REMOTE_USER"]))
    die("La d&eacute;connection ne fonctionne actuellement que pour l'authentification par pear");
 
 include_once("../conf/conf.php");
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
+require_once("../master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
 
-require_once "../includes/pear/Auth/Auth.php";
+
+dolibarr_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);
+
+session_name("DOLSESSID_".$dolibarr_main_db_name);
+session_start();
+session_unregister("dol_user");
 
 $a = new DOLIAuth("DB");
 $a->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
 $a->setShowLogin (false);
 $a->start();
-if ($a->getAuth()) 
-  $a->logout();
-header("Location: ../"); 
+if ($a->getAuth()) $a->logout();
+
+header("Location: ../index.php");
 ?>
