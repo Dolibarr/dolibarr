@@ -201,14 +201,20 @@ else
 $mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL;
 $mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
 $mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;
+// Anciens id prof
 $mysoc->siren=$conf->global->MAIN_INFO_SIREN;
 $mysoc->siret=$conf->global->MAIN_INFO_SIRET;
 $mysoc->ape=$conf->global->MAIN_INFO_APE;
 $mysoc->rcs=$conf->global->MAIN_INFO_RCS;
+// Id prof génériques
+$mysoc->profid1=$conf->global->MAIN_INFO_SIREN;
+$mysoc->profid2=$conf->global->MAIN_INFO_SIRET;
+$mysoc->profid3=$conf->global->MAIN_INFO_APE;
+$mysoc->profid4=$conf->global->MAIN_INFO_RCS;
 $mysoc->tva_assuj=$conf->global->FACTURE_TVAOPTION;
 $mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;
 $mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
-$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_FORME_JURIDIQUE;
+$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
 $mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
 $mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
 $mysoc->logo=$conf->global->MAIN_INFO_SOCIETE_LOGO;
