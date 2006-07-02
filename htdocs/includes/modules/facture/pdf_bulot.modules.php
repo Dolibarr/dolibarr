@@ -35,7 +35,10 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 		\brief      Classe permettant de générer les factures au modèle Bulot
 */
 
-class pdf_bulot extends ModelePDFFactures {
+class pdf_bulot extends ModelePDFFactures
+{
+	var $emetteur;	// Objet societe qui emet
+
 
     /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
@@ -58,9 +61,9 @@ class pdf_bulot extends ModelePDFFactures {
 		$this->page_hauteur = 297;
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 
-        // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=$mysoc->pays_code;
-        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 	}
 
     /**
@@ -70,7 +73,7 @@ class pdf_bulot extends ModelePDFFactures {
 	 */
 	function write_pdf_file($fac,$outputlangs='')
 	{
-		global $user,$langs,$conf,$mysoc;
+		global $user,$langs,$conf;
 
 		if ($conf->facture->dir_output)
 		{
@@ -409,10 +412,10 @@ class pdf_bulot extends ModelePDFFactures {
 			$pdf->SetFont('Arial','',10);
 			$pdf->MultiCell(40, 5, $langs->trans('PhoneNumber').' : '.FAC_PDF_TEL);
 		}
-		if (defined("MAIN_INFO_SIREN"))
+		if ($this->emetteur->profid1)
 		{
 			$pdf->SetFont('Arial','',10);
-			$pdf->MultiCell(40, 5, "SIREN : ".MAIN_INFO_SIREN);
+			$pdf->MultiCell(40, 5, "SIREN : ".$this->emetteur->profid1);
 		}
 
 		if (defined("FAC_PDF_INTITULE2"))

@@ -39,6 +39,8 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 class pdf_crabe extends ModelePDFFactures
 {
+	var $emetteur;	// Objet societe qui emet
+
 
     /**
     		\brief  Constructeur
@@ -75,9 +77,9 @@ class pdf_crabe extends ModelePDFFactures
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
 
-        // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=$mysoc->pays_code;
-        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 
         // Defini position des colonnes
         $this->posxdesc=$this->marge_gauche+1;
@@ -97,26 +99,10 @@ class pdf_crabe extends ModelePDFFactures
      *		\brief      Fonction générant la facture sur le disque
      *		\param	    fac		Objet facture à générer (ou id si ancienne methode)
      *		\return	    int     1=ok, 0=ko
-     *      \remarks    Variables utilisées
-	 *		\remarks    MAIN_INFO_SOCIETE_NOM
-     *		\remarks    MAIN_INFO_SOCIETE_ADRESSE
-     *		\remarks    MAIN_INFO_SOCIETE_CP
-     *		\remarks    MAIN_INFO_SOCIETE_VILLE
-     *		\remarks    MAIN_INFO_SOCIETE_TEL
-     *		\remarks    MAIN_INFO_SOCIETE_FAX
-     *	 	\remarks    MAIN_INFO_SOCIETE_WEB
-     *      \remarks    MAIN_INFO_SOCIETE_LOGO
-     *		\remarks    MAIN_INFO_SIRET
-     *		\remarks    MAIN_INFO_SIREN
-     *		\remarks    MAIN_INFO_RCS
-     *		\remarks    MAIN_INFO_CAPITAL
-     *		\remarks    MAIN_INFO_TVAINTRA
-	 *		\remarks    FACTURE_CHQ_NUMBER
-     *		\remarks    FACTURE_RIB_NUMBER
      */
     function write_pdf_file($fac,$outputlangs='')
     {
-        global $user,$langs,$conf,$mysoc;
+        global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
@@ -382,10 +368,10 @@ class pdf_crabe extends ModelePDFFactures
                     {
                         $pdf->SetXY($this->marge_gauche, 227);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedToShort').' '.$mysoc->nom.' '.$outputlangs->trans('SendTo').':',0,'L',0);
+                        $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedToShort').' '.$this->emetteur->nom.' '.$outputlangs->trans('SendTo').':',0,'L',0);
                         $pdf->SetXY($this->marge_gauche, 231);
                         $pdf->SetFont('Arial','',8);
-                        $pdf->MultiCell(80, 3, $mysoc->adresse_full, 0, 'L', 0);
+                        $pdf->MultiCell(80, 3, $this->emetteur->adresse_full, 0, 'L', 0);
                     }
                 }
 
@@ -761,7 +747,7 @@ class pdf_crabe extends ModelePDFFactures
      */
     function _pagehead(&$pdf, $fac, $showadress=1, $outputlangs)
     {
-        global $conf,$mysoc;
+        global $conf;
 
         $outputlangs->load("main");
         $outputlangs->load("bills");
@@ -776,8 +762,8 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-        $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-        if ($mysoc->logo)
+        $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+        if ($this->emetteur->logo)
         {
             if (is_readable($logo))
 			{
@@ -842,28 +828,28 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->SetTextColor(0,0,60);
             $pdf->SetFont('Arial','B',11);
             if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-            else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
+            else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
 
             // Caractéristiques emetteur
             $carac_emetteur = '';
             if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
             else {
-                $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
-                $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
+                $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->adresse;
+                $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->cp.' '.$this->emetteur->ville;
             }
             $carac_emetteur .= "\n";
             // Tel
             if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Phone").": ".FAC_PDF_TEL;
-            elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Phone").": ".$mysoc->tel;
+            elseif ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Phone").": ".$this->emetteur->tel;
             // Fax
             if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Fax").": ".FAC_PDF_FAX;
-            elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Fax").": ".$mysoc->fax;
+            elseif ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Fax").": ".$this->emetteur->fax;
             // EMail
     		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Email").": ".FAC_PDF_MEL;
-            elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Email").": ".$mysoc->email;
+            elseif ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Email").": ".$this->emetteur->email;
             // Web
     		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Web").": ".FAC_PDF_WWW;
-            elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Web").": ".$mysoc->url;
+            elseif ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Web").": ".$this->emetteur->url;
 
             $pdf->SetFont('Arial','',9);
             $pdf->SetXY($this->marge_gauche+2,$posy+8);
@@ -907,36 +893,36 @@ class pdf_crabe extends ModelePDFFactures
 
         // Premiere ligne d'info réglementaires
         $ligne1="";
-        if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
+        if ($this->emetteur->forme_juridique_code)
         {
-            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($this->emetteur->forme_juridique_code);
         }
-        if ($conf->global->MAIN_INFO_CAPITAL)
+        if ($this->emetteur->capital)
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$outputlangs->trans("Currency".$conf->monnaie);
+            $ligne1.=($ligne1?" - ":"").$outputlangs->trans("CapitalOf",$this->emetteur->capital)." ".$outputlangs->trans("Currency".$conf->monnaie);
         }
-        if ($conf->global->MAIN_INFO_SIRET)
+        if ($this->emetteur->profid2)
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->pays_code).": ".$this->emetteur->profid2;
         }
-        if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->code_pays != 'FR'))
+        if ($this->emetteur->profid1 && (! $this->emetteur->profid2 || $this->emetteur->pays_code != 'FR'))
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
         }
 
         // Deuxieme ligne d'info réglementaires
         $ligne2="";
-        if ($conf->global->MAIN_INFO_APE)
+        if ($this->emetteur->profid3)
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->pays_code).": ".$this->emetteur->profid3;
         }
-        if ($conf->global->MAIN_INFO_RCS)
+        if ($this->emetteur->profid4)
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->pays_code).": ".$this->emetteur->profid4;
         }
-        if ($conf->global->MAIN_INFO_TVAINTRA != '')
+        if ($this->emetteur->tva_intra != '')
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->trans("VATIntraShort").": ".$this->emetteur->tva_intra;
         }
 
         $pdf->SetFont('Arial','',8);

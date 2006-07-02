@@ -37,12 +37,16 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 
 class pdf_propale_vert extends ModelePDFPropales
 {
+	var $emetteur;	// Objet societe qui emet
+
 
     /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
   	function pdf_propale_vert($db=0)
     {
+        global $conf,$langs,$mysoc;
+
         $this->db = $db;
         $this->name = "vert";
         $this->description = "Affichage de la remise par produit";
@@ -55,9 +59,9 @@ class pdf_propale_vert extends ModelePDFPropales
 
         $this->error = "";
         
-        // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=$mysoc->pays_code;
-        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
     }
 
 
@@ -77,7 +81,7 @@ class pdf_propale_vert extends ModelePDFPropales
 	*/
 	function write_pdf_file($propale,$outputlangs='')
 	{
-		global $user,$conf,$langs,$mysoc;
+		global $user,$conf,$langs;
 
 		if ($conf->propal->dir_output)
 		{

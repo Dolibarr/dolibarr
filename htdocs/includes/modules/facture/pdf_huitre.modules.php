@@ -37,7 +37,10 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 		\brief      Classe permettant de générer les factures au modèle Huitre
 */
 
-class pdf_huitre extends ModelePDFFactures {
+class pdf_huitre extends ModelePDFFactures
+{
+	var $emetteur;	// Objet societe qui emet
+
 
     /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
@@ -61,9 +64,9 @@ class pdf_huitre extends ModelePDFFactures {
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
         
-        // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=$mysoc->pays_code;
-        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
     }
 
 
@@ -74,7 +77,7 @@ class pdf_huitre extends ModelePDFFactures {
 	 */
 	function write_pdf_file($fac,$outputlangs='')
 	{
-		global $user,$langs,$conf,$mysoc;
+		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
@@ -469,7 +472,7 @@ class pdf_huitre extends ModelePDFFactures {
     */
   function _pagehead(&$pdf, $fac)
     {
-        global $langs,$conf,$mysoc;
+        global $langs,$conf;
         $langs->load("main");
         $langs->load("bills");
 		$langs->load("companies");
@@ -480,8 +483,8 @@ class pdf_huitre extends ModelePDFFactures {
       $ligne = 2;
 
 		// Logo
-        $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-        if ($mysoc->logo)
+        $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+        if ($this->emetteur->logo)
         {
             if (is_readable($logo))
             {
@@ -598,13 +601,13 @@ class pdf_huitre extends ModelePDFFactures {
             $ligne=$langs->trans('LimitedLiabilityCompanyCapital').' '. MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".MAIN_INFO_SIREN;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->pays_code).": ".MAIN_INFO_SIREN;
         }
         if (defined('MAIN_INFO_SIRET') && MAIN_INFO_SIRET) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->code_pays).": ".MAIN_INFO_SIRET;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->pays_code).": ".MAIN_INFO_SIRET;
         }
         if (defined('MAIN_INFO_RCS') && MAIN_INFO_RCS) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".MAIN_INFO_RCS;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->pays_code).": ".MAIN_INFO_RCS;
         }
         if ($ligne) {
             $pdf->SetY(-$footy);

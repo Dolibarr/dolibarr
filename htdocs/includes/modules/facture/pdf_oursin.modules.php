@@ -40,6 +40,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 
 class pdf_oursin extends ModelePDFFactures
 {
+	var $emetteur;	// Objet societe qui emet
     var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
 
 
@@ -72,9 +73,9 @@ class pdf_oursin extends ModelePDFFactures
         if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
         	$this->franchise=1;
 
-        // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=$mysoc->pays_code;
-		if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
     }
 
 
@@ -99,7 +100,7 @@ class pdf_oursin extends ModelePDFFactures
   	 */
 	function write_pdf_file($fac,$outputlangs='')
 	{
-		global $user,$langs,$conf,$mysoc;
+		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
@@ -593,7 +594,7 @@ class pdf_oursin extends ModelePDFFactures
    */
   function _pagehead(&$pdf, $fac)
   {
-    global $langs,$conf,$mysoc;
+    global $langs,$conf;
     $langs->load("main");
     $langs->load("bills");
     $langs->load("propal");
@@ -605,8 +606,8 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetXY($this->marges['g'],6);
 
     // Logo
-    $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-    if ($mysoc->logo)
+    $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+    if ($this->emetteur->logo)
       {
 				if (is_readable($logo))
 	  			{
@@ -678,11 +679,11 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetFont('Arial','',7);
     if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
       {
-            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN);
+            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->pays_code).": ".MAIN_INFO_SIREN);
       }
     elseif (defined("MAIN_INFO_SIRET") && MAIN_INFO_SIRET)
       {
-            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET);
+            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->pays_code).": ".MAIN_INFO_SIRET);
       }
 
 
@@ -771,13 +772,13 @@ class pdf_oursin extends ModelePDFFactures
             $ligne=$langs->trans('LimitedLiabilityCompanyCapital').' '. MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".MAIN_INFO_SIREN;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->pays_code).": ".MAIN_INFO_SIREN;
         }
         if (defined('MAIN_INFO_SIRET') && MAIN_INFO_SIRET) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->code_pays).": ".MAIN_INFO_SIRET;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->pays_code).": ".MAIN_INFO_SIRET;
         }
         if (defined('MAIN_INFO_RCS') && MAIN_INFO_RCS) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".MAIN_INFO_RCS;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->pays_code).": ".MAIN_INFO_RCS;
         }
         if ($ligne) {
             $pdf->SetY(-$footy);

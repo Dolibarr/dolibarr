@@ -36,11 +36,13 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 
 class pdf_propale_bleu extends ModelePDFPropales
 {
+	var $emetteur;	// Objet societe qui emet
+
 
     /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
-  function pdf_propale_bleu($db=0)
+	function pdf_propale_bleu($db=0)
     {
         $this->db = $db;
         $this->name = "bleu";
@@ -54,9 +56,9 @@ class pdf_propale_bleu extends ModelePDFPropales
 
         $this->error = "";
         
-        // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=$mysoc->pays_code;
-        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
     }
 
 
@@ -74,20 +76,6 @@ class pdf_propale_bleu extends ModelePDFPropales
 	    \brief      Fonction générant la propale sur le disque
 	    \param	    propale		Objet propal
 		\return	    int     	1=ok, 0=ko
-        \remarks    Variables utilisées
-		\remarks    MAIN_INFO_SOCIETE_NOM
-		\remarks    MAIN_INFO_SOCIETE_ADRESSE
-		\remarks    MAIN_INFO_SOCIETE_CP
-		\remarks    MAIN_INFO_SOCIETE_VILLE
-		\remarks    MAIN_INFO_SOCIETE_TEL
-		\remarks    MAIN_INFO_SOCIETE_FAX
-		\remarks    MAIN_INFO_SOCIETE_WEB
-        \remarks    MAIN_INFO_SOCIETE_LOGO
-		\remarks    MAIN_INFO_SIRET
-		\remarks    MAIN_INFO_SIREN
-		\remarks    MAIN_INFO_RCS
-		\remarks    MAIN_INFO_CAPITAL
-		\remarks    MAIN_INFO_TVAINTRA
 	*/
 	function write_pdf_file($propale,$outputlangs='')
 	{
@@ -279,62 +267,62 @@ class pdf_propale_bleu extends ModelePDFPropales
 
     }
 
-  function _pagehead(&$pdf, $propale)
-    {
-    	global $langs;
-      $pdf->SetXY(10,5);
-      if (defined("FAC_PDF_INTITULE"))
+	function _pagehead(&$pdf, $propale)
 	{
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->SetFont('Times','B',14);
-	  $pdf->MultiCell(76, 8, FAC_PDF_INTITULE, 0, 'L');
+		global $langs;
+		$pdf->SetXY(10,5);
+		if (defined("FAC_PDF_INTITULE"))
+		{
+			$pdf->SetTextColor(0,0,200);
+			$pdf->SetFont('Times','B',14);
+			$pdf->MultiCell(76, 8, FAC_PDF_INTITULE, 0, 'L');
+		}
+	
+		$pdf->SetTextColor(70,70,170);
+		if (defined("FAC_PDF_ADRESSE"))
+		{
+			$pdf->SetFont('Times','',12);
+			$pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
+		}
+		if (defined("FAC_PDF_TEL"))
+		{
+			$pdf->SetFont('Times','',10);
+			$pdf->MultiCell(76, 5, $langs->trans("Phone")." : ".FAC_PDF_TEL);
+		}
+		if ($this->emetteur->profid1)
+		{
+			$pdf->SetFont('Times','',10);
+			$pdf->MultiCell(76, 5, "SIREN : ".$this->emetteur->profid1);
+		}
+	
+		if (defined("FAC_PDF_INTITULE2"))
+		{
+			$pdf->SetXY(100,5);
+			$pdf->SetFont('Times','B',14);
+			$pdf->SetTextColor(0,0,200);
+			$pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+		}
+		/*
+		* Adresse Client
+		*/
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Courier','B',12);
+		$propale->fetch_client();
+		$pdf->SetXY(102,42);
+		$pdf->MultiCell(96,5, $propale->client->nom);
+		$pdf->SetFont('Courier','B',11);
+		$pdf->SetXY(102,47);
+		$pdf->MultiCell(96,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
+		$pdf->rect(100, 40, 100, 40);
+	
+	
+		$pdf->SetTextColor(200,0,0);
+		$pdf->SetFont('Courier','B',12);
+		$pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $propale->date));
+		$pdf->Text(11, 94, "Proposition commerciale : ".$propale->ref);
+	
+	
 	}
-
-      $pdf->SetTextColor(70,70,170);
-      if (defined("FAC_PDF_ADRESSE"))
-	{
-	  $pdf->SetFont('Times','',12);
-	  $pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
-	}
-      if (defined("FAC_PDF_TEL"))
-	{
-	  $pdf->SetFont('Times','',10);
-	  $pdf->MultiCell(76, 5, $langs->trans("Phone")." : ".FAC_PDF_TEL);
-	}
-      if (defined("MAIN_INFO_SIREN"))
-	{
-	  $pdf->SetFont('Times','',10);
-	  $pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
-	}
-
-      if (defined("FAC_PDF_INTITULE2"))
-	{
-	  $pdf->SetXY(100,5);
-	  $pdf->SetFont('Times','B',14);
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
-	}
-      /*
-       * Adresse Client
-       */
-      $pdf->SetTextColor(0,0,0);
-      $pdf->SetFont('Courier','B',12);
-      $propale->fetch_client();
-      $pdf->SetXY(102,42);
-      $pdf->MultiCell(96,5, $propale->client->nom);
-      $pdf->SetFont('Courier','B',11);
-      $pdf->SetXY(102,47);
-      $pdf->MultiCell(96,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
-      $pdf->rect(100, 40, 100, 40);
-
-
-      $pdf->SetTextColor(200,0,0);
-      $pdf->SetFont('Courier','B',12);
-      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $propale->date));
-      $pdf->Text(11, 94, "Proposition commerciale : ".$propale->ref);
-
-
-    }
 
 }
 
