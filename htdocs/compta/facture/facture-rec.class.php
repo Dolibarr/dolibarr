@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 class FactureRec extends Facture
 {
 	var $db ;
-	var $element='commande';
+	var $element='facture';
 
 	var $id ;
 
@@ -244,23 +244,6 @@ class FactureRec extends Facture
         }
     }
 
-    /**
-     * Valide la facture
-     */
-    function valid($userid, $dir)
-    {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
-        $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-
-        if ($this->db->query($sql) )
-        {
-            return 1;
-        }
-        else
-        {
-            print $this->db->error() . ' in ' . $sql;
-        }
-    }
 
     /**
      * Supprime la facture
@@ -290,348 +273,81 @@ class FactureRec extends Facture
         }
     }
 
-    /**
-     * Valide la facture
-     */
-    function set_valid($rowid, $user, $soc)
-    {
-        if ($this->brouillon)
-        {
-            $action_notify = 2; // ne pas modifier cette valeur
-
-            $numfa = $this->getNextNumRef($soc);
-
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
-            $result = $this->db->query( $sql);
-
-            /*
-            * Notify
-            */
-            $facref = sanitize_string($this->ref);
-            $filepdf = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
-
-
-            $mesg = "La facture ".$this->ref." a été validée.\n";
-
-            $notify = New Notify($this->db);
-            $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
-
-            /*
-            * Update Stats
-            *
-            */
-            $sql = "SELECT fk_product FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_facture = ".$this->id;
-            $sql .= " AND fk_product IS NOT NULL";
-
-            $result = $this->db->query($sql);
-            if ($result)
-            {
-                $num = $this->db->num_rows($result);
-                $i = 0;
-                while ($i < $num)
-                {
-                    $obj = $this->db->fetch_object($result);
-
-                    $sql = "UPDATE ".MAIN_DB_PREFIX."product";
-                    $sql.= " SET nbvente=nbvente+1";
-                    $sql.= " WHERE rowid = ".$obj->fk_product;
-                    $result2 = $db->query($sql);
-                    $i++;
-                }
-            }
-
-            /*
-             * Contrats
-             */
-            $contrat = new Contrat($this->db);
-            $contrat->create_from_facture($this->id, $user, $this->socidp);
-
-            return $result;
-        }
-    }
  
-     /**
-     *      \brief      Renvoie la référence de facture suivante non utilisée en fonction du module
-     *                  de numérotation actif défini dans FACTURE_ADDON
-     *      \param	    soc  		            objet societe
-     *      \return     string                  reference libre pour la facture
-     */
-    function getNextNumRef($soc)
-    {
-        global $db, $langs;
-        $langs->load("bills");
-    
-        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
-    
-        if (defined("FACTURE_ADDON") && FACTURE_ADDON)
-        {
-            $file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
-    
-            // Chargement de la classe de numérotation
-            $classname = "mod_facture_".FACTURE_ADDON;
-            require_once($dir.$file);
-    
-            $obj = new $classname();
-    
-            $numref = "";
-            $numref = $obj->getNumRef($soc,$this);
-    
-            if ( $numref != "")
-            {
-                return $numref;
-            }
-            else
-            {
-                dolibarr_print_error($db,"modules_facture::getNextNumRef ".$obj->error);
-                return "";
-            }
-        }
-        else
-        {
-            print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_NotDefined");
-            return "";
-        }
-    }
-    
-    /**
-     * Ajoute un produit dans la facture
-     */
-    function add_product($idproduct, $qty, $remise_percent)
-    {
-        if ($idproduct > 0)
-        {
-            $i = sizeof($this->products);
-            $this->products[$i] = $idproduct;
-            if (!$qty)
-            {
-                $qty = 1 ;
-            }
-            $this->products_qty[$i] = $qty;
-            $this->products_remise_percent[$i] = $remise_percent;
-        }
-    }
- 
-  /**
-   * Ajoute une ligne de facture
-   */
-  function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
-  {
-    if ($this->brouillon)
-      {
-	if (strlen(trim($qty))==0)
-	  {
-	    $qty=1;
-	  }
-	$remise = 0;
-	$price = round(price2num($pu), 2);
-	$subprice = $price;
-	if (trim(strlen($remise_percent)) > 0)
-	  {
-	    $remise = round(($pu * $remise_percent / 100), 2);
-	    $price = $pu - $remise;
-	  }
+	/**
+	 *		\brief		Ajoute une ligne de facture
+	 */
+	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
+	{
+		if ($this->brouillon)
+		{
+			if (strlen(trim($qty))==0)
+			{
+				$qty=1;
+			}
+			$remise = 0;
+			$price = round(price2num($pu), 2);
+			$subprice = $price;
+			if (trim(strlen($remise_percent)) > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100), 2);
+				$price = $pu - $remise;
+			}
 	
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
-	$sql .= " VALUES ('$facid', '$desc'";
-	$sql .= ",".price2num($price);
-	$sql .= ",".price2num($qty);
-	$sql .= ",".price2num($txtva);
-	$sql .= ",'$fk_product'";
-	$sql .= ",'".price2num($remise_percent)."'";
-	$sql .= ",'".price2num($subprice)."'";
-	$sql .= ",'".price2num($remise)."') ;";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
+			$sql .= " VALUES ('$facid', '$desc'";
+			$sql .= ",".price2num($price);
+			$sql .= ",".price2num($qty);
+			$sql .= ",".price2num($txtva);
+			$sql .= ",'$fk_product'";
+			$sql .= ",'".price2num($remise_percent)."'";
+			$sql .= ",'".price2num($subprice)."'";
+			$sql .= ",'".price2num($remise)."') ;";
 	
-	if ( $this->db->query( $sql) )
-	  {
-	    $this->update_price($facid);
-	    return 1;
-	  }
-	else
-	  {
-	    print "$sql";
-	    return -1;
-	  }
-      }
-    }
-  
-  /**
-   * Mets à jour une ligne de facture
-   */
-  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0)
-  {
-    if ($this->brouillon)
-      {
-	if (strlen(trim($qty))==0)
-	  {
-	    $qty=1;
-	  }
-	$remise = 0;
-	$price = round(price2num($pu), 2);
-	$subprice = $price;
-	if (trim(strlen($remise_percent)) > 0)
-	  {
-	    $remise = round(($pu * $remise_percent / 100), 2);
-	    $price = $pu - $remise;
-	  }
-	else
-	  {
-	    $remise_percent=0;
-	  }
+			if ( $this->db->query( $sql) )
+			{
+				$this->update_price($facid);
+				return 1;
+			}
+			else
+			{
+				print "$sql";
+				return -1;
+			}
+		}
+	}
 	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc'";
-	$sql .= ",price=".price2num($price);
-	$sql .= ",subprice=".price2num($subprice);
-	$sql .= ",remise=".price2num($remise);
-	$sql .= ",remise_percent=".price2num($remise_percent);
-	$sql .= ",qty=".price2num($qty);
-	$sql .= " WHERE rowid = $rowid ;";
+	/**
+	 *		\brief		Rend la facture automatique
+	 *
+	 */
+	function set_auto($user, $freq, $courant)
+	{
+		if ($user->rights->facture->creer)
+		{
 	
-	$result = $this->db->query( $sql);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec ";
+			$sql .= " SET frequency = '".$freq."', last_gen='".$courant."'";
+			$sql .= " WHERE rowid = ".$this->facid.";";
 	
-	$this->update_price($this->id);
-      }
-  }
-  
-  /**
-   * Supprime une ligne
-   */
-  function deleteline($rowid)
-  {
-    if ($this->brouillon)
-      {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = $rowid;";
-	$result = $this->db->query( $sql);
+			$resql = $this->db->query($sql);
 	
-	$this->update_price($this->id);
-      }
-  }
-  
-  /**
-   * Mise à jour des sommes de la facture
-   */
-  function update_price($facid)
-  {
-    include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
-    $err=0;
-    $sql = "SELECT price, qty, tva_taux FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $facid;";
-    
-    $result = $this->db->query($sql);
-    
-    if ($result)
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $obj = $this->db->fetch_object($result);
-	    
-	    $products[$i][0] = $obj->price;
-	    $products[$i][1] = $obj->qty;
-	    $products[$i][2] = $obj->tva_taux;
-	    
-	    $i++;
-	  }
-	
-	$this->db->free();
-	
-	$calculs = calcul_price($products, $this->remise_percent);
-	
-	$this->total_remise   = $calculs[3];
-	$this->amount_ht      = $calculs[4];
-	$this->total_ht       = $calculs[0];
-	$this->total_tva      = $calculs[1];
-	$this->total_ttc      = $calculs[2];
-	$tvas                 = $calculs[5];
-	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET ";
-	$sql .= " amount = ".price2num($this->amount_ht);
-	$sql .= ", remise=".price2num($this->total_remise);
-	$sql .= ", total=".price2num($this->total_ht);
-	$sql .= ", tva=".price2num($this->total_tva);
-	$sql .= ", total_ttc=".price2num($this->total_ttc);
-
-	$sql .= " WHERE rowid = $facid ;";
-	
-	if ( $this->db->query($sql) )
-	  {
-	    if ($err == 0)
-	      {
-		return 1;
-	      }
-	    else
-	      {
-		return -3;
-	      }
-	  }
-	else
-	  {
-	    print "$sql<br>";
-	    return -2;
-	  }
-      }
-    else
-      {
-	print "Error";
-            return -1;
-      }
-  }
-  
-  /**
-   * Applique une remise
-   */
-  function set_remise($user, $remise)
-  {
-    if ($user->rights->facture->creer)
-      {
-	
-	$this->remise_percent = $remise ;
-	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET remise_percent = ".price2num($remise);
-	$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-	
-	if ($this->db->query($sql) )
-	  {
-	    $this->update_price($this->id);
-	    return 1;
-	  }
-	else
-	  {
-	    print $this->db->error() . ' in ' . $sql;
-	    return -1;
-	  }
-      }
-  } 
-  /**
-   * Rend la facture automatique
-   *
-   */
-  function set_auto($user, $freq, $courant)
-  {
-    if ($user->rights->facture->creer)
-      {
-	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec ";
-	$sql .= " SET frequency = '".$freq."', last_gen='".$courant."'";
-	$sql .= " WHERE rowid = ".$this->facid.";";
-	
-	$resql = $this->db->query($sql);
-
-	if ($resql)
-	  {
-	    $this->frequency 	= $freq;
-	    $this->last_gen 	= $courant;
-	    return 0;
-	  }
-	else
-	  {
-	    print $this->db->error() . ' in ' . $sql;
-	    return -1;
-	  }
-      }
-    else
-      {
-	return -2;
-      }
-  }
+			if ($resql)
+			{
+				$this->frequency 	= $freq;
+				$this->last_gen 	= $courant;
+				return 0;
+			}
+			else
+			{
+				print $this->db->error() . ' in ' . $sql;
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
+	}
 }
 ?>
