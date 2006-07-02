@@ -322,7 +322,7 @@ class Propal extends CommonObject
    */
     function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='')
     {
-    	dolibarr_syslog("propal.class.php::updateligne $rowid, $pu, $qty, $remise_percent, $txtva, $desc");
+    	dolibarr_syslog("propal.class.php::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         if ($this->statut == 0)
@@ -377,7 +377,7 @@ class Propal extends CommonObject
             {
                 $this->error=$this->db->error();
 				$this->db->rollback();
-                dolibarr_syslog("Propal::UpdateLigne Erreur sql=$sql, error=".$this->error);
+                dolibarr_syslog("Propal::UpdateLine Erreur sql=$sql, error=".$this->error);
                 return -1;
             }
         }

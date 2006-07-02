@@ -313,7 +313,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	$commande = new Commande($db,'',$_POST['id']);
 	if (! $commande->fetch($_POST['id']) > 0) dolibarr_print_error($db);
 
-	$result = $commande->update_line($_POST['elrowid'],
+	$result = $commande->updateline($_POST['elrowid'],
 		$_POST['eldesc'],
 		$_POST['pu'],
 		$_POST['qty'],

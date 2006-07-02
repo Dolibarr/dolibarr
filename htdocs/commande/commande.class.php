@@ -1566,7 +1566,7 @@ class Commande extends CommonObject
 	 *      \param     tva_tx           Taux TVA
 	 *      \return    int              < 0 si erreur, > 0 si ok
 	 */
-	function update_line($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva)
 	{
 		dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');

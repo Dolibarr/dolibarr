@@ -108,7 +108,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer)
   $commande = new CommandeFournisseur($db,"",$_GET["id"]);
   if ($commande->fetch($_GET["id"]) )
     {
-      $result = $commande->update_line($_POST["elrowid"],
+      $result = $commande->updateline($_POST["elrowid"],
 				       $_POST["eldesc"],
 				       $_POST["elprice"],
 				       $_POST["elqty"],
