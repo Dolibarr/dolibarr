@@ -2596,7 +2596,7 @@ else
 						{
 							print '<td align="center"><b>!!!</b></td>';
 						}
-						print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+						print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,48).'</a></td>';
 						print '<td align="right">'.price($objp->total).'</td>';
 						print '<td align="right">'.price($objp->total_ttc).'</td>';
 						print '<td align="right">'.price($objp->am).'</td>';
