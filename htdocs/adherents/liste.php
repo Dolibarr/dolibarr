@@ -32,6 +32,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
 $langs->load("members");
+$langs->load("companies");
 
 
 /*
