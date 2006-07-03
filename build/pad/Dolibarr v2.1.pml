@@ -8,12 +8,12 @@
 		<Program_Release_Month>07</Program_Release_Month>
 		<Program_Release_Day>14</Program_Release_Day>
 		<Program_Release_Year>2006</Program_Release_Year>
-		<Program_Cost_Dollars>0</Program_Cost_Dollars>
+		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
-		<Program_Cost_Other>0</Program_Cost_Other>
+		<Program_Cost_Other />
 		<Program_Type>Freeware</Program_Type>
 		<Program_Release_Status>Major Update</Program_Release_Status>
-		<Program_Install_Support>Uninstall Only</Program_Install_Support>
+		<Program_Install_Support>No Install Support</Program_Install_Support>
 		<Program_OS_Support>Win95,Win98,WinME,WinNT 4.x,Windows2000,WinXP,Windows2003,Windows Vista Starter,Windows Vista Home Basic,Windows Vista Home Premium,Windows Vista Business,Windows Vista Enterprise,Windows Vista Ultimate,Windows Vista Home Basic x64,Windows Vista Home Premium x64,Windows Vista Business x64,Windows Vista Enterprise x64,Windows Vista Ultimate x64,Unix,Linux,OS/2,OS/2 Warp,OS/2 Warp 4,MAC 68k,Mac PPC,Mac OS X,Mac Other,BEOS</Program_OS_Support>
 		<Program_Language>English,French</Program_Language>
 		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
@@ -58,11 +58,11 @@
 			<Application_Info_URL>http://www.dolibarr.org</Application_Info_URL>
 			<Application_Order_URL>http://www.dolibarr.org</Application_Order_URL>
 			<Application_Screenshot_URL>http://www.dolibarr.org/demo/doc/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
-			<Application_Icon_URL>http://www.dolibarr.org/demo/doc/images/dolibarr.ico</Application_Icon_URL>
+			<Application_Icon_URL>http://www.dolibarr.org/demo/doc/images/mylogo.png</Application_Icon_URL>
 			<Application_XML_File_URL>http://www.dolibarr.org/demo/build/pad/pad_dolibarr.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL />
+			<Primary_Download_URL>http://www.dolibarr.org/demo/build/dolibarr.tgz</Primary_Download_URL>
 			<Secondary_Download_URL />
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />

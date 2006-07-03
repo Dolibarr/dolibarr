@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PADGEN_CML>
-	<AppVerInfo>PADGen 2.0.1.22</AppVerInfo>
+	<AppVerInfo>PADGen 2.0.2.30</AppVerInfo>
 	<Company_Info>
 		<Company_Name>Dolibarr Developpers</Company_Name>
 		<Address_1 />
 		<Address_2 />
-		<City_Town />
+		<City_Town>Paris</City_Town>
 		<State_Province />
 		<Zip_Postal_Code />
 		<Country>FRANCE</Country>
-		<Company_WebSite_URL>http://www.dolibarr.com</Company_WebSite_URL>
+		<Company_WebSite_URL>http://www.dolibarr.org</Company_WebSite_URL>
 		<Contact_Info>
-			<Author_First_Name />
-			<Author_Last_Name />
+			<Author_First_Name>Dolibarr team</Author_First_Name>
+			<Author_Last_Name>Dolibarr team</Author_Last_Name>
 			<Author_Email>dolibarr-dev@nongnu.org</Author_Email>
-			<Contact_First_Name />
-			<Contact_Last_Name />
-			<Contact_Email />
+			<Contact_First_Name>Dolibarr team</Contact_First_Name>
+			<Contact_Last_Name>Dolibarr team</Contact_Last_Name>
+			<Contact_Email>dolibarr-dev@nongnu.org</Contact_Email>
 		</Contact_Info>
 		<Support_Info>
-			<Sales_Email />
-			<Support_Email />
-			<General_Email />
+			<Sales_Email>dolibarr-dev@nongnu.org</Sales_Email>
+			<Support_Email>dolibarr-dev@nongnu.org</Support_Email>
+			<General_Email>dolibarr-dev@nongnu.org</General_Email>
 			<Sales_Phone />
 			<Support_Phone />
 			<General_Phone />
