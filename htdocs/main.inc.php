@@ -69,6 +69,7 @@ $bc[1]="class=\"pair\"";
 // plusieurs modes sont indiqués.
 // Exemple: array('http','dolibarr');
 // Exemple: array('ldap');
+//$authmode=array('ldap');
 $authmode=array('http','dolibarr');
 if (isset($dolibarr_auto_user)) $authmode=array('auto');
 
@@ -167,12 +168,12 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 			    'basedn' => $conf->global->LDAP_SERVER_DN,
 			    'binddn' => $conf->global->LDAP_ADMIN_DN,
 			    'bindpw' => $conf->global->LDAP_ADMIN_PASS,
-			    'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA,
+			    //'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA,
+			    'userattr' => 'samAccountName',
 			    'userfilter' => '(objectClass=user)',
 		    );
-		
-		    $aDol = new DOLIAuth("DB", $params, "loginfunction");
-		    $aDol->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
+
+		    $aDol = new DOLIAuth("LDAP", $params, "loginfunction");
 		    $aDol->start();
 		    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
 		    if ($result)

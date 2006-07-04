@@ -351,10 +351,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
     /*
      * ajout utilisateur ldap
      */
-     if ($conf->ldap->enabled)
-     {
-     	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
-     	{     		
+//     if ($conf->ldap->enabled)
+//     {
+//     	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+//     	{     		
      		$name      = $conf->global->LDAP_FIELD_NAME;
      		$firstname = $conf->global->LDAP_FIELD_FIRSTNAME;
      		$mail      = $conf->global->LDAP_FIELD_MAIL;
@@ -430,8 +430,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			print $ldap->ldapErrorCode;
 			print $ldap->ldapErrorText;
 		}
-	}
- }
+	//}
+//}
 
     print '<form action="fiche.php" method="post" name="createuser">';
     print '<input type="hidden" name="action" value="add">';
@@ -605,16 +605,16 @@ else
     				$message .= $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
     			}
     		}
+
     		//On vérifie les options du compte
-    		$control = $ldap->parseUACF(utf8_decode($entries[0]["useraccountcontrol"][0]));
-    		foreach ($control as $key => $statut)
+    		foreach ($ldap->uacf as $key => $statut)
     		{
     			if ($key == 65536)
     			{
     				$passDoNotExpire = $langs->trans("LdapUacf_".$statut);
     			}
     		}
-    		if (utf8_decode($entries[0]["pwdlastset"][0]) == 0 && utf8_decode($entries[0]["pwdlastset"][0]) != "")
+    		if ($ldap->pwdlastset == 0 && $ldap->pwdlastset != "")
     		{
     			$userChangePassNextLogon = $langs->trans("UserMustChangePassNextLogon");
     		}

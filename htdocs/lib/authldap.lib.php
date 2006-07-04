@@ -80,6 +80,20 @@ class AuthLdap {
      * Message texte de l'erreur
      */
     var $ldapErrorText;
+    
+    
+    //Fetch user
+    var $name;
+    var $firstname;
+    var $login;
+    var $phone;
+    var $fax;
+    var $mail;
+    var $mobile;
+    
+    var $uacf;
+    var $pwdlastset;
+    
 
     // 1.2 Private properties ----------------------------------------------------
     /**
@@ -94,26 +108,32 @@ class AuthLdap {
     /**
      * Constructor- creates a new instance of the authentication class
      *
-     * @param string the ldap server to connect to
-     * @param string the base dn
-     * @param string the server type- current supports OpenLdap and ActiveDirectory
-     * @param string the domain to use when authenticating against Active Directory
-     * @param string the username to authenticate with when searching if anonymous binding is not supported
-     * @param string the password to authenticate with when searching if anonymous binding is not supported
      */
     function AuthLdap () {
     	global $conf;
 
+        //Server
         $this->server = array($conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_HOST_SLAVE);
-        $this->serverPort = $conf->global->LDAP_SERVER_PORT;
+        $this->serverPort          = $conf->global->LDAP_SERVER_PORT;
         $this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
-        $this->dn = $conf->global->LDAP_SERVER_DN;
-        $this->serverType = $conf->global->LDAP_SERVER_TYPE;
-        $this->domain = $sDomain;
-        $this->searchUser = $conf->global->LDAP_ADMIN_DN;
-        $this->searchPassword = $conf->global->LDAP_ADMIN_PASS;
-        $this->people = $conf->global->LDAP_USER_DN;
-        $this->groups = $conf->global->LDAP_GROUP_DN;
+        $this->dn                  = $conf->global->LDAP_SERVER_DN;
+        $this->serverType          = $conf->global->LDAP_SERVER_TYPE;
+        $this->domain              = $sDomain; //Todo: ajouter en base
+        $this->searchUser          = $conf->global->LDAP_ADMIN_DN;
+        $this->searchPassword      = $conf->global->LDAP_ADMIN_PASS;
+        $this->people              = $conf->global->LDAP_USER_DN;
+        $this->groups              = $conf->global->LDAP_GROUP_DN;
+        $this->filter              = $conf->global->LDAP_FILTER_CONNECTION;
+        
+        //Users
+        $this->attr_login      = $conf->global->LDAP_FIELD_LOGIN; //unix
+        $this->attr_sambalogin = $conf->global->LDAP_FIELD_LOGIN_SAMBA; //samba, activedirectory
+        $this->attr_name       = $conf->global->LDAP_FIELD_NAME;
+        $this->attr_firstname  = $conf->global->LDAP_FIELD_FIRSTNAME;
+        $this->attr_mail       = $conf->global->LDAP_FIELD_MAIL;
+        $this->attr_phone      = $conf->global->LDAP_FIELD_PHONE;
+        $this->attr_fax        = $conf->global->LDAP_FIELD_FAX;
+        $this->attr_mobile     = $conf->global->LDAP_FIELD_MOBILE;
     }
     
     // 2.1 Connection handling methods -------------------------------------------
@@ -410,15 +430,12 @@ class AuthLdap {
      * results are returned (eg:- multiple email addresses)
      */
     function getAttribute ( $uname,$attribute) {
-    	
-        // builds the appropriate dn, based on whether $this->people and/or $this->group is set
-        //$checkDn = $this->setDn( true);
-        $checkDn = $this->people;
+
         $results[0] = $attribute;
         $filtre = $this->getUserIdentifier()."=$uname";
 
         // We need to search for this user in order to get their entry.
-        $this->result = @ldap_search( $this->connection,$checkDn,$filtre,$results);
+        $this->result = @ldap_search( $this->connection,$this->people,$filtre,$results);
         $info = ldap_get_entries( $this->connection, $this->result);
 
         // Only one entry should ever be returned (no user will have the same uid)
@@ -473,12 +490,6 @@ class AuthLdap {
      * users.  The $attributeArray variable contains the required user detail field names
      */
     function getUsers( $search, $attributeArray) {
-    	
-    	global $conf;
-
-        // builds the appropriate dn, based on whether $this->people and/or $this->group is set
-        //$checkDn = $this->setDn( true);
-        $checkDn = $conf->global->LDAP_USER_DN;
 
         // Perform the search and get the entry handles
         
@@ -487,9 +498,9 @@ class AuthLdap {
             $this->authBind($this->searchUser, $this->searchPassword);
         }
 
-        $filter = '('.$conf->global->LDAP_FILTER_CONNECTION.'('.$this->getUserIdentifier().'='.$search.'))';
+        $filter = '('.$this->filter.'('.$this->getUserIdentifier().'='.$search.'))';
         
-        $this->result = @ldap_search( $this->connection, $checkDn, $filter);
+        $this->result = @ldap_search( $this->connection, $this->People, $filter);
         
         if (!$this->result)
         {
@@ -543,13 +554,10 @@ class AuthLdap {
      */
     function getObjectSid($ldapUser)
     {
-    	global $conf;
-    	
     	$criteria =  $this->getUserIdentifier()."=$ldapUser";
     	$justthese = array("objectsid");
-    	$checkDn = $conf->global->LDAP_USER_DN;
     	
-    	$ldapSearchResult = ldap_search($this->connection, $checkDn, $criteria, $justthese);
+    	$ldapSearchResult = ldap_search($this->connection, $this->people, $criteria, $justthese);
   		
     	$entry = ldap_first_entry($this->connection, $ldapSearchResult);
     	$ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid");
@@ -619,7 +627,6 @@ class AuthLdap {
      * \param $user : utilisateur ldap
      */
     function fetch( $user) {
-    	global $conf;
 
         // Perform the search and get the entry handles
         
@@ -627,10 +634,11 @@ class AuthLdap {
         if ($this->serverType == "activedirectory") {
             $this->authBind($this->searchUser, $this->searchPassword);
         }
-        $checkDn = $this->people;
-        $filter = '('.$conf->global->LDAP_FILTER_CONNECTION.'('.$this->getUserIdentifier().'='.$user.'))';
+        $userIdentifier = $this->getUserIdentifier();
 
-        $this->result = @ldap_search( $this->connection, $checkDn, $filter);
+        $filter = '('.$this->filter.'('.$userIdentifier.'='.$user.'))';
+
+        $this->result = @ldap_search( $this->connection, $this->people, $filter);
         
         $result = @ldap_get_entries( $this->connection, $this->result);
 
@@ -641,8 +649,18 @@ class AuthLdap {
         }
         else
         {
-        	//ldap_free_result($this->result);
-        	return $result;
+        	$this->name       = utf8_decode($result[0][$this->attr_name][0]);
+        	$this->firstname  = utf8_decode($result[0][$this->attr_firstname][0]);
+        	$this->login      = utf8_decode($result[0][$userIdentifier][0]);
+        	$this->phone      = utf8_decode($result[0][$this->attr_phone][0]);
+        	$this->fax        = utf8_decode($result[0][$this->attr_fax][0]);
+        	$this->mail       = utf8_decode($result[0][$this->attr_mail][0]);
+        	$this->mobile     = utf8_decode($result[0][$this->attr_mobile][0]);
+        	
+        	$this->uacf       = $this->parseUACF(utf8_decode($result[0]["useraccountcontrol"][0]));
+        	$this->pwdlastset = utf8_decode($result[0]["pwdlastset"][0]);
+        	
+        	ldap_free_result($this->result);
         }
       }
 
@@ -678,11 +696,10 @@ class AuthLdap {
      * Returns the correct user identifier to use, based on the ldap server type
      */
     function getUserIdentifier() {
-    	global $conf;
         if ($this->serverType == "activedirectory") {
-            return $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+            return $this->attr_sambalogin;
         } else {
-            return $conf->global->LDAP_FIELD_LOGIN;
+            return $this->attr_login;
         }
     }
     
