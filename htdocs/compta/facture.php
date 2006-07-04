@@ -1642,11 +1642,11 @@ else
 				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'classer')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->fk_soc,$fac->projetid,'projetid');
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socidp,$fac->projetid,'projetid');
 				}
 				else
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->fk_soc,$fac->projetid,'none');
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socidp,$fac->projetid,'none');
 				}
 				print '</td>';
 				print '</tr>';
