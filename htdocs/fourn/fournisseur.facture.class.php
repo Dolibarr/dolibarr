@@ -227,14 +227,29 @@ class FactureFournisseur extends Facture
 				}
 				else
 				{
+					dolibarr_syslog('Erreur FactureFournisseur::Fetch rowid='.$rowid.', Erreur dans fetch des lignes');
+					$this->error=$this->db->error();
 					dolibarr_print_error($this->db);
+					return -3;
 				}
 			}
+			else
+			{
+				dolibarr_syslog('Erreur FactureFournisseur::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
+				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
+				dolibarr_print_error($this->db);
+				return -2;
+			}
+			$this->db->free($resql);
 		}
 		else
 		{
+			dolibarr_syslog('Erreur FactureFournisseur::Fetch rowid='.$rowid.' Erreur dans fetch de la facture fournisseur');
+			$this->error=$this->db->error();
 			dolibarr_print_error($this->db);
+			return -1;
 		}
+		return 1;
 	}
 
 	/**

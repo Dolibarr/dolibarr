@@ -29,8 +29,10 @@
 	\version    $Revision$
 */
 
-require('./pre.inc.php');
-require('./paiementfourn.class.php');
+require_once('./pre.inc.php');
+require_once('./paiementfourn.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
+
 
 if (!$user->rights->fournisseur->facture->lire)
 	accessforbidden();
@@ -572,19 +574,9 @@ else
 			/*
 			 *
 			 */
-			$h=0;
-
-			$head[$h][0] = 'fiche.php?facid='.$fac->id;
-			$head[$h][1] = $langs->trans('Card');
-			$hselected = $h;
-			$h++;
-
-			$head[$h][0] = 'info.php?facid='.$fac->id;
-			$head[$h][1] = $langs->trans('Info');
-			$h++;
-
+			$head = facturefourn_prepare_head($fac);
 			$titre=$langs->trans('SupplierInvoice');
-			dolibarr_fiche_head($head, $hselected, $titre);
+			dolibarr_fiche_head($head, 'card', $titre);
 
 
 			/*

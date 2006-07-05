@@ -27,8 +27,8 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
+require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 
 $langs->load("bills");
 
@@ -46,19 +46,9 @@ $fac->info($_GET["facid"]);
 $soc = new Societe($db, $fac->socidp);
 $soc->fetch($fac->socidp);
 
-$h=0;
-
-$head[$h][0] = 'fiche.php?facid='.$fac->id;
-$head[$h][1] = $langs->trans('Card');
-$h++;
-
-$head[$h][0] = 'info.php?facid='.$fac->id;
-$head[$h][1] = $langs->trans('Info');
-$hselected = $h;
-$h++;
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("SupplierInvoice"));
-
+$head = facturefourn_prepare_head($fac);
+$titre=$langs->trans('SupplierInvoice');
+dolibarr_fiche_head($head, 'info', $langs->trans('SupplierInvoice'));
 
 print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($fac);
