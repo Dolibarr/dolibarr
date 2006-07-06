@@ -175,7 +175,7 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		print "<td>".$langs->trans("CustomerDoesNotHavePrefix")."</td></tr>\n";
+		print "<td>".img_warning().$langs->trans("CustomerDoesNotHavePrefix")."</td></tr>\n";
 	}
 	
 	print "<tr><td>".$langs->trans("Duration")." (".$langs->trans("days").")</td><td><input name=\"duree\"></td></tr>\n";
@@ -210,7 +210,7 @@ if ($_GET["action"] == 'create')
 
 			$user->getrights("projet");
 
-			if ($user->rights->projet->creer && $societe->prefix_comm)
+			if ($user->rights->projet->creer)
 			{
 				print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socidp.'&action=create>'.$langs->trans("Add").'</a>';
 			}
@@ -223,9 +223,14 @@ if ($_GET["action"] == 'create')
 	print "<td><textarea name=\"note\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea>";
 	print '</td></tr>';
 
-	print '<tr><td colspan="2" align="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDaftIntervention").'">';
-	print '</td></tr>';
+	// en attendant le module de numérotation
+	if ($societe->prefix_comm)
+	{
+		print '<tr><td colspan="2" align="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans("CreateDaftIntervention").'">';
+		print '</td></tr>';
+	}
+	
 	print '</table>';
 	print '</form>';
 }
