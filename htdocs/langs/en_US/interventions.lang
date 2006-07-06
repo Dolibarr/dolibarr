@@ -9,3 +9,4 @@ ListOfInterventions=List of interventions
 LastInterventions=Last %s interventions
 AllInterventions=All interventions
 CreateDaftIntervention=Create draft
+CustomerDoesNotHavePrefix=Customer does not have a prefix

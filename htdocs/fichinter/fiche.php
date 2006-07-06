@@ -166,7 +166,18 @@ if ($_GET["action"] == 'create')
 
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
-	print "<tr><td>".$langs->trans("Ref")."</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
+	print "<tr><td>".$langs->trans("Ref")."</td>";
+	
+	// en attendant le module de numérotation
+	if ($societe->prefix_comm)
+	{
+		print "<td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
+	}
+	else
+	{
+		print "<td>".$langs->trans("CustomerDoesNotHavePrefix")."</td></tr>\n";
+	}
+	
 	print "<tr><td>".$langs->trans("Duration")." (".$langs->trans("days").")</td><td><input name=\"duree\"></td></tr>\n";
 
 	if ($conf->projet->enabled)
@@ -199,7 +210,7 @@ if ($_GET["action"] == 'create')
 
 			$user->getrights("projet");
 
-			if ($user->rights->projet->creer)
+			if ($user->rights->projet->creer && $societe->prefix_comm)
 			{
 				print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socidp.'&action=create>'.$langs->trans("Add").'</a>';
 			}
