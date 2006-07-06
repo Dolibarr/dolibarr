@@ -155,7 +155,7 @@ class Fichinter extends CommonObject
         $socprefix = sanitize_string($societe->prefix_comm);
         
         $sql = "SELECT max(ref) FROM ".MAIN_DB_PREFIX."fichinter";
-        $sql.= " WHERE ref like 'FI".$socprefix."%'";
+        $sql.= " WHERE ref like 'FI-".$socprefix."%'";
 
         $result=$this->db->query($sql);
         if ($result)
