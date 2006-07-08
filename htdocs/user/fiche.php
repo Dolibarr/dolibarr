@@ -106,7 +106,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 }
 
 //reactive un compte ldap
-if ($_GET["action"] == 'reactivate' && $canadduser)
+if ($conf->ldap->enabled && $_GET["action"] == 'reactivate' && $canadduser)
 {
     if ($_GET["id"] <> $user->id)
     {
@@ -351,10 +351,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
     /*
      * ajout utilisateur ldap
      */
-//     if ($conf->ldap->enabled)
-//     {
-//     	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
-//     	{     		
+     if ($conf->ldap->enabled)
+     {
+     	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+     	{     		
      		$name      = $conf->global->LDAP_FIELD_NAME;
      		$firstname = $conf->global->LDAP_FIELD_FIRSTNAME;
      		$mail      = $conf->global->LDAP_FIELD_MAIL;
@@ -430,8 +430,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			print $ldap->ldapErrorCode;
 			print $ldap->ldapErrorText;
 		}
-	//}
-//}
+	}
+}
 
     print '<form action="fiche.php" method="post" name="createuser">';
     print '<input type="hidden" name="action" value="add">';
