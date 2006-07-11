@@ -1,6 +1,10 @@
 build
 dev
 doc/dev/dolibarr-phpdoc
+doc/dev/barcode
+doc/dev/compta
+doc/dev/dbmodel
+doc/dev/normes
 doc/install
 doc/user
 document
