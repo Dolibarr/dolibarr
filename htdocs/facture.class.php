@@ -1239,7 +1239,7 @@ class Facture extends CommonObject
 			$ligne->desc=$desc;
 			$ligne->price=$price;
 			$ligne->qty=$qty;
-			$ligne->txtva=$txtva;
+			$ligne->tva_taux=$txtva;
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$subprice;
 			$ligne->remise=$remise;
