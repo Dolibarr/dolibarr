@@ -89,7 +89,7 @@
 			<Application_Order_URL>http://www.dolibarr.org</Application_Order_URL>
 			<Application_Screenshot_URL>http://www.dolibarr.org/demo/doc/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://www.dolibarr.org/demo/doc/images/mylogo.png</Application_Icon_URL>
-			<Application_XML_File_URL>http://www.dolibarr.org/demo/build/pad/pad_dolibarr.xml</Application_XML_File_URL>
+			<Application_XML_File_URL>http://dolibarrint.jexiste.fr/demo/build/pad/pad_dolibarr.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
 			<Primary_Download_URL>http://www.dolibarr.org/demo/build/dolibarr.tgz</Primary_Download_URL>
