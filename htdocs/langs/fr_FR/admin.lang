@@ -142,7 +142,8 @@ Module700Desc=Gestion des dons
 Module1780Name=Catégories
 Module1780Desc=Gestion des catégories
 Permission11=Consulter les factures
-Permission12=Créer/modifier les factures
+Permission12=Créer les factures
+Permission13=Modifier les factures
 Permission14=Valider les factures
 Permission15=Envoyer les factures par courriel
 Permission16=Émettre des paiements sur les factures
@@ -404,6 +405,7 @@ CreditNotes=Avoirs
 ForceInvoiceDate=Forcer la date de facture à la date de validation
 DisableRepeatable=Désactiver les factures récurrentes
 SuggestedPaymentModesIfNotDefinedInInvoice=Modes de paiements suggérés sur les factures si non défini explicitement
+EnableEditDeleteValidInvoice=Activer la possibilité d'éditer/supprimer une facture validée sans paiement
 ##### Proposals #####
 PropalSetup=Configuration du module Propositions Commerciales
 CreateForm=Création formulaire

@@ -161,6 +161,16 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	}
 }
 
+if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->global->FACTURE_ENABLE_EDITDELETE)
+{
+  /*
+   *  Repasse la facture en mode brouillon
+   */
+  $fac = new Facture($db);
+  $fac->fetch($_GET['facid']);
+  $fac->reopen($user);
+}
+
 if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
     if ($user->rights->facture->creer)
@@ -1361,7 +1371,16 @@ else
  			 */
 			if ($_GET['action'] == 'valid')
 			{
-				$numfa = $fac->getNextNumRef($soc);
+				// on vérifie si la facture est en numérotation provisoire
+				$facref = substr($fac->ref, 1, 4);
+				if ($facref == PROV)
+				{
+					$numfa = $fac->getNextNumRef($soc);
+				}
+				else
+				{
+					$numfa = $fac->ref;
+				}
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$langs->trans('ConfirmValidateBill',$numfa),'confirm_valid');
 				print '<br />';
 			}
@@ -2074,6 +2093,16 @@ else
 			{
 				print '<div class="tabsAction">';
 
+				// Editer une facture déjà validée et sans paiement
+				if ($fac->statut == 1)
+				{
+					if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
+					&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0))
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+					}
+				}
+				
 				// Récurrente
 				if (! $conf->global->FACTURE_DISABLE_RECUR)
 				{
@@ -2104,11 +2133,37 @@ else
 					}
 				}
 
-				// Supprimer
-				if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-				}
+				// on vérifie si la facture est en numérotation provisoire
+			  $facref = substr($fac->ref, 1, 4);
+			  if ($facref == PROV)
+			  {
+			  	// Supprimer
+			  	if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
+			  	{
+			  		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			  	}
+			  }
+			  else if ($conf->global->FACTURE_ENABLE_EDITDELETE)
+			  {
+			  	if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
+			  	{
+			  		// On ne peut supprimer que la dernière facture validée
+			  		// pour ne pas avoir de trou dans les numéros
+			  	  $sql = "SELECT MAX(facnumber)";
+			  	  $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+
+			  	  $resql=$db->query($sql);
+			  	  if ($resql)
+			  	  {
+			  		  $maxfacnumber = $db->fetch_row($resql);
+			  	  }
+
+			  	  if ($maxfacnumber[0] == $fac->ref)
+			  	  {
+			  		  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			  	  }
+			    }
+			  }
 
 				// Envoyer
 				if ($fac->statut == 1 && $user->rights->facture->envoyer)

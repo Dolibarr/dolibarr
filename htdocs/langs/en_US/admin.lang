@@ -142,7 +142,8 @@ Module700Desc=Donations' management
 Module1780Name=Categories
 Module1780Desc=Categories' management
 Permission11=Read invoices
-Permission12=Create/modify invoices
+Permission12=Create invoices
+Permission13=Modify invoices
 Permission14=Validate invoices
 Permission15=Send invoices by email
 Permission16=Create payments for invoices
@@ -404,6 +405,7 @@ CreditNotes=Credit notes
 ForceInvoiceDate=Force invoice date to validation date
 DisableRepeatable=Disable repeatable invoices
 SuggestedPaymentModesIfNotDefinedInInvoice=Suggested Payments mode on invoices if not explicitely defined
+EnableEditDeleteValidInvoice=Enable the possibility to edit/delete valid invoice with no payment
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms

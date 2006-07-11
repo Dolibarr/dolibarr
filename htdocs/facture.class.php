@@ -830,14 +830,21 @@ class Facture extends CommonObject
 		{
             $this->db->begin();
 
+			// on vérifie si la facture est en numérotation provisoire
+			$facref = substr($this->ref, 1, 4);
+			
 			$action_notify = 2; // ne pas modifier cette valeur
 			if ($force_number)
 			{
 				$numfa = $force_number;
 			}
-			else
+			else if ($facref == PROV)
 			{
 				$numfa = $this->getNextNumRef($soc);
+			}
+			else
+			{
+				$numfa = $this->ref;
 			}
 
 			$this->update_price($this->id);
@@ -868,22 +875,26 @@ class Facture extends CommonObject
             }
 
 
-			// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
-			// afin de ne pas perdre les fichiers attachés
-			$facref = sanitize_string($this->ref);
-			$snumfa = sanitize_string($numfa);
-			$dirsource = $conf->facture->dir_output.'/'.$facref;
-			$dirdest = $conf->facture->dir_output.'/'.$snumfa;
-			if (file_exists($dirsource))
+			// On vérifie si la facture était une provisoire
+			if ($facref == PROV)
 			{
-				dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
+				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
+				// afin de ne pas perdre les fichiers attachés
+			  $facref = sanitize_string($this->ref);
+			  $snumfa = sanitize_string($numfa);
+			  $dirsource = $conf->facture->dir_output.'/'.$facref;
+			  $dirdest = $conf->facture->dir_output.'/'.$snumfa;
+			  if (file_exists($dirsource))
+			  {
+				  dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
 
-				if (rename($dirsource, $dirdest))
-				{
-					dolibarr_syslog("Renommage ok");
-					// Suppression ancien fichier PDF dans nouveau rep
-					dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
-				}
+				  if (rename($dirsource, $dirdest))
+				  {
+					  dolibarr_syslog("Renommage ok");
+					  // Suppression ancien fichier PDF dans nouveau rep
+					  dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
+				  }
+			  }
 			}
 
 
@@ -932,14 +943,16 @@ class Facture extends CommonObject
 				}
 */
 
-
+      // On vérifie si la facture était une provisoire
+			if ($facref == PROV)
+			{
             /*
              * Pour chaque produit, on met a jour indicateur nbvente
              * On crée ici une dénormalisation des données pas forcément utilisée.
              */
-			$sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet';
-			$sql.= ' WHERE fk_facture = '.$this->id;
-			$sql.= ' AND fk_product > 0';
+			      $sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet';
+			      $sql.= ' WHERE fk_facture = '.$this->id;
+			      $sql.= ' AND fk_product > 0';
 
             $resql = $this->db->query($sql);
             if ($resql)
@@ -958,6 +971,7 @@ class Facture extends CommonObject
             {
                 $error++;
             }
+          }
 
             if ($error == 0)
             {
@@ -976,11 +990,11 @@ class Facture extends CommonObject
                  * \todo	Mettre notifications dans triggers
                  */
                 $facref = sanitize_string($this->ref);
-				$filepdf = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
-				$mesg = 'La facture '.$this->ref." a été validée.\n";
+                $filepdf = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
+                $mesg = 'La facture '.$this->ref." a été validée.\n";
 
-                $notify = New Notify($this->db);
-				$notify->send($action_notify, $this->socidp, $mesg, 'facture', $rowid, $filepdf);
+                $notify = New Notify($this->db); 
+                $notify->send($action_notify, $this->socidp, $mesg, 'facture', $rowid, $filepdf);
 
                 $this->db->commit();
 
@@ -992,6 +1006,25 @@ class Facture extends CommonObject
                 $this->db->rollback();
                 return -1;
             }
+        }
+    }
+    
+  /**
+   *
+   *
+   */
+    function reopen($userid)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
+        $sql .= " WHERE rowid = $this->id;";
+    
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
         }
     }
 
