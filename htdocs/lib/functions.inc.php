@@ -2009,4 +2009,84 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 	}
 }
 
+/**
+ *   \brief   Retourne le numéro de la semaine par rapport a une date
+ *   \param   time   date au format 'timestamp'
+ *   \return  Numéro de semaine
+ */
+function numero_semaine($time)
+{
+    $stime = strftime( '%Y-%m-%d',$time);
+    
+    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$stime,$reg))
+    {
+        // Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+        $annee = $reg[1];
+        $mois = $reg[2];
+        $jour = $reg[3];
+    }
+    
+    /*
+     * Norme ISO-8601:
+     * - La semaine 1 de toute année est celle qui contient le 4 janvier ou que la semaine 1 de toute année est celle qui contient le 1er jeudi de janvier.
+     * - La majorité des années ont 52 semaines mais les années qui commence un jeudi et les années bissextiles commençant un mercredi en possède 53.
+     * - Le 1er jour de la semaine est le Lundi
+     */ 
+    
+    // Définition du Jeudi de la semaine
+    if (date("w",mktime(12,0,0,$mois,$jour,$annee))==0) // Dimanche
+        $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-3*24*60*60;
+    else if (date("w",mktime(12,0,0,$mois,$jour,$annee))<4) // du Lundi au Mercredi
+        $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)+(4-date("w",mktime(12,0,0,$mois,$jour,$annee)))*24*60*60;
+    else if (date("w",mktime(12,0,0,$mois,$jour,$annee))>4) // du Vendredi au Samedi
+        $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-(date("w",mktime(12,0,0,$mois,$jour,$annee))-4)*24*60*60;
+    else // Jeudi
+        $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee);
+    
+    // Définition du premier Jeudi de l'année
+    if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==0) // Dimanche
+    {
+        $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+4*24*60*60;
+    }
+    else if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))<4) // du Lundi au Mercredi
+    {
+        $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(4-date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine))))*24*60*60;
+    }
+    else if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))>4) // du Vendredi au Samedi
+    {
+        $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(7-(date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))-4))*24*60*60;
+    }
+    else // Jeudi
+    {
+        $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine));
+    }
+        
+    // Définition du numéro de semaine: nb de jours entre "premier Jeudi de l'année" et "Jeudi de la semaine";
+    $numeroSemaine =     ( 
+                    ( 
+                        date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine))) 
+                        -
+                        date("z",mktime(12,0,0,date("m",$premierJeudiAnnee),date("d",$premierJeudiAnnee),date("Y",$premierJeudiAnnee))) 
+                    ) / 7 
+                ) + 1;
+    
+    // Cas particulier de la semaine 53
+    if ($numeroSemaine==53)
+    {
+        // Les années qui commence un Jeudi et les années bissextiles commençant un Mercredi en possède 53
+        if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==4 || (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==3 && date("z",mktime(12,0,0,12,31,date("Y",$jeudiSemaine)))==365))
+        {
+            $numeroSemaine = 53;
+        }
+        else
+        {
+            $numeroSemaine = 1;
+        }
+    }
+        
+    //echo $jour."-".$mois."-".$annee." (".date("d-m-Y",$premierJeudiAnnee)." - ".date("d-m-Y",$jeudiSemaine).") -> ".$numeroSemaine."<BR>";
+            
+    return sprintf("%02d",$numeroSemaine);
+}
+
 ?>
