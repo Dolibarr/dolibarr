@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,8 @@ class pdf_huitre extends ModelePDFFactures
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
         
+        $this->option_logo = 1;                    // Affiche logo
+
         // Recupere emmetteur
         $this->emetteur=$mysoc;
         if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
@@ -127,7 +129,7 @@ class pdf_huitre extends ModelePDFFactures
 				$pdf->Open();
 				$pdf->AddPage();
 
-				$this->_pagehead($pdf, $fac);
+				$this->_pagehead($pdf, $fac, $outputlangs);
 
 				$pdf->SetTitle($fac->ref);
 				$pdf->SetSubject($langs->trans("Bill"));
@@ -177,7 +179,7 @@ class pdf_huitre extends ModelePDFFactures
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 						$pdf->AddPage();
 						$nexY = $iniY;
-						$this->_pagehead($pdf, $fac);
+						$this->_pagehead($pdf, $fac, $outputlangs);
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 10);
 					}
@@ -228,8 +230,9 @@ class pdf_huitre extends ModelePDFFactures
 
 				$pdf->SetFont('Arial','U',11);
 				$pdf->SetXY(10, 225);
-				$titre = $langs->trans("PaymentConditions").' : ';
-                $titre.=$lib_condition_paiement=$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code)?$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+				$titre = $outputlangs->trans("PaymentConditions").' : ';
+                $lib_condition_paiement=$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code)!=('PaymentCondition'.$fac->cond_reglement_code)?$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+				$titre.=$lib_condition_paiement;
 				$pdf->MultiCell(190, 5, $titre, 0, 'J');
 
 				$pdf->SetFont('Arial','',6);
@@ -470,124 +473,128 @@ class pdf_huitre extends ModelePDFFactures
     *   \param      pdf     objet PDF
     *   \param      fac     objet facture
     */
-  function _pagehead(&$pdf, $fac)
-    {
-        global $langs,$conf;
-        $langs->load("main");
-        $langs->load("bills");
-		$langs->load("companies");
-
-      $tab4_top = 60;
-      $tab4_hl = 6;
-      $tab4_sl = 4;
-      $ligne = 2;
+	function _pagehead(&$pdf, $fac, $outputlangs)
+	{
+		global $conf;
+		
+		$outputlangs->load("main");
+		$outputlangs->load("bills");
+        $outputlangs->load("propal");
+		$outputlangs->load("companies");
+	
+		$tab4_top = 60;
+		$tab4_hl = 6;
+		$tab4_sl = 4;
+		$ligne = 2;
+	
+		$pdf->SetXY(10,5);
 
 		// Logo
-        $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
-        if ($this->emetteur->logo)
-        {
-            if (is_readable($logo))
-            {
-                $pdf->SetXY(10,5);
-                $pdf->Image($logo, 10, 5,45.0, 25.0);
-            }
-            else {
-                $pdf->SetTextColor(200,0,0);
-                $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
-                $pdf->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
-            }
-        }
-        else if (defined("FAC_PDF_INTITULE"))
-        {
-            $pdf->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
-        }
+		$logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+		if ($this->emetteur->logo)
+		{
+			if (is_readable($logo))
+			{
+				$pdf->Image($logo, 10, 5,45.0, 25.0);
+			}
+			else
+			{
+				$pdf->SetTextColor(200,0,0);
+				$pdf->SetFont('Arial','B',8);
+				$pdf->MultiCell(80, 3, $outputlangs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->MultiCell(80, 3, $outputlangs->trans("ErrorGoToModuleSetup"), 0, 'L');
+			}
+		}
+		else if (defined("FAC_PDF_INTITULE"))
+		{
+			$pdf->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
+		}
+	
+		$pdf->SetDrawColor(192,192,192);
+		$pdf->line(9, 5, 200, 5 );
+		$pdf->line(9, 30, 200, 30 );
+	
+		$pdf->SetFont('Arial','B',7);
+		$pdf->SetTextColor(128,128,128);
+	
+		if (defined("FAC_PDF_ADRESSE"))
+		{
+			$pdf->SetXY( $tab4_top , $tab4_hl );
+			$pdf->MultiCell(80, 3, FAC_PDF_ADRESSE, '' , 'L');
+		}
+		$pdf->SetFont('Arial','',7);
+		if (defined("FAC_PDF_TEL"))
+		{
+			$pdf->SetXY( $tab4_top , $tab4_hl + 2*$tab4_sl );
+			$pdf->MultiCell(80, 3, $outputlangs->trans('FullPhoneNumber').' : ' . FAC_PDF_TEL, '' , 'L');
+		}
+		if (defined("FAC_PDF_FAX"))
+		{
+			$pdf->SetXY( $tab4_top , $tab4_hl + 3*$tab4_sl );
+			$pdf->MultiCell(80, 3, $outputlangs->trans('TeleFax').' : ' . FAC_PDF_FAX, '' , 'L');
+		}
+		if (defined("FAC_PDF_MEL"))
+		{
+			$pdf->SetXY( $tab4_top , $tab4_hl + 4*$tab4_sl );
+			$pdf->MultiCell(80, 3, $outputlangs->trans('Email').' : ' . FAC_PDF_MEL, '' , 'L');
+		}
+		if (defined("FAC_PDF_WWW"))
+		{
+			$pdf->SetXY( $tab4_top , $tab4_hl + 5*$tab4_sl );
+			$pdf->MultiCell(80, 3, $outputlangs->trans('Web').' : ' . FAC_PDF_WWW, '' , 'L');
+		}
+		$pdf->SetTextColor(70,70,170);
+	
+	
+		/*
+		* Definition du document
+		*/
+		$pdf->SetXY(150,16);
+		$pdf->SetFont('Arial','B',16);
+		$pdf->SetTextColor(0,0,200);
+		$pdf->MultiCell(50, 2, strtoupper($outputlangs->trans("Invoice")), '' , 'C');
+	
+		/*
+		* Adresse Client
+		*/
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFillColor(242,239,119);
+	
+		//      $this->RoundedRect(100, 40, 100, 40, 3, 'F');
+		$pdf->rect(100, 40, 100, 40, 'F');
+		$pdf->SetFont('Arial','B',12);
+		$fac->fetch_client();
+		$pdf->SetXY(102,42);
+		$pdf->MultiCell(96,5, $fac->client->nom, 0, 'C');
+		$pdf->SetFont('Arial','B',11);
+		$pdf->SetXY(102,50);
+		$pdf->MultiCell(96,5, $fac->client->adresse . "\n\n" . $fac->client->cp . " " . $fac->client->ville ,  0, 'C');
+	
+	
+	
+	
+		$pdf->SetTextColor(200,0,0);
+		$pdf->SetFont('Arial','B',14);
+		$pdf->Text(11, 88, $outputlangs->trans('Date'));
+		$pdf->Text(35, 88, ": " . strftime("%d %b %Y", $fac->date));
+		$pdf->Text(11, 94, $outputlangs->trans('Invoice'));
+		$pdf->Text(35, 94, ": ".$fac->ref);
+	
+		// Montants exprimes en euros
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Arial','',10);
+		$titre = $outputlangs->trans("AmountInCurrency",$outputlangs->trans("Currency".$conf->monnaie));
+		$pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
+	
+	}
 
-      $pdf->SetDrawColor(192,192,192);
-      $pdf->line(9, 5, 200, 5 );
-      $pdf->line(9, 30, 200, 30 );
-
-      $pdf->SetFont('Arial','B',7);
-      $pdf->SetTextColor(128,128,128);
-
-      if (defined("FAC_PDF_ADRESSE"))
-      {
-      	$pdf->SetXY( $tab4_top , $tab4_hl );
-        $pdf->MultiCell(80, 3, FAC_PDF_ADRESSE, '' , 'L');
-      }
-      $pdf->SetFont('Arial','',7);
-      if (defined("FAC_PDF_TEL"))
-      {
-      	$pdf->SetXY( $tab4_top , $tab4_hl + 2*$tab4_sl );
-        $pdf->MultiCell(80, 3, $langs->trans('FullPhoneNumber').' : ' . FAC_PDF_TEL, '' , 'L');
-      }
-      if (defined("FAC_PDF_FAX"))
-      {
-      	$pdf->SetXY( $tab4_top , $tab4_hl + 3*$tab4_sl );
-        $pdf->MultiCell(80, 3, $langs->trans('TeleFax').' : ' . FAC_PDF_FAX, '' , 'L');
-      }
-      if (defined("FAC_PDF_MEL"))
-      {
-      	$pdf->SetXY( $tab4_top , $tab4_hl + 4*$tab4_sl );
-        $pdf->MultiCell(80, 3, $langs->trans('Email').' : ' . FAC_PDF_MEL, '' , 'L');
-      }
-      if (defined("FAC_PDF_WWW"))
-      {
-      	$pdf->SetXY( $tab4_top , $tab4_hl + 5*$tab4_sl );
-        $pdf->MultiCell(80, 3, $langs->trans('Web').' : ' . FAC_PDF_WWW, '' , 'L');
-      }
-      $pdf->SetTextColor(70,70,170);
-
-
-       /*
-       * Definition du document
-       */
-      $pdf->SetXY(10,16);
-      $pdf->SetFont('Arial','B',16);
-      $pdf->SetTextColor(0,0,200);
-      $pdf->MultiCell(50, 2, "FACTURE", '' , 'C');
-
-      /*
-       * Adresse Client
-       */
-      $pdf->SetTextColor(0,0,0);
-      $pdf->SetFillColor(242,239,119);
-
-//      $this->RoundedRect(100, 40, 100, 40, 3, 'F');
-      $pdf->rect(100, 40, 100, 40, 'F');
-      $pdf->SetFont('Arial','B',12);
-      $fac->fetch_client();
-      $pdf->SetXY(102,42);
-      $pdf->MultiCell(96,5, $fac->client->nom, 0, 'C');
-      $pdf->SetFont('Arial','B',11);
-      $pdf->SetXY(102,50);
-      $pdf->MultiCell(96,5, $fac->client->adresse . "\n\n" . $fac->client->cp . " " . $fac->client->ville ,  0, 'C');
-
-
-
-
-      $pdf->SetTextColor(200,0,0);
-      $pdf->SetFont('Arial','B',14);
-      $pdf->Text(11, 88, $langs->trans('Date'));
-      $pdf->Text(35, 88, ": " . strftime("%d %b %Y", $fac->date));
-      $pdf->Text(11, 94, $langs->trans('Invoice'));
-      $pdf->Text(35, 94, ": ".$fac->ref);
-
-      // Montants exprimes en euros
-      $pdf->SetTextColor(0,0,0);
-      $pdf->SetFont('Arial','',10);
-      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
-      $pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
-
-    }
-
-  /*
-    *   \brief      Affiche le pied de page de la facture
-    *   \param      pdf     objet PDF
-    *   \param      fac     objet facture
-   */
-   function _pagefoot(&$pdf, $fac)
-{
+	/*
+	 *   \brief      Affiche le pied de page de la facture
+	 *   \param      pdf     objet PDF
+	 *   \param      fac     objet facture
+	 */
+	function _pagefoot(&$pdf, $fac)
+	{
         global $langs, $conf;
         $langs->load("main");
         $langs->load("bills");
