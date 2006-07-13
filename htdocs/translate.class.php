@@ -169,8 +169,13 @@ class Translate {
                     if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
                     {
                         $tab=split('=',$ligne,2);
+                        $key=$tab[0]; $value='';
                         //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-                        if (! $this->getTransFromTab($tab[0])) $this->setTransFromTab($tab[0],trim(isset($tab[1])?$tab[1]:''));
+                        if (! $this->getTransFromTab($key))
+                        {
+	                        if (isset($tab[1])) $value=ereg_replace('\\\n',"\n",$tab[1]);
+                        	$this->setTransFromTab($key,$value);
+                        }
                     }
                 }
                 fclose($fp);
