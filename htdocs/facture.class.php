@@ -405,7 +405,7 @@ class Facture extends CommonObject
 				 */
 				$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, l.remise, l.remise_percent, l.subprice,';
 				$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
-				$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
+				$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
 				$sql.= ' p.label as label, p.description as product_desc';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -420,25 +420,27 @@ class Facture extends CommonObject
 					{
 						$objp = $this->db->fetch_object($result2);
 						$faclig = new FactureLigne($this->db);
-						$faclig->rowid			= $objp->rowid;
-						$faclig->desc           = $objp->description;     // Description ligne
-						$faclig->libelle        = $objp->label;           // Label produit
-						$faclig->product_desc   = $objp->product_desc;    // Description produit
-						$faclig->qty            = $objp->qty;
-						$faclig->price          = $objp->price;
-						$faclig->subprice       = $objp->subprice;
-						$faclig->tva_taux       = $objp->tva_taux;
-						$faclig->remise         = $objp->remise;
-						$faclig->remise_percent = $objp->remise_percent;
-						$faclig->produit_id     = $objp->fk_product;
-						$faclig->date_start     = $objp->date_start;
-						$faclig->date_end       = $objp->date_end;
-						$faclig->date_start     = $objp->date_start;
-						$faclig->date_end       = $objp->date_end;
-						$faclig->info_bits      = $objp->info_bits;
-						$faclig->total_ht       = $objp->total_ht;
-						$faclig->total_tva      = $objp->total_tva;
-						$faclig->total_ttc      = $objp->total_ttc;
+						$faclig->rowid			      = $objp->rowid;
+						$faclig->desc             = $objp->description;     // Description ligne
+						$faclig->libelle          = $objp->label;           // Label produit
+						$faclig->product_desc     = $objp->product_desc;    // Description produit
+						$faclig->qty              = $objp->qty;
+						$faclig->price            = $objp->price;
+						$faclig->subprice         = $objp->subprice;
+						$faclig->tva_taux         = $objp->tva_taux;
+						$faclig->remise           = $objp->remise;
+						$faclig->remise_percent   = $objp->remise_percent;
+						$faclig->produit_id       = $objp->fk_product;
+						$faclig->date_start       = $objp->date_start;
+						$faclig->date_end         = $objp->date_end;
+						$faclig->date_start       = $objp->date_start;
+						$faclig->date_end         = $objp->date_end;
+						$faclig->info_bits        = $objp->info_bits;
+						$faclig->total_ht         = $objp->total_ht;
+						$faclig->total_tva        = $objp->total_tva;
+						$faclig->total_ttc        = $objp->total_ttc;
+						$faclig->export_compta    = $objp->fk_export_compta;
+						$faclig->code_ventilation = $objp->fk_code_ventilation;
 						$this->lignes[$i] = $faclig;
 						$i++;
 					}

@@ -168,7 +168,21 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
    */
   $fac = new Facture($db);
   $fac->fetch($_GET['facid']);
-  $fac->reopen($user);
+  
+  // On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+  $ventilExportCompta = 0 ;
+  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
+  {
+  	if ($fac->lignes[$i]->export_compta <> 0 && $fac->lignes[$i]->code_ventilation <> 0)
+  	{
+  		$ventilExportCompta++;
+  	}
+  }
+  
+  if ($ventilExportCompta == 0)
+  {
+  	$fac->reopen($user);
+  }
 }
 
 if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
@@ -2093,11 +2107,21 @@ else
 			{
 				print '<div class="tabsAction">';
 
-				// Editer une facture déjà validée et sans paiement
+				// Editer une facture déjà validée, sans paiement effectué et pas exporté en compta
 				if ($fac->statut == 1)
 				{
+					// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+					$ventilExportCompta = 0 ;
+					for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
+					{
+						if ($fac->lignes[$i]->export_compta <> 0 && $fac->lignes[$i]->code_ventilation <> 0)
+						{
+							$ventilExportCompta++;
+						}
+					}
+
 					if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
-					&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0))
+					&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
 					}
@@ -2157,8 +2181,18 @@ else
 			  	  {
 			  		  $maxfacnumber = $db->fetch_row($resql);
 			  	  }
+			  	  
+			  	  // On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+			  	  $ventilExportCompta = 0 ;
+			  	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
+			  	  {
+			  	  	if ($fac->lignes[$i]->export_compta <> 0 && $fac->lignes[$i]->code_ventilation <> 0)
+			  	  	{
+			  	  		$ventilExportCompta++;
+			  	  	}
+			  	  }
 
-			  	  if ($maxfacnumber[0] == $fac->ref)
+			  	  if ($maxfacnumber[0] == $fac->ref && $ventilExportCompta == 0)
 			  	  {
 			  		  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 			  	  }
