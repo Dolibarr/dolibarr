@@ -114,7 +114,7 @@ if ($facid > 0)
         $societe->fetch($facture->socidp);
 
 		$head = facturefourn_prepare_head($facture);
-		dolibarr_fiche_head($head, 'documents', $langs->trans('Invoice'));
+		dolibarr_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));
 
         // Construit liste des fichiers
         clearstatcache();
@@ -154,7 +154,7 @@ if ($facid > 0)
         print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td colspan="3">'.$totalsize.' '.$langs->trans('bytes').'</td></tr>';
         print '</table>';
-//        print '</div>';
+        print '</div>';
 
         if ($mesg) { print $mesg.'<br>'; }
 
@@ -166,7 +166,7 @@ if ($facid > 0)
     		print '<table width="100%" class="noborder">';
             print '<tr><td width="50%" valign="top">';
             print '<input type="hidden" name="max_file_size" value="2000000">';
-            print '<input class="flat" type="file" name="userfile" size="40" maxlength="80">';
+            print '<input class="flat" type="file" name="userfile" size="80">';
             print ' &nbsp; ';
             print '<input type="submit" class="button" value="'.$langs->trans('Add').'" name="sendit">';
             print '</td></tr>';
