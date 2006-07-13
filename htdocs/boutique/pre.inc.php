@@ -19,59 +19,32 @@
  * $Source$
  *
  */
+
+/**
+        \file       htdocs/boutique/pre.inc.php
+		\brief      Fichier gestionnaire du menu de gauche
+		\version    $Revision$
+*/
+
 require("../main.inc.php");
-//require("./livre/livre.class.php");
-//require("./editeur/editeur.class.php");
-//require("./auteur/auteur.class.php");
-require("../product/categorie/categorie.class.php");
 
 //affichages dans la page d'accueil
 define("OSC_MAXNBCOM", 5);
 
 function llxHeader($head = "", $urlp = "")
 {
-  global $user, $conf;
-
-  /*
-   *
-   *
-   */
-  top_menu($head);
-
-  $menu = new Menu();
-/*
-  $menu->add(DOL_URL_ROOT."/boutique/livre/", "Livres");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/vignettes.php","Vignettes manquantes");
-
-  $menu->add(DOL_URL_ROOT."/boutique/auteur/", "Auteurs");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
-
-  $menu->add(DOL_URL_ROOT."/boutique/editeur/", "Editeurs");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
-*/
-
-  $menu->add(DOL_URL_ROOT."/boutique/produits/osc-liste.php", "Produits");
-
-  $menu->add(DOL_URL_ROOT."/boutique/client/", "Clients");
-
-  $menu->add(DOL_URL_ROOT."/boutique/commande/", "Commandes");
-
+	global $user,$conf, $langs;
+	$langs->load("shop");
+	
+	top_menu($head);
+	
+	$menu = new Menu();
+	
+	$menu->add(DOL_URL_ROOT."/boutique/index.php", $langs->trans("OSCommerceShop"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/produits/osc-liste.php", $langs->trans("Products"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/client/", $langs->trans("Customers"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Orders"));
   
-/*
-  $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
-
-  $menu->add(DOL_URL_ROOT."/product/promotion/", "Promotions");
-
-  if (defined("MAIN_MODULE_POSTNUKE") && MAIN_MODULE_POSTNUKE)
-    {
-      $menu->add(DOL_URL_ROOT."/postnuke/articles/", "Editorial");
-    }
-*/
-  left_menu($menu->liste);
+	left_menu($menu->liste);
 }
 ?>

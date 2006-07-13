@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +18,18 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
+/**
+        \file       htdocs/boutique/livre/pre.inc.php
+		\brief      Fichier gestionnaire du menu de gauche
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 require("./livre.class.php");
 require("../editeur/editeur.class.php");
 require("../auteur/auteur.class.php");
-require("../../product/categorie/categorie.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {

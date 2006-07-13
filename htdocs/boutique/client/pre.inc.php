@@ -32,35 +32,18 @@ require_once(DOL_DOCUMENT_ROOT.'/client.class.php');
 
 function llxHeader($head = "", $urlp = "")
 {
-  global $user, $conf;
-
-  /*
-   *
-   *
-   */
-  top_menu($head);
-
-  $menu = new Menu();
-
-  $menu->add(DOL_URL_ROOT."/boutique/produits/osc-liste.php", "Produits");
-
-  $menu->add(DOL_URL_ROOT."/boutique/client/", "Clients");
-
-  $menu->add(DOL_URL_ROOT."/boutique/commande/", "Commandes");
-
-/*  $menu->add(DOL_URL_ROOT."/boutique/notification/", "Notifications");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/notification/produits.php", "Produits");
-
-  $menu->add(DOL_URL_ROOT."/boutique/newsletter/", "Newsletter");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/newsletter/fiche.php?action=create", "Nouvelle newsletter");
-*/
-  left_menu($menu->liste);
-  /*
-   *
-   *
-   */
-
+	global $user,$conf, $langs;
+	$langs->load("shop");
+	
+	top_menu($head);
+	
+	$menu = new Menu();
+	
+	$menu->add(DOL_URL_ROOT."/boutique/index.php", $langs->trans("OSCommerceShop"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/produits/osc-liste.php", $langs->trans("Products"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/client/", $langs->trans("Customers"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Orders"));
+  
+	left_menu($menu->liste);
 }
 ?>

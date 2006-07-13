@@ -32,13 +32,13 @@ require("./pre.inc.php");
 $langs->load("boutique");
 
 
-llxHeader("",$langs->trans("Orders"),"Commande");
+llxHeader("",$langs->trans("OSCommerceShop"),"");
 
-print_titre($langs->trans("BoutiqueWeb"));
+print_fiche_titre($langs->trans("OSCommerceShop"));
 
-print '<table class="noborder" width="100%">';
+print '<table width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="40%">';
+print '<tr><td valign="top" width="40%" class="notopnoleft">';
 
 
 /* 
@@ -46,7 +46,7 @@ print '<tr><td valign="top" width="40%">';
 */
 //print_barre_liste("Chiffre d'affaire", $page, "ca.php");
 
-print_titre($langs->trans("Chiffre d'affaire"));
+print_titre($langs->trans('SalesTurnover'));
 
 print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
@@ -117,8 +117,8 @@ else
 */
 
 print "</table>";
-print '</td><td valign="top" width="60%">';
-print_titre($langs->trans("Commandes"));
+print '</td><td valign="top" width="60%" class="notopnoleftnoright">';
+print_titre($langs->trans("Orders"));
 
 /*
  * 5 dernières commandes reçues
@@ -265,5 +265,5 @@ print '</tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -22,53 +22,53 @@
  * $Source$
  */
 
-/**     \defgroup   oscommerce     Module OSCommerce
-        \brief      Module pour gérer une boutique et interface avec OSCommerce
+/**     \defgroup   oscommerce2     Module OSCommerce 2
+        \brief      Module pour gérer une boutique et interface avec OSCommerce via Web Services
 */
 
 /**
-        \file       htdocs/includes/modules/modOSCommerce.class.php
-        \ingroup    oscommerce
+        \file       htdocs/includes/modules/modOSCommerce2.class.php
+        \ingroup    oscommerce2
         \brief      Fichier de description et activation du module OSCommerce
 */
 
 include_once "DolibarrModules.class.php";
 
 /** 
-		\class 		modBoutique
+		\class 		modOSCommerce2
 		\brief      Classe de description et activation du module OSCommerce
 */
 
-class modBoutique extends DolibarrModules
+class modOSCOmmerce2 extends DolibarrModules
 {
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
 	 *   \param      DB      handler d'accès base
 	 */
-	function modBoutique($DB)
+	function modOSCommerce2($DB)
 	{
 		$this->db = $DB ;
-		$this->id = 'boutique';   // Same value xxx than in file modXxx.class.php file
-		$this->numero = 800;
-
+		$this->id = 'oscommerce2';   // Same value xxx than in file modXxx.class.php file
+		$this->numero = 900;
+	
 		$this->family = "products";
-		$this->name = "OSCommerce 1";
-		$this->description = "Interface de visualisation d'une boutique OSCommerce";
+		$this->name = "OSCommerce 2";
+		$this->description = "Interface de visualisation d'une boutique OSCommerce via des Web services.\nCe module requiert d'installer les composants dans /oscommerce_ws/ws_server sur OSCommerce. Voir fichier README dans /oscommerce_ws/ws_server";
 		$this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_BOUTIQUE';
+		$this->const_name = 'MAIN_MODULE_OSCOMMERCEWS';
 		$this->special = 1;
 	
 		// Dir
 		$this->dirs = array();
 	
 		// Config pages
-		$this->config_page_url = array("boutique.php","osc-languages.php");
+		$this->config_page_url = array();
 	
 		// Dépendances
 		$this->depends = array();
 		$this->requiredby = array();
-	    $this->conflictwith = array("modOSCommerce2");
+	    $this->conflictwith = array("modBoutique");
 	   	$this->langfiles = array("shop");
 	
 		// Constantes

@@ -19,29 +19,28 @@
  * $Id$
  * $Source$
  */
-
+ 
 /**
-        \file       htdocs/boutique/produits/pre.inc.php
+        \file       htdocs/oscommerce_ws/pre.inc.php
 		\brief      Fichier gestionnaire du menu de gauche
 		\version    $Revision$
 */
 
-require("../../main.inc.php");
+require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "")
 {
-	global $user,$conf,$langs;
+	global $user, $conf, $langs;
 	$langs->load("shop");
 	
 	top_menu($head);
 	
 	$menu = new Menu();
 	
-	$menu->add(DOL_URL_ROOT."/boutique/index.php", $langs->trans("OSCommerceShop"));
-	$menu->add_submenu(DOL_URL_ROOT."/boutique/produits/osc-liste.php", $langs->trans("Products"));
-	$menu->add_submenu(DOL_URL_ROOT."/boutique/client/", $langs->trans("Customers"));
-	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Orders"));
+	$menu->add(DOL_URL_ROOT."/oscommerce_ws/index.php", $langs->trans("OSCommerceShop"));
+	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/produits/", $langs->trans("Products"));
 	
 	left_menu($menu->liste);
 }
+
 ?>

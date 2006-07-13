@@ -233,10 +233,12 @@ class Conf
 		$this->contrat->enabled=defined("MAIN_MODULE_CONTRAT")?MAIN_MODULE_CONTRAT:0;
 		// Module projet
 		$this->projet->enabled=defined("MAIN_MODULE_PROJET")?MAIN_MODULE_PROJET:0;
-		// Module oscommerce
+		// Module oscommerce 1
 		$this->boutique->enabled=defined("MAIN_MODULE_BOUTIQUE")?MAIN_MODULE_BOUTIQUE:0;
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
+		// Module oscommerce 2
+		$this->oscommerce2->enabled=defined("MAIN_MODULE_OSCOMMERCEWS")?MAIN_MODULE_OSCOMMERCEWS:0;
 		// Module postnuke
 		$this->postnuke->enabled=defined("MAIN_MODULE_POSTNUKE")?MAIN_MODULE_POSTNUKE:0;
 		// Module clicktodial
