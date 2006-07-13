@@ -20,15 +20,16 @@
  * $Source$
  */
 
-/** 
+/**
     	\file       htdocs/compta/sociales/index.php
 		\ingroup    compta
 		\brief      Ecran des charges sociales
 		\version    $Revision$
 */
 
-
 require("./pre.inc.php");
+require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+
 
 $user->getrights('facture');
 $user->getrights('compta');
@@ -47,7 +48,7 @@ if ($page < 0) $page = 0;
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-  
+
 if (! $sortfield) $sortfield="c.id";
 if (! $sortorder) $sortorder="DESC";
 
@@ -65,7 +66,7 @@ if ($_POST["action"] == 'add')
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount) ";
       $sql .= " VALUES (".$_POST["type"].",'".addslashes($_POST["libelle"])."','".$_POST["date"]."','".$_POST["periode"]."','".$_POST["amount"]."');";
-    
+
       if (! $db->query($sql) )
         {
           dolibarr_print_error($db);
@@ -140,17 +141,17 @@ if ($user->rights->compta->charges->creer) {
     print '<td>&nbsp;</td>';
     print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
     print '<td><input type="text" size="8" name="periode"><br>YYYYMMDD</td>';
-    
+
     print '<td align="left"><select name="type">';
-    
+
     $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql .= " ORDER BY lower(c.libelle) ASC";
-    
+
     if ( $db->query($sql) )
     {
       $num = $db->num_rows();
       $i = 0;
-    
+
       while ($i < $num)
         {
           $obj = $db->fetch_object();
@@ -162,7 +163,7 @@ if ($user->rights->compta->charges->creer) {
     print '</td>';
     print '<td align="left"><input type="text" size="34" name="libelle"></td>';
     print '<td align="right"><input type="text" size="6" name="amount"></td>';
-    
+
     print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
     print '</tr>';
 
@@ -200,7 +201,7 @@ if ($filtre) {
     $sql .= " AND $filtre";
 }
 if ($_GET["sortfield"]) {
-    $sql .= " ORDER BY ".$_GET["sortfield"];    
+    $sql .= " ORDER BY ".$_GET["sortfield"];
 }
 else {
     $sql .= " ORDER BY lower(s.date_ech)";
@@ -213,54 +214,52 @@ else {
 }
 
 
+$chargesociale_static=new ChargeSociales($db);
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  $var=true;
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$var=true;
 
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object();
-
-      $var = !$var;
-      print "<tr $bc[$var]>";
-      print '<td width="60">';
-      print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
-      print '</td>';
-
-      print '<td width="110">'.dolibarr_print_date($obj->de).'</td>';
-      print '<td>';
-      if ($obj->periode) {
-      	print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a>';
-      } else {
-      	print '&nbsp;';
-      }
-      print '</td>';
-      print '<td>'.$obj->type_lib.'</td><td>'.dolibarr_trunc($obj->libelle,36).'</td>';
-      print '<td align="right" width="100">'.price($obj->amount).'</td>';
-      
-      if ($obj->paye)
+	while ($i < $num)
 	{
-	  print '<td align="center" class="normal"><a class="payee" href="index.php?filtre=paye:1">Payé</a></td>';
-	} else {
-	  print '<td align="center"><a class="impayee" href="index.php?filtre=paye:0">Impayé</a></td>';
+		$obj = $db->fetch_object($resql);
+
+		$var = !$var;
+		print "<tr $bc[$var]>";
+		print '<td width="60">';
+		print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
+		print '</td>';
+
+		print '<td width="110">'.dolibarr_print_date($obj->de).'</td>';
+		print '<td>';
+		if ($obj->periode) {
+			print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a>';
+			} else {
+				print '&nbsp;';
+			}
+			print '</td>';
+			print '<td>'.$obj->type_lib.'</td><td>'.dolibarr_trunc($obj->libelle,36).'</td>';
+			print '<td align="right" width="100">'.price($obj->amount).'</td>';
+
+			print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
+
+			print '</tr>';
+			$i++;
+		}
 	}
-      print '</tr>';
-      $i++;
-    }
-}
-else
-{
-  dolibarr_print_error($db);
-}
+	else
+	{
+		dolibarr_print_error($db);
+	}
 
 print '</table>';
 
 
 
 $db->close();
- 
+
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

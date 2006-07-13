@@ -138,7 +138,9 @@ class ChargeSociales {
     var $paye;
     var $periode;
 
-    function ChargeSociales($DB) {
+
+    function ChargeSociales($DB)
+    {
         $this->db = $DB;
 
         return 1;
@@ -223,17 +225,61 @@ class ChargeSociales {
       $return = $this->db->query( $sql);
     }
 
+	/**
+	 *    \brief      Retourne le libellé du statut d'une charge (impayé, payée)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->paye,$mode);
+	}
 
-  /**
-   *    \brief      Renvoi le staut de la charge sous forme de libellé
-   *    \return     string      libellé du statut
-   */
-    function getLibStatut() {
-        global $langs;
-        
-        if ($this->paye == 0) { return $langs->trans("Unpayed"); }
-        else { return $langs->trans("Payed"); }
-    }
+	/**
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string        	Libellé du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('customers');
+
+		if ($mode == 0)
+		{
+			if ($statut ==  0) return $langs->trans("Unpayed");
+			if ($statut ==  1) return $langs->trans("Payed");
+		}
+		if ($mode == 1)
+		{
+			if ($statut ==  0) return $langs->trans("Unpayed");
+			if ($statut ==  1) return $langs->trans("Payed");
+		}
+		if ($mode == 2)
+		{
+			if ($statut ==  0) return img_picto($langs->trans("Unpayed"), 'statut1').' '.$langs->trans("Unpayed");
+			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6').' '.$langs->trans("Payed");
+		}
+		if ($mode == 3)
+		{
+			if ($statut ==  0) return img_picto($langs->trans("Unpayed"), 'statut1');
+			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut ==  0) return img_picto($langs->trans("Unpayed"), 'statut1').' '.$langs->trans("Unpayed");
+			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6').' '.$langs->trans("Payed");
+		}
+		if ($mode == 5)
+		{
+			if ($statut ==  0) return $langs->trans("Unpayed").' '.img_picto($langs->trans("Unpayed"), 'statut1');
+			if ($statut ==  1) return $langs->trans("Payed").' '.img_picto($langs->trans("Payed"), 'statut6');
+		}
+
+		return "Error, mode/status not found";
+	}
+	
 }
 
 ?>
