@@ -133,7 +133,7 @@ if ($resql)
 
     $i = 0;
 
-    if ($num == 1 && (isset($_POST["sall"]) or $snom or $sref))
+    if ($num == 1 && ($sall or $snom or $sref))
     {
         $objp = $db->fetch_object($resql);
         Header("Location: fiche.php?id=$objp->rowid");
@@ -161,9 +161,9 @@ if ($resql)
 
     llxHeader("","",$texte);
 
-    if ($sref || $snom || $_POST["sall"] || $_POST["search"])
+    if ($sref || $snom || $sall || $_POST["search"])
     {
-        print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+        print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
     }
     else
     {
@@ -264,9 +264,9 @@ if ($resql)
     
     if ($num > $conf->liste_limit)
     {
-	    if ($sref || $snom || $_POST["sall"] || $_POST["search"])
+	    if ($sref || $snom || $sall || $_POST["search"])
 	    {
-	        print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+	        print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
 	    }
 	    else
 	    {
