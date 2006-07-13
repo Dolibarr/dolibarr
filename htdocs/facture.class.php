@@ -314,7 +314,7 @@ class Facture extends CommonObject
 		$sql .= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
 		$sql .= ', f.note, f.note_public, f.paye, f.fk_statut, f.fk_user_author, f.model_pdf';
 		$sql .= ', f.fk_mode_reglement, f.ref_client, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql .= ', f.fk_cond_reglement, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
+		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
 		$sql .= ', cf.fk_commande';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c, '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
@@ -353,6 +353,7 @@ class Facture extends CommonObject
 				$this->mode_reglement_code    = $obj->mode_reglement_code;
 				$this->mode_reglement         = $obj->mode_reglement_libelle;
 				$this->cond_reglement_id      = $obj->fk_cond_reglement;
+				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
 				$this->projetid               = $obj->fk_projet;
