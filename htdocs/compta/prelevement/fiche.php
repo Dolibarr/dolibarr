@@ -196,7 +196,8 @@ if ($_GET["id"])
 	  print $html->select_array("methode",$bon->methodes_trans);
 	  print '</td></tr>';
 	  print '<tr><td width="20%">Fichier</td><td>';
-	  print '<input type="file" name="userfile" size="30" maxlength="80"><br />';
+      print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+	  print '<input class="flat" type="file" name="userfile" size="80"><br />';
 	  print '</td></tr>';
 	  print '<tr><td colspan="2" align="center">';
 	  print '<input type="submit" class="button" value="'.$langs->trans("Send").'">';

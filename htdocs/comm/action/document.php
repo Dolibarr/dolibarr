@@ -191,8 +191,8 @@ if ($_GET["id"] > 0)
         print '<table class="noborder" width="100%">';
         print '<tr><td width="50%" valign="top">';
 
-        print '<input type="hidden" name="max_file_size" value="2000000">';
-        print '<input class="flat" type="file" name="userfile" size="40" maxlength="80">';
+        print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+        print '<input class="flat" type="file" name="userfile" size="80">';
         print ' &nbsp; ';
         print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="sendit">';
 

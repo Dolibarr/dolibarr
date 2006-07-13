@@ -316,8 +316,8 @@ else
 
 	      print '<td valign="top">Vignette</td><td colspan="2">';
 	      echo '<FORM NAME="userfile" ACTION="fiche.php?id='.$id.'" ENCTYPE="multipart/form-data" METHOD="POST">';      
-	      print '<input type="hidden" name="max_file_size" value="2000000">';
-	      print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
+	      print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+	      print '<input type="file"   name="userfile" size="80"><br>';
 	      print '<input type="submit" value="Upload File!" name="sendit">';
 	      print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><BR>';
 	      print '</form>';

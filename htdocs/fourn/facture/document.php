@@ -165,7 +165,7 @@ if ($facid > 0)
     		print '<form name="userfile" action="document.php?facid='.$facture->id.'" enctype="multipart/form-data" method="POST">';
     		print '<table width="100%" class="noborder">';
             print '<tr><td width="50%" valign="top">';
-            print '<input type="hidden" name="max_file_size" value="2000000">';
+            print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
             print '<input class="flat" type="file" name="userfile" size="80">';
             print ' &nbsp; ';
             print '<input type="submit" class="button" value="'.$langs->trans('Add').'" name="sendit">';

@@ -242,7 +242,7 @@ if ($_GET["id"] || $_GET["ref"])
 
             print '<table class="border" width="100%"><tr>';
             print '<td>'.$langs->trans("File").' ('.$langs->trans("Size").' <= '.$conf->maxfilesize.')</td>';
-            print '<td><input type="file" class="flat" name="photofile"></td></tr>';
+            print '<td><input type="file" class="flat" name="photofile" size="80"></td></tr>';
 
             print '<tr><td colspan="2" align="center">';
             print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"> &nbsp; ';

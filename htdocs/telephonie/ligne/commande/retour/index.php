@@ -103,7 +103,7 @@ else
 print '<br>';
 
 print '<form name="userfile" action="index.php" enctype="multipart/form-data" METHOD="POST">';      
-print '<input type="hidden" name="max_file_size" value="2000000">';
+print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Charger un fichier de retour</td></tr>';
