@@ -90,7 +90,7 @@ class MenuTop {
             $id="sel";
         }
 
-        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|commande|compta|contrat|product|fourn|telephonie|projet)\/",$_SERVER["PHP_SELF"])) {
+        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|commande|compta|contrat|product|fourn|telephonie|energie|boutique|oscommerce_ws|projet)\/",$_SERVER["PHP_SELF"])) {
             $id="sel";
         }
         else {
@@ -253,7 +253,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
 
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/index.php?mainmenu=telephonie"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a></td>';
         }
 
         // Entrée energie
@@ -270,7 +270,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
 
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/energie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/energie/index.php?mainmenu=energie"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
         }
         
         // Entrée OSCommerce 1
@@ -287,7 +287,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
 
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/boutique/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=boutique"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
 
         // Entrée OSCommerce 2
@@ -304,7 +304,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
 
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/oscommerce_ws/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=oscommerce2"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
 
         // Entrée webcal
