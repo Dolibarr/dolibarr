@@ -22,6 +22,7 @@ dolibarr-*.rpm
 dolibarr-*.deb
 dolibarr-*.zip
 cvschangelogbuilder_dolibarr*
+htdocs/includes/menus/barre_top/esprit.php
 deneb
 janus
 jupiter
