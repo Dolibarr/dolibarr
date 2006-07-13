@@ -468,7 +468,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 					$obj = $db->fetch_object($resql);
 					$var = !$var;
 					print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-					print '<td><a href="fiche.php?socidp='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+					print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
 					if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 					print '<td align="right">'.price($obj->total_ttc).'</td>';
 					print '<td align="right">'.price($obj->am).'</td>';

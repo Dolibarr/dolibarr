@@ -38,7 +38,6 @@ class Notify
     var $db;
     var $error;
 
-    var $socidp;
     var $author;
     var $ref;
     var $date;
