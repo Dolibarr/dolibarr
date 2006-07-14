@@ -139,9 +139,61 @@ if ($_GET["id"])
 	}
 
 
-      // Affiche photos
-      $nbphoto=$product->show_photos($conf->produit->dir_output,1);
-      if ($nbphoto < 1) print $langs->trans("NoPhotoYet")."<br><br>";
+        // Affiche photos
+        if ($_GET["action"] != 'ajout_photo')
+        {
+            $nbphoto=0;
+            $nbbyrow=5;
+            
+            $pdir = get_exdir($product->id) . $product->id ."/photos/";
+            $dir = $conf->produit->dir_output . '/'. $pdir;
+
+            print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+            
+            foreach ($product->liste_photos($dir) as $obj)
+            {
+                $nbphoto++;
+
+//                if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+
+                if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
+                if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+                
+                print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
+
+                // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
+                if ($obj['photo_vignette']) $filename=$obj['photo_vignette'];
+                else $filename=$obj['photo'];
+                print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
+
+                print '</a>';
+                print '<br>'.$langs->trans("File").': '.dolibarr_trunc($filename,16);
+                if ($user->rights->produit->creer)
+                {
+                    print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$filename).'">'.img_delete().'</a>';
+                }
+                if ($nbbyrow) print '</td>';
+                if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
+            }
+            
+            // Ferme tableau
+            while ($nbphoto % $nbbyrow)
+            {
+                print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+                $nbphoto++;
+            }
+            
+            if ($nbphoto < 1)
+            {
+                print '<tr align=center valign=middle border=1><td class="photo">';
+                print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
+                print '</td></tr></table>';
+            }
+
+           print '</table>';
+        }
+        
+
       print "</div>\n";
 
     }

@@ -371,7 +371,7 @@ else
 	      if ($product->type == 1) $nblignefour++;
 		
 	      print '<td valign="middle" align="center" rowspan="'.$nblignefour.'">';
-	      $product->show_photo($conf->produit->dir_output,1);
+	      $product->show_photos($conf->produit->dir_output,1,1,0);
 	      print '</td></tr>';
 
           // Description

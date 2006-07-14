@@ -1964,25 +1964,12 @@ function get_each_prod()
   
 
   /**
-   *    \brief      Affiche la première photo du produit
-   *    \param      sdir    Répertoire à scanner
-   *    \param      size    0=taille origine, 1 taille vignette
-   *    \return     int     Nombre de photos affichées
-   */
-  function show_photo($sdir,$size=0)
-  {
-    return $this->show_photos($sdir,$size,1,0);
-  }
-
-
-  /**
    *    \brief      Affiche toutes les photos du produit (nbmax maximum)
    *    \param      sdir        Répertoire à scanner
    *    \param      size        0=taille origine, 1 taille vignette
    *    \param      nbmax       Nombre maximum de photos (0=pas de max)
    *    \param      nbbyrow     Nombre vignettes par ligne (si mode vignette)
    *    \return     int         Nombre de photos affichées
-   *    \todo   A virer, seule la methode avec size=0 sert encore.
    */
   function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5)
   {
@@ -2059,50 +2046,53 @@ function get_each_prod()
     return $nbphoto;
   }
   
-  /**
-   *    \brief      Retourne tableau de toutes les photos du produit
-   *    \param      dir         Répertoire à scanner
-   *    \param      nbmax       Nombre maximum de photos (0=pas de max)
-   *    \return     array       Tableau de photos
-   */
-  function liste_photos($dir,$nbmax=0)
-  {
-    $nbphoto=0;
-    $tabobj=array();
-    
-    if (file_exists($dir))
-    {
-        $handle=opendir($dir);
-    
-        while (($file = readdir($handle)) != false)
-        {
-            if (is_file($dir.$file))
-            {
-                $nbphoto++;
-                $photo = $file;
+	/**
+	*    \brief      Retourne tableau de toutes les photos du produit
+	*    \param      dir         Répertoire à scanner
+	*    \param      nbmax       Nombre maximum de photos (0=pas de max)
+	*    \return     array       Tableau de photos
+	*/
+	function liste_photos($dir,$nbmax=0)
+	{
+		$nbphoto=0;
+		$tabobj=array();
+	
+		if (file_exists($dir))
+		{
+			$handle=opendir($dir);
+	
+			while (($file = readdir($handle)) != false)
+			{
+				if (is_file($dir.$file))
+				{
+					$nbphoto++;
+					$photo = $file;
 
-                // On determine nom du fichier vignette
-                $photo_vignette='';
-                if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
-                    $photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
-                }
- 
-                // Objet
-                $obj->photo=$photo;
-                if ($photo_vignette && is_file($photo_vignette)) $obj->photo_vignette=$photo_vignette;
-                else $obj->photo_vignette="";
-                $tabobj[$nbphoto-1]=$obj;
+					// On determine nom du fichier vignette
+					$photo_vignette='';
+					if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs))
+					{
+						$photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
+					}
+	
+					// Objet
+					$obj=array();
+					$obj['photo']=$photo;
+					if ($photo_vignette && is_file($photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+					else $obj['photo_vignette']="";
 
-                // On continue ou on arrete de boucler ?
-                if ($nbmax && $nbphoto >= $nbmax) break;
-            }
-        }
-        
-        closedir($handle);
-    }
-    
-    return $tabobj;
-  }
+					$tabobj[$nbphoto-1]=$obj;
+
+					// On continue ou on arrete de boucler ?
+					if ($nbmax && $nbphoto >= $nbmax) break;
+				}
+			}
+	
+			closedir($handle);
+		}
+	
+		return $tabobj;
+	}
 
 
     /**

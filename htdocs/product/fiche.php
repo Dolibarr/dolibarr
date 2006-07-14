@@ -616,7 +616,7 @@ if ($_GET["id"] || $_GET["ref"])
             {
                 // Photo
                 print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
-                $nbphoto=$product->show_photo($conf->produit->dir_output,1);
+                $nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
                 print '</td>';
             }
 

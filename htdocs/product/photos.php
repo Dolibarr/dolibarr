@@ -262,8 +262,8 @@ if ($_GET["id"] || $_GET["ref"])
             $dir = $conf->produit->dir_output . '/'. $pdir;
 
             print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
-            
-            foreach ($product->liste_photos($dir) as $obj)
+
+            foreach ($product->liste_photos($dir) as $key => $obj)
             {
                 $nbphoto++;
 
@@ -272,11 +272,11 @@ if ($_GET["id"] || $_GET["ref"])
                 if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
                 if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
                 
-                print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj->photo).'" alt="Taille origine" target="_blank">';
+                print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
 
                 // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-                if ($obj->photo_vignette) $filename=$obj->photo_vignette;
-                else $filename=$obj->photo;
+                if ($obj['photo_vignette']) $filename=$obj['photo_vignette'];
+                else $filename=$obj['photo'];
                 print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
 
                 print '</a>';
