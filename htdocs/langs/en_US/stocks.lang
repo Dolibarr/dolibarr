@@ -25,3 +25,4 @@ StockCorrection=Stock correction
 StockMovement=Transfer
 NumberOfUnit=Number of units
 TotalStock=Total in stock
+StockTooLow=Stock too low

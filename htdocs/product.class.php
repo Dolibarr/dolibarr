@@ -769,150 +769,121 @@ class Product
      *      \param      ref     Ref du produit/service à charger
      *      \return     int     <0 si ko, >0 si ok
      */
-    function fetch($id='',$ref='')
-    {
-        global $langs;
+	function fetch($id='',$ref='')
+	{
+		global $langs;
 		global $conf;
-
+	
 		dolibarr_syslog("Product::fetch id=$id ref=$ref");
-
-        // Verification parametres
-        if (! $id && ! $ref)
-        {
-            $this->error=$langs->trans('ErrorWrongParameters');
+	
+		// Verification parametres
+		if (! $id && ! $ref)
+		{
+			$this->error=$langs->trans('ErrorWrongParameters');
 			dolibarr_print_error("Product::fetch ".$this->error);
-            return -1;
-        }
-
-        $sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
-        $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        if ($id) $sql.= " WHERE rowid = '".$id."'";
-        if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
-    
-        $result = $this->db->query($sql) ;
-        if ( $result )
-        {
-            $result = $this->db->fetch_array();
-    
-            $this->id                 = $result["rowid"];
-            $this->ref                = $result["ref"];
-            $this->libelle            = stripslashes($result["label"]);
-            $this->description        = stripslashes($result["description"]);
-            $this->note               = stripslashes($result["note"]);
-            $this->price              = $result["price"];
-            $this->tva_tx             = $result["tva_tx"];
-            $this->type               = $result["fk_product_type"];
-            $this->nbvente            = $result["nbvente"];
-            $this->status             = $result["envente"];
-            $this->duration           = $result["duration"];
-            $this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
-            $this->duration_unit      = substr($result["duration"],-1);
-            $this->seuil_stock_alerte = $result["seuil_stock_alerte"];
-    
-            $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
-    
-            if ($this->type == 0)
-            {
-                $this->isproduct = 1;
-                $this->isservice = 0;
-            }
-            else
-            {
-                $this->isproduct = 0;
-                $this->isservice = 1;
-            }
-    
-            $this->db->free();
+			return -1;
+		}
+	
+		$sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
+		$sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		if ($id) $sql.= " WHERE rowid = '".$id."'";
+		if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
+	
+		$result = $this->db->query($sql) ;
+		if ( $result )
+		{
+			$result = $this->db->fetch_array();
+	
+			$this->id                 = $result["rowid"];
+			$this->ref                = $result["ref"];
+			$this->libelle            = stripslashes($result["label"]);
+			$this->description        = stripslashes($result["description"]);
+			$this->note               = stripslashes($result["note"]);
+			$this->price              = $result["price"];
+			$this->tva_tx             = $result["tva_tx"];
+			$this->type               = $result["fk_product_type"];
+			$this->nbvente            = $result["nbvente"];
+			$this->status             = $result["envente"];
+			$this->duration           = $result["duration"];
+			$this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
+			$this->duration_unit      = substr($result["duration"],-1);
+			$this->seuil_stock_alerte = $result["seuil_stock_alerte"];
+	
+			$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
+	
+			if ($this->type == 0)
+			{
+				$this->isproduct = 1;
+				$this->isservice = 0;
+			}
+			else
+			{
+				$this->isproduct = 0;
+				$this->isservice = 1;
+			}
+	
+			$this->db->free();
 			// multilangs
 			if( $conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
-			
-
+	
+	
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
-					if ($ref) 
+				if ($ref)
+				{
+					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product ";
+					$sql.=  "WHERE ref = '".addslashes($ref)."'";
+					$result = $this->db->query($sql) ;
+					if ($result)
 					{
-						 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product ";
-						 $sql.=  "WHERE ref = '".addslashes($ref)."'";
-						 $result = $this->db->query($sql) ;
-						 if ($result)
-						{
-								$result = $this->db->fetch_array();
-								$prodid = $result["rowid"];
-						}
-						else
-						 {
-							dolibarr_print_error($this->db);
-							return -1;
-						}
+						$result = $this->db->fetch_array();
+						$prodid = $result["rowid"];
 					}
-					$this -> multiprices[1] = $this->price;
-					for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+					else
 					{
-						$sql= "SELECT price, tva_tx, envente ";
-						$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
-						$sql.= "where price_level=".$i." and ";
-						if ($id) $sql.= "fk_product = '".$id."' ";
-						if ($ref) $sql.= "fk_product = '".$prodid."' ";
-						$sql.= "order by date_price DESC limit 1";
-					    $result = $this->db->query($sql) ;
-						if ( $result )
-						{
-							$result = $this->db->fetch_array();
-							if($result["price"] != "" && $result["price"] != "0.00")
-							 	$this -> multiprices[$i]=$result["price"];
-							 else
-							 	$this -> multiprices[$i]=$this->price;
-						}
-						else
-						 {
-							dolibarr_print_error($this->db);
-							return -1;
-						}
+						dolibarr_print_error($this->db);
+						return -1;
 					}
-					
-			  }
-		
-            $sql = "SELECT reel, fk_entrepot";
-            $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = '".$this->id."'";
-            $result = $this->db->query($sql) ;
-            if ($result)
-            {
-                $num = $this->db->num_rows($result);
-                $i=0;
-                if ($num > 0)
-                {
-                    while ($i < $num )
-                    {
-                        $row = $this->db->fetch_row($result);
-                        $this->stock_entrepot[$row[1]] = $row[0];
-    
-                        $this->stock_reel = $this->stock_reel + $row[0];
-                        $i++;
-                    }
-    
-                    $this->no_stock = 0;
-                }
-                else
-                {
-                    $this->no_stock = 1;
-                }
-                $this->db->free($result);
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                return -2;            
-            }
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-            return -1;
-        }
-    }
+				}
+				$this -> multiprices[1] = $this->price;
+				for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+				{
+					$sql= "SELECT price, tva_tx, envente ";
+					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
+					$sql.= "where price_level=".$i." and ";
+					if ($id) $sql.= "fk_product = '".$id."' ";
+					if ($ref) $sql.= "fk_product = '".$prodid."' ";
+					$sql.= "order by date_price DESC limit 1";
+					$result = $this->db->query($sql) ;
+					if ( $result )
+					{
+						$result = $this->db->fetch_array();
+						if($result["price"] != "" && $result["price"] != "0.00")
+						$this -> multiprices[$i]=$result["price"];
+						else
+						$this -> multiprices[$i]=$this->price;
+					}
+					else
+					{
+						dolibarr_print_error($this->db);
+						return -1;
+					}
+				}
+	
+			}
+	
+			$res=$this->load_stock();
+			
+			return $res;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
 
 
     /**
@@ -1825,7 +1796,6 @@ function get_each_prod()
    *    \param  nbpiece         nombre de pieces
    *    \param  mouvement       0 = ajout, 1 = suppression
    */
-	 
   function ajust_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
     $op[0] = "+" . trim($nbpiece);
@@ -1877,13 +1847,52 @@ function get_each_prod()
       }
   }
 
+	/**
+	 *    \brief      Charge les informations en stock du produit
+	 *    \return     int             < 0 si erreur, > 0 si ok
+	 */
+	function load_stock()
+    {    
+        $sql = "SELECT reel, fk_entrepot";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
+        $sql.= " WHERE fk_product = '".$this->id."'";
+        $result = $this->db->query($sql) ;
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i=0;
+            if ($num > 0)
+            {
+                while ($i < $num )
+                {
+                    $row = $this->db->fetch_row($result);
+                    $this->stock_entrepot[$row[1]] = $row[0];
+                    $this->stock_reel = $this->stock_reel + $row[0];
+                    $i++;
+                }
 
-  /**
-   *    \brief      Charge les informations relatives à un fournisseur
-   *    \param      fournid         id du fournisseur
-   *    \return     int             < 0 si erreur, > 0 si ok
-   */
-  function fetch_fourn_data($fournid)
+                $this->no_stock = 0;
+            }
+            else
+            {
+                $this->no_stock = 1;
+            }
+            $this->db->free($result);
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;            
+        }
+	}
+	            
+	/**
+	 *    \brief      Charge les informations relatives à un fournisseur
+	 *    \param      fournid         id du fournisseur
+	 *    \return     int             < 0 si erreur, > 0 si ok
+	 */
+	function fetch_fourn_data($fournid)
     {    
         $sql = "SELECT rowid, ref_fourn";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur ";

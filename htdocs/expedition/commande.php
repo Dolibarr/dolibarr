@@ -41,6 +41,7 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load('propal');
 $langs->load('deliveries');
+$langs->load('stocks');
 
 $user->getrights('commande');
 $user->getrights('expedition');
@@ -300,7 +301,7 @@ if ($_GET["id"] > 0)
 
         /**
          *  Lignes de commandes avec quantité livrées et reste à livrer
-         *
+         *  Les quantités livrées sont stockées dans $commande->expeditions[fk_product]
          */
         echo '<table class="liste" width="100%">';
 
@@ -352,7 +353,7 @@ if ($_GET["id"] > 0)
                 }
                 else
                 {
-                    print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
+                    print "<td>".nl2br($objp->description)."</td>\n";
                 }
 
                 print '<td align="center">'.$objp->qty.'</td>';
@@ -363,22 +364,20 @@ if ($_GET["id"] > 0)
                 print '</td>';
 
                 $reste_a_livrer[$objp->fk_product] = $objp->qty - $quantite_livree;
-                $reste_a_livrer_x = $objp->qty - $quantite_livree;
-                $reste_a_livrer_total = $reste_a_livrer_total + $reste_a_livrer_x;
+                $reste_a_livrer_total = $reste_a_livrer_total + $reste_a_livrer[$objp->fk_product];
                 print '<td align="center">';
                 print $reste_a_livrer[$objp->fk_product];
                 print '</td>';
 
                 if ($conf->stock->enabled)
                 {
-                    if ($product->stock_reel < $reste_a_livrer_x)
+                    print '<td align="center">';
+                    print $product->stock_reel;
+                    if ($product->stock_reel < $reste_a_livrer[$objp->fk_product])
                     {
-                        print '<td align="center" class="alerte">'.$product->stock_reel.'</td>';
+						print ' '.img_warning($langs->trans("StockTooLow"));
                     }
-                    else
-                    {
-                        print '<td align="center">'.$product->stock_reel.'</td>';
-                    }
+                    print '</td>';
                 }
                 else
                 {
@@ -459,51 +458,6 @@ if ($_GET["id"] > 0)
             print "</form>\n";
         }
 
-
-        /*
-         * Alerte de seuil
-         */
-        if ($reste_a_livrer_total > 0 && $conf->stock->enabled)
-        {
-            print '<br><table class="liste" width="100%">';
-            foreach ($reste_a_livrer as $key => $value)
-            {
-                if ($value > 0)
-                {
-                    $sql = "SELECT e.rowid as entrepot_id, e.label as entrepot, ps.reel, p.label, p.ref, p.rowid as fk_product";
-                    $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
-                    $sql .= " WHERE e.rowid = ps.fk_entrepot AND ps.fk_product = p.rowid AND ps.fk_product = $key";
-                    $sql .= " AND e.statut = 1 AND reel < $value";
-
-                    $resql = $db->query($sql);
-                    if ($resql)
-                    {
-                        $num = $db->num_rows($resql);
-                        $i = 0;
-
-                        $var=True;
-                        while ($i < $num)
-                        {
-                            $obja = $db->fetch_object($resql);
-                            print "<tr $bc[$var]>";
-                            print '<td width="30%">';
-                            print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$obja->ref.'</a> - '.$obja->label;
-                            print '<td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$obja->entrepot_id.'">'.$obja->entrepot.'</td>';
-                            print '<td><b>Stock : '.$obja->reel.'</b>' .img_warning($langs->trans("Alert")).'</td>';
-                            print "</tr>\n";
-                            $i++;
-                        }
-                        $db->free($resql);
-                    }
-                    else {
-                        dolibarr_print_error($db);
-                    }
-
-                }
-            }
-            print "</table>";
-        }
-
         /*
          * Déjà livré
          */
@@ -534,13 +488,13 @@ if ($_GET["id"] > 0)
                 print '<table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td align="left">'.$langs->trans("Sending").'</td>';
+                print '<td>'.$langs->trans("Product").'</td>';
+                print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
+                print '<td align="center">'.$langs->trans("Date").'</td>';
                 if ($conf->livraison->enabled)
                 {
                 	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
                 }
-                print '<td>'.$langs->trans("Description").'</td>';
-                print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-                print '<td align="center">'.$langs->trans("Date").'</td>';
                 print "</tr>\n";
 
                 $var=True;
@@ -550,18 +504,6 @@ if ($_GET["id"] > 0)
                     $objp = $db->fetch_object($resql);
                     print "<tr $bc[$var]>";
                     print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
-                    
-                    if ($conf->livraison->enabled)
-                    {
-                    	if ($objp->livraison_id)
-                    	{
-                    		print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
-                    	}
-                    	else
-                    	{
-                    		print '<td><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'<a></td>';
-                    	}
-                    }
                     
                     if ($objp->fk_product > 0)
                     {
@@ -579,6 +521,19 @@ if ($_GET["id"] > 0)
                     }
                     print '<td align="center">'.$objp->qty_livre.'</td>';
                     print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
+                    if ($conf->livraison->enabled)
+                    {
+                    	if ($objp->livraison_id)
+                    	{
+                    		print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
+                    	}
+                    	else
+                    	{
+                    		print '<td><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'<a></td>';
+                    	}
+                    }
+					print '</tr>';
+
                     $i++;
                 }
 

@@ -25,3 +25,4 @@ StockCorrection=Correction stock
 StockMovement=Transfert
 NumberOfUnit=Nombre de pièces
 TotalStock=Total en stock
+StockTooLow=Stock insuffisant

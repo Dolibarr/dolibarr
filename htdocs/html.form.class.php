@@ -2162,7 +2162,7 @@ class Form
         \param	htmlname        Nom de la zone select
         \param	array           Tableau de key+valeur
         \param	id              Key pré-sélectionnée
-        \param	show_empty      1 si il faut ajouter une valeur " " dans la liste, 0 sinon
+        \param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
         \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
         \param	value_as_key    1 pour utiliser la valeur comme clé
     */

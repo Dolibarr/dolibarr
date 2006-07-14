@@ -1035,7 +1035,7 @@ class Commande extends CommonObject
      */
 	function expedition_array($filtre_statut=-1)
 	{
-		$this->livraisons = array();
+		$this->expeditions = array();
 		$sql = 'SELECT fk_product, sum(ed.qty)';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'expedition as e, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql.=' WHERE ed.fk_expedition = e.rowid AND ed.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid';
@@ -1059,14 +1059,14 @@ class Commande extends CommonObject
 	    return 0;
 	}
 	
-  /**
-   * Renvoie un tableau avec les expeditions par ligne
-   *
-   */
+	/**
+	* Renvoie un tableau avec nombre de lignes d'expeditions
+	*
+	*/
 	function nb_expedition()
 	{
 		$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'expedition as e';
-		$sql .=" WHERE e.fk_commande = $this->id";
+		$sql .=" WHERE e.fk_commande = ".$this->id;
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1076,7 +1076,7 @@ class Commande extends CommonObject
 		}
 	}
 	
-	    /**
+	/**
      *      \brief      Renvoie un tableau avec les livraisons par ligne
      *      \param      filtre_statut       Filtre sur statut
      *      \return     int                 0 si OK, <0 si KO
@@ -1107,11 +1107,48 @@ class Commande extends CommonObject
 	    return 0;
 	}
 	
-  /**
-   *    \brief      Supprime une ligne de la commande
-   *    \param      idligne     Id de la ligne à supprimer
-   *    \return     int         >0 si ok, <0 si ko
-   */
+    /**
+     *      \brief      Renvoie un tableau avec les stocks restant par produit
+     *      \param      filtre_statut       Filtre sur statut
+     *      \return     int                 0 si OK, <0 si KO
+     *		\todo		FONCTION NON FINIE A FINIR
+     */
+	function stock_array($filtre_statut=-1)
+	{
+		$this->stocks = array();
+
+		// Tableau des id de produit de la commande
+		
+		
+		// Recherche total en stock pour chaque produit
+		if (sizeof($array_of_product))
+		{
+	        $sql = "SELECT fk_product, sum(ps.reel)";
+	        $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+	        $sql.= " WHERE ps.fk_product in (".join(',',$array_of_product).")";
+			$sql.= ' GROUP BY fk_product ';
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$num = $this->db->num_rows();
+				$i = 0;
+				while ($i < $num)
+				{
+					$row = $this->db->fetch_row( $i);
+					$this->stocks[$row[0]] = $row[1];
+					$i++;
+				}
+				$this->db->free();
+			}
+		}
+	    return 0;
+	}
+	
+	/**
+	 *    \brief      Supprime une ligne de la commande
+	 *    \param      idligne     Id de la ligne à supprimer
+	 *    \return     int         >0 si ok, <0 si ko
+	 */
 	function delete_line($idligne)
 	{
 		if ($this->statut == 0)

@@ -586,6 +586,26 @@ class Expedition extends CommonObject
       }
     return $this->lignes;
   }
+  
+    /**
+     *    \brief      Retourne le libellé du statut d'un entrepot (ouvert, fermé)
+     *    \return     string      Libellé
+     */
+    function getLibStatut()
+    {
+    	return $this->LibStatut($this->statut);
+    }
+    
+    /**
+     *    \brief      Renvoi le libellé d'un statut donné
+     *    \param      statut      id statut
+     *    \return     string      Libellé
+     */
+    function LibStatut($statut)
+    {
+        return $this->statuts[$statut];
+    }  
+  
 }
 
 
