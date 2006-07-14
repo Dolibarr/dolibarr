@@ -422,9 +422,33 @@ if ($_GET["id"] > 0)
 
         }
 
+
+
+		print '<table width="100%"><tr><td width="50%" valign="top">';
+
+		/*
+		* Documents générés
+		*
+		*/
+		$comref = sanitize_string($commande->ref);
+		$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
+		$relativepath = $comref.'/'.$comref.'.pdf';
+		$filedir = $conf->commande->dir_output . '/' . $comref;
+		$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+		$genallowed=0;
+		$delallowed=0;
+		
+		$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+
+
+        print '</td><td valign="top" width="50%">';
+
+
 		// Bouton expedier avec gestion des stocks
         if ($conf->stock->enabled && $reste_a_livrer_total > 0 && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
         {
+            print_titre($langs->trans("NewSending"));
+            
             print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
             print '<input type="hidden" name="action" value="create">';
             print '<input type="hidden" name="id" value="'.$commande->id.'">';
@@ -454,12 +478,17 @@ if ($_GET["id"] > 0)
             print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
             print '</td></tr>';
 
-            print "</table><br>";
+            print "</table>";
             print "</form>\n";
+            
+            $somethingshown=1;
         }
 
+        print "</td></tr></table>";
+
+
         /*
-         * Déjà livré
+         * 	Liste des expéditions
          */
         $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
         $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
@@ -471,7 +500,6 @@ if ($_GET["id"] > 0)
         $sql .= " WHERE cd.fk_commande = ".$commande->id;
         $sql .= " AND cd.rowid = ed.fk_commande_ligne";
         $sql .= " AND ed.fk_expedition = e.rowid";
-        $sql .= " AND e.fk_statut > 0";
         $sql .= " ORDER BY cd.fk_product";
 
         $resql = $db->query($sql);
@@ -482,9 +510,9 @@ if ($_GET["id"] > 0)
 
             if ($num)
             {
-                print '<br>';
+                if ($somethingshown) print '<br>';
                 
-                print_titre($langs->trans("OtherSendingsForSameOrder"));
+                print_titre($langs->trans("SendingsForSameOrder"));
                 print '<table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td align="left">'.$langs->trans("Sending").'</td>';

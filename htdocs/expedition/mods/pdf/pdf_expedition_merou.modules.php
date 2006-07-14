@@ -87,6 +87,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
         $outputlangs->load("bills");
         $outputlangs->load("propal");
         $outputlangs->load("products");
+        $outputlangs->load("sendings");
 
 		$outputlangs->setPhpLang();
 
@@ -171,7 +172,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				//Generation du tableau
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 				//Recuperation des produits de la commande.
-				$this->expe->commande->fetch_lignes();
+				$this->expe->commande->fetch_lignes(1);
 				$Produits = $this->expe->commande->lignes;
 				$nblignes = sizeof($Produits);
 				for ($i = 0 ; $i < $nblignes ; $i++){
@@ -188,7 +189,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Insertion du libelle
 					$pdf->SetFont('Arial','', 7);			
 					$pdf->SetXY (50, $curY );
-					$pdf->MultiCell(130, 5, stripslashes($Prod->libelle), 0, 'L', 0);
+					$pdf->MultiCell(130, 5, $Prod->libelle, 0, 'L', 0);
 					//Insertion de la quantite
 					$pdf->SetFont('Arial','', 7);			
 					$pdf->SetXY (180, $curY );
@@ -319,7 +320,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY(60,7);
 		$pdf->SetFont('Arial','B',14);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, "BON DE LIVRAISON", '' , 'L');
+		$pdf->MultiCell(0, 8, $langs->trans("SendingSheet"), '' , 'L');
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 115;
@@ -327,10 +328,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $langs->trans("Ref: ").$exp->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $langs->trans("RefSending").': '.$exp->ref, '' , 'L');
 		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
-		$Yoff = $Yoff+10;
+		$Yoff = $Yoff+4;
 //		$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);

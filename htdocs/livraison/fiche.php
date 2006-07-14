@@ -628,101 +628,11 @@ else
                 dolibarr_print_error($db);
             }
     
-            /*
-            * Commandes associées
-            *
-            */
-            $file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-            $relativepath = $commande->ref . "/" . $commande->ref . ".pdf";
-    
-            $var=true;
-    
-            if (file_exists($file))
-            {
-                print '<br>';
-                print_titre("Orders");
-                print '<table width="100%" class="border">';
-    
-                print "<tr $bc[$true]><td>".$langs->trans("Order")." PDF</td>";
-                print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-                print '<td align="right">'.filesize($file). ' bytes</td>';
-                print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-                print '</tr>';
-    
-                print "</table>\n";
-			}
-
 
             print '</td><td valign="top" width="50%">';
 
-
-            print_titre("Actions");
-            /*
-            * Liste des actions
-            *
-            */
-            $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-            $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-            $sql .= " WHERE a.fk_soc = ".$commande->socidp." AND a.fk_action in (9,10)";
-            $sql .= " AND a.fk_commande = ".$livraison->id;
-
-            $resql = $db->query($sql);
-            if ($resql)
-            {
-                $num = $db->num_rows($resql);
-                if ($num)
-                {
-                    $i = 0;
-                    print '<table class="border" width="100%">';
-                    print "<tr $bc[$var]><td>".$langs->trans("Date")."</td><td>".$langs->trans("Action")."</td></tr>\n";
-
-                    $var=True;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($resql);
-                        $var=!$var;
-                        print "<tr $bc[$var]>";
-                        print "<td>".strftime("%d %B %Y",$objp->da)."</td>\n";
-                        print '<td>'.stripslashes($objp->note).'</td>';
-                        print "</tr>";
-                        $i++;
-                    }
-                    print "</table>";
-                }
-                $db->free($resql);
-            }
-            else
-            {
-                dolibarr_print_error($db);
-            }
-    
-            if ($action == 'presend')
-            {
-                $replytoname = $user->fullname;
-                $from_name = $replytoname;
-    
-                $replytomail = $user->email;
-                $from_mail = $replytomail;
-    
-                print "<form method=\"post\" action=\"fiche.php?id=$livraison->id&amp;action=send\">\n";
-                print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-                print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-    
-                print "<p><b>Envoyer le bon de livraison par mail</b>";
-                print "<table cellspacing=0 border=1 cellpadding=3>";
-                print '<tr><td>Destinataire</td><td colspan="5">';
-    
-                $form = new Form($db);
-                $form->select_array("destinataire",$soc->contact_email_array());
-    
-                print "</td><td><input size=\"30\" name=\"sendto\" value=\"$commande->email\"></td></tr>";
-                print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-                print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-                print "<td>$replytomail</td></tr></table>";
-    
-                print "<input type=\"submit\" value=\"Envoyer\"></form>";
-            }
-            
+			// Rien à droite
+			            
             print '</td></tr></table>';
             
         }

@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - sendings
+RefSending=Ref. sending
 Sending=Sending
 Sendings=Sendings
 SendingsArea=Sendings area
@@ -18,5 +19,11 @@ QtyShipped=Qty shipped
 QtyReceived=Qty received
 QtyToShip=Qty to ship
 KeepToShip=Keep to ship
-OtherSendingsForSameOrder=Other sendings already shipped
+OtherSendingsForSameOrder=Other sendings for this order
+SendingsForSameOrder=Sendings for this order
 SendingsToValidate=Sending to validate
+StatusSendingDraft=Draft
+StatusSendingValidated=Validated (products to ship or already received)
+StatusSendingDraftShort=Draft
+StatusSendingValidatedShort=Validated
+SendingSheet=Sending sheet

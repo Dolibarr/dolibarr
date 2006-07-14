@@ -1600,7 +1600,8 @@ else
 				}
 
 				// Ship
-				if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
+				if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer
+						&& $commande->getNbOfProductsLines() > 0)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
 				}
@@ -1690,59 +1691,8 @@ else
 			}
 			print '</td><td valign="top" width="50%">';
 
-			/*
-			* Liste des expéditions
-			*/
-			$sql = 'SELECT e.rowid as expedition_id, e.ref,'.$db->pdate('e.date_expedition').' as de';
-			if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
-			if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
-			$sql .= ' WHERE e.fk_commande = '. $commande->id;
+			// Rien a droite
 
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$num = $db->num_rows($result);
-				if ($num)
-				{
-					print_titre($langs->trans('Sendings'));
-					$i = 0; $total = 0;
-					print '<table class="border" width="100%">';
-					print '<tr '.$bc[$var].'><td>'.$langs->trans('Sendings').'</td>';
-					if ($conf->livraison->enabled)
-					{
-						print '<td>'.$langs->trans("DeliveryOrder").'</td>';
-					}
-					print '<td>'.$langs->trans('Date').'</td></tr>';
-
-					$var=True;
-					while ($i < $num)
-					{
-						$objp = $db->fetch_object($result);
-						$var=!$var;
-						print '<tr '.$bc[$var].'>';
-						print '<td><a href="../expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans('ShowSending'),'sending').' '.$objp->ref.'</a></td>';
-						if ($conf->livraison->enabled)
-            {
-             	if ($objp->livraison_id)
-             	{
-             		print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
-             	}
-             	else
-             	{
-             		print '<td><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'<a></td>';
-             	}
-            }
-						print '<td>'.dolibarr_print_date($objp->de).'</td></tr>';
-						$i++;
-					}
-					print '</table>';
-				}
-			}
-			else
-			{
-				dolibarr_print_error($db);
-			}
 			print '</td></tr></table>';
 
 			/*

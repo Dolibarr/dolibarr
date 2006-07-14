@@ -538,22 +538,22 @@ if ($_GET["id"] > 0)
         }
 
 
-        print '<table width="100%"><tr><td width="50%" valign="top">';
-
-
-     /*
-			* Documents générés
-			*
-			*/
-			$comref = sanitize_string($commande->ref);
-			$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
-			$relativepath = $comref.'/'.$comref.'.pdf';
-			$filedir = $conf->commande->dir_output . '/' . $comref;
-			$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
-			$genallowed=0;
-			$delallowed=0;
-
-			$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+		print '<table width="100%"><tr><td width="50%" valign="top">';
+		
+		
+		/*
+		* Documents générés
+		*
+		*/
+		$comref = sanitize_string($commande->ref);
+		$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
+		$relativepath = $comref.'/'.$comref.'.pdf';
+		$filedir = $conf->commande->dir_output . '/' . $comref;
+		$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+		$genallowed=0;
+		$delallowed=0;
+		
+		$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
         /*
         * Liste des factures
@@ -598,38 +598,73 @@ if ($_GET["id"] > 0)
 
         print '</td><td valign="top" width="50%">';
 
-        /*
-        * Liste des expéditions
-        */
-        $sql = "SELECT e.rowid as expedition_id, e.ref,".$db->pdate("e.date_expedition")." as de";
-        if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
-        $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-        if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
-        $sql .= " WHERE e.fk_commande = ". $commande->id;
+		// Rien a droite
 
-        $result = $db->query($sql);
-        if ($result)
+        print "</td></tr></table>";
+        
+        
+        /*
+         * 	Liste des expéditions
+         */
+        $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
+        $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
+        $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
+        if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
+        $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+        $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
+        if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
+        $sql .= " WHERE cd.fk_commande = ".$commande->id;
+        $sql .= " AND cd.rowid = ed.fk_commande_ligne";
+        $sql .= " AND ed.fk_expedition = e.rowid";
+        $sql .= " ORDER BY cd.fk_product";
+
+        $resql = $db->query($sql);
+        if ($resql)
         {
-            $num = $db->num_rows($result);
+            $num = $db->num_rows($resql);
+	        $i = 0;
+
             if ($num)
             {
-                print_titre($langs->trans("Sendings"));
-                $i = 0; $total = 0;
-                print '<table class="border" width="100%">';
-                print "<tr $bc[$var]><td>".$langs->trans("Sendings")."</td>";
+                if ($somethingshown) print '<br>';
+                
+                print_titre($langs->trans("SendingsForSameOrder"));
+                print '<table class="liste" width="100%">';
+                print '<tr class="liste_titre">';
+                print '<td align="left">'.$langs->trans("Sending").'</td>';
+                print '<td>'.$langs->trans("Product").'</td>';
+                print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
+                print '<td align="center">'.$langs->trans("Date").'</td>';
                 if ($conf->livraison->enabled)
                 {
                 	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
                 }
-                print "<td>".$langs->trans("Date")."</td></tr>\n";
+                print "</tr>\n";
 
                 $var=True;
                 while ($i < $num)
                 {
-                    $objp = $db->fetch_object($result);
                     $var=!$var;
+                    $objp = $db->fetch_object($resql);
                     print "<tr $bc[$var]>";
-                    print '<td><a href="../../expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref.'</a></td>';
+                    print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+                    
+                    if ($objp->fk_product > 0)
+                    {
+            	      $product = new Product($db);
+            	      $product->fetch($objp->fk_product);
+            	      
+            	      print '<td>';
+            	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+            	      if ($objp->description) print '<br>'.nl2br($objp->description);
+            	      print '</td>';
+                    }
+                    else
+                    {
+                        print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
+                    }
+                    print '<td align="center">'.$objp->qty_livre.'</td>';
+                    print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
                     if ($conf->livraison->enabled)
                     {
                     	if ($objp->livraison_id)
@@ -641,19 +676,20 @@ if ($_GET["id"] > 0)
                     		print '<td><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'<a></td>';
                     	}
                     }
-                    print "<td>".dolibarr_print_date($objp->de)."</td></tr>\n";
+					print '</tr>';
+
                     $i++;
                 }
-                print "</table>";
+
+                print '</table>';
             }
+	      $db->free($resql);
         }
         else
         {
             dolibarr_print_error($db);
         }
-
-        print "</td></tr></table>";
-
+        
     }
     else
     {

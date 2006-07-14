@@ -49,7 +49,7 @@ function commande_prepare_head($commande)
     if (($conf->expedition->enabled || $conf->livraison->enabled) && $user->rights->expedition->lire)
     {
         $head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
-        $head[$h][1] = $langs->trans("SendingCard");
+        $head[$h][1] = $langs->trans("Sendings");
     	$head[$h][2] = 'shipping';
         $h++;
     }
@@ -58,7 +58,7 @@ function commande_prepare_head($commande)
     if ($conf->facture->enabled)
     {
         $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
-        $head[$h][1] = $langs->trans("ComptaCard");
+        $head[$h][1] = $langs->trans("Compta");
     	$head[$h][2] = 'accountancy';
         $h++;
     }

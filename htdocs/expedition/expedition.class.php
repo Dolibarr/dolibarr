@@ -40,6 +40,7 @@ class Expedition extends CommonObject
 	var $id;
 	var $brouillon;
 	var $entrepot_id;
+	var $modelpdf;
 
 
 	/**
@@ -192,11 +193,12 @@ class Expedition extends CommonObject
     {
         global $conf;
     
-        $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
-        $sql.= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, c.fk_adresse_livraison";
+        $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot,";
+        $sql.= " ".$this->db->pdate("e.date_expedition")." as date_expedition, e.model_pdf,";
+        $sql.= " c.fk_adresse_livraison";
         if ($conf->livraison->enabled) $sql.=", l.rowid as livraison_id";
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-        $sql.= ", ".MAIN_DB_PREFIX."expedition as e";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
+        $sql.= " ".MAIN_DB_PREFIX."expedition as e";
         if ($conf->livraison->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
         $sql.= " WHERE e.rowid = ".$id;
         $sql.= " AND e.fk_commande = c.rowid";
@@ -219,6 +221,7 @@ class Expedition extends CommonObject
             $this->date                 = $obj->date_expedition;
             $this->entrepot_id          = $obj->fk_entrepot;
             $this->adresse_livraison_id = $obj->fk_adresse_livraison;
+			$this->modelpdf             = $obj->model_pdf;
             $this->db->free($result);
     
             if ($this->statut == 0) $this->brouillon = 1;
@@ -519,6 +522,8 @@ class Expedition extends CommonObject
 	return -1;
       }
   }
+  
+  
   /**
    * Classe la commande
    *
@@ -539,6 +544,32 @@ class Expedition extends CommonObject
 	}
     }
 
+
+	/**
+	 *		\brief		Positionne modele derniere generation
+	 *		\param		user		Objet use qui modifie
+	 *		\param		modelpdf	Nom du modele
+	 */
+	function set_pdf_model($user, $modelpdf)
+	{
+		if ($user->rights->expedition->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET model_pdf = '$modelpdf'";
+			$sql.= " WHERE rowid = ".$this->id;
+	
+			if ($this->db->query($sql) )
+			{
+				$this->modelpdf=$modelpdf;
+				return 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return 0;
+			}
+		}
+	}
+	
 
   /*
    * Lit la commande associée
@@ -588,22 +619,39 @@ class Expedition extends CommonObject
   }
   
     /**
-     *    \brief      Retourne le libellé du statut d'un entrepot (ouvert, fermé)
+     *    \brief      Retourne le libellé du statut d'une expedition
      *    \return     string      Libellé
      */
-    function getLibStatut()
+    function getLibStatut($mode=0)
     {
-    	return $this->LibStatut($this->statut);
+    	return $this->LibStatut($this->statut,$mode);
     }
     
-    /**
-     *    \brief      Renvoi le libellé d'un statut donné
-     *    \param      statut      id statut
-     *    \return     string      Libellé
-     */
-    function LibStatut($statut)
+	/**
+	 *		\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut      Id statut
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string		Libellé
+	 */
+    function LibStatut($statut,$mode)
     {
-        return $this->statuts[$statut];
+		global $langs;
+
+    	if ($mode==0)
+    	{
+        	if ($statut==0) return $this->statuts[$statut];
+        	if ($statut==1) return $this->statuts[$statut];
+    	}
+    	if ($mode==1)
+    	{
+        	if ($statut==0) return $this->statuts[$statut];
+        	if ($statut==1) return $this->statuts[$statut];
+    	}
+        if ($mode == 4)
+        {
+        	if ($statut==0) return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
+        	if ($statut==1) return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
+		}
     }  
   
 }

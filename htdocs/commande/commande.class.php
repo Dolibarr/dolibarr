@@ -943,9 +943,8 @@ class Commande extends CommonObject
 	{
 		if ($user->rights->commande->creer)
 		{
-	
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET model_pdf = '$modelpdf'";
-			$sql .= " WHERE rowid = $this->id AND fk_statut < 2 ;";
+			$sql.= " WHERE rowid = ".$this->id;
 	
 			if ($this->db->query($sql) )
 			{
@@ -970,7 +969,7 @@ class Commande extends CommonObject
 		$this->lignes = array();
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
 		$sql.= ' l.remise_percent, l.subprice, l.rang, l.coef, l.label,';
-		$sql.= ' p.ref as product_ref, p.description as product_desc';
+		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -1001,9 +1000,10 @@ class Commande extends CommonObject
 				$ligne->coef           = $objp->coef;
 				$ligne->rang           = $objp->rang;
 
-				$ligne->libelle        = $objp->label;        // Label produit
-				$ligne->product_desc   = $objp->product_desc; // Description produit
-				$ligne->ref            = $objp->product_ref;
+				$ligne->ref            = $objp->product_ref;	
+				$ligne->libelle        = $objp->label;        		// Label produit
+				$ligne->product_desc   = $objp->product_desc; 		// Description produit
+				$ligne->fk_product_type= $objp->fk_product_type;	// Produit ou service
 
 				$this->lignes[$i] = $ligne;
 				$i++;
@@ -1012,14 +1012,27 @@ class Commande extends CommonObject
 		}
 		return $this->lignes;
 	}
-	
+
+
+    /**
+     *      \brief      Renvoie nombre de lignes de type produits. Doit etre appelé après fetch_lignes
+     *		\return		int		<0 si ko, Nbre de lignes produits sinon
+     */
+	function getNbOfProductsLines()
+	{
+		$nb=0;
+		foreach($this->lignes as $ligne)
+		{
+			if ($ligne->fk_product_type == 0) $nb++;
+		}
+		return $nb;
+	}	
 	
 	/**
-   *
-   *
-   */
-	 
-  function fetch_adresse_livraison($id)
+	 *
+	 *
+	 */
+	function fetch_adresse_livraison($id)
     {
     	$idadresse = $id;
       $adresse = new Societe($this->db);
@@ -1414,7 +1427,7 @@ class Commande extends CommonObject
     }
     
   /**
-   *    \brief      Renvoi la liste des propal (éventuellement filtrée sur un user) dans un tableau
+   *    \brief      Renvoi la liste des commandes (éventuellement filtrée sur un user) dans un tableau
    *    \param      brouillon       0=non brouillon, 1=brouillon
    *    \param      user            Objet user de filtre
    *    \return     int             -1 si erreur, tableau résultat si ok

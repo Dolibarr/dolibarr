@@ -111,7 +111,7 @@ if ($_GET["id"])
     print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $commande->ref;
 	print "</td></tr>";
 
