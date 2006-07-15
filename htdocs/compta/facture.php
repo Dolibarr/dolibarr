@@ -541,7 +541,7 @@ if ($_GET['action'] == 'deleteline' && $user->rights->facture->creer && !$conf->
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 {
-	if ($user->rights->facture->supprimer )
+	if ($user->rights->facture->supprimer)
 	{
 		$fac = new Facture($db);
 		$result = $fac->delete($_GET['facid']);
@@ -2106,7 +2106,7 @@ else
 			if ($user->societe_id == 0 && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
 			{
 				print '<div class="tabsAction">';
-
+			
 				// Editer une facture déjà validée, sans paiement effectué et pas exporté en compta
 				if ($fac->statut == 1)
 				{
@@ -2119,20 +2119,20 @@ else
 							$ventilExportCompta++;
 						}
 					}
-
+			
 					if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
 					&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
 					}
 				}
-				
+
 				// Récurrente
 				if (! $conf->global->FACTURE_DISABLE_RECUR)
 				{
 					print '  <a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
 				}
-
+			
 				// Valider
 				if ($fac->statut == 0 && $num_lignes > 0)
 				{
@@ -2156,80 +2156,55 @@ else
 						}
 					}
 				}
-
-				// on vérifie si la facture est en numérotation provisoire
-			  $facref = substr($fac->ref, 1, 4);
-			  if ($facref == PROV)
-			  {
-			  	// Supprimer
-			  	if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
-			  	{
-			  		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-			  	}
-			  }
-			  else if ($conf->global->FACTURE_ENABLE_EDITDELETE)
-			  {
-			  	if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
-			  	{
-			  		// On ne peut supprimer que la dernière facture validée
-			  		// pour ne pas avoir de trou dans les numéros
-			  	  $sql = "SELECT MAX(facnumber)";
-			  	  $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-
-			  	  $resql=$db->query($sql);
-			  	  if ($resql)
-			  	  {
-			  		  $maxfacnumber = $db->fetch_row($resql);
-			  	  }
-			  	  
-			  	  // On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
-			  	  $ventilExportCompta = 0 ;
-			  	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
-			  	  {
-			  	  	if ($fac->lignes[$i]->export_compta <> 0 && $fac->lignes[$i]->code_ventilation <> 0)
-			  	  	{
-			  	  		$ventilExportCompta++;
-			  	  	}
-			  	  }
-
-			  	  if ($maxfacnumber[0] == $fac->ref && $ventilExportCompta == 0)
-			  	  {
-			  		  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-			  	  }
-			    }
-			  }
-
+			
+				// On vérifie si la facture est supprimable. Si oui, on propose bouton supprimer
+				if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
+				{
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+				}
+			
 				// Envoyer
 				if ($fac->statut == 1 && $user->rights->facture->envoyer)
 				{
 					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
 				}
-
+			
 				// Envoyer une relance
 				if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
 				{
 					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance">'.$langs->trans('SendRemindByMail').'</a>';
 				}
-
+			
 				// Emettre paiement
 				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 				{
 					print '  <a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaiement').'</a>';
 				}
-
+			
 				// Classer 'payé'
-				if ($fac->statut == 1 && price($resteapayer) <= 0
-				&& $fac->paye == 0 && $user->rights->facture->paiement)
+				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement
+						&& price($resteapayer) <= 0)
 				{
 					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
 				}
-
-				// Classer 'abandonnée' (possible si validée et pas encore classer payée)
-				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+			
+				// Classer 'fermée' (possible si validée et pas encore classer payée)
+				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement
+						&& price($resteapayer) > 0)
 				{
-					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
-				}
+					if ($totalpaye > 0)
+					{
+						print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyPayedPartially').'</a>';
+					}
+					else
+					{
+						print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
 
+						// \todo
+						// Ajouter bouton "Annuler et Créer facture remplacement" 
+					}
+				}
+			
 				print '</div>';
 			}
 

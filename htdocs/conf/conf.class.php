@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Xavier Dutoit        <doli@sydesy.com> 
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * 
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,13 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- * 
+ *
  * $Id$
  * $Source$
- *
- * Ce fichier a vocation de disparaitre, la configuration se faisant 
- * dorénavant dans la base de donnée
- *
  */
 
 /**
@@ -32,7 +28,7 @@
 */
 
 
-/**	
+/**
         \class      Conf
 		\brief      Classe de stockage de la config courante
 		\todo       Deplacer ce fichier dans htdocs/lib
@@ -67,8 +63,8 @@ class Conf
     var $webcal;
     var $propal;
     var $categorie;
-    
-	    
+
+
 	/**
 	 *      \brief      Positionne toutes les variables de configuration
 	 *      \param      $db			Handler d'accès base
@@ -77,8 +73,7 @@ class Conf
 	function setValues($db)
 	{
 	    dolibarr_syslog("functions.inc.php::setValues");
-	
-	
+
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
 		 * - En constante php (\todo a virer)
@@ -90,7 +85,7 @@ class Conf
 		{
 		    $numr = $db->num_rows($result);
 		    $i = 0;
-		
+
 		    while ($i < $numr)
 		    {
 		        $objp = $db->fetch_object($result);
@@ -102,9 +97,9 @@ class Conf
 		    }
 		}
 		$db->free($result);
-		
-		
-				
+
+
+
 		/*
 		 * Nettoyage variables des gestionnaires de menu
 		 * conf->menu_top et conf->menu_left sont définis dans main.inc.php (selon user)
@@ -113,36 +108,29 @@ class Conf
 		if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="default.php";
 		if (! $this->global->MAIN_MENU_BARRELEFT) $this->global->MAIN_MENU_BARRELEFT="default.php";
 		if (! $this->global->MAIN_MENUFRONT_BARRELEFT) $this->global->MAIN_MENUFRONT_BARRELEFT="default.php";
-		
+
 		/*
-		 * Charge l'objet de traduction et positionne langage courant global 
+		 * Charge l'objet de traduction et positionne langage courant global
 		 */
 		if (! $this->global->MAIN_LANG_DEFAULT) $this->global->MAIN_LANG_DEFAULT="fr_FR";
-		
+
 		/*
 		 * Autres parametres globaux de configurations
 		 */
 		$this->users->dir_output=DOL_DATA_ROOT."/users";
-		
+
 		/*
-		 * Utilise dans tous les upload de fichier
-		 * necessaire pour desactiver dans la demo
+		 * Autorisation globale d'uploader (necessaire pour desactiver dans la demo)
+		 * conf->upload peut etre écrasée dans main.inc.php (selon user)
 		 */
-		if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
-		{
-		  $this->upload = 1;
-		}
-		else
-		{
-		  $this->upload = 0;
-		}
-		
-		
+		if ($this->global->MAIN_UPLOAD_DOC) $this->upload = 1;
+		else $this->upload = 0;
+
 		/*
 		 * Definition des parametres d'activation de module et dependants des modules
 		 * Chargement d'include selon etat activation des modules
 		 */
-		
+
 		// Module bookmark4u
 		$this->bookmark4u->enabled=defined('MAIN_MODULE_BOOKMARK4U')?MAIN_MODULE_BOOKMARK4U:0;
 		$this->bookmark->enabled=defined('MAIN_MODULE_BOOKMARK')?MAIN_MODULE_BOOKMARK:0;
@@ -156,7 +144,7 @@ class Conf
 		$this->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;
 		$this->commande->dir_output=DOL_DATA_ROOT."/commande";
 		$this->commande->dir_images=DOL_DATA_ROOT."/commande/images";
-		
+
 		// Module expeditions
 		$this->expedition->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
 		// Sous module bons d'expedition
@@ -167,7 +155,7 @@ class Conf
 		$this->livraison->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
 		$this->livraison->dir_output=DOL_DATA_ROOT."/livraison";
 		$this->livraison->dir_images=DOL_DATA_ROOT."/livraison/images";
-		
+
 		// Module societe
 		$this->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
 		$this->societe->dir_output=DOL_DATA_ROOT."/societe";
@@ -282,12 +270,12 @@ class Conf
 		$this->export->dir_ouput=DOL_DATA_ROOT."/export";
 		// Module ldap
 		$this->ldap->enabled=defined("MAIN_MODULE_LDAP")?MAIN_MODULE_LDAP:0;
-		
-		
+
+
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes
 		 */
-		
+
 		// societe
 		if (! $this->global->SOCIETE_CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (! $this->global->SOCIETE_CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON="mod_codeclient_leopard";
@@ -295,58 +283,59 @@ class Conf
 		// Pour compatibilite ascendante:
 		if ($this->global->CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON=$this->global->CODECLIENT_ADDON;
 		if ($this->global->CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->CODEFOURNISSEUR_ADDON;
-		
+
 		// securite
 		if (! $this->global->USER_PASSWORD_GENERATED) $this->global->USER_PASSWORD_GENERATED='standard';
-		
+
 		// conf->use_preview_tabs
 		$this->use_preview_tabs=1;
 		if (isset($this->global->MAIN_USE_PREVIEW_TABS)) $this->use_preview_tabs=$this->global->MAIN_USE_PREVIEW_TABS;
-		
+
 		// conf->use_javascript
 		$this->use_javascript=1;
 		if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) $this->use_javascript=! $this->global->MAIN_DISABLE_JAVASCRIPT;
-		
+
 		// conf->use_ajax
 		$this->use_ajax=0; // Pas d' Ajax par defaut
 		if (isset($this->global->MAIN_DISABLE_AJAX)) $this->use_ajax=! $this->global->MAIN_DISABLE_AJAX;
-		
+
 		// conf->use_popup_calendar
 		$this->use_popup_calendar="";	// Pas de date popup par defaut
 		if (isset($this->global->MAIN_POPUP_CALENDAR)) $this->use_popup_calendar=$this->global->MAIN_POPUP_CALENDAR;
-		
+
 		// conf->monnaie
-		if (! $this->global->MAIN_MONNAIE) $this->global->MAIN_MONNAIE='EUR';	
+		if (! $this->global->MAIN_MONNAIE) $this->global->MAIN_MONNAIE='EUR';
 		$this->monnaie=$this->global->MAIN_MONNAIE;
-		
+
 		// $this->compta->mode = Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
 		$this->compta->mode = 'RECETTES-DEPENSES';  // Par défaut
 		if (defined('COMPTA_MODE') && COMPTA_MODE) {
 			// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 		    $this->compta->mode = COMPTA_MODE;
 		}
-		
+
 		// $this->defaulttx
-		if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise') {
+		if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise')
+		{
 			$this->defaulttx='0';		// Taux par défaut des factures clients
 		}
 		else {
 			$this->defaulttx='';		// Pas de taux par défaut des factures clients, le premier sera pris
 		}
-		
+
 		// $this->liste_limit = constante de taille maximale des listes
 		if (! $this->global->MAIN_SIZE_LISTE_LIMIT) $this->global->MAIN_SIZE_LISTE_LIMIT=20;
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;
-		
+
 		// $this->produit->limit_size = constante de taille maximale des select de produit
 		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=50;
 		$this->produit->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
-		
+
 		// $this->theme et $this->css
 		if (! $this->global->MAIN_THEME) $this->global->MAIN_THEME="eldy";
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "theme/".$this->theme."/".$this->theme.".css";
-		
+
 		// $this->email_from          = email pour envoi par Dolibarr des mails auto (notifications, ...)
 		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
 		$this->email_from="dolibarr-robot@domain.com";
@@ -359,7 +348,7 @@ class Conf
 		    $this->mailing->email_from=MAILING_EMAIL_FROM;
 		}
 		else $this->mailing->email_from=$this->email_from;
-		
+
 		// $this->adherent->email_resil, ...
 		if (defined("MAIN_MAIL_RESIL"))
 		{
@@ -393,19 +382,19 @@ class Conf
 		{
 		  $this->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
 		}
-		
+
 		// Format de la date
 		// \todo Mettre format dans fichier langue
 		$this->format_date_text_short="%d %b %Y";
 		$this->format_date_short="%d/%m/%Y";
 		$this->format_date_short_java="dd/MM/yyyy";
-		
+
 		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
 		 * (pour particuliers ou libéraux en franchise)
 		 * En attendant, valeur forcée à 1
 		 */
 		$this->compta->tva=1;
-		
+
 		// Delais de tolerance des alertes
 		$this->actions->warning_delay=$this->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 		$this->commande->traitement->warning_delay=$this->global->MAIN_DELAY_ORDERS_TO_PROCESS*24*60*60;
@@ -417,7 +406,7 @@ class Conf
 		$this->contrat->services->expires->warning_delay=$this->global->MAIN_DELAY_RUNNING_SERVICES*24*60*60;
 		$this->adherent->cotisation->warning_delay=$this->global->MAIN_DELAY_MEMBERS*24*60*60;
 		$this->bank->rappro->warning_delay=$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE*24*60*60;
-		
+
 	}
 
 }

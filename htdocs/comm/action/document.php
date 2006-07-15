@@ -181,8 +181,8 @@ if ($_GET["id"] > 0)
     print '</div>';
 
 
-    // Affiche forumlaire upload
-    if (defined('MAIN_UPLOAD_DOC') && $conf->upload)
+    // Affiche formulaire upload
+    if ($conf->upload)
     {
 		print_titre($langs->trans('AttachANewFile'));
 

@@ -62,7 +62,8 @@ class Facture extends CommonObject
 	var $total;
 	var $note;
 	var $note_public;
-	var $paye;
+	var $statut;
+	var $paye;					// 1 si facture payée COMPLETEMENT, 0 sinon
 	var $propalid;
 	var $projetid;
 	var $date_lim_reglement;
@@ -1540,7 +1541,8 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-				if ($statut == 3) return $langs->trans('Bill'.$prefix.'StatusCanceled');
+				if ($statut == 3 && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpayed');
+				if ($statut == 3 && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
 				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
 				return $langs->trans('Bill'.$prefix.'StatusStarted');
 			}
@@ -1555,7 +1557,8 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-				if ($statut == 3) return $langs->trans('Bill'.$prefix.'StatusCanceled');
+				if ($statut == 3 && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpayed');
+				if ($statut == 3 && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
 				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
 				return $langs->trans('Bill'.$prefix.'StatusStarted');
 			}
@@ -1569,14 +1572,15 @@ class Facture extends CommonObject
 			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
-				if ($statut == 3) return img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if ($alreadypayed <= 0) return img_picto($langs->trans('Bill'.$prefix.'StatusNotPayed'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPayed');
-				return img_picto($langs->trans('Bill'.$prefix.'StatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
+				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
+				if ($statut == 3 && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusClosedUnpayed');
+				if ($statut == 3 && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
+				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPayed');
+				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
 			}
 			else
 			{
-				return img_picto($langs->trans('Bill'.$prefix.'StatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
+				return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
 		if ($mode == 3)
@@ -1584,14 +1588,15 @@ class Facture extends CommonObject
 			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0');
-				if ($statut == 3) return img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5');
-				if ($alreadypayed <= 0) return img_picto($langs->trans('Bill'.$prefix.'StatusNotPayed'),'statut1');
-				return img_picto($langs->trans('Bill'.$prefix.'StatusStarted'),'statut3');
+				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0');
+				if ($statut == 3 && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
+				if ($statut == 3 && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7');
+				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1');
+				return img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}
 			else
 			{
-				return img_picto($langs->trans('Bill'.$prefix.'StatusPayed'),'statut6');
+				return img_picto($langs->trans('BillStatusPayed'),'statut6');
 			}
 		}
 		if ($mode == 4)
@@ -1599,7 +1604,8 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
-				if ($statut == 3) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('BillStatusCanceled');
+				if ($statut == 3 && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
+				if ($statut == 3 && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
 				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('BillStatusNotPayed');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('BillStatusStarted');
 			}
@@ -1613,14 +1619,15 @@ class Facture extends CommonObject
 			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('Bill'.$prefix.'StatusDraft'),'statut0');
-				if ($statut == 3) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('Bill'.$prefix.'StatusCanceled'),'statut5');
-				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed').' '.img_picto($langs->trans('Bill'.$prefix.'StatusNotPayed'),'statut1');
-				return $langs->trans('Bill'.$prefix.'StatusStarted').' '.img_picto($langs->trans('Bill'.$prefix.'StatusStarted'),'statut3');
+				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('BillStatusDraft'),'statut0');
+				if ($statut == 3 && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('BillStatusCanceled'),'statut5');
+				if ($statut == 3 && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially').' '.img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7');
+				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed').' '.img_picto($langs->trans('BillStatusNotPayed'),'statut1');
+				return $langs->trans('Bill'.$prefix.'StatusStarted').' '.img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}
 			else
 			{
-				return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('Bill'.$prefix.'StatusPayed'),'statut6');
+				return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('BillStatusPayed'),'statut6');
 			}
 		}
 
@@ -1827,6 +1834,59 @@ class Facture extends CommonObject
 	}
 
 
+   /**
+	*   \brief      Renvoi si une facture peut etre supprimée complètement
+    *				La règle est la suivante:
+    *				Si facture brouillon -> oui, fin de règle
+    *				Si facture dernière, sans paiement et non exporté en compta -> oui
+    *   \param      user        Utilisateur créant la demande
+    *   \return     int         <0 si ko, 0=non, 1=oui
+	*/
+	function is_erasable()
+	{
+		global $conf;
+		
+		// Si facture brouillon
+		if ($this->statut == 0)
+		{
+			return 1;
+		}
+
+		// Si facture non brouillon
+		if ($conf->compta->enabled && $conf->global->FACTURE_ENABLE_EDITDELETE)
+		{
+			// On ne peut supprimer que la dernière facture validée
+			// pour ne pas avoir de trou dans les numéros
+			$sql = "SELECT MAX(facnumber)";
+			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$maxfacnumber = $db->fetch_row($resql);
+			}
+
+			// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+			$ventilExportCompta = 0 ;
+			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+			{
+				if ($this->lignes[$i]->export_compta <> 0 && $this->lignes[$i]->code_ventilation <> 0)
+				{
+					$ventilExportCompta++;
+				}
+			}
+
+			// Si derniere facture et si non ventilée, on peut supprimer
+			if ($maxfacnumber[0] == $this->ref && $ventilExportCompta == 0)
+			{
+				return 1;
+			}
+		}
+		
+		return 0;
+	}
+	
+	
    /**
 	*   \brief      Créé une demande de prélèvement
     *   \param      user        Utilisateur créant la demande

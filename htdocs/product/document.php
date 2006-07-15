@@ -246,7 +246,7 @@ if ($product->id)
 
 
     // Affiche forumlaire upload
-    if (defined('MAIN_UPLOAD_DOC') && $conf->upload && $user->rights->produit->creer)
+    if ($conf->upload && $user->rights->produit->creer)
     {
 		print_titre($langs->trans('AttachANewFile'));
 
