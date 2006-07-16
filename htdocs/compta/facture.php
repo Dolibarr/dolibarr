@@ -167,6 +167,25 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 	$fac = new Facture($db);
   $fac->fetch($_GET['facid']);
   
+  // On vérifie si la facture a des paiements
+  $sql = 'SELECT pf.amount,';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
+	$sql.= ' WHERE pf.fk_facture = '.$fac->id;
+
+	$result = $db->query($sql);
+	
+	if ($result)
+	{
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($result);
+			$totalpaye += $objp->amount;
+		  $i++;
+		}
+	}
+			
+  $resteapayer = $fac->total_ttc - $totalpaye;
+  
 	// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
 	$ventilExportCompta = $fac->getVentilExportCompta();
 	
