@@ -1838,7 +1838,7 @@ class Facture extends CommonObject
 	*   \brief      Renvoi si une facture peut etre supprimée complètement
     *				La règle est la suivante:
     *				Si facture dernière, non provisoire, sans paiement et non exporté en compta -> oui fin de règle
-    *       Si facture brouillon et ptovisoire -> oui
+    *       Si facture brouillon et provisoire -> oui
     *   \param      user        Utilisateur créant la demande
     *   \return     int         <0 si ko, 0=non, 1=oui
 	*/
