@@ -161,27 +161,19 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	}
 }
 
+// Repasse la facture en mode brouillon
 if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->global->FACTURE_ENABLE_EDITDELETE)
 {
-  /*
-   *  Repasse la facture en mode brouillon
-   */
-  $fac = new Facture($db);
+	$fac = new Facture($db);
   $fac->fetch($_GET['facid']);
   
-  // On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
-  $ventilExportCompta = 0 ;
-  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
-  {
-  	if ($fac->lignes[$i]->export_compta <> 0 && $fac->lignes[$i]->code_ventilation <> 0)
-  	{
-  		$ventilExportCompta++;
-  	}
-  }
-  
-  if ($ventilExportCompta == 0)
-  {
-  	$fac->reopen($user);
+	// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+	$ventilExportCompta = $fac->getVentilExportCompta();
+	
+	// On vérifie si aucun paiement n'a été effectué
+	if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
+	{
+		$fac->reopen($user);
   }
 }
 
@@ -2111,14 +2103,7 @@ else
 				if ($fac->statut == 1)
 				{
 					// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
-					$ventilExportCompta = 0 ;
-					for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
-					{
-						if ($fac->lignes[$i]->export_compta <> 0 && $fac->lignes[$i]->code_ventilation <> 0)
-						{
-							$ventilExportCompta++;
-						}
-					}
+					$ventilExportCompta = $fac->getVentilExportCompta();
 			
 					if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
 					&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))

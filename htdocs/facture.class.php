@@ -1835,13 +1835,41 @@ class Facture extends CommonObject
 
 
    /**
-	*   \brief      Renvoi si une facture peut etre supprimée complètement
+	  *   \brief      Renvoi si les lignes de facture sont ventilées et/ou exportées en compta
+    *   \param      user        Utilisateur créant la demande
+    *   \return     int         <0 si ko, 0=non, 1=oui
+	  */
+	  function getVentilExportCompta()
+	  {
+	  	// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+			$ventilExportCompta = 0 ;
+			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+			{
+				if ($this->lignes[$i]->export_compta <> 0 && $this->lignes[$i]->code_ventilation <> 0)
+				{
+					$ventilExportCompta++;
+				}
+			}
+			
+			if ($ventilExportCompta <> 0)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+   
+   
+   /**
+	  *   \brief      Renvoi si une facture peut etre supprimée complètement
     *				La règle est la suivante:
     *				Si facture dernière, non provisoire, sans paiement et non exporté en compta -> oui fin de règle
     *       Si facture brouillon et provisoire -> oui
     *   \param      user        Utilisateur créant la demande
     *   \return     int         <0 si ko, 0=non, 1=oui
-	*/
+	  */
 	function is_erasable()
 	{
 		global $conf, $db;
@@ -1862,16 +1890,8 @@ class Facture extends CommonObject
 			{
 				$maxfacnumber = $db->fetch_row($resql);
 			}
-
-			// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
-			$ventilExportCompta = 0 ;
-			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-			{
-				if ($this->lignes[$i]->export_compta <> 0 && $this->lignes[$i]->code_ventilation <> 0)
-				{
-					$ventilExportCompta++;
-				}
-			}
+			
+			$ventilExportCompta = $this->getVentilExportCompta();
 
 			// Si derniere facture et si non ventilée, on peut supprimer
 			if ($maxfacnumber[0] == $this->ref && $ventilExportCompta == 0)
@@ -1889,10 +1909,10 @@ class Facture extends CommonObject
 	
 	
    /**
-	*   \brief      Créé une demande de prélèvement
+	  *   \brief      Créé une demande de prélèvement
     *   \param      user        Utilisateur créant la demande
     *   \return     int         <0 si ko, >0 si ok
-	*/
+	  */
 	function demande_prelevement($user)
 	{
         dolibarr_syslog("Facture::demande_prelevement $this->statut $this->paye $this->mode_reglement_id");
