@@ -1002,6 +1002,7 @@ if ($_GET['propalid'] > 0)
 				if ($objp->fk_product > 0)
 				{
 					print '<td>';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 					if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');
@@ -1077,7 +1078,7 @@ if ($_GET['propalid'] > 0)
 				// Icone d'edition et suppression
 				if ($propal->statut == 0  && $user->rights->propale->creer)
 				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'">';
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'#'.$objp->rowid.'">';
 					print img_edit();
 					print '</a></td>';
 					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
@@ -1116,7 +1117,7 @@ if ($_GET['propalid'] > 0)
 			// Ligne en mode update
 			if ($propal->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["ligne"] == $objp->rowid)
 			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#'.$objp->rowid.'" method="post">';
 				print '<input type="hidden" name="action" value="updateligne">';
 				print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 				print '<input type="hidden" name="ligne" value="'.$_GET["ligne"].'">';
@@ -1124,6 +1125,7 @@ if ($_GET['propalid'] > 0)
 				print '<td>';
 				if ($objp->fk_product > 0)
 				{
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 					if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');
@@ -1304,7 +1306,9 @@ if ($_GET['propalid'] > 0)
 	if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
 	{
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Description').'</td>';
+		print '<td>';
+		print '<a name="add"></a>'; // ancre
+		print $langs->trans('Description').'</td>';
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -1316,7 +1320,7 @@ if ($_GET['propalid'] > 0)
 		print "</tr>\n";
 
 		// Ajout produit produits/services personalisés
-		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 		print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 		print '<input type="hidden" name="action" value="addligne">';
 
@@ -1345,7 +1349,7 @@ if ($_GET['propalid'] > 0)
 		// Ajout de produits/services prédéfinis
 		if ($conf->produit->enabled)
 		{
-			print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+			print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 			print '<input type="hidden" name="action" value="addligne">';
 

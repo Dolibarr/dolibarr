@@ -1225,7 +1225,9 @@ else
 						print '<tr '.$bc[$var].'>';
 						if ($objp->fk_product > 0)
 						{
-							print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+							print '<td>';
+							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a> - '.nl2br($objp->product);
@@ -1275,7 +1277,7 @@ else
 						// Icone d'edition et suppression
 						if ($commande->statut == 0  && $user->rights->commande->creer)
 						{
-							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
 							print img_edit();
 							print '</a></td>';
 							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
@@ -1313,7 +1315,7 @@ else
 					// Ligne en mode update
 					if ($_GET['action'] == 'editline' && $user->rights->commande->creer && $_GET['rowid'] == $objp->rowid)
 					{
-						print '<form action="fiche.php" method="post">';
+						print '<form action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
 						print '<input type="hidden" name="action" value="updateligne">';
 						print '<input type="hidden" name="id" value="'.$id.'">';
 						print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
@@ -1321,6 +1323,7 @@ else
 						print '<td>';
 						if ($objp->fk_product > 0)
 						{
+							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
@@ -1488,7 +1491,9 @@ else
 			if ($commande->statut == 0 && $user->rights->commande->creer && $_GET["action"] <> 'editline')
 			{
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Description').'</td>';
+				print '<td>';
+				print '<a name="add"></a>'; // ancre
+				print $langs->trans('Description').'</td>';
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -1500,7 +1505,7 @@ else
 				print '</tr>';
 
 				// Ajout produit produits/services personalisés
-				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<form action="fiche.php?id='.$id.'#add" method="post">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
 
@@ -1522,7 +1527,7 @@ else
 				print '</form>';
 
 				// Ajout de produits/services prédéfinis
-				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<form action="fiche.php?id='.$id.'#add" method="post">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
 

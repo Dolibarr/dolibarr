@@ -1752,7 +1752,9 @@ else
 						print '<tr '.$bc[$var].'>';
 						if ($objp->fk_product > 0)
 						{
-							print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+							print '<td>';
+							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a>';
@@ -1806,7 +1808,7 @@ else
 						// Icone d'edition et suppression
 						if ($fac->statut == 0  && $user->rights->facture->creer)
 						{
-							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
 							print img_edit();
 							print '</a></td>';
 							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
@@ -1844,7 +1846,7 @@ else
 					// Ligne en mode update
 					if ($_GET['action'] == 'editline' && $user->rights->facture->creer && $_GET['rowid'] == $objp->rowid)
 					{
-						print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+						print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
 						print '<input type="hidden" name="action" value="updateligne">';
 						print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 						print '<input type="hidden" name="rowid" value="'.$_GET['rowid'].'">';
@@ -1852,6 +1854,7 @@ else
 						print '<td>';
 						if ($objp->fk_product > 0)
 						{
+							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
@@ -2029,7 +2032,9 @@ else
 			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid')
 			{
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Description').'</td>';
+				print '<td>';
+				print '<a name="add"></a>'; // ancre
+				print $langs->trans('Description').'</td>';
 				print '<td align="right">'.$langs->trans('VAT').'</td>';
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -2041,7 +2046,7 @@ else
 				print "</tr>\n";
 
                 // Ajout produit produits/services personalisés
-				print '<form name="addligne" action="'.$_SERVER['PHP_SELF'].'" method="post">';
+				print '<form name="addligne" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
 				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
 
@@ -2075,7 +2080,7 @@ else
                 // Ajout de produits/services prédéfinis
                 if ($conf->produit->enabled)
                 {
-    				print '<form name="addligne_predef" action="'.$_SERVER['PHP_SELF'].'" method="post">';
+    				print '<form name="addligne_predef" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
     				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
     				print '<input type="hidden" name="action" value="addligne_predef">';
     
@@ -2214,7 +2219,6 @@ else
 			
 				print '</div>';
 			}
-
 
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 
