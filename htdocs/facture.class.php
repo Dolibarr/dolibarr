@@ -1862,33 +1862,32 @@ class Facture extends CommonObject
 		}
    
    
-   /**
-	  *   \brief      Renvoi si une facture peut etre supprimée complètement
-    *				La règle est la suivante:
-    *				Si facture dernière, non provisoire, sans paiement et non exporté en compta -> oui fin de règle
-    *       Si facture brouillon et provisoire -> oui
-    *   \param      user        Utilisateur créant la demande
-    *   \return     int         <0 si ko, 0=non, 1=oui
-	  */
+	/**
+	 *   \brief     Renvoi si une facture peut etre supprimée complètement.
+	 *				La règle est la suivante:
+	 *				Si facture dernière, non provisoire, sans paiement et non exporté en compta -> oui fin de règle
+	 *       		Si facture brouillon et provisoire -> oui
+	 *   \return    int         <0 si ko, 0=non, 1=oui
+	 */
 	function is_erasable()
 	{
-		global $conf, $db;
+		global $conf;
 
 		// on vérifie si la facture est en numérotation provisoire
-    $facref = substr($this->ref, 1, 4);
+    	$facref = substr($this->ref, 1, 4);
 
 		// Si facture non brouillon et non provisoire
-		if ($facref != PROV && $conf->compta->enabled && $conf->global->FACTURE_ENABLE_EDITDELETE)
+		if ($facref != 'PROV' && $conf->compta->enabled && $conf->global->FACTURE_ENABLE_EDITDELETE)
 		{
 			// On ne peut supprimer que la dernière facture validée
 			// pour ne pas avoir de trou dans la numérotation
 			$sql = "SELECT MAX(facnumber)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 
-			$resql=$db->query($sql);
+			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				$maxfacnumber = $db->fetch_row($resql);
+				$maxfacnumber = $this->db->fetch_row($resql);
 			}
 			
 			$ventilExportCompta = $this->getVentilExportCompta();
@@ -1899,7 +1898,7 @@ class Facture extends CommonObject
 				return 1;
 			}
 		}
-		else if ($this->statut == 0 && $facref == PROV) // Si facture brouillon et provisoire
+		else if ($this->statut == 0 && $facref == 'PROV') // Si facture brouillon et provisoire
 		{
 			return 1;
 		}
