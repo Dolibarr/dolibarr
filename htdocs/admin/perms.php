@@ -145,6 +145,7 @@ if ($result)
         print '<tr '. $bc[$var].'>';
 
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
+        print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 
         $perm_libelle=(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle);
         print '<td>'.$perm_libelle. '</td>';
@@ -155,13 +156,13 @@ if ($result)
 
             print img_tick();
             print '</td><td>';
-            print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_remove().'</a>';
+            print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove#'.$objMod->getName().'">'.img_edit_remove().'</a>';
         }
         else
         {
             print '&nbsp;';
             print '</td><td>';
-            print '<a href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
+            print '<a href="perms.php?pid='.$obj->id.'&amp;action=add#'.$objMod->getName().'">'.img_edit_add().'</a>';
         }
 
         print '</td></tr>';

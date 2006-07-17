@@ -198,9 +198,9 @@ if ($_GET["id"])
                    print '<td>'.img_object('',$picto).' '.$objMod->getName();
                    print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
                    print '<td align="center" nowrap>';
-                   print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
+                   print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                    print '/';
-                   print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
+                   print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
                    print '</td>';
                    print '<td colspan="2">&nbsp;</td>';
                    print '</tr>';
@@ -217,7 +217,7 @@ if ($_GET["id"])
                 // Own permission by group
                 if ($caneditperms)
                 {
-                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
                 }
                 print '<td align="center">';
                 print img_tick();
@@ -228,7 +228,7 @@ if ($_GET["id"])
                 // Do not own permission
                 if ($caneditperms)
                 {
-                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
                 }
                 print '<td>&nbsp</td>';
             }
