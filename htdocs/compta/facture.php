@@ -1875,7 +1875,7 @@ else
 						else print '&nbsp;';
 						print '</td>';
 						print '<td align="right" nowrap>';
-						if (($objp->info_bits & 2) != 0)
+						if (($objp->info_bits & 2) != 2)
 						{
 							print '<input size="2" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
 						}
