@@ -326,3 +326,5 @@ alter table llx_commande_fournisseur drop column fk_soc_contact;
 alter table llx_commande drop column fk_soc_contact;
 alter table llx_livraison drop column fk_soc_contact;
 alter table llx_propal drop column fk_soc_contact;
+
+alter table llx_c_pays modify libelle varchar(50) NOT NULL;

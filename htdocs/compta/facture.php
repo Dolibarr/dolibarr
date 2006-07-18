@@ -203,9 +203,15 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
 {
     if ($user->rights->facture->creer)
     {
-    	$facture = new Facture($db);
-    	$facture->fetch($_GET['facid']);
-    	$facture->deleteline($_GET['rowid']);
+    	$fac = new Facture($db);
+    	$fac->fetch($_GET['facid']);
+    	$fac->deleteline($_GET['rowid']);
+    	if ($_REQUEST['lang_id'])
+    	{
+    		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+    		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    	}
+    	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
     }
     Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
     exit;
@@ -551,6 +557,12 @@ if ($_GET['action'] == 'deleteline' && $user->rights->facture->creer && !$conf->
 	$fac = new Facture($db,'',$_GET['facid']);
 	$fac->fetch($_GET['facid']);
 	$result = $fac->deleteline($_GET['rowid']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+  facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 }
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
@@ -570,7 +582,7 @@ if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
 	if ($user->rights->facture->supprimer)
 	{
 		$fac = new Facture($db);
-    	$fac->fetch($_GET['facid']);
+    $fac->fetch($_GET['facid']);
 		$result = $fac->set_canceled($user);
 	}
 }
@@ -582,13 +594,29 @@ if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
 if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db,'',$_GET['facid']);
+	$fac->fetch($_GET['facid']);
 	$fac->line_up($_GET['rowid']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+  facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
 }
 
 if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db,'',$_GET['facid']);
+	$fac->fetch($_GET['facid']);
 	$fac->line_down($_GET['rowid']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+  facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
 }
 
 /*
@@ -736,12 +764,12 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	$facture = new Facture($db, 0, $_GET['facid']);
-	$facture->fetch($_GET['facid']);
+	$fac = new Facture($db, 0, $_GET['facid']);
+	$fac->fetch($_GET['facid']);
 	
 	if ($_REQUEST['model'])
 	{
-		$facture->set_pdf_model($user, $_REQUEST['model']);
+		$fac->set_pdf_model($user, $_REQUEST['model']);
 	}
 	
 	if ($_REQUEST['lang_id'])
@@ -750,11 +778,15 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 	
-	$result=facture_pdf_create($db, $facture->id, '', $facture->modelpdf, $outputlangs);
+	$result=facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);
-        exit;
+      exit;
+    }
+    else
+    {
+    	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'#builddoc');
     }    
 }
 
@@ -1772,6 +1804,7 @@ else
 						else
 						{
 							print '<td>';
+							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							if (($objp->info_bits & 2) == 2)
 							{
 								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$fac->socidp.'">';
@@ -1852,9 +1885,9 @@ else
 						print '<input type="hidden" name="rowid" value="'.$_GET['rowid'].'">';
 						print '<tr '.$bc[$var].'>';
 						print '<td>';
+						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 						if ($objp->fk_product > 0)
 						{
-							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
@@ -2221,6 +2254,7 @@ else
 			}
 
 			print '<table width="100%"><tr><td width="50%" valign="top">';
+			print '<a name="builddoc"></a>'; // ancre
 
 			/*
 			 * Documents générés

@@ -430,13 +430,29 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db,'',$_GET['id']);
+	$commande->fetch($_GET['id']);
 	$commande->line_up($_GET['rowid']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+  commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
 }
 
 if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db,'',$_GET['id']);
+	$commande->fetch($_GET['id']);
 	$commande->line_down($_GET['rowid']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+  commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
 }
 
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
@@ -464,6 +480,10 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     {
     	dolibarr_print_error($db,$result);
         exit;
+    }
+    else
+    {
+    	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#builddoc');
     }
 }
 
@@ -1208,9 +1228,9 @@ else
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-					print '<td>&nbsp;</td>';
-					print '<td>&nbsp;</td>';
-					print '<td>&nbsp;</td>';
+					print '<td width="16">&nbsp;</td>';
+					print '<td width="16">&nbsp;</td>';
+					print '<td width="16">&nbsp;</td>';
 					print "</tr>\n";
 				}
 				$var=true;
@@ -1241,6 +1261,7 @@ else
 						else
 						{
 							print '<td>';
+							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							if (($objp->info_bits & 2) == 2)
 							{
 								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socidp.'">';
@@ -1321,9 +1342,9 @@ else
 						print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
 						print '<tr '.$bc[$var].'>';
 						print '<td>';
+						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 						if ($objp->fk_product > 0)
 						{
-							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
@@ -1639,6 +1660,7 @@ else
 
 
 			print '<table width="100%"><tr><td width="50%" valign="top">';
+			print '<a name="builddoc"></a>'; // ancre
 
 			/*
 			* Documents générés

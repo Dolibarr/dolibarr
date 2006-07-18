@@ -550,7 +550,16 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+  $result=propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+  if ($result <= 0)
+  {
+  	dolibarr_print_error($db,$result);
+  	exit;
+  }
+  else
+  {
+    Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#builddoc');
+  }    
 }
 
 
@@ -625,13 +634,29 @@ if ($_POST["action"] == 'setmode')
 if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db, '', $_GET["propalid"]);
+	$propal->fetch($_GET['propalid']);
 	$propal->line_up($_GET['rowid']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+  propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET["propalid"].'#'.$_GET['rowid']);
 }
 
 if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db, '', $_GET["propalid"]);
+	$propal->fetch($_GET['propalid']);
 	$propal->line_down($_GET['rowid']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+  propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET["propalid"].'#'.$_GET['rowid']);
 }
 
 
@@ -1031,6 +1056,7 @@ if ($_GET['propalid'] > 0)
 				else
 				{
 					print '<td>';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					if (($objp->info_bits & 2) == 2)
 					{
 						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socidp.'">';
@@ -1123,9 +1149,9 @@ if ($_GET['propalid'] > 0)
 				print '<input type="hidden" name="ligne" value="'.$_GET["ligne"].'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
+				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 				if ($objp->fk_product > 0)
 				{
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 					if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');
@@ -1489,6 +1515,7 @@ if ($_GET['propalid'] > 0)
 
 
 	print '<table width="100%"><tr><td width="50%" valign="top">';
+	print '<a name="builddoc"></a>'; // ancre
 
 
 	/*

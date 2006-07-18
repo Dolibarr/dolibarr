@@ -2462,7 +2462,7 @@ class Form
 
             $headershown=1;
 
-            print '<form action="'.$urlsource.'" method="post">';
+            print '<form action="'.$urlsource.'#builddoc" method="post">';
             print '<input type="hidden" name="action" value="builddoc">';
 
             print_titre($langs->trans("Documents"));
