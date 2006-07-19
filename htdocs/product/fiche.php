@@ -388,8 +388,6 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
     $product = new Product($db);
 
-    if ($mesg) print "$mesg\n";
-
     if ($_error == 1)
     {
         $product = $e_product;
@@ -397,6 +395,8 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
+    if ($mesg) print "$mesg\n";
+    
     print '<form action="fiche.php" method="post">';
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
