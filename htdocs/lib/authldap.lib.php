@@ -118,7 +118,7 @@ class AuthLdap {
         $this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
         $this->dn                  = $conf->global->LDAP_SERVER_DN;
         $this->serverType          = $conf->global->LDAP_SERVER_TYPE;
-        $this->domain              = $sDomain; //Todo: ajouter en base
+        $this->domain              = $conf->global->LDAP_SERVER_DN;
         $this->searchUser          = $conf->global->LDAP_ADMIN_DN;
         $this->searchPassword      = $conf->global->LDAP_ADMIN_PASS;
         $this->people              = $conf->global->LDAP_USER_DN;
@@ -499,8 +499,8 @@ class AuthLdap {
         }
 
         $filter = '('.$this->filter.'('.$this->getUserIdentifier().'='.$search.'))';
-        
-        $this->result = @ldap_search( $this->connection, $this->People, $filter);
+
+        $this->result = @ldap_search( $this->connection, $this->people, $filter);
         
         if (!$this->result)
         {

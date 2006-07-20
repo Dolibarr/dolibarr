@@ -748,6 +748,10 @@ else
             	{
             		print '<td>'.$userChangePassNextLogon.'</td>';
             	}
+            	else
+            	{
+            		print '<td>'.$langs->trans("DomainPassword").'</td>';
+            	}
             }
             else
             {
