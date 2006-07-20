@@ -1,0 +1,961 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class BarcodeObject</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class BarcodeObject</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+							<a href="#sec-descendents">Descendents</a>
+			|											<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Barcode Render Class for PHP using the GD graphics library.</p>
+	<ul class="tags">
+				<li><span class="field">license:</span> <a href="http://www.gnu.org/copyleft/lesser.html">LGPL</a></li>
+				<li><span class="field">since:</span> 2001-03-25</li>
+				<li><span class="field">version:</span> 0.0.8a 2001-04-01 (original code)</li>
+				<li><span class="field">name:</span> BarcodeObject</li>
+				<li><span class="field">author:</span> Karim Mribti, Nicola Asuni</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_tcpdf_php4_barcode_barcode_php.html">/barcode/barcode.php</a> (line <span class="field">209</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+	<a name="sec-descendents"></a>
+	<div class="info-box">
+		<div class="info-box-title">Direct descendents</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+			<span class="disabled">Descendents</span>
+			|												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+								|															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<table cellpadding="2" cellspacing="0" class="class-table">
+				<tr>
+					<th class="class-table-header">Class</th>
+					<th class="class-table-header">Description</th>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../com.tecnick.tcpdf/C39Object.html">C39Object</a></td>
+					<td>
+											Code 39 Barcode Render Class.<br />  Code 39 is an alphanumeric bar code that can encode decimal number, case alphabet and some special symbols.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../com.tecnick.tcpdf/C128AObject.html">C128AObject</a></td>
+					<td>
+											Code 128-A Barcode Render Class for PHP using the GD graphics library.<br />  Code 128-A is a continuous, multilevel and include all upper case alphanumeric characters and ASCII control characters.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../com.tecnick.tcpdf/C128BObject.html">C128BObject</a></td>
+					<td>
+											Code 128-B Barcode Render Class for PHP using the GD graphics library.<br />  Code 128-B is a continuous, multilevel and full ASCII code.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../com.tecnick.tcpdf/C128CObject.html">C128CObject</a></td>
+					<td>
+											Code 128-C Barcode Render Class for PHP using the GD graphics library.<br />  Code 128-C is numeric only and provides the most efficiency.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../com.tecnick.tcpdf/I25Object.html">I25Object</a></td>
+					<td>
+											I25 Barcode Render Class for PHP using the GD graphics library.
+										</td>
+				</tr>
+							</table>
+		</div>
+	</div>
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+								<div class="var-title">
+					<span class="var-type">Background</span>
+					<a href="#$mBgcolor" title="details" class="var-name">$mBgcolor</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Brush</span>
+					<a href="#$mBrush" title="details" class="var-name">$mBrush</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Allowed</span>
+					<a href="#$mChars" title="details" class="var-name">$mChars</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Character</span>
+					<a href="#$mCharSet" title="details" class="var-name">$mCharSet</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Error</span>
+					<a href="#$mError" title="details" class="var-name">$mError</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Numeric</span>
+					<a href="#$mFont" title="details" class="var-name">$mFont</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Image</span>
+					<a href="#$mHeight" title="details" class="var-name">$mHeight</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Image</span>
+					<a href="#$mImg" title="details" class="var-name">$mImg</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Numeric</span>
+					<a href="#$mStyle" title="details" class="var-name">$mStyle</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">Image</span>
+					<a href="#$mWidth" title="details" class="var-name">$mWidth</a>
+				</div>
+							</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+								
+				<div class="method-definition">
+											<span class="method-result">BarcodeObject</span>
+										<a href="#BarcodeObject" title="details" class="method-name">BarcodeObject</a>
+											([<span class="var-type">int</span>&nbsp;<span class="var-name">$Width</span> = <span class="var-default">BCD_DEFAULT_WIDTH</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$Height</span> = <span class="var-default">BCD_DEFAULT_HEIGHT</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$Style</span> = <span class="var-default">BCD_DEFAULT_STYLE</span>])
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#DestroyObject" title="details" class="method-name">DestroyObject</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#DrawBorder" title="details" class="method-name">DrawBorder</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#DrawChar" title="details" class="method-name">DrawChar</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$Font</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$xPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$yPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$Char</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#DrawObject" title="details" class="method-name">DrawObject</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$xres</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">bool</span>
+										<a href="#DrawSingleBar" title="details" class="method-name">DrawSingleBar</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$xPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$yPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$xSize</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$ySize</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#DrawText" title="details" class="method-name">DrawText</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$Font</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$xPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$yPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$Char</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#FlushObject" title="details" class="method-name">FlushObject</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#GetError" title="details" class="method-name">GetError</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#GetFontHeight" title="details" class="method-name">GetFontHeight</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$font</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#GetFontWidth" title="details" class="method-name">GetFontWidth</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$font</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">object image.</span>
+										<a href="#getImage" title="details" class="method-name">getImage</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#GetStyle" title="details" class="method-name">GetStyle</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#SetFont" title="details" class="method-name">SetFont</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$font</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#SetStyle" title="details" class="method-name">SetStyle</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$Style</span>)
+									</div>
+							</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$mBgcolor" id="$mBgcolor"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Background</span>
+			<span class="var-name">$mBgcolor</span>
+						(line <span class="line-number">232</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> color.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mBrush" id="$mBrush"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Brush</span>
+			<span class="var-name">$mBrush</span>
+						(line <span class="line-number">238</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> color.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mChars" id="$mChars"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Allowed</span>
+			<span class="var-name">$mChars</span>
+						(line <span class="line-number">268</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> symbols.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mCharSet" id="$mCharSet"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Character</span>
+			<span class="var-name">$mCharSet</span>
+						(line <span class="line-number">262</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> Set.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mError" id="$mError"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Error</span>
+			<span class="var-name">$mError</span>
+						(line <span class="line-number">256</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> message.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mFont" id="$mFont"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Numeric</span>
+			<span class="var-name">$mFont</span>
+						(line <span class="line-number">250</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> code for character font.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mHeight" id="$mHeight"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Image</span>
+			<span class="var-name">$mHeight</span>
+						(line <span class="line-number">220</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> height in pixels.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mImg" id="$mImg"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Image</span>
+			<span class="var-name">$mImg</span>
+						(line <span class="line-number">244</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> object.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mStyle" id="$mStyle"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Numeric</span>
+			<span class="var-name">$mStyle</span>
+						(line <span class="line-number">226</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> code for Barcode style.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$mWidth" id="$mWidth"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Image</span>
+			<span class="var-name">$mWidth</span>
+						(line <span class="line-number">214</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">var:</span> width in pixels.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodBarcodeObject" id="BarcodeObject"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor BarcodeObject</span> (line <span class="line-number">276</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Class Constructor.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">BarcodeObject</span>
+		<span class="method-name">
+			BarcodeObject
+		</span>
+					([<span class="var-type">int</span>&nbsp;<span class="var-name">$Width</span> = <span class="var-default">BCD_DEFAULT_WIDTH</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$Height</span> = <span class="var-default">BCD_DEFAULT_HEIGHT</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$Style</span> = <span class="var-default">BCD_DEFAULT_STYLE</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$Width</span><span class="var-description">: Image width in pixels.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$Height</span><span class="var-description">: Image height in pixels.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$Style</span><span class="var-description">: Barcode style.</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodDestroyObject" id="DestroyObject"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">DestroyObject</span> (line <span class="line-number">433</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Destroy the barcode image.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			DestroyObject
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodDrawBorder" id="DrawBorder"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">DrawBorder</span> (line <span class="line-number">316</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Draws the barcode border.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			DrawBorder
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodDrawChar" id="DrawChar"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">DrawChar</span> (line <span class="line-number">328</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Draws the alphanumeric code.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			DrawChar
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$Font</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$xPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$yPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$Char</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$Font</span><span class="var-description">: Font type.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$xPos</span><span class="var-description">: Horiziontal position.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$yPos</span><span class="var-description">: Vertical position.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$Char</span><span class="var-description">: Alphanumeric code to write.</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodDrawObject" id="DrawObject"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">DrawObject</span> (line <span class="line-number">307</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Abstract method used to draw the barcode image.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			DrawObject
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$xres</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$xres</span><span class="var-description">: Horizontal resolution.</span>			</li>
+				</ul>
+		
+		
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../com.tecnick.tcpdf/C39Object.html#methodDrawObject">C39Object::DrawObject()</a>
+								: Draws the barcode object.
+							</li>
+					<li>
+				<a href="../com.tecnick.tcpdf/C128AObject.html#methodDrawObject">C128AObject::DrawObject()</a>
+								: Draws the barcode object.
+							</li>
+					<li>
+				<a href="../com.tecnick.tcpdf/C128BObject.html#methodDrawObject">C128BObject::DrawObject()</a>
+								: Draws the barcode object.
+							</li>
+					<li>
+				<a href="../com.tecnick.tcpdf/C128CObject.html#methodDrawObject">C128CObject::DrawObject()</a>
+								: Draws the barcode object.
+							</li>
+					<li>
+				<a href="../com.tecnick.tcpdf/I25Object.html#methodDrawObject">I25Object::DrawObject()</a>
+								: Draws the barcode object.
+							</li>
+				</ul>
+	</div>
+<a name="methodDrawSingleBar" id="DrawSingleBar"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">DrawSingleBar</span> (line <span class="line-number">353</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Draws a single barcode bar.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> trur in case of success, false otherwise.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">bool</span>
+		<span class="method-name">
+			DrawSingleBar
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$xPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$yPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$xSize</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$ySize</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$xPos</span><span class="var-description">: Horiziontal position.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$yPos</span><span class="var-description">: Vertical position.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$xSize</span><span class="var-description">: Vertical size.</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodDrawText" id="DrawText"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">DrawText</span> (line <span class="line-number">340</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Draws a character string.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			DrawText
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$Font</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$xPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$yPos</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$Char</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$Font</span><span class="var-description">: Font type.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$xPos</span><span class="var-description">: Horiziontal position.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$yPos</span><span class="var-description">: Vertical position.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$Char</span><span class="var-description">: string to write.</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodFlushObject" id="FlushObject"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">FlushObject</span> (line <span class="line-number">417</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Flush the barcode image.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			FlushObject
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodGetError" id="GetError"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">GetError</span> (line <span class="line-number">368</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the current error message.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> error message.</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			GetError
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodGetFontHeight" id="GetFontHeight"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">GetFontHeight</span> (line <span class="line-number">377</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the font height.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> font height.</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			GetFontHeight
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$font</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$font</span><span class="var-description">: font type.</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodGetFontWidth" id="GetFontWidth"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">GetFontWidth</span> (line <span class="line-number">386</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the font width.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> font width.</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			GetFontWidth
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$font</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$font</span><span class="var-description">: font type.</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodgetImage" id="getImage"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getImage</span> (line <span class="line-number">299</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the image object.</p>
+	<ul class="tags">
+				<li><span class="field">since:</span> 1.5.2</li>
+				<li><span class="field">author:</span> Nicola Asuni</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">object image.</span>
+		<span class="method-name">
+			getImage
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodGetStyle" id="GetStyle"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">GetStyle</span> (line <span class="line-number">402</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns barcode style.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> barcode style.</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			GetStyle
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodSetFont" id="SetFont"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">SetFont</span> (line <span class="line-number">394</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set font type.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetFont
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$font</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$font</span><span class="var-description">: font type.</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodSetStyle" id="SetStyle"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">SetStyle</span> (line <span class="line-number">410</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set barcode style.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetStyle
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$Style</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$Style</span><span class="var-description">: barcode style.</span>			</li>
+				</ul>
+		
+		
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 23 Jun 2006 10:11:50 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</div></body>
+</html>
