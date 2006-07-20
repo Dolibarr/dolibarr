@@ -1,0 +1,54 @@
+<% 
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2004 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * File Name: sampleposteddata.php
+ * 	This page lists the data posted by a form.
+ * 
+ * Version:  1.0 
+ * Modified: 2005-07-01
+ * 
+ * File Authors: Soenke Freitag (www.afp-hosting.de)
+ * 		
+%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>FCKeditor - Samples - Posted Data</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="robots" content="noindex, nofollow">
+		<link href="../sample.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<h1>FCKeditor - Samples - Posted Data</h1>
+		This page lists all data posted by the form.
+		<hr>
+		<table width="100%" border="1" cellspacing="0" bordercolor="#999999">
+			<tr style="FONT-WEIGHT: bold; COLOR: #dddddd; BACKGROUND-COLOR: #999999">
+				<td nowrap>Field Name&nbsp;&nbsp;</td>
+				<td>Value</td>
+			</tr>
+<%
+		lcForm=REQUEST.Form()
+		lcForm=STRTRAN(lcForm,"&",CHR(13)+CHR(10))
+
+		FOR lnLoop=1 TO MEMLINES(lcForm)
+			lcZeile=ALLTRIM(MLINE(lcForm,lnLoop))
+			IF AT("=",lcZeile)>0
+				lcVariable=UPPER(ALLTRIM(LEFT(lcZeile,AT("=",lcZeile)-1)))  
+				lcWert=ALLTRIM(RIGHT(lcZeile,LEN(lcZeile)-AT("=",lcZeile)))
+				lcWert=Server.UrlDecode( lcWert ) 
+	
+				? [<tr><td>]+lcVariable+[ =</td><td>]+lcWert+[</td></tr>]
+			ENDIF
+		NEXT
+%>
+		</table>
+	</body>
+</html>

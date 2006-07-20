@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: fck_paste.html
+ * 	This dialog is shown when, for some reason (usually security settings), 
+ * 	the user is not able to paste data from the clipboard to the editor using 
+ * 	the toolbar buttons or the context menu.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="robots" content="noindex, nofollow">
+		<script language="javascript">
+var oEditor = window.parent.InnerDialogLoaded() ;
+
+window.onload = function ()
+{
+	// First of all, translate the dialog box texts
+	oEditor.FCKLanguageManager.TranslatePage(document) ;
+	
+	if ( window.parent.dialogArguments.CustomValue == 'Word' )
+	{
+		var oFrame = document.getElementById('frmData')
+		oFrame.style.display = '' ;
+		
+		if ( oFrame.contentDocument ) 
+			oFrame.contentDocument.designMode = 'on' ;
+		else
+			oFrame.contentWindow.document.body.contentEditable = true ;
+	}
+	else
+	{
+		document.getElementById('txtData').style.display = '' ;
+		document.getElementById('oWordCommands').style.display = 'none' ;
+	}
+
+	window.parent.SetOkButton( true ) ;	
+	window.parent.SetAutoSize( true ) ;	
+}
+
+function Ok()
+{
+	var sHtml ;
+	
+	if ( window.parent.dialogArguments.CustomValue == 'Word' )
+	{
+		var oFrame = document.getElementById('frmData') ;
+		
+		if ( oFrame.contentDocument ) 
+			sHtml = oFrame.contentDocument.body.innerHTML ;
+		else
+			sHtml = oFrame.contentWindow.document.body.innerHTML ;
+
+		sHtml = CleanWord( sHtml ) ;
+	}
+	else
+	{
+		var sHtml = oEditor.FCKTools.HTMLEncode( document.getElementById('txtData').value )  ;
+		sHtml = sHtml.replace( /\n/g, '<BR>' ) ;
+	}
+	
+	oEditor.FCK.InsertHtml( sHtml ) ;
+	
+	return true ;
+}
+
+function CleanUpBox()
+{
+	var oFrame = document.getElementById('frmData') ;
+	
+	if ( oFrame.contentDocument ) 
+		oFrame.contentDocument.body.innerHTML = '' ;
+	else
+		oFrame.contentWindow.document.body.innerHTML = '' ;
+}
+
+function CleanWord( html )
+{
+	var bIgnoreFont = document.getElementById('chkRemoveFont').checked ;
+	var bRemoveStyles = document.getElementById('chkRemoveStyles').checked ;
+
+	html = html.replace(/<o:p>\s*<\/o:p>/g, "") ;
+	html = html.replace(/<o:p>.*?<\/o:p>/g, "&nbsp;") ;
+	
+	// Remove mso-xxx styles.
+	html = html.replace( /\s*mso-[^:]+:[^;"]+;?/gi, "" ) ;
+
+	// Remove margin styles.
+	html = html.replace( /\s*MARGIN: 0cm 0cm 0pt\s*;/gi, "" ) ;
+	html = html.replace( /\s*MARGIN: 0cm 0cm 0pt\s*"/gi, "\"" ) ;
+
+	html = html.replace( /\s*TEXT-INDENT: 0cm\s*;/gi, "" ) ;
+	html = html.replace( /\s*TEXT-INDENT: 0cm\s*"/gi, "\"" ) ;
+
+	html = html.replace( /\s*TEXT-ALIGN: [^\s;]+;?"/gi, "\"" ) ;
+
+	html = html.replace( /\s*PAGE-BREAK-BEFORE: [^\s;]+;?"/gi, "\"" ) ;
+
+	html = html.replace( /\s*FONT-VARIANT: [^\s;]+;?"/gi, "\"" ) ;
+
+	html = html.replace( /\s*tab-stops:[^;"]*;?/gi, "" ) ;
+	html = html.replace( /\s*tab-stops:[^"]*/gi, "" ) ;
+
+	// Remove FONT face attributes.
+	if ( bIgnoreFont )
+	{
+		html = html.replace( /\s*face="[^"]*"/gi, "" ) ;
+		html = html.replace( /\s*face=[^ >]*/gi, "" ) ;
+
+		html = html.replace( /\s*FONT-FAMILY:[^;"]*;?/gi, "" ) ;
+	}
+	
+	// Remove Class attributes
+	html = html.replace(/<(\w[^>]*) class=([^ |>]*)([^>]*)/gi, "<$1$3") ;
+
+	// Remove styles.
+	if ( bRemoveStyles )
+		html = html.replace( /<(\w[^>]*) style="([^\"]*)"([^>]*)/gi, "<$1$3" ) ;
+
+	// Remove empty styles.
+	html =  html.replace( /\s*style="\s*"/gi, '' ) ;
+	
+	html = html.replace( /<SPAN\s*[^>]*>\s*&nbsp;\s*<\/SPAN>/gi, '&nbsp;' ) ;
+	
+	html = html.replace( /<SPAN\s*[^>]*><\/SPAN>/gi, '' ) ;
+	
+	// Remove Lang attributes
+	html = html.replace(/<(\w[^>]*) lang=([^ |>]*)([^>]*)/gi, "<$1$3") ;
+	
+	html = html.replace( /<SPAN\s*>(.*?)<\/SPAN>/gi, '$1' ) ;
+	
+	html = html.replace( /<FONT\s*>(.*?)<\/FONT>/gi, '$1' ) ;
+
+	// Remove XML elements and declarations
+	html = html.replace(/<\\?\?xml[^>]*>/gi, "") ;
+	
+	// Remove Tags with XML namespace declarations: <o:p><\/o:p>
+	html = html.replace(/<\/?\w+:[^>]*>/gi, "") ;
+	
+	html = html.replace( /<H\d>\s*<\/H\d>/gi, '' ) ;
+
+	html = html.replace( /<H1([^>]*)>/gi, '<div$1><b><font size="6">' ) ;
+	html = html.replace( /<H2([^>]*)>/gi, '<div$1><b><font size="5">' ) ;
+	html = html.replace( /<H3([^>]*)>/gi, '<div$1><b><font size="4">' ) ;
+	html = html.replace( /<H4([^>]*)>/gi, '<div$1><b><font size="3">' ) ;
+	html = html.replace( /<H5([^>]*)>/gi, '<div$1><b><font size="2">' ) ;
+	html = html.replace( /<H6([^>]*)>/gi, '<div$1><b><font size="1">' ) ;
+
+	html = html.replace( /<\/H\d>/gi, '<\/font><\/b><\/div>' ) ;
+	
+	html = html.replace( /<(U|I|STRIKE)>&nbsp;<\/\1>/g, '&nbsp;' ) ;
+
+	// Remove empty tags (three times, just to be sure).
+	html = html.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
+	html = html.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
+	html = html.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
+
+	// Transform <P> to <DIV>
+	var re = new RegExp("(<P)([^>]*>.*?)(<\/P>)","gi") ;	// Different because of a IE 5.0 error
+	html = html.replace( re, "<div$2<\/div>" ) ;
+
+	return html ;
+}
+
+		</script>
+	</head>
+	<body scroll="no" style="OVERFLOW: hidden">
+		<table height="98%" cellspacing="0" cellpadding="0" width="100%" border="0">
+			<tr>
+				<td>
+					<span fckLang="DlgPasteMsg2">Please paste inside the following box using the 
+						keyboard (<STRONG>Ctrl+V</STRONG>) and hit <STRONG>OK</STRONG>.</span>
+					<br>
+					&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" height="100%" style="BORDER-RIGHT: #000000 1px solid; BORDER-TOP: #000000 1px solid; BORDER-LEFT: #000000 1px solid; BORDER-BOTTOM: #000000 1px solid">
+					<textarea id="txtData" style="BORDER-RIGHT: #000000 1px; BORDER-TOP: #000000 1px; DISPLAY: none; BORDER-LEFT: #000000 1px; WIDTH: 99%; BORDER-BOTTOM: #000000 1px; HEIGHT: 98%"></textarea>
+					<iframe id="frmData" src="../fckblank.html" height="98%" width="99%" frameborder="0" style="BORDER-RIGHT: #000000 1px; BORDER-TOP: #000000 1px; DISPLAY: none; BORDER-LEFT: #000000 1px; BORDER-BOTTOM: #000000 1px; BACKGROUND-COLOR: #ffffff">
+					</iframe>
+				</td>
+			</tr>
+			<tr id="oWordCommands">
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="100%">
+						<tr>
+							<td nowrap>
+								<input id="chkRemoveFont" type="checkbox" checked="checked"> <label for="chkRemoveFont" fckLang="DlgPasteIgnoreFont">
+									Ignore Font Face definitions</label>
+								<br>
+								<input id="chkRemoveStyles" type="checkbox"> <label for="chkRemoveStyles" fckLang="DlgPasteRemoveStyles">
+									Remove Styles definitions</label>
+							</td>
+							<td align="right" valign="top">
+								<input type="button" fckLang="DlgPasteCleanBox" value="Clean Up Box" onclick="CleanUpBox()">
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

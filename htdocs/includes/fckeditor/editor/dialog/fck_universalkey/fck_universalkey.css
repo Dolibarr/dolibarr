@@ -1,0 +1,62 @@
+/*
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: fck_universalkey.css
+ * 	CSS styles for the Universal Keyboard.
+ * 
+ * File Authors:
+ * 		Michel Staelens (michel.staelens@wanadoo.fr)
+ * 		Bernadette Cierzniak
+ * 		Abdul-Aziz Al-Oraij (top7up@hotmail.com)
+ */
+
+BODY, TEXTAREA, INPUT, TD, SELECT
+{
+	font-family: Tahoma,verdana,arial,sans-serif;
+}
+DIV
+{
+	position: absolute;
+}
+.simple
+{
+	font-size: 11pt;
+}
+.double
+{
+	font-size: 9pt;
+}
+.simpledia
+{
+	color: red;
+	font-size: 11pt;
+}
+.doubledia
+{
+	color: red;
+	font-size: 9pt;
+}
+.action
+{
+	color: white;
+	font-size: 7pt;
+}
+.clavier
+{
+	color: blue;
+	font-size: 7pt;
+}
+.sign
+{
+	color: gray;
+	font-size: 7pt;
+}

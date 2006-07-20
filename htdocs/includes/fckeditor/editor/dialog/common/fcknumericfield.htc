@@ -1,0 +1,24 @@
+<public:component lightweight="true">
+
+<script language="javascript">
+
+function CheckIsDigit()
+{
+	var iCode = event.keyCode ;
+
+	event.returnValue =
+		(
+			( iCode >= 48 && iCode <= 57 )		// Numbers
+			|| (iCode >= 37 && iCode <= 40)		// Arrows
+			|| iCode == 8						// Backspace
+			|| iCode == 46						// Delete
+		) ;
+
+	return event.returnValue ;
+}
+
+this.onkeypress = CheckIsDigit ;
+
+</script>
+
+</public:component>

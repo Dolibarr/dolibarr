@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: sampleposteddata.html
+ * 	This page lists the data posted by a form. It uses the URL (GET data), 
+ * 	so it's limited to 2KB of data.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>FCKeditor - Samples - Posted Data</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="robots" content="noindex, nofollow" />
+	<link href="../sample.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<h1>
+		FCKeditor - Samples - Posted Data
+	</h1>
+	<div>
+		This page lists all data posted by the form. It uses the "QueryString" to search
+		for data submitted using the "GET" method, so it is limited to 2KB.
+	</div>
+	<hr />
+	<table width="100%" border="1" cellpadding="3" style="border-color: #999999; border-collapse: collapse;">
+		<tr style="font-weight: bold; color: #dddddd; background-color: #999999">
+			<td style="white-space: nowrap;">
+				Field</td>
+			<td>
+				Value</td>
+		</tr>
+		<script type="text/javascript">
+<!--
+
+function HTMLEncode( text )
+{
+	text = text.replace(/&/g, "&amp;") ;
+	text = text.replace(/"/g, "&quot;") ;
+	text = text.replace(/</g, "&lt;") ;
+	text = text.replace(/>/g, "&gt;") ;
+	text = text.replace(/'/g, "&#39;") ;
+
+	return text ;
+}
+
+var aParams = document.location.search.substr(1).split('&') ;
+
+for ( i = 0 ; i < aParams.length ; i++ )
+{
+	var aParam = aParams[i].split('=') ;
+	var sParamName  = aParam[0] ;
+	var sParamValue = aParam[1] ;
+
+	document.write( '<tr>' ) ;
+	document.write( '<td valign="top" style="white-space: nowrap;">' + sParamName + '</td>' ) ;
+	document.write( '<td style="width: 100%;"><pre>' + HTMLEncode( unescape( sParamValue.replace( /\+/g, ' ' ) ) ) + '</pre></td>' ) ;
+	document.write( '</tr>' ) ;
+}
+
+//-->
+		</script>
+	</table>
+</body>
+</html>

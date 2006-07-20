@@ -1,0 +1,61 @@
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: fck_image_preview.html
+ * 	Preview page for the Image dialog window.
+ * 	Curiosity: http://www.lipsum.com/
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="robots" content="noindex, nofollow">
+		<link href="../common/fck_dialog_common.css" rel="stylesheet" type="text/css" />
+		<script language="javascript">
+
+// Sets the Skin CSS
+document.write( '<link href="' + window.parent.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;
+
+if ( window.parent.FCKConfig.BaseHref.length > 0 )
+	document.write( '<base href="' + window.parent.FCKConfig.BaseHref + '">' ) ;
+
+window.onload = function()
+{
+	window.parent.SetPreviewElements( 
+		document.getElementById( 'imgPreview' ),
+		document.getElementById( 'lnkPreview' ) ) ;
+}
+
+		</script>
+	</head>
+	<body style="COLOR: #000000; BACKGROUND-COLOR: #ffffff">
+		<a id="lnkPreview" onclick="return false;" style="CURSOR: default"><img id="imgPreview" onload="window.parent.UpdateOriginal();" style="DISPLAY: none"></a>Lorem 
+		ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas feugiat consequat 
+		diam. Maecenas metus. Vivamus diam purus, cursus a, commodo non, facilisis 
+		vitae, nulla. Aenean dictum lacinia tortor. Nunc iaculis, nibh non iaculis 
+		aliquam, orci felis euismod neque, sed ornare massa mauris sed velit. Nulla 
+		pretium mi et risus. Fusce mi pede, tempor id, cursus ac, ullamcorper nec, 
+		enim. Sed tortor. Curabitur molestie. Duis velit augue, condimentum at, 
+		ultrices a, luctus ut, orci. Donec pellentesque egestas eros. Integer cursus, 
+		augue in cursus faucibus, eros pede bibendum sem, in tempus tellus justo quis 
+		ligula. Etiam eget tortor. Vestibulum rutrum, est ut placerat elementum, lectus 
+		nisl aliquam velit, tempor aliquam eros nunc nonummy metus. In eros metus, 
+		gravida a, gravida sed, lobortis id, turpis. Ut ultrices, ipsum at venenatis 
+		fringilla, sem nulla lacinia tellus, eget aliquet turpis mauris non enim. Nam 
+		turpis. Suspendisse lacinia. Curabitur ac tortor ut ipsum egestas elementum. 
+		Nunc imperdiet gravida mauris.
+	</body>
+</html>

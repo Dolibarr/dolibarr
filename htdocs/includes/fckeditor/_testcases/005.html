@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: 005.html
+ * 	Test page.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html>
+	<head>
+		<title>FCKeditor - Sample</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="robots" content="noindex, nofollow">
+		<link href="testcases.css" rel="stylesheet" type="text/css">
+			<script type="text/javascript" src="../fckeditor.js"></script>
+	</head>
+	<body>
+		<h1>FCKeditor - Test 005</h1>
+		<P>
+			<STRONG>Expected results</STRONG>: The editor content must be loaded and the 
+			submit button must post the editors html. No javascript errors should be thrown 
+			(security errors).<BR>
+			<STRONG>Configurations</STRONG>: BaseHref = http://www.fckeditor.net
+			<BR>
+			<STRONG>Steps to&nbsp;Reproduce</STRONG>:
+		</P>
+		<OL>
+			<LI>
+			Wait the editor to load.
+			<LI>
+			Create a table with border =
+			   0&nbsp;and an anchor. 
+  <LI>Create an image and points it to /images/logotop.gif
+  <LI>Hit submit button and check the posted data.</LI></OL>
+		<P>
+			<hr>
+		<P></P>
+		<form action="sampleposteddata.asp" method="post" target="_blank">
+			<script type="text/javascript">
+<!--
+// Automatically calculates the editor base path based on the _samples directory.
+// This is usefull only for these samples. A real application should use something like this:
+// oFCKeditor.BasePath = '/fckeditor/' ;	// '/fckeditor/' is the default value.
+var sBasePath = document.location.pathname.substring(0,document.location.pathname.lastIndexOf('_testcases')) ;
+
+var oFCKeditor = new FCKeditor( 'FCKeditor1' ) ;
+oFCKeditor.BasePath	= sBasePath ;
+oFCKeditor.Config['BaseHref'] = 'http://www.fckeditor.net' ;
+oFCKeditor.Value	= 'This is some <strong>sample text</strong>. You are using <a href="http://www.fckeditor.net/">FCKeditor</a>.' ;
+oFCKeditor.Create() ;
+//-->
+			</script>
+			<br>
+			<input type="submit" value="Submit">
+		</form>
+	</body>
+</html>

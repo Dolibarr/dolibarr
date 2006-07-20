@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: _fckviewstrips.html
+ * 	Useful page that enumerates all icons in the skins strips.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>FCKeditor - View Icons Strips</title>
+	<style type="text/css">
+		.TB_Button_Image
+		{
+			overflow: hidden;
+			width: 16px;
+			height: 16px;
+			margin: 3px;
+			background-repeat: no-repeat;
+		}
+
+		.TB_Button_Image img
+		{
+			position: relative;
+		}
+	</style>
+	<script type="text/javascript">
+
+window.onload = function()
+{
+	var eImg1 = document.createElement( 'img' ) ;
+	eImg1.onreadystatechange = Img_OnReadyStateChange ;
+	eImg1.src = 'default/fck_strip.gif' ;
+
+	var eImg2 = document.createElement( 'img' ) ;
+	eImg2.onreadystatechange = Img_OnReadyStateChange ;
+	eImg2.src = 'office2003/fck_strip.gif' ;
+
+	var eImg3 = document.createElement( 'img' ) ;
+	eImg3.onreadystatechange = Img_OnReadyStateChange ;
+	eImg3.src = 'silver/fck_strip.gif' ;
+}
+
+var iTotalStrips = 3 ;
+var iMaxHeight = 0 ;
+
+function Img_OnReadyStateChange()
+{
+	if ( this.readyState == 'complete' )
+	{
+		if ( iMaxHeight < this.height )
+			iMaxHeight = this.height ;
+		
+		iTotalStrips-- ;
+		
+		if ( iTotalStrips == 0 )
+			LoadIcons( iMaxHeight / 16 ) ;
+	}
+}
+
+function LoadIcons( total )
+{
+	for ( var i = 0 ; i < total ; i++ )
+	{
+		var eRow = xIconsTable.insertRow(-1) ;
+		
+		var eCell = eRow.insertCell(-1) ;
+		eCell.innerHTML = i + 1 ;
+		
+		eCell = eRow.insertCell(-1) ;
+		eCell.align = 'center' ;
+		eCell.style.border = '#dcdcdc 1px solid' ;
+		eCell.innerHTML = '<div class="TB_Button_Image"><img src="default/fck_strip.gif" style="top=-' + ( i * 16 ) + 'px;"></div>' ;
+
+		eCell = eRow.insertCell(-1) ;
+		eCell.align = 'center' ;
+		eCell.style.border = '#dcdcdc 1px solid' ;
+		eCell.innerHTML = '<div class="TB_Button_Image"><img src="office2003/fck_strip.gif" style="top=-' + ( i * 16 ) + 'px;"></div>' ;
+
+		eCell = eRow.insertCell(-1) ;
+		eCell.align = 'center' ;
+		eCell.style.border = '#dcdcdc 1px solid' ;
+		eCell.innerHTML = '<div class="TB_Button_Image"><img src="silver/fck_strip.gif" style="top=-' + ( i * 16 ) + 'px;"></div>' ;
+	}
+}
+
+	</script>
+</head>
+<body>
+	<table id="xIconsTable">
+		<tr>
+			<td rowspan="2">
+				Index</td>
+			<td align="center" colspan="3">
+				Skins</td>
+		</tr>
+		<tr>
+			<td width="80" align="center">
+				default</td>
+			<td width="80" align="center">
+				office2003</td>
+			<td width="80" align="center">
+				silver</td>
+		</tr>
+	</table>
+</body>
+</html>

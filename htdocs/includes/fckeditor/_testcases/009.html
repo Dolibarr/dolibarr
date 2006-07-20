@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: 009.html
+ * 	Test page.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html>
+	<head>
+		<title>FCKeditor - Sample</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="robots" content="noindex, nofollow">
+		<link href="testcases.css" rel="stylesheet" type="text/css">
+			<script type="text/javascript" src="../fckeditor.js"></script>
+			<script>
+
+function FCKeditor_OnComplete( editorInstance )
+{
+	// Attach to the event fired when the editor's HTML is set.
+	editorInstance.Events.AttachEvent( 'OnAfterSetHTML', FCKeditor_OnAfterSetHTML ) ;
+}
+
+function FCKeditor_OnAfterSetHTML( editorInstance )
+{
+	// Get the actual color from the combo.
+	var sColor = document.getElementById('ActualColor').value ;
+
+	// Set the color of the editor instance.
+	editorInstance.EditorDocument.body.style.backgroundColor = sColor ;
+}
+
+function SetActualColor()
+{
+	// Get the editor instance that we want to interact with.
+	var oEditor = FCKeditorAPI.GetInstance('FCKeditor1') ;
+	
+	// Call the event function to set the color.
+	FCKeditor_OnAfterSetHTML( oEditor ) ;
+}
+
+			</script>
+	</head>
+	<body>
+		<h1>FCKeditor - Test 009</h1>
+		<P>
+			<STRONG>Expected results</STRONG> : The user should be able to background color 
+			of the editor by code.<BR>
+			<STRONG>Configurations</STRONG>: Default<BR>
+			<STRONG>Steps to&nbsp;Reproduce</STRONG>:
+		</P>
+		<OL>
+			<LI>
+			Wait the editor to load.
+			<LI>
+			Type some text.
+			<LI>
+			Change the background color using the combo.
+			<LI>
+			Type more text.
+			<LI>
+			Switch to source view.
+			<LI>
+			Switch back to WYSIWYG. The background color must be the same.
+			<LI>
+			Repeate steps 3 to 6.
+			<LI>
+				Submit the form.</LI></OL>
+		<P>
+			<hr>
+		<P>
+		Select a color for the background:<br>
+		<select id="ActualColor" onchange="SetActualColor();">
+			<option value="white" selected>White</option>
+			<option value="red">Red</option>
+			<option value="green">Green</option>
+			<option value="gold">Gold</option>
+		</select>
+		</P>
+		<form action="sampleposteddata.asp" method="post" target="_blank">
+			<script type="text/javascript">
+<!--
+// Automatically calculates the editor base path based on the _samples directory.
+// This is usefull only for these samples. A real application should use something like this:
+// oFCKeditor.BasePath = '/fckeditor/' ;	// '/fckeditor/' is the default value.
+var sBasePath = document.location.pathname.substring(0,document.location.pathname.lastIndexOf('_testcases')) ;
+
+var oFCKeditor = new FCKeditor( 'FCKeditor1' ) ;
+oFCKeditor.BasePath	= sBasePath ;
+oFCKeditor.Value	= 'This is some <strong>sample text</strong>. You are using <a href="http://www.fckeditor.net/">FCKeditor</a>.' ;
+oFCKeditor.Create() ;
+//-->
+			</script>
+			<br>
+			<input type="submit" value="Submit">
+		</form>
+	</body>
+</html>

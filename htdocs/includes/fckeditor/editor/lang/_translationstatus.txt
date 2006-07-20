@@ -1,0 +1,70 @@
+/*
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: _translationstatus.txt
+ * 	Translations Status.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ */
+
+ar.js      Found: 388   Missing: 0
+bg.js      Found: 380   Missing: 8
+bn.js      Found: 388   Missing: 0
+bs.js      Found: 232   Missing: 156
+ca.js      Found: 387   Missing: 1
+cs.js      Found: 388   Missing: 0
+da.js      Found: 388   Missing: 0
+de.js      Found: 388   Missing: 0
+el.js      Found: 232   Missing: 156
+en-au.js   Found: 388   Missing: 0
+en-ca.js   Found: 388   Missing: 0
+en-uk.js   Found: 388   Missing: 0
+eo.js      Found: 352   Missing: 36
+es.js      Found: 382   Missing: 6
+et.js      Found: 388   Missing: 0
+eu.js      Found: 388   Missing: 0
+fa.js      Found: 358   Missing: 30
+fi.js      Found: 388   Missing: 0
+fo.js      Found: 358   Missing: 30
+fr.js      Found: 383   Missing: 5
+gl.js      Found: 388   Missing: 0
+he.js      Found: 388   Missing: 0
+hi.js      Found: 388   Missing: 0
+hr.js      Found: 383   Missing: 5
+hu.js      Found: 388   Missing: 0
+it.js      Found: 388   Missing: 0
+ja.js      Found: 388   Missing: 0
+km.js      Found: 377   Missing: 11
+ko.js      Found: 375   Missing: 13
+lt.js      Found: 383   Missing: 5
+lv.js      Found: 388   Missing: 0
+mn.js      Found: 232   Missing: 156
+ms.js      Found: 358   Missing: 30
+nl.js      Found: 388   Missing: 0
+no.js      Found: 388   Missing: 0
+pl.js      Found: 388   Missing: 0
+pt-br.js   Found: 383   Missing: 5
+pt.js      Found: 375   Missing: 13
+ro.js      Found: 388   Missing: 0
+ru.js      Found: 383   Missing: 5
+sk.js      Found: 383   Missing: 5
+sl.js      Found: 380   Missing: 8
+sr-latn.js Found: 375   Missing: 13
+sr.js      Found: 375   Missing: 13
+sv.js      Found: 383   Missing: 5
+th.js      Found: 352   Missing: 36
+tr.js      Found: 374   Missing: 14
+uk.js      Found: 375   Missing: 13
+vi.js      Found: 388   Missing: 0
+zh-cn.js   Found: 388   Missing: 0
+zh.js      Found: 388   Missing: 0

@@ -1,0 +1,88 @@
+/*
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: fck_internal.css
+ * 	This CSS Style Sheet defines rules used by the editor for its internal use.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ */
+
+/* Fix to allow putting the caret at the end of the
+content in Firefox if clicking below the content */
+html
+{
+	min-height:100%;
+}
+
+
+table.FCK__ShowTableBorders, table.FCK__ShowTableBorders td, table.FCK__ShowTableBorders th
+{
+	border: #d3d3d3 1px solid;
+}
+
+form
+{
+	border: 1px dotted #FF0000;
+	padding: 2px;
+}
+
+.FCK__Flash
+{
+	border: darkgray 1px solid;
+	background-position: center center;
+	background-image: url(images/fck_flashlogo.gif);
+	background-repeat: no-repeat;
+	width: 80px;
+	height: 80px;
+}
+
+.FCK__Anchor
+{
+	background-position: center center;
+	background-image: url(images/fck_anchor.gif);
+	background-repeat: no-repeat;
+	width: 16px;
+	height: 15px;
+}
+
+.FCK__PageBreak
+{
+	background-position: center center;
+	background-image: url(images/fck_pagebreak.gif);
+	background-repeat: no-repeat;
+	clear: both;
+	display: block;
+	float: none;
+	width: 100%;
+	border-top: #999999 1px dotted;
+	border-bottom: #999999 1px dotted;
+	border-right: 0px;
+	border-left: 0px;
+	height: 5px;
+}
+
+input[type="hidden"]
+{
+	display: inline;
+	width:20px;
+	height:20px;
+	border:1px dotted #FF0000 ;
+	background-image: url(behaviors/hiddenfield.gif);
+	background-repeat: no-repeat;
+}
+
+input[type="hidden"]:after
+{
+	padding-left: 20px;
+	content: "" ;
+}

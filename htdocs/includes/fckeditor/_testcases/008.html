@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: 008.html
+ * 	Test page.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html>
+	<head>
+		<title>FCKeditor - Sample</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="robots" content="noindex, nofollow">
+		<link href="testcases.css" rel="stylesheet" type="text/css">
+			<script type="text/javascript" src="../fckeditor.js"></script>
+			<script>
+
+function Validate()
+{
+	// Get the editor instance that we want to interact with.
+	var oEditor = FCKeditorAPI.GetInstance('FCKeditor1') ;
+
+	// Get the editor contents in XHTML.
+	if ( oEditor.GetXHTML( false ).length == 0 )
+	{
+		alert( 'The "Save" command must not submit if the editor is empty' ) ;
+		return false ;
+	}
+}
+
+			</script>
+	</head>
+	<body>
+		<h1>FCKeditor - Test 008</h1>
+		<P>
+			<STRONG>Expected results</STRONG>: The editor content must be loaded and the 
+			submit button must post the editors html.<BR>
+			<STRONG>Configurations</STRONG>: Default<BR>
+			<STRONG>Steps to&nbsp;Reproduce</STRONG>:
+		</P>
+		<OL>
+			<LI>
+			Wait the editor to load.
+			<LI>
+			Select all the content with the mouse and delete it.
+			<LI>
+			Hit the "Save" button - an alert should popup.
+			<LI>
+			Insert some text.
+			<LI>
+			Hit the "Save" button and check the posted data.
+			<LI>
+			Close the data window.
+			<LI>
+			Press the "New Page" button.
+			<LI>
+				Hit the "Save" button - an alert should popup.</LI></OL>
+		<P>
+			<hr>
+		<P></P>
+		<form action="sampleposteddata.asp" method="post" target="_blank" onsubmit="return Validate();">
+			<script type="text/javascript">
+<!--
+// Automatically calculates the editor base path based on the _samples directory.
+// This is usefull only for these samples. A real application should use something like this:
+// oFCKeditor.BasePath = '/fckeditor/' ;	// '/fckeditor/' is the default value.
+var sBasePath = document.location.pathname.substring(0,document.location.pathname.lastIndexOf('_testcases')) ;
+
+var oFCKeditor = new FCKeditor( 'FCKeditor1' ) ;
+oFCKeditor.BasePath	= sBasePath ;
+oFCKeditor.Value	= 'This is some <strong>sample text</strong>. You are using <a href="http://www.fckeditor.net/">FCKeditor</a>.' ;
+oFCKeditor.Create() ;
+//-->
+			</script>
+		</form>
+	</body>
+</html>

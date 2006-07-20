@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: 004.html
+ * 	Test page.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html>
+	<head>
+		<title>FCKeditor - Sample</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="robots" content="noindex, nofollow">
+		<link href="testcases.css" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="../fckeditor.js"></script>
+		<script language="javascript">
+
+function Show()
+{
+	document.getElementById('eEditor').style.display	= '' ;
+	document.getElementById('eNoEditor').style.display	= 'none' ;
+
+	// This is a hack for Gecko... it stops editing when the editor is hidden.
+	if ( !document.all )
+	{
+		var oEditor = FCKeditorAPI.GetInstance( 'FCKeditor1' ) ;
+		
+		if (  oEditor.EditMode == FCK_EDITMODE_WYSIWYG )
+			oEditor.MakeEditable() ;
+	}
+}
+
+function Hide()
+{
+	document.getElementById('eEditor').style.display	= 'none' ;
+	document.getElementById('eNoEditor').style.display	= '' ;
+}
+
+		</script>
+	</head>
+	<body>
+		<h1 id="Prova">FCKeditor - Test 004</h1>
+		<P>
+			<STRONG>Expected results</STRONG> : The editor must still work when hidding it 
+			programmatically (through javascript).<BR>
+			<STRONG>Configurations</STRONG>: Default<BR>
+			<STRONG>Steps to&nbsp;Reproduce</STRONG>:
+		</P>
+		<OL>
+			<LI>
+			Wait the page to load.
+			<LI>
+			Hit the "Show Editor" button.
+			<LI>
+			Insert some text and format it.
+			<LI>
+			Hit the "Hide Editor" button.
+			<LI>
+			Hit the "Submit" and check the posted HTML.
+			<LI>
+			Close the "Submit" window.
+			<LI>
+			Hit the "Show Editor" button.
+			<LI>
+				Repeat steps 2 and 4.</LI></OL>
+		<P>
+			<hr>
+		<P></P>
+		<form action="sampleposteddata.asp" method="post" target="_blank">
+			<div id="eNoEditor">
+				<input type="button" value="Show Editor" onclick="Show();">
+			</div>
+			<div id="eEditor" style="DISPLAY: none">
+				<input type="button" value="Hide Editor" onclick="Hide();">
+				<br><br>
+				<script type="text/javascript">
+<!--
+// Automatically calculates the editor base path based on the _samples directory.
+// This is usefull only for these samples. A real application should use something like this:
+// oFCKeditor.BasePath = '/fckeditor/' ;	// '/fckeditor/' is the default value.
+var sBasePath = document.location.pathname.substring(0,document.location.pathname.lastIndexOf('_testcases')) ;
+
+var oFCKeditor = new FCKeditor( 'FCKeditor1' ) ;
+oFCKeditor.BasePath	= sBasePath ;
+oFCKeditor.Value	= 'This is some <strong>sample text</strong>. You are using <a href="http://www.fckeditor.net/">FCKeditor</a>.' ;
+oFCKeditor.Create() ;
+//-->
+				</script>
+			</div>
+			<br>
+			<input type="submit" value="Submit">
+		</form>
+	</body>
+</html>

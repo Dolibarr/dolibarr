@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+	</head>
+	<script language="javascript">
+
+window.onload = function()
+{
+	var oRange = document.selection.createRange() ;
+	
+	var sNormal ;
+	var sFormats = '' ;
+	for ( var i = 1 ; i <= 9 ; i++ )
+	{
+		oRange.moveToElementText( document.getElementById( 'x' + i ) ) ;
+		sFormats += oRange.queryCommandValue( 'FormatBlock' ) ;
+		if ( i == 1 )
+			sNormal = sFormats ;
+		sFormats += ';' ;
+	}
+	
+	document.getElementById('xFontFormats').innerHTML = sFormats + sNormal + ' (DIV)' ;
+}
+	</script>
+	<body>
+		<table width="70%" align="center">
+			<tr>
+				<td>
+					<h3>FontFormats Localization</h3>
+					<p>
+						IE has some limits when handling the "Font Format". It actually uses localized 
+						strings to retrieve the current format value. This makes it very difficult to 
+						make a system that works on every single computer in the world.
+					</p>
+					<p>
+						With FCKeditor, this problem impacts in the "Format" toolbar command that 
+						doesn't reflects the format of the current cursor position.
+					</p>
+					<p>
+						There is only one way to make it work. We must localize FCKeditor using the 
+						strings used by IE. In this way, we will have the expected behavior at least 
+						when using FCKeditor in the same language as the browser. So, when localizing 
+						FCKeditor, go to a computer with IE in the target language, open this page and 
+						use the following string to the "FontFormats" value:
+					</p>
+					<div style="white-space: nowrap">
+						FontFormats : "<span id="xFontFormats" style="COLOR: #000099"></span>",
+					</div>
+				</td>
+			</tr>
+		</table>
+		<div style="DISPLAY: none">
+			<p id="x1">&nbsp;</p>
+			<pre id="x2">&nbsp;</pre>
+			<address id="x3">&nbsp;</address>
+			<h1 id="x4">&nbsp;</h1>
+			<h2 id="x5">&nbsp;</h2>
+			<h3 id="x6">&nbsp;</h3>
+			<h4 id="x7">&nbsp;</h4>
+			<h5 id="x8">&nbsp;</h5>
+			<h6 id="x9">&nbsp;</h6>
+		</div>
+	</body>
+</html>

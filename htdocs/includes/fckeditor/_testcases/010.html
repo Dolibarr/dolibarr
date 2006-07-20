@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: 010.html
+ * 	Test page.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html>
+<head>
+	<title>FCKeditor - Sample</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="robots" content="noindex, nofollow">
+	<link href="testcases.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="../fckeditor.js"></script>
+	<script>
+
+function SubmitForm()
+{
+	document.forms[0].submit() ;
+}
+
+function SetToolbar( toolbarName )
+{
+	// Get the editor instance that we want to interact with.
+	var oEditor = FCKeditorAPI.GetInstance('FCKeditor1') ;
+	oEditor.ToolbarSet.Load( toolbarName ) ;
+}
+
+	</script>
+</head>
+<body>
+	<h1>
+		FCKeditor - Test 010</h1>
+	<p>
+		<strong>Expected results</strong>: The editor content must be loaded and the the
+		user must be able to change the toolbar dinamically (without reloading the page).<br>
+		<strong>Configurations</strong>: Default<br>
+		<strong>Steps to&nbsp;Reproduce</strong>:
+	</p>
+	<ol>
+		<li>Wait the editor to load.</li>
+		<li>Select some text and format it.</li>
+		<li>Select the "Basic" toolbar.</li>
+		<li>Format more text.</li>
+		<li>Select the "Default" toolbar.</li>
+		<li>Go to "Source" view.</li>
+		<li>Select the "Basic" toolbar.</li>
+		<li>Select the "Default" toolbar.</li>
+		<li>Go to "WYSIWYG" view.</li>
+		<li>Hit submit button and check the posted data.</li></ol>
+	<p>
+		<hr>
+	</p>
+	Select the toolbar you want to load:<br>
+	<select onchange="SetToolbar( this.value );">
+		<option value="Default" selected>Default</option>
+		<option value="Basic">Basic</option>
+	</select>
+	<br>
+	<br>
+	<form action="sampleposteddata.asp" method="post" target="_blank">
+		<script type="text/javascript">
+<!--
+// Automatically calculates the editor base path based on the _samples directory.
+// This is usefull only for these samples. A real application should use something like this:
+// oFCKeditor.BasePath = '/fckeditor/' ;	// '/fckeditor/' is the default value.
+var sBasePath = document.location.pathname.substring(0,document.location.pathname.lastIndexOf('_testcases')) ;
+
+var oFCKeditor = new FCKeditor( 'FCKeditor1' ) ;
+oFCKeditor.BasePath	= sBasePath ;
+oFCKeditor.Value	= 'This is some <strong>sample text</strong>. You are using <a href="http://www.fckeditor.net/">FCKeditor</a>.' ;
+oFCKeditor.Create() ;
+//-->
+		</script>
+		<br>
+		<input type="submit" value="Submit">
+	</form>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: replace.html
+ * 	This is the sample "Replace" plugin window.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta content="noindex, nofollow" name="robots">
+		<script type="text/javascript">
+
+var oEditor = window.parent.InnerDialogLoaded() ;
+
+function OnLoad()
+{
+	// First of all, translate the dialog box texts
+	oEditor.FCKLanguageManager.TranslatePage( document ) ;
+
+	window.parent.SetAutoSize( true ) ;
+}
+
+function btnStat(frm)
+{
+	document.getElementById('btnReplace').disabled = 
+		document.getElementById('btnReplaceAll').disabled = 
+			( document.getElementById('txtFind').value.length == 0 ) ;
+}
+
+function ReplaceTextNodes( parentNode, regex, replaceValue, replaceAll, hasFound )
+{
+	for ( var i = 0 ; i < parentNode.childNodes.length ; i++ )
+	{
+		var oNode = parentNode.childNodes[i] ;
+		if ( oNode.nodeType == 3 )
+		{
+			var sReplaced = oNode.nodeValue.replace( regex, replaceValue ) ;
+			if ( oNode.nodeValue != sReplaced )
+			{
+				oNode.nodeValue = sReplaced ;
+				if ( ! replaceAll )
+					return true ;
+				hasFound = true ;
+			}
+		}
+
+		hasFound = ReplaceTextNodes( oNode, regex, replaceValue, replaceAll, hasFound ) ;
+		if ( ! replaceAll && hasFound )
+			return true ;
+	}
+	
+	return hasFound ;
+}
+
+function GetRegexExpr()
+{
+	if ( document.getElementById('chkWord').checked )
+		var sExpr = '\\b' + document.getElementById('txtFind').value + '\\b' ;
+	else
+		var sExpr = document.getElementById('txtFind').value ;
+		
+	return sExpr ;
+}
+
+function GetCase() 
+{
+	return ( document.getElementById('chkCase').checked ? '' : 'i' ) ;
+}
+
+function Replace()
+{
+	var oRegex = new RegExp( GetRegexExpr(), GetCase() ) ;
+	ReplaceTextNodes( oEditor.FCK.EditorDocument.body, oRegex, document.getElementById('txtReplace').value, false ) ;
+}
+
+function ReplaceAll()
+{
+	var oRegex = new RegExp( GetRegexExpr(), GetCase() + 'g' ) ;
+	ReplaceTextNodes( oEditor.FCK.EditorDocument.body, oRegex, document.getElementById('txtReplace').value, true ) ;
+	window.parent.Cancel() ;
+}
+		</script>
+	</head>
+	<body onload="OnLoad()" scroll="no" style="OVERFLOW: hidden">
+		<div align="center">
+			This is my Plugin!
+		</div>
+		<table cellSpacing="3" cellPadding="2" width="100%" border="0">
+			<tr>
+				<td noWrap><label for="txtFind" fckLang="DlgMyReplaceFindLbl">Find what:</label>
+				</td>
+				<td width="100%"><input id="txtFind" onkeyup="btnStat(this.form)" style="WIDTH: 100%" tabIndex="1" type="text">
+				</td>
+				<td><input id="btnReplace" style="WIDTH: 100%" disabled onclick="Replace();" type="button"
+						value="Replace" fckLang="DlgMyReplaceReplaceBtn">
+				</td>
+			</tr>
+			<tr>
+				<td vAlign="top" nowrap><label for="txtReplace" fckLang="DlgMyReplaceReplaceLbl">Replace 
+						with:</label>
+				</td>
+				<td vAlign="top"><input id="txtReplace" style="WIDTH: 100%" tabIndex="2" type="text">
+				</td>
+				<td><input id="btnReplaceAll" disabled onclick="ReplaceAll()" type="button" value="Replace All"
+						fckLang="DlgMyReplaceReplAllBtn">
+				</td>
+			</tr>
+			<tr>
+				<td vAlign="bottom" colSpan="3">&nbsp;<input id="chkCase" tabIndex="3" type="checkbox"><label for="chkCase" fckLang="DlgMyReplaceCaseChk">Match 
+						case</label>
+					<br>
+					&nbsp;<input id="chkWord" tabIndex="4" type="checkbox"><label for="chkWord" fckLang="DlgMyReplaceWordChk">Match 
+						whole word</label>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

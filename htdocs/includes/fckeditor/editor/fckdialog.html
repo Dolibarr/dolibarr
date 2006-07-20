@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: fckdialog.html
+ * 	This page is used by all dialog box as the container.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="robots" content="noindex, nofollow" />
+		<script type="text/javascript">
+
+// On some Gecko browsers (probably over slow connections) the
+// "dialogArguments" are not set so we must get it from the opener window.
+if ( !window.dialogArguments )
+	window.dialogArguments = window.opener.FCKLastDialogInfo ;
+
+// Sets the Skin CSS
+document.write( '<link href="' + window.dialogArguments.Editor.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;
+
+// Sets the language direction.
+window.document.dir = window.dialogArguments.Editor.FCKLang.Dir ;
+
+var sTitle = window.dialogArguments.Title ;
+document.write( '<title>' + sTitle + '<\/title>' ) ;
+
+function LoadInnerDialog()
+{
+	// The following value is set, so the editor can check that the dialog has been correctly opened.
+	window.setTimeout( function() { window.returnValue = true ; }, 100 ) ;
+
+	if ( window.onresize )
+		window.onresize() ;
+
+	// First of all, translate the dialog box contents.
+	window.dialogArguments.Editor.FCKLanguageManager.TranslatePage( document ) ;
+
+	window.frames["frmMain"].document.location.href = window.dialogArguments.Page ;
+}
+
+function InnerDialogLoaded()
+{
+	var oInnerDoc = document.getElementById('frmMain').contentWindow.document ;
+
+	// Set the language direction.
+	oInnerDoc.dir = window.dialogArguments.Editor.FCKLang.Dir ;
+
+	// Sets the Skin CSS.
+	oInnerDoc.write( '<link href="' + window.dialogArguments.Editor.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;
+
+	SetOnKeyDown( oInnerDoc ) ;
+	DisableContextMenu( oInnerDoc ) ;
+
+	return window.dialogArguments.Editor ;
+}
+
+function SetOkButton( showIt )
+{
+	document.getElementById('btnOk').style.visibility = ( showIt ? '' : 'hidden' ) ;
+}
+
+var bAutoSize = false ;
+
+function SetAutoSize( autoSize )
+{
+	bAutoSize = autoSize ;
+	RefreshSize() ;
+}
+
+function RefreshSize()
+{
+	if ( bAutoSize )
+	{
+		var oInnerDoc = document.getElementById('frmMain').contentWindow.document ;
+
+		var iFrameHeight ;
+		if ( document.all )
+			iFrameHeight = oInnerDoc.body.offsetHeight ;
+		else
+			iFrameHeight = document.getElementById('frmMain').contentWindow.innerHeight ;
+
+		var iInnerHeight = oInnerDoc.body.scrollHeight ;
+
+		var iDiff = iInnerHeight - iFrameHeight ;
+
+		if ( iDiff > 0 )
+		{
+			if ( document.all )
+				window.dialogHeight = ( parseInt( window.dialogHeight ) + iDiff ) + 'px' ;
+			else
+				window.resizeBy( 0, iDiff ) ;
+		}
+	}
+}
+
+function Ok()
+{
+	if ( window.frames["frmMain"].Ok && window.frames["frmMain"].Ok() )
+		Cancel() ;
+}
+
+function Cancel()
+{
+	// All dialog windows will fire the "OnSelectionChange" event, not matter
+	// the Ok or Cancel button have being pressed.
+	window.dialogArguments.Editor.FCK.Events.FireEvent( 'OnSelectionChange' ) ;
+	window.close() ;
+}
+
+// Object that holds all available tabs.
+var oTabs = new Object() ;
+
+function TabDiv_OnClick()
+{
+	SetSelectedTab( this.TabCode ) ;
+}
+
+function AddTab( tabCode, tabText, startHidden )
+{
+	if ( typeof( oTabs[ tabCode ] ) != 'undefined' )
+		return ;
+
+	var eTabsRow = document.getElementById( 'Tabs' ) ;
+
+	var oCell = eTabsRow.insertCell(  eTabsRow.cells.length - 1 ) ;
+	oCell.noWrap = true ;
+
+	var oDiv = document.createElement( 'DIV' ) ;
+	oDiv.className = 'PopupTab' ;
+	oDiv.innerHTML = tabText ;
+	oDiv.TabCode = tabCode ;
+	oDiv.onclick = TabDiv_OnClick ;
+
+	if ( startHidden )
+		oDiv.style.display = 'none' ;
+
+	eTabsRow = document.getElementById( 'TabsRow' ) ;
+
+	oCell.appendChild( oDiv ) ;
+
+	if ( eTabsRow.style.display == 'none' )
+	{
+		var eTitleArea = document.getElementById( 'TitleArea' ) ;
+		eTitleArea.className = 'PopupTitle' ;
+
+		oDiv.className = 'PopupTabSelected' ;
+		eTabsRow.style.display = '' ;
+
+		if ( ! window.dialogArguments.Editor.FCKBrowserInfo.IsIE )
+			window.onresize() ;
+	}
+
+	oTabs[ tabCode ] = oDiv ;
+	oTabs[ tabCode ].Index = oTabs.length - 1 ;
+}
+
+function SetSelectedTab( tabCode )
+{
+	for ( var sCode in oTabs )
+	{
+		if ( sCode == tabCode )
+			oTabs[sCode].className = 'PopupTabSelected' ;
+		else
+			oTabs[sCode].className = 'PopupTab' ;
+	}
+
+	if ( typeof( window.frames["frmMain"].OnDialogTabChange ) == 'function' )
+		window.frames["frmMain"].OnDialogTabChange( tabCode ) ;
+}
+
+function SetTabVisibility( tabCode, isVisible )
+{
+	var oTab = oTabs[ tabCode ] ;
+	oTab.style.display = isVisible ? '' : 'none' ;
+
+	if ( ! isVisible && oTab.className == 'PopupTabSelected' )
+	{
+		for ( var sCode in oTabs )
+		{
+			if ( oTabs[sCode].style.display != 'none' )
+			{
+				SetSelectedTab( sCode ) ;
+				break ;
+			}
+		}
+	}
+}
+
+function SetOnKeyDown( targetDocument )
+{
+	targetDocument.onkeydown = function ( e )
+	{
+		e = e || event || this.parentWindow.event ;
+		switch ( e.keyCode )
+		{
+			case 13 :		// ENTER
+				var oTarget = e.srcElement || e.target ;
+				if ( oTarget.tagName == 'TEXTAREA' ) return ;
+				Ok() ;
+				return false ;
+			case 27 :		// ESC
+				Cancel() ;
+				return false ;
+				break ;
+		}
+		return true ;
+	}
+}
+SetOnKeyDown( document ) ;
+
+function DisableContextMenu( targetDocument )
+{
+	if ( window.dialogArguments.Editor.FCKBrowserInfo.IsIE ) return ;
+
+	// Disable Right-Click
+	var oOnContextMenu = function( e )
+	{
+		var sTagName = e.target.tagName ;
+		if ( ! ( ( sTagName == "INPUT" && e.target.type == "text" ) || sTagName == "TEXTAREA" ) )
+			e.preventDefault() ;
+	}
+	targetDocument.addEventListener( 'contextmenu', oOnContextMenu, true ) ;
+}
+DisableContextMenu( document ) ;
+
+if ( ! window.dialogArguments.Editor.FCKBrowserInfo.IsIE )
+{
+	window.onresize = function()
+	{
+		var oFrame = document.getElementById("frmMain") ;
+
+		if ( ! oFrame )
+		return ;
+
+		oFrame.height = 0 ;
+
+		var oCell = document.getElementById("FrameCell") ;
+		var iHeight = oCell.offsetHeight ;
+
+		oFrame.height = iHeight - 2 ;
+	}
+}
+
+if ( window.dialogArguments.Editor.FCKBrowserInfo.IsIE )
+{
+	function Window_OnBeforeUnload()
+	{
+		for ( var t in oTabs )
+			oTabs[t] = null ;
+
+		window.dialogArguments.Editor = null ;
+	}
+	window.attachEvent( "onbeforeunload", Window_OnBeforeUnload ) ;
+}
+
+function Window_OnClose()
+{
+	window.dialogArguments.Editor.FCKFocusManager.Unlock() ;
+}
+
+if ( window.addEventListener )
+	window.addEventListener( 'unload', Window_OnClose, false ) ;
+
+		</script>
+	</head>
+	<body onload="LoadInnerDialog();" class="PopupBody">
+		<table height="100%" cellspacing="0" cellpadding="0" width="100%" border="0">
+			<tr>
+				<td id="TitleArea" class="PopupTitle PopupTitleBorder">
+					<script type="text/javascript">
+document.write( sTitle ) ;
+					</script>
+				</td>
+			</tr>
+			<tr id="TabsRow" style="DISPLAY: none">
+				<td class="PopupTabArea">
+					<table border="0" cellpadding="0" cellspacing="0" width="100%">
+						<tr id="Tabs" onselectstart="return false;">
+							<td class="PopupTabEmptyArea">&nbsp;</td>
+							<td class="PopupTabEmptyArea" width="100%">&nbsp;</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td id="FrameCell" height="100%" valign="top">
+					<iframe id="frmMain" src="fckblank.html" name="frmMain" frameborder="0" height="100%" width="100%" scrolling="auto">
+					</iframe>
+				</td>
+			</tr>
+			<tr>
+				<td class="PopupButtons">
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="100%">&nbsp;</td>
+							<td nowrap="nowrap">
+								<input id="btnOk" style="VISIBILITY: hidden; WIDTH: 100px" type="button" value="Ok" class="Button"
+									onclick="Ok();" fckLang="DlgBtnOK" />&nbsp; <input type="button" value="Cancel" class="Button" onclick="Cancel();" fckLang="DlgBtnCancel" />
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

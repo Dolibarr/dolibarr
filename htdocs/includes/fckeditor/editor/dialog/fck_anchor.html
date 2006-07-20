@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: fck_anchor.html
+ * 	Anchor dialog window.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+-->
+<html>
+	<head>
+		<title>Anchor Properties</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta content="noindex, nofollow" name="robots">
+		<script src="common/fck_dialog_common.js" type="text/javascript"></script>
+		<script type="text/javascript">
+
+var oEditor	= window.parent.InnerDialogLoaded() ;
+var FCK		= oEditor.FCK ;
+
+// Gets the document DOM
+var oDOM = oEditor.FCK.EditorDocument ;
+
+var oFakeImage = FCK.Selection.GetSelectedElement() ;
+var oAnchor ;
+
+if ( oFakeImage )
+{
+	if ( oFakeImage.tagName == 'IMG' && oFakeImage.getAttribute('_fckanchor') )
+		oAnchor = FCK.GetRealElement( oFakeImage ) ;
+	else
+		oFakeImage = null ;
+}
+
+window.onload = function()
+{
+	// First of all, translate the dialog box texts
+	oEditor.FCKLanguageManager.TranslatePage(document) ;
+
+	if ( oAnchor )
+		GetE('txtName').value = oAnchor.name ;
+	else
+		oAnchor = null ;
+
+	window.parent.SetOkButton( true ) ;
+}
+
+function Ok()
+{
+	if ( GetE('txtName').value.length == 0 )
+	{
+		alert( oEditor.FCKLang.DlgAnchorErrorName ) ;
+		return false ;
+	}
+	
+	oEditor.FCKUndo.SaveUndoStep() ;
+	
+	oAnchor		= FCK.EditorDocument.createElement( 'DIV' ) ;
+	oAnchor.innerHTML = '<a name="' + GetE('txtName').value + '"><\/a>' ;
+	oAnchor = oAnchor.firstChild ;
+
+	oFakeImage	= oEditor.FCKDocumentProcessor_CreateFakeImage( 'FCK__Anchor', oAnchor ) ;
+	oFakeImage.setAttribute( '_fckanchor', 'true', 0 ) ;
+	oFakeImage	= FCK.InsertElementAndGetIt( oFakeImage ) ;
+
+//	oEditor.FCK.InsertHtml( '<a name="' + GetE('txtName').value + '"><\/a>' ) ;
+	return true ;
+}
+
+		</script>
+	</head>
+	<body style="OVERFLOW: hidden" scroll="no">
+		<table height="100%" width="100%">
+			<tr>
+				<td align="center">
+					<table border="0" cellpadding="0" cellspacing="0" width="80%">
+						<tr>
+							<td>
+								<span fckLang="DlgAnchorName">Anchor Name</span><BR>
+								<input id="txtName" style="WIDTH: 100%" type="text">
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
