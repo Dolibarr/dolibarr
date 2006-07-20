@@ -270,6 +270,8 @@ class Conf
 		$this->export->dir_ouput=DOL_DATA_ROOT."/export";
 		// Module ldap
 		$this->ldap->enabled=defined("MAIN_MODULE_LDAP")?MAIN_MODULE_LDAP:0;
+		// Module FCKeditor
+		$this->fckeditor->enabled=defined("MAIN_MODULE_FCKEDITOR")?MAIN_MODULE_FCKEDITOR:0;
 
 
 		/*

@@ -450,7 +450,18 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-    print '<textarea name="desc" rows="4" cols="50">';
+    
+    if ($conf->fckeditor->enabled)
+        {
+        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+        	$oFCKeditor = new FCKeditor('desc');
+        	$oFCKeditor->Create() ;
+        }
+        else
+        {
+        	print '<textarea name="desc" rows="4" cols="50">';
+        }
+        
     print "</textarea></td></tr>";
 
     if ($_GET["type"] == 1)
@@ -753,9 +764,22 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
-        print '<textarea name="desc" rows="4" cols="50">';
-        print $product->description;
-        print "</textarea></td></tr>";
+        print "\n";
+        if ($conf->fckeditor->enabled)
+        {
+        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+        	$oFCKeditor = new FCKeditor('desc');
+        	$oFCKeditor->Value		= $product->description;
+        	$oFCKeditor->Create() ;
+        }
+        else
+        {
+        	print '<textarea name="desc" rows="4" cols="50">';
+        	print $product->description;
+        	print "</textarea>";
+        	print "</td></tr>";
+        }
+        print "\n";
 
         if ($product->type == 1)
         {

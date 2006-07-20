@@ -146,6 +146,7 @@ $langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
  * Pour MagpieRss:      MAGPIERSS_PATH
  * Pour JPGraph:        JPGRAPH_PATH
  * Pour NuSOAP:         NUSOAP_PATH
+ * Pour TCPDF:          TCPDF_PATH
  */
 // Les path racines
 if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
@@ -155,8 +156,11 @@ if (! defined('PHPLOT_PATH'))         { define('PHPLOT_PATH',        DOL_DOCUMEN
 if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
 if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
 if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
+if (! defined('TCPDF_PATH'))          { define('TCPDF_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/tcpdf/'); }
 // Les autres path
-if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH . 'font/'); }
+if (! defined('FPDF_FONTPATH') && ! $conf->fckeditor->enabled){ 
+	define('FPDF_FONTPATH', FPDF_PATH . 'font/');
+}else{ define('FPDF_FONTPATH', TCPDF_PATH . 'fonts/');}
 if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
 if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   DOL_DATA_ROOT .'/rsscache'); }
 

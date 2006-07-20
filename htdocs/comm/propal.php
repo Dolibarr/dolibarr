@@ -1159,7 +1159,18 @@ if ($_GET['propalid'] > 0)
 					print ' - '.nl2br($objp->product);
 					print '<br>';
 				}
-				print '<textarea name="desc" cols="50" class="flat" rows="'.ROWS_2.'">'.$objp->description.'</textarea></td>';
+				if ($conf->fckeditor->enabled)
+        {
+        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+        	$oFCKeditor = new FCKeditor('desc');
+        	$oFCKeditor->Value		= $objp->description;
+        	$oFCKeditor->Create() ;
+        }
+        else
+        {
+        	print '<textarea name="desc" cols="50" class="flat" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
+        }
+				print '</td>';
 				print '<td align="right">';
 				if($societe->tva_assuj == "0")
 				print '<input type="hidden" name="tva_tx" value="0">0';

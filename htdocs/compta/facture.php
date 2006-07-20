@@ -2203,7 +2203,7 @@ else
 				}
 			
 				// On vérifie si la facture est supprimable. Si oui, on propose bouton supprimer
-				if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
+				if ($fac->statut == 0 && $fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
 				{
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 				}
