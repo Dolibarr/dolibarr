@@ -1895,7 +1895,19 @@ else
 							print ' - '.nl2br($objp->product);
 							print '<br>';
 						}
-						print '<textarea name="desc" class="flat" cols="70" rows="'.ROWS_2.'">'.$objp->description.'</textarea></td>';
+						// éditeur wysiwyg
+						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+						{
+							require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+							$oFCKeditor = new FCKeditor('desc');
+							$oFCKeditor->Value		= $objp->description;
+							$oFCKeditor->Create() ;
+						}
+						else
+						{
+							print '<textarea name="desc" class="flat" cols="70" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
+						}
+						print '</td>';
 						print '<td align="right">';
 						if(! $soc->tva_assuj)
 							print '<input type="hidden" name="tva_tx" value="0">0';

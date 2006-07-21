@@ -22,6 +22,7 @@ NextValue=Next value
 ComptaSetup=Accounting module setup
 UserSetup=Users' management setup
 Setup=Setup
+Activation=Activation
 SetupShort=Setup
 OtherOptions=Other options
 OtherSetup=Other setup
@@ -513,7 +514,7 @@ BarcodeEncodeModule=Barcode' encodage type
 ##### Prelevements #####
 WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
-ExternalRSSSetup=External RSS imports setup
+ExternalRSSSetup=External RSS imports setup<textarea></textarea>
 NewRSS=New RSS
 ##### Mailing #####
 MailingSetup=Mailing module setup
@@ -526,3 +527,6 @@ SendingsAbility=Support sendings sheets for customer deliveries
 DeliveryOrderNumberingModules=Products deliveries receipt numbering module
 DeliveryOrderModel=Products deliveries receipt model
 DeliveriesOrderAbility=Products deliveries receipt ability
+##### FCKeditor #####
+ActivateFCKeditor=Activate FCKeditor for:
+FCKeditorForProductDescription=Creation/edition of products/services description (in all modules)

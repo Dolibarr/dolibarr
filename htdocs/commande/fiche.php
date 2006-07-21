@@ -1352,7 +1352,19 @@ else
 							print ' - '.nl2br($objp->product);
 							print '<br>';
 						}
-						print '<textarea name="eldesc" class="flat" cols="50" rows="1">'.$objp->description.'</textarea></td>';
+						// éditeur wysiwyg
+						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+						{
+							require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+							$oFCKeditor = new FCKeditor('eldesc');
+							$oFCKeditor->Value		= $objp->description;
+							$oFCKeditor->Create() ;
+						}
+						else
+						{
+							print '<textarea name="eldesc" class="flat" cols="50" rows="1">'.$objp->description.'</textarea>';
+						}							
+						print '</td>';
 						print '<td align="right">';
 						if($soc->tva_assuj == "0")
 						print '<input type="hidden" name="tva_tx" value="0">0';

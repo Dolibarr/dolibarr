@@ -254,8 +254,15 @@ class pdf_crabe extends ModelePDFFactures
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                    $pdf->SetXY ($this->posxdesc-1, $curY);
-                    $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
+                    if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+                    {
+                    	$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+                    }
+                    else
+                    {
+                    	$pdf->SetXY ($this->posxdesc-1, $curY);
+                    	$pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
+                    }
 
                     $nexY = $pdf->GetY();
 

@@ -51,8 +51,8 @@ class modFckeditor extends DolibarrModules
 
     $this->name = "FCKeditor";
     $this->family = "technic";
-    $this->description = "Editeur wysiwyg";
-    $this->version = 'development';    // 'experimental' or 'dolibarr' or version
+    $this->description = "Editeur WYSIWYG";
+    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_FCKEDITOR';
     $this->special = 1;
 

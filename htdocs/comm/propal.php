@@ -1159,7 +1159,8 @@ if ($_GET['propalid'] > 0)
 					print ' - '.nl2br($objp->product);
 					print '<br>';
 				}
-				if ($conf->fckeditor->enabled)
+				// éditeur wysiwyg
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
         {
         	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
         	$oFCKeditor = new FCKeditor('desc');

@@ -22,6 +22,7 @@ NextValue=Prochaine valeur
 ComptaSetup=Configuration du module Comptabilité
 UserSetup=Configuration gestion des utilisateurs
 Setup=Configuration
+Activation=Activation
 SetupShort=Config
 OtherOptions=Autres options
 OtherSetup=Divers
@@ -526,3 +527,6 @@ SendingsAbility=Prise en charge des bons d'expéditions vers le client
 DeliveryOrderNumberingModules=Module de numérotation des bons de réception client
 DeliveryOrderModel=Modèle de bon de réception client
 DeliveriesOrderAbility=Prise en charge des bons de réception client
+##### FCKeditor #####
+ActivateFCKeditor=Activer FCKeditor pour :
+FCKeditorForProductDescription=Création/édition de la description des produits/services (dans tous les modules)
