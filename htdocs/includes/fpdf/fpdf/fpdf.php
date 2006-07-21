@@ -187,7 +187,7 @@ var $PDFVersion;         //PDF version number
 *******************************************************************************/
 function FPDF($orientation='P',$unit='mm',$format='A4')
 {
-	// ajout pour HTML2PDF
+	// ajout pour HTML PARSER
 	$this->fontlist = array("arial", "times", "courier", "helvetica", "symbol");
 	$this->b = 0;
 	$this->i = 0;
