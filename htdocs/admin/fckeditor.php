@@ -1,0 +1,121 @@
+<?php
+/* Copyright (C) 2004-2006 Laurent Destailleur       <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Andre Cianfarani          <acianfa@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ */
+
+/**
+	    \file       htdocs/admin/fckeditor.php
+		\ingroup    fckeditor
+		\brief      Page d'activation du module FCKeditor dans les autres modules
+		\version    $Revision$
+*/
+
+require("./pre.inc.php");
+
+$langs->load("admin");
+$langs->load("fckeditor");
+
+if (!$user->admin)
+  accessforbidden();
+
+
+
+if ($_GET["action"] == 'activate_productdesc')
+{
+    dolibarr_set_const($db, "FCKEDITOR_ENABLE_PRODUCTDESC", "1");
+    Header("Location: fckeditor.php");
+    exit;
+}
+else if ($_GET["action"] == 'disable_productdesc')
+{
+	dolibarr_del_const($db, "FCKEDITOR_ENABLE_PRODUCTDESC");
+    Header("Location: fckeditor.php");
+    exit;
+}
+
+
+/*
+ * Affiche page
+ */
+
+llxHeader("","");
+
+$html=new Form($db);
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/fckeditor.php";
+$head[$h][1] = $langs->trans("Activation");
+$hselected=$h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/fckeditor_cfg.php";
+$head[$h][1] = $langs->trans("Setup");
+$h++;
+
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+
+/*
+ * Activation/désactivation de FCKeditor
+ */
+
+$var=true;
+
+// Module Propale
+$var=!$var;
+print "<form method=\"post\" action=\"fckeditor.php\">";
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("ActivateFCKeditor").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
+print "</tr>\n";
+print "<input type=\"hidden\" name=\"action\" value=\"productdesc\">";
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("FCKeditorForProductDescription").'</td>';
+print '<td align="center" width="20">';
+
+if($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC == 1)
+{
+	print img_tick();
+}
+
+print '</td>';
+print '<td align="center" width="100">';
+
+if($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC == 0)
+{
+	print '<a href="fckeditor.php?action=activate_productdesc">'.$langs->trans("Activate").'</a>';
+}
+else if($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC == 1)
+{
+	print '<a href="fckeditor.php?action=disable_productdesc">'.$langs->trans("Disable").'</a>';
+}
+
+print "</td>";
+print '</tr>';
+print '</table>';
+print '</form>';
+
+$db->close();
+
+llxFooter();
+?>
