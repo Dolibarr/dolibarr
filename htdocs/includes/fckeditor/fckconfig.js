@@ -41,7 +41,7 @@ FCKConfig.AutoGrowMax = 400 ;
 
 FCKConfig.ProtectedSource.Add( /<script[\s\S]*?\/script>/gi ) ;	// <SCRIPT> tags.
 // FCKConfig.ProtectedSource.Add( /<%[\s\S]*?%>/g ) ;	// ASP style server side code <%...%>
-// FCKConfig.ProtectedSource.Add( /<\?[\s\S]*?\?>/g ) ;	// PHP style server side code
+FCKConfig.ProtectedSource.Add( /<\?[\s\S]*?\?>/g ) ;	// PHP style server side code
 // FCKConfig.ProtectedSource.Add( /(<asp:[^\>]+>[\s|\S]*?<\/asp:[^\>]+>)|(<asp:[^\>]+\/>)/gi ) ;	// ASP.Net style tags <asp:control>
 
 FCKConfig.AutoDetectLanguage	= true ;
@@ -54,8 +54,8 @@ FCKConfig.IncludeGreekEntities	= true ;
 
 FCKConfig.FillEmptyBlocks	= true ;
 
-FCKConfig.FormatSource		= true ;
-FCKConfig.FormatOutput		= true ;
+FCKConfig.FormatSource		= false ;
+FCKConfig.FormatOutput		= false ;
 FCKConfig.FormatIndentator	= '    ' ;
 
 FCKConfig.ForceStrongEm = true ;

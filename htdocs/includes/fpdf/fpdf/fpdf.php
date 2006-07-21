@@ -1,5 +1,6 @@
 <?php
 /*******************************************************************************
+* Modifié par Régis Houssin                                                    *
 * Logiciel : FPDF                                                              *
 * Version :  1.53                                                              *
 * Date :     31/12/2004                                                        *
@@ -8,6 +9,16 @@
 *                                                                              *
 * Vous pouvez utiliser et modifier ce logiciel comme vous le souhaitez.        *
 *******************************************************************************/
+
+/*
+* $Id$
+* $Source$
+*/
+
+/**
+ * height of cell repect font height
+ */
+define("K_CELL_HEIGHT_RATIO", 1.25);
 
 if(!class_exists('FPDF'))
 {
@@ -70,6 +81,105 @@ var $creator;            //creator
 var $AliasNbPages;       //alias for total number of pages
 var $PDFVersion;         //PDF version number
 
+		// variables pour HTML PARSER
+		
+		/**
+		 * @var HTML PARSER: store current link.
+		 * @access private
+		 */
+		var $HREF;
+		
+		/**
+		 * @var HTML PARSER: store font list.
+		 * @access private
+		 */
+		var $fontList;
+		
+		/**
+		 * @var HTML PARSER: true when font attribute is set.
+		 * @access private
+		 */
+		var $issetfont;
+		
+		/**
+		 * @var HTML PARSER: true when color attribute is set.
+		 * @access private
+		 */
+		var $issetcolor;
+		
+		/**
+		 * @var HTML PARSER: true in case of ordered list (OL), false otherwise.
+		 * @access private
+		 */
+		var $listordered = false;
+		
+		/**
+		 * @var HTML PARSER: count list items.
+		 * @access private
+		 */
+		var $listcount = 0;
+		
+		/**
+		 * @var HTML PARSER: size of table border.
+		 * @access private
+		 */
+		var $tableborder = 0;
+		
+		/**
+		 * @var HTML PARSER: true at the beginning of table.
+		 * @access private
+		 */
+		var $tdbegin = false;
+		
+		/**
+		 * @var HTML PARSER: table width.
+		 * @access private
+		 */
+		var $tdwidth = 0;
+		
+		/**
+		 * @var HTML PARSER: table height.
+		 * @access private
+		 */
+		var $tdheight = 0;
+		
+		/**
+		 * @var HTML PARSER: table align.
+		 * @access private
+		 */
+		var $tdalign = "L";
+		
+		/**
+		 * @var HTML PARSER: table background color.
+		 * @access private
+		 */
+		var $tdbgcolor = false;
+		
+		/**
+		 * @var Bold font style status.
+		 * @access private
+		 */
+		var $b;
+		
+		/**
+		 * @var Underlined font style status.
+		 * @access private
+		 */
+		var $u;
+		
+		/**
+		 * @var Italic font style status.
+		 * @access private
+		 */
+		var $i;
+		
+		/**
+		 * @var spacer for LI tags.
+		 * @access private
+		 */
+		var $lispacer = "";
+		
+
 /*******************************************************************************
 *                                                                              *
 *                               Public methods                                 *
@@ -77,6 +187,21 @@ var $PDFVersion;         //PDF version number
 *******************************************************************************/
 function FPDF($orientation='P',$unit='mm',$format='A4')
 {
+	// ajout pour HTML2PDF
+	$this->fontlist = array("arial", "times", "courier", "helvetica", "symbol");
+	$this->b = 0;
+	$this->i = 0;
+	$this->u = 0;
+	$this->HREF = '';
+	$this->issetfont = false;
+	$this->issetcolor = false;
+	$this->tableborder = 0;
+	$this->tdbegin = false;
+	$this->tdwidth=  0;
+	$this->tdheight = 0;
+	$this->tdalign = "L";
+	$this->tdbgcolor = false;
+	
 	//Some checks
 	$this->_dochecks();
 	//Initialization of properties
@@ -121,17 +246,107 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
 	//Page format
 	if(is_string($format))
 	{
+		// Added new page formats (45 standard ISO paper formats and 4 american common formats).
+		// Paper cordinates are calculated in this way: (inches * 72) where (1 inch = 2.54 cm)
 		$format=strtolower($format);
-		if($format=='a3')
+		if($format=='4a0')
+			$format=array(4767.87,6740.79);
+		elseif($format=='2a0')
+			$format=array(3370.39,4767.87);
+		elseif($format=='a0')
+			$format=array(2383.94,3370.39);
+		elseif($format=='a1')
+			$format=array(1683.78,2383.94);
+		elseif($format=='a2')
+			$format=array(1190.55,1683.78);
+		elseif($format=='a3')
 			$format=array(841.89,1190.55);
 		elseif($format=='a4')
 			$format=array(595.28,841.89);
 		elseif($format=='a5')
 			$format=array(420.94,595.28);
+		elseif($format=='a6')
+			$format=array(297.64,419.53);
+		elseif($format=='a7')
+			$format=array(209.76,297.64);
+		elseif($format=='a8')
+			$format=array(147.40,209.76);
+		elseif($format=='a9')
+			$format=array(104.88,147.40);
+		elseif($format=='a10')
+			$format=array(73.70,104.88);
+		elseif($format=='b0')
+			$format=array(2834.65,4008.19);
+		elseif($format=='b1')
+			$format=array(2004.09,2834.65);
+		elseif($format=='b2')
+			$format=array(1417.32,2004.09);
+		elseif($format=='b3')
+			$format=array(1000.63,1417.32);
+		elseif($format=='b4')
+			$format=array(708.66,1000.63);
+		elseif($format=='b5')
+			$format=array(498.90,708.66);
+		elseif($format=='b6')
+			$format=array(354.33,498.90);
+		elseif($format=='b7')
+			$format=array(249.45,354.33);
+		elseif($format=='b8')
+			$format=array(175.75,249.45);
+		elseif($format=='b9')
+			$format=array(124.72,175.75);
+		elseif($format=='b10')
+			$format=array(87.87,124.72);
+		elseif($format=='c0')
+			$format=array(2599.37,3676.54);
+		elseif($format=='c1')
+			$format=array(1836.85,2599.37);
+		elseif($format=='c2')
+			$format=array(1298.27,1836.85);
+		elseif($format=='c3')
+			$format=array(918.43,1298.27);
+		elseif($format=='c4')
+			$format=array(649.13,918.43);
+		elseif($format=='c5')
+			$format=array(459.21,649.13);
+		elseif($format=='c6')
+			$format=array(323.15,459.21);
+		elseif($format=='c7')
+			$format=array(229.61,323.15);
+		elseif($format=='c8')
+			$format=array(161.57,229.61);
+		elseif($format=='c9')
+			$format=array(113.39,161.57);
+		elseif($format=='c10')
+			$format=array(79.37,113.39);
+		elseif($format=='ra0')
+			$format=array(2437.80,3458.27);
+		elseif($format=='ra1')
+			$format=array(1729.13,2437.80);
+		elseif($format=='ra2')
+			$format=array(1218.90,1729.13);
+		elseif($format=='ra3')
+			$format=array(864.57,1218.90);
+		elseif($format=='ra4')
+			$format=array(609.45,864.57);
+		elseif($format=='sra0')
+			$format=array(2551.18,3628.35);
+		elseif($format=='sra1')
+			$format=array(1814.17,2551.18);
+		elseif($format=='sra2')
+			$format=array(1275.59,1814.17);
+		elseif($format=='sra3')
+			$format=array(907.09,1275.59);
+		elseif($format=='sra4')
+			$format=array(637.80,907.09);
 		elseif($format=='letter')
 			$format=array(612,792);
 		elseif($format=='legal')
 			$format=array(612,1008);
+		elseif($format=='executive')
+			$format=array(521.86,756);
+		elseif($format=='folio')
+			$format=array(612,936);
 		else
 			$this->Error('Unknown page format: '.$format);
 		$this->fwPt=$format[0];
@@ -1633,6 +1848,612 @@ function _out($s)
 	else
 		$this->buffer.=$s."\n";
 }
+
+    // --- HTML PARSER FUNCTIONS ---
+    
+    /**
+		 * Allows to preserve some HTML formatting.<br />
+		 * Supports: h1, h2, h3, h4, h5, h6, b, u, i, a, img, p, br, strong, em, font, blockquote, li, ul, ol, hr, td, th, tr, table, sup, sub, small
+		 * @param string $html text to display
+		 * @param boolean $ln if true add a new line after text (default = true)
+		 * @param int $fill Indicates if the background must be painted (1) or transparent (0). Default value: 0.
+		 */
+		function writeHTML($html, $ln=true, $fill=0) {
+						
+			// store some variables
+			$html=strip_tags($html,"<h1><h2><h3><h4><h5><h6><b><u><i><a><img><p><br><strong><em><font><blockquote><li><ul><ol><hr><td><th><tr><table><sup><sub><small>"); //remove all unsupported tags
+			//replace carriage returns, newlines and tabs
+			$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " "); 
+			$html = strtr($html, $repTable);
+			$pattern = '/(<[^>]+>)/Uu';
+			$a = preg_split($pattern, $html, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY); //explodes the string
+			
+			if (empty($this->lasth)) {
+				//set row height
+				$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO; 
+			}
+			
+			foreach($a as $key=>$element) {
+				if (!preg_match($pattern, $element)) {
+					//Text
+					if($this->HREF) {
+						$this->addHtmlLink($this->HREF, $element, $fill);
+					}
+					elseif($this->tdbegin) {
+						if((strlen(trim($element)) > 0) AND ($element != "&nbsp;")) {
+							// Cette version ne gère pas UTF8
+							//$this->Cell($this->tdwidth, $this->tdheight, $this->unhtmlentities($element), $this->tableborder, '', $this->tdalign, $this->tdbgcolor);
+							$this->Cell($this->tdwidth, $this->tdheight, utf8_decode($this->unhtmlentities($element)), $this->tableborder, '', $this->tdalign, $this->tdbgcolor);
+						}
+						elseif($element == "&nbsp;") {
+							$this->Cell($this->tdwidth, $this->tdheight, '', $this->tableborder, '', $this->tdalign, $this->tdbgcolor);
+						}
+					}
+					else {
+						// cette version ne gère pas UTF8
+						//$this->Write($this->lasth, stripslashes($this->unhtmlentities($element)), '', $fill);
+						$this->Write($this->lasth, stripslashes(utf8_decode($this->unhtmlentities($element))), '', $fill);
+					}
+				}
+				else {
+					$element = substr($element, 1, -1);
+					//Tag
+					if($element{0}=='/') {
+						$this->closedHTMLTagHandler(strtolower(substr($element, 1)));
+					}
+					else {
+						//Extract attributes
+						// get tag name
+						preg_match('/([a-zA-Z0-9]*)/', $element, $tag);
+						$tag = strtolower($tag[0]);
+						// get attributes
+						preg_match_all('/([^=\s]*)=["\']?([^"\']*)["\']?/', $element, $attr_array, PREG_PATTERN_ORDER);
+						$attr = array(); // reset attribute array
+						while(list($id,$name)=each($attr_array[1])) {
+							$attr[strtolower($name)] = $attr_array[2][$id];
+						}
+						$this->openHTMLTagHandler($tag, $attr, $fill);
+					}
+				}
+			}
+			if ($ln) {
+				$this->Ln($this->lasth);
+			}
+		}
+		
+		/**
+		 * Prints a cell (rectangular area) with optional borders, background color and html text string. The upper-left corner of the cell corresponds to the current position. After the call, the current position moves to the right or to the next line.<br />
+		 * If automatic page breaking is enabled and the cell goes beyond the limit, a page break is done before outputting.
+		 * @param float $w Cell width. If 0, the cell extends up to the right margin.
+		 * @param float $h Cell minimum height. The cell extends automatically if needed.
+		 * @param float $x upper-left corner X coordinate
+		 * @param float $y upper-left corner Y coordinate
+		 * @param string $html html text to print. Default value: empty string.
+		 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be either a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul>or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul>
+		 * @param int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right</li><li>1: to the beginning of the next line</li><li>2: below</li></ul>
+	Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
+		 * @param int $fill Indicates if the cell background must be painted (1) or transparent (0). Default value: 0.
+		 * @see Cell()
+		 */
+		function writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=0) {
+			
+			if (empty($this->lasth)) {
+				//set row height
+				$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO; 
+			}
+			
+			if (empty($x)) {
+				$x = $this->GetX();
+			}
+			if (empty($y)) {
+				$y = $this->GetY();
+			}
+			
+			// get current page number
+			$pagenum = $this->page;
+			
+			$this->SetX($x);
+			$this->SetY($y);
+					
+			if(empty($w)) {
+				$w = $this->fw - $x - $this->rMargin;
+			}
+			
+			// store original margin values
+			$lMargin = $this->lMargin;
+			$rMargin = $this->rMargin;
+			
+			// set new margin values
+			$this->SetLeftMargin($x);
+			$this->SetRightMargin($this->fw - $x - $w);
+					
+			// calculate remaining vertical space on page
+			$restspace = $this->getPageHeight() - $this->GetY() - $this->getBreakMargin();
+			
+			$this->writeHTML($html, true, $fill); // write html text
+			
+			$currentY =  $this->GetY();
+			
+			// check if a new page has been created
+			if ($this->page > $pagenum) {
+				// design a cell around the text on first page
+				$currentpage = $this->page;
+				$this->page = $pagenum;
+				$this->SetY($this->getPageHeight() - $restspace - $this->getBreakMargin());
+				$h = $restspace - 1;
+				$this->Cell($w, $h, "", $border, $ln, 'L', 0);
+				// design a cell around the text on last page
+				$this->page = $currentpage;
+				$h = $currentY - $this->tMargin;
+				$this->SetY($this->tMargin); // put cursor at the beginning of text
+				$this->Cell($w, $h, "", $border, $ln, 'L', 0);
+			} else {
+				$h = max($h, ($currentY - $y));
+				$this->SetY($y); // put cursor at the beginning of text
+				// design a cell around the text
+				$this->Cell($w, $h, "", $border, $ln, 'L', 0);
+			}
+			
+			// restore original margin values
+			$this->SetLeftMargin($lMargin);
+			$this->SetRightMargin($rMargin);
+			
+			if ($ln) {
+				$this->Ln(0);
+			}
+		}
+		
+		/**
+		 * Process opening tags.
+		 * @param string $tag tag name (in uppercase)
+		 * @param string $attr tag attribute (in uppercase)
+		 * @param int $fill Indicates if the cell background must be painted (1) or transparent (0). Default value: 0.
+		 * @access private
+		 */
+		function openHTMLTagHandler($tag, $attr, $fill=0) {
+			//Opening tag
+			switch($tag) {
+				case 'table': {
+					if ((isset($attr['border'])) AND ($attr['border'] != '')) {
+						$this->tableborder = $attr['border'];
+					}
+					else {
+						$this->tableborder = 0;
+					}
+					break;
+				}
+				case 'tr': {
+					break;
+				}
+				case 'td':
+				case 'th': {
+					if ((isset($attr['width'])) AND ($attr['width'] != '')) {
+						$this->tdwidth = ($attr['width']/4);
+					}
+					else {
+						$this->tdwidth = (($this->w - $this->lMargin - $this->rMargin) / $this->default_table_columns);
+					}
+					if ((isset($attr['height'])) AND ($attr['height'] != '')) {
+						$this->tdheight=($attr['height'] / $this->k);
+					}
+					else {
+						$this->tdheight = $this->lasth;
+					}
+					if ((isset($attr['align'])) AND ($attr['align'] != '')) {
+						switch ($attr['align']) {
+							case 'center': {
+								$this->tdalign = "C";
+								break;
+							}
+							case 'right': {
+								$this->tdalign = "R";
+								break;
+							}
+							default:
+							case 'left': {
+								$this->tdalign = "L";
+								break;
+							}
+						}
+					}
+					if ((isset($attr['bgcolor'])) AND ($attr['bgcolor'] != '')) {
+						$coul = $this->convertColorHexToDec($attr['bgcolor']);
+						$this->SetFillColor($coul['R'], $coul['G'], $coul['B']);
+						$this->tdbgcolor=true;
+					}
+					$this->tdbegin=true;
+					break;
+				}
+				case 'hr': {
+					$this->Ln();
+					if ((isset($attr['width'])) AND ($attr['width'] != '')) {
+						$hrWidth = $attr['width'];
+					}
+					else {
+						$hrWidth = $this->w - $this->lMargin - $this->rMargin;
+					}
+					$x = $this->GetX();
+					$y = $this->GetY();
+					$this->SetLineWidth(0.2);
+					$this->Line($x, $y, $x + $hrWidth, $y);
+					$this->SetLineWidth(0.2);
+					$this->Ln();
+					break;
+				}
+				case 'strong': {
+					$this->setStyle('b', true);
+					break;
+				}
+				case 'em': {
+					$this->setStyle('i', true);
+					break;
+				}
+				case 'b':
+				case 'i':
+				case 'u': {
+					$this->setStyle($tag, true);
+					break;
+				}
+				case 'a': {
+					$this->HREF = $attr['href'];
+					break;
+				}
+				case 'img': {
+					if(isset($attr['src'])) {
+						// replace relative path with real server path
+						$attr['src'] = str_replace(K_PATH_URL_CACHE, K_PATH_CACHE, $attr['src']);
+						if(!isset($attr['width'])) {
+							$attr['width'] = 0;
+						}
+						if(!isset($attr['height'])) {
+							$attr['height'] = 0;
+						}
+						
+						$this->Image($attr['src'], $this->GetX(),$this->GetY(), $this->pixelsToMillimeters($attr['width']), $this->pixelsToMillimeters($attr['height']));
+						//$this->SetX($this->img_rb_x);
+						$this->SetY($this->img_rb_y);
+						
+					}
+					break;
+				}
+				case 'ul': {
+					$this->listordered = false;
+					$this->listcount = 0;
+					break;
+				}
+				case 'ol': {
+					$this->listordered = true;
+					$this->listcount = 0;
+					break;
+				}
+				case 'li': {
+					$this->Ln();
+					if ($this->listordered) {
+						$this->lispacer = "    ".(++$this->listcount).". ";
+					}
+					else {
+						//unordered list simbol
+						$this->lispacer = "    -  ";
+					}
+					$this->Write($this->lasth, $this->lispacer, '', $fill);
+					break;
+				}
+				case 'tr':
+				case 'blockquote':
+				case 'br': {
+					$this->Ln();
+					if(strlen($this->lispacer) > 0) {
+						$this->x += $this->GetStringWidth($this->lispacer);
+					}
+					break;
+				}
+				case 'p': {
+					$this->Ln();
+					$this->Ln();
+					break;
+				}
+				case 'sup': {
+					$currentFontSize = $this->FontSize;
+					$this->tempfontsize = $this->FontSizePt;
+					$this->SetFontSize($this->FontSizePt * K_SMALL_RATIO);
+					$this->SetXY($this->GetX(), $this->GetY() - (($currentFontSize - $this->FontSize)*(K_SMALL_RATIO)));
+					break;
+				}
+				case 'sub': {
+					$currentFontSize = $this->FontSize;
+					$this->tempfontsize = $this->FontSizePt;
+					$this->SetFontSize($this->FontSizePt * K_SMALL_RATIO);
+					$this->SetXY($this->GetX(), $this->GetY() + (($currentFontSize - $this->FontSize)*(K_SMALL_RATIO)));
+					break;
+				}
+				case 'small': {
+					$currentFontSize = $this->FontSize;
+					$this->tempfontsize = $this->FontSizePt;
+					$this->SetFontSize($this->FontSizePt * K_SMALL_RATIO);
+					$this->SetXY($this->GetX(), $this->GetY() + (($currentFontSize - $this->FontSize)/3));
+					break;
+				}
+				case 'font': {
+					if (isset($attr['color']) AND $attr['color']!='') {
+						$coul = $this->convertColorHexToDec($attr['color']);
+						$this->SetTextColor($coul['R'],$coul['G'],$coul['B']);
+						$this->issetcolor=true;
+					}
+					if (isset($attr['face']) and in_array(strtolower($attr['face']), $this->fontlist)) {
+						$this->SetFont(strtolower($attr['FACE']));
+						$this->issetfont=true;
+					}
+					if (isset($attr['size'])) {
+						$headsize = intval($attr['size']);
+					} else {
+						$headsize = 0;
+					}
+					$currentFontSize = $this->FontSize;
+					$this->tempfontsize = $this->FontSizePt;
+					$this->SetFontSize($this->FontSizePt + $headsize);
+					$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO;
+					break;
+				}
+				case 'h1': 
+				case 'h2': 
+				case 'h3': 
+				case 'h4': 
+				case 'h5': 
+				case 'h6': {
+					$headsize = (4 - substr($tag, 1)) * 2;
+					$currentFontSize = $this->FontSize;
+					$this->tempfontsize = $this->FontSizePt;
+					$this->SetFontSize($this->FontSizePt + $headsize);
+					$this->setStyle('b', true);
+					$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO;
+					break;
+				}
+			}
+		}
+		
+		/**
+		 * Process closing tags.
+		 * @param string $tag tag name (in uppercase)
+		 * @access private
+		 */
+		function closedHTMLTagHandler($tag) {
+			//Closing tag
+			switch($tag) {
+				case 'td':
+				case 'th': {
+					$this->tdbegin = false;
+					$this->tdwidth = 0;
+					$this->tdheight = 0;
+					$this->tdalign = "L";
+					$this->tdbgcolor = false;
+					$this->SetFillColor($this->prevFillColor[0], $this->prevFillColor[1], $this->prevFillColor[2]);
+					break;
+				}
+				case 'tr': {
+					$this->Ln();
+					break;
+				}
+				case 'table': {
+					$this->tableborder=0;
+					break;
+				}
+				case 'strong': {
+					$this->setStyle('b', false);
+				}
+				case 'em': {
+					$this->setStyle('i', false);
+				}
+				case 'b':
+				case 'i':
+				case 'u': {
+					$this->setStyle($tag, false);
+					break;
+				}
+				case 'a': {
+					$this->HREF = '';
+					break;
+				}
+				case 'sup': {
+					$currentFontSize = $this->FontSize;
+					$this->SetFontSize($this->tempfontsize);
+					$this->tempfontsize = $this->FontSizePt;
+					$this->SetXY($this->GetX(), $this->GetY() - (($currentFontSize - $this->FontSize)*(K_SMALL_RATIO)));
+					break;
+				}
+				case 'sub': {
+					$currentFontSize = $this->FontSize;
+					$this->SetFontSize($this->tempfontsize);
+					$this->tempfontsize = $this->FontSizePt;
+					$this->SetXY($this->GetX(), $this->GetY() + (($currentFontSize - $this->FontSize)*(K_SMALL_RATIO)));
+					break;
+				}
+				case 'small': {
+					$currentFontSize = $this->FontSize;
+					$this->SetFontSize($this->tempfontsize);
+					$this->tempfontsize = $this->FontSizePt;
+					$this->SetXY($this->GetX(), $this->GetY() - (($this->FontSize - $currentFontSize)/3));
+					break;
+				}
+				case 'font': {
+					if ($this->issetcolor == true) {
+						$this->SetTextColor($this->prevTextColor[0], $this->prevTextColor[1], $this->prevTextColor[2]);
+					}
+					if ($this->issetfont) {
+						$this->FontFamily = $this->prevFontFamily;
+						$this->FontStyle = $this->prevFontStyle;
+						$this->SetFont($this->FontFamily);
+						$this->issetfont = false;
+					}
+					$currentFontSize = $this->FontSize;
+					$this->SetFontSize($this->tempfontsize);
+					$this->tempfontsize = $this->FontSizePt;
+					//$this->TextColor = $this->prevTextColor;
+					$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO;
+					break;
+				}
+				case 'ul': {
+					$this->Ln();
+					break;
+				}
+				case 'ol': {
+					$this->Ln();
+					break;
+				}
+				case 'li': {
+					$this->lispacer = "";
+					break;
+				}
+				case 'h1': 
+				case 'h2': 
+				case 'h3': 
+				case 'h4': 
+				case 'h5': 
+				case 'h6': {
+					$currentFontSize = $this->FontSize;
+					$this->SetFontSize($this->tempfontsize);
+					$this->tempfontsize = $this->FontSizePt;
+					$this->setStyle('b', false);
+					$this->Ln();
+					$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO;
+					break;
+				}
+				default : {
+					break;
+				}
+			}
+		}
+		
+		/**
+		 * Sets font style.
+		 * @param string $tag tag name (in lowercase)
+		 * @param boolean $enable
+		 * @access private
+		 */
+		function setStyle($tag, $enable) {
+			//Modify style and select corresponding font
+			$this->$tag += ($enable ? 1 : -1);
+			$style='';
+			foreach(array('b', 'i', 'u') as $s) {
+				if($this->$s > 0) {
+					$style .= $s;
+				}
+			}
+			$this->SetFont('', $style);
+		}
+		
+		/**
+		 * Output anchor link.
+		 * @param string $url link URL
+		 * @param string $name link name
+		 * @param int $fill Indicates if the cell background must be painted (1) or transparent (0). Default value: 0.
+		 * @access public
+		 */
+		function addHtmlLink($url, $name, $fill=0) {
+			//Put a hyperlink
+			$this->SetTextColor(0, 0, 255);
+			$this->setStyle('u', true);
+			$this->Write($this->lasth, $name, $url, $fill);
+			$this->setStyle('u', false);
+			$this->SetTextColor(0);
+		}
+		
+		/**
+		 * Returns an associative array (keys: R,G,B) from 
+		 * a hex html code (e.g. #3FE5AA).
+		 * @param string $color hexadecimal html color [#rrggbb]
+		 * @return array
+		 * @access private
+		 */
+		function convertColorHexToDec($color = "#000000"){
+			$tbl_color = array();
+			$tbl_color['R'] = hexdec(substr($color, 1, 2));
+			$tbl_color['G'] = hexdec(substr($color, 3, 2));
+			$tbl_color['B'] = hexdec(substr($color, 5, 2));
+			return $tbl_color;
+		}
+		
+		/**
+		 * Converts pixels to millimeters in 72 dpi.
+		 * @param int $px pixels
+		 * @return float millimeters
+		 * @access private
+		 */
+		function pixelsToMillimeters($px){
+			return $px * 25.4 / 72;
+		}
+			
+		/**
+		 * Reverse function for htmlentities.
+		 * Convert entities in UTF-8.
+		 *
+		 * @param $text_to_convert Text to convert.
+		 * @return string converted
+		 */
+		function unhtmlentities($text_to_convert) {
+			require_once(dirname(__FILE__).'/html_entity_decode_php4.php');
+			return html_entity_decode_php4($text_to_convert);
+		}
+		
+				/**
+		* Set the image scale.
+		* @param float $scale image scale.
+		* @author Nicola Asuni
+		* @since 1.5.2
+		*/
+		function setImageScale($scale) {
+			$this->imgscale=$scale;
+		}
+
+		/**
+		* Returns the image scale.
+		* @return float image scale.
+		* @author Nicola Asuni
+		* @since 1.5.2
+		*/
+		function getImageScale() {
+			return $this->imgscale;
+		}
+
+		/**
+		* Returns the page width in units.
+		* @return int page width.
+		* @author Nicola Asuni
+		* @since 1.5.2
+		*/
+		function getPageWidth() {
+			return $this->w;
+		}
+
+		/**
+		* Returns the page height in units.
+		* @return int page height.
+		* @author Nicola Asuni
+		* @since 1.5.2
+		*/
+		function getPageHeight() {
+			return $this->fh;
+		}
+
+		/**
+		* Returns the page break margin.
+		* @return int page break margin.
+		* @author Nicola Asuni
+		* @since 1.5.2
+		*/
+		function getBreakMargin() {
+			return $this->bMargin;
+		}
+
+		/**
+		* Returns the scale factor (number of points in user unit).
+		* @return int scale factor.
+		* @author Nicola Asuni
+		* @since 1.5.2
+		*/
+		function getScaleFactor() {
+			return $this->k;
+		}
+
 //End of class
 }
 
