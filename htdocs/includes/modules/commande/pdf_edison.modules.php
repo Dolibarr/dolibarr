@@ -295,65 +295,67 @@ class pdf_edison extends ModelePDFCommandes
 
     }
 
-  function _pagehead(&$pdf, $com)
-   {
+	function _pagehead(&$pdf, $com)
+	{
 		global $langs,$mysoc;
-	 $langs->load("orders");
-      $pdf->SetXY(10,5);
-      if (defined("MAIN_INFO_SOCIETE_NOM"))
-	{
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->SetFont('Arial','B',14);
-	  $pdf->MultiCell(76, 8, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+		$langs->load("orders");
+
+		$pdf->SetXY(10,8);
+		if (defined("MAIN_INFO_SOCIETE_NOM"))
+		{
+			$pdf->SetTextColor(0,0,200);
+			$pdf->SetFont('Arial','B',14);
+			$pdf->MultiCell(76, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+		}
+	
+   		$pdf->SetX(10);
+		$pdf->SetTextColor(70,70,170);
+		if (defined("FAC_PDF_ADRESSE"))
+		{
+			$pdf->SetFont('Arial','',12);
+			$pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
+		}
+		if (defined("FAC_PDF_TEL"))
+		{
+			$pdf->SetFont('Arial','',10);
+			$pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
+		}
+		if (defined("MAIN_INFO_SIREN"))
+		{
+			$pdf->SetFont('Arial','',10);
+			$pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
+		}
+	
+		if (defined("FAC_PDF_INTITULE2"))
+		{
+			$pdf->SetXY(100,5);
+			$pdf->SetFont('Arial','B',14);
+			$pdf->SetTextColor(0,0,200);
+			$pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+		}
+		/*
+		* Adresse Client
+		*/
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Arial','B',12);
+		$client = new Societe($this->db);
+		$client->fetch($com->socidp);
+		$com->client = $client;
+		$pdf->SetXY(102,42);
+		$pdf->MultiCell(96,5, $com->client->nom);
+		$pdf->SetFont('Arial','B',11);
+		$pdf->SetXY(102,47);
+		$pdf->MultiCell(96,5, $com->client->adresse . "\n" . $com->client->cp . " " . $com->client->ville);
+		$pdf->rect(100, 40, 100, 40);
+	
+	
+		$pdf->SetTextColor(200,0,0);
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $com->date));
+		$pdf->Text(11, 94, $langs->trans("Order")." ".$com->ref);
+	
+	
 	}
-      
-      $pdf->SetTextColor(70,70,170);
-      if (defined("FAC_PDF_ADRESSE"))
-	{
-	  $pdf->SetFont('Arial','',12);
-	  $pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
-	}
-      if (defined("FAC_PDF_TEL"))
-	{
-	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
-	}  
-      if (defined("MAIN_INFO_SIREN"))
-	{
-	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
-	}  
-      
-      if (defined("FAC_PDF_INTITULE2"))
-	{
-	  $pdf->SetXY(100,5);
-	  $pdf->SetFont('Arial','B',14);
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
-	}
-      /*
-       * Adresse Client
-       */
-      $pdf->SetTextColor(0,0,0);
-      $pdf->SetFont('Arial','B',12);
-	  $client = new Societe($this->db);
-      $client->fetch($com->socidp);
-	  $com->client = $client;
-      $pdf->SetXY(102,42);
-      $pdf->MultiCell(96,5, $com->client->nom);
-      $pdf->SetFont('Arial','B',11);
-      $pdf->SetXY(102,47);
-      $pdf->MultiCell(96,5, $com->client->adresse . "\n" . $com->client->cp . " " . $com->client->ville);
-      $pdf->rect(100, 40, 100, 40);
-      
-      
-      $pdf->SetTextColor(200,0,0);
-      $pdf->SetFont('Arial','B',12);
-      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $com->date));
-      $pdf->Text(11, 94, $langs->trans("Order")." ".$com->ref);
-      
-      
-    }
 
 }
 
