@@ -100,13 +100,13 @@ FCKConfig.ToolbarSets["dolibarr_notes"] = [
 
 FCKConfig.ToolbarSets["dolibarr_details"] = [
         ['FitWindow','Source','DocProps'],
-        ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
-        ['Undo','Redo','-','Find','Replace','-','SelectAll'],
+        ['Cut','Copy','Paste','-','Preview'],
+        ['Undo','Redo'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent',],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['Link','Unlink','Anchor'],
-        ['Smiley','SpecialChar','UniversalKey'],
+        ['SpecialChar','UniversalKey'],
         ['FontName','FontSize']
 ] ;
 
