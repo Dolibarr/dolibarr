@@ -1898,10 +1898,9 @@ else
 						// éditeur wysiwyg
 						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 						{
-							require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
-							$oFCKeditor = new FCKeditor('desc');
-							$oFCKeditor->Value		= $objp->description;
-							$oFCKeditor->Create() ;
+					    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+							$doleditor=new DolEditor('desc',$objp->description,200,'dolibarr_details');
+							$doleditor->Create();
 						}
 						else
 						{

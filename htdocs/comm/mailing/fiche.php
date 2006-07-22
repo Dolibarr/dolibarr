@@ -246,12 +246,11 @@ if ($_GET["action"] == 'create')
     print '</i></td>';
     print '<td>';
     // éditeur wysiwyg
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
     {
-      require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
-      $oFCKeditor = new FCKeditor('body');
-      $oFCKeditor->Height = '20' ;
-      $oFCKeditor->Create() ;
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('body',$objp->description,320,'dolibarr_details');
+		$doleditor->Create();
     }
     else
     {
@@ -447,11 +446,9 @@ else
             // éditeur wysiwyg
             if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
             {
-            	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
-            	$oFCKeditor = new FCKeditor('body');
-            	$oFCKeditor->Value	= $mil->body;
-				$oFCKeditor->Height = '320';
-            	$oFCKeditor->Create();
+            	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('body',$mil->body,320,'dolibarr_mailings');
+				$doleditor->Create();
             }
             else
             {

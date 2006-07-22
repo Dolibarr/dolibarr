@@ -453,9 +453,9 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
-		$oFCKeditor = new FCKeditor('desc');
-		$oFCKeditor->Create() ;
+    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('desc','',200,'dolibarr_notes');
+		$doleditor->Create();
 	}
 	else
 	{
@@ -479,9 +479,9 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
-		$oFCKeditor = new FCKeditor('note');
-		$oFCKeditor->Create() ;
+    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note','',200,'dolibarr_notes');
+		$doleditor->Create();
 	}
 	else
 	{
@@ -778,10 +778,9 @@ if ($_GET["id"] || $_GET["ref"])
         print "\n";
         if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
         {
-        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
-        	$oFCKeditor = new FCKeditor('desc');
-        	$oFCKeditor->Value		= $product->description;
-        	$oFCKeditor->Create() ;
+	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('desc',$product->description,200,'dolibarr_notes');
+			$doleditor->Create();
         }
         else
         {
@@ -811,10 +810,9 @@ if ($_GET["id"] || $_GET["ref"])
         print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
         {
-        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
-        	$oFCKeditor = new FCKeditor('note');
-        	$oFCKeditor->Value		= $product->note;
-        	$oFCKeditor->Create() ;
+	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes');
+			$doleditor->Create();
         }
         else
         {
