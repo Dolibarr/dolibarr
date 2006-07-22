@@ -214,11 +214,11 @@ class pdf_crabe extends ModelePDFFactures
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=$fac->lignes[$i]->libelle;
+                    $libelleproduitservice=_dol_htmlentities($fac->lignes[$i]->libelle,0);
                     if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$fac->lignes[$i]->desc;
+                        $libelleproduitservice.=_dol_htmlentities($fac->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
                     }
                     // Si ligne associée à un code produit
                     if ($fac->lignes[$i]->produit_id)
@@ -254,7 +254,7 @@ class pdf_crabe extends ModelePDFFactures
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                    if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+                    if ($conf->fckeditor->enabled)
                     {
                     	$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
                     }
@@ -959,6 +959,19 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
     }
 
+}
+
+// Cette fonction est appelée pour coder ou non une chaine en html
+// selon qu'on compte l'afficher dans le PDF avec:
+// writeHTMLCell -> a besoin d'etre encodé en HTML
+// MutliCell -> ne doit pas etre encodé en HTML
+function _dol_htmlentities($stringtoencode,$isstringalreadyhtml)
+{
+	global $conf;
+	
+	if ($isstringalreadyhtml) return $stringtoencode;
+	if ($conf->fckeditor->enabled) return htmlentities($stringtoencode);
+	return $stringtoencode;
 }
 
 ?>

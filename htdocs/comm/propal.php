@@ -1160,7 +1160,7 @@ if ($_GET['propalid'] > 0)
 					print '<br>';
 				}
 				// éditeur wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
         {
         	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
         	$oFCKeditor = new FCKeditor('desc');

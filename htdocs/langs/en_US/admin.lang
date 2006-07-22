@@ -529,5 +529,6 @@ DeliveryOrderModel=Products deliveries receipt model
 DeliveriesOrderAbility=Products deliveries receipt ability
 ##### FCKeditor #####
 ActivateFCKeditor=Activate FCKeditor for:
-FCKeditorForProductDescription=Creation/edition of products/services description (in all modules)
-FCKeditorForMailing=Creation/edition mailings
+FCKeditorForProductDescription=WYSIWIG creation/edition of products/services description and note
+FCKeditorForDetails=WYSIWIG creation/edition of details lines for all entities (proposals, orders, invoices, etc...)
+FCKeditorForMailing=WYSIWIG creation/edition of mailings

@@ -38,6 +38,7 @@ if (!$user->admin)
 // Constante et traduction de la description du module
 $modules = array(
 'PRODUCTDESC'=>'FCKeditorForProductDescription',
+'DETAILS'=>'FCKeditorForDetails',
 'MAILING'=>'FCKeditorForMailing',
 ); 
 
@@ -45,17 +46,18 @@ foreach($modules as $const => $desc)
 {
 	if ($_GET["action"] == 'activate_'.strtolower($const))
 	{
-    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1");
-    Header("Location: fckeditor.php");
-    exit;
-  }
-  else if ($_GET["action"] == 'disable_'.strtolower($const))
- {
-	  dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const);
-    Header("Location: fckeditor.php");
-    exit;
- }
+	    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1");
+	    Header("Location: fckeditor.php");
+	    exit;
+	}
+	if ($_GET["action"] == 'disable_'.strtolower($const))
+	{
+		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const);
+		Header("Location: fckeditor.php");
+		exit;
+	}
 }
+
 
 /*
  * Affiche page
@@ -96,39 +98,35 @@ print "</tr>\n";
 foreach($modules as $const => $desc)
 {
 	$var=!$var;
-	print "<form method=\"post\" action=\"fckeditor.php\">";
-	print '<input type="hidden" name="action" value="'.strtolower($const).'">';
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans($desc).'</td>';
 	print '<td align="center" width="20">';
-	
+
 	$constante = FCKEDITOR_ENABLE_.$const;
 	$value = $conf->global->$constante;
-	
-	if($value == 1)
- {
-	 print img_tick();
- }
 
- print '</td>';
- print '<td align="center" width="100">';
+	print $value == 1 ? img_tick() : '&nbsp;';
 
- if($value == 0)
- {
-	 print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.$langs->trans("Activate").'</a>';
- }
- else if($value == 1)
- {
-	 print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.$langs->trans("Disable").'</a>';
- }
-  print '</form>';
+	print '</td>';
+	print '<td align="center" width="100">';
+
+	if($value == 0)
+	{
+		print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.$langs->trans("Activate").'</a>';
+	}
+	else if($value == 1)
+	{
+		print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.$langs->trans("Disable").'</a>';
+	}
+
+	print "</td>";
+	print '</tr>';
 }
 
- print "</td>";
- print '</tr>';
- print '</table>';
+print '</table>';
+
 
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

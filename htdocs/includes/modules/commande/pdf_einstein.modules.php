@@ -40,6 +40,8 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 class pdf_einstein extends ModelePDFCommandes
 {
+	var $emetteur;	// Objet societe qui emet
+
     
     /**
 			\brief      Constructeur
@@ -47,7 +49,7 @@ class pdf_einstein extends ModelePDFCommandes
     */
     function pdf_einstein($db)
     {
-        global $conf,$langs;
+        global $conf,$langs,$mysoc;
 
         $this->db = $db;
         $this->name = "einstein";
@@ -72,21 +74,9 @@ class pdf_einstein extends ModelePDFCommandes
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
       		$this->franchise=1;
 
-        // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
-        $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-        $sql .= " WHERE rowid = '".$conf->global->MAIN_INFO_SOCIETE_PAYS."'";
-        $result=$this->db->query($sql);
-        if ($result) {
-            $obj = $this->db->fetch_object($result);
-            if ($obj->code) $this->emetteur->code_pays=$obj->code;
-        }
-        else {
-            dolibarr_print_error($this->db);
-        }
-        $this->db->free($result);
-
-        $this->tva=array();
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 
         // Defini position des colonnes
         $this->posxdesc=$this->marge_gauche+1;
@@ -96,6 +86,7 @@ class pdf_einstein extends ModelePDFCommandes
         $this->posxdiscount=162;
         $this->postotalht=177;
        
+        $this->tva=array();
         $this->atleastoneratenotnull=0;
         $this->atleastonediscount=0;
 	}
@@ -113,20 +104,6 @@ class pdf_einstein extends ModelePDFCommandes
     		\brief      Fonction générant la commande sur le disque
     		\param	    id	        Id de la commande à générer
     		\return	    int         1=ok, 0=ko
-            \remarks    Variables utilisées
-    		\remarks    MAIN_INFO_SOCIETE_NOM
-    		\remarks    MAIN_INFO_ADRESSE
-    		\remarks    MAIN_INFO_CP
-    		\remarks    MAIN_INFO_VILLE
-    		\remarks    MAIN_INFO_TEL
-    		\remarks    MAIN_INFO_FAX
-    		\remarks    MAIN_INFO_WEB
-    		\remarks    MAIN_INFO_SIRET
-    		\remarks    MAIN_INFO_SIREN
-    		\remarks    MAIN_INFO_RCS
-    		\remarks    MAIN_INFO_CAPITAL
-    		\remarks    MAIN_INFO_TVAINTRA
-            \remarks    MAIN_INFO_LOGO
     */
     function write_pdf_file($com,$outputlangs='')
     {
@@ -218,11 +195,11 @@ class pdf_einstein extends ModelePDFCommandes
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=$com->lignes[$i]->libelle;
+                    $libelleproduitservice=_dol_htmlentities($com->lignes[$i]->libelle,0);
                     if ($com->lignes[$i]->desc&&$com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$com->lignes[$i]->desc;
+                        $libelleproduitservice.=_dol_htmlentities($com->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
                     }
                     // Si ligne associée à un code produit
                     if ($com->lignes[$i]->fk_product)
@@ -253,7 +230,7 @@ class pdf_einstein extends ModelePDFCommandes
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                    if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+                    if ($conf->fckeditor->enabled)
                     {
                     	$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
                     }
@@ -662,7 +639,7 @@ class pdf_einstein extends ModelePDFCommandes
      */
     function _pagehead(&$pdf, $com, $showadress=1, $outputlangs)
     {
-        global $conf,$mysoc;
+        global $conf;
 
         $outputlangs->load("main");
         $outputlangs->load("bills");
@@ -677,8 +654,8 @@ class pdf_einstein extends ModelePDFCommandes
         $pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-        $logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-        if ($mysoc->logo)
+        $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+        if ($this->emetteur->logo)
         {
             if (is_readable($logo))
 			{
@@ -739,28 +716,28 @@ class pdf_einstein extends ModelePDFCommandes
 	        $pdf->SetTextColor(0,0,60);
 	        $pdf->SetFont('Arial','B',11);
 	        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-	        else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
+	        else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
 	
 	        // Caractéristiques emetteur
 	        $carac_emetteur = '';
 	        if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
 	        else {
-	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
-	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
+	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->adresse;
+	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->cp.' '.$this->emetteur->ville;
 	        }
 	        $carac_emetteur .= "\n";
 	        // Tel
 	        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Phone").": ".FAC_PDF_TEL;
-	        elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Phone").": ".$mysoc->tel;
+	        elseif ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Phone").": ".$this->emetteur->tel;
 	        // Fax
 	        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Fax").": ".FAC_PDF_FAX;
-	        elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Fax").": ".$mysoc->fax;
+	        elseif ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Fax").": ".$this->emetteur->fax;
 	        // EMail
 			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Email").": ".FAC_PDF_MEL;
-	        elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Email").": ".$mysoc->email;
+	        elseif ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Email").": ".$this->emetteur->email;
 	        // Web
 			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Web").": ".FAC_PDF_WWW;
-	        elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Web").": ".$mysoc->url;
+	        elseif ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->trans("Web").": ".$this->emetteur->url;
 	
 	        $pdf->SetFont('Arial','',9);
 	        $pdf->SetXY($this->marge_gauche+2,$posy+8);
@@ -812,36 +789,36 @@ class pdf_einstein extends ModelePDFCommandes
         
         // Premiere ligne d'info réglementaires
         $ligne1="";
-        if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
+        if ($this->emetteur->forme_juridique_code)
         {
-            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($this->emetteur->forme_juridique_code);
         }
-        if ($conf->global->MAIN_INFO_CAPITAL)
+        if ($this->emetteur->capital)
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$outputlangs->trans("Currency".$conf->monnaie);
+            $ligne1.=($ligne1?" - ":"").$outputlangs->trans("CapitalOf",$this->emetteur->capital)." ".$outputlangs->trans("Currency".$conf->monnaie);
         }
-        if ($conf->global->MAIN_INFO_SIRET)
+        if ($this->emetteur->profid2)
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->pays_code).": ".$this->emetteur->profid2;
         }
-        if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->code_pays != 'FR'))
+        if ($this->emetteur->profid1 && (! $this->emetteur->profid2 || $this->emetteur->pays_code != 'FR'))
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
-        }
-        if ($conf->global->MAIN_INFO_APE)
-        {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
         }
 
         // Deuxieme ligne d'info réglementaires
         $ligne2="";
-        if ($conf->global->MAIN_INFO_RCS)
+        if ($this->emetteur->profid3)
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
+            $ligne2.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->pays_code).": ".$this->emetteur->profid3;
         }
-        if ($conf->global->MAIN_INFO_TVAINTRA != '')
+        if ($this->emetteur->profid4)
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->pays_code).": ".$this->emetteur->profid4;
+        }
+        if ($this->emetteur->tva_intra != '')
+        {
+            $ligne2.=($ligne2?" - ":"").$outputlangs->trans("VATIntraShort").": ".$this->emetteur->tva_intra;
         }
 
         $pdf->SetFont('Arial','',8);
@@ -871,6 +848,19 @@ class pdf_einstein extends ModelePDFCommandes
         $pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
     }
 
+}
+
+// Cette fonction est appelée pour coder ou non une chaine en html
+// selon qu'on compte l'afficher dans le PDF avec:
+// writeHTMLCell -> a besoin d'etre encodé en HTML
+// MutliCell -> ne doit pas etre encodé en HTML
+function _dol_htmlentities($stringtoencode,$isstringalreadyhtml)
+{
+	global $conf;
+	
+	if ($isstringalreadyhtml) return $stringtoencode;
+	if ($conf->fckeditor->enabled) return htmlentities($stringtoencode);
+	return $stringtoencode;
 }
 
 ?>

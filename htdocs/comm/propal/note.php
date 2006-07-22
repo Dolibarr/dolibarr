@@ -119,10 +119,10 @@ if ($_GET['propalid'])
 	        print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref_url.'</td></tr>';
 
             // Société
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
+            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
             
 			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$societe->getCurrentDiscount();
@@ -133,14 +133,14 @@ if ($_GET['propalid'])
 			print '</td></tr>';
     
 			// Date
-            print '<tr><td>'.$langs->trans('Date').'</td><td>';
+            print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
             print dolibarr_print_date($propal->date,'%a %d %B %Y');
             print '</td>';
     		print '</tr>';
     		
     		// Date fin propal
             print '<tr>';
-            print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
+            print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
             if ($propal->fin_validite)
             {
                 print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');

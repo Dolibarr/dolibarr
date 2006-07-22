@@ -451,18 +451,19 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
     
-    if ($conf->fckeditor->enabled)
-        {
-        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
-        	$oFCKeditor = new FCKeditor('desc');
-        	$oFCKeditor->Create() ;
-        }
-        else
-        {
-        	print '<textarea name="desc" rows="4" cols="50">';
-        }
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+		$oFCKeditor = new FCKeditor('desc');
+		$oFCKeditor->Create() ;
+	}
+	else
+	{
+		print '<textarea name="desc" rows="4" cols="50">';
+		print '</textarea>';
+	}
         
-    print "</textarea></td></tr>";
+    print "</td></tr>";
 
     if ($_GET["type"] == 1)
     {
@@ -475,9 +476,19 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     }
 
     // Note
-    print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-    print '<textarea name="note" rows="8" cols="50">';
-    print "</textarea></td></tr>";
+    print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+		$oFCKeditor = new FCKeditor('note');
+		$oFCKeditor->Create() ;
+	}
+	else
+	{
+		print '<textarea name="note" rows="8" cols="50">';
+		print '</textarea>';
+	}
+    print "</td></tr>";
 
     print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
     print '</table>';
@@ -765,7 +776,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
         print "\n";
-        if ($conf->fckeditor->enabled)
+        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
         {
         	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
         	$oFCKeditor = new FCKeditor('desc');
@@ -777,8 +788,8 @@ if ($_GET["id"] || $_GET["ref"])
         	print '<textarea name="desc" rows="4" cols="50">';
         	print $product->description;
         	print "</textarea>";
-        	print "</td></tr>";
         }
+       	print "</td></tr>";
         print "\n";
 
         if ($product->type == 1)
@@ -798,9 +809,21 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Note
         print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
-        print '<textarea name="note" rows="8" cols="50">';
-        print $product->note;
-        print "</textarea></td></tr>";
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+        {
+        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+        	$oFCKeditor = new FCKeditor('note');
+        	$oFCKeditor->Value		= $product->note;
+        	$oFCKeditor->Create() ;
+        }
+        else
+        {
+        	print '<textarea name="note" rows="8" cols="50">';
+        	print $product->description;
+        	print "</textarea>";
+        }
+		print "</td></tr>";
+        
         print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
         print '</table>';

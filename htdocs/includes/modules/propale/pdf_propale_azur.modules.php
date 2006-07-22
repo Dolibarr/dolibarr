@@ -213,18 +213,19 @@ class pdf_propale_azur extends ModelePDFPropales
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=$propale->lignes[$i]->libelle;
-					if ($propale->lignes[$i]->desc&&$propale->lignes[$i]->desc!=$propale->lignes[$i]->libelle)
+					$libelleproduitservice=_dol_htmlentities($propale->lignes[$i]->libelle,0);
+					if ($propale->lignes[$i]->desc && $propale->lignes[$i]->desc!=$propale->lignes[$i]->libelle)
 					{
 						if ($libelleproduitservice) $libelleproduitservice.="\n";
-						$libelleproduitservice.=$propale->lignes[$i]->desc;
+						$libelleproduitservice.=_dol_htmlentities($propale->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
 					}
 					// Si ligne associée à un code produit
 					if ($propale->lignes[$i]->fk_product)
 					{
 						$prodser = new Product($this->db);
-
 						$prodser->fetch($propale->lignes[$i]->fk_product);
+						
+						// On ajoute la ref
 						if ($prodser->ref)
 						{
 							$prefix_prodserv = "";
@@ -236,10 +237,10 @@ class pdf_propale_azur extends ModelePDFPropales
 							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
 						}
 
-						// Ajoute description du produit
+						// Ajoute description complète du produit
 						if ($conf->global->PROP_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
 						{
-							if ($propale->lignes[$i]->product_desc&&$propale->lignes[$i]->product_desc!=$propale->lignes[$i]->libelle&&$propale->lignes[$i]->product_desc!=$propale->lignes[$i]->desc)
+							if ($propale->lignes[$i]->product_desc && $propale->lignes[$i]->product_desc!=$propale->lignes[$i]->libelle && $propale->lignes[$i]->product_desc!=$propale->lignes[$i]->desc)
 							{
 								if ($libelleproduitservice) $libelleproduitservice.="\n";
 								$libelleproduitservice.=$propale->lignes[$i]->product_desc;
@@ -254,15 +255,15 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-          {
-             $pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
-          }
-          else
-          {
-          	$pdf->SetXY ($this->posxdesc-1, $curY);
-          	$pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
-          }
+					if ($conf->fckeditor->enabled)
+					{
+						$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					}
+					else
+					{
+						$pdf->SetXY ($this->posxdesc-1, $curY);
+						$pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
+					}
 
 					$nexY = $pdf->GetY();
 
@@ -865,6 +866,19 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
     }
 
+}
+
+// Cette fonction est appelée pour coder ou non une chaine en html
+// selon qu'on compte l'afficher dans le PDF avec:
+// writeHTMLCell -> a besoin d'etre encodé en HTML
+// MutliCell -> ne doit pas etre encodé en HTML
+function _dol_htmlentities($stringtoencode,$isstringalreadyhtml)
+{
+	global $conf;
+	
+	if ($isstringalreadyhtml) return $stringtoencode;
+	if ($conf->fckeditor->enabled) return htmlentities($stringtoencode);
+	return $stringtoencode;
 }
 
 ?>
