@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@uers.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,11 +250,12 @@ if ($_GET["action"] == 'create')
     {
       require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
       $oFCKeditor = new FCKeditor('body');
+      $oFCKeditor->Height = '20' ;
       $oFCKeditor->Create() ;
     }
     else
     {
-    	print '<textarea cols="70" rows="10" name="body"></textarea>';
+    	print '<textarea cols="70" rows="20" name="body"></textarea>';
     }
     print '</td></tr>';
     print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></td></tr>';
@@ -448,12 +449,13 @@ else
             {
             	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
             	$oFCKeditor = new FCKeditor('body');
-            	$oFCKeditor->Value		= $mil->body;
-            	$oFCKeditor->Create() ;
+            	$oFCKeditor->Value	= $mil->body;
+				$oFCKeditor->Height = '320';
+            	$oFCKeditor->Create();
             }
             else
             {
-            	print '<textarea name="body" cols=70 rows=10>';
+            	print '<textarea name="body" cols="70" rows="20">';
             	print $mil->body.'</textarea>';
             }
             print '</td></tr>';
