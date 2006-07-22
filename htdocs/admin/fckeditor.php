@@ -35,21 +35,27 @@ $langs->load("fckeditor");
 if (!$user->admin)
   accessforbidden();
 
+// Constante et traduction de la description du module
+$modules = array(
+'PRODUCTDESC'=>'FCKeditorForProductDescription',
+'MAILING'=>'FCKeditorForMailing',
+); 
 
-
-if ($_GET["action"] == 'activate_productdesc')
+foreach($modules as $const => $desc)
 {
-    dolibarr_set_const($db, "FCKEDITOR_ENABLE_PRODUCTDESC", "1");
+	if ($_GET["action"] == 'activate_'.strtolower($const))
+	{
+    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1");
     Header("Location: fckeditor.php");
     exit;
-}
-else if ($_GET["action"] == 'disable_productdesc')
-{
-	dolibarr_del_const($db, "FCKEDITOR_ENABLE_PRODUCTDESC");
+  }
+  else if ($_GET["action"] == 'disable_'.strtolower($const))
+ {
+	  dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const);
     Header("Location: fckeditor.php");
     exit;
+ }
 }
-
 
 /*
  * Affiche page
@@ -79,41 +85,45 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 $var=true;
 
-// Module Propale
-$var=!$var;
-print "<form method=\"post\" action=\"fckeditor.php\">";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("ActivateFCKeditor").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
-print "<input type=\"hidden\" name=\"action\" value=\"productdesc\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("FCKeditorForProductDescription").'</td>';
-print '<td align="center" width="20">';
 
-if($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC == 1)
+// Modules
+foreach($modules as $const => $desc)
 {
-	print img_tick();
+	$var=!$var;
+	print "<form method=\"post\" action=\"fckeditor.php\">";
+	print '<input type="hidden" name="action" value="'.strtolower($const).'">';
+	print '<tr ".$bc[$var].">';
+	print '<td>'.$langs->trans($desc).'</td>';
+	print '<td align="center" width="20">';
+	
+	if($conf->global->FCKEDITOR_ENABLE_.$const == 1)
+ {
+	 print img_tick();
+ }
+
+ print '</td>';
+ print '<td align="center" width="100">';
+
+ if($conf->global->FCKEDITOR_ENABLE_.$const == 0)
+ {
+	 print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.$langs->trans("Activate").'</a>';
+ }
+ else if($conf->global->FCKEDITOR_ENABLE_.$cont == 1)
+ {
+	 print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.$langs->trans("Disable").'</a>';
+ }
+  print '</form>';
 }
 
-print '</td>';
-print '<td align="center" width="100">';
-
-if($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC == 0)
-{
-	print '<a href="fckeditor.php?action=activate_productdesc">'.$langs->trans("Activate").'</a>';
-}
-else if($conf->global->FCKEDITOR_ENABLE_PRODUCTDESC == 1)
-{
-	print '<a href="fckeditor.php?action=disable_productdesc">'.$langs->trans("Disable").'</a>';
-}
-
-print "</td>";
-print '</tr>';
-print '</table>';
-print '</form>';
+ print "</td>";
+ print '</tr>';
+ print '</table>';
 
 $db->close();
 

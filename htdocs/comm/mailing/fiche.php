@@ -244,7 +244,19 @@ if ($_GET["action"] == 'create')
     print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
     print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
     print '</i></td>';
-    print '<td><textarea cols="70" rows="10" name="body"></textarea></td></tr>';
+    print '<td>';
+    // éditeur wysiwyg
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+    {
+      require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+      $oFCKeditor = new FCKeditor('body');
+      $oFCKeditor->Create() ;
+    }
+    else
+    {
+    	print '<textarea cols="70" rows="10" name="body"></textarea>';
+    }
+    print '</td></tr>';
     print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></td></tr>';
     print '</table>';
     print '</form>';
@@ -430,8 +442,21 @@ else
             print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
             print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
             print '</i></td>';
-            print '<td colspan="3"><textarea name="body" cols=70 rows=10>';
-            print $mil->body.'</textarea></td></tr>';
+            print '<td colspan="3">';
+            // éditeur wysiwyg
+            if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+            {
+            	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+            	$oFCKeditor = new FCKeditor('body');
+            	$oFCKeditor->Value		= $mil->body;
+            	$oFCKeditor->Create() ;
+            }
+            else
+            {
+            	print '<textarea name="body" cols=70 rows=10>';
+            	print $mil->body.'</textarea>';
+            }
+            print '</td></tr>';
 
             print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
             print '</table>';
