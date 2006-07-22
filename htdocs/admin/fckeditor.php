@@ -114,7 +114,7 @@ foreach($modules as $const => $desc)
  {
 	 print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.$langs->trans("Activate").'</a>';
  }
- else if($conf->global->FCKEDITOR_ENABLE_.$cont == 1)
+ else if($conf->global->FCKEDITOR_ENABLE_.$const == 1)
  {
 	 print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.$langs->trans("Disable").'</a>';
  }

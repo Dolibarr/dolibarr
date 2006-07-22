@@ -530,3 +530,4 @@ DeliveriesOrderAbility=Products deliveries receipt ability
 ##### FCKeditor #####
 ActivateFCKeditor=Activate FCKeditor for:
 FCKeditorForProductDescription=Creation/edition of products/services description (in all modules)
+FCKeditorForMailing=Creation/edition mailings

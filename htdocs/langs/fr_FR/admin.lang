@@ -530,3 +530,4 @@ DeliveriesOrderAbility=Prise en charge des bons de réception client
 ##### FCKeditor #####
 ActivateFCKeditor=Activer FCKeditor pour :
 FCKeditorForProductDescription=Création/édition de la description des produits/services (dans tous les modules)
+FCKeditorForMailing=Création/édition des mailings
