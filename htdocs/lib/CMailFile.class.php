@@ -223,11 +223,19 @@ class CMailFile
     */
     function write_body($msgtext, $filename_list)
     {
+    	global $conf;
         $out='';
         if (count($filename_list))
         {
             $out = "--" . $this->mime_boundary . "\n";
-            $out = $out . "Content-Type: text/plain; charset=\"iso8859-15\"\n\n";
+            if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+            {
+            	$out = $out . "Content-Type: text/html; charset=\"iso8859-15\"\n\n";
+            }
+            else
+            {
+            	$out = $out . "Content-Type: text/plain; charset=\"iso8859-15\"\n\n";
+            }
             //	  $out = $out . "Content-Type: text/plain; charset=\"us-ascii\"\n\n";
         }
         $out = $out . $msgtext . "\n";
