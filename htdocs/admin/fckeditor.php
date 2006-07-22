@@ -98,7 +98,7 @@ foreach($modules as $const => $desc)
 	$var=!$var;
 	print "<form method=\"post\" action=\"fckeditor.php\">";
 	print '<input type="hidden" name="action" value="'.strtolower($const).'">';
-	print '<tr ".$bc[$var].">';
+	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans($desc).'</td>';
 	print '<td align="center" width="20">';
 	
