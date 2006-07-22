@@ -102,7 +102,10 @@ foreach($modules as $const => $desc)
 	print '<td>'.$langs->trans($desc).'</td>';
 	print '<td align="center" width="20">';
 	
-	if($conf->global->FCKEDITOR_ENABLE_.$const == 1)
+	$constante = FCKEDITOR_ENABLE_.$const;
+	$value = $conf->global->$constante;
+	
+	if($value == 1)
  {
 	 print img_tick();
  }
@@ -110,11 +113,11 @@ foreach($modules as $const => $desc)
  print '</td>';
  print '<td align="center" width="100">';
 
- if($conf->global->FCKEDITOR_ENABLE_.$const == 0)
+ if($value == 0)
  {
 	 print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.$langs->trans("Activate").'</a>';
  }
- else if($conf->global->FCKEDITOR_ENABLE_.$const == 1)
+ else if($value == 1)
  {
 	 print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.$langs->trans("Disable").'</a>';
  }
