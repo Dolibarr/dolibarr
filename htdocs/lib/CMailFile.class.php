@@ -230,7 +230,8 @@ class CMailFile
             $out = "--" . $this->mime_boundary . "\n";
             if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
             {
-            	$out = $out . "Content-Type: text/html; charset=\"iso8859-15\"\n\n";
+            	$out .= "Content-Type: text/html; charset=\"iso8859-15\"\n\n";
+            	$out .= "Content-Transfer-Encoding: quoted-printable\n\n";
             }
             else
             {
