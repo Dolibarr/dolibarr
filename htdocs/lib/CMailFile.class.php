@@ -267,6 +267,7 @@ class CMailFile
     */
     function write_smtpheaders()
     {
+    	global $conf;
         $out = "";
 
         $out .= "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
