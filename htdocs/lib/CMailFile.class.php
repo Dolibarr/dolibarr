@@ -228,18 +228,20 @@ class CMailFile
         if (count($filename_list))
         {
             $out = "--" . $this->mime_boundary . "\n";
-            if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
-            {
-            	$out .= "Content-Type: text/html; charset=\"iso8859-15\"\n\n";
-            	$out .= "Content-Transfer-Encoding: quoted-printable\n\n";
-            }
-            else
-            {
-            	$out = $out . "Content-Type: text/plain; charset=\"iso8859-15\"\n\n";
-            }
+            $out .= "Content-Type: text/plain; charset=\"iso8859-15\"\n\n";
             //	  $out = $out . "Content-Type: text/plain; charset=\"us-ascii\"\n\n";
         }
-        $out = $out . $msgtext . "\n";
+        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+        {
+        	$out .= "<html><BODY>\n";
+        	$out .= "<html><head><title></title></head><body>";
+          $out .= $msgtext;
+          $out .= "</body></html>";
+        }
+        else
+        {
+        	$out .= $msgtext . "\n";
+        }
         return $out;
     }
 
@@ -283,6 +285,12 @@ class CMailFile
         
         //    if($this->errors_to != "")
         //$out = $out . "Errors-to: ".$this->errors_to."\n";
+        
+        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+        {
+        	$out .= "Content-Type: text/html; charset=\"iso-8859-15\"\n";
+        	$out .= "Content-Transfer-Encoding: 8bit\n";
+        }
 
         dolibarr_syslog("CMailFile::write_smtpheaders $out");
         return $out;
