@@ -18,7 +18,7 @@
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
  */
 
-global $Config ;
+global $Config, $conf ;
 
 // SECURITY: You must explicitelly enable this "uploader". 
 $Config['Enabled'] = true ;

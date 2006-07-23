@@ -18,19 +18,19 @@
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
  */
 
-global $Config ;
+global $Config, $conf ;
 
 // SECURITY: You must explicitelly enable this "connector". (Set it to "true").
-$Config['Enabled'] = false ;
+$Config['Enabled'] = true ;
 
 // Path to user files relative to the document root.
-$Config['UserFilesPath'] = '/UserFiles/' ;
+$Config['UserFilesPath'] = '/images/' ;
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Usefull if you are using a virtual directory, symbolic
 // link or alias. Examples: 'C:\\MySite\\UserFiles\\' or '/root/mysite/UserFiles/'.
 // Attention: The above 'UserFilesPath' must point to the same directory.
-$Config['UserFilesAbsolutePath'] = '' ;
+$Config['UserFilesAbsolutePath'] = $conf->fckeditor->dir_images ;
 
 // Due to security issues with Apache modules, it is reccomended to leave the
 // following setting enabled.
