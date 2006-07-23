@@ -772,6 +772,13 @@ if ($_GET["id"] || $_GET["ref"])
         {
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
         }
+        
+        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+        {
+        	print '<tr><td>&nbsp;</td><td colspan="2">';
+        	print '<div id="xToolbar"></div>';
+        	print '</td></tr>';
+        }
 
         // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
@@ -779,7 +786,7 @@ if ($_GET["id"] || $_GET["ref"])
         if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
         {
 	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('desc',$product->description,200,'dolibarr_notes');
+			$doleditor=new DolEditor('desc',$product->description,200,'dolibarr_notes','Out:xToolbar');
 			$doleditor->Create();
         }
         else
@@ -811,7 +818,7 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
         {
 	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes');
+			$doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','Out:xToolbar');
 			$doleditor->Create();
         }
         else
