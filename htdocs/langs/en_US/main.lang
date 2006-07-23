@@ -318,6 +318,7 @@ AccountancyPreview=Accountancy preview
 ShowCustomerPreview=Show customer preview
 ShowSupplierPreview=Show supplier preview
 ShowAccountancyPreview=Show accountancy preview
+RefCustomer=Ref. customer
 # Countries
 CountryFR=France
 CountryBE=Belgium
