@@ -83,6 +83,11 @@ class modFckeditor extends DolibarrModules
     */
   function init()
   {
+    global $conf;
+    
+    // Dir
+    $this->dirs[0] = $conf->fckeditor->dir_images;
+    
     $sql = array();
 
     return $this->_init($sql);
