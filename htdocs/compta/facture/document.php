@@ -205,7 +205,8 @@ if ($facid > 0)
     			$var=true;
     			while (($file = readdir($handle))!==false)
     			{
-    				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    				if (! is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'
+    						&& ! eregi('\.meta$',$file))
     				{
     					$var=!$var;
     					print '<tr '.$bc[$var].'>';
