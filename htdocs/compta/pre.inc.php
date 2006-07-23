@@ -99,12 +99,12 @@ function llxHeader($head = "", $title="", $help_url='')
         $menu->add(DOL_URL_ROOT."/compta/deplacement/", $langs->trans("Trips"));
     }
 
-    if (($conf->compta->enabled || $conf->comptaexpert->enabled) && $conf->compta->tva && $user->societe_id == 0)
+    if ($conf->tax->enabled && $conf->compta->tva && $user->societe_id == 0)
     {
         $menu->add(DOL_URL_ROOT."/compta/tva/index.php",$langs->trans("VAT"));
     }
 
-    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+    if ($conf->tax->enabled)
     {
         $menu->add(DOL_URL_ROOT."/compta/charges/index.php",$langs->trans("Charges"));
     }
@@ -124,13 +124,18 @@ function llxHeader($head = "", $title="", $help_url='')
         $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
     }
 
-    $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
-
-    if ($user->rights->compta->ventilation->parametrer)
+    if ($conf->compta->enabled)
     {
-        $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
-    }
-
+    	if ($user->rights->compta->ventilation->parametrer)
+		{
+	    	$menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
+		}
+	
+	    if ($user->rights->compta->ventilation->parametrer)
+	    {
+	        $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
+	    }
+	}
 
     left_menu($menu->liste, $help_url);
 }
