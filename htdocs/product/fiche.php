@@ -407,7 +407,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 
     print '<table class="border" width="100%">';
     print '<tr>';
-    print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
+    print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
     if ($_error == 1)
     {
         print $langs->trans("RefAlreadyExists");
@@ -420,12 +420,14 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 			 print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
 			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
 			{
-				print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'"></td>';
+				print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'"></td></tr>';
 			}
 	}
 	// PRIX
 	else
+	{
 		 print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
+    }
     $langs->load("bills");
     print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
     print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
@@ -435,11 +437,12 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     print '<select class="flat" name="statut">';
     print '<option value="1">'.$langs->trans("OnSell").'</option>';
     print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
+    print '</select>';
     print '</td></tr>';
 
     if ($_GET["type"] == 0 && $conf->stock->enabled)
     {
-        print "<tr>".'<td>Seuil stock</td><td colspan="2">';
+        print '<tr><td>Seuil stock</td><td>';
         print '<input name="seuil_stock_alerte" size="4" value="0">';
         print '</td></tr>';
     }
