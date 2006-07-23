@@ -83,7 +83,7 @@ FCKConfig.ToolbarSets["dolibarr_mailings"] = [
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent',],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor','Image','Flash','Table','Rule','Smiley','SpecialChar','UniversalKey'],
+        ['Link','Unlink','Anchor','Image','Table','Rule','Smiley','SpecialChar','UniversalKey'],
         ['FontName','FontSize']
 ] ;
 
@@ -94,7 +94,7 @@ FCKConfig.ToolbarSets["dolibarr_notes"] = [
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent',],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor','Image','Flash','Table','Rule','Smiley','SpecialChar','UniversalKey'],
+        ['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar','UniversalKey'],
         ['FontName','FontSize']
 ] ;
 
