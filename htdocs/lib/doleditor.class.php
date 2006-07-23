@@ -41,13 +41,14 @@ class DolEditor
 	
     /**
             \brief 	DolEditor
-            \param 	htmlname		     Nom formulaire html WYSIWIG
-            \param 	content			     Contenu édition WYSIWIG
-            \param 	height			     Hauteur en pixel de la zone édition
-            \param 	toolbarname		   Nom barre de menu éditeur
-            \param  toolbarlocation  Emplacement de la barre de menu : 
-                                     'In' chaque fenêtre d'édition a ça propre barre d'outils
-                                     'Out:nom' partage de la barre d'outils où 'nom' est le nom du DIV qui affiche la barre
+            \param 	htmlname		          Nom formulaire html WYSIWIG
+            \param 	content			          Contenu édition WYSIWIG
+            \param 	height			          Hauteur en pixel de la zone édition
+            \param 	toolbarname		        Nom barre de menu éditeur
+            \param  toolbarlocation       Emplacement de la barre de menu : 
+                                          'In' chaque fenêtre d'édition a ça propre barre d'outils
+                                          'Out:nom' partage de la barre d'outils où 'nom' est le nom du DIV qui affiche la barre
+            \param  toolbarstartexpanded  visible ou non au démarrage
     */
     function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false)
     {
