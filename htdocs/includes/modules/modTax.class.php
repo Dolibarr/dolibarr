@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -22,55 +22,55 @@
  * $Source$
  */
 
-/**     \defgroup   comptabilite     Module comptabilite
-        \brief      Module pour inclure des fonctions de comptabilité (gestion de comptes comptables et rapports)
+/**     \defgroup   tax		Module taxes
+        \brief      Module pour inclure des fonctions de saisies des taxes et charges sociales
 */
 
 /**
-        \file       htdocs/includes/modules/modComptabilite.class.php
+        \file       htdocs/includes/modules/modTax.class.php
         \ingroup    comptabilite
-        \brief      Fichier de description et activation du module Comptabilite
+        \brief      Fichier de description et activation du module Taxe
 */
 include_once "DolibarrModules.class.php";
 
 
 /**
-		\class 		modComptabilite
-        \brief      Classe de description et activation du module Comptabilite
+		\class 		modTax
+        \brief      Classe de description et activation du module Tax
 */
-class modComptabilite extends DolibarrModules
+class modTax extends DolibarrModules
 {
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
     *   \param      DB      handler d'accès base
     */
-	function modComptabilite($DB)
+	function modTax($DB)
 	{
 		global $conf;
 	
 		$this->db = $DB ;
-		$this->id = 'comptabilite';   // Same value xxx than in file modXxx.class.php file
-		$this->numero = 10 ;
+		$this->id = 'tax';   // Same value xxx than in file modXxx.class.php file
+		$this->numero = 500 ;
 	
 		$this->family = "financial";
-		$this->name = "Comptabilite";
-		$this->description = "Gestion sommaire de comptabilité";
+		$this->name = "Taxes et charges sociales";
+		$this->description = "Gestion des taxes et charges sociales";
 	
 		$this->revision = explode(" ","$Revision$");
 		$this->version = $this->revision[1];
 	
-		$this->const_name = 'MAIN_MODULE_COMPTABILITE';
+		$this->const_name = 'MAIN_MODULE_TAX';
 		$this->special = 0;
-        $this->picto='';
+        $this->picto='bill';
 	
 		// Config pages
-		$this->config_page_url = "compta.php";
+		$this->config_page_url = array();
 	
 		// Dépendances
-		$this->depends = array("modFacture","modBanque");
+		$this->depends = array();
 		$this->requiredby = array();
-		$this->conflictwith = array("modComptabiliteExpert");
+		$this->conflictwith = array();
 		$this->langfiles = array("compta");
 	
 		// Constantes
@@ -78,50 +78,40 @@ class modComptabilite extends DolibarrModules
 	
 		// Répertoires
 		$this->dirs = array();
-		$this->dirs[0] = $conf->compta->dir_output;
-		$this->dirs[1] = $conf->compta->dir_output."/rapport";
-		$this->dirs[2] = $conf->compta->dir_output."/export";
-		$this->dirs[3] = $conf->compta->dir_images;
+		$this->dirs[0] = $conf->tax->dir_output;
+		$this->dirs[1] = $conf->tax->dir_images;
 	
 		// Boites
 		$this->boxes = array();
 	
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'compta';
+		$this->rights_class = 'tax';
 		$r=0;
 	
 		$r++;
-		$this->rights[$r][0] = 95;
-		$this->rights[$r][1] = 'Lire CA, bilans, résultats';
+		$this->rights[$r][0] = 91;
+		$this->rights[$r][1] = 'Lire les charges';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'resultat';
+		$this->rights[$r][4] = 'charges';
 		$this->rights[$r][5] = 'lire';
 	
 		$r++;
-		$this->rights[$r][0] = 96;
-		$this->rights[$r][1] = 'Paramétrer la ventilation';
-		$this->rights[$r][2] = 'r';
+		$this->rights[$r][0] = 92;
+		$this->rights[$r][1] = 'Créer modifier les charges';
+		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'ventilation';
-		$this->rights[$r][5] = 'parametrer';
-	
-		$r++;
-		$this->rights[$r][0] = 97;
-		$this->rights[$r][1] = 'Lire les ventilations de factures';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'ventilation';
-		$this->rights[$r][5] = 'lire';
-	
-		$r++;
-		$this->rights[$r][0] = 98;
-		$this->rights[$r][1] = 'Ventiler les lignes de factures';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'ventilation';
+		$this->rights[$r][4] = 'charges';
 		$this->rights[$r][5] = 'creer';
+	
+		$r++;
+		$this->rights[$r][0] = 93;
+		$this->rights[$r][1] = 'Supprimer les charges';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'charges';
+		$this->rights[$r][5] = 'supprimer';
 	}
 
 
@@ -139,16 +129,15 @@ class modComptabilite extends DolibarrModules
 		return $this->_init($sql);
 	}
 
-	/**
-	 *    \brief      Fonction appelée lors de la désactivation d'un module.
-	 *                Supprime de la base les constantes, boites et permissions du module.
-	 */
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
+   */
 	function remove()
 	{
 		$sql = array();
 	
 		return $this->_remove($sql);
 	}
-
 }
 ?>

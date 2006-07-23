@@ -354,19 +354,19 @@ class MenuLeft {
                   $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement&mainmenu=accountancy", $langs->trans("Trips"), 0, $user->rights->deplacement->lire);
                 }
                 
-                // Charges
-                if ($conf->charges->enabled)
+                // Charges sociales
+                if ($conf->tax->enabled)
                 {
-					$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&mainmenu=accountancy",$langs->trans("Charges"), 0, $user->rights->compta->charges->lire);
-					if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"), 1, $user->rights->compta->charges->creer);
+					$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&mainmenu=accountancy",$langs->trans("Charges"), 0, $user->rights->tax->charges->lire);
+					if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"), 1, $user->rights->tax->charges->creer);
         		}
         		
-        		// Compta tva        
-                if (($conf->compta->enabled || $conf->comptaexpert->enabled) && $conf->compta->tva && $user->societe_id == 0)
+        		// Charges tva        
+                if ($conf->tax->enabled && $conf->compta->tva && $user->societe_id == 0)
                 {
-                  $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&mainmenu=accountancy",$langs->trans("VAT"),0,$user->rights->compta->charges->lire);
-                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1,$user->rights->compta->charges->creer);
-                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1,$user->rights->compta->charges->lire);
+                  $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&mainmenu=accountancy",$langs->trans("VAT"),0,$user->rights->tax->charges->lire);
+                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1,$user->rights->tax->charges->creer);
+                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1,$user->rights->tax->charges->lire);
                 }
                 
                 // Compta simple

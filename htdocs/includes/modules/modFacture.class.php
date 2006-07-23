@@ -32,7 +32,6 @@
 		\ingroup    facture
 		\brief      Fichier de la classe de description et activation du module Facture
 */
-
 include_once "DolibarrModules.class.php";
 
 
@@ -40,7 +39,6 @@ include_once "DolibarrModules.class.php";
         \class      modFacture
         \brief      Classe de description et activation du module Facture
 */
-
 class modFacture extends DolibarrModules
 {
 
