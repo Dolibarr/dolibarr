@@ -49,7 +49,7 @@ class DolEditor
                                      'In' chaque fenêtre d'édition a ça propre barre d'outils
                                      'Out:nom' partage de la barre d'outils où 'nom' est le nom du DIV qui affiche la barre
     */
-    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In')
+    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false)
     {
 		global $conf;
 		
@@ -64,6 +64,7 @@ class DolEditor
 			$this->editor->Config["CustomConfigurationsPath"] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
 			$this->editor->ToolbarSet = $toolbarname;
 			$this->editor->Config[ 'ToolbarLocation' ] = $toolbarlocation ;
+			$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
 			$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
 		}
     }

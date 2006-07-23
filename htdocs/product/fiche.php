@@ -786,7 +786,7 @@ if ($_GET["id"] || $_GET["ref"])
         if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
         {
 	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('desc',$product->description,200,'dolibarr_notes','Out:xToolbar');
+			$doleditor=new DolEditor('desc',$product->description,200,'dolibarr_notes','Out:xToolbar',true);
 			$doleditor->Create();
         }
         else
@@ -818,7 +818,7 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
         {
 	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','Out:xToolbar');
+			$doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','Out:xToolbar',true);
 			$doleditor->Create();
         }
         else
