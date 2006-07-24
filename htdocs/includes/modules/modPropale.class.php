@@ -84,7 +84,7 @@ class modPropale extends DolibarrModules
     $this->const[1][3] = 'Nom du gestionnaire de numérotation des propales';
     $this->const[1][4] = 0;
     
-    $this->const[2][0] = "PROPALE_ADD_PROD_DESC";
+    $this->const[2][0] = "PROP_ADD_PROD_DESC";
     $this->const[2][1] = "chaine";
     $this->const[2][2] = "0";
     $this->const[2][3] = "Mettre à 1 pour voir la description d\'un produit dans une propale";

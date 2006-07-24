@@ -219,7 +219,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                         }
 
                         // Ajoute description du produit
-                        if ($conf->global->COM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+                        if ($conf->global->COMMANDE_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                         {
                             if ($lignesdelivery[$i]->product_desc&&$lignesdelivery[$i]->product_desc!=$lignesdelivery[$i]->libelle&&$lignesdelivery[$i]->product_desc!=$lignesdelivery[$i]->desc)
                             {
