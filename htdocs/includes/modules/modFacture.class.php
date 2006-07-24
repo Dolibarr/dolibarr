@@ -94,7 +94,7 @@ class modFacture extends DolibarrModules
         $this->const[$r][2] = "0";
     	$r++;
     
-        $this->const[$r][0] = "FAC_ADD_PROD_DESC";
+        $this->const[$r][0] = "FACTURE_ADD_PROD_DESC";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "0";
         $this->const[$r][3] = "Mettre à 1 pour voir la description d'un produit dans une facture";
