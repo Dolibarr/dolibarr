@@ -192,6 +192,8 @@ if ($_GET["action"] == 'create')
 	// A quoi sert une date de livraison sur une propale ?
 	// Si il y a date de livraison connue alors ne s'agit-il pas d'une commande plutot ?
 	// Régis : c'est plus pour information afin que le client est un délai de fabrication par exemple.
+if ($conf->expedition->enabled)
+{
 	if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
 	{
 		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
@@ -223,6 +225,7 @@ if ($_GET["action"] == 'create')
 		}
     print '</td></tr>';
   }
+}
 
     // Model
     print '<tr>';

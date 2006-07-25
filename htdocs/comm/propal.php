@@ -784,8 +784,11 @@ if ($_GET['propalid'] > 0)
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
+if ($conf->expedition->enabled)
+{
 	if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $rowspan++;
 	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
+}
 
 	// Notes
 	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
@@ -826,6 +829,8 @@ if ($_GET['propalid'] > 0)
 
 	// date de livraison (conditonné sur PROPALE_ADD_SHIPPING_DATE car carac à
 	// gérer par les commandes et non les propal
+if ($conf->expedition->enabled)
+{
 	if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
 	{
 		print '<tr><td>';
@@ -873,6 +878,7 @@ if ($_GET['propalid'] > 0)
 		}
 		print '</td></tr>';
 	}
+}
 
 	// Conditions et modes de réglement
 	print '<tr><td>';

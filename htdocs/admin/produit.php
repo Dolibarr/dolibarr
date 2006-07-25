@@ -48,7 +48,7 @@ else if ($_POST["action"] == 'multiprix_num')
     Header("Location: produit.php");
     exit;
 }
-if ($_GET["action"] == 'activate_multiprix')
+if ($_POST["action"] == 'multiprix')
 {
 	$res=$db -> desc_table(MAIN_DB_PREFIX."product_price","price_level");
 	if(! $db -> fetch_row())
@@ -85,7 +85,7 @@ if ($_GET["action"] == 'activate_multiprix')
 				}
 				else
 				{
-					dolibarr_set_const($db, "PRODUIT_MULTIPRICES", "1");
+					dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
 					dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
 					Header("Location: produit.php");
 				}
@@ -94,54 +94,70 @@ if ($_GET["action"] == 'activate_multiprix')
 	}
 	else
 	{
-			dolibarr_set_const($db, "PRODUIT_MULTIPRICES", "1");
+			dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
 			dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
 			Header("Location: produit.php");
 	}
     exit;
 }
-else if ($_GET["action"] == 'disable_multiprix')
+else if ($_POST["action"] == 'sousproduits')
 {
-    //"ALTER TABLE ".MAIN_DB_PREFIX."product_price drop price_level"
-	dolibarr_del_const($db, "PRODUIT_MULTIPRICES");
-	dolibarr_del_const($db, "PRODUIT_MULTIPRICES_LIMIT");
-    Header("Location: produit.php");
-    exit;
-}
-else if ($_GET["action"] == 'activate_sousproduits')
-{
-    $table = MAIN_DB_PREFIX."product_association";
-	$fields['fk_product_pere'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
-	$fields['fk_product_fils'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
-	$fields['qty'] = array('type'=>'double','default'=> 'null');
-	$keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
-	$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
-	if(! $db -> create_table($table,$fields,"","MyISAM","","",$keys))
+  $res=$db -> desc_table(MAIN_DB_PREFIX."product_association");
+	if(! $db -> fetch_row())
 	{
-		dolibarr_print_error($db);
-		print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
+		$table = MAIN_DB_PREFIX."product_association";
+		$fields['fk_product_pere'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
+		$fields['fk_product_fils'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
+		$fields['qty'] = array('type'=>'double','default'=> 'null');
+		$keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
+		$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
+		if(! $db -> create_table($table,$fields,"","MyISAM","","",$keys))
+		{
+			dolibarr_print_error($db);
+			print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
+		}
+		else
+		{
+			dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
+			Header("Location: produit.php");
+	  }
 	}
 	else
 	{
-			dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", "1");
-			Header("Location: produit.php");
+		dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
+		Header("Location: produit.php");
 	}
 }
-else if ($_GET["action"] == 'disable_sousproduits')
+else if ($_POST["action"] == 'confirmdeleteline')
 {
-	dolibarr_del_const($db, "PRODUIT_SOUSPRODUITS");
+    dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", $_POST["activate_confirmdeleteline"]);
     Header("Location: produit.php");
     exit;
 }
-else if ($_GET["action"] == 'activate_confirmdeleteline')
+else if ($_POST["action"] == 'changeproductdesc')
 {
-    dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", "1");
+    dolibarr_set_const($db, "PRODUIT_CHANGE_PROD_DESC", $_POST["activate_changeproductdesc"]);
+    dolibarr_set_const($db, "PROPALE_ADD_PROD_DESC", 0);
+    dolibarr_set_const($db, "COMMANDE_ADD_PROD_DESC", 0);
+    dolibarr_set_const($db, "FACTURE_ADD_PROD_DESC", 0);
     Header("Location: produit.php");
     exit;
 }
-else if ($_GET["action"] == 'disable_confirmdeleteline')
+else if ($_POST["action"] == 'viewProdDescInPropal')
 {
-	dolibarr_del_const($db, "PRODUIT_CONFIRM_DELETE_LINE");
+    dolibarr_set_const($db, "PROPALE_ADD_PROD_DESC", $_POST["activate_viewProdDescInPropal"]);
+    Header("Location: produit.php");
+    exit;
+}
+else if ($_POST["action"] == 'viewProdDescInOrder')
+{
+    dolibarr_set_const($db, "COMMANDE_ADD_PROD_DESC", $_POST["activate_viewProdDescInOrder"]);
+    Header("Location: produit.php");
+    exit;
+}
+else if ($_POST["action"] == 'viewProdDescInInvoice')
+{
+    dolibarr_set_const($db, "FACTURE_ADD_PROD_DESC", $_POST["activate_viewProdDescInInvoice"]);
     Header("Location: produit.php");
     exit;
 }
@@ -156,125 +172,146 @@ llxHeader('',$langs->trans("ProductSetup"));
 
 print_titre($langs->trans("ProductSetup"));
 
+$html=new Form($db);
+$var=true;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print "  <td>".$langs->trans("Parameters")."</td>\n";
+print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
+print "  <td width=\"80\">&nbsp;</td></tr>\n";
+
 /*
  * Formulaire parametres divers
  */
 
-print '<br>';
+$var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"nbprod\">";
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print "  <td>".$langs->trans("Name")."</td>\n";
-print "  <td align=\"left\">".$langs->trans("Value")."</td>\n";
-print "  <td>&nbsp;</td>\n";
-print "</tr><tr ".$bc[false].">";
+print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
-print "<td align=\"left\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_LIMIT_SIZE."\"></td>";
-print '<td><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print "<td align=\"right\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_LIMIT_SIZE."\"></td>";
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
-print '</table>';
 print '</form>';
-print '<br>';
 
 
 // multiprix activation/desactivation
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td align="center">&nbsp;</td>';
-print '<td align="center">'.$langs->trans("Active").'</td>';
-print "</tr>\n";
+$var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"multiprix\">";
-print "<tr ".$bc[false].">";
+print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("MultiPricesAbility").'</td>';
-print '<td align="center">';
-if($conf->global->PRODUIT_MULTIPRICES == 1)
-	print img_tick();
-print '</td>';
-print "<td align=\"center\">";
-if($conf->global->PRODUIT_MULTIPRICES == 0)
-print '<a href="produit.php?action=activate_multiprix">'.$langs->trans("Activate").'</a>';
-else if($conf->global->PRODUIT_MULTIPRICES == 1)
-	print '<a href="produit.php?action=disable_multiprix">'.$langs->trans("Disable").'</a>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_multiprix",$conf->global->PRODUIT_MULTIPRICES,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print '</tr>';
-print '</table>';
 print '</form>';
 
 
 // multiprix nombre de prix a proposer
 if($conf->global->PRODUIT_MULTIPRICES == 1)
 {
-	print '<br>';
+	$var=!$var;
 	print "<form method=\"post\" action=\"produit.php\">";
 	print "<input type=\"hidden\" name=\"action\" value=\"multiprix_num\">";
-	print "<table class=\"noborder\" width=\"100%\">";
-	print "<tr class=\"liste_titre\">";
-	print '  <td width="80%">'.$langs->trans("Name")."</td>\n";
-	print "  <td align=\"left\">".$langs->trans("Value")."</td>\n";
-	print "  <td>&nbsp;</td>\n";
-	print "</tr><tr ".$bc[false].">";
+	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
-	print "<td align=\"left\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_MULTIPRICES_LIMIT."\"></td>";
-	print '<td><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print "<td align=\"right\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_MULTIPRICES_LIMIT."\"></td>";
+	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';
-	print '</table>';
 	print '</form>';
 }
 
 // sousproduits activation/desactivation
-print '<br>';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td align="center">&nbsp;</td>';
-print '<td align="center">'.$langs->trans("Active").'</td>';
-print "</tr>\n";
+$var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"multiprix\">";
-print "<tr ".$bc[false].">";
+print "<input type=\"hidden\" name=\"action\" value=\"sousproduits\">";
+print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("AssociatedProductsAbility").'</td>';
-print '<td align="center">';
-if($conf->global->PRODUIT_SOUSPRODUITS == 1)
-	print img_tick();
-print '</td>';
-print "<td align=\"center\">";
-if($conf->global->PRODUIT_SOUSPRODUITS == 0)
-print '<a href="produit.php?action=activate_sousproduits">'.$langs->trans("Activate").'</a>';
-else if($conf->global->PRODUIT_SOUSPRODUITS == 1)
-	print '<a href="produit.php?action=disable_sousproduits">'.$langs->trans("Disable").'</a>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print '</tr>';
-print '</table>';
 print '</form>';
 
 // confirmation de suppression ligne produit activation/desactivation
-print '<br>';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td align="center">&nbsp;</td>';
-print '<td align="center">'.$langs->trans("Active").'</td>';
-print "</tr>\n";
+$var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"confirmdeleteline\">";
-print "<tr ".$bc[false].">";
+print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
-print '<td align="center">';
-if($conf->global->PRODUIT_CONFIRM_DELETE_LINE == 1)
-	print img_tick();
-print '</td>';
-print "<td align=\"center\">";
-if($conf->global->PRODUIT_CONFIRM_DELETE_LINE == 0)
-print '<a href="produit.php?action=activate_confirmdeleteline">'.$langs->trans("Activate").'</a>';
-else if($conf->global->PRODUIT_CONFIRM_DELETE_LINE == 1)
-	print '<a href="produit.php?action=disable_confirmdeleteline">'.$langs->trans("Disable").'</a>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_confirmdeleteline",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print '</tr>';
-print '</table>';
 print '</form>';
+
+// Modification description produit activation/desactivation
+$var=!$var;
+print "<form method=\"post\" action=\"produit.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"changeproductdesc\">";
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("ModifyProductDescAbility").'</td>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_changeproductdesc",$conf->global->PRODUIT_CHANGE_PROD_DESC,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td>";
+print '</tr>';
+print '</form>';
+
+if ($conf->global->PRODUIT_CHANGE_PROD_DESC == 0)
+{
+	// Visualiser description produit dans propale activation/desactivation
+  $var=!$var;
+  print "<form method=\"post\" action=\"produit.php\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInPropal\">";
+  print "<tr ".$bc[$var].">";
+  print '<td width="80%">'.$langs->trans("ViewProductDescInPropalAbility").'</td>';
+  print '<td width="60" align="right">';
+  print $html->selectyesno("activate_viewProdDescInPropal",$conf->global->PROPALE_ADD_PROD_DESC,1);
+  print '</td><td align="right">';
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</td>";
+  print '</tr>';
+  print '</form>';
+  
+  // Visualiser description produit dans commande activation/desactivation
+  $var=!$var;
+  print "<form method=\"post\" action=\"produit.php\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInOrder\">";
+  print "<tr ".$bc[$var].">";
+  print '<td width="80%">'.$langs->trans("ViewProductDescInOrderAbility").'</td>';
+  print '<td width="60" align="right">';
+  print $html->selectyesno("activate_viewProdDescInOrder",$conf->global->COMMANDE_ADD_PROD_DESC,1);
+  print '</td><td align="right">';
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</td>";
+  print '</tr>';
+  print '</form>';
+  
+  // Visualiser description produit dans facture activation/desactivation
+  $var=!$var;
+  print "<form method=\"post\" action=\"produit.php\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInInvoice\">";
+  print "<tr ".$bc[$var].">";
+  print '<td width="80%">'.$langs->trans("ViewProductDescInInvoiceAbility").'</td>';
+  print '<td width="60" align="right">';
+  print $html->selectyesno("activate_viewProdDescInInvoice",$conf->global->FACTURE_ADD_PROD_DESC,1);
+  print '</td><td align="right">';
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</td>";
+  print '</tr>';
+  print '</form>';
+}
+
+print '</table>';
 
 $db->close();
 

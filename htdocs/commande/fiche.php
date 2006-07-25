@@ -708,6 +708,8 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '</td></tr>';
 
 			// Date de livraison
+		if ($conf->expedition->enabled)
+		{
 			print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
 			if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
 			{
@@ -730,7 +732,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			}
 
 			print '</td></tr>';
-
+		}
 
 			// Conditions de réglement
 			print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
@@ -1074,6 +1076,8 @@ else
 			print '</tr>';
 
 			// Date de livraison
+		if ($conf->expedition->enabled)
+		{
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DateDelivery');
@@ -1120,6 +1124,7 @@ else
 				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
 			}
 			print '</td></tr>';
+		}
 
 			// Conditions et modes de réglement
 			print '<tr><td height="10">';
