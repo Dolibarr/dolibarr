@@ -84,12 +84,6 @@ class modCommande extends DolibarrModules
     $this->const[1][2] = "mod_commande_marbre";
     $this->const[1][3] = 'Nom du gestionnaire de numérotation des commandes';
     $this->const[1][4] = 0;
-    
-    $this->const[2][0] = "COMMANDE_ADD_PROD_DESC";
-    $this->const[2][1] = "chaine";
-    $this->const[2][2] = "0";
-    $this->const[2][3] = "Mettre à 1 pour voir la description d\'un produit dans une commande";
-    $this->const[2][4] = 1;
 
     // Boites
     $this->boxes = array();

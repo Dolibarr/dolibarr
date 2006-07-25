@@ -499,10 +499,8 @@ LDAPFieldMobileExample=Default attribute : mobile
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
 ConfirmDeleteProductLineAbility=Confirmation of removal of a line produces in the forms
-ModifyProductDescAbility=
-ViewProductDescInPropalAbility=
-ViewProductDescInOrderAbility=
-ViewProductDescInInvoiceAbility=
+ModifyProductDescAbility=Personalization of descriptions produced in the forms 
+ViewProductDescInFormAbility=Visualization of descriptions produced in the forms
 ##### Syslog #####
 SyslogSetup=Syslog module setup
 SyslogOutput=Log output

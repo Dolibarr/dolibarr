@@ -1039,7 +1039,7 @@ if ($conf->expedition->enabled)
 					else print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$objp->ref.'</a>';
 					print ' - '.nl2br($objp->product);
-					if ($conf->global->PROPALE_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+					if ($conf->global->FORM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
 					{
 						print '<br>'.nl2br($objp->product_desc);
 					}

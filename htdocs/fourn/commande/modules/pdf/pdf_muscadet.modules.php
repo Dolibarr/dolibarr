@@ -218,7 +218,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
                         }
 
                         // Ajoute description du produit
-                        if ($conf->global->COMMANDE_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+                        if ($conf->global->FORM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                         {
                             if ($com->lignes[$i]->product_desc&&$com->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$com->lignes[$i]->product_desc!=$com->lignes[$i]->desc)
                             {

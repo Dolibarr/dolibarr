@@ -137,27 +137,13 @@ else if ($_POST["action"] == 'confirmdeleteline')
 else if ($_POST["action"] == 'changeproductdesc')
 {
     dolibarr_set_const($db, "PRODUIT_CHANGE_PROD_DESC", $_POST["activate_changeproductdesc"]);
-    dolibarr_set_const($db, "PROPALE_ADD_PROD_DESC", 0);
-    dolibarr_set_const($db, "COMMANDE_ADD_PROD_DESC", 0);
-    dolibarr_set_const($db, "FACTURE_ADD_PROD_DESC", 0);
+    dolibarr_set_const($db, "FORM_ADD_PROD_DESC", 0);
     Header("Location: produit.php");
     exit;
 }
-else if ($_POST["action"] == 'viewProdDescInPropal')
+else if ($_POST["action"] == 'viewProdDescInForm')
 {
-    dolibarr_set_const($db, "PROPALE_ADD_PROD_DESC", $_POST["activate_viewProdDescInPropal"]);
-    Header("Location: produit.php");
-    exit;
-}
-else if ($_POST["action"] == 'viewProdDescInOrder')
-{
-    dolibarr_set_const($db, "COMMANDE_ADD_PROD_DESC", $_POST["activate_viewProdDescInOrder"]);
-    Header("Location: produit.php");
-    exit;
-}
-else if ($_POST["action"] == 'viewProdDescInInvoice')
-{
-    dolibarr_set_const($db, "FACTURE_ADD_PROD_DESC", $_POST["activate_viewProdDescInInvoice"]);
+    dolibarr_set_const($db, "FORM_ADD_PROD_DESC", $_POST["activate_viewProdDescInForm"]);
     Header("Location: produit.php");
     exit;
 }
@@ -268,42 +254,14 @@ print '</form>';
 
 if ($conf->global->PRODUIT_CHANGE_PROD_DESC == 0)
 {
-	// Visualiser description produit dans propale activation/desactivation
+	// Visualiser description produit dans les formulaires activation/desactivation
   $var=!$var;
   print "<form method=\"post\" action=\"produit.php\">";
-  print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInPropal\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInForm\">";
   print "<tr ".$bc[$var].">";
-  print '<td width="80%">'.$langs->trans("ViewProductDescInPropalAbility").'</td>';
+  print '<td width="80%">'.$langs->trans("ViewProductDescInFormAbility").'</td>';
   print '<td width="60" align="right">';
-  print $html->selectyesno("activate_viewProdDescInPropal",$conf->global->PROPALE_ADD_PROD_DESC,1);
-  print '</td><td align="right">';
-  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-  print "</td>";
-  print '</tr>';
-  print '</form>';
-  
-  // Visualiser description produit dans commande activation/desactivation
-  $var=!$var;
-  print "<form method=\"post\" action=\"produit.php\">";
-  print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInOrder\">";
-  print "<tr ".$bc[$var].">";
-  print '<td width="80%">'.$langs->trans("ViewProductDescInOrderAbility").'</td>';
-  print '<td width="60" align="right">';
-  print $html->selectyesno("activate_viewProdDescInOrder",$conf->global->COMMANDE_ADD_PROD_DESC,1);
-  print '</td><td align="right">';
-  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-  print "</td>";
-  print '</tr>';
-  print '</form>';
-  
-  // Visualiser description produit dans facture activation/desactivation
-  $var=!$var;
-  print "<form method=\"post\" action=\"produit.php\">";
-  print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInInvoice\">";
-  print "<tr ".$bc[$var].">";
-  print '<td width="80%">'.$langs->trans("ViewProductDescInInvoiceAbility").'</td>';
-  print '<td width="60" align="right">';
-  print $html->selectyesno("activate_viewProdDescInInvoice",$conf->global->FACTURE_ADD_PROD_DESC,1);
+  print $html->selectyesno("activate_viewProdDescInForm",$conf->global->FORM_ADD_PROD_DESC,1);
   print '</td><td align="right">';
   print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
   print "</td>";
