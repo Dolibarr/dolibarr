@@ -20,6 +20,8 @@
 
 FCKConfig.CustomConfigurationsPath = '' ;
 
+print FCKConfig.BasePath;
+
 FCKConfig.EditorAreaCSS = FCKConfig.BasePath + 'css/fck_editorarea.css' ;
 
 FCKConfig.DocType = '' ;
@@ -174,8 +176,8 @@ FCKConfig.FlashDlgHideAdvanced	= false ;
 // inline when creating the editor instance. In that cases you must set the 
 // values of LinkBrowserURL, ImageBrowserURL and so on.
 // Custom implementations should just ignore it.
-var _FileBrowserLanguage	= 'asp' ;	// asp | aspx | cfm | lasso | perl | php | py
-var _QuickUploadLanguage	= 'asp' ;	// asp | aspx | cfm | lasso | php
+var _FileBrowserLanguage	= 'php' ;	// asp | aspx | cfm | lasso | perl | php | py
+var _QuickUploadLanguage	= 'php' ;	// asp | aspx | cfm | lasso | php
 
 // Don't care about the following line. It just calculates the correct connector 
 // extension to use for the default File Browser (Perl uses "cgi").

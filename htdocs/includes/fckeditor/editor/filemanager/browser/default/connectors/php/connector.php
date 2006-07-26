@@ -35,7 +35,7 @@ if ( isset( $Config['UserFilesPath'] ) )
 else if ( isset( $_GET['ServerPath'] ) )
 	$GLOBALS["UserFilesPath"] = $_GET['ServerPath'] ;
 else
-	$GLOBALS["UserFilesPath"] = '/UserFiles/' ;
+	$GLOBALS["UserFilesPath"] = $dolibarr_main_url_root.'/document.php?modulepart=editor&file=';// il faut l'url en entier
 
 if ( ! ereg( '/$', $GLOBALS["UserFilesPath"] ) )
 	$GLOBALS["UserFilesPath"] .= '/' ;

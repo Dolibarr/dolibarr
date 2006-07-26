@@ -20,6 +20,16 @@
  */
 define("K_CELL_HEIGHT_RATIO", 1.25);
 
+/**
+ * Répertoire des documents de fckeditor
+ */
+define ("K_PATH_CACHE", $conf->fckeditor->dir_output);
+
+/**
+ * url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera intégrée au pdf
+ */
+define ("K_PATH_URL_CACHE", $dolibarr_main_url_root."/document.php?modulepart=editor&amp;file=");
+
 if(!class_exists('FPDF'))
 {
 define('FPDF_VERSION','1.53');

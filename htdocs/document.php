@@ -250,7 +250,16 @@ if ($modulepart)
         // Aucun test necessaire car on force le rep de doanwload sur
         // le rep export qui est propre à l'utilisateur
         $accessallowed=1;
-        $original_file=$conf->export->dir_ouput.'/'.$user->id.'/'.$original_file;
+        $original_file=$conf->export->dir_output.'/'.$user->id.'/'.$original_file;
+    }
+    
+    // Wrapping pour l'éditeur wysiwyg
+    if ($modulepart == 'editor')
+    {
+        // Aucun test necessaire car on force le rep de doanwload sur
+        // le rep export qui est propre à l'utilisateur
+        $accessallowed=1;
+        $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
     }
 
 }
