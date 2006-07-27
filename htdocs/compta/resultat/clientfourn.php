@@ -33,7 +33,8 @@ require_once("../../chargesociales.class.php");
 $langs->load("bills");
 
 $user->getrights('compta');
-if (!$user->rights->compta->resultat->lire)
+$user->getrights('facture');
+if (!$user->rights->facture->lire)
   accessforbidden();
 
 $year=$_GET["year"];
