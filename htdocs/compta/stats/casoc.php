@@ -27,6 +27,7 @@
 */
 
 require("./pre.inc.php");
+$langs->load("companies");
 
 $year=$_GET["year"];
 if (! $year) { $year = strftime("%Y", time()); }
