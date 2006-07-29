@@ -989,7 +989,11 @@ function loginfunction()
     // Si feuille de style en php existe
     if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
     
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    // Ce DTD est KO car inhibe document.body.scrollTop
+    //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    // Ce DTD est OK
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">';
+
     print "\n<html><head><title>Dolibarr Authentification</title>\n";
     
     print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
@@ -1026,10 +1030,10 @@ function loginfunction()
     print '</head>'."\n";
     print '<body class="body" onload="donnefocus();">';
     
-    print '<form id="login" method="post" action="';
+    print '<form id="login" name="login" method="post" action="';
     print $_SERVER['PHP_SELF'];
     print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-    print '" name="identification">';
+    print '">';
     
     print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">';
     
@@ -1041,7 +1045,7 @@ function loginfunction()
     }
     else
     {
-      print '<tr class="vmenu"><td>Dolibarr '.DOL_VERSION.'</td></tr>';
+      print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
     }
     
     print'</table>
@@ -1069,7 +1073,7 @@ function loginfunction()
     print '
 </tr>
 
-<tr><td align="left"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </a></td>
+<tr><td align="left"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>
 <td><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2" />
 </td></tr>
 
