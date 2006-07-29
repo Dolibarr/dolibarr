@@ -10,7 +10,6 @@ ExternalUser=Utilisateur externe
 InternalUsers=Utilisateurs internes
 ExternalUsers=Utilisateurs externes
 GlobalSetup=Général
-CompanySetup=Institution
 GUISetup=Affichage
 ErrorModuleRequirePHPVersion=Erreur, ce module requiert une version %s ou supérieure de PHP
 DictionnarySetup=Dictionnaires
