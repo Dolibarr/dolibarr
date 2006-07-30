@@ -247,7 +247,7 @@ if ($socidp > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentConditions');
 	print '<td>';
-	if (($_GET['action'] != 'editconditions') && ($user->societe_id > 0)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if (($_GET['action'] != 'editconditions') && (!$user->societe_id > 0)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editconditions')
@@ -266,7 +266,7 @@ if ($socidp > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentMode');
 	print '<td>';
-	if (($_GET['action'] != 'editmode') && ($user->societe_id > 0)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	if (($_GET['action'] != 'editmode') && (!$user->societe_id > 0)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editmode')
@@ -285,7 +285,7 @@ if ($socidp > 0)
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerRelativeDiscountShort");
     print '<td><td align="right">';
-    if ($user->societe_id > 0)
+    if (!$user->societe_id > 0)
     {
     	print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     }
@@ -299,7 +299,7 @@ if ($socidp > 0)
     print '<tr><td nowrap>';
     print $langs->trans("CustomerAbsoluteDiscountShort");
     print '<td><td align="right">';
-    if ($user->societe_id > 0)
+    if (!$user->societe_id > 0)
     {
     	print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     }
@@ -320,7 +320,7 @@ if ($socidp > 0)
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans("PriceLevel");
 		print '<td><td align="right">';
-		if ($user->societe_id > 0)
+		if (!$user->societe_id > 0)
     {
     	print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     }
@@ -336,7 +336,7 @@ if ($socidp > 0)
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans("DeliveriesAddress");
 		print '<td><td align="right">';
-		if ($user->societe_id > 0)
+		if (!$user->societe_id > 0)
     {
     	print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     }
