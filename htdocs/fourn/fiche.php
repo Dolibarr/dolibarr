@@ -37,6 +37,7 @@ $langs->load('products');
 $langs->load('bills');
 $langs->load('orders');
 $langs->load('companies');
+$langs->load('commercial');
 
 // Sécurité accés client
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
