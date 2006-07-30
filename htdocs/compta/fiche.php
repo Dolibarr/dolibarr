@@ -178,7 +178,10 @@ if ($socid > 0)
         print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
         print $langs->trans("CustomerRelativeDiscountShort");
         print '<td><td align="right">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+        if (!$user->societe_id > 0)
+        {
+        	print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+        }
         print '</td></tr></table>';
         print '</td><td colspan="3">'.($societe->remise_client?$societe->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
         print '</tr>';
@@ -189,7 +192,10 @@ if ($socid > 0)
         print '<tr><td nowrap>';
         print $langs->trans("CustomerAbsoluteDiscountShort");
         print '<td><td align="right">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+        if (!$user->societe_id > 0)
+        {
+        	print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+        }
         print '</td></tr></table>';
         print '</td>';
         print '<td colspan="3">';

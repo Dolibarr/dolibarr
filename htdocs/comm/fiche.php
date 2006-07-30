@@ -81,7 +81,7 @@ if ($_GET["action"] == 'attribute_prefix')
     $societe->attribute_prefix($db, $_GET["socid"]);
 }
 // conditions de règlement
-if ($_POST["action"] == 'setconditions')
+if ($_POST["action"] == 'setconditions' && (!$user->societe_id > 0))
 {
     
 	$societe = new Societe($db, $_GET["socid"]);
@@ -92,7 +92,7 @@ if ($_POST["action"] == 'setconditions')
     if (! $result) dolibarr_print_error($result);
 }
 // mode de règlement
-if ($_POST["action"] == 'setmode')
+if ($_POST["action"] == 'setmode' && (!$user->societe_id > 0))
 {
     $societe = new Societe($db, $_GET["socid"]);
     $societe->mode_reglement=$_POST['mode_reglement_id'];
@@ -102,7 +102,7 @@ if ($_POST["action"] == 'setmode')
     if (! $result) dolibarr_print_error($result);
 }
 // assujétissement à la TVA
-if ($_POST["action"] == 'setassujtva')
+if ($_POST["action"] == 'setassujtva' && (!$user->societe_id > 0))
 {
 	$societe = new Societe($db, $_GET["socid"]);
     $societe->tva_assuj=$_POST['assujtva_value'];

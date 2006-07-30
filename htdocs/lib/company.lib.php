@@ -71,10 +71,13 @@ function societe_prepare_head($objsoc)
         $h++;
     }
 
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Note");
-    $head[$h][2] = 'note';
-    $h++;
+    if ($user->societe_id == 0)
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
+    	$head[$h][1] = $langs->trans("Note");
+    	$head[$h][2] = 'note';
+    	$h++;
+    }
 
     if ($user->societe_id == 0)
     {
@@ -84,18 +87,21 @@ function societe_prepare_head($objsoc)
         $h++;
     }
 
-    if (! $conf->global->SOCIETE_DISABLE_NOTIFICATIONS)
+    if (! $conf->global->SOCIETE_DISABLE_NOTIFICATIONS && $user->societe_id == 0)
     {
 	    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
 	    $head[$h][1] = $langs->trans("Notifications");
 	    $head[$h][2] = 'notify';
 	    $h++;
-	}
-	
+	 }
+	 
+	 if ($user->societe_id == 0)
+   {	
     $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$objsoc->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;
+  }
 
     if ($conf->bookmark->enabled && $user->rights->bookmark->creer)
     {
