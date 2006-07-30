@@ -99,8 +99,6 @@ if ($_GET["action"] == 'setdoc')
 
     if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"]))
     {
-        // La constante qui a été lue en avant du nouveau set
-        // on passe donc par une variable pour avoir un affichage cohérent
         $conf->global->FACTURE_ADDON_PDF = $_GET["value"];
     }
 

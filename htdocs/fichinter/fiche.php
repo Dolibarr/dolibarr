@@ -31,9 +31,9 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/ficheinter/".FICHEINTER_ADDON.".php"))
+if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php"))
 {
-    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/ficheinter/".FICHEINTER_ADDON.".php");
+    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php");
 }
 
 $langs->load("companies");
@@ -138,18 +138,20 @@ if ($_GET["action"] == 'create')
 {
 	print_titre($langs->trans("AddIntervention"));
 
-	// \todo Utiliser un module de numérotation
-	
+	if (! $conf->global->FICHEINTER_ADDON)
+	{
+        dolibarr_print_error($db,$langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
+        exit;
+	}
 
 	$fix = new Fichinter($db);
 
-	$obj = $conf->global->FICHEINTER_ADDON;
+    $file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
 
-	// \todo	Quand module numerotation fiche inter sera dispo
-	//    $modFicheinter = new $obj;
-	//    $numpr = $modFicheinter->getNextValue($soc);
+	$obj = "mod_".$conf->global->FICHEINTER_ADDON;
+	$modFicheinter = new $obj;
+	$numpr = $modFicheinter->getNextValue($societe);
 
-	$numpr = $fix->get_new_num($societe);
 
 	print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
 
@@ -167,16 +169,7 @@ if ($_GET["action"] == 'create')
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
 	print "<tr><td>".$langs->trans("Ref")."</td>";
-	
-	// en attendant le module de numérotation
-	if ($societe->prefix_comm)
-	{
-		print "<td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
-	}
-	else
-	{
-		print "<td>".img_warning().$langs->trans("CustomerDoesNotHavePrefix")."</td></tr>\n";
-	}
+	print "<td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
 	
 	print "<tr><td>".$langs->trans("Duration")." (".$langs->trans("days").")</td><td><input name=\"duree\"></td></tr>\n";
 
@@ -223,13 +216,9 @@ if ($_GET["action"] == 'create')
 	print "<td><textarea name=\"note\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea>";
 	print '</td></tr>';
 
-	// en attendant le module de numérotation
-	if ($societe->prefix_comm)
-	{
-		print '<tr><td colspan="2" align="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateDaftIntervention").'">';
-		print '</td></tr>';
-	}
+	print '<tr><td colspan="2" align="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("CreateDaftIntervention").'">';
+	print '</td></tr>';
 	
 	print '</table>';
 	print '</form>';
@@ -410,5 +399,6 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 }
 
 $db->close();
-llxFooter();
+
+llxFooter('$Date$ - $Revision$');
 ?>

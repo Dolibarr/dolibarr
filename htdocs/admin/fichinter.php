@@ -93,6 +93,15 @@ if ($_GET["action"] == 'setdoc')
     }
 }
 
+if ($_GET["action"] == 'setmod')
+{
+    // \todo Verifier si module numerotation choisi peut etre activé
+    // par appel methode canBeActivated
+
+	dolibarr_set_const($db, "FICHEINTER_ADDON",$_GET["value"]);
+}
+
+
 
 /*
  * Affichage page
@@ -100,12 +109,81 @@ if ($_GET["action"] == 'setdoc')
 
 llxHeader();
 
-$dir = "../includes/modules/fichinter/";
+$dir=DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
 $html=new Form($db);
 
 print_titre($langs->trans("InterventionsSetup"));
 
 print "<br>";
+
+
+print_titre($langs->trans("FicheinterNumberingModules"));
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+$handle = opendir($dir);
+if ($handle)
+{
+    $var=true;
+    
+    while (($file = readdir($handle))!==false)
+    {
+        if (eregi('^(mod_.*)\.php$',$file,$reg))
+        {
+            $file = $reg[1];
+
+            require_once($dir.$file.".php");
+
+            $module = new $file;
+
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+            print $module->info();
+            print '</td>';
+
+            // Examples
+            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+
+            print '<td align="center">';
+            if ("mod_".$conf->global->FICHEINTER_ADDON == $file)
+            {
+                print img_tick($langs->trans("Activated"));
+            }
+            else
+            {
+                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+            }
+            print '</td>';
+
+			// Info
+			$htmltooltip='';
+	        $nextval=$module->getNextValue();
+	        if ($nextval != $langs->trans("NotAvailable"))
+	        {
+	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+	        }
+	    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
+	    	print ($htmltooltip?img_help(0):'');
+	    	print '</td>';
+
+            print '</tr>';
+        }
+    }
+    closedir($handle);
+}
+
+print '</table><br>';
+
+
 
 print_titre($langs->trans("TemplatePDFInterventions"));
 

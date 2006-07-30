@@ -73,8 +73,6 @@ if ($_GET["action"] == 'setdoc')
 	
     if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$_GET["value"]))
     {
-        // La constante qui a été lue en avant du nouveau set
-        // on passe donc par une variable pour avoir un affichage cohérent
         $conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $_GET["value"];
     }
 
@@ -100,13 +98,7 @@ if ($_GET["action"] == 'setmod')
     // \todo Verifier si module numerotation choisi peut etre activé
     // par appel methode canBeActivated
 
-
-	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$_GET["value"]))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $conf->global->COMMANDE_SUPPLIER_ADDON = $_GET["value"];
-    }
+	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$_GET["value"]);
 }
 
 

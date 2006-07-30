@@ -39,12 +39,12 @@ include_once("modules_commande.php");
 class mod_commande_ivoire extends ModeleNumRefCommandes
 {
 
-  /**   \brief      Constructeur
-   */
-  function mod_commande_ivoire()
-    {
-      $this->nom = "Ivoire";
-    }
+	/**   \brief      Constructeur
+	*/
+	function mod_commande_ivoire()
+	{
+		$this->nom = "Ivoire";
+	}
 
 
     /**     \brief      Renvoi la description du modele de numérotation
