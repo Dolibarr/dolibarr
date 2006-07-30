@@ -318,6 +318,7 @@ SummarySystem=Résumé des informations systèmes Dolibarr
 SummaryConst=Liste de tous les paramètres de configuration Dolibarr
 SystemUpdate=Mise à jour du système
 SystemSuccessfulyUpdate=Votre système a été mis à jour avec succés
+MenuCompanySetup=Société/Institution
 MenuNewUser=Nouvel utilisateur
 MenuTopManager=Gestionnaire du menu haut
 MenuLeftManager=Gestionnaire du menu gauche

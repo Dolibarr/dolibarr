@@ -318,6 +318,7 @@ SummarySystem=System information summary
 SummaryConst=List of all Dolibarr setup parameters
 SystemUpdate=System update
 SystemSuccessfulyUpdate=Your system has been updated successfuly
+MenuCompanySetup=Company/Fundation
 MenuNewUser=New user
 MenuTopManager=Top menu manager
 MenuLeftManager=Left menu manager

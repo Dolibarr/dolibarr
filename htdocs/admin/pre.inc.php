@@ -42,7 +42,7 @@ function llxHeader($head = "", $title="", $help_url='')
   $langs->load("admin");
   $langs->load("users");
   
-  $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("CompanySetup"));
+  $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("MenuCompanySetup"));
 
   $menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
 
