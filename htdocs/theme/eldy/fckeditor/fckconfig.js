@@ -81,7 +81,7 @@ FCKConfig.ToolbarSets["dolibarr_mailings"] = [
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
         ['Undo','Redo','-','Find','Replace','-','SelectAll'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-        ['OrderedList','UnorderedList','-','Outdent','Indent',],
+        ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['Link','Unlink','Anchor','Image','Table','Rule','Smiley','SpecialChar','UniversalKey'],
         ['FontName','FontSize']
@@ -92,7 +92,7 @@ FCKConfig.ToolbarSets["dolibarr_notes"] = [
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
         ['Undo','Redo','-','Find','Replace','-','SelectAll'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-        ['OrderedList','UnorderedList','-','Outdent','Indent',],
+        ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar','UniversalKey'],
         ['FontName','FontSize']
@@ -103,7 +103,7 @@ FCKConfig.ToolbarSets["dolibarr_details"] = [
         ['Cut','Copy','Paste','-','Preview'],
         ['Undo','Redo'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-        ['OrderedList','UnorderedList','-','Outdent','Indent',],
+        ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['Link','Unlink','Anchor'],
         ['SpecialChar','UniversalKey'],
