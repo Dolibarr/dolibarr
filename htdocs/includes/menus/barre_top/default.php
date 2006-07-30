@@ -90,7 +90,7 @@ class MenuTop {
             $id="sel";
         }
 
-        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|commande|compta|contrat|product|fourn|telephonie|energie|boutique|oscommerce_ws|projet)\/",$_SERVER["PHP_SELF"])) {
+        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|commande|compta|contrat|product|fichinter|fourn|telephonie|energie|boutique|oscommerce_ws|projet)\/",$_SERVER["PHP_SELF"])) {
             $id="sel";
         }
         else {
