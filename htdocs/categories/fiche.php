@@ -46,10 +46,11 @@ if ($_REQUEST['origin'])
 	$idprodorigin = $_REQUEST['origin'];
 }
 
+
+
+
 llxHeader("","",$langs->trans("Categories"));
 $html = new Form($db);
-
-
 
 // Action ajout d'une catégorie
 if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
@@ -60,8 +61,8 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	$categorie->description    = $_POST["description"];
 	$categorie->visible        = $_POST["visible"];
 	if($_POST['catMere'] != "-1")
-		$categorie->id_mere = $_POST['catMere'];
-	
+	$categorie->id_mere = $_POST['catMere'];
+
 
 	if (!$categorie->label || !$categorie->description)
 	{
@@ -74,37 +75,37 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		{
 			$_GET["action"] = 'confirmed';
 			$_POST["addcat"] = '';
-			
+
 		}
 	}
 	/*
-         * Action confirmation de création de la catégorie
-         */
+	* Action confirmation de création de la catégorie
+	*/
 
-        if ($_GET["action"] == 'confirmed')
-        {
-                print_titre($langs->trans("CatCreated"));
+	if ($_GET["action"] == 'confirmed')
+	{
+		print_titre($langs->trans("CatCreated"));
 
-                print '<table border="0" width="100%">';
-                print '<tr><td valign="top" width="30%">';
-                print '<p>'.$langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully").'</p>';
-                
-                if ($_REQUEST['idprodorigin'])
-                {
-                	$idprodorigin = $_REQUEST['idprodorigin'];
-                	print '<p><a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idprodorigin.'">'.$langs->trans("ReturnInProduct").'</a></p>';
-                }
-                
-                print '</td></tr></table>';
-        }
+		print '<table border="0" width="100%">';
+		print '<tr><td valign="top" width="30%">';
+		print $langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully");
+
+		if ($_REQUEST['idprodorigin'])
+		{
+			$idprodorigin = $_REQUEST['idprodorigin'];
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idprodorigin.'">'.$langs->trans("ReturnInProduct").'</a>';
+		}
+
+		print '</td></tr></table>';
+	}
 }
 
 
-if ($user->rights->produit->creer)
+if ($user->rights->categorie->creer)
 {
 	/*
- * Fiche en mode création
- */
+	 * Fiche en mode création
+	 */
 	if ($_GET["action"] == 'create' || $_POST["addcat"] == 'addcat')
 	{
 		if($categorie->error != "")
@@ -126,11 +127,24 @@ if ($user->rights->produit->creer)
 
 		print '<table class="border" width="100%" class="notopnoleftnoright">';
 		print '<tr>';
-		print '<td>'.$langs->trans("Label").'</td><td><input name="nom" size"25" value="'.$categorie->label.'">';
+		print '<td width="25%">'.$langs->trans("Label").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
 		print'</td></tr>';
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-		print '<textarea name="description" rows="6" cols="50">';
-		print $categorie->description.'</textarea></td></tr>';
+		
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+		{
+	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('description',$categorie->description,240,'dolibarr_notes');
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea name="description" rows="'.ROWS_6.'" cols="50">';
+			print $categorie->description;
+			print '</textarea>';
+		}
+		
+		print '</td></tr>';
 		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
 		print $html->select_all_categories();
 		print '</td></tr>';

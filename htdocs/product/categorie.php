@@ -243,14 +243,14 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td></tr>';
 
+			$var = true;
 			foreach ($cats as $cat)
 			{
-
 				$ways = $cat->print_all_ways ();
 				foreach ($ways as $way)
 				{
-					$i = !$i;
-					print "<tr ".$bc[$i]."><td>".$way."</td>";
+					$var = ! $var;
+					print "<tr ".$bc[$var]."><td>".$way."</td>";
 					print '<td align="right">'.img_delete($langs->trans("DeleteFromCat"))." <a href= '".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
 
 				}

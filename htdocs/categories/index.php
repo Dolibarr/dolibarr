@@ -75,50 +75,54 @@ print '</td><td valign="top" width="70%">';
  * Catégories trouvées
  */
 
-if($_POST['catname']) {
-  $cats = $c->rechercher_par_nom ($_POST['catname']);
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
-  
-  foreach ($cats as $cat)
-    {
-      $i = !$i;
-      print "\t<tr ".$bc[$i].">\n";
-      print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
-      print "\t\t<td>".$cat->description."</td>\n";
-      print "\t</tr>\n";
-    }
-  print "</table>";
-  
+if($_POST['catname'])
+{
+	$cats = $c->rechercher_par_nom ($_POST['catname']);
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
+
+	$var=true;
+	foreach ($cats as $cat)
+	{
+		$var = ! $var;
+		print "\t<tr ".$bc[$var].">\n";
+		print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
+		print "\t\t<td>".$cat->description."</td>\n";
+		print "\t</tr>\n";
+	}
+	print "</table>";
 }
 
 /*
- * Catégories principales
- */
+* Catégories principales
+*/
 print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("AllCats").'</td><td>'.$langs->trans("Desc").'</td></tr>';
-  
-  		$c->get_categories_arbo();
-		$cate_arbo = $c->get_arbo_each_cate();
-	
-		foreach($cate_arbo as $key => $value)
-		{
-			$i = !$i;
-			print "\t<tr ".$bc[$i].">\n";
-			print '<td><a href="viewcat.php?id='.$value[1].'">'.$value[0].'</a></td>';
-			 print "\t</td>\n";
-			 print '<td>'.$c->get_desc($value[1]).'</td>';
-			 print "\t</td>\n";
-			 print "\t</tr>\n";
-		}
-					 
-			
-  print "</table>";
+print '<tr class="liste_titre"><td>'.$langs->trans("AllCats").'</td><td>'.$langs->trans("Desc").'</td></tr>';
+
+$c->get_categories_arbo();
+$cate_arbo = $c->get_arbo_each_cate();
+
+if (is_array($cate_arbo))
+{
+	$var=true;
+	foreach($cate_arbo as $key => $value)
+	{
+		$var = ! $var;
+		print "\t<tr ".$bc[$var].">\n";
+		print '<td><a href="viewcat.php?id='.$value[1].'">'.$value[0].'</a></td>';
+		print "\t</td>\n";
+		print '<td>'.$c->get_desc($value[1]).'</td>';
+		print "\t</td>\n";
+		print "\t</tr>\n";
+	}
+}
+
+print "</table>";
 
 
 print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

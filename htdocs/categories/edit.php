@@ -85,7 +85,7 @@ print '<tr><td valign="top" width="30%">';
 ?>
 <form method="post" action="<?php print $_SERVER['REQUEST_URI']; ?>">
 <input type="hidden" name="action" value="update">
-<table class="border">
+<table class="border" width="100%">
 	<tr>
 		<td><?php print $langs->trans("Label"); ?>&nbsp;:</td>
 
@@ -93,15 +93,27 @@ print '<tr><td valign="top" width="30%">';
 				print $categorie->label; 
 			?>" />
 	</tr>
-	<tr>
-		<td><?php print $langs->trans("Description"); ?>&nbsp;:</td>
-		
-		<td><textarea name='description' cols='40' rows='6' id='description'><?php
-				print $categorie->description; 
-		?></textarea></td>
-		
-	</tr>
-	
+<?php
+	print '<tr>';
+	print '<td width="25%">'.$langs->trans("Description").':</td>';
+	print '<td>';
+
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+		{
+	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('description',$categorie->description,240,'dolibarr_notes');
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea name="description" rows="'.ROWS_6.'" cols="50">';
+			print $categorie->description;
+			print '</textarea>';
+		}
+
+	print '</td>';
+	print '</tr>';
+?>
 	
 	<tr><td><?php print $langs->trans ("AddIn"); ?></td><td>
 	<?php print $html->select_all_categories($categorie->id_mere);?>
@@ -124,4 +136,6 @@ print '<tr><td valign="top" width="30%">';
 print '</td></tr></table>';
 
 $db->close();
+
+llxFooter('$Date$ - $Revision$');
 ?>
