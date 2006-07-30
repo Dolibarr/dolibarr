@@ -28,6 +28,7 @@
 
 require "./pre.inc.php";
 
+if (!$user->rights->categorie->lire) accessforbidden();
 
 
 llxHeader ("","",$langs->trans("Categories"));
@@ -47,10 +48,11 @@ if ($cats != -1)
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("AllCats").'</td></tr>';
   
+  $var=true;
   foreach ($cats as $cat)
     {
-      $i = !$i;
-      print "\t<tr ".$bc[$i].">\n";
+      $var = ! $var;
+      print "\t<tr ".$bc[$var].">\n";
       print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
       print "\t\t<td>".$cat->description."</td>\n";
       print "\t</tr>\n";
@@ -66,5 +68,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
