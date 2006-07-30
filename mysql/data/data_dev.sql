@@ -169,7 +169,7 @@ REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_P
 
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_TEL','01 02 03 04 05','chaine',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_FAX','01 02 03 04 06','chaine',0);
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_WEB','dolibarr.jexiste.fr','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_WEB','www.dolibarr.org','chaine',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_MAIL','mycompany@mycompany.com','chaine',0);
 
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_TVAINTRA','12345679012345','chaine',0);
