@@ -62,214 +62,227 @@ $html = new Form($db);
 if ($_GET["id"] || $_GET["ref"])
 {
 	//on veut supprimer une catégorie
-	if ($_REQUEST["cat"])
+	if ($_REQUEST["removecat"] && $user->rights->produit->creer)
 	{
-		$cat = new Categorie($db,$_REQUEST["cat"]);
+		$cat = new Categorie($db,$_REQUEST["removecat"]);
 		$cat->del_product($product);
 	}
-
+	
 	//on veut ajouter une catégorie
-	if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
+	if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0  && $user->rights->produit->creer)
 	{
 		$cat = new Categorie($db,$_REQUEST["catMere"]);
 		$cat->add_product($product);
 	}
-
-	if ( $result )
+	
+	/*
+	 *  En mode visu
+	 */
+	
+	$h=0;
+	
+	$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+	$head[$h][1] = $langs->trans("Card");
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+	$head[$h][1] = $langs->trans("Price");
+	$h++;
+	
+	//affichage onglet catégorie
+	if ($conf->categorie->enabled)
 	{
-
-		/*
-	 	 *  En mode visu
-		 */
-
-		$h=0;
-
-		$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-		$head[$h][1] = $langs->trans("Card");
+		$head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
+		$head[$h][1] = $langs->trans('Categories');
+		$hselected = $h;
 		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-		$head[$h][1] = $langs->trans("Price");
-		$h++;
-
-		//affichage onglet catégorie
-		if ($conf->categorie->enabled)
+	}
+	
+	if($product->type == 0)
+	{
+		if ($user->rights->barcode->lire)
 		{
-			$head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
-			$head[$h][1] = $langs->trans('Categories');
-			$hselected = $h;
-			$h++;
-		}
-
-		if($product->type == 0)
-		{
-			if ($user->rights->barcode->lire)
+			if ($conf->barcode->enabled)
 			{
-				if ($conf->barcode->enabled)
-				{
-					$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
-					$head[$h][1] = $langs->trans("BarCode");
-					$h++;
-				}
-			}
-		}
-
-		$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
-		$head[$h][1] = $langs->trans("Photos");
-		$h++;
-
-		if($product->type == 0)
-		{
-			if ($conf->stock->enabled)
-			{
-				$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-				$head[$h][1] = $langs->trans("Stock");
+				$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
+				$head[$h][1] = $langs->trans("BarCode");
 				$h++;
 			}
 		}
-		
-		// Multilangs
-    if($conf->global->MAIN_MULTILANGS)
-    {
+	}
+	
+	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+	$head[$h][1] = $langs->trans("Photos");
+	$h++;
+	
+	if($product->type == 0)
+	{
+		if ($conf->stock->enabled)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+			$head[$h][1] = $langs->trans("Stock");
+			$h++;
+		}
+	}
+	
+	// Multilangs
+	if($conf->global->MAIN_MULTILANGS)
+	{
 	    $head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;
 	    $head[$h][1] = $langs->trans("Translation");
 	    $h++;
-    }
-
-		if ($conf->fournisseur->enabled)
-		{
-			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-			$head[$h][1] = $langs->trans("Suppliers");
-			$h++;
-		}
-
-		$head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-		$head[$h][1] = $langs->trans('Statistics');
+	}
+	
+	if ($conf->fournisseur->enabled)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+		$head[$h][1] = $langs->trans("Suppliers");
 		$h++;
-		
-		// sousproduits
-		if($conf->global->PRODUIT_SOUSPRODUITS == 1)
-		{
-				$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
-				$head[$h][1] = $langs->trans('AssociatedProducts');
-				$h++;
-		}
-		
-		$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
-		$head[$h][1] = $langs->trans('Referers');
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
-		$head[$h][1] = $langs->trans('Documents');
-		$h++;
-
-		$titre=$langs->trans("CardProduct".$product->type);
-		dolibarr_fiche_head($head, $hselected, $titre);
-
-		print($mesg);
-		print '<table class="border" width="100%">';
-		print "<tr>";
-		// Reference
-		print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
-		$product->load_previous_next_ref();
-		$previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
-		$next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
-		if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
-		if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
-		print '</td>';
-		print '</tr>';
-
-		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-		print '</tr>';
-
-        // Prix
-        print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
-
-        // Statut
-        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-		print $product->getLibStatut(2);
-        print '</td></tr>';
-
-		print '</table>';
-
-		print '</div>';
-		
-		
-	    /*
-	     * Barre d'actions
-	     *
-	     */
-	    print '<div class="tabsAction">';
-	    if ($user->rights->categorie->creer)
-	    {
-    	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$product->id.'">'.$langs->trans("NewCat").'</a>';
-	    }
-		print '</div>';
-
-
-		// Formulaire ajout dans une categorie
-		if ($user->rights->produit->creer)
-		{
-			print '<br>';
-		  print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
-		  print '<table class="noborder" width="100%">';
-		  print '<tr class="liste_titre"><td>';
-		  print $langs->trans("ClassifyInCategory").' ';
-		  print $html->select_all_categories($categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
-		  print '</tr>';
-		  print '</table>';
-		  print '</form>';
-		  print '<br/>';
-		}
-
-
-		$c = new Categorie($db);
-
-		if ($_GET["id"])
-		{
-			$cats = $c->containing($_REQUEST["id"]);
-		}
-
-		if ($_GET["ref"])
-		{
-			$cats = $c->containing_ref($_REQUEST["ref"]);
-		}
-
-		if (sizeof($cats) > 0)
-		{
-			print_fiche_titre($langs->trans("ProductIsInCategories"));
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td></tr>';
-
-			$var = true;
-			foreach ($cats as $cat)
-			{
-				$ways = $cat->print_all_ways ();
-				foreach ($ways as $way)
-				{
-					$var = ! $var;
-					print "<tr ".$bc[$var]."><td>".$way."</td>";
-					print '<td align="right">'.img_delete($langs->trans("DeleteFromCat"))." <a href= '".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."&amp;cat=".$cat->id."'>".$langs->trans("DeleteFromCat")."</a></td></tr>\n";
-
-				}
-
-			}
-			print "</table><br/>\n";
-		}
-		else if($cats < 0)
-		{
-			print $langs->trans("ErrorUnknown");
-		}
-
-		else
-		{
-			print $langs->trans("ProductHasNoCategory")."<br/>";
-		}
-
 	}
 
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+	$head[$h][1] = $langs->trans('Statistics');
+	$h++;
+	
+	// sousproduits
+	if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+	{
+			$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
+			$head[$h][1] = $langs->trans('AssociatedProducts');
+			$h++;
+	}
+	
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+	$head[$h][1] = $langs->trans('Referers');
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
+	$head[$h][1] = $langs->trans('Documents');
+	$h++;
+
+	$titre=$langs->trans("CardProduct".$product->type);
+	dolibarr_fiche_head($head, $hselected, $titre);
+
+	print($mesg);
+	print '<table class="border" width="100%">';
+	print "<tr>";
+	// Reference
+	print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+	$product->load_previous_next_ref();
+	$previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+	$next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+	if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+	if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+	print '</td>';
+	print '</tr>';
+
+	// Libelle
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+	print '</tr>';
+
+    // Prix
+    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
+
+    // Statut
+    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+	print $product->getLibStatut(2);
+    print '</td></tr>';
+
+	print '</table>';
+
+	print '</div>';
+	
+	
+    /*
+     * Barre d'actions
+     *
+     */
+    print '<div class="tabsAction">';
+    if ($user->rights->categorie->creer)
+    {
+	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$product->id.'">'.$langs->trans("NewCat").'</a>';
+    }
+	print '</div>';
+
+
+	// Formulaire ajout dans une categorie
+	if ($user->rights->produit->creer)
+	{
+		print '<br>';
+	  print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
+	  print '<table class="noborder" width="100%">';
+	  print '<tr class="liste_titre"><td>';
+	  print $langs->trans("ClassifyInCategory").' ';
+	  print $html->select_all_categories($categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
+	  print '</tr>';
+	  print '</table>';
+	  print '</form>';
+	  print '<br/>';
+	}
+
+
+	$c = new Categorie($db);
+
+	if ($_GET["id"])
+	{
+		$cats = $c->containing($_REQUEST["id"]);
+	}
+
+	if ($_GET["ref"])
+	{
+		$cats = $c->containing_ref($_REQUEST["ref"]);
+	}
+
+	if (sizeof($cats) > 0)
+	{
+		print_fiche_titre($langs->trans("ProductIsInCategories"));
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td></tr>';
+
+		$var = true;
+		foreach ($cats as $cat)
+		{
+			$ways = $cat->print_all_ways ();
+			foreach ($ways as $way)
+			{
+				$var = ! $var;
+				print "<tr ".$bc[$var].">";
+				
+				// Categorie
+				print "<td>".$way."</td>";
+
+				// Lien supprimer
+				print '<td align="right">';
+				if ($user->rights->produit->creer)
+				{
+					print "<a href= '".DOL_URL_ROOT."/product/categorie.php?id=".$product->id."&amp;removecat=".$cat->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td>";
+
+				print "</tr>\n";
+
+			}
+
+		}
+		print "</table><br/>\n";
+	}
+	else if($cats < 0)
+	{
+		print $langs->trans("ErrorUnknown");
+	}
+
+	else
+	{
+		print $langs->trans("ProductHasNoCategory")."<br/>";
+	}
+	
 }
 $db->close();
 
