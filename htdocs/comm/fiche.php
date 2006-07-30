@@ -247,7 +247,7 @@ if ($socidp > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentConditions');
 	print '<td>';
-	if ($_GET['action'] != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if (($_GET['action'] != 'editconditions') && ($user->societe_id > 0)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editconditions')
@@ -266,7 +266,7 @@ if ($socidp > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentMode');
 	print '<td>';
-	if ($_GET['action'] != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	if (($_GET['action'] != 'editmode') && ($user->societe_id > 0)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editmode')
@@ -285,7 +285,10 @@ if ($socidp > 0)
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerRelativeDiscountShort");
     print '<td><td align="right">';
-    print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    if ($user->societe_id > 0)
+    {
+    	print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    }
     print '</td></tr></table>';
     print '</td><td colspan="3">'.($objsoc->remise_client?$objsoc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
     print '</tr>';
@@ -296,7 +299,10 @@ if ($socidp > 0)
     print '<tr><td nowrap>';
     print $langs->trans("CustomerAbsoluteDiscountShort");
     print '<td><td align="right">';
-    print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    if ($user->societe_id > 0)
+    {
+    	print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    }
     print '</td></tr></table>';
     print '</td>';
     print '<td colspan="3">';
@@ -314,7 +320,10 @@ if ($socidp > 0)
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans("PriceLevel");
 		print '<td><td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		if ($user->societe_id > 0)
+    {
+    	print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    }
 		print '</td></tr></table>';
 		print '</td><td colspan="3">'.$objsoc->price_level."</td>";
 		print '</tr>';
@@ -327,7 +336,10 @@ if ($socidp > 0)
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans("DeliveriesAddress");
 		print '<td><td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		if ($user->societe_id > 0)
+    {
+    	print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    }
 		print '</td></tr></table>';
 		print '</td><td colspan="3">';
 
@@ -631,7 +643,7 @@ if ($socidp > 0)
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
     }
 
-    if ($conf->fichinter->enabled)
+    if ($conf->fichinter->enabled && $user->rights->ficheinter->creer)
     {
         $langs->load("fichinter");
         print '<a class="butAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
