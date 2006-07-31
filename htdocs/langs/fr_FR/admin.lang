@@ -533,6 +533,7 @@ DeliveryOrderModel=Modèle de bon de réception client
 DeliveriesOrderAbility=Prise en charge des bons de réception client
 ##### FCKeditor #####
 ActivateFCKeditor=Activer FCKeditor pour :
+FCKeditorForCompany=Création/édition WYSIWIG de la description et note des tiers
 FCKeditorForProductDescription=Création/édition WYSIWIG de la description et note des produits/services
 FCKeditorForDetails=Création/édition WYSIWIG des lignes details des entités (commandes, propales, factures, etc...)
 FCKeditorForMailing=Création/édition WYSIWIG des mailings

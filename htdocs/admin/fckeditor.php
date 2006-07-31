@@ -37,10 +37,19 @@ if (!$user->admin)
 
 // Constante et traduction de la description du module
 $modules = array(
-'PRODUCTDESC'=>'FCKeditorForProductDescription',
-'DETAILS'=>'FCKeditorForDetails',
-'MAILING'=>'FCKeditorForMailing',
-); 
+'SOCIETE' => 'FCKeditorForCompany',
+'PRODUCTDESC' => 'FCKeditorForProductDescription',
+'DETAILS' => 'FCKeditorForDetails',
+'MAILING' => 'FCKeditorForMailing'
+);
+// Conditions pour que l'option soit proposée
+$conditions = array(
+'SOCIETE' => $conf->societe->enabled,
+'PRODUCTDESC' => ($conf->produit->enabled||$conf->service->enabled),
+'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
+'MAILING' => $conf->mailing->enabled
+);
+
 
 foreach($modules as $const => $desc)
 {
@@ -97,6 +106,9 @@ print "</tr>\n";
 // Modules
 foreach($modules as $const => $desc)
 {
+	// Si condition non remplie, on ne propose pas l'option
+	if (! $conditions[$const]) continue;
+	
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans($desc).'</td>';
