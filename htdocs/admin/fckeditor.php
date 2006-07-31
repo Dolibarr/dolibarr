@@ -83,10 +83,12 @@ $head[$h][1] = $langs->trans("Activation");
 $hselected=$h;
 $h++;
 
+/*
+En attendant d'avoir quelquechose de gérer par cette page, je commente
 $head[$h][0] = DOL_URL_ROOT."/admin/fckeditor_cfg.php";
 $head[$h][1] = $langs->trans("Setup");
 $h++;
-
+*/
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
