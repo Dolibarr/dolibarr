@@ -58,14 +58,14 @@ if ($user->societe_id > 0)
 // Protection restriction commercial
 if (!$user->rights->commercial->client->voir && $socidp && !$user->societe_id > 0)
 {
-        $sql = "SELECT sc.fk_soc, s.client";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socidp." AND sc.fk_user = ".$user->id." AND s.client = 1";
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
+	$sql = "SELECT sc.fk_soc, s.client";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE sc.fk_soc = ".$socidp." AND sc.fk_user = ".$user->id." AND s.client = 1";
+	
+	if ( $db->query($sql) )
+	{
+		if ( $db->num_rows() == 0) accessforbidden();
+	}
 }
 
 
@@ -81,7 +81,7 @@ if ($_GET["action"] == 'attribute_prefix')
     $societe->attribute_prefix($db, $_GET["socid"]);
 }
 // conditions de règlement
-if ($_POST["action"] == 'setconditions' && (!$user->societe_id > 0))
+if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
 {
     
 	$societe = new Societe($db, $_GET["socid"]);
@@ -92,7 +92,7 @@ if ($_POST["action"] == 'setconditions' && (!$user->societe_id > 0))
     if (! $result) dolibarr_print_error($result);
 }
 // mode de règlement
-if ($_POST["action"] == 'setmode' && (!$user->societe_id > 0))
+if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
 {
     $societe = new Societe($db, $_GET["socid"]);
     $societe->mode_reglement=$_POST['mode_reglement_id'];
@@ -102,7 +102,7 @@ if ($_POST["action"] == 'setmode' && (!$user->societe_id > 0))
     if (! $result) dolibarr_print_error($result);
 }
 // assujétissement à la TVA
-if ($_POST["action"] == 'setassujtva' && (!$user->societe_id > 0))
+if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 {
 	$societe = new Societe($db, $_GET["socid"]);
     $societe->tva_assuj=$_POST['assujtva_value'];
@@ -247,7 +247,7 @@ if ($socidp > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentConditions');
 	print '<td>';
-	if (($_GET['action'] != 'editconditions') && (!$user->societe_id > 0)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if (($_GET['action'] != 'editconditions') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editconditions')
@@ -266,7 +266,7 @@ if ($socidp > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentMode');
 	print '<td>';
-	if (($_GET['action'] != 'editmode') && (!$user->societe_id > 0)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	if (($_GET['action'] != 'editmode') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$objsoc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editmode')
@@ -285,7 +285,7 @@ if ($socidp > 0)
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerRelativeDiscountShort");
     print '<td><td align="right">';
-    if (!$user->societe_id > 0)
+    if ($user->rights->societe->creer)
     {
     	print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     }
@@ -299,7 +299,7 @@ if ($socidp > 0)
     print '<tr><td nowrap>';
     print $langs->trans("CustomerAbsoluteDiscountShort");
     print '<td><td align="right">';
-    if (!$user->societe_id > 0)
+    if ($user->rights->societe->creer)
     {
     	print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     }
@@ -320,10 +320,10 @@ if ($socidp > 0)
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans("PriceLevel");
 		print '<td><td align="right">';
-		if (!$user->societe_id > 0)
-    {
-    	print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-    }
+		if ($user->rights->societe->creer)
+		{
+			print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		}
 		print '</td></tr></table>';
 		print '</td><td colspan="3">'.$objsoc->price_level."</td>";
 		print '</tr>';
@@ -336,10 +336,10 @@ if ($socidp > 0)
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans("DeliveriesAddress");
 		print '<td><td align="right">';
-		if (!$user->societe_id > 0)
-    {
-    	print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-    }
+		if ($user->rights->societe->creer)
+	    {
+    		print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    	}
 		print '</td></tr></table>';
 		print '</td><td colspan="3">';
 
