@@ -75,7 +75,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
 
-if ($_GET["action"] == 'attribute_prefix')
+if ($_GET["action"] == 'attribute_prefix' && $user->rights->societe->creer)
 {
     $societe = new Societe($db, $_GET["socid"]);
     $societe->attribute_prefix($db, $_GET["socid"]);

@@ -119,7 +119,7 @@ if ($socidp > 0)
 		print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
 
 	    // éditeur wysiwyg
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
 	    {
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 			$doleditor=new DolEditor('note',$societe->note,280,'dolibarr_notes');

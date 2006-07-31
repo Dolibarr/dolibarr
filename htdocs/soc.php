@@ -93,7 +93,7 @@ if ($_POST["getsuppliercode"])
 }
 
 if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
-	 && ($_POST["action"] == 'add' || $_POST["action"] == 'update'))
+	 && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
 {
     $soc->nom                   = $_POST["nom"];
     $soc->adresse               = $_POST["adresse"];
