@@ -1,24 +1,24 @@
 <?php
 /* Copyright (C) 2005-2006 Regis Houssin  <regis.houssin@cap-networks.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-* or see http://www.gnu.org/
-*
-* $Id$
-* $Source$
-*/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * or see http://www.gnu.org/
+ *
+ * $Id$
+ * $Source$
+ */
 
 /**
         \file       htdocs/product/traduction.php
@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("products");
@@ -130,88 +131,6 @@ $product = new Product($db);
 if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-/*
- * Définition des onglets
- */
-$h=0;
-
-$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-$head[$h][1] = $langs->trans("Card");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-$head[$h][1] = $langs->trans("Price");
-$h++;
-
-//affichage onglet catégorie
-if ($conf->categorie->enabled)
-{
-	$head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
-	$head[$h][1] = $langs->trans('Categories');
-	$h++;
-}
-
-if($product->type == 0)
-{
-    if ($user->rights->barcode->lire)
-    {
-        if ($conf->barcode->enabled)
-        {
-            $head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
-            $head[$h][1] = $langs->trans("BarCode");
-            $h++;
-        }
-    }
-}
-
-$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
-$head[$h][1] = $langs->trans("Photos");
-$h++;
-
-if($product->type == 0)
-{
-    if ($conf->stock->enabled)
-    {
-        $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Stock");
-        $h++;
-    }
-}
-
-// Multilangs
-if($conf->global->MAIN_MULTILANGS)
-{
-	$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;
-	$head[$h][1] = $langs->trans("Translation");
-	$hselected=$h;
-	$h++;
-}
-
-if ($conf->fournisseur->enabled) {
-    $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-    $head[$h][1] = $langs->trans("Suppliers");
-    $h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-$head[$h][1] = $langs->trans("Statistics");
-$h++;
-
-// sousproduits
-if($conf->global->PRODUIT_SOUSPRODUITS == 1)
-{
-	$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
-	$head[$h][1] = $langs->trans('AssociatedProducts');
-	$h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
-$head[$h][1] = $langs->trans("Referers");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
-$head[$h][1] = $langs->trans('Documents');
-$h++;
 
 /*
  * Affichage
@@ -219,9 +138,10 @@ $h++;
 
 llxHeader("","",$langs->trans("Translation"));
 
-$titre=$langs->trans("CardProduct".$product->type);
 
-if ( $_GET["action"] != 'edit') dolibarr_fiche_head($head, $hselected, $titre);
+$head=product_prepare_head($product);
+$titre=$langs->trans("CardProduct".$product->type);
+if ( $_GET["action"] != 'edit') dolibarr_fiche_head($head, 'translation', $titre);
 
 print '<table class="border" width="100%">';
 

@@ -31,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("products");
@@ -107,88 +108,10 @@ if ($_GET["id"] || $_GET["ref"])
 
     if ($result > 0)
     {
-        $h=0;
-
-        $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Card");
-        $h++;
-
-        $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Price");
-        $h++;
-        
-        //affichage onglet catégorie
-        if ($conf->categorie->enabled)
-        {
-            $head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
-            $head[$h][1] = $langs->trans('Categories');
-            $h++;
-        }
-
-        if($product->type == 0)
-        {
-            if ($user->rights->barcode->lire)
-            {
-                if ($conf->barcode->enabled)
-                {
-                    $head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
-                    $head[$h][1] = $langs->trans("BarCode");
-                    $h++;
-                }
-            }
-        }
-
-        $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Photos");
-        $h++;
-
-        if ($product->type == 0)
-        {
-            if ($conf->stock->enabled)
-            {
-                $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-                $head[$h][1] = $langs->trans("Stock");
-                $hselected = $h;
-                $h++;
-            }
-        }
-        
-        // Multilangs
-       if($conf->global->MAIN_MULTILANGS)
-       {
-	       $head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;
-	       $head[$h][1] = $langs->trans("Translation");
-	       $h++;
-       }
-        
-        if ($conf->fournisseur->enabled) {
-            $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-            $head[$h][1] = $langs->trans("Suppliers");
-            $h++;
-        }
-
-        $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Statistics");
-        $h++;
-
-    	  // sousproduits
-		    if($conf->global->PRODUIT_SOUSPRODUITS == 1)
-		    {
-				  $head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
-				  $head[$h][1] = $langs->trans('AssociatedProducts');
-				  $h++;
-		    }
-        
-        $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
-        $head[$h][1] = $langs->trans('Referers');
-        $h++;
-	  
-        $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
-        $head[$h][1] = $langs->trans('Documents');
-        $h++;
-
+		$head=product_prepare_head($product);
         $titre=$langs->trans("CardProduct".$product->type);
-        dolibarr_fiche_head($head, $hselected, $titre);
+        dolibarr_fiche_head($head, 'stock', $titre);
+
 
         print($mesg);
 
