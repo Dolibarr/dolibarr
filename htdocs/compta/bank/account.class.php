@@ -316,6 +316,8 @@ class Account
         // Chargement librairie pour acces fonction controle RIB
         require_once(DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php');
 
+		dolibarr_syslog("Account.class::update $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix");
+
         // Verification parametres
         if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
             $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
