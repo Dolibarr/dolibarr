@@ -353,24 +353,6 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
     exit;
 }
 
-if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> $langs->trans("Cancel"))
-{
-
-    $product = new Product($db);
-    if( $product->fetch($_GET["id"]) )
-    {
-        if ($product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]) > 0)
-        {
-            $action = '';
-            $mesg = $langs->trans("SupplierAdded");
-        }
-        else
-        {
-            $action = '';
-        }
-    }
-}
-
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
     $action = '';
@@ -500,7 +482,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 }
 
 
-/*
+/**
  * Fiche produit
  */
 if ($_GET["id"] || $_GET["ref"])
@@ -509,8 +491,15 @@ if ($_GET["id"] || $_GET["ref"])
     if ($_GET["action"] <> 're-edit')
     {
         $product = new Product($db);
-        if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-        if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+        if ($_GET["ref"])
+        {
+        	$result = $product->fetch('',$_GET["ref"]);
+        	$_GET["id"] = $product->id;
+        }
+        elseif ($_GET["id"]) 
+        {
+        	$result = $product->fetch($_GET["id"]);
+        }
         llxHeader("","",$langs->trans("CardProduct".$product->type));
     }
 
@@ -600,7 +589,7 @@ if ($_GET["id"] || $_GET["ref"])
             // Stock
             if ($product->type == 0 && $conf->stock->enabled)
             {
-                print '<tr><td><a href="stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
+                print '<tr><td>'.$langs->trans("Stock").'</td>';
                 if ($product->no_stock)
                 {
                     print "<td>Pas de définition de stock pour ce produit";
@@ -762,12 +751,6 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
 {
-    if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
-    {
-        print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-        print $langs->trans("Order").'</a>';
-    }
-
     if ( $user->rights->produit->creer)
     {
         print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
@@ -775,9 +758,24 @@ if ($_GET["action"] == '')
         print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
     }
 
-    $prod_use = $product->verif_prod_use($product->id);
+/*
+    if ($product->type == 0 && $user->rights->commande->creer)
+    {
+    	$langs->load('orders');
+        print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+        print $langs->trans("CreateCustomerOrder").'</a>';
+    }
 
-    if ($user->rights->produit->supprimer && $prod_use == 0)
+    if ($product->type == 0 && $user->rights->fournisseur->commande->creer)
+    {
+    	$langs->load('orders');
+        print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+        print $langs->trans("CreateSupplierOrder").'</a>';
+    }
+*/
+
+    $product_is_used = $product->verif_prod_use($product->id);
+    if ($user->rights->produit->supprimer && ! $product_is_used)
     {
 	      print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
     }

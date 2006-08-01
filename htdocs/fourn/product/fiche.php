@@ -49,10 +49,11 @@ $types[1] = $langs->trans("Service");
 
 if ($_GET["action"] == 'fastappro')
 {
-  $product = new Product($db);
-  $product->fetch($_GET["id"]);
-  $result = $product->fastappro($user);
-  Header("Location: fiche.php?id=".$_GET["id"]);
+	$product = new Product($db);
+	$product->fetch($_GET["id"]);
+	$result = $product->fastappro($user);
+	Header("Location: fiche.php?id=".$_GET["id"]);
+	exit;
 }
 
 
@@ -572,27 +573,28 @@ else
 	  
 	  print "\n<div class=\"tabsAction\">\n";
 	  
-	  if ($_GET["action"] == '')
-	    {
-	      
-	      print '<a class="butAction" href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("AddSupplier").'</a>';
-	      
-	      if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
+		if ($_GET["action"] == '')
 		{
-		  print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-		  print $langs->trans("Order").'</a>';
+			if ( $user->rights->produit->creer)
+			{
+				print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+			}
+		
+			if ($product->type == 0 && $conf->stock->enabled)
+			{
+				print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
+			}
+
+			print '<a class="butAction" href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("AddSupplier").'</a>';
+		
+			if ($product->type == 0 && $user->rights->commande->creer)
+			{
+				$langs->load('orders');
+				print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+				print $langs->trans("CreateOrder").'</a>';
+			}
+		
 		}
-	      
-	      if ( $user->rights->produit->creer)
-		{
-		  print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
-		}
-	      
-	      if ($product->type == 0 && $conf->stock->enabled)
-		{
-		  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
-		}
-	    }
 	  
 	  print "\n</div>\n";
 	  	 	  

@@ -67,17 +67,6 @@ function product_prepare_head($product)
 		}
 	}
 	
-	if($product->type == 0)	// Si produit stockable
-	{
-		if ($conf->stock->enabled)
-		{
-			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-			$head[$h][1] = $langs->trans("Stock");
-			$head[$h][2] = 'stock';
-			$h++;
-		}
-	}
-	
 	// Multilangs
 	// TODO Ecran a virer et à remplacer par 
 	if($conf->global->MAIN_MULTILANGS)
@@ -126,6 +115,17 @@ function product_prepare_head($product)
 	$head[$h][2] = 'document';
 	$h++;
 
+	if($product->type == 0)	// Si produit stockable
+	{
+		if ($conf->stock->enabled)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+			$head[$h][1] = $langs->trans("Stock");
+			$head[$h][2] = 'stock';
+			$h++;
+		}
+	}
+	
 	return $head;
 }
 

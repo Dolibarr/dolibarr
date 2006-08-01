@@ -438,16 +438,8 @@ if ($_GET["id"] > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a></td>';
-				if ($objp->fk_product > 0)
-				{
-					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/fourn/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
-				}
-				else
-				{
-					print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
-				}
+				print '<td><a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a></td>';
+				print "<td>".nl2br($objp->description)."</td>";
 				print '<td align="center">'.$objp->tva_tx.'%</td>';
 				print '<td align="center">'.$objp->qty.'</td>';
 				if ($objp->remise_percent > 0)

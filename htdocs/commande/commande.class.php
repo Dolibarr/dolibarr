@@ -1136,19 +1136,19 @@ class Commande extends CommonObject
 		// Recherche total en stock pour chaque produit
 		if (sizeof($array_of_product))
 		{
-	        $sql = "SELECT fk_product, sum(ps.reel)";
+	        $sql = "SELECT fk_product, sum(ps.reel) as total";
 	        $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 	        $sql.= " WHERE ps.fk_product in (".join(',',$array_of_product).")";
 			$sql.= ' GROUP BY fk_product ';
 			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $this->db->num_rows();
+				$num = $this->db->num_rows($result);
 				$i = 0;
 				while ($i < $num)
 				{
-					$row = $this->db->fetch_row( $i);
-					$this->stocks[$row[0]] = $row[1];
+					$obj = $this->db->fetch_object($result);
+					$this->stocks[$obj->fk_product] = $obj->total;
 					$i++;
 				}
 				$this->db->free();
@@ -1426,13 +1426,12 @@ class Commande extends CommonObject
         }
     }
     
-  /**
-   *    \brief      Renvoi la liste des commandes (éventuellement filtrée sur un user) dans un tableau
-   *    \param      brouillon       0=non brouillon, 1=brouillon
-   *    \param      user            Objet user de filtre
-   *    \return     int             -1 si erreur, tableau résultat si ok
-   */
-	 
+	/**
+	 *    \brief      Renvoi la liste des commandes (éventuellement filtrée sur un user) dans un tableau
+	 *    \param      brouillon       0=non brouillon, 1=brouillon
+	 *    \param      user            Objet user de filtre
+	 *    \return     int             -1 si erreur, tableau résultat si ok
+	 */
     function liste_array ($brouillon=0, $user='')
     {
         $ga = array();

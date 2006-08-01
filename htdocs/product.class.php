@@ -964,14 +964,14 @@ class Product
 
 
     /**
-     *    \brief    Charge tableau des stats commande pour le produit/service
-     *    \param    socid       Id societe
-     *    \return   array       Tableau des stats
+     *    \brief    Charge tableau des stats commande client pour le produit/service
+     *    \param    socid       	Id societe pour filtrer sur une société
+     *    \param    filtrestatut    Id statut pour filtrer sur un statut
+     *    \return   array       	Tableau des stats
      */
-    function load_stats_commande($socid=0)
+    function load_stats_commande($socid=0,$filtrestatut='')
     {
-    	  global $conf;
-    	  global $user;
+		global $conf,$user;
     	
         $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
         $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
@@ -980,12 +980,15 @@ class Product
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE c.rowid = cd.fk_commande AND cd.fk_product = ".$this->id;
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-        //$sql.= " AND c.fk_statut != 0";
         if ($socid > 0)
         {
-            $sql .= " AND c.fk_soc = $socid";
+            $sql.= " AND c.fk_soc = ".$socid;
         }
-    
+    	if ($filtrestatut)
+    	{
+    		$sql.= " AND c.fk_statut = ".$filtrestatut;
+    	}
+    	
         $result = $this->db->query($sql) ;
         if ( $result )
         {
@@ -994,6 +997,49 @@ class Product
             $this->stats_commande['nb']=$obj->nb;
             $this->stats_commande['rows']=$obj->nb_rows;
             $this->stats_commande['qty']=$obj->qty?$obj->qty:0;
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+    
+    /**
+     *    \brief    Charge tableau des stats commande fournisseur pour le produit/service
+     *    \param    socid       	Id societe pour filtrer sur une société
+     *    \param    filtrestatut    Id statut pour filtrer sur un statut
+     *    \return   array       	Tableau des stats
+     */
+    function load_stats_commande_fournisseur($socid=0,$filtrestatut='')
+    {
+		global $conf,$user;
+    	
+        $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_suppliers, COUNT(DISTINCT c.rowid) as nb,";
+        $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+        $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as c";
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE c.rowid = cd.fk_commande AND cd.fk_product = ".$this->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($socid > 0)
+        {
+            $sql.= " AND c.fk_soc = ".$socid;
+        }
+    	if ($filtrestatut)
+    	{
+    		$sql.= " AND c.fk_statut = ".$filtrestatut;
+    	}
+    	
+        $result = $this->db->query($sql) ;
+        if ( $result )
+        {
+            $obj=$this->db->fetch_object($result);
+            $this->stats_commande_fournisseur['suppliers']=$obj->nb_suppliers;
+            $this->stats_commande_fournisseur['nb']=$obj->nb;
+            $this->stats_commande_fournisseur['rows']=$obj->nb_rows;
+            $this->stats_commande_fournisseur['qty']=$obj->qty?$obj->qty:0;
             return 1;
         }
         else
@@ -1360,61 +1406,55 @@ class Product
         }
     }
 
-
-  /**
-   *    \brief  Renvoie le nombre de fournisseurs
-   *    \return int         nombre de fournisseur
-   */
-	 
-  function count_fournisseur()
-    {
-      $sql = "SELECT fk_soc";
-      $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur as p";
-      $sql .= " WHERE p.fk_product = ".$this->id;
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
+	
+	/**
+	*    \brief  	Renvoie la liste des fournisseurs du produit/service
+	*    \return 	array		Tableau des id de fournisseur
+	*/
+	function list_suppliers()
 	{
-	  $num = $this->db->num_rows();
+		$list = array();
+		
+		$sql = "SELECT fk_soc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as p";
+		$sql.= " WHERE p.fk_product = ".$this->id;
+	
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				$list[$i] = $obj->fk_soc;
+				$i++;
+			}
+		}
 
-	  if ($num == 1)
-	    {
-	      $row = $this->db->fetch_row();
-	      $this->fourn_appro_open = $row[0];
-	      return 1;
-	    }
-	  else
-	    {
-	      return 0;
-	    }
+		return $list;
 	}
-      else
+    
+    /**
+	 *		\brief		Saisie une commande fournisseur
+	 *		\param		user		Objet user de celui qui demande
+	 *		\param		int			<0 si ko, >0 si ok
+	 */
+	function fastappro($user)
 	{
-	  return 0;
+		include_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
+		
+		$list = $this->list_suppliers();
+		if (sizeof($list) > 0)
+		{
+			dolibarr_syslog("Product::fastappro");
+			$fournisseur = new Fournisseur($this->db);
+			$fournisseur->fetch($this->fourn_appro_open);
+		
+			$fournisseur->ProductCommande($user, $this->id);
+		}
+		return 1;		
 	}
-    }
-
-
-  /**
-   *
-   *
-   */
-  function fastappro($user)
-  {
-    include_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
-
-    $nbf = $this->count_fournisseur();
-    if ($nbf == 1)
-      {
-	dolibarr_syslog("Product::fastappro");
-	$fournisseur = new Fournisseur($this->db);
-	$fournisseur->fetch($this->fourn_appro_open);
-
-	$fournisseur->ProductCommande($user, $this->id);
-      }
-
-  }
 
 
     /**

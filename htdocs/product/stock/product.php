@@ -40,9 +40,9 @@ $langs->load("bills");
 $user->getrights('produit');
 $mesg = '';
 
-if (!$user->rights->produit->lire)
+if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->enabled)
 {
-  accessforbidden();
+	accessforbidden();
 }
 
 
@@ -142,32 +142,54 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-        // TVA
-        $langs->load("bills");
-        print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
-
         // Stock
-        if ($product->type == 0 && $conf->stock->enabled)
+        print '<tr><td>'.$langs->trans("TotalStock").'</td>';
+        if ($product->no_stock)
         {
-            print '<tr><td>'.$langs->trans("TotalStock").'</td>';
-            if ($product->no_stock)
+            print "<td>Pas de définition de stock pour ce produit";
+        }
+        else
+        {
+            if ($product->stock_reel <= $product->seuil_stock_alerte)
             {
-                print "<td>Pas de définition de stock pour ce produit";
+                print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
             }
             else
             {
-                if ($product->stock_reel <= $product->seuil_stock_alerte)
-                {
-                    print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
-                }
-                else
-                {
-                    print "<td>".$product->stock_reel;
-                }
+                print "<td>".$product->stock_reel;
             }
-            print '</td></tr>';
         }
+        print '</td></tr>';
         
+
+        // Nbre de commande clients en cours
+		if ($conf->commande->enabled)
+		{
+			$result=$product->load_stats_commande(0,'1');
+	        if ($result < 0) dolibarr_print_error($db,$product->error);
+	        print '<tr><td>'.$langs->trans("CustomersOrders").'</td>';
+			print '<td>';
+			print $product->stats_commande['qty'];
+			$result=$product->load_stats_commande(0,'0');
+	        if ($result < 0) dolibarr_print_error($db,$product->error);
+			print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
+	        print '</td></tr>';
+		}
+		        
+        // Nbre de commande fournisseurs en cours
+		if ($conf->fournisseur->enabled)
+		{
+			$result=$product->load_stats_commande_fournisseur(0,'1');
+	        if ($result < 0) dolibarr_print_error($db,$product->error);
+	        print '<tr><td>'.$langs->trans("SuppliersOrders").'</td>';
+			print '<td>';
+			print $product->stats_commande_fournisseur['qty'];
+			$result=$product->load_stats_commande_fournisseur(0,'0');
+	        if ($result < 0) dolibarr_print_error($db,$product->error);
+			print ' ('.$langs->trans("Draft").': '.$product->stats_commande_fournisseur['qty'].')';
+	        print '</td></tr>';
+		}
+                
         print "</table>";
 
     }
