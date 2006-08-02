@@ -492,8 +492,8 @@ class MenuLeft {
 				}
 			
 				if ($conf->categorie->enabled)
-				$langs->load("categories");
 				{
+					$langs->load("categories");
 					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
 					if ($user->societe_id == 0)
 					{
