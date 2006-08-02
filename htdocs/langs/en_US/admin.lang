@@ -421,10 +421,12 @@ ProposalsNumberingModules=Commercial proposal numbering modules
 ProposalsPDFModules=Commercial proposal documents models
 ClassifiedInvoiced=Classified invoiced
 ClassifiedInvoicedWithOrder=Classified invoiced proposal at the same time as the order
+HideTreadedPropal=Hide the treated commercial proposals in the list
 ##### Orders #####
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules
 OrdersModelModule=Order documents models
+HideTreadedOrders=Hide the treated orders in the list
 ##### Fiche inter #####
 TemplatePDFInterventions=Intervention card documents models
 ##### Clicktodial #####
