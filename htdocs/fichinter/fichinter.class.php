@@ -187,15 +187,17 @@ class Fichinter extends CommonObject
         }
     }
 
-    /*
-     *
-     *
+    /**
+     *		\brief		Charge en mémoire la fiche intervention
+     *		\param		rowid		Id de la fiche à charger
+     *		\return		int			<0 si ko, >0 si ok
      */
     function fetch($rowid)
     {
-
         $sql = "SELECT ref,note,fk_soc,fk_statut,duree,".$this->db->pdate(datei)." as di, fk_projet";
         $sql.= " FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid=".$rowid;
+
+		dolibarr_syslog("Fichinter.class::fetch rowid=$rowid sql=$sql");
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -208,8 +210,9 @@ class Fichinter extends CommonObject
                 $this->date       = $obj->di;
                 $this->duree      = $obj->duree;
                 $this->ref        = $obj->ref;
-                $this->note       = stripslashes($obj->note);
-                $this->societe_id = $obj->fk_soc;
+                $this->note       = $obj->note;
+                $this->socidp     = $obj->fk_soc;
+                $this->societe_id = $obj->fk_soc;		// A virer, obsolete
                 $this->projet_id  = $obj->fk_projet;
                 $this->statut     = $obj->fk_statut;
 
