@@ -777,22 +777,23 @@ class Form
             {
 				if (! $num)
 				{
-					print $langs->trans("NoProductMatching").' ';	
+					print '<select class="flat" name="'.$htmlname.'">';
+					print '<option value="0">-- '.$langs->trans("NoProductMatching").' --</option>';
 				}
-//				else
-//				{
+				else
+				{
 					print '<select class="flat" name="'.$htmlname.'" onchange="publish_selvalue(this);">';
-		            print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
-//				}
+		            print '<option value="0" selected="true">-- '.$langs->trans("MatchingProducts").' --</option>';
+				}
 			}
 			else
 			{
 				print '<select class="flat" name="'.$htmlname.'">';
-	            print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
+	            print '<option value="0" selected="true">&nbsp;</option>';
             }
     
             $i = 0;
-            while ($i < $num)
+            while ($num && $i < $num)
             {
                 $objp = $this->db->fetch_object($result);
                 

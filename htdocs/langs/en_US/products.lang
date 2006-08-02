@@ -105,3 +105,4 @@ ExportDataset_produit_1=Products and services
 DeleteProductLine=Delete product line
 ConfirmDeleteProductLine=Are you sure you want to delete this product line?
 NoProductMatching=No product/service match your criteria
+MatchingProducts=Matching products/services
