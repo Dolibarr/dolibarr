@@ -144,15 +144,25 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+		// Customer orders
         elseif ($action == 'ORDER_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
-        elseif ($action == 'ORDER_MODIFY')
+        elseif ($action == 'ORDER_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'ORDER_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+		// Supplier orders
+        elseif ($action == 'ORDER_SUPPLIER_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+        elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }

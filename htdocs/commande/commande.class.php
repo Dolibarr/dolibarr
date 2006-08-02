@@ -144,13 +144,14 @@ class Commande extends CommonObject
 		return $this->create($user);
 	}
 
-  /**   \brief      Valide la commande
-        \param      user            Utilisateur qui valide
-   */
+	/**   	\brief      Valide la commande
+	 *    	\param      user        Utilisateur qui valide
+	 *		\return		int			<=0 si ko, >0 si ok
+	 */
 	function valid($user)
 	{
-		$result = 0;
 		global $conf;
+
 		if ($user->rights->commande->valider)
 		{
 			if (defined('COMMANDE_ADDON'))
@@ -158,21 +159,23 @@ class Commande extends CommonObject
 				if (is_readable(DOL_DOCUMENT_ROOT .'/includes/modules/commande/'.COMMANDE_ADDON.'.php'))
 				{
 					require_once DOL_DOCUMENT_ROOT .'/includes/modules/commande/'.COMMANDE_ADDON.'.php';
-
+		
+					$this->db->begin();
+					
 					// Definition du nom de module de numerotation de commande
-
+		
 					// \todo  Normer le nom des classes des modules de numérotation de ref de commande avec un nom du type NumRefCommandesXxxx
 					//
 					//$list=split('_',COMMANDE_ADDON);
 					//$numrefname=$list[2];
 					//$modName = 'NumRefCommandes'.ucfirst($numrefname);
-					$modName=COMMANDE_ADDON;
-
+					$modName=$conf->global->COMMANDE_ADDON;
+		
 					// Recuperation de la nouvelle reference
 					$objMod = new $modName($this->db);
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socidp);
-					
+		
 					// on vérifie si la commande est en numérotation provisoire
 					$comref = substr($this->ref, 1, 4);
 					if ($comref == PROV)
@@ -183,57 +186,71 @@ class Commande extends CommonObject
 					{
 						$num = $this->ref;
 					}
-
+		
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 					$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-
+		
 					if ($this->db->query($sql) )
 					{
-							// On efface le répertoire de pdf provisoire
-							$comref = sanitize_string($this->ref);
-							if ($conf->commande->dir_output)
+						// On efface le répertoire de pdf provisoire
+						$comref = sanitize_string($this->ref);
+						if ($conf->commande->dir_output)
+						{
+							$dir = $conf->commande->dir_output . "/" . $comref ;
+							$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+							if (file_exists($file))
 							{
-								$dir = $conf->commande->dir_output . "/" . $comref ;
-								$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-								if (file_exists($file))
+								commande_delete_preview($this->db, $this->id, $this->ref);
+		
+								if (!dol_delete_file($file))
 								{
-									commande_delete_preview($this->db, $this->id, $this->ref);
-									
-									if (!dol_delete_file($file))
-									{
-                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-                    return 0;
-                  }
-                }
-                if (file_exists($dir))
-                {
-                	if (!dol_delete_dir($dir))
-                  {
-                  	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-                    return 0;
-                  }
-                }
-               }
-	    			$result = 1;
+									$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+					                $this->db->rollback();
+									return 0;
+								}
+							}
+							if (file_exists($dir))
+							{
+								if (!dol_delete_dir($dir))
+								{
+									$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+					                $this->db->rollback();
+									return 0;
+								}
+							}
+						}
+		
+						// Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+						$interface=new Interfaces($this->db);
+						$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
+						// Fin appel triggers
+
+		                $this->db->commit();
+		                return $this->id;
 					}
 					else
 					{
-						$result = -1;
-						dolibarr_print_error($this->db);
+		                $this->db->rollback();
+						$this->error=$this->db->error();
+						return -1;
 					}
-
 				}
 				else
 				{
-					print 'Impossible de lire le module de numérotation';
+					$this->error='Impossible de lire le module de numérotation';
+					return -1;
 				}
 			}
 			else
 			{
-				print 'Le module de numérotation n\'est pas défini' ;
+				$this->error='Le module de numérotation n\'est pas défini';
+				return -1;
 			}
 		}
-		return $result ;
+
+		$this->error='Autorisation insuffisante';
+		return -1;
 	}
 	
 	/**
@@ -446,8 +463,14 @@ class Commande extends CommonObject
 							$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
 						}
 					}
+			    	
+	                // Appel des triggers
+	                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	                $interface=new Interfaces($this->db);
+	                $result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
+	                // Fin appel triggers
 
-			    $this->db->commit();
+			    	$this->db->commit();
 					return $this->id;
 				}
 				else
@@ -1697,61 +1720,69 @@ class Commande extends CommonObject
 	
 
 	/**
-	* Supprime la commande
-	*
-	*/
+	 *		\brief		Supprime la commande
+	 */
 	function delete()
 	{
 		global $conf, $lang;
-		
+	
 		$err = 0;
 		$this->db->begin();
+	
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id ;";
 		if (! $this->db->query($sql) )
 		{
 			$err++;
 		}
-
+	
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = $this->id;";
 		if (! $this->db->query($sql) )
 		{
 			$err++;
 		}
-
+	
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."co_pr WHERE fk_commande = $this->id;";
 		if (! $this->db->query($sql) )
 		{
 			$err++;
 		}
-		
+	
 		// On efface le répertoire de pdf provisoire
 		$comref = sanitize_string($this->ref);
 		if ($conf->commande->dir_output)
 		{
-				$dir = $conf->commande->dir_output . "/" . $comref ;
-				$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-				if (file_exists($file))
+			$dir = $conf->commande->dir_output . "/" . $comref ;
+			$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+			if (file_exists($file))
+			{
+				commande_delete_preview($this->db, $this->id, $this->ref);
+	
+				if (!dol_delete_file($file))
 				{
-					commande_delete_preview($this->db, $this->id, $this->ref);
-					
-					if (!dol_delete_file($file))
-					{
-              $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-              return 0;
-           }
-        }
-        if (file_exists($dir))
-        {
-         	if (!dol_delete_dir($dir))
-          {
-            	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-              return 0;
-          }
-        }
-     }
-
+					$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+					$this->db->rollback();
+					return 0;
+				}
+			}
+			if (file_exists($dir))
+			{
+				if (!dol_delete_dir($dir))
+				{
+					$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+					$this->db->rollback();
+					return 0;
+				}
+			}
+		}
+	
 		if ($err == 0)
 		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
+			// Fin appel triggers
+	
 			$this->db->commit();
 			return 1;
 		}

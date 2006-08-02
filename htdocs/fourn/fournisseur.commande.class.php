@@ -178,66 +178,84 @@ class CommandeFournisseur extends Commande
         }
     }
 
-  /**
-   * Valide la commande
-   *
-   *
-   */
-   function valid($user)
+	/**
+	 *		\brief		Valide la commande
+	 *		\param		user		Utilisateur qui valide
+	 */
+	function valid($user)
     {
-      dolibarr_syslog("CommandeFournisseur::Valid");
-      $result = 0;
-      if ($user->rights->fournisseur->commande->valider)
-	    {
-        if (defined('COMMANDE_SUPPLIER_ADDON'))
-			  {
-				   if (is_readable(DOL_DOCUMENT_ROOT .'/fourn/commande/modules/'.COMMANDE_SUPPLIER_ADDON.'.php'))
-				   {
-					   require_once DOL_DOCUMENT_ROOT .'/fourn/commande/modules/'.COMMANDE_SUPPLIER_ADDON.'.php';
-
+		dolibarr_syslog("CommandeFournisseur::Valid");
+		$result = 0;
+		if ($user->rights->fournisseur->commande->valider)
+		{
+			if (defined('COMMANDE_SUPPLIER_ADDON'))
+			{
+				if (is_readable(DOL_DOCUMENT_ROOT .'/fourn/commande/modules/'.COMMANDE_SUPPLIER_ADDON.'.php'))
+				{
+					$this->db->begin();
+					
+					require_once DOL_DOCUMENT_ROOT .'/fourn/commande/modules/'.COMMANDE_SUPPLIER_ADDON.'.php';
+		
 					// Definition du nom de module de numerotation de commande fournisseur
-
+		
 					$modName=COMMANDE_SUPPLIER_ADDON;
-
+		
 					// Recuperation de la nouvelle reference
 					$objMod = new $modName($this->db);
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socidp);
 					$num = $objMod->commande_get_num($soc);
-
+		
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 					$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-
-					if ($this->db->query($sql) )
+		
+					$resql=$this->db->query($sql);
+					if ($resql)
 					{
 						$result = 1;
 						$this->log($user, 1, time());
-	          $this->ref = $num;
-	          $this->_NotifyApprobator($user);
+						$this->ref = $num;
+
+		                // Appel des triggers
+		                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		                $interface=new Interfaces($this->db);
+		                $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+		                // Fin appel triggers
+
+						$this->_NotifyApprobator($user);	// \todo a gerer par trigger
+		
+		                dolibarr_syslog("CommandeFournisseur::valid Success");
+						$this->db->begin();
+						return 1;
 					}
 					else
 					{
-						$result = -1;
-						dolibarr_print_error($this->db);
-						dolibarr_syslog("CommandeFournisseur::Valid Error -1");
+						$this->error=$this->db->error();
+						dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
+						$this->db->rollback();
+						return -1;
 					}
-
 				}
 				else
 				{
-					print 'Impossible de lire le module de numérotation';
+					$this->error='Impossible de lire le module de numérotation';
+					dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
+					return -1;
 				}
 			}
 			else
 			{
-				print 'Le module de numérotation n\'est pas défini' ;
+				$this->error='Le module de numérotation n\'est pas défini' ;
+				dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
+				return -1;
 			}
 		}
-	  else
-	  {
-		  dolibarr_syslog("CommandeFournisseur::Valid Not Authorized");
-	  }
-	 return $result ;
+		else
+		{
+			$this->error='Not Authorized';
+			dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
+			return -1;
+		}
 	}
 
   /**
@@ -561,6 +579,12 @@ class CommandeFournisseur extends Commande
                 // On logue creation pour historique   
                 $this->log($user, 0, time());
                 
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
+                // Fin appel triggers
+
                 dolibarr_syslog("CommandeFournisseur::Create : Success");
                 $this->db->commit();
                 return 1;
@@ -746,38 +770,45 @@ class CommandeFournisseur extends Commande
     }
 
   /**
-   * Supprime la commande
+   * 	\brief		Supprime la commande
    *
    */
-  function delete()
-  {
-    $err = 0;
+	function delete()
+	{
+		$err = 0;
+	
+		$this->db->begin();
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =". $this->id ;
+		if (! $this->db->query($sql) )
+		{
+			$err++;
+		}
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
+		if (! $this->db->query($sql) )
+		{
+			$err++;
+		}
+	
+		if ($err == 0)
+		{
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('ORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+            // Fin appel triggers
 
-    $this->db->begin();
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =". $this->id ;
-    if (! $this->db->query($sql) ) 
-      {
-	$err++;
-      }
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
-    if (! $this->db->query($sql) ) 
-      {
-	$err++;
-      }
-
-    if ($err == 0)
-      {
-	$this->db->commit();
-	return 1;
-      }
-    else
-      {
-	$this->db->rollback();
-	return -1;
-      }
-  }
+            dolibarr_syslog("CommandeFournisseur::delete : Success");
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	 *		\brief		Positionne modele derniere generation
