@@ -258,39 +258,47 @@ class CommandeFournisseur extends Commande
 		}
 	}
 
-  /**
-   * Annule la commande
-   * L'annulation se fait après la validation
-   */
-  function Cancel($user)
-    {
-      //dolibarr_syslog("CommandeFournisseur::Cancel");
-      $result = 0;
-      if ($user->rights->fournisseur->commande->annuler)
+	/**
+	 * 		\brief		Annule la commande
+	 * 		\param		user		Utilisateur qui demande annulation
+	 *		\remarks	L'annulation se fait après la validation
+	 */
+	function Cancel($user)
 	{
+		//dolibarr_syslog("CommandeFournisseur::Cancel");
+		$result = 0;
+		if ($user->rights->fournisseur->commande->annuler)
+		{
+			$statut = 6;
+	
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
+			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
+	
+			if ($this->db->query($sql) )
+			{
+				$result = 0;
+				$this->log($user, $statut, time());
+				
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+                // Fin appel triggers
 
-	  $statut = 6;
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
-	  $sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
-	  
-	  if ($this->db->query($sql) )
-	    {
-	      $result = 0;
-	      $this->log($user, $statut, time());
-	    }
-	  else
-	    {
-	      dolibarr_syslog("CommandeFournisseur::Cancel Error -1");
-	      $result = -1;
-	    }	  
+				return 1;
+			}
+			else
+			{
+				dolibarr_syslog("CommandeFournisseur::Cancel Error -1");
+				return -1;
+			}
+		}
+		else
+		{
+			dolibarr_syslog("CommandeFournisseur::Cancel Not Authorized");
+			return -1;
+		}
 	}
-      else
-	{
-	  dolibarr_syslog("CommandeFournisseur::Cancel Not Authorized");
-	}
-      return $result ;
-    }
 
 
 	/**
