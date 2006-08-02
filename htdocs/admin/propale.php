@@ -92,6 +92,13 @@ if ($_POST["action"] == 'setclassifiedinvoiced')
     exit;
 }
 
+if ($_POST["action"] == 'sethidetreated')
+{
+    dolibarr_set_const($db, "PROPALE_HIDE_TREATED",$_POST["hidetreated"]);
+    Header("Location: propale.php");
+    exit;
+}
+
 if ($_GET["action"] == 'set')
 {
 	$type='propal';
@@ -394,6 +401,19 @@ if ($conf->commande->enabled)
 	print '</tr>';
 	print '</form>';
 }
+
+// cacher les propales classer facturées des listes
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="sethidetreated">';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("HideTreadedPropal");
+print '</td><td align="left">';
+print $html->selectyesno("hidetreated",$conf->global->PROPALE_HIDE_TREATED,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
 print '</table>';
 

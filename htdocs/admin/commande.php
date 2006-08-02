@@ -127,6 +127,11 @@ if ($_GET["action"] == 'setmod')
 	dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
 }
 
+if ($_POST["action"] == 'sethidetreated')
+{
+    dolibarr_set_const($db, "COMMANDE_HIDE_TREATED",$_POST["hidetreated"]);
+}
+
 
 
 /*
@@ -321,6 +326,33 @@ while (($file = readdir($handle))!==false)
 	}
 }
 closedir($handle);
+
+print '</table>';
+
+//Autres Options
+print "<br>";
+print_titre($langs->trans("OtherOptions"));
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+$var=true;
+
+// cacher les commandes classer facturées des listes
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="sethidetreated">';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("HideTreadedOrders");
+print '</td><td width="60" align="center">';
+print $html->selectyesno("hidetreated",$conf->global->COMMANDE_HIDE_TREATED,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
 print '</table>';
 
