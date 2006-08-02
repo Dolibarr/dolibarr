@@ -32,7 +32,7 @@
 
 
 /**
-	    \class      ModeleDon
+	    \class      ModeleThirdPartyCode
 		\brief  	Classe mère des modèles de numérotation des codes tiers
 */
 

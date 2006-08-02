@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,29 +21,26 @@
  */
 
 /**
-			\file       htdocs/includes/dons/html_cerfafr.php
+			\file       htdocs/includes/dons/html_cerfafr.modules.php
 			\ingroup    don
 			\brief      Formulaire de don
 			\version    $Revision$
 */
-
-require_once(DOL_DOCUMENT_ROOT."/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projetdon.class.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
-
 
 
 /**
 	    \class      html_cerfafr
 		\brief      Classe permettant de générer les propales au modèle Azur
 */
-
 class html_cerfafr extends ModeleDon
 {
     /**
 			\brief      Constructeur
     		\param	    db		Handler accès base de donnée
     */
+
     function html_cerfafr($db)
     {
         global $conf,$langs;
@@ -60,7 +57,7 @@ class html_cerfafr extends ModeleDon
     */
     function pdferror() 
     {
-      return $this->error;
+    	return $this->error;
     }
 
 
@@ -118,6 +115,8 @@ class html_cerfafr extends ModeleDon
 
         return 1;
     }
+
 }
+
 
 ?>

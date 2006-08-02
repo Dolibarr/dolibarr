@@ -148,22 +148,19 @@ function don_create($db, $id, $message='', $modele='', $outputlangs='')
 {
     global $conf, $langs;
     $langs->load("bills");
-    
-	// todo forcé ici
-    $conf->global->DON_ADDON='html_cerfafr';
-    
+
     $dir = DOL_DOCUMENT_ROOT . "/includes/modules/dons/";
 
 	// Positionne modele sur le nom du modele à utiliser
 	if (! strlen($modele))
 	{
-		if ($conf->global->DON_ADDON_PDF)
+		if ($conf->global->DON_ADDON_MODEL)
 		{
-			$modele = $conf->global->DON_ADDON_PDF;
+			$modele = $conf->global->DON_ADDON_MODEL;
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_DON_ADDON_PDF_NotDefined");
+			print $langs->trans("Error")." ".$langs->trans("Error_DON_ADDON_MODEL_NotDefined");
 			return 0;
 		}
 	}
@@ -173,6 +170,7 @@ function don_create($db, $id, $message='', $modele='', $outputlangs='')
 	if (file_exists($dir.$file))
 	{
         $classname = $modele;
+
         require_once($dir.$file);
     
         $obj = new $classname($db);

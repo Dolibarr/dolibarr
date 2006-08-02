@@ -35,16 +35,13 @@ if (!$user->admin)
   accessforbidden();
 
 
-$dons_addon_var      = DON_ADDON;
-
 
 $typeconst=array('yesno','texte','chaine');
 
 
 if ($_GET["action"] == 'setmodelbon')
 {
-  if (dolibarr_set_const($db, "DON_ADDON",$_GET["value"]))
-    $don_addon_var = $_GET["value"];
+	dolibarr_set_const($db, "DON_ADDON_MODEL",$_GET["value"]))
 }
 
 
@@ -91,7 +88,7 @@ while (($file = readdir($handle))!==false)
         echo "$file";
         print '</td><td>&nbsp;</td><td align="center">';
 
-        if ($dons_addon_var == "$name")
+        if ($conf->global->DON_ADDON_MODEL == $name)
         {
             print img_tick();
             print '</td><td align="center">';

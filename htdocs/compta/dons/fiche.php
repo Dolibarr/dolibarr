@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,10 +160,10 @@ if ($_GET["action"] == 'set_encaisse')
 /*
  * Générer ou regénérer le document
  */
-if ($_GET['action'] == 'build')
+if ($_GET['action'] == 'builddoc')
 {
     require_once(DOL_DOCUMENT_ROOT ."/includes/modules/dons/modules_don.php");
-	don_create($db, $_GET['rowid']);
+	$result=don_create($db, $_GET['rowid']);
 }
 
 
@@ -313,7 +313,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 	$form->select_types_paiements('', 'modepaiement', 'CRDT', 0);
     print "</td></tr>\n";
 
-    print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut().'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
     
     print "<tr>".'<td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
     
@@ -379,7 +379,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
     print $don->modepaiement;
     print "</td></tr>\n";
 
-    print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut().'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
     
     print "</table>\n";
     print "</form>\n";
@@ -412,7 +412,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
     if ($don->statut == 2 || $don->statut == 3)
     {
-        print '  <a class="butAction" href="fiche.php?rowid='.$don->id.'&amp;action=build">'.$langs->trans('BuildDonationReceipt').'</a>';
+        print '  <a class="butAction" href="fiche.php?rowid='.$don->id.'&amp;action=builddoc">'.$langs->trans('BuildDonationReceipt').'</a>';
     }
 
     if ($don->statut == 0) 

@@ -204,6 +204,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (29
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (292, 29,   '0','0','VAT Rate 0',1);
 
 
+update llx_const set name='DON_ADDON_MODEL' where name='DON_ADDON';
 update llx_const set value='neptune' where value='pluton' and name = 'FACTURE_ADDON';
 update llx_const set value='azur' where value='orange' and name = 'PROPALE_ADDON';
 update llx_const set value='mod_commande_diamant' where value='mod_commande_jade' and name ='COMMANDE_ADDON';

@@ -279,7 +279,7 @@ if (! $user->societe_id)    // Si utilisateur interne
 {
     $conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
     $conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
-    // Pour compatibilite    if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
+    // Pour compatibilite
     if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
 }
 else                        // Si utilisateur externe
