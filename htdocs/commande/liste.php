@@ -32,6 +32,7 @@
 require('./pre.inc.php');
 
 $langs->load('orders');
+$langs->load('companies');
 
 if (!$user->rights->commande->lire)
 	accessforbidden();
@@ -148,7 +149,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socidp='.$socidp,'width="25%"',$sortfield);
 	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socidp='.$socidp,'width="30%"',$sortfield);
-	print_liste_field_titre($langs->trans('RefCdeClient'),'liste.php','c.ref_client','','&amp;socidp='.$socidp,'width="15%"',$sortfield);
+	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socidp='.$socidp,'width="15%"',$sortfield);
 	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socidp='.$socidp, 'width="20%" align="right" colspan="2"',$sortfield);
 	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socidp='.$socidp,'width="10%" align="center"',$sortfield);
 	print '</tr>';

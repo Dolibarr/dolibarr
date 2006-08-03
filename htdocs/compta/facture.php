@@ -1039,7 +1039,7 @@ if ($_GET['action'] == 'create')
     */
     if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
     {
-    	print '<tr><td>'.$langs->trans('RefCdeClient').'</td><td>';
+    	print '<tr><td>'.$langs->trans('RefCustomerOrder').'</td><td>';
     	print '<input type="text" name="ref_client" value="'.$ref_client.'">';
     	print '</td></tr>';
     }
@@ -1485,10 +1485,10 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
 			print '</td>';
-			if ($_GET['action'] != 'refcdeclient' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcdeclient&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+			if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="5">';
-			if ($user->rights->facture->creer && $_GET['action'] == 'refcdeclient')
+			if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
 			{
 				print '<form action="facture.php?facid='.$id.'" method="post">';
 				print '<input type="hidden" name="action" value="set_ref_client">';
@@ -1644,7 +1644,7 @@ else
             */
             if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
             {
-			    print '<tr><td>'.$langs->trans('RefCdeClient').'</td>';
+			    print '<tr><td>'.$langs->trans('RefCustomerOrder').'</td>';
 
     			if ($fac->brouillon == 1 && $user->rights->facture->creer)
     			{
