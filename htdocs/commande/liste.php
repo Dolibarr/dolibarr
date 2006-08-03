@@ -67,7 +67,7 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET['page'] ;
 
-$sql = 'SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht, c.ref_client';
+$sql = 'SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' '.$db->pdate('c.date_commande').' as date_commande, c.fk_statut, c.facture as facturee';
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
