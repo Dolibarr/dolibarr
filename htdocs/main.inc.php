@@ -354,7 +354,8 @@ function top_htmlhead($head, $title="", $target="")
     //header("Content-type: text/html; charset=UTF-8");
     header("Content-type: text/html; charset=iso-8859-1");
 
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+//    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">';
     print "\n<html>";
 
     print $langs->lang_header();
@@ -393,9 +394,8 @@ function top_htmlhead($head, $title="", $target="")
     print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
 
     print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
-    print '<link rel="help" title="'.$langs->trans("Help").'" href="http://www.dolibarr.com/aide.fr.html">'."\n";
     print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-    print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.com/dev.fr.html">'."\n";
+    print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.org">'."\n";
 
     if ($conf->use_javascript || $conf->use_ajax)
     {

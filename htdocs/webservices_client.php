@@ -47,7 +47,7 @@ dolibarr_syslog("Call method ".$WS_METHOD);
 $result = $soapclient->call($WS_METHOD,$parameters);
 
 // Show page with result
-header("Content-type: text/html; charset=iso-8859-1");
+header("Content-type: text/html; charset=utf8");
 print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 echo '<html>'."\n";
 echo '<head>';
