@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,17 @@ print_titre("Dolibarr");
 
 print "<br>\n";
 
+$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".DOL_VERSION."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("Version")."</td><td>".DOL_VERSION."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentTheme")."</td><td>".$conf->theme."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentTopMenuHandler")."</td><td>".$conf->top_menu."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
 print '</table>';
 print '<br>';
 
