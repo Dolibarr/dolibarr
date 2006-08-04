@@ -57,27 +57,27 @@ elseif ($actionsave)
 
     $db->begin();
     
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_URL',trim($_POST["phpwebcalendar_url"]),'',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_HOST',trim($_POST["phpwebcalendar_host"]),'',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_DBNAME',trim($_POST["phpwebcalendar_dbname"]),'',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_USER',trim($_POST["phpwebcalendar_user"]),'',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASS',trim($_POST["phpwebcalendar_pass"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_URL',trim($_POST["phpwebcalendar_url"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_HOST',trim($_POST["phpwebcalendar_host"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_DBNAME',trim($_POST["phpwebcalendar_dbname"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_USER',trim($_POST["phpwebcalendar_user"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASS',trim($_POST["phpwebcalendar_pass"]),'chaine',0);
 
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_SYNCRO',trim($_POST["phpwebcalendar_syncro"]),'',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_COMPANYCREATE',trim($_POST["phpwebcalendar_companycreate"]),'',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_CONTRACTSTATUS',trim($_POST["phpwebcalendar_contractstatus"]),'',0);
-    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_BILLSTATUS',trim($_POST["phpwebcalendar_billstatus"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_SYNCRO',trim($_POST["phpwebcalendar_syncro"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_COMPANYCREATE',trim($_POST["phpwebcalendar_companycreate"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_CONTRACTSTATUS',trim($_POST["phpwebcalendar_contractstatus"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_BILLSTATUS',trim($_POST["phpwebcalendar_billstatus"]),'chaine',0);
 
     if ($i >= 9)
     {
         $db->commit();
-        header("Location: webcalendar.php");
-        exit;
+        $mesg = "<font class=\"ok\">".$langs->trans("WebCalSetupSaved")."</font>";
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"ok\">".$langs->trans("WebCalSetupSaved")."</font>";
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
     }
 }
 elseif ($actiontest)
@@ -142,7 +142,7 @@ print_titre($langs->trans("WebCalSetup"));
 print '<br>';
 
 
-print '<form name="phpwebcalendarconfig" action="webcalendar.php" method="post">';
+print '<form name="phpwebcalendarconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td width=\"30%\">".$langs->trans("Parameter")."</td>";
@@ -250,6 +250,8 @@ if ($conf->facture->enabled)
     print '</td></tr>';
     print '</table>';
 }
+
+
 print '<br><center>';
 print "<input type=\"submit\" name=\"test\" class=\"button\" value=\"".$langs->trans("TestConnection")."\">";
 print "&nbsp; &nbsp;";

@@ -63,7 +63,8 @@ class modBoutique extends DolibarrModules
 		$this->dirs = array();
 	
 		// Config pages
-		$this->config_page_url = array("boutique.php","osc-languages.php");
+//		$this->config_page_url = array("boutique.php","osc-languages.php");
+		$this->config_page_url = array("boutique.php");
 	
 		// Dépendances
 		$this->depends = array();

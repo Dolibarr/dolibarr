@@ -36,7 +36,6 @@ if (! $user->rights->societe->lire)
 
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
-if ($conf->webcal->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/webcal.class.php");
 
 $langs->load("companies");
 
