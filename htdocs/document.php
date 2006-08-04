@@ -142,7 +142,8 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->compta->dir_output.'/'.$original_file;
+        if ($user->societe_id > 0) $original_file=DOL_DATA_ROOT.'/private/'.$user->id.'/compta/'.$original_file;
+        else $original_file=$conf->compta->dir_output.'/'.$original_file;
     }
 
     // Wrapping pour les exports de compta

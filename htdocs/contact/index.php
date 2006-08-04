@@ -278,7 +278,7 @@ if ($result)
         $i++;
     }
     
-    print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
+    if ($num > $limit) print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
     
     print "</table>";
 

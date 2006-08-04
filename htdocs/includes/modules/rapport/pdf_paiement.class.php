@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -41,22 +41,24 @@ class pdf_paiement
     /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
-  function pdf_paiement($db=0)
+  	function pdf_paiement($db=0)
     { 
-      $this->db = $db;
-      $this->description = "Liste des paiements";
+    	global $langs;
 
-      $this->url = DOL_URL_ROOT."/document/rapport/" . "paiements" . ".pdf";
-
-      $this->tab_top = 30;
-
-      $this->line_height = 5;
-      $this->line_per_page = 25;
-      $this->tab_height = 230;//$this->line_height * $this->line_per_page;
-
-    }
-
-  function print_link()
+		$this->db = $db;
+		$this->description = "Liste des paiements";
+		
+		$this->url = DOL_URL_ROOT."/document/rapport/" . "paiements" . ".pdf";
+		
+		$this->tab_top = 30;
+		
+		$this->line_height = 5;
+		$this->line_per_page = 25;
+		$this->tab_height = 230;	//$this->line_height * $this->line_per_page;
+	}
+	
+	
+  	function print_link()
     {
       if (file_exists($this->file))
 	{
@@ -68,13 +70,13 @@ class pdf_paiement
 	}
     }
 
-  function Header(&$pdf, $page, $pages)
+
+  	function Header(&$pdf, $page, $pages)
     {
+    	global $langs;
+    	
       $pdf->SetFont('Arial','B',12);
-      $pdf->Text(10, 10, FAC_PDF_INTITULE);
-            
-      $pdf->SetFont('Arial','B',12);
-      $pdf->Text(90, 10, "Liste des paiements encaissés");
+      $pdf->Text(90, 10, $langs->trans("PaimentsList"));
 
       $pdf->SetFont('Arial','B',12);
       $pdf->Text(11, 16, "Date : " . strftime("%d %b %Y", time()));
@@ -173,110 +175,100 @@ class pdf_paiement
     		\param	month		mois du rapport
     		\param	year		annee du rapport
     */
-  function write_pdf_file($_dir, $month, $year)
+  	function write_pdf_file($_dir, $month, $year)
     {
-      if (! file_exists($_dir))
-	{
-	  umask(0);
-	  if (! mkdir($_dir, 0755))
-	    {
-	      print "Impossible de créer $_dir !";
-	      die;
-	    }
+    	global $langs;
+    	
+    	$dir=$_dir.'/'.$year;
+    	
+		if (! is_dir($dir))
+		{
+			$result=create_exdir($dir);
+			if ($result < 0)
+			{
+				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				return;	
+			}
+		}
+	
+		$month = substr("0".$month, strlen("0".$month)-2,2);
+		$_file = $dir . "/paiements-$month-$year" . ".pdf";
+		
+		
+		$pdf = new FPDF('P','mm','A4');
+		$pdf->Open();
+		
+		$sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";
+		$sql .= ", c.libelle as paiement_type, p.num_paiement";
+		$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
+		$sql .= ", pf.amount as pf_amount ";
+		$sql .= ", p.rowid as prowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f, ";
+		$sql .= MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
+		
+		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
+		
+		$sql .= " AND date_format(p.datep, '%Y') = " . $year;
+		$sql .= " AND p.fk_paiement = c.id ";
+		//      $sql .= " AND date_format(p.datep, '%m%Y') = " . $month.$year;
+		$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
+		$result = $this->db->query($sql);
+		//      print $sql ;
+		
+		if ($result)
+		{
+			$lignes = $this->db->num_rows($result);
+			$i = 0;
+			$var=True;
+		
+			while ($i < $lignes)
+			{
+				$objp = $this->db->fetch_object($result);
+				$var=!$var;
+		
+				$lines[$i][0] = $objp->facnumber;
+				$lines[$i][1] = strftime("%d %B %Y",$objp->dp);
+				$lines[$i][2] = $objp->paiement_type ;
+				$lines[$i][3] = $objp->num_paiement;
+				$lines[$i][4] = price($objp->paiement_amount);
+				$lines[$i][5] = price($objp->facture_amount);
+				$lines[$i][6] = price($objp->pf_amount);
+				$lines[$i][7] = price($objp->prowid);
+				$i++;
+			}
+		}
+		
+		$pages = intval($lignes / $this->line_per_page);
+		
+		if (($lignes % $this->line_per_page)>0)
+		{
+			$pages++;
+		}
+		
+		if ($pages == 0)
+		{
+			// force à générer au moins une page si le rapport ne contient aucune ligne
+			$pages = 1;
+		}
+		/*
+		for ($i = 0 ; $i < $pages ; $i++)
+		{
+		$pdf->AddPage();
+		$this->Header($pdf, $i+1, $pages);
+		$this->Body($pdf, $i+1, $lines);
+		}
+		*/
+		
+		$pdf->AddPage();
+		$this->Header($pdf, 1, $pages);
+		$this->Body($pdf, 1, $lines);
+		
+		/*
+		*
+		*/
+		
+		$pdf->Output($_file);
 	}
-      $_dir = $_dir . '/' . $year . '/';
-      if (! file_exists($_dir))
-	{
-	  umask(0);
-	  if (! mkdir($_dir, 0755))
-	    {
-	      print "Impossible de créer $_dir !";
-	      die;
-	    }
-	}
-
-      $month = substr("0".$month, strlen("0".$month)-2,2);
-      $_file = $_dir . "paiements-$month-$year" . ".pdf";
-
-      
-      $pdf = new FPDF('P','mm','A4');
-      $pdf->Open();
-            
-      /*
-       *
-       */  
-
-      $sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";
-      $sql .= ", c.libelle as paiement_type, p.num_paiement";
-      $sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
-      $sql .= ", pf.amount as pf_amount ";
-      $sql .= ", p.rowid as prowid";
-      $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f, ";
-      $sql .= MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
-
-      $sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-
-      $sql .= " AND date_format(p.datep, '%Y') = " . $year;
-      $sql .= " AND p.fk_paiement = c.id ";
-      //      $sql .= " AND date_format(p.datep, '%m%Y') = " . $month.$year;
-      $sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
-      $result = $this->db->query($sql);
-      //      print $sql ;
-
-      if ($result)
-	{
-	  $lignes = $this->db->num_rows();
-	  $i = 0; 
-	  $var=True;
-
-	  while ($i < $lignes)
-	    {
-	      $objp = $this->db->fetch_object($result);
-	      $var=!$var;
-	 
-	      $lines[$i][0] = $objp->facnumber;
-	      $lines[$i][1] = strftime("%d %B %Y",$objp->dp);
-	      $lines[$i][2] = $objp->paiement_type ;
-	      $lines[$i][3] = $objp->num_paiement;
-	      $lines[$i][4] = price($objp->paiement_amount);
-	      $lines[$i][5] = price($objp->facture_amount);
-	      $lines[$i][6] = price($objp->pf_amount);
-	      $lines[$i][7] = price($objp->prowid);
-	      $i++;
-	    }
-	}
-
-      $pages = intval($lignes / $this->line_per_page);
-
-      if (($lignes % $this->line_per_page)>0)
-	{
-	  $pages++;
-	}
-
-      if ($pages == 0)
-	{
-	  // force à générer au moins une page si le rapport ne contient aucune ligne
-	  $pages = 1;
-	}
-      /*
-      for ($i = 0 ; $i < $pages ; $i++)
-	{
-	  $pdf->AddPage();
-	  $this->Header($pdf, $i+1, $pages);
-	  $this->Body($pdf, $i+1, $lines);
-	}
-      */
-
-      $pdf->AddPage();
-      $this->Header($pdf, 1, $pages);
-      $this->Body($pdf, 1, $lines);
-
-      /*
-       *
-       */
-      
-      $pdf->Output($_file);      
-    }
 
 }
 
