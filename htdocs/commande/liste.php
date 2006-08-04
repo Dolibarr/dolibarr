@@ -37,6 +37,8 @@ $langs->load('companies');
 if (!$user->rights->commande->lire)
 	accessforbidden();
 
+$year=isset($_GET["year"])?$_GET["year"]:$_POST["year"];
+$month=isset($_GET["month"])?$_GET["month"]:$_POST["month"];
 $sref=isset($_GET['sref'])?$_GET['sref']:$_POST['sref'];
 $sref_client=isset($_GET['sref_client'])?$_GET['sref_client']:(isset($_POST['sref_client'])?$_POST['sref_client']:'');
 $snom=isset($_GET['snom'])?$_GET['snom']:$_POST['snom'];
