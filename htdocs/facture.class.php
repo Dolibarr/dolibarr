@@ -32,7 +32,6 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT .'/notify.class.php');
 require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/client.class.php");
 
@@ -837,12 +836,11 @@ class Facture extends CommonObject
 			// on vérifie si la facture est en numérotation provisoire
 			$facref = substr($this->ref, 1, 4);
 			
-			$action_notify = 2; // ne pas modifier cette valeur
 			if ($force_number)
 			{
 				$numfa = $force_number;
 			}
-			else if ($facref == PROV)
+			else if ($facref == 'PROV')
 			{
 				$numfa = $this->getNextNumRef($soc);
 			}
@@ -880,7 +878,7 @@ class Facture extends CommonObject
 
 
 			// On vérifie si la facture était une provisoire
-			if ($facref == PROV)
+			if ($facref == 'PROV')
 			{
 				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
 				// afin de ne pas perdre les fichiers attachés
@@ -947,35 +945,35 @@ class Facture extends CommonObject
 				}
 */
 
-      // On vérifie si la facture était une provisoire
-			if ($facref == PROV)
+      		// On vérifie si la facture était une provisoire
+			if ($facref == 'PROV')
 			{
-            /*
-             * Pour chaque produit, on met a jour indicateur nbvente
-             * On crée ici une dénormalisation des données pas forcément utilisée.
-             */
-			      $sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet';
-			      $sql.= ' WHERE fk_facture = '.$this->id;
-			      $sql.= ' AND fk_product > 0';
-
-            $resql = $this->db->query($sql);
-            if ($resql)
-            {
-                $num = $this->db->num_rows($resql);
-                $i = 0;
-                while ($i < $num)
-                {
-                    $obj = $this->db->fetch_object($resql);
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'product SET nbvente=nbvente+1 WHERE rowid = '.$obj->fk_product;
-                    $resql2 = $this->db->query($sql);
-                    $i++;
-                }
-            }
-            else
-            {
-                $error++;
-            }
-          }
+				/*
+				* Pour chaque produit, on met a jour indicateur nbvente
+				* On crée ici une dénormalisation des données pas forcément utilisée.
+				*/
+				$sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet';
+				$sql.= ' WHERE fk_facture = '.$this->id;
+				$sql.= ' AND fk_product > 0';
+			
+				$resql = $this->db->query($sql);
+				if ($resql)
+				{
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
+						$sql = 'UPDATE '.MAIN_DB_PREFIX.'product SET nbvente=nbvente+1 WHERE rowid = '.$obj->fk_product;
+						$resql2 = $this->db->query($sql);
+						$i++;
+					}
+				}
+				else
+				{
+					$error++;
+				}
+			}
 
             if ($error == 0)
             {
@@ -988,17 +986,6 @@ class Facture extends CommonObject
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
                 // Fin appel triggers
-
-                /*
-                 * Notify
-                 * \todo	Mettre notifications dans triggers
-                 */
-                $facref = sanitize_string($this->ref);
-                $filepdf = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
-                $mesg = 'La facture '.$this->ref." a été validée.\n";
-
-                $notify = New Notify($this->db); 
-                $notify->send($action_notify, $this->socidp, $mesg, 'facture', $rowid, $filepdf);
 
                 $this->db->commit();
 

@@ -134,12 +134,19 @@ class Conf
 		// Module bookmark4u
 		$this->bookmark4u->enabled=defined('MAIN_MODULE_BOOKMARK4U')?MAIN_MODULE_BOOKMARK4U:0;
 		$this->bookmark->enabled=defined('MAIN_MODULE_BOOKMARK')?MAIN_MODULE_BOOKMARK:0;
+
 		// Module deplacement
 		$this->deplacement->enabled=defined("MAIN_MODULE_DEPLACEMENT")?MAIN_MODULE_DEPLACEMENT:0;
+
 		// Module mailing
 		$this->mailing->enabled=defined("MAIN_MODULE_MAILING")?MAIN_MODULE_MAILING:0;
+	
+		// Module notification
+		$this->notification->enabled=defined("MAIN_MODULE_NOTIFICATION")?MAIN_MODULE_NOTIFICATION:0;
+
 		// Module externalrss
 		$this->externalrss->enabled=defined("MAIN_MODULE_EXTERNALRSS")?MAIN_MODULE_EXTERNALRSS:0;
+		
 		// Module commande client
 		$this->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;
 		$this->commande->dir_output=DOL_DATA_ROOT."/commande";
@@ -340,12 +347,13 @@ class Conf
 		$this->css  = "theme/".$this->theme."/".$this->theme.".css";
 
 		// $this->email_from          = email pour envoi par Dolibarr des mails auto (notifications, ...)
-		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
-		$this->email_from="dolibarr-robot@domain.com";
-		if (defined('MAIN_EMAIL_FROM'))
+		$this->notification->email_from="dolibarr-robot@domain.com";
+		if (defined('NOTIFICATION_EMAIL_FROM'))
 		{
-		    $this->email_from=MAIN_EMAIL_FROM;
+		    $this->notification->email_from=NOTIFICATION_EMAIL_FROM;
 		}
+
+		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
 		if (defined('MAILING_EMAIL_FROM'))
 		{
 		    $this->mailing->email_from=MAILING_EMAIL_FROM;

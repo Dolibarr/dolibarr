@@ -55,8 +55,7 @@ class modClickToDial extends DolibarrModules
     $this->name = "ClickToDial";
     $this->description = "Gestion du Click To Dial";
 
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
+    $this->version = 'development';		// 'development' or 'experimental' or 'dolibarr' or version
 
     $this->const_name = 'MAIN_MODULE_CLICKTODIAL';
     $this->special = 1;

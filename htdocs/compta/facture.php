@@ -1422,7 +1422,8 @@ else
  			 */
 			if ($_GET['action'] == 'delete')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('DeleteBill'),$langs->trans('ConfirmDeleteBill'),'confirm_delete');
+				$text=$langs->trans('ConfirmDeleteBill');
+				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('DeleteBill'),$text,'confirm_delete');
 				print '<br />';
 			}
 
@@ -1433,7 +1434,7 @@ else
 			{
 				// on vérifie si la facture est en numérotation provisoire
 				$facref = substr($fac->ref, 1, 4);
-				if ($facref == PROV)
+				if ($facref == 'PROV')
 				{
 					$numfa = $fac->getNextNumRef($soc);
 				}
@@ -1441,7 +1442,17 @@ else
 				{
 					$numfa = $fac->ref;
 				}
-				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$langs->trans('ConfirmValidateBill',$numfa),'confirm_valid');
+
+				$text=$langs->trans('ConfirmValidateBill',$numfa);
+				if ($conf->notification->enabled)
+				{
+					require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+					$notify=new Notify($db);
+					$text.='<br>';
+					$text.=$notify->confirmMessage(2,$fac->socidp);
+				}
+
+				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$text,'confirm_valid');
 				print '<br />';
 			}
 

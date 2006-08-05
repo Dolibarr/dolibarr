@@ -69,82 +69,27 @@ if ($user->societe_id > 0)
  *********************************************************************************/  
 if ($_socid > 0)
 {
-  // On recupere les donnees societes par l'objet
-  $objsoc = new Societe($db);
-  $objsoc->id=$_socid;
-  $objsoc->fetch($_socid,$to);
-  
-  $dac = strftime("%Y-%m-%d %H:%M", time());
-  if ($errmesg)
-    {
-      print '<div class="error">'.$errmesg.'</div><br>';
-    }
-  
-  /*
-   * Affichage onglets
-   */
-  $h = 0;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
-  $head[$h][1] = $langs->trans("Company");
-  $h++;
-  
-  if ($objsoc->client==1)
-    {
-      $hselected=$h;
-      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = $langs->trans("Customer");
-      $h++;
-    }
-  if ($objsoc->client==2)
-    {
-      $hselected=$h;
-      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socid;
-      $head[$h][1] = $langs->trans("Prospect");
-      $h++;
-    }
-  if ($objsoc->fournisseur)
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = $langs->trans("Supplier");
-      $h++;
-    }
-  
-  if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-  {
-    $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Accountancy");
-    $h++;
-  }
+	// On recupere les donnees societes par l'objet
+	$objsoc = new Societe($db);
+	$objsoc->id=$_socid;
+	$objsoc->fetch($_socid,$to);
+	
+	$dac = strftime("%Y-%m-%d %H:%M", time());
+	if ($errmesg)
+	{
+		print '<div class="error">'.$errmesg.'</div><br>';
+	}
+	
 
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Note");
-    $h++;
+	/*
+	 * Affichage onglets
+	 */
 
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
-        $head[$h][1] = $langs->trans("Documents");
-        $h++;
-    }
+	$head = societe_prepare_head($objsoc);
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Notifications");
-    $h++;
-    
-    if ($user->societe_id == 0)
-      {
-	$head[$h][0] = DOL_URL_ROOT."/comm/index.php?socidp=$objsoc->id&action=add_bookmark";
-	$head[$h][1] = img_object($langs->trans("BookmarkThisPage"),'bookmark');
-	$head[$h][2] = 'image';
-      }
+    dolibarr_fiche_head($head, 'notify', $objsoc->nom);
 
-    dolibarr_fiche_head($head, $hselected, $objsoc->nom);
 
-    /*
-     *
-     *
-     */
     print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
     print '<input type="hidden" name="action" value="setpricelevel">';
     print '<table width="100%" border="0">';

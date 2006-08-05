@@ -74,3 +74,9 @@ ToAddRecipientsChooseHere=To add recipients, choose in those lists
 NbOfEMailingsReceived=Mass emailings received
 IdRecord=ID record
 DeliveryReceipt=Delivery Receipt
+
+# Module Notifications
+Notifications=Notifications
+NoNotificationsWillBeSent=No email notifications are planned for this event and company
+ANotificationsWillBeSent=1 notification will be sent by email
+SomeNotificationsWillBeSent=%s notifications will be sent by email

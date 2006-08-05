@@ -105,7 +105,6 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
-    $var=True;
 
     $paramlist=($_GET["orphelins"]?"&orphelins=1":"");
     print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
@@ -135,7 +134,7 @@ if ($resql)
     print "</tr>\n";
     print '</form>';
 
-
+	$var=true;
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);

@@ -22,13 +22,14 @@
 
 /**
 	    \file       htdocs/societe/notify/fiche.php
-        \ingroup    societe
+        \ingroup    societe, notification
 		\brief      Onglet notifications pour une societe
 		\version    $Revision$
 */
 
 require("pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("companies");
 
@@ -151,11 +152,16 @@ if ( $soc->fetch($soc->id) )
     
     print "\n";
     
+
+	print_fiche_titre($langs->trans("AddNewNotification"));
+	
+    print '<form action="fiche.php?socid='.$socid.'" method="post">';
+
     // Ligne de titres
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name","","&socid=$socid",'',$sortfield);
-    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre","","&socid=$socid",'',$sortfield);
+    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield);
+    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield);
     print '<td>&nbsp;</td>';
     print '</tr>';
     
@@ -184,7 +190,6 @@ if ( $soc->fetch($soc->id) )
     }
     
     $var=false;
-    print '<form action="fiche.php?socid='.$socid.'" method="post">';
     print '<input type="hidden" name="action" value="add">';
     print '<tr '.$bc[$var].'><td>';
     $html->select_array("contactid",$soc->contact_email_array());
@@ -194,11 +199,25 @@ if ( $soc->fetch($soc->id) )
     print '</td>';
     print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
     print '</tr>';
+    print '</table>';
+
     print '</form>';
-    
+	print '<br>';    
+
+
+	print_fiche_titre($langs->trans("ListOfActiveNotifications"));
+	$var=true;
+	
+    // Ligne de titres
+    print '<table width="100%" class="noborder">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield);
+    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield);
+    print '<td>&nbsp;</td>';
+    print '</tr>';
     
     // Liste
-    $sql = "SELECT c.name, c.firstname, a.titre,n.rowid";
+    $sql = "SELECT c.idp as id, c.name, c.firstname, a.titre, n.rowid";
     $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n";
     $sql.= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
     
@@ -207,13 +226,19 @@ if ( $soc->fetch($soc->id) )
     {
         $num = $db->num_rows($resql);
         $i = 0;
+
+		$contactstatic=new Contact($db);
+		
         while ($i < $num)
         {
             $var = !$var;
 
             $obj = $db->fetch_object($resql);
     
-            print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
+            $contactstatic->id=$obj->id;
+            $contactstatic->name=$obj->name;
+            $contactstatic->firstname=$obj->firstname;
+            print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1).'</td>';
             print '<td>'.$obj->titre.'</td>';
             print'<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
             print '</tr>';

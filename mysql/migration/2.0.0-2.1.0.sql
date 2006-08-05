@@ -155,9 +155,12 @@ update llx_const set name='MAIN_SIZE_LISTE_LIMIT' where name='SIZE_LISTE_LIMIT';
 update llx_const set name='SOCIETE_FISCAL_MONTH_START' where name='FISCAL_MONTH_START';
 update llx_const set visible=0 where name='FACTURE_DISABLE_RECUR';
 update llx_const set visible=0 where name='MAILING_EMAIL_FROM';
+update llx_const set name='NOTIFICATION_EMAIL_FROM', visible=0 where name='MAIN_MAIL_FROM';
+update llx_const set name='NOTIFICATION_EMAIL_FROM', visible=0 where name='MAIN_EMAIL_FROM';
 
 insert into llx_const(name,value,type,visible,note) values('MAIN_SHOW_DEVELOPMENT_MODULES','0','yesno',1,'Make development modules visible');
 
+delete from llx_const where name in ('OSC_CATALOG_URL','OSC_LANGUAGE_ID');
 
 alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 

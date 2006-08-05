@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
         \brief      Fichier de la classe de gestion des notifications
         \version    $Revision$
 */
+require_once(DOL_DOCUMENT_ROOT ."/lib/CMailFile.class.php");
 
 
 /**
@@ -45,7 +46,10 @@ class Notify
     var $note;
     var $projet_id;
 
-
+	// Les codes actions sont définis dans la table llx_notify_def
+	// \todo utiliser des codes texte plutot que numérique
+	// 1 = Validation fiche inter
+	// 2 = Validation facture
 
     /**
      *    \brief      Constructeur
@@ -54,13 +58,59 @@ class Notify
     function Notify($DB)
     {
         $this->db = $DB ;
-        include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
     }
 
 
     /**
-     *    \brief      Envoi mail et sauve trace
-     *
+     *    	\brief      Renvoie le message signalant les notifications qui auront lieu sur
+     *					un evenement pour affichage dans texte de confirmation evenement.
+     *		\return		string		Message
+     */
+	function confirmMessage($action,$socid)
+	{
+		global $langs;
+		$langs->load("mails");
+		
+		$nb=$this->countDefinedNotifications($action,$socid);
+		if ($nb <= 0) $texte=$langs->trans("NoNotificationsWillBeSent");
+		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
+		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
+		return $texte;
+	}
+	
+    /**
+     *    	\brief      Renvoie le nombre de notifications configurés pour l'action et la société donnée
+     *		\return		int		<0 si ko, sinon nombre de notifications définies
+     */
+	function countDefinedNotifications($action,$socid)
+	{
+        $num=-1;
+        
+        $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
+        $sql .= " AND n.fk_soc = s.idp AND n.fk_action = ".$action;
+        $sql .= " AND s.idp = ".$socid;
+
+		dolibarr_syslog("Notify.class::countDefinedNotifications $action, $socid");
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+		}
+		else
+		{
+			$this->error=$this->db->error.' sql='.$sql;
+			return -1;
+		}
+		
+		return $num;
+	}
+
+    /**
+     *    	\brief      Vérifie si notification actice. Si oui, envoi mail et sauve trace
+     *		\return		int		<0 si ko, sinon nombre de notifications faites
      */
     function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
@@ -71,6 +121,8 @@ class Notify
         $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
         $sql .= " AND n.fk_soc = s.idp AND n.fk_action = ".$action;
         $sql .= " AND s.idp = ".$socid;
+
+		dolibarr_syslog("Notify.class::send $action, $socid, $texte, $objet_type, $objet_id, $file");
 
         $result = $this->db->query($sql);
         if ($result)
@@ -85,19 +137,20 @@ class Notify
 
                 if (strlen($sendto))
                 {
-                    $subject = $langs->trans("DolibarrNotififcation");
+                    $subject = $langs->trans("DolibarrNotification");
                     $message = $texte;
                     $filename = split("/",$file);
-                    $replyto = $conf->email_from;
+
+                    $replyto = $conf->notification->email_from;
 
                     $mailfile = new CMailFile($subject,
-                    $sendto,
-                    $replyto,
-                    $message,
-                    array($file),
-                    array("application/pdf"),
-                    array($filename[sizeof($filename)-1])
-                    );
+	                    $sendto,
+	                    $replyto,
+	                    $message,
+	                    array($file),
+	                    array("application/pdf"),
+	                    array($filename[sizeof($filename)-1])
+	                    );
 
                     if ( $mailfile->sendfile() )
                     {
@@ -109,7 +162,6 @@ class Notify
                         {
                             dolibarr_print_error($db);
                         }
-
                     }
                     else
                     {
@@ -118,10 +170,12 @@ class Notify
                 }
                 $i++;
             }
+            return $i;
         }
         else
         {
             $this->error=$this->db->error();
+            return -1;
         }
 
     }

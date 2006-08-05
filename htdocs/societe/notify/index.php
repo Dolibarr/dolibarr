@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +19,24 @@
  * $Id$
  * $Source$
  */
+
+/**
+	    \file       htdocs/societe/notify.index.php
+		\ingroup    notification
+		\brief      Liste des notifications réalisées
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
 $langs->load("companies");
 $langs->load("banks");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
-
-
-llxHeader();
 
 if ($sortorder == "")
 {
@@ -50,60 +53,62 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+
+
 /*
  * Mode Liste
  *
- *
- *
  */
-print_barre_liste("Liste des societes", $page, "index.php");
+
+llxHeader();
 
 $sql = "SELECT s.nom, s.idp, c.name, c.firstname, a.titre,n.rowid FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
 $sql .= " AND n.fk_soc = s.idp";
-
-if ($socid > 0) {
-  $sql .= " AND s.idp = " . $user->societe_id;
+if ($socid > 0)
+{
+	$sql .= " AND s.idp = " . $user->societe_id;
 }
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
-    
-
-  print "<table class=\noborder\" width=\"100%\">";
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign=\"center\"');
-  print_liste_field_titre($langs->trans("Contact"),"index.php","c.name");
-  print_liste_field_titre($langs->trans("Action"),"index.php","a.titre");
-  print "</tr>\n";
-  $var=True;
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object( $i);
-    
-      $var=!$var;
-    
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
-      print "<td>".$obj->firstname." ".$obj->name."</td>\n";
-      print "<td>".$obj->titre."</td>\n";      
-      print "</tr>\n";
-      $i++;
-    }
-  print "</table>";
-  $db->free();
+	$num = $db->num_rows($result);
+	$i = 0;
+	
+	$paramlist='';
+	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, "index.php", $paramlist, $sortfield,$sortorder,'',$num);
+	
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign=\"center\"');
+	print_liste_field_titre($langs->trans("Contact"),"index.php","c.name");
+	print_liste_field_titre($langs->trans("Action"),"index.php","a.titre");
+	print "</tr>\n";
+	$var=True;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($result);
+	
+		$var=!$var;
+	
+		print "<tr $bc[$var]>";
+		print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+		print "<td>".$obj->firstname." ".$obj->name."</td>\n";
+		print "<td>".$obj->titre."</td>\n";
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>";
+	$db->free();
 }
 else
 {
-  print $db->error() . ' ' . $sql;
+	dolibarr_print_error($db);
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -137,6 +137,8 @@ Module410Name=Webcalendar
 Module410Desc=Webcalendar integration
 Module500Name=Taxes and social contributions
 Module500Desc=Taxes and social contributions' management
+Module600Name=Notification
+Module600Desc=Send notifications (by email) on Dolibarr business events
 Module700Name=Donations
 Module700Desc=Donations' management
 Module800Name=OSCommerce 1
@@ -525,6 +527,9 @@ NewRSS=New RSS
 ##### Mailing #####
 MailingSetup=Mailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
+##### Notification #####
+NotificationSetup=Mailing module setup
+NotificationEMailFrom=Sender EMail (From) for emails sent for notifications
 ##### Sendings #####
 SendingsSetup=Sending module setup
 SendingsReceiptModel=Sending receipt model

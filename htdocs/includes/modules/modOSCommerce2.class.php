@@ -55,7 +55,7 @@ class modOSCOmmerce2 extends DolibarrModules
 		$this->family = "products";
 		$this->name = "OSCommerce 2";
 		$this->description = "Interface de visualisation d'une boutique OSCommerce via des Web services.\nCe module requiert d'installer les composants dans /oscommerce_ws/ws_server sur OSCommerce. Voir fichier README dans /oscommerce_ws/ws_server";
-		$this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
+		$this->version = 'experimental';	// 'development' or 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_OSCOMMERCEWS';
 		$this->special = 1;
 	

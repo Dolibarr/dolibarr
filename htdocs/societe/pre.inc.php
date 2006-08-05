@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +18,40 @@
  *
  * $Id$
  * $Source$
- *
  */
 
+/**
+		\file       htdocs/societe/notify/pre.inc.php
+		\ingroup    product,service
+		\brief      Fichier gestionnaire du menu gauche des notifications
+		\version    $Revision$
+*/
 require ("../main.inc.php");
+
 
 function llxHeader($head = "")
 {
-  global $langs, $user, $conf;
+	global $langs, $user, $conf;
 
-  top_menu($head);
+	top_menu($head);
 
-  $menu = new Menu();
+	$menu = new Menu();
 
-  if ($conf->societe->enabled) 
-    {
-      $menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"),"company");
+	if ($conf->societe->enabled)
+	{
+		$menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"),"company");
 
-      if ($conf->rights->societe->creer)
-      {
-        $menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", $langs->trans("NewCompany"));
-      }
-      
-      $menu->add_submenu(DOL_URL_ROOT."/contact.php", $langs->trans("Contacts"));
+		if ($conf->rights->societe->creer)
+		{
+			$menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", $langs->trans("NewCompany"));
+		}
 
-      $menu->add_submenu("notify/index.php", $langs->trans("Notifications"));
-    }
+		$menu->add_submenu(DOL_URL_ROOT."/contact.php", $langs->trans("Contacts"));
 
-  left_menu($menu->liste);
+		$menu->add_submenu("notify/index.php", $langs->trans("Notifications"));
+	}
+
+	left_menu($menu->liste);
 }
 
 ?>

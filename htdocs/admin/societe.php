@@ -65,19 +65,6 @@ if ($_GET["action"] == 'setcodecompta')
 	}
 }
 
-if ($_POST["action"] == 'setdisablenotifications')
-{
-	if (dolibarr_set_const($db, "SOCIETE_DISABLE_NOTIFICATIONS",! $_POST["constvalue"]))
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dolibarr_print_error($db);	
-	}
-}
-
 
 /*
  * 	Affichage page configuration module societe
@@ -213,8 +200,8 @@ print "</table>\n";
 print '<br>';
 
 
-// Choix du module de gestion des codes compta
-
+// Autres options
+/*
 print_titre($langs->trans("OtherOptions"));
 
 $var=true;
@@ -228,16 +215,16 @@ print '<td>&nbsp;</td>';
 print "</tr>\n";
 
 print '<form action="'.$_SERVER["societe.php"].'" method="POST">';
-print '<input type="hidden" name="action" value="setdisablenotifications">';
-print '<input type="hidden" name="constname" value="SOCIETE_DISABLE_NOTIFICATIONS">';
+print '<input type="hidden" name="action" value="setxxx">';
+print '<input type="hidden" name="constname" value="XXX">';
 
 $var=!$var;
 print '<tr '.$bc[$var].' class="value">';
-print '<td nowrap="nowrap">'.$langs->trans("UseNotifications")."</td>\n";
+print '<td nowrap="nowrap">'.$langs->trans("UseXXX")."</td>\n";
 print '<td>';
-$form->selectyesnonum('constvalue',! $conf->global->SOCIETE_DISABLE_NOTIFICATIONS);
+$form->selectyesnonum('constvalue',! $conf->global->XXX);
 print '</td>';
-print '<td>'.$langs->trans("NotificationsDesc").'</td>';
+print '<td>'.$langs->trans("XXXDesc").'</td>';
 print '<td align="right">';
 print '<input class="button" type="submit" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
 print '</td>';
@@ -246,7 +233,7 @@ print "</tr>\n";
 print '</form>';
 
 print "</table>\n";
-
+*/
 
 
 $db->close();

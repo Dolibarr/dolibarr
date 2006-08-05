@@ -27,7 +27,6 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 
 
 /**	    \class      Ficheinter
@@ -227,57 +226,32 @@ class Fichinter extends CommonObject
         }
     }
 
-    /*
-     *
-     *
+    /**
+     *		\brief		Valide une fiche intervention
+     *		\param		user		User qui valide
+     *		\return		int			<0 si ko, >0 si ok
      */
-    function valid($userid, $outputdir)
+    function valid($user, $outputdir)
     {
-        $action_notify = 1; // ne pas modifier cette valeur
-
-        $this->fetch($this->id);
-
-        $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
-        $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-
-        if ($this->db->query($sql) )
+        $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+        $sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
+        $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+		$resql=$this->db->query($sql);
+        if ($resql)
         {
-            /*
-             * Set generates files readonly
-             */
-            umask(0);
-            $file = $outputdir . "/$this->ref/$this->ref.tex";
-            if (is_writeable($file))
-            {
-                chmod($file, 0444);
-            }
-            $file = $outputdir . "/$this->ref/$this->ref.ps";
-            if (is_writeable($file))
-            {
-                chmod($file, 0444);
-            }
-            $filepdf = $conf->fichinter->dir_output . "/$this->ref/$this->ref.pdf";
-            if (is_writeable($filepdf))
-            {
-                chmod($filepdf, 0444);
-            }
-
-            /*
-             * Notify
-             */
-            $mesg = "La fiche d'intervention ".$this->ref." a été validée.\n";
-
-            $notify = New Notify($this->db);
-            $notify->send($action_notify, $this->societe_id, $mesg, "ficheinter", $this->id, $filepdf);
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
+            // Fin appel triggers
 
             return 1;
         }
         else
         {
-            print $this->db->error() . ' in ' . $sql;
+            $this->error=$this->db->error().' sql='.$sql;
             return -1;
         }
-
     }
 
     /**

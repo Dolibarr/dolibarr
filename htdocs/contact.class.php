@@ -748,6 +748,31 @@ class Contact
             return -1;
         }
     }    
-    
+
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Sur quoi pointe le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		if ($option == 'xxx')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+		}
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact"),'contact').$lienfin.' ');
+		$result.=$lien.$this->name.' '.$this->firstname.$lienfin;
+		return $result;
+	}    
 }
 ?>

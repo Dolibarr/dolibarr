@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.org>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,9 @@ class modBookmark4u extends DolibarrModules
     $this->family = "technic";
     $this->name = "Bookmark4u";
     $this->description = "Ajoute fonction pour générer un compte Bookmark4u depuis un compte Dolibarr";
-    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
+
+    $this->version = 'development';		// 'development' or 'experimental' or 'dolibarr' or version
+
     $this->const_name = 'MAIN_MODULE_BOOKMARK4U';
     $this->special = 1;
     $this->picto='user';

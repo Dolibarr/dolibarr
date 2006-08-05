@@ -118,6 +118,7 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }
+
         // Companies
         elseif     ($action == 'COMPANY_CREATE')
         {
@@ -131,6 +132,7 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }
+
         // Products
         elseif ($action == 'PRODUCT_CREATE')
         {
@@ -144,6 +146,7 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+
 		// Customer orders
         elseif ($action == 'ORDER_CREATE')
         {
@@ -157,6 +160,7 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+
 		// Supplier orders
         elseif ($action == 'ORDER_SUPPLIER_CREATE')
         {
@@ -166,6 +170,7 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+
         // Proposals
         elseif ($action == 'PROPAL_CREATE')
         {
@@ -187,6 +192,7 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+
         // Contracts
         elseif ($action == 'CONTRACT_CREATE')
         {
@@ -212,6 +218,7 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+
         // Bills
         elseif ($action == 'BILL_CREATE')
         {
@@ -233,6 +240,7 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+
         // Payments
         elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
         {
@@ -242,6 +250,13 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+
+		// Interventions
+	    elseif ($action == 'FICHEINTER_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+        }
+
         // Members
         elseif ($action == 'MEMBER_CREATE')
         {
@@ -267,6 +282,8 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
+
+		// If not found
         else
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran but no handler found for this action.");

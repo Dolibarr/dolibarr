@@ -74,3 +74,9 @@ ToAddRecipientsChooseHere=Pour ajouter des destinataires, choisir dans les liste
 NbOfEMailingsReceived=Mailings de masse reçus
 IdRecord=ID enregistrement
 DeliveryReceipt=Accusé de réception
+
+# Module Notifications
+Notifications=Notifications
+NoNotificationsWillBeSent=Aucune notification par email n'est prévue pour cet évenement et société
+ANotificationsWillBeSent=1 notification va être envoyée par mail
+SomeNotificationsWillBeSent=%s notifications vont être envoyées par mail

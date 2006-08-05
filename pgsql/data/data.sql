@@ -50,7 +50,6 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE',
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Autorise l\'upload de document',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation',1);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',0);
 
@@ -124,11 +123,14 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_TEXT','%TYPE% n° %ID%\r\n%PRENOM% %NOM%\r\n<%EMAIL%>\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%','texte','Texte imprime sur la carte adherent',0);
 
 --
--- OsCommerce
+-- OsCommerce 1
 --
-insert into llx_const (name, value, type) values ('DB_NAME_OSC','catalog','chaine');
-insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine');
-insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
+insert into llx_const (name, value, type) values ('OSC_DB_HOST','localhost','chaine');
+
+--
+-- Notification
+--
+insert into llx_const (name, value, type, note, visible) values ('NOTIFICATION_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
 
 --
 --
