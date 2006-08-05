@@ -15,7 +15,7 @@ use Data::Dumper;
 use Getopt::Long;
 use strict;
 
-use vars qw/ $DIR $PROG $Extension $SOURCE $DESTI %filelist /;
+use vars qw/ $DIR $PROG $Extension $SOURCE $DESTI %filelist $stop /;
 
 # command line options
 my( $opt_debug, $opt_help);
@@ -343,7 +343,8 @@ foreach my $file (keys %filelist) {
 
 print "\n";
 print "Build ".(scalar keys %filelist)." file(s).\n";
-
-sleep(3);
+print "\n";
+print "Press a key to finish...\n";
+$stop=<STDIN>;
 
 0;
