@@ -53,7 +53,7 @@ class modPostnuke extends DolibarrModules
     $this->family = "technic";
     $this->name = "Postnuke";
     $this->description = "Gestion de l'outil PostNuke";
-    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
+    $this->version = 'development';    // 'development' or 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_POSTNUKE';
     $this->special = 1;
 
