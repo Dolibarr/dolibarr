@@ -18,14 +18,22 @@
  *
  * $Id$
  * $Source$
- *
- *
- * Script de verification des demandes de prélèvement
- *
- * Vérifie que les sociétés qui doivent être prélevées ont bien un RIB correct
  */
  
-require_once("../htdocs/master.inc.php");
+/**
+        \file       scripts/prelevement/prelevement-verif.php
+        \ingroup    prelevement
+        \brief      Vérifie que les sociétés qui doivent être prélevées ont bien un RIB correct
+*/
+
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+
+require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 

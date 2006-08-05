@@ -22,7 +22,7 @@
  */
 
 /**
-        \file       scripts/factures-impayees-commerciaux.php
+        \file       scripts/invoices/factures-impayees-commerciaux.php
         \ingroup    facture
         \brief      Script d'envoi de mails résumé des imapyées par commerciaux
 */
@@ -38,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 $path=eregi_replace('factures-impayees-commerciaux.php','',$_SERVER["PHP_SELF"]);
 
 
-require($path."../htdocs/master.inc.php");
+require($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
 

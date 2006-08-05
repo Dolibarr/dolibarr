@@ -18,11 +18,22 @@
  *
  * $Id$
  * $Source$
- *
- * Script de prelevement
  */
 
-require_once("../htdocs/master.inc.php");
+/**
+        \file       scripts/prelevement/prelevement.php
+        \ingroup    prelevement
+        \brief      Script de prelevement
+*/
+
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+
+require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/bon-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
