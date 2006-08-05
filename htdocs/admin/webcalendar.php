@@ -65,6 +65,7 @@ elseif ($actionsave)
 
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_SYNCRO',trim($_POST["phpwebcalendar_syncro"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_COMPANYCREATE',trim($_POST["phpwebcalendar_companycreate"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PROPALSTATUS',trim($_POST["phpwebcalendar_propalstatus"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_CONTRACTSTATUS',trim($_POST["phpwebcalendar_contractstatus"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_BILLSTATUS',trim($_POST["phpwebcalendar_billstatus"]),'chaine',0);
 
@@ -225,6 +226,18 @@ if ($conf->societe->enabled)
     print '</select>';
     print '</td></tr>';
 }
+if ($conf->propal->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("WebCalAddEventOnStatusPropal").'</td>';
+    print '<td>';
+    print '<select name="phpwebcalendar_propalstatus" class="flat">';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_PROPALSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_PROPALSTATUS || $conf->global->PHPWEBCALENDAR_PROPALSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '</select>';
+    print '</td></tr>';
+}
 if ($conf->contrat->enabled)
 {
     $var=!$var;
@@ -248,8 +261,8 @@ if ($conf->facture->enabled)
     print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_BILLSTATUS || $conf->global->PHPWEBCALENDAR_BILLSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("WebCalNever").'</option>';
     print '</select>';
     print '</td></tr>';
-    print '</table>';
 }
+print '</table>';
 
 
 print '<br><center>';

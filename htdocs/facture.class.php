@@ -977,9 +977,9 @@ class Facture extends CommonObject
 
             if ($error == 0)
             {
-                $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
                 $this->ref = $numfa;
+
+                $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
