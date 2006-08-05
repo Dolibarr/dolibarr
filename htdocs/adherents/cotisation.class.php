@@ -439,62 +439,6 @@ class Cotisation
       }
   }
 
-  /*
-   * Somme des dons encaissés
-   */
 
-  function sum_actual()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don";
-    $sql .= " WHERE fk_statut = 3";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
-  
-  /* Paiement recu en attente d'encaissement
-   * 
-   *
-   */
-  function sum_pending()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don";
-    $sql .= " WHERE fk_statut = 2";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
-
-  /*
-   * Somme des promesses de dons validées
-   *
-   */
-	 
-  function sum_intent()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don";
-    $sql .= " WHERE fk_statut = 1";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
 }
 ?>

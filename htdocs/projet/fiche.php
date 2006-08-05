@@ -218,7 +218,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td><input name="title" value="'.$projet->title.'"></td></tr>';      
 
-      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->$projet->societe->getNomUrl(1).'</td></tr>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
       print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
       print '</table>';
       print '</form>';

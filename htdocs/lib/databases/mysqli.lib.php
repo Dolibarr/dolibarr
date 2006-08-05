@@ -40,7 +40,7 @@
 class DoliDb
 {
     var $db;                    // Handler de base
-    var $type='mysql';          // Nom du gestionnaire
+    var $type='mysqli';          // Nom du gestionnaire
     var $forcecharset='latin1';
 	var $forcecollate='latin1_swedish_ci';
 
@@ -96,14 +96,14 @@ class DoliDb
             \param	    newlink     ???
             \return     int			1 en cas de succès, 0 sinon
     */
-    function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
+    function DoliDb($type='mysqli', $host, $user, $pass, $name='', $newlink=0)
     {
         global $conf,$langs;
         $this->transaction_opened=0;
 
         //print "Name DB: $host,$user,$pass,$name<br>";
 
-        if (! function_exists("mysql_connect"))
+        if (! function_exists("mysqli_connect"))
         {
         	$this->connected = 0;
         	$this->ok = 0;
@@ -127,7 +127,7 @@ class DoliDb
         if ($this->db)
         {
 			// Si client connecté avec charset different de celui de Dolibarr
-			if (mysql_client_encoding ( $this->db ) != $this->forcecharset)
+			if (mysqli_client_encoding ( $this->db ) != $this->forcecharset)
 			{
 				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
             }
@@ -177,7 +177,7 @@ class DoliDb
     */
     function select_db($database)
     {
-        return mysql_select_db($database, $this->db);
+        return mysqli_select_db($this->db,$database);
     }
 
 
@@ -191,7 +191,7 @@ class DoliDb
     */
     function connect($host, $login, $passwd, $name)
     {
-        $this->db  = @mysql_connect($host, $login, $passwd);
+        $this->db  = @mysqli_connect($host, $login, $passwd);
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;
     }
@@ -203,9 +203,10 @@ class DoliDb
     */
     function getVersion()
     {
-        $resql=$this->query('SELECT VERSION()');
-        $row=$this->fetch_row($resql);
-        return $row[0];
+//        $resql=$this->query('SELECT VERSION()');
+//        $row=$this->fetch_row($resql);
+//        return $row[0];
+		return mysqli_get_server_info($this->db);
     }
 
 
@@ -237,7 +238,7 @@ class DoliDb
 	        $ret=$this->query($sql);
         }
 
-        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysql_error($this->db);
+        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysqli_error($this->db);
         return $ret;
     }
 
@@ -248,7 +249,7 @@ class DoliDb
     */
     function close()
     {
-        return mysql_close($this->db);
+        return mysqli_close($this->db);
     }
 
 
@@ -321,11 +322,11 @@ class DoliDb
         if (! $this->database_name)
         {
             // Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
-            $ret = mysql_query($query, $this->db);
+            $ret = mysqli_query($this->db,$query);
         }
         else
         {
-            $ret = mysql_db_query($this->database_name, $query, $this->db);
+            $ret = mysqli_query($this->db,$query);
         }
 
         if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
@@ -352,8 +353,8 @@ class DoliDb
     function fetch_object($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_fetch_object($resultset);
+        if (! is_object($resultset)) { $resultset=$this->results; }
+        return mysqli_fetch_object($resultset);
     }
 
 
@@ -502,8 +503,8 @@ class DoliDb
     function fetch_array($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_fetch_array($resultset);
+        if (! is_object($resultset)) { $resultset=$this->results; }
+        return mysqli_fetch_array($resultset);
     }
 
     /**
@@ -515,8 +516,8 @@ class DoliDb
     function fetch_row($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_fetch_row($resultset);
+        if (! is_object($resultset)) { $resultset=$this->results; }
+        return mysqli_fetch_row($resultset);
     }
 
     /**
@@ -528,8 +529,8 @@ class DoliDb
     function num_rows($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_num_rows($resultset);
+        if (! is_object($resultset)) { $resultset=$this->results; }
+        return mysqli_num_rows($resultset);
     }
 
     /**
@@ -542,10 +543,10 @@ class DoliDb
     function affected_rows($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->results; }
         // mysql necessite un link de base pour cette fonction contrairement
         // a pqsql qui prend un resultset
-        return mysql_affected_rows($this->db);
+        return mysqli_affected_rows($this->db);
     }
 
 
@@ -556,9 +557,9 @@ class DoliDb
     function free($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->results; }
         // Si resultset en est un, on libere la mémoire
-        if (is_resource($resultset)) mysql_free_result($resultset);
+        if (is_object($resultset)) mysqli_free_result($resultset);
     }
 
 
@@ -661,10 +662,10 @@ class DoliDb
             return 'DB_ERROR_FAILED_TO_CONNECT';
         }
         else {
-            if (isset($this->errorcode_map[mysql_errno($this->db)])) {
-                return $this->errorcode_map[mysql_errno($this->db)];
+            if (isset($this->errorcode_map[mysqli_errno($this->db)])) {
+                return $this->errorcode_map[mysqli_errno($this->db)];
             }
-            $errno=mysql_errno($this->db);
+            $errno=mysqli_errno($this->db);
             return ($errno?'DB_ERROR_'.$errno:'0');
         }
     }
@@ -676,11 +677,11 @@ class DoliDb
     function error()
     {
         if (! $this->connected) {
-            // Si il y a eu echec de connection, $this->db n'est pas valide pour mysql_error.
+            // Si il y a eu echec de connection, $this->db n'est pas valide pour mysqli_error.
             return 'Not connected. Check setup parameters in conf/conf.php file and your mysql client and server versions';
         }
         else {
-            return mysql_error($this->db);
+            return mysqli_error($this->db);
         }
     }
 
@@ -691,7 +692,7 @@ class DoliDb
     */
     function last_insert_id($tab)
     {
-        return mysql_insert_id($this->db);
+        return mysqli_insert_id($this->db);
     }
 
     /**
@@ -710,7 +711,7 @@ class DoliDb
     */
     function list_tables($database)
     {
-        $this->results = mysql_list_tables($database, $this->db);
+        $this->results = mysqli_list_tables($database, $this->db);
         return $this->results;
     }
 	 /**

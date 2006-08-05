@@ -29,6 +29,11 @@
 */
 
 include_once("./inc.php");
+if (file_exists($conffile)) include_once($conffile);
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
@@ -36,26 +41,10 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
-
-dolibarr_install_syslog("Entering etape5.php page");
-
-
 $success=0;
 
-if (file_exists($conffile))
-{
-    include($conffile);
-    if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
-    define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
-}
 
-
-if($dolibarr_main_db_type == "mysql")
-    require_once($dolibarr_main_document_root . "/lib/mysql.lib.php");
-else
-    require_once($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-
-require_once($dolibarr_main_document_root . "/conf/conf.class.php");
+dolibarr_install_syslog("Entering etape5.php page");
 
 
 if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")

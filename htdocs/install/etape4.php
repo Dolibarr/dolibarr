@@ -30,6 +30,12 @@
 
 
 include_once("./inc.php");
+if (file_exists($conffile)) include_once($conffile);
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root . "/conf/conf.class.php");
+
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
@@ -40,19 +46,7 @@ $langs->load("install");
 
 pHeader($langs->trans("AdminAccountCreation"),"etape5");
 
-if (file_exists($conffile))
-{
-    include_once($conffile);
-}
 
-if($dolibarr_main_db_type == "mysql")
-	require_once($dolibarr_main_document_root . "/lib/mysql.lib.php");		
-else
-	require_once($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-			
-
-
-require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 print '<table cellspacing="0" cellpadding="2" width="100%">';
 

@@ -20,6 +20,7 @@ URLRoot=URL Racine
 DolibarrDatabase=Base de données Dolibarr
 DatabaseChoice=Choix de la base de données
 DatabaseType=Type de la base de données
+DriverType=Type du driver
 Server=Serveur
 ServerAddressDescription=Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web
 DatabaseName=Nom de la base de données

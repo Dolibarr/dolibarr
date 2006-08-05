@@ -6,8 +6,8 @@ Documentation démarrage
 1) Installer Dolibarr
 2) Mettre à jour Dolibarr depuis une ancienne version
 3) Ce qui est nouveau dans cette version
-4) Que peux faire Dolibarr
-5) Que ne peux pas encore faire Dolibarr
+4) Ce que peux faire Dolibarr
+5) Ce que ne peux pas Dolibarr (pas encore)
 
 
 I - INSTALLER DOLIBARR
@@ -120,8 +120,8 @@ Miscellanous:
 
 V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
 ------------------------------------------
-This is feature Dolibarr does not support completely yet:
-- "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
-  called "Non Perçue Récupérable").
-- Accountancy.
-- Dolibarr can manage only one currency.
+Voici un liste de fonctionnalité pas encore gérées par Dolibarr:
+- "TVA NPR" (TVA "Non Perçue Récupérable").
+- Pas de compta.
+- Dolibarr ne gère qu'une seule monnaie.
+- Dolibarr ne fait pas le café (pas encore).

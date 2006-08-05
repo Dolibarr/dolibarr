@@ -477,88 +477,55 @@ class Don
       }    
   }
 
-  /*
-   *    \brief  Classe le don comme encaissé
-   *    \param  rowid   id du don à modifier
-   *
-   */
-  function set_encaisse($rowid)
-  {
+	/*
+	 *    \brief  Classe le don comme encaissé
+	 *    \param  rowid   id du don à modifier
+	 *
+	 */
+	function set_encaisse($rowid)
+	{
+	
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
+	
+		if ( $this->db->query( $sql) )
+		{
+			if ( $this->db->affected_rows() )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
+	}
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
+	/**
+	 *    	\brief		Somme des dons
+	 *		\param		param	1=promesses de dons validées , 2=xxx, 3=encaissés
+	 */
+	function sum_donations($param)
+	{
+		$result=0;
+		
+		$sql = "SELECT sum(amount) as total";
+		$sql.= " FROM ".MAIN_DB_PREFIX."don";
+		$sql.= " WHERE fk_statut = ".$param;
+	
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$result=$obj->total;
+		}
 
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-      dolibarr_print_error($this->db);
-	  return 0;
-      }    
-  }
+		return $result;
+	}
 
-  /*
-   *    \brief  Somme des dons encaissés
-   */
-  function sum_actual()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don";
-    $sql .= " WHERE fk_statut = 3";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
-
-  /*
-   *    \brief  Paiement recu en attente d'encaissement
-   *
-   */
-  function sum_pending()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don";
-    $sql .= " WHERE fk_statut = 2";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
-
-  /*
-   *    \brief  Somme des promesses de dons validées
-   *
-   */
-  function sum_intent()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don";
-    $sql .= " WHERE fk_statut = 1";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
 }
 ?>

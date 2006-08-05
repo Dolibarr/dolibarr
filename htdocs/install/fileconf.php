@@ -143,8 +143,8 @@ print $dolibarr_main_url_root;
 <?php
 print $langs->trans("Examples").":<br>";
 ?>
-<li>http://dolibarr.lafrere.net</li>
-<li>http://www.lafrere.net/dolibarr</li>
+<li>http://localhost/</li>
+<li>http://www.myserver.com:8180/dolibarr</li>
 </tr>
 
 <tr>
@@ -161,12 +161,58 @@ $dolibarr_main_db_host = "localhost";
 <tr>
 <!-- moi-->
 <td valign="top" class="label">
-<?php echo $langs->trans("DatabaseType"); ?>
+<?php echo $langs->trans("DriverType"); ?>
 </td>
 
-<td class="label"><select name='db_type'>
-<option value='mysql'<?php echo (! isset($dolibarr_main_db_type) || $dolibarr_main_db_type=='mysql')?" selected":"" ?>>MySql</option>
-<option value='pgsql'<?php echo (isset($dolibarr_main_db_type) && $dolibarr_main_db_type=='pgsql')?" selected":"" ?>>PostgreSQL <?php echo $langs->trans("Experimental"); ?></option>
+<td class="label">
+<select name='db_type'>
+<?php
+
+$defaultype=isset($dolibarr_main_db_type)?$dolibarr_main_db_type:'mysql';
+
+// Scan les drivers
+$dir=DOL_DOCUMENT_ROOT.'/lib/databases';
+$handle=opendir($dir);
+$modules = array();
+$nbok = $nbko = 0;
+
+while (($file = readdir($handle))!==false)
+{
+    if (is_readable($dir."/".$file) && eregi('^(.*)\.lib\.php',$file,$reg))
+    {
+        $type=$reg[1];
+        $modName = 'DoliDb';
+        //print "file=$file "; print "type=$type "; print "modName=$modName";
+
+/*
+        include_once($dir."/".$file);
+        $objMod = new $modName();
+        if ($objMod)
+        {
+
+        }
+*/
+		// Version min de la base
+		$versionmin=array();
+		if ($type=='mysql')  $versionmin=array(3,1,0);
+		if ($type=='mysqli') $versionmin=array(4,1,0);
+		if ($type=='pgsql')  $versionmin=array(8,1,0);
+		
+		// Remarques
+		$note='';
+		if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionmin).')';
+		if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionmin).')';
+		if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionmin).')';
+
+		// Affiche ligne dans liste
+		print '<option value="'.$type.'" '.($defaultype==$type?" selected":"").'>';
+		print $type;
+		if ($note) print ' '.$note;
+		print '</option>';
+    }
+}
+
+?>
 </select>
 &nbsp;
 </td>

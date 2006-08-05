@@ -27,6 +27,11 @@
 */
 
 include_once("./inc.php");
+if (file_exists($conffile)) include_once($conffile);
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 $etape = 2;
 $ok = 0;
@@ -45,27 +50,13 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
+if ($dolibarr_main_db_type == "mysql")  $choix=1;
+if ($dolibarr_main_db_type == "mysqli") $choix=1;
+if ($dolibarr_main_db_type == "pqsql") $choix=2;
+
+
 
 pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
-
-
-if (file_exists($conffile))
-{
-    include_once($conffile);
-}
-
-if($dolibarr_main_db_type == "mysql")
-{
-    require_once($dolibarr_main_document_root . "/lib/mysql.lib.php");
-    $choix=1;
-}
-else
-{
-    require_once($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-    $choix=2;
-}
-
-require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 
 if ($_POST["action"] == "set")

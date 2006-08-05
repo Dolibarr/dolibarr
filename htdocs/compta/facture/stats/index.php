@@ -67,35 +67,37 @@ if (! $mesg) {
     $px->draw($filename);
 }
       
-$sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";
+$sql = "SELECT count(*) as nb, date_format(datef,'%Y') as dm, sum(total) as total FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";
 if ($socidp)
 {
   $sql .= " AND fk_soc = $socidp";
 }
 $sql .= " GROUP BY dm DESC ";
-if ($db->query($sql))
+$result=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-
-  print '<table class="border" width="100%">';
-  print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NumberOfBills").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
-  print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  if ($mesg) { print $mesg; }
-  else { print '<img src="'.$fileurl.'" alt="Nombre de factures par mois">'; }
-  print '</td></tr>';
-  $i = 0;
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($i);
-      $nbproduct = $row[0];
-      $year = $row[1];
-      print "<tr>";
-      print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td align="center">'.price($row[2]).'</td></tr>';
-      $i++;
-    }
-
-  print '</table>';
-  $db->free();
+	$num = $db->num_rows($resql);
+	
+	print '<table class="border" width="100%">';
+	print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NumberOfBills").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
+	print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
+	if ($mesg) { print $mesg; }
+	else { print '<img src="'.$fileurl.'" alt="Nombre de factures par mois">'; }
+	print '</td></tr>';
+	$i = 0;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$nbproduct = $obj->nb;
+		$year = $obj->dm;
+		$total = price($obj->total);
+		print "<tr>";
+		print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td align="center">'.$total.'</td></tr>';
+		$i++;
+	}
+	
+	print '</table>';
+	$db->free();
 }
 else
 {

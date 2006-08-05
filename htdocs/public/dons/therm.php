@@ -72,9 +72,9 @@ if (file_exists ($thermlib))
 
       $dontherm = new Don($dbt);
       
-      $actualValue = $dontherm->sum_actual();
-      $pendingValue = $dontherm->sum_pending();
-      $intentValue = $dontherm->sum_intent();
+      $intentValue  = $dontherm->sum_donations(1);
+      $pendingValue = $dontherm->sum_donations(2);
+      $actualValue  = $dontherm->sum_donations(3);
 
       $dbt->close();
     }

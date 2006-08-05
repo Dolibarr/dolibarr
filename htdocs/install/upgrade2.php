@@ -27,6 +27,11 @@
 */
 
 include_once('./inc.php');
+if (file_exists($conffile)) include_once($conffile);
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 include_once('../facture.class.php');
 include_once('../propal.class.php');
 include_once('../commande/commande.class.php');
@@ -52,34 +57,15 @@ $langs->load('install');
 $langs->load("bills");
 $langs->load("suppliers");
 
+if ($dolibarr_main_db_type == 'mysql')  $choix=1;
+if ($dolibarr_main_db_type == 'mysqli') $choix=1;
+if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
+
 
 dolibarr_install_syslog("Entering upgrade2.php page");
 
 
 pHeader($langs->trans('DataMigration'),'etape5','upgrade');
-
-
-if (file_exists($conffile))
-{
-	include_once($conffile);
-	if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
-	define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
-}
-
-if($dolibarr_main_db_type == 'mysql')
-{
-	require_once($dolibarr_main_document_root . '/lib/mysql.lib.php');
-	$choix=1;
-}
-else
-{
-	require_once($dolibarr_main_document_root . '/lib/pgsql.lib.php');
-	require_once($dolibarr_main_document_root . '/lib/grant.postgres.php');
-	$choix=2;
-}
-
-require_once($dolibarr_main_document_root . '/conf/conf.class.php');
-
 
 
 if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
@@ -522,7 +508,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
     $nb=0;
 	$select_sql  = 'SELECT rowid, fk_facture_fourn, amount ';
 	$select_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn ';
-	$select_sql .= ' WHERE fk_facture_fourn IS NOT NULL ;';
+	$select_sql .= ' WHERE fk_facture_fourn IS NOT NULL';
 	$select_resql = $db->query($select_sql);
 	if ($select_resql)
 	{
@@ -531,7 +517,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 		$var = true;
         
 		// Pour chaque paiement fournisseur, on insère une ligne dans paiementfourn_facturefourn
-		while ($i < $select_num && ! $error)
+		while (($i < $select_num) && (! $error))
 		{
 			$var = !$var;
 			$select_obj = $db->fetch_object($select_resql);
@@ -544,7 +530,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 			if ($check_resql)
 			{
 				$check_num = $db->num_rows($check_resql);
-				if ($check_num === 0)
+				if ($check_num == 0)
 				{
             		if ($nb == 0) 
             		{

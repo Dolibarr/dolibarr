@@ -27,6 +27,11 @@
 */
 
 include_once("./inc.php");
+if (file_exists($conffile)) include_once($conffile);
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 $migfile='^2.0.0-2.1.0.sql$';
 $grant_query='';
@@ -47,34 +52,15 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
+if ($dolibarr_main_db_type == "mysql") $choix=1;
+if ($dolibarr_main_db_type == "mysqli") $choix=1;
+if ($dolibarr_main_db_type == "pgsql") $choix=2;
+
 
 dolibarr_install_syslog("Entering upgrade.php page");
 
 
 pHeader($langs->trans("DatabaseMigration"),"upgrade2","upgrade");
-
-
-if (file_exists($conffile))
-{
-    include_once($conffile);
-    if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
-    define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
-}
-
-if($dolibarr_main_db_type == "mysql")
-{
-    require_once($dolibarr_main_document_root . "/lib/mysql.lib.php");
-    $choix=1;
-}
-else
-{
-    require_once($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-    require_once($dolibarr_main_document_root . "/lib/grant.postgres.php");
-    $choix=2;
-}
-
-require_once($dolibarr_main_document_root . "/conf/conf.class.php");
-
 
 if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 {

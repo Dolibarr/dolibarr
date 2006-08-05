@@ -81,25 +81,25 @@ if ($exc->error_message);
 print '<table class="notopnoleftnoright" width="100%">';
 print '<tr><td valign="top" width="30%">';
 
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";
+$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."facturedet";
 $sql .= " WHERE fk_export_compta = 0";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $row = $db->fetch_row($resql);
-  $nbfac = $row[0];
+  $obj = $db->fetch_object($resql);
+  $nbfac = $obj->nb;
 
   $db->free($resql);
 }
 
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiement";
+$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."paiement";
 $sql .= " WHERE fk_export_compta = 0";
 
 $resql = $db->query($sql);
 if ($resql)
 {
-  $row = $db->fetch_row($resql);
-  $nbp = $row[0];
+  $obj = $db->fetch_object($resql);
+  $nbp = $obj->nb;
 
   $db->free($resql);
 }

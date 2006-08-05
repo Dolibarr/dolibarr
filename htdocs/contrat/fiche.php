@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -573,7 +573,7 @@ else
         /*
          *   Contrat
          */
-        if ($contrat->brouillon == 1 && $user->rights->contrat->creer)
+        if ($contrat->brouillon && $user->rights->contrat->creer)
         {
             print '<form action="fiche.php?id='.$id.'" method="post">';
             print '<input type="hidden" name="action" value="setremise">';
@@ -628,11 +628,11 @@ else
             print '</td><td colspan="3">';
             if ($_GET["action"] == "classer")
             {
-                $html->form_project("fiche.php?id=$id",$contrat->fk_soc,$contrat->fk_projet,"projetid");
+                $html->form_project("fiche.php?id=$id",$contrat->socidp,$contrat->fk_projet,"projetid");
             }
             else
             {
-                $html->form_project("fiche.php?id=$id",$contrat->fk_soc,$contrat->fk_projet,"none");
+                $html->form_project("fiche.php?id=$id",$contrat->socidp,$contrat->fk_projet,"none");
             }
             print "</td></tr>";
         }

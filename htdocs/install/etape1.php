@@ -153,7 +153,7 @@ if ($_POST["action"] == "set")
         }
 
         // Chargement driver acces bases
-        include_once("../lib/".$dolibarr_main_db_type.".lib.php");
+        include_once("../lib/databases/".$dolibarr_main_db_type.".lib.php");
 
     }
 

@@ -65,7 +65,7 @@ print '<ul>';
 print '<li>';
 if (eregi('^fr_',$langs->getDefaultLang()))
 {
-	print '<a target="blank" href="http://www.dolibarr.com/">'.$langs->trans("OfficialWebSite").'</a>';
+	print '<a target="blank" href="http://www.dolibarr.com/">'.$langs->trans("OfficialWebSiteFr").'</a>';
 }
 else
 {

@@ -44,6 +44,7 @@ class DoliDb
 {
     var $db;                      // Handler de base
     var $type='pgsql';            // Nom du gestionnaire
+	var $versionmin=array(8,1,0);
 
     var $results;                 // Resultset de la dernière requete
 
