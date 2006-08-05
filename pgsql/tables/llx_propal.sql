@@ -25,12 +25,14 @@
 -- ===================================================================
 
 
+
 create table llx_propal
 (
   rowid SERIAL PRIMARY KEY,
   "fk_soc"          integer,
   "fk_projet"       integer DEFAULT 0,     -- projet auquel est rattache la propale
   "ref"             varchar(30) NOT NULL,  -- propal number
+  "ref_client"      varchar(30),           -- customer order number
   "datec"           timestamp,              -- date de creation 
   "datep"           date,                  -- date de la propal
   "fin_validite"    timestamp,              -- date de fin de validite

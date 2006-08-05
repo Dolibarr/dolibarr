@@ -29,7 +29,6 @@ create table llx_livraison
 (
   rowid SERIAL PRIMARY KEY,
   "tms"                   timestamp,
-  "fk_soc"                integer NOT NULL,
   "fk_commande"           integer DEFAULT 0,             -- commande auquel est rattache le bon de livraison
   "fk_expedition"         integer,                       -- expedition auquel est rattache le bon de livraison
   "ref"                   varchar(30) NOT NULL,          -- delivery number
@@ -49,3 +48,4 @@ create table llx_livraison
 );
 
 CREATE INDEX idx_llx_livraison_ref ON llx_livraison (ref);
+CREATE INDEX idx_llx_livraison_fk_commande ON llx_livraison (fk_commande);

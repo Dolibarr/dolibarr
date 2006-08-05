@@ -27,9 +27,8 @@
 create table llx_societe
 (
   idp SERIAL PRIMARY KEY,
-  "id"                 varchar(32),                         -- private id
-  "active"             smallint       DEFAULT 0,            --
-  "parent"             integer        DEFAULT 0,            --
+  "statut"             smallint        DEFAULT 0,            -- statut
+  "parent"             integer,
   "tms"                timestamp,
   "datec"	             timestamp,                            -- creation date
   "datea"	             timestamp,                            -- activation date
@@ -46,6 +45,7 @@ create table llx_societe
   "tel"                varchar(20),                         -- phone number
   "fax"                varchar(20),                         -- fax number
   "url"                varchar(255),                        --
+  "email"              varchar(128),                        --
   "fk_secteur"         integer        DEFAULT 0,            --
   "fk_effectif"        integer        DEFAULT 0,            --
   "fk_typent"          integer        DEFAULT 0,            --
@@ -56,17 +56,17 @@ create table llx_societe
   "tva_intra"          varchar(20),                         -- tva intracommunautaire
   "capital"            real,                                -- capital de la société
   "description"        text,                                --
-  "fk_stcomm"          smallint       DEFAULT 0,            -- commercial statut
+  "fk_stcomm"          smallint        DEFAULT 0,            -- commercial statut
   "note"               text,                                --
-  "services"           integer        DEFAULT 0,            --
+  "services"           smallint        DEFAULT 0,            --
   "prefix_comm"        varchar(5),                          -- prefix commercial
-  "client"             integer        DEFAULT 0,            -- client oui/non
-  "fournisseur"        smallint       DEFAULT 0,            -- fournisseur oui/non
+  "client"             smallint        DEFAULT 0,            -- client 0/1/2
+  "fournisseur"        smallint        DEFAULT 0,             -- fournisseur 0/1
   "rubrique"           varchar(255),                        -- champ rubrique libre
   "fk_user_creat"      integer,                             -- utilisateur qui a créé l'info
   "fk_user_modif"      integer,                             -- utilisateur qui a modifié l'info
   "remise_client"      real           DEFAULT 0,            -- remise systématique pour le client
-  "mode_reglement"     integer				DEFAULT 0,            -- mode de réglement
-  "cond_reglement"     integer				DEFAULT 1  NOT NULL,  -- condition de réglement
-  "tva_assuj"          smallint        DEFAULT 1	            -- assujéti ou non à la TVA
+  "mode_reglement"     smallint, 					          -- mode de réglement
+  "cond_reglement"     smallint, 							  -- condition de réglement
+  "tva_assuj"          smallint        DEFAULT 1	          -- assujéti ou non à la TVA
 );

@@ -26,6 +26,7 @@
 
 
 
+
 create table llx_commande
 (
   rowid SERIAL PRIMARY KEY,

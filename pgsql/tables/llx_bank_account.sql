@@ -49,5 +49,6 @@ create table llx_bank_account
   "courant"        smallint DEFAULT 0 NOT NULL,
   "clos"           smallint DEFAULT 0 NOT NULL,
   "rappro"         smallint DEFAULT 1,
+  "url"			 varchar(128),
   "account_number" varchar(8)
 );

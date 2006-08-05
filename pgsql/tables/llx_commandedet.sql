@@ -30,11 +30,17 @@ create table llx_commandedet
   "fk_product"     integer,
   "label"          varchar(255),
   "description"    text,
-  "tva_tx"         real DEFAULT 19.6, -- taux tva
+  "tva_tx"         real, 				-- taux tva
   "qty"            real,              -- quantité
   "remise_percent" real DEFAULT 0,    -- pourcentage de remise
   "remise"         real DEFAULT 0,    -- montant de la remise
+  "fk_remise_except"	integer NULL,   -- Lien vers table des remises fixes
   "subprice"       real,              -- prix avant remise
   "price"          real,              -- prix final
-  "coef"           real               -- coefficient de marge
+  "total_ht"        real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  "total_tva"       real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  "total_ttc"       real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  "info_bits"		  integer DEFAULT 0, 	-- TVA NPR ou non
+  "coef"           real,              -- coefficient de marge
+  "rang"           integer DEFAULT 0
 );

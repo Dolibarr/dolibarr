@@ -47,6 +47,7 @@ create table llx_user
   "note"              text,
   "datelastaccess"    timestamp,
   "egroupware_id"     integer,
+  "ldap_sid"          varchar(255) DEFAULT NULL,
   
   UNIQUE(login)
 );
