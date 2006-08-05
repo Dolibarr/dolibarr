@@ -651,13 +651,15 @@ class Form
 	 *      \param      htmlname    Nom de la zone html
 	 *      \return     int         Nbre de projet si ok, <0 si ko
 	 */
-	function select_projects($socid='', $selected='', $htmlname='projectid')
+	function select_projects($socid, $selected='', $htmlname='projectid')
 	{
 		// On recherche les projets
 		$sql = 'SELECT p.rowid, p.title FROM ';
 		$sql.= MAIN_DB_PREFIX .'projet as p';
 		$sql.= " WHERE fk_soc='".$socid."'";
 		$sql.= " ORDER BY p.title ASC";
+
+		dolibarr_syslog("html.form.class::select_projects sql=$sql");
 
 		$result=$this->db->query($sql);
 		if ($result)
@@ -1513,6 +1515,7 @@ class Form
     function form_project($page, $socid, $selected='', $htmlname='projectid')
     {
         global $langs;
+        
         $langs->load("project");
         if ($htmlname != "none")
         {

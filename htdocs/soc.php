@@ -395,7 +395,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
         print '</td></tr>';
 
-        print '<tr><td nowrap><div id="particulier4" class="visible">'.$langs->trans('VATIntraShort').'</div></td><td colspan="3">';
+        print '<tr><td nowrap><div id="particulier4" class="visible">'.$langs->trans('VATIntraShort').'</div></td><td>';
 
         print '<div id="particulier5" class="visible">';
         print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
@@ -803,7 +803,7 @@ else
 	print '</td><td>';
 	print yn($soc->tva_assuj);
 	print '</td>';
-    print '<td nowrap="nowrpa">'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
+    print '<td nowrap="nowrpa">'.$langs->trans('VATIntraShort').'</td><td>';
     print $soc->tva_intra;
     print '</td></tr>';
 
