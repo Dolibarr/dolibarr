@@ -64,7 +64,7 @@ class Webcal {
         $webcalname=eregi_replace('__dolibarr_main_db_name__',$dolibarr_main_db_name,$conf->webcal->db->name);
 
         // On initie la connexion à la base Webcalendar
-        require_once (DOL_DOCUMENT_ROOT ."/lib/".$webcaltype.".lib.php");
+        require_once (DOL_DOCUMENT_ROOT ."/lib/databases/".$webcaltype.".lib.php");
         $this->localdb = new DoliDb($webcaltype,$webcalhost,$webcaluser,$webcalpass,$webcalname);
     }
 
