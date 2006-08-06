@@ -22,7 +22,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/database.php
+/**
+		\file 		htdocs/admin/system/database.php
 		\brief      Page des infos système de la base de donnée
 		\version    $Revision$
 */
@@ -34,52 +35,58 @@ $langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();
-	
+
+
+
 llxHeader();
 
 print_titre($langs->trans("DatabaseConfiguration"));
 
-if ($conf->db->type == 'mysql')
+$base=0;
+if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 {
     $sql = "SHOW VARIABLES";
     $base=1;
 }
-
 if ($conf->db->type == 'pgsql')
 {
     $sql = "select name,setting from pg_settings;";
     $base=2;
 }
 
-print '<br>';
-print '<table class="noborder">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-
-$result = $db->query($sql);
-if ($result) 
+if (! $base)
 {
-  $i=0;
-  $num = $db->num_rows();
-  $var=True;
-  while ($i < $num)
-    {
-        $objp = $db->fetch_object($result);
-        $var=!$var;
-        print "<tr $bc[$var]>";
-        if ($base==1)
-            print '<td>'.$objp->Variable_name.'</td><td>'.$objp->Value.'</td>';
-        else
-            print '<td>'.$objp->name.'</td><td>'.$objp->setting.'</td>';
-        print '</tr>';
-        
-        $i++;
-    }
+	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 }
-print '</table>';
+else
+{
+	print '<br>';
+	print '<table class="noborder">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameter").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print "</tr>\n";
+		
+	$result = $db->query($sql);
+	if ($result) 
+	{
+	  $i=0;
+	  $num = $db->num_rows();
+	  $var=True;
+	  while ($i < $num)
+	    {
+	        $objp = $db->fetch_object($result);
+	        $var=!$var;
+	        print "<tr $bc[$var]>";
+	        if ($base==1) print '<td>'.$objp->Variable_name.'</td><td>'.$objp->Value.'</td>';
+	        if ($base==2) print '<td>'.$objp->name.'</td><td>'.$objp->setting.'</td>';
+	        print '</tr>';
+	        
+	        $i++;
+	    }
+	}
+	print '</table>';
+}
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -43,66 +43,73 @@ llxHeader();
 
 print_titre($langs->trans("Constraints"));
 
-if ($conf->db->type == 'mysql')
+$base=0;
+if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 {
     $sql = "SHOW TABLE STATUS";
     $base=1;
 }
-
 if ($conf->db->type == 'pgsql')
 {
     $sql = "SELECT conname, contype FROM pg_constraint;";
     $base=2;
 }
 
-print '<br>';
-print '<table class="noborder">';
-print '<tr class="liste_titre">';
-
-if($base==1)
+if (! $base)
 {
-    print '<td>'.$langs->trans("Tables").'</td>';
-    print '<td>'.$langs->trans("Type").'</td>';
-    print '<td>'.$langs->trans("Constraints").'</td>';
+	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 }
 else
 {
-    print '<td>'.$langs->trans("Constraints").'</td>';
-    print '<td>'.$langs->trans("ConstraintsType").'</td>';
+	print '<br>';
+	print '<table class="noborder">';
+	print '<tr class="liste_titre">';
+	
+	if ($base==1)
+	{
+	    print '<td>'.$langs->trans("Tables").'</td>';
+	    print '<td>'.$langs->trans("Type").'</td>';
+	    print '<td>'.$langs->trans("Constraints").'</td>';
+	}
+	if ($base==2)
+	{
+	    print '<td>'.$langs->trans("Constraints").'</td>';
+	    print '<td>'.$langs->trans("ConstraintsType").'</td>';
+	}
+	
+	print "</tr>\n";
+	
+	
+	$result = $db->query($sql);
+	if ($result)
+	{
+	    $num = $db->num_rows($result);
+	    $var=True;
+	    $i=0;
+	    while ($i < $num)
+	    {
+	        $obj = $db->fetch_object($rsult);
+	        $var=!$var;
+	        print "<tr $bc[$var]>";
+	
+	        if ($base==1)
+	        {
+	            print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
+	            print '<td>'.$obj->Engine.'</td>';
+	            print '<td>'.$obj->Comment.'</td>';
+	        }
+			if ($base==2)
+	        {
+	            print '<td>'.$obj->conname.'</td>';
+	            print '<td>'.$obj->contype.'</td>';
+	        }
+	
+	        print '</tr>';
+	        $i++;
+	    }
+	}
+	print '</table>';
 }
-
-print "</tr>\n";
-
-
-$result = $db->query($sql);
-if ($result)
-{
-    $num = $db->num_rows($result);
-    $var=True;
-    $i=0;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($rsult);
-        $var=!$var;
-        print "<tr $bc[$var]>";
-
-        if ($base==1)
-        {
-            print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
-            print '<td>'.$obj->Engine.'</td>';
-            print '<td>'.$obj->Comment.'</td>';
-        }
-        else
-        {
-            print '<td>'.$obj->conname.'</td>';
-            print '<td>'.$obj->contype.'</td>';
-        }
-
-        print '</tr>';
-        $i++;
-    }
-}
-print '</table>';
 
 llxFooter('$Date$ - $Revision$');
 ?>
