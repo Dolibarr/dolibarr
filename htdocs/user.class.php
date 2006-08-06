@@ -906,6 +906,7 @@ class User
         require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
 
         $subject = $langs->trans("SubjectNewPassword");
+        $msgishtml=0;
         
         $mesg .= "Bonjour,\n\n";
         $mesg .= "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
@@ -917,7 +918,9 @@ class User
         $mesg .= "--\n";
         $mesg.= $user->fullname;
 
-        $mailfile = new CMailFile($subject,$this->email,$conf->email_from,$mesg,array(),array(),array());
+        $mailfile = new CMailFile($subject,$this->email,$conf->email_from,$mesg,
+        							array(),array(),array(),
+        							'', '', 0, $msgishtml);
 
         if ($mailfile->sendfile())
         {

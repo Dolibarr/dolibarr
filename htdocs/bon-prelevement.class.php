@@ -494,6 +494,8 @@ class BonPrelevement
                 $arr_file = array();
                 $arr_mime = array();
                 $arr_name = array();
+                $msgishtml=0;
+                
                 if ($joinfile == 1)
                 {
                     $arr_file = array(DOL_DATA_ROOT.'/prelevement/bon/'.$this->ref.'.ps');
@@ -501,7 +503,9 @@ class BonPrelevement
                     $arr_name = array($this->ref.".ps");
                 }
 
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$arr_file,$arr_mime,$arr_name);
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,
+                							$arr_file,$arr_mime,$arr_name,
+                							'', '', 0, $msgishtml);
 
                 $result=$mailfile->sendfile();
 

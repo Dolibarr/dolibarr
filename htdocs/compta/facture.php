@@ -622,7 +622,7 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 /*
  * Action envoi de mail
  */
-if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
+if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['cancel'])
 {
 	$langs->load('mails');
 
@@ -698,42 +698,51 @@ if ($_POST['action'] == 'send' || $_POST['action'] == 'relance')
 
 				// Envoi de la facture
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
-
-				if ($mailfile->sendfile())
+				if ($mailfile->error)
 				{
-					$msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
-
-					// Insertion action
-					require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
-					require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
-					$actioncomm = new ActionComm($db);
-					$actioncomm->type_id     = $actiontypeid;
-					$actioncomm->label       = $actionmsg2;
-					$actioncomm->note        = $actionmsg;
-					$actioncomm->date        = time();
-					$actioncomm->percent     = 100;
-					$actioncomm->contact     = new Contact($db,$sendtoid);
-					$actioncomm->societe     = new Societe($db,$fac->socidp);
-					$actioncomm->user        = $user;   // User qui a fait l'action
-					$actioncomm->facid       = $fac->id;
-
-					$ret=$actioncomm->add($user);       // User qui saisit l'action
-
-					if ($ret < 0)
-					{
-						dolibarr_print_error($db);
-					}
-					else
-					{
-						// Renvoie sur la fiche
-						Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&msg='.urlencode($msg));
-						exit;
-					}
+					$msg='<div class="error">'.$mailfile->error.'</div>';
 				}
 				else
 				{
-					$langs->load("other");
-					$msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' !</div>';
+					if ($mailfile->sendfile())
+					{
+						$msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+	
+						// Insertion action
+						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
+						require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
+						$actioncomm = new ActionComm($db);
+						$actioncomm->type_id     = $actiontypeid;
+						$actioncomm->label       = $actionmsg2;
+						$actioncomm->note        = $actionmsg;
+						$actioncomm->date        = time();
+						$actioncomm->percent     = 100;
+						$actioncomm->contact     = new Contact($db,$sendtoid);
+						$actioncomm->societe     = new Societe($db,$fac->socidp);
+						$actioncomm->user        = $user;   // User qui a fait l'action
+						$actioncomm->facid       = $fac->id;
+	
+						$ret=$actioncomm->add($user);       // User qui saisit l'action
+	
+						if ($ret < 0)
+						{
+							dolibarr_print_error($db);
+						}
+						else
+						{
+							// Renvoie sur la fiche
+							Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&msg='.urlencode($msg));
+							exit;
+						}
+					}
+					else
+					{
+						$langs->load("other");
+						$msg='<div class="error">';
+						$msg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+						if ($mailfile->error) $msg.='<br>'.$mailfile->error;
+						$msg.='</div>';
+					}
 				}
 			}
 			else
@@ -963,7 +972,6 @@ if ($_GET['action'] == 'create')
 	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '">';
 	print ' '.$langs->trans("Currency".$conf->monnaie);
 	print '</td><td>'.img_info().' ';
-	$absolute_discount=$soc->getCurrentDiscount();
 	if ($absolute_discount)
 	{
 		print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
@@ -1523,7 +1531,6 @@ else
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$soc->getCurrentDiscount();
 			print '. ';
 			if ($absolute_discount)
 			{
@@ -2286,8 +2293,8 @@ else
 			$filename=sanitize_string($fac->ref);
 			$filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-      $genallowed=($fac->statut == 1 && $user->rights->facture->creer);
-      $delallowed=$user->rights->facture->supprimer;
+			$genallowed=($fac->statut == 1 && $user->rights->facture->creer);
+			$delallowed=$user->rights->facture->supprimer;
 
 			$var=true;
 
@@ -2496,6 +2503,7 @@ else
 				$formmail->withfile=1;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
+				$formmail->withcancel=1;
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$fac->ref;
 				// Tableau des paramètres complémentaires du post

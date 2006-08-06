@@ -200,7 +200,8 @@ class RejetPrelevement
             $subject = "Prélèvement rejeté";
             $sendto = $emuser->fullname." <".$emuser->email.">";
             $from = $this->user->fullname." <".$this->user->email.">";
-    
+    		$msgishtml=0;
+    		
             $arr_file = array();
             $arr_mime = array();
             $arr_name = array();
@@ -210,7 +211,8 @@ class RejetPrelevement
             $message .= "\n\n--\n".$this->user->fullname;
     
             $mailfile = new CMailFile($subject,$sendto,$from,$message,
-                                      $arr_file,$arr_mime,$arr_name);
+                                      $arr_file,$arr_mime,$arr_name,
+                                      '', '', 0, $msgishtml);
             $mailfile->errors_to = $this->user->email;
     
             $result=$mailfile->sendfile();

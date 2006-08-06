@@ -159,6 +159,7 @@ class Adherent
 		      );
 		$texttosend = preg_replace ($patterns, $replace, $text);
 		$subjectosend = preg_replace ($patterns, $replace, $subject);
+		$msgishtml=0;
 		
 		// Envoi mail confirmation
         include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
@@ -166,7 +167,9 @@ class Adherent
         $from=$conf->email_from;
         if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
         
-        $mailfile = new CMailFile($subject,$this->email,$from,$mesg,array(),array(),array());
+        $mailfile = new CMailFile($subject,$this->email,$from,$mesg,
+        							array(),array(),array(),
+        							'', '', 0, $msgishtml);
 
         if ($mailfile->sendfile())
         {

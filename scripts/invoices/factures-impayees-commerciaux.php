@@ -113,7 +113,8 @@ function envoi_mail($oldemail,$message,$total)
     $subject = "[Dolibarr] Liste des factures impayées";
     $sendto = $oldemail;
     $from = $conf->global->MAIN_EMAIL_FROM;
-
+	$msgishtml = 0;
+	
     print "Envoi mail pour $oldemail, total: $total\n";
     dolibarr_syslog("factures-impayees-commerciaux: send mail to $oldemail");
 
@@ -127,7 +128,8 @@ function envoi_mail($oldemail,$message,$total)
     $mail = new CMailFile($subject,
     $sendto,
     $from,
-    $allmessage,array(),array(),array());
+    $allmessage,array(),array(),array()
+    '', '', 0, $msgishtml);
 
     $mail->errors_to = $errorsto;
 

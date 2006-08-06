@@ -73,17 +73,24 @@ if ($_POST["action"] == 'send')
         $arr_mime = array();
         $arr_name = array();
 
-        $mailfile = new CMailFile($mil->sujet,$sendto,$from,$mil->body,$arr_file,$arr_mime,$arr_name);
+		// Le message est-il en html
+		$msgishtml=0;	// Non par defaut
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
+
+        $mailfile = new CMailFile($mil->sujet,$sendto,$from,$mil->body,
+        							$arr_file,$arr_mime,$arr_name,
+        							'', '', 0, $msgishtml);
 
         $result=$mailfile->sendfile();
 
-        if($result)
+        if ($result)
         {
             $message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'</div>';
         }
         else
         {
-            $message='<div class="error">'.$langs->trans("ResultKo").'</div>';
+            $message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.'</div>';
         }
 
         $_GET["action"]='';

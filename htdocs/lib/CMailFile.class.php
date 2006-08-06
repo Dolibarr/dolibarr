@@ -24,7 +24,7 @@
  * Lots of code inspired from Dan Potter's CMailFile class
  *
  * If chunk_split does not works on your system, change the call to chunk_split
- * to my_chunk_split 
+ * to _chunk_split 
  */
 
 /**
@@ -47,8 +47,7 @@
 class CMailFile
 {
     var $subject;
-    var $addr_from_email;
-    var $addr_from_name;
+    var $addr_from;
     var $addr_to;
     var $addr_cc;
     var $addr_bcc;
@@ -58,77 +57,72 @@ class CMailFile
     var $mime_boundary;
     var $smtp_headers;
     var $deliveryreceipt;
+    
+    var $eol;
+    var $atleastonefile=0;
+    var $error='';
+    
 
     /**
-            \brief CMailFile
-            \param subject              sujet
-            \param to                   email destinataire ("Nom <email>" ou "email" ou "<email>")
-            \param from                 email emetteur ("Nom <email>" ou "email" ou "<email>")
-            \param msg                  message
-            \param filename_list        tableau de fichiers attachés
-            \param mimetype_list        tableau des types des fichiers attachés
-            \param mimefilename_list    tableau des noms des fichiers attachés
-            \param addr_cc              email cc
-            \param addr_bcc             email bcc
+            \brief 	CMailFile
+            \param 	subject             sujet
+            \param 	to                  email destinataire (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+            \param 	from                email emetteur     (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+            \param 	msg                 message
+            \param 	filename_list       tableau de fichiers attachés
+            \param 	mimetype_list       tableau des types des fichiers attachés
+            \param 	mimefilename_list   tableau des noms des fichiers attachés
+            \param 	addr_cc             email cc
+            \param 	addr_bcc            email bcc
+            \param	msgishtml			message is a html message
     */
     function CMailFile($subject,$to,$from,$msg,
                        $filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-                       $addr_cc="",$addr_bcc="",$deliveryreceipt=0)
+                       $addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0)
     {
-        dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, filename_list[0]=$filename_list[0], mimetype_list[0]=$mimetype_list[0] mimefilename_list[0]=$mimefilename_list[0]");
-
+        dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc");
+        dolibarr_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml");
+        foreach ($filename_list as $i => $val)
+        {
+        	if ($filename_list[$i])
+        	{
+        		$this->atleastonefile=1;
+        		dolibarr_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]);
+			}
+		}
         $this->mime_boundary = md5( uniqid("dolibarr") );
 
+		// On definit fin de ligne
+		$this->eol="\n";
+		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
+		if (eregi('^mac',PHP_OS)) $this->eol="\r";
+
+		$this->msgishtml = $msgishtml;
+
+        // Genere en-tete dans $this->smtp_headers
         $this->subject = $subject;
-        if (eregi('(.*)<(.+)>',$from,$regs))
-        {
-            $this->addr_from_name  = trim($regs[1]);
-            $this->addr_from_email = trim($regs[2]);
-        }
-        else
-        {
-            $this->addr_from_name  = $from;
-            $this->addr_from_email = $from;
-        }
+        $this->addr_from = $from;
         $this->addr_to = $to;
         $this->addr_cc = $addr_cc;
         $this->addr_bcc = $addr_bcc;
         $this->deliveryreceipt = $deliveryreceipt;
         $this->smtp_headers = $this->write_smtpheaders();
-        $this->text_body = $this->write_body($msg, $filename_list);
-        if (count($filename_list))
+
+		// Genere en-tete suite dans $this->mime_headers
+        if ($this->atleastonefile)
         {
             $this->mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
-            $this->text_encoded = $this->attach_file($filename_list,$mimetype_list,$mimefilename_list);
-        }
-    }
+		}
 
-
-    /**
-            \brief permet d'attacher un fichier
-            \param filename_list
-            \param mimetype_list
-            \param mimefilename_list
-    */
-    function attach_file($filename_list,$mimetype_list,$mimefilename_list)
-    {
-        for ($i = 0; $i < count($filename_list); $i++)
+		// Genere corps message dans $this->text_body
+        $this->text_body = $this->write_body($msg, $filename_list);
+        
+        // Genere corps message suite (fichiers attachés) dans $this->text_encoded
+        if ($this->atleastonefile)
         {
-            dolibarr_syslog("CMailFile::attach_file: i=$i");
-            $encoded = $this->encode_file($filename_list[$i]);
-            if ($encoded != -1)
-            {
-                if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-                $out = $out . "--" . $this->mime_boundary . "\n";
-                if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
-                $out .= "Content-type: " . $mimetype_list[$i] . "; name=\"$filename_list[$i]\";\n";
-                $out .= "Content-Transfer-Encoding: base64\n";
-                $out .= "Content-disposition: attachment; filename=\"$filename_list[$i]\"\n\n";
-                $out .= $encoded . "\n";
-            }
+            $this->text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
         }
-        $out = $out . "--" . $this->mime_boundary . "--" . "\n";
-        return $out;
+        
     }
 
 
@@ -137,166 +131,294 @@ class CMailFile
             \param      sourcefile
             \return     <0 si erreur, fichier encodé si ok
     */
-    function encode_file($sourcefile)
+    function _encode_file($sourcefile)
     {
         if (is_readable($sourcefile))
         {
             $fd = fopen($sourcefile, "r");
             $contents = fread($fd, filesize($sourcefile));
-            $encoded = chunk_split(base64_encode($contents));
-            //$encoded = my_chunk_split(base64_encode($contents));
+            $encoded = chunk_split(base64_encode($contents), 68, $this->eol);
+            //$encoded = _chunk_split(base64_encode($contents));
             fclose($fd);
             return $encoded;
         }
         else
         {
-            dolibarr_syslog("CMailFile::encode_file: Can't read file '$sourcefile'");
+            $this->error="Error: Can't read file '$sourcefile'";
+            dolibarr_syslog("CMailFile::encode_file: ".$this->error);
             return -1;
         }
     }
 
     /**
             \brief     Envoi le mail
-            \return    boolean     vrai si mail envoyé, faux sinon
+            \return    boolean     true si mail envoyé, false sinon
     */
     function sendfile()
     {
-        global $conf;
+        global $conf,$langs;
         
         $headers = $this->smtp_headers . $this->mime_headers;
-        $message=$this->text_body . $this->text_encoded;
+        $message = $this->text_body . $this->text_encoded;
 
-        // Fix si windows, la fonction mail ne traduit pas les \n, il faut donc y mettre
-        // des champs \r\n (imposés par SMTP).
-        if (eregi('^win',PHP_OS))
-        {
-            $message = eregi_replace("\r","", $this->text_body . $this->text_encoded);
-            $message = eregi_replace("\n","\r\n", $message);
-        }
-        
-        dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
-        //dolibarr_syslog("CMailFile::sendfile message=\n".$message);
-        //dolibarr_syslog("CMailFile::sendfile header=\n".$headers);
+        dolibarr_syslog("CMailFile::sendfile addr_to_name=".$this->addr_to_name.", addr_to_email=".$this->addr_to_email.", subject=".$this->subject);
+        dolibarr_syslog("CMailFile::sendfile header=\n".$headers);
+        dolibarr_syslog("CMailFile::sendfile message=\n".$message);
+        //$this->send_to_file();
 
         $errorlevel=error_reporting();
         //error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
+
         if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
         {
+			if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
+			if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
+
 	        if ($this->errors_to)
 	        {
-	            dolibarr_syslog("CMailFile::sendfile with errorsto : ".$this->errors_to);
-	            $res = mail($this->addr_to,$this->subject,stripslashes($message),$headers,"-f".$this->errors_to);
+	            dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", with errorsto : ".getValidAddress($this->errors_to,1));
+	            $res = mail(getValidAddress($this->addr_to,2),$this->subject,stripslashes($message),$headers,"-f".getValidAddress($this->errors_to,2));
 	        }
 	        else
 	        {
-	            dolibarr_syslog("CMailFile::sendfile");
-	            $res = mail($this->addr_to,$this->subject,stripslashes($message),$headers);
+	            dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
+	            $res = mail(getValidAddress($this->addr_to,2),$this->subject,stripslashes($message),$headers);
 	        }
-	        //if (! $res) $this->error= 
-		}
-        error_reporting($errorlevel);              // Réactive niveau erreur origine
+	        if (! $res) 
+	        {
+	        	$this->error=$langs->trans("Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup");
+	        	dolibarr_syslog("CMailFile::sendfile: mail end res=$res ".$this->error);
+	        }
+	        else
+	        {
+	        	dolibarr_syslog("CMailFile::sendfile: mail end res=$res");
+	        }
 
-        //$this->write_to_file();
+			if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_restore('SMTP');
+			if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_restore('smtp_port');
+		}
+		else
+		{
+            dolibarr_syslog("CMailFile::sendfile: No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS");
+		}
+
+        error_reporting($errorlevel);              // Réactive niveau erreur origine
 
         return $res;
     }
+
 
     /**
      *    \brief  Ecrit le mail dans un fichier.
      *            Utilisation pour le debuggage
      */
-    function write_to_file()
+    function send_to_file()
     {
         $headers = $this->smtp_headers . $this->mime_headers;
         $message = $this->text_body . $this->text_encoded;
 
-        $fp = fopen("/tmp/mail","w");
+        $fp = fopen("/tmp/dolibarr_mail","w");
         fputs($fp, $headers);
         fputs($fp, $message);
         fclose($fp);
     }
 
-    /**
-            \brief 	Permet d'ecrire le corps du message
-            \param 	msgtext
-            \param 	filename_list
-    */
-    function write_body($msgtext, $filename_list)
-    {
-    	global $conf;
-        $out='';
-        if (count($filename_list))
-        {
-            $out = "--" . $this->mime_boundary . "\n";
-            $out .= "Content-Type: text/plain; charset=\"iso8859-15\"\n\n";
-            //	  $out = $out . "Content-Type: text/plain; charset=\"us-ascii\"\n\n";
-        }
-        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
-        {
-        	$out .= "<html><BODY>\n";
-        	$out .= "<html><head><title></title></head><body>";
-          $out .= $msgtext;
-          $out .= "</body></html>";
-        }
-        else
-        {
-        	$out .= $msgtext . "\n";
-        }
-        return $out;
-    }
 
     /**
-            \brief création des headers mime
-            \param filename_list
-            \param mimefilename_list
-    */
-    function write_mimeheaders($filename_list, $mimefilename_list) {
-        $out = "MIME-version: 1.0\n";
-        $out = $out . "Content-type: multipart/mixed; ";
-        $out = $out . "boundary=\"$this->mime_boundary\"\n";
-        $out = $out . "Content-transfer-encoding: 7BIT\n";
-        for($i = 0; $i < count($filename_list); $i++) {
-            if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-            $out = $out . "X-attachments: $filename_list[$i];\n\n";
-        }
-        return $out;
-    }
-
-    /**
-            \brief création des headers smtp
+            \brief		Création des headers smtp
+            \remarks	On construit tout avec \n. Toute correction se fait plus tard.
     */
     function write_smtpheaders()
     {
-    	global $conf;
         $out = "";
 
-        $out .= "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
-        $out .= "X-Sender: <$this->addr_from_email>\n";
+		// Sender
+        //$out .= "X-Sender: ".getValidAddress($this->addr_from,2).$this->eol;
+		$out .= "From: ".getValidAddress($this->addr_from,0).$this->eol;
+        $out .= "Return-Path: ".getValidAddress($this->addr_from,0).$this->eol;
+        if (isset($this->reply_to)  && $this->reply_to)  $out .= "Reply-To: ".getValidAddress($this->reply_to,2).$this->eol;
+        if (isset($this->errors_to) && $this->errors_to) $out .= "Errors-To: ".getValidAddress($this->errors_to,2).$this->eol;
+
+		// Receiver
+        if (isset($this->addr_cc)   && $this->addr_cc)   $out .= "Cc: ".getValidAddress($this->addr_cc,2).$this->eol;
+        if (isset($this->addr_bcc)  && $this->addr_bcc)  $out .= "Bcc: ".getValidAddress($this->addr_bcc,2).$this->eol;
+
+        // Accusé réception
+        if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,1).$this->eol;
+
+        $out .= "X-Mailer: Dolibarr version " . DOL_VERSION .$this->eol;
         //$out .= "X-Priority: 3\n";
-
-        $out .= "Return-path: <$this->addr_from_email>\n";
-        $out .= "From: $this->addr_from_name <".$this->addr_from_email.">\n";
-
-        if (isset($this->addr_cc)  && $this->addr_cc)  $out .= "Cc: ".$this->addr_cc."\n";
-        if (isset($this->addr_bcc) && $this->addr_bcc) $out .= "Bcc: ".$this->addr_bcc."\n";
-        if (isset($this->reply_to) && $this->reply_to) $out .= "Reply-To: ".$this->reply_to."\n";
-        
-        //accusé réception
-        if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".$this->addr_from_email."\n";
-        
-        //    if($this->errors_to != "")
-        //$out = $out . "Errors-to: ".$this->errors_to."\n";
-        
-        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+       
+        if ($this->msgishtml)
         {
-        	$out .= "Content-Type: text/html; charset=\"iso-8859-15\"\n";
-        	$out .= "Content-Transfer-Encoding: 8bit\n";
+        	$out.= "Content-Type: text/html; charset=\"iso-8859-1\"".$this->eol;
+        	$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
         }
+        else
+        {
+			$out.= "Content-Transfer-Encoding: 7bit".$this->eol;
+		}
 
         dolibarr_syslog("CMailFile::write_smtpheaders $out");
         return $out;
     }
 
+
+    /**
+            \brief 		Création header MIME
+            \param 		filename_list
+            \param 		mimefilename_list
+            \remarks	On construit tout avec \n. Toute correction se fait plus tard.
+    */
+    function write_mimeheaders($filename_list, $mimefilename_list)
+    {
+		$mimedone=0;
+        for ($i = 0; $i < count($filename_list); $i++)
+        {
+        	if ($filename_list[$i])
+        	{
+				if (! $mimedone)
+				{
+			        $out = "";
+			        $out.= "MIME-Version: 1.0".$this->eol;
+					$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
+					$mimedone=1;
+				}
+            	if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
+            	$out.= "X-attachments: $filename_list[$i]".$this->eol;
+        	}
+        }
+      	$out.= $this->eol;
+        return $out;
+    }
+
+    /**
+            \brief 		Permet d'ecrire le corps du message
+            \param 		msgtext
+            \param 		filename_list
+            \remarks	On construit tout avec \n. Toute correction se fait plus tard.
+    */
+    function write_body($msgtext, $filename_list)
+    {
+        $out='';
+        if ($this->atleastonefile)
+        {
+            $out.= "--" . $this->mime_boundary . $this->eol;
+	        if ($this->msgishtml)
+	        {
+	        	$out.= "Content-Type: text/html; charset=\"iso-8859-1\"".$this->eol;
+	        }
+            $out.= $this->eol;
+        }
+        if ($this->msgishtml)
+        {
+			// Check if html header already in message
+			$htmlalreadyinmsg=0;
+			if (eregi('^[ \t]*<html>',$msgtext)) $htmlalreadyinmsg=1;
+			
+			if (! $htmlalreadyinmsg) $out .= "<html><head><title></title></head><body>";
+			$out.= $msgtext;
+			if (! $htmlalreadyinmsg) $out .= "</body></html>";
+        }
+        else
+        {
+        	$out.= $msgtext;
+        }
+       	$out.= $this->eol;
+        return $out;
+    }
+
+    /**
+            \brief 		Permet d'attacher un fichier
+            \param 		filename_list		Tableau
+            \param 		mimetype_list		Tableau
+            \param 		mimefilename_list	Tableau
+            \return		out					Chaine fichiers encodés
+            \remarks	On construit tout avec \n. Toute correction se fait plus tard.
+    */
+    function write_files($filename_list,$mimetype_list,$mimefilename_list)
+    {
+        $out = "";
+        
+        for ($i = 0; $i < count($filename_list); $i++)
+        {
+            if ($filename_list[$i])
+            {
+	            dolibarr_syslog("CMailFile::write_files: i=$i");
+	            $encoded = $this->_encode_file($filename_list[$i]);
+	            if ($encoded >= 0)
+	            {
+	                if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
+	                if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
+
+	                $out = $out . "--" . $this->mime_boundary . $this->eol;
+	                $out.= "Content-Type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\"".$this->eol;
+	                $out.= "Content-Transfer-Encoding: base64".$this->eol;
+	                $out.= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
+	                $out.= $this->eol;
+	                $out.= $encoded;
+	                $out.= $this->eol;
+	            }
+	            else
+	            {
+	            	return $encoded;
+	            }
+			}
+        }
+
+		// Fin de tous les attachements
+        $out = $out . "--" . $this->mime_boundary . "--" . $this->eol;
+        return $out;
+    }
+    
+}
+
+
+/**
+        \brief      Renvoie une adresse acceptée par le serveur SMTP
+        \param      adresses		Exemple: 'Jhon Doe <jhon@doe.com>' ou 'jhon@doe.com'
+        \param		format			0=Auto, 1=emails avec <>, 2=emails sans <>
+        \return	    string			Renvoi: '<john@doe.com>' ou 'Jhon Doe <jhon@doe.com>' ou 'john@doe.com'
+*/
+function getValidAddress($adresses,$format)
+{
+	global $conf;
+	
+	$ret="";
+	
+	$arrayaddress=split(',',$adresses);
+
+	// Boucle sur chaque composant de l'adresse
+	foreach($arrayaddress as $val)
+	{
+	   	if (eregi('^(.*)<(.+)>$',trim($val),$regs))
+	    {
+	        $name  = trim($regs[1]);
+	        $email = trim($regs[2]);
+	    }
+	    else
+	    {
+	        $name  = '';
+	        $email = trim($val);
+	    }
+	
+		if ($format == 2)
+		{
+			$ret=($ret ? $ret.',' : '').$email;
+		}
+		if ($format == 1)
+		{
+			$ret=($ret ? $ret.',' : '').'<'.$email.'>';
+		}
+		if ($format == 0)
+		{
+			if ($conf->global->MAIN_MAIL_NO_FULL_EMAIL) $ret=($ret ? $ret.',' : '').'<'.$email.'>';
+			elseif (! $name) $ret=($ret ? $ret.',' : '').'<'.$email.'>';
+			else $ret=($ret ? $ret.',' : '').$name.' <'.$email.'>';
+		}
+	}
+	
+	return $ret;
 }
 
 
@@ -304,21 +426,21 @@ class CMailFile
         \brief      Permet de diviser une chaine (RFC2045)
         \param      str
         \remarks    function chunk_split qui remplace celle de php si nécéssaire
-        \remarks    76 caractères par ligne, terminé par "\r\n"
+        \remarks    76 caractères par ligne, terminé par "\n"
 */
-function my_chunk_split($str)
+function _chunk_split($str)
 {
     $stmp = $str;
     $len = strlen($stmp);
     $out = "";
     while ($len > 0) {
         if ($len >= 76) {
-            $out = $out . substr($stmp, 0, 76) . "\r\n";
+            $out = $out . substr($stmp, 0, 76) . "\n";
             $stmp = substr($stmp, 76);
             $len = $len - 76;
         }
         else {
-            $out = $out . $stmp . "\r\n";
+            $out = $out . $stmp . "\n";
             $stmp = ""; $len = 0;
         }
     }

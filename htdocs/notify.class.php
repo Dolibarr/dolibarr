@@ -140,7 +140,8 @@ class Notify
                     $subject = $langs->trans("DolibarrNotification");
                     $message = $texte;
                     $filename = split("/",$file);
-
+					$msgishtml=0;
+					
                     $replyto = $conf->notification->email_from;
 
                     $mailfile = new CMailFile($subject,
@@ -149,7 +150,8 @@ class Notify
 	                    $message,
 	                    array($file),
 	                    array("application/pdf"),
-	                    array($filename[sizeof($filename)-1])
+	                    array($filename[sizeof($filename)-1]),
+	                    '', '', 0, $msgishtml
 	                    );
 
                     if ( $mailfile->sendfile() )

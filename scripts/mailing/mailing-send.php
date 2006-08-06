@@ -80,23 +80,28 @@ $sql .= " LIMIT 1";
 $resql=$db->query($sql);
 if ($resql) 
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
-  if ($num == 1)
-    {
-      $obj = $db->fetch_object($resql);
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-      dolibarr_syslog("mailing-send: mailing ".$id);
+	if ($num == 1)
+	{
+		$obj = $db->fetch_object($resql);
 
-      $id       = $obj->rowid;
-      $subject  = $obj->sujet;
-      $message  = $obj->body;
-      $from     = $obj->email_from;
-      $errorsto = $obj->email_errorsto;
+		dolibarr_syslog("mailing-send: mailing ".$id);
 
-      $i++;
-    }
+		$id       = $obj->rowid;
+		$subject  = $obj->sujet;
+		$message  = $obj->body;
+		$from     = $obj->email_from;
+		$errorsto = $obj->email_errorsto;
+
+		// Le message est-il en html
+		$msgishtml=0;	// Non par defaut
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
+		
+		$i++;
+	}
 }
 
 
@@ -129,13 +134,31 @@ if ($resql)
         $i = 0;
         while ($i < $num )
         {
+            $res=1;
+            
             $obj = $db->fetch_object($resql);
 
+            // sendto en RFC2822
             $sendto = stripslashes($obj->prenom). " ".stripslashes($obj->nom) ."<".$obj->email.">";
-            $mail = new CMailFile($subject, $sendto, $from, $message, array(), array(), array());
-            $mail->errors_to = $errorsto;
-    
-            if ( $mail->sendfile() )
+
+            // Fabrication du mail
+            $mail = new CMailFile($subject, $sendto, $from, $message, 
+            						array(), array(), array(),
+            						'', '', 0, $msgishtml);
+            						
+			if ($mail->error)
+			{
+				$res=0;
+			}
+
+            // Envoi du mail
+			if ($res)
+			{
+	            $mail->errors_to = $errorsto;
+    			$res=$mail->sendfile();
+			}
+			
+            if ($res)
             {
                 // Mail envoye avec succes
                 $nbok++;
