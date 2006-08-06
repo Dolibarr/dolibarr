@@ -454,7 +454,7 @@ else
             if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
             {
             	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('body',$mil->body,320,'dolibarr_mailings');
+				$doleditor=new DolEditor('body',$mil->body,320,'dolibarr_mailings','',true);
 				$doleditor->Create();
             }
             else
