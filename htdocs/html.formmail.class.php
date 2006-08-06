@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,67 +37,69 @@ require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 
 class FormMail
 {
-  var $db;
-
-  var $fromname;
-  var $frommail;
-  var $replytoname;
-  var $replytomail;
-  var $toname;
-  var $tomail;
-  
-  var $withfrom;
-  var $withto;
-  var $withtocc;
-  var $withtopic;
-  var $withfile;
-  var $withbody;
-  
-  var $withfromreadonly;
-  var $withreplytoreadonly;
-  var $withtoreadonly;
-  var $withtoccreadonly;
-  var $withtopicreadonly;
-  var $withdeliveryreceipt;
-
-  var $substit=array();
-  var $param=array();
-  
-  var $errorstr;
-  
-  /**	\brief     Constructeur
-        \param     DB      handler d'accès base de donnée
-  */
+	var $db;
 	
-  function FormMail($DB)
-  {
-    $this->db = $DB;
+	var $fromname;
+	var $frommail;
+	var $replytoname;
+	var $replytomail;
+	var $toname;
+	var $tomail;
+	
+	var $withfrom;
+	var $withto;
+	var $withtocc;
+	var $withtopic;
+	var $withfile;
+	var $withbody;
+	
+	var $withfromreadonly;
+	var $withreplytoreadonly;
+	var $withtoreadonly;
+	var $withtoccreadonly;
+	var $withtopicreadonly;
+	var $withdeliveryreceipt;
+	var $withcancel;
+	
+	var $substit=array();
+	var $param=array();
+	
+	var $errorstr;
 
-    $this->withfrom=1;
-    $this->withto=1;
-    $this->withtocc=1;
-    $this->withtopic=1;
-    $this->withfile=0;
-    $this->withbody=1;
+  
+	/**
+		\brief     Constructeur
+	    \param     DB      handler d'accès base de donnée
+	*/
+	function FormMail($DB)
+	{
+		$this->db = $DB;
+		
+		$this->withfrom=1;
+		$this->withto=1;
+		$this->withtocc=1;
+		$this->withtopic=1;
+		$this->withfile=0;
+		$this->withbody=1;
+		
+		$this->withfromreadonly=1;
+		$this->withreplytoreadonly=1;
+		$this->withtoreadonly=0;
+		$this->withtoccreadonly=0;
+		$this->withtopicreadonly=0;
+		$this->withbodyreadonly=0;
+		$this->withdeliveryreceiptreadonly=0;
+		
+		return 1;
+	}
 
-    $this->withfromreadonly=1;
-    $this->withreplytoreadonly=1;
-    $this->withtoreadonly=0;
-    $this->withtoccreadonly=0;
-    $this->withtopicreadonly=0;
-    $this->withbodyreadonly=0;
-    $this->withdeliveryreceiptreadonly=0;
-   
-    return 1;
-  }
 
-
-  /*
-   *    \brief      Effectue les substitutions des mots clés par les données en fonction du tableau $this->substit
-   *    \param      chaine      chaine dans laquelle faire les substitutions
-   *    \return     string      chaine avec les substitutions effectuées
-   */
-  function make_substitutions($chaine)
+	/*
+	 *    \brief      Effectue les substitutions des mots clés par les données en fonction du tableau $this->substit
+	 *    \param      chaine      chaine dans laquelle faire les substitutions
+	 *    \return     string      chaine avec les substitutions effectuées
+	 */
+  	function make_substitutions($chaine)
     {
         foreach ($this->substit as $key=>$value) {
             $chaine=ereg_replace($key,$value,$chaine);
@@ -106,161 +108,181 @@ class FormMail
     }
 
 
-  /*
-   *    \brief  Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
-   */
-  function show_form() {
-    global $conf, $langs, $user;
+	/*
+	 *    \brief  Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
+	 */
+	function show_form()
+	{
+		global $conf, $langs, $user;
+	
+		$langs->load("other");
+		$langs->load("mails");
+	
+		$form=new Form($DB);
+	
+		print "\n<!-- Debut form mail -->\n";
+		print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
+		foreach ($this->param as $key=>$value)
+		{
+			print "<input type=\"hidden\" name=\"$key\" value=\"$value\">\n";
+		}
+		print "<table class=\"border\" width=\"100%\">\n";
+	
+		// From
+		if ($this->withfrom)
+		{
+			if ($this->withfromreadonly)
+			{
+				print '<input type="hidden" name="fromname" value="'.$this->fromname.'">';
+				print '<input type="hidden" name="frommail" value="'.$this->frommail.'">';
+				print "<tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>".$this->fromname.($this->frommail?(" &lt;".$this->frommail."&gt;"):"")."</td></tr>\n";
+				print "</td></tr>\n";
+			}
+		}
+	
+		// Replyto
+		if ($this->withreplyto)
+		{
+			if ($this->withreplytoreadonly)
+			{
+				print '<input type="hidden" name="replyname" value="'.$this->replytoname.'">';
+				print '<input type="hidden" name="replymail" value="'.$this->replytomail.'">';
+				print "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail?(" &lt;".$this->replytomail."&gt;"):"");
+				print "</td></tr>\n";
+			}
+		}
+	
+		// To
+		if ($this->withto || is_array($this->withto))
+		{
+			print '<tr><td width="180">'.$langs->trans("MailTo").'</td><td>';
+			if ($this->withtoreadonly)
+			{
+				print (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
+			}
+			else
+			{
+				print "<input size=\"30\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)?$this->withto:"")."\">";
+				if (is_array($this->withto))
+				{
+					print " ".$langs->trans("or")." ";
+					$form->select_array("receiver",$this->withto);
+				}
+			}
+			print "</td></tr>\n";
+		}
+	
+		// CC
+		if ($this->withcc)
+		{
+			print '<tr><td width="180">'.$langs->trans("MailCC").'</td><td>';
+			if ($this->withtoccreadonly)
+			{
+				print (! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"";
+			}
+			else
+			{
+				print "<input size=\"30\" name=\"sendtocc\" value=\"".((! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"")."\">";
+				if (is_array($this->withtocc))
+				{
+					print " ".$langs->trans("or")." ";
+					$form->select_array("receivercc",$this->withtocc);
+				}
+			}
+			print "</td></tr>\n";
+		}
 
-    $langs->load("other");
-    $langs->load("mails");
-    
-    $form=new Form($DB);
+		// Accusé réception
+		if ($this->withdeliveryreceipt)
+		{
+			print '<tr><td width="180">'.$langs->trans("DeliveryReceipt").'</td><td>';
 
-    print "\n<!-- Debut form mail -->\n";
-    print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
-    foreach ($this->param as $key=>$value) {
-        print "<input type=\"hidden\" name=\"$key\" value=\"$value\">\n";
-    }
-    print "<table class=\"border\" width=\"100%\">\n";
+			if ($this->withdeliveryreceiptreadonly)
+			{
+				print yn($this->withdeliveryreceipt);
+			}
+			else
+			{
+				print $form->select_YesNo(0,'deliveryreceipt');
+			}
 
-    // From
-    if ($this->withfrom) 
-    {
-        if ($this->withfromreadonly) {
-            print '<input type="hidden" name="fromname" value="'.$this->fromname.'">';
-            print '<input type="hidden" name="frommail" value="'.$this->frommail.'">';
-            print "<tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>".$this->fromname.($this->frommail?(" &lt;".$this->frommail."&gt;"):"")."</td></tr>\n";
-            print "</td></tr>\n";
-        }
-    }
+			print "</td></tr>\n";
+		}
 
-    // Replyto
-    if ($this->withreplyto) 
-    {
-        if ($this->withreplytoreadonly) {
-            print '<input type="hidden" name="replyname" value="'.$this->replytoname.'">';
-            print '<input type="hidden" name="replymail" value="'.$this->replytomail.'">';
-            print "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail?(" &lt;".$this->replytomail."&gt;"):"");
-            print "</td></tr>\n";
-        }
-    }
-    
-    // To
-    if ($this->withto || is_array($this->withto)) {
-        print '<tr><td width="180">'.$langs->trans("MailTo").'</td><td>';
-        if ($this->withtoreadonly) {
-            print (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
-        } else {
-            print "<input size=\"30\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)?$this->withto:"")."\">";
-            if (is_array($this->withto))
-            {
-                print " ".$langs->trans("or")." ";
-                $form->select_array("receiver",$this->withto);
-            }
-        }
-        print "</td></tr>\n";
-    }
-        
-    // CC
-    if ($this->withcc)
-    {
-        print '<tr><td width="180">'.$langs->trans("MailCC").'</td><td>';
-        if ($this->withtoccreadonly) {
-            print (! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"";
-        } else {
-            print "<input size=\"30\" name=\"sendtocc\" value=\"".((! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"")."\">";
-            if (is_array($this->withtocc))
-            {
-                print " ".$langs->trans("or")." ";
-                $form->select_array("receivercc",$this->withtocc);
-            }
-        }
-        print "</td></tr>\n";
-    }
-    
-    // Accusé réception
-    if ($this->withdeliveryreceipt) 
-    {
-        print '<tr><td width="180">'.$langs->trans("DeliveryReceipt").'</td><td>';
-        
-        if ($this->withdeliveryreceiptreadonly) {
-            print yn($this->withdeliveryreceipt);
-        }
-        else
-        {
-        	print $form->select_YesNo(0,'deliveryreceipt');
-        }
-        
-        print "</td></tr>\n";
-    }
+		// Topic
+		if ($this->withtopic)
+		{
+			$this->withtopic=$this->make_substitutions($this->withtopic);
 
-    // Topic
-    if ($this->withtopic)
-    {
-        $this->withtopic=$this->make_substitutions($this->withtopic);
+			print "<tr>";
+			print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
+			print "<td>";
+			if ($this->withtopicreadonly)
+			{
+				print $this->withtopic;
+				print "<input type=\"hidden\" size=\"60\" name=\"subject\" value=\"".$this->withtopic."\">";
+			}
+			else
+			{
+				print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"".$this->withtopic."\">";
+			}
+			print "</td></tr>\n";
+		}
 
-        print "<tr>";
-        print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
-        print "<td>";
-        if ($this->withtopicreadonly) {
-            print $this->withtopic;
-            print "<input type=\"hidden\" size=\"60\" name=\"subject\" value=\"".$this->withtopic."\">";
-        }
-        else
-        {
-            print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"".$this->withtopic."\">";
-        }
-        print "</td></tr>\n";
-    }
+		// Si fichier joint
+		if ($this->withfile)
+		{
+			print "<tr>";
+			print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
+			print "<td>";
+			print "<input type=\"file\" class=\"flat\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
+			print "</td></tr>\n";
+		}
 
-    // Si fichier joint
-    if ($this->withfile)
-    {
-        print "<tr>";
-        print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
-        print "<td>";
-        print "<input type=\"file\" class=\"flat\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
-        print "</td></tr>\n";
-    }
+		// Message
+		if ($this->withbody)
+		{
+			$defaultmessage="";
 
-    // Message
-    if ($this->withbody)
-    {
-        $defaultmessage="";
+			// \todo    A partir du type, proposer liste de messages dans table llx_models
+			if ($this->param["models"]=='body') { $defaultmessage=$this->withbody; }
+			if ($this->param["models"]=='facture_send')    { $defaultmessage="Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n"; }
+			if ($this->param["models"]=='facture_relance') { $defaultmessage="Nous apportons à votre connaissance que la facture  __FACREF__ ne semble pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n"; }
+			if ($this->param["models"]=='propal_send') { $defaultmessage="Veuillez trouver ci-joint la proposition commerciale __PROPREF__\n\nCordialement\n\n"; }
+			if ($this->param["models"]=='order_send') { $defaultmessage="Veuillez trouver ci-joint la commande __ORDERREF__\n\nCordialement\n\n"; }
 
-        // \todo    A partir du type, proposer liste de messages dans table llx_models
-        if ($this->param["models"]=='body') { $defaultmessage=$this->withbody; }
-        if ($this->param["models"]=='facture_send')    { $defaultmessage="Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n"; }
-        if ($this->param["models"]=='facture_relance') { $defaultmessage="Nous apportons à votre connaissance que la facture  __FACREF__ ne semble pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n"; }
-        if ($this->param["models"]=='propal_send') { $defaultmessage="Veuillez trouver ci-joint la proposition commerciale __PROPREF__\n\nCordialement\n\n"; }
-        if ($this->param["models"]=='order_send') { $defaultmessage="Veuillez trouver ci-joint la commande __ORDERREF__\n\nCordialement\n\n"; }
+			$defaultmessage=$this->make_substitutions($defaultmessage);
 
-        $defaultmessage=$this->make_substitutions($defaultmessage);
-        
-        print "<tr>";
-        print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
-        print "<td>";
-        if ($this->withbodyreadonly)
-        {
-            print nl2br($defaultmessage);
-            print '<input type="hidden" name="message" value="'.$defaultmessage.'">';
-        }
-        else
-        {
-            print '<textarea cols="72" rows="8" name="message">';
-            print $defaultmessage;
-            print '</textarea>';
-        }
-        print "</td></tr>\n";
-    }
-    	
-    print "<tr><td align=center colspan=2><center><input class=\"button\" type=\"submit\" value=\"".$langs->trans("SendMail")."\"></center></td></tr>\n";
-    print "</table>\n";
+			print "<tr>";
+			print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
+			print "<td>";
+			if ($this->withbodyreadonly)
+			{
+				print nl2br($defaultmessage);
+				print '<input type="hidden" name="message" value="'.$defaultmessage.'">';
+			}
+			else
+			{
+				print '<textarea cols="72" rows="8" name="message">';
+				print $defaultmessage;
+				print '</textarea>';
+			}
+			print "</td></tr>\n";
+		}
 
-    print "</form>\n";	
-    print "<!-- Fin form mail -->\n";
-  }
+		print "<tr><td align=center colspan=2><center>";
+		print "<input class=\"button\" type=\"submit\" name=\"sendmail\" value=\"".$langs->trans("SendMail")."\">";
+		if ($this->withcancel)
+		{
+			print " &nbsp; &nbsp; ";
+			print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"".$langs->trans("Cancel")."\">";
+		}
+		print "</center></td></tr>\n";
+		print "</table>\n";
+
+		print "</form>\n";
+		print "<!-- Fin form mail -->\n";
+	}
 
 
   /*
