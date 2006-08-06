@@ -977,6 +977,12 @@ class Facture extends CommonObject
 
             if ($error == 0)
             {
+                
+                // Classe la société rattachée comme client
+                $soc=new Societe($this->db);
+                $soc->id = $this->socidp;
+                $result=$soc->set_as_client();
+                
                 $this->ref = $numfa;
 
                 $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);

@@ -175,6 +175,9 @@ class Commande extends CommonObject
 					$objMod = new $modName($this->db);
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socidp);
+					
+					// Classe la société rattachée comme client
+          $result=$soc->set_as_client();
 		
 					// on vérifie si la commande est en numérotation provisoire
 					$comref = substr($this->ref, 1, 4);
