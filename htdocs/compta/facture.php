@@ -1546,6 +1546,8 @@ else
 			
             $nbrows=8;
             if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
+			if ($conf->projet->enabled) $nbrows++;
+
 			print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
 			/*
