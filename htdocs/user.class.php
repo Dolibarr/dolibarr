@@ -1031,10 +1031,10 @@ class User
       $result = $this->db->query($sql);
     }
 
-  /**
-   *    \brief      Retire l'utilisateur d'un groupe
-   *    \param      group       id du groupe
-   */
+	/**
+	 *    \brief      Retire l'utilisateur d'un groupe
+	 *    \param      group       id du groupe
+	 */
 	function RemoveFromGroup($group)
     {
 
@@ -1044,7 +1044,32 @@ class User
   
       $result = $this->db->query($sql);
     }
-    
+
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Sur quoi pointe le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		if ($option == 'xxx')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+		}
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin.' ');
+		$result.=$lien.$this->nom.' '.$this->prenom.$lienfin;
+		return $result;
+	}    
 }
 
 ?>

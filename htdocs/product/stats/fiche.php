@@ -132,7 +132,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Reference
         print '<tr>';
-        print '<td width="28%">'.$langs->trans("Ref").'</td><td colspan="3">';
+        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
         $product->load_previous_next_ref();
         $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
         $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
@@ -152,10 +152,10 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-        print '<tr><td valign="top" width="28%">'.$langs->trans("Referers").'</td>';
-        print '<td align="right" width="24%">'.$langs->trans("NbOfCustomers").'</td>';
-        print '<td align="right" width="24%">'.$langs->trans("NbOfReferers").'</td>';
-        print '<td align="right" width="24%">'.$langs->trans("TotalQuantity").'</td>';
+        print '<tr><td valign="top" width="25%">'.$langs->trans("Referers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("NbOfCustomers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
         print '</tr>';
 
         // Propals
@@ -182,7 +182,7 @@ if ($_GET["id"] || $_GET["ref"])
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("orders");
             print '<tr><td>';
-            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("Orders").'</a>';
+            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("CustomersOrders").'</a>';
             print '</td><td align="right">';
             print $product->stats_commande['customers'];
             print '</td><td align="right">';
@@ -216,7 +216,7 @@ if ($_GET["id"] || $_GET["ref"])
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("bills");
             print '<tr><td>';
-            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("Bills").'</a>';
+            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
             print '</td><td align="right">';
             print $product->stats_facture['customers'];
             print '</td><td align="right">';

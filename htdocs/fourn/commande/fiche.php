@@ -264,6 +264,7 @@ if ($_GET["id"] > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($commande->socidp);
+
 		$author = new User($db);
 		$author->id = $commande->user_author_id;
 		$author->fetch();
@@ -291,7 +292,7 @@ if ($_GET["id"] > 0)
 		*/
 		if ($_GET["action"] == 'delete')
 		{
-			$html->form_confirm("fiche.php?id=$commande->id","Supprimer la commande","Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
+			$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DeleteOrder"),"Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
 			print '<br />';
 		}
 
@@ -301,7 +302,27 @@ if ($_GET["id"] > 0)
 		*/
 		if ($_GET["action"] == 'valid')
 		{
-			$html->form_confirm("fiche.php?id=$commande->id","Valider la commande","Etes-vous sûr de vouloir valider cette commande ?","confirm_valid");
+			// on vérifie si la commande est en numérotation provisoire
+			$ref = substr($commande->ref, 1, 4);
+			if ($ref == 'PROV')
+			{
+				$newref = $commande->getNextNumRef($soc);
+			}
+			else
+			{
+				$newref = $commande->ref;
+			}
+
+			$text=$langs->trans('ConfirmValidateOrder',$newref);
+			if ($conf->notification->enabled)
+			{
+				require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+				$notify=new Notify($db);
+				$text.='<br>';
+				$text.=$notify->confirmMessage(3,$commande->socidp);
+			}
+
+			$html->form_confirm("fiche.php?id=".$commande->id,$langs->trans("ValidateOrder"),$text,"confirm_valid");
 			print '<br />';
 		}
 		/*
@@ -351,7 +372,7 @@ if ($_GET["id"] > 0)
 		
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">'.$commande->ref.'</td>';
+		print '<td colspan="5">'.$commande->ref.'</td>';
 		print '</tr>';
 
 		// Fournisseur
@@ -386,7 +407,8 @@ if ($_GET["id"] > 0)
 		}
 
 		// Auteur
-		print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
+		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
+		print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
 		print '<td colspan="3" width="50%">';
 		print "&nbsp;</td></tr>";
 

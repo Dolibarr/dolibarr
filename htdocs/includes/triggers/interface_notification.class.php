@@ -125,6 +125,19 @@ class InterfaceNotification
             $notify->send($action_notify, $object->socidp, $mesg, 'ficheinter', $object->id, $filepdf);
 		}
 
+		if ($action == 'ORDER_SUPPLIER_VALIDATE')
+		{
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+
+			$action_notify = 3;
+            $ref = sanitize_string($object->ref);
+            $filepdf = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+            $mesg = 'La commande fournisseur '.$object->ref." a été validée.\n";
+
+            $notify = new Notify($this->db); 
+            $notify->send($action_notify, $object->socidp, $mesg, 'order_supplier', $object->id, $filepdf);
+		}
+
 		return 0;
     }
 

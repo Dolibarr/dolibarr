@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("products");
+$langs->load("orders");
 $langs->load("bills");
 
 $user->getrights('produit');
@@ -119,7 +120,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Reference
         print '<tr>';
-        print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+        print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
         $product->load_previous_next_ref();
         $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
         $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
@@ -179,14 +180,14 @@ if ($_GET["id"] || $_GET["ref"])
         // Nbre de commande fournisseurs en cours
 		if ($conf->fournisseur->enabled)
 		{
-			$result=$product->load_stats_commande_fournisseur(0,'1');
+			$result=$product->load_stats_commande_fournisseur(0,'2');
 	        if ($result < 0) dolibarr_print_error($db,$product->error);
 	        print '<tr><td>'.$langs->trans("SuppliersOrders").'</td>';
 			print '<td>';
 			print $product->stats_commande_fournisseur['qty'];
-			$result=$product->load_stats_commande_fournisseur(0,'0');
+			$result=$product->load_stats_commande_fournisseur(0,'0,1');
 	        if ($result < 0) dolibarr_print_error($db,$product->error);
-			print ' ('.$langs->trans("Draft").': '.$product->stats_commande_fournisseur['qty'].')';
+			print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
 	        print '</td></tr>';
 		}
                 

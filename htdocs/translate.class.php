@@ -34,7 +34,8 @@
 class Translate {
 
     var $dir;
-    var $defaultlang;
+    var $origlang;					// Langue origine
+    var $defaultlang;				// Langue courante en vigueur de l'utilisateur
 
     var $tab_loaded=array();		// Tableau pour signaler les fichiers deja chargés
     var $tab_translate=array();		// Tableau des traductions
@@ -81,11 +82,13 @@ class Translate {
 
     /**
      *  \brief      Accesseur de this->defaultlang
-     *  \param      defaultlang     Langue par defaut à utiliser
+     *  \param      srclang     	Langue à utiliser
      */
-    function setDefaultLang($defaultlang='fr_FR')
+    function setDefaultLang($srclang='fr_FR')
     {
-        if ($defaultlang == 'auto')
+		$this->origlang=$srclang;
+		
+        if ($srclang == 'auto')
         {
             $langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
             $langpref=eregi_replace(";[^,]*","",$langpref);
@@ -95,11 +98,11 @@ class Translate {
 
             $langpart=split("_",$langlist[0]);
 
-            if (isset($langpart[1])) $defaultlang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
-            else $defaultlang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
+            if (isset($langpart[1])) $srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
+            else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
         }
 
-        $this->defaultlang=$defaultlang;
+        $this->defaultlang=$srclang;
     }
 
     

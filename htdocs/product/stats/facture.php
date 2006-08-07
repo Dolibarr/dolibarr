@@ -107,10 +107,10 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-        print '<tr><td valign="top" width="28%">'.$langs->trans("Referers").'</td>';
-        print '<td align="right" width="24%">'.$langs->trans("NbOfCustomers").'</td>';
-        print '<td align="right" width="24%">'.$langs->trans("NbOfReferers").'</td>';
-        print '<td align="right" width="24%">'.$langs->trans("TotalQuantity").'</td>';
+        print '<tr><td valign="top" width="25%">'.$langs->trans("Referers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("NbOfCustomers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
         print '</tr>';
 
         // Propals
@@ -137,7 +137,7 @@ if ($_GET["id"] || $_GET["ref"])
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("orders");
             print '<tr><td>';
-            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("Orders").'</a>';
+            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("CustomersOrders").'</a>';
             print '</td><td align="right">';
             print $product->stats_commande['customers'];
             print '</td><td align="right">';
@@ -171,7 +171,7 @@ if ($_GET["id"] || $_GET["ref"])
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("bills");
             print '<tr><td>';
-            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("Bills").'</a>';
+            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
             print '</td><td align="right">';
             print $product->stats_facture['customers'];
             print '</td><td align="right">';
@@ -207,7 +207,7 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $num = $db->num_rows($result);
 
-            print_barre_liste($langs->trans("Bills"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
+            print_barre_liste($langs->trans("CustomersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
 
             $i = 0;
             print "<table class=\"noborder\" width=\"100%\">";

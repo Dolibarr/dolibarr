@@ -86,11 +86,12 @@ class Notify
 	{
         $num=-1;
         
-        $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
-        $sql .= " AND n.fk_soc = s.idp AND n.fk_action = ".$action;
-        $sql .= " AND s.idp = ".$socid;
+        $sql = "SELECT n.rowid, c.email, c.idp, c.name, c.firstname, a.titre, s.nom";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
+        $sql.= " AND n.fk_soc = s.idp";
+        $sql.= " AND n.fk_action = ".$action;
+        $sql.= " AND s.idp = ".$socid;
 
 		dolibarr_syslog("Notify.class::countDefinedNotifications $action, $socid");
 

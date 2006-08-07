@@ -39,7 +39,6 @@ class Conf
     /** \public */
     var $db;            // Objet des caractéristiques de connexions
                         // base db->host, db->name, db->user, db->pass, db->type
-    var $langage;                   // Langue choisie fr_FR, en_US, ...
     var $maxfilesize = 2000000;     // Taille max des fichiers uploadés
 
     var $externalrss;

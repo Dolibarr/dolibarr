@@ -136,14 +136,14 @@ if ($_GET["id"] || $_GET["ref"])
             print '</td>';
             print '</tr>';
         }
-        // Commandes
+        // Commandes clients
         if ($conf->commande->enabled)
         {
             $ret=$product->load_stats_commande($socidp);
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("orders");
             print '<tr><td>';
-            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("Orders").'</a>';
+            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("CustomersOrders").'</a>';
             print '</td><td align="right">';
             print $product->stats_commande['customers'];
             print '</td><td align="right">';
@@ -177,7 +177,7 @@ if ($_GET["id"] || $_GET["ref"])
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("bills");
             print '<tr><td>';
-            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("Bills").'</a>';
+            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
             print '</td><td align="right">';
             print $product->stats_facture['customers'];
             print '</td><td align="right">';
@@ -194,7 +194,7 @@ if ($_GET["id"] || $_GET["ref"])
         
 
         $sql = "SELECT distinct(s.nom), s.idp, s.code_client, c.rowid, c.total_ht as amount, c.ref,";
-        $sql.= " ".$db->pdate("c.date_creation")." as date, c.fk_statut as statut, c.rowid as commandeid";
+        $sql.= " ".$db->pdate("c.date_creation")." as date, c.fk_statut as statut, c.facture, c.rowid as commandeid";
         if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."commandedet as d";
         if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -213,7 +213,7 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $num = $db->num_rows($result);
 
-            print_barre_liste($langs->trans("Orders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
+            print_barre_liste($langs->trans("CustomersOrders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
 
             $i = 0;
             print "<table class=\"noborder\" width=\"100%\">";
@@ -246,7 +246,7 @@ if ($_GET["id"] || $_GET["ref"])
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->amount)."</td>\n";
-                    print '<td align="right">'.$commandestatic->LibStatut($objp->statut,5).'</td>';
+                    print '<td align="right">'.$commandestatic->LibStatut($objp->statut,$objp->facture,5).'</td>';
                     print "</tr>\n";
                     $i++;
                 }

@@ -41,18 +41,18 @@ class DolEditor
 	
     /**
             \brief 	DolEditor
-            \param 	htmlname		          Nom formulaire html WYSIWIG
-            \param 	content			          Contenu édition WYSIWIG
-            \param 	height			          Hauteur en pixel de la zone édition
+            \param 	htmlname		        Nom formulaire html WYSIWIG
+            \param 	content			        Contenu édition WYSIWIG
+            \param 	height			        Hauteur en pixel de la zone édition
             \param 	toolbarname		        Nom barre de menu éditeur
-            \param  toolbarlocation       Emplacement de la barre de menu : 
-                                          'In' chaque fenêtre d'édition a ça propre barre d'outils
-                                          'Out:nom' partage de la barre d'outils où 'nom' est le nom du DIV qui affiche la barre
-            \param  toolbarstartexpanded  visible ou non au démarrage
+            \param  toolbarlocation       	Emplacement de la barre de menu : 
+                                          	'In' chaque fenêtre d'édition a ça propre barre d'outils
+                                          	'Out:nom' partage de la barre d'outils où 'nom' est le nom du DIV qui affiche la barre
+            \param  toolbarstartexpanded  	visible ou non au démarrage
     */
     function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false)
     {
-		global $conf;
+		global $conf,$langs;
 		
         dolibarr_syslog("DolEditor::DolEditor");
 
@@ -62,11 +62,15 @@ class DolEditor
 		$this->editor->Height = $height;
 		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
 		{
-			$this->editor->Config["CustomConfigurationsPath"] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
+			$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
 			$this->editor->ToolbarSet = $toolbarname;
-			$this->editor->Config[ 'ToolbarLocation' ] = $toolbarlocation ;
+			$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
 			$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
 			$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
+//			if ($langs->origlang=='auto')
+//			{
+				$this->editor->Config['AutoDetectLanguage'] = 'true';
+//			}
 		}
     }
 

@@ -1009,7 +1009,7 @@ class Product
     /**
      *    \brief    Charge tableau des stats commande fournisseur pour le produit/service
      *    \param    socid       	Id societe pour filtrer sur une société
-     *    \param    filtrestatut    Id statut pour filtrer sur un statut
+     *    \param    filtrestatut    Id des statuts pour filtrer sur des statuts
      *    \return   array       	Tableau des stats
      */
     function load_stats_commande_fournisseur($socid=0,$filtrestatut='')
@@ -1027,9 +1027,9 @@ class Product
         {
             $sql.= " AND c.fk_soc = ".$socid;
         }
-    	if ($filtrestatut)
+    	if ($filtrestatut != '')	// Peut valoir 0
     	{
-    		$sql.= " AND c.fk_statut = ".$filtrestatut;
+    		$sql.= " AND c.fk_statut in (".$filtrestatut.")";
     	}
     	
         $result = $this->db->query($sql) ;

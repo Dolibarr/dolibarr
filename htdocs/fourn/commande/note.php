@@ -140,7 +140,8 @@ if ($_GET["id"] > 0)
 		}
 
 		// Auteur
-		print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
+		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
+		print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
 		print '<td width="50%">';
 		print "&nbsp;</td></tr>";
 

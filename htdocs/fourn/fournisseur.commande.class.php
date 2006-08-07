@@ -184,69 +184,39 @@ class CommandeFournisseur extends Commande
 	 */
 	function valid($user)
     {
-		dolibarr_syslog("CommandeFournisseur::Valid");
+		dolibarr_syslog("CommandeFournisseur.class::Valid");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->valider)
 		{
-			if (defined('COMMANDE_SUPPLIER_ADDON'))
+			$this->db->begin();
+			
+			$num=$this->getNextNumRef($soc);
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+			$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+
+			$resql=$this->db->query($sql);
+			if ($resql)
 			{
-				if (is_readable(DOL_DOCUMENT_ROOT .'/fourn/commande/modules/'.COMMANDE_SUPPLIER_ADDON.'.php'))
-				{
-					$this->db->begin();
-					
-					require_once DOL_DOCUMENT_ROOT .'/fourn/commande/modules/'.COMMANDE_SUPPLIER_ADDON.'.php';
-		
-					// Definition du nom de module de numerotation de commande fournisseur
-		
-					$modName=COMMANDE_SUPPLIER_ADDON;
-		
-					// Recuperation de la nouvelle reference
-					$objMod = new $modName($this->db);
-					$soc = new Societe($this->db);
-					$soc->fetch($this->socidp);
-					$num = $objMod->commande_get_num($soc);
-		
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-					$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-		
-					$resql=$this->db->query($sql);
-					if ($resql)
-					{
-						$result = 1;
-						$this->log($user, 1, time());
-						$this->ref = $num;
+				$result = 1;
+				$this->log($user, 1, time());	// Statut 1
+				$this->ref = $num;
 
-		                // Appel des triggers
-		                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		                $interface=new Interfaces($this->db);
-		                $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-		                // Fin appel triggers
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+                // Fin appel triggers
 
-						$this->_NotifyApprobator($user);	// \todo a gerer par trigger
-		
-		                dolibarr_syslog("CommandeFournisseur::valid Success");
-						$this->db->begin();
-						return 1;
-					}
-					else
-					{
-						$this->error=$this->db->error();
-						dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
-						$this->db->rollback();
-						return -1;
-					}
-				}
-				else
-				{
-					$this->error='Impossible de lire le module de numérotation';
-					dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
-					return -1;
-				}
+                dolibarr_syslog("CommandeFournisseur::valid Success");
+				$this->db->commit();
+				return 1;
 			}
 			else
 			{
-				$this->error='Le module de numérotation n\'est pas défini' ;
+				$this->error=$this->db->error();
 				dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
+				$this->db->rollback();
 				return -1;
 			}
 		}
@@ -370,64 +340,59 @@ class CommandeFournisseur extends Commande
 	}
 
 
-  /*
-   *
-   *
-   */
-  function _NotifyApprobator($user)
-  {
-    require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-    
-    $this->ReadApprobators();
-    
-    if (sizeof($this->approbs) > 0)
-      {
+    /**
+     *      \brief      Renvoie la référence de commande suivante non utilisée en fonction du module
+     *                  de numérotation actif défini dans COMMANDE_SUPPLIER_ADDON
+     *      \param	    soc  		            objet societe
+     *      \return     string                  reference libre pour la facture
+     */
+    function getNextNumRef($soc)
+    {
+        global $db, $langs;
+        $langs->load("orders");
 
-	$this->_details_text();
+        $dir = DOL_DOCUMENT_ROOT .'/fourn/commande/modules';
 
-	$from = $user->email;
-	$subject = "Nouvelle commande en attente d'approbation réf : ".$this->ref;
-
-	$message = "Bonjour,\n\n";
-	$message .= "La commande ".$this->ref." validée par $user->fullname, est en attente de votre approbation.\n\n";
-
-
-	$message .= $this->details_text;
-
-	if (sizeof($this->approbs) > 1)
-	  {
-	    $message .= "\nCette demande d'approbation a été envoyée à :\n";
-	    
-	    foreach($this->approbs as $approb)
-	      {
-		if (strlen($approb[2]))
-		  {
-		    $message .= "- $approb[0] $approb[1] <$approb[2]>\n";
-		  }
-	      }
-	  }
-
-	$message .= "\nCordialement,\n\n";
-	$message .="--\n(message automatique envoyé par Dolibarr)";	    
+		if (defined('COMMANDE_SUPPLIER_ADDON'))
+		{
+			$file = COMMANDE_SUPPLIER_ADDON.'.php';
+			
+			if (is_readable($dir.'/'.$file))
+			{
+				// Definition du nom de module de numerotation de commande fournisseur
+				$modName=COMMANDE_SUPPLIER_ADDON;
+				require_once($dir.'/'.$file);
 	
-	foreach($this->approbs as $approb)
-	  {
+				// Recuperation de la nouvelle reference
+				$objMod = new $modName($this->db);
 
-	    $sendto = $approb[2];
-
-	    $mailfile = new CMailFile($subject,
-					 $sendto,
-					 $from,
-					 $message, array(), array(), array());
-	    if ( $mailfile->sendfile() )
-	      {
-		
-	      }
-	  }
-      }
-  }
-
-	/**
+	            $numref = "";
+	            $numref = $objMod->commande_get_num($soc,$this);
+	
+	            if ( $numref != "")
+	            {
+	                return $numref;
+	            }
+	            else
+	            {
+	                dolibarr_print_error($db,"Facture::getNextNumRef ".$obj->error);
+	                return -1;
+	            }
+			}
+			else
+			{
+    	        print $langs->trans("Error")." ".$langs->trans("FailedToLoadCOMMANDE_SUPPLIER_ADDONFile");
+	        	return -2;
+			}
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_SUPPLIER_ADDON_NotDefined");
+            return -3;
+        }
+    }
+    
+    /**
 	 * 		\brief	Approuve une commande
 	 *
 	 */
@@ -443,15 +408,23 @@ class CommandeFournisseur extends Commande
 			if ($this->db->query($sql) )
 			{
 				$result = 0;
-				$this->log($user, 2, time());
+				$this->log($user, 2, time());	// Statut 2
 	
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('ORDER_SUPPLIER_APPROVE',$this,$user,$langs,$conf);
+                // Fin appel triggers
+
 				$subject = "Votre commande ".$this->ref." a été approuvée";
 				$message = "Bonjour,\n\n";
 				$message .= "Votre commande ".$this->ref." a été approuvée, par $user->fullname";
 				$message .= "\n\nCordialement,\n\n";
-	
 				$this->_NotifyCreator($user, $subject, $message);
-	
+
+                dolibarr_syslog("CommandeFournisseur::valid Success");
+				$this->db->commit();
+				return 1;
 			}
 			else
 			{

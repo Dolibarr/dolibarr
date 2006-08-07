@@ -142,7 +142,7 @@ if ($_GET["id"] || $_GET["ref"])
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("orders");
             print '<tr><td>';
-            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("Orders").'</a>';
+            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("CustomersOrders").'</a>';
             print '</td><td align="right">';
             print $product->stats_commande['customers'];
             print '</td><td align="right">';
@@ -176,7 +176,7 @@ if ($_GET["id"] || $_GET["ref"])
             if ($ret < 0) dolibarr_print_error($db);
             $langs->load("bills");
             print '<tr><td>';
-            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("Bills").'</a>';
+            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
             print '</td><td align="right">';
             print $product->stats_facture['customers'];
             print '</td><td align="right">';

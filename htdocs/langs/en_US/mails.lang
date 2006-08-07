@@ -80,3 +80,5 @@ Notifications=Notifications
 NoNotificationsWillBeSent=No email notifications are planned for this event and company
 ANotificationsWillBeSent=1 notification will be sent by email
 SomeNotificationsWillBeSent=%s notifications will be sent by email
+AddNewNotification=Activate a new notification request
+ListOfActiveNotifications=List all active notifications requests

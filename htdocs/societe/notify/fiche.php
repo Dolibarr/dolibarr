@@ -32,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("companies");
+$langs->load("mails");
 
 $user->getrights('commercial');
 
