@@ -20,30 +20,47 @@
  */
 
 /**
-        \file       htdocs/webservices.php
+        \file       htdocs/webservices/server.php
         \brief      Fichier point entrée des WebServices Dolibarr
         \version    $Revision$
 */
 
-require_once("./master.inc.php");
+require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
-
 
 
 dolibarr_syslog("Call Dolibarr webservices interfaces");
 
-// Create the soap Object
-$s = new soap_server;
 
-// Register a method available for clients
-$s->register('getVersions');
+// Create the soap Object
+$server = new soap_server();
+$ns='dolibarr';
+$server->configureWSDL('WebServicesDolibarr',$ns);
+$server->wsdl->schemaTargetNamespace=$ns;
+
+
+// Register methods available for clients
+/*
+$server->register('getVersions',
+array(),								// Tableau parametres entrée
+array('result' => 'xsd:array'),			// Tableau parametres sortie
+$ns);
+*/
+
+$server->register('getVersions',
+// Tableau parametres entrée
+array(),
+// Tableau parametres sortie
+array('dolibarr'=>'xsd:string','mysql'=>'xsd:string','apache'=>'xsd:string'),
+$ns);
+
+
 
 // Return the results.
-$s->service($HTTP_RAW_POST_DATA);
+$server->service($HTTP_RAW_POST_DATA);
 
 
-
-
+// Full methods code
 function getVersions()
 {
 	dolibarr_syslog("Function: getVersions");
