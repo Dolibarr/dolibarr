@@ -2272,7 +2272,8 @@ class FactureLigne
 	var $date_start;
 	var $date_end;
 
-	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+	var $info_bits = 0;		// Bit 0:	0 si TVA normal - 1 si TVA NPR
+							// Bit 1:	0 si ligne normal - 1 si bit discount
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
 	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
