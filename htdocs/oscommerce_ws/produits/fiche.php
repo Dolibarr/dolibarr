@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003-2005 Éric Seigne <eric.seigne@ryxeo.com>
+/*  Copyright (C) 2006      Jean Heimburger     <jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +61,7 @@ if ($action == '' && !$cancel) {
       else
 	{
 	  print "<p>ERROR 1</p>\n";
-	  dolibarr_print_error("erreur webservice ".$osc_prod->error);
+	  dolibarr_print_error('',"erreur webservice ".$osc_prod->error);
 	}
  }
  else
@@ -143,5 +142,5 @@ if ($action == '' && !$cancel) {
  
     }
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

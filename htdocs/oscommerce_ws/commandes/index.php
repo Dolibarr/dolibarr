@@ -1,7 +1,6 @@
 <?php
 /*  Copyright (C) 2006      Jean Heimburger     <jean@tiaris.info>
  *
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,8 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
- * $Source$
  *
  */
 
@@ -32,7 +29,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des articles de la boutique web", $page, "index.php");
+print_barre_liste("Liste des commandes de la boutique web", $page, "index.php");
 
 set_magic_quotes_runtime(0);
 
@@ -41,12 +38,15 @@ require_once(NUSOAP_PATH."nusoap.php");
 require_once("../includes/configure.php");
 
 // Set the parameters to send to the WebService
-$parameters = array();
+$parameters = array("orderid"=>"0");
 
 // Set the WebService URL
-$client = new soapclient(OSCWS_DIR."ws_articles.php");
+$client = new soapclient(OSCWS_DIR."ws_orders.php");
 
-$result = $client->call("get_listearticles",$parameters );
+$result = $client->call("get_Order",$parameters );
+
+//		echo '<h2>Result</h2><pre>'; print_r($result); echo '</pre>';
+
 if ($client->fault) {
   		dolibarr_print_error('',"erreur de connection ");
 }
@@ -61,30 +61,30 @@ elseif (!($err = $client->getError()) )
 		print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 		print '<TR class="liste_titre">';
 		print "<td>id</td>";
-		print "<td>Ref</td>";
-		print "<td>Titre</td>";
-		print "<td>Groupe</td>";
-		print '<td align="center">Stock</td>';
-		print '<TD align="center">Status</TD>';
+		print '<TD align="center">Commande</TD>';
+		print "<td>Client</td>";
+		print "<td>Date</td>";
+		print "<td>Montant</td>";
+		print '<td align="center">Paiement</td>';
   		print "</TR>\n";
 	   
 		while ($i < $num) {
       		$var=!$var;
 
 		    print "<TR $bc[$var]>";
-		    print '<TD><a href="fiche.php?id='.$result[$i][OSC_id].'">'.$result[$i][OSC_id]."</TD>\n";
-    		print "<TD>".$result[$i][model]."</TD>\n";
-    		print "<TD>".$result[$i][name]."</TD>\n";
-    		print "<TD>".$result[$i][manufacturer]."</TD>\n";
-    		print '<TD align="center">'.$result[$i][quantity]."</TD>\n";
-    		print '<TD align="center">'.$result[$i][status]."</TD>\n";
+		    print '<TD><a href="fiche.php?orderid='.$result[$i][orders_id].'">'.$result[$i][orders_id]."</TD>\n";
+    		print "<TD>".$result[$i][customers_name]."</TD>\n";
+    		print "<TD>".$result[$i][date_purchased]."</TD>\n";
+    		print "<TD>".$result[$i][value]."</TD>\n";
+    		print '<TD align="center">'.$result[$i][payment_method]."</TD>\n";
+//    		print '<TD align="center">'/*.$result[$i][customers_telephone]*/."</TD>\n";
     		print "</TR>\n";
     		$i++;
   		}
 		print "</table></p>";
 	}
 	else {
-  		dolibarr_print_error('',"Aucun article trouvÃ©");
+  		dolibarr_print_error('',"Aucune commande trouvée");
 	}
 }
 else {

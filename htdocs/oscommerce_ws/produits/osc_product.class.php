@@ -1,9 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2006      Jean Heimburger     <jean@tiaris.info>
+/*  Copyright (C) 2006      Jean Heimburger     <jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +20,9 @@
  */
 
 /**
-        \file       htdocs/product.class.php
-        \ingroup    produit
-        \brief      Fichier de la classe des produits prédéfinis
+        \file       htdocs/oscommerce_ws/produits/osc_product.class.php
+        \ingroup    oscommerce_ws/produits/
+        \brief      Fichier de la classe des produits issus de OSC
         \version    $Revision$
 */
 
@@ -64,9 +60,9 @@ class Osc_product
 	}
 
 /**
-     *      \brief      Charge le produit/service en mémoire
-     *      \param      id      Id du produit/service à charger
-     *      \param      ref     Ref du produit/service à charger
+     *      \brief      Charge le produit OsC en mémoire
+     *      \param      id      Id du produit dans OsC 
+     *      \param      ref     Ref du produit dans OsC (doit être unique dans OsC)
      *      \return     int     <0 si ko, >0 si ok
      */
    function fetch($id='',$ref='')

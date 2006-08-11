@@ -22,13 +22,13 @@
  */
  
 /**
-        \file       htdocs/oscommerce_ws/pre.inc.php
+        \file       htdocs/oscommerce_ws/clients/pre.inc.php
 		\brief      Fichier gestionnaire du menu de gauche
 		\version    $Revision$
 */
 
 require("../../main.inc.php");
-require("./osc_product.class.php");
+require("./osc_order.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {
@@ -41,9 +41,9 @@ function llxHeader($head = "", $urlp = "")
 	
 	$menu->add(DOL_URL_ROOT."/oscommerce_ws/index.php", $langs->trans("OSCommerceShop"));
 	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/produits/", $langs->trans("Products"));
-	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/clients/", $langs->trans("Clients"));	
+	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/clients/", $langs->trans("Clients"));
 	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/commandes/", $langs->trans("Commandes"));
-
+	
 	left_menu($menu->liste);
 }
 

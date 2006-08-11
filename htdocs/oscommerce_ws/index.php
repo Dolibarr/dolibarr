@@ -66,7 +66,7 @@ print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 // Call the WebService and store its result in $result.
 $result = $client->call("get_CAmensuel",$parameters );
 if ($client->fault) {
-  dolibarr_print_error("Erreur de connection ");
+  dolibarr_print_error('',"Erreur de connection ");
 }
 elseif (!($err = $client->getError()) )
 {
@@ -90,7 +90,7 @@ elseif (!($err = $client->getError()) )
 }
 else
 {
-  dolibarr_print_error("Erreur du service web ".$err);
+  dolibarr_print_error('',"Erreur du service web ".$err);
 }
 
 
@@ -113,7 +113,7 @@ $parameters = array("limit"=>OSC_MAXNBCOM);
 $result = $client->call("get_orders",$parameters );
 
 if ($client->fault) {
-  dolibarr_print_error("Erreur de connection ");
+  dolibarr_print_error('',"Erreur de connection ");
 }
 elseif (!($err = $client->getError()) ) {
 	$num=0;
@@ -133,7 +133,7 @@ elseif (!($err = $client->getError()) ) {
     }
 }
 else {
-  dolibarr_print_error("Erreur du service web ".$err);
+  dolibarr_print_error('',"Erreur du service web ".$err);
 }
 
 print "</table><br>";
@@ -150,7 +150,7 @@ $parameters = array("limit"=>OSC_MAXNBCOM, "status"=>OSC_ORDWAIT);
 $result = $client->call("get_orders",$parameters );
 
 if ($client->fault) {
-  dolibarr_print_error("Erreur webservice ".$client->faultstring);
+  dolibarr_print_error('',"Erreur webservice ".$client->faultstring);
 }
 elseif (!($err = $client->getError()) ) {
   $var=True;
@@ -171,7 +171,7 @@ elseif (!($err = $client->getError()) ) {
   }
 }
 else {
-  dolibarr_print_error("Erreur du service web ".$err);
+  dolibarr_print_error('',"Erreur du service web ".$err);
 }
 
 print "</table><br>";
@@ -187,7 +187,7 @@ $parameters = array("limit"=>OSC_MAXNBCOM, "status"=>OSC_ORDPROCESS);
 $result = $client->call("get_orders",$parameters );
 
 if ($client->fault) {
-  dolibarr_print_error("Erreur webservice ".$client->faultstring);
+  dolibarr_print_error('',"Erreur webservice ".$client->faultstring);
 }
 elseif (!($err = $client->getError()) ) {
   $var=True;
@@ -208,7 +208,7 @@ elseif (!($err = $client->getError()) ) {
     }
 }
 else {
-  dolibarr_print_error("Erreur du service web ".$err);
+  dolibarr_print_error('',"Erreur du service web ".$err);
 }
 
 print "</table><br>";
@@ -226,7 +226,7 @@ $parameters = array("limit"=>OSC_MAXNBCOM);
 $result = $client->call("get_lastOrderClients",$parameters );
 
 if ($client->fault) {
-  dolibarr_print_error("Erreur webservice ".$client->faultstring);
+  dolibarr_print_error('',"Erreur webservice ".$client->faultstring);
 }
 elseif (!($err = $client->getError()) ) {
   $var=True;
@@ -248,12 +248,12 @@ elseif (!($err = $client->getError()) ) {
     }
 }
 else {
-  dolibarr_print_error("Erreur du service web ".$err);
+  dolibarr_print_error('',"Erreur du service web ".$err);
 }
 
 
 print '</tr></table>';
 
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
