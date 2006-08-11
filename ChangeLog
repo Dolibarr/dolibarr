@@ -22,8 +22,8 @@ English Dolibarr changelog
   allowing to add easily other rules.
 - Add Dolibarr triggers support on users creation/change.
 - Add Dolibarr triggers support on payments.
+- Add Dolibarr triggers on supplier and customers orders.
 - Support optionnal new javascript popup selector for date fields.
-- Added new Dolibarr triggers.
 - Support for several RSS boxes in external RSS module.
 - Can attach documents on Action, Orders, Invoices, Commercial proposals.
 - Can attach contacts on proposals, orders, contracts, invoices.
