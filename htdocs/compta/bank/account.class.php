@@ -59,6 +59,11 @@ class Account
 
 	var $account_number;
 
+	var $currency_code;
+	var $min_allowed;
+	var $min_desired;
+	var $comment;
+	
 	
     /**
      *  Constructeur
@@ -261,6 +266,10 @@ class Account
     {
         global $langs;
 
+		// Verification parametres
+		if (! $this->min_allowed) $this->min_allowed=0;
+		if (! $this->min_desired) $this->min_desired=0;
+		
         // Chargement librairie pour acces fonction controle RIB
         require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
 
@@ -275,7 +284,16 @@ class Account
         	return -1;
         }
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, ref, label, account_number) values (now(),'" . addslashes($this->ref) . "', '" . addslashes($this->label) . "','" . addslashes($this->account_number) . "');";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (";
+        $sql.= "datec, ref, label, account_number, currency_code,";
+        $sql.= "min_allowed, min_desired,";
+        $sql.= "comment";
+        $sql.= ") values (";
+        $sql.= "now(),'" . addslashes($this->ref) . "', '" . addslashes($this->label) . "',";
+        $sql.= "'".addslashes($this->account_number) . "','".$this->currency_code."',";
+        $sql.= "min_allowed=".price2num($this->min_allowed).",min_desired=".price2num($this->min_desired).",";
+        $sql.= "comment='".addslashes($this->comment)."'";
+        $sql.= ")";
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -285,7 +303,7 @@ class Account
                 if ( $this->update() )
                 {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account, datev, dateo, fk_type, rappro) ";
-                    $sql .= " VALUES (now(),'".$langs->trans("Balance")."','" . ereg_replace(',','.',$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
+                    $sql .= " VALUES (now(),'".$langs->trans("Balance")."','" . price2num($this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
                     $this->db->query($sql);
                 }
                 return $this->id;
@@ -293,23 +311,79 @@ class Account
         }
         else
         {
-            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+            {
                 $this->error=$langs->trans("ErrorBankLabelAlreadyExists");
+				dolibarr_syslog($this->error);
                 return -1;
             }
             else {
-                $this->error=$this->db->error();
+                $this->error=$this->db->error()." sql=".$sql;
+				dolibarr_syslog($this->error);
                 return -2;
             }
         }
     }
 
     /*
-     *    	\brief      Mise a jour compte
+     *    	\brief      Mise a jour compte, partie generale
      *    	\param      user        Object utilisateur qui modifie
 	 *		\return		int			<0 si ko, >0 si ok
      */
     function update($user='')
+    {
+        global $langs;
+        
+		dolibarr_syslog("Account.class::update");
+
+        if (! $this->ref)
+        {
+        	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+        	return -1;
+        }
+        if (! $this->label) $this->label = "???";
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
+
+        $sql .= " ref   = '".addslashes($this->ref)."'";
+        $sql .= ",label = '".addslashes($this->label)."'";
+
+        $sql .= ",courant = ".$this->courant;
+        $sql .= ",clos = ".$this->clos;
+        $sql .= ",rappro = ".$this->rappro;
+        $sql .= ",url = ".($this->url?"'".$this->url."'":"null");
+        $sql .= ",account_number = '".$this->account_number."'";
+
+        $sql .= ",currency_code = '".$this->currency_code."'";
+
+        $sql .= ",min_allowed = '".price2num($this->min_allowed)."'";
+        $sql .= ",min_desired = '".price2num($this->min_desired)."'";
+        $sql .= ",comment     = '".addslashes($this->comment)."'";
+
+        $sql .= " WHERE rowid = ".$this->id;
+
+		dolibarr_syslog("Account.class::update sql=$sql");
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            return 1;
+        }
+        else
+        {
+        	$this->error=$this->db.' sql='.$sql;
+            dolibarr_print_error($this->error);
+            return -1;
+        }
+    }
+
+
+    /*
+     *    	\brief      Mise a jour compte, partie RIB
+     *    	\param      user        Object utilisateur qui modifie
+	 *		\return		int			<0 si ko, >0 si ok
+     */
+    function update_rib($user='')
     {
         global $langs;
         
@@ -329,16 +403,9 @@ class Account
         	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
         	return -1;
         }
-        if (! $this->label) $this->label = "???";
-		$this->account_number=trim($this->account_number);
-
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
-
         $sql .= " bank  = '".addslashes($this->bank)."'";
-        $sql .= ",ref   = '".addslashes($this->ref)."'";
-        $sql .= ",label = '".addslashes($this->label)."'";
-
         $sql .= ",code_banque='".$this->code_banque."'";
         $sql .= ",code_guichet='".$this->code_guichet."'";
         $sql .= ",number='".$this->number."'";
@@ -348,27 +415,24 @@ class Account
         $sql .= ",domiciliation='".addslashes($this->domiciliation)."'";
         $sql .= ",proprio = '".addslashes($this->proprio)."'";
         $sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
-        $sql .= ",courant = ".$this->courant;
-        $sql .= ",clos = ".$this->clos;
-        $sql .= ",rappro = ".$this->rappro;
-        $sql .= ",url = ".($this->url?"'".$this->url."'":"null");
-        $sql .= ",account_number = '".$this->account_number."'";
-
         $sql .= " WHERE rowid = ".$this->id;
 
-        $result = $this->db->query($sql);
+		dolibarr_syslog("Account.class::update_rib sql=$sql");
 
+        $result = $this->db->query($sql);
         if ($result)
         {
             return 1;
         }
         else
         {
-            dolibarr_print_error($this->db);
-            return 0;
+        	$this->error=$this->db.' sql='.$sql;
+            dolibarr_print_error($this->error);
+            return -1;
         }
     }
-
+    
+    
     /*
      *      \brief      Charge en memoire depuis la base le compte
      *      \param      id      Id du compte à récupérer
@@ -379,7 +443,8 @@ class Account
         $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
         $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
         $sql.= " domiciliation, proprio, adresse_proprio,";
-        $sql.= " account_number";
+        $sql.= " account_number, currency_code,";
+        $sql.= " min_allowed, min_desired, comment";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
         $sql.= " WHERE rowid  = ".$id;
 
@@ -411,6 +476,11 @@ class Account
                 $this->adresse_proprio = $obj->adresse_proprio;
 
                 $this->account_number = $obj->account_number;
+
+                $this->currency_code  = $obj->currency_code;
+                $this->min_allowed    = $obj->min_allowed;
+                $this->min_desired    = $obj->min_desired;
+                $this->comment        = $obj->comment;
             }
             $this->db->free($result);
         }

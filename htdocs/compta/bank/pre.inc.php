@@ -65,7 +65,7 @@ function llxHeader($head = "")
 		}
 		$db->free($resql);
 	}
-	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
+	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"));
 	
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"));
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByCategories"));
@@ -78,7 +78,7 @@ function llxHeader($head = "")
 	
 	if ($user->rights->banque->configurer)
 	{
-		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/config.php",$langs->trans("Setup"));
+		$menu->add(DOL_URL_ROOT."/compta/bank/config.php",$langs->trans("MenuSetupBank"));
 	}
 	
 	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)
