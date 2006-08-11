@@ -246,8 +246,6 @@ $form = new Form($db);
         if ($account->type == 0 || $account->type == 1)
         {
 			// If bank account
-			print '<tr><td colspan="4"><b>'.$langs->trans("IfBankAccount").'...</b></td></tr>';
-
             print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
             print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
             print '</tr>';

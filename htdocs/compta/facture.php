@@ -1423,7 +1423,7 @@ else
 
 			$head = facture_prepare_head($fac);
  
-			dolibarr_fiche_head($head, 0, $langs->trans('InvoiceCustomer'));
+			dolibarr_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
 
 			/*
 			 * Confirmation de la suppression de la facture

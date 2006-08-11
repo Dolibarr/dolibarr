@@ -291,55 +291,56 @@ class Form
   
   	/**
 	 *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
-	 *    \param     selected         Code pays pré-sélectionné
+	 *    \param     selected         Id ou code pays pré-sélectionné
 	 *    \param     htmlname         Nom de la liste deroulante
 	 *    \param     htmloption       Options html sur le select
 	 *    \todo      trier liste sur noms après traduction plutot que avant
 	 */
 	function select_pays($selected='',$htmlname='pays_id',$htmloption='')
 	{
-	    global $conf,$langs;
-	    $langs->load("dict");
-	    
-	    $sql = "SELECT rowid, libelle, code, active FROM ".MAIN_DB_PREFIX."c_pays";
-	    $sql .= " WHERE active = 1";
-	    $sql .= " ORDER BY code ASC;";
-	    
-	    if ($this->db->query($sql))
-      {
-        print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
-        $num = $this->db->num_rows();
-        $i = 0;
-        if ($num)
-	  {
-            $foundselected=false;
-            while ($i < $num)
-	      {
-                $obj = $this->db->fetch_object();
-                if ($selected > 0 && $selected == $obj->rowid)
-		  {
-                    $foundselected=true;
-                    print '<option value="'.$obj->rowid.'" selected="true">';
-		  }
-                else
-		  {
-                    print '<option value="'.$obj->rowid.'">';
-		  }
-                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                if ($obj->code) { print $obj->code . ' - '; }
-                print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
-                print '</option>';
-                $i++;
-	      }
-	  }
-        print '</select>';
-        return 0;
-      }
-    else {
-      dolibarr_print_error($this->db);
-      return 1;
-    }
-  }
+		global $conf,$langs;
+		$langs->load("dict");
+
+		$sql = "SELECT rowid, code, libelle, active";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+		$sql.= " WHERE active = 1";
+		$sql.= " ORDER BY code ASC;";
+	
+		if ($this->db->query($sql))
+		{
+			print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
+			$num = $this->db->num_rows();
+			$i = 0;
+			if ($num)
+			{
+				$foundselected=false;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object();
+					if ($selected && $selected != '-1' && ($selected == $obj->rowid || $selected == $obj->code))
+					{
+						$foundselected=true;
+						print '<option value="'.$obj->rowid.'" selected="true">';
+					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">';
+					}
+					// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+					if ($obj->code) { print $obj->code . ' - '; }
+					print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
+					print '</option>';
+					$i++;
+				}
+			}
+			print '</select>';
+			return 0;
+		}
+		else {
+			dolibarr_print_error($this->db);
+			return 1;
+		}
+	}
 
 
     /**

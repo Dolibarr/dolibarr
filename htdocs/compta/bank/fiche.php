@@ -53,24 +53,13 @@ if ($_POST["action"] == 'add')
     $account->rappro        = $_POST["norappro"]?1:0;
     $account->url           = $_POST["url"];
     
-    $account->bank          = trim($_POST["bank"]);
-    $account->code_banque   = $_POST["code_banque"];
-    $account->code_guichet  = $_POST["code_guichet"];
-    $account->number        = $_POST["number"];
-    $account->cle_rib       = $_POST["cle_rib"];
-    $account->bic           = $_POST["bic"];
-    $account->iban_prefix   = $_POST["iban_prefix"];
-    $account->domiciliation = trim($_POST["domiciliation"]);
-    
-    $account->proprio 	      = trim($_POST["proprio"]);
-    $account->adresse_proprio = trim($_POST["adresse_proprio"]);
-
     $account->account_number  = trim($_POST["account_number"]);
     
     $account->solde           = $_POST["solde"];
     $account->date_solde      = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
+    $account->country_code    = trim($_POST["account_country_code"]);
 
     $account->min_allowed     = $_POST["account_min_allowed"];
     $account->min_desired     = $_POST["account_min_desired"];
@@ -121,6 +110,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->account_number  = trim($_POST["account_number"]);
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
+    $account->country_code    = trim($_POST["account_country_code"]);
 
     $account->min_allowed     = $_POST["account_min_allowed"];
     $account->min_desired     = $_POST["account_min_desired"];
@@ -213,6 +203,14 @@ if ($_GET["action"] == 'create')
 	print $langs->trans("Currency".$conf->monnaie);
 	print '</td></tr>';
 
+	// Pays		
+	print '<tr><td valign="top">'.$langs->trans("Country").'</td>';
+	print '<td colspan="3">';
+	$selectedcode=$account->account_country_code;
+	if (! $selectedcode) $selectedcode=$mysoc->pays_code;
+	$form->select_pays($selectedcode, 'account_country_code');
+	print '</td></tr>';
+
 	// Web
 	print '<tr><td valign="top">'.$langs->trans("Web").'</td>';
 	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
@@ -236,39 +234,6 @@ if ($_GET["action"] == 'create')
 
 	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalDesired").'</td>';
 	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.$account->account_min_desired.'"></td></tr>';
-
-
-	// If bank account
-	print '<tr><td colspan="4"><b>'.$langs->trans("IfBankAccount").'...</b></td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("Conciliation").'</td>';
-	print '<td colspan="3"><input type="checkbox" name="norappro" value="'.$_POST["norappro"].'"> '.$langs->trans("DisableConciliation").'</td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
-	print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$_POST["bank"].'"></td></tr>';
-
-	print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-	print '<tr><td><input size="8" type="text" class="flat" name="code_banque" value="'.$_POST["code_banque"].'"></td>';
-	print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$_POST["code_guichet"].'"></td>';
-	print '<td><input size="15" type="text" class="flat" name="number" value="'.$_POST["number"].'"></td>';
-	print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$_POST["cle_rib"].'"></td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="3"><input size="24" type="text" class="flat" name="iban_prefix" value="'.$_POST["iban_prefix"].'"></td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="3"><input size="24" type="text" class="flat" name="bic" value="'.$_POST["bic"].'"></td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
-	print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">".$_POST["domiciliation"];
-	print "</textarea></td></tr>";
-
-	print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.$_POST["proprio"].'"></td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
-	print "<textarea class=\"flat\" name=\"adresse_proprio\" rows=\"2\" cols=\"40\">".$_POST["adresse_proprio"];
-	print "</textarea></td></tr>";
 
 	print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></td></tr>';
 	print '</form>';

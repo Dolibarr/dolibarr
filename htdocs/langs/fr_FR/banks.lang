@@ -1,6 +1,9 @@
 # Dolibarr language file - fr_FR - banks
 Bank=Banque
 Banks=Banques
+MenuBankCash=Banques/Caisses
+MenuSetupBank=Param. banque/caisse
+BankName=Nom de la banque
 FinancialAccount=Compte
 FinancialAccounts=Comptes
 BankAccount=Compte bancaire
@@ -14,6 +17,8 @@ SavingAccount=Compte épargne
 SavingAccounts=Comptes épargnes/placements
 ErrorBankLabelAlreadyExists=Libellé de compte financier déjà existant
 BankBalance=Solde
+BalanceMinimalAllowed=Solde minimum autorisé
+BalanceMinimalDesired=Solde minimum désiré
 InitialBankBalance=Solde initial
 EndBankBalance=Solde final
 CurrentBalance=Solde actuel
@@ -43,7 +48,7 @@ NewCurrentAccount=Nouveau compte courant
 NewSavingAccount=Nouveau compte épargne
 NewCashAccount=Nouveau compte caisse
 EditFinancialAccount=Edition compte
-AccountSetup=Configuration des comptes
+AccountSetup=Configuration des comptes financiers
 SearchBankMovement=Recherche écriture bancaire
 Debts=Dettes
 LabelBankCashAccount=Libellé compte ou caisse

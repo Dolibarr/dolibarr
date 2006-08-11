@@ -419,7 +419,7 @@ class MenuLeft {
                 if ($conf->banque->enabled)
                 { 
                   $langs->load("banks");
-                  $newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&mainmenu=bank",$langs->trans("Bank"),0,$user->rights->banque->lire);
+                  $newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&mainmenu=bank",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
                 }
                 
                 // Rapports
@@ -447,6 +447,8 @@ class MenuLeft {
                 	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
                 	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
                 }
+
+				$newmenu->add(DOL_URL_ROOT."/compta/bank/config.php",$langs->trans("MenuSetupBank"),0,$user->rights->banque->configurer);
 
             }
         

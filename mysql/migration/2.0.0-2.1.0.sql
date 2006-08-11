@@ -296,7 +296,11 @@ insert into llx_c_pays (rowid,code,libelle) values (30, 'SG', 'Singapoure');
 
 alter table llx_bank_account add column ref varchar(12) NOT NULL;
 alter table llx_bank_account add column url varchar(128);
-
+alter table llx_bank_account add column currency_code varchar(2) NOT NULL;
+alter table llx_bank_account add column min_allowed integer DEFAULT 0;
+alter table llx_bank_account add column min_desired integer DEFAULT 0;
+alter table llx_bank_account add column comment varchar(254);
+update llx_bank_account set currency_code='EU';
 
 alter table llx_accountingsystem_det rename to llx_accountingaccount;
 

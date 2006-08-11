@@ -1,6 +1,9 @@
 # Dolibarr language file - en_US - banks
 Bank=Bank
 Banks=Banks
+MenuBankCash=Bank/Cash
+MenuSetupBank=Bank/Cash setup
+BankName=Bank name
 FinancialAccount=Account
 FinancialAccounts=Accounts
 BankAccount=Bank account
@@ -14,6 +17,8 @@ SavingAccount=Saving account
 SavingAccounts=Saving accounts
 ErrorBankLabelAlreadyExists=Financial account label already exists
 BankBalance=Balance
+BalanceMinimalAllowed=Minimum allowed balance
+BalanceMinimalDesired=Minimum desired balance
 InitialBankBalance=Initial balance
 EndBankBalance=End balance
 CurrentBalance=Current balance
@@ -43,7 +48,7 @@ NewCurrentAccount=New current account
 NewSavingAccount=New saving account
 NewCashAccount=New cash account
 EditFinancialAccount=Edit account
-AccountSetup=Account setup
+AccountSetup=Financial accounts setup
 SearchBankMovement=Search bank movement
 Debts=Debts
 LabelBankCashAccount=Bank or cash label
