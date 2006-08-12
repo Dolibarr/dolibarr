@@ -19,9 +19,19 @@
  * $Source$
  */
 
-header('Content-type: text/css');
+/**
+    \file       htdocs/theme/eldy/eldy.css.php
+    \brief      Fichier de style CSS du theme Eldy
+    \version    $Revision$
+*/
 
 require("../../conf/conf.php");
+
+// Define css type
+header('Content-type: text/css');
+// Important: Avoid page request by browser and dynamic build at
+// each Dolibarr page access.
+header('Cache-Control: max-age=3600, must-revalidate');
 
 ?>
 
