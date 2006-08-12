@@ -122,7 +122,7 @@ if ($socidp > 0)
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
 	    {
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$societe->note,280,'dolibarr_notes');
+			$doleditor=new DolEditor('note',$societe->note,280,'dolibarr_notes','In',true);
 			$doleditor->Create();
 	    }
 	    else
