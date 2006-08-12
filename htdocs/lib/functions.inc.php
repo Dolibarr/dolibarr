@@ -412,7 +412,7 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 /**
 		\brief      Formattage de la date en fonction de la langue $conf->langage
 		\param	    time        Date 'timestamp' ou format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-		\param	    format      Format d'affichage de la date ("%d %b %Y", "%d/%m/%Y", ...)
+		\param	    format      Format d'affichage de la date ("%d %b %Y", "%d/%m/%Y %h:%M:%s", ...)
 		\return     string      Date formatée ou '' si time null
 */
 function dolibarr_print_date($time,$format='')

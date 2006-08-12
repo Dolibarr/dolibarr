@@ -330,7 +330,11 @@ alter table llx_propal add column ref_client varchar(30) after ref;
 
 alter table llx_societe_adresse_livraison drop column fk_departement;
 
-alter table llx_user add column ldap_sid varchar(255)DEFAULT NULL;
+alter table llx_user change datelastaccess datelastlogin datetime;
+alter table llx_user add column datepreviouslogin datetime after datelastlogin;
+alter table llx_user add column ldap_sid varchar(255) DEFAULT NULL;
+alter table llx_user add column statut tinyint DEFAULT 1;
+alter table llx_user add column lang varchar(6);
 
 
 alter table llx_commande_fournisseur drop column fk_soc_contact;

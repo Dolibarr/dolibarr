@@ -62,12 +62,15 @@ class User
 	var $admin;
 	var $login;
 	var $pass;
-	var $lang;
 	var $datec;
 	var $datem;
 	var $societe_id;
 	var $webcal_login;
-	var $datelastaccess;
+
+	var $datelastlogin;
+	var $datepreviouslogin;
+	var $statut;
+	var $lang;
 	
 	var $error;
 	var $userpref_limite_liste;
@@ -102,10 +105,14 @@ class User
 	function fetch($login='')
     {
         // Recupere utilisateur
-        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
+        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
+        $sql.= " u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
         $sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
-        $sql.= " ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem,";
-        $sql.= " ".$this->db->pdate("u.datelastaccess")." as datel";
+        $sql.= " u.statut, u.lang,";
+        $sql.= " ".$this->db->pdate("u.datec")." as datec,";
+        $sql.= " ".$this->db->pdate("u.tms")." as datem,";
+        $sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
+        $sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
         if ($login)
         {
@@ -138,14 +145,18 @@ class User
                 $this->admin = $obj->admin;
                 $this->contact_id = $obj->fk_socpeople;
                 $this->note = stripslashes($obj->note);
-                $this->lang = 'fr_FR';    // \todo Gérer la langue par défaut d'un utilisateur Dolibarr
-
+                $this->statut = $obj->statut;
+                $this->lang = $obj->lang;
+				
                 $this->datec  = $obj->datec;
                 $this->datem  = $obj->datem;
-                $this->datelastaccess = $obj->datel;
+                $this->datelastlogin     = $obj->datel;
+                $this->datepreviouslogin = $obj->datep;
         
                 $this->webcal_login = $obj->webcal_login;
                 $this->societe_id = $obj->fk_societe;
+                
+                if (! $this->lang) $this->lang='fr_FR';
             }
             $this->db->free($result);
         
@@ -811,6 +822,7 @@ class User
 
   /**
    *    \brief      Mise à jour en base de la date de deniere connexion d'un utilisateur
+   *				Fonction appelée lors d'une nouvelle connexion
    *    \return     <0 si echec, >=0 si ok
    */
   	function update_last_login_date()
@@ -819,19 +831,21 @@ class User
 
         $now=time();
         
-        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-        $sql.= " SET datelastaccess = ".$this->db->idate($now).",";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
+        $sql.= " datepreviouslogin = datelastlogin,";
+        $sql.= " datelastlogin = ".$this->db->idate($now).",";
         $sql.= " tms = tms";    // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
         $sql.= " WHERE rowid = ".$this->id;
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->datelastaccess=$now;
+            $this->datepreviouslogin=$this->datelastlogin;
+            $this->datelastlogin=$now;
             return 1;
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->error().' sql='.$sql;
             return -1;
         }
    }

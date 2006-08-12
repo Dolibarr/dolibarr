@@ -466,8 +466,10 @@ function top_menu($head, $title="", $target="")
         print '<a href="'.DOL_URL_ROOT.'/user/logout.php"';
         print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
         print '>';
+        $title=$langs->trans("Logout");
+        $title.=' ('.$langs->trans("ConnectedSince").': '.dolibarr_print_date($user->datelastlogin,"%d/%m/%Y %H:%M:%S").')';
         print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-        print ' alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"';
+        print ' alt="'.$title.'" title="'.$title.'"';
         print '>';
         print '</a>';
     }

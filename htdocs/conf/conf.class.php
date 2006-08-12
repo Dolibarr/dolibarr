@@ -174,7 +174,7 @@ class Conf
 		$this->commercial->enabled=defined("MAIN_MODULE_COMMERCIAL")?MAIN_MODULE_COMMERCIAL:0;
 		$this->commercial->dir_output=DOL_DATA_ROOT."/rapport";
 		// Module taxes et charges sociales
-		$this->tax->enabled=1;
+		$this->tax->enabled=defined("MAIN_MODULE_TAX")?MAIN_MODULE_TAX:0;
 		$this->tax->dir_output=DOL_DATA_ROOT."/taxes";
 		$this->tax->dir_images=DOL_DATA_ROOT."/taxes/images";
 		// Module comptaexpert

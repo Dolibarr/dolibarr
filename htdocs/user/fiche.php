@@ -591,7 +591,7 @@ else
     {
     	$fuser = new User($db, $_GET["id"]);
     	$fuser->fetch();
-    	
+
     	// Connexion ldap
     	if ($conf->ldap->enabled && $fuser->ldap_sid)
     	{
@@ -818,11 +818,19 @@ else
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("DateCreation").'</td>';
-            print '<td class="valeur">'.dolibarr_print_date($fuser->datec).'</td>';
+            print '<td class="valeur">'.dolibarr_print_date($fuser->datec,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("DateModification").'</td>';
-            print '<td class="valeur">'.dolibarr_print_date($fuser->datem).'</td>';
+            print '<td class="valeur">'.dolibarr_print_date($fuser->datem,"%d/%m/%Y %H:%M:%S").'</td>';
+            print "</tr>\n";
+
+            print '<tr><td width="25%" valign="top">'.$langs->trans("LastConnexion").'</td>';
+            print '<td class="valeur">'.dolibarr_print_date($fuser->datelastlogin,"%d/%m/%Y %H:%M:%S").'</td>';
+            print "</tr>\n";
+
+            print '<tr><td width="25%" valign="top">'.$langs->trans("PreviousConnexion").'</td>';
+            print '<td class="valeur">'.dolibarr_print_date($fuser->datepreviouslogin,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
 
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';

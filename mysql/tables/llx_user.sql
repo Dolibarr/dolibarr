@@ -41,9 +41,12 @@ create table llx_user
   fk_societe        integer DEFAULT 0,
   fk_socpeople      integer DEFAULT 0,
   note              text,
-  datelastaccess    datetime,
+  datelastlogin     datetime,
+  datepreviouslogin datetime,
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
+  statut			tinyint DEFAULT 1,
+  lang              varchar(6),
   
   UNIQUE INDEX(login)
 )type=innodb;

@@ -405,14 +405,14 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Group
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','Société coopérative agricole');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société non commerciale d\'assurances');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','Société civile');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autres personnes de droit privé inscrites au registre du commerce et sociétés');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autres personnes de droit privé inscrites au RCS');
                                                                      
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l\'état');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'72','Collectivité territoriale');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'73','Établissement public administratif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'74','Autre personne morale de droit public administratif');
                                                                      
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'81','Organisme gérant un régime de protection social à adhésion obligatoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'81','Organisme gérant régime de protection social à adhésion obligatoire');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'82','Organisme mutualiste');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'83','Comité d\'entreprise');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'84','Organisme professionnel');
