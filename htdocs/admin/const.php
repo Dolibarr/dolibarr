@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,10 @@ if ($_GET["action"] == 'delete')
 llxHeader();
 
 print_fiche_titre($langs->trans("OtherSetup"),'','setup');
+
+print $langs->trans("ConstDesc")."<br>\n";
+print "<br>\n";
+
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

@@ -59,6 +59,9 @@ llxHeader();
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
+print $langs->trans("GeneratedPasswordDesc")."<br>\n";
+print "<br>\n";
+
 
 $h = 0;
 
@@ -146,6 +149,7 @@ print '</form>';
 
 print '</div>';
 
-llxFooter('$Date$ - $Revision$');
+$db->close();
 
+llxFooter('$Date$ - $Revision$');
 ?>

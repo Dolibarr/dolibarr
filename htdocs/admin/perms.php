@@ -53,6 +53,9 @@ llxHeader();
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
+print $langs->trans("DefaultRightsDesc")."<br>\n";
+print "<br>\n";
+
 
 $h = 0;
 
@@ -65,10 +68,7 @@ $head[$h][0] = DOL_URL_ROOT."/admin/security.php";
 $head[$h][1] = $langs->trans("Passwords");
 $h++;
 
-
 dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
-
-print $langs->trans("DefaultRightsDesc")."<br><br>\n";
 
 
 print '<table class="noborder" width="100%">';
@@ -175,6 +175,7 @@ if ($result)
 print '</table>';
 
 print '</div>';
+
 
 $db->close();
 

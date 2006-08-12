@@ -38,6 +38,7 @@ $langs->load("banks");
 
 if (!$user->admin)
   accessforbidden();
+  
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
   || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
@@ -64,13 +65,12 @@ llxHeader();
 
 print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','setup');
 
+print $langs->transnoentities("DelaysOfToleranceDesc",img_warning())."<br>\n";
+print "<br>\n";
 
 $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-print $langs->transnoentities("DelaysOfToleranceDesc",img_warning())."<br>\n";
-
-print "<br>\n";
 
 if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
  || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
@@ -96,67 +96,87 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="60%">'.$langs->trans("DolibarrWorkBoard").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="2" width="60%">'.$langs->trans("DolibarrWorkBoard").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	//
     if (1 == 1)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceActionsToDo").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','task').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceActionsToDo").'</td><td>';
         print '<input size="5" name="ActionsToDo" value="'. ($conf->global->MAIN_DELAY_ACTIONS_TODO+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
     if ($conf->commande->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceOrdersToProcess").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','order').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceOrdersToProcess").'</td><td>';
         print '<input size="5" name="OrdersToProcess" value="'. ($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
     if ($conf->propal->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfTolerancePropalsToClose").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','propal').'</td>';
+        print '<td>'.$langs->trans("DelaysOfTolerancePropalsToClose").'</td><td>';
         print '<input size="5" name="PropalsToClose" value="'. ($conf->global->MAIN_DELAY_PROPALS_TO_CLOSE+0) . '"> ' . $langs->trans("days") . '</td></tr>';    
     }
     if ($conf->propal->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfTolerancePropalsToBill").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','propal').'</td>';
+        print '<td>'.$langs->trans("DelaysOfTolerancePropalsToBill").'</td><td>';
         print '<input size="5" name="PropalsToBill" value="'. ($conf->global->MAIN_DELAY_PROPALS_TO_BILL+0) . '"> ' . $langs->trans("days") . '</td></tr>';	
     }
     if ($conf->service->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceNotActivatedServices").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','service').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceNotActivatedServices").'</td><td>';
         print '<input size="5" name="BoardNotActivatedServices" value="'. ($conf->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
     if ($conf->service->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceRunningServices").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','service').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceRunningServices").'</td><td>';
         print '<input size="5" name="BoardRunningServices" value="'. ($conf->global->MAIN_DELAY_RUNNING_SERVICES +0). '"> ' . $langs->trans("days") . '</td></tr>';
     }
     if ($conf->fournisseur->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','bill').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>';
         print '<input size="5" name="SupplierBillsToPay" value="'. ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }    
     if ($conf->facture->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpayed").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','bill').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpayed").'</td><td>';
         print '<input size="5" name="CustomerBillsUnpayed" value="'. ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }    
     if ($conf->banque->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceTransactionsToConciliate").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','account').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceTransactionsToConciliate").'</td><td>';
         print '<input size="5" name="TransactionsToConciliate" value="'. ($conf->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE+0) . '"> ' . $langs->trans("days") . '</td></tr>'; 
     }
     if ($conf->adherent->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceMembers").'</td><td>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','user').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceMembers").'</td><td>';
         print '<input size="5" name="Members" value="'. ($conf->global->MAIN_DELAY_MEMBERS+0). '"> ' . $langs->trans("days") . '</td></tr>';
     }
         
@@ -175,68 +195,88 @@ else
      */
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="60%">'.$langs->trans("DolibarrWorkBoard").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="2" width="60%">'.$langs->trans("DolibarrWorkBoard").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=true;
 
     $var=!$var;
 
     if (1== 1)
     {
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceActionsToDo").'</td><td>' . ($conf->global->MAIN_DELAY_ACTIONS_TODO+0) . ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','task').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceActionsToDo").'</td><td>' . ($conf->global->MAIN_DELAY_ACTIONS_TODO+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
     
     if ($conf->commande->enabled)
     {
     	$var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceOrdersToProcess").'</td><td>' . ($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS+0) . ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','order').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceOrdersToProcess").'</td><td>' . ($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
      
     if ($conf->propal->enabled)
     {
     	$var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfTolerancePropalsToClose").'</td><td>' . ($conf->global->MAIN_DELAY_PROPALS_TO_CLOSE+0). ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','propal').'</td>';
+        print '<td>'.$langs->trans("DelaysOfTolerancePropalsToClose").'</td><td>' . ($conf->global->MAIN_DELAY_PROPALS_TO_CLOSE+0). ' ' . $langs->trans("days") . '</td></tr>';
     }
 
     if ($conf->propal->enabled)
     {
     	$var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfTolerancePropalsToBill").'</td><td>' . ($conf->global->MAIN_DELAY_PROPALS_TO_BILL+0) . ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','propal').'</td>';
+        print '<td>'.$langs->trans("DelaysOfTolerancePropalsToBill").'</td><td>' . ($conf->global->MAIN_DELAY_PROPALS_TO_BILL+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
     if ($conf->service->enabled)
     {
     	$var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceNotActivatedServices").'</td><td>' . ($conf->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES+0) . ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','service').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceNotActivatedServices").'</td><td>' . ($conf->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
     
     if ($conf->service->enabled)
     {
     	$var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceRunningServices").'</td><td>' . ($conf->global->MAIN_DELAY_RUNNING_SERVICES+0). ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','service').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceRunningServices").'</td><td>' . ($conf->global->MAIN_DELAY_RUNNING_SERVICES+0). ' ' . $langs->trans("days") . '</td></tr>';
     }
 
     if ($conf->fournisseur->enabled)
     {
     	$var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>' . ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','bill').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>' . ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
     
     if ($conf->facture->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpayed").'</td><td>' . ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','bill').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpayed").'</td><td>' . ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
     if ($conf->banque->enabled)
     {
     	$var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceTransactionsToConciliate").'</td><td>' . ($conf->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE+0) . ' ' . $langs->trans("days") . '</td></tr>';    
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','account').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceTransactionsToConciliate").'</td><td>' . ($conf->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE+0) . ' ' . $langs->trans("days") . '</td></tr>';    
     }
 
     if ($conf->adherent->enabled)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td>'.$langs->trans("DelaysOfToleranceMembers").'</td><td>' . ($conf->global->MAIN_DELAY_MEMBERS+0) . ' ' . $langs->trans("days") . '</td></tr>';
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','user').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceMembers").'</td><td>' . ($conf->global->MAIN_DELAY_MEMBERS+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
     print '</table>';
@@ -249,6 +289,7 @@ else
 }
 
 
-llxFooter('$Date$ - $Revision$');
+$db->close();
 
+llxFooter('$Date$ - $Revision$');
 ?>

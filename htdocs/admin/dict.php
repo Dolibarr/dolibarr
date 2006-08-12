@@ -98,7 +98,7 @@ $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FR
 $tabsql[12]= "SELECT rowid   as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 
-// Tri par defaut
+// Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays, code ASC";
 $tabsqlsort[2] ="pays, code ASC";
 $tabsqlsort[3] ="pays, code ASC";
@@ -158,6 +158,20 @@ $tabrowid[11]= "rowid";
 $tabrowid[12]= "rowid";
 $tabrowid[13]= "id";
 
+// Condition to show dictionnary in setup page
+$tabcond[1] = $conf->societe->enabled;
+$tabcond[2] = true;
+$tabcond[3] = true;
+$tabcond[4] = true;
+$tabcond[5] = $conf->societe->enabled;
+$tabcond[6] = true;
+$tabcond[7] = $conf->tax->enabled;
+$tabcond[8] = $conf->societe->enabled;
+$tabcond[9] = true;
+$tabcond[10]= true;
+$tabcond[11]= true;
+$tabcond[12]= $conf->facture->enabled||$conf->fournisseur->enabled;
+$tabcond[13]= $conf->facture->enabled||$conf->fournisseur->enabled;
 
 $msg='';
 
@@ -302,6 +316,15 @@ if ($_GET["action"] == $acts[1])       // disable
 
 llxHeader();
 
+$titre=$langs->trans("DictionnarySetup");
+if ($_GET["id"])
+{
+	$titre.=' - '.$tablib[$_GET["id"]];
+}
+print_fiche_titre($titre,'','setup');
+
+print $langs->trans("DictionnaryDesc")."<br>\n";
+print "<br>\n";
 
 
 /*
@@ -309,31 +332,36 @@ llxHeader();
  */
 if ($_GET["id"])
 {
-    print_fiche_titre($langs->trans("DictionnarySetup").' - '.$tablib[$_GET["id"]],'','setup');
-
     if ($msg) {
         print $msg.'<br>';
     }
 
     // Complète requete recherche valeurs avec critere de tri
     $sql=$tabsql[$_GET["id"]];
-    if ($_GET["sortfield"]) {
-        $sql .= " ORDER BY ".$_GET["sortfield"];
-        if ($_GET["sortorder"]) {
-            $sql.=" ".$_GET["sortorder"];
+    if ($_GET["sortfield"])
+    {
+        $sql.= " ORDER BY ".$_GET["sortfield"];
+        if ($_GET["sortorder"])
+        {
+            $sql.=" ".strtoupper($_GET["sortorder"]);
         }
         $sql.=", ";
+		// Remove from default sort order the choosed order
+        $tabsqlsort[$_GET["id"]]=eregi_replace($_GET["sortfield"].' '.$_GET["sortorder"].',','',$tabsqlsort[$_GET["id"]]);
+        $tabsqlsort[$_GET["id"]]=eregi_replace($_GET["sortfield"].',','',$tabsqlsort[$_GET["id"]]);
     }
     else {
         $sql.=" ORDER BY ";   
     }
     $sql.=$tabsqlsort[$_GET["id"]];
+	//print $sql;
     
     $fieldlist=split(',',$tabfield[$_GET["id"]]);
     print '<table class="noborder" width="100%">';
 
     // Ligne d'ajout
-    if ($tabname[$_GET["id"]]) {
+    if ($tabname[$_GET["id"]])
+    {
         $alabelisused=0;
         $var=false;
         
@@ -345,7 +373,8 @@ if ($_GET["id"])
 
         // Ligne de titre d'ajout
         print '<tr class="liste_titre">';
-        foreach ($fieldlist as $field => $value) {
+        foreach ($fieldlist as $field => $value)
+        {
             // Determine le nom du champ par rapport aux noms possibles
             // dans les dictionnaires de données
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
@@ -373,7 +402,8 @@ if ($_GET["id"])
         // Ligne d'ajout
         print "<tr $bc[$var] class=\"value\">";
         $html = new Form($db);
-        foreach ($fieldlist as $field => $value) {
+        foreach ($fieldlist as $field => $value)
+        {
             if ($fieldlist[$field] == 'pays') {
                 print '<td>';
                 $html->select_pays('','pays');
@@ -437,7 +467,11 @@ if ($_GET["id"])
                 $html->selectyesno('fdm','',1);
                 print '</td>';
             }
-            else {
+            elseif ($fieldlist[$field] == 'taux') {
+                print '<td><input type="text" class="flat" value="" size="3" name="'.$fieldlist[$field].'"></td>';
+            }
+            else
+            {
                 print '<td><input type="text" class="flat" value="" name="'.$fieldlist[$field].'" ></td>';
             }
         }
@@ -541,7 +575,6 @@ else
     /*
      * Affichage de la liste des dictionnaires
      */
-    print_fiche_titre($langs->trans("DictionnarySetup"),'','setup');
 
     $var=true;
     print '<table class="noborder" width="100%">';
@@ -549,6 +582,8 @@ else
 
     foreach ($taborder as $i)
     {
+        if ($tabname[$i] && ! $tabcond[$i]) continue;	// If dictionnary and condition not true
+        
         $var=!$var;
         if ($i)
         {

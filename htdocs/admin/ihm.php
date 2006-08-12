@@ -84,6 +84,9 @@ llxHeader();
 
 print_fiche_titre($langs->trans("GUISetup"),'','setup');
 
+print $langs->trans("DisplayDesc")."<br>\n";
+print "<br>\n";
+
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
@@ -381,6 +384,8 @@ function show_theme($edit=0)
     print '</td></tr>';
     print '</table>';
 }
+
+$db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

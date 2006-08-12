@@ -148,6 +148,12 @@ llxHeader("","");
 print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 
 
+if ($mode==0) print $langs->trans("ModulesDesc")."<br>\n";
+if ($mode==1) print $langs->trans("ModulesInterfaceDesc")."<br>\n";
+if ($mode==2) print $langs->trans("ModulesSpecialDesc")."<br>\n";
+print "<br>\n";
+
+
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=0";
@@ -168,15 +174,8 @@ $h++;
 dolibarr_fiche_head($head, $hselected, $langs->trans("Modules"));
 
 
-if ($mode==0) print $langs->trans("ModulesDesc")."<br>\n";
-if ($mode==1) print $langs->trans("ModulesInterfaceDesc")."<br>\n";
-if ($mode==2) print $langs->trans("ModulesSpecialDesc")."<br>\n";
-
-
-
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
-print "<br>\n";
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Family")."</td>\n";
@@ -364,6 +363,7 @@ print "</table></div>\n";
 print '<div class="tabsAction">';
 print '</div>';
 
+$db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

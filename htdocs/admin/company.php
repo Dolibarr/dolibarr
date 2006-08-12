@@ -109,6 +109,8 @@ $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst")
 
 print_fiche_titre($langs->trans("CompanyFundation"),'','setup');
 
+print $langs->trans("CompanyFundationDesc")."<br>\n";
+print "<br>\n";
 
 if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
  || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
@@ -140,19 +142,19 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyName").'</td><td>';
-    print '<input name="nom" value="'. $conf->global->MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
+    print '<input name="nom" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyAddress").'</td><td>';
-    print '<textarea name="address" cols="50" rows="'.ROWS_2.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
+    print '<textarea name="address" cols="60" rows="'.ROWS_3.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyZip").'</td><td>';
-    print '<input name="cp" value="'. $conf->global->MAIN_INFO_SOCIETE_CP . '"></td></tr>';
+    print '<input name="cp" value="'. $conf->global->MAIN_INFO_SOCIETE_CP . '" size="10"></td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyTown").'</td><td>';
-    print '<input name="ville" value="'. $conf->global->MAIN_INFO_SOCIETE_VILLE . '"></td></tr>';
+    print '<input name="ville" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_VILLE . '"></td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
@@ -176,18 +178,18 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Mail").'</td><td>';
-    print '<input name="mail" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
+    print '<input name="mail" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Web").'</td><td>';
-    print '<input name="web" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
+    print '<input name="web" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
     print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
-    print '<input type="file" class="flat" name="logo" size="30">';
+    print '<input type="file" class="flat" name="logo" size="50">';
     print '</td><td valign="middle" align="right">';
     if ($mysoc->logo && file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
     {
@@ -577,7 +579,7 @@ else
     print '<br>';
 }
 
+$db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>
