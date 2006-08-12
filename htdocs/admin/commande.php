@@ -143,7 +143,7 @@ llxHeader();
 $dir = "../includes/modules/commande/";
 $html=new Form($db);
 
-print_titre($langs->trans("OrdersSetup"));
+print_fiche_titre($langs->trans("OrdersSetup"),'','setup');
 
 print "<br>";
 

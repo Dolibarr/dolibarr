@@ -40,7 +40,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print_titre($langs->trans("DatabaseConfiguration"));
+print_fiche_titre($langs->trans("DatabaseConfiguration"),'','setup');
 
 $base=0;
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')

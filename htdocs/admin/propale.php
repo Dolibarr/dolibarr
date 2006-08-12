@@ -164,7 +164,7 @@ $dir = "../includes/modules/propale/";
 $html=new Form($db);
 
 
-print_titre($langs->trans("PropalSetup"));
+print_fiche_titre($langs->trans("PropalSetup"),'','setup');
 
 /*
  *  Module numérotation

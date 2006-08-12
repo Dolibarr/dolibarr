@@ -57,7 +57,7 @@ if ($_GET["action"] == 'delete')
 
 llxHeader();
 
-print_fiche_titre($langs->trans("OtherSetup"));
+print_fiche_titre($langs->trans("OtherSetup"),'','setup');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

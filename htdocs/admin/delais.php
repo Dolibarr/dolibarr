@@ -62,11 +62,11 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 llxHeader();
 
+print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','setup');
+
+
 $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
-
-
-print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"));
 
 print $langs->transnoentities("DelaysOfToleranceDesc",img_warning())."<br>\n";
 

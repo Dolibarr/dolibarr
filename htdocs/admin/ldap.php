@@ -161,7 +161,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 llxHeader();
 
-print_titre($langs->trans("LDAPSetup"));
+print_fiche_titre($langs->trans("LDAPSetup"),'','setup');
 
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))

@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/constall.php
+/**
+		\file 		htdocs/admin/system/constall.php
 		\brief      Page d'info de toutes les constantes
 		\version    $Revision$
 */
@@ -36,7 +37,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print_titre($langs->trans("SummaryConst"));
+print_fiche_titre($langs->trans("SummaryConst"),'','setup');
 
 print '<br>';
 print '<table class="noborder">';

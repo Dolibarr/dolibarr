@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +32,17 @@ include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".li
 $langs->load("admin");
 $langs->load("user");
 
-
 if (!$user->admin)
   accessforbidden();
 
+
 llxHeader();
 
-print_titre($langs->trans("SummarySystem"));
+print_fiche_titre($langs->trans("SummarySystem"),'','setup');
 
 print "<br>\n";
+
+print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";

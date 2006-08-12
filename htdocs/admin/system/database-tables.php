@@ -46,7 +46,7 @@ if ($_GET["action"] == 'convert')
 llxHeader();
 
 
-print_titre($langs->trans("Tables")." ".ucfirst($conf->db->type));
+print_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','setup');
 
 $base=0;
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')

@@ -139,7 +139,7 @@ elseif ($actiontest)
 
 llxHeader();
 
-print_titre($langs->trans("WebCalSetup"));
+print_fiche_titre($langs->trans("WebCalSetup"),'','setup');
 print '<br>';
 
 

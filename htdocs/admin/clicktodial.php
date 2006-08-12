@@ -55,7 +55,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 
 llxHeader();
 
-print_titre($langs->trans("ClickToDialSetup"));
+print_fiche_titre($langs->trans("ClickToDialSetup"),'','setup');
 
 if ($mesg) print '<br>'.$mesg;
 

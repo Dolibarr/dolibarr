@@ -35,7 +35,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print_titre("OS");
+print_fiche_titre("OS",'','setup');
 
 print "<br>\n";
 

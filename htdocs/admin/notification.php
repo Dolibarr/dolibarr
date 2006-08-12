@@ -57,7 +57,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 
 llxHeader();
 
-print_titre($langs->trans("NotificationSetup"));
+print_fiche_titre($langs->trans("NotificationSetup"),'','setup');
 
 if ($mesg) print '<br>'.$mesg;
 

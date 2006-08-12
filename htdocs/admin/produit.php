@@ -156,7 +156,7 @@ else if ($_POST["action"] == 'viewProdDescInForm')
 llxHeader('',$langs->trans("ProductSetup"));
 
 
-print_titre($langs->trans("ProductSetup"));
+print_fiche_titre($langs->trans("ProductSetup"),'','setup');
 
 $html=new Form($db);
 $var=true;

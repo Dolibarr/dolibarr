@@ -36,7 +36,7 @@ $langs->load("other");
 
 llxHeader();
 
-print_titre($langs->trans("SyslogSetup"));
+print_fiche_titre($langs->trans("SyslogSetup"),'','setup');
 print '<br>';
 
 $def = array();

@@ -122,7 +122,7 @@ if ($_POST["delete"])
   
 llxHeader();
 
-print_fiche_titre($langs->trans("ExternalRSSSetup"), $mesg);
+print_fiche_titre($langs->trans("ExternalRSSSetup"), $mesg, 'setup');
 
 print '<form name="externalrssconfig" action="external_rss.php" method="post">';
 

@@ -40,8 +40,7 @@ accessforbidden();
 
 llxHeader();
 
-
-print_titre($langs->trans("Constraints"));
+print_fiche_titre($langs->trans("Constraints"),'','setup');
 
 $base=0;
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')

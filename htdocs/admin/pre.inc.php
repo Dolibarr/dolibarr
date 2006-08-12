@@ -42,11 +42,11 @@ function llxHeader($head = "", $title="", $help_url='')
   $langs->load("admin");
   $langs->load("users");
   
-  $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("MenuCompanySetup"));
-
-  $menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
+  $menu->add(DOL_URL_ROOT."/admin/company.php", $langs->trans("MenuCompanySetup"));
 
   $menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
+
+  $menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
 
   $menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
   

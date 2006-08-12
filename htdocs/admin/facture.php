@@ -190,7 +190,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
  *  Module numérotation
  */
 
-print_titre($langs->trans("BillsNumberingModule"));
+print_fiche_titre($langs->trans("BillsNumberingModule"),'','setup');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

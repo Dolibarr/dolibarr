@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print_titre($langs->trans("WebServer"));
+print_fiche_titre($langs->trans("WebServer"),'','setup');
 
 print "<br>\n";
 

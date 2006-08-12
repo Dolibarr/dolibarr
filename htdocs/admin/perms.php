@@ -51,6 +51,8 @@ if ($_GET["action"] == 'remove')
 
 llxHeader();
 
+print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
+
 
 $h = 0;
 

@@ -125,7 +125,7 @@ elseif ($_POST["test"])
 
 llxHeader();
 
-print_titre($langs->trans("OSCommerceSetup"));
+print_fiche_titre($langs->trans("OSCommerceSetup"),'','setup');
 
 
 

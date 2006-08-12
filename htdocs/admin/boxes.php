@@ -115,7 +115,7 @@ if ($_GET["action"] == 'switch')
 
 llxHeader();
 
-print_fiche_titre($langs->trans("Boxes"));
+print_fiche_titre($langs->trans("Boxes"),'','setup');
 
 print $langs->trans("BoxesDesc")."<br>\n";
 

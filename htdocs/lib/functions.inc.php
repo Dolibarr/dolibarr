@@ -1531,12 +1531,16 @@ function print_titre($titre)
 		\brief  Affichage d'un titre d'une fiche, aligné a gauche
 		\param	titre			Le titre a afficher
 		\param	mesg			Message suplémentaire à afficher à droite
+		\param	picto			Picto pour ligne de titre
 */
-function print_fiche_titre($titre, $mesg='')
+function print_fiche_titre($titre, $mesg='', $picto='')
 {
     print "\n";
-    print '<table width="100%" border="0" class="notopnoleftnoright">';
-    print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.'</div></td>';
+    print '<table width="100%" border="0" class="notopnoleftnoright"><tr>';
+	if ($picto) print '<td width="24" align="left" valign="middle">'.img_picto('',$picto).'</td>';
+    print '<td class="notopnoleftnoright" valign="middle">';
+    print '<div class="titre">'.$titre.'</div>';
+    print '</td>';
     if (strlen($mesg))
     {
         print '<td align="right" valign="middle"><b>'.$mesg.'</b></td>';

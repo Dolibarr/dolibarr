@@ -195,6 +195,7 @@ ActionsToDo=Actions to do
 ActionsDone=Actions done
 ActionsToDoShort=To do
 ActionsDoneShort=Done
+CompanyFundation=Company/Fundation
 ContactsForCompany=Contacts for company
 ActionsOnCompany=Actions about company
 NActions=%s actions

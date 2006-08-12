@@ -167,7 +167,7 @@ if ($resql)
     }
 }
 
-print_titre($langs->trans("SendingMethod"));
+print_fiche_titre($langs->trans("SendingMethod"),'','setup');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

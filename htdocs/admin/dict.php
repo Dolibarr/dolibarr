@@ -309,7 +309,7 @@ llxHeader();
  */
 if ($_GET["id"])
 {
-    print_fiche_titre($langs->trans("DictionnarySetup").' - '.$tablib[$_GET["id"]]);
+    print_fiche_titre($langs->trans("DictionnarySetup").' - '.$tablib[$_GET["id"]],'','setup');
 
     if ($msg) {
         print $msg.'<br>';
@@ -541,7 +541,7 @@ else
     /*
      * Affichage de la liste des dictionnaires
      */
-    print_fiche_titre($langs->trans("DictionnarySetup"));
+    print_fiche_titre($langs->trans("DictionnarySetup"),'','setup');
 
     $var=true;
     print '<table class="noborder" width="100%">';
@@ -569,6 +569,4 @@ print '<br>';
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
-
 ?>

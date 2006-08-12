@@ -41,7 +41,7 @@ if (!$user->admin)
 llxHeader();
 
 
-print_titre($langs->trans("Table") . " ".$_GET["table"]);
+print_fiche_titre($langs->trans("Table") . " ".$_GET["table"],'','setup');
 
 if ($conf->db->type == 'mysql')
 {

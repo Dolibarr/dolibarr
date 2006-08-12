@@ -54,14 +54,14 @@ $dir = "../includes/modules/dons/";
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 
-print_titre($langs->trans("DonationsSetup"));
+print_fiche_titre($langs->trans("DonationsSetup"),'','setup');
 
 
 /*
  *  PDF
  */
 print '<br>';
-print_titre("Modèles de bon de dons");
+print_titre($langs->trans("DonationsModels"));
 
 print '<table class="noborder" width=\"100%\">';
 print '<tr class="liste_titre">';

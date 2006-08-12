@@ -57,6 +57,8 @@ if ($_GET["action"] == 'setgeneraterule')
 
 llxHeader();
 
+print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
+
 
 $h = 0;
 

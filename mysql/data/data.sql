@@ -44,8 +44,6 @@ insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_
 insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (6,'PROFORMA',    6,1, 'Proforma','Réglement avant livraison',0,0);
 
 
-insert into llx_sqltables (name, loaded) values ('llx_album',0);
-
 --
 -- Définition des actions de workflow notifications
 --

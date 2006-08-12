@@ -74,7 +74,7 @@ if ($_GET['action'] == 'delete')
  */
 
 $html=new Form($db);
-print_titre($langs->trans('ComptaSetup'));
+print_fiche_titre($langs->trans('ComptaSetup'),'','setup');
 
 
 print '<br>';

@@ -145,6 +145,9 @@ function UnActivate($value,$requiredby=1)
  
 llxHeader("","");
 
+print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
+
+
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=0";

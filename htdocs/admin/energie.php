@@ -59,7 +59,7 @@ llxHeader();
  *
  */
 
-print_titre($langs->trans("Energy"));
+print_fiche_titre($langs->trans("Energy"),'','setup');
 
 print '<br>';
 print '<form method="post" action="energie.php">';

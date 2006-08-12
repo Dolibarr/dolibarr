@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ function UnActivate($value)
 llxHeader("","");
 
 
-print_fiche_titre($langs->trans("TriggersAvailable"));
+print_fiche_titre($langs->trans("TriggersAvailable"),'','setup');
 
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";

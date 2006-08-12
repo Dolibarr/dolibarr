@@ -76,7 +76,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_titre($langs->trans("CompanySetup"));
+print_fiche_titre($langs->trans("CompanySetup"),'','setup');
 
 print "<br>";
 

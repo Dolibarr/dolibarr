@@ -17,11 +17,10 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-		\file 		htdocs/admin/boutique-update-all.php
+		\file 		htdocs/admin/boutique-special-all.php
 		\ingroup    boutique
 		\brief      Page d'administration/configuration du module Boutique
 		\version    $Revision$
@@ -31,6 +30,7 @@ require("./pre.inc.php");
 require("../boutique/livre/livre.class.php");
 require("../boutique/editeur/editeur.class.php");
 require("../boutique/auteur/auteur.class.php");
+require("../product/promotion/promotion.class.php");
 
 $langs->load("admin");
 
@@ -41,7 +41,7 @@ if (!$user->admin)
 llxHeader();
 
 
-print_barre_liste("Mise a jour de tous les livres", $page, "boutique-update-all.php");
+print_barre_liste("Mise a jour de tous les livres", $page, "boutique-special-all.php");
 
 $sql = "SELECT l.rowid FROM ".MAIN_DB_PREFIX."livre as l";
   
@@ -56,8 +56,10 @@ if ( $db->query($sql) )
     $livre = new Livre($db);
     if ($livre->fetch($objp->rowid))
       {
-	$livre->updateosc();
-	print "livre ".$objp->rowid." up to date<br>";
+	
+	$prom = new Promotion($db);
+	$prom->create($user,$livre->oscid, 5);
+
       }
     else 
       {

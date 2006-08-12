@@ -112,7 +112,7 @@ llxHeader();
 $dir=DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
 $html=new Form($db);
 
-print_titre($langs->trans("InterventionsSetup"));
+print_fiche_titre($langs->trans("InterventionsSetup"),'','setup');
 
 print "<br>";
 

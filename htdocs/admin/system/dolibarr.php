@@ -33,8 +33,7 @@ if (!$user->admin)
 
 llxHeader();
 
-
-print_titre("Dolibarr");
+print_fiche_titre("Dolibarr",'','setup');
 
 print "<br>\n";
 
