@@ -58,7 +58,7 @@ if ($_GET["action"] == 'settype' && $user->admin)
 
 llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');
 
-print_titre($langs->trans("BarcodeSetup"));
+print_fiche_titre($langs->trans("BarcodeSetup"),'','setup');
 
 /*
  *  CHOIX ENCODAGE

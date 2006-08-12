@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -34,11 +33,14 @@ require("./pre.inc.php");
 llxHeader();
 
 
-print_titre("Dolibarr");
+print_fiche_titre("Dolibarr",'','setup');
 
 print "<br>\n";
 
-print $langs->trans("DolibarrLicense").': GNU/GPL<br>';
+print $langs->trans("DolibarrLicense").':';
+print '<ul>';
+print '<li>GNU/GPL</li>';
+print '</ul>';
 
 print "<br>\n";
 
@@ -63,13 +65,14 @@ print $langs->trans("Informations").':';
 
 print '<ul>';
 print '<li>';
+print '<a target="blank" href="http://www.dolibarr.org/">'.$langs->trans("OfficialWebSite").'</a>';
+print '</li>';
+// Si langue francaise, on affiche site web francophone
 if (eregi('^fr_',$langs->getDefaultLang()))
 {
+	print '<li>';
 	print '<a target="blank" href="http://www.dolibarr.com/">'.$langs->trans("OfficialWebSiteFr").'</a>';
-}
-else
-{
-	print '<a target="blank" href="http://www.dolibarr.org/">'.$langs->trans("OfficialWebSite").'</a>';
+	print '</li>';
 }
 print '<li>';
 print '<a target="blank" href="http://freshmeat.net/projects/dolibarr/">Freshmeat</a>';
@@ -77,17 +80,17 @@ print '</li>';
 
 if (eregi('^fr_',$langs->getDefaultLang()))
 {
-print '<li>';
-print 'Les tâches en cours de réalisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
-print '</li>';
-
-print '<li>';
-print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les développeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">système de gestion des bogues</a> de Savannah.';
-print '</li>';
-
-print '<li>';
-print 'Le code source de Dolibarr est consultable par l\'<a target="blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.';
-print '</li>';
+	print '<li>';
+	print 'Les tâches en cours de réalisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
+	print '</li>';
+	
+	print '<li>';
+	print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les développeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">système de gestion des bogues</a> de Savannah.';
+	print '</li>';
+	
+	print '<li>';
+	print 'Le code source de Dolibarr est consultable par l\'<a target="blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.';
+	print '</li>';
 }
 
 print '</ul>';

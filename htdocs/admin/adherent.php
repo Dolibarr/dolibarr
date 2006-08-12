@@ -107,7 +107,7 @@ llxHeader();
  * Interface de configuration de certaines variables de la partie adherent
  */
 
-print_titre($langs->trans("MembersSetup"));
+print_fiche_titre($langs->trans("MembersSetup"),'','setup');
 print "<br>";
 
 
