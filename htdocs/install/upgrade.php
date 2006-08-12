@@ -133,7 +133,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
             if (eregi($migfile,$file))
             {
                 print '<tr><td nowrap>';
-                print $langs->trans("ChooseMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
+                print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
 
                 $name = substr($file, 0, strlen($file) - 4);
                 $buffer = '';

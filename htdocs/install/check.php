@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Marc Barilley / Océbo <marc@ocebo.com>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,10 @@ dolibarr_install_syslog("Dolibarr install/upgrade process started");
 
 
 pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
+
+print '<center><img src="../theme/dolibarr_logo_2.png" alt="Dolibarr logo"></center><br>';
+print "<br>";
+
 
 print $langs->trans("InstallEasy")."<br>";
 
