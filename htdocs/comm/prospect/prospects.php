@@ -199,7 +199,7 @@ if ($resql)
         $i++;
     }
     
-    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num);
+    if ($num > $conf->liste_limit) print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num);
     
     print "</table>";
     $db->free($resql);
