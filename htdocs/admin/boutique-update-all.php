@@ -20,7 +20,8 @@
  *
  */
 
-/*!	\file htdocs/admin/boutique-update-all.php
+/**
+		\file 		htdocs/admin/boutique-update-all.php
 		\ingroup    boutique
 		\brief      Page d'administration/configuration du module Boutique
 		\version    $Revision$
