@@ -54,10 +54,9 @@ if ($user->admin && ! defined("MAIN_REMOVE_INSTALL_WARNING"))
     if (is_dir(DOL_DOCUMENT_ROOT."/install") && is_readable(DOL_DOCUMENT_ROOT."/install"))
     {
         $langs->load("other");
-        print '<table width="100%"><tr><td>';
-        print '<div class="warning">'.$langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install").' ';
-        print $langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install").'</div>';   
-        print '</td></tr></table>';
+        $message=$langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install");
+        $message.=$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install");
+		print info_admin($message);
         print "<br>\n";
     }
 }

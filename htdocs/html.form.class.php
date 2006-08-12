@@ -662,18 +662,18 @@ class Form
 
 		dolibarr_syslog("html.form.class::select_projects sql=$sql");
 
-		$result=$this->db->query($sql);
-		if ($result)
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
     		print '<option value="0">&nbsp;</option>';
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 					if (!empty($selected) && $selected == $obj->rowid)
 					{
 						print '<option value="'.$obj->rowid.'" selected="true">'.$obj->title.'</option>';
@@ -704,7 +704,7 @@ class Form
     function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
     {
 		global $langs,$conf,$user;
-		if($conf->use_ajax)
+		if ($conf->use_ajax)
 		{
 			print $langs->trans("Ref").':<input type="text" size="8" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp; &nbsp;';
 			print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
