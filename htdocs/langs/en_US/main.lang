@@ -321,6 +321,7 @@ ShowSupplierPreview=Show supplier preview
 ShowAccountancyPreview=Show accountancy preview
 RefCustomer=Ref. customer
 Currency=Currency
+InfoAdmin=Information for administrators
 # Countries
 CountryFR=France
 CountryBE=Belgium

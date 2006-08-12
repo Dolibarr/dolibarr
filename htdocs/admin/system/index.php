@@ -40,8 +40,7 @@ llxHeader();
 
 print_fiche_titre($langs->trans("SummarySystem"),'','setup');
 
-print "<br>\n";
-
+//print "<br>\n";
 print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
 print '<table class="noborder" width="100%">';

@@ -64,8 +64,8 @@ print "<br>";
 print img_picto('','puce').' '.$langs->trans("SetupDescription4")."<br>";
 print "<br>";
 
-    
 print '<br>';
+print info_admin($langs->trans("OnceSetupFinishedCreateUsers")).'<br>';
 
 $db->close();
 

@@ -321,6 +321,7 @@ ShowSupplierPreview=Afficher aperçu fournisseur
 ShowAccountancyPreview=Afficher aperçu compta
 RefCustomer=Réf. client
 Currency=Devise
+InfoAdmin=Information pour les administrateurs
 # Countries
 CountryFR=France
 CountryBE=Belgique

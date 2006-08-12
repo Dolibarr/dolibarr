@@ -382,6 +382,7 @@ TriggersDesc=Les triggers sont des composants qui, une fois activés, modifient l
 GeneratedPasswordDesc=Definissez ici quelle règle vous voulez utilisez pour générer les mots de passe quand vous demander à fabriquer un nouveau mot de passe
 DictionnaryDesc=Definissez ici les données de référence. Vous pouvez compléter/modifier les données prédéfinies avec les votres
 ConstDesc=Tout autre parametre non editable dans les pages précédentes
+OnceSetupFinishedCreateUsers=Attention, vous êtes sous un compte administrateur de Dolibarr. Les administrateurs sont utilisés pour configurer Dolibarr. Pour une utilisation courante de Dolibarr, il est recommandé d'utiliser un compte non administrateur crée depuis le menu "Utilisateurs & Groupes".
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Proposer un mot de passe généré

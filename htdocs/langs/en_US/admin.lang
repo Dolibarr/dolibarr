@@ -382,6 +382,7 @@ TriggersDesc=Triggers are components that modify, once activated, the behaviour 
 GeneratedPasswordDesc=Define here which rule you want to use to generate new password if you ask to have auto generated password
 DictionnaryDesc=Define here all reference datas. You can complete predefined value with yours
 ConstDesc=All other parameters not available in previous pages
+OnceSetupFinishedCreateUsers=Warning, you are a Dolibarr administrator user. Administrator users are used to setup Dolibarr. For a usual usage of Dolibarr, it is recommanded to use a non administrator user created from Users & Groups menu.
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
