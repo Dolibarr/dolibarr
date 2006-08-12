@@ -29,7 +29,7 @@
 */
 
 require("./pre.inc.php");
-include_once $dolibarr_main_document_root."/lib/".$conf->db->type.".lib.php";
+include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
 
 $langs->load("admin");
 
