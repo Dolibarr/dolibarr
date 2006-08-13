@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file   	htdocs/compta/bank/pre.inc.php
-   \ingroup    compta
-   \brief  	Fichier gestionnaire du menu compta banque
+		\file   	htdocs/compta/bank/pre.inc.php
+		\ingroup    compta
+		\brief  	Fichier gestionnaire du menu compta banque
 */
 
 require_once("../../main.inc.php");
@@ -57,9 +56,10 @@ function llxHeader($head = "")
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=" . $objp->rowid,  $objp->label);
-				if ($objp->courant != 2) $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,$langs->trans("AccountStatements"));
-				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=" . $objp->rowid ,$langs->trans("IOMonthlyReporting"));
+				$menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid,  $objp->label);
+				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
+				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
+				if ($objp->courant != 2) $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=".$objp->rowid ,$langs->trans("AccountStatements"));
 				$i++;
 			}
 		}

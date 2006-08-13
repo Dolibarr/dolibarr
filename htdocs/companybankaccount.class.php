@@ -185,7 +185,7 @@ class CompanyBankAccount
    */
   function verif()
   {
-    require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
+    require_once DOL_DOCUMENT_ROOT . '/lib/bank.lib.php';
 
 
     if (strlen(trim($this->code_banque)) == 0)

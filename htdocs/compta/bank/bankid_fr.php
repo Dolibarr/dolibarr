@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 $langs->load("banks");
 
@@ -103,21 +104,11 @@ $form = new Form($db);
 		/*
 		* Affichage onglets
 		*/
-		$h=0;
+		$titre=$langs->trans("FinancialAccount")." : ".$account->label;
+		print_fiche_titre($titre,$mesg);
 
-		$head[$h][0] = 'fiche.php?id='.$account->id;
-		$head[$h][1] = $langs->trans("AccountCard");
-		$head[$h][2] = 'bankname';
-		$h++;
-		
-		if ($account->type == 0 || $account->type == 1)
-		{
-			$head[$h][0] = 'bankid_fr.php?id='.$account->id;
-			$head[$h][1] = $langs->trans("RIB");
-			$head[$h][2] = 'bankid';
-			$h++;
-		}
-			
+		// Onglets
+		$head=bank_prepare_head($account);
 		dolibarr_fiche_head($head, 'bankid', $langs->trans("FinancialAccount"));
 	
 		/*
@@ -186,7 +177,7 @@ $form = new Form($db);
 
 		print '</table>';
 	
-		print '</div>';
+		print "\n</div>\n";
 	
 	
 		/*

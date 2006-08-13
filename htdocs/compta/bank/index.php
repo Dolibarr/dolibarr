@@ -27,10 +27,8 @@
         \version    $Revision$
 */
 
-
 require("./pre.inc.php");
-
-require("./bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require("../../tva.class.php");
 require("../../chargesociales.class.php");
 

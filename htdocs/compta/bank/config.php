@@ -28,10 +28,11 @@
 */
 
 require("./pre.inc.php");
-require("./bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 if (!$user->rights->banque->configurer)
   accessforbidden();
+
 
 llxHeader();
 

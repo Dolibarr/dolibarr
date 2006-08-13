@@ -26,18 +26,19 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 if (!$user->rights->banque->lire)
   accessforbidden();
 
+$account = $_GET["account"];
+
+
 
 llxHeader();
 
-$account = $_GET["id"];
-
 if ($account > 0)
 {
-
     $datetime = time();
     $month = strftime("%m", $datetime);
     $year = strftime("%Y", $datetime);
@@ -45,23 +46,28 @@ if ($account > 0)
     $acct = new Account($db);
     $acct->fetch($account);
     
-    print_fiche_titre("Journal de trésorerie du compte: " .$acct->getNomUrl(0),$mesg);
-    
-    print '<table class="notopnoleftnoright" width="100%">';
+
+	$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
+	print_fiche_titre($titre,$mesg);
+
+	// Onglets
+	$head=bank_prepare_head($acct);
+	dolibarr_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0);
+	
+	print '<table class="notopnoleftnoright" width="100%">';
     print '<tr><td>';
     $file = "solde.$account.$year.png";
 
-    /* Bug
-    if (! file_exists($conf->$file))
-      {
-	print "Pour générer ou regénérer les graphiques, lancer le script ./scripts/banque/graph-solde.php en ligne de commande.<br>";
-      print '<br>';
-      }
-    else
-      {
-        print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
-      }
-    */
+	if (! file_exists($conf->banque->dir_images."/".$file))
+	{
+		print "Pour générer ou regénérer les graphiques, lancer le script ./scripts/banque/graph-solde.php en ligne de commande.<br>";
+		print '<br>';
+	}
+	else
+	{
+		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+	}
+
     print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     print '</td></tr><tr><td>';
     
@@ -76,6 +82,9 @@ if ($account > 0)
     
     print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     
-    print '</td></tr></table>';    
+    print '</td></tr></table>';
+    
+	print "\n</div>\n";
+    
 }
 ?>

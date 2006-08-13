@@ -50,11 +50,11 @@ $stcomm=isset($_GET["stcomm"])?$_GET["stcomm"]:$_POST["stcomm"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-if ($page == -1) { $page = 0 ; }
+if ($page == -1) { $page = 0; }
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$offset = $conf->liste_limit * $page ;
+$offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 

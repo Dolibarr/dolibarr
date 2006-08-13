@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 $langs->load("banks");
 
@@ -215,8 +216,11 @@ if ($_GET["action"] == 'create')
 	print '<tr><td valign="top">'.$langs->trans("Web").'</td>';
 	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
 
+	// Comment
 	print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
-	print '<td colspan="3"><textarea cols="70" class="flat" name="account_comment">'.$account->comment.'</textarea></td></tr>';
+	print '<td colspan="3">';
+	print '<textarea cols="70" class="flat" name="account_comment">'.$account->comment.'</textarea>';
+	print '</td></tr>';
 
 	// Solde
 	print '<tr><td colspan="4"><b>'.$langs->trans("InitialBankBalance").'...</b></td></tr>';
@@ -254,21 +258,11 @@ else
 		/*
 		* Affichage onglets
 		*/
-		$h=0;
-		
-		$head[$h][0] = 'fiche.php?id='.$account->id;
-		$head[$h][1] = $langs->trans("AccountCard");
-		$head[$h][2] = 'bankname';
-		$h++;
+		$titre=$langs->trans("FinancialAccount")." : ".$account->label;
+		print_fiche_titre($titre,$mesg);
 
-		if ($account->type == 0 || $account->type == 1)
-		{
-			$head[$h][0] = 'bankid_fr.php?id='.$account->id;
-			$head[$h][1] = $langs->trans("RIB");
-			$head[$h][2] = 'bankid';
-			$h++;
-		}
-	
+		// Onglets
+		$head=bank_prepare_head($account);
 		dolibarr_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"));
 	
 		/*
@@ -433,13 +427,16 @@ else
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalDesired").'</td>';
 		print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.$account->min_desired.'"></td></tr>';
 
+		// Web
         print '<tr><td valign="top">'.$langs->trans("Web").'</td>';
         print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$account->url.'">';
         print '</td></tr>';
 
+		// Comment
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
-		print '<td colspan="3"><textarea cols="70" class="flat" name="account_comment">'.$account->comment.'</textarea></td></tr>';
-	
+		print '<td colspan="3">';
+		print '<textarea cols="70" class="flat" name="account_comment">'.$account->comment.'</textarea>';
+		print '</td></tr>';
         
         print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
         print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';

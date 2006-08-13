@@ -271,7 +271,7 @@ class Account
 		if (! $this->min_desired) $this->min_desired=0;
 		
         // Chargement librairie pour acces fonction controle RIB
-        require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/lib/bank.lib.php';
 
         if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
             $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
@@ -388,7 +388,7 @@ class Account
         global $langs;
         
         // Chargement librairie pour acces fonction controle RIB
-        require_once(DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php');
+        require_once(DOL_DOCUMENT_ROOT.'/lib/bank.lib.php');
 
 		dolibarr_syslog("Account.class::update $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix");
 

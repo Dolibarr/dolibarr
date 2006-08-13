@@ -31,7 +31,7 @@ require("../../conf/conf.php");
 header('Content-type: text/css');
 // Important: Avoid page request by browser and dynamic build at
 // each Dolibarr page access.
-header('Cache-Control: max-age=3600, must-revalidate');
+header('Cache-Control: max-age=3600, public, must-revalidate');
 
 ?>
 

@@ -234,10 +234,11 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 		\param	    links		Tableau de titre d'onglets
 		\param	    active      0=onglet non actif, 1=onglet actif
 		\param      title       Titre tabelau ("" par defaut)
+		\param      notab		0=Add tab header, 1=no tab header
 */
-function dolibarr_fiche_head($links, $active='0', $title='')
+function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
 {
-    print '<div class="tabs">'."\n";
+    print "\n".'<div class="tabs">'."\n";
 
     // Affichage titre
     if ($title)
@@ -275,7 +276,7 @@ function dolibarr_fiche_head($links, $active='0', $title='')
 
     print "</div>\n";
     
-    print '<div class="tabBar">'."\n\n";
+    if (! $notab) print '<div class="tabBar">'."\n\n";
 }
 
 /**
@@ -1580,7 +1581,7 @@ function dol_delete_dir($dir)
 		\param	titre			titre de la page
 		\param	page			numéro de la page
 		\param	file			lien
-		\param	options         options cellule td ('' par defaut)
+		\param	options         parametres complementaires lien ('' par defaut)
 		\param	sortfield       champ de tri ('' par defaut)
 		\param	sortorder       ordre de tri ('' par defaut)
 		\param	center          chaine du centre ('' par defaut)
@@ -1603,7 +1604,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
     if ($page > 0 || $num > $conf->liste_limit)
     {
-        print '<tr><td><div class="titre">'.$titre.' - page '.($page+1);
+        print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.' - page '.($page+1);
         print '</div></td>';
     }
     else

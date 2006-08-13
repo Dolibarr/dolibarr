@@ -86,3 +86,4 @@ DateConciliating=Date rapprochement
 BankLineConciliated=Ecriture rapprochée
 CustomerInvoicePayment=Règlement client
 SupplierInvoicePayment=Règlement fournisseur
+FinancialAccountJournal=Journal de trésorerie du compte

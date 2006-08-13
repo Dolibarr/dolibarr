@@ -86,3 +86,4 @@ DateConciliating=Conciliate date
 BankLineConciliated=Transaction conciliated
 CustomerInvoicePayment=Customer payment
 SupplierInvoicePayment=Supplier payment
+FinancialAccountJournal=Financial account journal

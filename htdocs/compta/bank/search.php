@@ -28,7 +28,7 @@
 */
 
 require("./pre.inc.php");
-require("./bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 $user->getrights('banque');
 

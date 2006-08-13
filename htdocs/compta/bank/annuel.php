@@ -22,13 +22,14 @@
  */
 
 /**
-   \file        htdocs/compta/bank/annuel.php
-   \ingroup     banque
-   \brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
-   \version     $Revision$
+	\file        htdocs/compta/bank/annuel.php
+	\ingroup     banque
+	\brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
+	\version     $Revision$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 if (!$user->rights->banque->lire) accessforbidden();
 
@@ -44,6 +45,13 @@ else
   $year_end=$year_start+2;   
 }
 
+// Sécurité accés client
+if ($user->societe_id > 0) 
+{
+  $socidp = $user->societe_id;
+}
+
+
 
 llxHeader();
 
@@ -51,17 +59,6 @@ llxHeader();
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $socidp = $user->societe_id;
-}
-$title=$langs->trans("IOMonthlyReporting").", ".$langs->trans("FinancialAccount")." : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>";
-$lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
-print_fiche_titre($title,$lien);
-print '<br>';
 
 # Ce rapport de trésorerie est basé sur llx_bank (car doit inclure les transactions sans facture)
 # plutot que sur llx_paiement + llx_paiementfourn
@@ -75,16 +72,18 @@ $sql .= " GROUP BY dm";
 $resql=$db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0; 
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($resql);
-      $encaiss[$row[1]] = $row[0];
-      $i++;
-    }
-} else {
-    dolibarr_print_error($db);
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		$encaiss[$row[1]] = $row[0];
+		$i++;
+	}
+}
+else
+{
+	dolibarr_print_error($db);
 }
 
 $sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";
@@ -95,17 +94,28 @@ $sql .= " GROUP BY dm";
 $resql=$db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($resql);
-      $decaiss[$row[1]] = -$row[0];
-      $i++;
-    }
-} else {
-    dolibarr_print_error($db);
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		$decaiss[$row[1]] = -$row[0];
+		$i++;
+	}
 }
+else
+{
+	dolibarr_print_error($db);
+}
+
+
+$title=$langs->trans("FinancialAccount")." : ".$acct->label;
+$lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+print_fiche_titre($title,$lien);
+
+// Onglets
+$head=bank_prepare_head($acct);
+dolibarr_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0);
 
 
 // Affiche tableau
@@ -169,7 +179,6 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     $nbcol+=2;
 }
 print "</tr>\n";
-print '<td colspan="'.$nbcol.'">&nbsp;</td>';
 
 // Solde actuel
 $balance=0;
@@ -191,6 +200,7 @@ print "</tr>\n";
 
 print "</table>";
 
+print "\n</div>\n";
 
 $db->close();
 
