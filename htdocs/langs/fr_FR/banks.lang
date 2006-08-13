@@ -44,6 +44,7 @@ StandingOrderProcessed=Traités
 NewAccount=Nouveau compte
 NewBankAccount=Nouveau compte bancaire
 NewFinancialAccount=Nouveau compte financier
+MenuNewFinancialAccount=Nouveau compte
 NewCurrentAccount=Nouveau compte courant
 NewSavingAccount=Nouveau compte épargne
 NewCashAccount=Nouveau compte caisse

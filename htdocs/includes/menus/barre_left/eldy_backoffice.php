@@ -448,8 +448,6 @@ class MenuLeft {
                 	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
                 }
 
-				$newmenu->add(DOL_URL_ROOT."/compta/bank/config.php",$langs->trans("MenuSetupBank"),0,$user->rights->banque->configurer);
-
             }
         
         

@@ -56,10 +56,12 @@ function llxHeader($head = "")
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid,  $objp->label);
+				$menu->add(DOL_URL_ROOT."/compta/bank/fiche.php?id=".$objp->rowid,  $objp->label);
+/*
 				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
 				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
 				if ($objp->courant != 2) $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=".$objp->rowid ,$langs->trans("AccountStatements"));
+*/
 				$i++;
 			}
 		}
@@ -67,6 +69,9 @@ function llxHeader($head = "")
 	}
 	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"));
 	
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"));
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Categories"));
+
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"));
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByCategories"));
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan");
@@ -74,11 +79,6 @@ function llxHeader($head = "")
 	if ($user->rights->banque->modifier)
 	{
 		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("Virements"));
-	}
-	
-	if ($user->rights->banque->configurer)
-	{
-		$menu->add(DOL_URL_ROOT."/compta/bank/config.php",$langs->trans("MenuSetupBank"));
 	}
 	
 	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)

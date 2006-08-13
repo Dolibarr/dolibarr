@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,29 +32,28 @@ require("./pre.inc.php");
 if (!$user->rights->banque->configurer)
   accessforbidden();
 
-llxHeader();
 
 
 /*
- * Actions ajout catégorie
- */
+* Actions ajout catégorie
+*/
 if ($_POST["action"] == 'add')
 {
-  if ($_POST["label"])
-    {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('".$_POST["label"]."')";
-      $result = $db->query($sql);
-      
-      if (!$result)
+	if ($_POST["label"])
 	{
-	  dolibarr_print_error($db);
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('".$_POST["label"]."')";
+		$result = $db->query($sql);
+
+		if (!$result)
+		{
+			dolibarr_print_error($db);
+		}
 	}
-    }
 }
 
 /*
- * Action suppression catégorie
- */
+* Action suppression catégorie
+*/
 if ( $_REQUEST['action'] == 'delete' )
 {
 	if ( $_REQUEST['categid'] )
@@ -64,16 +63,23 @@ if ( $_REQUEST['action'] == 'delete' )
 
 		if (!$result)
 		{
-		dolibarr_print_error($db);
+			dolibarr_print_error($db);
 		}
 	}
 }
+
+
 
 /*
  * Affichage liste des catégories
  */
 
-print_titre($langs->trans("Categories"));
+llxHeader();
+
+
+print_fiche_titre($langs->trans("Categories"));
+
+
 print '<form method="post" action="categ.php">';
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 print '<table class="noborder" width="100%">';
@@ -95,9 +101,9 @@ if ($result)
       $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
       print "<td>$objp->label</td>";
-      print '<td style="text-align: center;"><a href="categ.php?categid='.$objp->rowid.'&amp;action=delete"'.img_delete().'</a></td>';
+      print '<td style="text-align: center;"><a href="categ.php?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
       print "</tr>";
       $i++;
     }

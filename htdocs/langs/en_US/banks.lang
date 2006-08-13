@@ -44,6 +44,7 @@ StandingOrderProcessed=Processed
 NewAccount=New account
 NewBankAccount=New bank account
 NewFinancialAccount=New financial account
+MenuNewFinancialAccount=New financial account
 NewCurrentAccount=New current account
 NewSavingAccount=New saving account
 NewCashAccount=New cash account

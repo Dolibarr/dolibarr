@@ -87,4 +87,9 @@ if ($account > 0)
 	print "\n</div>\n";
     
 }
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+
 ?>

@@ -320,7 +320,9 @@ else
 		print '<td colspan="3">'.$account->min_desired.'</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("Web").'</td><td colspan="3">';
-		print '<a href="'.$account->url.'" target="_gobank">'.$account->url.'</a>';
+		if ($account->url) print '<a href="'.$account->url.'" target="_gobank">';
+		print $account->url;
+		if ($account->url) print '</a>';
 		print "</td></tr>\n";
 	
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
