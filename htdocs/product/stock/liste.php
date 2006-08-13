@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,42 +67,42 @@ $sql .= $db->plimit($limit + 1 ,$offset);
 $result = $db->query($sql) ;
 if ($result)
 {
-  $num = $db->num_rows($result);
+	$num = $db->num_rows($result);
 
-  $i = 0;
-  
-  llxHeader("","",$langs->trans("ListOfWarehouses"));
+	$i = 0;
 
-  print_barre_liste($langs->trans("ListOfWarehouses"), $page, "liste.php", "", $sortfield, $sortorder,'',$num);
+	llxHeader("","",$langs->trans("ListOfWarehouses"));
 
-  print '<table class="noborder" width="100%">';
+	print_barre_liste($langs->trans("ListOfWarehouses"), $page, "liste.php", "", $sortfield, $sortorder,'',$num);
 
-  print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.label","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut","","","",$sortfield);
-  print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","","","",$sortfield);
-  print "</tr>\n";
-  
-  if ($num) {
-      $entrepot=new Entrepot($db);
-    
-      $var=True;
-      while ($i < min($num,$limit))
-        {
-          $objp = $db->fetch_object($result);
-          $var=!$var;
-          print "<tr $bc[$var]>";
-          print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
-          print '<td>'.$entrepot->LibStatut($objp->statut).'</td>';
-          print '<td>'.$objp->lieu.'</td>';
-          print "</tr>\n";
-          $i++;
-        }
-    }
-    
-  $db->free($result);
+	print '<table class="noborder" width="100%">';
 
-  print "</table>";
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.label","","","",$sortfield);
+	print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","","","",$sortfield);
+	print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut",'','','align="right"',$sortfield);
+	print "</tr>\n";
+
+	if ($num) {
+		$entrepot=new Entrepot($db);
+
+		$var=True;
+		while ($i < min($num,$limit))
+		{
+			$objp = $db->fetch_object($result);
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
+			print '<td>'.$objp->lieu.'</td>';
+			print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
+			print "</tr>\n";
+			$i++;
+		}
+	}
+
+	$db->free($result);
+
+	print "</table>";
 
 }
 else

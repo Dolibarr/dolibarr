@@ -311,26 +311,64 @@ class Entrepot
     }
 
 
-    /**
-     *    \brief      Retourne le libellé du statut d'un entrepot (ouvert, fermé)
-     *    \return     string      Libellé
-     */
-    function getLibStatut()
-    {
-    	return $this->LibStatut($this->statut);
-    }
+	/**
+	 *    \brief      Retourne le libellé du statut d'un entrepot (ouvert, ferme)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
     
-    /**
-     *    \brief      Renvoi le libellé d'un statut donné
-     *    \param      statut      id statut
-     *    \return     string      Libellé
-     */
-    function LibStatut($statut)
-    {
-        return $this->statuts[$statut];
-    }
-  
-  
+	/**
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string        	Libellé du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('stocks');
+
+		if ($mode == 0)
+		{
+			$prefix='';
+			if ($statut == 0) return $langs->trans('Closed2');
+			if ($statut == 1) return $langs->trans('Opened');
+		}
+		if ($mode == 1)
+		{
+			$prefix='Short';
+			if ($statut == 0) return $langs->trans('Closed2');
+			if ($statut == 1) return $langs->trans('Opened');
+		}
+		if ($mode == 2)
+		{
+			$prefix='Short';
+			if ($statut == 0) return img_picto($langs->trans('Closed2'),'statut5').' '.$langs->trans('Closed2');
+			if ($statut == 1) return img_picto($langs->trans('Opened'),'statut4').' '.$langs->trans('Opened');
+		}
+		if ($mode == 3)
+		{
+			$prefix='Short';
+			if ($statut == 0) return img_picto($langs->trans('Closed2'),'statut5');
+			if ($statut == 1) return img_picto($langs->trans('Opened'),'statut4');
+		}
+		if ($mode == 4)
+		{
+			if ($statut == 0) return img_picto($langs->trans('Closed2'),'statut5').' '.$langs->trans('Closed2');
+			if ($statut == 1) return img_picto($langs->trans('Opened'),'statut4').' '.$langs->trans('Opened');
+		}
+		if ($mode == 5)
+		{
+			$prefix='Short';
+			if ($statut == 0) return $langs->trans('Closed2').' '.img_picto($langs->trans('Closed2'),'statut5');
+			if ($statut == 1) return $langs->trans('Opened').' '.img_picto($langs->trans('Opened'),'statut4');
+		}
+	}
+
   
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)

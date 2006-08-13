@@ -144,12 +144,26 @@ if ($_GET["action"] == 'create')
     }
 
     print '<table class="border" width="100%">';
-    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="40" value=""></td></tr>';
-    print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
-    print '<textarea name="desc" rows="4" cols="60">';
-    print "</textarea></td></tr>";
+
+	// Ref
+    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
 
     print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
+
+	// Description
+    print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+	if ($conf->fckeditor->enabled)
+    {
+	    // Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('desc',$entrepot->description,200,'dolibarr_notes','In',false);
+		$doleditor->Create();
+    }
+    else
+    {
+		print '<textarea name="desc" cols="70" rows="5">'.$entrepot->description.'</textarea>';
+    }
+    print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
     print $entrepot->address;
@@ -164,7 +178,9 @@ if ($_GET["action"] == 'create')
 
     print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
     print '<select name="statut">';
-    print '<option value="0" selected="true">'.$langs->trans("WarehouseClosed").'</option><option value="1">'.$langs->trans("WarehouseOpened").'</option>';
+    print '<option value="0" selected="true">'.$langs->trans("WarehouseClosed").'</option>';
+    print '<option value="1">'.$langs->trans("WarehouseOpened").'</option>';
+    print '</select>';
     print '</td></tr>';
 
     print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
@@ -208,10 +224,14 @@ else
             dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
 
             print '<table class="border" width="100%">';
+
+			// Ref
             print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
-            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
 
             print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
+
+			// Description
+            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
 
             print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
             print $entrepot->address;
@@ -224,7 +244,7 @@ else
             print $entrepot->pays;
             print '</td></tr>';
 
-            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
+            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
             print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
             print $entrepot->nb_products();
@@ -358,20 +378,33 @@ else
          */
         if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && 1)
         {
-            print_fiche_titre('Edition de la fiche entrepot', $mesg);
+            print_fiche_titre($langs->trans("WarehouseEdit"), $mesg);
 
             print '<form action="fiche.php" method="POST">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$entrepot->id.'">';
 
             print '<table class="border" width="100%">';
-            print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="40" value="'.$entrepot->libelle.'"></td></tr>';
-            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
-            print '<textarea name="desc" rows="4" cols="60">';
-            print $entrepot->description;
-            print "</textarea></td></tr>";
 
+			// Ref
+            print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$entrepot->libelle.'"></td></tr>';
+            
             print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
+
+            // Description
+            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+			if ($conf->fckeditor->enabled)
+		    {
+			    // Editeur wysiwyg
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('desc',$entrepot->description,200,'dolibarr_notes','In',false);
+				$doleditor->Create();
+		    }
+		    else
+		    {
+				print '<textarea name="desc" cols="70" rows="5">'.$entrepot->description.'</textarea>';
+		    }
+            print '</td></tr>';
 
             print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
             print $entrepot->address;
