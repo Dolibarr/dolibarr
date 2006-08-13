@@ -25,7 +25,7 @@
         \brief      Fichier de la classe mère Atome de génération de rapports
 */
 
-include_once DOL_DOCUMENT_ROOT.'/bargraph.class.php';
+include_once DOL_DOCUMENT_ROOT.'/dolgraph.class.php';
 
 
 /**
@@ -57,7 +57,7 @@ class Atome
      * 
      *
      */
-    function BarGraph()
+    function ShowGraph()
     {
         $dir = DOL_DATA_ROOT.'/rapport/images/';
         if (! is_dir($dir)) create_exdir($dir);
@@ -111,7 +111,7 @@ class Atome
         // var_dump($this->graph_values);
     
     
-        $bgraph = new BarGraph();
+        $bgraph = new DolGraph();
         $bgraph->SetData($this->graph_values);
         $bgraph->bgcolor = array(255,255,255);
         $bgraph->SetWidth(600);
@@ -120,5 +120,5 @@ class Atome
     
         return $filename;
     }
-    }
+}
 ?>

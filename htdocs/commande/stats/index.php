@@ -28,14 +28,14 @@
 */
 
 require("./pre.inc.php");
-
-if (!$user->rights->commande->lire) accessforbidden();
-
-require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-require("./commandestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/stats/commandestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $WIDTH=500;
 $HEIGHT=250;
+
+if (!$user->rights->commande->lire) accessforbidden();
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -75,11 +75,13 @@ else
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';
 }
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
-    $px->SetMaxValue($px->GetMaxValue());
+	$px->SetPrecisionY(0);
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);

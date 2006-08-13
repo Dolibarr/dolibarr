@@ -29,7 +29,8 @@
 */
 
 require("./pre.inc.php");
-require("./propalestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/propal/stats/propalestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $WIDTH=500;
 $HEIGHT=250;
@@ -56,12 +57,14 @@ else
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$year.'.png';
 }
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
+	$px->SetPrecisionY(0);
     $px->SetLegend(array($year - 1, $year));
-    $px->SetMaxValue($px->GetMaxValue());
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->draw($filename);

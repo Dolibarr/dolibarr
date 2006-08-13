@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $WIDTH=500;
 $HEIGHT=250;
@@ -56,11 +57,13 @@ if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
 $filename = $conf->facture->dir_images."/nbfacture2year-".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=nbfacture2year-'.$year.'.png';
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
-    $px->SetMaxValue($px->GetMaxValue());
+	$px->SetPrecisionY(0);
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);

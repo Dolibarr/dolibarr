@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $GRAPHHEIGHT=250;
 $GRAPHWIDTH=500;
@@ -60,11 +61,13 @@ if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
 $filename = $conf->facture->dir_images."/facture".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=facture'.$year.'.png';
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
-    $px->SetMaxValue($px->GetMaxValue());
+    $px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
     $px->draw($filename);
@@ -82,12 +85,14 @@ for ($i = 1 ; $i < 13 ; $i++)
 $filename_amount = $conf->facture->dir_images."/factureamount".$year.".png";
 $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureamount'.$year.'.png';
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
     $px->SetYLabel($langs->trans("AmountTotal"));
-    $px->SetMaxValue($px->GetAmountMaxValue());
+    $px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
     $px->draw($filename_amount);
@@ -104,12 +109,14 @@ for ($i = 1 ; $i < 13 ; $i++)
 $filename_avg = $conf->facture->dir_images."/factureaverage".$year.".png";
 $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureaverage'.$year.'.png';
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
+	$px->SetPrecisionY(0);
     $px->SetYLabel($langs->trans("AmountAverage"));
-    $px->SetMaxValue($px->GetAmountMaxValue());
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
     $px->draw($filename_avg);

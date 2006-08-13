@@ -29,8 +29,10 @@
 */
 
 require("./pre.inc.php");
-require("../expedition.class.php");
-require("./expeditionstats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/stats/expeditionstats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
+
 
 llxHeader();
 
@@ -46,9 +48,10 @@ if (! is_dir($conf->expedition->dir_images)) { mkdir($conf->expedition->dir_imag
 $filename = $conf->expedition->dir_images."/expedition".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expedition'.$year.'.png';
 
-$px = new BarGraph();
+$px = new DolGraph();
 $px->SetData($data);
-$px->SetMaxValue($px->GetMaxValue());
+$px->SetMaxValue($px->GetCeilMaxValue());
+$px->SetPrecisionY(0);
 $px->SetWidth(600);
 $px->SetHeight(280);
 $px->draw($filename);

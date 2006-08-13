@@ -29,7 +29,9 @@
 */
 
 require("./pre.inc.php");
-require("./propalestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/propal/stats/propalestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
+
 
 llxHeader();
 
@@ -65,11 +67,13 @@ else
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale'.$year.'.png';
 }
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
-    $px->SetMaxValue($px->GetMaxValue());
+	$px->SetPrecisionY(0);
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->draw($filename);
@@ -95,12 +99,14 @@ else
 	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount'.$year.'.png';
 }
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
+	$px->SetPrecisionY(0);
     $px->SetYLabel($langs->trans("AmountTotal"));
-    $px->SetMaxValue($px->GetAmountMaxValue());
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->draw($filename_amount, $data, $year);
@@ -125,12 +131,14 @@ else
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage'.$year.'.png';
 }
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
+	$px->SetPrecisionY(0);
     $px->SetYLabel($langs->trans("AmountAverage"));
-    $px->SetMaxValue($px->GetAmountMaxValue());
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->draw($filename_avg);

@@ -33,6 +33,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $langs->load("products");
 $langs->load("bills");
@@ -92,35 +93,49 @@ if ($_GET["id"] || $_GET["ref"])
         $WIDTH=380;
         $HEIGHT=200;
         
-        $px = new BarGraph();
+        $px = new DolGraph();
         $mesg = $px->isGraphKo();
         if (! $mesg)
         {
             $graph_data = $product->get_num_vente($socid);
             $px->SetData($graph_data);
-            $px->SetMaxValue($px->GetMaxValue());
+            $px->SetMaxValue($px->GetCeilMaxValue());
             $px->SetWidth($WIDTH);
             $px->SetHeight($HEIGHT);
+			$px->SetPrecisionY(0);
+			$px->SetShading(6);
             $px->draw($filenbvente);
+		}
 
-            $px = new BarGraph();
+        $px = new DolGraph();
+        $mesg = $px->isGraphKo();
+        if (! $mesg)
+        {
             $graph_data = $product->get_nb_vente($socid);
             $px->SetData($graph_data);
-            $px->SetMaxValue($px->GetMaxValue());
+            $px->SetMaxValue($px->GetCeilMaxValue());
             $px->SetWidth($WIDTH);
             $px->SetHeight($HEIGHT);
+			$px->SetPrecisionY(0);
+			$px->SetShading(6);
             $px->draw($filenbpiece);
+		}
 
-            $px = new BarGraph();
+        $px = new DolGraph();
+        $mesg = $px->isGraphKo();
+        if (! $mesg)
+        {
             $graph_data = $product->get_num_propal($socid);
             $px->SetData($graph_data);
-            $px->SetMaxValue($px->GetMaxValue());
+            $px->SetMaxValue($px->GetCeilMaxValue());
             $px->SetWidth($WIDTH);
             $px->SetHeight($HEIGHT);
+			$px->SetPrecisionY(0);
+			$px->SetShading(6);
             $px->draw($filenbpropal);
+		}
 
-            $mesg = $langs->trans("ChartGenerated");
-        }
+        $mesg = $langs->trans("ChartGenerated");
 
 
 		$head=product_prepare_head($product);

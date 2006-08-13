@@ -29,12 +29,11 @@
 */
 
 require("./pre.inc.php");
-require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-require("./commandestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/stats/commandestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -75,11 +74,13 @@ else
   $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande'.$year.'.png';
 }
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
-    $px->SetMaxValue($px->GetMaxValue());
+	$px->SetPrecisionY(0);
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel("Nombre de commande");
@@ -106,11 +107,13 @@ else
 	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount'.$year.'.png';
 }
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
-    $px->SetMaxValue($px->GetAmountMaxValue());
+	$px->SetPrecisionY(0);
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("AmountTotal"));
@@ -136,11 +139,13 @@ else
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage'.$year.'.png';
 }
 
-$px = new BarGraph();
+$px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (! $mesg)
+{
     $px->SetData($data);
-    $px->SetMaxValue($px->GetAmountMaxValue());
+	$px->SetPrecisionY(0);
+    $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("AmountAverage"));

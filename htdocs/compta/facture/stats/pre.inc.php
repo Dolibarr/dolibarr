@@ -28,8 +28,8 @@
 */
 
 require("../../../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
-require("./facturestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/stats/facturestats.class.php");
+
 
 function llxHeader($head = "", $urlp = "")
 {
@@ -37,10 +37,6 @@ function llxHeader($head = "", $urlp = "")
   $langs->load("bills");
   $langs->load("propal");
   
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
@@ -50,6 +46,5 @@ function llxHeader($head = "", $urlp = "")
   $menu->add("index.php", $langs->trans("Statistics"));
 
   left_menu($menu->liste);
-  
 }
 ?>

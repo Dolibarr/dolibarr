@@ -29,9 +29,9 @@
 */
 
 require("../../../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $urlp = "")
+{
   global $user, $conf, $langs;
 
   $langs->load("companies");

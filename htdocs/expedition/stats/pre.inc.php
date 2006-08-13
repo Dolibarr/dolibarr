@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +18,17 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+	    \file       htdocs/product/stats/pre.inc.php
+        \ingroup    expedition
+		\brief      Fichier gestionnaire du menu gauche des statistiques expedition
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
-require("../../bargraph.class.php");
+
 $langs->load("orders");
 
 function llxHeader($head = "", $title="", $urlp = "")

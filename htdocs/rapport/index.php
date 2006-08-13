@@ -51,7 +51,7 @@ $arr = $x->fetch();
  * Création du graph 
  * -> retounre le nom du fichier
  */
-$img = $x->BarGraph();
+$img = $x->ShowGraph();
 print $img."<br>";
 
 
@@ -60,7 +60,7 @@ print $img."<br>";
 $x = new AtomeFactureValidee($db,'year', mktime(12,0,0,1,12,2003));
 $arr = $x->fetch('year');
 
-$img = $x->BarGraph();
+$img = $x->ShowGraph();
 print $img."<br>";
 for ($i = 1 ; $i < 5; $i++)
 {
@@ -70,7 +70,7 @@ for ($i = 1 ; $i < 5; $i++)
   $arr = $x->fetch('month');
   
   
-  $img = $x->BarGraph();
+  $img = $x->ShowGraph();
   print $img."<br>";
 }
 
@@ -82,7 +82,7 @@ $arr = $x->fetch();
 
 var_dump($arr);
 
-$img = $x->BarGraph();
+$img = $x->ShowGraph();
 print $img."<br>";
 
 $db->close();
