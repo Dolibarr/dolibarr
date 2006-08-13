@@ -108,19 +108,26 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	 * Pour utiliser d'autres versions des librairies externes que les
 	 * versions embarquées dans Dolibarr, définir les constantes adequates:
 	 * Pour FPDF:           FPDF_PATH
-	 * Pour PEAR:           PEAR_PATH
+	 * Pour Pear:           PEAR_PATH
 	 * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
-	 * Pour PHPlot:         PHPLOT_PATH
 	 * Pour MagpieRss:      MAGPIERSS_PATH
+	 * Pour PHPlot:         PHPLOT_PATH
+	 * Pour JPGraph:        JPGRAPH_PATH
+	 * Pour NuSOAP:         NUSOAP_PATH
+	 * Pour TCPDF:          TCPDF_PATH
 	 */
 	if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
 	if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMENT_ROOT .'/includes/pear/'); }
 	if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
-	if (! defined('PHPLOT_PATH'))         { define('PHPLOT_PATH',        DOL_DOCUMENT_ROOT .'/includes/phplot/'); }
 	if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
+	if (! defined('PHPLOT_PATH'))         { define('PHPLOT_PATH',        DOL_DOCUMENT_ROOT .'/includes/phplot/'); }
 	if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
-	define('FPDF_FONTPATH', FPDF_PATH . 'font/');
-	define('MAGPIE_DIR', MAGPIERSS_PATH);
+	if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
+	if (! defined('TCPDF_PATH'))          { define('TCPDF_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/tcpdf/'); }
+	// Les autres path
+	if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH . 'font/'); }
+	if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
+	if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   DOL_DATA_ROOT .'/rsscache'); }
 
 
 	/***************************************************************************************

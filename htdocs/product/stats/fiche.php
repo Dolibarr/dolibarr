@@ -99,11 +99,13 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $graph_data = $product->get_num_vente($socid);
             $px->SetData($graph_data);
-            $px->SetMaxValue($px->GetCeilMaxValue());
+			$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+			$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
             $px->SetWidth($WIDTH);
             $px->SetHeight($HEIGHT);
+			$px->SetHorizTickIncrement(1);
 			$px->SetPrecisionY(0);
-			$px->SetShading(6);
+			$px->SetShading(5);
             $px->draw($filenbvente);
 		}
 
@@ -113,11 +115,13 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $graph_data = $product->get_nb_vente($socid);
             $px->SetData($graph_data);
-            $px->SetMaxValue($px->GetCeilMaxValue());
+			$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+			$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
             $px->SetWidth($WIDTH);
             $px->SetHeight($HEIGHT);
+			$px->SetHorizTickIncrement(1);
 			$px->SetPrecisionY(0);
-			$px->SetShading(6);
+			$px->SetShading(5);
             $px->draw($filenbpiece);
 		}
 
@@ -127,11 +131,13 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $graph_data = $product->get_num_propal($socid);
             $px->SetData($graph_data);
-            $px->SetMaxValue($px->GetCeilMaxValue());
+			$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+			$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
             $px->SetWidth($WIDTH);
             $px->SetHeight($HEIGHT);
+			$px->SetHorizTickIncrement(1);
 			$px->SetPrecisionY(0);
-			$px->SetShading(6);
+			$px->SetShading(5);
             $px->draw($filenbpropal);
 		}
 

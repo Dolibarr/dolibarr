@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/commande/stats/commandestats.class.php");
 require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $WIDTH=500;
-$HEIGHT=250;
+$HEIGHT=200;
 
 if (!$user->rights->commande->lire) accessforbidden();
 
@@ -85,7 +85,10 @@ if (! $mesg)
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
-    $px->SetYLabel("Nombre de commande");
+    $px->SetYLabel($langs->trans("NbOfOrder"));
+    $px->SetShading(5);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
     $px->draw($filename);
 }      
 $rows = $stats->getNbByYear();

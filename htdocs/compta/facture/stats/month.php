@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -31,17 +30,16 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
-$GRAPHHEIGHT=250;
 $GRAPHWIDTH=500;
+$GRAPHHEIGHT=200;
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
 
 llxHeader();
 
@@ -70,6 +68,9 @@ if (! $mesg)
 	$px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
+    $px->SetShading(5);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
     $px->draw($filename);
 }
 
@@ -95,6 +96,9 @@ if (! $mesg)
 	$px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
+    $px->SetShading(5);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
     $px->draw($filename_amount);
 }
 $res = $stats->getAverageByMonth($year);
@@ -119,6 +123,9 @@ if (! $mesg)
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
+    $px->SetShading(5);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
     $px->draw($filename_avg);
 }
 

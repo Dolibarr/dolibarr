@@ -1204,71 +1204,69 @@ class Product
     }
 
 
-  /**
-   *    \brief  Renvoie le nombre de factures dans lesquelles figure le produit par mois
-   *    \param  socid       id societe
-   *    \return array       nombre de factures par mois
-   */
-	 
-  function get_num_vente($socid=0)
-    {
-    	global $conf;
-    	global $user;
-    	
-      $sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
-      if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-      $sql .= " WHERE f.rowid = d.fk_facture AND d.fk_product =".$this->id;
-      if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-      if ($socid > 0)
+	/**
+	*    \brief  Renvoie le nombre de factures dans lesquelles figure le produit par mois
+	*    \param  socid       id societe
+	*    \return array       nombre de factures par mois
+	*/
+	function get_num_vente($socid=0)
 	{
-	  $sql .= " AND f.fk_soc = $socid";
+		global $conf;
+		global $user;
+	
+		$sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
+		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " WHERE f.rowid = d.fk_facture AND d.fk_product =".$this->id;
+		if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid > 0)
+		{
+			$sql .= " AND f.fk_soc = $socid";
+		}
+		$sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
+	
+		return $this->_get_stats($sql);
 	}
-      $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
-
-      return $this->_get_stats($sql);
-    }
-
-
-  /**
-   *    \brief  Renvoie le nombre de propales dans lesquelles figure le produit par mois
-   *    \param  socid       id societe
-   *    \return array       nombre de propales par mois
-   */
-	 
-  function get_num_propal($socid=0)
-  {
-  	  global $conf;
-    	global $user;
-    	
-      $sql = "SELECT count(*), date_format(p.datep, '%Y%m') ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
-      if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-      $sql .= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;
-      if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-      if ($socid > 0)
+	
+	
+	/**
+	*    \brief  Renvoie le nombre de propales dans lesquelles figure le produit par mois
+	*    \param  socid       id societe
+	*    \return array       nombre de propales par mois
+	*/
+	function get_num_propal($socid=0)
 	{
-	  $sql .= " AND p.fk_soc = $socid";
+		global $conf;
+		global $user;
+	
+		$sql = "SELECT count(*), date_format(p.datep, '%Y%m') ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
+		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;
+		if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid > 0)
+		{
+			$sql .= " AND p.fk_soc = $socid";
+		}
+		$sql .= " GROUP BY date_format(p.datep,'%Y%m') DESC ;";
+	
+		return $this->_get_stats($sql);
 	}
-      $sql .= " GROUP BY date_format(p.datep,'%Y%m') DESC ;";
 
-      return $this->_get_stats($sql);
-    }
-/**
-   *    \brief      Lie un sousproduit au produit/service
-   *    \param      id_pere    Id du produit auquel sera lié le produit à lier
-   *    \param      id_fils  Id du produit à lier
-   *    \return     int         < 0 si erreur, > 0 si ok
-   */
-	 
-  function add_sousproduit($id_pere, $id_fils,$qty) 
-    {
+	/**
+	*    \brief      Lie un sousproduit au produit/service
+	*    \param      id_pere    Id du produit auquel sera lié le produit à lier
+	*    \param      id_fils  Id du produit à lier
+	*    \return     int         < 0 si erreur, > 0 si ok
+	*/
+	function add_sousproduit($id_pere, $id_fils,$qty)
+	{
 		$sql = 'delete from '.MAIN_DB_PREFIX.'product_association';
 		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
 		if (! $this->db->query($sql))
 		{
 			dolibarr_print_error($this->db);
-			 return -1;
+			return -1;
 		}
 		else
 		{
@@ -1277,12 +1275,12 @@ class Product
 			if (! $this->db->query($sql))
 			{
 				dolibarr_print_error($this->db);
-				 return -1;
+				return -1;
 			}
 			else
 			{
 				$result = $this->db->query($sql) ;
-				 if ($result)
+				if ($result)
 				{
 					$num = $this->db->num_rows($result);
 					if($num > 0)
@@ -1292,119 +1290,119 @@ class Product
 					}
 					else
 					{
-							$sql = 'insert into '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
-							$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
-							if (! $this->db->query($sql))
-							{
-								dolibarr_print_error($this->db);
-								 return -1;
-							}
-							else
-							{
-								 return 1;
-							}
+						$sql = 'insert into '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
+						$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
+						if (! $this->db->query($sql))
+						{
+							dolibarr_print_error($this->db);
+							return -1;
+						}
+						else
+						{
+							return 1;
+						}
 					}
 				}
 			}
-				
+	
 		}
-    }
-/**
-   *    \brief      retire le lien entre un sousproduit et un produit/service
-   *    \param      id_pere    Id du produit auquel ne sera plus lié le produit lié
-   *    \param      id_fils  Id du produit à ne plus lié
-   *    \return     int         < 0 si erreur, > 0 si ok
-   */
-	 
-  function del_sousproduit($id_pere, $id_fils) 
-    {
-        $sql = 'delete from '.MAIN_DB_PREFIX.'product_association';
+	}
+
+	/**
+	*    \brief      retire le lien entre un sousproduit et un produit/service
+	*    \param      id_pere    Id du produit auquel ne sera plus lié le produit li
+	*    \param      id_fils  Id du produit à ne plus li
+	*    \return     int         < 0 si erreur, > 0 si ok
+	*/
+	function del_sousproduit($id_pere, $id_fils)
+	{
+		$sql = 'delete from '.MAIN_DB_PREFIX.'product_association';
 		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
 		if (! $this->db->query($sql))
 		{
 			dolibarr_print_error($this->db);
-			 return -1;
+			return -1;
 		}
 		else
-			return 1;
-    }
-/**
-   *    \brief      retire le lien entre un sousproduit et un produit/service
-   *    \param      id_pere    Id du produit auquel ne sera plus lié le produit lié
-   *    \param      id_fils  Id du produit à ne plus lié
-   *    \return     int         < 0 si erreur, > 0 si ok
-   */
-	 
-  function is_sousproduit($id_pere, $id_fils) 
-    {
-        $sql = 'select fk_product_pere,qty from '.MAIN_DB_PREFIX.'product_association';
+		return 1;
+	}
+
+	/**
+	*    \brief      retire le lien entre un sousproduit et un produit/service
+	*    \param      id_pere    Id du produit auquel ne sera plus lié le produit li
+	*    \param      id_fils  Id du produit à ne plus li
+	*    \return     int         < 0 si erreur, > 0 si ok
+	*/
+	function is_sousproduit($id_pere, $id_fils)
+	{
+		$sql = 'select fk_product_pere,qty from '.MAIN_DB_PREFIX.'product_association';
 		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
 		if (! $this->db->query($sql))
 		{
 			dolibarr_print_error($this->db);
-			 return -1;
+			return -1;
 		}
 		else
 		{
 			$result = $this->db->query($sql) ;
-       		 if ($result)
-        	{
-            	$num = $this->db->num_rows($result);
+			if ($result)
+			{
+				$num = $this->db->num_rows($result);
 				if($num > 0)
 				{
 					$obj = $this->db->fetch_object($result);
-               		$this->is_sousproduit_qty = $obj->qty;          
-					
+					$this->is_sousproduit_qty = $obj->qty;
+	
 					return true;
 				}
 				else
-					return false;
+				return false;
 			}
 		}
-    }
-  /**
-   *    \brief      Lie un fournisseur au produit/service
-   *    \param      user        Utilisateur qui fait le lien
-   *    \param      id_fourn    Id du fournisseur
-   *    \param      ref_fourn   Reference chez le fournisseur
-   *    \return     int         < 0 si erreur, > 0 si ok
-   */
-	 
-  function add_fournisseur($user, $id_fourn, $ref_fourn) 
-    {
-        $sql = "SELECT count(*) as nb";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
-        $sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
-        //$sql.= " AND ref_fourn = '".$ref_fourn."'"; // crée des doublons
-    
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $obj = $this->db->fetch_object($resql);
-            if ($obj->nb == 0)
-            {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
-                $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
-                $sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
-    
-                if ($this->db->query($sql))
-                {
-                    return 1;
-                }
-                else
-                {
-                    $this->error=$this->db->error();
-                    return -1;
-                }
-            }
-            $this->db->free($resql);
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -2;
-        }
-    }
+	}
+
+	/**
+	*    \brief      Lie un fournisseur au produit/service
+	*    \param      user        Utilisateur qui fait le lien
+	*    \param      id_fourn    Id du fournisseur
+	*    \param      ref_fourn   Reference chez le fournisseur
+	*    \return     int         < 0 si erreur, > 0 si ok
+	*/
+	function add_fournisseur($user, $id_fourn, $ref_fourn)
+	{
+		$sql = "SELECT count(*) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
+		$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
+		//$sql.= " AND ref_fourn = '".$ref_fourn."'"; // crée des doublons
+	
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj->nb == 0)
+			{
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
+				$sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
+				$sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
+	
+				if ($this->db->query($sql))
+				{
+					return 1;
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					return -1;
+				}
+			}
+			$this->db->free($resql);
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -2;
+		}
+	}
 
 	
 	/**

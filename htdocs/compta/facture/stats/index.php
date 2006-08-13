@@ -31,7 +31,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $WIDTH=500;
-$HEIGHT=250;
+$HEIGHT=200;
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -63,7 +63,9 @@ if (! $mesg)
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
-    $px->SetShading(4);
+    $px->SetShading(5);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
     $px->draw($filename);
 }
       

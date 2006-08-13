@@ -51,8 +51,8 @@ if ($account > 0)
     $acct->fetch($account);
 
 	// Definition de $width et $height
-	$width = 750;
-	$height = 280;
+	$width = 700;
+	$height = 200;
 
 	// Calcul de $min et $max
 	$sql = "SELECT min(".$db->pdate("datev")."),max(".$db->pdate("datev").")";
@@ -147,18 +147,20 @@ if ($account > 0)
 	$graph_datas=array();
 	foreach($datas as $i => $val)
 	{
-        $graph_datas[$i]=array("$labels[$i]",$datas[$i]);
+          $graph_datas[$i]=array($labels[$i],$datas[$i]);
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
     $px->SetLegend(array($langs->trans("Balance")));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
     $px->SetWidth($width);
     $px->SetHeight($height);
 	$px->SetType('lines');
 	$px->setBgColor('onglet');
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
     $px->draw($file);
 
 	
@@ -226,7 +228,7 @@ if ($account > 0)
 		}
 		if (strftime("%d",$day) == 15)
 		{
-			$labels[$i] = strftime("%m",$day);
+			$labels[$i] = dolibarr_print_date($day,"%b");
 		}
 		$day += 86400;
 		$xyear = strftime("%Y",$day);
@@ -244,12 +246,15 @@ if ($account > 0)
 	$px = new DolGraph();
     $px->SetData($graph_datas);
     $px->SetLegend(array($langs->trans("Balance")));
-    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
     $px->SetWidth($width);
     $px->SetHeight($height);
 	$px->SetType('lines');
 	$px->setBgColor('onglet');
+	$px->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
+	$px->SetPrecisionY(0);
     $px->draw($file);
 
 
@@ -287,7 +292,7 @@ if ($account > 0)
 	$subtotal = 0;
 	$day = $min;
 	$i = 0;
-	while ($day <= ($max+1000000))	// On va bien au dela du dernier jour
+	while ($day <= ($max+86400))	// On va au dela du dernier jour
 	{
 		$subtotal = $subtotal + (isset($amounts[strftime("%Y%m%d",$day)]) ? $amounts[strftime("%Y%m%d",$day)] : 0);
 		//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
@@ -318,13 +323,14 @@ if ($account > 0)
 	$px = new DolGraph();
     $px->SetData($graph_datas);
     $px->SetLegend(array($langs->trans("Balance")));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
     $px->SetWidth($width);
     $px->SetHeight($height);
 	$px->SetType('lines');
 	$px->setBgColor('onglet');
+	$px->SetPrecisionY(0);
     $px->draw($file);
 
 
@@ -380,7 +386,7 @@ if ($account > 0)
 	{
 		$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 		$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
-		$labels[$i] = $i+1;
+		$labels[$i] = strftime("%b",mktime(1,1,1,$i+1,1,2000));
 	}
 
 	// Fabrication tableau 4
@@ -394,21 +400,29 @@ if ($account > 0)
 	$px = new DolGraph();
     $px->SetData($graph_datas);
     $px->SetLegend(array($langs->trans("Debit"),$langs->trans("Credit")));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
     $px->SetWidth($width);
     $px->SetHeight($height);
 	$px->SetType('bars');
 	$px->SetShading(8);
 	$px->setBgColor('onglet');
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
     $px->draw($file);
+
 
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0);
 
 	print '<table class="notopnoleftnoright" width="100%">';
+
+    print '<tr><td align="center">';
+    $file = "mouvement.$account.$year.png";
+    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+    print '</td></tr>';
 
     print '<tr><td align="center">';
     $file = "solde.$account.$year.$month.png";
@@ -422,11 +436,6 @@ if ($account > 0)
     
     print '<tr><td align="center">';
     $file = "solde.$account.png";
-    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
-    print '</td></tr>';
-    
-    print '<tr><td align="center">';
-    $file = "mouvement.$account.$year.png";
     print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     print '</td></tr>';
     

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -33,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/comm/propal/stats/propalestats.class.php");
 require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $WIDTH=500;
-$HEIGHT=250;
+$HEIGHT=200;
 
 
 llxHeader();
@@ -44,7 +43,7 @@ $stats = new PropaleStats($db);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 
-if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
+create_exdir($conf->propal->dir_images);
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
@@ -67,6 +66,9 @@ if (! $mesg)
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
+    $px->SetShading(5);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
     $px->draw($filename);
 }
 
