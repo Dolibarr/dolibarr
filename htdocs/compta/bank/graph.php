@@ -50,6 +50,10 @@ if ($account > 0)
     $acct = new Account($db);
     $acct->fetch($account);
 
+	
+	create_exdir($conf->banque->dir_images);
+	
+
 	// Definition de $width et $height
 	$width = 700;
 	$height = 200;
