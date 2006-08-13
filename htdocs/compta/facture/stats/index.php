@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -34,10 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 $WIDTH=500;
 $HEIGHT=250;
 
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -67,6 +63,7 @@ if (! $mesg)
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
+    $px->SetShading(4);
     $px->draw($filename);
 }
       
@@ -76,7 +73,7 @@ if ($socidp)
   $sql .= " AND fk_soc = $socidp";
 }
 $sql .= " GROUP BY dm DESC ";
-$result=$db->query($sql);
+$resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -104,7 +101,7 @@ if ($resql)
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 

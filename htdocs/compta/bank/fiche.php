@@ -258,8 +258,6 @@ else
 		/*
 		* Affichage onglets
 		*/
-		$titre=$langs->trans("FinancialAccount")." : ".$account->label;
-		print_fiche_titre($titre,$mesg);
 
 		// Onglets
 		$head=bank_prepare_head($account);

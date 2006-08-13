@@ -1623,7 +1623,6 @@ class Facture extends CommonObject
 				return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('BillStatusPayed'),'statut6');
 			}
 		}
-
 	}
 
     /**

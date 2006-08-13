@@ -63,6 +63,7 @@ class DolGraph
 	function DolGraph()
 	{
 		global $conf;
+		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 	
 		// Test si module GD présent
 		$modules_list = get_loaded_extensions();
@@ -92,12 +93,12 @@ class DolGraph
 		$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
 		if (is_readable($color_file))
 		{
-			include($color_file);
+			include_once($color_file);
 			if (isset($theme_bordercolor)) $this->bordercolor = $theme_bordercolor;
 			if (isset($theme_datacolor))   $this->datacolor   = $theme_datacolor;
 			if (isset($theme_bgcolor))     $this->bgcolor     = $theme_bgcolor;
 		}
-	
+		//print 'bgcolor: '.join(',',$this->bgcolor).'<br>';
 		return 1;
 	}
 	
@@ -161,10 +162,24 @@ class DolGraph
 		$this->graph->SetPrecisionX(0);
 	
 		// Set areas
-		$this->graph->SetNewPlotAreaPixels(80, 40, $this->width-10, $this->height-40);
+		$left_space=80;								// For y labels
+		$right_space=10;							// If no legend
+		if (isset($this->Legend)) $right_space=70;	// For legend
+
+		$this->graph->SetNewPlotAreaPixels($left_space, 40, $this->width-$right_space, $this->height-40);
 		if (isset($this->MaxValue))
 		{
 			$this->graph->SetPlotAreaWorld(0,$this->MinValue,sizeof($this->data),$this->MaxValue);
+		}
+
+		// Define title
+		if (strlen($this->title)) $this->graph->SetTitle($this->title);
+	
+		// Défini position du graphe (et legende) au sein de l'image
+		if (isset($this->Legend))
+		{
+			$this->graph->SetLegendPixels($this->width-$right_space+8,40,'');
+			$this->graph->SetLegend($this->Legend);
 		}
 
 		if (isset($this->SetShading))
@@ -186,20 +201,7 @@ class DolGraph
 
 		$this->graph->SetPlotBorderType("left");		// Affiche axe y a gauche uniquement
 		$this->graph->SetVertTickPosition('plotleft');	// Affiche tick axe y a gauche uniquement
-
-
 	
-
-	
-		// Define title
-		if (strlen($this->title)) $this->graph->SetTitle($this->title);
-	
-		// Défini position du graphe (et legende) au sein de l'image
-		if (isset($this->Legend))
-		{
-			$this->graph->SetLegend($this->Legend);
-		}
-
 		$this->graph->SetOutputFile($file);
 	}
 	
@@ -264,9 +266,29 @@ class DolGraph
 		unset($this->bgcolor);
 	}
 	
+	/**
+	*	\brief		Definie la couleur de fond du graphique
+	*	\param		bg_color		array(R,G,B) ou 'onglet' ou 'default'
+	*/
 	function SetBgColor($bg_color = array(255,255,255))
 	{
-		$this->bgcolor = $bg_color;
+		global $theme_bgcolor,$theme_bgcoloronglet;
+		if (! is_array($bg_color))
+		{
+			if ($bg_color == 'onglet')
+			{
+				//print 'ee'.join(',',$theme_bgcoloronglet);
+				$this->bgcolor = $theme_bgcoloronglet;
+			}
+			else
+			{
+				$this->bgcolor = $theme_bgcolor;
+			}
+		}
+		else
+		{
+			$this->bgcolor = $bg_color;
+		}
 	}
 	
 	function ResetDataColor()

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-	\file        htdocs/compta/bank/annuel.php
-	\ingroup     banque
-	\brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
-	\version     $Revision$
+		\file        htdocs/compta/bank/annuel.php
+		\ingroup     banque
+		\brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
+		\version     $Revision$
 */
 
 require("./pre.inc.php");
@@ -109,13 +108,13 @@ else
 }
 
 
-$title=$langs->trans("FinancialAccount")." : ".$acct->label;
-$lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
-print_fiche_titre($title,$lien);
-
 // Onglets
 $head=bank_prepare_head($acct);
 dolibarr_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0);
+
+$title=$langs->trans("FinancialAccount")." : ".$acct->label;
+$lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+print_fiche_titre($title,$lien);
 
 
 // Affiche tableau

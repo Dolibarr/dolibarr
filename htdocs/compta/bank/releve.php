@@ -87,12 +87,12 @@ if (! isset($_GET["num"]))
 		$numrows = $db->num_rows($result);
 		$i = 0;
 
-		$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
-		print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], "&amp;account=".$_GET["account"], $sortfield, $sortorder,'',$numrows);
-
 		// Onglets
 		$head=bank_prepare_head($acct);
 		dolibarr_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0);
+
+		$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
+		print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], "&amp;account=".$_GET["account"], $sortfield, $sortorder,'',$numrows);
 
 		print '<table class="noborder" width="100%">';
 		print "<tr class=\"liste_titre\">";

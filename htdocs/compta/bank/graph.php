@@ -158,6 +158,7 @@ if ($account > 0)
     $px->SetWidth($width);
     $px->SetHeight($height);
 	$px->SetType('lines');
+	$px->setBgColor('onglet');
     $px->draw($file);
 
 	
@@ -248,6 +249,7 @@ if ($account > 0)
     $px->SetWidth($width);
     $px->SetHeight($height);
 	$px->SetType('lines');
+	$px->setBgColor('onglet');
     $px->draw($file);
 
 
@@ -322,6 +324,7 @@ if ($account > 0)
     $px->SetWidth($width);
     $px->SetHeight($height);
 	$px->SetType('lines');
+	$px->setBgColor('onglet');
     $px->draw($file);
 
 
@@ -398,11 +401,8 @@ if ($account > 0)
     $px->SetHeight($height);
 	$px->SetType('bars');
 	$px->SetShading(8);
+	$px->setBgColor('onglet');
     $px->draw($file);
-
-
-	$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
-	print_fiche_titre($titre,$mesg);
 
 	// Onglets
 	$head=bank_prepare_head($acct);

@@ -193,12 +193,15 @@ if ($account > 0)
 	}
 
 
-	$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
-	print_fiche_titre($titre,$mesg);
-
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
+	
+	if (! $_GET["action"]=='addline')
+	{
+		$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
+		print_fiche_titre($titre,$mesg);
+	}
 	
 	print '<table class="notopnoleftnoright" width="100%">';
 
@@ -216,8 +219,6 @@ if ($account > 0)
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="vline" value="' . $vline . '">';
 		print '<input type="hidden" name="account" value="' . $acct->id . '">';
-
-		print "<tr class=\"noborder\"><td colspan=\"8\">&nbsp;</td></tr>\n";
 
 		print '<tr>';
 		print '<td align="left" colspan="8"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
