@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,19 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-    \file       htdocs/theme/eldy/graph-color.php
-    \brief      Fichier de déclaration des couleurs pour les graphiques
-    \version    $Revision$
+		\file       htdocs/theme/eldy/graph-color.php
+		\brief      Fichier de déclaration des couleurs pour les graphiques
+        \ingroup    core
+		\version    $Revision$
 */
 
-//$theme_bgcolor = array(224,221,224);
-$theme_bgcolor = array(241,241,241);
+global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
+$theme_bordercolor = array(235,235,224);
+$theme_datacolor = array(array(120,130,150), array(160,160,180), array(190,190,220));
+$theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
+$theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
 
 ?>

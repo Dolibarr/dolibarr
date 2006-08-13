@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,37 +35,12 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit;
 }
 
-
 // Recupere root dolibarr
 $path=eregi_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
+require_once($path."../../htdocs/dolgraph.class.php");
 
-// Vérifie que chemin vers JPGRAHP est connu et defini $jpgraph
-if (! $conf->global->JPGRAPH_DIR && ! defined('JPGRAPH_PATH'))
-{
-	print 'Erreur: Définissez la constante JPGRAPH_PATH sur la valeur du répertoire contenant JPGraph';
-	exit;
-}
-if (! $conf->global->JPGRAPH_DIR) $conf->global->JPGRAPH_DIR=JPGRAPH_PATH;
-$jpgraphdir=$conf->global->JPGRAPH_DIR;
-if (! eregi('[\\\/]$',$jpgraphdir)) $jpgraphdir.='/';
-
-if (! file_exists($jpgraphdir."jpgraph.php"))
-{
-	print 'Erreur: Impossible de trouver les librairies graphiques.'."\n";
-	print 'Vérifier la variable JPGRAPH_PATH';
-	if ($conf->global->JPGRAPH_DIR) print ' ('.$conf->global->JPGRAPH_DIR.')'."\n";
-	elseif (defined('JPGRAPH_PATH')) print ' ('.JPGRAPH_PATH.')'."\n";
-	exit;
-}
-
-include_once($jpgraphdir."jpgraph.php");
-include_once($jpgraphdir."jpgraph_line.php");
-include_once($jpgraphdir."jpgraph_bar.php");
-include_once($jpgraphdir."jpgraph_pie.php");
-include_once($jpgraphdir."jpgraph_error.php");
-include_once($jpgraphdir."jpgraph_canvas.php");
 
 $error = 0;
 
@@ -144,41 +120,50 @@ if ($resql)
 
 }
 
-$account = 1;
+
+$width = 750;
+$height = 350;
+
 
 foreach ($accounts as $account)
 {
-	$labels = array();
-	$datas = array();
-	$amounts = array();
+    $datetime = time();
+    $year = strftime("%Y", $datetime);
+    $month = strftime("%m", $datetime);
+    $day = strftime("%d", $datetime);
+    
+	
+	// Definition de $width et $height
+	$width = 750;
+	$height = 280;
 
-	$sql = "SELECT sum(amount)";
+	// Calcul de $min et $max
+	$sql = "SELECT min(".$db->pdate("datev")."),max(".$db->pdate("datev").")";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " AND datev < '".$year."-".$month."-01';";
-
 	$resql = $db->query($sql);
 	if ($resql)
 	{
+		$num = $db->num_rows($resql);
 		$row = $db->fetch_row($resql);
-		$solde = $row[0];
+		$min = $row[0];
+		$max = $row[1];
 	}
 	else
 	{
-		print $sql ;
+		dolibarr_print_error($db);
 	}
+//	print strftime("%Y%m%d",$max);
 
-
+	// Chargement du tableau $amounts
+	// \todo peut etre optimise en virant les date_format
+	$amounts = array();
 	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 	$sql .= " WHERE fk_account = ".$account;
 	$sql .= " AND date_format(datev,'%Y%m') = '".$year.$month."'";
-	$sql .= " GROUP BY date_format(datev,'%Y%m%d');";
-
+	$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 	$resql = $db->query($sql);
-
-	$amounts = array();
-
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
@@ -193,8 +178,29 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		print $sql ;
+		dolibarr_print_error($db);
 	}
+
+	// Calcul de $solde avant le debut du graphe
+	$solde = 0;
+	$sql = "SELECT sum(amount)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+	$sql .= " WHERE fk_account = ".$account;
+	$sql .= " AND datev < '".$year."-".sprintf("%02s",$month)."-01'";
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$row = $db->fetch_row($resql);
+		$solde = $row[0];
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+
+	// Chargement de labels et datas pour tableau 1
+	$labels = array();
+	$datas = array();
 
 	$subtotal = 0;
 
@@ -205,18 +211,16 @@ foreach ($accounts as $account)
 	while ($xmonth == $month)
 	{
 		//print strftime ("%e %d %m %y",$day)."\n";
-
-		$subtotal = $subtotal + $amounts[strftime("%Y%m%d",$day)];
-
+		$subtotal = $subtotal + (isset($amounts[strftime("%Y%m%d",$day)]) ? $amounts[strftime("%Y%m%d",$day)] : 0);
 		if ($day > time())
 		{
-			$datas[$i] = 0;
+			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
 		}
 		else
 		{
 			$datas[$i] = $solde + $subtotal;
 		}
-
+		//$labels[$i] = strftime("%d",$day);
 		$labels[$i] = strftime("%d",$day);
 
 		$day += 86400;
@@ -224,69 +228,36 @@ foreach ($accounts as $account)
 		$i++;
 	}
 
-	$width = 750;
-	$height = 350;
 
-	$graph = new Graph($width, $height,"auto");
-	$graph->SetScale("textlin");
-
-	$graph->yaxis->scale->SetGrace(2);
-	$graph->SetFrame(1);
-	$graph->img->SetMargin(60,20,20,35);
-
-	$b2plot = new BarPlot($datas);
-
-	$b2plot->SetColor("blue");
-	//$b2plot->SetWeight(2);
-
-	$graph->title->Set("Solde $month $year");
-
-	$graph->xaxis->SetTickLabels($labels);
-	//$graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-
-	$graph->Add($b2plot);
-	$graph->img->SetImgFormat("png");
-
+	// Fabrication tableau 1
 	$file= $conf->banque->dir_images."/solde.$account.$year.$month.png";
+	$title=$langs->trans("Balance").' '.$langs->trans("Month").': '.$month.' '.$langs->trans("Year").': '.$year;
+	$graph_datas=array();
+	foreach($datas as $i => $val)
+	{
+        $graph_datas[$i]=array("$labels[$i]",$datas[$i]);
+    }
+	$px = new DolGraph();
+    $px->SetData($graph_datas);
+    $px->SetLegend(array($langs->trans("Balance")));
+    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetTitle($title);
+    $px->SetWidth($width);
+    $px->SetHeight($height);
+	$px->SetType('lines');
+    $px->draw($file);
 
-	$graph->Stroke($file);
-}
-/*
-* Graph annuels
-*
-*/
-foreach ($accounts as $account)
-{
-	$labels = array();
-	$datas = array();
+	
+	// Chargement du tableau $amounts
+	// \todo peut etre optimise en virant les date_format
 	$amounts = array();
-
-	$sql = "SELECT sum(amount)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " AND datev < '".$year."-01-01';";
-
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$row = $db->fetch_row($resql);
-		$solde = $row[0];
-	}
-	else
-	{
-		print $sql ;
-	}
-
 	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 	$sql .= " WHERE fk_account = ".$account;
 	$sql .= " AND date_format(datev,'%Y') = '".$year."'";
-	$sql .= " GROUP BY date_format(datev,'%Y%m%d');";
-
+	$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 	$resql = $db->query($sql);
-
-	$amounts = array();
-
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
@@ -301,8 +272,29 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_syslog("graph-solde.php Error");
+		dolibarr_print_error($db);
 	}
+	
+	// Calcul de $solde avant le debut du graphe
+	$solde = 0;
+	$sql = "SELECT sum(amount)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+	$sql .= " WHERE fk_account = ".$account;
+	$sql .= " AND datev < '".$year."-01-01'";
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$row = $db->fetch_row($resql);
+		$solde = $row[0];
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+
+	// Chargement de labels et datas pour tableau 2
+	$labels = array();
+	$datas = array();
 
 	$subtotal = 0;
 
@@ -312,26 +304,19 @@ foreach ($accounts as $account)
 	$i = 0;
 	while ($xyear == $year)
 	{
-		//print strftime ("%e %d %m %y",$day)."\n";
-
-		$subtotal = $subtotal + $amounts[strftime("%Y%m%d",$day)];
-
+		$subtotal = $subtotal + (isset($amounts[strftime("%Y%m%d",$day)]) ? $amounts[strftime("%Y%m%d",$day)] : 0);
+		//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 		if ($day > time())
 		{
-			$datas[$i] = 'x'; // Valeur spéciale permettant de ne pas tracer le graph
+			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
 		}
 		else
 		{
 			$datas[$i] = $solde + $subtotal;
 		}
-
-		if (strftime("%d",$day) == 1)
+		if (strftime("%d",$day) == 15)
 		{
-			$labels[$i] = strftime("%d",$day);
-		}
-		else
-		{
-
+			$labels[$i] = strftime("%m",$day);
 		}
 
 		$day += 86400;
@@ -339,77 +324,33 @@ foreach ($accounts as $account)
 		$i++;
 	}
 
-	$width = 750;
-	$height = 350;
-
-	$graph = new Graph($width, $height,"auto");
-	$graph->SetScale("textlin");
-
-	$graph->yaxis->scale->SetGrace(2);
-	$graph->SetFrame(1);
-	$graph->img->SetMargin(60,20,20,35);
-
-	$b2plot = new LinePlot($datas);
-
-	$b2plot->SetColor("blue");
-	//$b2plot->SetWeight(2);
-
-	$graph->title->Set("Solde $year");
-
-	$graph->xaxis->SetTickLabels($labels);
-
-	$graph->xaxis->Hide();
-	//$graph->xaxis->HideTicks();
-
-
-	//$graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-
-	$graph->Add($b2plot);
-	$graph->img->SetImgFormat("png");
-
+	// Fabrication tableau 2
 	$file= $conf->banque->dir_images."/solde.$account.$year.png";
+	$title=$langs->trans("Balance").' '.$langs->trans("Year").': '.$year;
+	$graph_datas=array();
+	foreach($datas as $i => $val)
+	{
+        $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+    }
+	$px = new DolGraph();
+    $px->SetData($graph_datas);
+    $px->SetLegend(array($langs->trans("Balance")));
+    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetTitle($title);
+    $px->SetWidth($width);
+    $px->SetHeight($height);
+	$px->SetType('lines');
+    $px->draw($file);
 
-	$graph->Stroke($file);
-}
 
-/*
-* Graph annuels
-*
-*/
-foreach ($accounts as $account)
-{
-	$labels = array();
-	$datas = array();
+	// Chargement du tableau $amounts
+	// \todo peut etre optimise en virant les date_format
 	$amounts = array();
-
-	$sql = "SELECT min(".$db->pdate("datev")."),max(".$db->pdate("datev").")";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-
-	$resql = $db->query($sql);
-
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$row = $db->fetch_row($resql);
-		$min = $row[0];
-		$max = $row[1];
-	}
-	else
-	{
-		dolibarr_syslog("graph-solde.php Error");
-	}
-
-
 	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " GROUP BY date_format(datev,'%Y%m%d');";
-
+	$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
 	$resql = $db->query($sql);
-
-	$amounts = array();
-
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
@@ -424,64 +365,61 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		dolibarr_syslog("graph-solde.php Error");
+		dolibarr_print_error($db);
 	}
 
+	// Calcul de $solde avant le debut du graphe
+	$solde = 0;
+
+	// Chargement de labels et datas pour tableau 3
+	$labels = array();
+	$datas = array();
 	$subtotal = 0;
 
 	$day = $min;
 
 	$i = 0;
-	while ($day <= $max)
+	while ($day <= ($max+1000000))	// On va bien au dela du dernier jour
 	{
-		//print strftime ("%e %d %m %y",$day)."\n";
-
-		$subtotal = $subtotal + $amounts[strftime("%Y%m%d",$day)];
-
-		$datas[$i] = $solde + $subtotal;
-
-		$labels[$i] = strftime("%d",$day);
-
+		$subtotal = $subtotal + (isset($amounts[strftime("%Y%m%d",$day)]) ? $amounts[strftime("%Y%m%d",$day)] : 0);
+		//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
+		if ($day > ($max+86400))
+		{
+			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
+		}
+		else
+		{
+			$datas[$i] = $solde + $subtotal;
+		}
+		if (strftime("%d",$day) == 1)
+		{
+			$labels[$i] = strftime("%m",$day);
+		}
 		$day += 86400;
 		$i++;
 	}
 
-	if (sizeof($amounts) > 3)
+	// Fabrication tableau 3
+	$file= $conf->banque->dir_images."/solde.$account.png";
+	$title=$langs->trans("Balance");
+	$graph_datas=array();
+	foreach($datas as $i => $val)
 	{
-		$width = 750;
-		$height = 350;
+        $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+    }
+	$px = new DolGraph();
+    $px->SetData($graph_datas);
+    $px->SetLegend(array($langs->trans("Balance")));
+    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetTitle($title);
+    $px->SetWidth($width);
+    $px->SetHeight($height);
+	$px->SetType('lines');
+    $px->draw($file);
 
-		$graph = new Graph($width, $height,"auto");
-		$graph->SetScale("textlin");
 
-		$graph->yaxis->scale->SetGrace(2);
-		$graph->SetFrame(1);
-		$graph->img->SetMargin(60,20,20,35);
-
-		$b2plot = new LinePlot($datas);
-
-		$b2plot->SetColor("blue");
-
-		$graph->title->Set("Solde");
-
-		$graph->xaxis->SetTickLabels($labels);
-
-		$graph->xaxis->Hide();
-
-		$graph->Add($b2plot);
-		$graph->img->SetImgFormat("png");
-
-		$file= $conf->banque->dir_images."/solde.$account.png";
-
-		$graph->Stroke($file);
-	}
-}
-
-foreach ($accounts as $account)
-{
-	$labels = array();
-	$datas = array();
-	$amounts = array();
+	// Chargement du tableau $credits, $debits
 	$credits = array();
 	$debits = array();
 
@@ -493,9 +431,6 @@ foreach ($accounts as $account)
 	$sql .= " GROUP BY date_format(datev,'%m');";
 
 	$resql = $db->query($sql);
-
-	$amounts = array();
-
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
@@ -510,7 +445,7 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		print $sql ;
+		dolibarr_print_error($db);
 	}
 
 	$sql = "SELECT date_format(datev,'%m'), sum(amount)";
@@ -530,44 +465,41 @@ foreach ($accounts as $account)
 	}
 	else
 	{
-		print $sql ;
+		dolibarr_print_error($db);
 	}
 
+	// Chargement de labels et data_xxx pour tableau 4
+	$labels = array();
+	$data_credit = array();
+	$data_debit = array();
 	for ($i = 0 ; $i < 12 ; $i++)
 	{
-		$data_credit[$i] = $credits[substr("0".($i+1),-2)];
-		$data_debit[$i] = $debits[substr("0".($i+1),-2)];
+		$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
+		$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
 		$labels[$i] = $i+1;
 	}
 
-	$width = 750;
-	$height = 350;
-
-	$graph = new Graph($width, $height,"auto");
-	$graph->SetScale("textlin");
-
-	$graph->yaxis->scale->SetGrace(2);
-	//$graph->SetFrame(1);
-	$graph->img->SetMargin(60,20,20,35);
-
-	$bsplot = new BarPlot($data_debit);
-	$bsplot->SetColor("red");
-
-	$beplot = new BarPlot($data_credit);
-	$beplot->SetColor("green");
-
-	$bg = new GroupBarPlot(array($beplot, $bsplot));
-
-	$graph->title->Set("Mouvements $year");
-
-	$graph->xaxis->SetTickLabels($labels);
-
-	$graph->Add($bg);
-	$graph->img->SetImgFormat("png");
-
+	// Fabrication tableau 4
 	$file= $conf->banque->dir_images."/mouvement.$account.$year.png";
-
-	$graph->Stroke($file);
+	$title=$langs->trans("Movements").' '.$langs->trans("Year").': '.$year;
+	$graph_datas=array();
+	foreach($data_credit as $i => $val)
+	{
+        $graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
+    }
+	$px = new DolGraph();
+    $px->SetData($graph_datas);
+    $px->SetLegend(array($langs->trans("Debit"),$langs->trans("Credit")));
+    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetTitle($title);
+    $px->SetWidth($width);
+    $px->SetHeight($height);
+	$px->SetType('bars');
+	$px->SetShading(8);
+    $px->draw($file);
 }
+
+$db->close();
 
 ?>

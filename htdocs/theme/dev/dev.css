@@ -100,7 +100,7 @@ a.tmenu
 {
   margin-right: 3px;
   text-decoration: none;
-  color:gray;
+  color: #505050;
   font-weight:bold;
   font-size:11px;
 }
@@ -108,7 +108,7 @@ a.tmenu
 a.tmenu#sel
 { 
   border-bottom:4px solid #9d9da1;	
-  color:black;
+  color: #000000;
 }
 
 a.tmenu:hover
@@ -172,17 +172,17 @@ a.vmenu
 {
   padding-bottom:3px;
   text-decoration:none;
-  color:gray;
+  color: #505050;
   font-weight:bold;
   font-size:11px;
-  }
+}
 
 a.vsmenu
 {
   margin-left: 8px;
   padding-bottom:3px;
   text-decoration:none;
-  color:gray;
+  color: #505050;
   font-weight:bold;
   font-size:11px;
   }
@@ -191,15 +191,32 @@ a.vmenu:hover
 {
   border-color:gray;
   text-decoration: none;
-  color:black;
+  color: #000000;
   }
 
 a.vsmenu:hover
 {
   border-color:gray;
-  color:black;
+  color: #000000;
   }
 
+font.vmenudisabled
+{
+  padding-bottom:3px;
+  text-decoration:none;
+  color: #A0A0A0;
+  font-weight:bold;
+  font-size:11px;
+}
+font.vsmenudisabled
+{
+  margin-left: 8px;
+  padding-bottom:3px;
+  text-decoration:none;
+  color: #A0A0A0;
+  font-weight:bold;
+  font-size:11px;
+}
 
 
 table.liste
@@ -299,15 +316,6 @@ textarea.flat
 /*
  * Onglets
  */
-div.tabs 
-{
-  top: 20px;
-  margin: 1px 0em 0em 0em;
-  padding: 0em 0.5em;
-  text-align: left;
-  font-family: sans-serif; font-size: 12px;
-  }
-
 div.tabBar
 {
   float: none;
@@ -318,7 +326,16 @@ div.tabBar
   padding-bottom: 14px;
   margin: 0px 0px 10px 0px;
   border: 1px solid #8CACBB;
-  }
+}
+
+div.tabs 
+{
+  top: 20px;
+  margin: 1px 0em 0em 0em;
+  padding: 0em 0.5em;
+  text-align: left;
+  font-family: sans-serif; font-size: 12px;
+}
 
 
 /*
@@ -379,12 +396,18 @@ div.error {
   border: 1px solid #6C7C8B;
 }
 
+div.info {
+  color: #999999;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  margin: 0.5em 0em 0.5em 0em;
+  border: 1px solid #ACACAB;
+}
 
 
 a.tab:link {
   background: white;
   border: 1px solid #8CACBB;
-  color: #436976;
+  color: #222233;
   font: 100% Bold;
   padding: 0em 1.0em;
   margin: 0em 0.5em;
@@ -394,7 +417,7 @@ a.tab:link {
 a.tab:visited {
   background: white;
   border: 1px solid #8CACBB;
-  color: #436976;
+  color: #222233;
   font: 100% Bold;
   padding: 0em 1.0em;
   margin: 0em 0.5em;
