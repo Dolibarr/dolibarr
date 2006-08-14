@@ -77,7 +77,7 @@ FCKConfig.FloatingPanelsZIndex = 10000 ;
 FCKConfig.ToolbarLocation = 'In' ;
 
 FCKConfig.ToolbarSets["dolibarr_mailings"] = [
-        ['FitWindow','Source','DocProps'],
+        ['FitWindow','Source'],
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
         ['Undo','Redo','-','Find','Replace','-','SelectAll'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
@@ -88,7 +88,7 @@ FCKConfig.ToolbarSets["dolibarr_mailings"] = [
 ] ;
 
 FCKConfig.ToolbarSets["dolibarr_notes"] = [
-        ['FitWindow','Source','DocProps'],
+        ['FitWindow','Source'],
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
         ['Undo','Redo','-','Find','Replace','-','SelectAll'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
@@ -99,7 +99,7 @@ FCKConfig.ToolbarSets["dolibarr_notes"] = [
 ] ;
 
 FCKConfig.ToolbarSets["dolibarr_details"] = [
-        ['FitWindow','Source','DocProps'],
+        ['FitWindow','Source'],
         ['Cut','Copy','Paste','-','Preview'],
         ['Undo','Redo'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
