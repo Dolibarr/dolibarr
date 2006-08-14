@@ -347,4 +347,4 @@ alter table llx_c_pays modify libelle varchar(50) NOT NULL;
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUUPLIER','Validation commande fournisseur','Déclenché lors de la validation d\'une commande fournisseur','order_supplier');
 
 
-drop table if exists sqltables;
+drop table if exists llx_sqltables;
