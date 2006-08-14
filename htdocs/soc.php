@@ -335,7 +335,10 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
         
 
-        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        //print '<div id="particulier" style="display:none">';
+        //print '<div id="particulier" style="visibility: hidden">';
+
+        print '<tr><td><div id="particulier13" class="visible">'.$langs->trans('Capital').'</div></td><td colspan="3"><div id="particulier14" class="visible"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</div></td></tr>';
 
         print '<tr><td><div id="particulier10" class="visible">'.($langs->transcountry("ProfId1",$soc->pays_code) != '-'?$langs->transcountry('ProfId1',$soc->pays_code):'').'</div></td><td>';
         if ($soc->pays_id)
@@ -372,11 +375,9 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         }
         print '</td><td colspan="2"><div id="particulier12" class="visible">&nbsp;</div></td></tr>'."\n";
 
-//        print '<div id="particulier" style="display:none">';
-       // print '<div id="particulier" style="visibility: hidden">';
-
+        // Forme juridique
         print '<tr><td><div id="particulier1" class="visible">'.$langs->trans('JuridicalStatus').'</div></td>';
-        print '<td colspan="3">';
+        print '<td colspan="3" class="visible">';
         if ($soc->pays_id)
         {
             $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
@@ -386,7 +387,6 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
             print $countrynotdefined;
         }
         print '</td></tr>';
-        //print '</div>'."\n";
 
         print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
         $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id, 0, 0, 0, 1, 'onChange="formDisplayHideId(\'particulier\', 8)"');
@@ -395,8 +395,8 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
         print '</td></tr>';
 
-        print '<tr><td nowrap><div id="particulier4" class="visible">'.$langs->trans('VATIntraShort').'</div></td><td>';
-
+        // TVA Intra
+        print '<tr><td nowrap><div id="particulier4" class="visible">'.$langs->trans('VATIntraShort').'</div></td><td colspan="3">';
         print '<div id="particulier5" class="visible">';
         print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
         print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
@@ -404,6 +404,8 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '</div>';
         print '</td></tr>';
 
+        //print '</div>'."\n";
+        //print '</div>'."\n";
 
 		// Assujeti TVA
 		$html = new Form($db);
@@ -413,7 +415,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		
 
         print '<tr><td colspan="4" align="center">';
-        print '<input type="submit" class="button" value="'.$langs->trans('AddCompany').'"></td></tr>'."\n";
+        print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'"></td></tr>'."\n";
     
         print '</table>'."\n";
         print '</form>'."\n";

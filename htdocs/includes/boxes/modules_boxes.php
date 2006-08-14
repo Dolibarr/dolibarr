@@ -75,7 +75,7 @@ class ModeleBoxes
         print dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
         if ($head['sublink'])
         {
-            print ' <a href="'.$head['sublink'].'">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
+            print ' <a href="'.$head['sublink'].'" target="_new">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
         }
         print '</td></tr>';
     

@@ -95,6 +95,7 @@ AddContact=Créer contact
 Contact=Contact
 DefaultContact=Contact par défaut
 AddCompany=Créer société
+AddThirdParty=Créer tiers
 DeleteACompany=Supprimer une société
 PersonalInformations=Informations personnelles
 AccountancyCode=Code compta

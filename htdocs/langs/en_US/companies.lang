@@ -95,6 +95,7 @@ AddContact=Add contact
 Contact=Contact
 DefaultContact=Default contact
 AddCompany=Add company
+AddThirdParty=Add third party
 DeleteACompany=Delete a company
 PersonalInformations=Personal data
 AccountancyCode=Accountancy code
