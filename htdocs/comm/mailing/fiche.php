@@ -256,7 +256,7 @@ if ($_GET["action"] == 'create')
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
     {
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('body',$objp->description,320,'dolibarr_details');
+		$doleditor=new DolEditor('body',$objp->description,320,'dolibarr_details','',true);
 		$doleditor->Create();
     }
     else
