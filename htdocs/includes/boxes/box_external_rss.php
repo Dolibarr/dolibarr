@@ -88,18 +88,37 @@ class box_external_rss extends ModeleBoxes {
         	$this->info_box_head = array('text' => $title);
 		}
 		
+		// Titre du channel
+		$channel=$rss->channel['tagline'];
+
         for($i = 0; $i < $max ; $i++)
         {
             $item = $rss->items[$i];
-            $href = $item['link'];
-            $result = $this->utf8_check(urldecode($item['title']));
+
+			// Magpierss common fields
+            $href  = $item['link'];
+        	$title = urldecode($item['title']);
+			$date  = $item['date_timestamp'];	// date will be empty if conversion into timestamp failed
+			if ($rss->is_rss())	// If RSS
+			{
+				if (! $date && isset($item['pubdate']))    $date=$item['pubdate'];
+				if (! $date && isset($item['dc']['date'])) $date=$item['dc']['date'];
+				//$item['dc']['language']
+				//$item['dc']['publisher']
+			}
+			if ($rss->is_atom())	// If Atom
+			{
+				if (! $date && isset($item['issued']))    $date=$item['issued'];
+				if (! $date && isset($item['modified']))  $date=$item['modified'];
+				//$item['issued']
+				//$item['modified']
+				//$item['atom_content']
+			}
+			if (is_numeric($date)) $date=dolibarr_print_date($date,"dayhour");
+			$result = $this->utf8_check($title);
             if ($result)
             {
-            	$title = utf8_decode(urldecode($item['title']));
-            }
-            else
-            {
-            	$title = (urldecode($item['title']));
+            	$title=utf8_decode($title);
             }
             $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
             $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
@@ -108,7 +127,12 @@ class box_external_rss extends ModeleBoxes {
             'logo' => $this->boximg,
             'text' => $title,
             'url' => $href,
+            'maxlength' => 64,
             'target' => 'newrss');
+            $this->info_box_contents[$i][1] = array('align' => 'right',
+            'text' => $date,
+            'td' => 'nowrap="1"');
+
         }
     }
     

@@ -396,9 +396,12 @@ class Conf
 		}
 
 		// Format de la date
-		// \todo Mettre format dans fichier langue
-		$this->format_date_text_short="%d %b %Y";
+		// \todo Mettre les 4 formats dans fichier langue
 		$this->format_date_short="%d/%m/%Y";
+		$this->format_date_text_short="%d %b %Y";
+		$this->format_date_hour_short="%d/%m/%Y %H:%M";
+		$this->format_date_hour_text_short="%d %b %Y %H:%M";
+
 		$this->format_date_short_java="dd/MM/yyyy";
 
 		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA

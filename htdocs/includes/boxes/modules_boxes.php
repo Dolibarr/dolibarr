@@ -99,6 +99,7 @@ class ModeleBoxes
                     if (isset($contents[$i][$j]['width'])) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
                     if (isset($contents[$i][$j]['colspan'])) $tdparam.=' colspan="'. $contents[$i][$j]['colspan'].'"';
                     if (isset($contents[$i][$j]['class'])) $tdparam.=' class="'. $contents[$i][$j]['class'].'"';
+                    if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
         
                     if (!$contents[$i][$j]['text']) $contents[$i][$j]['text']="";
                     $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
