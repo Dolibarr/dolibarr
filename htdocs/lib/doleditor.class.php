@@ -60,16 +60,22 @@ class DolEditor
     	$this->editor = new FCKeditor($htmlname);
     	$this->editor->Value	= $content;
 		$this->editor->Height = $height;
+		$this->editor->ToolbarSet = $toolbarname;
+		$this->editor->Config['AutoDetectLanguage'] = 'true';
+		$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
+		$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
 		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
 		{
 			$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
-			$this->editor->ToolbarSet = $toolbarname;
-			$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
-			$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
 			$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
-//			if ($langs->origlang=='auto')
+//			if ($langs->origlang!='auto')
 //			{
-				$this->editor->Config['AutoDetectLanguage'] = 'true';
+//			}
+		}
+		else
+		{
+//			if ($langs->origlang!='auto')
+//			{
 //			}
 		}
     }
