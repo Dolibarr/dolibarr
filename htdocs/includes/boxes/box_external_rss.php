@@ -76,6 +76,10 @@ class box_external_rss extends ModeleBoxes {
 		// Recupere flux RSS definie dans EXTERNAL_RSS_URLRSS_$site
         $rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_".$site) );
         
+		// INFO sur le channel
+		$description=$rss->channel['tagline'];
+		$link=$rss->channel['link'];
+
         $title=$langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site));
         if ($rss->ERROR)
         {
@@ -85,12 +89,11 @@ class box_external_rss extends ModeleBoxes {
         }
         else
         {         
-        	$this->info_box_head = array('text' => $title);
+        	$this->info_box_head = array('text' => $title,
+        		'sublink' => $link, 'subtext'=>'WWW', 'subpicto'=>'object_bookmark');
 		}
 		
-		// Titre du channel
-		$channel=$rss->channel['tagline'];
-
+		// INFO sur le élements
         for($i = 0; $i < $max ; $i++)
         {
             $item = $rss->items[$i];
