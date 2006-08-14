@@ -816,16 +816,16 @@ insert into llx_c_stcomm (id,code,libelle) values ( 3, 'ST_DONE',  'Contactée');
 --
 
 delete from llx_c_typent;
-insert into llx_c_typent (id,code,libelle) values (  0, 'TE_UNKNOWN', '-');
-insert into llx_c_typent (id,code,libelle) values (  1, 'TE_STARTUP', 'Start-up');
-insert into llx_c_typent (id,code,libelle) values (  2, 'TE_GROUP',   'Grand groupe');
-insert into llx_c_typent (id,code,libelle) values (  3, 'TE_MEDIUM',  'PME/PMI');
-insert into llx_c_typent (id,code,libelle) values (  4, 'TE_SMALL',   'TPE');
-insert into llx_c_typent (id,code,libelle) values (  5, 'TE_ADMIN',   'Administration');
-insert into llx_c_typent (id,code,libelle) values (  6, 'TE_WHOLE',   'Grossiste');
-insert into llx_c_typent (id,code,libelle) values (  7, 'TE_RETAIL',  'Revendeur');
-insert into llx_c_typent (id,code,libelle) values (  8, 'TE_PRIVATE', 'Particulier');
-insert into llx_c_typent (id,code,libelle) values (100, 'TE_OTHER',   'Autres');
+insert into llx_c_typent (id,code,libelle,active) values (  0, 'TE_UNKNOWN', '-',             1);
+insert into llx_c_typent (id,code,libelle,active) values (  1, 'TE_STARTUP', 'Start-up',      0);
+insert into llx_c_typent (id,code,libelle,active) values (  2, 'TE_GROUP',   'Grand groupe',  1);
+insert into llx_c_typent (id,code,libelle,active) values (  3, 'TE_MEDIUM',  'PME/PMI',       1);
+insert into llx_c_typent (id,code,libelle,active) values (  4, 'TE_SMALL',   'TPE',           1);
+insert into llx_c_typent (id,code,libelle,active) values (  5, 'TE_ADMIN',   'Administration',1);
+insert into llx_c_typent (id,code,libelle,active) values (  6, 'TE_WHOLE',   'Grossiste',     0);
+insert into llx_c_typent (id,code,libelle,active) values (  7, 'TE_RETAIL',  'Revendeur',     0);
+insert into llx_c_typent (id,code,libelle,active) values (  8, 'TE_PRIVATE', 'Particulier',   1);
+insert into llx_c_typent (id,code,libelle,active) values (100, 'TE_OTHER',   'Autres',        1);
 
 
 --
