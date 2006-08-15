@@ -31,26 +31,11 @@ $user->getrights();
 if (!$user->rights->categorie->lire)
   accessforbidden();
 
-
-/*
- * Affichage fiche
- */
-
-llxHeader("","",$langs->trans("Categories"));
-
-print_titre($langs->trans("ModifCat"));
-
-print '<table border="0" width="100%">';
-
-print '<tr><td valign="top" width="30%">';
-
-$categorie = new Categorie ($db, $_REQUEST['id']);
-$html = new Form($db);
-
-
 // Action mise à jour d'une catégorie
 if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 {
+	$categorie = new Categorie ($db, $_REQUEST['id']);
+
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
 	$categorie->visible        = $_POST["visible"];
@@ -69,22 +54,43 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 	{
 		if ($categorie->update() > 0)
 		{
-			$_GET["action"] = 'confirmed';
-			$_POST["addcat"] = '';
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id);
+			exit;
 		}
 	}
 }
+
+
+
+/*
+ * Affichage fiche
+ */
+
+llxHeader("","",$langs->trans("Categories"));
+
+print_titre($langs->trans("ModifCat"));
+print "<br>";
+
 if ($categorie->error)
 {
 	print '<div class="error">';
 	print $categorie->error;
 	print '</div>';
 }
-print '<tr><td valign="top" width="30%">';
+
+$categorie = new Categorie ($db, $_REQUEST['id']);
+$html = new Form($db);
+
+print '<table class="notopnoleft" border="0" width="100%">';
+
+print '<tr><td class="notopnoleft" valign="top" width="30%">';
+
+print "\n";
+print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="id" value="'.$categorie->id.'">';
 
 ?>
-<form method="post" action="<?php print $_SERVER['REQUEST_URI']; ?>">
-<input type="hidden" name="action" value="update">
 <table class="border" width="100%">
 	<tr>
 		<td><?php print $langs->trans("Label"); ?>&nbsp;:</td>
@@ -101,7 +107,7 @@ print '<tr><td valign="top" width="30%">';
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 		{
 	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('description',$categorie->description,240,'dolibarr_notes');
+			$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes');
 			$doleditor->Create();
 		}
 		else

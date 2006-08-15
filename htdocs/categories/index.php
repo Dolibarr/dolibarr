@@ -36,15 +36,16 @@ if (!$user->rights->categorie->lire) accessforbidden();
  * Affichage page accueil
  */
 
-llxHeader("","",$langs->trans("ProductsCategoriesArea"));
+$c = new Categorie($db);
 $html = new Form($db);
+
+llxHeader("","",$langs->trans("ProductsCategoriesArea"));
 print_fiche_titre($langs->trans("ProductsCategoriesArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
-$c = new Categorie ($db);
 
 /*
  * Zone recherche produit/service
@@ -74,10 +75,10 @@ print '</td><td valign="top" width="70%">';
 /*
  * Catégories trouvées
  */
-
-if($_POST['catname'])
+if($_POST['catname'] || $_REQUEST['id'])
 {
-	$cats = $c->rechercher_par_nom ($_POST['catname']);
+	$cats = $c->rechercher($_REQUEST['id'],$_POST['catname']);
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
@@ -107,90 +108,96 @@ $cate_arbo = $c->get_full_arbo();
 * Catégories en javascript
 */
 
-/*
+
 if ($conf->use_javascript)
 {
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("AllCats").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("CategoriesTree").'</td></tr>';
 
 	print '<tr><td>';
 
-	require_once(DOL_DOCUMENT_ROOT.'/includes/treemenu/TreeMenu.php');
-	
-	$menu  = new HTML_TreeMenu();
-	$icon         = 'folder.gif';
-	$expandedIcon = 'folder-expanded.gif';
-
-	// Création noeud racine
-	$node=array();
-	$currentnode=-1;
-	$node[$currentnode] = new HTML_TreeNode(
-		array('text' => $langs->trans("AllCats"), 'link' => '', 'icon' => $icon, 'expandedIcon' => $expandedIcon, 'expanded' => true)
-		//,array('onclick' => "alert('foo'); return false", 'onexpand' => "alert('Expanded')")
-	);
-	$node1 = new HTML_TreeNode(
-		array('text' => $langs->trans("AllCats"), 'link' => '', 'icon' => $icon, 'expandedIcon' => $expandedIcon, 'expanded' => true)
-		//,array('onclick' => "alert('foo'); return false", 'onexpand' => "alert('Expanded')")
-	);
-
-	// Ajoute id_mere sur tableau cate_arbo
-	foreach ($cate_arbo as $key => $val)
+	if (sizeof($cate_arbo))
 	{
-
-		print 'x '.$cate_arbo[$key]['id'].' '.$cate_arbo[$key]['level'].' '.$cate_arbo[$key]['id_mere'].'<br>';
-
+	
+		require_once(DOL_DOCUMENT_ROOT.'/includes/treemenu/TreeMenu.php');
+		
+		$menu  = new HTML_TreeMenu();
+		$icon         = 'folder.gif';
+		$expandedIcon = 'folder-expanded.gif';
+	
+		// Création noeud racine
+		$node=array();
+		$rootnode='-1';
+		$node[$rootnode] = new HTML_TreeNode(
+			array('text' => $langs->trans("AllCats"), 'link' => '', 'icon' => $icon, 'expandedIcon' => $expandedIcon, 'expanded' => true)
+			//,array('onclick' => "alert('foo'); return false", 'onexpand' => "alert('Expanded')")
+		);
+	
+		// Ajoute id_mere sur tableau cate_arbo
+		$i=0;
+		foreach ($cate_arbo as $key => $val)
+		{
+			$i++;
+			$nodeparent=ereg_replace('_[0-9]+$','',$cate_arbo[$key]['fullpath']);
+			if (! $nodeparent) $nodeparent=$rootnode;
+			//print "Ajout noeud sur noeud ".$nodeparent.' pour categorie '.$cate_arbo[$key]['fulllabel']."<br>\n";
+			$node[$cate_arbo[$key]['fullpath']]=$node[$nodeparent]->addItem(new HTML_TreeNode(array(
+					'text' => $cate_arbo[$key]['label'],
+					//'link' => $_SERVER["PHP_SELF"].'?id='.$cate_arbo[$key]['id'],
+					'link' => DOL_URL_ROOT.'/categories/viewcat.php?id='.$cate_arbo[$key]['id'],
+					'icon' => $icon, 'expandedIcon' => $expandedIcon)));
+			//print 'Resultat: noeud '.$cate_arbo[$key]['fullpath']." créé<br>\n";
+		}
+		
+		$menu->addItem($node[$rootnode]);
+		
+		// Affiche arbre
+		print '<script src="'.DOL_URL_ROOT.'/includes/treemenu/TreeMenu.js" language="JavaScript" type="text/javascript"></script>';
+		
+		$treeMenu = new HTML_TreeMenu_DHTML($menu, array('images' => DOL_URL_ROOT.'/includes/treemenu/images', 'defaultClass' => 'treeMenuDefault', false));
+		$treeMenu->printMenu();
+		
+		//$listBox  = new HTML_TreeMenu_Listbox($menu, array('linkTarget' => '_self'));
+		//$listBox->printMenu();
+	
 	}
-	
-	$node1->addItem(new HTML_TreeNode(array('text' => "Second level, item y", 'link' => $_SERVER["PHP_SELF"], 'icon' => $icon, 'expandedIcon' => $expandedIcon)));
-	$node1_1 = $node1->addItem(new HTML_TreeNode(array('text' => "Second level", 'link' => $_SERVER["PHP_SELF"], 'icon' => $icon, 'expandedIcon' => $expandedIcon)));
-	$node1_1_1 = $node1_1->addItem(new HTML_TreeNode(array('text' => "Third level", 'link' => $_SERVER["PHP_SELF"], 'icon' => $icon, 'expandedIcon' => $expandedIcon)));
-	$node1_1_1_1 = $node1_1_1->addItem(new HTML_TreeNode(array('text' => "Fourth level", 'link' => $_SERVER["PHP_SELF"], 'icon' => $icon, 'expandedIcon' => $expandedIcon)));
-	$node1_1_1_1->addItem(new HTML_TreeNode(array('text' => "Fifth level", 'link' => $_SERVER["PHP_SELF"], 'icon' => $icon, 'expandedIcon' => $expandedIcon, 'cssClass' => 'treeMenuBold')));
-	$node1_1->addItem(new HTML_TreeNode(array('text' => "Third Level, item 2", 'link' => $_SERVER["PHP_SELF"], 'icon' => $icon, 'expandedIcon' => $expandedIcon)));
-	$node1->addItem(new HTML_TreeNode(array('text' => "Second level, item 3", 'link' => $_SERVER["PHP_SELF"], 'icon' => $icon, 'expandedIcon' => $expandedIcon)));
-	$menu->addItem($node1);
-	
-	// Affiche arbre
-	print '<script src="'.DOL_URL_ROOT.'/includes/treemenu/TreeMenu.js" language="JavaScript" type="text/javascript"></script>';
-	
-	$treeMenu = new HTML_TreeMenu_DHTML($menu, array('images' => DOL_URL_ROOT.'/includes/treemenu/images', 'defaultClass' => 'treeMenuDefault', false));
-	$treeMenu->printMenu();
-	
-	//$listBox  = new HTML_TreeMenu_Listbox($menu, array('linkTarget' => '_self'));
-	//$listBox->printMenu();
+	else
+	{
+		print $langs->trans("NoneCategory");	
+	}
 
 	print '</td></tr>';
 	
 	print "</table>";
 	print '<br>';
 }
-*/
-
-/*
-* Catégories principales en HTML pure
-*/
-if (1 == 1)
+else
 {
+	/*
+	* Catégories principales en HTML pure
+	*/
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("AllCats").'</td><td>'.$langs->trans("Desc").'</td></tr>';
-	
-	if (is_array($cate_arbo))
+	print '<tr class="liste_titre"><td>'.$langs->trans("AllCats").'</td><td>'.$langs->trans("Description").'</td></tr>';
+
+	if (sizeof($cate_arbo))
 	{
-		$var=true;
-		foreach($cate_arbo as $key => $value)
+		if (is_array($cate_arbo))
 		{
-			$var = ! $var;
-			print "\t<tr ".$bc[$var].">\n";
-			print '<td><a href="viewcat.php?id='.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</a></td>';
-			print '<td>'.$c->get_desc($cate_arbo[$key]['id']).'</td>';
-			print "\t</td>\n";
-			print "\t</tr>\n";
+			$var=true;
+			foreach($cate_arbo as $key => $value)
+			{
+				$var = ! $var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td><a href="viewcat.php?id='.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</a></td>';
+				print '<td>'.$c->get_desc($cate_arbo[$key]['id']).'</td>';
+				print "\t</tr>\n";
+			}
 		}
+		
 	}
-	
+
 	print "</table>";
 }
-
 
 $db->close();
 

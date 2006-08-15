@@ -17,6 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/**
+        \file       htdocs/categories/edit.php
+        \ingroup    categories
+        \brief      Page de visualisation de categorie produit
+        \version    $Revision$
+*/
+
 require "./pre.inc.php";
 
 $user->getrights('categorie');
@@ -28,35 +35,74 @@ if (! $user->rights->categorie->lire)
 
 if ($_REQUEST['id'] == "")
 {
-  dolibarr_print_error ();
-  exit ();
+  dolibarr_print_error('','Missing parameter id');
+  exit();
 }
 
-$c = new Categorie ($db, $_REQUEST['id']);
 
 
 /*
  * Affichage fiche categorie
  */
- 
 llxHeader ("","",$langs->trans("Categories"));
 
-print_fiche_titre($langs->trans("Category"));
+$c = new Categorie ($db, $_REQUEST['id']);
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+$h = 0;
+$head = array();
 
+$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$c->id;
+$head[$h][1] = $langs->trans("Card");
+$head[$h][2] = 'card';
+$h++;
+
+dolibarr_fiche_head($head, 'card', $langs->trans("Category"));
+
+
+print '<table border="0" width="100%" class="border">';
+
+print '<tr><td width="20%" class="notopnoleft">';
 $ways = $c->print_all_ways ();
-print "<div id='ways'>";
-print $langs->trans("Ref").': ';
+print $langs->trans("Ref").'</td><td>';
 foreach ($ways as $way)
 {
   print $way."<br />\n";
 }
+print '</td></tr>';
+
+
+print '<tr><td width="20%" class="notopnoleft">';
+print $langs->trans("Description").'</td><td>';
+print nl2br($c->description);
+print '</td></tr>';
+
+print '</table>';
+
+print '</div>';
+
+
+/*
+ * Boutons actions
+ */
+print "<div class='tabsAction'>\n";
+
+if ($user->rights->categorie->creer)
+{
+	print "<a class='butAction' href='edit.php?id=".$c->id."'>".$langs->trans("Edit")."</a>";
+}
+
+if ($user->rights->categorie->supprimer)
+{
+	print "<a class='butActionDelete' href='delete.php?id=".$c->id."'>".$langs->trans("Delete")."</a>";
+}
+
 print "</div>";
 
-$cats = $c->get_filles ();
 
+
+
+
+$cats = $c->get_filles ();
 if ($cats < 0)
 {
 	dolibarr_print_error();
@@ -96,10 +142,8 @@ else
 	print "</table>\n";
 }
 
-$i = 0;
 
 $prods = $c->get_products ();
-
 if ($prods < 0)
 {
   dolibarr_print_error();
@@ -112,6 +156,7 @@ else
 	
 	if (sizeof ($prods) > 0)
 	{
+		$i = 0;
 		$var=true;
 		foreach ($prods as $prod)
 		{
@@ -134,25 +179,6 @@ else
 	print "</table>\n";
 }
 
-/*
- * Boutons actions
- */
-print "<div class='tabsAction'>\n";
-
-if ($user->rights->categorie->creer)
-{
-	print "<a class='butAction' href='edit.php?id=".$c->id."'>".$langs->trans("Edit")."</a>";
-}
-
-if ($user->rights->categorie->supprimer)
-{
-	print "<a class='butActionDelete' href='delete.php?id=".$c->id."'>".$langs->trans("Delete")."</a>";
-}
-
-print "</div>";
-
-
-print '</td></tr></table>';
 
 $db->close();
 

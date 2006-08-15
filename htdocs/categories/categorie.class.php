@@ -874,23 +874,29 @@ class Categorie
 	}
 
 	/**
-	* Retourne les catégories dont le nom correspond à $nom
-	* ajoute des wildcards sauf si $exact = true
+	* 	\brief	Retourne les catégories dont l'id ou le nom correspond
+	* 			ajoute des wildcards au nom sauf si $exact = true
 	*/
-	function rechercher_par_nom ($nom, $exact = false)
+	function rechercher($id, $nom, $exact = false)
 	{
 		$cats = array ();
 
-		if (!$exact)
+		// Generation requete recherche
+		$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie ";
+		if ($nom)
 		{
-			$nom = '%'.str_replace ('*', '%', $nom).'%';
+			if (! $exact)
+			{
+				$nom = '%'.str_replace ('*', '%', $nom).'%';
+			}
+			$sql.= "WHERE label LIKE '".$nom."'";
+		}
+		if ($id)
+		{
+			$sql.="WHERE rowid = '".$id."'";
 		}
 
-		$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie ";
-		$sql .= "WHERE label LIKE '".$nom."'";
-
 		$res  = $this->db->query ($sql);
-
 		if ($res)
 		{
 			while ($id = $this->db->fetch_array ($res))
@@ -902,7 +908,10 @@ class Categorie
 		}
 		else
 		{
-			return 0;
+			$this->error=$this->db->error().' sql='.$sql;
+			//dolibarr_syslog($this->error);
+			dolibarr_print_error('',$this->error);
+			return -1;
 		}
 	}
 }

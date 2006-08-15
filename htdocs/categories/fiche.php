@@ -67,7 +67,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	if (!$categorie->label || !$categorie->description)
 	{
 		$_GET["action"] = 'create';
-		$categorie->error = $langs->trans(ErrForgotField);
+		$categorie->error = $langs->trans("ErrForgotField");
 	}
 	if ($categorie->error =="")
 	{
@@ -84,11 +84,13 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 
 	if ($_GET["action"] == 'confirmed')
 	{
-		print_titre($langs->trans("CatCreated"));
-
-		print '<table border="0" width="100%">';
-		print '<tr><td valign="top" width="30%">';
-		print $langs->trans("TheCategorie").' '.$categorie->label.' '.$langs->trans("WasAddedSuccessfully");
+		print_titre($langs->trans("NewCategory"));
+		print '<br>';
+		
+		print '<table class="notopnoleft" width="100%">';
+		print '<tr><td valign="top" class="notopnoleft" width="30%">';
+		
+		print '<div class="ok">'.$langs->trans("CategorySuccessfullyCreated",$categorie->label).'</div>';
 
 		if ($_REQUEST['idprodorigin'])
 		{
@@ -134,7 +136,7 @@ if ($user->rights->categorie->creer)
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 		{
 	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('description',$categorie->description,240,'dolibarr_notes');
+			$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes');
 			$doleditor->Create();
 		}
 		else
