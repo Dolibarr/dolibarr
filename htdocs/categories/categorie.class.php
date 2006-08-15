@@ -3,6 +3,7 @@
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -28,891 +28,882 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 class Categorie
 {
-  var $db;
+	var $db;
 
-  var $id;
-  var $label;
-  var $description;
-  var $statut;
+	var $id;
+	var $label;
+	var $description;
+	var $statut;
 
-  /**
-   * Constructeur
-   * db : accès base de données
-   * id : id de la catégorie
-   */
-  function Categorie($db, $id=-1)
-  {
-    $this->db = $db;
-    $this->id = $id;
+	var $cats=array();			// Tableau en memoire des categories
+	var $motherof = array();	// Tableau des correspondances id_fille -> id_mere
 
-    if ($id != -1) $this->fetch ($this->id);
-  }
+	var $error;
 	
-  /**
-   * Charge la catégorie
-   * id : id de la catégorie à charger
-   */
-  function fetch($id)
-  {
-    $sql = "SELECT rowid, label, description, visible";
-    $sql.= " FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$id;
 
-    $resql  = $this->db->query ($sql);
+	/**
+	* Constructeur
+	* db : accès base de données
+	* id : id de la catégorie
+	*/
+	function Categorie($db, $id=-1)
+	{
+		$this->db = $db;
+		$this->id = $id;
 
-    if ($resql)
-    {
-	     $res = $this->db->fetch_array($resql);
+		if ($id != -1) $this->fetch ($this->id);
+	}
 
-	     $this->id		      = $res['rowid'];
-	     $this->label		    = $res['label'];
-	     $this->description	= stripslashes($res['description']);
-	     $this->visible     = $res['visible'];
+	/**
+	* Charge la catégorie
+	* id : id de la catégorie à charger
+	*/
+	function fetch($id)
+	{
+		$sql = "SELECT rowid, label, description, visible";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$id;
 
-	     $this->db->free($resql);
-    }
-    else
-    {
-	     dolibarr_print_error ($this->db);
-	     return -1;
-    }
-	$sql = "SELECT fk_categorie_mere";
-    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association WHERE fk_categorie_fille = '".$id."'";
+		$resql  = $this->db->query ($sql);
 
-    $resql  = $this->db->query ($sql);
+		if ($resql)
+		{
+			$res = $this->db->fetch_array($resql);
 
-    if ($resql)
-    {
-	     $res = $this->db->fetch_array($resql);
-	     $this->id_mere = $res['fk_categorie_mere'];
-	     
-    }
-    else
-    {
-	     dolibarr_print_error ($this->db);
-	     return -1;
-    }
-  }
+			$this->id		      = $res['rowid'];
+			$this->label		    = $res['label'];
+			$this->description	= stripslashes($res['description']);
+			$this->visible     = $res['visible'];
 
-  /**
-   * Ajoute la catégorie dans la base de données
-   * retour : -1 : erreur SQL
-   *          -2 : nouvel ID inconnu
-   *          -3 : catégorie invalide
-   */
-  function create()
-  {
+			$this->db->free($resql);
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+		$sql = "SELECT fk_categorie_mere";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association WHERE fk_categorie_fille = '".$id."'";
+
+		$resql  = $this->db->query ($sql);
+
+		if ($resql)
+		{
+			$res = $this->db->fetch_array($resql);
+			$this->id_mere = $res['fk_categorie_mere'];
+
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	* Ajoute la catégorie dans la base de données
+	* retour : -1 : erreur SQL
+	*          -2 : nouvel ID inconnu
+	*          -3 : catégorie invalide
+	*/
+	function create()
+	{
 		global $langs;
 		$langs->load('categories');
-	if ($this->already_exists ())
-    {
-		 $this->error=$langs->trans("ImpossibleAddCat");
-		 $this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
-		 return -1;
-    }
-	
-    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, visible) ";
-    $sql .= "VALUES ('".str_replace("'","''",$this->label)."', '".str_replace("'","''",$this->description)."', '".$this->visible."')";
-		
+		if ($this->already_exists ())
+		{
+			$this->error=$langs->trans("ImpossibleAddCat");
+			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
+			return -1;
+		}
 
-    $res  = $this->db->query ($sql);
-    if ($res)
-    {
-	     $id = $this->db->last_insert_id (MAIN_DB_PREFIX."categorie");
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, visible) ";
+		$sql .= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."', '".$this->visible."')";
 
-	      if ($id > 0)
-	      {
-	         $this->id = $id;
-			 if($this->id_mere != "")
+
+		$res  = $this->db->query ($sql);
+		if ($res)
+		{
+			$id = $this->db->last_insert_id (MAIN_DB_PREFIX."categorie");
+
+			if ($id > 0)
 			{
-				if($this->add_fille() < 0)
+				$this->id = $id;
+				if($this->id_mere != "")
 				{
-					 $this->error=$langs->trans("ImpossibleAssociateCategory");
-					return -1;
+					if($this->add_fille() < 0)
+					{
+						$this->error=$langs->trans("ImpossibleAssociateCategory");
+						return -1;
+					}
+
 				}
-					
+				return $id;
 			}
-	         return $id;
-	      }
-	      else
-	      {
-	         return -2;
-	      }
-    }
-    else
-    {
-	      dolibarr_print_error ($this->db);
-	      return -1;
-    }
-  }
-	
-  /**
-   * Mise à jour de la catégorie
-   * retour :  1 : OK
-   *          -1 : erreur SQL
-   *          -2 : catégorie invalide
-   */
-  function update()
-  {
-   
-	$sql = 'delete from '.MAIN_DB_PREFIX.'categorie_association';
-    $sql .= ' WHERE fk_categorie_fille = "'.$this->id.'"';
+			else
+			{
+				return -2;
+			}
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+	}
 
-    if (! $this->db->query($sql))
-    {
-	    dolibarr_print_error($this->db);
-	     return -1;
-    }
-
-	
-	if($this->id_mere !="" && $this->id_mere!=$this->id)
+	/**
+	* Mise à jour de la catégorie
+	* retour :  1 : OK
+	*          -1 : erreur SQL
+	*          -2 : catégorie invalide
+	*/
+	function update()
 	{
-		
-		$sql = 'insert into '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
-		$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
+
+		$sql = 'delete from '.MAIN_DB_PREFIX.'categorie_association';
+		$sql .= ' WHERE fk_categorie_fille = "'.$this->id.'"';
+
 		if (! $this->db->query($sql))
 		{
 			dolibarr_print_error($this->db);
-			 return -1;
+			return -1;
 		}
-	}
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-    $sql.= " SET label = '".trim(str_replace("'","''",$this->label))."'";
 
-    if (strlen (trim($this->description)) > 0)
-    {
-    	$sql .= ", description = '".trim(str_replace("'","''",$this->description))."'";
-    }
-    
-    $sql .= ", visible = '".$this->visible."'";
-    $sql .= " WHERE rowid = ".$this->id;
 
-    if ($this->db->query($sql))
-    {
-	    return 1;
-    }
-    else
-    {
-	     dolibarr_print_error($this->db);
-	     return -1;
-    }
-  }
+		if($this->id_mere !="" && $this->id_mere!=$this->id)
+		{
 
-  /**
-   * Supprime la catégorie
-   * Les produits et sous-catégories deviennent orphelins
-   * si $all = false, et sont (seront :) supprimés sinon
-   * TODO : imp. $all
-   */
-  function remove ($all = false)
-  {
-
-    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product ";
-    $sql .= "WHERE fk_categorie = ".$this->id;
-    
-    if (!$this->db->query($sql))
-    {
-	     dolibarr_print_error($this->db);
-	     return -1;
-    }
-
-    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association ";
-    $sql .= "WHERE fk_categorie_mere  = ".$this->id;
-    $sql .= "   OR fk_categorie_fille = ".$this->id;
-    
-    if (!$this->db->query($sql))
-    {
-	     dolibarr_print_error($this->db);
-	     return -1;
-    }
-
-    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie ";
-    $sql .= "WHERE rowid = ".$this->id;
-    
-    if (!$this->db->query($sql))
-    {
-	     dolibarr_print_error($this->db);
-	     return -1;
-    }
-    else
-    {
-	     return 1;
-    }
-
-  }
-	
-	
-  /**
-   * Ajout d'une sous-catégorie
-   * $fille : objet catégorie
-   * retour :  1 : OK
-   *          -2 : $fille est déjà dans la famille de $this
-   *          -3 : catégorie ($this ou $fille) invalide
-   */
-  function add_fille()
-  {
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_association (fk_categorie_mere, fk_categorie_fille)";
-    $sql.= " VALUES (".$this->id_mere.", ".$this->id.")";
-
-    if ($this->db->query($sql))
-    {
-	      return 1;
-    }
-    else
-    {
-	      dolibarr_print_error($this->db);
-	      return -1;
-    }
-  }
-	 
-  /**
-   * Suppression d'une sous-catégorie (seulement "désassociation")
-   * $fille : objet catégorie
-   * retour :  1 : OK
-   *          -3 : catégorie ($this ou $fille) invalide
-   */
-  function del_fille($fille)
-  {
-    if (!$this->check() || !$fille->check())
-    {
-	     return -3;
-    }
-
-    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
-    $sql .= " WHERE fk_categorie_mere = ".$this->id." and fk_categorie_fille = ".$fille->id;
-
-    if ($this->db->query($sql))
-    {
-       return 1;
-    }
-    else
-    {
-       dolibarr_print_error($this->db);
-       return -1;
-    }
-  }
-	 
-  /**
-   * Ajout d'un produit à la catégorie
-   * retour :  1 : OK
-   *          -1 : erreur SQL
-   *          -2 : id non renseigné
-   */
-  function add_product($prod)
-  {
-    if ($this->id == -1)
-    {
-      return -2;
-    }
-		
-    $sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_product (fk_categorie, fk_product)";
-    $sql .= " VALUES (".$this->id.", ".$prod->id.")";
-
-    if ($this->db->query($sql))
-    {
-	     return 1;
-    }
-    else
-    {
-       dolibarr_print_error($this->db);
-       return -1;
-    }
-  }
-	
-  /**
-   * Suppresion d'un produit de la catégorie 
-   * @param $prod est un objet de type produit
-   * retour :  1 : OK
-   *          -1 : erreur SQL
-   */
-  function del_product($prod)
-  {
-    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
-    $sql .= " WHERE fk_categorie = ".$this->id;
-    $sql .= " AND   fk_product   = ".$prod->id;
-
-    if ($this->db->query($sql))
-    {
-      return 1;
-    }
-    else
-    {
-       dolibarr_print_error($this->db);
-       return -1;
-    }
-  }
-	
-  /**
-   * Retourne les produits de la catégorie
-   */
-  function get_products()
-  {
-    $sql  = "SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product ";
-    $sql .= "WHERE fk_categorie = ".$this->id;
-
-    $res  = $this->db->query($sql);
-
-    if ($res)
-    {
-       $prods = array();
-       while ($rec = $this->db->fetch_array ($res))
-	     {
-	        $prod = new Product ($this->db, $rec['fk_product']);
-	        $prod->fetch ($prod->id);
-	        $prods[] = $prod;
-	     }
-	       return $prods;
-    }
-    else
-    {
-        dolibarr_print_error ($this->db);
-        return -1;
-    }
-  }
-	/**
-   * Retourne les filles de la catégorie
-   */
-  function get_filles ()
-  {
-    $sql  = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association ";
-    $sql .= "WHERE fk_categorie_mere = ".$this->id;
-
-    $res  = $this->db->query ($sql);
-
-    if ($res)
-      {
-        $cats = array ();
-        while ($rec = $this->db->fetch_array ($res))
-          {
-            $cat = new Categorie ($this->db, $rec['fk_categorie_fille']);
-            $cats[] = $cat;
-          }
-        return $cats;
-      }
-    else
-      {
-        dolibarr_print_error ($this->db);
-        return -1;
-      }
-  }
-  /**
-   * Retourne les filles de la catégorie structurée pour l'arbo
-   */
-  function get_filles_arbo ($id_mere)
-  {
-	$sql  = "SELECT c.rowid, c.label as label,ca.fk_categorie_fille as id FROM ";
-	$sql .= MAIN_DB_PREFIX."categorie as c,".MAIN_DB_PREFIX."categorie_association as ca";
-    $sql .= " WHERE c.rowid = ca.fk_categorie_fille and ca.fk_categorie_mere = '".$id_mere."'";
-    $res  = $this->db->query ($sql);
-
-    if ($res)
-     {
-			$cat = array();
-			while ($rec = $this->db->fetch_array ($res))
-			 {
-					$cat[$rec['label']]= array(0=>$rec['id']);
-					foreach($this -> get_filles_arbo($rec['id']) as $kf=>$vf)
-							$cat[$rec['label']][$kf] = $vf;
-			 }
-			 return $cat;
-      }
-    else
-    {
-				dolibarr_print_error ($this->db);
+			$sql = 'insert into '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
+			$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
+			if (! $this->db->query($sql))
+			{
+				dolibarr_print_error($this->db);
 				return -1;
-     }
-  }
-	/**
-   * retourne la description d'une catégorie
-   */
-  function get_desc ($cate)
-  {
-    $sql  = "SELECT description FROM ".MAIN_DB_PREFIX."categorie ";
-    $sql .= "WHERE rowid = '".$cate."'";
-
-    $res  = $this->db->query ($sql);
-    $n    = $this->db->fetch_array ($res);
-		
-    return ($n[0]);
-  }
-  /**
-   * La catégorie $fille est-elle une fille de cette catégorie ?
-   */
-  function is_fille ($fille)
-  {
-    $sql  = "SELECT count(fk_categorie_fille) FROM ".MAIN_DB_PREFIX."categorie_association ";
-    $sql .= "WHERE fk_categorie_mere = ".$this->id." AND fk_categorie_fille = ".$fille->id;
-
-    $res  = $this->db->query ($sql);
-		
-    $n    = $this->db->fetch_array ($res);
-		
-    return ($n[0] > 0);
-  }
-	
-  /**
-   * Retourne toutes les catégories qui n'ont pas d'enfants ;-)
-   */
-  function get_steriles_categories ()
-  {
-    $sql = "SELECT fk_categorie_mere,fk_categorie_fille FROM ";
-	$sql .= MAIN_DB_PREFIX."categorie_association";
-	$res = $this->db->query ($sql);
-	$cats_sterile = array();
-	while ($record = $this->db->fetch_array ($res))
-	{
-	    $cats_sterile[] = $record['fk_categorie_mere'];
-		$cats_sterile[] = $record['fk_categorie_fille'];
-	 }
-	$sql = "SELECT rowid,label FROM ";
-	$sql .= MAIN_DB_PREFIX."categorie";
-
-    $res = $this->db->query ($sql);
-
-    if ($res)
-      {
-	$cats = array ();
-	while ($record = $this->db->fetch_array ($res))
-	{
-	   if(! in_array($record['rowid'],$cats_sterile))
-			$cats[$record['label']] = array(0=>$record['rowid']);
-	 }
-	return $cats;
-      }
-    else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
-  }
-  /**
-   * fonction récursive uniquement utilisée par get_arbo_each_cate
-   * Recompose l'arborescence des catégories
-   */
-  function fetch_cate_arbo($cate,$compl_path="")
-{
-			$this->res;
-			$this->mere_encours;
-			foreach($cate as $nom_mere => $desc_mere)
-			{
-						// on est dans une sous-catégorie
-						if(is_array($desc_mere))
-							$this->res[]= array($this->mere_encours.$compl_path." >> ".$nom_mere,$desc_mere[0]);
-						else if($nom_mere != "0")
-							$this->res[]= array($this->mere_encours.$compl_path." >> ".$nom_mere,$desc_mere);
-						if(sizeof($desc_mere) >1)
-						{
-							$this ->fetch_cate_arbo($desc_mere," >> ".$nom_mere);
-						}
 			}
-	}
-	/**
-   * reconstruit l'arborescence des catégorie sous la forme d'un tableau
-   * 
-   */
-function get_arbo_each_cate()
-{
-		if(is_array($this -> cates))
-		{
-			foreach($this -> cates as $nom_mere => $desc_mere)
-			{
-				$this->mere_encours = $nom_mere;
-				$this->res[]= array($nom_mere,$desc_mere[0]);
-				if(sizeof($desc_mere) >1)
-					$this ->fetch_cate_arbo($desc_mere);
-			}
-			sort($this->res);
 		}
-		return $this->res;
-}
-/**
-   * Retourne l'arborescence des catégories, id et nom
-   * sous la forme d'un tableau
-   */
-  function get_categories_arbo ()
-  {
-		$cates_steriles = $this -> get_steriles_categories();
-		$meres = $this -> get_all_meres();
-		foreach($meres as $k=>$v)
+		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
+		$sql.= " SET label = '".trim(addslashes($this->label))."'";
+
+		if (strlen (trim($this->description)) > 0)
 		{
-			foreach($this -> get_filles_arbo($v[0]) as $kf=>$vf)
-				$meres[$k][$kf] = $vf;
-
+			$sql .= ", description = '".trim(addslashes($this->description))."'";
 		}
-		
-		// on concatène tout ça
-		foreach($meres as $k=>$v)
+
+		$sql .= ", visible = '".$this->visible."'";
+		$sql .= " WHERE rowid = ".$this->id;
+
+		if ($this->db->query($sql))
 		{
-			
-			$this -> cates[$k]=$v;
+			return 1;
 		}
-		foreach($cates_steriles  as $k=>$v)
-		{
-			// print "<br>xxxxxxxx".$k;
-			$this -> cates[$k]=$v;
-			
-		}
-		
-		
-		
-
-		
-  }
-  /**
-   * Retourne toutes les catégories qui ont au moins 1 fille 
-   */
-  function get_all_meres()
-  {
-   	$sql  = "SELECT fk_categorie_fille as id FROM ";
-	$sql  .= MAIN_DB_PREFIX."categorie_association";
-	 $res = $this->db->query ($sql);
-	 if ($res)
-      {
-			$ids_fille = array ();
-			while ($record = $this->db->fetch_array ($res))
-			 {
-				$ids_fille[] = $record['id'];
-			 }
-      }
-    else
-     {
-			dolibarr_print_error ($this->db);
-			return -1;	
-     }
-   
-	$sql  = "SELECT c.label as label,c.rowid,ca.fk_categorie_mere as id FROM ";
-	$sql  .= MAIN_DB_PREFIX."categorie_association as ca,";
-	$sql  .= MAIN_DB_PREFIX."categorie as c";
-	$sql  .= " where c.rowid=ca.fk_categorie_mere";
-    $res = $this->db->query ($sql);
-    if ($res)
-      {
-	$cats = array ();
-	while ($record = $this->db->fetch_array ($res))
-	 {
-			 if(! in_array($record['id'],$ids_fille))
-			$cats[$record['label']] = array(0=>$record['id']);
-	 }
-		return $cats;
-      }
-    else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
-  }
-	/**
-   * Retourne toutes les catégories
-   */
-  function get_all_categories ()
-  {
-    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-
-    $res = $this->db->query ($sql);
-
-    if ($res)
-      {
-        $cats = array ();
-        while ($record = $this->db->fetch_array ($res))
-          {
-            $cat = new Categorie ($this->db, $record['rowid']);
-            $cats[$record['rowid']] = $cat;
-          }
-        return $cats;
-      }
-    else
-      {
-        dolibarr_print_error ($this->db);
-        return -1;
-      }
-  }
-  /**
-   * Retourne le nombre total de catégories
-   */
-  function get_nb_categories ()
-  {
-    $sql = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX."categorie";
-    $res = $this->db->query ($sql);
-	
-    if ($res)
-     {
-		$res = $this->db->fetch_array ();
-		return $res[0];
-     }
-    else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
-  }
-	
-  /**
-   * Vérifie si une catégorie porte le label $label
-   */
-  function already_exists()
-  {    
-    $sql = "SELECT count(c.rowid)";
-    $sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
-    $sql.= " WHERE c.label = '".str_replace("'","''",$this -> label)."'";
-	if($this -> id_mere != "")
-	{
-    	$sql.= " AND c.rowid = ca.fk_categorie_fille";
-    	$sql.= " AND ca.fk_categorie_mere = '".$this -> id_mere."'";
-	}
-
-    $res  = $this->db->query ($sql);
-	if($res)
-	{
-    	$res  = $this->db->fetch_array ($res);
-		if($res[0] > 0)
-			return true;
 		else
-			return false;
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
 	}
-	else
-    {
-	      dolibarr_print_error ($this->db);
-	      return -1;
-    }
-    
-  }
 
-  /**
-   * Retourne les catégories de premier niveau
-   */
-  function get_main_categories ()
-  {
-    $allcats = $this->get_all_categories ();
-    $maincats = array ();
-    $filles   = array ();
-		
-    $sql = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association";
-    $res = $this->db->query ($sql);
-    while ($res = $this->db->fetch_array ($res))
-    {
-	     $filles[] = $res['fk_categorie_fille'];
-    }
+	/**
+	* Supprime la catégorie
+	* Les produits et sous-catégories deviennent orphelins
+	* si $all = false, et sont (seront :) supprimés sinon
+	* TODO : imp. $all
+	*/
+	function remove ($all = false)
+	{
 
-    foreach ($allcats as $cat)
-    {
-	     if (!in_array ($cat->id, $filles))
-	     {
-	         $maincats[] = $cat;
-	     }
-	     else
-	     {
-	     }
-    }
-		
-    return $maincats;
-  }
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product ";
+		$sql .= "WHERE fk_categorie = ".$this->id;
 
-  /**
-   * Retourne les chemin de la catégorie, avec les noms des catégories
-   * séparés par $sep (" >> " par défaut)
-   */
-  function print_all_ways ($sep = " &gt;&gt; ", $url='')
-  {
-    $ways = array ();
-		
-    foreach ($this->get_all_ways () as $way)
-      {
-	$w = array ();
-	foreach ($way as $cat)
-	  {
-	    if ($url == '')
-	      {
-		$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
-	      }
-	    else
-	      {
-		$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
-	      }
-	  }
-	$ways[] = implode ($sep, $w);
-      }
+		if (!$this->db->query($sql))
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
 
-    return $ways;
-  }
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association ";
+		$sql .= "WHERE fk_categorie_mere  = ".$this->id;
+		$sql .= "   OR fk_categorie_fille = ".$this->id;
+
+		if (!$this->db->query($sql))
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie ";
+		$sql .= "WHERE rowid = ".$this->id;
+
+		if (!$this->db->query($sql))
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+		else
+		{
+			return 1;
+		}
+
+	}
+
+
+	/**
+	* Ajout d'une sous-catégorie
+	* $fille : objet catégorie
+	* retour :  1 : OK
+	*          -2 : $fille est déjà dans la famille de $this
+	*          -3 : catégorie ($this ou $fille) invalide
+	*/
+	function add_fille()
+	{
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_association (fk_categorie_mere, fk_categorie_fille)";
+		$sql.= " VALUES (".$this->id_mere.", ".$this->id.")";
+
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	* Suppression d'une sous-catégorie (seulement "désassociation")
+	* $fille : objet catégorie
+	* retour :  1 : OK
+	*          -3 : catégorie ($this ou $fille) invalide
+	*/
+	function del_fille($fille)
+	{
+		if (!$this->check() || !$fille->check())
+		{
+			return -3;
+		}
+
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+		$sql .= " WHERE fk_categorie_mere = ".$this->id." and fk_categorie_fille = ".$fille->id;
+
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			return -1;
+		}
+	}
+
+	/**
+	* Ajout d'un produit à la catégorie
+	* retour :  1 : OK
+	*          -1 : erreur SQL
+	*          -2 : id non renseign
+	*/
+	function add_product($prod)
+	{
+		if ($this->id == -1)
+		{
+			return -2;
+		}
+
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_product (fk_categorie, fk_product)";
+		$sql .= " VALUES (".$this->id.", ".$prod->id.")";
+
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			return -1;
+		}
+	}
+
+	/**
+	* Suppresion d'un produit de la catégorie
+	* @param $prod est un objet de type produit
+	* retour :  1 : OK
+	*          -1 : erreur SQL
+	*/
+	function del_product($prod)
+	{
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
+		$sql .= " WHERE fk_categorie = ".$this->id;
+		$sql .= " AND   fk_product   = ".$prod->id;
+
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			return -1;
+		}
+	}
+
+	/**
+	* Retourne les produits de la catégorie
+	*/
+	function get_products()
+	{
+		$sql  = "SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product ";
+		$sql .= "WHERE fk_categorie = ".$this->id;
+
+		$res  = $this->db->query($sql);
+
+		if ($res)
+		{
+			$prods = array();
+			while ($rec = $this->db->fetch_array ($res))
+			{
+				$prod = new Product ($this->db, $rec['fk_product']);
+				$prod->fetch ($prod->id);
+				$prods[] = $prod;
+			}
+			return $prods;
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			return -1;
+		}
+	}
+	/**
+	* Retourne les filles de la catégorie
+	*/
+	function get_filles ()
+	{
+		$sql  = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association ";
+		$sql .= "WHERE fk_categorie_mere = ".$this->id;
+
+		$res  = $this->db->query ($sql);
+
+		if ($res)
+		{
+			$cats = array ();
+			while ($rec = $this->db->fetch_array ($res))
+			{
+				$cat = new Categorie ($this->db, $rec['fk_categorie_fille']);
+				$cats[] = $cat;
+			}
+			return $cats;
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+	}
+
+
+	/**
+	* retourne la description d'une catégorie
+	*/
+	function get_desc ($cate)
+	{
+		$sql  = "SELECT description FROM ".MAIN_DB_PREFIX."categorie ";
+		$sql .= "WHERE rowid = '".$cate."'";
+
+		$res  = $this->db->query ($sql);
+		$n    = $this->db->fetch_array ($res);
+
+		return ($n[0]);
+	}
 	
+	/**
+	* La catégorie $fille est-elle une fille de cette catégorie ?
+	*/
+	function is_fille ($fille)
+	{
+		$sql  = "SELECT count(fk_categorie_fille) FROM ".MAIN_DB_PREFIX."categorie_association ";
+		$sql .= "WHERE fk_categorie_mere = ".$this->id." AND fk_categorie_fille = ".$fille->id;
 
-  /**
-   * get_primary_way() affiche le chemin le plus court pour se rendre à un produit
-   */
-  function get_primary_way($id)
-  {
-    $primary_way = Array("taille"=>-1,"chemin"=>Array());
-    $meres = $this->containing($id);
-    foreach ($meres as $mere)
-      {
-	foreach ($mere->get_all_ways() as $way)
-	  {
-	    if(sizeof($way)<$primary_way["taille"] || $primary_way["taille"]<0)
-	      {
-		$primary_way["taille"] = sizeOf($way);
-		$primary_way["chemin"] = $way;
-	      }
-	  }
-      }
-    return $primary_way["chemin"];
+		$res  = $this->db->query ($sql);
 
-  }
+		$n    = $this->db->fetch_array ($res);
 
-  /**
-   * print_primary_way() affiche le chemin le plus court pour se rendre à un produit
-   */
-  function print_primary_way($id, $sep= " &gt;&gt; ",$url)
-  {
-    $primary_way = Array();
-    $way = $this->get_primary_way($id);
-    $w = array();
-    foreach ($way as $cat)
-      {
-	if ($url == '')
-	  {
-	    $w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
-	  }
-	else
-	  {
-	    $w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
-	  }
-      }
-    
-    return implode($sep, $w);
-  }
-  /**
-   * Retourne un tableau contenant la liste des catégories mères
-   */
-  function get_meres ()
-  {
-    $meres = array ();
+		return ($n[0] > 0);
+	}
 
-    $sql  = "SELECT fk_categorie_mere FROM ".MAIN_DB_PREFIX."categorie_association ";
-    $sql .= "WHERE fk_categorie_fille = ".$this->id;
 
-    $res  = $this->db->query ($sql);
+	/**
+	* 	\brief		Reconstruit l'arborescence des catégories sous la forme d'un tableau
+	*				Renvoi un tableau de tableau('id','id_mere',...) trié selon
+	*				arbre et avec:
+	*						id = id de la categorie
+	*						id_mere = id de la categorie mere
+	*						id_children = tableau des id enfant
+	*						label = nom de la categorie
+	*						fulllabel = nom avec chemin complet de la categorie
+	*						fullpath = chemin complet compose des id
+	*	\return		array	Tableau de array
+	*/
+	function get_full_arbo()
+	{
+		// Charge tableau des meres
+		$sql = "SELECT fk_categorie_mere as id_mere, fk_categorie_fille as id_fille";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+		$res = $this->db->query ($sql);
+		if ($res)
+		{
+			while ($obj= $this->db->fetch_object($res))
+			{
+				$this->motherof[$obj->id_fille]=$obj->id_mere;
+			}
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
 
-    while ($cat = $this->db->fetch_array ($res))
-      {
-	$meres[] = new Categorie ($this->db, $cat['fk_categorie_mere']);
-      }
+		// Charge tableau des categories
+		$sql = "SELECT c.rowid, c.label as label, ca.fk_categorie_fille as rowid_fille";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
+		$sql.= " ON c.rowid=ca.fk_categorie_mere";
+		$sql.= " ORDER BY c.label, c.rowid";
+		$res = $this->db->query ($sql);
+		if ($res)
+		{
+			$cats = array ();
+			$i=0;
+			while ($obj = $this->db->fetch_object($res))
+			{
+				$this->cats[$obj->rowid]['id'] = $obj->rowid;
+				$this->cats[$obj->rowid]['id_mere'] = $this->motherof[$obj->rowid];
+				$this->cats[$obj->rowid]['label'] = $obj->label;
+				if ($obj->rowid_fille)
+				{
+					if (is_array($this->cats[$obj->rowid]['id_children']))
+					{
+						$newelempos=sizeof($this->cats[$obj->rowid]['id_children']);
+						//print "this->cats[$i]['id_children'] est deja un tableau de $newelem elements<br>";
+						$this->cats[$obj->rowid]['id_children'][$newelempos]=$obj->rowid_fille;
+					}
+					else
+					{
+						//print "this->cats[".$obj->rowid."]['id_children'] n'est pas encore un tableau<br>";
+						$this->cats[$obj->rowid]['id_children']=array($obj->rowid_fille);
+					}
+				}				
+				$i++;
+			}
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+		
+		// On ajoute la propriete fullpath a tous les éléments
+		foreach($this->cats as $key => $val)
+		{
+			if (isset($motherof[$key])) continue;	
+			$this->build_path_from_id_categ($key,0);
+		}
+		
+		$this->cats=$this->sabsi($this->cats,'fulllabel', 'asc', true, false);
 
-    return $meres;
-  }
+		//$this->debug_cats();
+		
+		return $this->cats;
+	}
+
+
+	/**
+	* 	\brief	Advanced sort array by second index function, which produces
+	*			ascending (default) or descending output and uses optionally
+	*			natural case insensitive sorting (which can be optionally case
+	*			sensitive as well).
+	*/
+	function sabsi ($array, $index, $order='asc', $natsort, $case_sensitive)
+	{
+		if (is_array($array) && count($array)>0)
+		{
+			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+			if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
+			else
+			{
+				($case_sensitive) ? natsort($temp) : natcasesort($temp);
+				if($order!='asc') $temp=array_reverse($temp,TRUE);
+			}
+			foreach(array_keys($temp) as $key) (is_numeric($key))? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+			return $sorted;
+		}
+		return $array;
+	}
+
+	/**
+	*	\brief		Calcule les propriétés fullpath et fulllabel d'une categorie
+	*				du tableau this->cats et de toutes ces enfants
+	*/
+	function build_path_from_id_categ($id_categ,$protection=0)
+	{
+		// Defini fullpath
+		if (isset($this->cats[$id_categ]['id_mere']))
+		{
+			$this->cats[$id_categ]['fullpath'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fullpath'];
+			$this->cats[$id_categ]['fullpath'].='_'.$id_categ;
+			$this->cats[$id_categ]['fulllabel'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fulllabel'];
+			$this->cats[$id_categ]['fulllabel'].=' >> '.$this->cats[$id_categ]['label'];
+		}
+		else
+		{
+			$this->cats[$id_categ]['fullpath']='_'.$id_categ;			
+			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
+		}
+		
+		// Traite ces enfants
+		$protection++;
+		if ($protection > 20) return;	// On ne traite pas plus de 20 niveaux
+		if (! is_array($this->cats[$id_categ]['id_children'])) return;
+		foreach($this->cats[$id_categ]['id_children'] as $key => $val)
+		{
+			$this->build_path_from_id_categ($val,$protection);
+		}
+		return;
+	}
 	
-  /**
-   * Retourne dans un tableau tous les chemins possibles pour arriver à la catégorie
-   * en partant des catégories principales, représentés par des tableaux de catégories
-   */
-  function get_all_ways ()
-  {
-    $ways = array ();
+	/**
+	*	\brief		Affiche contenu de $this->cats
+	*/
+	function debug_cats()
+	{
+		// Affiche $this->cats				
+		foreach($this->cats as $key => $val)
+		{
+			print 'id: '.$this->cats[$key]['id'];
+			print ' label: '.$this->cats[$key]['label'];
+			print ' mother: '.$this->cats[$key]['id_mere'];
+			print ' children: '.(is_array($this->cats[$key]['id_children'])?join(',',$this->cats[$key]['id_children']):'');
+			print ' fullpath: '.$this->cats[$key]['fullpath'];
+			print ' fulllabel: '.$this->cats[$key]['fulllabel'];
+			print "<br>\n";
+		}
+	}
 
-    foreach ($this->get_meres () as $mere)
-      {
-	foreach ($mere->get_all_ways () as $way)
-	  {
-	    $w   = $way;
-	    $w[] = $this;
-
-	    $ways[] = $w;
-	  }
-      }
-
-    if (sizeof ($ways) == 0)
-      $ways[0][0] = $this;
-
-    return $ways;
-  }
 	
-  /**
-   * Retourne les catégories contenant le produit $id
-   */
-  function containing ($id)
-  {
-    $cats = array ();
-		
-    $sql  = "SELECT fk_categorie FROM ".MAIN_DB_PREFIX."categorie_product ";
-    $sql .= "WHERE  fk_product = ".$id;
+	/**
+	* Retourne toutes les catégories
+	*/
+	function get_all_categories ()
+	{
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 
-    $res = $this->db->query ($sql);
-		
-    if ($res)
-      {
-	while ($cat = $this->db->fetch_array ($res))
-	  {
-	    $cats[] = new Categorie ($this->db, $cat['fk_categorie']);
-	  }
+		$res = $this->db->query ($sql);
 
-	return $cats;
-      }
-    else
-      {
-	dolibarr_print_error ($this->db);
-	return -1;
-      }
-  }
-	
-	  /**
-   * Retourne les catégories contenant le produit $ref
-   */
-  function containing_ref ($ref)
-  {
-    $cats = array ();
-		
-    $sql = "SELECT c.fk_categorie, c.fk_product, p.rowid, p.ref";
-    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as c, ".MAIN_DB_PREFIX."product as p";
-    $sql.= " WHERE  p.ref = '".$ref."' AND c.fk_product = p.rowid";
+		if ($res)
+		{
+			$cats = array ();
+			while ($record = $this->db->fetch_array ($res))
+			{
+				$cat = new Categorie ($this->db, $record['rowid']);
+				$cats[$record['rowid']] = $cat;
+			}
+			return $cats;
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+	}
+	/**
+	* 	\brief		Retourne le nombre total de catégories
+	*	\return		int		Nombre de categories
+	*/
+	function get_nb_categories ()
+	{
+		$sql = "SELECT count(rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
+		$res = $this->db->query ($sql);
+		if ($res)
+		{
+			$res = $this->db->fetch_array($res);
+			return $res[0];
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+	}
 
-    $res = $this->db->query ($sql);
-		
-    if ($res)
-    {
-	     while ($cat = $this->db->fetch_array ($res))
-	     {
-	        $cats[] = new Categorie ($this->db, $cat['fk_categorie']);
-	     }
+	/**
+	* 		Vérifie si une catégorie porte le label $label
+	*/
+	function already_exists()
+	{
+		$sql = "SELECT count(c.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
+		$sql.= " WHERE c.label = '".addslashes($this -> label)."'";
+		if($this -> id_mere != "")
+		{
+			$sql.= " AND c.rowid = ca.fk_categorie_fille";
+			$sql.= " AND ca.fk_categorie_mere = '".$this -> id_mere."'";
+		}
 
-	  return $cats;
-    }
-    else
-    {
-	     dolibarr_print_error ($this->db);
-	     return -1;
-    }
-  }
-	
-  /**
-   * Retourne les catégories dont le nom correspond à $nom
-   * ajoute des wildcards sauf si $exact = true
-   */
-  function rechercher_par_nom ($nom, $exact = false)
-  {
-    $cats = array ();
-		
-    if (!$exact)
-      {
-	$nom = '%'.str_replace ('*', '%', $nom).'%';
-      }
+		$res  = $this->db->query ($sql);
+		if($res)
+		{
+			$res  = $this->db->fetch_array ($res);
+			if($res[0] > 0)
+			return true;
+			else
+			return false;
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
 
-    $sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie ";
-    $sql .= "WHERE label LIKE '".$nom."'";
+	}
 
-    $res  = $this->db->query ($sql);
+	/**
+	* 		\brief		Retourne les catégories de premier niveau (qui ne sont pas filles)
+	*/
+	function get_main_categories ()
+	{
+		$allcats = $this->get_all_categories ();
+		$maincats = array ();
+		$filles   = array ();
 
-    if ($res)
-      {
-	while ($id = $this->db->fetch_array ($res))
-	  {
-	    $cats[] = new Categorie ($this->db, $id['rowid']);
-	  }
+		$sql = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association";
+		$res = $this->db->query ($sql);
+		while ($res = $this->db->fetch_array ($res))
+		{
+			$filles[] = $res['fk_categorie_fille'];
+		}
 
-	return $cats;
-      }
-    else
-      {
-	return 0;
-      }
-  }
+		foreach ($allcats as $cat)
+		{
+			if (!in_array ($cat->id, $filles))
+			{
+				$maincats[] = $cat;
+			}
+			else
+			{
+			}
+		}
+
+		return $maincats;
+	}
+
+	/**
+	* Retourne les chemin de la catégorie, avec les noms des catégories
+	* séparés par $sep (" >> " par défaut)
+	*/
+	function print_all_ways ($sep = " &gt;&gt; ", $url='')
+	{
+		$ways = array ();
+
+		foreach ($this->get_all_ways () as $way)
+		{
+			$w = array ();
+			foreach ($way as $cat)
+			{
+				if ($url == '')
+				{
+					$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
+				}
+				else
+				{
+					$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
+				}
+			}
+			$ways[] = implode ($sep, $w);
+		}
+
+		return $ways;
+	}
+
+
+	/**
+	* get_primary_way() affiche le chemin le plus court pour se rendre à un produit
+	*/
+	function get_primary_way($id)
+	{
+		$primary_way = Array("taille"=>-1,"chemin"=>Array());
+		$meres = $this->containing($id);
+		foreach ($meres as $mere)
+		{
+			foreach ($mere->get_all_ways() as $way)
+			{
+				if(sizeof($way)<$primary_way["taille"] || $primary_way["taille"]<0)
+				{
+					$primary_way["taille"] = sizeOf($way);
+					$primary_way["chemin"] = $way;
+				}
+			}
+		}
+		return $primary_way["chemin"];
+
+	}
+
+	/**
+	* print_primary_way() affiche le chemin le plus court pour se rendre à un produit
+	*/
+	function print_primary_way($id, $sep= " &gt;&gt; ",$url)
+	{
+		$primary_way = Array();
+		$way = $this->get_primary_way($id);
+		$w = array();
+		foreach ($way as $cat)
+		{
+			if ($url == '')
+			{
+				$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
+			}
+			else
+			{
+				$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
+			}
+		}
+
+		return implode($sep, $w);
+	}
+	/**
+	* Retourne un tableau contenant la liste des catégories mères
+	*/
+	function get_meres ()
+	{
+		$meres = array ();
+
+		$sql  = "SELECT fk_categorie_mere FROM ".MAIN_DB_PREFIX."categorie_association ";
+		$sql .= "WHERE fk_categorie_fille = ".$this->id;
+
+		$res  = $this->db->query ($sql);
+
+		while ($cat = $this->db->fetch_array ($res))
+		{
+			$meres[] = new Categorie ($this->db, $cat['fk_categorie_mere']);
+		}
+
+		return $meres;
+	}
+
+	/**
+	* Retourne dans un tableau tous les chemins possibles pour arriver à la catégorie
+	* en partant des catégories principales, représentés par des tableaux de catégories
+	*/
+	function get_all_ways ()
+	{
+		$ways = array ();
+
+		foreach ($this->get_meres () as $mere)
+		{
+			foreach ($mere->get_all_ways () as $way)
+			{
+				$w   = $way;
+				$w[] = $this;
+
+				$ways[] = $w;
+			}
+		}
+
+		if (sizeof ($ways) == 0)
+		$ways[0][0] = $this;
+
+		return $ways;
+	}
+
+	/**
+	* Retourne les catégories contenant le produit $id
+	*/
+	function containing ($id)
+	{
+		$cats = array ();
+
+		$sql  = "SELECT fk_categorie FROM ".MAIN_DB_PREFIX."categorie_product ";
+		$sql .= "WHERE  fk_product = ".$id;
+
+		$res = $this->db->query ($sql);
+
+		if ($res)
+		{
+			while ($cat = $this->db->fetch_array ($res))
+			{
+				$cats[] = new Categorie ($this->db, $cat['fk_categorie']);
+			}
+
+			return $cats;
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	* Retourne les catégories contenant le produit $ref
+	*/
+	function containing_ref ($ref)
+	{
+		$cats = array ();
+
+		$sql = "SELECT c.fk_categorie, c.fk_product, p.rowid, p.ref";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as c, ".MAIN_DB_PREFIX."product as p";
+		$sql.= " WHERE  p.ref = '".$ref."' AND c.fk_product = p.rowid";
+
+		$res = $this->db->query ($sql);
+
+		if ($res)
+		{
+			while ($cat = $this->db->fetch_array ($res))
+			{
+				$cats[] = new Categorie ($this->db, $cat['fk_categorie']);
+			}
+
+			return $cats;
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	* Retourne les catégories dont le nom correspond à $nom
+	* ajoute des wildcards sauf si $exact = true
+	*/
+	function rechercher_par_nom ($nom, $exact = false)
+	{
+		$cats = array ();
+
+		if (!$exact)
+		{
+			$nom = '%'.str_replace ('*', '%', $nom).'%';
+		}
+
+		$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie ";
+		$sql .= "WHERE label LIKE '".$nom."'";
+
+		$res  = $this->db->query ($sql);
+
+		if ($res)
+		{
+			while ($id = $this->db->fetch_array ($res))
+			{
+				$cats[] = new Categorie ($this->db, $id['rowid']);
+			}
+
+			return $cats;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 }
 ?>

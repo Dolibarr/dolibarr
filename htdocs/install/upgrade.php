@@ -200,7 +200,8 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	                                        'DB_ERROR_NOSUCHFIELD',
 	                                        'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
 	                                        'DB_ERROR_CANNOT_CREATE',    		// Qd contrainte deja existante
-	                                       	'DB_ERROR_CANT_DROP_PRIMARY_KEY'
+	                                       	'DB_ERROR_CANT_DROP_PRIMARY_KEY',
+	                                       	'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS'
 	                                       );
 	                        if (in_array($errno,$okerror))
 	                        {
@@ -208,8 +209,8 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	                        }
 	                        else
 	                        {
-	                            print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1).'</td>';
-	                            print '<td valign="top">'.$langs->trans("Error")." ".$db->errno()." ".$sql."<br>".$db->error()."</td>";
+	                            print '<tr><td valign="top" colspan="2">';
+	                            print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$sql."<br>".$db->error()."</font></td>";
 	                            print '</tr>';
 								dolibarr_install_syslog($langs->trans("Request").' '.($i+1)." ".$langs->trans("Error")." ".$db->errno()." ".$sql."<br>".$db->error());
 	                            $error++;
@@ -234,7 +235,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
         else
         {
             print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-            print '<td align="right"><div class="error">'.$langs->trans("KO").'</div></td></tr>';
+            print '<td align="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>';
             $ok = 0;
         }
     }

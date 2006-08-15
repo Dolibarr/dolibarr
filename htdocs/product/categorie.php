@@ -36,12 +36,47 @@ require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("categories");
 
-$mesg = '';
-
 if (!$user->rights->produit->lire) accessforbidden();
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
+$mesg = '';
+
+
+/*
+*	Actions
+*/
+
+//on veut supprimer une catégorie
+if ($_REQUEST["removecat"] && $user->rights->produit->creer)
+{
+	$product = new Product($db);
+	if ($_REQUEST["ref"]) $result = $product->fetch('',$_REQUEST["ref"]);
+	if ($_REQUEST["id"])  $result = $product->fetch($_REQUEST["id"]);
+
+	$cat = new Categorie($db,$_REQUEST["removecat"]);
+	$result=$cat->del_product($product);
+}
+
+//on veut ajouter une catégorie
+if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0  && $user->rights->produit->creer)
+{
+	$product = new Product($db);
+	if ($_REQUEST["ref"]) $result = $product->fetch('',$_REQUEST["ref"]);
+	if ($_REQUEST["id"])  $result = $product->fetch($_REQUEST["id"]);
+
+	$cat = new Categorie($db,$_REQUEST["catMere"]);
+	$result=$cat->add_product($product);
+	if ($result >= 0)
+	{
+		$mesg='<div class="ok">'.$langs->trans("Added").'</div>';	
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("Error").' '.$cat->error.'</div>';	
+	}
+	
+}
+
+
 
 /*
 * Creation de l'objet produit correspondant à l'id
@@ -54,6 +89,8 @@ if ($_GET["id"] || $_GET["ref"])
 	
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 }
+
+
 $html = new Form($db);
 
 
@@ -62,24 +99,6 @@ $html = new Form($db);
  */
 if ($_GET["id"] || $_GET["ref"])
 {
-	//on veut supprimer une catégorie
-	if ($_REQUEST["removecat"] && $user->rights->produit->creer)
-	{
-		$cat = new Categorie($db,$_REQUEST["removecat"]);
-		$cat->del_product($product);
-	}
-	
-	//on veut ajouter une catégorie
-	if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0  && $user->rights->produit->creer)
-	{
-		$cat = new Categorie($db,$_REQUEST["catMere"]);
-		$cat->add_product($product);
-	}
-	
-	/*
-	 *  En mode visu
-	 */
-	
 	$head=product_prepare_head($product);
     $titre=$langs->trans("CardProduct".$product->type);
     dolibarr_fiche_head($head, 'category', $titre);
@@ -189,7 +208,6 @@ if ($_GET["id"] || $_GET["ref"])
 				print "</td>";
 
 				print "</tr>\n";
-
 			}
 
 		}

@@ -793,11 +793,11 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 
 	// Propals
-	if($user->rights->propale->creer)
+	if($conf->propal->enabled && $user->rights->propale->creer)
 	{
 		$langs->load("propal");
 
-		print '<tr><td width="50%" valign="top">';
+		print '<tr class="liste_titre"><td width="50%" valign="top">';
 		print_titre($langs->trans("AddToMyProposals")) . '</td>';
 
 		if ($user->rights->commercial->client->voir)
@@ -807,7 +807,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		}
 		else
 		{
-			print '<td width="50%" valign="top"></td>';
+			print '<td width="50%" valign="top">&nbsp;</td>';
 		}
 
 		print '</tr>';
@@ -907,11 +907,11 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 
 	// Commande
-	if($user->rights->commande->creer)
+	if($conf->commande->enabled && $user->rights->commande->creer)
 	{
 		$langs->load("orders");
 
-		print '<tr><td width="50%" valign="top">';
+		print '<tr class="liste_titre"><td width="50%" valign="top">';
 		print_titre($langs->trans("AddToMyOrders")) . '</td>';
 
 		if ($user->rights->commercial->client->voir)
@@ -1016,11 +1016,11 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	}
 
 	// Factures
-	if($user->rights->facture->creer)
+	if($conf->facture->enabled && $user->rights->facture->creer)
 	{
 		$langs->load("bills");
 
-		print '<tr><td width="50%" valign="top">';
+		print '<tr class="liste_titre"><td width="50%" valign="top">';
 		print_titre($langs->trans("AddToMyBills"));
 
 		if ($user->rights->commercial->client->voir)

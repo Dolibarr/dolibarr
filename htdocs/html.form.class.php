@@ -1190,31 +1190,37 @@ class Form
         }
     }
      
-           /**
-     *    \brief      Retourne la ou les listes déroulante des catégories en fonction du nombre choisi
-     *    \param      selected    nombre de catégorie à créer
+    /**
+     *    \brief    Retourne la ou les listes déroulante des catégories en fonction 
+     *				du nombre choisi
+     *    \param    selected    nombre de catégorie à créer
      */
     function select_all_categories($selected='',$select_name="")
     {
         global $langs;
         $langs->load("categorie");
-		if($select_name=="")
-			$select_name="catMere";
+
+		if ($select_name=="") $select_name="catMere";
+
         $cat = new Categorie ($this -> db);
-		$cat->get_categories_arbo();
-		$cate_arbo = $cat->get_arbo_each_cate();
-		$output = '<select name="'.$select_name.'">'; //creation des categories meres
+		$cate_arbo = $cat->get_full_arbo();
+
+		$output = '<select name="'.$select_name.'">';
 		$output.= '<option value="-1" id="choix">&nbsp;</option>';
 		
 		if ($cate_arbo)
 		{
 			foreach($cate_arbo as $key => $value)
 			{
-				if($value[1] == $selected)
+				if ($cate_arbo[$key]['fulllabel'] == $selected)
+				{
 					$add = "selected='true' ";
+				}
 				else
+				{
 					$add = "";
-				$output.= '<option '.$add.'value="'.$value[1].'">'.$value[0].'</option>';
+				}
+				$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</option>';
 			}
 		}
 							 
