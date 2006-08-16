@@ -1044,7 +1044,7 @@ class Product
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->error().' sql='.$sql;
             return -1;
         }
     }
@@ -1084,7 +1084,7 @@ class Product
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->error().' sql='.$sql;
             return -1;
         }
     }
@@ -1129,7 +1129,46 @@ class Product
         }
     }
 
-
+    /**
+     *    \brief    Charge tableau des stats facture pour le produit/service
+     *    \param    socid       Id societe
+     *    \return   array       Tableau des stats
+     */
+    function load_stats_facture_fournisseur($socid=0)
+    {
+    	global $conf;
+    	global $user;
+    	
+        $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_suppliers, COUNT(DISTINCT f.rowid) as nb,";
+        $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as pd,";
+        $sql.= " ".MAIN_DB_PREFIX."facture_fourn as f";
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE f.rowid = pd.fk_facture_fourn AND pd.fk_product = ".$this->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        //$sql.= " AND f.fk_statut != 0";
+        if ($socid > 0)
+        {
+            $sql .= " AND f.fk_soc = $socid";
+        }
+    
+        $result = $this->db->query($sql) ;
+        if ( $result )
+        {
+            $obj=$this->db->fetch_object($result);
+            $this->stats_facture_fournisseur['suppliers']=$obj->nb_suppliers;
+            $this->stats_facture_fournisseur['nb']=$obj->nb;
+            $this->stats_facture_fournisseur['rows']=$obj->nb_rows;
+            $this->stats_facture_fournisseur['qty']=$obj->qty?$obj->qty:0;
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+    
     /**
      *    \brief    Renvoie tableau des stats pour une requete donnée
      *    \param    sql         Requete a exécuter

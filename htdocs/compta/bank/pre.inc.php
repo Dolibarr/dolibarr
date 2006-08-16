@@ -56,7 +56,7 @@ function llxHeader($head = "")
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$menu->add(DOL_URL_ROOT."/compta/bank/fiche.php?id=".$objp->rowid,  $objp->label);
+				$menu->add(DOL_URL_ROOT."/compta/bank/fiche.php?id=".$objp->rowid,$objp->label,0,$user->rights->banque->lire);
 /*
 				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
 				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
@@ -67,18 +67,18 @@ function llxHeader($head = "")
 		}
 		$db->free($resql);
 	}
-	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"));
+	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
 	
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Categories"),1,$user->rights->banque->configurer);
 
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"));
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByCategories"));
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"),1,$user->rights->banque->lire);
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByCategories"),1,$user->rights->banque->lire);
+	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan",1,$user->rights->banque->lire);
 	
 	if ($user->rights->banque->modifier)
 	{
-		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("Virements"));
+		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("Virements"),1,$user->rights->banque->modifier);
 	}
 	
 	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)

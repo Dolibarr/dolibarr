@@ -292,6 +292,7 @@ AmountInCurrency=Montants exprimés en %s
 Example=Exemple
 NoExample=Pas d'exemple
 FindBug=Signaler un bug
+NbOfThirdParties=Nombre de tiers
 NbOfCustomers=Nombre de clients
 NbOfLines=Nombre de lignes
 NbOfObjects=Nombre d'objets

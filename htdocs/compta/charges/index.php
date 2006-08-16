@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -30,17 +29,17 @@
 
 require("./pre.inc.php");
 
-llxHeader();
-
 $user->getrights('compta');
 
-if (!$user->admin && !$user->rights->compta->charges)
+if (!$user->admin && !$user->rights->tax->charges->lire)
   accessforbidden();
-
 
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
 if (! $year) { $year=date("Y", time()); }
+
+
+llxHeader();
 
 print_fiche_titre($langs->trans("Charges"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 
