@@ -180,10 +180,6 @@ $head[$h][1] = $langs->trans("Invoices");
 $hselected=$h;
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/avoir.php";
-$head[$h][1] = $langs->trans("CreditNotes");
-$h++;
-
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
