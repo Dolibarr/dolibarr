@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
+$langs->load("companies");
 $langs->load("products");
 $langs->load("bills");
 
@@ -63,7 +64,7 @@ if ($_GET["id"] || $_GET["ref"])
     $product = new Product($db);
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
-    
+
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
     if ($result)
@@ -92,7 +93,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         $WIDTH=380;
         $HEIGHT=200;
-        
+
         $px = new DolGraph();
         $mesg = $px->isGraphKo();
         if (! $mesg)
@@ -162,7 +163,7 @@ if ($_GET["id"] || $_GET["ref"])
         if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
         print '</td>';
         print '</tr>';
-    
+
         // Libelle
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
 
@@ -174,7 +175,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</td></tr>';
 
         print '<tr><td valign="top" width="25%">'.$langs->trans("Referers").'</td>';
-        print '<td align="right" width="25%">'.$langs->trans("NbOfCustomers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
         print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
         print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
         print '</tr>';
@@ -196,7 +197,7 @@ if ($_GET["id"] || $_GET["ref"])
             print '</td>';
             print '</tr>';
         }
-        // Commandes
+        // Commandes clients
         if ($conf->commande->enabled)
         {
             $ret=$product->load_stats_commande($socid);
@@ -210,6 +211,23 @@ if ($_GET["id"] || $_GET["ref"])
             print $product->stats_commande['nb'];
             print '</td><td align="right">';
             print $product->stats_commande['qty'];
+            print '</td>';
+            print '</tr>';
+        }
+        // Commandes fournisseurs
+        if ($conf->fournisseur->enabled)
+        {
+            $ret=$product->load_stats_commande_fournisseur($socidp);
+            if ($ret < 0) dolibarr_print_error($db);
+            $langs->load("orders");
+            print '<tr><td>';
+            print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("SuppliersOrders").'</a>';
+            print '</td><td align="right">';
+            print $product->stats_commande_fournisseur['suppliers'];
+            print '</td><td align="right">';
+            print $product->stats_commande_fournisseur['nb'];
+            print '</td><td align="right">';
+            print $product->stats_commande_fournisseur['qty'];
             print '</td>';
             print '</tr>';
         }
@@ -230,7 +248,7 @@ if ($_GET["id"] || $_GET["ref"])
             print '</td>';
             print '</tr>';
         }
-        // Factures
+        // Factures clients
         if ($conf->facture->enabled)
         {
             $ret=$product->load_stats_facture($socid);
@@ -247,11 +265,28 @@ if ($_GET["id"] || $_GET["ref"])
             print '</td>';
             print '</tr>';
         }
+        // Factures fournisseurs
+        if ($conf->fournisseur->enabled)
+        {
+            $ret=$product->load_stats_facture_fournisseur($socidp);
+            if ($ret < 0) dolibarr_print_error($db);
+            $langs->load("bills");
+            print '<tr><td>';
+            print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("SuppliersInvoices").'</a>';
+            print '</td><td align="right">';
+            print $product->stats_facture_fournisseur['suppliers'];
+            print '</td><td align="right">';
+            print $product->stats_facture_fournisseur['nb'];
+            print '</td><td align="right">';
+            print $product->stats_facture_fournisseur['qty'];
+            print '</td>';
+            print '</tr>';
+        }
 
         print '</table>';
         print '</div>';
-        
-        
+
+
         print '<table class="border" width="100%">';
 
         // Ligne de graph
@@ -281,7 +316,7 @@ if ($_GET["id"] || $_GET["ref"])
             print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
         }
         print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td></tr>';
-        
+
         // Ligne de graph
         print '<tr class="liste_titre"><td width="50%" colspan="2" align="center">Nombre de ventes<br>sur les 12 derniers mois</td>';
         print '<td align="center" width="50%" colspan="2">Nombre de pièces vendues</td></tr>';
@@ -319,7 +354,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent en fin de page
         print '<div class="tabsAction">';
         print '</div>';
-        
+
     }
 }
 else

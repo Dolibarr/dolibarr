@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
+$langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
 
@@ -108,7 +109,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</td></tr>';
 
         print '<tr><td valign="top" width="25%">'.$langs->trans("Referers").'</td>';
-        print '<td align="right" width="25%">'.$langs->trans("NbOfCustomers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
         print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
         print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
         print '</tr>';
@@ -130,7 +131,7 @@ if ($_GET["id"] || $_GET["ref"])
             print '</td>';
             print '</tr>';
         }
-        // Commandes
+        // Commandes clients
         if ($conf->commande->enabled)
         {
             $ret=$product->load_stats_commande($socidp);
@@ -144,6 +145,23 @@ if ($_GET["id"] || $_GET["ref"])
             print $product->stats_commande['nb'];
             print '</td><td align="right">';
             print $product->stats_commande['qty'];
+            print '</td>';
+            print '</tr>';
+        }
+        // Commandes fournisseurs
+        if ($conf->fournisseur->enabled)
+        {
+            $ret=$product->load_stats_commande_fournisseur($socidp);
+            if ($ret < 0) dolibarr_print_error($db);
+            $langs->load("orders");
+            print '<tr><td>';
+            print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("SuppliersOrders").'</a>';
+            print '</td><td align="right">';
+            print $product->stats_commande_fournisseur['suppliers'];
+            print '</td><td align="right">';
+            print $product->stats_commande_fournisseur['nb'];
+            print '</td><td align="right">';
+            print $product->stats_commande_fournisseur['qty'];
             print '</td>';
             print '</tr>';
         }
@@ -164,7 +182,7 @@ if ($_GET["id"] || $_GET["ref"])
             print '</td>';
             print '</tr>';
         }
-        // Factures
+        // Factures clients
         if ($conf->facture->enabled)
         {
             $ret=$product->load_stats_facture($socidp);
@@ -181,7 +199,23 @@ if ($_GET["id"] || $_GET["ref"])
             print '</td>';
             print '</tr>';
         }
-        
+        // Factures fournisseurs
+        if ($conf->fournisseur->enabled)
+        {
+            $ret=$product->load_stats_facture_fournisseur($socidp);
+            if ($ret < 0) dolibarr_print_error($db);
+            $langs->load("bills");
+            print '<tr><td>';
+            print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("SuppliersInvoices").'</a>';
+            print '</td><td align="right">';
+            print $product->stats_facture_fournisseur['suppliers'];
+            print '</td><td align="right">';
+            print $product->stats_facture_fournisseur['nb'];
+            print '</td><td align="right">';
+            print $product->stats_facture_fournisseur['qty'];
+            print '</td>';
+            print '</tr>';
+        }        
         print "</table>";
 
         print '</div>';
