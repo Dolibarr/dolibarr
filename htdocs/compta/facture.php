@@ -1562,7 +1562,6 @@ else
 			 */
  			$totalpaye = 0;
  
- 			print $langs->trans('Payments').' :<br>';
 			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
 			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
@@ -1576,7 +1575,7 @@ else
 				$num = $db->num_rows($result);
 				$i = 0;
 				print '<table class="noborder" width="100%">';
-				print '<tr class="liste_titre"><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Type').'</td>';
+				print '<tr class="liste_titre"><td>'.$langs->trans('Payments').'</td><td>'.$langs->trans('Type').'</td>';
 				print '<td align="right">'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
 
 				$var=True;
@@ -2603,9 +2602,10 @@ else
 			if (! $sortorder) $sortorder='DESC';
 			if (! $sortfield) $sortfield='f.datef';
 
-			$sql = 'SELECT s.nom,s.idp,f.facnumber,f.increment,f.total,f.total_ttc,';
+			$sql = 'SELECT s.nom, s.idp,';
+			$sql.= ' f.rowid as facid, f.facnumber, f.increment, f.total, f.total_ttc,';
 			$sql.= $db->pdate('f.datef').' as df, '.$db->pdate('f.date_lim_reglement').' as datelimite, ';
-			$sql.= ' f.paye as paye, f.rowid as facid, f.fk_statut';
+			$sql.= ' f.paye as paye, f.fk_statut';
 			if (! $sall) $sql.= ' ,sum(pf.amount) as am';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 			$sql.= ','.MAIN_DB_PREFIX.'facture as f';
@@ -2652,7 +2652,7 @@ else
 				$sql .= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
 			}
 
-			$sql .= ' GROUP BY f.facnumber';
+			$sql .= ' GROUP BY f.rowid';
 
 			$sql .= ' ORDER BY ';
 			$listfield=split(',',$sortfield);

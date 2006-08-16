@@ -236,10 +236,14 @@ if ($socid > 0)
 
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, f.total, f.total_ttc, ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-        $sql .= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
-        $sql .= " ORDER BY f.datef DESC";
+        $sql = "SELECT s.nom, s.idp, f.rowid as facid, f.facnumber, f.amount, f.total, f.total_ttc,";
+        $sql.= " ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut";
+		$sql.= ' ,sum(pf.amount) as am';
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
+        $sql.= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
+		$sql.= ' GROUP BY f.rowid';
+        $sql.= " ORDER BY f.datef DESC";
 
         $resql=$db->query($sql);
         if ($resql)
@@ -271,7 +275,7 @@ if ($socid > 0)
                 }
                 print "<td align=\"right\">".price($objp->total_ttc)."</td>\n";
 
-                print '<td align="right" nowrap="nowrap">'.($facturestatic->LibStatut($objp->paye,$objp->statut,5))."</td>\n";
+                print '<td align="right" nowrap="nowrap">'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am))."</td>\n";
                 print "</tr>\n";
                 $i++;
             }
