@@ -112,9 +112,22 @@ $cate_arbo = $c->get_full_arbo();
 if ($conf->use_javascript)
 {
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("CategoriesTree").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("CategoriesTree").'</td>';
+	print '<td align="right">';
+	if ($_GET["expand"] != 'all')
+	{
+		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=all">'.$langs->trans("ExpandAll").'</a>';
+		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/includes/treemenu/images/folder-expanded.gif">';
+	}
+	if ($_GET["expand"] != 'none')
+	{
+		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=none">'.$langs->trans("UndoExpandAll").'</a>';
+		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/includes/treemenu/images/folder.gif">';
+	}
+	print '</td>';
+	print '</tr>';
 
-	print '<tr><td>';
+	print '<tr><td colspan="2">';
 
 	if (sizeof($cate_arbo))
 	{
@@ -128,8 +141,12 @@ if ($conf->use_javascript)
 		// Création noeud racine
 		$node=array();
 		$rootnode='-1';
-		$node[$rootnode] = new HTML_TreeNode(
-			array('text' => $langs->trans("AllCats"), 'link' => '', 'icon' => $icon, 'expandedIcon' => $expandedIcon, 'expanded' => true)
+		$node[$rootnode] = new HTML_TreeNode(array(
+			'text' => $langs->trans("AllCats"),
+			'link' => '',
+			'icon' => $icon,
+			'expandedIcon' => $expandedIcon,
+			'expanded' => true)
 			//,array('onclick' => "alert('foo'); return false", 'onexpand' => "alert('Expanded')")
 		);
 	
@@ -140,12 +157,31 @@ if ($conf->use_javascript)
 			$i++;
 			$nodeparent=ereg_replace('_[0-9]+$','',$cate_arbo[$key]['fullpath']);
 			if (! $nodeparent) $nodeparent=$rootnode;
-			//print "Ajout noeud sur noeud ".$nodeparent.' pour categorie '.$cate_arbo[$key]['fulllabel']."<br>\n";
-			$node[$cate_arbo[$key]['fullpath']]=$node[$nodeparent]->addItem(new HTML_TreeNode(array(
+
+			// Definition du nouvel element a ajouter dans l'arbre
+			$newelement=array(
 					'text' => $cate_arbo[$key]['label'],
 					//'link' => $_SERVER["PHP_SELF"].'?id='.$cate_arbo[$key]['id'],
 					'link' => DOL_URL_ROOT.'/categories/viewcat.php?id='.$cate_arbo[$key]['id'],
-					'icon' => $icon, 'expandedIcon' => $expandedIcon)));
+					'icon' => $icon,
+					'expandedIcon' => $expandedIcon
+			);
+
+			if ($_GET["expand"])
+			{
+				$patharray=split('_',$cate_arbo[$key]['fullpath']);
+				$level=(sizeof($patharray)-1);
+				if ($_GET["expand"] == 'all' || $level <= $_GET["expand"]) {
+					$newelement['expanded']=true;
+				}
+				if ($_GET["expand"] == 'none') 
+				{
+					$newelement['expanded']=false;
+				}
+//print 'x'.$cate_arbo[$key]['fullpath'].' level='.$level.' expand='.$newelement['expanded'].'<br>';
+			}
+			
+			$node[$cate_arbo[$key]['fullpath']]=$node[$nodeparent]->addItem(new HTML_TreeNode($newelement));
 			//print 'Resultat: noeud '.$cate_arbo[$key]['fullpath']." créé<br>\n";
 		}
 		
