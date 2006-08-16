@@ -20,8 +20,8 @@
 --
 -- ===========================================================================
 --
--- position : 0-index.php, 1-left, 2-right
--- 
+-- position  : 0-index.php, 1-left, 2-right
+-- box_order : Box sort order
 --
 
 create table llx_boxes
@@ -29,5 +29,6 @@ create table llx_boxes
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   box_id      integer NOT NULL,
   position    smallint NOT NULL,
-  box_order   smallint default 0 NOT NULL
+  box_order   smallint default 0 NOT NULL,
+  fk_user	  integer
 )type=innodb;

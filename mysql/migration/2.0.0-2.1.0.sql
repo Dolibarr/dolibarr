@@ -336,6 +336,7 @@ alter table llx_user add column ldap_sid varchar(255) DEFAULT NULL;
 alter table llx_user add column statut tinyint DEFAULT 1;
 alter table llx_user add column lang varchar(6);
 
+alter table llx_boxes add column fk_user integer;
 
 alter table llx_commande_fournisseur drop column fk_soc_contact;
 alter table llx_commande drop column fk_soc_contact;
@@ -360,3 +361,5 @@ ALTER TABLE llx_categorie_product ADD CONSTRAINT fk_categorie_product_categorie_
 ALTER TABLE llx_categorie_product ADD CONSTRAINT fk_categorie_product_product_rowid   FOREIGN KEY (fk_product)   REFERENCES llx_product (rowid);
 
 ALTER TABLE llx_categorie_product ADD PRIMARY KEY (fk_categorie, fk_product);
+
+
