@@ -325,6 +325,10 @@ ShowAccountancyPreview=Show accountancy preview
 RefCustomer=Ref. customer
 Currency=Currency
 InfoAdmin=Information for administrators
+Undo=Undo
+Redo=Redo
+ExpandAll=Expand all
+UndoExpandAll=Undo expand
 # Countries
 CountryFR=France
 CountryBE=Belgium

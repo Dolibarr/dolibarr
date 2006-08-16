@@ -119,7 +119,7 @@ if ($conf->use_javascript)
 		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=all">'.$langs->trans("ExpandAll").'</a>';
 		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/includes/treemenu/images/folder-expanded.gif">';
 	}
-	if ($_GET["expand"] != 'none')
+	if ($_GET["expand"] && $_GET["expand"] != 'none')
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=none">'.$langs->trans("UndoExpandAll").'</a>';
 		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/includes/treemenu/images/folder.gif">';

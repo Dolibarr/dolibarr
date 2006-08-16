@@ -325,6 +325,10 @@ ShowAccountancyPreview=Afficher aperçu compta
 RefCustomer=Réf. client
 Currency=Devise
 InfoAdmin=Information pour les administrateurs
+Undo=Annuler
+Redo=Refaire
+ExpandAll=Tout dérouler
+UndoExpandAll=Annuler déroulement
 # Countries
 CountryFR=France
 CountryBE=Belgique
