@@ -178,10 +178,10 @@ if ($conf->use_javascript)
 				{
 					$newelement['expanded']=false;
 				}
-//print 'x'.$cate_arbo[$key]['fullpath'].' level='.$level.' expand='.$newelement['expanded'].'<br>';
 			}
 			
-			$node[$cate_arbo[$key]['fullpath']]=$node[$nodeparent]->addItem(new HTML_TreeNode($newelement));
+			//print 'x'.$cate_arbo[$key]['fullpath'].' ' expand='.$newelement['expanded'].'<br>';
+			$node[$cate_arbo[$key]['fullpath']]=&$node[$nodeparent]->addItem(new HTML_TreeNode($newelement));
 			//print 'Resultat: noeud '.$cate_arbo[$key]['fullpath']." créé<br>\n";
 		}
 		
@@ -190,7 +190,15 @@ if ($conf->use_javascript)
 		// Affiche arbre
 		print '<script src="'.DOL_URL_ROOT.'/includes/treemenu/TreeMenu.js" language="JavaScript" type="text/javascript"></script>';
 		
-		$treeMenu = new HTML_TreeMenu_DHTML($menu, array('images' => DOL_URL_ROOT.'/includes/treemenu/images', 'defaultClass' => 'treeMenuDefault', false));
+		$treeMenu = new HTML_TreeMenu_DHTML($menu,
+			array(
+			'images' => DOL_URL_ROOT.'/includes/treemenu/images',
+			'defaultClass' => 'treeMenuDefault',
+			'noTopLevelImages' => false,
+			'jsObjectName' => 'tree_categories',
+			'usePersistence' => false
+			),
+			true);
 		$treeMenu->printMenu();
 		
 		//$listBox  = new HTML_TreeMenu_Listbox($menu, array('linkTarget' => '_self'));
