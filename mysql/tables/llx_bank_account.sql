@@ -45,10 +45,10 @@ create table llx_bank_account
   courant        smallint DEFAULT 0 NOT NULL,
   clos           smallint DEFAULT 0 NOT NULL,
   rappro         smallint DEFAULT 1,
-  url			 varchar(128),
+  url			       varchar(128),
   account_number varchar(8),
   currency_code  varchar(2) NOT NULL,
   min_allowed    integer DEFAULT 0,
   min_desired    integer DEFAULT 0,
-  comment		 comment varchar(254)
+  comment        varchar(254)
 )type=innodb;
