@@ -144,8 +144,8 @@ if ($conf->use_javascript)
 		$node[$rootnode] = new HTML_TreeNode(array(
 			'text' => $langs->trans("AllCats"),
 			'link' => '',
-			'icon' => $icon,
-			'expandedIcon' => $expandedIcon,
+			'icon' => 'base.gif',
+			'expandedIcon' => 'base.gif',
 			'expanded' => true)
 			//,array('onclick' => "alert('foo'); return false", 'onexpand' => "alert('Expanded')")
 		);
