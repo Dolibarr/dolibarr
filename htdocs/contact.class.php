@@ -131,7 +131,7 @@ class Contact
         $this->email=trim($this->email);
         $this->phone_pro=trim($this->phone_pro);
     
-        if ($this->phone_pro && $this->socid > 0)
+        if (! $this->phone_pro && $this->socid > 0)
         {
             $soc = new Societe($this->db);
             $soc->fetch($this->socid);
@@ -139,7 +139,9 @@ class Contact
         }
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
-        $sql .= "  civilite='".addslashes($this->civilite_id)."'";
+        if ($this->socid > 0) $sql .= "  fk_soc='".addslashes($this->socid)."'";
+        if ($this->socid == -1) $sql .= "  fk_soc=null";
+        $sql .= ", civilite='".addslashes($this->civilite_id)."'";
         $sql .= ", name='".addslashes($this->name)."'";
         $sql .= ", firstname='".addslashes($this->firstname)."'";
         $sql .= ", address='".addslashes($this->address)."'";
@@ -160,7 +162,7 @@ class Contact
         $result = $this->db->query($sql);
         if (! $result)
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->error().' sql='.$sql;
             return -1;
         }
     

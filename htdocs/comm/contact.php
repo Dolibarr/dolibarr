@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -86,13 +85,12 @@ if ($type == "f")
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm";
 $sql .= ", p.idp as cidp, p.name, p.firstname, p.email, p.phone";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " , ".MAIN_DB_PREFIX."socpeople as p";
-$sql .= " , ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
+if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql .= " ".MAIN_DB_PREFIX."socpeople as p";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc";
+$sql .= " WHERE s.fk_stcomm = st.id";
 if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-
 if ($type == "c") $sql .= " AND s.client = 1";
 if ($type == "p") $sql .= " AND s.client = 2";
 if ($type == "f") $sql .= " AND s.fournisseur = 1";

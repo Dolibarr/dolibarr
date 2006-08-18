@@ -456,7 +456,7 @@ class Form
 	 *    \param      htmlname        Nom champ formulaire
 	 *    \param      filter          Criteres optionnels de filtre
 	 */
-	function select_societes($selected='',$htmlname='soc_id',$filter='')
+	function select_societes($selected='',$htmlname='soc_id',$filter='',$showempty=0)
     {
         // On recherche les societes
         $sql = "SELECT s.idp, s.nom FROM";
@@ -468,6 +468,7 @@ class Form
         if ($resql)
         {
             print '<select class="flat" name="'.$htmlname.'">';
+            if ($showempty) print '<option value="-1">&nbsp;</option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)

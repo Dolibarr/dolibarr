@@ -62,12 +62,13 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+$langs->load("companies");
 $titre=$langs->trans("ListOfContacts");
-if ($type == "c") { $titre=$langs->trans("ListOfCustomersContacts"); }
-if ($type == "f") { $titre=$langs->trans("ListOfSuppliersContacts"); }
-if ($view == 'phone')  { $text="(Vue Téléphones)"; }
-if ($view == 'mail')   { $text="(Vue EMail)"; }
-if ($view == 'recent') { $text="(Récents)"; }
+if ($type == "c") { $titre=$langs->trans("ListOfContacts").'  ('.$langs->trans("ThirdPartyCustomers").')'; }
+if ($type == "f") { $titre=$langs->trans("ListOfSuppliersContacts").' ('.$langs->trans("ThirdPartySuppliers").')'; }
+if ($view == 'phone')  { $text="( Vue Téléphones)"; }
+if ($view == 'mail')   { $text=" (Vue EMail)"; }
+if ($view == 'recent') { $text=" (Récents)"; }
 $titre = $titre." $text";
 
 if ($_POST["button_removefilter"])
