@@ -316,6 +316,10 @@ alter table llx_propaldet add column rang integer DEFAULT 0;
 
 alter table llx_facture drop column model;
 alter table llx_facture add column model_pdf varchar(50) after note_public;
+alter table llx_facture add column fk_facture integer after fk_user_valid;
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_facture (fk_facture);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_facture        FOREIGN KEY (fk_facture)     REFERENCES llx_facture (rowid);
+
 
 
 update llx_societe_remise_except set description='Remise sans description' where description is NULL or description ='';
