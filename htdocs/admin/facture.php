@@ -173,6 +173,10 @@ llxHeader("","");
 
 $html=new Form($db);
 
+
+print_fiche_titre($langs->trans("BillsNumberingModule"),'','setup');
+print '<br>';
+
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/facture.php";
@@ -185,9 +189,6 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 /*
  *  Module numérotation
  */
-
-print_fiche_titre($langs->trans("BillsNumberingModule"),'','setup');
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
