@@ -169,21 +169,25 @@ if ($_GET["id"])
 	print "</td></tr>";
 
 	// Note privée
-    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
-	print '<td valign="top" colspan="3">';
-    if ($_GET["action"] == 'edit')
-    {
-        print '<form method="post" action="note.php?id='.$contrat->id.'">';
-        print '<input type="hidden" name="action" value="update">';
-        print '<textarea name="note" cols="80" rows="'.ROWS_8.'">'.$contrat->note."</textarea><br>";
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-        print '</form>';
-    }
-	else
+	if (! $user->societe_id)
 	{
-	    print ($contrat->note?nl2br($contrat->note):"&nbsp;");
+	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+		print '<td valign="top" colspan="3">';
+	    if ($_GET["action"] == 'edit')
+	    {
+	        print '<form method="post" action="note.php?id='.$contrat->id.'">';
+	        print '<input type="hidden" name="action" value="update">';
+	        print '<textarea name="note" cols="80" rows="'.ROWS_8.'">'.$contrat->note."</textarea><br>";
+	        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	        print '</form>';
+	    }
+		else
+		{
+		    print ($contrat->note?nl2br($contrat->note):"&nbsp;");
+		}
+		print "</td></tr>";
 	}
-	print "</td></tr>";
+
     print "</table>";
 
 

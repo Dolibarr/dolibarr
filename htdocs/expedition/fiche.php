@@ -256,7 +256,7 @@ if ($_GET["action"] == 'create')
 			print '</td></tr>';
 		}
 
-		if ($commande->note)
+		if ($commande->note && ! $user->societe_id)
 		{
 			print '<tr><td colspan="3">'.$langs->trans("NotePrivate").': '.nl2br($commande->note)."</td></tr>";
 		}

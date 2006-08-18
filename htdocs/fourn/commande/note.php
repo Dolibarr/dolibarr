@@ -156,14 +156,16 @@ if ($_GET["id"] > 0)
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
 
-
-		print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
-		print '<td colspan="3">';
-		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="60" rows="'.ROWS_4.'" name="note">';
-		print nl2br($commande->note);
-		if ($user->rights->fournisseur->commande->creer) print '</textarea>';
-		print '</td></tr>';
-
+		if (! $user->societe_id)
+		{
+			print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+			print '<td colspan="3">';
+			if ($user->rights->fournisseur->commande->creer) print '<textarea cols="60" rows="'.ROWS_4.'" name="note">';
+			print nl2br($commande->note);
+			if ($user->rights->fournisseur->commande->creer) print '</textarea>';
+			print '</td></tr>';
+		}
+		
 		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 		print '<td colspan="3">';
 		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="60" rows="'.ROWS_4.'" name="note_public">';

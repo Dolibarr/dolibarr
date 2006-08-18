@@ -1021,24 +1021,27 @@ if ($_GET['action'] == 'create')
 	print '</textarea></td></tr>';
 
 	// Note privée
-	print '<tr>';
-	print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
-	print '<td valign="top" colspan="2">';
-	print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-	if (is_object($propal))
+	if (! $user->societe_id)
 	{
-		print $propal->note;
+		print '<tr>';
+		print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
+		print '<td valign="top" colspan="2">';
+		print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+		if (is_object($propal))
+		{
+			print $propal->note;
+		}
+		if (is_object($commande))
+		{
+			print $commande->note;
+		}
+		if (is_object($contrat))
+		{
+			print $contrat->note;
+		}
+		print '</textarea></td></tr>';
 	}
-	if (is_object($commande))
-	{
-		print $commande->note;
-	}
-	if (is_object($contrat))
-	{
-		print $contrat->note;
-	}
-	print '</textarea></td></tr>';
-
+	
     /*
       \todo
       L'info "Reference commande client" est une carac de la commande et non de la facture.

@@ -419,9 +419,12 @@ if ($_GET["action"] == 'create')
             print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
             print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
 
-            print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
-            print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
-
+			if (! $user->societe_id)
+			{
+	            print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
+	            print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
+			}
+			
             print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 
             print "</table>\n";
