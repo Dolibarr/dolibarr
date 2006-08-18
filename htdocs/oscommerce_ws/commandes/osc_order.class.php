@@ -27,6 +27,11 @@
 */
 
 
+require("../clients/osc_customer.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+
+
+
 /**
         \class      Osc_order
         \brief      Classe permettant la gestion des commandes issues d'une base OSC
@@ -34,6 +39,8 @@
 
 class Osc_order
 {
+	var $db;
+
 	var $osc_orderid;
 	var $osc_custid; //identifant du client osc
 	var $osc_custname;
@@ -41,18 +48,20 @@ class Osc_order
 	var $osc_ordertotal;
 	var $osc_orderpaymet;
 
+	var $osc_lines = array();
+
 	var $error;
 
     /**
      *    \brief      Constructeur de la classe
      *    \param      id          Id client (0 par defaut)
      */	
-	function Osc_order($id=0) {
+	function Osc_order($DB, $id=0) {
 
         global $langs;
       
         $this->osc_orderid = $id ;
-
+		$this->db = $DB;
         /* les initialisations nécessaires */
 	}
 
@@ -102,12 +111,63 @@ class Osc_order
 			$this->osc_orderdate = $obj[0][date_purchased];
 			$this->osc_ordertotal = $obj[0][value];
 			$this->osc_orderpaymet = $obj[0][payment_method];
+
+
+			for ($i=1;$i<count($obj);$i++) {
+			// les lignes
+				$this->osc_lines[$i-1][products_id] = $obj[$i][products_id];
+				$this->osc_lines[$i-1][products_name] = $obj[$i][products_name];
+				$this->osc_lines[$i-1][products_price] = $obj[$i][products_price];
+				$this->osc_lines[$i-1][final_price] = $obj[$i][final_price];
+				$this->osc_lines[$i-1][products_tax] = $obj[$i][products_tax];
+				$this->osc_lines[$i-1][quantity] = $obj[$i][quantity];
+				}
   			}
   		else {
 		    $this->error = 'Erreur '.$err ;
 			return -1;
 		} 
 		return 0;
+	}
+
+// renvoie un objet commande dolibarr
+	function osc2dolibarr($osc_orderid)
+	{
+	  $result = $this->fetch($osc_orderid);
+	  if ( !$result )
+	  {
+			$commande = new Commande($this->db);
+	    	if ($_error == 1)
+	    	{
+	       		print '<br>erreur 1</br>';
+				exit;
+	    	}
+	    	/* initialisation */
+			$oscclient = new Osc_Customer($this->db);
+			$clientid = $oscclient->get_clientid($this->osc_custid);
+
+			$commande->socidp = $clientid;
+			$commande->ref = $this->osc_orderid;
+			$commande->date = $this->orderdate;
+			/* on force */
+			$commande->statut = 0; //à voir
+			$commande->source = 0; // à vérifier
+ 
+			//les lignes
+			print "<br> nombre : " . count($this->osc_lines); 
+			for ($i = 0; $i < sizeof($this->osc_lines);$i++) {
+				$commande->lines[$i]->libelle = $this->osc_lines[$i][products_id];
+				$commande->lines[$i]->desc = $this->osc_lines[$i][products_name];
+				$commande->lines[$i]->price = $this->osc_lines[$i][products_price];
+				$commande->lines[$i]->qty = $this->osc_lines[$i][quantity];
+				$commande->lines[$i]->tva_tx = $this->osc_lines[$i][products_tax];
+//				$commande->lines[$i]->fk_product;
+				$commande->lines[$i]->remise_percent = 0; // à calculer avec le finalprice
+			}
+
+		return $commande;
+		} 
+
 	}
 	
 	}

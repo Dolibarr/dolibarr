@@ -32,6 +32,7 @@
         \brief      Classe permettant la gestion des clients/prospects issus d'une base OSC
 */
 
+
 class Osc_customer
 {
 	var $db;
@@ -56,13 +57,16 @@ class Osc_customer
      *    \brief      Constructeur de la classe
      *    \param      id          Id client (0 par defaut)
      */	
-	function Osc_customer($id=0) {
+	function Osc_customer($DB, $id=0) {
 
         global $langs;
-      
+ 		global $conf;
+     
         $this->osc_custid = $id ;
 
         /* les initialisations nécessaires */
+		$this->db = $DB;
+
 	}
 
 
@@ -133,27 +137,27 @@ class Osc_customer
 *	   \param	   socidp	  champ société.idp 	
 *      \return     int     <0 si ko, >0 si ok
 */
-	function transcode($oscid, $socidp)
+	function transcode($oscid, $socidp )
 	{
-		global $conf;
+
+		print "entree transcode <br>";
 
 		/* suppression et insertion */
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX." osc_customer WHERE osc_custid = ".$oscid;
-		$this->$db = $DB;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_customer WHERE osc_custid = ".$oscid.";";
 		$result=$this->db->query($sql);
         if ($result)
         {
-			print "suppression ok ".$result;
+			print "suppression ok ".$sql."  * ".$result;
 		}
         else
         {
-			print "suppression rate ".$result;
+			print "suppression rate ".$sql."  * ".$result;
             dolibarr_syslog("osc_customer::transcode echec suppression");
 //            $this->db->rollback();
 //            return -1;
 		}
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX." osc_customer VALUES (".$oscid." , CURDATE() , ".$socidp.")";
-		$this->$db = $DB;
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_customer VALUES (".$oscid." ,  now() , ".$socidp.") ;";
+
 		$result=$this->db->query($sql);
         if ($result)
         {
@@ -168,6 +172,16 @@ class Osc_customer
 		}
 	return 0;	
      }
+// converti le client osc en client dolibarr
+
+	function get_clientid($osc_client)
+	{
+		$sql = "SELECT doli_socidp FROM ".MAIN_DB_PREFIX."osc_customer WHERE osc_custid = ".$osc_client.";";
+		$result=$this->db->query($sql);
+		$row = $this->db->fetch_row($resql);
+// test d'erreurs
+		return $row[0];	
+	}
 
 	}
 	

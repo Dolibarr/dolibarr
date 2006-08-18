@@ -29,7 +29,7 @@ if ($action == '' && !$cancel) {
 
  if ($_GET['custid'])
  {
-  $osc_cust = new Osc_customer($_GET['custid']);
+  $osc_cust = new Osc_customer($db, $_GET['custid']);
   $result = $osc_cust->fetch($_GET['custid']);
 
   if ( !$result)
@@ -75,9 +75,9 @@ if ($action == '' && !$cancel) {
 */
  if (($_GET["action"] == 'import' ) && ( $_GET["custid"] != '' ) && $user->rights->produit->creer)
     {
-		  $osc_cust = new Osc_customer();
+		  $osc_cust = new Osc_customer($db, $_GET['custid']);
   		  $result = $osc_cust->fetch($_GET['custid']);
-		
+	
 	  if ( !$result )
 	  {
 			$societe = new Societe($db);
@@ -109,7 +109,10 @@ if ($action == '' && !$cancel) {
 	       
 		    if ($id == 0)
 		    {
-		       	print '<br>création réussie nouveau client/prospect '.$id.' nom : '.$societe->nom.'</br>';
+		       	print '<br>création réussie nouveau client/prospect '.$societe->id.' nom : '.$societe->nom.'</br>';
+				$res = $osc_cust->transcode($osc_cust->osc_custid,$societe->id);
+print '<br>transcode '.$res.' | '.$societe->id.' osc : '.$osc_cust->osc_custid.'</br>';
+
 		    }
 		    else
 		    {
@@ -134,9 +137,8 @@ if ($action == '' && !$cancel) {
 					{ 
 						$res = $societe->update($idp, $user);
 						if ($res < 0) print '<br>Erreur update '.$idp.'</br>';
-						$res = $osc_cust->transcode($osc_cust->custid,$idp);
+						$res = $osc_cust->transcode($osc_cust->custid,$idp );
 						if ($res < 0) print '<br>Erreur update '.$idp.'</br>';
-
 					}
 					else print '<br>update impossible $id : '.$idp.' </br>';
 				}

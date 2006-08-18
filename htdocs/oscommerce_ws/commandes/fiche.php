@@ -22,6 +22,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once("../includes/configure.php");
+require_once("../clients/osc_customer.class.php");
 
 llxHeader();
 
@@ -29,7 +30,7 @@ if ($action == '' && !$cancel) {
 
  if ($_GET["orderid"])
  {
-  $osc_order = new Osc_order($_GET["orderid"]);
+  $osc_order = new Osc_order($db, $_GET["orderid"]);
   $result = $osc_order->fetch($_GET["orderid"]);
 
   if ( !$result)
@@ -70,46 +71,23 @@ if ($action == '' && !$cancel) {
    print "Error";
  }
 }
-/* action Import création de l'objet product de dolibarr 
+/* action Import création de l'objet commande de dolibarr 
 *
 */
  if (($_GET["action"] == 'import' ) && ( $_GET["orderid"] != '' ) && $user->rights->commande->creer)
     {
-		  $osc_order = new osc_order();
+		  $osc_order = new osc_order($db);
   		  $result = $osc_order->fetch($_GET["orderid"]);
-		print '<br>on passe 1</br>';  
 	  if ( !$result )
 	  {
-			$commande = new Commande($db);
-	    	if ($_error == 1)
-	    	{
-	       		print '<br>erreur 1</br>';
-				exit;
-	    	}
-		print '<br>on passe 2</br>';
-	    	/* initialisation */
-	    	$societe->nom = $osc_order->osc_ordersoc.' '.$osc_order->osc_orderlastname;
-	    	$societe->adresse = $osc_order->osc_cutstreet;
-	    	$societe->cp = $osc_order->osc_orderpostcode;
-	    	$societe->ville = $osc_order->osc_ordercity;
-	    	$societe->departement_id = 0;
-	    	$societe->pays_code = $osc_order->osc_ordercodecountry;
-	    	$societe->tel = $osc_order->osc_ordertel; 
-	    	$societe->fax = $osc_order->osc_orderfax; 
-	    	$societe->email = $osc_order->osc_ordermail; 
-	/* on force */
-			$societe->url = '';
-			$societe->siren = '';
-			$societe->siret = '';
-			$societe->ape = '';
-			$societe->client = 1; // mettre 0 si prospect
-		 } 
-		print '<br>on passe 3</br>';
-			$id = $societe->create($user);
+			$commande = $osc_order->osc2dolibarr($_GET["orderid"]);
+			print_r($commande);		
+		} 
+			$id = $commande->create($user);
 	       
 		    if ($id > 0)
 		    {
-		       	print '<br>création réussie nouveau client/prospect '.$id.' nom : '.$societe->nom.'</br>';
+		       	print '<br>création réussie nouvelle commande '.$id;
 				if ($id > 0)  exit;
 		    }
 		    else
