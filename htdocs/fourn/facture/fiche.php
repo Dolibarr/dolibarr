@@ -651,7 +651,6 @@ else
 			 * Liste des paiements
 			 */
 			print '<tr><td colspan="2">';
-			print $langs->trans('Payments').' :<br>';
 			$sql  = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
 			$sql .= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -667,7 +666,7 @@ else
 				$i = 0; $totalpaye = 0;
 				print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Date').'</td>';
+				print '<td>'.$langs->trans('Payments').'</td>';
 				print '<td>'.$langs->trans('Type').'</td>';
 
 				if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
@@ -744,7 +743,12 @@ else
 				$var=!$var;
 
 				print '<tr '.$bc[$var].'>';
-				print '<td>'.$fac->lignes[$i][0].'</td>';
+
+				print '<td>';
+				//print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' ';
+				print $fac->lignes[$i][0];
+				//print '</a>';
+				print '</td>';
 				print '<td align="right">'.price($fac->lignes[$i][1]).'</td>';
 				print '<td align="right">'.$fac->lignes[$i][3].'</td>';
 				print '<td align="right">'.price($fac->lignes[$i][4]).'</td>';

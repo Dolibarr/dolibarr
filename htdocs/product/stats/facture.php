@@ -24,7 +24,7 @@
 /**
         \file       htdocs/product/stats/facture.php
         \ingroup    product, service, facture
-        \brief      Page des stats des factures pour un produit
+        \brief      Page des stats des factures clients pour un produit
         \version    $Revision$
 */
 
@@ -108,114 +108,8 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-        print '<tr><td valign="top" width="25%">'.$langs->trans("Referers").'</td>';
-        print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
-        print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
-        print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
-        print '</tr>';
-
-        // Propals
-        if ($conf->propal->enabled)
-        {
-            $ret=$product->load_stats_propale($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("propal");
-            print '<tr><td>';
-            print '<a href="propal.php?id='.$product->id.'">'.img_object('','propal').' '.$langs->trans("Proposals").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_propale['customers'];
-            print '</td><td align="right">';
-            print $product->stats_propale['nb'];
-            print '</td><td align="right">';
-            print $product->stats_propale['qty'];
-            print '</td>';
-            print '</tr>';
-        }
-        // Commandes clients
-        if ($conf->commande->enabled)
-        {
-            $ret=$product->load_stats_commande($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("orders");
-            print '<tr><td>';
-            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("CustomersOrders").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_commande['customers'];
-            print '</td><td align="right">';
-            print $product->stats_commande['nb'];
-            print '</td><td align="right">';
-            print $product->stats_commande['qty'];
-            print '</td>';
-            print '</tr>';
-        }
-        // Commandes fournisseurs
-        if ($conf->fournisseur->enabled)
-        {
-            $ret=$product->load_stats_commande_fournisseur($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("orders");
-            print '<tr><td>';
-            print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("SuppliersOrders").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_commande_fournisseur['suppliers'];
-            print '</td><td align="right">';
-            print $product->stats_commande_fournisseur['nb'];
-            print '</td><td align="right">';
-            print $product->stats_commande_fournisseur['qty'];
-            print '</td>';
-            print '</tr>';
-        }
-        // Contrats
-        if ($conf->contrat->enabled)
-        {
-            $ret=$product->load_stats_contrat($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("contracts");
-            print '<tr><td>';
-            print '<a href="contrat.php?id='.$product->id.'">'.img_object('','contract').' '.$langs->trans("Contracts").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_contrat['customers'];
-            print '</td><td align="right">';
-            print $product->stats_contrat['nb'];
-            print '</td><td align="right">';
-            print $product->stats_contrat['qty'];
-            print '</td>';
-            print '</tr>';
-        }
-        // Factures clients
-        if ($conf->facture->enabled)
-        {
-            $ret=$product->load_stats_facture($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("bills");
-            print '<tr><td>';
-            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_facture['customers'];
-            print '</td><td align="right">';
-            print $product->stats_facture['nb'];
-            print '</td><td align="right">';
-            print $product->stats_facture['qty'];
-            print '</td>';
-            print '</tr>';
-        }
-        // Factures fournisseurs
-        if ($conf->fournisseur->enabled)
-        {
-            $ret=$product->load_stats_facture_fournisseur($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("bills");
-            print '<tr><td>';
-            print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("SuppliersInvoices").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_facture_fournisseur['suppliers'];
-            print '</td><td align="right">';
-            print $product->stats_facture_fournisseur['nb'];
-            print '</td><td align="right">';
-            print $product->stats_facture_fournisseur['qty'];
-            print '</td>';
-            print '</tr>';
-        }        
+		show_stats_for_company($product,$socidp);
+    
         print "</table>";
 
         print '</div>';

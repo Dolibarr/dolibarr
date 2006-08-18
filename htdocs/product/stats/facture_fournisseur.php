@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +22,22 @@
  */
 
 /**
-	    \file       htdocs/product/stats/propal.php
-        \ingroup    product, service, propal
-		\brief      Page des stats des propals pour un produit
-		\version    $Revision$
+        \file       htdocs/product/stats/facture_fournisseur.php
+        \ingroup    product, service, facture
+        \brief      Page des stats des factures fournisseurs pour un produit
+        \version    $Revision$
 */
 
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
+$langs->load("companies");
+$langs->load("bills");
 $langs->load("products");
+$langs->load("companies");
 
 $mesg = '';
 
@@ -45,19 +49,13 @@ $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.datec";
-
+if (! $sortfield) $sortfield="f.datef";
 
 // Securite
 $socidp = 0;
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socidp = $user->societe_id;
-}
-else
-{
-  $socidp = 0;
+    $socidp = $user->societe_id;
 }
 
 
@@ -75,7 +73,7 @@ if ($_GET["id"] || $_GET["ref"])
     
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
-    if ( $result > 0)
+    if ($result > 0)
     {
         /*
          *  En mode visu
@@ -99,38 +97,38 @@ if ($_GET["id"] || $_GET["ref"])
         print '</td>';
         print '</tr>';
 
-		// Libelle
+        // Libelle
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
         print '</tr>';
         
         // Prix
         print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">'.price($product->price).'</td></tr>';
-
+        
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
 		show_stats_for_company($product,$socidp);
-        
+    
         print "</table>";
 
         print '</div>';
+        
 
-
-        $sql = "SELECT distinct(s.nom), s.idp, p.rowid as propalid, p.ref, p.total as amount,";
-				$sql.= $db->pdate("p.datec")." as date, p.fk_statut as statut";
-				if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."propaldet as d";
+        $sql = "SELECT distinct(s.nom), s.idp, s.code_client, f.facnumber, f.amount as amount,";
+        $sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
+        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."facture_fourn_det as d";
         if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-				$sql.= " WHERE p.fk_soc = s.idp";
-        $sql.= " AND d.fk_propal = p.rowid AND d.fk_product =".$product->id;
+        $sql.= " WHERE f.fk_soc = s.idp";
+        $sql.= " AND d.fk_facture_fourn = f.rowid AND d.fk_product =".$product->id;
         if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($socidp)
         {
-            $sql .= " AND p.fk_soc = $socidp";
+            $sql .= " AND f.fk_soc = $socidp";
         }
-        $sql .= " ORDER BY $sortfield $sortorder ";
+        $sql.= " ORDER BY $sortfield $sortorder ";
         $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
         $result = $db->query($sql);
@@ -138,37 +136,39 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $num = $db->num_rows($result);
 
-            print_barre_liste($langs->trans("Proposals"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
+            print_barre_liste($langs->trans("SuppliersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
 
             $i = 0;
             print "<table class=\"noborder\" width=\"100%\">";
-            print '<tr class="liste_titre">';
-            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","&amp;id=".$_GET["id"],'',$sortfield);
-            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield);
-            print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"p.datec","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
-            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print "</tr>\n";
 
-            $propalstatic=new Propal($db);
+            print '<tr class="liste_titre">';
+            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.idp","","&amp;id=".$_GET["id"],'',$sortfield);
+            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield);
+            print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield);
+            print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
+            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
+            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
+            print "</tr>\n";
 
             if ($num > 0)
             {
                 $var=True;
-                while ($i < $num && $i < $conf->liste_limit)
+                while ($i < $num && $conf->liste_limit)
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
 
                     print "<tr $bc[$var]>";
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
-                    print $objp->ref;
+                    print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' ';
+                    print $objp->facnumber;
                     print "</a></td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socidp='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+                    print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->amount)."</td>\n";
-                    print '<td align="right">'.$propalstatic->LibStatut($objp->statut,5).'</td>';
+                    $fac=new Facture($db);
+                    print '<td align="right">'.$fac->LibStatut($objp->paye,$objp->statut,5).'</td>';
                     print "</tr>\n";
                     $i++;
                 }

@@ -340,7 +340,7 @@ class FactureFournisseur extends Facture
 	 * \param     tauxtva         taux de tva
 	 * \param     qty             quantité
 	 */
-	function addline($desc, $pu, $tauxtva, $qty)
+	function addline($desc, $pu, $tauxtva, $qty, $idproduct)
 	{
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 		$sql .= ' VALUES ('.$this->id.');';
@@ -348,14 +348,18 @@ class FactureFournisseur extends Facture
 		if ($resql)
 		{
 			$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
-			$this->updateline($idligne, $desc, $pu, $tauxtva, $qty);
+			$this->updateline($idligne, $desc, $pu, $tauxtva, $qty, $idproduct);
+
+			// Mise a jour prix facture
+			$this->update_price($this->id);
+
+			return 1;
 		}
 		else
 		{
 			dolibarr_print_error($this->db);
+			return -1;
 		}
-		// Mise a jour prix facture
-		$this->update_price($this->id);
 	}
 
 	/**
@@ -367,7 +371,7 @@ class FactureFournisseur extends Facture
 	 * \param     qty             quantité
 	 * \return    int             <0 si ko, >0 si ok
 	 */
-	function updateline($id, $label, $puht, $tauxtva, $qty=1)
+	function updateline($id, $label, $puht, $tauxtva, $qty=1, $idproduct)
 	{
 		$puht = price2num($puht);
 		$qty  = price2num($qty);
@@ -379,15 +383,17 @@ class FactureFournisseur extends Facture
 			$totalttc = $totalht + $tva;
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
-			$sql .= 'SET ';
-			$sql .= 'description =\''.addslashes($label).'\'';
-			$sql .= ', pu_ht = '  .$puht;
-			$sql .= ', qty ='     .$qty;
-			$sql .= ', total_ht=' .price2num($totalht);
-			$sql .= ', tva='      .price2num($tva);
-			$sql .= ', tva_taux=' .price2num($tauxtva);
-			$sql .= ', total_ttc='.price2num($totalttc);
-			$sql .= ' WHERE rowid = '.$id.';';
+			$sql.= 'SET ';
+			$sql.= 'description =\''.addslashes($label).'\'';
+			$sql.= ', pu_ht = '  .$puht;
+			$sql.= ', qty ='     .$qty;
+			$sql.= ', total_ht=' .price2num($totalht);
+			$sql.= ', tva='      .price2num($tva);
+			$sql.= ', tva_taux=' .price2num($tauxtva);
+			$sql.= ', total_ttc='.price2num($totalttc);
+			if ($idproduct) $sql.= ', fk_product='.$idproduct;
+			else $sql.= ', fk_product=null';
+			$sql.= ' WHERE rowid = '.$id;
 
 			$resql=$this->db->query($sql);
 			if ($resql)

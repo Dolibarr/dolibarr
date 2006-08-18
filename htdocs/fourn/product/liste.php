@@ -21,10 +21,10 @@
  */
 
 /**
-        \file       htdocs/fourn/product/liste.php
-        \ingroup    produit
-        \brief      Page liste des produits ou services
-        \version    $Revision$
+		\file       htdocs/fourn/product/liste.php
+		\ingroup    produit
+		\brief      Page liste des produits ou services
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -43,34 +43,34 @@ $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = $_GET["page"];
-if ($page < 0) { 
-  $page = 0 ; }
+if ($page < 0) {
+$page = 0 ; }
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-  
+
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
 if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
-    $sref="";
-    $snom="";
+	$sref="";
+	$snom="";
 }
 
 if ($_GET["fourn_id"] > 0)
 {
-    $fourn_id = $_GET["fourn_id"];
+	$fourn_id = $_GET["fourn_id"];
 }
 
 if (isset($_REQUEST['catid']))
 {
-    $catid = $_REQUEST['catid'];
+	$catid = $_REQUEST['catid'];
 }
 
 /*
- * Mode Liste
- *
- */
+* Mode Liste
+*
+*/
 
 $title=$langs->trans("ProductsAndServices");
 
@@ -81,7 +81,7 @@ $sql .= ", s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid)
 {
-  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = pf.fk_soc";
@@ -89,38 +89,39 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON ppf.fk
 
 if ($_POST["mode"] == 'search')
 {
-  $sql .= " WHERE p.ref like '%".$_POST["sall"]."%'";
-  $sql .= " OR p.label like '%".$_POST["sall"]."%'";
+	$sql .= " WHERE p.ref like '%".$_POST["sall"]."%'";
+	$sql .= " OR p.label like '%".$_POST["sall"]."%'";
 }
 else
 {
-  $sql .= " WHERE 1=1";
-  if (isset($_GET["type"]) || isset($_POST["type"]))
-    {
-      $sql .= " AND p.fk_product_type = ".(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
-    }
-  if ($sref)
-    {
-      $sql .= " AND p.ref like '%".$sref."%'";
-    }
-  if ($snom)
-    {
-      $sql .= " AND p.label like '%".$snom."%'";
-    }
-  if($catid)
-    {
-      $sql .= " AND cp.fk_product = p.rowid";
-      $sql .= " AND cp.fk_categorie = ".$catid;
-    }
+	$sql .= " WHERE 1=1";
+	if ($_GET["type"] || $_POST["type"])
+	{
+		$sql .= " AND p.fk_product_type = ".(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
+	}
+	if ($sref)
+	{
+		$sql .= " AND p.ref like '%".$sref."%'";
+	}
+	if ($snom)
+	{
+		$sql .= " AND p.label like '%".$snom."%'";
+	}
+	if($catid)
+	{
+		$sql .= " AND cp.fk_product = p.rowid";
+		$sql .= " AND cp.fk_categorie = ".$catid;
+	}
 
 }
 if ($fourn_id > 0)
 {
-  $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = $fourn_id";
+	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 }
 $sql .= " GROUP BY p.rowid";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
+
 
 dolibarr_syslog("fourn/product/liste: sql=$sql");
 
@@ -141,14 +142,8 @@ if ($resql)
 	$texte = $langs->trans("List");
 	llxHeader("","",$texte);
 
-	if ($sref || $snom || $_POST["sall"] || $_POST["search"])
-	{
-		print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom, $sortfield, $sortorder,'',$num);
-	}
-	else
-	{
-		print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
-	}
+	$param="&envente=$envente&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"");
+	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
 
 
 	if (isset($catid))
@@ -165,10 +160,10 @@ if ($resql)
 
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
-	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
-	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "pf.fk_soc","","","",$sortfield);
-	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
+	print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield);
+	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield);
+	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "pf.fk_soc",$param,"","",$sortfield);
+	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre

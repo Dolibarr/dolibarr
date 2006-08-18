@@ -24,7 +24,7 @@
 /**
         \file       htdocs/product/stats/commande.php
         \ingroup    product, service, commande
-        \brief      Page des stats des commandes pour un produit
+        \brief      Page des stats des commandes clients pour un produit
         \version    $Revision$
 */
 
@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("orders");
 $langs->load("products");
+$langs->load("companies");
 
 $mesg = '';
 
@@ -113,80 +114,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-        print '<tr><td valign="top" width="25%">'.$langs->trans("Referers").'</td>';
-        print '<td align="right" width="25%">'.$langs->trans("NbOfCustomers").'</td>';
-        print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
-        print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
-        print '</tr>';
-
-        // Propals
-        if ($conf->propal->enabled)
-        {
-            $ret=$product->load_stats_propale($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("propal");
-            print '<tr><td>';
-            print '<a href="propal.php?id='.$product->id.'">'.img_object('','propal').' '.$langs->trans("Proposals").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_propale['customers'];
-            print '</td><td align="right">';
-            print $product->stats_propale['nb'];
-            print '</td><td align="right">';
-            print $product->stats_propale['qty'];
-            print '</td>';
-            print '</tr>';
-        }
-        // Commandes clients
-        if ($conf->commande->enabled)
-        {
-            $ret=$product->load_stats_commande($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("orders");
-            print '<tr><td>';
-            print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("CustomersOrders").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_commande['customers'];
-            print '</td><td align="right">';
-            print $product->stats_commande['nb'];
-            print '</td><td align="right">';
-            print $product->stats_commande['qty'];
-            print '</td>';
-            print '</tr>';
-        }
-        // Contrats
-        if ($conf->contrat->enabled)
-        {
-            $ret=$product->load_stats_contrat($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("contracts");
-            print '<tr><td>';
-            print '<a href="contrat.php?id='.$product->id.'">'.img_object('','contract').' '.$langs->trans("Contracts").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_contrat['customers'];
-            print '</td><td align="right">';
-            print $product->stats_contrat['nb'];
-            print '</td><td align="right">';
-            print $product->stats_contrat['qty'];
-            print '</td>';
-            print '</tr>';
-        }
-        // Factures
-        if ($conf->facture->enabled)
-        {
-            $ret=$product->load_stats_facture($socidp);
-            if ($ret < 0) dolibarr_print_error($db);
-            $langs->load("bills");
-            print '<tr><td>';
-            print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
-            print '</td><td align="right">';
-            print $product->stats_facture['customers'];
-            print '</td><td align="right">';
-            print $product->stats_facture['nb'];
-            print '</td><td align="right">';
-            print $product->stats_facture['qty'];
-            print '</td>';
-            print '</tr>';
-        }
+		show_stats_for_company($product,$socidp);
         
         print "</table>";
 

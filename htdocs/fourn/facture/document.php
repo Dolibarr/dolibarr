@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 
 $langs->load('bills');
 $langs->load('other');
+$langs->load("companies");
 
 $user->getrights('fournisseur');
 
