@@ -71,7 +71,7 @@ class modUser extends DolibarrModules
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
-    $this->langfiles = array("users","companies");
+    $this->langfiles = array("main","users","companies");
 
     // Constantes
     $this->const = array();
@@ -147,9 +147,9 @@ class modUser extends DolibarrModules
     $r++;
     $this->export_code[$r]=$this->id.'_'.$r;
     $this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
-    $this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.code'=>"Code",'u.login'=>"Login",'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.fk_socpeople'=>"IdContact",'u.note'=>"Note",'u.datelastlogin'=>'DateLastLogin','u.datepreviouslogin'=>'DatePreviousLogin');
-    $this->export_entities_array[$r]=array('u.rowid'=>"user",'u.name'=>"user",'u.firstname'=>"user",'u.code'=>"user",'u.login'=>"user",'u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.fk_socpeople'=>"user",'u.note'=>"user",'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user');
-    $this->export_alias_array[$r]=array('u.rowid'=>"rowid",'u.name'=>"name",'u.firstname'=>"firstname",'u.code'=>"code",'u.login'=>"login",'u.datec'=>"datecreation",'u.tms'=>"datelastmodification",'u.admin'=>"admin",'u.fk_socpeople'=>"idcontact",'u.note'=>"note",'u.datelastlogin'=>'datelastlogin','u.datepreviouslogin'=>'datepreviouslogin');
+    $this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.code'=>"Code",'u.login'=>"Login",'u.office_phone'=>'Tel','u.office_fax'=>'Fax','u.email'=>'EMail','u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.fk_socpeople'=>"IdContact",'u.note'=>"Note",'u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion');
+    $this->export_entities_array[$r]=array('u.rowid'=>"user",'u.code'=>"user",'u.login'=>"user",'u.office_phone'=>'user','u.office_fax'=>'user','u.email'=>'user','u.name'=>"user",'u.firstname'=>"user",'u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.fk_socpeople'=>"user",'u.note'=>"user",'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user');
+    $this->export_alias_array[$r]=array('u.rowid'=>"rowid",'u.code'=>"code",'u.login'=>"login",'u.office_phone'=>'tel','u.office_fax'=>'fax','u.email'=>'email','u.name'=>"name",'u.firstname'=>"firstname",'u.datec'=>"datecreation",'u.tms'=>"datelastmodification",'u.admin'=>"admin",'u.fk_socpeople'=>"idcontact",'u.note'=>"note",'u.datelastlogin'=>'datelastlogin','u.datepreviouslogin'=>'datepreviouslogin');
     $this->export_sql[$r]="select ";
     $i=0;
     foreach ($this->export_alias_array[$r] as $key => $value)

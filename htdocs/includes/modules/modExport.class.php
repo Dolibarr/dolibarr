@@ -50,7 +50,7 @@ class modExport extends DolibarrModules
 
     $this->family = "technic";
     $this->name = "Exports";
-    $this->description = "Permet export des données de la base en fichiers";
+    $this->description = "Permet exports par les utilisateurs, via un assistant, de lot de données personalisées";
     $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_EXPORT';
     $this->special = 0;

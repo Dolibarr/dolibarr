@@ -41,7 +41,7 @@ $langs->load("other");
 $langs->load("bills");
 
 if (isset($_GET["error"])) $error=$_GET["error"];
-$upload_dir = $conf->actionscomm->dir_output.'/'.$_GET['id'];
+$upload_dir = $conf->actions->dir_output.'/'.$_GET['id'];
 
 // Sécurité accés client
 if ($user->societe_id > 0) 

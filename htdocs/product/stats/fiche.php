@@ -114,7 +114,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Generation des graphs
         $WIDTH=380;
         $HEIGHT=160;
-        $dir = $conf->produit->dir_images;
+        $dir = $conf->produit->dir_temp;
         if (! file_exists($dir.'/'.$product->id))
         {
             if (create_exdir($dir.'/'.$product->id) < 0)

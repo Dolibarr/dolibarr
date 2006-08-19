@@ -79,7 +79,7 @@ class modTax extends DolibarrModules
 		// Répertoires
 		$this->dirs = array();
 		$this->dirs[0] = $conf->tax->dir_output;
-		$this->dirs[1] = $conf->tax->dir_images;
+		$this->dirs[1] = $conf->tax->dir_temp;
 	
 		// Boites
 		$this->boxes = array();

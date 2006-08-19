@@ -48,9 +48,9 @@ $stats = new FactureStats($db, $socidp);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 
-if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
+create_exdir($conf->facture->dir_temp);
 
-$filename = $conf->facture->dir_images."/nbfacture2year-".$year.".png";
+$filename = $conf->facture->dir_temp."/nbfacture2year-".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=nbfacture2year-'.$year.'.png';
 
 $px = new DolGraph();

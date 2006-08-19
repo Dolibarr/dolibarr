@@ -68,8 +68,8 @@ class CommActionRapport
     {
         global $user,$conf,$langs;
 
-        $dir = $conf->commercial->dir_output."/actions";
-        $file = $dir . "/rapport-action-".$this->month."-".$this->year.".pdf";
+        $dir = $conf->action->dir_temp."/";
+        $file = $dir . "/actions-".$this->month."-".$this->year.".pdf";
 
         if (! file_exists($dir))
         {

@@ -43,16 +43,16 @@ $stats = new PropaleStats($db);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 
-create_exdir($conf->propal->dir_images);
+create_exdir($conf->propal->dir_temp);
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
-	$filename = $conf->propal->dir_images.'/nbpropale2year-'.$user->id.'-'.$year.'.png';
+	$filename = $conf->propal->dir_temp.'/nbpropale2year-'.$user->id.'-'.$year.'.png';
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename = $conf->propal->dir_images.'/nbpropale2year-'.$year.'.png';
+	$filename = $conf->propal->dir_temp.'/nbpropale2year-'.$year.'.png';
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$year.'.png';
 }
 

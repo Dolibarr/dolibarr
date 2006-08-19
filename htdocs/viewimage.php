@@ -108,7 +108,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->propal->dir_images.'/'.$original_file;
+        $original_file=$conf->propal->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les images des stats commandes
@@ -119,7 +119,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->commande->dir_images.'/'.$original_file;
+        $original_file=$conf->commande->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les images des stats commandes
@@ -130,7 +130,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->facture->dir_images.'/'.$original_file;
+        $original_file=$conf->facture->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les images des stats expeditions
@@ -141,7 +141,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->expedition->dir_images.'/'.$original_file;
+        $original_file=$conf->expedition->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les images des stats produits
@@ -152,7 +152,7 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
-        $original_file=$conf->produit->dir_images.'/'.$original_file;
+        $original_file=$conf->produit->dir_temp.'/'.$original_file;
     }
 
     // Wrapping pour les produits
@@ -197,7 +197,7 @@ if ($modulepart)
     if ($modulepart == 'bank')
     {
       $accessallowed=1;
-      $original_file=$conf->banque->dir_images.'/'.$original_file;
+      $original_file=$conf->banque->dir_temp.'/'.$original_file;
     }
 }
 

@@ -46,6 +46,11 @@ llxHeader('',$langs->trans("ExportsArea"));
 
 print_fiche_titre($langs->trans("ExportsArea"));
 
+print $langs->trans("FormatedExportDesc1").'<br>';
+print $langs->trans("FormatedExportDesc2").' ';
+print $langs->trans("FormatedExportDesc3").'<br>';
+print '<br>';
+
 print '<table class="notopnoleftnoright" width="100%">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -85,7 +90,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ExportableDatas").'</td>';
-print '<td>&nbsp;</td>';
+//print '<td>&nbsp;</td>';
 print '</tr>';
 $val=true;
 if (sizeof($export->array_export_code))
@@ -99,10 +104,15 @@ if (sizeof($export->array_export_code))
         print '</td><td>';
         $string=$langs->trans($export->array_export_label[$key]);
         print ($string!=$export->array_export_label[$key]?$string:$export->array_export_label[$key]);
-        print '</td><td width="24">';
-        print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$export->array_export_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
-        print '</td></tr>';
+        print '</td>';
+//        print '<td width="24">';
+//        print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&amp;datatoexport='.$export->array_export_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+//        print '</td>';
+        print '</tr>';
+
     }
+
+    print '<tr class="total"><td class="total" colspan="2" align="center"><form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"></form></td></tr>';
 }
 else
 {

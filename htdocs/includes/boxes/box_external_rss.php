@@ -84,7 +84,7 @@ class box_external_rss extends ModeleBoxes {
         if ($rss->ERROR)
         {
             // Affiche warning car il y a eu une erreur
-            $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",(isset($rss->date)?dolibarr_print_date($rss->date,"%d %b %Y %H:%M"):'unknown date')));
+            $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",(isset($rss->date)?dolibarr_print_date($rss->date,"dayhourtext"):'unknown date')));
             $this->info_box_head = array('text' => $title,'limit' => 0);
         }
         else

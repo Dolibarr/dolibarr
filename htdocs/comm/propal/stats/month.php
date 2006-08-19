@@ -53,16 +53,16 @@ print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
 $stats = new PropaleStats($db);
 $data = $stats->getNbByMonth($year);
 
-if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
+create_exdir($conf->propal->dir_temp);
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
-	$filename = $conf->propal->dir_images.'/propale-'.$user->id.'-'.$year.'.png';
+	$filename = $conf->propal->dir_temp.'/propale-'.$user->id.'-'.$year.'.png';
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename = $conf->propal->dir_images.'/propale'.$year.'.png';
+	$filename = $conf->propal->dir_temp.'/propale'.$year.'.png';
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale'.$year.'.png';
 }
 
@@ -92,12 +92,12 @@ for ($i = 1 ; $i < 13 ; $i++)
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
-	$filename_amount = $conf->propal->dir_images.'/propaleamount-'.$user->id.'-'.$year.'.png';
+	$filename_amount = $conf->propal->dir_temp.'/propaleamount-'.$user->id.'-'.$year.'.png';
 	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename_amount = $conf->propal->dir_images.'/propaleamount'.$year.'.png';
+	$filename_amount = $conf->propal->dir_temp.'/propaleamount'.$year.'.png';
 	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount'.$year.'.png';
 }
 
@@ -127,12 +127,12 @@ for ($i = 1 ; $i < 13 ; $i++)
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
-	$filename_avg = $conf->propal->dir_images.'/propaleaverage-'.$user->id.'-'.$year.'.png';
+	$filename_avg = $conf->propal->dir_temp.'/propaleaverage-'.$user->id.'-'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename_avg = $conf->propal->dir_images.'/propaleaverage'.$year.'.png';
+	$filename_avg = $conf->propal->dir_temp.'/propaleaverage'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage'.$year.'.png';
 }
 

@@ -209,7 +209,7 @@ if ($modulepart)
         //{
         $accessallowed=1;
         //}
-        $original_file=$conf->actionscomm->dir_output.'/'.$original_file;
+        $original_file=$conf->actions->dir_output.'/'.$original_file;
     }
 
     // Wrapping pour les actions
@@ -220,7 +220,7 @@ if ($modulepart)
         //{
         $accessallowed=1;
         //}
-		$original_file = $conf->commercial->dir_output."/actions/".$original_file;
+		$original_file = $conf->action->dir_temp."/".$original_file;
 	}
 
     // Wrapping pour les produits et services
@@ -251,7 +251,7 @@ if ($modulepart)
         // Aucun test necessaire car on force le rep de doanwload sur
         // le rep export qui est propre à l'utilisateur
         $accessallowed=1;
-        $original_file=$conf->export->dir_output.'/'.$user->id.'/'.$original_file;
+        $original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
     }
     
     // Wrapping pour l'éditeur wysiwyg

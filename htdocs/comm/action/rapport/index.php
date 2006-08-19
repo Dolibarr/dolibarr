@@ -115,9 +115,9 @@ if ($resql)
 	
 			print '<td><a href="index.php?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a></td>';
 	
-			$name = "rapport-action-".$obj->month."-".$obj->year.".pdf";
+			$name = "actions-".$obj->month."-".$obj->year.".pdf";
 			$relativepath= $name;
-			$file = $conf->commercial->dir_output . "/actions/" .$name;
+			$file = $conf->action->dir_temp."/".$name;
 	
 			if (file_exists($file))
 			{

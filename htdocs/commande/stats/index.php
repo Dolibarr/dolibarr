@@ -55,7 +55,7 @@ $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 
 // Création répertoire pour images générées
-$dir=$conf->commande->dir_images;
+$dir=$conf->commande->dir_temp;
 if (! file_exists($dir))
 {
     if (create_exdir($dir) < 0)
@@ -66,12 +66,12 @@ if (! file_exists($dir))
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
-	$filename = $conf->commande->dir_images.'/nbcommande2year-'.$user->id.'-'.$year.'.png';
+	$filename = $conf->commande->dir_temp.'/nbcommande2year-'.$user->id.'-'.$year.'.png';
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename = $conf->commande->dir_images.'/nbcommande2year-'.$year.'.png';
+	$filename = $conf->commande->dir_temp.'/nbcommande2year-'.$year.'.png';
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';
 }
 

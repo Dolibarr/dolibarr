@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/mailing.class.php';
 $user->getrights();
 $langs->load("companies");
 $langs->load("mails");
+$langs->load("exports");
 
 
 function llxHeader($head = "", $title = "")

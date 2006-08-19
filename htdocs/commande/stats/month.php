@@ -60,16 +60,17 @@ print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 $stats = new CommandeStats($db, $socidp);
 $data = $stats->getNbByMonth($year);
 
-if (! is_dir($conf->commande->dir_images)) { mkdir($conf->commande->dir_images); }
+create_exdir($conf->commande->dir_temp);
+
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
-	$filename = $conf->commande->dir_images.'/commande-'.$user->id.'-'.$year.'.png';
+	$filename = $conf->commande->dir_temp.'/commande-'.$user->id.'-'.$year.'.png';
   $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename = $conf->commande->dir_images.'/commande'.$year.'.png';
+	$filename = $conf->commande->dir_temp.'/commande'.$year.'.png';
   $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande'.$year.'.png';
 }
 
@@ -99,12 +100,12 @@ for ($i = 1 ; $i < 13 ; $i++)
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
-	$filename_amount = $conf->commande->dir_images.'/commandeamount-'.$user->id.'-'.$year.'.png';
+	$filename_amount = $conf->commande->dir_temp.'/commandeamount-'.$user->id.'-'.$year.'.png';
 	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename_amount = $conf->commande->dir_images.'/commandeamount'.$year.'.png';
+	$filename_amount = $conf->commande->dir_temp.'/commandeamount'.$year.'.png';
 	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount'.$year.'.png';
 }
 
@@ -133,12 +134,12 @@ for ($i = 1 ; $i < 13 ; $i++)
 
 if (!$user->rights->commercial->client->voir || $user->societe_id)
 {
-	$filename_avg = $conf->commande->dir_images.'/commandeaverage-'.$user->id.'-'.$year.'.png';
+	$filename_avg = $conf->commande->dir_temp.'/commandeaverage-'.$user->id.'-'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename_avg = $conf->commande->dir_images.'/commandeaverage'.$year.'.png';
+	$filename_avg = $conf->commande->dir_temp.'/commandeaverage'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage'.$year.'.png';
 }
 

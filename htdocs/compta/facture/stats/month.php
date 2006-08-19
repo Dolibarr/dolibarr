@@ -54,9 +54,9 @@ print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
 $stats = new FactureStats($db, $socidp);
 $data = $stats->getNbByMonth($year);
 
-if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
+create_exdir($conf->facture->dir_temp);
 
-$filename = $conf->facture->dir_images."/facture".$year.".png";
+$filename = $conf->facture->dir_temp."/facture".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=facture'.$year.'.png';
 
 $px = new DolGraph();
@@ -83,7 +83,7 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
-$filename_amount = $conf->facture->dir_images."/factureamount".$year.".png";
+$filename_amount = $conf->facture->dir_temp."/factureamount".$year.".png";
 $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureamount'.$year.'.png';
 
 $px = new DolGraph();
@@ -110,7 +110,7 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
-$filename_avg = $conf->facture->dir_images."/factureaverage".$year.".png";
+$filename_avg = $conf->facture->dir_temp."/factureaverage".$year.".png";
 $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureaverage'.$year.'.png';
 
 $px = new DolGraph();

@@ -81,7 +81,7 @@ class modComptabilite extends DolibarrModules
 		$this->dirs[0] = $conf->compta->dir_output;
 		$this->dirs[1] = $conf->compta->dir_output."/rapport";
 		$this->dirs[2] = $conf->compta->dir_output."/export";
-		$this->dirs[3] = $conf->compta->dir_images;
+		$this->dirs[3] = $conf->compta->dir_temp;
 	
 		// Boites
 		$this->boxes = array();

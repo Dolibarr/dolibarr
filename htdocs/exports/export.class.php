@@ -172,7 +172,7 @@ class Export
             //$this->array_export_label[$indice]
             $filename="export_".$datatoexport;
             $filename.='.'.$objmodel->getDriverExtension();
-            $dirname=$conf->export->dir_ouput.'/'.$user->id;
+            $dirname=$conf->export->dir_temp.'/'.$user->id;
 
             // Open file
             create_exdir($dirname);

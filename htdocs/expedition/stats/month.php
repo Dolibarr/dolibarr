@@ -43,9 +43,9 @@ print_fiche_titre('Statistiques expeditions '.$_GET["year"], $mesg);
 $stats = new ExpeditionStats($db);
 $data = $stats->getNbExpeditionByMonth($_GET["year"]);
 
-if (! is_dir($conf->expedition->dir_images)) { mkdir($conf->expedition->dir_images); }
+create_exdir($conf->expedition->dir_temp);
 
-$filename = $conf->expedition->dir_images."/expedition".$year.".png";
+$filename = $conf->expedition->dir_temp."/expedition".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expedition'.$year.'.png';
 
 $px = new DolGraph();

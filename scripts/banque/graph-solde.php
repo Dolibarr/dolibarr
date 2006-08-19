@@ -56,13 +56,9 @@ else
 	$opt=array('m'=>$argv[1]);
 }
 
-if (!$conf->banque->dir_images)
-{
-	$conf->banque->dir_images = DOL_DATA_ROOT."/graph/banque/";
-}
 
 // Crée répertoire accueil
-create_exdir($conf->banque->dir_images);
+create_exdir($conf->banque->dir_temp);
 
 
 $datetime = time();
@@ -230,7 +226,7 @@ foreach ($accounts as $account)
 
 
 	// Fabrication tableau 1
-	$file= $conf->banque->dir_images."/solde.$account.$year.$month.png";
+	$file= $conf->banque->dir_temp."/solde.$account.$year.$month.png";
 	$title=$langs->trans("Balance").' '.$langs->trans("Month").': '.$month.' '.$langs->trans("Year").': '.$year;
 	$graph_datas=array();
 	foreach($datas as $i => $val)
@@ -325,7 +321,7 @@ foreach ($accounts as $account)
 	}
 
 	// Fabrication tableau 2
-	$file= $conf->banque->dir_images."/solde.$account.$year.png";
+	$file= $conf->banque->dir_temp."/solde.$account.$year.png";
 	$title=$langs->trans("Balance").' '.$langs->trans("Year").': '.$year;
 	$graph_datas=array();
 	foreach($datas as $i => $val)
@@ -400,7 +396,7 @@ foreach ($accounts as $account)
 	}
 
 	// Fabrication tableau 3
-	$file= $conf->banque->dir_images."/solde.$account.png";
+	$file= $conf->banque->dir_temp."/solde.$account.png";
 	$title=$langs->trans("Balance");
 	$graph_datas=array();
 	foreach($datas as $i => $val)
@@ -480,7 +476,7 @@ foreach ($accounts as $account)
 	}
 
 	// Fabrication tableau 4
-	$file= $conf->banque->dir_images."/mouvement.$account.$year.png";
+	$file= $conf->banque->dir_temp."/mouvement.$account.$year.png";
 	$title=$langs->trans("Movements").' '.$langs->trans("Year").': '.$year;
 	$graph_datas=array();
 	foreach($data_credit as $i => $val)

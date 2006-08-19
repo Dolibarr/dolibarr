@@ -152,7 +152,7 @@ class modCommande extends DolibarrModules
 
     // Dir
     $this->dirs[0] = $conf->commande->dir_output;
-    $this->dirs[1] = $conf->commande->dir_images;
+    $this->dirs[1] = $conf->commande->dir_temp;
 	$sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."'",
 		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES('".$this->const[0][2]."','order')"
