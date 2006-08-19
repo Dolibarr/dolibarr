@@ -168,6 +168,7 @@ if ($_GET["id"] || $_GET["ref"])
 
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
             print '</table>';
+            
             print '</form>';
         }
 
@@ -180,7 +181,8 @@ if ($_GET["id"] || $_GET["ref"])
             $pdir = get_exdir($product->id) . $product->id ."/photos/";
             $dir = $conf->produit->dir_output . '/'. $pdir;
 
-            print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+            print '<br>';
+            print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
             foreach ($product->liste_photos($dir) as $key => $obj)
             {
@@ -219,7 +221,7 @@ if ($_GET["id"] || $_GET["ref"])
             {
                 print '<tr align=center valign=middle border=1><td class="photo">';
                 print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
-                print '</td></tr></table>';
+                print '</td></tr>';
             }
 
            print '</table>';
