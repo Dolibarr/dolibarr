@@ -54,7 +54,7 @@ class modFckeditor extends DolibarrModules
     $this->description = "Editeur WYSIWYG";
     $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_FCKEDITOR';
-    $this->special = 1;
+    $this->special = 0;
 
     // Dir
     $this->dirs = array();
