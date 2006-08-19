@@ -20,12 +20,12 @@
  * $Id$
  * $Source$
  */
-
+ 
 /**
-        \file       htdocs/product/stock/mouvement.php
-        \ingroup    stock
-        \brief      Page liste des mouvements de stocks
-        \version    $Revision$
+		\file       htdocs/product/stock/mouvement.php
+		\ingroup    stock
+		\brief      Page liste des mouvements de stocks
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -43,21 +43,21 @@ $sortorder = $_GET["sortorder"];
 if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
-  
+
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
-  
+
 $sql = "SELECT p.rowid, p.label as produit, s.label as stock, m.value, ".$db->pdate("m.datem")." as datem, s.rowid as entrepot_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
 $sql .= " WHERE m.fk_product = p.rowid AND m.fk_entrepot = s.rowid";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql.= ' AND IFNULL(c.visible,1)=1';
+	$sql.= ' AND IFNULL(c.visible,1)=1';
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
@@ -65,48 +65,96 @@ $result = $db->query($sql) ;
 
 if ($result)
 {
-  $num = $db->num_rows($result);
+	$num = $db->num_rows($result);
 
-  $i = 0;
-  
-  $texte = $langs->trans("ListOfStockMovements");
-  llxHeader("","",$texte);
-  
-  print_barre_liste($texte, $page, "mouvement.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+	if ($_GET["id"])
+	{
+	    $entrepot = new Entrepot($db);
+	    $result = $entrepot->fetch($_GET["id"]);
+	    if ($result < 0)
+	    {
+	        dolibarr_print_error($db);
+	    }
+	}
+	
+	$i = 0;
 
-  print '<table class="noborder" width="100%">';
-  print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Product"),"mouvement.php", "p.ref","","","",$sortfield);
-  print "<td align=\"center\">".$langs->trans("Units")."</td>";
-  print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","","","",$sortfield);
-  print "</tr>\n";
-    
-  $var=True;
-  while ($i < min($num,$limit))
-    {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td>'.dolibarr_print_date($objp->datem).'</td>';
-      print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
-      print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
-      print "</a></td>\n";
-      print '<td align="center">'.$objp->value.'</td>';
-      print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
-      print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
-      print "</a></td>\n";
-      print "</tr>\n";
-      $i++;
-    }
-  $db->free($result);
+	$texte = $langs->trans("ListOfStockMovements");
+	llxHeader("","",$texte);
 
-  print "</table>";
+
+	/*
+	* Affichage onglets
+	*/
+	if ($_GET["id"])
+	{
+		$h = 0;
+	
+		$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
+		$head[$h][1] = $langs->trans("WarehouseCard");
+		$h++;
+	
+		$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
+		$head[$h][1] = $langs->trans("StockMovements");
+		$hselected=$h;
+		$h++;
+	
+		$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
+		$head[$h][1] = $langs->trans("Info");
+		$h++;
+	
+		dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
+	
+	    print '<table class="border" width="100%">';
+	
+		// Ref
+	    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
+	
+	    print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
+	
+		// Statut
+	    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
+	
+	    print "</table>";
+	
+	    print '</div>';
+	}
+
+
+	print_barre_liste($texte, $page, "mouvement.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+	print '<table class="noborder" width="100%">';
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","","","",$sortfield);
+	print_liste_field_titre($langs->trans("Product"),"mouvement.php", "p.ref","","","",$sortfield);
+	print "<td align=\"center\">".$langs->trans("Units")."</td>";
+	print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","","","",$sortfield);
+	print "</tr>\n";
+
+	$var=True;
+	while ($i < min($num,$limit))
+	{
+		$objp = $db->fetch_object($result);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print '<td>'.dolibarr_print_date($objp->datem).'</td>';
+		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
+		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
+		print "</a></td>\n";
+		print '<td align="center">'.$objp->value.'</td>';
+		print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
+		print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
+		print "</a></td>\n";
+		print "</tr>\n";
+		$i++;
+	}
+	$db->free($result);
+
+	print "</table>";
 
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 

@@ -23,6 +23,7 @@ LastMovements=Last movements
 Units=Units
 StockCorrection=Stock correction
 StockMovement=Transfer
+StockMovements=Stock transferts
 NumberOfUnit=Number of units
 TotalStock=Total in stock
 StockTooLow=Stock too low

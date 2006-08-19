@@ -113,13 +113,6 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
     }
 }
 
-
-
-llxHeader("","",$langs->trans("WarehouseCard"));
-
-$form=new Form($db);
-
-
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
     $_GET["action"] = '';
@@ -127,10 +120,15 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 }
 
 
+
 /*
 * Affichage fiche en mode création
 *
 */
+
+llxHeader("","",$langs->trans("WarehouseCard"));
+
+$form=new Form($db);
 
 if ($_GET["action"] == 'create')
 {
@@ -139,7 +137,8 @@ if ($_GET["action"] == 'create')
     print '<input type="hidden" name="type" value="'.$type.'">'."\n";
     print_titre($langs->trans("NewWarehouse"));
 
-    if ($mesg) {
+    if ($mesg)
+    {
         print $mesg;
     }
 
@@ -156,7 +155,7 @@ if ($_GET["action"] == 'create')
     {
 	    // Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('desc',$entrepot->description,200,'dolibarr_notes','In',false);
+		$doleditor=new DolEditor('desc',$entrepot->description,180,'dolibarr_notes','In',false);
 		$doleditor->Create();
     }
     else
@@ -176,7 +175,7 @@ if ($_GET["action"] == 'create')
     $form->select_pays($entrepot->pays_id?$entrepot->pays_id:$mysoc->pays_code, 'pays_id');
     print '</td></tr>';
 
-    print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
+    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
     print '<select name="statut">';
     print '<option value="0" selected="true">'.$langs->trans("WarehouseClosed").'</option>';
     print '<option value="1">'.$langs->trans("WarehouseOpened").'</option>';
@@ -196,7 +195,7 @@ else
 
         $entrepot = new Entrepot($db);
         $result = $entrepot->fetch($_GET["id"]);
-        if (! $result)
+        if ($result < 0)
         {
             dolibarr_print_error($db);
         }
@@ -217,6 +216,10 @@ else
             $hselected=$h;
             $h++;
 
+			$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
+			$head[$h][1] = $langs->trans("StockMovements");
+			$h++;
+		
             $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
             $head[$h][1] = $langs->trans("Info");
             $h++;
@@ -244,7 +247,8 @@ else
             print $entrepot->pays;
             print '</td></tr>';
 
-            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
+            // Statut
+            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
             print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
             print $entrepot->nb_products();
@@ -267,6 +271,7 @@ else
             print '<tr><td valign="top"><a href="mouvement.php">'.$langs->trans("LastMovement").'</a></td><td colspan="3">';
             print dolibarr_print_date($row[0]);
             print "</td></tr>";
+
             print "</table>";
 
             print '</div>';
@@ -368,8 +373,6 @@ else
                 dolibarr_print_error($db);
             }
             print "</table>\n";
-            print "</div>\n";
-
         }
 
 
@@ -397,7 +400,7 @@ else
 		    {
 			    // Editeur wysiwyg
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('desc',$entrepot->description,200,'dolibarr_notes','In',false);
+				$doleditor=new DolEditor('desc',$entrepot->description,180,'dolibarr_notes','In',false);
 				$doleditor->Create();
 		    }
 		    else

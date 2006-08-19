@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -51,6 +50,10 @@ $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
 $head[$h][1] = $langs->trans("WarehouseCard");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
+$head[$h][1] = $langs->trans("StockMovements");
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
