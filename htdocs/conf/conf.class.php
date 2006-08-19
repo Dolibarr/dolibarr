@@ -147,6 +147,7 @@ class Conf
 
 		// Module externalrss
 		$this->externalrss->enabled=defined("MAIN_MODULE_EXTERNALRSS")?MAIN_MODULE_EXTERNALRSS:0;
+		$this->externalrss->dir_temp=DOL_DATA_ROOT."/rss/temp";
 		
 		// Module commande client
 		$this->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;

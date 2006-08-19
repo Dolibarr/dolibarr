@@ -838,23 +838,6 @@ class Commande extends CommonObject
 					}
 				}
 		
-				if ($this->user_author_id)
-				{
-					$sql = "SELECT name, firstname";
-					$sql.= " FROM ".MAIN_DB_PREFIX."user";
-					$sql.= " WHERE rowid = ".$this->user_author_id;
-		
-					$resqluser = $this->db->query($sql);
-		
-					if ($resqluser)
-					{
-						$obju = $this->db->fetch_object($resqluser);
-						$this->user_author_name      = $obju->name;
-						$this->user_author_firstname = $obju->firstname;
-					}
-				}
-		
-	
 				$this->lignes = $this->fetch_lignes();
 		
 				/*

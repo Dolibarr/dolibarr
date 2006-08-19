@@ -74,6 +74,7 @@ if ($_GET["id"] > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($commande->socidp);
+
 		$author = new User($db);
 		$author->id = $commande->user_author_id;
 		$author->fetch();

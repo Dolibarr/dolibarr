@@ -63,6 +63,8 @@ class Facture extends CommonObject
 	var $note_public;
 	var $statut;
 	var $paye;					// 1 si facture payée COMPLETEMENT, 0 sinon
+	var $close_code;			// Si mis a paye sans paiement complet, code qui justifie
+	var $close_note;			// Commentaire si mis a paye sans paiement complet
 	var $propalid;
 	var $projetid;
 	var $date_lim_reglement;
@@ -312,7 +314,7 @@ class Facture extends CommonObject
 		$sql = 'SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql .= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
 		$sql .= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
-		$sql .= ', f.note, f.note_public, f.paye, f.fk_statut, f.fk_user_author, f.model_pdf';
+		$sql .= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.model_pdf';
 		$sql .= ', f.fk_mode_reglement, f.ref_client, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
 		$sql .= ', cf.fk_commande';
@@ -346,6 +348,8 @@ class Facture extends CommonObject
 				$this->total_tva              = $obj->tva;
 				$this->total_ttc              = $obj->total_ttc;
 				$this->paye                   = $obj->paye;
+				$this->close_code             = $obj->close_code;
+				$this->close_note             = $obj->close_note;
 				$this->socidp                 = $obj->fk_soc;
 				$this->statut                 = $obj->fk_statut;
 				$this->date_lim_reglement     = $obj->dlr;
@@ -365,36 +369,20 @@ class Facture extends CommonObject
 				$this->lignes                 = array();
 
 
-				if ($this->user_author)
-        {
-             $sql = "SELECT name, firstname";
-             $sql.= " FROM ".MAIN_DB_PREFIX."user";
-             $sql.= " WHERE rowid = ".$this->user_author;
-
-             $resqluser = $this->db->query($sql);
-
-             if ($resqluser)
-             {
-                $obju = $this->db->fetch_object($resqluser);
-                $this->user_author_name      = $obju->name;
-                $this->user_author_firstname = $obju->firstname;
-             }
-        }
-
-        if ($this->commande_id)
-        {
-             $sql = "SELECT ref";
-             $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-             $sql.= " WHERE rowid = ".$this->commande_id;
-
-             $resqlcomm = $this->db->query($sql);
-
-             if ($resqlcomm)
-             {
-                $objc = $this->db->fetch_object($resqlcomm);
-                $this->commande_ref      = $objc->ref;
-             }
-        }
+		        if ($this->commande_id)
+		        {
+		             $sql = "SELECT ref";
+		             $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		             $sql.= " WHERE rowid = ".$this->commande_id;
+		
+		             $resqlcomm = $this->db->query($sql);
+		
+		             if ($resqlcomm)
+		             {
+		                $objc = $this->db->fetch_object($resqlcomm);
+		                $this->commande_ref      = $objc->ref;
+		             }
+		        }
 
 				if ($this->statut == 0)
 				{
@@ -725,17 +713,23 @@ class Facture extends CommonObject
 	/**
 	 *      \brief      Tag la facture comme payée complètement + appel trigger BILL_PAYED
      *      \param      user        Objet utilisateur qui modifie
+     *		\param		close_code	Code renseigné si on classe à payée alors que paiement incomplet
+     *								Les valeurs possibles sont:	escompte, other
+     *		\param		close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet
  	 *      \return     int         <0 si ok, >0 si ok
 	 */
-	function set_payed($user)
+	function set_payed($user,$close_code='',$close_note='')
 	{
 		global $conf,$langs;
 
 	    dolibarr_syslog("Facture.class.php::set_payed rowid=".$this->id);
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-		$sql.= ' SET paye=1 WHERE rowid = '.$this->id ;
-		$resql = $this->db->query($sql);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
+		$sql.= ' paye=1';
+		if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
+		if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
+		$sql.= ' WHERE rowid = '.$this->id;
 
+		$resql = $this->db->query($sql);
         if ($resql)
         {
             $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
@@ -1488,16 +1482,19 @@ class Facture extends CommonObject
 	}
 
 	/**
-	* \brief     Renvoie la sommes des paiements deja effectués
-	* \remarks   Utilisé entre autre par certains modèles de factures
+	* 	\brief     	Renvoie la sommes des paiements deja effectués
+	*	\return		Montant deja versé, <0 si ko
 	*/
 	function getSommePaiement()
 	{
-		$sql = 'SELECT sum(amount) FROM '.MAIN_DB_PREFIX.'paiement_facture WHERE fk_facture = '.$this->id;
-		if ($this->db->query($sql))
+		$sql = 'SELECT sum(amount) as amount';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture';
+		$sql.= ' WHERE fk_facture = '.$this->id;
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$row = $this->db->fetch_row(0);
-			return $row[0];
+			$obj = $this->db->fetch_object($resql);
+			return $obj->amount;
 		}
 		else
 		{

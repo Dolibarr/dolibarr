@@ -193,7 +193,7 @@ if ($_POST["action"] == "set")
             $dir[4] = "$main_data_dir/ficheinter";
             $dir[5] = "$main_data_dir/produit";
             $dir[6] = "$main_data_dir/rapport";
-            $dir[7] = "$main_data_dir/rsscache";
+            $dir[7] = "$main_data_dir/rss";
             $dir[8] = "$main_data_dir/logo";
 
             // Boucle sur chaque répertoire de dir[] pour les créer s'ils nexistent pas

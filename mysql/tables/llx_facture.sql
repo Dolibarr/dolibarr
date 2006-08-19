@@ -35,6 +35,10 @@ create table llx_facture
   remise_percent      real     DEFAULT 0,   -- remise relative
   remise_absolue      real     DEFAULT 0,   -- remise absolue
   remise              real     DEFAULT 0,   -- remise totale calculee
+
+  close_code          varchar(12)  after remise;		-- Code motif cloture sans paiement complet
+  close_note          varchar(128) after close_code;	-- Commentaire cloture sans paiement complet
+
   tva                 real     DEFAULT 0,   -- montant tva apres remise totale
   total               real     DEFAULT 0,   -- montant total ht apres remise totale
   total_ttc           real     DEFAULT 0,   -- montant total ttc apres remise totale

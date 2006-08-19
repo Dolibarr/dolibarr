@@ -483,7 +483,7 @@ class CommandeFournisseur extends Commande
   {
     require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
     
-    $cc = new user($this->db, $this->user_author_id);
+    $cc = new User($this->db, $this->user_author_id);
     $cc->fetch();
     
     $sendto = $cc->email;

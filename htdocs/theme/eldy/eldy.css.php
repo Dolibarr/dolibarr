@@ -55,15 +55,15 @@ a:visited { font: verdana, arial, helvetica, sans-serif; font-weight: bold; colo
 a:active  { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 input
-{ 
-    font: 12px helvetica, verdana, arial, sans-serif; 
+{
+    font: 12px helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 input.flat
-{ 
+{
     font: 12px helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -78,7 +78,7 @@ textarea  {
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
-{ 
+{
     font: 12px helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -113,7 +113,7 @@ div.vmenuplusfiche
     top: auto;
     left: auto;
     position: static;
-    float: left; 
+    float: left;
     display: block;
     margin-right: 6px;
     margin-left: 1px;
@@ -163,9 +163,9 @@ div.tmenu
     font-weight: bold;
     font-size: 12px;
     height: 19px;
-    background: #b3c5cc; 
+    background: #b3c5cc;
     background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
-    color: #000000; 
+    color: #000000;
     text-decoration: none;
 }
 
@@ -193,7 +193,7 @@ a.tmenu:visited
   font-weight: bold;
 }
 a.tmenu#sel
-{ 
+{
   color: #234046;
   padding: 0px 8px 0px 8px;
   margin: 0px 0px 2px 0px;
@@ -282,7 +282,7 @@ div.blockvmenupair
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
@@ -298,7 +298,7 @@ div.blockvmenuimpair
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
@@ -315,7 +315,7 @@ div.help
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
 	font: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
     padding: 3px;
@@ -323,23 +323,23 @@ div.help
 }
 
 
-td.barre { 
+td.barre {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #b3c5cc;
 	font: helvetica, verdana, arial, sans-serif;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
 }
 
-td.barre_select { 
-	background: #b3c5cc; 
+td.barre_select {
+	background: #b3c5cc;
 	color: #000000;
 }
 
 td.photo {
-	background: #F4F4F4; 
+	background: #F4F4F4;
 	color: #000000;
     border: 1px solid #b3c5cc;
 }
@@ -361,7 +361,7 @@ div.formsearch
   background: #d0d4d7;
   top: 0px;
   left: 130px;
-  padding: 4px; 
+  padding: 4px;
   vertical-align: middle;
   margin-bottom: 10px;
 }
@@ -414,7 +414,7 @@ div.onglet_inf
     font-weight:bold;
     font-size: 12px;
     height: 19px;
-    color: #000000; 
+    color: #000000;
     text-decoration: none;
 }
 
@@ -517,52 +517,52 @@ a.tabimage {
 
 a.butAction:link    { font: 12px helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
-                      background: white; 
-                      border: 1px solid #8CACBB; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
-                      white-space: nowrap; }
-
-a.butAction:visited { font: 12px helvetica, verdana, arial, sans-serif; 
-                      font-weight: bold;
-                      background: white; 
-                      border: 1px solid #8CACBB; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
-                      white-space: nowrap; }
-
-a.butAction:active  { font: 12px helvetica, verdana, arial, sans-serif; 
-                      font-weight: bold;
-                      background: white; 
-                      border: 1px solid #8CACBB; 
+                      background: white;
+                      border: 1px solid #8CACBB;
                       color: #436976;
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:hover   { font: 12px helvetica, verdana, arial, sans-serif; 
+a.butAction:visited { font: 12px helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
-                      background: #dee7ec; 
-                      border: 1px solid #8CACBB; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: white;
+                      border: 1px solid #8CACBB;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
+                      white-space: nowrap; }
+
+a.butAction:active  { font: 12px helvetica, verdana, arial, sans-serif;
+                      font-weight: bold;
+                      background: white;
+                      border: 1px solid #8CACBB;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
+                      white-space: nowrap; }
+
+a.butAction:hover   { font: 12px helvetica, verdana, arial, sans-serif;
+                      font-weight: bold;
+                      background: #dee7ec;
+                      border: 1px solid #8CACBB;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
 a.butActionRefuse    { font: 12px helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
-                      background: white; 
-                      border: 1px solid red; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: white;
+                      border: 1px solid red;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
 a.butActionRefuse:hover { font: 12px helvetica, verdana, arial, sans-serif;
@@ -572,12 +572,12 @@ a.butActionRefuse:hover { font: 12px helvetica, verdana, arial, sans-serif;
 
 a.butActionDelete    { font: 12px helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
-                      background: white; 
-                      border: 1px solid red; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: white;
+                      border: 1px solid red;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
 a.butActionDelete:link    { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
@@ -592,13 +592,13 @@ a.tabAction:link    { font: 12px helvetica, verdana, arial, sans-serif; font-wei
 a.tabAction:visited { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.tabAction:active  { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.tabAction:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: #dee7ec; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-                             
+
 a.butDelete:link    { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butDelete:active  { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butDelete:visited { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
-                      
+
 /* ============================================================================== */
 /* Tables                                                                         */
 /* ============================================================================== */
@@ -659,7 +659,7 @@ border-collapse: collapse;
 width: 100%;
 }
 
-tr.liste_titre { 
+tr.liste_titre {
 background: #7699A9;
 background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
@@ -668,7 +668,7 @@ font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
-td.liste_titre { 
+td.liste_titre {
 background: #7699A9;
 background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
@@ -678,29 +678,29 @@ border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 td.liste_titre_sel
-{ 
+{
 background: #7699A9;
 background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
-color: #F5FFFF; 
+color: #F5FFFF;
 font: helvetica, verdana, arial, sans-serif;
-font-weight: bold; 
+font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
-input.liste_titre { 
+input.liste_titre {
 background: #7699A9;
 background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 border: 0px;
 }
 
-tr.liste_total td { 
+tr.liste_total td {
 border-top: 1px solid #888888;
 background: #F4F4F4;
 font-weight: bold;
 white-space: nowrap;
 }
 
-th { 
+th {
 background: #7699A9;
 color: #334444;
 font: helvetica, verdana, arial, sans-serif;
@@ -712,32 +712,32 @@ border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
 }
 
-td.border { 
+td.border {
 border-top: 1px solid #000000;
 border-right: 1px solid #000000;
 border-bottom: 1px solid #000000;
 border-left: 1px solid #000000;
 }
 
-.pair	{ 
-background: #e6ebed; 
+.pair	{
+background: #e6ebed;
 font: helvetica, verdana, arial, sans-serif;
 border: 0px;
 }
 /*
-.pair:hover { 
+.pair:hover {
 background: #c0c4c7;
 border: 0px;
 }
 */
 
-.impair { 
+.impair {
 background: #d0d4d7;
 font: helvetica, verdana, arial, sans-serif;
 border: 0px;
 }
 /*
-.impair:hover { 
+.impair:hover {
 background: #c0c4c7;
 border: 0px;
 }
@@ -746,7 +746,7 @@ border: 0px;
 /*
  *  Boxes
  */
-tr.box_titre { 
+tr.box_titre {
 background: #7699A9;
 background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
@@ -756,17 +756,17 @@ border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 
-tr.box_impair { 
+tr.box_impair {
 background: #e6ebed;
 font: 12px arial, helvetica, verdana, sans-serif;
 }
 
-tr.box_pair { 
+tr.box_pair {
 background: #d0d4d7;
 font: 12px arial, helvetica, verdana, sans-serif;
 }
 
-tr.fiche { 
+tr.fiche {
 font: helvetica, verdana, arial, sans-serif;
 }
 
@@ -789,7 +789,7 @@ div.warning {
 }
 
 div.error {
-  color: #550000; font-weight: bold; 
+  color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #8C9CAB;
@@ -807,7 +807,7 @@ div.info {
  *   Liens Payes/Non payes
  */
 
-a.normal:link { font-weight: normal } 
+a.normal:link { font-weight: normal }
 a.normal:visited { font-weight: normal }
 a.normal:active { font-weight: normal }
 a.normal:hover { font-weight: normal }
@@ -823,36 +823,49 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 /*
  *  Lignes titre espace
  */
-div.titre { 
+div.titre {
 	font: helvetica, verdana, arial, sans-serif;
-	font-weight: bold; 
-	color: #336666; 
+	font-weight: bold;
+	color: #336666;
 	text-decoration: none }
 
 
 /* ============================================================================== */
- * Formulaire confirmation
+/* Formulaire confirmation                                                        */
 /* ============================================================================== */
 
-td.validtitle { 
-           font-weight: bold;
-           background: #EECC55;
-           }
-td.valid { 
-           background: #EECC55;
-           }
+table.valid {
+    border-top: solid 1px #E6E6E6;
+    border-left: solid 1px #E6E6E6;
+    border-right: solid 1px #444444;
+    border-bottom: solid 1px #555555;
+	padding-top: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	margin: 0px 0px;
+    background: #D5BAA8;
+}
+
+.validtitre {
+    background: #D5BAA8;
+	font-weight: bold;
+}
+
+.valid {
+}
 
 
-td.small { 
+td.small {
            font-size: 10px;
            }
 
-tr.nonpayed { 
+tr.nonpayed {
            font-weight: bold;
            }
 
 
-div.version { 
+div.version {
 background: #F4F4F4;
 text-align: right;
 font-size: 9px;
@@ -880,13 +893,13 @@ z-index: 100;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
-.bodyline { 
+.bodyline {
 	-moz-border-radius:8px;
-	border: 1px #E4ECEC outset; 
+	border: 1px #E4ECEC outset;
 	padding:0px;
 	margin-bottom:5px;
 }
-table.dp { 
+table.dp {
     width: 180px;
     background-color: #FFFFFF;
     border-top: solid 2px #DDDDDD;
@@ -896,10 +909,10 @@ table.dp {
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
-.dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
+.dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
 	background-color:#b3c5cc;
-	color:white; 
+	color:white;
 	font-size:11px;
 	cursor:auto;
 }
@@ -908,9 +921,9 @@ table.dp {
 	text-align:center;
 	background-color:#617389;
 	color:#FFFFFF;
-	font-weight:bold; 
+	font-weight:bold;
 	border: 1px outset black;
-	cursor:pointer;	
+	cursor:pointer;
 }
 .dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
 .dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
@@ -934,7 +947,7 @@ table.dp {
 .tpMinute td:Hover {background-color:black; color:white; }
 .tpMinute td {background-color:#D9DBE1; text-align:center; cursor:pointer;}
 
-/* Bouton X fermer */	
+/* Bouton X fermer */
 .dpInvisibleButtons
 {
 border-style:none;
@@ -944,7 +957,7 @@ font-size:9px;
 border-width:0px;
 color:#0B63A2;
 vertical-align:middle;
-cursor: pointer; 
+cursor: pointer;
 }
 
 

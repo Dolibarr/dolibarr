@@ -329,6 +329,7 @@ Undo=Undo
 Redo=Redo
 ExpandAll=Expand all
 UndoExpandAll=Undo expand
+Reason=Raison
 # Countries
 CountryFR=France
 CountryBE=Belgium

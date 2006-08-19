@@ -329,6 +329,7 @@ Undo=Annuler
 Redo=Refaire
 ExpandAll=Tout dérouler
 UndoExpandAll=Annuler déroulement
+Reason=Raison
 # Countries
 CountryFR=France
 CountryBE=Belgique

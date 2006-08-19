@@ -170,7 +170,7 @@ if (! defined('TCPDF_PATH'))          { define('TCPDF_PATH',         DOL_DOCUMEN
 // Les autres path
 if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH . 'font/'); }
 if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
-if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   DOL_DATA_ROOT .'/rsscache'); }
+if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
 
 // \todo Ajouter la ligne
 // require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");

@@ -53,14 +53,14 @@ if ($_GET["id"] > 0)
 	{
 		$soc->fetch($commande->socidp);
 
+		$author = new User($db);
+		$author->id = $commande->user_author_id;
+		$author->fetch();
+
 		$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
 		$addons[0][1] = $soc->nom;
 
 		llxHeader('',$langs->trans("History"),"CommandeFournisseur",$addons);
-
-		$author = new User($db);
-		$author->id = $commande->user_author_id;
-		$author->fetch();
 
 		$h = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;

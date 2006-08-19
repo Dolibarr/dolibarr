@@ -30,6 +30,7 @@
 */
 
 require_once(FPDF_PATH.'fpdf.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilisé dans les classes qui héritent
 
 
 /**

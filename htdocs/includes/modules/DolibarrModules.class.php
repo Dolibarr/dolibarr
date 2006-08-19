@@ -83,13 +83,11 @@ class DolibarrModules
         // Créé les répertoires
         if (is_array($this->dirs))
         {
-            foreach ($this->dirs as $key => $value)
+            foreach ($this->dirs as $key => $dir)
             {
-                $dir = $value;
                 if ($dir && ! file_exists($dir))
                 {
-                    umask(0);
-                    if (! @mkdir($dir, 0755))
+                    if (create_exdir($dir) < 0)
                     {
                         $this->error = $langs->trans("ErrorCanNotCreateDir",$dir);
                         dolibarr_syslog("DolibarrModules::_init error");
@@ -106,7 +104,7 @@ class DolibarrModules
             $result=$this->db->query($sql);
             if (! $result)
             {
-            	dolibarr_syslog("Error sql=".$sql." - ".$this->db->error());
+            	dolibarr_syslog("DolibarrModules.class::init Error sql=".$sql." - ".$this->db->error());
                 $err++;
             }
         }

@@ -224,6 +224,28 @@ if ($_POST['action'] == 'confirm_payed' && $_POST['confirm'] == 'yes' && $user->
 	$fac->fetch($_GET['facid']);
 	$result = $fac->set_payed($user);
 }
+if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
+{
+	$fac = new Facture($db);
+	$fac->fetch($_GET['facid']);
+	$close_code=$_POST["close_code"];
+	$close_note=$_POST["close_note"];
+	if ($close_code)
+	{
+		if ($close_code == 'other' && ! $close_note)
+		{
+			$msg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Comment")).'</div>';
+		}
+		else
+		{
+			$result = $fac->set_payed($user,$close_code,$close_note);
+		}
+	}
+	else
+	{
+		$msg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
+	}
+}
 
 /*
  * Insertion facture
@@ -284,7 +306,7 @@ if ($_POST['action'] == 'add')
 			else
 			{
 				$_GET["action"]='create';
-				$mesg='<div class="error">'.$facture->error.'</div>';
+				$msg='<div class="error">'.$facture->error.'</div>';
 			}
 		}
 		else
@@ -582,7 +604,7 @@ if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
 	if ($user->rights->facture->supprimer)
 	{
 		$fac = new Facture($db);
-    $fac->fetch($_GET['facid']);
+		$fac->fetch($_GET['facid']);
 		$result = $fac->set_canceled($user);
 	}
 }
@@ -838,7 +860,7 @@ if ($_GET['action'] == 'create')
 {
 	print_titre($langs->trans('NewBill'));
 
-	if ($mesg) print $mesg;
+	if ($msg) print $msg;
 	
 	$soc = new Societe($db);
 
@@ -1416,6 +1438,10 @@ else
 			$soc = new Societe($db, $fac->socidp);
 			$soc->fetch($fac->socidp);
 			$absolute_discount=$soc->getCurrentDiscount();
+
+ 			$totalpaye = $fac->getSommePaiement();
+			$resteapayer = $fac->total_ttc - $totalpaye;
+			if ($fac->paye) $resteapayer=0;
 			
 			$author = new User($db);
 			if ($fac->user_author)
@@ -1470,14 +1496,26 @@ else
 			/*
  			 * Confirmation du classement payé
  			 */
-			if ($_GET['action'] == 'payed')
+			if ($_GET['action'] == 'payed' && $resteapayer <= 0)
 			{
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
 				print '<br />';
 			}
+			if ($_GET['action'] == 'payed' && $resteapayer > 0)
+			{
+				// Crée un tableau formulaire
+				$formquestion=array(
+					'text' => $langs->trans("ConfirmClassifyPayedPartiallyQuestion"),
+					array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => array('escompte' => $langs->trans("ConfirmClassifyPayedPartiallyReasonEscompte",$resteapayer,$langs->trans("Currency".$conf->monnaie)), 'other' => $langs->trans("ConfirmClassifyPayedPartiallyReasonOther"))),
+					array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '70')
+				);
+				// Paiement incomplet. On demande si motif = escompte ou autre
+				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedPartially',$fac->ref),'confirm_payed_partially',$formquestion);
+				print '<br />';
+			}
 
 			/*
-			 * Confirmation du classement abandonn
+			 * Confirmation du classement abandonne
 			 */
 			if ($_GET['action'] == 'canceled')
 			{
@@ -1563,8 +1601,6 @@ else
 			/*
 			 * Liste des paiements
 			 */
- 			$totalpaye = 0;
- 
 			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
 			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
@@ -1588,19 +1624,19 @@ else
 					$var=!$var;
 					print '<tr '.$bc[$var].'><td>';
 					print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-					print dolibarr_print_date($objp->dp).'</td>';
+					print dolibarr_print_date($objp->dp).'</a></td>';
 					print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 					print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
 					print '</tr>';
-					$totalpaye += $objp->amount;
 					$i++;
 				}
 
 				print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 				print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-
-				$resteapayer = $fac->total_ttc - $totalpaye;
-
+				if ($fac->close_code == 'escompte')
+				{
+					print '<tr><td colspan="2" align="right">'.$langs->trans("EscompteOffered").' :</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+				}
 				print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
 				print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
@@ -2248,7 +2284,7 @@ else
 				}
 			
 				// Envoyer une relance
-				if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
+				if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer)
 				{
 					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance">'.$langs->trans('SendRemindByMail').'</a>';
 				}
@@ -2261,18 +2297,18 @@ else
 			
 				// Classer 'payé'
 				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement
-						&& price($resteapayer) <= 0)
+						&& $resteapayer <= 0)
 				{
 					print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
 				}
 			
-				// Classer 'fermée' (possible si validée et pas encore classer payée)
-				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement
-						&& price($resteapayer) > 0)
+				// Classer 'fermée' (possible si validée et pas encore classée payée)
+				if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
+						&& $user->rights->facture->paiement)
 				{
 					if ($totalpaye > 0)
 					{
-						print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyPayedPartially').'</a>';
+						print '  <a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayedPartially').'</a>';
 					}
 					else
 					{

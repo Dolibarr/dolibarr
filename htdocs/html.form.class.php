@@ -1487,28 +1487,60 @@ class Form
 
   /**
    *    \brief  Affiche formulaire de demande de confirmation
-   *    \param  page        page
-   *    \param  title       title
-   *    \param  question    question
-   *    \param  action      action
+   *    \param  page        	page
+   *    \param  title       	title
+   *    \param  question    	question
+   *    \param  action      	action
+   *	\param	formquestion	an array with forms compementary inputs
    */
 	 
-  function form_confirm($page, $title, $question, $action)
+  function form_confirm($page, $title, $question, $action, $formquestion='')
   {
     global $langs;
     
-    print '<form method="post" action="'.$page.'">';
+    print '<form method="post" action="'.$page.'" class="notoptoleftroright">';
     print '<input type="hidden" name="action" value="'.$action.'">';
-    print '<table class="border" width="100%">';
+
+    print '<table width="100%" class="valid">';
+
     // Ligne titre
-    print '<tr><td class="validtitle" colspan="3">'.$title.'</td></tr>';
+	print '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>';
+
+    // Ligne formulaire
+    if ($formquestion)
+    {
+	    print '<tr class="valid"><td class="valid" colspan="3">';
+	    print '<table class="notopnoleftnoright" width="100%">';
+	    print '<tr><td colspan="2">'.$formquestion['text'].'</td></tr>';
+		foreach ($formquestion as $key => $input)
+		{	    
+	    	if ($input['type'] == 'text') print '<tr><td>'.$input['label'].'</td><td><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
+	    	if ($input['type'] == 'radio') 
+	    	{
+	    		$i=0;
+	    		foreach($input['values'] as $selkey => $selval)
+	    		{
+	    			print '<tr>';
+	    			if ($i==0) print '<td>'.$input['label'].'</td>';
+	    			else print '<td>&nbsp;</td>';
+	    			print '<td><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"> '.$selval.'</td></tr>';
+	 	   			$i++;
+	 	   		}
+	 	   	}
+		}
+	    print '</tr></table>';
+	    print '</td>';
+    }
+
     // Ligne message
-    print '<tr><td class="valid">'.$question.'</td><td class="valid">';
+    print '<tr class="valid"><td class="valid">'.$question.'</td>';
+    print '<td class="valid">';
     $this->selectyesno("confirm","no");
-    print "</td>\n";
+    print '</td>';
     print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Confirm").'"></td></tr>';
 
     print '</table>';
+    
     print "</form>\n";  
   }
 
