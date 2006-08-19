@@ -1169,94 +1169,74 @@ class Product
         }
     }
     
-    /**
-     *    \brief    Renvoie tableau des stats pour une requete donnée
-     *    \param    sql         Requete a exécuter
-     *    \return   array       Tableau de stats
-     */
-    function _get_stats($sql)
-    {
-        $result = $this->db->query($sql) ;
-        if ($result)
-        {
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            while ($i < $num)
-            {
-                $arr = $this->db->fetch_array($result);
-                $tab[$arr[1]] = $arr[0];
-                $i++;
-            }
-        }
-    
-        $year = strftime('%Y',time());
-        $month = strftime('%m',time());
-        $result = array();
-    
-        for ($j = 0 ; $j < 12 ; $j++)
-        {
-            $idx=ucfirst(substr( strftime("%b",mktime(12,0,0,$month,1,$year)) ,0,3) );
-            $monthnum=sprintf("%02s",$month);
-            
-            $result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
-//            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
-    
-            $month = "0".($month - 1);
-            if (strlen($month) == 3)
-            {
-                $month = substr($month,1);
-            }
-            if ($month == 0)
-            {
-                $month = 12;
-                $year = $year - 1;
-            }
-        }
-        return array_reverse($result);
-    
-    }
-
-
-  /**
-   *    \brief  Renvoie le nombre de ventes du produit/service par mois
-   *    \param  socid       id societe
-   *    \return array       nombre de vente par mois
-   */
-	 
-  function get_nb_vente($socid=0)
-    {
-    	global $conf;
-    	global $user;
-    	
-      $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
-      if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-      $sql .= " WHERE f.rowid = d.fk_facture and d.fk_product =".$this->id;
-      if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-      if ($socid > 0)
+	/**
+	*    \brief    Renvoie tableau des stats pour une requete donnée
+	*    \param    sql         Requete a exécuter
+	*    \return   array       Tableau de stats, -1 si ko
+	*/
+	function _get_stats($sql)
 	{
-	  $sql .= " AND f.fk_soc = $socid";
+		$result = $this->db->query($sql) ;
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num)
+			{
+				$arr = $this->db->fetch_array($result);
+				$tab[$arr[1]] = $arr[0];
+				$i++;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			return -1;
+		}
+	
+		$year = strftime('%Y',time());
+		$month = strftime('%m',time());
+		$result = array();
+	
+		for ($j = 0 ; $j < 12 ; $j++)
+		{
+			$idx=ucfirst(substr( strftime("%b",mktime(12,0,0,$month,1,$year)) ,0,3) );
+			$monthnum=sprintf("%02s",$month);
+	
+			$result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
+			//            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
+	
+			$month = "0".($month - 1);
+			if (strlen($month) == 3)
+			{
+				$month = substr($month,1);
+			}
+			if ($month == 0)
+			{
+				$month = 12;
+				$year = $year - 1;
+			}
+		}
+		
+		return array_reverse($result);
+	
 	}
-      $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
-
-      return $this->_get_stats($sql);
-    }
 
 
 	/**
-	*    \brief  Renvoie le nombre de factures dans lesquelles figure le produit par mois
+	*    \brief  Renvoie le nombre de factures clients du produit/service par mois
 	*    \param  socid       id societe
-	*    \return array       nombre de factures par mois
+	*    \return array       nombre de vente par mois
 	*/
-	function get_num_vente($socid=0)
+	function get_nb_vente($socid=0)
 	{
 		global $conf;
 		global $user;
 	
-		$sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
+		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE f.rowid = d.fk_facture AND d.fk_product =".$this->id;
+		$sql .= " WHERE f.rowid = d.fk_facture and d.fk_product =".$this->id;
 		if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)
 		{
@@ -1266,6 +1246,32 @@ class Product
 	
 		return $this->_get_stats($sql);
 	}
+
+
+	/**
+	*    \brief  Renvoie le nombre de factures fournisseurs du produit/service par mois
+	*    \param  socid       id societe
+	*    \return array       nombre d'achat par mois
+	*/
+	function get_nb_achat($socid=0)
+	{
+		global $conf;
+		global $user;
+	
+		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as d, ".MAIN_DB_PREFIX."facture_fourn as f";
+		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " WHERE f.rowid = d.fk_facture_fourn and d.fk_product =".$this->id;
+		if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid > 0)
+		{
+			$sql .= " AND f.fk_soc = $socid";
+		}
+		$sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
+
+		$resarray=$this->_get_stats($sql);
+		return $resarray;
+	}
 	
 	
 	/**
@@ -1273,12 +1279,12 @@ class Product
 	*    \param  socid       id societe
 	*    \return array       nombre de propales par mois
 	*/
-	function get_num_propal($socid=0)
+	function get_nb_propal($socid=0)
 	{
 		global $conf;
 		global $user;
 	
-		$sql = "SELECT count(*), date_format(p.datep, '%Y%m') ";
+		$sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m') ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;

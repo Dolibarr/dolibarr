@@ -104,7 +104,6 @@ if ($_GET["id"] || $_GET["ref"])
     dolibarr_fiche_head($head, 'category', $titre);
 
 
-	print($mesg);
 	print '<table class="border" width="100%">';
 	print "<tr>";
 	// Reference
@@ -134,6 +133,9 @@ if ($_GET["id"] || $_GET["ref"])
 
 	print '</div>';
 	
+
+	if ($mesg) print($mesg);
+
 	
     /*
      * Barre d'actions

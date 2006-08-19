@@ -145,7 +145,7 @@ if ($modulepart)
     }
 
     // Wrapping pour les images des stats produits
-    if ($modulepart == 'productstats')
+    if (eregi('^productstats_',$modulepart))
     {
         $user->getrights('produit');
         if ($user->rights->produit->lire)
