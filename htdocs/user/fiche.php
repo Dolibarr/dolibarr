@@ -713,7 +713,7 @@ else
             }
             else
             {
-                print '<img width="100" src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+                print '<img width="100" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
             }
             print '</td></tr>';
 
@@ -1040,7 +1040,7 @@ else
             }
             else
             {
-                print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+                print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
             }
             if ($caneditfield) 
             {

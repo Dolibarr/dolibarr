@@ -152,6 +152,7 @@ DiscountOfferedBy=Accordé par
 DiscountStillRemaining=Remises fixes restant en cours
 DiscountAlreadyCounted=Remises fixes déjà appliquées
 BillAddress=Adresse de facturation
+HelpEscompte=Un <b>escompte</b> est une remise accordée, sur une facture donnée, à un client car ce dernier a réalisé son paiement bien avant l'échéance.
 # PaymentConditions
 PaymentConditionShortRECEP=A réception
 PaymentConditionRECEP=A réception de facture

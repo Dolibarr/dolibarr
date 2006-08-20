@@ -1635,7 +1635,9 @@ else
 				print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 				if ($fac->close_code == 'escompte')
 				{
-					print '<tr><td colspan="2" align="right">'.$langs->trans("EscompteOffered").' :</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right" nowrap="1">';
+					$html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
+					print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 				}
 				print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
 				print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';

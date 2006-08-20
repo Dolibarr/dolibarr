@@ -242,7 +242,8 @@ function show_theme($fuser,$edit=0)
     $i=0;
     while (($subdir = readdir($handle))!==false)
     {
-        if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS')
+        if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
+        	&& substr($subdir, 0, 3) <> 'CVS' && ! eregi('common',$subdir))
         {
             if ($i % $thumbsbyrow == 0)
             {
@@ -251,7 +252,7 @@ function show_theme($fuser,$edit=0)
             
             print '<td align="center">';
             $file=$dirtheme."/".$subdir."/thumb.png";
-            if (! file_exists($file)) $file=$dirtheme."/nophoto.jpg";
+            if (! file_exists($file)) $file=$dirtheme."/common/nophoto.jpg";
             print '<table><tr><td><img src="'.$file.'" width="80" height="60"></td></tr><tr><td align="center">';
             if ($subdir == $fuser->conf->MAIN_THEME)
             {

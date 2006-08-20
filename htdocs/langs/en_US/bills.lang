@@ -152,6 +152,7 @@ DiscountOfferedBy=Granted by
 DiscountStillRemaining=Discount still remaining
 DiscountAlreadyCounted=Discount already counted
 BillAddress=Bill address
+HelpEscompte=This discount is a discount granted to customer because its paiement was made before term.
 # PaymentConditions
 PaymentConditionShortRECEP=After reception
 PaymentConditionRECEP=After invoice reception

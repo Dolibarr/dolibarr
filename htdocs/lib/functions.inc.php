@@ -761,7 +761,7 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 	global $conf,$langs;
 	$s ='<img ';
 	if ($usehelpcursor) $s.='style="cursor: help;" ';
-	$s.='src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/help.png" border="0"';
+	$s.='src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0"';
 	if ($usealttitle) $s.=' alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info");
 	$s.='">';
 	return $s;
