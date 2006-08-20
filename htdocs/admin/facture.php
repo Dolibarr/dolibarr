@@ -244,8 +244,8 @@ while (($file = readdir($handle))!==false)
 	        {
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
 	        }
-	    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
-	    	print ($htmltooltip?img_help(0):'');
+	    	print '<td align="center">';
+	    	$html->textwithhelp('',$htmltooltip,1,0);
 	    	print '</td>';
 
 	        print "</tr>\n";
@@ -291,7 +291,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -360,8 +360,11 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
     	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
-    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
-    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" alt="" title="">'.img_help(0,0).'</a>';
+    	print '<td align="center">';
+    	$html->textwithhelp('',$htmltooltip,1,0);
+    	print '</td>';
+    	print '<td align="center">';
+    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
     	print '</td>';
 
         print "</tr>\n";

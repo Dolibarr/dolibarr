@@ -280,7 +280,7 @@ print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -348,11 +348,16 @@ if(is_dir($dir))
 			$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
 			$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
 			$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
-			$htmltooltip.='<br>'.$langs->trans("FeaturesSupported").':';
+			$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
 			$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
-			print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>'.img_help(0).'</td>';
+	    	print '<td align="center">';
+	    	$html->textwithhelp('',$htmltooltip,1,0);
+	    	print '</td>';
+	    	print '<td align="center">';
+	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'sending').'</a>';
+	    	print '</td>';
 
-			print '</td></tr>';
+			print '</tr>';
 		}
 	}
 	closedir($handle);

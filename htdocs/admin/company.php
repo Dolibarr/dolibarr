@@ -199,7 +199,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     }
     else
     {
-        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
     }
 	print '</td></tr></table>';
     print '</td></tr>';
@@ -430,7 +430,7 @@ else
     }
     else
     {
-        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
     }
 	print '</td></tr></table>';
 

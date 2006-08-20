@@ -170,8 +170,8 @@ if ($handle)
 	        {
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
 	        }
-	    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>';
-	    	print ($htmltooltip?img_help(0):'');
+	    	print '<td align="center">';
+	    	$html->textwithhelp('',$htmltooltip,1,0);
 	    	print '</td>';
 
             print '</tr>';
@@ -218,7 +218,7 @@ print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -281,11 +281,16 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
     	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
     	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
-    	$htmltooltip.='<br>'.$langs->trans("FeaturesSupported").':';
+    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
     	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
-    	print '<td align="center" '.$html->tooltip_properties($htmltooltip).'>'.img_help(0).'</td>';
+    	print '<td align="center">';
+    	$html->textwithhelp('',$htmltooltip,1,0);
+    	print '</td>';
+    	print '<td align="center">';
+    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+    	print '</td>';
 
 		print "</tr>\n";
 	}
