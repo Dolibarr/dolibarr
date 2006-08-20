@@ -41,6 +41,17 @@ Box=Box
 Boxes=Boxes
 System=System
 SystemInfo=System informations
+SystemTools=System tools
+SystemToolsArea=System tools area
+Backup=Backup
+Restore=Restore
+RunCommandSummary=Backup will be done through the following command
+WebServerMustHavePermissionForCommand=Your web server must have permissions to run such commands
+BackupResult=Backup result
+BackupFileSuccessfullyCreated=Backup file successfully generated
+YouCanDownloadBackupFile=Generated files can now be downlaoded
+NoBackupFileAvailable=No backup files available.
+ToBuildBackupFileClickHere=To build one backup file, click <a href="%s">here</a>.
 Yes=Yes
 No=No
 AutoDetectLang=Autodetect (browser language)

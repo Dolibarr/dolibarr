@@ -291,6 +291,9 @@ class Conf
 		 * Modification de quelques variable de conf en fonction des Constantes
 		 */
 
+		// outils systemes
+		if (! $this->global->SYSTEMTOOLS_MYSQLDUMP) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
+		
 		// societe
 		if (! $this->global->SOCIETE_CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (! $this->global->SOCIETE_CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON="mod_codeclient_leopard";

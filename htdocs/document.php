@@ -263,6 +263,17 @@ if ($modulepart)
         $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
     }
 
+    // Wrapping pour les backups
+    if ($modulepart == 'systemtools')
+    {
+        if ($user->admin)
+        {
+            $accessallowed=1;
+        }
+        $original_file=DOL_DATA_ROOT.'/admin/temp/'.$original_file;
+    }
+
+
 }
 
 // Limite accès si droits non corrects

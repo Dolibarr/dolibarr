@@ -2389,7 +2389,7 @@ class Form
     /**
      *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
      *      \param      modulepart          propal=propal, facture=facture, ...
-     *      \param      filename            Nom fichier sans extension
+     *      \param      filename            Sous rep à scanner (vide si filedir deja complet)
      *      \param      filedir             Repertoire à scanner
      *      \param      urlsource           Url page origine
      *      \param      genallowed          Génération autorisée (1/0 ou array des formats)
@@ -2558,7 +2558,9 @@ class Form
 		{
 		
 	        // Défini chemin relatif par rapport au module pour lien download
-	        $relativepath=$filename."/".$file["name"];
+	        $relativepath=$file["name"];								// Cas general
+	        if ($filename) $relativepath=$filename."/".$file["name"];	// Cas prpal, facture...
+	        // Autre cas
             if ($modulepart == 'don')        { $relativepath = get_exdir($filename).$file["name"]; }
             if ($modulepart == 'export')     { $relativepath = $file["name"]; }
 

@@ -41,6 +41,17 @@ Box=Boîte
 Boxes=Boîtes
 System=Système
 SystemInfo=Infos Système
+SystemTools=Outils Système
+SystemToolsArea=Espace outils systèmes
+Backup=Sauvegarde
+Restore=Restauration
+RunCommandSummary=La sauvegarde sera exécutée par la commande suivante
+WebServerMustHavePermissionForCommand=Votre serveur web doit avoir les droits pour exécuter une telle commande
+BackupResult=Résultat sauvegarde
+BackupFileSuccessfullyCreated=Fichier backup généré avec succès
+YouCanDownloadBackupFile=Les fichiers générés peuvent maintenant être téléchargés
+NoBackupFileAvailable=Aucune fichier backup disponible.
+ToBuildBackupFileClickHere=Pour générer un fichier de sauvegarde, cliquez <a href="%s">ici</a>.
 Yes=Oui
 No=Non
 AutoDetectLang=Détection auto (navigateur)
