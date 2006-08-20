@@ -150,7 +150,7 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	$soc = new Societe($db);
 	$soc->fetch($fac->socidp);
 	$result = $fac->set_valid($fac->id, $user, $soc);
-	if ($result)
+	if ($result >= 0)
 	{
 		if ($_REQUEST['lang_id'])
 		{
@@ -158,6 +158,10 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
 		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+	}
+	else
+	{
+		$msg='<div class="error">'.$fac->error.'</div>';
 	}
 }
 

@@ -887,7 +887,7 @@ class Facture extends CommonObject
 			  {
 				  dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
 
-				  if (rename($dirsource, $dirdest))
+				  if (@rename($dirsource, $dirdest))
 				  {
 					  dolibarr_syslog("Renommage ok");
 					  // Suppression ancien fichier PDF dans nouveau rep
@@ -904,25 +904,59 @@ class Facture extends CommonObject
 			{
 			 	if (($this->lignes[$i]->info_bits & 2) == 2)
 			 	{
-			 		// Ligne de remis
-			 		dolibarr_syslog("Facture.class::set_valid top remises de ligne ".$this->lignes[$i]->fk_remise_except." comme utilisee");
+			 		// Ligne de remise
+			 		dolibarr_syslog("Facture.class::set_valid: recherche si remise ".$this->lignes[$i]->fk_remise_except." toujours dispo");
 			 			
-					// On met à jour ligne de remise comme utilisée
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-					$sql.= ' SET fk_facture = '.$this->lignes[$i]->rowid;
-					$sql.= ' WHERE rowid ='.$this->lignes[$i]->fk_remise_except;
+					// On recherche si ligne de remise pas deja attribuée
+					$sql = 'SELECT fk_facture';
+					$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except';
+					$sql.= ' WHERE fk_facture IS NULL AND rowid ='.$this->lignes[$i]->fk_remise_except;
+					$sql.= ' FOR UPDATE';
 					$resql=$this->db->query($sql);
-					if (! $resql)
+					if ($resql)
+					{
+						$num=$this->db->num_rows($resql);
+						if ($num >= 1)
+						{
+							dolibarr_syslog("Facture.class::set_valid: top ligne de remise ".$this->lignes[$i]->fk_remise_except." pour ligne de facture ".$this->lignes[$i]->rowid);
+							
+							// On met à jour ligne de remise comme utilisée
+							$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+							$sql.= ' SET fk_facture = '.$this->lignes[$i]->rowid;
+							$sql.= ' WHERE fk_facture IS NULL AND rowid ='.$this->lignes[$i]->fk_remise_except;
+							$resql=$this->db->query($sql);
+							if ($resql)
+							{
+							
+							}
+							else
+							{
+								$this->error=$this->db->error().' sql='.$sql;
+								dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
+								$error++;
+								break;
+							}
+						}
+						else
+						{
+							$error++;
+							$this->error=$langs->trans("InvoiceDiscountNotAvailable");
+							dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
+							break;
+						}	
+					}
+					else
 					{
 						$this->error=$this->db->error().' sql='.$sql;
-						dolibarr_syslog("Facture.class::set_valid Error ".$this->error);
+						dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
 						$error++;
+						break;
 					}
 				}
 			}
 
       		// On vérifie si la facture était une provisoire
-			if ($facref == 'PROV')
+			if (! $error && $facref == 'PROV')
 			{
 				/*
 				* Pour chaque produit, on met a jour indicateur nbvente
@@ -948,12 +982,12 @@ class Facture extends CommonObject
 				else
 				{
 					$error++;
+					$this->error=$this->db->error().' sql='.$sql;
 				}
 			}
 
-            if ($error == 0)
+            if (! $error)
             {
-                
                 // Classe la société rattachée comme client
                 $soc=new Societe($this->db);
                 $soc->id = $this->socidp;
@@ -970,12 +1004,10 @@ class Facture extends CommonObject
                 // Fin appel triggers
 
                 $this->db->commit();
-
                 return 1;
             }
             else
             {
-                $this->error=$this->db->error();
                 $this->db->rollback();
                 return -1;
             }
