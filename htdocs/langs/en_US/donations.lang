@@ -21,3 +21,4 @@ DonationStatusPromiseValidatedShort=Validated
 DonationStatusPayedShort=Received
 ValidPromise=Validate promise
 BuildDonationReceipt=Build receipt
+DonationsModels=Documents models for donation receipts

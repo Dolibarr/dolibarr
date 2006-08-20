@@ -21,3 +21,4 @@ DonationStatusPromiseValidatedShort=Validée
 DonationStatusPayedShort=Payé
 ValidPromess=Valider promesse
 BuildDonationReceipt=Créer reçu
+DonationsModels=Modèle de document de bon de réception de don

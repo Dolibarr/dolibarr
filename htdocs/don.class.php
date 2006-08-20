@@ -135,6 +135,52 @@ class Don
 	}
 	
 	
+	/**
+	 *		\brief		Initialise le don avec valeurs fictives aléatoire
+	 *					Sert à générer une recu de don pour l'aperu des modèles ou demo
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		// Charge tableau des id de société socids
+		$socids = array();
+		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_socs = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_socs)
+			{
+				$i++;
+
+				$row = $this->db->fetch_row($resql);
+				$socids[$i] = $row[0];
+			}
+		}
+
+		// Initialise paramètres
+    	$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$this->nom = 'Doe';
+		$this->prenom = 'John';
+		$this->socidp = $socids[$socid];
+		$this->date = time();
+		$this->amount = 100;
+		$this->public = 1;
+		$this->societe = 'The Company';
+		$this->adresse = 'Twist road';
+		$this->cp = '99999';
+		$this->ville = 'Town';
+		$this->note_public='SPECIMEN';
+		$this->email='email@email.com';
+		$this->commentaire='';
+		$this->statut=1;
+	}
+	
+	
 	/*
      *
      */
@@ -356,6 +402,7 @@ class Don
                 $obj = $this->db->fetch_object();
     
                 $this->id             = $obj->rowid;
+                $this->ref            = $obj->rowid;
                 $this->datec          = $obj->datec;
                 $this->date           = $obj->datedon;
                 $this->prenom         = stripslashes($obj->prenom);
