@@ -22,7 +22,7 @@
 
 /**
     	\file       htdocs/compta/sociales/index.php
-		\ingroup    compta
+		\ingroup    tax
 		\brief      Ecran des charges sociales
 		\version    $Revision$
 */
@@ -33,6 +33,7 @@ require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 
 $user->getrights('facture');
 $user->getrights('compta');
+$user->getrights('tax');
 
 if (!$user->admin && ! $user->rights->tax->charges->lire)
   accessforbidden();
@@ -114,7 +115,7 @@ print "<table class=\"noborder\" width=\"100%\">";
  * Forumalaire d'ajout d'une charge
  *
  */
-if ($user->rights->compta->charges->creer) {
+if ($user->rights->tax->charges->creer) {
     $var=false;
 
     print "<tr class=\"liste_titre\">";
@@ -261,5 +262,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

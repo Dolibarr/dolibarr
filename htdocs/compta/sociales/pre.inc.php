@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,14 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
+/**   
+      \file   	    htdocs/compta/sociales/pre.inc.php
+      \ingroup      tax
+      \brief  	    Fichier gestionnaire du menu charges sociales
+*/
+
 require("../../main.inc.php");
 
 function llxHeader($head = "")
@@ -34,7 +40,6 @@ function llxHeader($head = "")
     
     $menu->add("../charges/",$langs->trans("Contributions"));
     $menu->add_submenu("index.php",$langs->trans("SocialContributions"));
-    //  $menu->add_submenu("/compta/sociales/conf.php","Conf");
     
     left_menu($menu->liste);
 }

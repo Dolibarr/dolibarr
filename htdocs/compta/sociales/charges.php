@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,11 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
         \file       htdocs/compta/sociales/charges.php
-		\ingroup    compta
+		\ingroup    tax
 		\brief      Fiche d'une charge sociale
 		\version    $Revision$
 */
@@ -35,7 +34,7 @@ $langs->load("bills");
 
 $user->getrights('compta');
 
-if (!$user->admin && !$user->rights->compta->charges)
+if (!$user->admin && !$user->rights->tax->charges)
   accessforbidden();
 
 require("../../chargesociales.class.php");
