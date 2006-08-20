@@ -30,6 +30,7 @@
 require("./pre.inc.php");
 
 $user->getrights('compta');
+$user->getrights('tax');
 
 if (!$user->admin && !$user->rights->tax->charges->lire)
   accessforbidden();
@@ -127,5 +128,5 @@ print "</table><br>";
 
 $db->close();
  
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

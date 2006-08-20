@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -17,10 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
  */
 
-/*!	\file htdocs/compta/charges.php
+/**
+		\file 		htdocs/compta/charges.php
 		\ingroup    compta
 		\brief      Page liste des charges sociales
 		\version    $Revision$
@@ -92,5 +93,5 @@ print '</table>';
 
 $db->close();
  
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
