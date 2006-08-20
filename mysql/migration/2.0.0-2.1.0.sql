@@ -323,7 +323,7 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_fk_facture (fk_facture);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_facture        FOREIGN KEY (fk_facture)     REFERENCES llx_facture (rowid);
 
 ALTER TABLE llx_societe_remise_except DROP FOREIGN KEY fk_societe_remise_fk_facture;
-ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facture_det (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facturedet (rowid);
 
 -- drop table llx_societe_remise_except;
 -- create table llx_societe_remise_except

@@ -392,7 +392,9 @@ class Facture extends CommonObject
 				/*
 				 * Lignes
 				 */
-				$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, l.remise, l.remise_percent, l.subprice,';
+				 // \todo	Mettre ce code dans fonction fetch_lines qui charge tableau $this->lignes
+				$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, ';
+				$sql.= ' l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
 				$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
 				$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
 				$sql.= ' p.label as label, p.description as product_desc';
@@ -409,7 +411,7 @@ class Facture extends CommonObject
 					{
 						$objp = $this->db->fetch_object($result2);
 						$faclig = new FactureLigne($this->db);
-						$faclig->rowid			      = $objp->rowid;
+						$faclig->rowid			  = $objp->rowid;
 						$faclig->desc             = $objp->description;     // Description ligne
 						$faclig->libelle          = $objp->label;           // Label produit
 						$faclig->product_desc     = $objp->product_desc;    // Description produit
@@ -419,6 +421,7 @@ class Facture extends CommonObject
 						$faclig->tva_taux         = $objp->tva_taux;
 						$faclig->remise           = $objp->remise;
 						$faclig->remise_percent   = $objp->remise_percent;
+						$faclig->fk_remise_except = $objp->fk_remise_except;
 						$faclig->produit_id       = $objp->fk_product;
 						$faclig->date_start       = $objp->date_start;
 						$faclig->date_end         = $objp->date_end;
@@ -897,47 +900,26 @@ class Facture extends CommonObject
 			/*
 			 *	Tope les lignes de remises fixes avec id des lignes de facture au montant négatif
 			 */
-/* TODO Toper les lignes de remises fixes avec id des lignes de facture au montant négatif.
-
-				while ($i < $nurmx && $remise_a_decrementee && ! $error)
-				{
-					$obj = $this->db->fetch_object($resql);
-					$avoir=$obj->amount;
-
-					// On met à jour avoir comme affecté à facture
+			foreach($this->lignes as $i => $line)
+			{
+			 	if (($this->lignes[$i]->info_bits & 2) == 2)
+			 	{
+			 		// Ligne de remis
+			 		dolibarr_syslog("Facture.class::set_valid top remises de ligne ".$this->lignes[$i]->fk_remise_except." comme utilisee");
+			 			
+					// On met à jour ligne de remise comme utilisée
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-					$sql.= ' SET fk_facture = '.$this->id.',';
-					$sql.= " amount_ht = '".price2num(min($remise_a_decrementee,$avoir))."'";
-					$sql.= ' WHERE rowid ='.$obj->rowid;
-					dolibarr_syslog("Societe::set_valid Mise a jour avoir sql=$sql");
-					if (! $this->db->query($sql))
+					$sql.= ' SET fk_facture = '.$this->lignes[$i]->rowid;
+					$sql.= ' WHERE rowid ='.$this->lignes[$i]->fk_remise_except;
+					$resql=$this->db->query($sql);
+					if (! $resql)
 					{
+						$this->error=$this->db->error().' sql='.$sql;
+						dolibarr_syslog("Facture.class::set_valid Error ".$this->error);
 						$error++;
 					}
-
-					if ($remise_a_decrementee < $avoir)
-					{
-						// L'avoir n'a pas été complètement consommée, on insère ligne du reste
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'societe_remise_except';
-						$sql.= ' (fk_soc, datec, amount_ht, fk_user, fk_facture, description) ';
-						$sql.= ' VALUES ';
-						$sql.= ' ('.$this->socidp;
-						$sql.= ' ,'.$obj->datec;
-						$sql.= " ,'".price2num($avoir - $remise_a_decrementee)."'";
-						$sql.= ' ,'.$user->id;
-						$sql.= ' ,null';
-						$sql.= " ,'".addslashes($obj->description)."'";
-						$sql.= ')';
-						if (! $this->db->query( $sql))
-						{
-							$error++;
-						}
-					}
-
-					$remise_a_decrementee-=min($remise_a_decrementee,$avoir);
-					$i++;
 				}
-*/
+			}
 
       		// On vérifie si la facture était une provisoire
 			if ($facref == 'PROV')

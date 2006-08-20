@@ -173,13 +173,13 @@ if ($_socid > 0)
 
 
     /*
-     * Liste avoir restant dus
+     * Liste remises fixes restant en cours
      */
     $sql  = "SELECT rc.rowid, rc.amount_ht,".$db->pdate("rc.datec")." as dc, rc.description,";
     $sql.= " u.code, u.rowid as user_id";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."user as u";
     $sql.= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql.= " AND u.rowid = rc.fk_user AND fk_facture IS NULL";
+    $sql.= " AND u.rowid = rc.fk_user AND rc.fk_facture IS NULL";
     $sql.= " ORDER BY rc.datec DESC";
 
     $resql=$db->query($sql);
@@ -226,13 +226,15 @@ if ($_socid > 0)
      */
     $sql = "SELECT rc.rowid, rc.amount_ht,".$db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture,";
     $sql.= " u.code, u.rowid as user_id,";
-    $sql.= " f.facnumber";
+    $sql.= " f.rowid, f.facnumber";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql.= " , ".MAIN_DB_PREFIX."user as u";
+    $sql.= " , ".MAIN_DB_PREFIX."facturedet as fc";
     $sql.= " , ".MAIN_DB_PREFIX."facture as f";
     $sql.= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql.= " AND fk_facture = f.rowid";
-    $sql.= " AND u.rowid = rc.fk_user AND fk_facture IS NOT NULL";
+    $sql.= " AND rc.fk_facture = fc.rowid";
+    $sql.= " AND fc.fk_facture = f.rowid";
+    $sql.= " AND rc.fk_user = u.rowid";
     $sql.= " ORDER BY rc.datec DESC";
 
     $resql=$db->query($sql);
@@ -257,7 +259,7 @@ if ($_socid > 0)
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dolibarr_print_date($obj->dc).'</td>';
-            print '<td align="left"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
+            print '<td align="left"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
             print '<td>'.$obj->description.'</td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
             print '<td align="center">'.$obj->code.'</td>';
