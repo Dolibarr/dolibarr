@@ -43,6 +43,7 @@ System=Système
 SystemInfo=Infos Système
 SystemTools=Outils Système
 SystemToolsArea=Espace outils systèmes
+NewBackup=Nouvelle sauvegarde
 Backup=Sauvegarde
 Restore=Restauration
 RunCommandSummary=La sauvegarde sera exécutée par la commande suivante

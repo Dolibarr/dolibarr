@@ -40,8 +40,9 @@ $action = $_GET["action"];
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 $urlsource = urldecode($_GET["urlsource"]);
-// Défini type et attachment
+// Défini type (attachment=1 pour forcer popup 'enregistrer sous')
 $type = urldecode($_GET["type"]); $attachment = true;
+if (eregi('\.sql',$original_file)) 	    { $type='text/plain'; $attachment = true; }
 if (eregi('\.html',$original_file)) 	{ $type='text/html'; $attachment = false; }
 if (eregi('\.csv',$original_file))  	{ $type='text/csv'; $attachment = true; }
 if (eregi('\.pdf',$original_file))  	{ $type='application/pdf'; $attachment = true; }

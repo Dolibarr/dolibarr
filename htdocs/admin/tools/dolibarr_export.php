@@ -33,6 +33,9 @@ $langs->load("admin");
 if (! $user->admin)
   accessforbidden();
 
+$html=new Form($db);
+
+
 
 llxHeader();
 
@@ -41,6 +44,10 @@ print '<br>';
 
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '<br>';
+
+$result=$html->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1);
+if ($result) print '<br><br>';
+
 
 ?>
 
@@ -86,7 +93,7 @@ function show_checked_option() {
 </script>
 
 <fieldset id="fieldsetexport">
-<legend>Schéma et/ou contenu des bases de données
+<legend><?php echo $langs->trans("NewBackup"); ?>
 </legend>
 
 
@@ -533,7 +540,7 @@ if (function_exists('bz_open'))
 
 
 <center>
-    <input type="submit" class="button" value="Exécuter" id="buttonGo" /><br><br>
+    <input type="submit" class="button" value="<?php echo $langs->trans("NewBackup") ?>" id="buttonGo" /><br><br>
 </center>
 
 
