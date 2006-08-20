@@ -46,10 +46,10 @@ dolibarr_install_syslog("Dolibarr install/upgrade process started");
 pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
 
 print '<center><img src="../theme/dolibarr_logo_2.png" alt="Dolibarr logo"></center><br>';
-print "<br>";
+print "<br>\n";
 
 
-print $langs->trans("InstallEasy")."<br>";
+print $langs->trans("InstallEasy")."<br>\n";
 
 // Si fichier présent et lisible et renseigné
 clearstatcache();
@@ -107,7 +107,7 @@ else
         }
         print "<br />";
         print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
-        print "<br />";
+        print "<br />\n";
     
         $allowinstall=0;
     }
@@ -124,7 +124,7 @@ else
         }
         print "<br />";
         print $langs->trans("ConfFileIsWritable",'conf.php');
-        print "<br />";
+        print "<br />\n";
     
         $allowinstall=1;
     }
@@ -150,7 +150,7 @@ else
         print $langs->trans("InstallNotAllowed");   
     }
     print '</td>';
-    print '</tr>';
+    print '</tr>'."\n";
 
     print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").'</b></td><td>';
     print $langs->trans("UpgradeDesc").'</td>';
@@ -164,19 +164,14 @@ else
         print $langs->trans("NotAvailable");   
     }
     print '</td>';
-    print '</tr>';
+    print '</tr>'."\n";
     
     print '</table>';
     print "\n";
 
 }
 
-print '</div>';
-print '</div>';
-print '</form>';
 
-
-print '</body>';
-print '</html>';
+pFooter(1);
 
 ?>

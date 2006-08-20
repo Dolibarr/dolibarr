@@ -150,7 +150,7 @@ print $langs->trans("Examples").":<br>";
 <tr>
 <td colspan="3" align="center"><h2>
 <?php echo $langs->trans("DolibarrDatabase"); ?>
-<h2></td>
+</h2></td>
 </tr>
 <?php
 if (!isset($dolibarr_main_db_host))

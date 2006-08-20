@@ -88,13 +88,17 @@ function pHeader($soutitre,$next,$action='set')
     print '</head>';
     print '<body>';
     print '<span class="titre"><a class="titre" href="index.php">'.$langs->trans("DolibarrSetup").'</a></span>';
+
     print '<form action="'.$next.'.php" method="POST">';
     print '<input type="hidden" name="action" value="'.$action.'">';
-    print '<div class="main">';
+
+	print '<table class="main" width="100%"><tr><td>';
     if ($soutitre) {
         print '<div class="soustitre">'.$soutitre.'</div>';
     }
-    print '<div class="main-inside">';
+
+	print '<table class="main-inside" width="100%"><tr><td>';
+
 }
 
 function pFooter($nonext=0,$setuplang='')
@@ -103,7 +107,9 @@ function pFooter($nonext=0,$setuplang='')
     $langs->load("main");
     $langs->load("admin");
     
-    print '</div></div>';
+    print '</td></tr></table>';
+    print '</td></tr></table>';
+    
     if (! $nonext)
     {
         print '<div class="barrebottom"><input type="submit" value="'.$langs->trans("NextStep").' ->"></div>';
@@ -112,6 +118,7 @@ function pFooter($nonext=0,$setuplang='')
     {
         print '<input type="hidden" name="selectlang" value="'.$setuplang.'">';
     }
+
     print '</form>';
     print '</body>';
     print '</html>';

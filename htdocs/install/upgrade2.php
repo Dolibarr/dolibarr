@@ -71,6 +71,7 @@ pHeader($langs->trans('DataMigration'),'etape5','upgrade');
 if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 {
 	print '<h2>'.$langs->trans('DataMigration').'</h2>';
+
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
 	$conf = new Conf();// on pourrait s'en passer
@@ -142,7 +143,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		
 		print '<tr><td colspan="4" nowrap="nowrap">&nbsp;</td></tr>';
 
-
         // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
         // dans la 1ere colonne, la description de l'action a faire
         // dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
@@ -159,8 +159,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
         migrate_contracts_open($db,$langs,$conf);
 
-        migrate_paiementfourn_facturefourn($db,$langs,$conf);
-
         migrate_modeles($db,$langs,$conf);
 
 		migrate_price_propal($db,$langs,$conf);
@@ -169,11 +167,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 		migrate_price_facture($db,$langs,$conf);
 
+        migrate_paiementfourn_facturefourn($db,$langs,$conf);
+
     	// On commit dans tous les cas.
     	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
     	$db->commit();
     	
     	$db->close();
+    	
 	}
 
 	print '</table>';
@@ -196,6 +197,8 @@ pFooter($error,$setuplang);
  */
 function migrate_paiements($db,$langs,$conf)
 {
+ 	print '<tr><td colspan="4">';
+ 
     print '<br>';
     print '<b>'.$langs->trans('MigrationPaymentsUpdate')."</b><br>\n";
     
@@ -258,7 +261,9 @@ function migrate_paiements($db,$langs,$conf)
     else
     {
         print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
-    }  
+    }
+
+	print '</td></tr>';
 }
 
 
@@ -267,6 +272,8 @@ function migrate_paiements($db,$langs,$conf)
  */
 function migrate_contracts_det($db,$langs,$conf)
 {
+ 	print '<tr><td colspan="4">';
+
     $nberr=0;
     
     print '<br>';
@@ -346,7 +353,9 @@ function migrate_contracts_det($db,$langs,$conf)
     {
         print $langs->trans('MigrationContractsFieldDontExist')."<br>\n";
     //    dolibarr_print_error($db);   
-    }    
+    }
+
+	print '</td></tr>';
 }
 
 
@@ -355,6 +364,8 @@ function migrate_contracts_det($db,$langs,$conf)
  */
 function migrate_contracts_date1($db,$langs,$conf)
 {
+ 	print '<tr><td colspan="4">';
+
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsEmptyDatesUpdate')."</b><br>\n";
     
@@ -373,6 +384,8 @@ function migrate_contracts_date1($db,$langs,$conf)
 	 	print $langs->trans('MigrationContractsEmptyCreationDatesUpdateSuccess')."<br>\n";
     else
 	 	print $langs->trans('MigrationContractsEmptyCreationDatesNothingToUpdate')."<br>\n";
+
+	print '</td></tr>';
 }
 
 
@@ -381,6 +394,8 @@ function migrate_contracts_date1($db,$langs,$conf)
  */
 function migrate_contracts_date2($db,$langs,$conf)
 {
+ 	print '<tr><td colspan="4">';
+
     $nberr=0;
     
     print '<br>';
@@ -433,6 +448,8 @@ function migrate_contracts_date2($db,$langs,$conf)
     {
         dolibarr_print_error($db);
     }
+    
+	print '</td></tr>';
 }
 
 
@@ -441,6 +458,8 @@ function migrate_contracts_date2($db,$langs,$conf)
  */
 function migrate_contracts_date3($db,$langs,$conf)
 {
+ 	print '<tr><td colspan="4">';
+
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsIncoherentCreationDateUpdate')."</b><br>\n";
     
@@ -451,6 +470,8 @@ function migrate_contracts_date3($db,$langs,$conf)
 	 	print $langs->trans('MigrationContractsIncoherentCreationDateUpdateSuccess')."<br>\n";
     else
 	 	print $langs->trans('MigrationContractsIncoherentCreationDateNothingToUpdate')."<br>\n";
+
+	print '</td></tr>';
 }
 
 
@@ -459,6 +480,8 @@ function migrate_contracts_date3($db,$langs,$conf)
  */
 function migrate_contracts_open($db,$langs,$conf)
 {
+ 	print '<tr><td colspan="4">';
+
     print '<br>';
     print '<b>'.$langs->trans('MigrationReopeningContracts')."</b><br>\n";
     
@@ -501,6 +524,8 @@ function migrate_contracts_open($db,$langs,$conf)
         }
     }
     else print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
+
+	print '</td></tr>';
 }
 
 
@@ -600,6 +625,8 @@ function migrate_price_facture($db,$langs,$conf)
 
 		dolibarr_install_syslog("Upgrade data for invoice");
 
+	 	print '<tr><td colspan="4">';
+
 	    print '<br>';
 	    print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 		
@@ -686,8 +713,9 @@ function migrate_price_facture($db,$langs,$conf)
 			$db->rollback();
 		}
 
-		print '<br>';
+		print '<br><br>';
 		
+		print '</td></tr>';
 	}
 }
 
@@ -702,6 +730,8 @@ function migrate_price_propal($db,$langs,$conf)
 		$db->begin();
 
 		dolibarr_install_syslog("Upgrade data for propal");
+
+	 	print '<tr><td colspan="4">';
 
 	    print '<br>';
 	    print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
@@ -790,6 +820,8 @@ function migrate_price_propal($db,$langs,$conf)
 		}
 
 		print '<br>';
+
+		print '</td></tr>';
 	}
 }
 
@@ -804,6 +836,8 @@ function migrate_price_commande($db,$langs,$conf)
 		$db->begin();
 
 		dolibarr_install_syslog("Upgrade data for order");
+
+	 	print '<tr><td colspan="4">';
 
 	    print '<br>';
 	    print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
@@ -899,6 +933,8 @@ function migrate_price_commande($db,$langs,$conf)
 		}
 
 		print '<br>';
+
+		print '</td></tr>';
 	}
 }
 

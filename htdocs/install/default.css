@@ -22,14 +22,14 @@ body {
 font-size:13px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
 background-color: #F4F4F4;
-margin-left: 5%;
-margin-right: 5%;
-margin-top: 2em;
-margin-bottom: 5%;
+margin-left: 20px;
+margin-right: 20px;
+margin-top: 20px;
+margin-bottom: 20px;
 }
 
 div.titre {
-padding: 0.5em 0.5em 0.5em;
+padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;
 }
 
@@ -38,7 +38,7 @@ font-size:1.1em;
 font-weight: bold;
 background: #dcdcd3;
 color: #4965B3;
-padding: 0.5em 0.5em 0.5em;
+padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;
 border: 1px solid #8CACBB;
 }
@@ -55,13 +55,13 @@ border-right: 1px solid #8CACBB;
 text-align: right;
 }
 
-div.main {
+table.main {
 background: #dcdcd3;
 text-align: left;
 border: 1px solid #8CACBB;
 }
 
-div.main-inside {
+table.main-inside {
 padding-left: 20px;
 padding-right: 20px;
 margin-bottom: 40px;
