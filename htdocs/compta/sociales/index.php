@@ -82,14 +82,11 @@ if ($_POST["action"] == 'add')
  * Suppression d'une charge sociale
  */
 
-if ($_GET["action"] == 'del')
+if ($_GET["action"] == 'del' && $_POST["confirm"] == 'yes')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$_GET["id"]."'";
-
-  if (! $db->query($sql) )
-    {
-          dolibarr_print_error($db);
-    }
+	$chargesociales=new ChargeSociales($db);
+	$chargesociales->id=$_GET["id"];
+	$result=$chargesociales->delete($user);
 }
 
 

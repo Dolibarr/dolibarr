@@ -89,6 +89,7 @@ if ($chid > 0)
 		if ($_GET["action"] == 'delete')
 		{
 			$html->form_confirm("index.php?id=$cha->id&amp;action=del","Supprimer la charge sociale","Etes-vous sûr de vouloir supprimer cette charge sociale ?","confirm_delete");
+			print '<br>';
 		}
 
 		print "<form action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";

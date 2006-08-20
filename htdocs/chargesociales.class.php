@@ -31,7 +31,8 @@
 /**     \class      PaiementCharge
 		\brief      Classe permettant la gestion des paiements des charges
 */
-class PaiementCharge {
+class PaiementCharge
+{
     var $db;
     
     var $id;
@@ -125,7 +126,8 @@ class PaiementCharge {
 		\brief      Classe permettant la gestion des paiements des charges
                     La tva collectée n'est calculée que sur les factures payées.
 */
-class ChargeSociales {
+class ChargeSociales
+{
     var $db;
 
     var $id;
@@ -150,7 +152,8 @@ class ChargeSociales {
      *   \brief      Retrouve et charge une charge sociale
      *   \return     int     1 si trouve, 0 sinon
      */
-    function fetch($id) {
+    function fetch($id)
+    {
         $sql = "SELECT cs.rowid,".$this->db->pdate("cs.date_ech")." as date_ech,".$this->db->pdate("cs.date_pai")." as date_pai";
         $sql .=", cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, ".$this->db->pdate("cs.periode")." as periode, c.libelle";
         $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -188,8 +191,22 @@ class ChargeSociales {
         }
     }
 
-    function solde($year = 0) {
-
+    /**
+     *      \brief      Efface un charge sociale
+     *      \param      user    Utilisateur qui crée le paiement
+     *      \return     int     <0 si erreur, >0 si ok
+     */
+    function delete($user)
+    {
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
+		if (! $this->db->query($sql))
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+	
+    function solde($year = 0)
+    {
         $sql = "SELECT sum(f.amount) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f WHERE paye = 0";
 
@@ -215,11 +232,11 @@ class ChargeSociales {
         }
     }
 
-  /**
-   *    \brief      Tag la charge comme payée complètement
-   *    \param      rowid       id de la ligne a modifier
-   */
-  function set_payed($rowid)
+	/**
+	*    \brief      Tag la charge comme payée complètement
+	*    \param      rowid       id de la ligne a modifier
+	*/
+	function set_payed($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales set paye=1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
