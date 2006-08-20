@@ -322,6 +322,26 @@ alter table llx_facture add column fk_facture integer after fk_user_valid;
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_facture (fk_facture);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_facture        FOREIGN KEY (fk_facture)     REFERENCES llx_facture (rowid);
 
+ALTER TABLE llx_societe_remise_except DROP FOREIGN KEY fk_societe_remise_fk_facture;
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facture_det (rowid);
+
+-- drop table llx_societe_remise_except;
+-- create table llx_societe_remise_except
+-- (
+--   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+--   fk_soc          integer NOT NULL,
+--   datec           datetime,
+--   amount_ht       real NOT NULL,
+--   fk_user         integer NOT NULL,
+--   fk_facture      integer,
+--   description     varchar(255) NOT NULL
+-- )type=innodb;
+-- ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_user (fk_user);
+-- ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_soc (fk_soc);
+-- ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_facture (fk_facture);
+-- ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_user    FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
+-- ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_soc     FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+-- ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facturedet (rowid);
 
 
 update llx_societe_remise_except set description='Remise sans description' where description is NULL or description ='';
