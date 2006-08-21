@@ -346,16 +346,16 @@ if ($socid > 0)
 		// Si société cliente ou prospect, on affiche bouton "Créer facture client"
 		if ($societe->client != 0 && $conf->facture->enabled && $user->rights->facture->creer) {
 			$langs->load("bills");
-			print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$societe->id\">".$langs->trans("AddBill")."</a>";
+			print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socidp=$societe->id\">".$langs->trans("AddBill")."</a>";
 		}
 	
 		if ($conf->deplacement->enabled) {
 			$langs->load("trips");
-			print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
+			print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
 		}
 	}
 	
-    print '<a class="butAction" href="action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
 
 	if ($user->rights->societe->contact->creer)
 	{
@@ -367,321 +367,300 @@ if ($socid > 0)
 
     /*
      *
+     * Liste des contacts
      *
      */
-    if ($action == 'changevalue')
+	print_titre($langs->trans("ContactsForCompany"));
+	print '<table class="noborder" width="100%">';
+	
+	print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+	print "<td align=\"center\">&nbsp;</td>";
+	print '<td>&nbsp;</td>';
+	print "</tr>";
+
+    $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
+    $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+    $sql.= " WHERE p.fk_soc = ".$societe->id;
+    $sql.= " ORDER by p.datec";
+
+    $result = $db->query($sql);
+    $i = 0 ; $num = $db->num_rows($result);
+    $var=1;
+    while ($i < $num)
     {
+        $obj = $db->fetch_object($result);
+        $var = !$var;
 
-        print "<hr noshade>";
-        print "<form action=\"index.php?socid=$societe->id\" method=\"post\">";
-        print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
-        print "Cette société est un cabinet de recrutement : ";
-        print "<select name=\"selectvalue\">";
-        print "<option value=\"\">";
-        print "<option value=\"t\">Oui";
-        print "<option value=\"f\">Non";
-        print "</select>";
-        print "<input type=\"submit\" class=\"button\" value=\"".$langs->trans("Update")."\">";
-        print "</form>\n";
+        print "<tr $bc[$var]>";
 
+        print '<td>';
+        print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+
+        if (trim($obj->note))
+        {
+            print '<br>'.nl2br(trim($obj->note));
+        }
+        print '</td>';
+        print '<td>'.$obj->poste.'&nbsp;</td>';
+        print '<td><a href="../comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
+        print '<td><a href="../comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+        print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+
+    	print '<td align="center">';
+    	
+       	if ($user->rights->societe->contact->creer)
+		{
+    		print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+    	 	print img_edit();
+    	 	print '</a>';
+    	}
+    	else print '&nbsp;';
+    		
+    	print '</td>';
+
+        print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+        print img_object($langs->trans("Rendez-Vous"),"action");
+        print '</a></td>';
+
+        print "</tr>\n";
+        $i++;
+        $tag = !$tag;
     }
-    else
+    print "</table>";
+
+    print "<br>";
+
+
+	$actionstatic=new ActionComm($db);
+
+    /*
+     *      Listes des actions a faire
+     *
+     */
+	print_titre($langs->trans("ActionsOnCompany"));
+    print '<table width="100%" class="noborder">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+    print '</tr>';
+
+    $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
+    $sql.= " c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql.= " WHERE a.fk_soc = ".$societe->id;
+    $sql.= " AND u.rowid = a.fk_user_author";
+    $sql.= " AND c.id=a.fk_action AND a.percent < 100";
+    $sql.= " ORDER BY a.datea DESC, a.id DESC";
+
+    $result=$db->query($sql);
+    if ($result)
     {
-        /*
-         *
-         * Liste des contacts
-         *
-         */
-		print_titre($langs->trans("ContactsForCompany"));
-		print '<table class="noborder" width="100%">';
-		
-		print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
-		print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-		print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-		print "<td align=\"center\">&nbsp;</td>";
-		print '<td>&nbsp;</td>';
-		print "</tr>";
-
-        $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
-        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-        $sql.= " WHERE p.fk_soc = ".$societe->id;
-        $sql.= " ORDER by p.datec";
-
-        $result = $db->query($sql);
-        $i = 0 ; $num = $db->num_rows($result);
-        $var=1;
+        $i = 0 ;
+        $num = $db->num_rows($result);
+        $var=true;
+        
         while ($i < $num)
         {
-            $obj = $db->fetch_object($result);
             $var = !$var;
 
+            $obj = $db->fetch_object($result);
             print "<tr $bc[$var]>";
 
-            print '<td>';
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
-
-            if (trim($obj->note))
+            if ($oldyear == strftime("%Y",$obj->da) )
             {
-                print '<br>'.nl2br(trim($obj->note));
+                print '<td width="30" align="center">|</td>';
             }
-            print '</td>';
-            print '<td>'.$obj->poste.'&nbsp;</td>';
-            print '<td><a href="../comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
-            print '<td><a href="../comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-            print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+            else
+            {
+                print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
+                $oldyear = strftime("%Y",$obj->da);
+            }
 
-        	print '<td align="center">';
-        	
-           	if ($user->rights->societe->contact->creer)
-    		{
-        		print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
-        	 	print img_edit();
-        	 	print '</a>';
-        	}
-        	else print '&nbsp;';
-        		
-        	print '</td>';
+            if ($oldmonth == strftime("%Y%b",$obj->da) )
+            {
+                print '<td width="30" align="center">|</td>';
+            }
+            else
+            {
+                print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
+                $oldmonth = strftime("%Y%b",$obj->da);
+            }
 
-            print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
-            print img_object($langs->trans("Rendez-Vous"),"action");
-            print '</a></td>';
+            print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
+            print '<td width="30" nowrap="nowrap">'.strftime("%H:%M",$obj->da).'</td>';
+			
+			// Picto warning
+			print '<td width="16">';
+			if (date("U",$obj->da) < time()) print ' '.img_warning("Late");
+			else print '&nbsp;';
+			print '</td>';
+			
+            // Status/Percent
+            print '<td width="30">&nbsp;</td>';
+
+            if ($obj->propalrowid)
+            {
+                print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
+                  $transcode=$langs->trans("Action".$obj->acode);
+                  $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                  print $libelle;
+                print '</a></td>';
+            }
+            else
+            {
+                print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
+                  $transcode=$langs->trans("Action".$obj->acode);
+                  $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                  print $libelle;
+                print '</a></td>';
+            }
+
+            print '<td colspan="2">'.$obj->label.'</td>';
+
+            // Contact pour cette action
+            if ($obj->fk_contact) {
+                $contact = new Contact($db);
+                $contact->fetch($obj->fk_contact);
+                print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->fk_contact.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
+            } else {
+                print '<td>&nbsp;</td>';
+            }
+
+            // Auteur
+            print '<td width="50" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code.'</a></td>';
+
+			// Statut
+            print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
 
             print "</tr>\n";
             $i++;
-            $tag = !$tag;
         }
-        print "</table>";
 
-        print "<br>";
-
-
-		$actionstatic=new ActionComm($db);
-
-        /*
-         *      Listes des actions a faire
-         *
-         */
-		print_titre($langs->trans("ActionsOnCompany"));
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
-        print '</tr>';
-
-        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
-        $sql.= " c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-        $sql.= " WHERE a.fk_soc = ".$societe->id;
-        $sql.= " AND u.rowid = a.fk_user_author";
-        $sql.= " AND c.id=a.fk_action AND a.percent < 100";
-        $sql.= " ORDER BY a.datea DESC, a.id DESC";
-
-        $result=$db->query($sql);
-        if ($result)
-        {
-            $i = 0 ;
-            $num = $db->num_rows($result);
-            $var=true;
-            
-            while ($i < $num)
-            {
-                $var = !$var;
-
-                $obj = $db->fetch_object($result);
-                print "<tr $bc[$var]>";
-
-                if ($oldyear == strftime("%Y",$obj->da) )
-                {
-                    print '<td width="30" align="center">|</td>';
-                }
-                else
-                {
-                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
-                    $oldyear = strftime("%Y",$obj->da);
-                }
-
-                if ($oldmonth == strftime("%Y%b",$obj->da) )
-                {
-                    print '<td width="30" align="center">|</td>';
-                }
-                else
-                {
-                    print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
-                    $oldmonth = strftime("%Y%b",$obj->da);
-                }
-
-                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
-                print '<td width="30" nowrap="nowrap">'.strftime("%H:%M",$obj->da).'</td>';
-				
-				// Picto warning
-				print '<td width="16">';
-				if (date("U",$obj->da) < time()) print ' '.img_warning("Late");
-				else print '&nbsp;';
-				print '</td>';
-				
-                // Status/Percent
-                print '<td width="30">&nbsp;</td>';
-
-                if ($obj->propalrowid)
-                {
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
-                      $transcode=$langs->trans("Action".$obj->acode);
-                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                      print $libelle;
-                    print '</a></td>';
-                }
-                else
-                {
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
-                      $transcode=$langs->trans("Action".$obj->acode);
-                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                      print $libelle;
-                    print '</a></td>';
-                }
-
-                print '<td colspan="2">'.$obj->label.'</td>';
-
-                // Contact pour cette action
-                if ($obj->fk_contact) {
-                    $contact = new Contact($db);
-                    $contact->fetch($obj->fk_contact);
-                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->fk_contact.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
-                } else {
-                    print '<td>&nbsp;</td>';
-                }
-
-                // Auteur
-                print '<td width="50" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code.'</a></td>';
-
-				// Statut
-                print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
-
-                print "</tr>\n";
-                $i++;
-            }
-
-            $db->free($result);
-        } else {
-            dolibarr_print_error($db);
-        }
-        print "</table><br>";
-
-        /*
-         *      Listes des actions effectuées
-         */
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a>';
-        print '</td></tr>';
-
-        $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
-        $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
-        $sql.= " c.code as acode, c.libelle,";
-        $sql.= " u.code, u.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-        $sql.= " WHERE a.fk_soc = ".$societe->id;
-        $sql.= " AND u.rowid = a.fk_user_author";
-        $sql.= " AND c.id=a.fk_action AND a.percent = 100";
-        $sql.= " ORDER BY a.datea DESC, a.id DESC";
-
-        $result=$db->query($sql);
-        if ($result)
-        {
-            $i = 0 ;
-            $num = $db->num_rows($result);
-            $var=true;
-            
-            while ($i < $num)
-            {
-                $var = !$var;
-
-                $obj = $db->fetch_object($result);
-                print "<tr $bc[$var]>";
-
-                if ($oldyear == strftime("%Y",$obj->da) ) {
-                    print '<td width="30" align="center">|</td>';
-                } else {
-                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
-                    $oldyear = strftime("%Y",$obj->da);
-                }
-
-                if ($oldmonth == strftime("%Y%b",$obj->da) ) {
-                    print '<td width="30" align="center">|</td>';
-                } else {
-                    print '<td width="30" align="center">'.strftime("%b",$obj->da)."</td>\n";
-                    $oldmonth = strftime("%Y%b",$obj->da);
-                }
-
-                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
-                print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
-
-				// Picto
-                print '<td width="16">&nbsp;</td>';
-
-                // Espace
-                print '<td width="30">&nbsp;</td>';
-
-				// Action
-        		print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
-				$transcode=$langs->trans("Action".$obj->acode);
-				$libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-				print $libelle;
-				print '</a>';
-				print '</td>';
-
-        		// Objet lié
-        		print '<td>';
-				if ($obj->propalrowid)
-				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowPropal"),"propal");
-					print $langs->trans("Propal");
-					print '</a>';
-				}
-				if ($obj->fk_facture)
-				{
-					print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),"bill");
-					print $langs->trans("Invoice");
-					print '</a>';
-				}
-				else print '&nbsp;';
-        		print '</td>';
-
- 				// Libellé
-                print "<td>$obj->label</td>";
-
-                // Contact pour cette action
-                if ($obj->fk_contact)
-                {
-                    $contact = new Contact($db);
-                    $contact->fetch($obj->fk_contact);
-                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
-                }
-                else
-                {
-                    print '<td>&nbsp;</td>';
-                }
-
-				// Auteur
-                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
-
-				// Statut
-                print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
-
-                print "</tr>\n";
-                $i++;
-            }
-            $db->free();
-        }
-        else
-        {
-            dolibarr_print_error($db);
-        }
-        print "</table>";
-
+        $db->free($result);
     }
+    else
+    {
+        dolibarr_print_error($db);
+    }
+    print "</table><br>";
 
-} else {
-    print "Erreur";
+    /*
+     *      Listes des actions effectuées
+     */
+    print '<table width="100%" class="noborder">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a>';
+    print '</td></tr>';
+
+    $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
+    $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
+    $sql.= " c.code as acode, c.libelle,";
+    $sql.= " u.code, u.rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql.= " WHERE a.fk_soc = ".$societe->id;
+    $sql.= " AND u.rowid = a.fk_user_author";
+    $sql.= " AND c.id=a.fk_action AND a.percent = 100";
+    $sql.= " ORDER BY a.datea DESC, a.id DESC";
+
+    $result=$db->query($sql);
+    if ($result)
+    {
+        $i = 0 ;
+        $num = $db->num_rows($result);
+        $var=true;
+        
+        while ($i < $num)
+        {
+            $var = !$var;
+
+            $obj = $db->fetch_object($result);
+            print "<tr $bc[$var]>";
+
+            if ($oldyear == strftime("%Y",$obj->da) ) {
+                print '<td width="30" align="center">|</td>';
+            } else {
+                print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
+                $oldyear = strftime("%Y",$obj->da);
+            }
+
+            if ($oldmonth == strftime("%Y%b",$obj->da) ) {
+                print '<td width="30" align="center">|</td>';
+            } else {
+                print '<td width="30" align="center">'.strftime("%b",$obj->da)."</td>\n";
+                $oldmonth = strftime("%Y%b",$obj->da);
+            }
+
+            print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
+            print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
+
+			// Picto
+            print '<td width="16">&nbsp;</td>';
+
+            // Espace
+            print '<td width="30">&nbsp;</td>';
+
+			// Action
+    		print '<td>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+			$transcode=$langs->trans("Action".$obj->acode);
+			$libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+			print $libelle;
+			print '</a>';
+			print '</td>';
+
+    		// Objet lié
+    		print '<td>';
+			if ($obj->propalrowid)
+			{
+				print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowPropal"),"propal");
+				print $langs->trans("Propal");
+				print '</a>';
+			}
+			if ($obj->fk_facture)
+			{
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),"bill");
+				print $langs->trans("Invoice");
+				print '</a>';
+			}
+			else print '&nbsp;';
+    		print '</td>';
+
+			// Libellé
+            print "<td>$obj->label</td>";
+
+            // Contact pour cette action
+            if ($obj->fk_contact)
+            {
+                $contact = new Contact($db);
+                $contact->fetch($obj->fk_contact);
+                print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
+            }
+            else
+            {
+                print '<td>&nbsp;</td>';
+            }
+
+			// Auteur
+            print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+
+			// Statut
+            print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+
+            print "</tr>\n";
+            $i++;
+        }
+        $db->free();
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
+    print "</table>";
+}
+else
+{
+    dolibarr_print_error($db,'Bad value for socid parameter');
 }
 $db->close();
 
