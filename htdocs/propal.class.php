@@ -828,7 +828,7 @@ class Propal extends CommonObject
                  * Lignes propales liées à un produit ou non
                  */
                 $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice, d.fk_product,";
-                $sql.= " d.total_ht, d.total_tva, d.total_ttc, d.coef, d.rang,";
+                $sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.coef, d.rang,";
                 $sql.= " p.ref, p.label, p.description as product_desc";
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -854,6 +854,7 @@ class Propal extends CommonObject
                         $ligne->remise_percent = $objp->remise_percent;
                         $ligne->price          = $objp->price;
 
+                        $ligne->info_bits      = $objp->info_bits;
                         $ligne->total_ht       = $objp->total_ht;
                         $ligne->total_tva      = $objp->total_tva;
                         $ligne->total_ttc      = $objp->total_ttc;

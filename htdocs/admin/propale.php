@@ -224,7 +224,7 @@ if ($handle)
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
 	        }
 	    	print '<td align="center">';
-	    	$html->textwithhelp('',$htmltooltip,1,0);
+	    	print $html->textwithhelp('',$htmltooltip,1,0);
 	    	print '</td>';
 
             print "</tr>\n";
@@ -340,7 +340,7 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
     	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
     	print '<td align="center">';
-    	$html->textwithhelp('',$htmltooltip,1,0);
+    	print $html->textwithhelp('',$htmltooltip,1,0);
     	print '</td>';
     	print '<td align="center">';
     	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'propal').'</a>';

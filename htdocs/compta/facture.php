@@ -380,7 +380,11 @@ if ($_POST['action'] == 'add')
 								$lines[$i]->qty,
 								$lines[$i]->tva_tx,
 								$lines[$i]->fk_product,
-								$lines[$i]->remise_percent);
+								$lines[$i]->remise_percent,
+								'',
+								'',
+								0,
+								$lines[$i]->info_bits);
 						}
 					}
 					else

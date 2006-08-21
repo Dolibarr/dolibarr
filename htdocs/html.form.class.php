@@ -67,15 +67,18 @@ class Form
         \param      htmltooltip     	Contenu html du tooltip
         \param		direction			1=Le picto est après, -1=le picto est avant
         \param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
+        \param		string				Code html du texte.picto
     */
     function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
     {
 		global $conf;
+		
 		if (! $htmltext)
 		{
-			print $text;
-			return 1;
+			return $text;
 		}
+		
+		$s="";
 		
 		// Sanitize tooltip
         $paramfortooltip ='';
@@ -86,19 +89,19 @@ class Form
             $paramfortooltip.=' onMouseout="hidetip()"';
         }
 
-		print '<table class="nobordernopadding"><tr>';
+		$s.='<table class="nobordernopadding"><tr>';
 		if ($direction > 0)
 		{
-			if ($text) print '<td>'.$text.'&nbsp;</td>';
-			print '<td'.$paramfortooltip.'>'.img_help($usehelpcursor,0).'</td>';
+			if ($text) $s.='<td>'.$text.'&nbsp;</td>';
+			$s.='<td'.$paramfortooltip.' valign="top" width="14">'.img_help($usehelpcursor,0).'</td>';
 		}
 		else
 		{
-			print '<td'.$paramfortooltip.'>'.img_help($usehelpcursor,0).'</td>';
-			if ($text) print '<td>&nbsp;'.$text.'</td>';
+			$s.='<td'.$paramfortooltip.' valign="top" width="14">'.img_help($usehelpcursor,0).'</td>';
+			if ($text) $s.='<td>&nbsp;'.$text.'</td>';
 		}
-		print '</tr></table>';
-		return 1;
+		$s.='</tr></table>';
+		return $s;
     }
     
     
@@ -1518,19 +1521,22 @@ class Form
     {
 	    print '<tr class="valid"><td class="valid" colspan="3">';
 	    print '<table class="notopnoleftnoright" width="100%">';
-	    print '<tr><td colspan="2">'.$formquestion['text'].'</td></tr>';
+	    print '<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>';
 		foreach ($formquestion as $key => $input)
 		{	    
-	    	if ($input['type'] == 'text') print '<tr><td>'.$input['label'].'</td><td><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
+	    	if ($input['type'] == 'text') print '<tr><td valign="top">'.$input['label'].'</td><td colspan="2"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
 	    	if ($input['type'] == 'radio') 
 	    	{
 	    		$i=0;
 	    		foreach($input['values'] as $selkey => $selval)
 	    		{
 	    			print '<tr>';
-	    			if ($i==0) print '<td>'.$input['label'].'</td>';
+	    			if ($i==0) print '<td valign="top">'.$input['label'].'</td>';
 	    			else print '<td>&nbsp;</td>';
-	    			print '<td><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"> '.$selval.'</td></tr>';
+	    			print '<td valign="top"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"></td>';
+	    			print '<td valign="top">';
+	    			print $selval;
+	    			print '</td></tr>';
 	 	   			$i++;
 	 	   		}
 	 	   	}

@@ -1096,15 +1096,16 @@ class Facture extends CommonObject
 	 * 		\param    	date_start      Date de debut de validité du service
 	 * 		\param    	date_end        Date de fin de validité du service
 	 * 		\param    	ventil          Code de ventilation comptable
+	 * 		\param    	info_bits		Bits de type de lignes
 	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
  	 */
-	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil = 0)
+	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='')
 	{
 		global $conf;
-		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil)");
+		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits)");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
