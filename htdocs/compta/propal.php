@@ -290,10 +290,14 @@ if ($_GET["propalid"] > 0)
     * Lignes de propale
     *
     */
-    $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-    $sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-    $sql .= ' WHERE pt.fk_propal = '.$propal->id;
-    $sql .= ' ORDER BY pt.rang ASC';
+	$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
+	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
+	$sql.= ' p.description as product_desc';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
+	$sql.= ' WHERE pt.fk_propal = '.$propal->id;
+	$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -347,23 +351,35 @@ if ($_GET["propalid"] > 0)
                     print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
                     print '</td>';
                 }
-                else
-                {
-                    print '<td>'.stripslashes(nl2br($objp->description));
-                    if ($objp->date_start && $objp->date_end)
-                    {
-                        print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
-                    }
-                    if ($objp->date_start && ! $objp->date_end)
-                    {
-                        print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-                    }
-                    if (! $objp->date_start && $objp->date_end)
-                    {
-                        print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
-                    }
-                    print "</td>\n";
-                }
+				else
+				{
+					print '<td>';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+					if (($objp->info_bits & 2) == 2)
+					{
+						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socidp.'">';
+						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
+						print '</a>';
+						if ($objp->description) print ' - '.nl2br($objp->description);
+					}
+					else
+					{
+						print nl2br($objp->description);
+						if ($objp->date_start && $objp->date_end)
+						{
+							print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+						}
+						if ($objp->date_start && ! $objp->date_end)
+						{
+							print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+						}
+						if (! $objp->date_start && $objp->date_end)
+						{
+							print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+						}
+					}
+					print "</td>\n";
+				}
                 print '<td align="right">'.$objp->tva_tx.'%</td>';
                 print '<td align="right">'.price($objp->subprice)."</td>\n";
                 print '<td align="right">'.$objp->qty.'</td>';
