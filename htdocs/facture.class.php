@@ -717,7 +717,6 @@ class Facture extends CommonObject
 	 *      \brief      Tag la facture comme payée complètement + appel trigger BILL_PAYED
      *      \param      user        Objet utilisateur qui modifie
      *		\param		close_code	Code renseigné si on classe à payée alors que paiement incomplet
-     *								Les valeurs possibles sont:	escompte, other
      *		\param		close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet
  	 *      \return     int         <0 si ok, >0 si ok
 	 */
@@ -788,15 +787,20 @@ class Facture extends CommonObject
 	/**
  	 *      \brief      Tag la facture comme abandonnée + appel trigger BILL_CANCEL
      *      \param      user        Objet utilisateur qui modifie
+     *		\param		close_code	Code renseigné si on classe à payée alors que paiement incomplet
+     *		\param		close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet
  	 *      \return     int         <0 si ok, >0 si ok
 	 */
-	function set_canceled($user)
+	function set_canceled($user,$close_code='',$close_note='')
 	{
 		global $conf,$langs;
 
 	    dolibarr_syslog("Facture.class.php::set_canceled rowid=".$this->id);
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-		$sql.= ' SET fk_statut=3 WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
+		$sql.= ' fk_statut=3';
+		if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
+		if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
+		$sql.= ' WHERE rowid = '.$this->id;
 		$resql = $this->db->query($sql);
 
         if ($resql)
@@ -898,11 +902,11 @@ class Facture extends CommonObject
 
 
 			/*
-			 *	Tope les lignes de remises fixes avec id des lignes de facture au montant négatif
+			 *	Tope les lignes de remises fixes avec id des lignes de facture de remise
 			 */
 			foreach($this->lignes as $i => $line)
 			{
-			 	if (($this->lignes[$i]->info_bits & 2) == 2)
+			 	if (($this->lignes[$i]->info_bits & 2) == 2 && $this->lignes[$i]->fk_remise_except)
 			 	{
 			 		// Ligne de remise
 			 		dolibarr_syslog("Facture.class::set_valid: recherche si remise ".$this->lignes[$i]->fk_remise_except." toujours dispo");
@@ -1102,7 +1106,7 @@ class Facture extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
  	 */
-	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='')
+	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='')
 	{
 		global $conf;
 		dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits)");
@@ -1157,6 +1161,7 @@ class Facture extends CommonObject
 			$ligne->ventil=$ventil;
 			$ligne->rang=-1;
 			$ligne->info_bits=$info_bits;
+			$ligne->fk_remise_except=$fk_remise_except;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;

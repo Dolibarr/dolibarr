@@ -119,7 +119,11 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 	    $ret=$fac->fetch($_GET['facid']);
 		if ($ret > 0)
 		{
-			$fac->insert_discount($_POST["remise_id"]);
+			$result=$fac->insert_discount($_POST["remise_id"]);
+			if ($result < 0)
+			{
+				$mesg='<div class="error">'.$fac->error.'</div>';
+			}
 		}
 		else
 		{
@@ -236,14 +240,23 @@ if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' 
 	$close_note=$_POST["close_note"];
 	if ($close_code)
 	{
+/*
 		if ($close_code == 'other' && ! $close_note)
 		{
 			$msg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Comment")).'</div>';
 		}
 		else
 		{
-			$result = $fac->set_payed($user,$close_code,$close_note);
-		}
+*/
+			if ($close_code == 'abandon')
+			{
+				$result = $fac->set_canceled($user,$close_code,$close_note);
+			}
+			else
+			{
+				$result = $fac->set_payed($user,$close_code,$close_note);
+			}
+//		}
 	}
 	else
 	{
@@ -342,7 +355,8 @@ if ($_POST['action'] == 'add')
 								'',
 								'',
 								0,
-								$prop->lignes[$i]->info_bits);
+								$prop->lignes[$i]->info_bits,
+								$prop->lignes[$i]->fk_remise_except);
 						}
 					}
 					else
@@ -384,7 +398,8 @@ if ($_POST['action'] == 'add')
 								'',
 								'',
 								0,
-								$lines[$i]->info_bits);
+								$lines[$i]->info_bits,
+								$lines[$i]->fk_remise_except);
 						}
 					}
 					else
@@ -431,7 +446,10 @@ if ($_POST['action'] == 'add')
 								$lines[$i]->fk_product,
 								$lines[$i]->remise_percent,
 								$date_start,
-								$date_end);
+								$date_end,
+								0,
+								$lines[$i]->info_bits,
+								$lines[$i]->fk_remise_except);
 						}
 					}
 					else
@@ -1420,22 +1438,19 @@ else
 			if ($_GET['action'] == 'payed' && $resteapayer > 0)
 			{
 				// Crée un tableau formulaire
-				// \todo Restreindre les choix en fonction d'une option globale
-				$helpescompte_avoir=$langs->trans("ConfirmClassifyPayedPartiallyAvoir").'<br><br>'.$langs->trans("Note").': '.$langs->trans("HelpEscompte");
-				$helpescompte_novat=$langs->trans("ConfirmClassifyPayedPartiallyNoVat").'<br><br>'.$langs->trans("Note").': '.$langs->trans("HelpEscompte");
-				$helpescompte_vat  =$langs->trans("ConfirmClassifyPayedPartiallyVat").  '<br><br>'.$langs->trans("Note").': '.$langs->trans("HelpEscompte");
-				$reason_avoir=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountAvoir",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_avoir,1);
-				$reason_novat=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountNoVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_novat,1);
-				$reason_vat  =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_vat,1);
-				$reason_other=$langs->trans("ConfirmClassifyPayedPartiallyReasonOther");
-				$arrayreasons['discount_avoir']=$reason_avoir;
-				$arrayreasons['discount_novat']=$reason_novat;
-				$arrayreasons['discount_vat']  =$reason_vat;
-				$arrayreasons['discount_other']=$reason_other;
+				//$helpescompte_avoir=$langs->trans("ConfirmClassifyPayedPartiallyAvoir");
+				$helpescompte_vat    =$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyVat");
+				$helpescompte_abandon=$langs->trans("ConfirmClassifyPayedPartiallyAbandon");
+				//$reason_avoir  =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonAvoir",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_avoir,1);
+				$reason_vat    =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_vat,1);
+				$reason_abandon=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonAbandon",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_abandon,1);
+				//$arrayreasons['avoir']       =$reason_avoir;
+				$arrayreasons['discount_vat']=$reason_vat;
+				$arrayreasons['abandon']     =$reason_abandon;
 				$formquestion=array(
 					'text' => $langs->trans("ConfirmClassifyPayedPartiallyQuestion"),
 					array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
-					array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '70')
+					array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedPartially',$fac->ref),'confirm_payed_partially',$formquestion);
