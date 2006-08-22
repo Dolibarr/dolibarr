@@ -24,6 +24,7 @@ create table llx_facture
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   facnumber           varchar(30)        NOT NULL,
+  type				  smallint DEFAULT 0 NOT NULL,
   ref_client          varchar(30),
   increment           varchar(10),
   fk_soc              integer            NOT NULL,
@@ -48,7 +49,7 @@ create table llx_facture
   fk_user_author      integer,   -- createur de la facture
   fk_user_valid       integer,   -- valideur de la facture
 
-  fk_facture          integer,   -- facture origine si facture avoir
+  fk_facture_source   integer,   -- facture origine si facture avoir
   fk_projet           integer,   -- projet auquel est associée la facture
 
   fk_cond_reglement   integer  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
