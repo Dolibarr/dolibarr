@@ -109,6 +109,8 @@ if ($_POST["action"] == "set")
         //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
     }
 
+	$requestnb=0;
+
     /**************************************************************************************
     *
     * Chargement fichiers tables/*.sql (non *.key.sql)
@@ -144,7 +146,7 @@ if ($_POST["action"] == "set")
                 }
 
                 //print "<tr><td>Création de la table $name/td>";
-
+				$requestnb++;
                 if ($db->query($buffer))
                 {
                     //print "<td>OK requete ==== $buffer</td></tr>";
@@ -158,7 +160,9 @@ if ($_POST["action"] == "set")
                     }
                     else
                     {
-                        print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name)."</td>";
+                        print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
+                        print "<br>".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
+                        print "</td>";
                         print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
                         $error++;
                     }
@@ -228,9 +232,12 @@ if ($_POST["action"] == "set")
 
                 // Si plusieurs requetes, on boucle sur chaque
                 $listesql=split(';',$buffer);
-                foreach ($listesql as $buffer) {                
-                    if (trim($buffer)) {
-                        //print "<tr><td>Création des clés et index de la table $name: '$buffer'</td>";
+                foreach ($listesql as $buffer)
+                {
+                    if (trim($buffer))
+                    {
+		                //print "<tr><td>Création des clés et index de la table $name: '$buffer'</td>";
+						$requestnb++;
                         if ($db->query(trim($buffer)))
                         {
                             //print "<td>OK requete ==== $buffer</td></tr>";
@@ -247,7 +254,9 @@ if ($_POST["action"] == "set")
                             }
                             else
                             {
-                                print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name)."</td>";
+                                print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
+                                print "<br>".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
+                                print "</td>";
                                 print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
                                 $error++;
                             }
