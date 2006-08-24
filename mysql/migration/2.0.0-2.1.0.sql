@@ -306,6 +306,7 @@ alter table llx_bank_account add column min_allowed integer DEFAULT 0;
 alter table llx_bank_account add column min_desired integer DEFAULT 0;
 alter table llx_bank_account add column comment varchar(254);
 update llx_bank_account set currency_code='EU';
+update llx_bank_account set rappro=0 where courant=2;
 
 alter table llx_accountingsystem_det rename to llx_accountingaccount;
 
