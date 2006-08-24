@@ -136,9 +136,9 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 	            // Non authentifie
 	            //dolibarr_syslog("Authentification non realise");
 	        }
-	        // Le debut de la page a ete affichee par par getAuth qui a utilisé loginfunction.
+	        // Le debut de la page a ete affichee par getAuth qui a utilisé loginfunction.
 	        // On ferme donc juste la page de logon.
-	        print "</div>\n</div>\n</body>\n</html>";
+	        print "\n</body>\n</html>";
 	        exit;
         }
 	}
