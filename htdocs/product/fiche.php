@@ -821,12 +821,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		$result=$db->query($sql);
 		if ($result)
 		{
+			$var=true;
 			$num = $db->num_rows($result);
 			print '<table class="noborder" width="100%">';
 			if ($num)
 			{
 				$i = 0;
-				$var=true;
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
@@ -851,7 +851,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				}
 			}
 			else {
-				print "<tr $bc[$var]><td>";
+				print "<tr ".$bc[!$var]."><td>";
 				print $langs->trans("NoOpenedPropals");
 				print "</td></tr>";
 			}
