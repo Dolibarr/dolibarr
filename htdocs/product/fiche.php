@@ -488,25 +488,23 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 if ($_GET["id"] || $_GET["ref"])
 {
 
-    if ($_GET["action"] <> 're-edit')
-    {
-        $product = new Product($db);
-        if ($_GET["ref"])
-        {
-        	$result = $product->fetch('',$_GET["ref"]);
-        	$_GET["id"] = $product->id;
-        }
-        elseif ($_GET["id"]) 
-        {
-        	$result = $product->fetch($_GET["id"]);
-        }
-        llxHeader("","",$langs->trans("CardProduct".$product->type));
-    }
+    llxHeader("","",$langs->trans("CardProduct".$product->type));
 
+
+    $product = new Product($db);
+    if ($_GET["ref"])
+    {
+    	$result = $product->fetch('',$_GET["ref"]);
+    	$_GET["id"] = $product->id;
+    }
+    elseif ($_GET["id"]) 
+    {
+    	$result = $product->fetch($_GET["id"]);
+    }
     if ( $result )
     {
 
-        if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
+        if ($_GET["action"] <> 'edit')
         {
             /*
              *  En mode visu
@@ -640,7 +638,7 @@ if ($_GET["id"] || $_GET["ref"])
     /*
      * Fiche en mode edition
      */
-    if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
+    if ($_GET["action"] == 'edit' && $user->rights->produit->creer)
     {
 
         print_fiche_titre($langs->trans('Edit').' '.$types[$product->type].' : '.$product->ref, "");
@@ -695,7 +693,7 @@ if ($_GET["id"] || $_GET["ref"])
         }
         else
         {
-        	print '<textarea name="desc" rows="4" cols="50">';
+        	print '<textarea name="desc" rows="4" cols="70">';
         	print $product->description;
         	print "</textarea>";
         }
@@ -727,8 +725,8 @@ if ($_GET["id"] || $_GET["ref"])
         }
         else
         {
-        	print '<textarea name="note" rows="8" cols="50">';
-        	print $product->description;
+        	print '<textarea name="note" rows="8" cols="70">';
+        	print $product->note;
         	print "</textarea>";
         }
 		print "</td></tr>";
