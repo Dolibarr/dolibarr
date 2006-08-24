@@ -51,7 +51,8 @@ WebServerMustHavePermissionForCommand=Votre serveur web doit avoir les droits po
 BackupResult=Résultat sauvegarde
 BackupFileSuccessfullyCreated=Fichier backup généré avec succès
 YouCanDownloadBackupFile=Les fichiers générés peuvent maintenant être téléchargés
-NoBackupFileAvailable=Aucune fichier backup disponible.
+NoBackupFileAvailable=Aucun fichier backup disponible.
+ExportMethod=Méthode d'export
 ToBuildBackupFileClickHere=Pour générer un fichier de sauvegarde, cliquez <a href="%s">ici</a>.
 Yes=Oui
 No=Non

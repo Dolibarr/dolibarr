@@ -53,6 +53,7 @@ BackupFileSuccessfullyCreated=Backup file successfully generated
 YouCanDownloadBackupFile=Generated files can now be downlaoded
 NoBackupFileAvailable=No backup files available.
 ToBuildBackupFileClickHere=To build one backup file, click <a href="%s">here</a>.
+ExportMethod=Export method
 Yes=Yes
 No=No
 AutoDetectLang=Autodetect (browser language)

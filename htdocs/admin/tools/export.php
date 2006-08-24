@@ -38,20 +38,25 @@ if (! $user->admin)
   accessforbidden();
 
 
+if ($file && ! $what) 
+{
+   //print DOL_URL_ROOT.'/dolibarr_export.php';
+	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired",$langs->trans("ExportMethod"))));
+/*
+	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ExportMethod")).'</div>';
+	print '<br>';
+*/
+	exit;
+}
+
+
+
 llxHeader();
 
 $html=new Form($db);
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
 print '<br>';
-
-if ($file && ! $what) 
-{
-	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ee")).'</div>';
-	print '<br>';
-}
-
-
 
 /**
  * Increase time limit for script execution and initializes some variables

@@ -45,6 +45,13 @@ print '<br>';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '<br>';
 
+if ($_GET["msg"])
+{
+	print '<div class="error">'.$_GET["msg"].'</div>';
+	print '<br>';
+	print "\n";
+}
+
 $result=$html->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1);
 if ($result) print '<br><br>';
 
@@ -102,7 +109,7 @@ function show_checked_option() {
 
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
-<legend>Méthode d'exportation</legend>
+<legend><?php echo $langs->trans("ExportMethod"); ?></legend>
 
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_mysql"
