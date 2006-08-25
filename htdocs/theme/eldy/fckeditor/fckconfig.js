@@ -105,7 +105,6 @@ FCKConfig.ToolbarSets["dolibarr_details"] = [
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor'],
         ['SpecialChar','UniversalKey'],
         ['FontName','FontSize']
 ] ;
