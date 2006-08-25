@@ -939,7 +939,7 @@ class pdf_einstein extends ModelePDFCommandes
 // Cette fonction est appelée pour coder ou non une chaine en html
 // selon qu'on compte l'afficher dans le PDF avec:
 // writeHTMLCell -> a besoin d'etre encodé en HTML
-// MutliCell -> ne doit pas etre encodé en HTML
+// MultiCell -> ne doit pas etre encodé en HTML
 function _dol_htmlentities($stringtoencode,$isstringalreadyhtml)
 {
 	global $conf;
