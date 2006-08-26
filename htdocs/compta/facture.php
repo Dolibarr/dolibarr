@@ -975,7 +975,20 @@ if ($_GET['action'] == 'create')
     // Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 	
+	// Societe
+	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
+	print $soc->getNomUrl(1);
+	print '<input type="hidden" name="socidp" value="'.$soc->id.'">';
+	print '</td>';
+	print '</tr>';
+
     // Type de facture
+	$facids=$facturestatic->list_replacable_invoices($soc->id);
+	$options="";
+	foreach ($facids as $key => $value)
+	{
+		$options.='<option value="'.$key.'">'.$value.'</option>';
+	}
 	print '<tr><td valign="top">'.$langs->trans('Type').'</td><td colspan="2">';
 	print '<table class="nobordernopadding"><tr>';
 	print '<td width="16px">';
@@ -985,18 +998,21 @@ if ($_GET['action'] == 'create')
 	print $desc;
 	print '</td></tr>';
 	print '<tr><td>';
-	print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked=true':'').'>';
+	print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked=true':'');
+	if (! $options) print ' disabled="true"';
+	print '>';
 	print '</td><td>';
-	$facids=$facturestatic->list_replacable_invoices($soc->id);
-	$options="";
-	foreach ($facids as $key => $value)
-	{
-		$options.='<option value="'.$key.'">'.$value.'</option>';
-	}
 	$text=$langs->trans("InvoiceReplacementAsk").' ';
 	$text.='<select name="replacement_ref">';
-	$text.='<option value="-1">&nbsp;</option>';
-	$text.=$options;
+	if ($options)
+	{
+		$text.='<option value="-1">&nbsp;</option>';
+		$text.=$options;
+	}
+	else
+	{
+		$text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
+	}
 	$text.='</select>';
 	$desc=$html->textwithhelp($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
 	print $desc;	
@@ -1010,13 +1026,6 @@ if ($_GET['action'] == 'create')
 	print '</table>';
 	print '</td></tr>';
     
-	// Societe
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
-	print $soc->getNomUrl(1);
-	print '<input type="hidden" name="socidp" value="'.$soc->id.'">';
-	print '</td>';
-	print '</tr>';
-
 	// Ligne info remises tiers
     print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
 	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
@@ -1536,6 +1545,11 @@ else
 			// Reference
 			print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
 			
+			// Société
+			print '<tr><td>'.$langs->trans('Company').'</td>';
+			print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
+			print '</tr>';
+
 			// Type
 			print '<tr><td width="20%">'.$langs->trans('Type').'</td><td colspan="5">';
 			print $fac->getLibType();
@@ -1554,11 +1568,6 @@ else
 			}
 			print '</td></tr>';
 			
-			// Société
-			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
-			print '</tr>';
-
 			// Ligne info remises tiers
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
@@ -1687,6 +1696,7 @@ else
 			print '</td></tr>';
 
 
+			// Ref client
             /*
               \todo
               L'info "Reference commande client" est une carac de la commande et non de la facture.
@@ -1695,21 +1705,28 @@ else
             */
             if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
             {
-			    print '<tr><td>'.$langs->trans('RefCustomerOrder').'</td>';
-
-    			if ($fac->brouillon == 1 && $user->rights->facture->creer)
-    			{
-    					print '<form action="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'" method="post">';
-    					print '<input type="hidden" name="action" value="set_ref_client">';
-    					print '<td colspan="3"><input type="text" name="ref_client" size="20" value="'.$fac->ref_client.'">';
-    					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
-    					print '</form>';
-    			}
-    			else
-    			{
-    				print '<td colspan="3">'.$fac->ref_client.'</td>';
-    			}
-            }
+				print '<tr><td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+				print $langs->trans('RefCustomer').'</td><td align="left">';
+				print '</td>';
+				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
+				{
+					print '<form action="facture.php?facid='.$id.'" method="post">';
+					print '<input type="hidden" name="action" value="set_ref_client">';
+					print '<input type="text" class="flat" size="20" name="ref_client" value="'.$fac->ref_client.'">';
+					print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+					print '</form>';
+				}
+				else
+				{
+					print $fac->ref_client;
+				}
+				print '</td>';
+				print '</tr>';
+			}			
 
 			// Lit lignes de facture pour déterminer montant
 			// On s'en sert pas mais ca sert pour debuggage
