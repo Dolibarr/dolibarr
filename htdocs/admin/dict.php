@@ -357,6 +357,7 @@ if ($_GET["id"])
 	//print $sql;
     
     $fieldlist=split(',',$tabfield[$_GET["id"]]);
+    print '<form action="dict.php" method="post">';
     print '<table class="noborder" width="100%">';
 
     // Ligne d'ajout
@@ -366,10 +367,7 @@ if ($_GET["id"])
         $var=false;
         
         $fieldlist=split(',',$tabfield[$_GET["id"]]);
-        print '<table class="noborder" width="100%">';
-
-        print '<form action="dict.php" method="post">';
-        print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+//        print '<table class="noborder" width="100%">';
 
         // Ligne de titre d'ajout
         print '<tr class="liste_titre">';
@@ -396,11 +394,11 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='libelle') $alabelisused=1; 
         }
         print '<td>&nbsp;</td>';
-        print '<td>&nbsp;</td>';
-        print '</td>';
+        print '<td><input type="hidden" name="id" value="'.$_GET["id"].'"></td>';
+        print '</tr>';
 
         // Ligne d'ajout
-        print "<tr $bc[$var] class=\"value\">";
+        print "<tr $bc[$var]>";
         $html = new Form($db);
         foreach ($fieldlist as $field => $value)
         {
@@ -483,8 +481,6 @@ if ($_GET["id"])
             print '<tr><td colspan="'.(count($fieldlist)+2).'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
         }
         print '<tr><td colspan="'.(count($fieldlist)+2).'">&nbsp;</td></tr>';
-
-        print '</form>';
     }
 
     // Affiche table des valeurs
@@ -525,7 +521,7 @@ if ($_GET["id"])
                 $obj = $db->fetch_object();
                 $var=!$var;
 
-                print "<tr $bc[$var] class=\"value\">";
+                print "<tr $bc[$var]>";
                 foreach ($fieldlist as $field => $value) {
                     $valuetoshow=$obj->$fieldlist[$field];
 
@@ -555,7 +551,7 @@ if ($_GET["id"])
                 }
                 print "</td>";
                 if ($iserasable) {
-                    print '<td><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete"'.img_delete().'</a></td>';
+                    print '<td><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
                 } else {
                     print '<td>&nbsp;</td>';   
                 }
@@ -569,6 +565,8 @@ if ($_GET["id"])
     }
 
     print '</table>';
+
+    print '</form>';
 }
 else
 {
