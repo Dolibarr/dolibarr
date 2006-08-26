@@ -54,7 +54,7 @@ class CommandeFournisseur extends Commande
       $this->statuts[2] = "Approuvée";
       $this->statuts[3] = "Commandée";
       $this->statuts[4] = "Reçu partiellement";
-      $this->statuts[5] = "Clotûrée";
+      $this->statuts[5] = "Reçu complètement";
       $this->statuts[6] = "Annulée";
       $this->statuts[9] = "Refusée";
 

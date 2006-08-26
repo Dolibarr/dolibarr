@@ -315,6 +315,7 @@ insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perm
 -- V4.1 insert into llx_user_rights(fk_user,fk_id) select distinct fk_user, '262' from llx_user_rights where fk_id = 261;
 update llx_rights_def set subperms='creer' where subperms='supprimer' AND module='user' AND perms='self' AND id=255;
 update llx_rights_def set module='tax' where module='compta' AND id in ('91','92','93');
+update llx_rights_def set subperms='receptionner' where id=186;
 
 
 alter table llx_commandedet add column rang integer DEFAULT 0;

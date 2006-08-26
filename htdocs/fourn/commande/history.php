@@ -147,7 +147,7 @@ if ($_GET["id"] > 0)
 				print '<td width="20%">'.dolibarr_print_date($obj->dl,"%a %d %b %Y %H:%M:%S")."</td>\n";
 
 				// Statut
-				print '<td width="100px">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
+				print '<td width="100px" nowrap="1">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
 
 				// User
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';

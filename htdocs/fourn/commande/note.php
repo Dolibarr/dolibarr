@@ -140,40 +140,23 @@ if ($_GET["id"] > 0)
 			print "</td></tr>";
 		}
 
-		// Auteur
-		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
-		print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
-		print '<td width="50%">';
-		print "&nbsp;</td></tr>";
-
-		// Ligne de 3 colonnes
-		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-		print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
-		print '<td valign="top">&nbsp;</td></tr>';
-
-		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
+		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+		print '<td colspan="3">';
+		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_4.'" name="note_public">';
+		print nl2br($commande->note_public);
+		if ($user->rights->fournisseur->commande->creer) print '</textarea>';
+		print '</td></tr>';
 
 		if (! $user->societe_id)
 		{
 			print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 			print '<td colspan="3">';
-			if ($user->rights->fournisseur->commande->creer) print '<textarea cols="60" rows="'.ROWS_4.'" name="note">';
+			if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_6.'" name="note">';
 			print nl2br($commande->note);
 			if ($user->rights->fournisseur->commande->creer) print '</textarea>';
 			print '</td></tr>';
 		}
 		
-		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
-		print '<td colspan="3">';
-		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="60" rows="'.ROWS_4.'" name="note_public">';
-		print nl2br($commande->note_public);
-		if ($user->rights->fournisseur->commande->creer) print '</textarea>';
-		print '</td></tr>';
-
 		if ($user->rights->fournisseur->commande->creer)
 		{
 			print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';

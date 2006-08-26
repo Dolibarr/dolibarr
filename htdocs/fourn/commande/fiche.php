@@ -33,6 +33,8 @@ require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
 
+$user->getrights("fournisseur");
+
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 
@@ -695,7 +697,7 @@ if ($_GET["id"] > 0)
 			print '<br>';
 			print '<form action="fiche.php?id='.$commande->id.'" method="post">';
 			print '<input type="hidden" name="action" value="livraison">';
-			print '<table class="noborder">';
+			print '<table class="border" width="100%">';
 			print '<tr class="liste_titre"><td colspan="2">Réceptionner</td></tr>';
 			print '<tr><td>Date de livraison</td><td>';
 			print $form->select_date('','','','','',"commande");
