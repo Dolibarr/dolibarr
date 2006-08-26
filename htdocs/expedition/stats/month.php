@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -36,6 +35,9 @@ require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 llxHeader();
 
+$WIDTH=500;
+$HEIGHT=200;
+
 $mesg = '';
 
 print_fiche_titre('Statistiques expeditions '.$_GET["year"], $mesg);
@@ -49,12 +51,19 @@ $filename = $conf->expedition->dir_temp."/expedition".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expedition'.$year.'.png';
 
 $px = new DolGraph();
-$px->SetData($data);
-$px->SetMaxValue($px->GetCeilMaxValue());
-$px->SetPrecisionY(0);
-$px->SetWidth(600);
-$px->SetHeight(280);
-$px->draw($filename);
+$mesg = $px->isGraphKo();
+if (! $mesg)
+{
+    $px->SetData($data);
+    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
+    $px->SetYLabel($langs->trans("NbOfOrders"));
+    $px->SetShading(5);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
+    $px->draw($filename);
+}
 
 print '<table class="border" width="100%">';
 print '<tr><td align="center">Nombre d\'expédition par mois</td>';
