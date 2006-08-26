@@ -479,10 +479,10 @@ insert into llx_c_paiement (id,code,libelle,type,active) values (4, 'LIQ', 'Espè
 insert into llx_c_paiement (id,code,libelle,type,active) values (5, 'VAD', 'Paiement en ligne', 2,0);
 insert into llx_c_paiement (id,code,libelle,type,active) values (6, 'CB',  'Carte Bancaire',    2,1);
 insert into llx_c_paiement (id,code,libelle,type,active) values (7, 'CHQ', 'Chèque',            2,1);
-insert into llx_c_paiement (id,code,libelle,type,active) values (8, 'TRA', 'Traite',            2,1);
-insert into llx_c_paiement (id,code,libelle,type,active) values (9, 'LCR', 'LCR',               2,1);
-insert into llx_c_paiement (id,code,libelle,type,active) values (10,'FAC', 'Factor',            2,1);
-insert into llx_c_paiement (id,code,libelle,type,active) values (11,'PRO', 'Proforma',          2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (8, 'TRA', 'Traite',            2,0);
+insert into llx_c_paiement (id,code,libelle,type,active) values (9, 'LCR', 'LCR',               2,0);
+insert into llx_c_paiement (id,code,libelle,type,active) values (10,'FAC', 'Factor',            2,0);
+insert into llx_c_paiement (id,code,libelle,type,active) values (11,'PRO', 'Proforma',          2,0);
 
 --
 -- Pays
