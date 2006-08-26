@@ -114,7 +114,13 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->Text($posx, 60, $outputlangs->trans("Date")." : ".dolibarr_print_date($this->expe->commande->date,"%d %b %Y"));
 	}
 	
-	function generate(&$objExpe, $filename, $outputlangs='')
+
+    /**
+     *		\brief      Fonction générant le document sur le disque
+     *		\param	    obj		Objet expedition à générer (ou id si ancienne methode)
+     *		\return	    int     1=ok, 0=ko
+     */
+	function write_file(&$obj, $outputlangs='')
 	{
 		global $user,$conf,$langs;
 	
@@ -129,8 +135,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		if ($conf->expedition->dir_output)
 		{
-			$this->expe = $objExpe;
-			$this->expe->fetch_commande();
+			$this->expe = $obj;
 		
 			// Définition de $dir et $file
 			if ($this->expe->specimen)
@@ -253,8 +258,11 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			
 					$pdf->Text(194, $curY, $this->expe->lignes[$i]->qty_expedition);
 				}
+                $pdf->AliasNbPages();
+
+                $pdf->Close();
 			
-				$pdf->Output($filename);
+				$pdf->Output($file);
 	
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;

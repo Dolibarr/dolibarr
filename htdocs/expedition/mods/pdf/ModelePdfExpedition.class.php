@@ -77,7 +77,7 @@ Class ModelePdfExpedition extends DolibarrPdfBarCode
 /*
 		\brief      Crée un bon d'expedition sur disque
 		\param	    db  			objet base de donnée
-		\param	    id				id de la propale à créer
+		\param	    id				id de la expedition à créer
 		\param	    modele			force le modele à utiliser ('' par defaut)
 		\param		outputlangs		objet lang a utiliser pour traduction
 */
@@ -123,12 +123,7 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 		$expedition = new Expedition($db);
 		$result=$expedition->fetch($id);
 
-		$expeditionref = sanitize_string($expedition->ref);
-		$dir = $conf->expedition->dir_output . "/" . $expeditionref;
-		$file = $dir . "/" . $expeditionref . ".pdf";
-
-        if ($obj->generate($expedition, $file) > 0)
-//		if ( $obj->write_pdf_file($id, $outputlangs) > 0)
+        if ($obj->write_file($expedition, $langs) > 0)
 		{
 			// on supprime l'image correspondant au preview
 //			expedition_delete_preview($db, $id);

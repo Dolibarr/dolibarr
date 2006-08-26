@@ -573,5 +573,5 @@ DeliveriesOrderAbility=Prise en charge des bons de réception client
 ActivateFCKeditor=Activer FCKeditor pour :
 FCKeditorForCompany=Création/édition WYSIWIG des descriptions et notes des tiers
 FCKeditorForProductDescription=Création/édition WYSIWIG des notes des produits/services
-FCKeditorForDetails=Création/édition WYSIWIG des lignes details des entités (commandes, propales, factures, etc...)
+FCKeditorForDetails=Création/édition WYSIWIG des lignes details des produits (sur commandes, propales, factures, etc...)
 FCKeditorForMailing=Création/édition WYSIWIG des mailings

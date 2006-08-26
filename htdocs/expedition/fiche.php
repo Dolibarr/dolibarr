@@ -142,6 +142,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	// Sauvegarde le dernier modèle choisi pour générer un document
 	$expedition = new Expedition($db, 0, $_REQUEST['id']);
 	$expedition->fetch($_REQUEST['id']);
+	$expedition->fetch_commande();
 	if ($_REQUEST['model'])
 	{
 		$expedition->set_pdf_model($user, $_REQUEST['model']);
@@ -152,7 +153,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	$result=expedition_pdf_create($db, $expedition->id,$expedition->modelpdf,$outputlangs);
+	$result=expedition_pdf_create($db,$expedition->id,$expedition->modelpdf,$outputlangs);
     if ($result <= 0)
     {
     	dolibarr_print_error($db,$result);

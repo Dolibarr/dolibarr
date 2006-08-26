@@ -73,11 +73,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	}
 
 
-	//*****************************
-	//Creation du Document
-	//Initialisation des données
-	//*****************************
-	function generate(&$objExpe, $file, $outputlangs='')
+    /**
+     *		\brief      Fonction générant le document sur le disque
+     *		\param	    obj		Objet expedition à générer (ou id si ancienne methode)
+     *		\return	    int     1=ok, 0=ko
+     */
+	function write_file(&$obj, $outputlangs='')
 	{
 		global $user,$conf,$langs;
 		
@@ -92,8 +93,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$outputlangs->setPhpLang();
 
 		//Generation de la fiche
-		$this->expe = $objExpe;
-		$this->expe->fetch_commande();
+		$this->expe = $obj;
 
 		//Verification de la configuration
         if ($conf->expedition->dir_output)
@@ -210,10 +210,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				}
 				//Insertion du pied de page
 				$this->_pagefoot($pdf);
+
 				$pdf->AliasNbPages();
-				//Cloture du pdf
+
 				$pdf->Close();
-				//Ecriture du pdf
+
 				$pdf->Output($file);
 	
 				$langs->setPhpLang();	// On restaure langue session

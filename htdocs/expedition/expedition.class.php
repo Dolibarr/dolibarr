@@ -28,6 +28,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 
 /** 
@@ -571,15 +572,15 @@ class Expedition extends CommonObject
 	}
 	
 
-  /*
-   * Lit la commande associée
-   *
-   */
-  function fetch_commande()
-  {
-    $this->commande =& new Commande($this->db);
-    $this->commande->fetch($this->commande_id);
-  }
+	/*
+	* Lit la commande associée
+	*
+	*/
+	function fetch_commande()
+	{
+		$this->commande =& new Commande($this->db);
+		$this->commande->fetch($this->commande_id);
+	}
 
 
   function fetch_lignes()
@@ -653,7 +654,78 @@ class Expedition extends CommonObject
         	if ($statut==1) return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
 		}
     }  
-  
+
+	/**
+	 *		\brief		Initialise la facture avec valeurs fictives aléatoire
+	 *					Sert à générer une facture pour l'aperu des modèles ou demo
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		// Charge tableau des id de société socids
+		$socids = array();
+		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_socs = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_socs)
+			{
+				$i++;
+
+				$row = $this->db->fetch_row($resql);
+				$socids[$i] = $row[0];
+			}
+		}
+
+		// Charge tableau des produits prodids
+		$prodids = array();
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_prods = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_prods)
+			{
+				$i++;
+				$row = $this->db->fetch_row($resql);
+				$prodids[$i] = $row[0];
+			}
+		}
+
+		// Initialise paramètres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$socid = rand(1, $num_socs);
+        $this->statut               = 1;
+        $this->commande_id          = 0;
+        if ($conf->livraison->enabled)
+        {
+          	$this->livraison_id     = 0;
+        }
+        $this->date                 = time();
+        $this->entrepot_id          = 0;
+        $this->adresse_livraison_id = 0;
+		$this->socidp = $socids[$socid];
+
+		$nbp = 5;
+		$xnbp = 0;
+		while ($xnbp < $nbp)
+		{
+			$ligne=new ExpeditionLigne($this->db);
+			$ligne->desc=$langs->trans("Description")." ".$xnbp;
+			$ligne->libelle=$langs->trans("Description")." ".$xnbp;
+			$ligne->qty=10;
+			$ligne->qty_expedition=5;
+			$prodid = rand(1, $num_prods);
+			$ligne->fk_product=$prodids[$prodid];
+			$xnbp++;
+		}
+	}  
 }
 
 

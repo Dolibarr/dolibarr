@@ -64,11 +64,15 @@ if ($_GET["action"] == 'specimen')
 
 		$obj = new $classname($db);
 
-		if ($obj->write_pdf_file($facture) > 0)
+		if ($obj->write_pdf_file($facture,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
 			return;
 		}
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
 	}
 }
 

@@ -41,15 +41,16 @@ $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 $urlsource = urldecode($_GET["urlsource"]);
 // Défini type (attachment=1 pour forcer popup 'enregistrer sous')
-$type = urldecode($_GET["type"]); $attachment = true;
-if (eregi('\.sql',$original_file)) 	    { $type='text/plain'; $attachment = true; }
-if (eregi('\.html',$original_file)) 	{ $type='text/html'; $attachment = false; }
-if (eregi('\.csv',$original_file))  	{ $type='text/csv'; $attachment = true; }
-if (eregi('\.pdf',$original_file))  	{ $type='application/pdf'; $attachment = true; }
-if (eregi('\.xls',$original_file))  	{ $type='application/x-msexcel'; $attachment = true; }
-if (eregi('\.jpg',$original_file)) 		{ $type='image/jpeg'; $attachment = true; }
-if (eregi('\.png',$original_file)) 		{ $type='image/jpeg'; $attachment = true; }
-if (eregi('\.tiff',$original_file)) 	{ $type='image/tiff'; $attachment = true; }
+$type = urldecode($_GET["type"]);
+$attachment = true;
+if (eregi('\.sql$',$original_file))     { $type='text/plain'; $attachment = true; }
+if (eregi('\.html$',$original_file)) 	{ $type='text/html'; $attachment = false; }
+if (eregi('\.csv$',$original_file))  	{ $type='text/csv'; $attachment = true; }
+if (eregi('\.pdf$',$original_file))  	{ $type='application/pdf'; $attachment = true; }
+if (eregi('\.xls$',$original_file))  	{ $type='application/x-msexcel'; $attachment = true; }
+if (eregi('\.jpg$',$original_file)) 	{ $type='image/jpeg'; $attachment = true; }
+if (eregi('\.png$',$original_file)) 	{ $type='image/jpeg'; $attachment = true; }
+if (eregi('\.tiff$',$original_file)) 	{ $type='image/tiff'; $attachment = true; }
 
 //Suppression de la chaine de caractère ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
