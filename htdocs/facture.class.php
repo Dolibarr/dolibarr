@@ -63,7 +63,8 @@ class Facture extends CommonObject
 	var $note_public;
 	var $statut;
 	var $paye;					// 1 si facture payée COMPLETEMENT, 0 sinon
-	var $close_code;			// Si mis a paye sans paiement complet, code qui justifie
+	var $fk_facture_source;		// id facture source si facture de remplacement ou avoir
+	var $close_code;			// abandon, replaced, avoir, discount_vat
 	var $close_note;			// Commentaire si mis a paye sans paiement complet
 	var $propalid;
 	var $projetid;
@@ -77,7 +78,7 @@ class Facture extends CommonObject
 	// Pour board
 	var $nbtodo;
 	var $nbtodolate;
-	
+
 	var $specimen;
 	var $error;
 
@@ -108,21 +109,21 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *    \brief      Création de la facture en base
-	 *    \param      user       object utilisateur qui crée
+	 *	\brief      Création de la facture en base
+	 *	\param      user       	Object utilisateur qui crée
+	 *	\return		int			<0 si ko, >0 si ok
 	 */
 	function create($user)
 	{
 		global $langs,$conf,$mysoc;
 
 		// Nettoyage paramètres
+		if (! $this->type) $this->type = 0 ;
+		$this->ref_client=trim($this->ref_client);
 		$this->note=trim($this->note);
 		$this->note_public=trim($this->note_public);
-		$this->ref_client=trim($this->ref_client);
 		if (! $this->remise) $this->remise = 0 ;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
-
-		// On positionne en mode brouillon la facture
 		$this->brouillon = 1;
 
 		dolibarr_syslog("Facture::create");
@@ -131,6 +132,45 @@ class Facture extends CommonObject
 		$soc->fetch($this->socidp);
 
 		$this->db->begin();
+
+		// Verification paramètres
+		if ($this->type == 1)		// si remplacement
+		{
+			// Controle que facture source connue
+			if ($this->fk_facture_source <= 0)
+			{
+				$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("InvoiceReplacement"));
+				$this->db->rollback();
+				return -10;
+			}
+			
+			// Charge la facture source a remplacer
+			$facreplaced=new Facture($this->db);
+			$result=$facreplaced->fetch($this->fk_facture_source);
+			if ($result <= 0)
+			{
+				$this->error=$langs->trans("ErrorBadInvoice");
+				$this->db->rollback();
+				return -11;
+			}
+			
+			// Controle que facture source non deja remplacee
+			$idreplacement=$facreplaced->getIdNextInvoice();
+			if ($idreplacement != 0)
+			{
+				$this->error=$langs->trans("ErrorInvoiceAlreadyReplaced",$facreplaced->ref);
+				$this->db->rollback();
+				return -12;
+			}
+			
+			$result=$facreplaced->set_canceled($user,'replaced','');
+			if ($result < 0)
+			{
+				$this->error=$facreplaced->error." sql=".$sql;
+				$this->db->rollback();
+				return -13;
+			}
+		}
 
 		// Facture récurrente
 		if ($this->fac_rec > 0)
@@ -147,7 +187,7 @@ class Facture extends CommonObject
 			$this->amount            = $_facrec->amount;
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
-			$this->remise			       = $_facrec->remise;
+			$this->remise			 = $_facrec->remise;
 		}
 
 		// Definition de la date limite
@@ -162,19 +202,20 @@ class Facture extends CommonObject
 		$totalht = ($amount - $remise);
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture (';
-		$sql.= ' facnumber, fk_soc, datec, amount, remise_absolue, remise_percent,';
+		$sql.= ' facnumber, type, fk_soc, datec, amount, remise_absolue, remise_percent,';
 		$sql.= ' datef,';
 		$sql.= ' note,';
 		$sql.= ' note_public,';
 	  	$sql.= ' ref_client,';
-		$sql.= ' fk_user_author, fk_projet,';
-		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf) ';
-		$sql.= " VALUES (";
-		$sql.= "'$number','$socid', now(), '$totalht', '".$this->remise_absolue."'";
+		$sql.= ' fk_facture_source, fk_user_author, fk_projet,';
+		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf)';
+		$sql.= ' VALUES (';
+		$sql.= "'$number', '".$this->type."', '$socid', now(), '$totalht', '".$this->remise_absolue."'";
 		$sql.= ",'".$this->remise_percent."', ".$this->db->idate($this->date);
 		$sql.= ",".($this->note?"'".addslashes($this->note)."'":"null");
 		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
 		$sql.= ",".($this->ref_client?"'".addslashes($this->ref_client)."'":"null");
+		$sql.= ",".($this->fk_facture_source?"'".addslashes($this->fk_facture_source)."'":"null");
 		$sql.= ",".$user->id;
 		$sql.= ",".($this->projetid?$this->projetid:"null");
 		$sql.= ','.$this->cond_reglement_id;
@@ -189,6 +230,7 @@ class Facture extends CommonObject
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='(PROV".$this->id.")' WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);
 
+			// Mise a jour lien avec propal ou commande
 			if ($resql && $this->id && $this->propalid)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fa_pr (fk_facture, fk_propal) VALUES ('.$this->id.','.$this->propalid.')';
@@ -302,6 +344,27 @@ class Facture extends CommonObject
 
 
 	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Sur quoi pointe le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id.'">';
+		$lienfin='</a>';
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowInvoice"),'bill').$lienfin.' ');
+		$result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+	
+	
+	/**
 	*    \brief      Recupére l'objet facture et ses lignes de factures
 	*    \param      rowid       id de la facture a récupérer
 	*    \param      societe_id  id de societe
@@ -311,20 +374,21 @@ class Facture extends CommonObject
 	{
 		//dolibarr_syslog("Facture::Fetch rowid : $rowid, societe_id : $societe_id");
 
-		$sql = 'SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
-		$sql .= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
-		$sql .= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
-		$sql .= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.model_pdf';
-		$sql .= ', f.fk_mode_reglement, f.ref_client, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
-		$sql .= ', cf.fk_commande';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c, '.MAIN_DB_PREFIX.'facture as f';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_fa as cf ON cf.fk_facture = f.rowid';
-		$sql .= ' WHERE f.rowid='.$rowid.' AND c.rowid = f.fk_cond_reglement';
+		$sql = 'SELECT f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
+		$sql.= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
+		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
+		$sql.= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.model_pdf';
+		$sql.= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+		$sql.= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
+		$sql.= ', f.fk_facture_source';
+		$sql.= ', cf.fk_commande';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c, '.MAIN_DB_PREFIX.'facture as f';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_fa as cf ON cf.fk_facture = f.rowid';
+		$sql.= ' WHERE f.rowid='.$rowid.' AND c.rowid = f.fk_cond_reglement';
 		if ($societe_id > 0)
 		{
-			$sql .= ' AND f.fk_soc = '.$societe_id;
+			$sql.= ' AND f.fk_soc = '.$societe_id;
 		}
 		$result = $this->db->query($sql);
 
@@ -336,10 +400,11 @@ class Facture extends CommonObject
 				//print strftime('%Y%m%d%H%M%S',$obj->df).' '.$obj->df.' '.dolibarr_print_date($obj->df);
 
 				$this->id                     = $rowid;
-				$this->datep                  = $obj->dp;
-				$this->date                   = $obj->df;
 				$this->ref                    = $obj->facnumber;
 				$this->ref_client             = $obj->ref_client;
+				$this->type                   = $obj->type;
+				$this->datep                  = $obj->dp;
+				$this->date                   = $obj->df;
 				$this->amount                 = $obj->amount;
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
@@ -361,6 +426,7 @@ class Facture extends CommonObject
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
 				$this->projetid               = $obj->fk_projet;
+				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note                   = $obj->note;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
@@ -368,15 +434,14 @@ class Facture extends CommonObject
 				$this->commande_id            = $obj->fk_commande;
 				$this->lignes                 = array();
 
-
 		        if ($this->commande_id)
 		        {
 		             $sql = "SELECT ref";
 		             $sql.= " FROM ".MAIN_DB_PREFIX."commande";
 		             $sql.= " WHERE rowid = ".$this->commande_id;
-		
+
 		             $resqlcomm = $this->db->query($sql);
-		
+
 		             if ($resqlcomm)
 		             {
 		                $objc = $this->db->fetch_object($resqlcomm);
@@ -465,7 +530,7 @@ class Facture extends CommonObject
 
 
     /**
-     *    \brief     Ajout d'une ligne remise fixe dans la facture, en base
+     *    \brief     Ajout en base d'une ligne remise fixe en ligne de facture
      *    \param     idremise			Id de la remise fixe
      *    \return    int          		>0 si ok, <0 si ko
      */
@@ -480,9 +545,15 @@ class Facture extends CommonObject
 
 		$remise=new DiscountAbsolute($this->db);
 		$result=$remise->fetch($idremise);
-
 		if ($result > 0)
 		{
+			if ($remise->fk_facture)
+			{
+				$this->error=$langs->trans("ErrorDiscountAlreadyUsed");
+				$this->db->rollback();
+				return -5;
+			}
+			
 			$facligne=new FactureLigne($this->db);
 			$facligne->fk_facture=$this->id;
 			$facligne->fk_remise_except=$remise->id;
@@ -502,36 +573,46 @@ class Facture extends CommonObject
 			$facligne->total_tva = $tabprice[1];
 			$facligne->total_ttc = $tabprice[2];
 
-			$result=$facligne->insert();
-			if ($result > 0)
+			$lineid=$facligne->insert();
+			if ($lineid > 0)
 			{
 				$result=$this->update_price($this->id);
 				if ($result > 0)
 				{
+					// Crée lien entre remise et ligne de facture
+					$result=$remise->link_to_invoice($lineid);
+					if ($result < 0)
+					{
+						$this->error=$remise->error;
+						$this->db->rollback();
+						return -4;
+					}
+
 					$this->db->commit();
 					return 1;
 				}
 				else
 				{
-					$this->db->rollback();	
+					$this->error=$facligne->error;
+					$this->db->rollback();
 					return -1;
 				}
 			}
 			else
 			{
 				$this->error=$facligne->error;
-				$this->db->rollback();	
+				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
 			$this->db->rollback();
-			return -2;	
+			return -3;
 		}
 	}
-	
-	
+
+
 	/**
 	 *      \brief     Classe la facture dans un projet
 	 *      \param     projid       Id du projet dans lequel classer la facture
@@ -574,78 +655,92 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 * 		\brief     Supprime la facture
-	 * 		\param     rowid      id de la facture à supprimer
+	 * 		\brief     	Supprime la facture
+	 * 		\param     	rowid      	Id de la facture à supprimer
+	 *		\return		int			<0 si ko, >0 si ok
 	 */
 	function delete($rowid)
 	{
 		global $user,$langs,$conf;
 
+		dolibarr_syslog("Facture.class::delete rowid=".$rowid);
+		
         $this->db->begin();
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$rowid;
 
-		if ( $this->db->query( $sql) )
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$rowid;
+		if ($this->db->query($sql))
 		{
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'fa_pr WHERE fk_facture = '.$rowid;
-			if ($this->db->query( $sql) )
+			if ($this->db->query($sql))
 			{
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'co_fa WHERE fk_facture = '.$rowid;
-				if ($this->db->query( $sql) )
+				if ($this->db->query($sql))
 				{
-					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
-					if ($this->db->query( $sql) )
+					// On désaffecte de la facture les remises liées
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+					$sql.= ' SET fk_facture = NULL WHERE fk_facture = '.$rowid;
+					if ($this->db->query($sql))
 					{
-						// On désaffecte de la facture les remises liées
-						$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-						$sql.= ' SET fk_facture = NULL WHERE fk_facture = '.$rowid;
-						if ($this->db->query( $sql) )
+						$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
+						if ($this->db->query($sql))
 						{
-							$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid.' AND fk_statut = 0';
-                            $resql=$this->db->query($sql) ;
-
-                            if ($resql)
-                            {
-                                // Appel des triggers
-                                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                                $interface=new Interfaces($this->db);
-                                $result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
-                                // Fin appel triggers
-
-                                $this->db->commit();
-                                return 1;
-                            }
-                            else
-                            {
-                                $this->db->rollback();
-                                return -6;
-                            }
-                        }
-                        else
-                        {
-                            $this->db->rollback();
-                            return -5;
-                        }
+							$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
+	                        $resql=$this->db->query($sql);
+	                        if ($resql)
+	                        {
+	                            // Appel des triggers
+	                            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	                            $interface=new Interfaces($this->db);
+	                            $result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
+	                            // Fin appel triggers
+	
+	                            $this->db->commit();
+	                            return 1;
+	                        }
+	                        else
+	                        {
+		                       	$this->error=$this->db->error()." sql=".$sql;
+	                            dolibarr_syslog("Facture.class::delete ".$this->error);
+	                            $this->db->rollback();
+	                            return -6;
+	                        }
+	                    }
+	                    else
+	                    {
+	                       	$this->error=$this->db->error()." sql=".$sql;
+	                        dolibarr_syslog("Facture.class::delete ".$this->error);
+	                        $this->db->rollback();
+	                        return -4;
+	                    }
                     }
                     else
                     {
+	                   	$this->error=$this->db->error()." sql=".$sql;
+                        dolibarr_syslog("Facture.class::delete ".$this->error);
                         $this->db->rollback();
-                        return -4;
+                        return -5;
                     }
                 }
                 else
                 {
+                   	$this->error=$this->db->error()." sql=".$sql;
+                    dolibarr_syslog("Facture.class::delete ".$this->error);
                     $this->db->rollback();
                     return -3;
                 }
             }
             else
             {
+               	$this->error=$this->db->error()." sql=".$sql;
+                dolibarr_syslog("Facture.class::delete ".$this->error);
                 $this->db->rollback();
                 return -2;
             }
         }
         else
         {
+           	$this->error=$this->db->error()." sql=".$sql;
+            dolibarr_syslog("Facture.class::delete ".$this->error);
             $this->db->rollback();
             return -1;
         }
@@ -796,25 +891,48 @@ class Facture extends CommonObject
 		global $conf,$langs;
 
 	    dolibarr_syslog("Facture.class.php::set_canceled rowid=".$this->id);
+
+		$this->db->begin();
+		
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 		$sql.= ' fk_statut=3';
 		if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
 		if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
 		$sql.= ' WHERE rowid = '.$this->id;
-		$resql = $this->db->query($sql);
 
+		$resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+			// On désaffecte de la facture les remises liées
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+			$sql.= ' SET fk_facture = NULL WHERE fk_facture = '.$this->id;
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+	            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
-            // Fin appel triggers
+	            // Appel des triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
+	            // Fin appel triggers
+	
+				$this->db->commit();
+	        	return 1;
+	        }
+			else
+			{
+				$this->error=$this->db->error()." sql=".$sql;
+				$this->db->rollback();
+	        	return -1;
+	        }
         }
-
-        return 1;
+		else
+		{
+			$this->error=$this->db->error()." sql=".$sql;
+			$this->db->rollback();
+        	return -2;
+        }
 	}
 
 	/**
@@ -836,7 +954,7 @@ class Facture extends CommonObject
 
 			// on vérifie si la facture est en numérotation provisoire
 			$facref = substr($this->ref, 1, 4);
-			
+
 			if ($force_number)
 			{
 				$numfa = $force_number;
@@ -910,7 +1028,7 @@ class Facture extends CommonObject
 			 	{
 			 		// Ligne de remise
 			 		dolibarr_syslog("Facture.class::set_valid: recherche si remise ".$this->lignes[$i]->fk_remise_except." toujours dispo");
-			 			
+
 					// On recherche si ligne de remise pas deja attribuée
 					$sql = 'SELECT fk_facture';
 					$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except';
@@ -923,7 +1041,7 @@ class Facture extends CommonObject
 						if ($num >= 1)
 						{
 							dolibarr_syslog("Facture.class::set_valid: top ligne de remise ".$this->lignes[$i]->fk_remise_except." pour ligne de facture ".$this->lignes[$i]->rowid);
-							
+
 							// On met à jour ligne de remise comme utilisée
 							$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 							$sql.= ' SET fk_facture = '.$this->lignes[$i]->rowid;
@@ -931,7 +1049,7 @@ class Facture extends CommonObject
 							$resql=$this->db->query($sql);
 							if ($resql)
 							{
-							
+
 							}
 							else
 							{
@@ -947,7 +1065,7 @@ class Facture extends CommonObject
 							$this->error=$langs->trans("InvoiceDiscountNotAvailable");
 							dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
 							break;
-						}	
+						}
 					}
 					else
 					{
@@ -969,7 +1087,7 @@ class Facture extends CommonObject
 				$sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet';
 				$sql.= ' WHERE fk_facture = '.$this->id;
 				$sql.= ' AND fk_product > 0';
-			
+
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -996,7 +1114,7 @@ class Facture extends CommonObject
                 $soc=new Societe($this->db);
                 $soc->id = $this->socidp;
                 $result=$soc->set_as_client();
-                
+
                 $this->ref = $numfa;
 
                 $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
@@ -1017,7 +1135,7 @@ class Facture extends CommonObject
             }
         }
     }
-    
+
   /**
    *
    *
@@ -1026,7 +1144,7 @@ class Facture extends CommonObject
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
         $sql .= " WHERE rowid = $this->id;";
-    
+
         if ($this->db->query($sql) )
         {
             return 1;
@@ -1049,7 +1167,7 @@ class Facture extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET model_pdf = '$modelpdf'";
 			$sql .= " WHERE rowid = $this->id AND fk_statut < 2 ;";
-	
+
 			if ($this->db->query($sql) )
 			{
 				$this->modelpdf=$modelpdf;
@@ -1127,7 +1245,7 @@ class Facture extends CommonObject
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
 			$total_ht  = $tabprice[0];
@@ -1157,7 +1275,7 @@ class Facture extends CommonObject
 			$ligne->subprice=$subprice;
 			$ligne->remise=$remise;
 			$ligne->date_start=$date_start;
-			$ligne->date_end=$date_end;				
+			$ligne->date_end=$date_end;
 			$ligne->ventil=$ventil;
 			$ligne->rang=-1;
 			$ligne->info_bits=$info_bits;
@@ -1166,12 +1284,12 @@ class Facture extends CommonObject
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 
-			$result=$ligne->insert();			
+			$result=$ligne->insert();
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la facture meme
 				$result=$this->update_price($facid);
-				if ($result > 0) 
+				if ($result > 0)
 				{
 					$this->db->commit();
 					return 1;
@@ -1213,7 +1331,7 @@ class Facture extends CommonObject
 		if ($this->brouillon)
 		{
 			$this->db->begin();
-			
+
 			// Nettoyage paramètres
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
@@ -1223,7 +1341,7 @@ class Facture extends CommonObject
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
 			$total_ht  = $tabprice[0];
@@ -1246,7 +1364,7 @@ class Facture extends CommonObject
 			$ligne=new FactureLigne($this->db);
 			$ligne->rowid=$rowid;
 			$ligne->fetch($rowid);
-			
+
 			$ligne->desc=$desc;
 			$ligne->price=$price;
 			$ligne->qty=$qty;
@@ -1255,12 +1373,12 @@ class Facture extends CommonObject
 			$ligne->subprice=$subprice;
 			$ligne->remise=$remise;
 			$ligne->date_start=$date_start;
-			$ligne->date_end=$date_end;				
+			$ligne->date_end=$date_end;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 
-			$result=$ligne->update();			
+			$result=$ligne->update();
 			if ($result > 0)
 			{
 				// Mise a jour info denormalisees au niveau facture
@@ -1282,16 +1400,45 @@ class Facture extends CommonObject
 	}
 
 	/**
-	* \brief     Supprime une ligne facture de la base
-	* \param     rowid      id de la ligne de facture a supprimer
+	*	\brief		Supprime une ligne facture de la base
+	*	\param		rowid		Id de la ligne de facture a supprimer
 	*/
 	function deleteline($rowid)
 	{
+		dolibarr_syslog("Facture.class::deleteline rowid=".$rowid." ".$this->brouillon);
+
 		if ($this->brouillon)
 		{
+			$this->db->begin();
+			
+			// Libere remise liee a ligne de facture
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+			$sql.= ' SET fk_facture = NULL where fk_facture = '.$rowid;
+			$result = $this->db->query($sql);
+			if ($result < 0)
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Facture.class::deleteline Error ".$this->error);
+				$this->db->rollback();
+				return -1;
+			}
+
+			// Efface ligne de facture
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
-			$result = $this->db->query( $sql);
-			$this->update_price($this->id);
+			$result = $this->db->query($sql);
+			if ($result < 0)
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Facture.class::deleteline  Error ".$this->error);
+				$this->db->rollback();
+				return -1;
+			}
+			
+			$result=$this->update_price($this->id);
+
+			$this->db->commit();
+
+			return 1;
 		}
 	}
 
@@ -1521,6 +1668,50 @@ class Facture extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	* 	\brief     	Renvoie l'id de la facture qui la remplace
+	*	\return		int		<0 si ko, 0 si aucune facture ne remplace, id facture sinon
+	*/
+	function getIdNextInvoice()
+	{
+		$sql = 'SELECT rowid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' WHERE fk_facture_source = '.$this->id;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) 
+			{
+				// Si il y en a
+				return $obj->rowid;
+			}
+			else
+			{
+				// Si aucune facture ne remplace	
+				return 0;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	
+	/**
+	 *    \brief      Retourne le libellé du type de facture
+	 *    \return     string        Libelle
+	 */
+	function getLibType()
+	{
+		global $langs;
+		if ($this->type == 0) return $langs->trans("InvoiceStandard");
+		if ($this->type == 1) return $langs->trans("InvoiceReplacement");
+		if ($this->type == 2) return $langs->trans("InvoiceAvoir");
+		return $langs->trans("Unknown");
+	}
+
 
 	/**
 	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
@@ -1859,7 +2050,7 @@ class Facture extends CommonObject
 					$ventilExportCompta++;
 				}
 			}
-			
+
 			if ($ventilExportCompta <> 0)
 			{
 				return 1;
@@ -1869,8 +2060,8 @@ class Facture extends CommonObject
 				return 0;
 			}
 		}
-   
-   
+
+
 	/**
 	 *   \brief     Renvoi si une facture peut etre supprimée complètement.
 	 *				La règle est la suivante:
@@ -1886,7 +2077,7 @@ class Facture extends CommonObject
     	$facref = substr($this->ref, 1, 4);
 
 		// Si facture non brouillon et non provisoire
-		if ($facref != 'PROV' && $conf->compta->enabled && $conf->global->FACTURE_ENABLE_EDITDELETE)
+		if ($facref != 'PROV' && ! $conf->comptaexpert->enabled && $conf->global->FACTURE_ENABLE_EDITDELETE)
 		{
 			// On ne peut supprimer que la dernière facture validée
 			// pour ne pas avoir de trou dans la numérotation
@@ -1898,7 +2089,7 @@ class Facture extends CommonObject
 			{
 				$maxfacnumber = $this->db->fetch_row($resql);
 			}
-			
+
 			$ventilExportCompta = $this->getVentilExportCompta();
 
 			// Si derniere facture et si non ventilée, on peut supprimer
@@ -1911,16 +2102,52 @@ class Facture extends CommonObject
 		{
 			return 1;
 		}
-		
+
 		return 0;
 	}
-	
-	
-   /**
-	  *   \brief      Créé une demande de prélèvement
+
+
+	/**
+	 *  	\brief     	Renvoi liste des factures remplacables
+	 *					Statut validee + aucun paiement + non paye
+	 *		\param		socid		Id societe
+	 *   	\return    	array		Tableau des factures ($id => $ref)
+	 */
+	function list_replacable_invoices($socid=0)
+	{
+		global $conf;
+
+		$return = array();
+
+		$sql = "SELECT f.rowid, f.facnumber";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
+		$sql.= " WHERE f.fk_statut = 1 AND f.paye = 0 AND pf.fk_paiement IS NULL";
+		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
+		$sql.= " ORDER BY f.facnumber";
+
+		dolibarr_syslog("Facture.class::list_replacable_invoices sq=$sql");
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$return[$obj->rowid]=$obj->facnumber;
+			}
+
+			return $return;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+
+	/**
+	*   \brief      Créé une demande de prélèvement
     *   \param      user        Utilisateur créant la demande
     *   \return     int         <0 si ko, >0 si ok
-	  */
+	*/
 	function demande_prelevement($user)
 	{
         dolibarr_syslog("Facture::demande_prelevement $this->statut $this->paye $this->mode_reglement_id");
@@ -2299,7 +2526,7 @@ class FactureLigne
     var $libelle;      		// Label produit
     var $product_desc;  	// Description produit
 
-	
+
 	/**
 	 *      \brief     Constructeur d'objets ligne de facture
 	 *      \param     DB      handler d'accès base de donnée
@@ -2349,7 +2576,7 @@ class FactureLigne
 			$this->fk_code_ventilation = $objp->fk_code_ventilation;
 			$this->fk_export_compta    = $objp->fk_export_compta;
 			$this->rang           = $objp->rang;
-			
+
 			$this->ref			  = $objp->product_ref;
 			$this->libelle		  = $objp->product_libelle;
 			$this->product_desc	  = $objp->product_desc;
@@ -2391,7 +2618,7 @@ class FactureLigne
 				return -1;
 			}
 		}
-		
+
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' (fk_facture, description, price, qty, tva_taux,';
@@ -2429,8 +2656,10 @@ class FactureLigne
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
+
 			$this->db->commit();
-			return 1;	
+			return $this->rowid;
 		}
 		else
 		{
@@ -2440,8 +2669,8 @@ class FactureLigne
             return -2;
 		}
 	}
-	
-	
+
+
 	/**
 	 *      \brief     	Mise a jour de l'objet ligne de facture en base
 	 *		\return		int		<0 si ko, >0 si ok
@@ -2478,7 +2707,7 @@ class FactureLigne
 		if ($resql)
 		{
 			$this->db->commit();
-			return 1;	
+			return 1;
 		}
 		else
 		{
@@ -2488,7 +2717,7 @@ class FactureLigne
             return -2;
 		}
 	}
-	
+
 	/**
 	 *      \brief     	Mise a jour en base des champs total_xxx de ligne de facture
 	 *		\return		int		<0 si ko, >0 si ok
@@ -2510,7 +2739,7 @@ class FactureLigne
 		if ($resql)
 		{
 			$this->db->commit();
-			return 1;	
+			return 1;
 		}
 		else
 		{
@@ -2519,7 +2748,7 @@ class FactureLigne
 			$this->db->rollback();
             return -2;
 		}
-	}	
+	}
 }
 
 ?>

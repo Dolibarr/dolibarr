@@ -50,7 +50,7 @@ class DiscountAbsolute
 
 	
 	/**
-	 *    	\brief      Charge objet remiset depuis la base
+	 *    	\brief      Charge objet remise depuis la base
 	 *    	\param      rowid       id du projet à charger
 	 *		\return		int			<0 si ko, =0 si non trouvé, >0 si ok
 	 */
@@ -91,5 +91,31 @@ class DiscountAbsolute
 			return -1;
 		}
 	}
+	
+	/**
+	*		\brief		Link the discount to a particular invoice
+	*		\param		rowid		Invoice id
+	*		\return		int			<0 ko, >0 ok
+	*/
+	function link_to_invoice($rowid)
+	{
+		dolibarr_syslog("Discount.class::link_to_invoice link discount ".$this->id." to invoice rowid=".$rowid);
+
+		$sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+		$sql.=" SET fk_facture = ".$rowid;
+		$sql.=" WHERE rowid = ".$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Discount.class::link_to_invoice ".$this->error." sql=".$sql);
+			return -1;
+		}
+	}
+	
 }
 ?>
