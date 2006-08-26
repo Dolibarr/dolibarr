@@ -122,7 +122,8 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 
 		$expedition = new Expedition($db);
 		$result=$expedition->fetch($id);
-
+		$result=$expedition->fetch_commande();
+		
         if ($obj->write_file($expedition, $langs) > 0)
 		{
 			// on supprime l'image correspondant au preview

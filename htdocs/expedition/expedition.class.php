@@ -578,46 +578,46 @@ class Expedition extends CommonObject
 	*/
 	function fetch_commande()
 	{
-		$this->commande =& new Commande($this->db);
+		$this->commande = & new Commande($this->db);
 		$this->commande->fetch($this->commande_id);
 	}
 
-
-  function fetch_lignes()
-  {
-    $this->lignes = array();
-
-    $sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp";    
-    $sql .= ", c.fk_product";
-    $sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
-    $sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
-
-    $sql .= " WHERE e.fk_expedition = ".$this->id;
-    $sql .= " AND e.fk_commande_ligne = c.rowid";
-
-
-    $resql = $this->db->query($sql);
-    if ($resql)
-    {
-      	$num = $this->db->num_rows($resql);
-      	$i = 0;
-      	while ($i < $num)
-      	{
-      		$ligne = new ExpeditionLigne($this->db);
-      		$obj = $this->db->fetch_object($resql);
-      		
-      		$ligne->fk_product     = $obj->fk_product;
-      		$ligne->qty_commande   = $obj->qtycom;
-      		$ligne->qty_expedition = $obj->qtyexp;
-      		$ligne->description    = $obj->description;
-      		
-      		$this->lignes[$i] = $ligne;
-      		$i++;
-      	}
-      	$this->db->free($resql);
-      }
-    return $this->lignes;
-  }
+	
+	function fetch_lignes()
+	{
+		$this->lignes = array();
+	
+		$sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp";
+		$sql .= ", c.fk_product";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
+		$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
+	
+		$sql .= " WHERE e.fk_expedition = ".$this->id;
+		$sql .= " AND e.fk_commande_ligne = c.rowid";
+	
+	
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$ligne = new ExpeditionLigne($this->db);
+				$obj = $this->db->fetch_object($resql);
+	
+				$ligne->fk_product     = $obj->fk_product;
+				$ligne->qty_commande   = $obj->qtycom;
+				$ligne->qty_expedition = $obj->qtyexp;
+				$ligne->description    = $obj->description;
+	
+				$this->lignes[$i] = $ligne;
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+		return $this->lignes;
+	}
   
     /**
      *    \brief      Retourne le libellé du statut d'une expedition

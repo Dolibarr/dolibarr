@@ -199,10 +199,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->SetFont('Arial','', 10);
 				$curY = $this->tableau_top + 5;
 				$pdf->Text(12,  $curY+2, $outputlangs->trans("Description"));
-				$pdf->Text(166, $curY, $outputlangs->trans("Qty"));
-				$pdf->Text(166, $curY+4, "Commandée");
-				$pdf->Text(190, $curY, $outputlangs->trans("Qty"));
-				$pdf->Text(190, $curY+4, "Livrée");
+				$pdf->Text(160, $curY, $outputlangs->trans("Qty"));
+				$pdf->Text(160, $curY+4, "Commandée");
+				$pdf->Text(186, $curY, $outputlangs->trans("Qty"));
+				$pdf->Text(186, $curY+4, "Livrée");
 
 				$this->expe->fetch_lignes();
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
@@ -243,20 +243,22 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                    
                     if ($conf->fckeditor->enabled)
                     {
-                    	$pdf->writeHTMLCell(108, 4, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
+                    	$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
+//                    	$pdf->SetXY ($this->posxdesc, $curY);
+//                    	$pdf->MultiCell(150, 3, "zzzz g dg fdgdfgfgfgfdg dfg dfgdfgfdggggggggggggggggggg f g fd g fdgfdgggggggggggggggggggggggggggg fg df g ff  hf hz", 0, 'J');
                     }
                     else
                     {
                     	$pdf->SetXY ($this->posxdesc, $curY);
-                    	$pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
+                    	$pdf->MultiCell(150, 3, $libelleproduitservice, 0, 'J');
                     }
-
-					$pdf->Text(170, $curY, $this->expe->lignes[$i]->qty_commande);
+                   	$pdf->SetXY (160, $curY);
+					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_commande);
 			
-					$pdf->Text(194, $curY, $this->expe->lignes[$i]->qty_expedition);
+                   	$pdf->SetXY (186, $curY);
+					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_expedition);
 				}
                 $pdf->AliasNbPages();
 

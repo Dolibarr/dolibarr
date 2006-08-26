@@ -142,7 +142,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	// Sauvegarde le dernier modèle choisi pour générer un document
 	$expedition = new Expedition($db, 0, $_REQUEST['id']);
 	$expedition->fetch($_REQUEST['id']);
-	$expedition->fetch_commande();
+
 	if ($_REQUEST['model'])
 	{
 		$expedition->set_pdf_model($user, $_REQUEST['model']);
