@@ -1902,7 +1902,7 @@ else
 						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 						{
 					    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-							$doleditor=new DolEditor('desc',$objp->description,200,'dolibarr_details');
+							$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details');
 							$doleditor->Create();
 						}
 						else

@@ -326,6 +326,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				print '</tr>';
 				$tot_ht += $obj->total_ht;
 				$tot_ttc += $obj->total_ttc;
+				print "x".$tot_ttc."z".$obj->tot_fttc;
 				$tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
 				//			}
 				$i++;

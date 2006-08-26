@@ -135,14 +135,14 @@ if ($_POST["action"] == 'update' &&
             }
             else
             {
-                $_GET["action"] = 're-edit';
+                $_GET["action"] = 'edit';
                 $_GET["id"] = $_POST["id"];
                 $mesg = $product->error;
             }
         }
         else
         {
-            $_GET["action"] = 're-edit';
+            $_GET["action"] = 'edit';
             $_GET["id"] = $_POST["id"];
             $mesg = $langs->trans("ErrorProductBadRefOrLabel");
         }
@@ -434,18 +434,18 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
         print '<input name="seuil_stock_alerte" type="hidden" value="0">';
     }
 
-    // Description
+    // Description (utilisé dans facture, propale...)
     print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
     
-	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 	{
     	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('desc','',180,'dolibarr_notes','',false);
+		$doleditor=new DolEditor('desc','',160,'dolibarr_notes','',false);
 		$doleditor->Create();
 	}
 	else
 	{
-		print '<textarea name="desc" rows="4" cols="50">';
+		print '<textarea name="desc" rows="4" cols="90">';
 		print '</textarea>';
 	}
         
@@ -461,7 +461,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
         print '</td></tr>';
     }
 
-    // Note
+    // Note (invisible sur facture, propales...)
     print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	{
@@ -471,7 +471,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 	}
 	else
 	{
-		print '<textarea name="note" rows="8" cols="50">';
+		print '<textarea name="note" rows="8" cols="70">';
 		print '</textarea>';
 	}
     print "</td></tr>";
@@ -682,18 +682,18 @@ if ($_GET["id"] || $_GET["ref"])
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
         }
 
-        // Description
+    	// Description (utilisé dans facture, propale...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
         print "\n";
-        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
         {
 	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('desc',$product->description,180,'dolibarr_notes','',false);
+			$doleditor=new DolEditor('desc',$product->description,160,'dolibarr_notes','',false);
 			$doleditor->Create();
         }
         else
         {
-        	print '<textarea name="desc" rows="4" cols="70">';
+        	print '<textarea name="desc" rows="4" cols="90">';
         	print $product->description;
         	print "</textarea>";
         }

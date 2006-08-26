@@ -720,9 +720,10 @@ class pdf_einstein extends ModelePDFCommandes
 
     /*
      *   	\brief      Affiche en-tête propale
-     *   	\param      pdf     objet PDF
-     *   	\param      fac     objet propale
+     *   	\param      pdf     		Objet PDF
+     *   	\param      com     		Objet commande
      *      \param      showadress      0=non, 1=oui
+     *      \param      outputlang		Objet lang cible
      */
     function _pagehead(&$pdf, $com, $showadress=1, $outputlangs)
     {
