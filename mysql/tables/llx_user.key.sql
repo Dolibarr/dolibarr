@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 -- ===========================================================================
 
 
--- Supprimme orhpelins pour permettre montée de la clé
--- V4 DELETE llx_user_rights FROM llx_user_rights LEFT JOIN llx_user ON llx_user_rights.fk_user = llx_user.rowid WHERE llx_user.rowid IS NULL;
+ALTER TABLE llx_user ADD UNIQUE uk_user_login (login);
+ALTER TABLE llx_user ADD UNIQUE uk_user_code (code);
 
-
-ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);

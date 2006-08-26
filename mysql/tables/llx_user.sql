@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,11 +26,11 @@ create table llx_user
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   datec             datetime,
   tms               timestamp,
-  login             varchar(24),
+  login             varchar(24) NOT NULL,
   pass              varchar(32),
   name              varchar(50),
   firstname         varchar(50),
-  code              varchar(4),
+  code              varchar(4) NOT NULL,
   office_phone      varchar(20),
   office_fax        varchar(20),
   user_mobile       varchar(20),
@@ -40,13 +41,11 @@ create table llx_user
   module_compta     smallint DEFAULT 1,
   fk_societe        integer DEFAULT 0,
   fk_socpeople      integer DEFAULT 0,
-  note              text,
+  note              text DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
   statut			tinyint DEFAULT 1,
-  lang              varchar(6),
-  
-  UNIQUE INDEX(login)
+  lang              varchar(6)
 )type=innodb;
