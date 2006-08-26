@@ -310,8 +310,6 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				//			if ($obj->total_ttc-$obj->tot_fttc >0)
-				//			{
 				$var=!$var;
 				print "<tr $bc[$var]>";
 				print "<td width=\"20%\"><a href=\"commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
@@ -326,9 +324,8 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				print '</tr>';
 				$tot_ht += $obj->total_ht;
 				$tot_ttc += $obj->total_ttc;
-				print "x".$tot_ttc."z".$obj->tot_fttc;
+				//print "x".$tot_ttc."z".$obj->tot_fttc;
 				$tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
-				//			}
 				$i++;
 			}
 			$var=!$var;
