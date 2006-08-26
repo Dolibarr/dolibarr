@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -57,13 +56,13 @@ if ($user->societe_id > 0)
 if ($_GET["action"] == 'builddoc')
 {
 	$cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
-	$cat->generate($_GET["id"]);
+	$result=$cat->generate($_GET["id"]);
 }
 
 if ($action=='delete_action')
 {
 	$actioncomm = new ActionComm($db);
-	$actioncomm->delete($actionid);
+	$result=$actioncomm->delete($actionid);
 }
 
 

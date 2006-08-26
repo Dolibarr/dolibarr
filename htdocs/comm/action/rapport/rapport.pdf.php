@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ class CommActionRapport
         global $user,$conf,$langs;
 
         $dir = $conf->action->dir_temp."/";
-        $file = $dir . "/actions-".$this->month."-".$this->year.".pdf";
+        $file = $dir . "actions-".$this->month."-".$this->year.".pdf";
 
         if (! file_exists($dir))
         {
