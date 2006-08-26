@@ -57,6 +57,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
+        $this->marge_gauche=10;
+        $this->marge_droite=10;
+        $this->marge_haute=10;
+        $this->marge_basse=10;
 
         $this->option_logo = 0;
 
@@ -65,29 +69,49 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
         if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 	}
 	
-	function Header()
+	/*
+     *   	\param      pdf     		Objet PDF
+     *   	\param      exp     		Objet expedition
+     *      \param      showadress      0=non, 1=oui
+     *      \param      outputlang		Objet lang cible
+     */
+    function _pagehead(&$pdf, $exp, $showadress=1, $outputlangs)
 	{
-		$this->rect(5, 5, 200, 30);
+		global $conf;
+		
+		if ($conf->barcode->enabled)
+		{
+			$posx=105;
+		}
+		else
+		{
+			$posx=$this->marge_gauche+3;
+		}
+		
+		$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
 	
-		$this->Code39(8, 8, $this->expe->ref);
+		if ($this->barcode->enabled)
+		{
+			$pdf->Code39($this->marge_gauche+3, $this->marge_haute+3, $this->expe->ref);
+		}
+		
+        $pdf->SetDrawColor(128,128,128);
+
+		$pdf->SetFont('Arial','', 14);
+		$pdf->Text($posx, 16, $outputlangs->trans("SendingReceipt"));
+		$pdf->Text($posx, 22, $outputlangs->trans("Ref") ." : ".$this->expe->ref);
+		$pdf->Text($posx, 28, $outputlangs->trans("Date")." : ".dolibarr_print_date($this->expe->date,"%d %b %Y"));
+		$pdf->Text($posx, 34, $outputlangs->trans("Page")." : ".$pdf->PageNo() ."/{nb}", 0);
 	
-		$this->SetFont('Arial','', 14);
-		$this->Text(105, 12, "Bordereau d'expédition : ".$this->expe->ref);
-		$this->Text(105, 18, "Date : " . strftime("%d %b %Y", $this->expe->date));
-		$this->Text(105, 24, "Page : ". $this->PageNo() ."/{nb}", 0);
-	
-	
-		$this->rect(5, 40, 200, 250);
-	
-		$this->tableau_top = 40;
-	
-		$this->SetFont('Arial','', 10);
-		$a = $this->tableau_top + 5;
-		$this->Text(10, $a, "Produit");
-		$this->Text(166, $a, "Quantitée");
-		$this->Text(166, $a+4, "Commandée");
-		$this->Text(190, $a, "Livrée");
-	
+		if ($this->barcode->enabled)
+		{
+			$pdf->Code39($this->marge_gauche+3, 44, $this->expe->commande->ref);
+		}
+		
+		$pdf->SetFont('Arial','', 14);
+		$pdf->Text($posx, 48, $outputlangs->trans("Order"));
+		$pdf->Text($posx, 54, $outputlangs->trans("Ref") ." : ".$this->expe->commande->ref);
+		$pdf->Text($posx, 60, $outputlangs->trans("Date")." : ".dolibarr_print_date($this->expe->commande->date,"%d %b %Y"));
 	}
 	
 	function generate(&$objExpe, $filename, $outputlangs='')
@@ -106,6 +130,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		if ($conf->expedition->dir_output)
 		{
 			$this->expe = $objExpe;
+			$this->expe->fetch_commande();
 		
 			// Définition de $dir et $file
 			if ($this->expe->specimen)
@@ -131,39 +156,105 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			
             if (file_exists($dir))
             {
-				$this->pdf = new FPDF();
-				$this->pdf->expe = &$this->expe;
+                $pdf=new ModelePdfExpedition();
+				//$this = new ModelePdfExpedition();
+				//$this->expe = &$this->expe;
 			
-				$this->pdf->Open();
-				$this->pdf->AliasNbPages();
-				$this->pdf->AddPage();
+				$pdf->Open();
+				$pdf->AliasNbPages();
+				$pdf->AddPage();
 			
-				$this->pdf->SetTitle($objExpe->ref);
-				$this->pdf->SetSubject($langs->trans("Sending"));
-				$this->pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				$pdf->SetTitle($this->expe->ref);
+				$pdf->SetSubject($langs->trans("Sending"));
+				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				//$this->pdf->SetAuthor($user->fullname);
 			
-				/*
-				*
-				*/
+                $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+                $pdf->SetAutoPageBreak(1,0);
+
+				$this->_pagehead($pdf,$this->exp,0,$outputlangs);
 			
-				$this->pdf->SetTextColor(0,0,0);
-				$this->pdf->SetFont('Arial','', 14);
+				$pdf->SetFont('Arial','', 14);
+				$pdf->SetTextColor(0,0,0);
 			
+		        $tab_top = 90;
+				$height_note = 200;
+				$pdf->Rect($this->marge_gauche, 80, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 210);
+		        $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note);
+				if ($this->barcode->enabled)
+				{
+			        $this->posxdesc=$this->marge_gauche+35;
+				}
+				else
+				{
+			        $this->posxdesc=$this->marge_gauche+1;
+				}
+				$this->tableau_top = 80;
+
+				$pdf->SetFont('Arial','', 10);
+				$curY = $this->tableau_top + 5;
+				$pdf->Text(12,  $curY+2, $outputlangs->trans("Description"));
+				$pdf->Text(166, $curY, $outputlangs->trans("Qty"));
+				$pdf->Text(166, $curY+4, "Commandée");
+				$pdf->Text(190, $curY, $outputlangs->trans("Qty"));
+				$pdf->Text(190, $curY+4, "Livrée");
+
 				$this->expe->fetch_lignes();
-			
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
 				{
-					$a = $this->pdf->tableau_top + 14 + ($i * 7);
+					$curY = $this->tableau_top + 14 + ($i * 7);
 			
-					$this->pdf->Text(8, $a, $this->expe->lignes[$i]->description);
+					if ($this->barcode->enabled)
+					{
+						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$this->expe->lignes[$i]->fk_product, 1, 8);
+					}
+					
+                    // Description de la ligne produit
+                    $libelleproduitservice=_dol_htmlentities($this->expe->lignes[$i]->description,0);
+                    if ($this->expe->lignes[$i]->description&&$this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
+                    {
+                        if ($libelleproduitservice) $libelleproduitservice.="\n";
+                        $libelleproduitservice.=_dol_htmlentities($this->expe->lignes[$i]->description,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+                    }
+                    // Si ligne associée à un code produit
+                    if ($this->expe->lignes[$i]->fk_product)
+                    {
+                        $prodser = new Product($this->db);
+                        $prodser->fetch($this->expe->lignes[$i]->fk_product);
+
+						// On ajoute la ref
+                        if ($prodser->ref)
+						{
+							$prefix_prodserv = "";
+                        	if($prodser->type == 0)
+                        		$prefix_prodserv = $outputlangs->trans("Product")." ";
+                        	if($prodser->type == 1)
+                        		$prefix_prodserv = $outputlangs->trans("Service")." ";
+
+                            $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
+                        }
+
+                    }
+
+                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+
+                    
+                    if ($conf->fckeditor->enabled)
+                    {
+                    	$pdf->writeHTMLCell(108, 4, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
+                    }
+                    else
+                    {
+                    	$pdf->SetXY ($this->posxdesc, $curY);
+                    	$pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
+                    }
+
+					$pdf->Text(170, $curY, $this->expe->lignes[$i]->qty_commande);
 			
-					$this->pdf->Text(170, $a, $this->expe->lignes[$i]->qty_commande);
-			
-					$this->pdf->Text(194, $a, $this->expe->lignes[$i]->qty_expedition);
+					$pdf->Text(194, $curY, $this->expe->lignes[$i]->qty_expedition);
 				}
 			
-				$this->pdf->Output($filename);
+				$pdf->Output($filename);
 	
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
@@ -186,5 +277,19 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
         return 0;   // Erreur par defaut
 	}
 }
+
+// Cette fonction est appelée pour coder ou non une chaine en html
+// selon qu'on compte l'afficher dans le PDF avec:
+// writeHTMLCell -> a besoin d'etre encodé en HTML
+// MultiCell -> ne doit pas etre encodé en HTML
+function _dol_htmlentities($stringtoencode,$isstringalreadyhtml)
+{
+	global $conf;
+
+	if ($isstringalreadyhtml) return $stringtoencode;
+	if ($conf->fckeditor->enabled) return htmlentities($stringtoencode);
+	return $stringtoencode;
+}
+
 
 ?>
