@@ -6,7 +6,8 @@ English Dolibarr changelog
 - Support credit note and discounts (relative and absolute) on
   commercial proposal, orders and invoices.
 - WYSIWYG editor for some fields (use embedded version of fckeditor)
-- Added an export tool to export main dolibarr data.
+- Added an export assistant module to export main dolibarr data.
+- Added backup tool to backup database via mysqldump.
 - Added product categories management with a categorie tree.
 - Management of companies' discounts (relative or absolute).
 - Support multi-langual description for products.
@@ -24,16 +25,19 @@ English Dolibarr changelog
 - Add Dolibarr triggers support on payments.
 - Add Dolibarr triggers on supplier and customers orders.
 - Support optionnal new javascript popup selector for date fields.
-- Support for several RSS boxes in external RSS module.
+- Support for several RSS boxes in external RSS module. Setup easier.
 - Can attach documents on Action, Orders, Invoices, Commercial proposals.
 - Can attach contacts on proposals, orders, contracts, invoices.
+- Preview on results of PDF generator modules in setup pages.
 - Code cleaner. Remove unused or duplicate code.
+- Save and show last connexion date for users.
 - Enhancements on a lot of forms for better ergonomy.
 - Can add/remove company logo.
 - Can configure your own SMTP server/port for mail sendings.
 - Works even on "UTF8 by default" systems (Mysql, Linux...)
 - Better compatibility with different PHP version or setup.
 - Lot of fixes after 2.0 release not fixed in 2.0.1.
+- Adde mysqli driver.
 - Traduction more complete.
 
 
