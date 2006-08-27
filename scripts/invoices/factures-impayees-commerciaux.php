@@ -128,8 +128,14 @@ function envoi_mail($oldemail,$message,$total)
     $mail = new CMailFile($subject,
     $sendto,
     $from,
-    $allmessage,array(),array(),array()
-    '', '', 0, $msgishtml);
+    $allmessage,
+    array(),
+    array(),
+    array(),
+    '',
+    '',
+    0,
+    $msgishtml);
 
     $mail->errors_to = $errorsto;
 
