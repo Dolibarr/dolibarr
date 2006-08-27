@@ -321,10 +321,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY(60,7);
 		$pdf->SetFont('Arial','B',14);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $langs->trans("SendingSheet"), '' , 'L');
+		$pdf->MultiCell(0, 8, $langs->trans("SendingSheet"), '' , 'L');	// Bordereau expedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
-		$Xoff = 115;
+		$Xoff = 140;
 //		$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
@@ -338,6 +338,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(0, 8, $langs->trans("RefOrder").': '.$exp->commande->ref, '' , 'L');
+
+		$Xoff = 115;
 		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe
 		$blSocX=11;

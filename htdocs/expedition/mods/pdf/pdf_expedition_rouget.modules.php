@@ -98,7 +98,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
         $pdf->SetDrawColor(128,128,128);
 
 		$pdf->SetFont('Arial','', 14);
-		$pdf->Text($posx, 16, $outputlangs->trans("SendingReceipt"));
+		$pdf->Text($posx, 16, $outputlangs->trans("SendingSheet"));	// Bordereau expedition
 		$pdf->Text($posx, 22, $outputlangs->trans("Ref") ." : ".$this->expe->ref);
 		$pdf->Text($posx, 28, $outputlangs->trans("Date")." : ".dolibarr_print_date($this->expe->date,"%d %b %Y"));
 		$pdf->Text($posx, 34, $outputlangs->trans("Page")." : ".$pdf->PageNo() ."/{nb}", 0);

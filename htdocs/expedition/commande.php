@@ -513,13 +513,16 @@ if ($_GET["id"] > 0)
             {
                 if ($somethingshown) print '<br>';
                 
-                print_titre($langs->trans("SendingsForSameOrder"));
+                print_titre($langs->trans("SendingsAndReceivingForSameOrder"));
                 print '<table class="liste" width="100%">';
                 print '<tr class="liste_titre">';
-                print '<td align="left">'.$langs->trans("Sending").'</td>';
                 print '<td>'.$langs->trans("Product").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-                print '<td align="center">'.$langs->trans("Date").'</td>';
+                print '<td align="center">'.$langs->trans("DateSending").'</td>';
+                if ($conf->expedition->enabled)
+                {
+                	print '<td>'.$langs->trans("SendingSheet").'</td>';
+                }
                 if ($conf->livraison->enabled)
                 {
                 	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
@@ -532,7 +535,6 @@ if ($_GET["id"] > 0)
                     $var=!$var;
                     $objp = $db->fetch_object($resql);
                     print "<tr $bc[$var]>";
-                    print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                     
                     if ($objp->fk_product > 0)
                     {
@@ -546,10 +548,14 @@ if ($_GET["id"] > 0)
                     }
                     else
                     {
-                        print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
+                        print "<td>".nl2br($objp->description)."</td>\n";
                     }
                     print '<td align="center">'.$objp->qty_livre.'</td>';
                     print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
+                    if ($conf->expedition->enabled)
+                    {
+	                    print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+                    }
                     if ($conf->livraison->enabled)
                     {
                     	if ($objp->livraison_id)
@@ -558,7 +564,7 @@ if ($_GET["id"] > 0)
                     	}
                     	else
                     	{
-                    		print '<td><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'<a></td>';
+                    		print '<td>&nbsp;</td>';
                     	}
                     }
 					print '</tr>';

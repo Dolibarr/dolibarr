@@ -2,6 +2,7 @@
 RefSending=Ref. sending
 Sending=Sending
 Sendings=Sendings
+Receivings=Receivings
 SendingsArea=Sendings area
 ListOfSendings=List of sendings
 SendingMethod=Sending method
@@ -21,6 +22,7 @@ QtyToShip=Qty to ship
 KeepToShip=Keep to ship
 OtherSendingsForSameOrder=Other sendings for this order
 SendingsForSameOrder=Sendings for this order
+SendingsAndReceivingForSameOrder=Sendings and receivings for this order
 SendingsToValidate=Sending to validate
 StatusSendingDraft=Draft
 StatusSendingValidated=Validated (products to ship or already received)
