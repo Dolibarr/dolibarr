@@ -1710,20 +1710,30 @@ function print_duree_select($prefix)
 		\remarks    Fonction utilisée dans les pdf et les pages html
 		\param	    amount			Montant a formater
 		\param	    html			Formatage html ou pas (0 par defaut)
+		\param	    langs			Objet langs
 		\seealso	price2num		Fonction inverse de price
 */
-function price($amount, $html=0)
+function price($amount, $html=0, $langs='')
 {
+	// Separateurs par defaut
+	$dec='.'; $thousand=' ';
+
+	// Si $langs defini
+	if (is_object($langs))
+	{
+		if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
+		if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
+		//print "x".$langs->trans("SeparatorThousand")."x";
+	}
+
+	// Formate nombre
 	if ($html)
 	{
-	
-		$dec='.'; $thousand=' ';
 		return ereg_replace(' ','&nbsp;',number_format($amount, 2, $dec, $thousand));
-	
 	}
 	else
 	{
-		return number_format($amount, 2, '.', ' ');
+		return number_format($amount, 2, $dec, $thousand);
 	}
 }
 
