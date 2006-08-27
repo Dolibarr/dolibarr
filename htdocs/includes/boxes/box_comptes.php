@@ -104,7 +104,7 @@ class box_comptes extends ModeleBoxes {
 					);
 
 					$this->info_box_contents[$i][3] = array('align' => 'right',
-					'text' => price( $acc->solde() )
+					'text' => price($acc->solde())
 					);
 
 					$i++;

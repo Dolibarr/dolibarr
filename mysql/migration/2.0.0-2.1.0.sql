@@ -164,7 +164,7 @@ update llx_const set name='NOTIFICATION_EMAIL_FROM', visible=0 where name='MAIN_
 update llx_const set name='NOTIFICATION_EMAIL_FROM', visible=0 where name='MAIN_EMAIL_FROM';
 
 insert into llx_const(name,value,type,visible,note) values('MAIN_SHOW_DEVELOPMENT_MODULES','0','yesno',1,'Make development modules visible');
-insert into llx_const(name,value,type,visible,note) values('PRODUCT_SHOW_WHEN_CREATE','1','yesno',1,'Add product list in first step of proposal, invoice creation');
+insert into llx_const(name,value,type,visible,note) values('PRODUCT_SHOW_WHEN_CREATE','1','yesno',1,'Add products\' list in first step of proposal, invoice, order creation');
 
 delete from llx_const where name in ('OSC_CATALOG_URL','OSC_LANGUAGE_ID');
 

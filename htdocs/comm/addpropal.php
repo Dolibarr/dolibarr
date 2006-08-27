@@ -30,7 +30,7 @@
 */
 
 require("./pre.inc.php");
- 
+
 include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
 if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
 {
@@ -104,7 +104,7 @@ if ($_GET["action"] == 'create')
 
     // Ref
     print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
-    
+
     // Reference client
 	  print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 		print '<input type="text" name="ref_client" value=""></td>';
@@ -115,7 +115,7 @@ if ($_GET["action"] == 'create')
 	print '<input type="hidden" name="socidp" value="'.$soc->id.'">';
 	print '</td>';
 	print '</tr>';
-	
+
 	/*
    * Contact de la propale
    */
@@ -162,7 +162,7 @@ if ($_GET["action"] == 'create')
 	if ($relative_discount)
 	{
 		print $langs->trans("CompanyHasRelativeDiscount",$relative_discount);
-	}	
+	}
 	else
 	{
 		print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -180,7 +180,7 @@ if ($_GET["action"] == 'create')
 	if ($absolute_discount)
 	{
 		print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-	}	
+	}
 	else
 	{
 		print $langs->trans("CompanyHasNoAbsoluteDiscount");
@@ -212,7 +212,7 @@ if ($conf->expedition->enabled)
 		}
 		print '</td></tr>';
 	}
-	
+
 	// Adresse de livraison
 	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
 	{
@@ -253,7 +253,7 @@ if ($conf->expedition->enabled)
 
     print "</table>";
 	print '<br>';
-    
+
     /*
      * Combobox pour la fonction de copie
      */
@@ -264,7 +264,7 @@ if ($conf->expedition->enabled)
     print '<td>';
     $liste_propal = array();
     $liste_propal[0] = '';
-    $sql ="SELECT p.rowid as id, CONCAT(p.ref, '-', s.nom)  as lib";
+    $sql ="SELECT p.rowid as id, CONCAT(p.ref, ' - ', s.nom)  as lib";
     $sql.=" FROM ".MAIN_DB_PREFIX."propal p, ".MAIN_DB_PREFIX."societe s";
     $sql.=" WHERE s.idp = p.fk_soc AND fk_statut <> 0 ORDER BY Id";
     $resql = $db->query($sql);
@@ -285,44 +285,48 @@ if ($conf->expedition->enabled)
       	dolibarr_print_error($db);
     }
     print '</td></tr>';
-   
-   	print '<tr><td colspan="3">&nbsp;</td></tr>';
-   	
+
+   	if ($conf->global->PRODUCT_SHOW_WHEN_CREATE) print '<tr><td colspan="3">&nbsp;</td></tr>';
+
     print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="true"></td>';
 	print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
-    print '<tr><td colspan="3">';
-    if ($conf->produit->enabled || $conf->service->enabled)
-    {
-        $lib=$langs->trans("ProductsAndServices");
 
-        print '<table class="border" width="100%">';
-        print '<tr>';
-        print '<td>'.$lib.'</td>';
-        print '<td>'.$langs->trans("Qty").'</td>';
-        print '<td>'.$langs->trans("ReductionShort").'</td>';
-        print '</tr>';
-        for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
-        {
-            print '<tr><td>';
-			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES == 1)
-				$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size,$soc->price_level);
-			else
-            	$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
-            print '</td>';
-            print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-            print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_client.'">%</td>';
-			print '</tr>';
-        }
+	if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
+	{
+	    print '<tr><td colspan="3">';
+	    if ($conf->produit->enabled || $conf->service->enabled)
+	    {
+	        $lib=$langs->trans("ProductsAndServices");
 
-        print "</table>";
+	        print '<table class="border" width="100%">';
+	        print '<tr>';
+	        print '<td>'.$lib.'</td>';
+	        print '<td>'.$langs->trans("Qty").'</td>';
+	        print '<td>'.$langs->trans("ReductionShort").'</td>';
+	        print '</tr>';
+	        for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+	        {
+	            print '<tr><td>';
+				// multiprix
+				if($conf->global->PRODUIT_MULTIPRICES == 1)
+					$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size,$soc->price_level);
+				else
+	            	$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
+	            print '</td>';
+	            print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
+	            print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_client.'">%</td>';
+				print '</tr>';
+	        }
 
-    }
-    else
-    {
-    	print '&nbsp;';
-    }
-    print '</td></tr>';
+	        print "</table>";
+
+	    }
+	    else
+	    {
+	    	print '&nbsp;';
+	    }
+	    print '</td></tr>';
+	}
 	print '</table>';
     print '<br>';
 
