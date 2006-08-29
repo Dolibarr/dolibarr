@@ -159,7 +159,6 @@ if ($step == 1 || ! $datatoexport)
     print '<table class="notopnoleftnoright" width="100%">';
 
     print $langs->trans("SelectExportDataSet").'<br>';
-    print '<br>';
     
     // Affiche les modules d'exports
     print '<table class="noborder" width="100%">';
