@@ -22,13 +22,14 @@
  */
 
 /**
-	    \file       htdocs/comm/remise.php
+	    \file       htdocs/comm/multprix.php
         \ingroup    commercial
-		\brief      Onglet remise de la societe
+		\brief      Onglet choix du niveau de prix
 		\version    $Revision$
 */
  
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $user->getrights('propale');
