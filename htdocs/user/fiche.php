@@ -333,7 +333,11 @@ if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
 
 
 
+
+
 llxHeader('',$langs->trans("UserCard"));
+
+$html = new Form($db);
 
 if (($action == 'create') || ($action == 'adduserldap'))
 {
@@ -344,8 +348,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
     /* ************************************************************************** */
 
     print_titre($langs->trans("NewUser"));
-
     print "<br>";
+
+	print $langs->trans("CreateInternalUserDesc");
+    print "<br>";
+    print "<br>";
+
     if ($message) { print $message.'<br>'; }
     
     /*
@@ -440,7 +448,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<table class="border" width="100%">';
 
     print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
-    print '<td class="valeur">';
+    print '<td>';
     if ($ldap_nom)
     {
     	print '<input type="hidden" name="nom" value="'.$ldap_nom.'">';
@@ -453,7 +461,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
-    print '<td class="valeur">';
+    print '<td>';
     if ($ldap_prenom)
     {
     	print '<input type="hidden" name="prenom" value="'.$ldap_prenom.'">';
@@ -466,7 +474,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
-    print '<td class="valeur">';
+    print '<td>';
     if ($ldap_login)
     {
     	print '<input type="hidden" name="login" value="'.$ldap_login.'">';
@@ -493,7 +501,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     	}
     	
     	print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
-    	print '<td class="valeur">';
+    	print '<td>';
     	if ($ldap_SID)
     	{
     		print 'mot de passe du domaine';
@@ -507,13 +515,19 @@ if (($action == 'create') || ($action == 'adduserldap'))
     if ($user->admin)
     {
         print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
-        print '<td class="valeur">';
+        print '<td>';
         $form->selectyesnonum('admin',0);
         print "</td></tr>\n";
     }
     
+    print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
+    print '<td>';
+    print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+    print '</td></tr>';
+
+
     print '<tr><td valign="top">'.$langs->trans("Phone").'</td>';
-    print '<td class="valeur">';
+    print '<td>';
     if ($ldap_phone)
     {
     	print '<input type="hidden" name="office_phone" value="'.$ldap_phone.'">';
@@ -526,7 +540,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
-    print '<td class="valeur">';
+    print '<td>';
     if ($ldap_fax)
     {
     	print '<input type="hidden" name="office_fax" value="'.$ldap_fax.'">';
@@ -539,7 +553,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Mobile").'</td>';
-    print '<td class="valeur">';
+    print '<td>';
     if ($ldap_mobile)
     {
     	print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
@@ -552,7 +566,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
-    print '<td class="valeur">';
+    print '<td>';
     if ($ldap_mail)
     {
     	print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
@@ -565,14 +579,14 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-    print "<textarea name=\"note\" rows=\"6\" cols=\"40\">";
+    print "<textarea name=\"note\" rows=\"6\" cols=\"80\">";
     print "</textarea></td></tr>\n";
 
     // Autres caractéristiques issus des autres modules
     if ($conf->webcal->enabled)
     {
         print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-        print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
+        print '<td><input size="30" type="text" name="webcal_login" value=""></td></tr>';
     }
 
     print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
@@ -661,7 +675,6 @@ else
          */
         if ($action == 'password')
         {
-            $html = new Form($db);
             $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password");
             print '<br>';
         }
@@ -671,7 +684,6 @@ else
          */
         if ($action == 'passwordsend')
         {
-            $html = new Form($db);
             $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend");
             print '<br>';
         }
@@ -681,7 +693,6 @@ else
          */
         if ($action == 'disable')
         {
-            $html = new Form($db);
             $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable");
             print '<br>';
         }
@@ -691,7 +702,6 @@ else
          */
         if ($action == 'delete')
         {
-            $html = new Form($db);
             $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete");
             print '<br>';
         }
@@ -705,7 +715,7 @@ else
             print '<table class="border" width="100%">';
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td width="50%" class="valeur">'.$fuser->nom.'</td>';
+            print '<td width="50%">'.$fuser->nom.'</td>';
             print '<td align="center" valign="middle" width="25%" rowspan="14">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
@@ -718,13 +728,13 @@ else
             print '</td></tr>';
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td width="50%" class="valeur">'.$fuser->prenom.'</td>';
+            print '<td width="50%">'.$fuser->prenom.'</td>';
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
             if ($fuser->login)
             {
-            	print '<td width="50%" class="valeur">'.$fuser->login;
+            	print '<td width="50%">'.$fuser->login;
             }
             else if ($fuser->ldap_sid)
             {
@@ -755,23 +765,23 @@ else
             }
             else
             {
-            	print '<td width="50%" class="valeur">'.eregi_replace('.','*',$fuser->pass);
+            	print '<td width="50%">'.eregi_replace('.','*',$fuser->pass);
             }
             print "</td></tr>\n";
 
             // Administrateur
             print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
-            print '<td class="valeur">'.yn($fuser->admin);
+            print '<td>'.yn($fuser->admin);
             if ($fuser->admin) print ' '.img_picto($langs->trans("Administrator"),"star");
             print '</td>';
             print "</tr>\n";
             
-            // Source
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Source").'</td>';
-            print '<td class="valeur">';
+            // Type
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
+            print '<td>';
             if ($fuser->societe_id)
             {
-                print $langs->trans("External");
+                print $html->textwithhelp($langs->trans("External"),$langs->trans("InternalExternalDesc"));
             }
             else if ($fuser->ldap_sid)
             {
@@ -779,13 +789,13 @@ else
             }
             else
             {
-                print $langs->trans("Internal");
+                print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
             }
             print '</td></tr>';
 
             // Company / Contact
             print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
-            print '<td class="valeur">';
+            print '<td>';
             if ($fuser->societe_id > 0)
             {
                 $societe = new Societe($db);
@@ -807,34 +817,34 @@ else
 
             // Tel, fax, portable
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Phone").'</td>';
- 			print '<td width="50%" class="valeur">'.$fuser->office_phone.'</td>';
+ 			print '<td width="50%">'.$fuser->office_phone.'</td>';
  			print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
- 			print '<td width="50%" class="valeur">'.$fuser->office_fax.'</td>';
+ 			print '<td width="50%">'.$fuser->office_fax.'</td>';
  			print '<tr><td width="25%" valign="top">'.$langs->trans("Mobile").'</td>';
- 			print '<td width="50%" class="valeur">'.$fuser->user_mobile.'</td>';
+ 			print '<td width="50%">'.$fuser->user_mobile.'</td>';
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td width="50%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+            print '<td width="50%"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("DateCreation").'</td>';
-            print '<td class="valeur">'.dolibarr_print_date($fuser->datec,"%d/%m/%Y %H:%M:%S").'</td>';
+            print '<td>'.dolibarr_print_date($fuser->datec,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("DateModification").'</td>';
-            print '<td class="valeur">'.dolibarr_print_date($fuser->datem,"%d/%m/%Y %H:%M:%S").'</td>';
+            print '<td>'.dolibarr_print_date($fuser->datem,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("LastConnexion").'</td>';
-            print '<td class="valeur">'.dolibarr_print_date($fuser->datelastlogin,"%d/%m/%Y %H:%M:%S").'</td>';
+            print '<td>'.dolibarr_print_date($fuser->datelastlogin,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("PreviousConnexion").'</td>';
-            print '<td class="valeur">'.dolibarr_print_date($fuser->datepreviouslogin,"%d/%m/%Y %H:%M:%S").'</td>';
+            print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
 
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-            print '<td class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
+            print '<td>'.nl2br($fuser->note).'&nbsp;</td>';
             print "</tr>\n";
 
             // Autres caractéristiques issus des autres modules
@@ -1029,7 +1039,7 @@ else
             $rowspan=12;
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td width="50%" class="valeur">';
+            print '<td width="50%">';
             if ($caneditfield) print '<input class="flat" size="30" type="text" name="nom" value="'.$fuser->nom.'">';
             else print $fuser->nom;
             print '</td>';
@@ -1076,7 +1086,7 @@ else
             }
             else
             {
-                print '<td width="50%" class="valeur">'.eregi_replace('.','*',$fuser->pass);
+                print '<td width="50%">'.eregi_replace('.','*',$fuser->pass);
             }
             print "</td></tr>\n";
             
@@ -1084,13 +1094,13 @@ else
             print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
             if ($fuser->societe_id > 0)
             {
-                print '<td class="valeur">';
+                print '<td>';
                 print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
                 print '</td></tr>';
             }
             else
             {
-                print '<td class="valeur">';
+                print '<td>';
                 if ($user->admin)
                 {
                     $form->selectyesnonum('admin',$fuser->admin);
@@ -1102,9 +1112,9 @@ else
                 print '</td></tr>';
             }
 
-            // Source
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Source").'</td>';
-            print '<td class="valeur">';
+            // Type
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
+            print '<td>';
             if ($fuser->societe_id)
             {
                 print $langs->trans("External");
@@ -1121,7 +1131,7 @@ else
 
             // Company / Contact
             print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
-            print '<td class="valeur">';
+            print '<td>';
             if ($fuser->societe_id > 0)
             {
                 $societe = new Societe($db);
@@ -1169,7 +1179,7 @@ else
             print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
             if ($caneditfield) 
             {
-	            print '<textarea class="flat" name="note" rows="'.ROWS_3.'" cols="70">';
+	            print '<textarea class="flat" name="note" rows="'.ROWS_3.'" cols="80">';
 	            print $fuser->note;
 	            print '</textarea>';
 	        }
@@ -1184,7 +1194,7 @@ else
             {
             		$langs->load("other");
             		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-            		print '<td class="valeur" colspan="2">';
+            		print '<td colspan="2">';
             		if ($caneditfield) print '<input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'">';
             		else print $fuser->webcal_login;
             		print '</td></tr>';

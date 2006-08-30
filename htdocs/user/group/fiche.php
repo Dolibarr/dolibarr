@@ -159,7 +159,7 @@ if ($action == 'create')
     print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
 
     print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-    print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
+    print "<textarea name=\"note\" rows=\"12\" cols=\"80\">";
     print "</textarea></td></tr>\n";
 
     print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></td></tr>';
@@ -378,7 +378,7 @@ else
             print '<td width="75%" class="valeur"><input size="12" maxlength="8" type="text" name="group" value="'.$group->nom.'"></td>';
             print "</tr>\n";
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-            print '<td class="valeur"><textarea name="note" rows="12" cols="40">'.nl2br($group->note).'</textarea></td>';
+            print '<td class="valeur"><textarea name="note" rows="12" cols="80">'.nl2br($group->note).'</textarea></td>';
             print "</tr>\n";
             print '<tr><td align="center" colspan="2"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
             print "</table>\n";
