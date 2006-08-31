@@ -98,10 +98,11 @@ class User
 	}
 
 
-  /**
-   *    \brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
-   *    \param      login       Si défini, login a utiliser pour recherche
-   */
+	/**
+	*	\brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
+	*	\param      login       Si défini, login a utiliser pour recherche
+	*	\return		int			<0 si ko, >0 si ok
+	*/
 	function fetch($login='')
     {
         // Recupere utilisateur
@@ -163,7 +164,8 @@ class User
         }
         else
         {
-            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
         }
         
         // Recupere parametrage global propre à l'utilisateur
@@ -187,7 +189,8 @@ class User
         }
         else
         {
-            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
         }
 
         // Recupere parametrage propre à la page et à l'utilisateur
@@ -217,9 +220,12 @@ class User
             }
             else
             {
-                dolibarr_print_error($this->db);
+                $this->error=$this->db->error();
+                return -1;
             }
         }
+        
+        return 1;
     }
   
   /**
@@ -1083,7 +1089,33 @@ class User
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin.' ');
 		$result.=$lien.$this->nom.' '.$this->prenom.$lienfin;
 		return $result;
-	}    
+	}
+	
+	/**
+	 *    	\brief      Renvoie login clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Sur quoi pointe le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getLoginUrl($withpicto=0,$option='')
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		if ($option == 'xxx')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+		}
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin.' ');
+		$result.=$lien.$this->login.$lienfin;
+		return $result;
+	}		
 }
 
 ?>

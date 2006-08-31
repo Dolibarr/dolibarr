@@ -1196,7 +1196,7 @@ else
 				if ($conf->fckeditor->enabled)
 				{
 			    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);
+					$doleditor=new DolEditor('note',$fuser->note,180,'dolibarr_notes','',false);
 					$doleditor->Create();
 				}
 				else
