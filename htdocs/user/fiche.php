@@ -578,9 +578,21 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
-    print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-    print "<textarea name=\"note\" rows=\"6\" cols=\"80\">";
-    print "</textarea></td></tr>\n";
+    print '<tr><td valign="top">';
+    print $langs->trans("Note");
+    print '</td><td>';
+	if ($conf->fckeditor->enabled)
+	{
+    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
+		print '</textarea>';
+	}
+    print "</td></tr>\n";
 
     // Autres caractéristiques issus des autres modules
     if ($conf->webcal->enabled)
@@ -714,9 +726,10 @@ else
         {
             print '<table class="border" width="100%">';
 
+            $rowspan=15;
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td width="50%">'.$fuser->nom.'</td>';
-            print '<td align="center" valign="middle" width="25%" rowspan="14">';
+            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
                 print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
@@ -843,8 +856,9 @@ else
             print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
 
+            // Note
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-            print '<td>'.nl2br($fuser->note).'&nbsp;</td>';
+            print '<td colspan="2">'.nl2br($fuser->note).'&nbsp;</td>';
             print "</tr>\n";
 
             // Autres caractéristiques issus des autres modules
@@ -1035,8 +1049,8 @@ else
             print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="action" value="update">';
             print '<table width="100%" class="border">';
-            
-            $rowspan=12;
+
+            $rowspan=11;
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td width="50%">';
@@ -1052,7 +1066,7 @@ else
             {
                 print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
             }
-            if ($caneditfield) 
+            if ($caneditfield)
             {
 	            print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
 	            print '<tr><td>';
@@ -1176,12 +1190,21 @@ else
 			else print $fuser->email; 
             print '</td></tr>';
 
-            print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
+            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">';
             if ($caneditfield) 
             {
-	            print '<textarea class="flat" name="note" rows="'.ROWS_3.'" cols="80">';
-	            print $fuser->note;
-	            print '</textarea>';
+				if ($conf->fckeditor->enabled)
+				{
+			    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+					$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);
+					$doleditor->Create();
+				}
+				else
+				{
+					print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
+		            print $fuser->note;
+					print '</textarea>';
+				}
 	        }
 	        else
 	        {
