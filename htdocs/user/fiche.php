@@ -794,7 +794,7 @@ else
             print '<td>';
             if ($fuser->societe_id)
             {
-                print $langs->trans("External");
+                print $html->textwithhelp($langs->trans("External"),$langs->trans("InternalExternalDesc"));
             }
             else if ($fuser->ldap_sid)
             {
