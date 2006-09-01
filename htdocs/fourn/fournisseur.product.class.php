@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +18,19 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/product.class.php
-   \ingroup    produit
-   \brief      Fichier de la classe des produits prédéfinis
-   \version    $Revision$
+		\file       htdocs/fourn/fournisseur.product.class.php
+		\ingroup    produit
+		\brief      Fichier de la classe des produits prédéfinis
+		\version    $Revision$
 */
 
 
 /**
-   \class      Product
-   \brief      Classe permettant la gestion des produits prédéfinis
+		\class      Product
+		\brief      Classe permettant la gestion des produits prédéfinis
 */
 
 require_once DOL_DOCUMENT_ROOT."/product.class.php";
@@ -84,7 +84,6 @@ class ProductFournisseur extends Product
    *
    *
    */
-
   function get_buyprice($qty) 
   {
     Product::get_buyprice($this->fourn->id, $qty);
@@ -94,7 +93,6 @@ class ProductFournisseur extends Product
    *
    *
    */
-
   function update($ref, $qty, $buyprice, $user) 
   {
     $this->fourn_ref = $ref;
