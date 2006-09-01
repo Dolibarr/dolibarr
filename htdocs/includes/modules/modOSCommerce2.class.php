@@ -29,17 +29,17 @@
 /**
         \file       htdocs/includes/modules/modOSCommerce2.class.php
         \ingroup    oscommerce2
-        \brief      Fichier de description et activation du module OSCommerce
+        \brief      Fichier de description et activation du module OSCommerce2
 */
 
 include_once "DolibarrModules.class.php";
 
 /** 
 		\class 		modOSCommerce2
-		\brief      Classe de description et activation du module OSCommerce
+		\brief      Classe de description et activation du module OSCommerce2
 */
 
-class modOSCOmmerce2 extends DolibarrModules
+class modOSCommerce2 extends DolibarrModules
 {
 
 	/**
