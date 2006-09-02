@@ -59,7 +59,7 @@ if ($_POST['sendit'] && $conf->upload)
 	if ($facture->fetch($facid))
     {
 		$ref = sanitize_string($facture->ref);
-        $upload_dir = $conf->fournisseur->facture->dir_output . '/' . $ref;
+        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
         if (! is_dir($upload_dir)) create_exdir($upload_dir);
     
         if (is_dir($upload_dir))
@@ -87,7 +87,7 @@ if ($action=='delete')
 	if ($facture->fetch($facid))
     {
 		$ref = sanitize_string($facture->ref);
-        $upload_dir = $conf->fournisseur->facture->dir_output . '/' . $ref;
+        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
     	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
     	dol_delete_file($file);
         $mesg = '<div class="ok">'.$langs->trans('FileWasRemoved').'</div>';
@@ -109,7 +109,7 @@ if ($facid > 0)
     {
 		$facref = sanitize_string($facture->ref);
 
-		$upload_dir = $conf->fournisseur->facture->dir_output.'/'.$facref;
+		$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
 
         $societe = new Societe($db);
         $societe->fetch($facture->socidp);
@@ -200,7 +200,7 @@ if ($facid > 0)
     					$var=!$var;
     					print '<tr '.$bc[$var].'>';
     					print '<td>';
-    					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_fournisseur&file='.$facref.'/'.urlencode($file).'">'.$file.'</a>';
+    					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_fournisseur&file='.get_exdir($facture->id,2).'/'.urlencode($file).'">'.$file.'</a>';
     					print "</td>\n";
     					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
     					print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';

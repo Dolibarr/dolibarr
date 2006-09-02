@@ -429,7 +429,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	 * Documents générés
 	 */
 	$filename=sanitize_string($don->id);
-	$filedir=$conf->don->dir_output . '/' . get_exdir($filename);
+	$filedir=$conf->don->dir_output . '/' . get_exdir($filename,2);
 	$urlsource=$_SERVER['PHP_SELF'].'?rowid='.$don->id;
 //            $genallowed=($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer);
 //            $delallowed=$user->rights->facture->supprimer;

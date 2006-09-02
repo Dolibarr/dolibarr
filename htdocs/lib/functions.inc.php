@@ -1917,12 +1917,16 @@ function departement_rowid($db,$code, $pays_id)
 /**
  *      \brief      Renvoi un chemin de classement répertoire en fonction d'un id
  *                  Examples: 1->"0/0/1/", 15->"0/1/5/"
- *      \param      $num        id à décomposer
+ *      \param      $num        Id à décomposer
+ *      \param      $level		Niveau de decoupage (1, 2 ou 3 niveaux)
  */
-function get_exdir($num)
+function get_exdir($num,$level=3)
 {
-    $num = substr("000".$num, -3);
-    return substr($num, 0,1).'/'.substr($num, 1,1).'/'.substr($num, 2,1).'/';
+    $num = substr("000".$num, -$level);
+	if ($level == 1) return substr($num,0,1).'/';
+	if ($level == 2) return substr($num,1,1).'/'.substr($num,0,1).'/';
+	if ($level == 3) return substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1).'/';
+	return '';
 }
 
 /**

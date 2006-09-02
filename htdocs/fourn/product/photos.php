@@ -145,7 +145,7 @@ if ($_GET["id"])
             $nbphoto=0;
             $nbbyrow=5;
             
-            $pdir = get_exdir($product->id) . $product->id ."/photos/";
+            $pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             $dir = $conf->produit->dir_output . '/'. $pdir;
 
             print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';

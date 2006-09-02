@@ -503,44 +503,32 @@ echo $file;
 
     <div class="formelementrow">
         Compression :
-        <input type="radio" name="compression" value="none"
-            id="radio_compression_none"
-            onclick="document.getElementById('checkbox_dump_asfile').checked = true;"
-             checked="checked" />
-        <label for="radio_compression_none">aucune</label>
+<?php
 
-<!-- No zip support (not open source)
-            <input type="radio" name="compression" value="zip"
-            id="radio_compression_zip"
-            onclick="document.getElementById('checkbox_dump_asfile').checked = true;"
-             />
-        <label for="radio_compression_zip">"zippé"</label>
--->
+$compression=array(
+	'none' => array('function' => '',         'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
+//	'zip'  => array('function' => 'zip_open', 'id' => 'radio_compression_zip',  'label' => $langs->trans("Zip")),		Not open source
+	'gz'   => array('function' => 'gz_open',  'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
+	'bz'   => array('function' => 'bz_open',  'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"))
+);
 
-<?php
-if (function_exists('gz_open'))
+foreach($compression as $key => $val)
 {
-?>
-            <input type="radio" name="compression" value="gz"
-            id="radio_compression_gzip"
-            onclick="document.getElementById('checkbox_dump_asfile').checked = true;"
-             />
-        <label for="radio_compression_gzip">"gzippé"</label>
-<?php
+	if (! $val['function'] || function_exists($val['function']))
+	{
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"';
+		print ' onclick="document.getElementById(\'checkbox_dump_asfile\').checked = true;" checked="checked" />';
+		print ' <label for="radio_compression_none">'.$val['label'].'</label>';
+	}
+	else
+	{
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="true">';
+		print ' <label for="radio_compression_none">'.$val['label'].'</label>';
+		print ' ('.$langs->trans("NotAvailable").')';
+	}	
+	print ' &nbsp; &nbsp; ';
 }
-?>
-<?php
-if (function_exists('bz_open'))
-{
-?>
-            <input type="radio" name="compression" value="bz"
-            id="radio_compression_bzip"
-            onclick="document.getElementById('checkbox_dump_asfile').checked = true;"
-             />
-        <label for="radio_compression_bzip">"bzippé"</label>
-        </div>
-<?php
-}
+
 ?>
 
 </fieldset>

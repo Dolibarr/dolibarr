@@ -94,7 +94,7 @@ class html_cerfafr extends ModeleDon
 			else
 			{
 				$donref = sanitize_string($don->ref);
-				$dir = $conf->don->dir_output . "/" . get_exdir($donref);
+				$dir = $conf->don->dir_output . "/" . get_exdir($donref,2);
 				$file = $dir . "/" . $donref . ".html";
 			}
 			

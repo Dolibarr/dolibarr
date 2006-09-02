@@ -2002,7 +2002,7 @@ function get_each_prod()
    */
   function add_photo($sdir, $files)
   {
-    $dir = $sdir .'/'. get_exdir($this->id) . $this->id ."/";
+    $dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
     $dir .= "photos/";
     
     if (! file_exists($dir))
@@ -2029,7 +2029,7 @@ function get_each_prod()
    */
   function is_photo_available($sdir)
   {
-    $pdir = get_exdir($this->id) . $this->id ."/photos/";
+    $pdir = get_exdir($this->id,2) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
     
     $nbphoto=0;
@@ -2056,7 +2056,7 @@ function get_each_prod()
    */
   function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5)
   {
-    $pdir = get_exdir($this->id) . $this->id ."/photos/";
+    $pdir = get_exdir($this->id,2) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
     
     $nbphoto=0;

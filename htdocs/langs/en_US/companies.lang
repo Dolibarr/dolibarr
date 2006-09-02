@@ -15,6 +15,7 @@ NewSocGroup=Nouveau companies group
 ProspectionArea=Prospection area
 SocGroup=Group of companies
 IdCompany=Company Id
+IdContact=Contact Id
 Company=Company
 CompanyName=Company name
 Companies=Companies

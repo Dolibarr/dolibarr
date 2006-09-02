@@ -15,6 +15,7 @@ NewSocGroup=Nouveau groupement de sociétés
 ProspectionArea=Espace prospection
 SocGroup=Groupement de sociétés
 IdCompany=Id société
+IdContact=Id contact
 Company=Société
 CompanyName=Raison sociale
 Companies=Sociétés

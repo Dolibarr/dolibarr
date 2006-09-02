@@ -273,7 +273,7 @@ class Expedition extends CommonObject
                     return -1;
                 }
     
-            $file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id) . "/" . $this->id.".pdf";
+            $file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
             $this->pdf_filename = $file;
     
             return 1;

@@ -240,7 +240,7 @@ class Livraison extends CommonObject
 
             if ($this->statut == 0) $this->brouillon = 1;
 
-            $file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id) . "/" . $this->id.".pdf";
+            $file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id,2) . "/" . $this->id.".pdf";
             $this->pdf_filename = $file;
 
             return 1;

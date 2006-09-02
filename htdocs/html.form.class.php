@@ -2567,7 +2567,7 @@ class Form
 	        $relativepath=$file["name"];								// Cas general
 	        if ($filename) $relativepath=$filename."/".$file["name"];	// Cas prpal, facture...
 	        // Autre cas
-            if ($modulepart == 'don')        { $relativepath = get_exdir($filename).$file["name"]; }
+            if ($modulepart == 'don')        { $relativepath = get_exdir($filename,2).$file["name"]; }
             if ($modulepart == 'export')     { $relativepath = $file["name"]; }
 
             // Défini le type MIME du document
