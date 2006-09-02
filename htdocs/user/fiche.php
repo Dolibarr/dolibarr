@@ -87,7 +87,18 @@ if ($_POST["action"] == 'confirm_disable' && $_POST["confirm"] == "yes")
     {
         $edituser = new User($db, $_GET["id"]);
         $edituser->fetch($_GET["id"]);
-        $edituser->disable();
+        $edituser->setstatus(0);
+        Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
+        exit;
+    }
+}
+if ($_POST["action"] == 'confirm_enable' && $_POST["confirm"] == "yes")
+{
+    if ($_GET["id"] <> $user->id)
+    {
+        $edituser = new User($db, $_GET["id"]);
+        $edituser->fetch($_GET["id"]);
+        $edituser->setstatus(1);
         Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
         exit;
     }
@@ -106,7 +117,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 }
 
 //reactive un compte ldap
-if ($conf->ldap->enabled && $_GET["action"] == 'reactivate' && $canadduser)
+if ($conf->ldap->enabled && $_GET["action"] == 'reactivate' && $candisableuser)
 {
     if ($_GET["id"] <> $user->id)
     {
@@ -240,8 +251,8 @@ if ($_POST["action"] == 'update' && $caneditfield)
     $edituser->pass          = trim($_POST["pass"]);
     $edituser->admin         = trim($_POST["admin"]);
     $edituser->office_phone  = trim($_POST["office_phone"]);
- 	  $edituser->office_fax    = trim($_POST["office_fax"]);
- 	  $edituser->user_mobile   = trim($_POST["user_mobile"]);
+	$edituser->office_fax    = trim($_POST["office_fax"]);
+ 	$edituser->user_mobile   = trim($_POST["user_mobile"]);
     $edituser->email         = trim($_POST["email"]);
     $edituser->note          = trim($_POST["note"]);
     $edituser->webcal_login  = trim($_POST["webcal_login"]);
@@ -565,6 +576,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
+	// EMail
     print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
     print '<td>';
     if ($ldap_mail)
@@ -710,6 +722,15 @@ else
         }
 
         /*
+         * Confirmation activation
+         */
+        if ($action == 'enable')
+        {
+            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnabledUser",$fuser->login),"confirm_enable");
+            print '<br>';
+        }
+
+        /*
          * Confirmation suppression
          */
         if ($action == 'delete')
@@ -744,20 +765,17 @@ else
             print '<td width="50%">'.$fuser->prenom.'</td>';
             print "</tr>\n";
 
+			// Login
             print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-            if ($fuser->login)
+            if ($fuser->ldap_sid)
             {
-            	print '<td width="50%">'.$fuser->login;
-            }
-            else if ($fuser->ldap_sid)
-            {
-            	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisableInDolibarr");
+            	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
             }
             else
             {
-            	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisable");
+            	print '<td width="50%">'.$fuser->login.'</td>';
             }
-            print '</td></tr>';
+            print '</tr>';
 
             // Password
             print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
@@ -836,10 +854,17 @@ else
  			print '<tr><td width="25%" valign="top">'.$langs->trans("Mobile").'</td>';
  			print '<td width="50%">'.$fuser->user_mobile.'</td>';
 
+			// EMail
             print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
             print '<td width="50%"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
             print "</tr>\n";
 
+			// Statut
+		    print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+		    print '<td>';
+		   	print $fuser->getLibStatut(4);
+		    print '</td></tr>';
+		
             print '<tr><td width="25%" valign="top">'.$langs->trans("DateCreation").'</td>';
             print '<td>'.dolibarr_print_date($fuser->datec,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
@@ -883,18 +908,12 @@ else
              
             print '<div class="tabsAction">';
 
-            if ($caneditfield && (!$fuser->ldap_sid || !$fuser->login))
+
+            if ($caneditfield)
             {
-                if ($canadduser && $fuser->ldap_sid && !$fuser->login)
-                {
-                	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=reactivate">'.$langs->trans("Reactivate").'</a>';
-                }
-                else
-                {
-                	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-                }
+               	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
-            elseif ($caneditpassword && !$fuser->ldap_sid)
+            elseif ($caneditpassword && ! $fuser->ldap_sid)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
             }
@@ -913,7 +932,13 @@ else
 	            }
 			}
 
-            if ($user->id <> $_GET["id"] && $candisableperms && $fuser->login)
+            // Activer
+            if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 0)
+            {
+            	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
+            }
+            // Desactiver
+            if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 1)
             {
                 print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
@@ -1184,12 +1209,20 @@ else
 			else print $fuser->user_mobile; 
 			print '</td></tr>';
 
+            // EMail
             print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
             print '<td>';
             if ($caneditfield) print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
 			else print $fuser->email; 
             print '</td></tr>';
 
+			// Statut
+		    print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+		    print '<td>';
+		   	print $fuser->getLibStatut(4);
+		    print '</td></tr>';
+		
+			// Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">';
             if ($caneditfield) 
             {

@@ -503,16 +503,18 @@ class User
 
 
     /**
-     *      \brief      Désactive un utilisateur
+     *      \brief      Change statut d'un utilisateur
      *      \return     int     <0 si ko, >0 si ok
      */
-    function disable()
+    function setstatus($statut)
     {
         $error=0;
         
+		$this->db->begin();
+		
         // Désactive utilisateur
         $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-        $sql.= " SET login = NULL";
+        $sql.= " SET statut = ".$statut;
         $sql.= " WHERE rowid = ".$this->id;
         $result = $this->db->query($sql);
 
@@ -528,10 +530,12 @@ class User
 
         if ($error)
         {
+  			$this->db->rollback();
             return -$error;
         }
         else
         {
+			$this->db->commit();
             return 1;
         }
     }
@@ -1115,7 +1119,62 @@ class User
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin.' ');
 		$result.=$lien.$this->login.$lienfin;
 		return $result;
-	}		
+	}
+	
+	/**
+	 *    \brief      Retourne le libellé du statut d'un user (actif, inactif)
+	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \return     string        Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut        	Id statut
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string        	Libellé du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('users');
+
+		if ($mode == 0)
+		{
+			$prefix='';
+			if ($statut == 1) return $langs->trans('Enabled');
+			if ($statut == 0) return $langs->trans('Disabled');
+		}
+		if ($mode == 1)
+		{
+			if ($statut == 1) return $langs->trans('Enabled');
+			if ($statut == 0) return $langs->trans('Disabled');
+		}
+		if ($mode == 2)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+		}
+		if ($mode == 3)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5');
+		}
+		if ($mode == 4)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+		}
+		if ($mode == 5)
+		{
+			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+		}
+	}	
+			
 }
 
 ?>

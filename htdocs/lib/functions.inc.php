@@ -986,13 +986,14 @@ function info_admin($texte)
 
 
 /**
-		\brief      Affiche formulaire de login
-		\remarks    il faut changer le code html dans cette fonction pour changer le design
+		\brief      Affiche formulaire de login PEAR
+		\remarks    Il faut changer le code html dans cette fonction pour changer le design
 */
-function loginfunction()
+function dol_loginfunction($notused,$pearstatus)
 {
     global $langs,$conf;
     $langs->load("main");
+    $langs->load("other");
     
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
     // Si feuille de style en php existe
@@ -1013,7 +1014,7 @@ function loginfunction()
     print '<!--'."\n";
     print '#login {';
     print '  margin-top: 70px;';
-    print '  margin-bottom: 50px;';
+    print '  margin-bottom: 30px;';
     print '  text-align: center;';
     print '  font: 12px arial,helvetica;';
     print '}'."\n";
@@ -1037,8 +1038,9 @@ function loginfunction()
     print "}\n";
     print '</script>'."\n";
     print '</head>'."\n";
-    print '<body class="body" onload="donnefocus();">';
     
+    print '<body class="body" onload="donnefocus();">';
+
     print '<form id="login" name="login" method="post" action="';
     print $_SERVER['PHP_SELF'];
     print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
@@ -1097,20 +1099,40 @@ function loginfunction()
 
     print '</form>';
 
+	// Message
+    if ($_SESSION["loginmesg"] || ! empty($pearstatus))
+    {
+    	print '<center><table width="60%"><tr><td align="center" class="small"><div class="error">';
+		if ($pearstatus == AUTH_EXPIRED) print "<i>Your session expired. Please login again!</i>\n";
+		elseif ($pearstatus == AUTH_IDLED) print "<i>You have been idle for too long. Please login again!</i>\n";
+		elseif ($pearstatus == AUTH_WRONG_LOGIN) print $langs->trans("ErrorBadLoginPassword");
+		elseif ($_SESSION["loginmesg"])
+		{
+			print $_SESSION["loginmesg"];
+			$_SESSION["loginmesg"]="";
+		}
+		print '</div></td></tr></table></center>';
+	}
+
+    print "\n</body>\n</html>";
 }
 
 
 /**
 		\brief      Affiche message erreur de type acces interdit et arrete le programme
+		\param		message			Force error message
 		\remarks    L'appel a cette fonction termine le code.
 */
-function accessforbidden()
+function accessforbidden($message='')
 {
   global $user, $langs;
   $langs->load("other");
   
   llxHeader();
-  print '<div class="error">'.$langs->trans("ErrorForbidden").'</div>';
+  print '<div class="error">';
+  if (! $message) print $langs->trans("ErrorForbidden");
+  else print $message;
+  print '</div>';
   print '<br>';
   if ($user->login)
   {

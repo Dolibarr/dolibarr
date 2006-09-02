@@ -45,9 +45,9 @@ function stripslashes_deep($value)
 }
 if (get_magic_quotes_gpc())
 {
-   $_GET    = array_map('stripslashes_deep', $_GET);
-   $_POST  = array_map('stripslashes_deep', $_POST);
-   $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
+   $_GET     = array_map('stripslashes_deep', $_GET);
+   $_POST    = array_map('stripslashes_deep', $_POST);
+   $_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
    $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 }
 
@@ -114,7 +114,7 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 		    "cryptType" => "none",
 	    );
 
-	    $aDol = new DOLIAuth("DB", $params, "loginfunction");
+	    $aDol = new DOLIAuth("DB", $params, "dol_loginfunction");
 	    $aDol->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
     	$aDol->start();
 	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
@@ -136,70 +136,61 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 	            // Non authentifie
 	            //dolibarr_syslog("Authentification non realise");
 	        }
-	        // Le debut de la page a ete affichee par getAuth qui a utilisé loginfunction.
-	        // On ferme donc juste la page de logon.
-	        print "\n</body>\n</html>";
 	        exit;
         }
 	}
 
 	// MODE LDAP
-	if (in_array('ldap',$authmode) && ! $login)
+	if ($conf->ldap->enabled && in_array('ldap',$authmode) && ! $login)
 	{
-		if ($conf->ldap->enabled)
-		{
-		    // Authentification Apache KO ou non active, pas de mode force on demande le login
-		    require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
-		
-		    //if ($conf->global->LDAP_SERVER_PROTOCOLVERSION == 3)
-		    //{
-		    	$ldap = 'ldap://'.$conf->global->LDAP_ADMIN_DN.':'.$conf->global->LDAP_ADMIN_PASS.'@'.$conf->global->LDAP_SERVER_HOST.':'.$conf->global->LDAP_SERVER_PORT.'/'.$conf->global->LDAP_SERVER_DN;
-		    //}
-		    //else
-		    //{
-		    //	$ldap = 'ldap2://'.$conf->global->LDAP_ADMIN_DN.':'.$conf->global->LDAP_ADMIN_PASS.'@'.$conf->global->LDAP_SERVER_HOST.':'.$conf->global->LDAP_SERVER_PORT.'/'.$conf->global->LDAP_SERVER_DN;
-		    //}
-		
-		    $params = array(
-			    'dsn' => $ldap,
-			    'host' => $conf->global->LDAP_SERVER_HOST,
-			    'port' => $conf->global->LDAP_SERVER_PORT,
-			    'version' => $conf->global->LDAP_SERVER_PORT,
-			    'basedn' => $conf->global->LDAP_SERVER_DN,
-			    'binddn' => $conf->global->LDAP_ADMIN_DN,
-			    'bindpw' => $conf->global->LDAP_ADMIN_PASS,
-			    //'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA,
-			    'userattr' => 'samAccountName',
-			    'userfilter' => '(objectClass=user)',
-		    );
+	    // Authentification Apache KO ou non active, pas de mode force on demande le login
+	    require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
+	
+	    //if ($conf->global->LDAP_SERVER_PROTOCOLVERSION == 3)
+	    //{
+	    	$ldap = 'ldap://'.$conf->global->LDAP_ADMIN_DN.':'.$conf->global->LDAP_ADMIN_PASS.'@'.$conf->global->LDAP_SERVER_HOST.':'.$conf->global->LDAP_SERVER_PORT.'/'.$conf->global->LDAP_SERVER_DN;
+	    //}
+	    //else
+	    //{
+	    //	$ldap = 'ldap2://'.$conf->global->LDAP_ADMIN_DN.':'.$conf->global->LDAP_ADMIN_PASS.'@'.$conf->global->LDAP_SERVER_HOST.':'.$conf->global->LDAP_SERVER_PORT.'/'.$conf->global->LDAP_SERVER_DN;
+	    //}
+	
+	    $params = array(
+		    'dsn' => $ldap,
+		    'host' => $conf->global->LDAP_SERVER_HOST,
+		    'port' => $conf->global->LDAP_SERVER_PORT,
+		    'version' => $conf->global->LDAP_SERVER_PORT,
+		    'basedn' => $conf->global->LDAP_SERVER_DN,
+		    'binddn' => $conf->global->LDAP_ADMIN_DN,
+		    'bindpw' => $conf->global->LDAP_ADMIN_PASS,
+		    //'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA,
+		    'userattr' => 'samAccountName',
+		    'userfilter' => '(objectClass=user)',
+	    );
 
-		    $aDol = new DOLIAuth("LDAP", $params, "loginfunction");
-		    $aDol->start();
-		    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
-		    if ($result)
-		    {
-		        // Authentification Auth OK, on va chercher le login
-				$login=$aDol->getUsername();
-		        dolibarr_syslog ("Authentification ok (en mode Pear Base LDAP)");
-		    }
-		    else
-		    {
-		        if (isset($_POST["loginfunction"]))
-		        {
-		            // Echec authentification
-		            dolibarr_syslog("Authentification ko (en mode Pear Base LDAP) pour '".$_POST["username"]."'");
-		        }
-		        else 
-		        {
-		            // Non authentifie
-		            //dolibarr_syslog("Authentification non realise");
-		        }
-		        // Le debut de la page a ete affichee par getAuth qui a utilisé loginfunction.
-		        // On ferme donc juste la page de logon.
-		        print "</div>\n</div>\n</body>\n</html>";
-		        exit;
-		    }
-		}
+	    $aDol = new DOLIAuth("LDAP", $params, "dol_loginfunction");
+	    $aDol->start();
+	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
+	    if ($result)
+	    {
+	        // Authentification Auth OK, on va chercher le login
+			$login=$aDol->getUsername();
+	        dolibarr_syslog ("Authentification ok (en mode Pear Base LDAP)");
+	    }
+	    else
+	    {
+	        if (isset($_POST["loginfunction"]))
+	        {
+	            // Echec authentification
+	            dolibarr_syslog("Authentification ko (en mode Pear Base LDAP) pour '".$_POST["username"]."'");
+	        }
+	        else 
+	        {
+	            // Non authentifie
+	            //dolibarr_syslog("Authentification non realise");
+	        }
+	        exit;
+	    }
     }
 }
 else
@@ -208,10 +199,9 @@ else
     $login=$_SESSION["dol_user"];
 }
 
-
 // Charge l'objet user depuis son login
-$user->fetch($login);
-if (! $user->id)
+$result=$user->fetch($login);
+if ($result <= 0)
 {
 	dolibarr_print_error($langs->trans("ErrorCantLoadUserFromDolibarrDatabase"));
 	exit;
@@ -292,6 +282,17 @@ else                        // Si utilisateur externe
 // Tentative de hacking ?
 if (! $user->login) accessforbidden();
 
+// Verifie si user actif
+if ($user->statut < 1)
+{
+	// Si non actif, on delogue le user
+	$langs->load("other");
+    dolibarr_syslog ("Authentification ko (en mode Pear Base Dolibarr) car login desactive");
+	accessforbidden($langs->trans("ErrorLoginDisabled"));
+	exit;
+}
+			
+
 
 dolibarr_syslog("Access to ".$_SERVER["PHP_SELF"]);
 
@@ -351,6 +352,8 @@ function top_htmlhead($head, $title="", $target="")
 {
     global $user, $conf, $langs, $db;
     
+    if (! $conf->css)  $conf->css ='/theme/eldy/eldy.css.php';
+
     //header("Content-type: text/html; charset=UTF-8");
     header("Content-type: text/html; charset=iso-8859-1");
 
@@ -418,6 +421,9 @@ function top_htmlhead($head, $title="", $target="")
 function top_menu($head, $title="", $target="") 
 {
     global $user, $conf, $langs, $db;
+
+    if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
+	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
 
     top_htmlhead($head, $title, $target);
 
