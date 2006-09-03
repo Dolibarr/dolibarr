@@ -85,7 +85,7 @@ if ($_GET["id"] > 0)
     $commande = New Commande($db);
     if ( $commande->fetch($_GET["id"]) > 0)
     {
-        $commande->expedition_array(1);
+        $commande->loadExpeditions(1);
 
         $soc = new Societe($db);
         $soc->fetch($commande->socidp);

@@ -260,7 +260,7 @@ class Commande extends CommonObject
    *
    *
    */
-    function reopen($userid)
+    function set_draft($userid)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
     
@@ -1052,11 +1052,11 @@ class Commande extends CommonObject
 
 
     /**
-     *      \brief      Renvoie un tableau avec les expéditions par ligne
+     *      \brief      Charge tableau avec les expéditions par ligne
      *      \param      filtre_statut       Filtre sur statut
      *      \return     int                 0 si OK, <0 si KO
      */
-	function expedition_array($filtre_statut=-1)
+	function loadExpeditions($filtre_statut=-1)
 	{
 		$this->expeditions = array();
 		$sql = 'SELECT fk_product, sum(ed.qty)';
@@ -1068,11 +1068,11 @@ class Commande extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row( $i);
+				$row = $this->db->fetch_row($result);
 				$this->expeditions[$row[0]] = $row[1];
 				$i++;
 			}

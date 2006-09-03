@@ -444,10 +444,9 @@ class Propal extends CommonObject
 
 		dolibarr_syslog("Propal::create ref=".$this->ref);
 
-		$soc = new Societe($this->db);
-		$soc->fetch($this->socidp);
-
         $this->db->begin();
+
+		$this->fetch_client();
 
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
@@ -476,10 +475,10 @@ class Propal extends CommonObject
 					$prod = new Product($this->db, $this->products[$i]);
 					if ($prod->fetch($this->products[$i]))
 					{
-						$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+						$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
 						// multiprix
 						if($conf->global->PRODUIT_MULTIPRICES == 1)
-							$price = $prod->multiprices[$soc->price_level];
+							$price = $prod->multiprices[$this->client->price_level];
 						else
 							$price = $prod->price;
 
@@ -1291,7 +1290,7 @@ class Propal extends CommonObject
     *
     *
     */
-    function reopen($userid)
+    function set_draft($userid)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
 
@@ -1366,9 +1365,9 @@ class Propal extends CommonObject
     /**
      *    \brief        Renvoie un tableau contenant les numéros de commandes associées
      *    \remarks      Fonction plus light que associated_orders
-     *    \sa           associated_orders
+     *    \sa           loadOrders
      */
-    function commande_liste_array ()
+    function getOrderArrayList()
     {
         $ga = array();
 
@@ -1398,26 +1397,29 @@ class Propal extends CommonObject
     }
 
     /**
-     *    \brief      Renvoie un tableau contenant les commandes associées
-     *    \remarks    Fonction plus lourde que commande_liste_array
-     *    \sa         commande_liste_array
+     *		\brief      Charge tableau contenant les commandes associées
+     *  	\remarks    Fonction plus lourde que getOrderArrayList
+	 *		\return		int 				<0 si ko, >0 si ok
+     *		\sa         getOrdersArrayList
      */
-    function associated_orders()
+    function loadOrders()
     {
-        $ga = array();
+		$this->commandes = array();
 
+        $ga = array();
         $sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";
         $sql.= " WHERE fk_propale = " . $this->id;
-        if ($this->db->query($sql) )
+        $result=$this->db->query($sql);
+        if ($result)
         {
-            $nump = $this->db->num_rows();
+            $nump = $this->db->num_rows($result);
 
             if ($nump)
             {
                 $i = 0;
                 while ($i < $nump)
                 {
-                    $obj = $this->db->fetch_object();
+                    $obj = $this->db->fetch_object($result);
                     $order=new Commande($this->db);
 
                     if ($obj->fk_commande)
@@ -1428,11 +1430,13 @@ class Propal extends CommonObject
                     $i++;
                 }
             }
-            return $ga;
+            $this->commandes=$ga;
+            return 1;
         }
         else
         {
-            print $this->db->error();
+            $this->error=$this->db->error();
+            return -1;
         }
     }
 
@@ -1440,9 +1444,9 @@ class Propal extends CommonObject
      *    	\brief      Renvoie un tableau contenant les numéros de factures associées
      *		\return		array		Tableau des id de factures
      */
-    function getFactureListeArray ()
+    function getInvoiceArrayList ()
     {
-		return $this->FactureListeArray($this->id);
+		return $this->InvoiceArrayList($this->id);
 	}
 
     /**
@@ -1450,7 +1454,7 @@ class Propal extends CommonObject
      *		\param		id			Id propal
      *		\return		array		Tableau des id de factures
      */
-    function FactureListeArray($id)
+    function InvoiceArrayList($id)
     {
         $ga = array();
 
@@ -1479,60 +1483,60 @@ class Propal extends CommonObject
         }
     }
 
-  /**
-   *    \brief      Efface propal
-   *    \param      user        Objet du user qui efface
-   */
-  function delete($user)
-  {
-    global $conf;
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
-    if ( $this->db->query($sql) )
-      {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
-	if ( $this->db->query($sql) )
-	  {
-
-	    // On efface le répertoire du pdf
-							$propalref = sanitize_string($this->ref);
-							if ($conf->propal->dir_output)
-							{
-								$dir = $conf->propal->dir_output . "/" . $propalref ;
-								$file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
-								if (file_exists($file))
-								{
-									propale_delete_preview($this->db, $this->id, $this->ref);
-
-									if (!dol_delete_file($file))
-									{
-                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-                    return 0;
-                  }
-                }
-                if (file_exists($dir))
-                {
-                	if (!dol_delete_dir($dir))
-                  {
-                  	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-                    return 0;
-                  }
-                }
-              }
-
-	    dolibarr_syslog("Suppression de la proposition $this->id par $user->fullname ($user->id)");
-	    return 1;
-	  }
-	else
-	  {
-	    return -2;
-	  }
-      }
-    else
-      {
-	return -1;
-      }
-  }
+	/**
+	*    \brief      Efface propal
+	*    \param      user        Objet du user qui efface
+	*/
+	function delete($user)
+	{
+		global $conf;
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
+		if ( $this->db->query($sql) )
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
+			if ( $this->db->query($sql) )
+			{
+	
+				// On efface le répertoire du pdf
+				$propalref = sanitize_string($this->ref);
+				if ($conf->propal->dir_output)
+				{
+					$dir = $conf->propal->dir_output . "/" . $propalref ;
+					$file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
+					if (file_exists($file))
+					{
+						propale_delete_preview($this->db, $this->id, $this->ref);
+	
+						if (!dol_delete_file($file))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+							return 0;
+						}
+					}
+					if (file_exists($dir))
+					{
+						if (!dol_delete_dir($dir))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+							return 0;
+						}
+					}
+				}
+	
+				dolibarr_syslog("Suppression de la proposition $this->id par $user->fullname ($user->id)");
+				return 1;
+			}
+			else
+			{
+				return -2;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
 	/**
  	 *    \brief      Mets à jour les commentaires privés
@@ -1820,10 +1824,13 @@ class Propal extends CommonObject
      */
 	function create_from()
 	{
+        $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+
+		dolibarr_syslog("Propal::create_from ref=".$this->ref);
 
         $this->db->begin();
 
-        $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+		$this->fetch_client();
 
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
@@ -1834,6 +1841,7 @@ class Propal extends CommonObject
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf','".$this->db->idate($this->fin_validite)."',";
         $sql.= " '$this->cond_reglement_id', '$this->mode_reglement_id', '".$this->db->idate($this->date_livraison)."', '$this->adresse_livraison_id')";
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1848,10 +1856,10 @@ class Propal extends CommonObject
                  {
 					$resql = $this->addline(
 						$this->id,
-						$prod->description,
-						$price,
+						$ligne->description,
+						$ligne->price,
 						$ligne->qty,
-						$tva_tx,
+						$ligne->tva_tx,
 						$ligne->fk_product,
 						$ligne->remise_percent
 						);
@@ -1864,32 +1872,30 @@ class Propal extends CommonObject
 					}
                 }
 
-                // Affectation au projet
-                if ($this->projetidp)
-                {
-                    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref'";
-                    $result=$this->db->query($sql);
-                }
-
-                $resql=$this->update_price();
-                if ($resql)
-                {
-                    // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
-                    // Fin appel triggers
-
-                    $this->db->commit();
-                    return $this->id;
-                }
-                else
-                {
-                    $this->error=$this->db->error();
-                    dolibarr_syslog("Propal::Create_from -2 ".$this->error);
-                    $this->db->rollback();
-                    return -2;
-                }
+	            if ($resql)
+	            {
+   					// Mise a jour infos dénormalisés
+	                $resql=$this->update_price();
+	                if ($resql)
+	                {
+	                    // Appel des triggers
+	                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	                    $interface=new Interfaces($this->db);
+	                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
+	                    // Fin appel triggers
+	
+	                    $this->db->commit();
+			            dolibarr_syslog("Propal::Create_from done id=".$this->id);
+	                    return $this->id;
+	                }
+	                else
+	                {
+	                    $this->error=$this->db->error();
+	                    dolibarr_syslog("Propal::Create_from -2 ".$this->error);
+	                    $this->db->rollback();
+	                    return -2;
+	                }
+	            }
             }
         }
         else
@@ -1900,6 +1906,8 @@ class Propal extends CommonObject
             return -1;
         }
 
+		$this->db->commit();
+        dolibarr_syslog("Propal::Create_from done id=".$this->id);
         return $this->id;
 	}
 

@@ -422,7 +422,7 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
    */
   $propal = new Propal($db);
   $propal->fetch($_GET['propalid']);
-  $propal->reopen($user->id);
+  $propal->set_draft($user->id);
 }
 
 
@@ -1554,16 +1554,18 @@ if ($conf->expedition->enabled)
 	*/
 	if($conf->commande->enabled)
 	{
-		$coms = $propal->associated_orders();
+		$propal->loadOrders();
+		$coms = $propal->commandes;
 		if (sizeof($coms) > 0)
 		{
-			print '<br>';
+			if ($somethingshown) { print '<br>'; $somethingshown=1; }
 			print_titre($langs->trans('RelatedOrders'));
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Ref").'</td>';
 			print '<td align="center">'.$langs->trans("Date").'</td>';
 			print '<td align="right">'.$langs->trans("Price").'</td>';
+			print '<td align="right">'.$langs->trans("Status").'</td>';
 			print '</tr>';
 			$var=true;
 			for ($i = 0 ; $i < sizeof($coms) ; $i++)
@@ -1573,6 +1575,7 @@ if ($conf->expedition->enabled)
 				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
 				print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
 				print '<td align="right">'.$coms[$i]->total_ttc.'</td>';
+				print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
 				print "</tr>\n";
 			}
 			print '</table>';

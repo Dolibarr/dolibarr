@@ -1140,7 +1140,7 @@ class Facture extends CommonObject
    *
    *
    */
-    function reopen($userid)
+    function set_draft($userid)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
         $sql .= " WHERE rowid = $this->id;";

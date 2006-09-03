@@ -132,7 +132,7 @@ class RejetPrelevement
   
 	/* Valide le paiement */
 
-	if ($pai->valide() <> 0)
+	if ($pai->valide() < 0)
 	  {
 	    $error++;
 	    dolibarr_syslog("RejetPrelevement::Create Erreur validation du paiement");

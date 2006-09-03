@@ -203,7 +203,7 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 	// On vérifie si aucun paiement n'a été effectué
 	if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
 	{
-		$fac->reopen($user);
+		$fac->set_draft($user);
   }
 }
 

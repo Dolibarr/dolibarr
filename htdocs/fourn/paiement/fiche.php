@@ -73,7 +73,7 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 
 	$paiement = new PaiementFourn($db);
 	$paiement->id = $_GET['id'];
-	if ( $paiement->valide() == 0 )
+	if ($paiement->valide() >= 0)
 	{
         $db->commit();
 		Header('Location: fiche.php?id='.$paiement->id);

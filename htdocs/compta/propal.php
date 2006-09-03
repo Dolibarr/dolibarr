@@ -543,7 +543,7 @@ et non globalement
 			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create\">".$langs->trans("BuildBill")."</a>";
 		}
 	
-		if ($propal->statut == 2 && sizeof($propal->getFactureListeArray()))
+		if ($propal->statut == 2 && sizeof($propal->getInvoiceArrayList()))
 		{
 			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4\">".$langs->trans("ClassifyBilled")."</a>";
 		}
@@ -575,12 +575,10 @@ et non globalement
 	 */
 	if($conf->commande->enabled)
 	{
-		$coms = $propal->associated_orders();
+		$propal->loadOrders();
+		$coms = $propal->commandes;
 		if (sizeof($coms) > 0)
 		{
-			require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-			$staticcommande=new Commande($db);
-
 			$total=0;
 			if ($somethingshown) { print '<br>'; $somethingshown=1; }
 			print_titre($langs->trans('RelatedOrders'));
@@ -599,7 +597,7 @@ et non globalement
 				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
 				print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
 				print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
-				print '<td align="right">'.$staticcommande->LibStatut($coms[$i]->statut,$coms[$i]->facturee,3).'</td>';
+				print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
 				print "</tr>\n";
 				$total = $total + $objp->total;
 			}

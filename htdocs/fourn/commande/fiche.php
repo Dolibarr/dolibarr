@@ -136,8 +136,11 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
     $soc = new Societe($db);
     $soc->fetch($commande->socidp);
     $result = $commande->valid($user);
-    Header("Location: fiche.php?id=".$_GET["id"]);
-    exit;
+    if ($result >= 0)
+    {
+    	Header("Location: fiche.php?id=".$_GET["id"]);
+    	exit;
+    }
 }
 
 if ($_POST["action"] == 'confirm_approve' && $_POST["confirm"] == 'yes' && $user->rights->fournisseur->commande->approuver)

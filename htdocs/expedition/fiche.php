@@ -186,7 +186,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	$commande = new Commande($db);
-	$commande->expedition_array();
+	$commande->loadExpeditions();
 
 	if ( $commande->fetch($_GET["commande_id"]))
 	{
@@ -274,7 +274,7 @@ if ($_GET["action"] == 'create')
 		$lignes = $commande->fetch_lignes(1);
 
 		/* Lecture des expeditions déjà effectuées */
-		$commande->expedition_array();
+		$commande->loadExpeditions();
 
 		$num = sizeof($commande->lignes);
 		$i = 0;
