@@ -222,7 +222,7 @@ if ($_GET['action'] == 'mod_ligne')
 	if ($_GET['etat'] == '1' && !$_GET['cancel']) // si on valide la modification
 	{
 		$facfou = new FactureFournisseur($db,'',$_GET['facid']);
-		
+
 		$facfou->updateline($_GET['ligne_id'], $_POST['label'], $_POST['puht'], $_POST['tauxtva'], $_POST['qty']);
 	}
 	$_GET['action'] = 'edit';
@@ -236,11 +236,11 @@ if ($_GET['action'] == 'add_ligne')
     {
         $nv_prod = new Product($db);
         $nv_prod->fetch($_POST['idprod']);
-       
+
 		// cas spécial pour lequel on a les meme référence que le fournisseur
 		// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
         $label = $nv_prod->libelle;
-       
+
         $result=$nv_prod->get_buyprice($_POST['fourn_id'], $_POST['qty']);
         if ($result > 0)
         {
@@ -248,7 +248,7 @@ if ($_GET['action'] == 'add_ligne')
         }
         if ($result == -1)
         {
-        	// Quantité insuffisante	
+        	// Quantité insuffisante
         	$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
         }
     }
@@ -258,7 +258,7 @@ if ($_GET['action'] == 'add_ligne')
         if (! $_POST['label'])
         {
         	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Label")).'</div>';
-        }	
+        }
         else
         {
 	        if (!empty($_POST['amount']))
@@ -273,7 +273,7 @@ if ($_GET['action'] == 'add_ligne')
 	            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
 	        }
 		}
-    }   
+    }
     $_GET['action'] = 'edit';
 }
 
@@ -323,7 +323,7 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		$html->select_societes(empty($_GET['socid'])?'':$_GET['socid'],'socidp','s.fournisseur = 1');
 	}
 	print '</td>';
-	print '<td width="50%">'.$langs->trans('Note').'</td></tr>';
+	print '<td width="50%">'.$langs->trans('NotePublic').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" type="text"></td>';
 
@@ -347,38 +347,42 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 
 	print '</table><br>';
 
-	print '<table class="border" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
-	print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-	print '<td align="right">'.$langs->trans('Qty').'</td>';
-	print '<td align="right">'.$langs->trans('VATRate').'</td>';
-	print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-	print '</tr>';
-
-	for ($i = 1 ; $i < 9 ; $i++)
+	if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
 	{
-		if ($_GET['action'] == 'copy')
-		{
-			$value_label = $fac_ori->lignes[$i-1][0];
-			$value_pu = $fac_ori->lignes[$i-1][1];
-			$value_qty = $fac_ori->lignes[$i-1][3];
-		}
-		else
-		{
-			$value_qty = '1';
-		}
-		print '<tr><td>'.$i.'</td>';
-		print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
-		print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
-		print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
-		print '<td align="right">';
-		$html->select_tva('tauxtva'.$i,'',$societe,$mysoc);
-		print '</td>';
-		print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
-	}
+		print '<table class="border" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
+		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+		print '<td align="right">'.$langs->trans('Qty').'</td>';
+		print '<td align="right">'.$langs->trans('VATRate').'</td>';
+		print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
+		print '</tr>';
 
-	print '</table>';
+		for ($i = 1 ; $i < 9 ; $i++)
+		{
+			if ($_GET['action'] == 'copy')
+			{
+				$value_label = $fac_ori->lignes[$i-1][0];
+				$value_pu = $fac_ori->lignes[$i-1][1];
+				$value_qty = $fac_ori->lignes[$i-1][3];
+			}
+			else
+			{
+				$value_qty = '1';
+			}
+			print '<tr><td>'.$i.'</td>';
+			print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
+			print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
+			print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
+			print '<td align="right">';
+			$html->select_tva('tauxtva'.$i,'',$societe,$mysoc);
+			print '</td>';
+			print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
+		}
+
+		print '</table>';
+	}
+	
 	print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
 	print '</form>';
 }
@@ -405,7 +409,7 @@ else
 		llxHeader('','', $addons);
 
 		if ($mesg) { print $mesg.'<br>'; }
-		
+
 
 		if ($_GET['action'] == 'edit' || $_GET['action'] == 'delete_product_line')
 		{
@@ -427,7 +431,7 @@ else
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 
 			print '<td>'.$societe->getNomUrl(1).'</td>';
-			print '<td width="50%" valign="top">'.$langs->trans('Comments').'</tr>';
+			print '<td width="50%" valign="top">'.$langs->trans('NotePublic').'</tr>';
 
 			print '<tr><td valign="top">'.$langs->trans('Ref').'</td><td valign="top">';
 			print '<input name="facnumber" type="text" value="'.$fac->ref.'"></td>';
@@ -567,7 +571,7 @@ else
                 print '</form>';
             }
 
-            print '</table>';			
+            print '</table>';
 		}
 		else
 		{
@@ -588,7 +592,7 @@ else
 				$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid');
 				print '<br />';
 			}
-			
+
 			/*
 			* Confirmation de la suppression de la facture fournisseur
 			*/
@@ -605,7 +609,7 @@ else
 			 *   Facture
 			 */
 			print '<table class="border" width="100%">';
-            
+
             // Ref
             print "<tr><td>".$langs->trans("Ref")."</td><td colspan=\"3\">".$fac->ref."</td>";
             print "</tr>\n";
@@ -634,12 +638,7 @@ else
 			print '<tr><td>'.$langs->trans('AmountHT').'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($fac->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			if (strlen($fac->note))
-			{
-				print '<tr><td>'.$langs->trans('Comments').'</td><td colspan="3">';
-				print nl2br(stripslashes($fac->note));
-				print '</td></tr>';
-			}
+
 			print '</table>';
 
 			print '</td><td valign="top">';
@@ -792,8 +791,10 @@ else
 
 		if ($fac->statut == 0 && $user->rights->fournisseur->facture->valider)
 		{
-			if ($_GET['action'] <> 'edit')
-			print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Valid').'</a>';
+			if (sizeof($fac->lignes) && $_GET['action'] <> 'edit')
+			{
+				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Valid').'</a>';
+			}
 		}
 		else
 			if ($user->rights->fournisseur->facture->creer)

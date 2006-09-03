@@ -69,8 +69,12 @@ class FactureFournisseur extends Facture
 	function FactureFournisseur($DB, $socidp='', $facid='')
 	{
 		$this->db = $DB ;
+		$this->table = 'facture_fourn';
+		$this->tabledetail = 'facture_fourn_det';
+
+		$this->id = $facid;
 		$this->socidp = $socidp;
-		$this->products = array();
+
 		$this->amount = 0;
 		$this->remise = 0;
 		$this->tva = 0;
@@ -78,8 +82,8 @@ class FactureFournisseur extends Facture
 		$this->total_tva = 0;
 		$this->total_ttc = 0;
 		$this->propalid = 0;
-		$this->id = $facid;
 
+		$this->products = array();
 		$this->lignes = array();
 	}
 
@@ -160,12 +164,13 @@ class FactureFournisseur extends Facture
 	 */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT libelle, facnumber, amount, remise, '.$this->db->pdate(datef).'as df';
-		$sql .= ', total_ht, total_tva, total_ttc, fk_user_author';
-		$sql .= ', fk_statut, paye, f.note,'.$this->db->pdate('date_lim_reglement').'as de';
-		$sql .= ', s.nom as socnom, s.idp as socidp';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
-		$sql .= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.idp ;';
+		$sql = 'SELECT libelle, facnumber, amount, remise, '.$this->db->pdate(datef).'as df,';
+		$sql.= ' total_ht, total_tva, total_ttc, fk_user_author,';
+		$sql.= ' fk_statut, paye, f.note, f.note_public,';
+		$sql.= ' '.$this->db->pdate('date_lim_reglement').'as de,';
+		$sql.= ' s.nom as socnom, s.idp as socidp';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
+		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.idp';
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -194,6 +199,8 @@ class FactureFournisseur extends Facture
 
 				$this->socnom = $obj->socnom;
 				$this->note = $obj->note;
+				$this->note_public = $obj->note_public;
+
 				$this->db->free($resql);
 
 				/*

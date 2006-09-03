@@ -44,7 +44,9 @@ class Facture extends CommonObject
 {
 	var $db;
 	var $element='facture';
-
+	var $table;
+	var $tabledetail;
+	
 	var $id;
 
 	var $socidp;		// Id client
@@ -91,7 +93,9 @@ class Facture extends CommonObject
 	*/
 	function Facture($DB, $socidp='', $facid='')
 	{
-		$this->db = $DB ;
+		$this->db = $DB;
+		$this->table = 'facture';
+		$this->tabledetail = 'facturedet';
 
 		$this->id = $facid;
 		$this->socidp = $socidp;
@@ -106,6 +110,7 @@ class Facture extends CommonObject
 		$this->remise_exceptionnelle = 0;
 
 		$this->products = array();        // Tableau de lignes de factures
+		$this->lignes = array();
 	}
 
 	/**
@@ -1883,10 +1888,11 @@ class Facture extends CommonObject
 	 */
 	function update_note($note)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table;
 		$sql.= " SET note = '".addslashes($note)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
+		dolibarr_syslog("Facture.class::update_note sql=$sql");
 		if ($this->db->query($sql))
 		{
 			$this->note = $note;
@@ -1906,10 +1912,11 @@ class Facture extends CommonObject
 	 */
 	function update_note_public($note_public)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table;
 		$sql.= " SET note_public = '".addslashes($note_public)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
+		dolibarr_syslog("Facture.class::update_note_public sql=$sql");
 		if ($this->db->query($sql))
 		{
 			$this->note_public = $note_public;

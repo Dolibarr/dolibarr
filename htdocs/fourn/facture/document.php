@@ -107,13 +107,10 @@ if ($facid > 0)
 
 	if ($facture->fetch($facid))
     {
+        $facture->fetch_fournisseur();
+
 		$facref = sanitize_string($facture->ref);
-
 		$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
-
-        $societe = new Societe($db);
-        $societe->fetch($facture->socidp);
-
 		$head = facturefourn_prepare_head($facture);
 		dolibarr_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));
 
@@ -148,12 +145,17 @@ if ($facid > 0)
 
 
         print '<table class="border"width="100%">';
+
 		// Ref
         print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$facture->ref.'</td></tr>';
+
         // Société
-        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
+        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$facture->fournisseur->getNomUrl(1).'</td></tr>';
+
         print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+
         print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td colspan="3">'.$totalsize.' '.$langs->trans('bytes').'</td></tr>';
+
         print '</table>';
         print '</div>';
 
