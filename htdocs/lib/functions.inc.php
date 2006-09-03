@@ -320,6 +320,12 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     
     $db->begin();
     
+    if (! $name) 
+    {
+    	dolibarr_print_error("Error: Call to function dolibarr_set_const with wrong parameters");
+    	exit;
+    }
+    
     //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
     $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
     $resql=$db->query($sql);	

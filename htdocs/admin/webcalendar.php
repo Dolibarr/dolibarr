@@ -108,7 +108,7 @@ elseif ($actiontest)
             $mesg.="</div>";
         }
         else {
-            $mesg ="<div class=\"error\">".$langs->trans("ErrorConnectOkButWrongDatabase");
+            $mesg ="<div class=\"error\">".$langs->trans("WebCalErrorConnectOkButWrongDatabase");
             $mesg.="</div>";
         }
 

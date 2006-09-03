@@ -86,14 +86,16 @@ elseif ($_POST["test"])
     if ($oscommercedb->connected == 1 && $oscommercedb->database_selected == 1)
     {
         // Vérifie si bonne base par requete sur une table OSCommerce
-        $sql="SELECT xxx FROM zzz WHERE aaa='application_name'";
+        $sql ="SELECT configuration_value";
+        $sql.=" FROM configuration";
+        $sql.=" WHERE configuration_key='STORE_NAME'";
         $resql=$oscommercedb->query($sql);
         if ($resql) {
             $mesg ="<div class=\"ok\">".$langs->trans("OSCommerceTestOk",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbname"],$_POST["oscommerce_dbuser"]);
             $mesg.="</div>";
         }
         else {
-            $mesg ="<div class=\"error\">".$langs->trans("ErrorConnectOkButWrongDatabase");
+            $mesg ="<div class=\"error\">".$langs->trans("OSCommerceErrorConnectOkButWrongDatabase");
             $mesg.="</div>";
         }
 

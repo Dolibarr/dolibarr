@@ -17,20 +17,19 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /*
-  \file       htdocs/compta/prelevement/prelevement.class.php
-  \ingroup    prelevement
-  \brief      Fichier de la classe des prelevements
-  \version    $Revision$
+		\file       htdocs/compta/prelevement/rejet-prelevement.class.php
+		\ingroup    prelevement
+		\brief      Fichier de la classe des prelevements
+		\version    $Revision$
 */
 
 
-/*!
-  \class Prelevement
-  \brief      Classe permettant la gestion des prelevements
+/**
+		\class 		Prelevement
+		\brief      Classe permettant la gestion des prelevements
 */
 
 class RejetPrelevement

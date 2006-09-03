@@ -92,8 +92,11 @@ class Conf
 		        $objp = $db->fetch_object($result);
 		        $key=$objp->name;
 		        $value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais après POST quand get_magic_quotes_gpc()==1)
-		        define ("$key", $value);
-		        $this->global->$key=$value;
+		        if ($key)
+		        {
+		        	define ("$key", $value);
+		        	$this->global->$key=$value;
+				}
 		        $i++;
 		    }
 		}
@@ -141,14 +144,14 @@ class Conf
 
 		// Module mailing
 		$this->mailing->enabled=defined("MAIN_MODULE_MAILING")?MAIN_MODULE_MAILING:0;
-	
+
 		// Module notification
 		$this->notification->enabled=defined("MAIN_MODULE_NOTIFICATION")?MAIN_MODULE_NOTIFICATION:0;
 
 		// Module externalrss
 		$this->externalrss->enabled=defined("MAIN_MODULE_EXTERNALRSS")?MAIN_MODULE_EXTERNALRSS:0;
 		$this->externalrss->dir_temp=DOL_DATA_ROOT."/rss/temp";
-		
+
 		// Module commande client
 		$this->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;
 		$this->commande->dir_output=DOL_DATA_ROOT."/commande";
@@ -293,7 +296,7 @@ class Conf
 
 		// outils systemes
 		if (! $this->global->SYSTEMTOOLS_MYSQLDUMP) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
-		
+
 		// societe
 		if (! $this->global->SOCIETE_CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (! $this->global->SOCIETE_CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON="mod_codeclient_leopard";

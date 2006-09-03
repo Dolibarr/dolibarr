@@ -21,13 +21,13 @@
  * $Source$
  */
 
-/**     \file       htdocs/viewimage.php
+/**
+		\file       htdocs/viewimage.php
 		\brief      Wrapper permettant l'affichage de fichiers images Dolibarr
         \remarks    L'appel est viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
 		\version    $Revision$
 */
 
-require_once("master.inc.php");
 require_once("main.inc.php");
 
 
