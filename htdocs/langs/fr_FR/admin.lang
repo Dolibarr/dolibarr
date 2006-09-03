@@ -430,7 +430,7 @@ WebCalAddEventOnCreateCompany=Ajouter évênement dans calendrier sur création de 
 WebCalAddEventOnStatusPropal=Ajouter évênement dans calendrier sur changement de statut des propositions commerciales
 WebCalAddEventOnStatusContract=Ajouter évênement dans calendrier sur changement de statut des contrats
 WebCalAddEventOnStatusBill=Ajouter évênement dans calendrier sur changement de statut des factures
-ErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base webcalendar.
+WebCalErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base webcalendar.
 ##### Invoices #####
 BillsSetup=Configuration du module Factures
 BillsDate=Date des factures
@@ -575,3 +575,9 @@ FCKeditorForCompany=Création/édition WYSIWIG des descriptions et notes des tiers
 FCKeditorForProductDescription=Création/édition WYSIWIG des notes des produits/services
 FCKeditorForDetails=Création/édition WYSIWIG des lignes details des produits (sur commandes, propales, factures, etc...)
 FCKeditorForMailing=Création/édition WYSIWIG des mailings
+##### OSCommerce 1 #####
+OSCommerceErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base OSCommerce.
+OSCommerceTestOk=La connexion au serveur '%s' sur la base '%s' par l'utilisateur '%s' a réussi.
+OSCommerceTestKo1=La connexion au serveur '%s' a réussi mais la base '%s' n'a pu être atteinte.
+OSCommerceTestKo2=La connexion au serveur '%s' par l'utilisateur '%s' à échoué.
+

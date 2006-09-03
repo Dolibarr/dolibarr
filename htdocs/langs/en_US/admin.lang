@@ -430,7 +430,7 @@ WebCalAddEventOnCreateCompany=Add calendar event on companies create
 WebCalAddEventOnStatusPropal=Add calendar event on commercial proposal status change
 WebCalAddEventOnStatusContract=Add calendar event on contract status change
 WebCalAddEventOnStatusBill=Add calendar event on bill status change
-ErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be a Webcalendar database.
+WebCalErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be a Webcalendar database.
 ##### Invoices #####
 BillsSetup=Invoices module setup
 BillsDate=Invoices date
@@ -575,3 +575,8 @@ FCKeditorForCompany=WYSIWIG creation/edition of companies description and note
 FCKeditorForProductDescription=WYSIWIG creation/edition of products/services description and note
 FCKeditorForDetails=WYSIWIG creation/edition of details lines for all entities (proposals, orders, invoices, etc...)
 FCKeditorForMailing=WYSIWIG creation/edition of mailings
+##### OSCommerce 1 #####
+OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be an OSCommerce database.
+OSCommerceTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
+OSCommerceTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
+OSCommerceTestKo2=Connection to server '%s' with user '%s' failed.
