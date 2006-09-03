@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -40,6 +40,7 @@ function llxHeader($head = "", $urlp = "")
 	
 	$menu->add(DOL_URL_ROOT."/boutique/index.php", $langs->trans("OSCommerceShop"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/produits/osc-liste.php", $langs->trans("Products"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/critiques/index.php", $langs->trans("Critiques"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/client/", $langs->trans("Customers"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Orders"));
   

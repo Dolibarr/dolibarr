@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +18,14 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+		\file 		htdocs/boutique/produits/osc-liste.php
+		\ingroup    boutique
+		\brief      Page gestion produits du module OsCommerce
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 
@@ -59,15 +66,17 @@ print "<td>Titre</td>";
 print "<td>Groupe</td>";
 print '<td align="center">Stock</td>';
 print '<TD align="center">Status</TD>';
-  print "</TR>\n";
+print "</TR>\n";
  
-if ( $db->query($sql) ) {
-  $num = $db->num_rows();
+$resql=$db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
   $i = 0;
 
   $var=True;
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object($resql);
     $var=!$var;
     print "<TR $bc[$var]>";
     print "<TD>$objp->products_id</TD>\n";
@@ -81,11 +90,15 @@ if ( $db->query($sql) ) {
   }
   $db->free();
 }
+else
+{
+	dolibarr_print_error($db);
+}
 
 print "</TABLE>";
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

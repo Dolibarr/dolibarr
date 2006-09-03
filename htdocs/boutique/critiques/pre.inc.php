@@ -18,24 +18,21 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-        \file       htdocs/boutique/pre.inc.php
-		\brief      Fichier gestionnaire du menu de gauche
+		\file       htdocs/boutique/critiques/pre.inc.php
+		\ingroup    boutique
+		\brief      Fichier gestionnaire du menu gauche des critiques OSCommerce
 		\version    $Revision$
 */
 
-require("../main.inc.php");
-
-//affichages dans la page d'accueil
-define("OSC_MAXNBCOM", 5);
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/boutique/critiques/critique.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {
-	global $user,$conf, $langs;
-	$langs->load("shop");
+	global $user, $conf;
 	
 	top_menu($head);
 	
@@ -48,7 +45,8 @@ function llxHeader($head = "", $urlp = "")
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/promotion/index.php", $langs->trans("Promotion"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/client/", $langs->trans("Customers"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Orders"));
-  
+	
 	left_menu($menu->liste);
 }
+
 ?>
