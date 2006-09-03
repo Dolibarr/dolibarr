@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,21 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+	    \file       htdocs/boutique/notification/fiche.php
+		\ingroup    boutique
+		\brief      Page fiche notification OS Commerce
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 
 llxHeader();
 
 if ($action == 'add') {
-  $editeur = new Editeur($db);
+  $editeur = new Editeur($dbosc);
 
   $editeur->nom = $nom;
 
@@ -34,14 +40,14 @@ if ($action == 'add') {
 }
 
 if ($action == 'addga') {
-  $editeur = new Editeur($db);
+  $editeur = new Editeur($dbosc);
 
   $editeur->linkga($id, $ga);
 }
 
 
 if ($action == 'update' && !$cancel) {
-  $editeur = new Editeur($db);
+  $editeur = new Editeur($dbosc);
 
   $editeur->nom = $nom;
 
@@ -74,7 +80,7 @@ else
   if ($id)
     {
 
-      $editeur = new Editeur($db);
+      $editeur = new Editeur($dbosc);
       $result = $editeur->fetch($id);
 
       if ( $result )
@@ -137,7 +143,7 @@ if ($action != 'create')
 print '</div>';
 
 
-$db->close();
+$dbosc->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

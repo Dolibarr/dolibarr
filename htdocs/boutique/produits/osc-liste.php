@@ -56,7 +56,7 @@ if ($reqstock=='epuise')
 }  
 
 //$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit( $limit ,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print '<TR class="liste_titre">';
@@ -68,15 +68,16 @@ print '<td align="center">Stock</td>';
 print '<TD align="center">Status</TD>';
 print "</TR>\n";
  
-$resql=$db->query($sql);
+$resql=$dbosc->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
+  $num = $dbosc->num_rows($resql);
   $i = 0;
 
   $var=True;
-  while ($i < $num) {
-    $objp = $db->fetch_object($resql);
+  while ($i < $num)
+  {
+    $objp = $dbosc->fetch_object($resql);
     $var=!$var;
     print "<TR $bc[$var]>";
     print "<TD>$objp->products_id</TD>\n";
@@ -88,17 +89,17 @@ if ($resql)
     print "</TR>\n";
     $i++;
   }
-  $db->free();
+  $dbosc->free();
 }
 else
 {
-	dolibarr_print_error($db);
+	dolibarr_print_error($dbosc);
 }
 
 print "</TABLE>";
 
 
-$db->close();
+$dbosc->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

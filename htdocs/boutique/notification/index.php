@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,14 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+	    \file       htdocs/boutique/notification/index.php
+		\ingroup    boutique
+		\brief      Page gestion notification OS Commerce
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 
@@ -48,11 +54,11 @@ $sql .= ",".OSC_DB_NAME.".customers as c";
 $sql .= " WHERE n.customers_id = c.customers_id AND p.products_id=n.products_id";
 $sql .= " AND p.language_id = ".OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit( $limit ,$offset);
  
-if ( $db->query($sql) )
+if ( $dbosc->query($sql) )
 {
-  $num = $db->num_rows();
+  $num = $dbosc->num_rows();
   $i = 0;
   print "<table class=\noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
@@ -62,7 +68,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $dbosc->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
@@ -71,14 +77,14 @@ if ( $db->query($sql) )
       $i++;
     }
   print "</table>";
-  $db->free();
+  $dbosc->free();
 }
 else
 {
-  dolibarr_print_error($db);
+  dolibarr_print_error($dbosc);
 }
 
-$db->close();
+$dbosc->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

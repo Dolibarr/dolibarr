@@ -17,40 +17,31 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
 require("../../main.inc.php");
-require("../livre/livre.class.php");
-require("./notification.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/boutique/notification/notification.class.php');
 
-function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
 
-  /*
-   *
-   *
-   */
-  top_menu($head);
-
-  $menu = new Menu();
-
-  $menu->add(DOL_URL_ROOT."/boutique/client/", "Clients");
-
-  $menu->add(DOL_URL_ROOT."/boutique/commande/", "Commandes");
-
-  $menu->add(DOL_URL_ROOT."/boutique/notification/", "Notifications");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/notification/produits.php", "Produits");
-
-  $menu->add(DOL_URL_ROOT."/boutique/newsletter/", "Newsletter");
-
-  $menu->add_submenu(DOL_URL_ROOT."/boutique/newsletter/fiche.php?action=create", "Nouvelle newsletter");
-
-  left_menu($menu->liste);
-  /*
-   *
-   *
-   */
-
+function llxHeader($head = "", $urlp = "")
+{
+	global $user,$conf, $langs;
+	$langs->load("shop");
+	
+	top_menu($head);
+	
+	$menu = new Menu();
+	
+	$menu->add(DOL_URL_ROOT."/boutique/index.php", $langs->trans("OSCommerceShop"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/produits/osc-liste.php", $langs->trans("Products"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/critiques/index.php", $langs->trans("Critiques"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/critiques/bestproduct.php", "Meilleurs produits",2);
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/promotion/index.php", $langs->trans("Promotion"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/notification/", $langs->trans("Notifications"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/client/", $langs->trans("Customers"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Orders"));
+	
+	left_menu($menu->liste);
 }
 ?>

@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -47,16 +46,16 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des commandes", $page, "commande.php");
 
-    $sql = "SELECT o.orders_id, customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_country, customers_telephone, customers_email_address, customers_address_format_id, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_country, delivery_address_format_id, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_country, billing_address_format_id, payment_method, cc_type, cc_owner, cc_number, cc_expires, last_modified,".$db->pdate("date_purchased")." as date_purchased, orders_status, orders_date_finished, currency, currency_value, t.value";
+    $sql = "SELECT o.orders_id, customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_country, customers_telephone, customers_email_address, customers_address_format_id, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_country, delivery_address_format_id, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_country, billing_address_format_id, payment_method, cc_type, cc_owner, cc_number, cc_expires, last_modified,".$dbosc->pdate("date_purchased")." as date_purchased, orders_status, orders_date_finished, currency, currency_value, t.value";
 
 $sql .= " FROM ".OSC_DB_NAME.".orders as o, ".OSC_DB_NAME.".orders_total as t";
 $sql .= " WHERE o.orders_id = t.orders_id AND t.class = 'ot_total'";
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit( $limit ,$offset);
  
-if ( $db->query($sql) )
+if ( $dbosc->query($sql) )
 {
-  $num = $db->num_rows();
+  $num = $dbosc->num_rows();
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
@@ -68,7 +67,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $dbosc->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
 
@@ -81,14 +80,14 @@ if ( $db->query($sql) )
       $i++;
     }
   print "</table>";
-  $db->free();
+  $dbosc->free();
 }
 else
 {
-  dolibarr_print_error($db);
+  dolibarr_print_error($dbosc);
 }
 
-$db->close();
+$dbosc->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003-2005 Éric Seigne <eric.seigne@ryxeo.com>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,14 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+	    \file       htdocs/boutique/commande/fiche.php
+		\ingroup    boutique
+		\brief      Page fiche commande OSCommerce
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 
@@ -28,10 +34,6 @@ $langs->load("products");
 
 llxHeader();
 
-/*
- *
- *
- */
 
 if ($_GET['id'])
 {
@@ -67,9 +69,9 @@ if ($_GET['id'])
       $sql .= " FROM ".OSC_DB_NAME.".orders_products";
       $sql .= " WHERE orders_id = " . $commande->id;
 
-      if ( $db->query($sql) )
+      if ( $dbosc->query($sql) )
 	{
-	  $num = $db->num_rows();
+	  $num = $dbosc->num_rows();
 	  $i = 0;
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td align="left" width="40%">'.$langs->trans("Products").'</td>';
@@ -78,7 +80,7 @@ if ($_GET['id'])
 	  $var=True;
 	  while ($i < $num) 
 	    {
-	      $objp = $db->fetch_object();
+	      $objp = $dbosc->fetch_object();
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      print '<td align="left" width="40%">';
@@ -95,11 +97,11 @@ if ($_GET['id'])
 	      $i++;
 	    }
 	  print "</table>";
-	  $db->free();
+	  $dbosc->free();
 	}
       else
 	{
-	  print $db->error();
+	  print $dbosc->error();
 	}
 
       /*
@@ -144,7 +146,7 @@ print '</table><br>';
 
 
 
-$db->close();
+$dbosc->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

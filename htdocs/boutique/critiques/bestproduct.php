@@ -53,7 +53,7 @@ $sql .= " WHERE r.products_id = p.products_id";
 $sql .= " GROUP BY r.products_id, p.products_model, p.products_quantity, p.products_status";
 
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit( $limit ,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<TR class=\"liste_titre\"><td>".$langs->trans("Ref");
@@ -63,15 +63,15 @@ print '</td><td align="center">Status</TD>';
 print "</TR>\n";
 
 
-$resql=$db->query($sql);
+$resql=$dbosc->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
+	$num = $dbosc->num_rows($resql);
 	$i = 0;
 
 	$var=True;
 	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
+		$objp = $dbosc->fetch_object($resql);
 		$var=!$var;
 		print "<TR $bc[$var]>";
 		print '<TD><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_model.'</a></TD>';
@@ -81,17 +81,17 @@ if ($resql)
 		print "</TR>\n";
 		$i++;
 	}
-	$db->free();
+	$dbosc->free();
 }
 else
 {
-	dolibarr_print_error($db);
+	dolibarr_print_error($dbosc);
 }
 
 print "</TABLE>";
 
 
-$db->close();
+$dbosc->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

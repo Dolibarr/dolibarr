@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003-2005 Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +19,21 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
+/**
+	    \file       htdocs/boutique/client/fiche.php
+		\ingroup    boutique
+		\brief      Page fiche client OSCommerce
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 llxHeader();
 
 if ($action == 'update' && !$cancel) {
-  $client = new Client($db);
+  $client = new Client($dbosc);
   $client->nom = $nom;
   $client->update($id, $user);
 }
@@ -37,7 +45,7 @@ if ($action == 'update' && !$cancel) {
 if ($_GET['id'])
 {
   
-  $client = new Client($db);
+  $client = new Client($dbosc);
   $result = $client->fetch($_GET['id']);
   if ( $result )
     { 
@@ -53,20 +61,20 @@ if ($_GET['id'])
        * Commandes
        *
        */
-      $sql = "SELECT o.orders_id, o.customers_id,".$db->pdate("date_purchased")." as date_purchased, t.value as total";
+      $sql = "SELECT o.orders_id, o.customers_id,".$dbosc->pdate("date_purchased")." as date_purchased, t.value as total";
       $sql .= " FROM ".OSC_DB_NAME.".orders as o, ".OSC_DB_NAME.".orders_total as t";;
       $sql .= " WHERE o.customers_id = " . $client->id;
       $sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
-      if ( $db->query($sql) )
+      if ( $dbosc->query($sql) )
 	{
-	  $num = $db->num_rows();
+	  $num = $dbosc->num_rows();
 	  $i = 0;
 	  print '<table class="noborder" width="50%">';
 	  print "<tr class=\"liste_titre\"><td>Commandes</td>";
 	  print "</tr>\n";
 	  $var=True;
 	  while ($i < $num) {
-	    $objp = $db->fetch_object();
+	    $objp = $dbosc->fetch_object();
 	    $var=!$var;
 	    print "<tr $bc[$var]>";
 	    
@@ -78,19 +86,19 @@ if ($_GET['id'])
 	    $i++;
 	  }
 	  print "</table>";
-	  $db->free();
+	  $dbosc->free();
 	}
       else
 	{
 	  print "<p>ERROR 1</p>\n";
-	  dolibarr_print_error($db);
+	  dolibarr_print_error($dbosc);
 	}
       
     }
   else
     {
       print "<p>ERROR 1</p>\n";
-      dolibarr_print_error($db);
+      dolibarr_print_error($dbosc);
     }
   
   
@@ -111,7 +119,7 @@ else
 // Pas d'action
 
 
-$db->close();
+$dbosc->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

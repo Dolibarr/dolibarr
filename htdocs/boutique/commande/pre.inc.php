@@ -27,7 +27,9 @@
 */
 
 require("../../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
+
 
 function llxHeader($head = "", $urlp = "")
 {
@@ -43,6 +45,7 @@ function llxHeader($head = "", $urlp = "")
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/critiques/index.php", $langs->trans("Critiques"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/critiques/bestproduct.php", "Meilleurs produits",2);
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/promotion/index.php", $langs->trans("Promotion"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/notification/", $langs->trans("Notifications"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/client/", $langs->trans("Customers"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Orders"));
   

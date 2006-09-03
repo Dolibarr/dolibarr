@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ llxHeader();
 if ($id)
 {
 
-  $critique = new Critique($db);
+  $critique = new Critique($dbosc);
   $result = $critique->fetch($id);
   
   if ( $result )
@@ -77,7 +78,7 @@ print '</table><br>';
 
 
 
-$db->close();
+$dbosc->close();
 
 llxFooter('$Date$ - $Revision$');
 

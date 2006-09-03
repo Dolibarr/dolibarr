@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,14 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+	    \file       htdocs/boutique/client/index.php
+		\ingroup    boutique
+		\brief      Page gestion client OSCommerce
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 
@@ -44,11 +50,11 @@ print_barre_liste("Liste des clients", $page, "index.php");
 $sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_newsletter";
 $sql .= " FROM ".OSC_DB_NAME.".customers as c";
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit( $limit ,$offset);
  
-if ( $db->query($sql) )
+if ( $dbosc->query($sql) )
 {
-  $num = $db->num_rows();
+  $num = $dbosc->num_rows();
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
@@ -59,7 +65,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $dbosc->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></td>\n";
@@ -70,14 +76,14 @@ if ( $db->query($sql) )
       $i++;
     }
   print "</table>";
-  $db->free();
+  $dbosc->free();
 }
 else
 {
-  dolibarr_print_error($db);
+  dolibarr_print_error($dbosc);
 }
 
-$db->close();
+$dbosc->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

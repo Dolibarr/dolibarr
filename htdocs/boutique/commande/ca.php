@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,14 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+		\file 		htdocs/boutique/commande/ca.php
+		\ingroup    boutique
+		\brief      Page ca commandes du module OsCommerce
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 
@@ -48,14 +54,14 @@ $sql = "SELECT sum(t.value) as value";
 $sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
 $sql .= " WHERE t.class = 'ot_subtotal'";
  
-if ( $db->query($sql) )
+if ( $dbosc->query($sql) )
 {
-  $num = $db->num_rows();
+  $num = $dbosc->num_rows();
 
   $var=True;
   if ($num > 0)
     {
-      $objp = $db->fetch_object();
+      $objp = $dbosc->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td>Somme des commandes</td>';
@@ -65,25 +71,25 @@ if ( $db->query($sql) )
       $i++;
     }
 
-  $db->free();
+  $dbosc->free();
 }
 else
 {
-  dolibarr_print_error($db);
+  dolibarr_print_error($dbosc);
 }
 
 $sql = "SELECT sum(t.value) as value";
 $sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
 $sql .= " WHERE t.class = 'ot_shipping'";
  
-if ( $db->query($sql) )
+if ( $dbosc->query($sql) )
 {
-  $num = $db->num_rows();
+  $num = $dbosc->num_rows();
 
   $var=True;
   if ($num > 0)
     {
-      $objp = $db->fetch_object();
+      $objp = $dbosc->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td>Somme des frais de port</td>';
@@ -91,17 +97,17 @@ if ( $db->query($sql) )
       $i++;
     }
 
-  $db->free();
+  $dbosc->free();
 }
 else
 {
-  dolibarr_print_error($db);
+  dolibarr_print_error($dbosc);
 }
 
 
 print "</table>";
 
-$db->close();
+$dbosc->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

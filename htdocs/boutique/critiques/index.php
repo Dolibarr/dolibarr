@@ -49,7 +49,7 @@ $sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name F
 $sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";
 $sql .= " AND p.language_id = ".OSC_LANGUAGE_ID. " AND d.languages_id=".OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit( $limit ,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print '<TR class="liste_titre">';
@@ -59,14 +59,14 @@ print "<td align=\"center\">Note</td>";
 print "<TD align=\"right\"></TD>";
 print "</TR>\n";
 
-$resql=$db->query($sql);
+$resql=$dbosc->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
+	$num = $dbosc->num_rows($resql);
 	$i = 0;
 
 	$var=True;
 	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
+		$objp = $dbosc->fetch_object($resql);
 		$var=!$var;
 		print "<TR $bc[$var]>";
 		print "<TD>".substr($objp->products_name, 0, 30)."</TD>\n";
@@ -75,17 +75,17 @@ if ($resql) {
 		print "</TR>\n";
 		$i++;
 	}
-	$db->free();
+	$dbosc->free();
 }
 else
 {
-	dolibarr_print_error($db);
+	dolibarr_print_error($dbosc);
 }
 
 print "</TABLE>";
 
 
-$db->close();
+$dbosc->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

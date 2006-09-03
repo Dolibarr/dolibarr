@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2003 Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +19,14 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+	    \file       htdocs/boutique/notification/produits.php
+		\ingroup    boutique
+		\brief      Page fiche notification produits OS Commerce
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 
@@ -44,11 +51,12 @@ $sql .= " FROM ".OSC_DB_NAME.".products_notifications as n,".OSC_DB_NAME.".produ
 $sql .= " WHERE p.products_id=n.products_id";
 $sql .= " AND p.language_id = ".OSC_LANGUAGE_ID;
 $sql .= " GROUP BY p.products_name, p.products_id";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit( $limit ,$offset);
  
-if ( $db->query($sql) )
+$resql=$dbosc->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $dbosc->num_rows($resql);
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\">";
@@ -59,7 +67,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<TR $bc[$var]>";
 
@@ -73,14 +81,14 @@ if ( $db->query($sql) )
       $i++;
     }
   print "</TABLE>";
-  $db->free();
+  $dbosc->free();
 }
 else
 {
-  print $db->error();
+	dolibarr_print_error($dbosc);
 }
 
-$db->close();
+$dbosc->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
