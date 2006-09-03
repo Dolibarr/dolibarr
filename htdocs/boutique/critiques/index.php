@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 /**
 	    \file       htdocs/boutique/critiques/fiche.php
 		\ingroup    boutique
-		\brief      Page gestion critiques OS Commerce
+		\brief      Page gestion critiques OSCommerce
 		\version    $Revision$
 */
 

@@ -18,8 +18,14 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+	    \file       htdocs/boutique/promotions/fiche.php
+		\ingroup    boutique
+		\brief      Page gestion promotions OSCommerce
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 
@@ -60,9 +66,10 @@ $sql .= " WHERE s.products_id = pd.products_id AND pd.products_id = p.products_i
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
   
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   print '<table class=\"noborder width="100%">';
   print "<tr class=\"liste_titre\">";
@@ -107,11 +114,10 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
+	dolibarr_print_error($db);
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
-
+llxFooter('$Date$ - $Revision$');
 
 ?>

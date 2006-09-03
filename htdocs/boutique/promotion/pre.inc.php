@@ -32,7 +32,8 @@ require("./promotion.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {
-	global $user, $conf;
+	global $user,$conf, $langs;
+	$langs->load("shop");
 	
 	top_menu($head);
 	

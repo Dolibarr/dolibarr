@@ -32,7 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/boutique/critiques/critique.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {
-	global $user, $conf;
+	global $user,$conf, $langs;
+	$langs->load("shop");
 	
 	top_menu($head);
 	
