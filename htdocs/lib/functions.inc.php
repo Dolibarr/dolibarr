@@ -1692,21 +1692,21 @@ function print_fleche_navigation($page,$file,$options='',$nextpage)
 		\param	begin (1 par defaut)
 		\param	end (23 par defaut)
 */
-function print_heure_select($prefix,$begin=1,$end=23) {
-  
-  print '<select name="'.$prefix.'hour">';
-  for ($hour = $begin ; $hour <= $end ; $hour++) {
-    print "<option value=\"$hour\">$hour";
-  }
-  print "</select>&nbsp;H&nbsp;";
-  print '<select name="'.$prefix.'min">';
-  for ($min = 0 ; $min < 60 ; $min=$min+5) {
-    if ($min < 10) {
-      $min = "0" . $min;
-    }
-    print "<option value=\"$min\">$min";
-  }
-  print "</select>\n";  
+function print_heure_select($prefix,$begin=1,$end=23)
+{
+	print '<select class="flat" name="'.$prefix.'hour">';
+	for ($hour = $begin ; $hour <= $end ; $hour++) {
+		print "<option value=\"$hour\">$hour";
+	}
+	print "</select>&nbsp;H&nbsp;";
+	print '<select class="flat" name="'.$prefix.'min">';
+	for ($min = 0 ; $min < 60 ; $min=$min+5) {
+		if ($min < 10) {
+			$min = "0" . $min;
+		}
+		print "<option value=\"$min\">$min";
+	}
+	print "</select>\n";
 }
 
 /**

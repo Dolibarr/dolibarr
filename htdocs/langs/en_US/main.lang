@@ -332,6 +332,7 @@ Redo=Redo
 ExpandAll=Expand all
 UndoExpandAll=Undo expand
 Reason=Raison
+FeatureNotYetSupported=Feature not yet supported
 # Countries
 CountryFR=France
 CountryBE=Belgium

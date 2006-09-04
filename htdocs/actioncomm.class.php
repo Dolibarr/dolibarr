@@ -42,8 +42,9 @@ class ActionComm
     var $type;
     var $label;
     var $datec;			// Date creation enregistrement
-    var $datep;			// Date action 0%
-    var $date;			// Date action 100% (datea)
+    var $datep;			// Date action planifie debut
+    var $datef;			// Date action planifie fin
+    var $date;			// Date action realise completement (datea)
     var $datem;			// Date modif (tms)
     var $priority;
     var $user;
@@ -85,13 +86,13 @@ class ActionComm
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
-        if ($this->percent < 100) $sql.= "datep,";
-        if ($this->percent == 100) $sql.= "datea,";
+        if ($this->date_p) $sql.= "datep,";
+        if ($this->date_a) $sql.= "datea,";
         $sql.= "fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
         $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (now(),";
-        if ($this->percent < 100) $sql.= "'".$this->db->idate($this->date)."',";
-        if ($this->percent == 100) $sql.= "'".$this->db->idate($this->date)."',";
+        if ($this->date_p) $sql.= "'".$this->db->idate($this->date_p)."',";
+        if ($this->date_a) $sql.= "'".$this->db->idate($this->date_a)."',";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
         $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percent."','".$this->priority."',";

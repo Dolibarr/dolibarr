@@ -332,6 +332,7 @@ Redo=Refaire
 ExpandAll=Tout dérouler
 UndoExpandAll=Annuler déroulement
 Reason=Raison
+FeatureNotYetSupported=Fonctionnalité pas encore supportée
 # Countries
 CountryFR=France
 CountryBE=Belgique

@@ -78,7 +78,7 @@ if ($_POST["action"] == 'add_action')
         $actioncomm->type_id = $_POST["actionid"];
         $actioncomm->type_code = $cactioncomm->code;
         $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
-        $actioncomm->label = $_POST["label"];
+        $actioncomm->label = trim($_POST["label"]);
         if (! $_POST["label"])
         {
             if ($_POST["actionid"] == 5 && $contact->fullname)
@@ -93,16 +93,28 @@ if ($_POST["action"] == 'add_action')
                 }
             }
         }
-        $actioncomm->date = mktime($_POST["heurehour"],
-                                   $_POST["heuremin"],
-                                   0,
-                                   $_POST["acmonth"],
-                                   $_POST["acday"],
-                                   $_POST["acyear"]);
-        $actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
         $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
+		if ($actioncomm->percent < 100)
+		{
+        	$actioncomm->date_p = @mktime($_POST["heurephour"],
+                                   $_POST["heurepmin"],
+                                   0,
+                                   $_POST["apmonth"],
+                                   $_POST["apday"],
+                                   $_POST["apyear"]);
+        }
+		if ($actioncomm->percent == 100)
+        {
+        	$actioncomm->date_a = @mktime($_POST["heuredhour"],
+                                   $_POST["heuredmin"],
+                                   0,
+                                   $_POST["admonth"],
+                                   $_POST["adday"],
+                                   $_POST["adyear"]);
+        }
+        $actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
         $actioncomm->user = $user;
-        $actioncomm->note = $_POST["note"];
+        $actioncomm->note = trim($_POST["note"]);
         if (isset($_POST["contactid"]))    $actioncomm->contact = $contact;
         if (isset($_POST["socid"]))        $actioncomm->societe = $societe;
         if ($_POST["todo_webcal"] == 'on') $actioncomm->use_webcal=1;
@@ -115,7 +127,8 @@ if ($_POST["action"] == 'add_action')
             if (! $actioncomm->error)
             {
                 $db->commit();
-                Header("Location: ".$_POST["from"]);
+                if ($_POST["from"]) Header("Location: ".$_POST["from"]);
+                else Header("Location: ".DOL_URL_ROOT.'/comm/action/fiche.php?id='.$idaction);
                 exit;
             }
             else
@@ -129,12 +142,13 @@ if ($_POST["action"] == 'add_action')
         else
         {
             $db->rollback();
-            dolibarr_print_error($db);
+            $error=$actioncomm->error;
         }
     }
     else
     {
-        dolibarr_print_error('',"Le type d'action n'a pas été choisi");
+		$_GET["action"] = 'create';
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
     }
 
 }
@@ -187,200 +201,288 @@ $html = new Form($db);
 
 if ($_GET["action"] == 'create')
 {
-  $caction = new CActioncomm($db);
-  
-  if ($_GET["contactid"])
-    {      
-      $contact = new Contact($db);
-      $contact->fetch($_GET["contactid"]);
-    }
+	$caction = new CActioncomm($db);
 
-  print '<form name="action" action="fiche.php" method="post">';
-  print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
-  print '<input type="hidden" name="action" value="add_action">';
-
-  /*
-   * Si action de type Rendez-vous
-   *
-   */
-  if ($_GET["actionid"] == 5) 
-    {
-      print_titre ($langs->trans("AddActionRendezVous"));	  
-      print "<br>";
-
-      print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
-      
-      print '<table class="border" width="100%">';
-
-      // Type d'action
-      print '<input type="hidden" name="actionid" value="5">';
-
-      // Societe, contact
-      print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
-      if ($_GET["socid"])
+	if ($_GET["contactid"])
 	{
-          $societe = new Societe($db);
-          $societe->fetch($_GET["socid"]);
-	  		print $societe->getNomUrl(1);
-          print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+		$contact = new Contact($db);
+		$contact->fetch($_GET["contactid"]);
 	}
-      else
-	{  
-	  print $html->select_societes('','socid',1,1);
-	}
-      print '</td></tr>';
-      
-      // Si la societe est imposée, on propose ces contacts
-      if ($_GET["socid"])
+
+	print '<form name="action" action="fiche.php" method="post">';
+	print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
+	print '<input type="hidden" name="action" value="add_action">';
+
+	/*
+	* Si action de type Rendez-vous
+	*
+	*/
+	if ($_GET["actionid"] == 5)
 	{
-	  print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td width="40%">';
-          $html->select_contacts($_GET["socid"],'','contactid',1,1);
-    	  print '</td></tr>';
-	}
+		print_titre ($langs->trans("AddActionRendezVous"));
+		print "<br>";
 
-      print '<tr><td>'.$langs->trans("Date").'</td><td>';
-      $html->select_date('','ac','','','',"action");
-      print '</td></tr>';
-      print '<tr><td>'.$langs->trans("Hour").'</td><td>';
-      print_heure_select("heure",8,20);
-      print '</td></tr>';
-      print '<tr><td>'.$langs->trans("Duration").'</td><td>';
-      print_duree_select("duree");
-      print '</td></tr>';
+		if ($mesg) print $mesg.'<br>';
 
-      add_row_for_webcal_link();
-        
-      print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-      print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
-      print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';  
-      print '</table>';
-    }
+		print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
 
-  /* 
-   * Si action de type autre que rendez-vous
-   *
-   */   
-  else 
-    { 
-      /*
-       * Click to dial
-       *
-       */
-      if ($conf->clicktodial->enabled)
-	{
-	  $user->fetch_clicktodial();
+		print '<table class="border" width="100%">';
 
-	  if ($_GET["call"] && $user->clicktodial_enabled == 1)
-	    {
+		// Type d'action
+		print '<input type="hidden" name="actionid" value="5">';
 
-	      print '<Script language=javascript>'."\n";
-
-	      $url = CLICKTODIAL_URL ."?login=".$user->clicktodial_login."&password=".$user->clicktodial_password."&caller=".$user->clicktodial_poste ."&called=".$_GET["call"];
-	      
-	      print 'window.open("'.$url.'","clicktodial", "toolbar=no,location=0,directories=0,status=0,menubar=no,scrollbars=1,resizable=1,copyhistory=0,width=400,height=300,top=10,left=10");';
-	      print "\n</script>\n";
-	    }
-	}
-
-      /*
-       *
-       *
-       */
-
-      print_titre ($langs->trans("AddAnAction"));
-      print "<br>";
-      
-      print '<table class="border" width="100%">';
-
-      // Type d'action actifs
-      print '<tr><td>'.$langs->trans("Action").'</td><td>';
-      if ($_GET["actionid"])
-	{
-	  print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";      
-	  print $caction->get_nom($_GET["actionid"]);
-	}
-      else
-	{
-	  $html->select_array("actionid",  $caction->liste_array(1), 0);
-	}
-      print '</td></tr>';
-      
-      print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30"></td></tr>';
-      
-      // Societe, contact
-      print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
-      if ($_GET["socid"])
-	{
-          $societe = new Societe($db);
-          $societe->fetch($_GET["socid"]);
-	      print $societe->getNomUrl(1);
-          print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
-	}
-      else 
-	{  
-	  print $html->select_societes('','socid',1,1);
-	}
-      print '</td></tr>';
-      
-      // Si la societe est imposée, on propose ces contacts
-      if ($_GET["socid"])
-	{
-	  print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-          $html->select_contacts($_GET["socid"],'','contactid',1,1);
-    	  print '</td></tr>';
-	}
-      
-      // Avancement
-      if ($_GET["afaire"] == 1)
-	{
-	  print '<input type="hidden" name="percentage" value="0">';
-	  print '<input type="hidden" name="todo" value="on">';
-	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionToDo").' / 0%</td></tr>';
-	}
-      elseif ($_GET["afaire"] == 2)
-	{
-	  print '<input type="hidden" name="percentage" value="100">';
-	  print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
-	} else 
-	  {
-	    print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
-	  }
-      
-      	// Date
-      	print '<tr><td>'.$langs->trans("Date").'</td><td>';
-		if ($_GET["afaire"] == 1)
+		// Societe, contact
+		print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
+		if ($_GET["socid"])
 		{
-			$html->select_date('','ac','','','',"action");
-			print '</tr><tr><td>'.$langs->trans("Hour").'</td><td>';
-			print_heure_select("heure",8,20);
-		}
-		else if ($_GET["afaire"] == 2)
-		{
-			$html->select_date('','ac','','','',"action");
-			print '</tr><tr><td>'.$langs->trans("Hour").'</td><td>';
-			print_heure_select("heure",8,20);
+			$societe = new Societe($db);
+			$societe->fetch($_GET["socid"]);
+			print $societe->getNomUrl(1);
+			print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
 		}
 		else
 		{
-			$html->select_date('','ac','','','',"action");
-			print '</tr><tr><td>'.$langs->trans("Hour").'</td><td>';
-			print_heure_select("heure",8,20);
+			print $html->select_societes('','socid',1,1);
 		}
 		print '</td></tr>';
-      
+
+		// Si la societe est imposée, on propose ces contacts
+		if ($_GET["socid"])
+		{
+			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
+			$html->select_contacts($_GET["socid"],'','contactid',1,1);
+			print '</td></tr>';
+		}
+
+		// Affecte a
+		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
+
+		// Realise par
+		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
+
+		// Date planification
+		print '<tr><td>'.$langs->trans("DatePlanned").'</td><td>';
+		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
+		{
+			$html->select_date(-1,'ap','','','',"action");
+			print ' &nbsp; ';
+			print_heure_select("heurep",8,20);
+		}
+		else
+		{
+			$html->select_date(-1,'ap','','','',"action");
+			print ' &nbsp; ';
+			print_heure_select("heurep",8,20);
+		}
+		print '</td></tr>';
+
+		// Date done
+		print '<tr><td>'.$langs->trans("DateDone").'</td><td>';
+		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
+		{
+			$html->select_date(-1,'ad','','','',"action");
+			print ' &nbsp; ';
+			print_heure_select("heured",8,20);
+		}
+		else
+		{
+			$html->select_date(-1,'ad','','','',"action");
+			print ' &nbsp; ';
+			print_heure_select("heured",8,20);
+		}
+		print '</td></tr>';
+		
+		// Duration
+		print '<tr><td>'.$langs->trans("Duration").'</td><td>';
+		print_duree_select("duree");
+		print '</td></tr>';
+
 		add_row_for_webcal_link();
-      
-      // Note
-      print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-      print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
 
-      print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+		// Note
+		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
+		if ($conf->fckeditor->enabled)
+	    {
+		    // Editeur wysiwyg
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
+			$doleditor->Create();
+	    }
+	    else
+	    {
+			print '<textarea name="note" cols="90" rows="'.ROWS_8.'">'.$societe->note.'</textarea>';
+	    }
+		print '</td></tr>';
 
-      print '</table>';  
+		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+		print '</table>';
+	}
+
+	/*
+	* Si action de type autre que rendez-vous
+	*
+	*/
+	else
+	{
+		/*
+		* Click to dial
+		*
+		*/
+		if ($conf->clicktodial->enabled)
+		{
+			$user->fetch_clicktodial();
+
+			if ($_GET["call"] && $user->clicktodial_enabled == 1)
+			{
+
+				print '<Script language=javascript>'."\n";
+
+				$url = CLICKTODIAL_URL ."?login=".$user->clicktodial_login."&password=".$user->clicktodial_password."&caller=".$user->clicktodial_poste ."&called=".$_GET["call"];
+
+				print 'window.open("'.$url.'","clicktodial", "toolbar=no,location=0,directories=0,status=0,menubar=no,scrollbars=1,resizable=1,copyhistory=0,width=400,height=300,top=10,left=10");';
+				print "\n</script>\n";
+			}
+		}
+
+		/*
+		*
+		*
+		*/
+
+		print_titre ($langs->trans("AddAnAction"));
+		print "<br>";
+
+		if ($mesg) print $mesg.'<br>';
+
+		print '<table class="border" width="100%">';
+
+		// Type d'action actifs
+		print '<tr><td>'.$langs->trans("Type").'</td><td>';
+		if ($_GET["actionid"])
+		{
+			print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";
+			print $caction->get_nom($_GET["actionid"]);
+		}
+		else
+		{
+			$arraylist=$caction->liste_array(1);
+			$arraylist[0]='&nbsp;';
+			sort($arraylist);
+			$html->select_array("actionid", $arraylist, 0);
+		}
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30"></td></tr>';
+
+		// Societe, contact
+		print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
+		if ($_GET["socid"])
+		{
+			$societe = new Societe($db);
+			$societe->fetch($_GET["socid"]);
+			print $societe->getNomUrl(1);
+			print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+		}
+		else
+		{
+			print $html->select_societes('','socid',1,1);
+		}
+		print '</td></tr>';
+
+		// Affecte a
+		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
+
+		// Realise par
+		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
+
+		// Si la societe est imposée, on propose ces contacts
+		if ($_GET["socid"])
+		{
+			print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
+			$html->select_contacts($_GET["socid"],'','contactid',1,1);
+			print '</td></tr>';
+		}
+
+		// Avancement
+		if ($_GET["afaire"] == 1)
+		{
+			print '<input type="hidden" name="percentage" value="0">';
+			print '<input type="hidden" name="todo" value="on">';
+			print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionToDo").' / 0%</td></tr>';
+		}
+		elseif ($_GET["afaire"] == 2)
+		{
+			print '<input type="hidden" name="percentage" value="100">';
+			print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
+		} else
+		{
+			print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0" size="4">%</td></tr>';
+		}
+
+		// Date planification
+		print '<tr><td>'.$langs->trans("DatePlanned").'</td><td>';
+		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
+		{
+			$html->select_date(-1,'ap','','','',"action");
+			print ' &nbsp; ';
+			print_heure_select("heurep",8,20);
+		}
+		else
+		{
+			$html->select_date(-1,'ap','','','',"action");
+			print ' &nbsp; ';
+			print_heure_select("heurep",8,20);
+		}
+		print '</td></tr>';
+
+		// Date done
+		print '<tr><td>'.$langs->trans("DateDone").'</td><td>';
+		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
+		{
+			$html->select_date(-1,'ad','','','',"action");
+			print ' &nbsp; ';
+			print_heure_select("heured",8,20);
+		}
+		else
+		{
+			$html->select_date(-1,'ad','','','',"action");
+			print ' &nbsp; ';
+			print_heure_select("heured",8,20);
+		}
+		print '</td></tr>';
+
+		add_row_for_webcal_link();
+
+		// Note
+		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
+		if ($conf->fckeditor->enabled)
+	    {
+		    // Editeur wysiwyg
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
+			$doleditor->Create();
+	    }
+	    else
+	    {
+			print '<textarea name="note" cols="90" rows="'.ROWS_8.'"></textarea>';
+	    }
+		print '</td></tr>';
+		
+		print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+
+		print '</table>';
 
 
-    }
-    print "</form>";
+	}
+	print "</form>";
 }
 
 /*
@@ -448,9 +550,15 @@ if ($_GET["id"])
         $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
         print '</td></tr>';
 
-        // Auteur
-        print '<tr><td>'.$langs->trans("Author").'</td>';
-        print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
+		// Affecte a
+		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
+
+		// Realise par
+		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
 
         // Date debut
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">'.dolibarr_print_date($act->datep,'%d %B %Y %H:%M').'</td></tr>';
@@ -458,7 +566,10 @@ if ($_GET["id"])
         // Date fin real
         print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
 
+        // Etat
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
+
+		// Objet lié
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -467,7 +578,19 @@ if ($_GET["id"])
 
         // Note
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-        print '<textarea cols="60" rows="6" name="note">'.$act->note.'</textarea></td></tr>';
+		if ($conf->fckeditor->enabled)
+	    {
+		    // Editeur wysiwyg
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
+			$doleditor->Create();
+	    }
+	    else
+	    {
+			print '<textarea name="note" cols="90" rows="'.ROWS_8.'">'.$act->note.'</textarea>';
+	    }
+        
+        print '</td></tr>';
 
         print '<tr><td align="center" colspan="4"><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
         print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -497,9 +620,15 @@ if ($_GET["id"])
         
         print '</td></tr>';
 
-        // Auteur
-        print '<tr><td>'.$langs->trans("Author").'</td>';
-        print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
+		// Affecte a
+		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
+
+		// Realise par
+		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
 
         // Date debut
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">'.dolibarr_print_date($act->datep,'%d %B %Y %H:%M').'</td></tr>';
@@ -521,7 +650,8 @@ if ($_GET["id"])
 
         // Note
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-        print nl2br($act->note).'</td></tr>';
+        print nl2br($act->note);
+        print '</td></tr>';
 
         print '</table>';
     }

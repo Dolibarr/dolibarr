@@ -98,50 +98,58 @@ class CActioncomm {
         }
     }
 
-  /*
-   *    \brief      Renvoi la liste des types d'actions existant
-   *    \param      active      1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut = pas de filtre)
-   *    \return     array       tableau des types d'actions actifs si ok, <0 si erreur
-   */
-  function liste_array($active='')
-  {
-    global $langs;
-    $langs->load("commercial");
-    
-    $ga = array();
-
-    $sql = "SELECT id, code, libelle";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-    if ($active != '') {
-        $sql.=" WHERE active=$active";
-    }
-    $sql .= " ORDER BY id";
-    
-    $resql=$this->db->query($sql);
-    if ($resql)
-    {
-        $nump = $this->db->num_rows($resql);
-    
-        if ($nump)
-        {
-            $i = 0;
-            while ($i < $nump)
-            {
-                $obj = $this->db->fetch_object($resql);
-    
-                $transcode=$langs->trans("Action".$obj->code);
-                $ga[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-                $i++;
-            }
-        }
-        $this->liste_array=$ga;
-        return $ga;
-    }
-    else
-    {
-        return -1;
-    }
-  }
+	/*
+	*    \brief      Renvoi la liste des types d'actions existant
+	*    \param      active      1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut = pas de filtre)
+	*    \return     array       tableau des types d'actions actifs si ok, <0 si erreur
+	*/
+	function liste_array($active='')
+	{
+		global $langs,$conf;
+		$langs->load("commercial");
+	
+		$ga = array();
+	
+		$sql = "SELECT id, code, libelle, module";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
+		if ($active != '')
+		{
+			$sql.=" WHERE active=".$active;
+		}
+	
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+			if ($nump)
+			{
+				$i = 0;
+				while ($i < $nump)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$qualified=1;
+					if ($obj->module)
+					{
+						if ($obj->module == 'invoice' && ! $conf->facture->enabled)	 $qualified=0;
+						if ($obj->module == 'order'   && ! $conf->commande->enabled) $qualified=0;
+						if ($obj->module == 'propal'  && ! $conf->propal->enabled)	 $qualified=0;
+					}
+					if ($qualified)
+					{
+						$transcode=$langs->trans("Action".$obj->code);
+						$ga[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+					}
+					$i++;
+				}
+			}
+			$this->liste_array=$ga;
+			return $ga;
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
   
   /*

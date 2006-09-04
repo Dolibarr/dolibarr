@@ -82,12 +82,28 @@ alter table llx_categorie drop column fk_statut;
 alter table llx_categorie add visible tinyint DEFAULT 1 NOT NULL;
 
 
+alter table llx_c_actioncomm  add module varchar(16) DEFAULT NULL after libelle;
+
+delete from llx_c_actioncomm;
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 1, 'AC_TEL',  'system', 'Appel Téléphonique' ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 2, 'AC_FAX',  'system', 'Envoi Fax'          ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 3, 'AC_PROP', 'system', 'Envoi Proposition'  ,'propal');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 4, 'AC_EMAIL','system', 'Envoi Email'        ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 5, 'AC_RDV',  'system', 'Rendez-vous'        ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 8, 'AC_COM',  'system', 'Envoi Commande'     ,'order');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 9, 'AC_FAC',  'system', 'Envoi Facture'      ,'invoice');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values (50, 'AC_OTH',  'system', 'Autre'              ,NULL);
+
 alter table llx_actioncomm modify datea datetime;
 alter table llx_actioncomm add column datec datetime after id;
 alter table llx_actioncomm add column datep datetime after datec;
 alter table llx_actioncomm add column tms timestamp after datea;
+alter table llx_actioncomm add column fk_commande integer after propalrowid;
+
 update llx_actioncomm set datec = datea where datec is null;
 update llx_actioncomm set datep = datea where datep is null;
+update llx_actioncomm set fk_action = '8' where fk_action =  '3' and label = 'Envoi commande par mail';
+
 
 
 drop table if exists llx_expedition_model_pdf;
@@ -237,7 +253,6 @@ delete from llx_document_model where nom='transporteur' and type='shipping';
 delete from llx_document_model where nom='dorade' and type='shipping';
 
 
-alter table llx_actioncomm add column fk_commande integer after propalrowid;
 
 
 ALTER TABLE llx_facture ADD UNIQUE INDEX idx_facture_uk_facnumber (facnumber);
@@ -364,9 +379,6 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_factur
 
 update llx_societe_remise_except set description='Remise sans description' where description is NULL or description ='';
 alter table llx_societe_remise_except modify description varchar(255) NOT NULL;
-
-insert into llx_c_actioncomm (id, code, type, libelle) values ( 8, 'AC_COM',  'system', 'Envoi Commande');
-update llx_actioncomm set fk_action = '8' where fk_action =  '3' and label = 'Envoi commande par mail';
 
 insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION', '15', 'chaine', 0, 'Durée de validitée des propales');
 
