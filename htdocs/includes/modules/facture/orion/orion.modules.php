@@ -75,14 +75,22 @@ function info()
   /**     \brief      Renvoi prochaine valeur attribuée
    *      \return     string      Valeur
    */
-    function getNextValue($date_creation)
+    function getNextValue($date_creation = '')
     {
         global $db,$conf;
 
         // On défini l'année fiscale
         $prefix='FA';
         $current_month = date("n");
-        $create_month = strftime("%m",$date_creation);
+        
+        if ($date_creation != '')
+        {
+        	$create_month = strftime("%m",$date_creation);
+        }
+        else
+        {
+        	$create_month = $current_month;
+        }
         
         if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
         {
@@ -133,7 +141,7 @@ function info()
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
-    function getNumRef($objsoc=0,$date_creation)
+    function getNumRef($objsoc=0,$date_creation = '')
     {
         return $this->getNextValue($date_creation);
     }
