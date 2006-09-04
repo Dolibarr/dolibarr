@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006  Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,55 +22,64 @@
  *
  */
 
-/**
-	\file       htdocs/includes/modules/facture/neptune/titan.modules.php
-	\ingroup    facture
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Titan
-	\version    $Revision$
+/** 
+    \file       htdocs/includes/modules/commande/mod_commande_rubis.php
+    \ingroup    commande
+    \brief      Fichier contenant la classe du modèle de numérotation de référence de commande Rubis
+    \version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+include_once("modules_commande.php");
+
 
 /**
-	\class      mod_facture_titan
-	\brief      Classe du modèle de numérotation de référence de facture Titan
+   \class      mod_commande_rubis
+   \brief      Classe du modèle de numérotation de référence de commande Rubis
 */
-class mod_facture_titan extends ModeleNumRefFactures
+
+class mod_commande_rubis extends ModeleNumRefCommandes
 {
 
-    /**     \brief      Renvoi la description du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-function info()
-    {
-    	global $conf,$langs;
+  /**   \brief      Constructeur
+   */
+  function mod_commande_rubis()
+  {
+    $this->nom = "Rubis";
+  }
 
-		$langs->load("bills");
+
+  /**     \brief      Renvoi la description du modele de numérotation
+   *      \return     string      Texte descripif
+   */
+  function info()
+    {
+    	global $conf;
     	
-      $texte = $langs->trans('TitanNumRefModelDesc1')."<br>\n";
-      $texte.= $langs->trans('TitanNumRefModelDesc2')."<br>\n";
-      $texte.= $langs->trans('TitanNumRefModelDesc3')."<br>\n";
-      $texte.= $langs->trans('TitanNumRefModelDesc4')."<br>\n";
+      $texte = "Renvoie le numéro sous la forme CYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.<br>\n";
+      $texte.= "L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.<br>\n";
+      $texte.= "Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.<br>\n";
+      $texte.= "Dans cette exemple nous aurons au 1er septembre 2006 une commande nommée C0700345.<br>\n";
       
       if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->SOCIETE_FISCAL_MONTH_START.')';
+      	$texte.= "SOCIETE_FISCAL_MONTH_START est définie et vaut: ".$conf->global->SOCIETE_FISCAL_MONTH_START."";
       }
       else
       {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')';
+      	$texte.= "SOCIETE_FISCAL_MONTH_START n'est pas définie.";
       }
       return $texte;
     }
+    
+   /**     \brief      Renvoi un exemple de numérotation
+   *      \return     string      Example
+   */
+   function getExample()
+   {
+       return "C0600001";
+   }
 
-    /**     \brief      Renvoi un exemple de numérotation
-     *      \return     string      Example
-     */
-    function getExample()
-    {
-        return "FA0600001";           
-    }
-
+  
   /**     \brief      Renvoi prochaine valeur attribuée
    *      \return     string      Valeur
    */
@@ -80,7 +88,7 @@ function info()
         global $db,$conf;
         
         // D'abord on défini l'année fiscale
-        $prefix='FA';
+        $prefix='C';
         $current_month = date("n");
         if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
         {
@@ -92,27 +100,23 @@ function info()
         }
         
         // On récupère la valeur max (réponse immédiate car champ indéxé)
-        $fisc=$prefix.$yy;
-        $fayy='';
-        $sql = "SELECT MAX(facnumber)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        $sql.= " WHERE facnumber like '${fisc}%'";
+        $cyy='';
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $fayy = substr($row[0],0,4);
+            if ($row) $cyy = substr($row[0],0,3);
         }
 
         // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('FA[0-9][0-9]',$fayy))
+        if (eregi('C[0-9][0-9]',$cyy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $date = strftime("%Y%m", time());
-            $posindice=5;
-            $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql.= " WHERE facnumber like '${fayy}%'";
+            $posindice=4;
+            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."commande";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -127,7 +131,7 @@ function info()
         
         $num = sprintf("%05s",$max+1);
         
-        return  "FA$yy$num";
+        return  "C$yy$num";
     }
     
   
@@ -135,11 +139,9 @@ function info()
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
-    function getNumRef($objsoc=0)
+    function commande_get_num($objsoc=0)
     {
         return $this->getNextValue();
     }
-    
-}    
-
+}
 ?>

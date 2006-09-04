@@ -292,6 +292,12 @@ MercureNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique si
 NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.
 NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur
 
+# orion
+OrionNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
+OrionNumRefModelDesc2=L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.
+OrionNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
+OrionNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700354.
+
 # terre
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
 TerreNumRefModelError=Une facture commençant par $fayymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.

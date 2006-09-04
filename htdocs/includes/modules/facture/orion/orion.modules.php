@@ -24,19 +24,19 @@
  */
 
 /**
-	\file       htdocs/includes/modules/facture/neptune/titan.modules.php
+	\file       htdocs/includes/modules/facture/neptune/orion.modules.php
 	\ingroup    facture
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Titan
+	\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Orion
 	\version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 /**
-	\class      mod_facture_titan
-	\brief      Classe du modèle de numérotation de référence de facture Titan
+	\class      mod_facture_Orion
+	\brief      Classe du modèle de numérotation de référence de facture Orion
 */
-class mod_facture_titan extends ModeleNumRefFactures
+class mod_facture_orion extends ModeleNumRefFactures
 {
 
     /**     \brief      Renvoi la description du modele de numérotation
@@ -48,10 +48,10 @@ function info()
 
 		$langs->load("bills");
     	
-      $texte = $langs->trans('TitanNumRefModelDesc1')."<br>\n";
-      $texte.= $langs->trans('TitanNumRefModelDesc2')."<br>\n";
-      $texte.= $langs->trans('TitanNumRefModelDesc3')."<br>\n";
-      $texte.= $langs->trans('TitanNumRefModelDesc4')."<br>\n";
+      $texte = $langs->trans('OrionNumRefModelDesc1')."<br>\n";
+      $texte.= $langs->trans('OrionNumRefModelDesc2')."<br>\n";
+      $texte.= $langs->trans('OrionNumRefModelDesc3')."<br>\n";
+      $texte.= $langs->trans('OrionNumRefModelDesc4')."<br>\n";
       
       if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
@@ -92,11 +92,9 @@ function info()
         }
         
         // On récupère la valeur max (réponse immédiate car champ indéxé)
-        $fisc=$prefix.$yy;
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        $sql.= " WHERE facnumber like '${fisc}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -108,11 +106,9 @@ function info()
         if (eregi('FA[0-9][0-9]',$fayy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $date = strftime("%Y%m", time());
             $posindice=5;
             $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql.= " WHERE facnumber like '${fayy}%'";
             $resql=$db->query($sql);
             if ($resql)
             {
