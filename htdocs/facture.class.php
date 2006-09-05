@@ -1862,7 +1862,7 @@ class Facture extends CommonObject
             $obj = new $classname();
 
             $numref = "";
-            $numref = $obj->getNumRef($soc,$this->date);
+            $numref = $obj->getNumRef($soc,$this);
 
             if ( $numref != "")
             {

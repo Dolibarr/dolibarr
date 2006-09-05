@@ -139,11 +139,12 @@ function info()
   
     /**     \brief      Renvoie la référence de commande suivante non utilisée
      *      \param      objsoc      Objet société
+     *      \param      facture		Objet facture
      *      \return     string      Texte descripif
      */
-    function getNumRef($objsoc=0,$date_creation = '')
+    function getNumRef($objsoc=0,$facture)
     {
-        return $this->getNextValue($date_creation);
+        return $this->getNextValue($facture->date);
     }
     
 }    
