@@ -171,7 +171,7 @@ if ($_POST["action"] == "set")
         // Répertoire des documents
         if (! is_dir($main_data_dir))
         {
-            @mkdir($main_data_dir, 0755);
+            create_exdir($main_data_dir);
         }
 
         if (! is_dir($main_data_dir))
@@ -201,14 +201,14 @@ if ($_POST["action"] == "set")
             {
                 if (is_dir($dir[$i]))
                 {
-                    dolibarr_syslog ("Le dossier '".$dir[$i]."' existe");
+                    dolibarr_syslog ("Directory '".$dir[$i]."' exists");
                 }
                 else
                 {
-                    if (! @mkdir($dir[$i], 0755))
+                    if (create_exdir($dir[$i]) < 0)
                     {
                         print "<tr><td>";
-                        print "Impossible de créer : ".$dir[$i];
+                        print "Failed to create directory: ".$dir[$i];
                         print '</td><td>';
                         print $langs->trans("Error");
                         print "</td></tr>";
@@ -216,7 +216,7 @@ if ($_POST["action"] == "set")
                     }
                     else
                     {
-                        dolibarr_syslog ("Le dossier '".$dir[$i]."' a ete cree");
+                        dolibarr_syslog("Directory '".$dir[$i]."' created");
                     }
                 }
             }

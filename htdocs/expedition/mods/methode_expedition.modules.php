@@ -74,20 +74,7 @@ Class methode_expedition
       if ($propale->fetch($id))
 	{
 
-	  if (defined("PROPALE_OUTPUTDIR"))
-	    {
-	      $dir = PROPALE_OUTPUTDIR . "/" . $propale->ref ;
-	      umask(0);
-	      if (! file_exists($dir))
-		{
-		  mkdir($dir, 0755);
-		}
-	    }
-	  else
-	    {
-	      print "PROPALE_OUTPUTDIR non définit !";
-	    }
-	  
+  
 	  $file = $dir . "/" . $propale->ref . ".pdf";
 	  
 	  if (file_exists($dir))
@@ -104,14 +91,9 @@ Class methode_expedition
 
 	      $this->_pagehead($pdf, $propale);
 
-	      /*
-	       */
 	      $tab_top = 100;
 	      $tab_height = 150;
-	      /*
-	       *
-	       */  
-	      
+
 	      $pdf->SetFillColor(220,220,220);
 
 	      $pdf->SetTextColor(0,0,0);

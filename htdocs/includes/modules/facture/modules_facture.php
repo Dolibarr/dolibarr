@@ -209,33 +209,28 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 */
 function facture_meta_create($db, $facid, $message="")
 {
-  global $langs,$conf;
+	global $langs,$conf;
 
-  $fac = new Facture($db,"",$facid);
-  $fac->fetch($facid);
-  $fac->fetch_client();
-
-  if ($conf->facture->dir_output)
-    {
-      $facref = sanitize_string($fac->ref);
-      $dir = $conf->facture->dir_output . "/" . $facref ;
-      $file = $dir . "/" . $facref . ".meta";
-
-      if (! file_exists($dir))
-        {
-	  umask(0);
-	  if (! mkdir($dir, 0755))
-            {
-	      $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-	      return 0;
-            }
-        }
-
-      if (file_exists($dir))
+	$fac = new Facture($db,"",$facid);
+	$fac->fetch($facid);
+	$fac->fetch_client();
+	
+	if ($conf->facture->dir_output)
 	{
-	  $nblignes = sizeof($fac->lignes);
-	  $client = $fac->client->nom . " " . $fac->client->adresse . " " . $fac->client->cp . " " . $fac->client->ville;
-	  $meta = "REFERENCE=\"" . $fac->ref . "\"
+		$facref = sanitize_string($fac->ref);
+		$dir = $conf->facture->dir_output . "/" . $facref ;
+		$file = $dir . "/" . $facref . ".meta";
+		
+		if (! is_dir($dir))
+		{
+			create_exdir($dir);
+		}
+
+    	if (is_dir($dir))
+		{
+		  	$nblignes = sizeof($fac->lignes);
+		  	$client = $fac->client->nom . " " . $fac->client->adresse . " " . $fac->client->cp . " " . $fac->client->ville;
+		  	$meta = "REFERENCE=\"" . $fac->ref . "\"
 DATE=\"" . strftime("%d/%m/%Y",$fac->date) . "\"
 NB_ITEMS=\"" . $nblignes . "\"
 CLIENT=\"" . $client . "\"

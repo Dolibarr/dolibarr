@@ -243,7 +243,7 @@ while (($file = readdir($handle))!==false)
 
 			// Info
 			$htmltooltip='';
-	        $nextval=$module->getNextValue();
+	        $nextval=$module->getNextValue($mysoc,'');
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;

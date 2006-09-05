@@ -85,7 +85,7 @@ function info()
         $prefix='FA';
         $current_month = date("n");
         
-        if ($facture->date)
+        if (is_object($facture) && $facture->date)
         {
         	$create_month = strftime("%m",$facture->date);
         }
