@@ -201,8 +201,6 @@ print '</td><td width="65%" valign="top" class="notopnoleftnoright">';
 
 if ($conf->global->MAIN_SHOW_WORKBOARD == 1)
 {
-	$langs->load("bills");
-
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td colspan="2">'.$langs->trans("DolibarrWorkBoard").'</td>';
