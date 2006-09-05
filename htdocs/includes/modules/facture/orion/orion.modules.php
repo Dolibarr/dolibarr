@@ -72,10 +72,12 @@ function info()
         return "FA0600001";           
     }
 
-  /**     \brief      Renvoi prochaine valeur attribuée
-   *      \return     string      Valeur
-   */
-    function getNextValue($date_creation = '')
+	/**		\brief      Renvoi prochaine valeur attribuée
+	*      	\param      objsoc      Objet société
+	*      	\param      facture		Objet facture
+	*      	\return     string      Valeur
+	*/
+    function getNextValue($objsoc,$facture)
     {
         global $db,$conf;
 
@@ -83,9 +85,9 @@ function info()
         $prefix='FA';
         $current_month = date("n");
         
-        if ($date_creation != '')
+        if ($facture->date)
         {
-        	$create_month = strftime("%m",$date_creation);
+        	$create_month = strftime("%m",$facture->date);
         }
         else
         {
@@ -144,7 +146,7 @@ function info()
      */
     function getNumRef($objsoc=0,$facture)
     {
-        return $this->getNextValue($facture->date);
+        return $this->getNextValue($objsoc,$facture);
     }
     
 }    
