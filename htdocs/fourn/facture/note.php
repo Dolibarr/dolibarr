@@ -1,0 +1,176 @@
+<?php
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ */
+
+/**
+        \file       htdocs/fourn/facture/note.php
+        \ingroup    facture
+        \brief      Fiche de notes sur une facture fournisseur
+		\version    $Revision$
+*/
+
+require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
+
+$socidp=isset($_GET["socidp"])?$_GET["socidp"]:isset($_POST["socidp"])?$_POST["socidp"]:"";
+
+$user->getrights('facture');
+if (!$user->rights->facture->lire)
+  accessforbidden();
+
+$langs->load("companies");
+$langs->load("bills");
+
+// Sécurité accés
+if ($user->societe_id > 0) 
+{
+	unset($_GET["action"]);
+	$socidp = $user->societe_id;
+}
+
+
+$fac = new FactureFournisseur($db);
+$fac->fetch($_GET["facid"]);
+
+
+/******************************************************************************/
+/*                     Actions                                                */
+/******************************************************************************/
+
+if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
+{
+	$db->begin();
+	
+	$res=$fac->update_note_public($_POST["note_public"]);
+	if ($res < 0)
+	{
+		$mesg='<div class="error">'.$fac->error.'</div>';
+		$db->rollback();
+	}
+	else
+	{
+		$db->commit();
+	}
+}
+
+if ($_POST["action"] == 'update' && $user->rights->fournisseur->facture->creer)
+{
+	$db->begin();
+	
+	$res=$fac->update_note($_POST["note"]);
+	if ($res < 0)
+	{
+		$mesg='<div class="error">'.$fac->error.'</div>';
+		$db->rollback();
+	}
+	else
+	{
+		$db->commit();
+	}
+}
+
+
+
+/******************************************************************************/
+/* Affichage fiche                                                            */
+/******************************************************************************/
+
+llxHeader();
+
+$html = new Form($db);
+
+if ($_GET["facid"])
+{
+    $fac->fetch_fournisseur();
+
+	$head = facturefourn_prepare_head($fac);
+	$titre=$langs->trans('SupplierInvoice');
+	dolibarr_fiche_head($head, 'note', $titre);
+
+
+    print '<table class="border" width="100%">';
+
+	// Ref
+    print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
+
+    // Société
+    print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$fac->fournisseur->getNomUrl(1).'</td></tr>';
+
+	// Note publique
+    print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+	print '<td valign="top" colspan="3">';
+    if ($_GET["action"] == 'edit')
+    {
+        print '<form method="post" action="note.php?facid='.$fac->id.'">';
+        print '<input type="hidden" name="action" value="update_public">';
+        print '<textarea name="note_public" cols="80" rows="8">'.$fac->note_public."</textarea><br>";
+        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '</form>';
+    }
+    else
+    {
+	    print ($fac->note_public?nl2br($fac->note_public):"&nbsp;");
+    }
+	print "</td></tr>";
+
+	// Note privée
+	if (! $user->societe_id)
+	{
+	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+		print '<td valign="top" colspan="3">';
+	    if ($_GET["action"] == 'edit')
+	    {
+	        print '<form method="post" action="note.php?facid='.$fac->id.'">';
+	        print '<input type="hidden" name="action" value="update">';
+	        print '<textarea name="note" cols="80" rows="8">'.$fac->note."</textarea><br>";
+	        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	        print '</form>';
+	    }
+		else
+		{
+		    print ($fac->note?nl2br($fac->note):"&nbsp;");
+		}
+		print "</td></tr>";
+	}
+	
+    print "</table>";
+
+
+    /*
+    * Actions
+    */
+    print '</div>';
+    print '<div class="tabsAction">';
+
+    if ($user->rights->fournisseur->facture->creer && $_GET["action"] <> 'edit')
+    {
+        print "<a class=\"tabAction\" href=\"note.php?facid=$fac->id&amp;action=edit\">".$langs->trans('Edit')."</a>";
+    }
+
+    print "</div>";
+
+
+}
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+?>
