@@ -1560,7 +1560,7 @@ else
 				print '</td>';
 				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 				print '</tr></table>';
-				print '</td><td colspan="2">';
+				print '</td><td colspan="5">';
 				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
 				{
 					print '<form action="facture.php?facid='.$id.'" method="post">';
