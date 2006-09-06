@@ -1707,7 +1707,7 @@ else
             {
 				print '<tr><td>';
 				print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-				print $langs->trans('RefCustomer').'</td><td align="left">';
+				print $langs->trans('RefCustomerOrder').'</td><td align="left">';
 				print '</td>';
 				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 				print '</tr></table>';
