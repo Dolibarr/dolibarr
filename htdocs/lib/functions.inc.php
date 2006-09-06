@@ -1942,8 +1942,10 @@ function get_exdir($num,$level=3)
  */
 function create_exdir($dir)
 {
-    dolibarr_syslog("functions.inc.php::create_exdir dir=$dir");
+    dolibarr_syslog("functions.inc.php::create_exdir: dir=$dir");
 
+  	if (@is_dir($dir)) return 0;
+	
     $nberr=0;
     $nbcreated=0;
 
@@ -1959,20 +1961,20 @@ function create_exdir($dir)
 		// (ex selon config de open_basedir)
         if ($ccdir)
         {
-        	if (! is_dir($ccdir))
+        	if (! @is_dir($ccdir))
         	{
-                dolibarr_syslog("functions.inc.php::create_exdir Directory '$ccdir' does not exists or is outside open_basedir PHP setting.");
+                dolibarr_syslog("functions.inc.php::create_exdir: Directory '$ccdir' does not exists or is outside open_basedir PHP setting.");
 
 	            umask(0);
 	            if (! @mkdir($ccdir, 0755))
 	            {
 	                // Si le is_dir a renvoyé une fausse info, alors on passe ici.
-	                dolibarr_syslog("functions.inc.php::create_exdir Error: Fails to create directory '$ccdir'.");
+	                dolibarr_syslog("functions.inc.php::create_exdir: Fails to create directory '$ccdir' or directory already exists.");
 	                $nberr++;
 	            }
 	            else
 	            {
-	                dolibarr_syslog("functions.inc.php::create_exdir Directory '$ccdir' created");
+	                dolibarr_syslog("functions.inc.php::create_exdir: Directory '$ccdir' created");
 					$nberr=0;	// On remet à zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
 	                $nbcreated++;
 	            }
