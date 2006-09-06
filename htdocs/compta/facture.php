@@ -1560,7 +1560,7 @@ else
 				print '</td>';
 				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
 				print '</tr></table>';
-				print '</td><td colspan="3">';
+				print '</td><td colspan="2">';
 				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
 				{
 					print '<form action="facture.php?facid='.$id.'" method="post">';
@@ -1624,7 +1624,7 @@ else
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="3">'.dolibarr_print_date($fac->date,'%A %d %B %Y').'</td>';
 			
-            $nbrows=8;
+            $nbrows=7;
             if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 			if ($conf->projet->enabled) $nbrows++;
 
