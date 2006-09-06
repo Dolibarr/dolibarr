@@ -975,6 +975,20 @@ if ($_GET['action'] == 'create')
     // Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 	
+	 /*
+      \todo
+      L'info "Reference commande client" est une carac de la commande et non de la facture.
+      Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
+      Pour ceux qui veulent l'utiliser au niveau de la facture, positionner la
+      constante FAC_USE_CUSTOMER_ORDER_REF à 1.
+    */
+    if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+    {
+    	print '<tr><td>'.$langs->trans('RefCustomerOrder').'</td><td>';
+    	print '<input type="text" name="ref_client" value="'.$ref_client.'">';
+    	print '</td></tr>';
+    }
+	
 	// Societe
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
 	print $soc->getNomUrl(1);
@@ -1110,20 +1124,6 @@ if ($_GET['action'] == 'create')
 	$liste=$model->liste_modeles($db);
 	$html->select_array('model',$liste,$conf->global->FACTURE_ADDON_PDF);
 	print "</td></tr>";
-
-    /*
-      \todo
-      L'info "Reference commande client" est une carac de la commande et non de la facture.
-      Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
-      Pour ceux qui veulent l'utiliser au niveau de la facture, positionner la
-      constante FAC_USE_CUSTOMER_ORDER_REF à 1.
-    */
-    if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
-    {
-    	print '<tr><td>'.$langs->trans('RefCustomerOrder').'</td><td>';
-    	print '<input type="text" name="ref_client" value="'.$ref_client.'">';
-    	print '</td></tr>';
-    }
     
 	// Note publique
 	print '<tr>';
@@ -1545,6 +1545,38 @@ else
 			// Reference
 			print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
 			
+						// Ref client
+            /*
+              \todo
+              L'info "Reference commande client" est une carac de la commande et non de la facture.
+              Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
+              Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF à 1.
+            */
+            if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+            {
+				print '<tr><td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+				print $langs->trans('RefCustomerOrder').'</td><td align="left">';
+				print '</td>';
+				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
+				{
+					print '<form action="facture.php?facid='.$id.'" method="post">';
+					print '<input type="hidden" name="action" value="set_ref_client">';
+					print '<input type="text" class="flat" size="20" name="ref_client" value="'.$fac->ref_client.'">';
+					print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+					print '</form>';
+				}
+				else
+				{
+					print $fac->ref_client;
+				}
+				print '</td>';
+				print '</tr>';
+			}			
+			
 			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
@@ -1694,39 +1726,6 @@ else
 				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
 			}
 			print '</td></tr>';
-
-
-			// Ref client
-            /*
-              \todo
-              L'info "Reference commande client" est une carac de la commande et non de la facture.
-              Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
-              Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF à 1.
-            */
-            if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
-            {
-				print '<tr><td>';
-				print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-				print $langs->trans('RefCustomerOrder').'</td><td align="left">';
-				print '</td>';
-				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
-				print '</tr></table>';
-				print '</td><td colspan="3">';
-				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
-				{
-					print '<form action="facture.php?facid='.$id.'" method="post">';
-					print '<input type="hidden" name="action" value="set_ref_client">';
-					print '<input type="text" class="flat" size="20" name="ref_client" value="'.$fac->ref_client.'">';
-					print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-					print '</form>';
-				}
-				else
-				{
-					print $fac->ref_client;
-				}
-				print '</td>';
-				print '</tr>';
-			}			
 
 			// Lit lignes de facture pour déterminer montant
 			// On s'en sert pas mais ca sert pour debuggage
