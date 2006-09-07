@@ -54,7 +54,7 @@ $langs->load('products');
 $langs->load('main');
 
 $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
-$msg=isset($_GET['msg'])?urldecode($_GET['msg']):'';
+$mesg=isset($_GET['mesg'])?urldecode($_GET['mesg']):'';
 $socidp=isset($_GET['socidp'])?$_GET['socidp']:$_POST['socidp'];
 
 // Sécurité accés client
@@ -165,7 +165,7 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	}
 	else
 	{
-		$msg='<div class="error">'.$fac->error.'</div>';
+		$mesg='<div class="error">'.$fac->error.'</div>';
 	}
 }
 
@@ -243,7 +243,7 @@ if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' 
 /*
 		if ($close_code == 'other' && ! $close_note)
 		{
-			$msg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Comment")).'</div>';
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Comment")).'</div>';
 		}
 		else
 		{
@@ -260,7 +260,7 @@ if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' 
 	}
 	else
 	{
-		$msg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
 	}
 }
 
@@ -269,38 +269,65 @@ if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' 
  */
 if ($_POST['action'] == 'add')
 {
-	$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-
-	$facture = new Facture($db, $_POST['socid']);
-
-	$facture->type           = $_POST['type'];
-	if ($facture->type == 1) $facture->fk_facture_source = $_POST['replacement_ref'];
-	$facture->number         = $_POST['facnumber'];
-	$facture->date           = $datefacture;
-	$facture->note_public    = trim($_POST['note_public']);
-	$facture->note           = trim($_POST['note']);
-	$facture->ref_client     = $_POST['ref_client'];
-	$facture->modelpdf       = $_POST['model'];
-
-	if ($_POST['fac_rec'] > 0)
+	$facture = new Facture($db);
+	if ($_POST['type'] == 1)
 	{
-		// Facture récurrente
+		if ($_POST['fac_replacement'] > 0)
+		{
+			// Si facture remplacement
+			$result=$facture->fetch($_POST['fac_replacement']);
+
+			//print "xxx".$result." ".$facture->socidp;
+			$facid = $facture->create_clone(1,$user);
+		}
+		else
+		{
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReplaceInvoice")).'</div>';
+			$_GET['action'] = 'create';
+		}
+	}
+
+	if ($_POST['type'] == 0 && $_POST['fac_rec'] > 0)
+	{
+		// Si facture récurrente
+		$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+
+		$facture->socidp 		 = $_POST['socid'];
+		$facture->type           = $_POST['type'];
+		$facture->number         = $_POST['facnumber'];
+		$facture->date           = $datefacture;
+		$facture->note_public    = trim($_POST['note_public']);
+		$facture->note           = trim($_POST['note']);
+		$facture->ref_client     = $_POST['ref_client'];
+		$facture->modelpdf       = $_POST['model'];
+
 		$facture->fac_rec = $_POST['fac_rec'];
 		$facid = $facture->create($user);
 	}
-	else
+
+	if ($_POST['type'] == 0 && $_POST['fac_rec'] <= 0)
 	{
+		// Si facture standard
+		$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+
+		$facture->socidp 		 = $_POST['socid'];
+		$facture->type           = $_POST['type'];
+		$facture->number         = $_POST['facnumber'];
+		$facture->date           = $datefacture;
+		$facture->note_public    = trim($_POST['note_public']);
+		$facture->note           = trim($_POST['note']);
+		$facture->ref_client     = $_POST['ref_client'];
+		$facture->modelpdf       = $_POST['model'];
 		$facture->projetid          = $_POST['projetid'];
 		$facture->cond_reglement_id = $_POST['cond_reglement_id'];
 		$facture->mode_reglement_id = $_POST['mode_reglement_id'];
 		$facture->amount            = $_POST['amount'];
 		$facture->remise_absolue    = $_POST['remise_absolue'];
 		$facture->remise_percent    = $_POST['remise_percent'];
-		$facture->ref_client        = $_POST['ref_client'];
 
 		if (! $_POST['propalid'] && ! $_POST['commandeid'] && ! $_POST['contratid'])
 		{
-			for ($i = 1 ; $i <= $NBLINES ; $i++)
+			for ($i = 1; $i <= $NBLINES; $i++)
 			{
 				if ($_POST['idprod'.$i])
 				{
@@ -315,6 +342,8 @@ if ($_POST['action'] == 'add')
 					$facture->add_product($_POST['idprod'.$i],$_POST['qty'.$i],$_POST['remise_percent'.$i],$startday,$endday);
 				}
 			}
+
+
 			$facid = $facture->create($user);
 
 			if ($facid > 0)
@@ -325,14 +354,14 @@ if ($_POST['action'] == 'add')
 			else
 			{
 				$_GET["action"]='create';
-				$msg='<div class="error">'.$facture->error.'</div>';
+				$mesg='<div class="error">'.$facture->error.'</div>';
 			}
 		}
 		else
 		{
 			/*
-			 * Si creation depuis propale
-			 */
+			* Si creation depuis propale
+			*/
 			if ($_POST['propalid'])
 			{
 				$facture->propalid = $_POST['propalid'];
@@ -347,18 +376,18 @@ if ($_POST['action'] == 'add')
 							$desc=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
 
 							$result = $facture->addline(
-								$facid,
-								$desc,
-								$prop->lignes[$i]->subprice,
-								$prop->lignes[$i]->qty,
-								$prop->lignes[$i]->tva_tx,
-								$prop->lignes[$i]->fk_product,
-								$prop->lignes[$i]->remise_percent,
-								'',
-								'',
-								0,
-								$prop->lignes[$i]->info_bits,
-								$prop->lignes[$i]->fk_remise_except);
+							$facid,
+							$desc,
+							$prop->lignes[$i]->subprice,
+							$prop->lignes[$i]->qty,
+							$prop->lignes[$i]->tva_tx,
+							$prop->lignes[$i]->fk_product,
+							$prop->lignes[$i]->remise_percent,
+							'',
+							'',
+							0,
+							$prop->lignes[$i]->info_bits,
+							$prop->lignes[$i]->fk_remise_except);
 						}
 					}
 					else
@@ -373,8 +402,8 @@ if ($_POST['action'] == 'add')
 			}
 
 			/*
-			 * Si création depuis commande
-			 */
+			* Si création depuis commande
+			*/
 			if ($_POST['commandeid'])
 			{
 				$facture->commandeid = $_POST['commandeid'];
@@ -390,18 +419,18 @@ if ($_POST['action'] == 'add')
 							$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 
 							$result = $facture->addline(
-								$facid,
-								$desc,
-								$lines[$i]->subprice,
-								$lines[$i]->qty,
-								$lines[$i]->tva_tx,
-								$lines[$i]->fk_product,
-								$lines[$i]->remise_percent,
-								'',
-								'',
-								0,
-								$lines[$i]->info_bits,
-								$lines[$i]->fk_remise_except);
+							$facid,
+							$desc,
+							$lines[$i]->subprice,
+							$lines[$i]->qty,
+							$lines[$i]->tva_tx,
+							$lines[$i]->fk_product,
+							$lines[$i]->remise_percent,
+							'',
+							'',
+							0,
+							$lines[$i]->info_bits,
+							$lines[$i]->fk_remise_except);
 						}
 					}
 					else
@@ -416,8 +445,8 @@ if ($_POST['action'] == 'add')
 			}
 
 			/*
-			 * Si création depuis contrat
-			 */
+			* Si création depuis contrat
+			*/
 			if ($_POST['contratid'])
 			{
 				$facture->contratid = $_POST['contratid'];
@@ -440,18 +469,18 @@ if ($_POST['action'] == 'add')
 							if ($contrat->lignes[$i]->date_fin_reel) $date_end=$contrat->lignes[$i]->date_fin_reel;
 
 							$result = $facture->addline(
-								$facid,
-								$desc,
-								$lines[$i]->subprice,
-								$lines[$i]->qty,
-								$lines[$i]->tva_tx,
-								$lines[$i]->fk_product,
-								$lines[$i]->remise_percent,
-								$date_start,
-								$date_end,
-								0,
-								$lines[$i]->info_bits,
-								$lines[$i]->fk_remise_except);
+							$facid,
+							$desc,
+							$lines[$i]->subprice,
+							$lines[$i]->qty,
+							$lines[$i]->tva_tx,
+							$lines[$i]->fk_product,
+							$lines[$i]->remise_percent,
+							$date_start,
+							$date_end,
+							0,
+							$lines[$i]->info_bits,
+							$lines[$i]->fk_remise_except);
 						}
 					}
 					else
@@ -465,14 +494,16 @@ if ($_POST['action'] == 'add')
 				}
 			}
 
-			// Fin création facture, on l'affiche
-			if ($facid > 0)
-			{
-				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
-				exit;
-			}
 		}
 	}
+	
+	// Fin création facture, on l'affiche
+	if ($facid > 0)
+	{
+		Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
+		exit;
+	}
+	
 }
 
 /*
@@ -767,13 +798,13 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)
 				{
-					$msg='<div class="error">'.$mailfile->error.'</div>';
+					$mesg='<div class="error">'.$mailfile->error.'</div>';
 				}
 				else
 				{
 					if ($mailfile->sendfile())
 					{
-						$msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+						$mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
 	
 						// Insertion action
 						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
@@ -798,24 +829,24 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						else
 						{
 							// Renvoie sur la fiche
-							Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&msg='.urlencode($msg));
+							Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&mesg='.urlencode($mesg));
 							exit;
 						}
 					}
 					else
 					{
 						$langs->load("other");
-						$msg='<div class="error">';
-						$msg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-						if ($mailfile->error) $msg.='<br>'.$mailfile->error;
-						$msg.='</div>';
+						$mesg='<div class="error">';
+						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+						if ($mailfile->error) $mesg.='<br>'.$mailfile->error;
+						$mesg.='</div>';
 					}
 				}
 			}
 			else
 			{
 				$langs->load("other");
-				$msg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
+				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
 				dolibarr_syslog('Recipient email is empty');
 			}
 
@@ -823,14 +854,14 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 		else
 		{
 			$langs->load("other");
-			$msg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
 			dolibarr_syslog('Failed to read file: '.$file);
 		}
 	}
 	else
 	{
 		$langs->load("other");
-		$msg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
+		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
 		dolibarr_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
 	}
 }
@@ -907,7 +938,7 @@ if ($_GET['action'] == 'create')
 	
 	print_titre($langs->trans('NewBill'));
 
-	if ($msg) print $msg;
+	if ($mesg) print $mesg;
 	
 	$soc = new Societe($db);
 
@@ -1017,7 +1048,7 @@ if ($_GET['action'] == 'create')
 	print '>';
 	print '</td><td>';
 	$text=$langs->trans("InvoiceReplacementAsk").' ';
-	$text.='<select name="replacement_ref">';
+	$text.='<select name="fac_replacement">';
 	if ($options)
 	{
 		$text.='<option value="-1">&nbsp;</option>';
@@ -1426,7 +1457,7 @@ else
 		/*                                                                             */
 		/* *************************************************************************** */
 
-		if ($msg) print $msg.'<br>';
+		if ($mesg) print $mesg.'<br>';
 
 		$fac = New Facture($db);
 		if ( $fac->fetch($_GET['facid'], $user->societe_id) > 0)

@@ -77,6 +77,9 @@ class Facture extends CommonObject
 	var $mode_reglement_code;
 	var $modelpdf;
 
+	var $products=array();
+	var $lignes=array();
+	
 	// Pour board
 	var $nbtodo;
 	var $nbtodolate;
@@ -108,9 +111,6 @@ class Facture extends CommonObject
 		$this->propalid = 0;
 		$this->projetid = 0;
 		$this->remise_exceptionnelle = 0;
-
-		$this->products = array();        // Tableau de lignes de factures
-		$this->lignes = array();
 	}
 
 	/**
@@ -349,6 +349,52 @@ class Facture extends CommonObject
 
 
 	/**
+	 *	\brief      Création de la facture en base depuis une autre
+	 *	\param      facidsrc		Id facture source
+	 *	\param      invertdetail	Inverse le signe des lignes details
+	 *	\param      user       		Object utilisateur qui crée
+	 *	\return		int				<0 si ko, >0 si ok
+	 */
+	function create_clone($invertdetail=0,$user)
+	{
+		// Charge facture source
+		$facture=new Facture($this->db);
+
+		$facture->fk_facture_source = $this->id;
+		
+		$facture->socidp 		 = $this->socidp;
+		$facture->type           = $this->type;
+		$facture->number         = $this->number;
+		$facture->date           = $this->date;
+		$facture->note_public    = $this->note_public;
+		$facture->note           = $this->note;
+		$facture->ref_client     = $this->ref_client;
+		$facture->modelpdf       = $this->modelpdf;
+		$facture->projetid          = $this->projetid;
+		$facture->cond_reglement_id = $this->cond_reglement_id;
+		$facture->mode_reglement_id = $this->mode_reglement_id;
+		$facture->amount            = $this->amount;
+		$facture->remise_absolue    = $this->remise_absolue;
+		$facture->remise_percent    = $this->remise_percent;
+
+		dolibarr_syslog("Facture::create_clone invertdetail=$invertdetail socidp=".$this->socidp);
+		
+		for ($i = 0; $i < sizeof($this->lignes); $i++)
+		{
+			if ($this->lignes[$i])
+			{
+//print $this->lignes[$i]->fk_product.",".$this->lignes[$i]->qty.",".$this->lignes[$i]->remise_percent.",".$this->lignes[$i]->date_start.",".$this->lignes[$i]->date_end;
+				$facture->add_product($this->lignes[$i]->fk_product,$this->lignes[$i]->qty,$this->lignes[$i]->remise_percent,$this->lignes[$i]->date_start,$this->lignes[$i]->date_end);
+			}
+		}
+
+		$facid = $facture->create($user);
+
+		return $facid;
+	}		
+			
+			
+	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
 	 *		\param		option			Sur quoi pointe le lien
@@ -377,7 +423,7 @@ class Facture extends CommonObject
 	*/
 	function fetch($rowid, $societe_id=0)
 	{
-		//dolibarr_syslog("Facture::Fetch rowid : $rowid, societe_id : $societe_id");
+		dolibarr_syslog("Facture.class::fetch rowid=$rowid, societe_id=$societe_id");
 
 		$sql = 'SELECT f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
@@ -493,6 +539,7 @@ class Facture extends CommonObject
 						$faclig->remise_percent   = $objp->remise_percent;
 						$faclig->fk_remise_except = $objp->fk_remise_except;
 						$faclig->produit_id       = $objp->fk_product;
+						$faclig->fk_product       = $objp->fk_product;
 						$faclig->date_start       = $objp->date_start;
 						$faclig->date_end         = $objp->date_end;
 						$faclig->date_start       = $objp->date_start;
@@ -2116,7 +2163,7 @@ class Facture extends CommonObject
 
 	/**
 	 *  	\brief     	Renvoi liste des factures remplacables
-	 *					Statut validee + aucun paiement + non paye
+	 *					Statut validee + aucun paiement + non paye + pas deja remplacées
 	 *		\param		socid		Id societe
 	 *   	\return    	array		Tableau des factures ($id => $ref)
 	 */
@@ -2126,14 +2173,17 @@ class Facture extends CommonObject
 
 		$return = array();
 
-		$sql = "SELECT f.rowid, f.facnumber";
+		$sql = "SELECT f.rowid as rowid, f.facnumber,";
+		$sql.= " ff.rowid as rowidnext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
 		$sql.= " WHERE f.fk_statut = 1 AND f.paye = 0 AND pf.fk_paiement IS NULL";
+		$sql.= " AND ff.rowid IS NULL";
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 
-		dolibarr_syslog("Facture.class::list_replacable_invoices sq=$sql");
+		dolibarr_syslog("Facture.class::list_replacable_invoices sql=$sql");
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2146,6 +2196,8 @@ class Facture extends CommonObject
 		}
 		else
 		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Facture.class::list_replacable_invoices ".$this->error);
 			return -1;
 		}
 	}
@@ -2574,6 +2626,7 @@ class FactureLigne
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->produit_id     = $objp->fk_product;
+			$this->fk_product     = $objp->fk_product;
 			$this->date_start     = $objp->date_start;
 			$this->date_end       = $objp->date_end;
 			$this->info_bits      = $objp->info_bits;
