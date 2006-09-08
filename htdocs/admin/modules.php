@@ -193,6 +193,7 @@ $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
 
 // Charge tableaux modules, nom, numero, orders depuis répertoire dir
 $handle=opendir($dir);
+$nom = array();
 $modules = array();
 $orders = array();
 $i = 0;
@@ -218,7 +219,6 @@ while (($file = readdir($handle))!==false)
             }
 
             $modules[$i] = $objMod;
-
             $nom[$i]     = $modName;
             $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
             $j++;
