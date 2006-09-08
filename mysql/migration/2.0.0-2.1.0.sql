@@ -114,8 +114,8 @@ create table llx_product_det
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_product     integer      DEFAULT 0 NOT NULL,
   lang           varchar(5)   DEFAULT 0 NOT NULL,
-  label          varchar(128),
-  description    varchar(255),
+  label          varchar(255),
+  description    text,
   note           text
 )type=innodb;
 
@@ -424,4 +424,7 @@ ALTER TABLE llx_categorie_product ADD CONSTRAINT fk_categorie_product_product_ro
 
 ALTER TABLE llx_categorie_product ADD PRIMARY KEY (fk_categorie, fk_product);
 
-
+alter table llx_product modify label varchar(255) NOT NULL;
+alter table llx_product modify description text;
+alter table llx_product_det modify label varchar(255) NOT NULL;
+alter table llx_product_det modify description text;
