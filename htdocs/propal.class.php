@@ -272,9 +272,8 @@ class Propal extends CommonObject
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
-			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
             $price = $pu;
-            $subprice = $pu;
             if ($remise_percent > 0)
             {
                 $remise = round(($pu * $remise_percent / 100), 2);
@@ -286,18 +285,20 @@ class Propal extends CommonObject
 
 			$ligne->fk_propal=$propalid;
 			$ligne->desc=$desc;
-			$ligne->price=$price;
 			$ligne->qty=$qty;
 			$ligne->tva_tx=$txtva;
 			$ligne->fk_product=$fk_product;
 			$ligne->remise_percent=$remise_percent;
-			$ligne->subprice=$subprice;
-			$ligne->remise=$remise;
+			$ligne->subprice=$pu;
 			$ligne->rang=-1;
 			$ligne->info_bits=$info_bits;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
+
+			// Ne plus utiliser
+			$ligne->price=$price;
+			$ligne->remise=$remise;
 
 			$result=$ligne->insert();			
 			if ($result > 0)
