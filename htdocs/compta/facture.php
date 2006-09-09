@@ -278,7 +278,7 @@ if ($_POST['action'] == 'add')
 			$result=$facture->fetch($_POST['fac_replacement']);
 
 			//print "xxx".$result." ".$facture->socidp;
-			$facid = $facture->create_clone(1,$user);
+			$facid = $facture->create_clone('replace',$user);
 		}
 		else
 		{

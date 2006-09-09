@@ -345,15 +345,22 @@ class Facture extends CommonObject
 	 *	\param      user       		Object utilisateur qui crée
 	 *	\return		int				<0 si ko, >0 si ok
 	 */
-	function create_clone($invertdetail=0,$user)
+	function create_clone($reason='',$user)
 	{
 		// Charge facture source
 		$facture=new Facture($this->db);
 
-		$facture->fk_facture_source = $this->id;
+		if ($reason == 'replace')
+		{
+			$facture->fk_facture_source = $this->id;
+			$facture->type = 1;
+		}
+		else
+		{
+			$facture->type = $this->type;
+		}			
 		
 		$facture->socidp 		 = $this->socidp;
-		$facture->type           = $this->type;
 		$facture->number         = $this->number;
 		$facture->date           = $this->date;
 		$facture->note_public    = $this->note_public;
