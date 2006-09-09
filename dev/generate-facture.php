@@ -41,10 +41,6 @@ require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
 define (GEN_NUMBER_FACTURE, 5);
 
-/*
- *
- *
- */
 
 $sql = "SELECT min(rowid) FROM ".MAIN_DB_PREFIX."user";
 $resql = $db->query($sql);
@@ -89,27 +85,31 @@ if ($resql)
 $i=0;
 while ($i < GEN_NUMBER_FACTURE)
 {
-  $i++;
-  $socid = rand(1, $num_socs);
-
-  $facture = new Facture($db, $socids[$socid]);
-  $facture->number = 'provisoire';
-  $facture->date = time();
-  $facture->cond_reglement_id = 3;
-  $facture->mode_reglement_id = 3;
-
-  $nbp = rand(1, 9);
-  $xnbp = 0;
-
-  while ($xnbp < $nbp)
-    {
-      $prodid = rand(1, $num_prods);
-      $facture->add_product($prodids[$prodid], rand(1,5), 0);
-      $xnbp++;
-    }
-
-  $facture->create($user);
-  $facture->set_valid($facture->id,$user,$socid);
+	print "Facture $s";
+	
+	$i++;
+	$socid = rand(1, $num_socs);
+	
+	$facture = new Facture($db, $socids[$socid]);
+	$facture->number = 'provisoire';
+	$facture->date = time();
+	$facture->cond_reglement_id = 3;
+	$facture->mode_reglement_id = 3;
+	
+	$nbp = rand(2, 5);
+	$xnbp = 0;
+	while ($xnbp < $nbp)
+	{
+	    // \TODO Utiliser addline plutot que add_product
+		$prodid = rand(1, $num_prods);
+		$facture->add_product($prodids[$prodid], rand(1,5), 0);
+		$xnbp++;
+	}
+	
+	$facture->create($user);
+	$facture->set_valid($facture->id,$user,$socid);
+	
+	print "\n";
 }
 
 

@@ -37,16 +37,8 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
-/*
- * Parametre
- */
-
 define (GEN_NUMBER_PROPAL, 2);
 
-/*
- *
- *
- */
 
 $sql = "SELECT min(rowid) FROM ".MAIN_DB_PREFIX."user";
 $resql = $db->query($sql);
@@ -115,6 +107,8 @@ if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/module
 $i=0;
 while ($i < GEN_NUMBER_PROPAL)
 {
+    print "Propale $s";
+
 	$i++;
 	$socid = rand(1, $num_socs);
 	
@@ -134,9 +128,8 @@ while ($i < GEN_NUMBER_PROPAL)
 	
 	$propal->create($user);
 	
-	$nbp = rand(1, 9);
+	$nbp = rand(2, 5);
 	$xnbp = 0;
-	
 	while ($xnbp < $nbp)
 	{
 		$prodid = rand(1, $num_prods);
@@ -144,6 +137,7 @@ while ($i < GEN_NUMBER_PROPAL)
 		$xnbp++;
 	}
 
+	print "\n";
 }
 
 

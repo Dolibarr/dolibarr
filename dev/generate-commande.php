@@ -42,18 +42,39 @@ include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 define (GEN_NUMBER_COMMANDE, 10);
 
 
-$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
-if ($db->query($sql)) {
-  $num = $db->num_rows(); $i = 0;	
-  while ($i < $num) {      $row = $db->fetch_row($i);      $productsid[$i] = $row[0];      $i++; } }
-
 $sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
-while ($i < $num) { $row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++; } } else { print "err"; }
+if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
+	while ($i < $num) {
+		$row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++;
+	}
+}
+else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
-while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
+if ($db->query($sql)) {
+	$num = $db->num_rows(); $i = 0;
+	while ($i < $num) {
+		$row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++;
+	}
+}
+else { print "err"; }
+
+
+$prodids = array();
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+$resql = $db->query($sql);
+if ($resql) 
+{
+  $num_prods = $db->num_rows($resql);
+  $i = 0;
+  while ($i < $num_prods)
+    {
+      $i++;
+      
+      $row = $db->fetch_row($resql);
+      $prodids[$i] = $row[0];
+    }
+}
 
 
 $dates = array (mktime(12,0,0,1,3,2003),
@@ -115,6 +136,7 @@ print "Génère ".GEN_NUMBER_COMMANDE." commandes\n";
 for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 {
     print "Commande $s";
+
     $com = new Commande($db);
     
     $com->socidp         = 4;
@@ -124,13 +146,19 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
     $com->projetid       = 0;
     $com->remise_percent = 0;
     
-    $pidrand = rand(1, sizeof($productsid)-1);
-    $com->add_product($productsid[rand(1, sizeof($productsid)-1)],rand(1,11),rand(1,6),rand(0,20));
-    $id = $com->create($user);
-    $com->fetch($id);
-    print " " . strftime("%d %B %Y",$com->date_commande);
-    print " " .  $com->valid($user);
-    print "\n";
+	$nbp = rand(2, 5);
+	$xnbp = 0;
+	while ($xnbp < $nbp)
+	{
+	    // \TODO Utiliser addline plutot que add_product
+		$prodid = rand(1, $num_prods);
+	    $com->add_product($prodids[$prodid],rand(1,11),rand(1,6),rand(0,20));
+	}
+	
+    $com->create($user);
+	$com->valid($user);
+
+	print "\n";
 }
 
 ?>
