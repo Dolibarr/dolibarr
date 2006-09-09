@@ -247,31 +247,21 @@ class Facture extends CommonObject
 				$resql=$this->db->query($sql);
 			}
 
-			/*
- 			 * Produits/services
-			 */
+            /*
+             *  Insertion du detail des produits dans la base
+             */
 			for ($i = 0 ; $i < sizeof($this->products) ; $i++)
 			{
-				$prod = new Product($this->db, $this->products[$i]);
-				$res=$prod->fetch($this->products[$i]);
-
-				$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
-				// multiprix
-				if($conf->global->PRODUIT_MULTIPRICES == 1)
-					$price = $prod->multiprices[$soc->price_level];
-				else
-					$price = $prod->price;
-
 				$resql = $this->addline(
 					$this->id,
-					$prod->description,
-					$price,
-					$this->products_qty[$i],
-					$tva_tx,
-					$this->products[$i],
-					$this->products_remise_percent[$i],
-					$this->products_date_start[$i],
-					$this->products_date_end[$i]
+					$this->products[$i]->desc,
+					$this->products[$i]->subprice,
+					$this->products[$i]->qty,
+					$this->products[$i]->tva_tx,
+					$this->products[$i]->fk_product,
+					$this->products[$i]->remise_percent,
+					$this->products[$i]->date_start,
+					$this->products[$i]->date_end
 					);
 
 				if ($resql < 0)
@@ -376,17 +366,22 @@ class Facture extends CommonObject
 		$facture->amount            = $this->amount;
 		$facture->remise_absolue    = $this->remise_absolue;
 		$facture->remise_percent    = $this->remise_percent;
+		$facture->lignes		    = $this->lignes;	// Tableau des lignes de factures
 
-		dolibarr_syslog("Facture::create_clone invertdetail=$invertdetail socidp=".$this->socidp);
-		
-		for ($i = 0; $i < sizeof($this->lignes); $i++)
+		if ($invertdetail)
 		{
-			if ($this->lignes[$i])
+			foreach($facture->lignes as $i => $line)
 			{
-//print $this->lignes[$i]->fk_product.",".$this->lignes[$i]->qty.",".$this->lignes[$i]->remise_percent.",".$this->lignes[$i]->date_start.",".$this->lignes[$i]->date_end;
-				$facture->add_product($this->lignes[$i]->fk_product,$this->lignes[$i]->qty,$this->lignes[$i]->remise_percent,$this->lignes[$i]->date_start,$this->lignes[$i]->date_end);
+				$facture->lignes[$i]->subprice  = -$facture->lignes[$i]->subprice;
+				$facture->lignes[$i]->price     = -$facture->lignes[$i]->price;
+				$facture->lignes[$i]->total_ht  = -$facture->lignes[$i]->total_ht;
+				$facture->lignes[$i]->total_tva = -$facture->lignes[$i]->total_tva;
+				$facture->lignes[$i]->total_ttc = -$facture->lignes[$i]->total_ttc;
 			}
 		}
+				
+		dolibarr_syslog("Facture::create_clone invertdetail=$invertdetail socidp=".$this->socidp);
+		
 
 		$facid = $facture->create($user);
 
@@ -419,7 +414,7 @@ class Facture extends CommonObject
 	*    \brief      Recupére l'objet facture et ses lignes de factures
 	*    \param      rowid       id de la facture a récupérer
 	*    \param      societe_id  id de societe
-	*    \return     int         1 si ok, < 0 si erreur
+	*    \return     int         >0 si ok, <0 si ko
 	*/
 	function fetch($rowid, $societe_id=0)
 	{
@@ -508,78 +503,94 @@ class Facture extends CommonObject
 				/*
 				 * Lignes
 				 */
-				 // \todo	Mettre ce code dans fonction fetch_lines qui charge tableau $this->lignes
-				$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, ';
-				$sql.= ' l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
-				$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
-				$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
-				$sql.= ' p.label as label, p.description as product_desc';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
-				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-				$sql.= ' WHERE l.fk_facture = '.$this->id;
-				$sql.= ' ORDER BY l.rang';
-				$result2 = $this->db->query($sql);
-				if ($result2)
+				$result=$this->fetch_lines();
+				if ($result < 0)
 				{
-					$num = $this->db->num_rows($result2);
-					$i = 0; $total = 0;
-					while ($i < $num)
-					{
-						$objp = $this->db->fetch_object($result2);
-						$faclig = new FactureLigne($this->db);
-						$faclig->rowid			  = $objp->rowid;
-						$faclig->desc             = $objp->description;     // Description ligne
-						$faclig->libelle          = $objp->label;           // Label produit
-						$faclig->product_desc     = $objp->product_desc;    // Description produit
-						$faclig->qty              = $objp->qty;
-						$faclig->price            = $objp->price;
-						$faclig->subprice         = $objp->subprice;
-						$faclig->tva_taux         = $objp->tva_taux;
-						$faclig->remise           = $objp->remise;
-						$faclig->remise_percent   = $objp->remise_percent;
-						$faclig->fk_remise_except = $objp->fk_remise_except;
-						$faclig->produit_id       = $objp->fk_product;
-						$faclig->fk_product       = $objp->fk_product;
-						$faclig->date_start       = $objp->date_start;
-						$faclig->date_end         = $objp->date_end;
-						$faclig->date_start       = $objp->date_start;
-						$faclig->date_end         = $objp->date_end;
-						$faclig->info_bits        = $objp->info_bits;
-						$faclig->total_ht         = $objp->total_ht;
-						$faclig->total_tva        = $objp->total_tva;
-						$faclig->total_ttc        = $objp->total_ttc;
-						$faclig->export_compta    = $objp->fk_export_compta;
-						$faclig->code_ventilation = $objp->fk_code_ventilation;
-						$this->lignes[$i] = $faclig;
-						$i++;
-					}
-					$this->db->free($result2);
-					$this->db->free($result);
-					return 1;
-				}
-				else
-				{
-					dolibarr_syslog('Erreur Facture::Fetch rowid='.$rowid.', Erreur dans fetch des lignes');
-					$this->error=$this->db->error();
 					return -3;
 				}
+				return 1;
 			}
 			else
 			{
-				dolibarr_syslog('Erreur Facture::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
+				dolibarr_syslog('Facture::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
 				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
 				return -2;
 			}
-			$this->db->free($result);
 		}
 		else
 		{
-			dolibarr_syslog('Erreur Facture::Fetch rowid='.$rowid.' Erreur dans fetch de la facture');
+			dolibarr_syslog('Facture::Fetch Error rowid='.$rowid.' Erreur dans fetch de la facture');
 			$this->error=$this->db->error();
 			return -1;
 		}
 	}
 
+
+	/**
+	*    \brief      Recupére les lignes de factures
+	*    \return     int         1 si ok, < 0 si erreur
+	*/
+	function fetch_lines()
+	{
+		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.price, l.qty, l.tva_taux, ';
+		$sql.= ' l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
+		$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
+		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
+		$sql.= ' p.label as label, p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
+		$sql.= ' WHERE l.fk_facture = '.$this->id;
+		$sql.= ' ORDER BY l.rang';
+
+		dolibarr_syslog('Facture::fetch_lines sql='.$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num)
+			{
+				$objp = $this->db->fetch_object($result);
+				$faclig = new FactureLigne($this->db);
+				$faclig->rowid			  = $objp->rowid;
+				$faclig->desc             = $objp->description;     // Description ligne
+				$faclig->libelle          = $objp->label;           // Label produit
+				$faclig->product_desc     = $objp->product_desc;    // Description produit
+				$faclig->qty              = $objp->qty;
+				$faclig->subprice         = $objp->subprice;
+				$faclig->tva_taux         = $objp->tva_taux;
+				$faclig->remise_percent   = $objp->remise_percent;
+				$faclig->fk_remise_except = $objp->fk_remise_except;
+				$faclig->produit_id       = $objp->fk_product;
+				$faclig->fk_product       = $objp->fk_product;
+				$faclig->date_start       = $objp->date_start;
+				$faclig->date_end         = $objp->date_end;
+				$faclig->date_start       = $objp->date_start;
+				$faclig->date_end         = $objp->date_end;
+				$faclig->info_bits        = $objp->info_bits;
+				$faclig->total_ht         = $objp->total_ht;
+				$faclig->total_tva        = $objp->total_tva;
+				$faclig->total_ttc        = $objp->total_ttc;
+				$faclig->export_compta    = $objp->fk_export_compta;
+				$faclig->code_ventilation = $objp->fk_code_ventilation;
+
+				// Ne plus utiliser
+				$faclig->price            = $objp->price;
+				$faclig->remise           = $objp->remise;
+
+				$this->lignes[$i] = $faclig;
+				$i++;
+			}
+			$this->db->free($result);
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog('Facture::fetch_lines: Error '.$this->error);
+			return -3;
+		}
+	}
 
     /**
      *    \brief     Ajout en base d'une ligne remise fixe en ligne de facture
@@ -612,13 +623,15 @@ class Facture extends CommonObject
 			$facligne->desc=$remise->description;   	// Description ligne
 			$facligne->tva_tx=$remise->tva_tx;
 			$facligne->subprice=-$remise->amount_ht;
-			$facligne->price=-$remise->amount_ht;
 			$facligne->fk_product=0;					// Id produit prédéfini
 			$facligne->qty=1;
-			$facligne->remise=0;
 			$facligne->remise_percent=0;
 			$facligne->rang=-1;
 			$facligne->info_bits=2;
+
+			// Ne plus utiliser
+			$facligne->price=-$remise->amount_ht;
+			$facligne->remise=0;
 
 			$tabprice=calcul_price_total($facligne->qty, $facligne->subprice, 0,$facligne->tva_tx);
 			$facligne->total_ht  = $tabprice[0];
@@ -1234,27 +1247,47 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 * 	\brief     Ajoute un produit dans les tableaux products, products_qty, products_date_start|end
-	 * 	\param     idproduct
-	 * 	\param     qty
-	 * 	\param     remise_percent
-	 * 	\param     date_start
-	 * 	\param     date_end
+	 * 	\brief     	Ajoute une ligne dans le tableau products
+	 * 	\param     	idproduct			Id du produit a ajouter
+	 * 	\param     	qty					Quantité
+	 * 	\param     	remise_percent		Remise relative effectuée sur le produit
+	 * 	\param     	date_start
+	 * 	\param     	date_end
+	 * 	\return    	void
+	 *	\remarks	$this->client doit etre chargé
+	 *	\TODO	Remplacer les appels a cette fonction par generation objet Ligne 
+	 *			inséré dans tableau $this->products
 	 */
 	function add_product($idproduct, $qty, $remise_percent, $date_start='', $date_end='')
 	{
+		global $conf, $mysoc;
+
+		if (! $qty) $qty = 1;
+		
 		if ($idproduct > 0)
 		{
-			$i = sizeof($this->products);     // On recupere nb de produit deja dans tableau products
-			$this->products[$i] = $idproduct; // On ajoute a la suite
-			if (!$qty)
-			{
-				$qty = 1 ;
-			}
-			$this->products_qty[$i] = $qty;
-			$this->products_remise_percent[$i] = $remise_percent;
-			if ($date_start) { $this->products_date_start[$i] = $date_start; }
-			if ($date_end)   { $this->products_date_end[$i] = $date_end; }
+			$prod=new Product($this->db);
+			$prod->fetch($idproduct);
+			
+			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			// multiprix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+				$price = $prod->multiprices[$this->client->price_level];
+			else
+				$price = $prod->price;
+
+			$line=new FactureLigne($this->db);
+			$line->rowid = $idproduct;
+			$line->fk_product=$idproduct;
+			$line->desc=$prod->description;
+			$line->qty = $qty;
+			$line->subprice=$price;
+			$line->remise_percent = $remise_percent;
+			$line->tva_tx=$tva_tx;
+			if ($date_start) { $line->date_start = $date_start; }
+			if ($date_end)   { $line->date_end = $date_end; }
+
+			$this->products[]=$line;
 		}
 	}
 
@@ -1304,9 +1337,8 @@ class Facture extends CommonObject
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
-			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
-			$subprice = $pu;
 			$remise = 0;
 			if ($remise_percent > 0)
 			{
@@ -1319,13 +1351,11 @@ class Facture extends CommonObject
 
 			$ligne->fk_facture=$facid;
 			$ligne->desc=$desc;
-			$ligne->price=$price;
 			$ligne->qty=$qty;
 			$ligne->txtva=$txtva;
 			$ligne->fk_product=$fk_product;
 			$ligne->remise_percent=$remise_percent;
-			$ligne->subprice=$subprice;
-			$ligne->remise=$remise;
+			$ligne->subprice=$pu;
 			$ligne->date_start=$date_start;
 			$ligne->date_end=$date_end;
 			$ligne->ventil=$ventil;
@@ -1335,6 +1365,10 @@ class Facture extends CommonObject
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
+
+			// A ne plus utiliser
+			$ligne->price=$price;
+			$ligne->remise=$remise;
 
 			$result=$ligne->insert();
 			if ($result > 0)
@@ -1400,9 +1434,8 @@ class Facture extends CommonObject
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
-			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
-			$subprice = $pu;
 			$remise = 0;
 			if ($remise_percent > 0)
 			{
@@ -1410,7 +1443,6 @@ class Facture extends CommonObject
 				$price = ($pu - $remise);
 			}
 			$price    = price2num($price);
-			$subprice  = price2num($subprice);
 
 			// Mise a jour ligne en base
 			$ligne=new FactureLigne($this->db);
@@ -1418,17 +1450,19 @@ class Facture extends CommonObject
 			$ligne->fetch($rowid);
 
 			$ligne->desc=$desc;
-			$ligne->price=$price;
 			$ligne->qty=$qty;
 			$ligne->tva_taux=$txtva;
 			$ligne->remise_percent=$remise_percent;
-			$ligne->subprice=$subprice;
-			$ligne->remise=$remise;
+			$ligne->subprice=$pu;
 			$ligne->date_start=$date_start;
 			$ligne->date_end=$date_end;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
+
+			// A ne plus utiliser
+			$ligne->price=$price;
+			$ligne->remise=$remise;
 
 			$result=$ligne->update();
 			if ($result > 0)
@@ -1504,7 +1538,7 @@ class Facture extends CommonObject
 		$tvas=array();
 		$err=0;
 
-        // Liste des lignes factures a sommer
+        // Liste des lignes factures a sommer (Ne plus utiliser price)
 		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price,';
 		$sql.= ' total_ht, total_tva, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
@@ -1522,34 +1556,18 @@ class Facture extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->total_ht    += $obj->total_ht;
-				$this->total_tva   += ($obj->total_ttc - $obj->total_ht);
-				$this->total_ttc   += $obj->total_ttc;
+				$this->total_ht       += $obj->total_ht;
+				$this->total_tva      += ($obj->total_ttc - $obj->total_ht);
+				$this->total_ttc      += $obj->total_ttc;
 
-				// Anciens indicateurs
+				// Ne plus utiliser amount, ni remise
 				$this->amount_ht      += ($obj->price * $obj->qty);
 				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
 				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
-
-/* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
-				$products[$i][0] = $obj->price;
-				$products[$i][1] = $obj->qty;
-				$products[$i][2] = $obj->tva_taux;
-*/
 				$i++;
 			}
 
 			$this->db->free($resql);
-
-/* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
-			$calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
-			$this->total_remise   = $calculs[3];
-			$this->amount_ht      = $calculs[4];
-			$this->total_ht       = $calculs[0];
-			$this->total_tva      = $calculs[1];
-			$this->total_ttc      = $calculs[2];
-			$tvas                 = $calculs[5];
-*/
 
 			// Met a jour indicateurs sur facture
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
@@ -2557,28 +2575,30 @@ class FactureLigne
 
     // From llx_facturedet
 	var $rowid;
+	var $fk_facture;		// Id facture
     var $desc;          	// Description ligne
-	var $fk_facture;		// Id produit prédéfini
+    var $fk_product;		// Id produit prédéfini
 
 	var $qty;				// Quantité (exemple 2)
-	var $subprice;      	// P.U. HT (exemple 100)
-	var $remise;			// Montant calculé de la remise % sur PU HT (exemple 20)
-							// subprice = price + remise
-	var $remise_percent;	// % de la remise ligne (exemple 20%)
-	var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
 	var $tva_taux;			// Taux tva produit/service (exemple 19.6)
-	var $fk_code_ventilation = 0;
-	var $fk_export_compta = 0;
+	var $subprice;      	// P.U. HT (exemple 100)
+	var $remise_percent;	// % de la remise ligne (exemple 20%)
 	var $rang = 0;
-
-	var $date_start;
-	var $date_end;
-
 	var $info_bits = 0;		// Bit 0:	0 si TVA normal - 1 si TVA NPR
 							// Bit 1:	0 si ligne normal - 1 si bit discount
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
 	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
+
+	var $fk_code_ventilation = 0;
+	var $fk_export_compta = 0;
+
+	var $date_start;
+	var $date_end;
+
+	// Ne plus utiliser
+	var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
+	var $remise;			// Montant calculé de la remise % sur PU HT (exemple 20)
 
     // From llx_product
     var $ref;				// Reference produit
@@ -2619,10 +2639,8 @@ class FactureLigne
 			$this->fk_facture     = $objp->fk_facture;
 			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
-			$this->price          = $objp->price;
 			$this->subprice       = $objp->subprice;
 			$this->tva_taux       = $objp->tva_taux;
-			$this->remise         = $objp->remise;
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->produit_id     = $objp->fk_product;
@@ -2636,6 +2654,10 @@ class FactureLigne
 			$this->fk_code_ventilation = $objp->fk_code_ventilation;
 			$this->fk_export_compta    = $objp->fk_export_compta;
 			$this->rang           = $objp->rang;
+
+			// Ne plus utiliser
+			$this->price          = $objp->price;
+			$this->remise         = $objp->remise;
 
 			$this->ref			  = $objp->product_ref;
 			$this->libelle		  = $objp->product_libelle;
@@ -2681,20 +2703,20 @@ class FactureLigne
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
-		$sql.= ' (fk_facture, description, price, qty, tva_taux,';
-		$sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except,';
+		$sql.= ' (fk_facture, description, qty, tva_taux,';
+		$sql.= ' fk_product, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
 		$sql.= ' rang,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
 		$sql.= " VALUES (".$this->fk_facture.",";
 		$sql.= " '".addslashes($this->desc)."',";
-		$sql.= " '".price2num($this->price)."',";
 		$sql.= " '".price2num($this->qty)."',";
 		$sql.= " '".price2num($this->txtva)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='null,'; }
 		$sql.= " '".price2num($this->remise_percent)."',";
 		$sql.= " '".price2num($this->subprice)."',";
+		$sql.= " '".price2num($this->price)."',";
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
@@ -2742,8 +2764,8 @@ class FactureLigne
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
 		$sql.= " description='".addslashes($this->desc)."'";
-		$sql.= ",price='".price2num($this->price)."'";
 		$sql.= ",subprice='".price2num($this->subprice)."'";
+		$sql.= ",price='".price2num($this->price)."'";
 		$sql.= ",remise='".price2num($this->remise)."'";
 		$sql.= ",remise_percent='".price2num($this->remise_percent)."'";
 		if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;

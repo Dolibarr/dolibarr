@@ -72,16 +72,6 @@ class Fichinter extends CommonObject
     }
 
 
-    function add_product($idproduct)
-    {
-        if ($idproduct > 0)
-        {
-            $i = sizeof($this->products);
-            $this->products[$i] = $idproduct;
-        }
-    }
-
-
     /*
      *    \brief      Crée une fiche intervention en base
      *

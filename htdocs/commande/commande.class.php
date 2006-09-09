@@ -406,22 +406,16 @@ class Commande extends CommonObject
 
             if ($this->id)
             {
-				/*
-				 *  Insertion des produits dans la base
-				 */
+                /*
+                 *  Insertion du detail des produits dans la base
+                 */
 				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if ($this->propale_id)
-					{
-						// On récupère le subprice de la propale
-						$this->lines[$i]->price = $this->lines[$i]->subprice;
-					}
-					
 					$resql = $this->addline(
 						$this->id,
-						$this->lines[$i]->libelle,
+						$this->lines[$i]->libelle,		// \TODO A virer
 						$this->lines[$i]->desc,
-						$this->lines[$i]->price,
+						$this->lines[$i]->subprice,
 						$this->lines[$i]->qty,
 						$this->lines[$i]->tva_tx,
 						$this->lines[$i]->fk_product,
@@ -591,17 +585,20 @@ class Commande extends CommonObject
 
 
 	/**
- 	 * 		\brief				Ajoute une ligne produit prédéfini dans tableau lines
+ 	 * 		\brief				Ajoute une ligne dans tableau lines
 	 *		\param				idproduct			Id du produit à ajouter
 	 *		\param				qty					Quantité
-	 *		\remise_percent		remise_percent		Remise ligne en pourcentage
+	 *		\remise_percent		remise_percent		Remise relative effectuée sur le produit
+	 * 		\return    			void
 	 *		\remarks			$this->client doit etre chargé
+	 *		\TODO	Remplacer les appels a cette fonction par generation objet Ligne 
+	 *				inséré dans tableau $this->products
 	 */
 	function add_product($idproduct, $qty, $remise_percent=0)
 	{
 		global $conf, $mysoc;
 
-		if (!$qty) $qty = 1;
+		if (! $qty) $qty = 1;
 			
 		if ($idproduct > 0)
 		{
@@ -615,19 +612,18 @@ class Commande extends CommonObject
 			else
 				$price = $prod->price;
 
-			$ligne=new CommandeLigne($this->db);
-			$ligne->fk_product=$idproduct;
-			$ligne->desc=$prod->description;
-			$ligne->qty=$qty;
-			$ligne->price=$price;
-			$ligne->remise_percent=$remise_percent;
-			$ligne->tva_tx=$tva_tx;
-			$ligne->ref=$prod->ref;
-			$ligne->libelle=$prod->libelle;
-			$ligne->product_desc=$prod->description;
+			$line=new CommandeLigne($this->db);
+			$line->fk_product=$idproduct;
+			$line->desc=$prod->description;
+			$line->qty=$qty;
+			$line->subprice=$price;
+			$line->remise_percent=$remise_percent;
+			$line->tva_tx=$tva_tx;
+			$line->ref=$prod->ref;
+			$line->libelle=$prod->libelle;
+			$line->product_desc=$prod->description;
 			
-			$i = sizeof($this->lines);
-			$this->lines[$i] = $ligne;
+			$this->lines[] = $line;
 
 			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS À LA COMMANDE
 			if($conf->global->PRODUIT_SOUSPRODUITS == 1)
@@ -2061,21 +2057,23 @@ class CommandeLigne
 	var $rowid;
 	var $fk_facture;
 	var $desc;          	// Description ligne
+    var $fk_product;		// Id produit prédéfini
+
 	var $qty;
 	var $tva_tx;
-	var $price;
 	var $subprice;
-	var $remise;
 	var $remise_percent;
-	var $rang;
+	var $rang = 0;
 	var $coef;
-
-	var $fk_product;		// Id produit prédéfini
-
-	var $info_bits;			// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+							// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
 	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
+
+	// Ne plus utiliser
+    var $remise;
+    var $price;
 	
 	// From llx_product
 	var $ref;				// Reference produit

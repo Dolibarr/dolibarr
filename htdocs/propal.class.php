@@ -74,17 +74,14 @@ class Propal extends CommonObject
     var $note;
     var $note_public;
 
-	  var $date_livraison;
+	var $date_livraison;
     var $adresse_livraison_id;
     var $adresse;
 
-    var $products;
-    var $products_qty;
+    var $products=array();
 
     var $labelstatut=array();
     var $labelstatut_short=array();
-
-    var $product=array();
 
     // Pour board
     var $nbtodo;
@@ -127,22 +124,43 @@ class Propal extends CommonObject
 
 
 	/**
-	 * 	\brief     Ajout d'un produit dans la proposition, en memoire dans l'objet
-	 * 	\param     idproduct       	Id du produit à ajouter
-	 * 	\param     qty             	Quantité
-	 * 	\param     remise_percent  	Remise relative effectuée sur le produit
-	 * 	\return    void
+	 * 	\brief     	Ajoute une ligne dans tableau products
+	 * 	\param     	idproduct       	Id du produit à ajouter
+	 * 	\param     	qty             	Quantité
+	 * 	\param     	remise_percent  	Remise relative effectuée sur le produit
+	 * 	\return    	void
+	 *	\remarks	$this->client doit etre chargé
+	 *	\TODO	Remplacer les appels a cette fonction par generation objet Ligne 
+	 *			inséré dans tableau $this->products
 	 */
     function add_product($idproduct, $qty, $remise_percent=0)
     {
+		global $conf, $mysoc;
+
         if (! $qty) $qty = 1;
 
         if ($idproduct > 0)
         {
-            $i = sizeof($this->products);
-            $this->products[$i] = $idproduct;
-            $this->products_qty[$i] = $qty;
-            $this->products_remise_percent[$i] = $remise_percent;
+			$prod=new Product($this->db);
+			$prod->fetch($idproduct);
+			
+			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			// multiprix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+				$price = $prod->multiprices[$this->client->price_level];
+			else
+				$price = $prod->price;
+
+   			$line=new PropaleLigne($this->db);
+			$line->rowid = $idproduct;
+			$line->fk_product=$idproduct;
+			$line->desc=$prod->description;
+			$line->qty = $qty;
+			$line->subprice=$price;
+			$line->remise_percent = $remise_percent;
+			$line->tva_tx=$tva_tx;
+
+			$this->products[]=$line;
         }
     }
 
@@ -472,34 +490,23 @@ class Propal extends CommonObject
                  */
                 for ($i = 0 ; $i < sizeof($this->products) ; $i++)
                 {
-					$prod = new Product($this->db, $this->products[$i]);
-					if ($prod->fetch($this->products[$i]))
+					$resql = $this->addline(
+						$this->id,
+						$this->products[$i]->desc,
+						$this->products[$i]->subprice,
+						$this->products[$i]->qty,
+						$this->products[$i]->tva_tx,
+						$this->products[$i]->fk_product,
+						$this->products[$i]->remise_percent,
+						$this->products[$i]->date_start,
+						$this->products[$i]->date_end
+						);
+						
+					if ($resql < 0)
 					{
-						$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
-						// multiprix
-						if($conf->global->PRODUIT_MULTIPRICES == 1)
-							$price = $prod->multiprices[$this->client->price_level];
-						else
-							$price = $prod->price;
-
-						$resql = $this->addline(
-							$this->id,
-							$prod->description,
-							$price,
-							$this->products_qty[$i],
-							$tva_tx,
-							$this->products[$i],
-							$this->products_remise_percent[$i],
-							$this->products_date_start[$i],
-							$this->products_date_end[$i]
-							);
-							
-						if ($resql < 0)
-						{
-							$this->error=$this->db->error;
-							dolibarr_print_error($this->db);
-							break;
-						}
+						$this->error=$this->db->error;
+						dolibarr_print_error($this->db);
+						break;
 					}
                 }
 
@@ -2008,17 +2015,18 @@ class PropaleLigne
     var $qty;
     var $tva_tx;
     var $subprice;
-    var $remise;
     var $remise_percent;
-    var $price;
-	var $rang;
+	var $rang = 0;
 	var $coef;
-
-	var $info_bits;			// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 							// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
 	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
+
+	// Ne plus utiliser
+    var $remise;
+    var $price;
 
     // From llx_product
     var $ref;				// Reference produit
