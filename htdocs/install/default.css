@@ -83,6 +83,10 @@ margin: 0.5em 0em 0.5em 0em;
 border: 1px solid #6C7C8B;
 }
 
+font.error {
+color: #550000;
+}
+
 div.barrebottom {
 text-align: right;
 margin-top: 10px;

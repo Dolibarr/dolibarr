@@ -1,16 +1,21 @@
 # Dolibarr language file - fr_FR - install
 InstallEasy=Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.
+MiscellanousChecks=Vérification de prérequis
 DolibarrWelcome=Bienvenue sur Dolibarr
 ConfFileExists=Le fichier de configuration <b>%s</b> existe.
 ConfFileDoesNotExists=Le fichier de configuration <b>%s</b> n'existe pas !
 ConfFileCouldBeCreated=Le fichier de configuration <b>%s</b> a pu être créé.
 ConfFileIsNotWritable=Le fichier <b>%s</b> n'est pas modifiable. Pour une première installation, modifiez ses permissions. Le serveur Web doit avoir le droit d'écrire dans ce fichier le temps de la configuration ("chmod 666" par exemple sur un OS compatible Unix).
 ConfFileIsWritable=Le fichier <b>%s</b> est modifiable.
+PHPSupportSessions=Ce PHP supporte les sessions.
+ErrorPHPDoesNotSupportSessions=Votre installation PHP ne supporte pas les sessions. Cette fonctionnalité est requise pour faire fonctionner Dolibarr. Vérifiez votre configuration de PHP.
 ErrorDirDoesNotExists=Le répertoire <b>%s</b> n'existe pas ou n'est pas accessible.
 ErrorGoBackAndCorrectParameters=Revenez en arrière et corrigez les paramètres invalides.
 ErrorWrongValueForParameter=Vous avez peut-être saisi une mauvaise valeur pour le paramètre '%s'.
 ErrorFaileToCreateDatabase=Echec de création de la base '%'.
 ErrorFaileToConnectToDatabase=Echec de connection à la base '%'.
+ErrorPHPVersionTooLow=Version de PHP trop ancienne. La version %s est requise.
+PHPVersion=Version PHP
 YouCanContinue=Vous pouvez continuer...
 License=Licence d'utilisation
 ConfigurationFile=Fichier de configuration

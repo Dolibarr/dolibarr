@@ -31,6 +31,7 @@
 $err = 0;
 $allowinstall = 0;
 $allowupgrade = 0;
+$checksok = 1;
 
 include_once("./inc.php");
 
@@ -49,7 +50,32 @@ print '<center><img src="../theme/dolibarr_logo_2.png" alt="Dolibarr logo"></cen
 print "<br>\n";
 
 
-print $langs->trans("InstallEasy")."<br>\n";
+print $langs->trans("InstallEasy")."<br><br>\n";
+
+
+print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
+
+// Check PHP version
+if (versioncompare(versionphp(),array(4,1)) < 0)
+{
+    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.1')."<br>\n";
+    $checksok=0;
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphp())."<br>\n";
+}
+
+// Si session non actives
+if (! function_exists("session_id"))
+{
+    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
+    $checksok=0;
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportSessions")."<br>\n";
+}
 
 // Si fichier présent et lisible et renseigné
 clearstatcache();
@@ -80,10 +106,9 @@ else
 }
 
 // Si fichier absent et n'a pu etre créé
-if (!file_exists($conffile))
+if (! file_exists($conffile))
 {
-    print "<br /><br />";
-    print $langs->trans("ConfFileDoesNotExists",'conf.php');
+    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExists",'conf.php');
     print "<br />";
     print $langs->trans("YouMustCreateWithPermission",'htdocs/conf/conf.php');
     print "<br /><br />";
@@ -93,20 +118,19 @@ if (!file_exists($conffile))
 }
 else
 {
-    print "<br />\n";
     // Si fichier présent mais ne peut etre modifié
     if (!is_writable($conffile))
     {
         if ($confexists)
         {
-            print $langs->trans("ConfFileExists",'conf.php');
+            print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
         }
         else
         {
-            print $langs->trans("ConfFileCouldBeCreated",'conf.php');
+            print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
         }
         print "<br />";
-        print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+        print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
         print "<br />\n";
     
         $allowinstall=0;
@@ -116,14 +140,14 @@ else
     {
         if ($confexists)
         {
-            print $langs->trans("ConfFileExists",'conf.php');
+            print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
         }
         else
         {
-            print $langs->trans("ConfFileCouldBeCreated",'conf.php');
+            print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
         }
         print "<br />";
-        print $langs->trans("ConfFileIsWritable",'conf.php');
+        print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileIsWritable",'conf.php');
         print "<br />\n";
     
         $allowinstall=1;
@@ -131,47 +155,48 @@ else
     print "<br />\n";
     print "<br />\n";
 
-    // Si pas d'erreur, on affiche le bouton pour passer à l'étape suivante
-
-    
-    print $langs->trans("ChooseYourSetupMode");
-
-    print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
-    
-    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("FreshInstall").'</b></td><td>';
-    print $langs->trans("FreshInstallDesc").'</td>';
-    print '<td align="center">';
-    if ($allowinstall)
-    {
-        print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
-    }
-    else
-    {
-        print $langs->trans("InstallNotAllowed");   
-    }
-    print '</td>';
-    print '</tr>'."\n";
-
-    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").'</b></td><td>';
-    print $langs->trans("UpgradeDesc").'</td>';
-    print '<td align="center">';
-    if ($allowupgrade)
-    {
-        print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
-    }
-    else
-    {
-        print $langs->trans("NotAvailable");   
-    }
-    print '</td>';
-    print '</tr>'."\n";
-    
-    print '</table>';
-    print "\n";
+    // Si prerequis ok, on affiche le bouton pour passer à l'étape suivante
+	if ($checksok)
+	{
+	    print $langs->trans("ChooseYourSetupMode");
+	
+	    print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
+	    
+	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("FreshInstall").'</b></td><td>';
+	    print $langs->trans("FreshInstallDesc").'</td>';
+	    print '<td align="center">';
+	    if ($allowinstall)
+	    {
+	        print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+	    }
+	    else
+	    {
+	        print $langs->trans("InstallNotAllowed");   
+	    }
+	    print '</td>';
+	    print '</tr>'."\n";
+	
+	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").'</b></td><td>';
+	    print $langs->trans("UpgradeDesc").'</td>';
+	    print '<td align="center">';
+	    if ($allowupgrade)
+	    {
+	        print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+	    }
+	    else
+	    {
+	        print $langs->trans("NotAvailable");   
+	    }
+	    print '</td>';
+	    print '</tr>'."\n";
+	    
+	    print '</table>';
+	    print "\n";
+	}
 
 }
 
 
-pFooter(1);
+pFooter(1);	// 1 car ne doit jamais afficher bouton Suivant
 
 ?>

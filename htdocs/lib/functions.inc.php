@@ -76,7 +76,7 @@ function versioncompare($versionarray1,$versionarray2)
 
 
 /**
-		\brief      Compare 2 versions
+		\brief      Renvoie version PHP
         \return     array               Tableau de version (vermajeur,vermineur,autre)
 */
 function versionphp()
