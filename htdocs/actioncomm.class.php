@@ -145,13 +145,13 @@ class ActionComm
             $obj = $this->db->fetch_object($resql);
     
             $this->id = $id;
-            $this->type_id = $type_id;
+            $this->type_id   = $obj->type_id;
             $this->type_code = $obj->code;
             $transcode=$langs->trans("Action".$obj->code);
             $type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
             $this->type = $type_libelle;
             $this->label = $obj->label;
-            $this->date = $obj->datea;
+            $this->date  = $obj->datea;
             $this->datep = $obj->datep;
             $this->datec = $obj->datec;
             $this->datem = $obj->datem;
@@ -216,10 +216,11 @@ class ActionComm
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
         $sql.= " SET percent='".$this->percent."'";
-        if ($this->label) 			$sql.= ", label = '".addslashes($this->label)."'";
-        if ($this->percent == 100) 	$sql.= ", datea = now()";
-        if ($this->note) 			$sql.= ", note = '".addslashes($this->note)."'";
-        if ($this->contact->id) 	$sql.= ", fk_contact =". $this->contact->id;
+        if ($this->label) 		$sql.= ", label = '".addslashes($this->label)."'";
+        $sql.= ", datep = ".($this->date_p ? "'".$this->db->idate($this->date_p)."'" : 'null');
+        $sql.= ", datea = ".($this->date_a ? "'".$this->db->idate($this->date_a)."'" : 'null');
+        if ($this->note) 		$sql.= ", note = '".addslashes($this->note)."'";
+        if ($this->contact->id) $sql.= ", fk_contact =". $this->contact->id;
         $sql.= " WHERE id=".$this->id;
     
         if ($this->db->query($sql))

@@ -93,25 +93,34 @@ if ($_POST["action"] == 'add_action')
                 }
             }
         }
-        $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
-		if ($actioncomm->percent < 100)
-		{
-        	$actioncomm->date_p = @mktime($_POST["heurephour"],
+    	$actioncomm->date_p = @mktime($_POST["heurephour"],
                                    $_POST["heurepmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
-        }
-		if ($actioncomm->percent == 100)
-        {
-        	$actioncomm->date_a = @mktime($_POST["heuredhour"],
+    	$actioncomm->date_a = @mktime($_POST["heuredhour"],
                                    $_POST["heuredmin"],
                                    0,
                                    $_POST["admonth"],
                                    $_POST["adday"],
                                    $_POST["adyear"]);
-        }
+		if ($actioncomm->type_id == 5)
+		{
+			// RDV
+			if ($actioncomm->date_a)
+			{
+				$actioncomm->percent = 100;
+			}
+			else
+			{
+				$actioncomm->percent = 0;
+			}
+		}
+		else
+		{
+        	$actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
+	    }
         $actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
         $actioncomm->user = $user;
         $actioncomm->note = trim($_POST["note"]);
@@ -136,13 +145,13 @@ if ($_POST["action"] == 'add_action')
                 // Si erreur
                 $db->rollback();
                 $_GET["id"]=$idaction;
-                $error=$actioncomm->error;
+	            $error='<div class="error">'.$actioncomm->error.'</div>';
             }
         }
         else
         {
             $db->rollback();
-            $error=$actioncomm->error;
+            $error='<div class="error">'.$actioncomm->error.'</div>';
         }
     }
     else
@@ -176,15 +185,39 @@ if ($_POST["action"] == 'update')
     {
         $action = new Actioncomm($db);
         $action->fetch($_POST["id"]);
+    	$action->date_p = @mktime($_POST["heurephour"],
+                                   $_POST["heurepmin"],
+                                   0,
+                                   $_POST["apmonth"],
+                                   $_POST["apday"],
+                                   $_POST["apyear"]);
+    	$action->date_a = @mktime($_POST["heuredhour"],
+                                   $_POST["heuredmin"],
+                                   0,
+                                   $_POST["admonth"],
+                                   $_POST["adday"],
+                                   $_POST["adyear"]);
         $action->label       = $_POST["label"];
         $action->percent     = $_POST["percent"];
         $action->contact->id = $_POST["contactid"];
         $action->note        = $_POST["note"];
-        $action->update();
+		if ($action->type_code == 'AC_RDV' && $action->percent == 100 && ! $action->date_a)
+		{
+			$action->date_a = $action->date_p;
+		}
+        $result=$action->update();
     }
         
-    Header("Location: ".$_POST["from"]);
-    exit;
+    if ($result < 0)
+    {
+    	$mesg='<div class="error">'.$action->error.'</div>';
+    	$_GET["id"]=$_POST["id"];
+    }
+    else
+    {
+    	Header("Location: ".$_POST["from"]);
+    	exit;
+    }
 }
 
 
@@ -265,7 +298,7 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 
 		// Date planification
-		print '<tr><td>'.$langs->trans("DatePlanned").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
 			$html->select_date(-1,'ap','','','',"action");
@@ -281,7 +314,7 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 
 		// Date done
-		print '<tr><td>'.$langs->trans("DateDone").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
 			$html->select_date(-1,'ad','','','',"action");
@@ -428,7 +461,7 @@ if ($_GET["action"] == 'create')
 		}
 
 		// Date planification
-		print '<tr><td>'.$langs->trans("DatePlanned").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
 			$html->select_date(-1,'ap','','','',"action");
@@ -444,7 +477,7 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 
 		// Date done
-		print '<tr><td>'.$langs->trans("DateDone").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
 			$html->select_date(-1,'ad','','','',"action");
@@ -494,6 +527,10 @@ if ($_GET["id"])
     if ($error)
     {
         print '<div class="error">'.$error.'</div><br>';
+    }
+    if ($mesg)
+    {
+        print $mesg.'<br>';
     }
 
     $act = new ActionComm($db);
@@ -560,13 +597,22 @@ if ($_GET["id"])
 		print $langs->trans("FeatureNotYetSupported");
 		print '</td></tr>';
 
-        // Date debut
-		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">'.dolibarr_print_date($act->datep,'%d %B %Y %H:%M').'</td></tr>';
-        
-        // Date fin real
-        print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
+		// Date planification
+		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">';
+		$html->select_date(($act->datep?$act->datep:-1),'ap','','','',"action");
+		print ' &nbsp; ';
+		print_heure_select("heurep",8,20);
+		print '</td></tr>';
 
-        // Etat
+		// Date done
+		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">';
+		$html->select_date(($act->date?$act->date:-1),'ad','','','',"action");
+		print ' &nbsp; ';
+		print_heure_select("heured",8,20);
+		print '</td></tr>';
+		
+		
+		// Etat
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
 
 		// Objet lié
