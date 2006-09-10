@@ -127,20 +127,31 @@ if ($_GET["id"] > 0)
 
     // Affichage fiche action en mode visu
     print '<table class="border" width="100%"';
-    print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
-    print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-    print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-    print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
-    print '<td>'.$langs->trans("Contact").'</td>';
-    print '<td>';
-    if ($act->contact->id) print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.$act->contact->fullname.'</a>';
-    else print $langs->trans("None");
-    print '</td></tr>';
-    
-    // Auteur
-    print '<tr><td>'.$langs->trans("Author").'</td>';
-    print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
 
+		// Ref
+        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+
+		// Type
+        print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+
+		// Libelle
+        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+
+		// Societe - contact
+        print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
+        print '<td>'.$langs->trans("Contact").'</td>';
+        print '<td>';
+        if ($act->contact->id > 0)
+        {
+        	print $act->contact->getNomUrl(1);
+        }
+        else
+        {
+        	print $langs->trans("None");
+        }
+        
+        print '</td></tr>';
+        
     // Construit liste des fichiers
     clearstatcache();
 
