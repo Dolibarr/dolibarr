@@ -243,7 +243,7 @@ if ($socid > 0)
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
         $sql.= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
 		$sql.= ' GROUP BY f.rowid';
-        $sql.= " ORDER BY f.datef DESC";
+        $sql.= " ORDER BY f.datef DESC, f.datec DESC";
 
         $resql=$db->query($sql);
         if ($resql)
@@ -355,7 +355,7 @@ if ($socid > 0)
 		}
 	}
 	
-    print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
 
 	if ($user->rights->societe->contact->creer)
 	{

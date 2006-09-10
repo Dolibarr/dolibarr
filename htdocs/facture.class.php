@@ -123,11 +123,11 @@ class Facture extends CommonObject
 		global $langs,$conf,$mysoc;
 
 		// Nettoyage paramètres
-		if (! $this->type) $this->type = 0 ;
+		if (! $this->type) $this->type = 0;
 		$this->ref_client=trim($this->ref_client);
 		$this->note=trim($this->note);
 		$this->note_public=trim($this->note_public);
-		if (! $this->remise) $this->remise = 0 ;
+		if (! $this->remise) $this->remise = 0;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 		$this->brouillon = 1;
 
@@ -137,45 +137,6 @@ class Facture extends CommonObject
 		$soc->fetch($this->socidp);
 
 		$this->db->begin();
-
-		// Verification paramètres
-		if ($this->type == 1)		// si remplacement
-		{
-			// Controle que facture source connue
-			if ($this->fk_facture_source <= 0)
-			{
-				$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("InvoiceReplacement"));
-				$this->db->rollback();
-				return -10;
-			}
-			
-			// Charge la facture source a remplacer
-			$facreplaced=new Facture($this->db);
-			$result=$facreplaced->fetch($this->fk_facture_source);
-			if ($result <= 0)
-			{
-				$this->error=$langs->trans("ErrorBadInvoice");
-				$this->db->rollback();
-				return -11;
-			}
-			
-			// Controle que facture source non deja remplacee
-			$idreplacement=$facreplaced->getIdNextInvoice();
-			if ($idreplacement != 0)
-			{
-				$this->error=$langs->trans("ErrorInvoiceAlreadyReplaced",$facreplaced->ref);
-				$this->db->rollback();
-				return -12;
-			}
-			
-			$result=$facreplaced->set_canceled($user,'replaced','');
-			if ($result < 0)
-			{
-				$this->error=$facreplaced->error." sql=".$sql;
-				$this->db->rollback();
-				return -13;
-			}
-		}
 
 		// Facture récurrente
 		if ($this->fac_rec > 0)
@@ -200,7 +161,6 @@ class Facture extends CommonObject
 
 		// Insertion dans la base
 		$socid  = $this->socidp;
-		$number = $this->number;
 		$amount = $this->amount;
 		$remise = $this->remise;
 
@@ -340,33 +300,22 @@ class Facture extends CommonObject
 
 	/**
 	 *	\brief      Création de la facture en base depuis une autre
-	 *	\param      facidsrc		Id facture source
-	 *	\param      invertdetail	Inverse le signe des lignes details
 	 *	\param      user       		Object utilisateur qui crée
 	 *	\return		int				<0 si ko, >0 si ok
 	 */
-	function create_clone($reason='',$user)
+	function create_clone($user,$invertdetail=0)
 	{
 		// Charge facture source
 		$facture=new Facture($this->db);
 
-		if ($reason == 'replace')
-		{
-			$facture->fk_facture_source = $this->id;
-			$facture->type = 1;
-		}
-		else
-		{
-			$facture->type = $this->type;
-		}			
-		
-		$facture->socidp 		 = $this->socidp;
-		$facture->number         = $this->number;
-		$facture->date           = $this->date;
-		$facture->note_public    = $this->note_public;
-		$facture->note           = $this->note;
-		$facture->ref_client     = $this->ref_client;
-		$facture->modelpdf       = $this->modelpdf;
+		$facture->fk_facture_source = $this->fk_facture_source;
+		$facture->type 			    = $this->type;
+		$facture->socidp 		    = $this->socidp;
+		$facture->date              = $this->date;
+		$facture->note_public       = $this->note_public;
+		$facture->note              = $this->note;
+		$facture->ref_client        = $this->ref_client;
+		$facture->modelpdf          = $this->modelpdf;
 		$facture->projetid          = $this->projetid;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
@@ -374,6 +323,7 @@ class Facture extends CommonObject
 		$facture->remise_absolue    = $this->remise_absolue;
 		$facture->remise_percent    = $this->remise_percent;
 		$facture->lignes		    = $this->lignes;	// Tableau des lignes de factures
+		$facture->products		    = $this->lignes;	// Tant que products encore utilisé
 
 		if ($invertdetail)
 		{
@@ -387,7 +337,7 @@ class Facture extends CommonObject
 			}
 		}
 				
-		dolibarr_syslog("Facture::create_clone invertdetail=$invertdetail socidp=".$this->socidp);
+		dolibarr_syslog("Facture::create_clone invertdetail=$invertdetail socidp=".$this->socidp." nboflines=".sizeof($facture->lignes));
 		
 
 		$facid = $facture->create($user);
@@ -731,9 +681,11 @@ class Facture extends CommonObject
 	 * 		\param     	rowid      	Id de la facture à supprimer
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
-	function delete($rowid)
+	function delete($rowid=0)
 	{
 		global $user,$langs,$conf;
+
+		if (! $rowid) $rowid=$this->id;
 
 		dolibarr_syslog("Facture.class::delete rowid=".$rowid);
 		
@@ -1024,6 +976,48 @@ class Facture extends CommonObject
 		{
             $this->db->begin();
 
+			// Verification paramètres
+			if ($this->type == 1)		// si remplacement
+			{
+				// Controle que facture source connue
+				if ($this->fk_facture_source <= 0)
+				{
+					$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("InvoiceReplacement"));
+					$this->db->rollback();
+					return -10;
+				}
+				
+				// Charge la facture source a remplacer
+				$facreplaced=new Facture($this->db);
+				$result=$facreplaced->fetch($this->fk_facture_source);
+				if ($result <= 0)
+				{
+					$this->error=$langs->trans("ErrorBadInvoice");
+					$this->db->rollback();
+					return -11;
+				}
+				
+				// Controle que facture source non deja remplacee
+				$idreplacement=$facreplaced->getIdReplacingInvoice();
+				if ($idreplacement != 0)
+				{
+					$facreplacement=new Facture($this->db);
+					$facreplacement->fetch($idreplacement);
+					$this->error=$langs->trans("ErrorInvoiceAlreadyReplaced",$facreplaced->ref,$facreplacement->ref);
+					$this->db->rollback();
+					return -12;
+				}
+				
+				$result=$facreplaced->set_canceled($user,'replaced','');
+				if ($result < 0)
+				{
+					$this->error=$facreplaced->error." sql=".$sql;
+					$this->db->rollback();
+					return -13;
+				}
+			}
+
+
 			// on vérifie si la facture est en numérotation provisoire
 			$facref = substr($this->ref, 1, 4);
 
@@ -1073,21 +1067,21 @@ class Facture extends CommonObject
 			{
 				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
 				// afin de ne pas perdre les fichiers attachés
-			  $facref = sanitize_string($this->ref);
-			  $snumfa = sanitize_string($numfa);
-			  $dirsource = $conf->facture->dir_output.'/'.$facref;
-			  $dirdest = $conf->facture->dir_output.'/'.$snumfa;
-			  if (file_exists($dirsource))
-			  {
-				  dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
-
-				  if (@rename($dirsource, $dirdest))
-				  {
-					  dolibarr_syslog("Renommage ok");
-					  // Suppression ancien fichier PDF dans nouveau rep
-					  dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
-				  }
-			  }
+				$facref = sanitize_string($this->ref);
+				$snumfa = sanitize_string($numfa);
+				$dirsource = $conf->facture->dir_output.'/'.$facref;
+				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
+				if (file_exists($dirsource))
+				{
+					dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
+			
+					if (@rename($dirsource, $dirdest))
+					{
+						dolibarr_syslog("Renommage ok");
+						// Suppression ancien fichier PDF dans nouveau rep
+						dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
+					}
+				}
 			}
 
 
@@ -1208,22 +1202,25 @@ class Facture extends CommonObject
         }
     }
 
-  /**
-   *
-   *
-   */
+	/**
+	*
+	*
+	*/
     function set_draft($userid)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
-        $sql .= " WHERE rowid = $this->id;";
+        dolibarr_syslog("Facture.class::set_draft rowid=".$this->id);
 
-        if ($this->db->query($sql) )
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
+        $sql.= " WHERE rowid = ".$this->id;
+
+        if ($this->db->query($sql))
         {
             return 1;
         }
         else
         {
-            dolibarr_print_error($this->db);
+			$this->error=$this->db->error();
+            return -1;
         }
     }
 
@@ -1750,11 +1747,12 @@ class Facture extends CommonObject
 	* 	\brief     	Renvoie l'id de la facture qui la remplace
 	*	\return		int		<0 si ko, 0 si aucune facture ne remplace, id facture sinon
 	*/
-	function getIdNextInvoice()
+	function getIdReplacingInvoice()
 	{
 		$sql = 'SELECT rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' WHERE fk_facture_source = '.$this->id;
+		$sql.= ' AND fk_statut > 0';
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2204,7 +2202,7 @@ class Facture extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
 		$sql.= " WHERE f.fk_statut = 1 AND f.paye = 0 AND pf.fk_paiement IS NULL";
-		$sql.= " AND ff.rowid IS NULL";
+		$sql.= " AND IFNULL(ff.fk_statut,0) = 0";	// Doit renvoyé vrai si pas de jointure trouvé ou si jointure vers statut à 0
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 

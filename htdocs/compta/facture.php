@@ -275,10 +275,26 @@ if ($_POST['action'] == 'add')
 		if ($_POST['fac_replacement'] > 0)
 		{
 			// Si facture remplacement
-			$result=$facture->fetch($_POST['fac_replacement']);
+			$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
-			//print "xxx".$result." ".$facture->socidp;
-			$facid = $facture->create_clone('replace',$user);
+			$result=$facture->fetch($_POST['fac_replacement']);
+			
+			$facture->date           = $datefacture;
+			$facture->note_public    = trim($_POST['note_public']);
+			$facture->note           = trim($_POST['note']);
+			$facture->ref_client     = $_POST['ref_client'];
+			$facture->modelpdf       = $_POST['model'];
+			$facture->projetid          = $_POST['projetid'];
+			$facture->cond_reglement_id = $_POST['cond_reglement_id'];
+			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
+			$facture->remise_absolue    = $_POST['remise_absolue'];
+			$facture->remise_percent    = $_POST['remise_percent'];
+
+			// Propriétés particulieres a facture de remplacement
+			$facture->fk_facture_source = $_POST['fac_replacement'];
+			$facture->type              = 1;
+
+			$facid=$facture->create_clone($user);
 		}
 		else
 		{
@@ -662,7 +678,8 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	if ($user->rights->facture->supprimer)
 	{
 		$fac = new Facture($db);
-		$result = $fac->delete($_GET['facid']);
+		$result = $fac->fetch($_GET['facid']);
+		$result = $fac->delete();
 		if ($result > 0)
 		{
 			Header('Location: '.$_SERVER["PHP_SELF"]);
@@ -1622,7 +1639,7 @@ else
 				$facreplaced->fetch($fac->fk_facture_source);
 				print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
 			}
-			$facidnext=$fac->getIdNextInvoice();
+			$facidnext=$fac->getIdReplacingInvoice();
 			if ($facidnext > 0)
 			{
 				$facthatreplace=new Facture($db);
