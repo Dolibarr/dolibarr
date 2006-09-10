@@ -701,8 +701,11 @@ class Facture extends CommonObject
 				if ($this->db->query($sql))
 				{
 					// On désaffecte de la facture les remises liées
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-					$sql.= ' SET fk_facture = NULL WHERE fk_facture = '.$rowid;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except as re,';
+					$sql.= ' '.MAIN_DB_PREFIX.'facturedet as fd';
+					$sql.= ' SET re.fk_facture = NULL';
+					$sql.= ' WHERE fd.rowid=re.fk_facture AND fd.fk_facture = '.$rowid;
+
 					if ($this->db->query($sql))
 					{
 						$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
