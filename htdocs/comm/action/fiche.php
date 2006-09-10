@@ -93,14 +93,14 @@ if ($_POST["action"] == 'add_action')
                 }
             }
         }
-    	$actioncomm->date_p = @mktime($_POST["heurephour"],
-                                   $_POST["heurepmin"],
+    	$actioncomm->date_p = @mktime($_POST["aphour"],
+                                   $_POST["apmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
-    	$actioncomm->date_a = @mktime($_POST["heuredhour"],
-                                   $_POST["heuredmin"],
+    	$actioncomm->date_a = @mktime($_POST["adhour"],
+                                   $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
                                    $_POST["adday"],
@@ -183,20 +183,29 @@ if ($_POST["action"] == 'update')
 {
     if (! $_POST["cancel"])
     {
+    	if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
+    	if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
+    	if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
+    	if ($_POST["admin"] == -1) $_POST["admin"]='0';
+    	
         $action = new Actioncomm($db);
         $action->fetch($_POST["id"]);
-    	$action->date_p = @mktime($_POST["heurephour"],
-                                   $_POST["heurepmin"],
+
+                                   
+    	$action->date_p = @mktime($_POST["aphour"],
+                                   $_POST["apmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
-    	$action->date_a = @mktime($_POST["heuredhour"],
-                                   $_POST["heuredmin"],
+    	$action->date_a = @mktime($_POST["adhour"],
+                                   $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
                                    $_POST["adday"],
                                    $_POST["adyear"]);
+		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
+		//print $action->datep;
         $action->label       = $_POST["label"];
         $action->percent     = $_POST["percent"];
         $action->contact->id = $_POST["contactid"];
@@ -301,15 +310,11 @@ if ($_GET["action"] == 'create')
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
-			$html->select_date(-1,'ap','','','',"action");
-			print ' &nbsp; ';
-			print_heure_select("heurep",8,20);
+			$html->select_date(-1,'ap',1,1,1,"action");
 		}
 		else
 		{
-			$html->select_date(-1,'ap','','','',"action");
-			print ' &nbsp; ';
-			print_heure_select("heurep",8,20);
+			$html->select_date(-1,'ap',1,1,1,"action");
 		}
 		print '</td></tr>';
 
@@ -317,21 +322,17 @@ if ($_GET["action"] == 'create')
 		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
-			$html->select_date(-1,'ad','','','',"action");
-			print ' &nbsp; ';
-			print_heure_select("heured",8,20);
+			$html->select_date(-1,'ad',1,1,1,"action");
 		}
 		else
 		{
-			$html->select_date(-1,'ad','','','',"action");
-			print ' &nbsp; ';
-			print_heure_select("heured",8,20);
+			$html->select_date(-1,'ad',1,1,1,"action");
 		}
 		print '</td></tr>';
 		
 		// Duration
 		print '<tr><td>'.$langs->trans("Duration").'</td><td>';
-		print_duree_select("duree");
+		$html->select_duree("duree");
 		print '</td></tr>';
 
 		add_row_for_webcal_link();
@@ -464,15 +465,11 @@ if ($_GET["action"] == 'create')
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
-			$html->select_date(-1,'ap','','','',"action");
-			print ' &nbsp; ';
-			print_heure_select("heurep",8,20);
+			$html->select_date(-1,'ap',1,1,1,"action");
 		}
 		else
 		{
-			$html->select_date(-1,'ap','','','',"action");
-			print ' &nbsp; ';
-			print_heure_select("heurep",8,20);
+			$html->select_date(-1,'ap',1,1,1,"action");
 		}
 		print '</td></tr>';
 
@@ -480,15 +477,11 @@ if ($_GET["action"] == 'create')
 		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
-			$html->select_date(-1,'ad','','','',"action");
-			print ' &nbsp; ';
-			print_heure_select("heured",8,20);
+			$html->select_date(-1,'ad',1,1,1,"action");
 		}
 		else
 		{
-			$html->select_date(-1,'ad','','','',"action");
-			print ' &nbsp; ';
-			print_heure_select("heured",8,20);
+			$html->select_date(-1,'ad',1,1,1,"action");
 		}
 		print '</td></tr>';
 
@@ -599,16 +592,12 @@ if ($_GET["id"])
 
 		// Date planification
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">';
-		$html->select_date(($act->datep?$act->datep:-1),'ap','','','',"action");
-		print ' &nbsp; ';
-		print_heure_select("heurep",8,20);
+		$html->select_date(($act->datep?$act->datep:-1),'ap',1,1,1,"action");
 		print '</td></tr>';
 
 		// Date done
 		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">';
-		$html->select_date(($act->date?$act->date:-1),'ad','','','',"action");
-		print ' &nbsp; ';
-		print_heure_select("heured",8,20);
+		$html->select_date(($act->date?$act->date:-1),'ad',1,1,1,"action");
 		print '</td></tr>';
 		
 		

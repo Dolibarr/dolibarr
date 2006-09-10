@@ -1989,11 +1989,11 @@ class Form
      *            	Les champs sont présélectionnées avec:
      *            	- La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
      *            	- La date du jour si set_time vaut ''
-     *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 0)
+     *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 1)
 	 *		\param	set_time 		Date de pré-sélection
 	 *		\param	prefix			Prefix pour nom champ
-	 *		\param	h				Heure
-	 *		\param	m				Minutes
+	 *		\param	h				1=Affiche aussi les heures
+	 *		\param	m				1=Affiche aussi les minutes
 	 *		\param	empty			0=Champ obligatoire, 1=Permet une saisie vide
 	 *		\param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
      */
@@ -2040,7 +2040,7 @@ class Form
         /*
          * Affiche date en popup
          */
-		if ($conf->use_javascript && $conf->use_popup_calendar && $h==0 && $m==0)
+		if ($conf->use_javascript && $conf->use_popup_calendar)
         {
             //print "e".$set_time." t ".$conf->format_date_short;
             if ($set_time > 0)
@@ -2169,8 +2169,8 @@ class Form
         if ($h)
         {
             print '<select class="flat" name="'.$prefix.'hour">';
-    
-            for ($hour = 0; $hour < 24 ; $hour++)
+    		if ($empty) print '<option value="-1">&nbsp;</option>';
+            for ($hour = 0; $hour < 24; $hour++)
             {
                 if (strlen($hour) < 2)
                 {
@@ -2178,43 +2178,71 @@ class Form
                 }
                 if ($hour == $shour)
                 {
-                    print "<option value=\"$hour\" selected=\"true\">$hour";
+                    print "<option value=\"$hour\" selected=\"true\">$hour</option>";
                 }
                 else
                 {
-                    print "<option value=\"$hour\">$hour";
+                    print "<option value=\"$hour\">$hour</option>";
                 }
-                print "</option>";
             }
-            print "</select>H\n";
-    
-            if ($m)
+            print "</select>";
+            print "H\n";
+    	}
+    	
+        /*
+         * Affiche min en select
+         */
+        if ($m)
+        {
+            print '<select class="flat" name="'.$prefix.'min">';
+    		if ($empty) print '<option value="-1">&nbsp;</option>';
+            for ($min = 0; $min < 60 ; $min++)
             {
-                print '<select class="flat" name="'.$prefix.'min">';
-    
-                for ($min = 0; $min < 60 ; $min++)
+                if (strlen($min) < 2)
                 {
-                    if (strlen($min) < 2)
-                    {
-                        $min = "0" . $min;
-                    }
-                    if ($min == $smin)
-                    {
-                        print "<option value=\"$min\" selected=\"true\">$min";
-                    }
-                    else
-                    {
-                        print "<option value=\"$min\">$min";
-                    }
-                    print "</option>";
+                    $min = "0" . $min;
                 }
-                print "</select>M\n";
+                if ($min == $smin)
+                {
+                    print "<option value=\"$min\" selected=\"true\">$min</option>";
+                }
+                else
+                {
+                    print "<option value=\"$min\">$min</option>";
+                }
             }
-    
+            print "</select>";
+            print "M\n";
         }
 
     }
 	
+	/**
+			\brief  Fonction servant a afficher une durée dans une liste déroulante
+			\param	prefix  prefix
+	*/
+	function select_duree($prefix)
+	{
+		print '<select class="flat" name="'.$prefix.'hour">';
+		print "<option value=\"0\">0</option>";
+		for ($hour = 1 ; $hour < 24 ; $hour++)
+		{
+			print "<option value=\"$hour\"";
+			if ($hour == 1) print " selected=\"true\"";
+			print ">$hour</option>";
+		}
+		print "</select>";
+		print "H &nbsp;";
+		print '<select class="flat" name="'.$prefix.'min">';
+		for ($min = 0 ; $min < 55 ; $min=$min+5)
+		{
+			print "<option value=\"$min\">$min</option>";
+		}
+		print "</select>";
+		print "M&nbsp;";
+	}
+
+
     /**
         \brief  Affiche un select à partir d'un tableau
         \param	htmlname        Nom de la zone select
