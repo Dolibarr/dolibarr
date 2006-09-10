@@ -163,7 +163,7 @@ class CMailFile
 
         dolibarr_syslog("CMailFile::sendfile addr_to_name=".$this->addr_to_name.", addr_to_email=".$this->addr_to_email.", subject=".$this->subject);
         dolibarr_syslog("CMailFile::sendfile header=\n".$headers);
-        dolibarr_syslog("CMailFile::sendfile message=\n".$message);
+        //dolibarr_syslog("CMailFile::sendfile message=\n".$message);
         //$this->send_to_file();
 
         $errorlevel=error_reporting();
