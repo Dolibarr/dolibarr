@@ -202,7 +202,7 @@ if ($_GET["action"] == 'create')
 				}
 				else
 				{
-					print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+					print "<td>".nl2br($objp->description)."</TD>\n";
 				}
 				print '<TD align="center">'.$objp->tva_taux.' %</TD>';
 				print '<TD align="center">'.$objp->qty.'</TD>';

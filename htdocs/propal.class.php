@@ -1981,7 +1981,7 @@ class Propal extends CommonObject
 			$ligne->qty=1;
 			$ligne->subprice=100;
 			$ligne->price=100;
-			$ligne->tva_taux=19.6;
+			$ligne->tva_tx=19.6;
 			$prodid = rand(1, $num_prods);
 			$ligne->produit_id=$prodids[$prodid];
 			$this->lignes[$xnbp]=$ligne;

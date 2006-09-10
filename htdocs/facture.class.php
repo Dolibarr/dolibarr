@@ -515,7 +515,7 @@ class Facture extends CommonObject
 				$faclig->product_desc     = $objp->product_desc;    // Description produit
 				$faclig->qty              = $objp->qty;
 				$faclig->subprice         = $objp->subprice;
-				$faclig->tva_taux         = $objp->tva_taux;
+				$faclig->tva_tx           = $objp->tva_taux;
 				$faclig->remise_percent   = $objp->remise_percent;
 				$faclig->fk_remise_except = $objp->fk_remise_except;
 				$faclig->produit_id       = $objp->fk_product;
@@ -1458,7 +1458,7 @@ class Facture extends CommonObject
 
 			$ligne->desc=$desc;
 			$ligne->qty=$qty;
-			$ligne->tva_taux=$txtva;
+			$ligne->tva_tx=$txtva;
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$pu;
 			$ligne->date_start=$date_start;
@@ -2554,7 +2554,7 @@ class Facture extends CommonObject
 			$ligne->qty=1;
 			$ligne->subprice=100;
 			$ligne->price=100;
-			$ligne->tva_taux=19.6;
+			$ligne->tva_tx=19.6;
 			$prodid = rand(1, $num_prods);
 			$ligne->produit_id=$prodids[$prodid];
 			$this->lignes[$xnbp]=$ligne;
@@ -2588,7 +2588,7 @@ class FactureLigne
     var $fk_product;		// Id produit prédéfini
 
 	var $qty;				// Quantité (exemple 2)
-	var $tva_taux;			// Taux tva produit/service (exemple 19.6)
+	var $tva_tx;			// Taux tva produit/service (exemple 19.6)
 	var $subprice;      	// P.U. HT (exemple 100)
 	var $remise_percent;	// % de la remise ligne (exemple 20%)
 	var $rang = 0;
@@ -2648,7 +2648,7 @@ class FactureLigne
 			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
 			$this->subprice       = $objp->subprice;
-			$this->tva_taux       = $objp->tva_taux;
+			$this->tva_tx         = $objp->tva_taux;
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->produit_id     = $objp->fk_product;
@@ -2778,7 +2778,7 @@ class FactureLigne
 		$sql.= ",remise_percent='".price2num($this->remise_percent)."'";
 		if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
 		else $sql.= ",fk_remise_except=null";
-		$sql.= ",tva_taux='".price2num($this->tva_taux)."'";
+		$sql.= ",tva_taux='".price2num($this->tva_tx)."'";
 		$sql.= ",qty='".price2num($this->qty)."'";
 		if ($this->date_start) { $sql.= ",date_start='".$this->date_start."'"; }
 		else { $sql.=',date_start=null'; }

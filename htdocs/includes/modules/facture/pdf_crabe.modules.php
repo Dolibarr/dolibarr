@@ -272,7 +272,7 @@ class pdf_crabe extends ModelePDFFactures
 
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell(10, 4, ($fac->lignes[$i]->tva_taux < 0 ? '*':'').abs($fac->lignes[$i]->tva_taux), 0, 'R');
+                    $pdf->MultiCell(10, 4, ($fac->lignes[$i]->tva_tx < 0 ? '*':'').abs($fac->lignes[$i]->tva_tx), 0, 'R');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
@@ -298,7 +298,7 @@ class pdf_crabe extends ModelePDFFactures
                     // dans le tableau tva["taux"]=total_tva
                     $tvaligne=$fac->lignes[$i]->price * $fac->lignes[$i]->qty;
                     if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
-                    $this->tva[ (string)$fac->lignes[$i]->tva_taux ] += $tvaligne;
+                    $this->tva[ (string)$fac->lignes[$i]->tva_tx ] += $tvaligne;
 
                     $nexY+=2;    // Passe espace entre les lignes
 

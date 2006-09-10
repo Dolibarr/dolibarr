@@ -139,7 +139,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 
 		$tva = 0;
 		$amo = price2num($_POST['amount']);
-		$tva = (price2num($_POST['tva_taux']) * $amo) / 100 ;
+		$tva = (price2num($_POST['tva_tx']) * $amo) / 100 ;
 		$remise = 0;
 		$total = $tva + $amo;
 

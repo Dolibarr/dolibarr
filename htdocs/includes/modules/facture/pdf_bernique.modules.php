@@ -148,7 +148,7 @@ class pdf_bernique extends ModelePDFFactures
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (133, $curY);
-					$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
+					$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_tx, 0, 'C');
 
 					$pdf->SetXY (145, $curY);
 					$pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');

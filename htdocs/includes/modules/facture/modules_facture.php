@@ -241,7 +241,7 @@ TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
 	    //Pour les articles
 	    $meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
 ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lignes[$i]->price . "\"
-ITEM_" . $i . "_TVA=\"" .$fac->lignes[$i]->tva_taux . "\"
+ITEM_" . $i . "_TVA=\"" .$fac->lignes[$i]->tva_tx . "\"
 ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->desc)) . "\"
 ";
 	  }

@@ -221,7 +221,7 @@ class FactureFournisseur extends Facture
 							$obj = $this->db->fetch_object();
 							$this->lignes[$i][0] = stripslashes($obj->description);
 							$this->lignes[$i][1] = $obj->pu_ht;
-							$this->lignes[$i][2] = $obj->tva_taux;
+							$this->lignes[$i][2] = $obj->tva_tx;
 							$this->lignes[$i][3] = $obj->qty;
 							$this->lignes[$i][4] = $obj->total_ht;
 							$this->lignes[$i][5] = $obj->tva;

@@ -206,7 +206,7 @@ class pdf_oursin extends ModelePDFFactures
 					if ($this->franchise!=1)
 					{
 						$pdf->SetXY ($this->marges['g']+119, $curY);
-						$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
+						$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_tx, 0, 'C');
 					}
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->marges['g']+132, $curY);

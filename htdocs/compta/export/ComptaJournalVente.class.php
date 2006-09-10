@@ -68,8 +68,8 @@ class ComptaJournalVente  {
 	  $nexY = $pdf->GetY();
 	    
 	  $sql = "SELECT f.rowid as facid, f.facnumber, ".$this->db->pdate("f.datef")." as dp";
-	  $sql .= " , f.total_ttc as amount, f.tva ";
-	  $sql .= " ,s.nom, s.code_compta";
+	  $sql .= " , f.total_ttc as amount, f.tva";
+	  $sql .= " , s.nom, s.code_compta";
 	  $sql .= " , l.price, l.tva_taux";
 	  $sql .= " , c.numero, f.increment";
 	  $sql .= " , l.rowid as lrowid";

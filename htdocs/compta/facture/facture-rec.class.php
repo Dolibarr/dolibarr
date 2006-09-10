@@ -119,7 +119,7 @@ class FactureRec extends Facture
                     addslashes($facsrc->lignes[$i]->desc),
                     $facsrc->lignes[$i]->subprice,
                     $facsrc->lignes[$i]->qty,
-                    $facsrc->lignes[$i]->tva_taux,
+                    $facsrc->lignes[$i]->tva_tx,
                     $facsrc->lignes[$i]->produit_id,
                     $facsrc->lignes[$i]->remise_percent);
 
@@ -211,11 +211,11 @@ class FactureRec extends Facture
                         $objp = $this->db->fetch_object($result);
                         $faclig = new FactureLigne($this->db);
                         $faclig->produit_id     = $objp->fk_product;
-                        $faclig->desc           = stripslashes($objp->description);
+                        $faclig->desc           = $objp->description;
                         $faclig->qty            = $objp->qty;
                         $faclig->price          = $objp->price;
-                        $faclig->subprice          = $objp->subprice;
-                        $faclig->tva_taux       = $objp->tva_taux;
+                        $faclig->subprice       = $objp->subprice;
+                        $faclig->tva_tx         = $objp->tva_taux;
                         $faclig->remise_percent = $objp->remise_percent;
                         $this->lignes[$i]       = $faclig;
                         $i++;
@@ -299,7 +299,7 @@ class FactureRec extends Facture
 			$sql .= ",".price2num($price);
 			$sql .= ",".price2num($qty);
 			$sql .= ",".price2num($txtva);
-			$sql .= ",'$fk_product'";
+			$sql .= ",'".$fk_product."'";
 			$sql .= ",'".price2num($remise_percent)."'";
 			$sql .= ",'".price2num($subprice)."'";
 			$sql .= ",'".price2num($remise)."') ;";
