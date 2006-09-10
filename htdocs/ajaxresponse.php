@@ -25,9 +25,10 @@
         \version    $Revision$
 */
 
-require('./main.inc.php');
+require('./master.inc.php');
 
 $langs->load("products");
+$langs->load("main");
 
 //header("Content-type: text/html; charset=UTF-8");
 header("Content-type: text/html; charset=iso-8859-1");

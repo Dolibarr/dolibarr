@@ -402,16 +402,17 @@ function top_htmlhead($head, $title="", $target="")
 
     if ($conf->use_javascript || $conf->use_ajax)
     {
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>';
+        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
     }
     if ($conf->use_ajax)
     {
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/prototype.js"></script>';
+        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
+        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
     }
     
     print "</head>\n";
 }
-  
+
 /**
  *  \brief      Affiche en-tete html + la barre de menu superieure
  *  \param      head    lignes d'en-tete head

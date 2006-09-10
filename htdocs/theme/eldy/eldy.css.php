@@ -603,6 +603,14 @@ a.butDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-wei
 /* Tables                                                                         */
 /* ============================================================================== */
 
+.nocellnopadd {
+list-style-type:none;
+margin:0px;
+padding:0px;
+spacing:0px;
+cursor:move;
+}
+
 .notopnoleft {
 border-collapse: collapse;
 border: 0px;
@@ -622,6 +630,7 @@ padding-bottom: 4px;
 margin: 0px 0px;
 }
 
+   
 table.border {
 border: 1px solid #9CACBB;
 border-width: 1px;
@@ -635,6 +644,7 @@ border-width: 1px;
 border-collapse: collapse;
 }
 
+
 table.noborder {
 border-collapse: collapse;
 border: 0px;
@@ -643,7 +653,6 @@ table.noborder td {
 border: 0px;
 padding: 1px 2px;
 }
-
 
 table.nobordernopadding {
 border-collapse: collapse;

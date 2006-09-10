@@ -86,7 +86,7 @@ $userstring=$user->fullname;
 print '<td nowrap>'.$langs->trans("User").'</td><td>'.$userstring.'</td></tr>';
 print '<tr '.$bc[true].'>';
 print '<td nowrap>'.$langs->trans("PreviousConnexion").'</td><td>';
-if ($user->datepreviouslogin) print dolibarr_print_date($user->datepreviouslogin,"%d %B %Y %H:%M:%S");
+if ($user->datepreviouslogin) print dolibarr_print_date($user->datepreviouslogin,"%d %b %Y %H:%M:%S");
 else print $langs->trans("Unknown");
 print '</td>';
 print "</tr>\n";
@@ -483,6 +483,7 @@ print '</td></tr></table>';
 include_once("./boxes.php");
 $infobox=new InfoBox($db);
 $boxarray=$infobox->listboxes("0");       // 0 = valeur pour la page accueil
+$boxjavascriptids=array();
 
 $NBCOLS=2;      // Nombre de colonnes pour les boites
 
@@ -494,13 +495,25 @@ if (sizeof($boxarray))
 }
 for ($ii=0, $ni=sizeof($boxarray); $ii<$ni; $ii++)
 {
+	$boxjavascriptids[$ii]='"box'.$ii.'"';
+
 	if ($ii % $NBCOLS == 0) print "<tr>\n";
 	print '<td valign="top" width="50%">';
 	
+	if ($conf->use_ajax && $conf->browser->firefox)
+	{
+		print '<ul class="nocellnopadd" height="100px" id="box'.$ii.'">';
+		print '<li class="nocellnopadd" height="100px">';
+	}
 	// Affichage boite ii
 	$box=$boxarray[$ii];
 	$box->loadBox();
 	$box->showBox();
+	if ($conf->use_ajax && $conf->browser->firefox)
+	{
+		print '</li>';
+		print '</ul>';
+	}
 	
 	print "</td>";
 	if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
@@ -511,6 +524,17 @@ if (sizeof($boxarray))
     print "</table>";
 }
 
+if ($conf->use_ajax && $conf->browser->firefox)
+{
+	print '<script type="text/javascript" language="javascript">'."\n";
+	for ($ii=0, $ni=sizeof($boxarray); $ii<$ni; $ii++)
+	{
+		print 'Sortable.create(\'box'.$ii.'\',{hoverclass:\'grey\',ghosting:true,dropOnEmpty:true,containment:[';
+		print join(',',$boxjavascriptids);
+		print '],constraint:false});'."\n";
+	}
+	print '</script>'."\n";
+}
 
 // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
 print '<div class="tabsAction">';

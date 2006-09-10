@@ -536,9 +536,17 @@ a.butDelete:visited { background: white; border: 1px outset #997777; color: #436
 a.butDelete:hover   { background: #FFe7ec; border: 1px outset #997777; color: #436976; padding: 0em 1em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
                       
 
-/*
- * Tables
- */
+/* ============================================================================== */
+/* Tables                                                                         */
+/* ============================================================================== */
+
+.nocellnopadd {
+list-style-type:none;
+margin:0px;
+padding:0px;
+spacing:0px;
+cursor:move;
+}
 
 .notopnoleft {
 border-collapse: collapse;

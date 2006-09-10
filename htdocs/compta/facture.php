@@ -1672,7 +1672,7 @@ else
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="3">'.dolibarr_print_date($fac->date,'%A %d %B %Y').'</td>';
 			
-            $nbrows=7;
+            $nbrows=8;
             if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 			if ($conf->projet->enabled) $nbrows++;
 
