@@ -364,18 +364,20 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 			{
 				$value_label = $fac_ori->lignes[$i-1][0];
 				$value_pu = $fac_ori->lignes[$i-1][1];
+				$value_tauxtva = $fac_ori->lignes[$i-1][2];
 				$value_qty = $fac_ori->lignes[$i-1][3];
 			}
 			else
 			{
 				$value_qty = '1';
+				$value_tauxtva = '';
 			}
 			print '<tr><td>'.$i.'</td>';
 			print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
 			print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
 			print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
 			print '<td align="right">';
-			$html->select_tva('tauxtva'.$i,'',$societe,$mysoc);
+			$html->select_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
 			print '</td>';
 			print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
 		}
