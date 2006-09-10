@@ -71,6 +71,7 @@ class modProduit extends DolibarrModules
     $this->depends = array();
 	$this->requiredby = array("modStock","modService","modBarcode");
     $this->config_page_url = "produit.php";
+	$this->langfiles = array("products","companies");
 	
     // Constantes
     $this->const = array();
@@ -143,9 +144,9 @@ class modProduit extends DolibarrModules
     $r++;
     $this->export_code[$r]=$this->id.'_'.$r;
     $this->export_label[$r]="ProductsOrServices";	// Translation key
-    $this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.fk_product_type'=>"Type",'p.price'=>"Price",'p.envente'=>"OnSell",'p.duration'=>"Duration");
-    $this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.label'=>"product",'p.description'=>"product",'p.fk_product_type'=>"product",'p.price'=>"product",'p.envente'=>"product",'p.duration'=>"product");
-    $this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.label'=>"label",'p.description'=>"description",'p.fk_product_type'=>"type",'p.price'=>"price",'p.envente'=>"onsell",'p.duration'=>"duration");
+    $this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
+    $this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product');
+    $this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification');
     $this->export_sql[$r]="select ";
     $i=0;
     foreach ($this->export_alias_array[$r] as $key => $value)
