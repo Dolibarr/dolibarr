@@ -53,42 +53,32 @@ if ($_POST["action"] == 'multiprix')
 	$res=$db -> desc_table(MAIN_DB_PREFIX."product_price","price_level");
 	if(! $db -> fetch_row())
 	{
-		// on ajoute le champ price_level dans la table product_price
-		$field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
-		if(! $db -> add_field(MAIN_DB_PREFIX."product_price","price_level",$field_desc,"after date_price"))
+		// on ajoute le champ price_level dans la table societe
+		if(! $db -> add_field(MAIN_DB_PREFIX."societe","price_level",$field_desc))
 		{
 			dolibarr_print_error($db);
 			print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
 		}
+		// on crée la table societe_prices
 		else
 		{
-			// on ajoute le champ price_level dans la table societe
-			if(! $db -> add_field(MAIN_DB_PREFIX."societe","price_level",$field_desc))
+			$table = MAIN_DB_PREFIX."societe_prices";
+			$fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+			$fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
+			$fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
+			$fields['datec'] = array('type'=>'datetime','default'=> 'null');
+			$fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
+			$fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
+			if(! $db -> create_table($table,$fields,"rowid","InnoDB"))
 			{
 				dolibarr_print_error($db);
 				print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
 			}
-			// on crée la table societe_prices
 			else
 			{
-				$table = MAIN_DB_PREFIX."societe_prices";
-				$fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-				$fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
-				$fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
-				$fields['datec'] = array('type'=>'datetime','default'=> 'null');
-				$fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
-				$fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
-				if(! $db -> create_table($table,$fields,"rowid","InnoDB"))
-				{
-					dolibarr_print_error($db);
-					print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
-				}
-				else
-				{
-					dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-					dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-					Header("Location: produit.php");
-				}
+				dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
+				dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+				Header("Location: produit.php");
 			}
 		}
 	}
