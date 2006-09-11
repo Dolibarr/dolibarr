@@ -313,7 +313,7 @@ if ($_GET["propalid"] > 0)
             print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
             print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
             print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-            print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+            print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
             print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
             print '<td width="16">&nbsp;</td>';
             print '<td width="16">&nbsp;</td>';
