@@ -78,7 +78,7 @@ if ($_POST["action"] == 'multiprix')
 				$fields['datec'] = array('type'=>'datetime','default'=> 'null');
 				$fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
 				$fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
-				if(! $db -> create_table($table,$fields,"rowid","MyISAM"))
+				if(! $db -> create_table($table,$fields,"rowid","InnoDB"))
 				{
 					dolibarr_print_error($db);
 					print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
@@ -111,7 +111,7 @@ else if ($_POST["action"] == 'sousproduits')
 		$fields['qty'] = array('type'=>'double','default'=> 'null');
 		$keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
 		$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
-		if(! $db -> create_table($table,$fields,"","MyISAM","","",$keys))
+		if(! $db -> create_table($table,$fields,"","InnoDB","","",$keys))
 		{
 			dolibarr_print_error($db);
 			print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
