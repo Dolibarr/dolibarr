@@ -428,3 +428,11 @@ alter table llx_product modify label varchar(255) NOT NULL;
 alter table llx_product modify description text;
 alter table llx_product_det modify label varchar(255) NOT NULL;
 alter table llx_product_det modify description text;
+
+create table llx_accountingdebcred
+(
+	fk_transaction  integer		NOT NULL,
+	fk_account      integer		NOT NULL,
+	amount          real		NOT NULL,
+	direction       varchar(1)	NOT NULL
+)type=innodb;
