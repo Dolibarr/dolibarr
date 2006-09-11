@@ -52,7 +52,7 @@ $type=trim($type);
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 if (! $sortfield) $sortfield="p.ref";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -143,10 +143,6 @@ if ($resql)
     if (isset($_GET["envente"]) || isset($_POST["envente"]))
     {
         $envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
-    }
-    else
-    {
-        $envente=1;
     }
 
     if (isset($_GET["type"]) || isset($_POST["type"]))
@@ -254,7 +250,12 @@ if ($resql)
         print '<td align="center">'.dolibarr_print_date($objp->datem).'</td>';
         if ($conf->service->enabled && $type != 0) 
         {
-            print '<td align="center">'.$objp->duration.'</td>';
+            print '<td align="center">';
+            if (eregi('([0-9]+)y',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+            elseif (eregi('([0-9]+)m',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+            elseif (eregi('([0-9]+)d',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+            else print $objp->duration;
+            print '</td>';
         }
         print '<td align="right">'.price($objp->price).'</td>';
         print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
