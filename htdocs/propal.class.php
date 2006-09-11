@@ -135,33 +135,49 @@ class Propal extends CommonObject
 	 */
     function add_product($idproduct, $qty, $remise_percent=0)
     {
-		global $conf, $mysoc;
+    	global $conf, $mysoc;
 
-        if (! $qty) $qty = 1;
+      if (! $qty) $qty = 1;
 
-        if ($idproduct > 0)
-        {
-			$prod=new Product($this->db);
-			$prod->fetch($idproduct);
+      if ($idproduct > 0)
+      {
+      	$prod=new Product($this->db);
+			  $prod->fetch($idproduct);
 			
-			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
-			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES == 1)
-				$price = $prod->multiprices[$this->client->price_level];
-			else
-				$price = $prod->price;
-
-   			$line=new PropaleLigne($this->db);
-			$line->rowid = $idproduct;
-			$line->fk_product=$idproduct;
-			$line->desc=$prod->description;
-			$line->qty = $qty;
-			$line->subprice=$price;
-			$line->remise_percent = $remise_percent;
-			$line->tva_tx=$tva_tx;
-
-			$this->products[]=$line;
+			  // on ajoute la description du produit si l'option est active
+			  if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+        {
+      	  $productdesc = $prod->description;
         }
+        else
+        {
+        	$productdesc = '';
+        }
+			
+			  $tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			  
+			  // multiprix
+			  if($conf->global->PRODUIT_MULTIPRICES == 1)
+			  {
+			  	$price = $prod->multiprices[$this->client->price_level];
+			  }
+			  else
+			  {
+			  	$price = $prod->price;
+			  }
+			  
+			  $line = new PropaleLigne($this->db);
+			  
+			  $line->rowid          = $idproduct;
+			  $line->fk_product     = $idproduct;
+			  $line->desc           = $productdesc;
+			  $line->qty            = $qty;
+			  $line->subprice       = $price;
+			  $line->remise_percent = $remise_percent;
+			  $line->tva_tx         = $tva_tx;
+
+			  $this->products[] = $line;
+       }
     }
 
     /**
