@@ -1026,7 +1026,7 @@ function dol_loginfunction($notused,$pearstatus)
     print '}'."\n";
     print '#login table {';
     print '  border: 1px solid #C0C0C0;';
-    if (file_exists(DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
+    if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
     {
       print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;';
     }
