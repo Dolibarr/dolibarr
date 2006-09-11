@@ -145,6 +145,16 @@ class Propal extends CommonObject
 			$prod=new Product($this->db);
 			$prod->fetch($idproduct);
 	
+			// on ajoute la description du produit si l'option est active
+			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+			{
+				$productdesc = $prod->description;
+			}
+			else
+			{
+				$productdesc = '';
+			}
+
 			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
@@ -159,10 +169,10 @@ class Propal extends CommonObject
 			$line = new PropaleLigne($this->db);
 	
 			$line->fk_product=$idproduct;
-			$line->desc=$prod->description;
-			$line->qty = $qty;
+			$line->desc=$productdesc;
+			$line->qty=$qty;
 			$line->subprice=$price;
-			$line->remise_percent = $remise_percent;
+			$line->remise_percent=$remise_percent;
 			$line->tva_tx=$tva_tx;
 	
 			$this->products[]=$line;

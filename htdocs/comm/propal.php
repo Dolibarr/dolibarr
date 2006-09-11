@@ -165,6 +165,7 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 if ($_POST['action'] == 'add')
 {
 	$propal = new Propal($db, $_POST['socidp']);
+	$propal->fetch_client();
 	
 	$db->begin();
 	
@@ -550,16 +551,17 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-  $result=propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
-  if ($result <= 0)
-  {
-  	dolibarr_print_error($db,$result);
-  	exit;
-  }
-  else
-  {
-    Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#builddoc');
-  }    
+	$result=propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db,$result);
+		exit;
+	}
+	else
+	{
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#builddoc');
+		exit;
+	} 
 }
 
 
@@ -655,8 +657,9 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-  propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+  	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET["propalid"].'#'.$_GET['rowid']);
+	exit;
 }
 
 

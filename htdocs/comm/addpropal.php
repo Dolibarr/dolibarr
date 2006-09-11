@@ -82,8 +82,8 @@ if ($_GET["action"] == 'create')
     $modPropale = new $obj;
     $numpr = $modPropale->getNextValue($soc);
 
-	// Si numero deja pris (ne devrait pas arriver)
-	// on incremente par .num+1
+	// Fix pour modele numerotation qui deconne
+	// Si numero deja pris (ne devrait pas arriver), on incremente par .num+1
     $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
     $resql=$db->query($sql);
     if ($resql)
@@ -106,9 +106,9 @@ if ($_GET["action"] == 'create')
     print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
 
     // Reference client
-	  print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
-		print '<input type="text" name="ref_client" value=""></td>';
-		print '</tr>';
+	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
+	print '<input type="text" name="ref_client" value=""></td>';
+	print '</tr>';
 
 	// Societe
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->getNomUrl(1);
@@ -117,8 +117,8 @@ if ($_GET["action"] == 'create')
 	print '</tr>';
 
 	/*
-   * Contact de la propale
-   */
+	* Contact de la propale
+	*/
     print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
     $html->select_contacts($soc->id,$setcontact,'contactidp',1);
     print '</td></tr>';

@@ -37,7 +37,7 @@
 class Product
 {
     var $db ;
-    
+
     var $id ;
     var $ref;
     var $libelle;
@@ -59,8 +59,8 @@ class Product
 
     var $typeprodserv;
     var $error;
-    
-    
+
+
     /**
      *    \brief      Constructeur de la classe
      *    \param      DB          Handler accès base de données
@@ -69,22 +69,22 @@ class Product
     function Product($DB, $id=0)
     {
         global $langs;
-        
+
         $this->db = $DB;
         $this->id   = $id ;
         $this->status = 0;
         $this->seuil_stock_alerte = 0;
-        
+
         $this->typeprodser[0]=$langs->trans("Product");
         $this->typeprodser[1]=$langs->trans("Service");
-    }  
+    }
 
 
   /**
    *    \brief      Vérifie que la référence et libellé du produit est non null
    *    \return     int         1 si ok, 0 sinon
    */
-	 
+
   function check()
     {
     $this->ref = ereg_replace("'","",stripslashes($this->ref));
@@ -93,10 +93,10 @@ class Product
       $err = 0;
       if (strlen(trim($this->ref)) == 0)
 	$err++;
- 
+
       if (strlen(trim($this->libelle)) == 0)
 	$err++;
-      
+
       if ($err > 0)
 	{
 	  return 0;
@@ -104,7 +104,7 @@ class Product
       else
 	{
 	  return 1;
-	}      
+	}
     }
 
 
@@ -115,7 +115,7 @@ class Product
     function create($user)
     {
     	global $langs;
-    
+
         $this->ref = trim(sanitize_string($this->ref));
 
         if ($this->tva_tx=='') $this->tva_tx = 0;
@@ -124,9 +124,9 @@ class Product
         $this->price = price2num($this->price);
 
         dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
-    
+
         $this->db->begin();
-    
+
         $sql = "SELECT count(*)";
         $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
 
@@ -148,7 +148,7 @@ class Product
                 if ( $result )
                 {
                     $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
-    
+
                     if ($id > 0)
                     {
                         $this->id = $id;
@@ -207,14 +207,14 @@ class Product
         global $langs, $conf;
         $langs->load("main");
         $langs->load("products");
-    
+
         if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
-    
+
         $this->ref = trim(sanitize_string($this->ref));
         $this->libelle = trim($this->libelle);
         $this->description = trim($this->description);
         $this->note = trim($this->note);
-    
+
         $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
         $sql .= " SET label = '" . addslashes($this->libelle) ."'";
         if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
@@ -259,7 +259,7 @@ class Product
     function verif_prod_use($id)
     {
     	  $sqr = 0;
-    	
+
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
         $sql.= " WHERE fk_product = ".$id;
@@ -336,7 +336,7 @@ class Product
     function delete($id)
     {
         global $user;
-        
+
         if ($user->rights->produit->supprimer)
         {
           $prod_use = $this->verif_prod_use($id);
@@ -368,9 +368,9 @@ class Product
 		{
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_det";
 			$sql.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
-			
+
 			$result = $this->db->query($sql);
-			
+
 			if ($value == $current_lang)
 			{
 				if (mysql_num_rows($result)) // si aucune ligne dans la base
@@ -409,13 +409,13 @@ class Product
 				}
 
 				 // on ne sauvegarde pas des champs vides
-				if ( $this->multilangs["$value"]["libelle"] || $this->multilangs["$value"]["description"] || $this->multilangs["$value"]["note"] ) 
+				if ( $this->multilangs["$value"]["libelle"] || $this->multilangs["$value"]["description"] || $this->multilangs["$value"]["note"] )
 					if (!$this->db->query($sql2)) return -1;
 			}
 		}
 		return 1;
 	}
-	 
+
 
 	/**
 	 *		\ brief Charge toutes les traductions du produit
@@ -423,19 +423,19 @@ class Product
 	function getMultiLangs($langue='')
 	{
 		global $langs;
-        $langs_available = $langs->get_available_languages(); 
-		
+        $langs_available = $langs->get_available_languages();
+
 		if ( $langue != '')
 			foreach ($langs_available as $value)
 				if ( $value == $langue ) $current_lang = $value; // si $langue est une valeur correcte
-		
+
 		if ( !$current_lang )
 			$current_lang = $langs->getDefaultLang(); // sinon on choisi la langue par defaut
-		
+
 		$sql = "SELECT lang, label, description, note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_det";
 		$sql.= " WHERE fk_product=".$this->id;
-		
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -450,7 +450,7 @@ class Product
 				$this->multilangs["$obj->lang"]["libelle"]		= $obj->label;
 				$this->multilangs["$obj->lang"]["description"]	= $obj->description;
 				$this->multilangs["$obj->lang"]["note"]			= $obj->note;
-				
+
 			 }
 			}
 		else
@@ -466,7 +466,7 @@ class Product
      *    \brief  Ajoute un changement de prix en base dans l'historique des prix
      *    \param  user        utilisateur qui modifie le prix
      */
-    function _log_price($user) 
+    function _log_price($user)
     {
         // MultiPrix : si activé, on gère tout ici, même le prix standard
 		global $conf;
@@ -483,9 +483,9 @@ class Product
 								$sql_multiprix .= " and fk_product = ".$this->id;
 								$sql_multiprix .= " and fk_user_author = ".$user->id;
 								$sql_multiprix .= " and price = ".price2num($this->multiprices["$i"]);
-						
+
 								$this->db->query($sql_multiprix);
-								
+
 								// On ajoute nouveau tarif
 								$sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price) ";
 								$sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($this->multiprices["$i"]);
@@ -504,9 +504,9 @@ class Product
 					$sql .= " and price = ".price2num($this->price);
 					$sql .= " and envente = ".$this->status;
 					$sql .= " and tva_tx = ".$this->tva_tx;
-			
+
 					$this->db->query($sql);
-					
+
 					// On ajoute nouveau tarif
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
 					$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->status.",".$this->tva_tx;
@@ -532,17 +532,17 @@ class Product
 				$sql .= " and price = ".price2num($this->price);
 				$sql .= " and envente = ".$this->status;
 				$sql .= " and tva_tx = ".$this->tva_tx;
-		
+
 				$this->db->query($sql);
-				
+
 				// On ajoute nouveau tarif
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
 				$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->status.",".$this->tva_tx;
 				$sql .= ")";
-			   
+
 				 if ($this->db->query($sql) )
 				{
-						return 1;	      
+						return 1;
 				}
 				else
 				{
@@ -550,7 +550,7 @@ class Product
 						return 0;
 				}
 		}
-		
+
     }
 
 
@@ -560,7 +560,7 @@ class Product
      *    \param      qty             Quantite recherchée
      *    \return     int             <0 si ko, 0 si ok mais rien trouvé, 1 si ok et trouvé
      */
-    function get_buyprice($fourn_id, $qty) 
+    function get_buyprice($fourn_id, $qty)
     {
         $result = 0;
         $sql = "SELECT pf.price as price, pf.quantity as quantity";
@@ -570,9 +570,9 @@ class Product
         $sql.= " AND quantity <= ".$qty;
         $sql.= " ORDER BY quantity DESC";
         $sql.= " LIMIT 1";
-        
+
         dolibarr_syslog("Product::get_buyprice $fourn_id,$qty sql=$sql");
-        
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -628,18 +628,18 @@ class Product
    *    \param  buyprice        Prix d'achat pour la quantité
    *    \param  user            Objet user de l'utilisateur qui modifie
    */
-  function update_buyprice($id_fourn, $qty, $buyprice, $user) 
+  function update_buyprice($id_fourn, $qty, $buyprice, $user)
     {
         $error=0;
         $this->db->begin();
-        
+
         // Supprime prix courant du fournisseur pour cette quantité
         $sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
         $sql .= " WHERE ";
         $sql .= " fk_product = ".$this->id;
         $sql .= " AND fk_soc = ".$id_fourn;
         $sql .= " AND quantity = ".$qty;
-    
+
         if ($this->db->query($sql))
         {
             // Ajoute prix courant du fournisseur pour cette quantité
@@ -650,12 +650,12 @@ class Product
             $sql .= " ,fk_user = ".$user->id;
             $sql .= " ,price = ".price2num($buyprice);
             $sql .= " ,quantity = ".$qty;
-    
+
             if (! $this->db->query($sql))
             {
                 $error++;
             }
-    
+
             if (! $error) {
                 // Ajoute modif dans table log
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
@@ -692,7 +692,7 @@ class Product
         }
     }
 
-  
+
     /**
      *    \brief  Modifie le prix d'un produit/service
      *    \param  id          id du produit/service à modifier
@@ -709,7 +709,7 @@ class Product
 					$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 					$sql .= " SET price = " . price2num($this->price);
 					$sql .= " WHERE rowid = " . $id;
-			
+
 					if ( $this->db->query($sql) )
 					{
 						$this->_log_price($user);
@@ -739,7 +739,7 @@ class Product
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 				$sql .= " SET price = " . price2num($this->price);
 				$sql .= " WHERE rowid = " . $id;
-		
+
 				if ( $this->db->query($sql) )
 				{
 					$this->_log_price($user);
@@ -757,9 +757,6 @@ class Product
 				return -2;
 			}
 		}
-		
-		
-		
 	}
 
 
@@ -773,9 +770,9 @@ class Product
 	{
 		global $langs;
 		global $conf;
-	
+
 		dolibarr_syslog("Product::fetch id=$id ref=$ref");
-	
+
 		// Verification parametres
 		if (! $id && ! $ref)
 		{
@@ -783,18 +780,18 @@ class Product
 			dolibarr_print_error("Product::fetch ".$this->error);
 			return -1;
 		}
-	
+
 		$sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
 		$sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
-	
+
 		$result = $this->db->query($sql) ;
 		if ( $result )
 		{
 			$result = $this->db->fetch_array();
-	
+
 			$this->id                 = $result["rowid"];
 			$this->ref                = $result["ref"];
 			$this->libelle            = stripslashes($result["label"]);
@@ -809,9 +806,9 @@ class Product
 			$this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
 			$this->duration_unit      = substr($result["duration"],-1);
 			$this->seuil_stock_alerte = $result["seuil_stock_alerte"];
-	
+
 			$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
-	
+
 			if ($this->type == 0)
 			{
 				$this->isproduct = 1;
@@ -822,12 +819,12 @@ class Product
 				$this->isproduct = 0;
 				$this->isservice = 1;
 			}
-	
+
 			$this->db->free();
 			// multilangs
 			if( $conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
-	
-	
+
+
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
@@ -871,11 +868,11 @@ class Product
 						return -1;
 					}
 				}
-	
+
 			}
-	
+
 			$res=$this->load_stock();
-			
+
 			return $res;
 		}
 		else
@@ -918,11 +915,11 @@ class Product
         }
         $row = $this->db->fetch_row($result);
         $this->ref_next = $row[0];
-        
+
         return 1;
     }
-    
-    
+
+
     /**
      *    \brief    Charge tableau des stats propale pour le produit/service
      *    \param    socid       Id societe
@@ -932,7 +929,7 @@ class Product
     {
     	  global $conf;
     	  global $user;
-    	
+
         $sql = "SELECT COUNT(DISTINCT pr.fk_soc) as nb_customers, COUNT(DISTINCT pr.rowid) as nb,";
         $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as pr";
@@ -944,7 +941,7 @@ class Product
         {
             $sql .= " AND pr.fk_soc = $socid";
         }
-    
+
         $result = $this->db->query($sql) ;
         if ( $result )
         {
@@ -972,7 +969,7 @@ class Product
     function load_stats_commande($socid=0,$filtrestatut='')
     {
 		global $conf,$user;
-    	
+
         $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
         $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
@@ -988,7 +985,7 @@ class Product
     	{
     		$sql.= " AND c.fk_statut = ".$filtrestatut;
     	}
-    	
+
         $result = $this->db->query($sql) ;
         if ( $result )
         {
@@ -1005,7 +1002,7 @@ class Product
             return -1;
         }
     }
-    
+
     /**
      *    \brief    Charge tableau des stats commande fournisseur pour le produit/service
      *    \param    socid       	Id societe pour filtrer sur une société
@@ -1015,7 +1012,7 @@ class Product
     function load_stats_commande_fournisseur($socid=0,$filtrestatut='')
     {
 		global $conf,$user;
-    	
+
         $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_suppliers, COUNT(DISTINCT c.rowid) as nb,";
         $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
@@ -1031,7 +1028,7 @@ class Product
     	{
     		$sql.= " AND c.fk_statut in (".$filtrestatut.")";
     	}
-    	
+
         $result = $this->db->query($sql) ;
         if ( $result )
         {
@@ -1048,7 +1045,7 @@ class Product
             return -1;
         }
     }
-    
+
     /**
      *    \brief    Charge tableau des stats contrat pour le produit/service
      *    \param    socid       Id societe
@@ -1058,7 +1055,7 @@ class Product
     {
     	  global $conf;
     	  global $user;
-    	
+
         $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
         $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd,";
@@ -1088,7 +1085,7 @@ class Product
             return -1;
         }
     }
-    
+
     /**
      *    \brief    Charge tableau des stats facture pour le produit/service
      *    \param    socid       Id societe
@@ -1098,7 +1095,7 @@ class Product
     {
     	  global $conf;
     	  global $user;
-    	
+
         $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
         $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as pd,";
@@ -1111,7 +1108,7 @@ class Product
         {
             $sql .= " AND f.fk_soc = $socid";
         }
-    
+
         $result = $this->db->query($sql) ;
         if ( $result )
         {
@@ -1138,7 +1135,7 @@ class Product
     {
     	global $conf;
     	global $user;
-    	
+
         $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_suppliers, COUNT(DISTINCT f.rowid) as nb,";
         $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as pd,";
@@ -1151,7 +1148,7 @@ class Product
         {
             $sql .= " AND f.fk_soc = $socid";
         }
-    
+
         $result = $this->db->query($sql) ;
         if ( $result )
         {
@@ -1168,7 +1165,7 @@ class Product
             return -1;
         }
     }
-    
+
 	/**
 	*    \brief    Renvoie tableau des stats pour une requete donnée
 	*    \param    sql         Requete a exécuter
@@ -1193,19 +1190,19 @@ class Product
 			$this->error=$this->db->error().' sql='.$sql;
 			return -1;
 		}
-	
+
 		$year = strftime('%Y',time());
 		$month = strftime('%m',time());
 		$result = array();
-	
+
 		for ($j = 0 ; $j < 12 ; $j++)
 		{
 			$idx=ucfirst(substr( strftime("%b",mktime(12,0,0,$month,1,$year)) ,0,3) );
 			$monthnum=sprintf("%02s",$month);
-	
+
 			$result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
 			//            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
-	
+
 			$month = "0".($month - 1);
 			if (strlen($month) == 3)
 			{
@@ -1217,9 +1214,9 @@ class Product
 				$year = $year - 1;
 			}
 		}
-		
+
 		return array_reverse($result);
-	
+
 	}
 
 
@@ -1232,7 +1229,7 @@ class Product
 	{
 		global $conf;
 		global $user;
-	
+
 		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1243,7 +1240,7 @@ class Product
 			$sql .= " AND f.fk_soc = $socid";
 		}
 		$sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
-	
+
 		return $this->_get_stats($sql);
 	}
 
@@ -1257,7 +1254,7 @@ class Product
 	{
 		global $conf;
 		global $user;
-	
+
 		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as d, ".MAIN_DB_PREFIX."facture_fourn as f";
 		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1272,8 +1269,8 @@ class Product
 		$resarray=$this->_get_stats($sql);
 		return $resarray;
 	}
-	
-	
+
+
 	/**
 	*    \brief  Renvoie le nombre de propales dans lesquelles figure le produit par mois
 	*    \param  socid       id societe
@@ -1283,7 +1280,7 @@ class Product
 	{
 		global $conf;
 		global $user;
-	
+
 		$sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m') ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1294,7 +1291,7 @@ class Product
 			$sql .= " AND p.fk_soc = $socid";
 		}
 		$sql .= " GROUP BY date_format(p.datep,'%Y%m') DESC ;";
-	
+
 		return $this->_get_stats($sql);
 	}
 
@@ -1349,7 +1346,7 @@ class Product
 					}
 				}
 			}
-	
+
 		}
 	}
 
@@ -1397,7 +1394,7 @@ class Product
 				{
 					$obj = $this->db->fetch_object($result);
 					$this->is_sousproduit_qty = $obj->qty;
-	
+
 					return true;
 				}
 				else
@@ -1419,7 +1416,7 @@ class Product
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
 		$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
 		//$sql.= " AND ref_fourn = '".$ref_fourn."'"; // crée des doublons
-	
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1429,7 +1426,7 @@ class Product
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
 				$sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
 				$sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
-	
+
 				if ($this->db->query($sql))
 				{
 					return 1;
@@ -1449,7 +1446,7 @@ class Product
 		}
 	}
 
-	
+
 	/**
 	*    \brief  	Renvoie la liste des fournisseurs du produit/service
 	*    \return 	array		Tableau des id de fournisseur
@@ -1457,11 +1454,11 @@ class Product
 	function list_suppliers()
 	{
 		$list = array();
-		
+
 		$sql = "SELECT fk_soc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as p";
 		$sql.= " WHERE p.fk_product = ".$this->id;
-	
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1477,7 +1474,7 @@ class Product
 
 		return $list;
 	}
-    
+
     /**
 	 *		\brief		Saisie une commande fournisseur
 	 *		\param		user		Objet user de celui qui demande
@@ -1486,17 +1483,17 @@ class Product
 	function fastappro($user)
 	{
 		include_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
-		
+
 		$list = $this->list_suppliers();
 		if (sizeof($list) > 0)
 		{
 			dolibarr_syslog("Product::fastappro");
 			$fournisseur = new Fournisseur($this->db);
 			$fournisseur->fetch($this->fourn_appro_open);
-		
+
 			$fournisseur->ProductCommande($user, $this->id);
 		}
-		return 1;		
+		return 1;
 	}
 
 
@@ -1511,7 +1508,7 @@ class Product
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
         $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn and quantity = '".$qty."';";
-    
+
         if ($this->db->query($sql) )
         {
             return 1;
@@ -1522,7 +1519,7 @@ class Product
             return -1;
         }
     }
-    
+
     /**
      *    \brief    Délie un fournisseur au produit/service
      *    \param    user        utilisateur qui défait le lien
@@ -1533,7 +1530,7 @@ class Product
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
         $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn;";
-    
+
         if ($this->db->query($sql) )
         {
             return 1;
@@ -1544,7 +1541,7 @@ class Product
             return -1;
         }
     }
-        
+
     /**
      *    \brief    Recopie les prix d'un produit/service sur un autre
      *    \param    fromId      Id produit source
@@ -1554,9 +1551,9 @@ class Product
     function clone_price($fromId, $toId)
     {
         global $db;
-    
+
         $db->begin();
-    
+
         // les prix
         $sql = "insert "	.MAIN_DB_PREFIX."product_price ("
         . " fk_product, date_price, price, tva_tx, fk_user_author, envente )"
@@ -1570,7 +1567,7 @@ class Product
         $db->commit();
         return 1;
     }
-    
+
     /**
      *    \brief    Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
      *    \param    fromId      Id produit source
@@ -1580,9 +1577,9 @@ class Product
     function clone_fournisseurs($fromId, $toId)
     {
         global $db;
-    
+
         $db->begin();
-    
+
         // les fournisseurs
         $sql = "insert ".MAIN_DB_PREFIX."product_fournisseur ("
         . " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
@@ -1626,7 +1623,7 @@ class Product
 							$this ->fetch_prod_arbo($desc_pere,stripslashes($nom_pere)." -> ");
 						}
 			}
-	}	
+	}
 /**
    *   \brief fonction récursive uniquement utilisée par get_each_prod, ajoute chaque sousproduits dans le tableau res
    *   \return void
@@ -1644,7 +1641,7 @@ class Product
 							$this ->fetch_prods($desc_pere);
 						}
 			}
-	}	
+	}
 	/**
    *   \brief reconstruit l'arborescence des catégorie sous la forme d'un tableau
    *   \return array $this->res
@@ -1658,7 +1655,7 @@ function get_arbo_each_prod()
 			{
 				if(sizeof($desc_pere) >1)
 					$this ->fetch_prod_arbo($desc_pere);
-					
+
 			}
 			sort($this->res);
 		}
@@ -1677,20 +1674,20 @@ function get_each_prod()
 			{
 				if(sizeof($desc_pere) >1)
 					$this ->fetch_prods($desc_pere);
-					
+
 			}
 			sort($this->res);
 		}
 		return $this->res;
 }
-	
+
 /**
    *   \brief Retourne les catégories pères
    *   \return array prod
    */
   function get_pere()
   {
-   
+
 	$sql  = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id FROM ";
 	$sql  .= MAIN_DB_PREFIX."product_association as pa,";
 	$sql  .= MAIN_DB_PREFIX."product as p";
@@ -1741,12 +1738,12 @@ function get_each_prod()
      }
   }
 /**
-   * \brief compose l'arborescence des sousproduits, id, nom et quantité sous la forme d'un tableau associatif 
+   * \brief compose l'arborescence des sousproduits, id, nom et quantité sous la forme d'un tableau associatif
    *    \return    void
    */
   function get_sousproduits_arbo ()
   {
-		
+
 		$peres = $this -> get_pere();
 		foreach($peres as $k=>$v)
 		{
@@ -1812,7 +1809,7 @@ function get_each_prod()
 		}
 		return $langs->trans('Unknown');
 	}
-	
+
 	/**
 	 *    \brief  Entre un nombre de piece du produit en stock dans un entrepôt
 	 *    \param  id_entrepot     id de l'entrepot
@@ -1823,7 +1820,7 @@ function get_each_prod()
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock ";
 		$sql .= " (fk_product, fk_entrepot, reel)";
 		$sql .= " VALUES ($this->id, $id_entrepot, $nbpiece)";
-		
+
 		if ($this->db->query($sql) )
 		{
 			return 1;
@@ -1832,7 +1829,7 @@ function get_each_prod()
 		{
 			dolibarr_print_error($this->db);
 			return -1;
-		}    
+		}
 	}
 
 
@@ -1849,7 +1846,7 @@ function get_each_prod()
     {
     $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product_stock ";
     $sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
-    
+
     if ($this->db->query($sql) )
       {
 	      $row = $this->db->fetch_row(0);
@@ -1868,7 +1865,7 @@ function get_each_prod()
   	    $this->db->rollback();
 	      return -1;
       }
-    }       
+    }
   }
 
 
@@ -1890,22 +1887,22 @@ function get_each_prod()
 	$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 	$sql .= " SET stock_commande = stock_commande ".$op[$mouvement].", stock_propale = stock_propale ".$op[$mouvement];
 	$sql .= " WHERE rowid = $this->id ";
-	
+
 	if ($this->db->query($sql) )
-	  {	    
+	  {
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."product_stock ";
 	    $sql .= " SET reel = reel ".$op[$mouvement];
 	    $sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
-	    
+
 	    if ($this->db->query($sql) )
-	      {		
+	      {
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
 		$sql .= " VALUES (now(), $this->id, $id_entrepot, ".$op[$mouvement].", 0, $user->id)";
-		
+
 		if ($this->db->query($sql) )
 		  {
 		    $this->db->commit();
-		    return 1;	      
+		    return 1;
 		  }
 		else
 		  {
@@ -1919,14 +1916,14 @@ function get_each_prod()
   	    dolibarr_print_error($this->db);
 		$this->db->rollback();
 		return -1;
-	      } 
+	      }
 	  }
 	else
 	  {
  	    dolibarr_print_error($this->db);
 	    $this->db->rollback();
 	    return -3;
-	  }    
+	  }
       }
   }
 
@@ -1935,7 +1932,7 @@ function get_each_prod()
 	 *    \return     int             < 0 si erreur, > 0 si ok
 	 */
 	function load_stock()
-    {    
+    {
         $sql = "SELECT reel, fk_entrepot";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
         $sql.= " WHERE fk_product = '".$this->id."'";
@@ -1966,23 +1963,23 @@ function get_each_prod()
         else
         {
             $this->error=$this->db->error();
-            return -1;            
+            return -1;
         }
 	}
-	            
+
 	/**
 	 *    \brief      Charge les informations relatives à un fournisseur
 	 *    \param      fournid         id du fournisseur
 	 *    \return     int             < 0 si erreur, > 0 si ok
 	 */
 	function fetch_fourn_data($fournid)
-    {    
+    {
         $sql = "SELECT rowid, ref_fourn";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur ";
         $sql.= " WHERE fk_product = ".$this->id;
         $sql.= " AND fk_soc = ".$fournid;
         $result = $this->db->query($sql) ;
-        
+
         if ($result)
         {
             $result = $this->db->fetch_array();
@@ -2004,13 +2001,13 @@ function get_each_prod()
   {
     $dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
     $dir .= "photos/";
-    
+
     if (! file_exists($dir))
     {
         dolibarr_syslog("Product Create $dir");
         create_exdir($dir);
     }
-    
+
     if (file_exists($dir))
     {
         // Crée fichier en taille vignette
@@ -2031,12 +2028,12 @@ function get_each_prod()
   {
     $pdir = get_exdir($this->id,2) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
-    
+
     $nbphoto=0;
     if (file_exists($dir))
     {
         $handle=opendir($dir);
-    
+
         while (($file = readdir($handle)) != false)
         {
             if (is_file($dir.$file)) return true;
@@ -2044,7 +2041,7 @@ function get_each_prod()
      }
      return false;
   }
-  
+
 
   /**
    *    \brief      Affiche toutes les photos du produit (nbmax maximum)
@@ -2058,23 +2055,23 @@ function get_each_prod()
   {
     $pdir = get_exdir($this->id,2) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
-    
+
     $nbphoto=0;
     if (file_exists($dir))
     {
         $handle=opendir($dir);
-    
+
         while (($file = readdir($handle)) != false)
         {
             $photo='';
             if (is_file($dir.$file)) $photo = $file;
-    
+
             if ($photo)
             {
                 $nbphoto++;
 
                 if ($size == 1) {   // Format vignette
-                    
+
                     // On determine nom du fichier vignette
                     $photo_vignette='';
                     if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
@@ -2086,7 +2083,7 @@ function get_each_prod()
 
                     if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
                     if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
-                    
+
                     print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
 
                     // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
@@ -2103,15 +2100,15 @@ function get_each_prod()
                     if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
 
                 }
-    
+
                 if ($size == 0)     // Format origine
                     print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
-    
+
                 // On continue ou on arrete de boucler ?
                 if ($nbmax && $nbphoto >= $nbmax) break;
             }
         }
-        
+
         if ($nbbyrow && $size==1)
         {
             // Ferme tableau
@@ -2119,16 +2116,16 @@ function get_each_prod()
                 print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
                 $nbphoto++;
             }
-            
+
             if ($nbphoto) print '</table>';
         }
-        
+
         closedir($handle);
     }
-    
+
     return $nbphoto;
   }
-  
+
 	/**
 	*    \brief      Retourne tableau de toutes les photos du produit
 	*    \param      dir         Répertoire à scanner
@@ -2139,11 +2136,11 @@ function get_each_prod()
 	{
 		$nbphoto=0;
 		$tabobj=array();
-	
+
 		if (file_exists($dir))
 		{
 			$handle=opendir($dir);
-	
+
 			while (($file = readdir($handle)) != false)
 			{
 				if (is_file($dir.$file))
@@ -2157,7 +2154,7 @@ function get_each_prod()
 					{
 						$photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
 					}
-	
+
 					// Objet
 					$obj=array();
 					$obj['photo']=$photo;
@@ -2170,10 +2167,10 @@ function get_each_prod()
 					if ($nbmax && $nbphoto >= $nbmax) break;
 				}
 			}
-	
+
 			closedir($handle);
 		}
-	
+
 		return $tabobj;
 	}
 
@@ -2185,7 +2182,7 @@ function get_each_prod()
     function load_state_board()
     {
         global $conf, $user;
-        
+
         $this->nb=array();
 
         $sql = "SELECT count(p.rowid) as nb";
@@ -2209,7 +2206,7 @@ function get_each_prod()
             }
             return 1;
         }
-        else 
+        else
         {
             dolibarr_print_error($this->db);
             $this->error=$this->db->error();
@@ -2217,6 +2214,6 @@ function get_each_prod()
         }
 
     }
-    
+
 }
 ?>
