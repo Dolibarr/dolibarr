@@ -53,9 +53,11 @@ if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.rowid, l.fk_code_ventilation ";
-$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+$sql  = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.rowid, l.fk_code_ventilation";
+$sql .= ",p.rowid as product_id, p.ref as product_ref, p.label as product_label";
+$sql .= " FROM (".MAIN_DB_PREFIX."facturedet as l";
+$sql .= " , ".MAIN_DB_PREFIX."facture as f)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = l.fk_product)";
 $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND fk_code_ventilation = 0";
 $sql .= " ORDER BY l.rowid DESC ".$db->plimit($limit+1,$offset);
 
@@ -68,9 +70,11 @@ if ($result)
   print_barre_liste("Lignes de facture à ventiler",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
 
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>Facture</td>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("Invoice").'</td>';
+  print '<td>'.$langs->trans("Ref").'</td>';
+  print '<td>'.$langs->trans("Label").'</td>';
   print '<td>'.$langs->trans("Description").'</td>';
-  print '<td align="right">&nbsp;</td>';
+  print '<td align="right">'.$langs->trans("Montant").'</td>';
   print '<td>&nbsp;</td>';
   print "</tr>\n";
 
@@ -82,6 +86,8 @@ if ($result)
       print "<tr $bc[$var]>";
       
       print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->product_id.'">'.stripslashes($objp->product_ref).'</td>';
+      print '<td>'.stripslashes($objp->product_label).'</td>';
       print '<td>'.stripslashes(nl2br($objp->description)).'</td>';                       
 
       print '<td align="right">';
