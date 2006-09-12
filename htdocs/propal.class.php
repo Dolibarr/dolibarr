@@ -1879,7 +1879,7 @@ class Propal extends CommonObject
                  {
 					$resql = $this->addline(
 						$this->id,
-						$ligne->description,
+						$ligne->desc,
 						$ligne->price,
 						$ligne->qty,
 						$ligne->tva_tx,
