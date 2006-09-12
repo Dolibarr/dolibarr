@@ -88,8 +88,11 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$datelivraison = @mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 
 	$commande = new Commande($db);
+	$commande->socidp=$_POST['socidp'];
+	$commande->fetch_client();
 
-	$commande->socidp               = $_POST['socidp'];
+	$db->begin();
+
 	$commande->date_commande        = $datecommande;
 	$commande->note                 = $_POST['note'];
 	$commande->source               = $_POST['source_id'];
@@ -104,8 +107,6 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->adresse_livraison_id = $_POST['adresse_livraison_id'];
 	$commande->contactid            = $_POST['contactidp'];
 
-	$commande->fetch_client();
-
 	$commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
 	$commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
 	$commande->add_product($_POST['idprod3'],$_POST['qty3'],$_POST['remise_percent3']);
@@ -117,13 +118,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
 	$commande_id = $commande->create($user);
 
-	if ($commande_id <= 0)
-	{
-		$_GET['action']='create';
-		$_GET['socidp']=$_POST['socidp'];
-		$mesg='<div class="error">'.$commande->error.'</div>';
-	}
-	else
+	if ($commande_id > 0)
 	{
 		// Insertion contact par defaut si défini
 		if ($_POST["contactidp"])
@@ -144,6 +139,20 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 		$_GET['id'] = $commande->id;
 		$action = '';
 	}
+
+	// Fin création facture, on l'affiche
+	if ($commande_id > 0 && ! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+		$_GET["action"]='create';
+		$_GET['socidp']=$_POST['socidp'];
+		if (! $mesg) $mesg='<div class="error">'.$commande->error.'</div>';
+	}
+
 }
 
 // Positionne ref commande client
@@ -270,6 +279,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 
             // La description de la ligne est celle saisie ou
             // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
+            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
             $desc=$_POST['np_desc'];
             if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
             {
@@ -677,7 +687,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			// Reference client
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 			print '<input type="text" name="ref_client" value=""></td>';
-			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" wrap="soft" cols="50" rows="8"></textarea></td>';
+			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" cols="70" rows="8"></textarea></td>';
 			print '</tr>';
 
 			// Client
@@ -1260,6 +1270,7 @@ else
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a> - '.nl2br($objp->product);
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.nl2br($objp->description):'';
+				            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
 							if ($conf->global->FORM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
 							{
 								print '<br>'.nl2br($objp->product_desc);
@@ -1369,7 +1380,7 @@ else
 						}
 						else
 						{
-							print '<textarea name="eldesc" class="flat" cols="50" rows="1">'.$objp->description.'</textarea>';
+							print '<textarea name="eldesc" class="flat" cols="70" rows="1">'.$objp->description.'</textarea>';
 						}							
 						print '</td>';
 						print '<td align="right">';
@@ -1551,7 +1562,7 @@ else
 
 				$var=true;
 				print '<tr '.$bc[$var].'>';
-				print '  <td><textarea cols="50" name="desc" rows="1"></textarea></td>';
+				print '  <td><textarea cols="70" name="desc" rows="1"></textarea></td>';
 				print '<td align="center">';
 				if($soc->tva_assuj == "0")
 				print '<input type="hidden" name="tva_tx" value="0">0';
@@ -1580,7 +1591,7 @@ else
 				else
 					$html->select_produits('','idprod','',$conf->produit->limit_size);
 				if (! $conf->use_ajax) print '<br>';
-				print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
+				print '<textarea cols="70" name="np_desc" rows="1"></textarea>';
 				print '</td>';
 				print '<td>&nbsp;</td>';
 				print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';

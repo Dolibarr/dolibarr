@@ -162,9 +162,10 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 /*
  * Creation propale
  */
-if ($_POST['action'] == 'add')
+if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db, $_POST['socidp']);
+	$propal = new Propal($db);
+	$propal->socidp=$_POST['socidp'];
 	$propal->fetch_client();
 	
 	$db->begin();
@@ -477,6 +478,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
             
             // La description de la ligne est celle saisie ou
             // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
+            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
             $desc=$_POST['np_desc'];
             if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
             {
@@ -1042,6 +1044,7 @@ if ($conf->expedition->enabled)
 					else print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$objp->ref.'</a>';
 					print ' - '.nl2br($objp->product);
+		            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
 					if ($conf->global->FORM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
 					{
 						print '<br>'.nl2br($objp->product_desc);
@@ -1177,7 +1180,7 @@ if ($conf->expedition->enabled)
 				}
 				else
 				{
-					print '<textarea name="desc" cols="50" class="flat" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
+					print '<textarea name="desc" cols="70" class="flat" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
 				}
 				print '</td>';
 				print '<td align="right">';
@@ -1373,7 +1376,7 @@ if ($conf->expedition->enabled)
 		$var=true;
 
 		print '<tr '.$bc[$var].">\n";
-		print '<td><textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
+		print '<td><textarea cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
 		print '<td align="center">';
 		if($societe->tva_assuj == "0")
 		{
@@ -1413,7 +1416,7 @@ if ($conf->expedition->enabled)
 				$html->select_produits('','idprod','',$conf->produit->limit_size);
 			}
 			if (! $conf->use_ajax) print '<br>';
-			print '<textarea cols="50" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+			print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
 			print '</td>';
 			print '<td>&nbsp;</td>';
 			print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
@@ -1438,7 +1441,7 @@ if ($conf->expedition->enabled)
 	{
 		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
 		print '<table class="border" width="100%">';
-		print '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="60" rows="'.ROWS_3.'" wrap="soft" name="note">';
+		print '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
 		print $propal->note;
 		print '</textarea></td></tr>';
 		print '<tr><td>'.$langs->trans("CloseAs").'</td><td>';

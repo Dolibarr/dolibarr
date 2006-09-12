@@ -267,9 +267,14 @@ if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' 
 /*
  * Insertion facture
  */
-if ($_POST['action'] == 'add')
+if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 {
 	$facture = new Facture($db);
+	$facture->socidp=$_POST['socid'];
+	$facture->fetch_client();
+
+	$db->begin();
+
 	if ($_POST['type'] == 1)
 	{
 		if ($_POST['fac_replacement'] > 0)
@@ -298,8 +303,8 @@ if ($_POST['action'] == 'add')
 		}
 		else
 		{
+			$error=1;
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReplaceInvoice")).'</div>';
-			$_GET['action'] = 'create';
 		}
 	}
 
@@ -359,19 +364,7 @@ if ($_POST['action'] == 'add')
 				}
 			}
 
-
 			$facid = $facture->create($user);
-
-			if ($facid > 0)
-			{
-				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
-				exit;
-			}
-			else
-			{
-				$_GET["action"]='create';
-				$mesg='<div class="error">'.$facture->error.'</div>';
-			}
 		}
 		else
 		{
@@ -382,6 +375,7 @@ if ($_POST['action'] == 'add')
 			{
 				$facture->propalid = $_POST['propalid'];
 				$facid = $facture->create($user);
+
 				if ($facid > 0)
 				{
 					$prop = New Propal($db);
@@ -408,12 +402,12 @@ if ($_POST['action'] == 'add')
 					}
 					else
 					{
-						print $langs->trans('UnknownError');
+						$error++;
 					}
 				}
 				else
 				{
-					dolibarr_print_error($facture->db,$facture->error);
+					$error++;
 				}
 			}
 
@@ -424,6 +418,7 @@ if ($_POST['action'] == 'add')
 			{
 				$facture->commandeid = $_POST['commandeid'];
 				$facid = $facture->create($user);
+
 				if ($facid > 0)
 				{
 					$comm = New Commande($db);
@@ -451,12 +446,12 @@ if ($_POST['action'] == 'add')
 					}
 					else
 					{
-						print $langs->trans('UnknownError');
+						$error++;
 					}
 				}
 				else
 				{
-					dolibarr_print_error($facture->db,$facture->error);
+					$error++;
 				}
 			}
 
@@ -467,6 +462,7 @@ if ($_POST['action'] == 'add')
 			{
 				$facture->contratid = $_POST['contratid'];
 				$facid = $facture->create($user);
+
 				if ($facid > 0)
 				{
 					$contrat = New Contrat($db);
@@ -501,25 +497,31 @@ if ($_POST['action'] == 'add')
 					}
 					else
 					{
-						print $langs->trans('UnknownError');
+						$error++;
 					}
 				}
 				else
 				{
-					dolibarr_print_error($facture->db,$facture->error);
+					$error++;
 				}
 			}
-
 		}
+
 	}
 	
 	// Fin création facture, on l'affiche
-	if ($facid > 0)
+	if ($facid > 0 && ! $error)
 	{
+		$db->commit();
 		Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
 		exit;
 	}
-	
+	else
+	{
+		$db->rollback();
+		$_GET["action"]='create';
+		if (! $mesg) $mesg='<div class="error">'.$facture->error.'</div>';
+	}
 }
 
 /*
@@ -581,6 +583,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             
             // La description de la ligne est celle saisie ou
             // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
+            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
             $desc=$_POST['desc'];
             if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
             {
@@ -1909,9 +1912,10 @@ else
 							print_date_range($objp->date_start,$objp->date_end);
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 							
+				            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
 							if ($conf->global->FORM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                             {
-                            	print '<br>'.nl2br(stripslashes($objp->product_desc));
+                            	print '<br>'.nl2br($objp->product_desc);
                             }
 							
 							print '</td>';
