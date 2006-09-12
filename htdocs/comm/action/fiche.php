@@ -59,13 +59,22 @@ if ($_POST["action"] == 'add_action')
         $contact = new Contact($db);
         $contact->fetch($_POST["contactid"]);
     }
-    if ($_POST["socid"])
-    {
-        $societe = new Societe($db);
-        $societe->fetch($_POST["socid"]);
-    }
 
-    if ($_POST["actionid"])
+    if (! $_POST["actionid"])
+    {
+    	$error=1;
+		$_GET["action"] = 'create';
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
+    }
+ 
+ 	if (! $_POST["apyear"] && ! $_POST["adyear"])
+ 	{
+    	$error=1;
+		$_GET["action"] = 'create';
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
+ 	}
+    
+    if (! $error)
     {
         $db->begin();
 
@@ -125,7 +134,12 @@ if ($_POST["action"] == 'add_action')
         $actioncomm->user = $user;
         $actioncomm->note = trim($_POST["note"]);
         if (isset($_POST["contactid"]))    $actioncomm->contact = $contact;
-        if (isset($_POST["socid"]))        $actioncomm->societe = $societe;
+        if (isset($_REQUEST["socid"]) && $_REQUEST["socid"] > 0)
+        {
+	        $societe = new Societe($db);
+    	    $societe->fetch($_REQUEST["socid"]);
+        	$actioncomm->societe = $societe;
+       	}
         if ($_POST["todo_webcal"] == 'on') $actioncomm->use_webcal=1;
 
         // On crée l'action
@@ -136,8 +150,19 @@ if ($_POST["action"] == 'add_action')
             if (! $actioncomm->error)
             {
                 $db->commit();
-                if ($_POST["from"]) Header("Location: ".$_POST["from"]);
-                else Header("Location: ".DOL_URL_ROOT.'/comm/action/fiche.php?id='.$idaction);
+                if ($_POST["from"]) 
+                {
+					dolibarr_syslog("Back to ".$_POST["from"]);
+                	Header("Location: ".$_POST["from"]);
+                }
+                elseif($idaction)
+                {
+                	Header("Location: ".DOL_URL_ROOT.'/comm/action/fiche.php?id='.$idaction);
+                }
+                else
+                {
+                	Header("Location: ".DOL_URL_ROOT.'/comm/action/index.php');
+                }
                 exit;
             }
             else
@@ -154,12 +179,8 @@ if ($_POST["action"] == 'add_action')
             $error='<div class="error">'.$actioncomm->error.'</div>';
         }
     }
-    else
-    {
-		$_GET["action"] = 'create';
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
-    }
-
+    
+//    print $_REQUEST["from"]."rr";
 }
 
 /*
@@ -252,7 +273,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	print '<form name="action" action="fiche.php" method="post">';
-	print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
+    print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 	print '<input type="hidden" name="action" value="add_action">';
 
 	/*
@@ -275,12 +296,12 @@ if ($_GET["action"] == 'create')
 
 		// Societe, contact
 		print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
-		if ($_GET["socid"])
+		if ($_REQUEST["socid"])
 		{
 			$societe = new Societe($db);
-			$societe->fetch($_GET["socid"]);
+			$societe->fetch($_REQUEST["socid"]);
 			print $societe->getNomUrl(1);
-			print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+			print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
 		}
 		else
 		{
@@ -289,10 +310,10 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 
 		// Si la societe est imposée, on propose ces contacts
-		if ($_GET["socid"])
+		if ($_REQUEST["socid"])
 		{
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
-			$html->select_contacts($_GET["socid"],'','contactid',1,1);
+			$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
 			print '</td></tr>';
 		}
 
@@ -414,12 +435,12 @@ if ($_GET["action"] == 'create')
 
 		// Societe, contact
 		print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
-		if ($_GET["socid"])
+		if ($_REQUEST["socid"])
 		{
 			$societe = new Societe($db);
-			$societe->fetch($_GET["socid"]);
+			$societe->fetch($_REQUEST["socid"]);
 			print $societe->getNomUrl(1);
-			print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+			print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
 		}
 		else
 		{
@@ -438,10 +459,10 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 
 		// Si la societe est imposée, on propose ces contacts
-		if ($_GET["socid"])
+		if ($_REQUEST["socid"])
 		{
 			print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-			$html->select_contacts($_GET["socid"],'','contactid',1,1);
+			$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
 			print '</td></tr>';
 		}
 
@@ -567,14 +588,14 @@ if ($_GET["id"])
         print '<form action="fiche.php" method="post">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
-        print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
+        print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 
         print '<table class="border" width="100%">';
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
         print '<tr><td>'.$langs->trans("Company").'</td>';
-        print '<td><a href="../fiche.php?socid='.$act->societe->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$act->societe->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom.'</a></td>';
 
         print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
         $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);

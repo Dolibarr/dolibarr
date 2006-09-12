@@ -99,29 +99,30 @@ if ($resql)
     $title="DoneAndToDoActions";
     if ($status == 'done') $title="DoneActions";
     if ($status == 'todo') $title="ToDoActions";
+	$param="&status=$status";
 
     if ($socidp)
     {
         $societe = new Societe($db);
         $societe->fetch($socidp);
 
-        print_barre_liste($langs->trans($title."For",$societe->nom), $page, "index.php",'',$sortfield,$sortorder,'',$num);
+        print_barre_liste($langs->trans($title."For",$societe->nom), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
     }
     else
     {
-        print_barre_liste($langs->trans($title), $page, "index.php",'',$sortfield,$sortorder,'',$num);
+        print_barre_liste($langs->trans($title), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
     }
     $i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-//    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep","&status=$status",'','colspan="4"',$sortfield);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep","&status=$status",'','',$sortfield);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode","&status=$status","","",$sortfield);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","&status=$status","","",$sortfield);
-    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact","&status=$status","","",$sortfield);
+//    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','colspan="4"',$sortfield);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield);
+    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield);
     print '<td>'.$langs->trans("Comments").'</td>';
-    print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.code","&status=$status","","",$sortfield);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent","&status=$status","","",$sortfield);
+    print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.code",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"","",$sortfield);
     print "</tr>\n";
     $var=true;
     while ($i < min($num,$limit))
