@@ -32,6 +32,7 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $user->getrights('facture');
@@ -75,14 +76,25 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 	$paiement->id = $_GET['id'];
 	if ($paiement->valide() >= 0)
 	{
-        $db->commit();
+    $db->commit();
+    
+    // régénère le pdf
+    $fac = new Facture($db);
+    $fac->fetch($_GET['facid']);
+    if ($_REQUEST['lang_id'])
+    {
+    	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+     	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    }
+    facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+		
 		Header('Location: fiche.php?id='.$paiement->id);
-        exit;
+    exit;
 	}
 	else
 	{
 		$mesg='<div class="error">'.$paiement->error.'</div>';
-        $db->rollback();
+    $db->rollback();
 	}
 }
 
@@ -126,7 +138,8 @@ if ($_GET['action'] == 'delete')
  */
 if ($_GET['action'] == 'valide')
 {
-	$html->form_confirm('fiche.php?id='.$paiement->id, 'Valider le paiement', 'Etes-vous sûr de vouloir valider ce paiment, auncune modification n\'est possible une fois le paiement validé ?', 'confirm_valide');
+	$facid = $_GET['facid'];
+	$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, 'Valider le paiement', 'Etes-vous sûr de vouloir valider ce paiment, auncune modification n\'est possible une fois le paiement validé ?', 'confirm_valide');
 	print '<br>';
 }
 
@@ -237,7 +250,7 @@ print '<div class="tabsAction">';
 
 if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
 {
-	print '<a class="tabAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+	print '<a class="tabAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 }
 
 if ($user->societe_id == 0 && $allow_delete && $paiement->statut == 0 && $_GET['action'] == '')
