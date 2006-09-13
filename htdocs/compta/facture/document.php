@@ -111,7 +111,7 @@ if ($facid > 0)
 		$upload_dir = $conf->facture->dir_output.'/'.$facref;
 
         $societe = new Societe($db);
-        $societe->fetch($facture->socidp);
+        $societe->fetch($facture->socid);
 
 		$head = facture_prepare_head($facture);
 		dolibarr_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'));

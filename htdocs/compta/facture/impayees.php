@@ -43,13 +43,13 @@ $langs->load("bills");
 
 
 
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 
 // Sécurité accés client
 if ($user->societe_id > 0)
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -76,15 +76,15 @@ if ($user->rights->facture->lire)
   $sql.= $db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite, ";
   $sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
   $sql.= " ,sum(pf.amount) as am";
-  if (! $user->rights->commercial->client->voir && ! $socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+  if (! $user->rights->commercial->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
   $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-  if (! $user->rights->commercial->client->voir && ! $socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+  if (! $user->rights->commercial->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   $sql.= ",".MAIN_DB_PREFIX."facture as f";
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
   $sql.= " WHERE f.fk_soc = s.idp";
   $sql.= " AND f.paye = 0 AND f.fk_statut = 1";
-  if (! $user->rights->commercial->client->voir && ! $socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-  if ($socidp) $sql .= " AND s.idp = $socidp";
+  if (! $user->rights->commercial->client->voir && ! $socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+  if ($socid) $sql .= " AND s.idp = $socid";
 
   if ($_GET["filtre"])
     {
@@ -135,26 +135,26 @@ if ($user->rights->facture->lire)
     {
       $num = $db->num_rows($result);
       
-      if ($socidp)
+      if ($socid)
         {
 	  $soc = new Societe($db);
-	  $soc->fetch($socidp);
+	  $soc->fetch($socid);
         }
       
-      $titre=($socidp?$langs->trans("BillsCustomersUnpayedForCompany",$soc->nom):$langs->trans("BillsCustomersUnpayed"));
-      print_barre_liste($titre,$page,"impayees.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      $titre=($socid?$langs->trans("BillsCustomersUnpayedForCompany",$soc->nom):$langs->trans("BillsCustomersUnpayed"));
+      print_barre_liste($titre,$page,"impayees.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
       $i = 0;
       print '<table class="liste" width="100%">';
       print '<tr class="liste_titre">';
       
-      print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp","",$sortfield);
-      print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp",'align="center"',$sortfield);
-      print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","","&amp;socidp=$socidp",'align="center"',$sortfield);
-      print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp","",$sortfield);
-      print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp",'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp",'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp",'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","","&amp;socidp=$socidp",'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=$socid","",$sortfield);
+      print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=$socid",'align="center"',$sortfield);
+      print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","","&amp;socid=$socid",'align="center"',$sortfield);
+      print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=$socid","",$sortfield);
+      print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socid=$socid",'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socid=$socid",'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","","&amp;socid=$socid",'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","","&amp;socid=$socid",'align="right"',$sortfield);
       print "</tr>\n";
       
       // Lignes des champs de filtre

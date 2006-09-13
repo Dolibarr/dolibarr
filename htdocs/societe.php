@@ -41,11 +41,11 @@ $langs->load("suppliers");
 
 
 // Sécurité accés client
-$socidp=0; 
+$socid=0; 
 if ($user->societe_id > 0) 
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 
@@ -81,11 +81,11 @@ if ($mode == 'search')
     $_POST["search_nom"]="$socname";
 
     $sql = "SELECT s.idp";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE s.nom like '%".$socname."%'";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
     $result=$db->query($sql);
     if ($result)
@@ -93,8 +93,8 @@ if ($mode == 'search')
         if ($db->num_rows($result) == 1)
         {
             $obj = $db->fetch_object($result);
-            $socidp = $obj->idp;
-            header("location: soc.php?socid=$socidp");
+            $socid = $obj->idp;
+            header("location: soc.php?socid=$socid");
             exit;
         }
         $db->free($result);
@@ -103,7 +103,7 @@ if ($mode == 'search')
     if ($user->societe_id > 0) 
     {
         $action = '';
-        $socidp = $user->societe_id;
+        $socid = $user->societe_id;
     }
 }
 
@@ -128,14 +128,14 @@ $title=$langs->trans("ListOfCompanies");
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
 $sql.= ", st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.siren";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND s.idp = $socidp";
+  $sql .= " AND s.idp = $socid";
 }
 
 if ($socname)
@@ -147,7 +147,7 @@ if (strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
 	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }

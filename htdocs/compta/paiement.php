@@ -185,7 +185,7 @@ if ($_POST['action'] == 'add_paiement')
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
@@ -269,7 +269,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 			$sql .= ', sum(pf.amount) as am';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
-			$sql .= ' WHERE f.fk_soc = '.$facture->socidp;
+			$sql .= ' WHERE f.fk_soc = '.$facture->socid;
 			$sql .= ' AND f.paye = 0';
 			$sql .= ' AND f.fk_statut = 1';  // Statut=0 => non validée, Statut=2 => annulée
 			$sql .= ' GROUP BY f.facnumber';
@@ -376,9 +376,9 @@ if (! $_GET['action'] && ! $_POST['action'])
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
 	$sql .= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
 
-	if ($socidp)
+	if ($socid)
 	{
-		$sql .= ' AND f.fk_soc = '.$socidp;
+		$sql .= ' AND f.fk_soc = '.$socid;
 	}
 
 	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;

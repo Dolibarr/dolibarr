@@ -33,17 +33,17 @@ require("./pre.inc.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
-$socidp = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
+$socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 
 $title = $langs->trans("Projects");
 
 // Sécurité accés client
-if ($user->societe_id > 0) $socidp = $user->societe_id;
+if ($user->societe_id > 0) $socid = $user->societe_id;
 
-if ($socidp > 0)
+if ($socid > 0)
 {
   $soc = new Societe($db);
-  $soc->fetch($socidp);
+  $soc->fetch($socid);
   $title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
 }
 
@@ -71,14 +71,14 @@ llxHeader();
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do";
 $sql .= " , s.nom, s.idp, s.client";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE p.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp)
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)
 { 
-  $sql .= " AND s.idp = ".$socidp; 
+  $sql .= " AND s.idp = ".$socid; 
 }
 if ($_GET["search_ref"])
 {

@@ -35,7 +35,7 @@ llxHeader('','Telephonie - Services - Liste');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 if ($sortorder == "") {

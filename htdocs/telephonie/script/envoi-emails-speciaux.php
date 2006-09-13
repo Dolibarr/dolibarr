@@ -255,7 +255,7 @@ if (sizeof($factures_a_mailer) > 0)
 		      $actionmsg="Envoyée à $sendtox";
 		      $actionmsg2="Envoi Facture par mail";
 		      
-		      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '$actioncode' ,'$fact->socidp' ,'$actionmsg','$fact->id','$sendtoid','$user->id', '$actionmsg2',100);";
+		      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '$actioncode' ,'$fact->socid' ,'$actionmsg','$fact->id','$sendtoid','$user->id', '$actionmsg2',100);";
 		      
 		      if (! $db->query($sql) )
 			{

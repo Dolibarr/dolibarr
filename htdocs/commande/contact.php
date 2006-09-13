@@ -106,7 +106,7 @@ function select_type_contact($commande, $defValue, $htmlname = 'type', $source)
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 /*
@@ -220,8 +220,8 @@ if ($id > 0)
 	$commande = New Commande($db);
 	if ( $commande->fetch($_GET['id'], $user->societe_id) > 0)
 	{
-		$soc = new Societe($db, $commande->socidp);
-		$soc->fetch($commande->socidp);
+		$soc = new Societe($db, $commande->socid);
+		$soc->fetch($commande->socid);
 
 
 		$head = commande_prepare_head($commande);

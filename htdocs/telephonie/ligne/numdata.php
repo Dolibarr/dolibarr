@@ -80,7 +80,7 @@ llxHeader('','Telephonie - Ligne - Liste');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -186,7 +186,7 @@ if ($result)
       print "<tr $bc[$var]><td>";
 
       print dolibarr_print_phone($obj->numero)."</td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.$obj->nom.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
 
       print '<td align="center"><a href="'.DOL_URL_ROOT.'/telephonie/ligne/numdata.php?action=delete&amp;id='.$obj->rowid.'">';
       print img_delete();

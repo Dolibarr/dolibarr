@@ -50,7 +50,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="c.datec";
 
 // Securite
-$socidp = 0;
+$socid = 0;
 if ($user->societe_id > 0)
 {
     $action = '';
@@ -112,7 +112,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-		show_stats_for_company($product,$socidp);
+		show_stats_for_company($product,$socid);
         
         print "</table>";
 

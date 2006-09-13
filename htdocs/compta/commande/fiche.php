@@ -46,7 +46,7 @@ if (! $user->rights->commande->lire) accessforbidden();
 if ($user->societe_id > 0)
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -80,7 +80,7 @@ if ($_GET["id"] > 0)
     if ( $commande->fetch($_GET["id"]) > 0)
     {
         $soc = new Societe($db);
-        $soc->fetch($commande->socidp);
+        $soc->fetch($commande->socid);
 
         $author = new User($db);
         $author->id = $commande->user_author_id;
@@ -200,7 +200,7 @@ if ($_GET["id"] > 0)
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
 
-			if (1 == 2 && $_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socidp.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			if (1 == 2 && $_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 
@@ -262,11 +262,11 @@ if ($_GET["id"] > 0)
                 print '</td><td colspan="2">';
                 if ($_GET['action'] == 'classer')
                 {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'projetid');
+                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'projetid');
                 }
                 else
                 {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'none');
+                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'none');
                 }
                 print '</td></tr>';
             }
@@ -348,7 +348,7 @@ if ($_GET["id"] > 0)
                     print '<td>';
 					if (($objp->info_bits & 2) == 2)
 					{
-						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socidp.'">';
+						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socid.'">';
 						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
 						if ($objp->description) print ' - '.nl2br($objp->description);
@@ -528,7 +528,7 @@ if ($_GET["id"] > 0)
 
             if ($commande->statut > 0 && $user->rights->facture->creer)
             {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->socidp.'">'.$langs->trans("CreateBill").'</a>';
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socid='.$commande->socid.'">'.$langs->trans("CreateBill").'</a>';
             }
 
             if ($commande->statut > 0 && $user->rights->commande->creer)

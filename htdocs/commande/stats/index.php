@@ -41,7 +41,7 @@ if (!$user->rights->commande->lire) accessforbidden();
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -49,7 +49,7 @@ llxHeader();
 
 print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 
-$stats = new CommandeStats($db, $socidp);
+$stats = new CommandeStats($db, $socid);
 
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);

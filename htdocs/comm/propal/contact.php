@@ -106,7 +106,7 @@ function select_type_contact($propal, $defValue, $htmlname = 'type', $source)
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 /*
@@ -220,8 +220,8 @@ if ($id > 0)
 	$propal = New Propal($db);
 	if ( $propal->fetch($_GET['propalid'], $user->societe_id) > 0)
 	{
-		$soc = new Societe($db, $propal->socidp);
-		$soc->fetch($propal->socidp);
+		$soc = new Societe($db, $propal->socid);
+		$soc->fetch($propal->socid);
 
 
 		$head = propal_prepare_head($propal);

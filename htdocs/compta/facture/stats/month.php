@@ -37,7 +37,7 @@ $GRAPHHEIGHT=200;
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -51,7 +51,7 @@ $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 
 print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
 
-$stats = new FactureStats($db, $socidp);
+$stats = new FactureStats($db, $socid);
 $data = $stats->getNbByMonth($year);
 
 create_exdir($conf->facture->dir_temp);

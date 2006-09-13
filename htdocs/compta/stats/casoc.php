@@ -40,7 +40,7 @@ if (! $sortorder) $sortorder="asc";
 if (! $sortfield) $sortfield="nom";
 
 // Sécurité accés client
-if ($user->societe_id > 0) $socidp = $user->societe_id;
+if ($user->societe_id > 0) $socid = $user->societe_id;
 
 
 llxHeader();
@@ -90,7 +90,7 @@ else
     $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = s.idp";
     if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
-if ($socidp) $sql .= " AND f.fk_soc = $socidp";
+if ($socid) $sql .= " AND f.fk_soc = $socid";
 $sql .= " GROUP BY rowid";
 $sql .= " ORDER BY rowid";
 

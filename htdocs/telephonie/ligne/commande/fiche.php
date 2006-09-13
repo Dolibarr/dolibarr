@@ -53,7 +53,7 @@ print $mesg_erreur;
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 /*
@@ -128,7 +128,7 @@ else
  *
  */
 
-$sql = "SELECT sf.idp as sfidp, sf.nom as sfnom, s.idp as socidp, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid";
+$sql = "SELECT sf.idp as sfidp, sf.nom as sfnom, s.idp as socid, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
@@ -164,7 +164,7 @@ if ($db->query($sql))
       print "<tr $bc[$var]>";
       print '<td><a href="../fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
       print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.$obj->nom.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.$obj->sfnom.'</a></td>';
       print '<td align="center">'.$socf->verif_rib().'</a></td>';
       print "<td>".$obj->fournisseur."</td>\n";

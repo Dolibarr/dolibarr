@@ -41,7 +41,7 @@ class FactureFournisseur extends Facture
 {
 	var $id;
 	var $db;
-	var $socidp;
+	var $socid;
 	var $statut;
 	var $paye;
 	var $author;
@@ -63,17 +63,17 @@ class FactureFournisseur extends Facture
 	/**
 	 *    \brief  Constructeur de la classe
 	 *    \param  DB          	Handler accès base de données
-	 *    \param  socidp		Id societe ('' par defaut)
+	 *    \param  socid			Id societe ('' par defaut)
 	 *    \param  facid       	Id facture ('' par defaut)
 	 */
-	function FactureFournisseur($DB, $socidp='', $facid='')
+	function FactureFournisseur($DB, $socid='', $facid='')
 	{
 		$this->db = $DB ;
 		$this->table = 'facture_fourn';
 		$this->tabledetail = 'facture_fourn_det';
 
 		$this->id = $facid;
-		$this->socidp = $socidp;
+		$this->socid = $socid;
 
 		$this->amount = 0;
 		$this->remise = 0;
@@ -96,7 +96,7 @@ class FactureFournisseur extends Facture
 	{
 		global $langs;
 
-		$socidp = $this->socidp;
+		$socid = $this->socid;
 		$number = $this->ref;
 		$amount = $this->amount;
 		$remise = $this->remise;
@@ -108,7 +108,7 @@ class FactureFournisseur extends Facture
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ';
 		$sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
-		$sql .= $this->socidp.", now(),'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
+		$sql .= $this->socid.", now(),'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -168,7 +168,7 @@ class FactureFournisseur extends Facture
 		$sql.= ' total_ht, total_tva, total_ttc, fk_user_author,';
 		$sql.= ' fk_statut, paye, f.note, f.note_public,';
 		$sql.= ' '.$this->db->pdate('date_lim_reglement').'as de,';
-		$sql.= ' s.nom as socnom, s.idp as socidp';
+		$sql.= ' s.nom as socnom, s.idp as socid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.idp';
 		$resql = $this->db->query($sql);
@@ -186,7 +186,7 @@ class FactureFournisseur extends Facture
 				$this->libelle       = $obj->libelle;
 
 				$this->remise        = $obj->remise;
-				$this->socidp        = $obj->socidp;
+				$this->socid        = $obj->socid;
 
 				$this->total_ht  = $obj->total_ht;
 				$this->total_tva = $obj->total_tva;
@@ -266,7 +266,7 @@ class FactureFournisseur extends Facture
 	function fetch_fournisseur()
 	{
 		$fournisseur = new Fournisseur($this->db);
-		$fournisseur->fetch($this->socidp);
+		$fournisseur->fetch($this->socid);
 		$this->fournisseur = $fournisseur;
 	}
 

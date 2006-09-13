@@ -166,7 +166,7 @@ class Don
 		$this->specimen=1;
 		$this->nom = 'Doe';
 		$this->prenom = 'John';
-		$this->socidp = $socids[$socid];
+		$this->socid = $socids[$socid];
 		$this->date = time();
 		$this->amount = 100;
 		$this->public = 1;

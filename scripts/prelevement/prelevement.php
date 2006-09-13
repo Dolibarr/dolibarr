@@ -124,7 +124,7 @@ if (!$error)
 	  if ($fact->fetch($fac[0]) == 1)
 	    {
 	      $soc = new Societe($db);
-	      if ($soc->fetch($fact->socidp) == 1)
+	      if ($soc->fetch($fact->socid) == 1)
 		{
 		  if ($soc->verif_rib() == 1)
 		    {
@@ -135,7 +135,7 @@ if (!$error)
 		    }
 		  else
 		    {
-		      dolibarr_syslog("Erreur de RIB societe $fact->socidp $soc->nom");
+		      dolibarr_syslog("Erreur de RIB societe $fact->socid $soc->nom");
 		    }
 		}
 	      else

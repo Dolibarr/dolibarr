@@ -49,7 +49,7 @@ class Facture extends CommonObject
 	
 	var $id;
 
-	var $socidp;		// Id client
+	var $socid;		// Id client
 	var $client;		// Objet societe client (à charger par fetch_client)
 
 	var $number;
@@ -91,17 +91,17 @@ class Facture extends CommonObject
 	/**
 	*    \brief  Constructeur de la classe
 	*    \param  DB         handler accès base de données
-	*    \param  socidp		id societe ('' par defaut)
+	*    \param  socid		id societe ('' par defaut)
 	*    \param  facid      id facture ('' par defaut)
 	*/
-	function Facture($DB, $socidp='', $facid='')
+	function Facture($DB, $socid='', $facid='')
 	{
 		$this->db = $DB;
 		$this->table = 'facture';
 		$this->tabledetail = 'facturedet';
 
 		$this->id = $facid;
-		$this->socidp = $socidp;
+		$this->socid = $socid;
 
 		$this->amount = 0;
 		$this->remise = 0;
@@ -134,7 +134,7 @@ class Facture extends CommonObject
 		dolibarr_syslog("Facture::create");
 
 		$soc = new Societe($this->db);
-		$soc->fetch($this->socidp);
+		$soc->fetch($this->socid);
 
 		$this->db->begin();
 
@@ -160,7 +160,7 @@ class Facture extends CommonObject
 		$datelim=$this->calculate_date_lim_reglement();
 
 		// Insertion dans la base
-		$socid  = $this->socidp;
+		$socid  = $this->socid;
 		$amount = $this->amount;
 		$remise = $this->remise;
 
@@ -310,7 +310,7 @@ class Facture extends CommonObject
 
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;
-		$facture->socidp 		    = $this->socidp;
+		$facture->socid 		    = $this->socid;
 		$facture->date              = $this->date;
 		$facture->note_public       = $this->note_public;
 		$facture->note              = $this->note;
@@ -337,7 +337,7 @@ class Facture extends CommonObject
 			}
 		}
 				
-		dolibarr_syslog("Facture::create_clone invertdetail=$invertdetail socidp=".$this->socidp." nboflines=".sizeof($facture->lignes));
+		dolibarr_syslog("Facture::create_clone invertdetail=$invertdetail socid=".$this->socid." nboflines=".sizeof($facture->lignes));
 		
 
 		$facid = $facture->create($user);
@@ -418,7 +418,7 @@ class Facture extends CommonObject
 				$this->paye                   = $obj->paye;
 				$this->close_code             = $obj->close_code;
 				$this->close_note             = $obj->close_note;
-				$this->socidp                 = $obj->fk_soc;
+				$this->socid                 = $obj->fk_soc;
 				$this->statut                 = $obj->fk_statut;
 				$this->date_lim_reglement     = $obj->dlr;
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;
@@ -1181,7 +1181,7 @@ class Facture extends CommonObject
             {
                 // Classe la société rattachée comme client
                 $soc=new Societe($this->db);
-                $soc->id = $this->socidp;
+                $soc->id = $this->socid;
                 $result=$soc->set_as_client();
 
                 $this->ref = $numfa;
@@ -2238,7 +2238,7 @@ class Facture extends CommonObject
         dolibarr_syslog("Facture::demande_prelevement $this->statut $this->paye $this->mode_reglement_id");
 
 		$soc = new Societe($this->db);
-		$soc->id = $this->socidp;
+		$soc->id = $this->socid;
 		$soc->rib();
 		if ($this->statut > 0 && $this->paye == 0 && $this->mode_reglement_id == 3)
 		{
@@ -2539,7 +2539,7 @@ class Facture extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
-		$this->socidp = $socids[$socid];
+		$this->socid = $socids[$socid];
 		$this->date = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';

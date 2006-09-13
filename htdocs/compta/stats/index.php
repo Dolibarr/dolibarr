@@ -44,7 +44,7 @@ else {
  */
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $modecompta = $conf->compta->mode;
@@ -93,7 +93,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
     $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid";
 }
-if ($socidp) $sql .= " AND f.fk_soc = $socidp";
+if ($socid) $sql .= " AND f.fk_soc = $socid";
 $sql .= " GROUP BY dm DESC";
 
 $result = $db->query($sql);
@@ -315,9 +315,9 @@ if ($modecompta != 'CREANCES-DETTES')
   $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
   $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
-  if ($socidp)
+  if ($socid)
     {
-      $sql .= " AND f.fk_soc = $socidp";
+      $sql .= " AND f.fk_soc = $socid";
     }
   $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.idp, f.total_ttc";   
   
@@ -366,9 +366,9 @@ En attendant correction.
 			WHERE p.fk_soc = s.idp
 					AND p.fk_statut >=1
 					AND p.facture =0";
-  if ($socidp)
+  if ($socid)
     {
-      $sql .= " AND f.fk_soc = $socidp";
+      $sql .= " AND f.fk_soc = $socid";
     }
 	$sql .= " GROUP BY p.rowid";
 

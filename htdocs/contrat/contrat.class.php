@@ -43,7 +43,7 @@ class Contrat extends CommonObject
     
     var $id;
     var $ref;
-    var $socidp;
+    var $socid;
     var $societe;		// Objet societe
 
     var $product;
@@ -302,7 +302,7 @@ class Contrat extends CommonObject
 
                 $this->fk_projet         = $result["fk_projet"];
         
-                $this->socidp            = $result["fk_soc"];
+                $this->socid            = $result["fk_soc"];
                 $this->societe->fetch($result["fk_soc"]);
         
                 $this->db->free($resql);
@@ -470,7 +470,7 @@ class Contrat extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat";
 //        $sql.= ", fk_commercial_signature, fk_commercial_suivi";
         $sql.= " , ref)";
-        $sql.= " VALUES (now(),".$this->socidp.",".$user->id;
+        $sql.= " VALUES (now(),".$this->socid.",".$user->id;
         $sql.= ",".$this->db->idate($this->date_contrat);
 //        $sql.= ",".($this->commercial_signature_id>=0?$this->commercial_signature_id:"null");
 //        $sql.= ",".($this->commercial_suivi_id>=0?$this->commercial_suivi_id:"null");

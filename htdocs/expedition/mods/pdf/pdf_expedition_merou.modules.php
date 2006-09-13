@@ -100,7 +100,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
         {
 			//Creation du Client
 			$soc = new Societe($this->db);
-			$soc->fetch($this->expe->commande->socidp);
+			$soc->fetch($this->expe->commande->socid);
 	
 			//Creation de l expediteur
 			$this->expediteur = $soc;

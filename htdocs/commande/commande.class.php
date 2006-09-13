@@ -45,7 +45,7 @@ class Commande extends CommonObject
 
 	var $id ;
 
-	var $socidp;		// Id client
+	var $socid;		// Id client
 	var $client;		// Objet societe client (à charger par fetch_client)
 
 	var $ref;
@@ -77,12 +77,12 @@ class Commande extends CommonObject
 	 *        \brief      Constructeur
 	 *        \param      DB      Handler d'accès base
 	 */
-	function Commande($DB, $socidp="", $commandeid=0)
+	function Commande($DB, $socid="", $commandeid=0)
 	{
 		global $langs;
 		$langs->load('orders');
 		$this->db = $DB;
-		$this->socidp = $socidp;
+		$this->socid = $socid;
     	$this->id = $commandeid;
 
 		$this->sources[0] = $langs->trans('OrderSource0');
@@ -126,7 +126,7 @@ class Commande extends CommonObject
 			$this->lines[$i] = $CommLigne;
 		}
 
-		$this->socidp               = $propal->socidp;
+		$this->socid               = $propal->socid;
 		$this->projetid             = $propal->projetidp;
 		$this->cond_reglement_id    = $propal->cond_reglement_id;
 		$this->mode_reglement_id    = $propal->mode_reglement_id;
@@ -137,7 +137,7 @@ class Commande extends CommonObject
     
 		/* Définit la société comme un client */
 		$soc = new Societe($this->db);
-		$soc->id = $this->socidp;
+		$soc->id = $this->socid;
 		$soc->set_as_client();
 		$this->propale_id = $propal->id;
 
@@ -174,7 +174,7 @@ class Commande extends CommonObject
 					// Recuperation de la nouvelle reference
 					$objMod = new $modName($this->db);
 					$soc = new Societe($this->db);
-					$soc->fetch($this->socidp);
+					$soc->fetch($this->socid);
 					
 					// Classe la société rattachée comme client
           $result=$soc->set_as_client();
@@ -373,7 +373,7 @@ class Commande extends CommonObject
 		if (! $this->projetid) $this->projetid = 0;
 
 		$soc = new Societe($this->db);
-		$result=$soc->fetch($this->socidp);
+		$result=$soc->fetch($this->socid);
 		if ($result < 0)
 		{
 			$this->error="Failed to fetch company";
@@ -387,7 +387,7 @@ class Commande extends CommonObject
 		$sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_public, ref_client,';
 		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
 		$sql.= ' remise_absolue, remise_percent)';
-		$sql.= ' VALUES ('.$this->socidp.', now(), '.$user->id.', '.$this->projetid.',';
+		$sql.= ' VALUES ('.$this->socid.', now(), '.$user->id.', '.$this->projetid.',';
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";
@@ -440,7 +440,7 @@ class Commande extends CommonObject
 						$this->db->query($sql);
 					  
 					  // On récupère les différents contact interne et externe
-					  $prop = New Propal($this->db, $this->socidp, $this->propale_id);
+					  $prop = New Propal($this->db, $this->socid, $this->propale_id);
 					  
 					  // On récupère le commercial suivi propale
 						$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
@@ -795,7 +795,7 @@ class Commande extends CommonObject
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
-				$this->socidp               = $obj->fk_soc;
+				$this->socid               = $obj->fk_soc;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->total_ht             = $obj->total_ht;
@@ -2012,7 +2012,7 @@ class Commande extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
-		$this->socidp = $socids[$socid];
+		$this->socid = $socids[$socid];
 		$this->date = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';

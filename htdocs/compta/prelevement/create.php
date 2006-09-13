@@ -169,9 +169,9 @@ $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.idp = f.fk_soc";
 $sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socid";
 }
 
 if ( $db->query($sql) )

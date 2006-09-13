@@ -108,7 +108,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         	}
         	elseif ($origin == propal)
         	{
-        		Header("Location: ../comm/propal.php?action=editdelivery_adress&socidp=".$socid."&propalid=".$originid);
+        		Header("Location: ../comm/propal.php?action=editdelivery_adress&socid=".$socid."&propalid=".$originid);
         		exit;
         	}
         	else

@@ -43,7 +43,7 @@ if ($projetid == '') accessforbidden();
 
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 // Protection restriction commercial
@@ -53,7 +53,7 @@ if ($projetid && !$user->rights->commercial->client->voir)
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."projet as p";
         $sql .= " WHERE p.rowid = ".$projetid;
         if (!$user->rights->commercial->client->voir) $sql .= " AND sc.fk_soc = p.fk_soc AND fk_user = ".$user->id;
-        if ($socidp) $sql .= " AND p.fk_soc = ".$socidp;
+        if ($socid) $sql .= " AND p.fk_soc = ".$socid;
 
         if ( $db->query($sql) )
         {
@@ -195,7 +195,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   if ($mesg) print $mesg;
   
-  print '<form action="fiche.php?socidp='.$_GET["socidp"].'" method="post">';
+  print '<form action="fiche.php?socid='.$_GET["socid"].'" method="post">';
 
   print '<table class="border" width="100%">';
   print '<input type="hidden" name="action" value="add">';
@@ -205,7 +205,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   print '<tr><td>'.$langs->trans("Company").'</td><td>';
   $societe = new Societe($db);
-  $societe->fetch($_GET["socidp"]); 
+  $societe->fetch($_GET["socid"]); 
   print $societe->getNomUrl(1);
   print '</td></tr>';
 

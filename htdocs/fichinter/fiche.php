@@ -43,17 +43,17 @@ $user->getrights("ficheinter");
 if (!$user->rights->ficheinter->lire) accessforbidden();
 
 
-if ($_GET["socidp"])
+if ($_GET["socid"])
 {
 	$societe=new Societe($db);
-	$societe->fetch($_GET["socidp"]);
+	$societe->fetch($_GET["socid"]);
 }
 
 // Sécurité accés client
 if ($user->societe_id > 0)
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 
@@ -73,7 +73,7 @@ if ($_POST["action"] == 'add')
   $fichinter = new Fichinter($db);
 
   $fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]));
-  $fichinter->socidp = $_POST["socidp"];
+  $fichinter->socid = $_POST["socid"];
   $fichinter->duree = $_POST["duree"];
   $fichinter->projet_id = $_POST["projetidp"];
   $fichinter->author = $user->id;
@@ -89,7 +89,7 @@ if ($_POST["action"] == 'update')
   $fichinter = new Fichinter($db);
 
   $fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]));
-  $fichinter->socidp = $_POST["socidp"];
+  $fichinter->socid = $_POST["socid"];
   $fichinter->duree = $_POST["duree"];
   $fichinter->projet_id = $_POST["projetidp"];
   $fichinter->author = $user->id;
@@ -159,7 +159,7 @@ if ($_GET["action"] == 'create')
 	$syear = date("Y", time());
 	print '<table class="border" width="100%">';
 
-	print '<input type="hidden" name="socidp" value='.$_GET["socidp"].'>';
+	print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$societe->getNomUrl(1)."</td></tr>";
 
 	print "<tr><td>".$langs->trans("Date")."</td><td>";
@@ -180,7 +180,7 @@ if ($_GET["action"] == 'create')
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td><select name="projetidp">';
 		print '<option value="0"></option>';
 
-		$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc = '.$_GET["socidp"];
+		$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc = '.$_GET["socid"];
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -205,7 +205,7 @@ if ($_GET["action"] == 'create')
 
 			if ($user->rights->projet->creer)
 			{
-				print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socidp.'&action=create>'.$langs->trans("Add").'</a>';
+				print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create>'.$langs->trans("Add").'</a>';
 			}
 		}
 	

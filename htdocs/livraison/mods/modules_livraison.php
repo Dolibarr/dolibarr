@@ -190,7 +190,7 @@ function delivery_order_delete_preview($db, $deliveryid)
         $delivery = new Livraison($db,"",$deliveryid);
         $delivery->fetch($deliveryid);  
         $client = new Societe($db);
-        $client->fetch($delivery->socidp);
+        $client->fetch($delivery->socid);
 
         if ($conf->livraison->dir_output)
                 {

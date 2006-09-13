@@ -37,7 +37,7 @@ $langs->load("widthdrawals");
 
 if ($user->societe_id > 0)
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 llxHeader();
@@ -66,12 +66,12 @@ if (! $sortfield) $sortfield="f.facnumber";
 $sql= "SELECT f.facnumber, f.rowid, s.nom, s.idp";
 $sql.= " , ".$db->pdate("pfd.date_demande")." as date_demande";
 $sql.= " , pfd.fk_user_demande";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.idp = f.fk_soc";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (! $statut) $sql.= " AND pfd.traite = 0";
 if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
@@ -79,9 +79,9 @@ if (strlen(trim($_GET["search_societe"])))
 {
   $sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
 }
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 

@@ -27,7 +27,7 @@ require("./pre.inc.php");
  */
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -98,9 +98,9 @@ print '<tr><td valign="top">';
 
 $sql = "SELECT sum(f.price) as amount, date_format(f.datep,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " GROUP BY dm DESC";
 
@@ -110,9 +110,9 @@ print '</td><td valign="top">';
 
 $sql = "SELECT sum(f.price) as amount, year(f.datep) as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " GROUP BY dm DESC";
 
@@ -122,9 +122,9 @@ print "<br>";
 
 $sql = "SELECT sum(f.price) as amount, month(f.datep) as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " GROUP BY dm";
 

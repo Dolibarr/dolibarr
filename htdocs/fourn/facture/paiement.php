@@ -46,11 +46,11 @@ $sortorder = isset($_GET['sortorder'])?$_GET['sortorder']:$_POST['sortorder'];
 $page=isset($_GET['page'])?$_GET['page']:$_POST['page'];
 
 // Sécurité accés client
-$socidp=0;
+$socid=0;
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
@@ -201,12 +201,12 @@ if ($action == 'create' || $action == 'add_paiement')
 	$facture->fetch($facid);
 
 	$sql = 'SELECT s.nom,s.idp, f.amount, f.total_ttc as total, f.facnumber';
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= ' WHERE f.fk_soc = s.idp';
 	$sql .= ' AND f.rowid = '.$facid;
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -259,7 +259,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			$sql .= ', sum(pf.amount) as am';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-			$sql .= ' WHERE f.fk_soc = '.$facture->socidp;
+			$sql .= ' WHERE f.fk_soc = '.$facture->socid;
 			$sql .= ' AND f.paye = 0';
 			$sql .= ' AND f.fk_statut = 1';  // Statut=0 => non validée, Statut=2 => annulée
 			$sql .= ' GROUP BY f.facnumber';
@@ -368,9 +368,9 @@ if (! $_GET['action'] && ! $_POST['action'])
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	if (!$user->rights->commercial->client->voir) $sql .= " WHERE s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socidp)
+	if ($socid)
 	{
-		$sql .= ' WHERE f.fk_soc = '.$socidp;
+		$sql .= ' WHERE f.fk_soc = '.$socid;
 	}
 	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
 	$sql .= $db->plimit($limit + 1 ,$offset);

@@ -109,7 +109,7 @@ class InterfaceNotification
             $mesg = 'La facture '.$object->ref." a été validée.\n";
 
             $notify = new Notify($this->db); 
-            $notify->send($action_notify, $object->socidp, $mesg, 'facture', $object->id, $filepdf);
+            $notify->send($action_notify, $object->socid, $mesg, 'facture', $object->id, $filepdf);
 		}
 
 		if ($action == 'FICHEINTER_VALIDATE')
@@ -122,7 +122,7 @@ class InterfaceNotification
             $mesg = 'La fiche intervention '.$object->ref." a été validée.\n";
 
             $notify = new Notify($this->db); 
-            $notify->send($action_notify, $object->socidp, $mesg, 'ficheinter', $object->id, $filepdf);
+            $notify->send($action_notify, $object->socid, $mesg, 'ficheinter', $object->id, $filepdf);
 		}
 
 		if ($action == 'ORDER_SUPPLIER_VALIDATE')
@@ -135,7 +135,7 @@ class InterfaceNotification
             $mesg = 'La commande fournisseur '.$object->ref." a été validée.\n";
 
             $notify = new Notify($this->db); 
-            $notify->send($action_notify, $object->socidp, $mesg, 'order_supplier', $object->id, $filepdf);
+            $notify->send($action_notify, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
 		}
 
 		return 0;

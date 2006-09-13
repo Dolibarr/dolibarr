@@ -57,12 +57,12 @@ $pagenext = $page + 1;
 
 
 // Sécurité accés client
-$socidp='';
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+$socid='';
+if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0)
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -124,7 +124,7 @@ if ($_GET["propalid"] > 0)
 	$propal->fetch($_GET['propalid']);
 
 	$societe = new Societe($db);
-	$societe->fetch($propal->socidp);
+	$societe->fetch($propal->socid);
 
 	$head = propal_prepare_head($propal);
 	dolibarr_fiche_head($head, 'compta', $langs->trans('Proposal'));
@@ -240,7 +240,7 @@ if ($_GET["propalid"] > 0)
         {
             print '<td colspan="2">';
             print $langs->trans("NoProject").'</td><td>';
-            print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
+            print '<a href=../projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
             print '</td>';
         }
         else
@@ -357,7 +357,7 @@ if ($_GET["propalid"] > 0)
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					if (($objp->info_bits & 2) == 2)
 					{
-						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socidp.'">';
+						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
 						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
 						if ($objp->description) print ' - '.nl2br($objp->description);
@@ -735,12 +735,12 @@ et non globalement
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ";
   $sql.= $db->pdate("p.datep")." as dp, ";
   $sql.= $db->pdate("p.fin_validite")." as dfin";
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   $sql.= " WHERE p.fk_soc = s.idp";
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-  if ($socidp)           $sql .= " AND s.idp = $socidp";
+  if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+  if ($socid)           $sql .= " AND s.idp = $socid";
   if ($viewstatut <> '') $sql .= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons séparé par virgules
   if ($month > 0)        $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
   if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = $year";
@@ -753,7 +753,7 @@ et non globalement
 		
 		$propalstatic=new Propal($db);
 		
-		print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+		print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 		
 		$i = 0;
 		$var=true;

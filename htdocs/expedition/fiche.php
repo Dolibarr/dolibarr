@@ -51,7 +51,7 @@ if (!$user->rights->expedition->lire)
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -191,7 +191,7 @@ if ($_GET["action"] == 'create')
 	if ( $commande->fetch($_GET["commande_id"]))
 	{
 		$soc = new Societe($db);
-		$soc->fetch($commande->socidp);
+		$soc->fetch($commande->socid);
 
 		$author = new User($db);
 		$author->id = $commande->user_author_id;
@@ -440,7 +440,7 @@ else
             $commande->fetch($expedition->commande_id);
     
             $soc = new Societe($db);
-            $soc->fetch($commande->socidp);
+            $soc->fetch($commande->socid);
     
             $h=0;
             $head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$expedition->id;

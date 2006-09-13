@@ -45,11 +45,11 @@ $snom=isset($_GET['snom'])?$_GET['snom']:$_POST['snom'];
 $sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
 
 // Sécurité accés client
-$socidp = $_GET['socidp'];
+$socid = $_GET['socid'];
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
@@ -71,11 +71,11 @@ $offset = $limit * $_GET['page'] ;
 
 $sql = 'SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' '.$db->pdate('c.date_commande').' as date_commande, c.fk_statut, c.facture as facturee';
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ' WHERE c.fk_soc = s.idp';
-if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
   $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
@@ -87,9 +87,9 @@ if ($sall)
 {
 	$sql .= " AND (c.ref like '%".addslashes($sall)."%' OR c.note like '%".addslashes($sall)."%')";
 }
-if ($socidp)
+if ($socid)
 {
-	$sql .= ' AND s.idp = '.$socidp;
+	$sql .= ' AND s.idp = '.$socid;
 }
 if ($_GET['month'] > 0)
 {
@@ -132,10 +132,10 @@ $resql = $db->query($sql);
 
 if ($resql)
 {
-	if ($socidp)
+	if ($socid)
 	{
 		$soc = new Societe($db);
-		$soc->fetch($socidp);
+		$soc->fetch($socid);
 		$title = $langs->trans('ListOfOrders') . ' - '.$soc->nom;
 	}
 	else
@@ -145,15 +145,15 @@ if ($resql)
 	if ($_GET['status'] == 3)
 		$title.=' - '.$langs->trans('StatusOrderToBill');
 	$num = $db->num_rows($resql);
-	print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socidp='.$socidp,$sortfield,$sortorder,'',$num);
+	print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
 	$i = 0;
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socidp='.$socidp,'width="25%"',$sortfield);
-	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socidp='.$socidp,'width="30%"',$sortfield);
-	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socidp='.$socidp,'width="15%"',$sortfield);
-	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socidp='.$socidp, 'width="20%" align="right" colspan="2"',$sortfield);
-	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socidp='.$socidp,'width="10%" align="center"',$sortfield);
+	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socid='.$socid,'width="25%"',$sortfield);
+	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socid='.$socid,'width="30%"',$sortfield);
+	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socid='.$socid,'width="15%"',$sortfield);
+	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socid='.$socid, 'width="20%" align="right" colspan="2"',$sortfield);
+	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socid='.$socid,'width="10%" align="center"',$sortfield);
 	print '</tr>';
 	// Lignes des champs de filtre
 	print '<form method="get" action="liste.php">';

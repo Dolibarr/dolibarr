@@ -146,7 +146,7 @@ class Osc_order
 			$oscclient = new Osc_Customer($this->db);
 			$clientid = $oscclient->get_clientid($this->osc_custid);
 
-			$commande->socidp = $clientid;
+			$commande->socid = $clientid;
 			$commande->ref = $this->osc_orderid;
 			$commande->date = $this->orderdate;
 			/* on force */

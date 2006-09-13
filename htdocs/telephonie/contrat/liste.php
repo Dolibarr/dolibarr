@@ -46,7 +46,7 @@ $pagenext = $page + 1;
  *
  *
  */
-$sql = "SELECT c.rowid, c.ref, s.idp as socidp, c.statut, s.nom ";
+$sql = "SELECT c.rowid, c.ref, s.idp as socid, c.statut, s.nom ";
 $sql .= ", sf.idp as sfidp, sf.nom as sfnom";
 $sql .= ", sa.idp as saidp, sa.nom as sanom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -135,9 +135,9 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($obj->nom).'</a></td>';
 
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->sanom).'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($obj->sanom).'</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->sfnom).'</a></td>';
 
       print '<td align="center">-</td>';

@@ -39,7 +39,7 @@ include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -68,7 +68,7 @@ if ($_GET["propalid"])
   $propal->fetch($_GET["propalid"]);
 
   $societe = new Societe($db);
-  $societe->fetch($propal->socidp);
+  $societe->fetch($propal->socid);
 
   $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
   $head[0][1] = "Proposition commerciale : $propal->ref";

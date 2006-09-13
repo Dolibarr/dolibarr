@@ -58,12 +58,12 @@ $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 
 // Sécurité accés client
-$socidp='';
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+$socid='';
+if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 // Nombre de ligne pour choix de produit/service prédéfinis
@@ -165,7 +165,7 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	$propal->socidp=$_POST['socidp'];
+	$propal->socid=$_POST['socid'];
 	$propal->fetch_client();
 	
 	$db->begin();
@@ -183,7 +183,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->mode_reglement_id = $_POST['mode_reglement_id'];
 			$propal->remise_percent = $_POST['remise_percent'];
 			$propal->remise_absolue = $_POST['remise_absolue'];
-			$propal->socidp    = $_POST['socidp'];
+			$propal->socid    = $_POST['socid'];
 			$propal->contactid = $_POST['contactidp'];
 			$propal->projetidp = $_POST['projetidp'];
 			$propal->modelpdf  = $_POST['model'];
@@ -304,7 +304,7 @@ if ($_POST['action'] == 'send')
         $file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
         if (is_readable($file))
         {
-            $soc = new Societe($db, $propal->socidp);
+            $soc = new Societe($db, $propal->socid);
             if ($_POST['sendto'])
             {
                 // Le destinataire a été fourni via le champ libre
@@ -370,7 +370,7 @@ if ($_POST['action'] == 'send')
                     $actioncomm->date        = time();  // L'action est faite maintenant
                     $actioncomm->percent     = 100;
                     $actioncomm->contact     = new Contact($db,$sendtoid);
-                    $actioncomm->societe     = new Societe($db,$propal->socidp);
+                    $actioncomm->societe     = new Societe($db,$propal->socid);
                     $actioncomm->user        = $user;   // User qui a fait l'action
                     $actioncomm->propalrowid = $propal->id;
                     $ret=$actioncomm->add($user);       // User qui saisi l'action
@@ -455,8 +455,8 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 	{
 	    $propal = new Propal($db);
 	    $ret=$propal->fetch($_POST['propalid']);
-	    $soc = new Societe($db, $propal->socidp);
-	    $soc->fetch($propal->socidp);
+	    $soc = new Societe($db, $propal->socid);
+	    $soc->fetch($propal->socid);
 
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
@@ -689,7 +689,7 @@ if ($_GET['propalid'] > 0)
 	}
 
 	$societe = new Societe($db);
-	$societe->fetch($propal->socidp);
+	$societe->fetch($propal->socid);
 
 	$head = propal_prepare_head($propal);
 	dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));
@@ -869,17 +869,17 @@ if ($conf->expedition->enabled)
 		print $langs->trans('DeliveryAddress');
 		print '</td>';
 
-		if ($_GET['action'] != 'editdelivery_adress' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socidp='.$propal->socidp.'&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+		if ($_GET['action'] != 'editdelivery_adress' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$propal->socid.'&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 
 		if ($_GET['action'] == 'editdelivery_adress')
 		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socidp'],'adresse_livraison_id','propal',$propal->id);
+			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','propal',$propal->id);
 		}
 		else
 		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socidp'],'none','propal',$propal->id);
+			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socid'],'none','propal',$propal->id);
 		}
 		print '</td></tr>';
 	}
@@ -936,7 +936,7 @@ if ($conf->expedition->enabled)
 			print '</td></tr></table>';
 			print '<td colspan="2">';
 			print $langs->trans("NoProject").'</td><td>';
-			print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
+			print '<a href=../projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
 			print '</td>';
 		}
 		else
@@ -948,11 +948,11 @@ if ($conf->expedition->enabled)
 				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'classer')
 				{
-					$form->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socidp, $propal->projetidp, 'projetidp');
+					$form->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'projetidp');
 				}
 				else
 				{
-					$form->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socidp, $propal->projetidp, 'none');
+					$form->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'none');
 				}
 				print '</td></tr>';
 			}
@@ -1071,7 +1071,7 @@ if ($conf->expedition->enabled)
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					if (($objp->info_bits & 2) == 2)
 					{
-						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socidp.'">';
+						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
 						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
 						if ($objp->description) print ' - '.nl2br($objp->description);
@@ -1596,7 +1596,7 @@ if ($conf->expedition->enabled)
 	$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 	$sql .= ' WHERE a.propalrowid = '.$propal->id ;
-	if ($socidp) $sql .= ' AND a.fk_soc = '.$socidp;
+	if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -1698,13 +1698,13 @@ else
   $pagenext = $page + 1;
 
   $sql = 'SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
   $sql.= ' WHERE p.fk_soc = s.idp';
 
-  if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+  if (!$user->rights->commercial->client->voir && !$socid) //restriction
     {
 	    $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
     }
@@ -1721,7 +1721,7 @@ else
       $sql .= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
     }
   if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
-  if ($socidp) $sql .= ' AND s.idp = '.$socidp;
+  if ($socid) $sql .= ' AND s.idp = '.$socid;
   if ($_GET['viewstatut'] <> '')
     {
       $sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')';
@@ -1750,16 +1750,16 @@ else
   if ($result)
     {
       $num = $db->num_rows($result);
-      print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socidp='.$socidp,$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
       $i = 0;
       print '<table class="liste" width="100%">';
       print '<tr class="liste_titre">';
-      print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
-      print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
-      print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
-      print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
-      print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.price','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield);
+      print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield);
+      print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
+      print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
+      print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.price','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield);
       print "</tr>\n";
       // Lignes des champs de filtre
       print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';

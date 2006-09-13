@@ -237,7 +237,7 @@ if ($_POST["action"] == 'addinpropal')
 	}
 
   $soc = new Societe($db);
-  $soc->fetch($propal->socidp,$user);
+  $soc->fetch($propal->socid,$user);
 
   $prod = new Product($db, $_GET['id']);
   $result=$prod->fetch($_GET['id']);
@@ -288,7 +288,7 @@ if ($_POST["action"] == 'addincommande')
     $commande->fetch($_POST["commandeid"]);
 
     $soc = new Societe($db);
-    $soc->fetch($commande->socidp,$user);
+    $soc->fetch($commande->socid,$user);
 
     // multiprix
     if ($conf->global->PRODUIT_MULTIPRICES == 1)
@@ -327,7 +327,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
     $facture->fetch($_POST["factureid"]);
 
     $soc = new Societe($db);
-    $soc->fetch($facture->socidp,$user);
+    $soc->fetch($facture->socid,$user);
 
     // multiprix
     if ($conf->global->PRODUIT_MULTIPRICES == 1)

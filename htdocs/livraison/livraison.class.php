@@ -225,7 +225,7 @@ class Livraison extends CommonObject
             $this->date_creation        = $obj->date_creation;
             $this->date_valid           = $obj->date_valid;
             $this->ref                  = $obj->ref;
-            $this->socidp               = $obj->fk_soc;
+            $this->socid               = $obj->fk_soc;
             $this->statut               = $obj->fk_statut;
             $this->commande_id          = $obj->fk_commande;
             $this->expedition_id        = $obj->fk_expedition;
@@ -283,7 +283,7 @@ class Livraison extends CommonObject
 					    // Recuperation de la nouvelle reference
 					    $objMod = new $modName($this->db);
 					    $soc = new Societe($this->db);
-					    $soc->fetch($this->socidp);
+					    $soc->fetch($this->socid);
 
 					    // on vérifie si le bon de livraison est en numérotation provisoire
 					    $livref = substr($this->ref, 1, 4);

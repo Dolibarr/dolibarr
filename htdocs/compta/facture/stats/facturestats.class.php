@@ -40,10 +40,10 @@ class FactureStats extends Stats
 {
   var $db ;
 
-  function FactureStats($DB, $socidp=0)
+  function FactureStats($DB, $socid=0)
     {
       $this->db = $DB;
-      $this->socidp = $socidp;
+      $this->socid = $socid;
     }
 
 
@@ -55,9 +55,9 @@ class FactureStats extends Stats
   {
     $sql = "SELECT date_format(datef,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
-    if ($this->socidp)
+    if ($this->socid)
       {
-	$sql .= " AND fk_soc = ".$this->socidp;
+	$sql .= " AND fk_soc = ".$this->socid;
       }
     $sql .= " GROUP BY dm DESC";
     
@@ -84,9 +84,9 @@ class FactureStats extends Stats
   {
     $sql = "SELECT date_format(datef,'%m') as dm, sum(total)  FROM ".MAIN_DB_PREFIX."facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
-    if ($this->socidp)
+    if ($this->socid)
       {
-	$sql .= " AND fk_soc = ".$this->socidp;
+	$sql .= " AND fk_soc = ".$this->socid;
       }
     $sql .= " GROUP BY dm DESC";
 
@@ -100,9 +100,9 @@ class FactureStats extends Stats
   {
     $sql = "SELECT date_format(datef,'%m') as dm, avg(total) FROM ".MAIN_DB_PREFIX."facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
-    if ($this->socidp)
+    if ($this->socid)
       {
-	$sql .= " AND fk_soc = ".$this->socidp;
+	$sql .= " AND fk_soc = ".$this->socid;
       }
     $sql .= " GROUP BY dm DESC";
 

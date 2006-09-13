@@ -255,7 +255,7 @@ if ($socid > 0)
             {
                 $tableaushown=1;
                 print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$societe->id.'">'.$langs->trans("AllBills").' ('.$num.')</a></td></tr></table></td>';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$societe->id.'">'.$langs->trans("AllBills").' ('.$num.')</a></td></tr></table></td>';
                 print '</tr>';
             }
 
@@ -309,7 +309,7 @@ if ($socid > 0)
             {
                 $tableaushown=1;
                 print '<tr class="liste_titre">';
-                print '<td colspan="2"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/index.php?socidp='.$societe->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
+                print '<td colspan="2"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/index.php?socid='.$societe->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }
             while ($i < $num && $i < $MAXLIST)
@@ -346,7 +346,7 @@ if ($socid > 0)
 		// Si société cliente ou prospect, on affiche bouton "Créer facture client"
 		if ($societe->client != 0 && $conf->facture->enabled && $user->rights->facture->creer) {
 			$langs->load("bills");
-			print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socidp=$societe->id\">".$langs->trans("AddBill")."</a>";
+			print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socid=$societe->id\">".$langs->trans("AddBill")."</a>";
 		}
 	
 		if ($conf->deplacement->enabled) {

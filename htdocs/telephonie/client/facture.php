@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,14 +42,14 @@ require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
 include_once DOL_DOCUMENT_ROOT."/contact.class.php";
 include_once DOL_DOCUMENT_ROOT."/actioncomm.class.php";
 
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
 
 // Sécurité accés client
 if ($user->societe_id > 0)
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 /*
@@ -67,7 +67,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 
       if (is_readable($file))
         {
-	  $soc = new Societe($db, $fac->socidp);
+	  $soc = new Societe($db, $fac->socid);
 
 	  if ($_POST["sendto"]) {
 	    // Le destinataire a été fourni via le champ libre
@@ -144,7 +144,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		  $actioncomm->date        = time();
 		  $actioncomm->percent     = 100;
 		  $actioncomm->contact     = new Contact($db,$sendtoid);
-		  $actioncomm->societe     = new Societe($db,$fac->socidp);
+		  $actioncomm->societe     = new Societe($db,$fac->socid);
 		  $actioncomm->user        = $user;   // User qui a fait l'action
 		  $actioncomm->facid       = $fac->id;
 
@@ -195,8 +195,8 @@ if ($_GET["facid"] > 0)
   $fac = New Facture($db);
   if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
     {      
-      $soc = new Societe($db, $fac->socidp);
-      $soc->fetch($fac->socidp, $user);
+      $soc = new Societe($db, $fac->socid);
+      $soc->fetch($fac->socid, $user);
             
       if (!$soc->perm_read)
 	{
@@ -613,7 +613,7 @@ if ($_GET["facid"] > 0)
       $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
       $sql .= " WHERE a.fk_user_author = u.rowid ";
       $sql .= " AND a.fk_action in (9,10) ";
-      $sql .= " AND a.fk_soc = ".$fac->socidp ;
+      $sql .= " AND a.fk_soc = ".$fac->socid ;
       $sql .= " AND a.fk_facture = ".$fac->id;
 
       $resql = $db->query($sql);

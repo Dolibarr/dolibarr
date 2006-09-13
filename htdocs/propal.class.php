@@ -50,7 +50,7 @@ class Propal extends CommonObject
 
     var $id;
 
-	var $socidp;		// Id client
+	var $socid;		// Id client
 	var $client;		// Objet societe client (à charger par fetch_client)
 
     var $contactid;
@@ -94,15 +94,15 @@ class Propal extends CommonObject
     /**
      *		\brief      Constructeur
      *      \param      DB          Handler d'accès base
-     *      \param      socidp		Id de la société
+     *      \param      socid		Id de la société
      *      \param      propalid    Id de la propal
      */
-    function Propal($DB, $socidp="", $propalid=0)
+    function Propal($DB, $socid="", $propalid=0)
     {
       global $langs;
 
       $this->db = $DB ;
-      $this->socidp = $socidp;
+      $this->socid = $socid;
       $this->id = $propalid;
       $this->products = array();
       $this->remise = 0;
@@ -486,7 +486,7 @@ class Propal extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
         $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite,";
         $sql.= " fk_cond_reglement, fk_mode_reglement, date_livraison, ref_client) ";
-        $sql.= " VALUES ($this->socidp, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
+        $sql.= " VALUES ($this->socid, 0, $this->remise, $this->remise_percent, $this->remise_absolue,";
         $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '".$this->ref."', ".$this->author.",";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
@@ -806,7 +806,7 @@ class Propal extends CommonObject
                 $this->total_ht             = $obj->price;
                 $this->total_tva            = $obj->tva;
                 $this->total_ttc            = $obj->total;
-                $this->socidp               = $obj->fk_soc;
+                $this->socid               = $obj->fk_soc;
                 $this->projetidp            = $obj->fk_projet;
                 $this->modelpdf             = $obj->model_pdf;
                 $this->note                 = $obj->note;
@@ -1144,7 +1144,7 @@ class Propal extends CommonObject
 		if ($user->rights->propale->creer)
 		{
 			//verif que le projet et la société concordent
-			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socidp.' AND p.rowid='.$project_id;
+			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socid.' AND p.rowid='.$project_id;
 			$sqlres = $this->db->query($sql);
 			if ($sqlres)
 			{
@@ -1223,7 +1223,7 @@ class Propal extends CommonObject
                 {
                     // Classe la société rattachée comme client
                     $soc=new Societe($this->db);
-                    $soc->id = $this->socidp;
+                    $soc->id = $this->socid;
                     $result=$soc->set_as_client();
                 }
 
@@ -1858,7 +1858,7 @@ class Propal extends CommonObject
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
         $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison) ";
-        $sql.= " VALUES ('$this->socidp', '0', '$this->remise', '$this->remise_percent', '$this->remise_absolue',";
+        $sql.= " VALUES ('$this->socid', '0', '$this->remise', '$this->remise_percent', '$this->remise_absolue',";
         $sql.= " '0','0','".$this->db->idate($this->datep)."', now(), '$this->ref', '$this->author',";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
@@ -1981,7 +1981,7 @@ class Propal extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
-		$this->socidp = $socids[$socid];
+		$this->socid = $socids[$socid];
 		$this->date = time();
 		$this->fin_validite = $this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';

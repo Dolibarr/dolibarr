@@ -35,7 +35,7 @@ if (!$user->rights->societe->lire) accessforbidden();
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $page=$_GET["page"];
@@ -60,7 +60,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st"
 if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 
-if ($socidp)           $sql .= " AND s.idp = $socidp";
+if ($socid)           $sql .= " AND s.idp = $socid";
 if ($user->societe_id) $sql .= " AND s.idp = " .$user->societe_id;
 if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 

@@ -60,7 +60,7 @@ if ($conf->projet->enabled)
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 llxHeader();
@@ -78,8 +78,8 @@ if ($_GET["id"] > 0) {
 
 	if ( $commande->fetch($_GET["id"], $user->societe_id) > 0)
 		{
-		$soc = new Societe($db, $commande->socidp);
-		$soc->fetch($commande->socidp);
+		$soc = new Societe($db, $commande->socid);
+		$soc->fetch($commande->socid);
 
 
 		$head = commande_prepare_head($commande);
@@ -94,7 +94,7 @@ if ($_GET["id"] > 0) {
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' WHERE c.fk_soc = s.idp';
 		$sql.= ' AND c.rowid = '.$commande->id;
-		if ($socidp) $sql .= ' AND s.idp = '.$socidp;
+		if ($socid) $sql .= ' AND s.idp = '.$socid;
 
 		$result = $db->query($sql);
 

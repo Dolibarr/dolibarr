@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 $langs->load("companies");
 
-$socidp = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
+$socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
@@ -43,7 +43,7 @@ $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 if ($page == -1) { $page = 0 ; }
@@ -62,12 +62,12 @@ llxHeader();
  *
  */
 
-$sql = "SELECT s.nom as societe, s.idp as socidp, s.client,";
+$sql = "SELECT s.nom as societe, s.idp as socid, s.client,";
 $sql.= " a.id,".$db->pdate("a.datep")." as dp, a.fk_contact, a.note, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle, u.code, u.rowid as userid";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
 if ($_GET["type"])
 {
@@ -77,11 +77,11 @@ if ($_GET["time"] == "today")
 {
   $sql .= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
 }
-if ($socidp) 
+if ($socid) 
 {
-  $sql .= " AND s.idp = $socidp";
+  $sql .= " AND s.idp = $socid";
 }
-if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
 	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
@@ -101,10 +101,10 @@ if ($resql)
     if ($status == 'todo') $title="ToDoActions";
 	$param="&status=$status";
 
-    if ($socidp)
+    if ($socid)
     {
         $societe = new Societe($db);
-        $societe->fetch($socidp);
+        $societe->fetch($socid);
 
         print_barre_liste($langs->trans($title."For",$societe->nom), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
     }
@@ -178,7 +178,7 @@ if ($resql)
         if ($obj->client == 1) $url=DOL_URL_ROOT.'/comm/fiche.php?socid=';
         elseif ($obj->client == 2) $url=DOL_URL_ROOT.'/comm/prospect/fiche.php?id=';
         else $url=DOL_URL_ROOT.'/soc.php?socid=';
-        print '&nbsp;<a href="'.$url.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->societe,24).'</a></td>';
+        print '&nbsp;<a href="'.$url.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->societe,24).'</a></td>';
 
         // Contact
         print '<td>';

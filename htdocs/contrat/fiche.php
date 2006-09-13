@@ -50,7 +50,7 @@ $contratid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id > 0)
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 // Protection restriction commercial
@@ -63,7 +63,7 @@ if ($contratid && !$user->rights->commercial->client->voir)
         {
         	$sql .= " AND sc.fk_soc = c.fk_soc AND sc.fk_user = ".$user->id;
         }
-        if ($user->societe_id > 0) $sql .= " AND c.fk_soc = ".$socidp;
+        if ($user->societe_id > 0) $sql .= " AND c.fk_soc = ".$socid;
 
         if ( $db->query($sql) )
         {
@@ -134,7 +134,7 @@ if ($_POST["action"] == 'add')
 
     $contrat = new Contrat($db);
 
-    $contrat->socidp         = $_POST["socidp"];
+    $contrat->socid         = $_POST["socid"];
     $contrat->date_contrat   = $datecontrat;
 
     $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
@@ -154,7 +154,7 @@ if ($_POST["action"] == 'add')
     else {
         $mesg='<div class="error">'.$contrat->error.'</div>';
     }
-    $_GET["socid"]=$_POST["socidp"];
+    $_GET["socid"]=$_POST["socid"];
     $_GET["action"]='create';
     $action = '';
 }
@@ -330,7 +330,7 @@ if ($_GET["action"] == 'create')
             print '<form name="contrat" action="fiche.php" method="post">';
 
             print '<input type="hidden" name="action" value="add">';
-            print '<input type="hidden" name="socidp" value="'.$soc->id.'">'."\n";
+            print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
             print '<input type="hidden" name="remise_percent" value="0">';
 
             print '<table class="border" width="100%">';
@@ -631,11 +631,11 @@ else
             print '</td><td colspan="3">';
             if ($_GET["action"] == "classer")
             {
-                $html->form_project("fiche.php?id=$id",$contrat->socidp,$contrat->fk_projet,"projetid");
+                $html->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_projet,"projetid");
             }
             else
             {
-                $html->form_project("fiche.php?id=$id",$contrat->socidp,$contrat->fk_projet,"none");
+                $html->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_projet,"none");
             }
             print "</td></tr>";
         }
@@ -971,7 +971,7 @@ else
             if ($contrat->statut > 0 && $user->rights->facture->creer)
             {
                 $langs->load("bills");
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;contratid='.$contrat->id.'&amp;socidp='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;contratid='.$contrat->id.'&amp;socid='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
             }
 
             $numclos=$contrat->array_detail(5); // Tableau des lignes au statut clos

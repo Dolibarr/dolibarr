@@ -68,7 +68,7 @@ function propals ($db, $year, $month) {
     $var=!$var;
     print "<tr $bc[$var]>";
     
-    print "<td><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></td>\n";
+    print "<td><a href=\"comp.php?socid=$objp->idp\">$objp->nom</a></td>\n";
     
     print "<td><a href=\"../../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
     
@@ -130,7 +130,7 @@ function factures ($db, $year, $month, $paye) {
 	      $objp = $db->fetch_object($result);
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
-	      print "<td><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></td>\n";
+	      print "<td><a href=\"comp.php?socid=$objp->idp\">$objp->nom</a></td>\n";
 	      print "<td><a href=\"../facture.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
 	      if ($objp->df > 0 )
 		{
@@ -236,7 +236,7 @@ function pt ($db, $sql, $year) {
   }
 }
 
-function ppt ($db, $year, $socidp)
+function ppt ($db, $year, $socid)
 {
   global $bc,$conf,$langs;
   print "<table width=\"100%\">";
@@ -252,9 +252,9 @@ function ppt ($db, $year, $socidp)
   $sql = "SELECT sum(f.price) as sum, round(date_format(f.datep,'%m')) as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep,'%Y') = $year ";
 
-  if ($socidp)
+  if ($socid)
     {
-      $sql .= " AND f.fk_soc = $socidp";
+      $sql .= " AND f.fk_soc = $socid";
     }
 
   $sql .= " GROUP BY dm";
@@ -270,9 +270,9 @@ function ppt ($db, $year, $socidp)
 	$sql .= " AND f.paye = 1";
   }
   $sql .= " AND date_format(f.datef,'%Y') = $year ";
-  if ($socidp)
+  if ($socid)
     {
-      $sql .= " AND f.fk_soc = $socidp";
+      $sql .= " AND f.fk_soc = $socid";
     }
   $sql .= " GROUP BY dm";
   
@@ -300,7 +300,7 @@ function ppt ($db, $year, $socidp)
     }
   
   $ayear = $year - 1;
-  $acat = get_ca($db, $ayear, $socidp) - get_ca_propal($db, $ayear, $socidp);
+  $acat = get_ca($db, $ayear, $socid) - get_ca_propal($db, $ayear, $socid);
 
 
   print "<tr class=\"total\"><td align=\"right\">Total :</td><td align=\"right\">".price($deltat)."</td></tr>";
@@ -324,7 +324,7 @@ llxHeader();
  */
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $cyear = isset($_GET["year"])?$_GET["year"]:0;
@@ -332,7 +332,7 @@ if (! $cyear) { $cyear = strftime ("%Y", time()); }
 
 print_fiche_titre("Chiffre d'Affaire transformé (prévu-réalisé)",($cyear?"<a href='comp.php?year=".($cyear-1)."'>".img_previous()."</a> Année $cyear <a href='comp.php?year=".($cyear+1)."'>".img_next()."</a>":""));
 
-ppt($db, $cyear, $socidp);
+ppt($db, $cyear, $socid);
 
 if ($details == 1)
 {

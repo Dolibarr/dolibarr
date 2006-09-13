@@ -39,7 +39,7 @@ class Fichinter extends CommonObject
 
     var $id;
     
-	var $socidp;		// Id client
+	var $socid;		// Id client
 	var $client;		// Objet societe client (à charger par fetch_client)
 
     var $author;
@@ -53,14 +53,14 @@ class Fichinter extends CommonObject
     /**
      *    \brief      Constructeur de la classe
      *    \param      DB            Handler accès base de données
-     *    \param      socidp		Id societe
+     *    \param      socid			Id societe
      */
-    function Fichinter($DB, $socidp="")
+    function Fichinter($DB, $socid="")
     {
         global $langs;
 
         $this->db = $DB ;
-        $this->socidp = $socidp;
+        $this->socid = $socid;
         $this->products = array();
         $this->projet_id = 0;
 
@@ -85,7 +85,7 @@ class Fichinter extends CommonObject
             $sql .=  ",fk_projet";
         }
         $sql .= ") ";
-        $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '".addslashes($this->note)."', $this->duree";
+        $sql .= " VALUES ($this->socid, $this->date, now(), '$this->ref', $this->author, '".addslashes($this->note)."', $this->duree";
         if ($this->projet_id) {
             $sql .= ", $this->projet_id";
         }
@@ -200,7 +200,7 @@ class Fichinter extends CommonObject
                 $this->duree      = $obj->duree;
                 $this->ref        = $obj->ref;
                 $this->note       = $obj->note;
-                $this->socidp     = $obj->fk_soc;
+                $this->socid     = $obj->fk_soc;
                 $this->societe_id = $obj->fk_soc;		// A virer, obsolete
                 $this->projet_id  = $obj->fk_projet;
                 $this->statut     = $obj->fk_statut;

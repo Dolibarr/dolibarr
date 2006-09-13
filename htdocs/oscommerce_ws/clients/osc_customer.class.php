@@ -134,10 +134,10 @@ class Osc_customer
 /**
 *      \brief      Mise à jour de la table de transition
 *      \param      oscid      Id du client dans OsC 
-*	   \param	   socidp	  champ société.idp 	
+*	   \param	   socid	  champ société.idp 	
 *      \return     int     <0 si ko, >0 si ok
 */
-	function transcode($oscid, $socidp )
+	function transcode($oscid, $socid)
 	{
 
 		print "entree transcode <br>";
@@ -156,7 +156,7 @@ class Osc_customer
 //            $this->db->rollback();
 //            return -1;
 		}
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_customer VALUES (".$oscid." ,  now() , ".$socidp.") ;";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_customer VALUES (".$oscid." ,  now() , ".$socid.") ;";
 
 		$result=$this->db->query($sql);
         if ($result)
@@ -176,7 +176,9 @@ class Osc_customer
 
 	function get_clientid($osc_client)
 	{
-		$sql = "SELECT doli_socidp FROM ".MAIN_DB_PREFIX."osc_customer WHERE osc_custid = ".$osc_client.";";
+		$sql = "SELECT doli_socidp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."osc_customer";
+		$sql.= " WHERE osc_custid = ".$osc_client;
 		$result=$this->db->query($sql);
 		$row = $this->db->fetch_row($resql);
 // test d'erreurs

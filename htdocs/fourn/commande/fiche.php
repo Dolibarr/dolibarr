@@ -39,11 +39,11 @@ if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 
 // Sécurité accés client
-$socidp=0;
+$socid=0;
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $mesg='';
@@ -134,7 +134,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
     $commande = new CommandeFournisseur($db);
     $commande->fetch($_GET["id"]);
     $soc = new Societe($db);
-    $soc->fetch($commande->socidp);
+    $soc->fetch($commande->socid);
     $result = $commande->valid($user);
     if ($result >= 0)
     {
@@ -268,7 +268,7 @@ if ($_GET["id"] > 0)
 	if ( $commande->fetch($_GET["id"]) == 0)
 	{
 		$soc = new Societe($db);
-		$soc->fetch($commande->socidp);
+		$soc->fetch($commande->socid);
 
 		$author = new User($db);
 		$author->id = $commande->user_author_id;
@@ -324,7 +324,7 @@ if ($_GET["id"] > 0)
 				require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 				$notify=new Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage(3,$commande->socidp);
+				$text.=$notify->confirmMessage(3,$commande->socid);
 			}
 
 			$html->form_confirm("fiche.php?id=".$commande->id,$langs->trans("ValidateOrder"),$text,"confirm_valid");
@@ -651,7 +651,7 @@ if ($_GET["id"] > 0)
 			print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
 			$proj = new Project($db);
-			$html->select_array("projetid",$proj->liste_array($commande->socidp));
+			$html->select_array("projetid",$proj->liste_array($commande->socid));
 
 			print "</td></tr>";
 			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Send").'"></td></tr></table></form>';

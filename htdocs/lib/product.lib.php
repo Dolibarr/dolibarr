@@ -130,7 +130,7 @@ function product_prepare_head($product)
 }
 
 
-function show_stats_for_company($product,$socidp)
+function show_stats_for_company($product,$socid)
 {
 	global $conf,$langs,$user,$db;
 	
@@ -144,7 +144,7 @@ function show_stats_for_company($product,$socidp)
     // Propals
     if ($conf->propal->enabled && $user->rights->propale->lire)
     {
-        $ret=$product->load_stats_propale($socidp);
+        $ret=$product->load_stats_propale($socid);
         if ($ret < 0) dolibarr_print_error($db);
         $langs->load("propal");
         print '<tr><td>';
@@ -161,7 +161,7 @@ function show_stats_for_company($product,$socidp)
     // Commandes clients
     if ($conf->commande->enabled && $user->rights->commande->lire)
     {
-        $ret=$product->load_stats_commande($socidp);
+        $ret=$product->load_stats_commande($socid);
         if ($ret < 0) dolibarr_print_error($db);
         $langs->load("orders");
         print '<tr><td>';
@@ -178,7 +178,7 @@ function show_stats_for_company($product,$socidp)
     // Commandes fournisseurs
     if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
     {
-        $ret=$product->load_stats_commande_fournisseur($socidp);
+        $ret=$product->load_stats_commande_fournisseur($socid);
         if ($ret < 0) dolibarr_print_error($db);
         $langs->load("orders");
         print '<tr><td>';
@@ -195,7 +195,7 @@ function show_stats_for_company($product,$socidp)
     // Contrats
     if ($conf->contrat->enabled && $user->rights->contrat->lire)
     {
-        $ret=$product->load_stats_contrat($socidp);
+        $ret=$product->load_stats_contrat($socid);
         if ($ret < 0) dolibarr_print_error($db);
         $langs->load("contracts");
         print '<tr><td>';
@@ -212,7 +212,7 @@ function show_stats_for_company($product,$socidp)
     // Factures clients
     if ($conf->facture->enabled && $user->rights->facture->lire)
     {
-        $ret=$product->load_stats_facture($socidp);
+        $ret=$product->load_stats_facture($socid);
         if ($ret < 0) dolibarr_print_error($db);
         $langs->load("bills");
         print '<tr><td>';
@@ -229,7 +229,7 @@ function show_stats_for_company($product,$socidp)
     // Factures fournisseurs
     if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
     {
-        $ret=$product->load_stats_facture_fournisseur($socidp);
+        $ret=$product->load_stats_facture_fournisseur($socid);
         if ($ret < 0) dolibarr_print_error($db);
         $langs->load("bills");
         print '<tr><td>';

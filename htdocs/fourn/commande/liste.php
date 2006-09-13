@@ -78,7 +78,7 @@ $sql .= " WHERE cf.fk_soc = s.idp ";
 
 if ($socid)
 {
-    $sql .= " AND s.idp=$socid";
+    $sql .= " AND s.idp=".$socid;
 }
 
 if (strlen($_GET["statut"]))

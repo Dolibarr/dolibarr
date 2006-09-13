@@ -37,7 +37,7 @@ llxHeader();
  */
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $mode='recettes';
@@ -54,9 +54,9 @@ if ($conf->compta->mode != 'CREANCES-DETTES')
 { 
   $sql .= " AND f.paye = 1";
 }
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " GROUP BY dm";
 
@@ -70,9 +70,9 @@ $sql .= " WHERE f.fk_statut = 1";
 if ($conf->compta->mode != 'CREANCES-DETTES') { 
 	$sql .= " AND f.paye = 1";
 }
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " GROUP BY dm";
 

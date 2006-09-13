@@ -46,7 +46,7 @@ if (!$user->rights->propale->lire)
 if ($user->societe_id > 0) 
 {
 	unset($_GET['action']);
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 /******************************************************************************/
@@ -109,7 +109,7 @@ if ($_GET['propalid'])
 	if ( $propal->fetch($_GET['propalid']) )
 	{
 		$societe = new Societe($db);
-		if ( $societe->fetch($propal->socidp) )
+		if ( $societe->fetch($propal->socid) )
 		{
 			$head = propal_prepare_head($propal);
 			dolibarr_fiche_head($head, 'note', $langs->trans('Proposal'));

@@ -32,7 +32,7 @@ llxHeader('','Telephonie - Ligne - Liste');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 if ($sortorder == "") {
@@ -61,7 +61,7 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT g.nom as gnom, s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, l.statut, l.rowid, l.remise";
+$sql = "SELECT g.nom as gnom, s.idp as socid, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, l.statut, l.rowid, l.remise";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
 

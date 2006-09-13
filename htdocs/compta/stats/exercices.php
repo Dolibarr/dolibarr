@@ -34,7 +34,7 @@ llxHeader();
  */
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $mode='recettes';
@@ -74,7 +74,7 @@ function factures ($db, $year, $month, $paye)
 	$objp = $db->fetch_object($result);
 	$var=!$var;
 	print "<TR $bc[$var]>";
-	print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
+	print "<TD><a href=\"comp.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	print "<TD><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
 	if ($objp->df > 0 ) {
 	  print "<TD align=\"right\">".dolibarr_print_date($objp->df)."</TD>\n";
@@ -173,7 +173,7 @@ function pt ($db, $sql, $year) {
   }
 }
 
-function ppt ($db, $year, $socidp)
+function ppt ($db, $year, $socid)
 {
   global $bc,$conf,$langs;
   print "<table width=\"100%\">";
@@ -193,9 +193,9 @@ function ppt ($db, $year, $socidp)
     if ($conf->compta->mode != 'CREANCES-DETTES') { 
     	$sql .= " AND f.paye = 1";
     }
-    if ($socidp)
+    if ($socid)
     {
-      $sql .= " AND f.fk_soc = $socidp";
+      $sql .= " AND f.fk_soc = $socid";
     }
   $sql .= " GROUP BY dm";
   
@@ -210,9 +210,9 @@ function ppt ($db, $year, $socidp)
   if ($conf->compta->mode != 'CREANCES-DETTES') { 
 	$sql .= " AND f.paye = 1";
   }
-  if ($socidp)
+  if ($socid)
     {
-      $sql .= " AND f.fk_soc = $socidp";
+      $sql .= " AND f.fk_soc = $socid";
     }
   $sql .= " GROUP BY dm";
   
@@ -251,7 +251,7 @@ function ppt ($db, $year, $socidp)
 
 
 $cyear = strftime ("%Y", time());
-ppt($db, $cyear, $socidp);
+ppt($db, $cyear, $socid);
 
 $db->close();
 

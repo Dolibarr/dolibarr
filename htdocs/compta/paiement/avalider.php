@@ -37,11 +37,11 @@ $langs->load("bills");
 if (! $user->rights->facture->lire)
   accessforbidden();
 
-$socidp=0;
+$socid=0;
 if ($user->societe_id > 0) 
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 
@@ -63,15 +63,15 @@ $offset = $limit * $page ;
 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount, p.statut";
 $sql .=", c.libelle as paiement_type, p.num_paiement";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
-if ($socidp)
+if ($socid)
 {
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
 $sql .= " WHERE p.fk_paiement = c.id";
-if ($socidp)
+if ($socid)
 {
-    $sql.= " AND f.fk_soc = ".$socidp;
+    $sql.= " AND f.fk_soc = ".$socid;
 }
 $sql .= " AND p.statut = 0";
 $sql .= " ORDER BY $sortfield $sortorder";

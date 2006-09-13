@@ -35,7 +35,7 @@ llxHeader('','Telephonie - Contrats');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 /*
@@ -61,7 +61,7 @@ print '<br />';
 
 /* Consultations */
 
-$sql = "SELECT s.idp as socidp, s.nom, max(sc.datec) as dam, c.ref, c.rowid";
+$sql = "SELECT s.idp as socid, s.nom, max(sc.datec) as dam, c.ref, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_consult as sc";
@@ -82,14 +82,14 @@ if ($resql)
   while ($obj = $db->fetch_object($resql))
     {
       print "<tr $bc[$var]><td>";
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
       print img_file();      
       print '</a>&nbsp;';
       $nom = $obj->nom;
       if (strlen($obj->nom) > 33)
 	$nom = substr($obj->nom,0,30)."...";
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($nom).'</a></td>';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($nom).'</a></td>';
 
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">'.$obj->ref.'</a></td>';
 
@@ -152,7 +152,7 @@ else
 print '</td><td valign="top" width="70%">';
 
 $sql = "SELECT c.ref, c.rowid, c.statut";
-$sql .= " ,s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom";
+$sql .= " ,s.idp as socid, sf.idp as sfidp, sf.nom as nom_facture,s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -197,7 +197,7 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($obj->nom).'</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->nom_facture).'</a></td>';
 
       print "</tr>\n";

@@ -37,7 +37,7 @@ $langs->load("tax");
  * Action ajout en bookmark
  */
 if ($action == 'add_bookmark') {
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socid, now(),".$user->id.");";
   if (! $db->query($sql) ) {
     print $db->error();
   }

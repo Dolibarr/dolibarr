@@ -82,7 +82,7 @@ class CommandeFournisseur extends Commande
     
             $this->id                  = $obj->rowid;
             $this->ref                 = $obj->ref;
-            $this->socidp              = $obj->fk_soc;
+            $this->socid              = $obj->fk_soc;
             $this->fourn_id            = $obj->fk_soc;
             $this->statut              = $obj->fk_statut;
             $this->user_author_id      = $obj->fk_user_author;
@@ -538,7 +538,7 @@ class CommandeFournisseur extends Commande
      */
     function create($user)
     {
-        dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->socidp);
+        dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->socid);
 
         $this->db->begin();
         
@@ -546,7 +546,7 @@ class CommandeFournisseur extends Commande
         $this->brouillon = 1;
     
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (fk_soc, date_creation, fk_user_author, fk_statut) ";
-        $sql .= " VALUES (".$this->socidp.", now(), ".$user->id.",0)";
+        $sql .= " VALUES (".$this->socid.", now(), ".$user->id.",0)";
     
         if ( $this->db->query($sql) )
         {

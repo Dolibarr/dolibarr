@@ -113,7 +113,7 @@ if ($result) {
         $var=!$var;
             
         print "<tr $bc[$var]><td>&nbsp</td>";
-        print "<td>".$langs->trans("Bills")." <a href=\"../facture.php?socidp=$objp->idp\">$objp->nom</td>\n";
+        print "<td>".$langs->trans("Bills")." <a href=\"../facture.php?socid=$objp->idp\">$objp->nom</td>\n";
         
         if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
         print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";

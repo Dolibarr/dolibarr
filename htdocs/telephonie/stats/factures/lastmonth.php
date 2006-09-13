@@ -35,7 +35,7 @@ llxHeader('','Telephonie - Ligne');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $h = 0;

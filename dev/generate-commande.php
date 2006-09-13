@@ -139,7 +139,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 
     $com = new Commande($db);
     
-    $com->socidp         = 4;
+    $com->socid         = 4;
     $com->date_commande  = $dates[rand(1, sizeof($dates)-1)];
     $com->note           = $_POST["note"];
     $com->source         = 1;

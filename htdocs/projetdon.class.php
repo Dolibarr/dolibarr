@@ -26,7 +26,7 @@ class ProjetDon {
   var $db;
   var $ref;
   var $title;
-  var $socidp;
+  var $socid;
 
   function ProjetDon($DB) {
     $this->db = $DB;

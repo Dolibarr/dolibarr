@@ -51,7 +51,7 @@ if ($_GET["id"] > 0)
 
 	if ( $commande->fetch($_GET["id"]) == 0)
 	{
-		$soc->fetch($commande->socidp);
+		$soc->fetch($commande->socid);
 
 		$author = new User($db);
 		$author->id = $commande->user_author_id;

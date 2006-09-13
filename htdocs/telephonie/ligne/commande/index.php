@@ -37,7 +37,7 @@ llxHeader('','Telephonie - Ligne - Commande');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 /*

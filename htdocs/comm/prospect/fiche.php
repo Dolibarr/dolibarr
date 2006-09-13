@@ -177,7 +177,7 @@ if ($socid > 0)
         {
             $tableaushown=1;
             print '<tr class="liste_titre">';
-            print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socidp='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
+            print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
             print '</tr>';
         }
 
@@ -222,12 +222,12 @@ if ($socid > 0)
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
     {
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
     }
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
     {
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
+        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
     }
     print '</div>';
 

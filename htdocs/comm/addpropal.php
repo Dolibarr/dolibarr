@@ -71,7 +71,7 @@ if ($_GET["projetid"])
 if ($_GET["action"] == 'create')
 {
     $soc = new Societe($db);
-    $result=$soc->fetch($_GET["socidp"]);
+    $result=$soc->fetch($_GET["socid"]);
     if ($result < 0)
     {
         dolibarr_print_error($db,$soc->error);
@@ -97,7 +97,7 @@ if ($_GET["action"] == 'create')
 	    }
     }
 
-    print "<form name='addprop' action=\"propal.php?socidp=".$soc->id."\" method=\"post\">";
+    print "<form name='addprop' action=\"propal.php?socid=".$soc->id."\" method=\"post\">";
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
     print '<table class="border" width="100%">';
@@ -112,7 +112,7 @@ if ($_GET["action"] == 'create')
 
 	// Societe
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->getNomUrl(1);
-	print '<input type="hidden" name="socidp" value="'.$soc->id.'">';
+	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
 	print '</tr>';
 
@@ -218,7 +218,7 @@ if ($conf->expedition->enabled)
 	{
 		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
 		print '<td colspan="3">';
-		$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id',1);
+		$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
 		if ($numaddress==0)
 		{
 			print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
@@ -245,7 +245,7 @@ if ($conf->expedition->enabled)
         $numprojet=$html->select_projects($soc->id,$projetid,'projetidp');
         if ($numprojet==0)
         {
-            print ' &nbsp; <a href="../projet/fiche.php?socidp='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+            print ' &nbsp; <a href="../projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
         }
         print '</td>';
 		print '</tr>';

@@ -36,7 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 llxHeader();
@@ -57,7 +57,7 @@ $HEIGHT=200;
 
 print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 
-$stats = new CommandeStats($db, $socidp);
+$stats = new CommandeStats($db, $socid);
 $data = $stats->getNbByMonth($year);
 
 create_exdir($conf->commande->dir_temp);

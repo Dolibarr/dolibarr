@@ -45,7 +45,7 @@ else {
  */
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $modecompta = $conf->compta->mode;
@@ -95,7 +95,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
     $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid";
 }
-if ($socidp) $sql .= " AND f.fk_soc = $socidp";
+if ($socid) $sql .= " AND f.fk_soc = $socid";
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";
 
@@ -160,9 +160,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " ON f.rowid = p.fk_facture_fourn";
 	$sql .= " WHERE 1=1";
 }
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " GROUP BY dm";
 

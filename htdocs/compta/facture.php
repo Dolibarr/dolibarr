@@ -55,13 +55,13 @@ $langs->load('main');
 
 $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
 $mesg=isset($_GET['mesg'])?urldecode($_GET['mesg']):'';
-$socidp=isset($_GET['socidp'])?$_GET['socidp']:$_POST['socidp'];
+$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 
 // Sécurité accés client
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 // Récupération de l'id de projet
@@ -152,7 +152,7 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
 	$soc = new Societe($db);
-	$soc->fetch($fac->socidp);
+	$soc->fetch($fac->socid);
 	$result = $fac->set_valid($fac->id, $user, $soc);
 	if ($result >= 0)
 	{
@@ -270,7 +270,7 @@ if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' 
 if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 {
 	$facture = new Facture($db);
-	$facture->socidp=$_POST['socid'];
+	$facture->socid=$_POST['socid'];
 	$facture->fetch_client();
 
 	$db->begin();
@@ -313,7 +313,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		// Si facture récurrente
 		$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
-		$facture->socidp 		 = $_POST['socid'];
+		$facture->socid 		 = $_POST['socid'];
 		$facture->type           = $_POST['type'];
 		$facture->number         = $_POST['facnumber'];
 		$facture->date           = $datefacture;
@@ -331,7 +331,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		// Si facture standard
 		$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
-		$facture->socidp 		 = $_POST['socid'];
+		$facture->socid 		 = $_POST['socid'];
 		$facture->type           = $_POST['type'];
 		$facture->number         = $_POST['facnumber'];
 		$facture->date           = $datefacture;
@@ -534,7 +534,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$fac = new Facture($db);
 		$ret=$fac->fetch($_POST['facid']);
 		$soc = new Societe($db);
-		$ret=$soc->fetch($fac->socidp);
+		$ret=$soc->fetch($fac->socid);
 		
 		$date_start='';
 		$date_end='';
@@ -752,7 +752,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 
 		if (is_readable($file))
 		{			
-			$soc = new Societe($db, $fac->socidp);
+			$soc = new Societe($db, $fac->socid);
 
 			if ($_POST['sendto']) {
 				// Le destinataire a été fourni via le champ libre
@@ -836,7 +836,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						$actioncomm->date        = time();
 						$actioncomm->percent     = 100;
 						$actioncomm->contact     = new Contact($db,$sendtoid);
-						$actioncomm->societe     = new Societe($db,$fac->socidp);
+						$actioncomm->societe     = new Societe($db,$fac->socid);
 						$actioncomm->user        = $user;   // User qui a fait l'action
 						$actioncomm->facid       = $fac->id;
 	
@@ -966,7 +966,7 @@ if ($_GET['action'] == 'create')
 	{
 		$propal = New Propal($db);
 		$propal->fetch($_GET['propalid']);
-		$societe_id = $propal->socidp;
+		$societe_id = $propal->socid;
 		$projetid=$propal->projetidp;
 		$ref_client=$propal->ref_client;
 
@@ -980,7 +980,7 @@ if ($_GET['action'] == 'create')
 	{
 		$commande = New Commande($db);
 		$commande->fetch($_GET['commandeid']);
-		$societe_id = $commande->socidp;
+		$societe_id = $commande->socid;
 		$projetid=$commande-> projet_id;
 		$ref_client=$commande->ref_client;
 
@@ -1005,7 +1005,7 @@ if ($_GET['action'] == 'create')
 	}
 	else
 	{
-		$societe_id=$socidp;
+		$societe_id=$socid;
 
 		$soc->fetch($societe_id);
 		$cond_reglement_id = $soc->cond_reglement;
@@ -1043,7 +1043,7 @@ if ($_GET['action'] == 'create')
 	// Societe
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
 	print $soc->getNomUrl(1);
-	print '<input type="hidden" name="socidp" value="'.$soc->id.'">';
+	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
 	print '</tr>';
 
@@ -1419,7 +1419,7 @@ if ($_GET['action'] == 'create')
 				print '<tr '.$bc[$var].'><td>';
 				if (($objp->info_bits & 2) == 2)
 				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socidp.'">';
+					print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
 					print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 					print '</a>';
 				}
@@ -1482,8 +1482,8 @@ else
 		$fac = New Facture($db);
 		if ( $fac->fetch($_GET['facid'], $user->societe_id) > 0)
 		{
-			$soc = new Societe($db, $fac->socidp);
-			$soc->fetch($fac->socidp);
+			$soc = new Societe($db, $fac->socid);
+			$soc->fetch($fac->socid);
 			$absolute_discount=$soc->getCurrentDiscount();
 
  			$totalpaye = $fac->getSommePaiement();
@@ -1533,7 +1533,7 @@ else
 					require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 					$notify=new Notify($db);
 					$text.='<br>';
-					$text.=$notify->confirmMessage(2,$fac->socidp);
+					$text.=$notify->confirmMessage(2,$fac->socid);
 				}
 
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$text,'confirm_valid');
@@ -1839,11 +1839,11 @@ else
 				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'classer')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socidp,$fac->projetid,'projetid');
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'projetid');
 				}
 				else
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socidp,$fac->projetid,'none');
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'none');
 				}
 				print '</td>';
 				print '</tr>';
@@ -1926,7 +1926,7 @@ else
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							if (($objp->info_bits & 2) == 2)
 							{
-								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$fac->socidp.'">';
+								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$fac->socid.'">';
 								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 								print '</a>';
 								if ($objp->description) print ' - '.nl2br($objp->description);
@@ -2516,7 +2516,7 @@ else
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u ';
 			$sql .= ' WHERE a.fk_user_author = u.rowid ';
 			$sql .= ' AND a.fk_action in (9,10) ';
-			$sql .= ' AND a.fk_soc = '.$fac->socidp ;
+			$sql .= ' AND a.fk_soc = '.$fac->socid ;
 			$sql .= ' AND a.fk_facture = '.$fac->id;
 
 			$resql = $db->query($sql);
@@ -2709,7 +2709,7 @@ else
 		if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture ';
 		if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON f.rowid=fd.fk_facture ';
 		$sql.= ' WHERE f.fk_soc = s.idp';
-		if ($socidp) $sql .= ' AND s.idp = '.$socidp;
+		if ($socid) $sql .= ' AND s.idp = '.$socid;
 		if ($month > 0) $sql .= ' AND date_format(f.datef, \'%m\') = '.$month;
 		if ($_GET['filtre'])
 		{
@@ -2764,24 +2764,24 @@ else
 		{
 			$num = $db->num_rows($resql);
 
-			if ($socidp)
+			if ($socid)
 			{
 				$soc = new Societe($db);
-				$soc->fetch($socidp);
+				$soc->fetch($socid);
 			}
 
-			print_barre_liste($langs->trans('BillsCustomers').' '.($socidp?' '.$soc->nom:''),$page,'facture.php','&amp;socidp='.$socidp,$sortfield,$sortorder,'',$num);
+			print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
 
 			$i = 0;
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','','&amp;socidp='.$socidp,'',$sortfield);
-			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','','&amp;socidp='.$socidp,'align="center"',$sortfield);
-			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','','&amp;socidp='.$socidp,'',$sortfield);
-			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','','&amp;socidp='.$socidp,'align="right"',$sortfield);
-			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socidp='.$socidp,'align="right"',$sortfield);
-			print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socidp='.$socidp,'align="right"',$sortfield);
-			print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socidp='.$socidp,'align="right"',$sortfield);
+			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','','&amp;socid='.$socid,'',$sortfield);
+			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','','&amp;socid='.$socid,'align="center"',$sortfield);
+			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','','&amp;socid='.$socid,'',$sortfield);
+			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','','&amp;socid='.$socid,'align="right"',$sortfield);
+			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socid='.$socid,'align="right"',$sortfield);
+			print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socid='.$socid,'align="right"',$sortfield);
+			print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socid='.$socid,'align="right"',$sortfield);
 			print '</tr>';
 
 			// Lignes des champs de filtre

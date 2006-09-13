@@ -40,12 +40,12 @@ $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 
 // Sécurité accés client
-$socidp='';
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+$socid='';
+if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $staticcontrat=new Contrat($db);
@@ -106,13 +106,13 @@ $sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > sysdate()",1,0
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= sysdate())",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.statut, s.nom, s.idp as sidp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.idp ";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp > 0) $sql .= " AND s.idp = ".$socidp;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid > 0) $sql .= " AND s.idp = ".$socid;
 $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
 $sql.= " ORDER BY c.datec DESC";
 $sql.= " LIMIT $max";
@@ -169,13 +169,13 @@ print '<br>';
 
 // Not activated services
 $sql = "SELECT cd.rowid as cid, c.ref, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.statut=1 AND cd.statut = 0";
 $sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp > 0) $sql.= " AND s.idp = ".$socidp;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid > 0) $sql.= " AND s.idp = ".$socid;
 $sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
@@ -223,12 +223,12 @@ print '<br>';
 $max=5;
 
 $sql = "SELECT cd.rowid as cid, c.ref, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp > 0) $sql.= " AND s.idp = ".$socidp;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid > 0) $sql.= " AND s.idp = ".$socid;
 $sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )

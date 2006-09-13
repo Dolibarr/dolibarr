@@ -77,7 +77,7 @@ if ($_GET["id"])
 	  
 	  /* Lignes */
 	     
-	  $sql = "SELECT s.idp as socidp, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
+	  $sql = "SELECT s.idp as socid, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 	  $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";

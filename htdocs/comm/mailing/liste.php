@@ -34,7 +34,7 @@ if (!$user->rights->mailing->lire) accessforbidden();
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $page=$_GET["page"];

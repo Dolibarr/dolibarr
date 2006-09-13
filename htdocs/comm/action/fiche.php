@@ -43,7 +43,7 @@ $langs->load("orders");
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 if (isset($_GET["error"])) $error=$_GET["error"];
 

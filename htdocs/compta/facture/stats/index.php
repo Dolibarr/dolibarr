@@ -37,14 +37,14 @@ $HEIGHT=200;
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 llxHeader();
 
 print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
 
-$stats = new FactureStats($db, $socidp);
+$stats = new FactureStats($db, $socid);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 
@@ -70,9 +70,9 @@ if (! $mesg)
 }
       
 $sql = "SELECT count(*) as nb, date_format(datef,'%Y') as dm, sum(total) as total FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND fk_soc = $socidp";
+  $sql .= " AND fk_soc = $socid";
 }
 $sql .= " GROUP BY dm DESC ";
 $resql=$db->query($sql);

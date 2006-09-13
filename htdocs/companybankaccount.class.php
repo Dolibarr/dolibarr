@@ -22,7 +22,7 @@
 class CompanyBankAccount
 {
 	var $rowid;
-	var $socidp;
+	var $socid;
 		
 	var $bank;
 	var $courant;
@@ -41,7 +41,7 @@ class CompanyBankAccount
     global $config;
     
     $this->db = $DB;
-    $this->socidp = $socid;
+    $this->socid = $socid;
 
     $this->clos = 0;
     $this->solde = 0;
@@ -56,7 +56,7 @@ class CompanyBankAccount
    */
   function create()
     {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socidp, now());";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, now());";
       if ($this->db->query($sql))
 	{
 	  if ($this->db->affected_rows()) 
@@ -79,7 +79,7 @@ class CompanyBankAccount
   {      
     
     $sql = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."societe_rib ";
-    $sql .= " WHERE fk_soc = ".$this->socidp;
+    $sql .= " WHERE fk_soc = ".$this->socid;
 
     $result = $this->db->query($sql);
 
@@ -116,7 +116,7 @@ class CompanyBankAccount
     $sql .= ",proprio = '".addslashes($this->proprio)."'";
     $sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
     
-    $sql .= " WHERE fk_soc = ".$this->socidp;
+    $sql .= " WHERE fk_soc = ".$this->socid;
     
     $result = $this->db->query($sql);
     
@@ -139,7 +139,7 @@ class CompanyBankAccount
   {
 
     $sql = "SELECT rowid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."societe_rib";
-    $sql .= " WHERE fk_soc  = ".$this->socidp;
+    $sql .= " WHERE fk_soc  = ".$this->socid;
 
     $result = $this->db->query($sql);
 

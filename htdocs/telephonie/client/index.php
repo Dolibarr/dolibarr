@@ -32,7 +32,7 @@ llxHeader('','Telephonie - Clients');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 /*
@@ -92,7 +92,7 @@ print '<br />';
  * Liste
  *
  */
-$sql = "SELECT s.idp as socidp, s.nom, max(sc.datec) as dam";
+$sql = "SELECT s.idp as socid, s.nom, max(sc.datec) as dam";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."societe_consult as sc";
 $sql .= " WHERE s.idp = sc.fk_soc";
@@ -111,14 +111,14 @@ if ($resql)
   while ($obj = $db->fetch_object($resql))
     {
       print "<tr $bc[$var]><td>";
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
       print img_file();      
       print '</a>&nbsp;';
       $nom = $obj->nom;
       if (strlen($obj->nom) > 33)
 	$nom = substr($obj->nom,0,30)."...";
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($nom).'</a></td>';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($nom).'</a></td>';
 
       print "</tr>\n";
       $var=!$var;
@@ -138,7 +138,7 @@ print '</td><td valign="top" width="70%" rowspan="3">';
  * Liste
  *
  */
-$sql = "SELECT s.idp as socidp, s.nom, count(l.ligne) as ligne";
+$sql = "SELECT s.idp as socid, s.nom, count(l.ligne) as ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
@@ -170,11 +170,11 @@ if ($resql)
 
       print "<tr $bc[$var]><td>";
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($obj->nom).'</a></td>';
       print '<td align="center">'.$obj->ligne."</td>\n";
 
       print "</tr>\n";
@@ -191,7 +191,7 @@ else
 print "<br />";
 /* Commentaires */
 
-$sql = "SELECT s.idp as socidp, s.nom, c.commentaire";
+$sql = "SELECT s.idp as socid, s.nom, c.commentaire";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_commentaire as c";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
@@ -210,13 +210,13 @@ if ($resql)
     {
       $var=!$var;
       print "<tr $bc[$var]><td>";
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
       print img_file();      
       print '</a>&nbsp;';
       $nom = $obj->nom;
       if (strlen($obj->nom) > 33)
 	$nom = substr($obj->nom,0,30)."...";
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($nom).'</a></td>';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($nom).'</a></td>';
       print '<td>'.stripslashes($obj->commentaire)."</td>\n";
       print "</tr>\n";
     }

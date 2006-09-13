@@ -103,7 +103,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-		show_stats_for_company($product,$socidp);
+		show_stats_for_company($product,$socid);
 
         print '</table>';
         print '</div>';

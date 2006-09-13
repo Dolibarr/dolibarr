@@ -45,7 +45,7 @@ $langs->load("bills");
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -64,8 +64,8 @@ if ($_GET["facid"] > 0)
     $fac = New Facture($db);
     if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
     {
-        $soc = new Societe($db, $fac->socidp);
-        $soc->fetch($fac->socidp);
+        $soc = new Societe($db, $fac->socid);
+        $soc->fetch($fac->socid);
         $author = new User($db);
         if ($fac->user_author)
         {

@@ -337,7 +337,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  /*
 	   * Contrats existants
 	   */
-	  $sql = "SELECT c.rowid, c.ref, s.idp as socidp, s.nom ";
+	  $sql = "SELECT c.rowid, c.ref, s.idp as socid, s.nom ";
 	  $sql .= ", sf.idp as sfidp, sf.nom as sfnom";
 	  $sql .= ", sa.idp as saidp, sa.nom as sanom";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -377,9 +377,9 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 		      print '</a>&nbsp;';
 		      print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 		      
-		      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($obj->nom).'</a></td>';
 		      
-		      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->sanom).'</a></td>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($obj->sanom).'</a></td>';
 		      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->sfnom).'</a></td>';
 		      
 		      print "</tr>\n";

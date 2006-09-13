@@ -43,8 +43,8 @@ llxHeader();
 $fac = new FactureFournisseur($db);
 $fac->fetch($_GET["facid"]);
 $fac->info($_GET["facid"]);
-$soc = new Societe($db, $fac->socidp);
-$soc->fetch($fac->socidp);
+$soc = new Societe($db, $fac->socid);
+$soc->fetch($fac->socid);
 
 $head = facturefourn_prepare_head($fac);
 $titre=$langs->trans('SupplierInvoice');

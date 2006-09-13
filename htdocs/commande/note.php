@@ -30,7 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/order.lib.php');
 
-$socidp=isset($_GET["socidp"])?$_GET["socidp"]:isset($_POST["socidp"])?$_POST["socidp"]:"";
+$socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 
 $user->getrights('commande');
 if (!$user->rights->commande->lire)
@@ -44,7 +44,7 @@ $langs->load("orders");
 if ($user->societe_id > 0) 
 {
   unset($_GET["action"]);
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -100,8 +100,8 @@ $html = new Form($db);
 
 if ($_GET["id"])
 {
-    $soc = new Societe($db, $commande->socidp);
-    $soc->fetch($commande->socidp);
+    $soc = new Societe($db, $commande->socid);
+    $soc->fetch($commande->socid);
 
     $head = commande_prepare_head($commande);
 

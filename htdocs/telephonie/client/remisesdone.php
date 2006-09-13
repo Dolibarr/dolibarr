@@ -32,7 +32,7 @@ llxHeader('','Telephonie - Clients - Remises');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 if ($sortorder == "") {
@@ -55,7 +55,7 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT s.idp as socidp, s.nom, r.amount, f.facnumber, r.fk_facture";
+$sql = "SELECT s.idp as socid, s.nom, r.amount, f.facnumber, r.fk_facture";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_client_remise as r";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
@@ -110,11 +110,11 @@ if ($result)
 
       print "<tr $bc[$var]><td>";
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.$obj->nom.'</a></td>';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom.'</a></td>';
 
       print '<td align="right">'.price($obj->amount)." euros HT</td>\n";
       print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.$obj->facnumber."</a></td>\n";

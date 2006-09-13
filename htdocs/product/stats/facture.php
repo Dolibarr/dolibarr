@@ -51,10 +51,10 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
 
 // Securite
-$socidp = 0;
+$socid = 0;
 if ($user->societe_id > 0)
 {
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 
@@ -108,7 +108,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
         print '</td></tr>';
 
-		show_stats_for_company($product,$socidp);
+		show_stats_for_company($product,$socid);
     
         print "</table>";
 
@@ -117,15 +117,15 @@ if ($_GET["id"] || $_GET["ref"])
 
         $sql = "SELECT distinct(s.nom), s.idp, s.code_client, f.facnumber, f.amount as amount,";
         $sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
-        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d";
-        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE f.fk_soc = s.idp";
         $sql.= " AND d.fk_facture = f.rowid AND d.fk_product =".$product->id;
-        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-        if ($socidp)
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($socid)
         {
-            $sql .= " AND f.fk_soc = $socidp";
+            $sql .= " AND f.fk_soc = $socid";
         }
         $sql.= " ORDER BY $sortfield $sortorder ";
         $sql.= $db->plimit($conf->liste_limit +1, $offset);
@@ -161,7 +161,7 @@ if ($_GET["id"] || $_GET["ref"])
                     print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' ';
                     print $objp->facnumber;
                     print "</a></td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socidp='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";

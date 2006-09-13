@@ -44,7 +44,7 @@ if ($projetid == '' && ($_GET['action'] != "create" && $_POST['action'] != "add"
 
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 // Protection restriction commercial
@@ -55,7 +55,7 @@ if ($projetid && !$user->rights->commercial->client->voir)
 	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ";
 	$sql.= " WHERE p.rowid = ".$projetid;
 	if (!$user->rights->commercial->client->voir) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socidp) $sql .= " AND p.fk_soc = ".$socidp;
+	if ($socid) $sql .= " AND p.fk_soc = ".$socid;
 	
 	if ( $db->query($sql) )
 	{
@@ -67,7 +67,7 @@ if ($projetid && !$user->rights->commercial->client->voir)
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
   $pro = new Project($db);
-  $pro->socidp = $_GET["socidp"];
+  $pro->socid = $_GET["socid"];
   $pro->ref = $_POST["ref"];
   $pro->title = $_POST["title"];
   $result = $pro->create($user);
@@ -133,7 +133,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   if ($mesg) print $mesg;
   
-  print '<form action="fiche.php?socidp='.$_GET["socidp"].'" method="post">';
+  print '<form action="fiche.php?socid='.$_GET["socid"].'" method="post">';
 
   print '<table class="border" width="100%">';
   print '<input type="hidden" name="action" value="add">';
@@ -143,7 +143,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   print '<tr><td>'.$langs->trans("Company").'</td><td>';
   $societe = new Societe($db);
-  $societe->fetch($_GET["socidp"]); 
+  $societe->fetch($_GET["socid"]); 
   print $societe->getNomUrl(1);
   print '</td></tr>';
 

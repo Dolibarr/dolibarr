@@ -113,7 +113,7 @@ if ($_GET["id"])
 	  
 	  /* Lignes */
 	     
-	  $sql = "SELECT s.idp as socidp, f.nom as fournisseur, s.nom";
+	  $sql = "SELECT s.idp as socid, f.nom as fournisseur, s.nom";
 	  $sql .= ", ss.nom as agence, ss.ville, ss.code_client";
 	  $sql .= " , l.ligne,  l.statut, l.rowid, l.remise";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";

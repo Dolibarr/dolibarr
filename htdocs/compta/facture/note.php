@@ -30,7 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 
-$socidp=isset($_GET["socidp"])?$_GET["socidp"]:isset($_POST["socidp"])?$_POST["socidp"]:"";
+$socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 
 $user->getrights('facture');
 if (!$user->rights->facture->lire)
@@ -43,7 +43,7 @@ $langs->load("bills");
 if ($user->societe_id > 0) 
 {
   unset($_GET["action"]);
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -99,8 +99,8 @@ $html = new Form($db);
 
 if ($_GET["facid"])
 {
-    $soc = new Societe($db, $fac->socidp);
-    $soc->fetch($fac->socidp);
+    $soc = new Societe($db, $fac->socid);
+    $soc->fetch($fac->socid);
 
     $head = facture_prepare_head($fac);
     $hselected = 2;

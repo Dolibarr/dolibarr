@@ -39,12 +39,12 @@ $langs->load("commercial");
 $langs->load("orders");
 
 // Sécurité accés client
-$socidp='';
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+$socid='';
+if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $max=5;
@@ -60,12 +60,12 @@ if ($conf->propal->enabled) $propalstatic=new Propal($db);
 
 if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$_GET["socidp"]." AND fk_user=".$user->id;
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$_GET["socid"]." AND fk_user=".$user->id;
   if (! $db->query($sql) )
     {
       dolibarr_print_error($db);
     }
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socidp"].", now(),".$user->id.");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socid"].", now(),".$user->id.");";
   if (! $db->query($sql) )
     {
       dolibarr_print_error($db);
@@ -131,15 +131,15 @@ if ($conf->contrat->enabled)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     $sql = "SELECT p.rowid, p.ref, p.price, s.idp, s.nom";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
-    if ($socidp) 
+    if ($socid) 
     {
-       $sql .= " AND s.idp = $socidp";
+       $sql .= " AND s.idp = $socid";
     }
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
  
     $resql=$db->query($sql);
     if ($resql)
@@ -183,14 +183,14 @@ if ($conf->commande->enabled)
 {
     $langs->load("orders");
     $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-    if ($socidp)
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid)
     {
-        $sql .= " AND c.fk_soc = $socidp";
+        $sql .= " AND c.fk_soc = $socid";
     }
 
     $resql = $db->query($sql);
@@ -233,9 +233,9 @@ if ($conf->commande->enabled)
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
-if ($socidp)
+if ($socid)
 { 
-  $sql .= " AND s.idp = $socidp"; 
+  $sql .= " AND s.idp = $socid"; 
 }
 $sql .= " ORDER BY lower(s.nom) ASC";
 
@@ -279,14 +279,14 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  */
 
 $sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp)
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)
 {
-    $sql .= " AND s.idp = $socidp";
+    $sql .= " AND s.idp = $socid";
 }
 $sql .= " ORDER BY a.datep DESC, a.id DESC";
 
@@ -350,15 +350,15 @@ else
  */
 
 $sql = "SELECT a.id, a.percent, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE c.id=a.fk_action AND a.percent >= 100 AND s.idp = a.fk_soc";
-if ($socidp)
+if ($socid)
 {
-	$sql .= " AND s.idp = ".$socidp;
+	$sql .= " AND s.idp = ".$socid;
 }
-if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
 	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
@@ -419,15 +419,15 @@ else
 if ($user->rights->societe->lire)
 {
     $sql = "SELECT s.idp,s.nom,".$db->pdate("datec")." as datec";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE s.client = 1";
-    if ($socidp)
+    if ($socid)
     {
-        $sql .= " AND s.idp = $socidp";
+        $sql .= " AND s.idp = $socid";
     }
-    if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+    if (!$user->rights->commercial->client->voir && !$socid) //restriction
     {
 	      $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
     }
@@ -476,15 +476,15 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
   $langs->load("contracts");
   
   $sql = "SELECT s.nom, s.idp, c.statut, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p";
-  if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   $sql .= " WHERE c.fk_soc = s.idp and c.fk_product = p.rowid";
-  if ($socidp)
+  if ($socid)
     { 
-      $sql .= " AND s.idp = $socidp"; 
+      $sql .= " AND s.idp = $socid"; 
     }
-  if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+  if (!$user->rights->commercial->client->voir && !$socid) //restriction
   {
 	    $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
   }
@@ -531,12 +531,12 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
     $langs->load("propal");
     
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 1";
-    if ($socidp) $sql .= " AND s.idp = $socidp";
-    if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid) $sql .= " AND s.idp = $socid";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
     $sql .= " ORDER BY p.rowid DESC";
     
     $result=$db->query($sql);
@@ -588,15 +588,15 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
     $NBMAX=5;
     
 	$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut > 1";
-	if ($socidp)
+	if ($socid)
 	{ 
-	  $sql .= " AND s.idp = $socidp"; 
+	  $sql .= " AND s.idp = $socid"; 
 	}
-	if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$sql .= " ORDER BY p.rowid DESC";
 	$sql .= $db->plimit($NBMAX, 0);
 	

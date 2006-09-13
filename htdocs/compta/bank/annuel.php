@@ -47,7 +47,7 @@ else
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 

@@ -35,7 +35,7 @@ llxHeader('','Telephonie - Services - Liste');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 if ($sortorder == "") {
@@ -86,7 +86,7 @@ if ($_GET["id"])
       dolibarr_fiche_head($head, $hselected, 'Service : '.$service->id);
       
       
-      $sql = "SELECT s.idp as socidp, s.nom as nom_facture";
+      $sql = "SELECT s.idp as socid, s.nom as nom_facture";
       $sql .= " , c.ref, cs.montant, c.rowid as crowid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
       $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";

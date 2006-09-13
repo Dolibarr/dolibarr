@@ -53,25 +53,25 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Sécurité accés client
-$socidp = $_GET["socidp"];
+$socid = $_GET["socid"];
 if ($user->societe_id > 0)
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 $sql = "SELECT s.nom, s.idp,";                                  // Ou
 $sql.= " d.rowid, ".$db->pdate("d.dated")." as dd, d.km, ";     // Comment
 $sql.= " u.name, u.firstname";                                  // Qui
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE d.fk_soc = s.idp AND d.fk_user = u.rowid";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-if ($socidp)
+if ($socid)
 {
-  $sql .= " AND s.idp = $socidp";
+  $sql .= " AND s.idp = $socid";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
@@ -81,16 +81,16 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
 
-  print_barre_liste($langs->trans("ListOfTrips"), $page, "index.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans("ListOfTrips"), $page, "index.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"index.php","d.rowid","","&socidp=$socidp",'',$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"index.php","d.dated","","&socidp=$socidp",'',$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&socidp=$socidp",'',$sortfield);
-  print_liste_field_titre($langs->trans("Person"),"index.php","u.name","","&socidp=$socidp",'',$sortfield);
-  print_liste_field_titre($langs->trans("Distance"),"index.php","d.km","","&socidp=$socidp",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Ref"),"index.php","d.rowid","","&socid=$socid",'',$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"index.php","d.dated","","&socid=$socid",'',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&socid=$socid",'',$sortfield);
+  print_liste_field_titre($langs->trans("Person"),"index.php","u.name","","&socid=$socid",'',$sortfield);
+  print_liste_field_titre($langs->trans("Distance"),"index.php","d.km","","&socid=$socid",'align="right"',$sortfield);
   print "</tr>\n";
 
   $var=true;

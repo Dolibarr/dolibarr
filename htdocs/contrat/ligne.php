@@ -51,7 +51,7 @@ accessforbidden();
 if ($user->societe_id > 0)
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 
@@ -112,7 +112,7 @@ if ($id > 0)
     if ( $contrat->fetch($id) > 0)
     {
         $soc = new Societe($db);
-        $soc->fetch($contrat->socidp);
+        $soc->fetch($contrat->socid);
 
         $author = new User($db);
         $author->id = $contrat->user_author_id;

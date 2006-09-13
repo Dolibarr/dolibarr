@@ -192,7 +192,7 @@ class RejetPrelevement
             $emuser->fetch();
     
             $soc = new Societe($this->db);
-            $soc->fetch($fac->socidp);
+            $soc->fetch($fac->socid);
     
             require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
     

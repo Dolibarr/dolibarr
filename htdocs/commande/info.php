@@ -49,8 +49,8 @@ llxHeader();
 $commande = new Commande($db);
 $commande->fetch($_GET["id"]);
 $commande->info($_GET["id"]);
-$soc = new Societe($db, $commande->socidp);
-$soc->fetch($commande->socidp);
+$soc = new Societe($db, $commande->socid);
+$soc->fetch($commande->socid);
 
 $head = commande_prepare_head($commande);
 dolibarr_fiche_head($head, 'info', $langs->trans("CustomerOrder"));

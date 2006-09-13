@@ -43,7 +43,7 @@ class FactureRec extends Facture
 
 	var $id ;
 
-	var $socidp;		// Id client
+	var $socid;		// Id client
 	var $client;		// Objet societe client (à charger par fetch_client)
 
     var $number;
@@ -97,7 +97,7 @@ class FactureRec extends Facture
             $this->brouillon = 1;
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (titre, fk_soc, datec, amount, remise, remise_percent, note, fk_user_author,fk_projet, fk_cond_reglement) ";
-            $sql.= " VALUES ('$this->titre', '$facsrc->socidp', now(), '$facsrc->amount', '$facsrc->remise', '$facsrc->remise_percent', '".addslashes($this->note)."','$user->id',";
+            $sql.= " VALUES ('$this->titre', '$facsrc->socid', now(), '$facsrc->amount', '$facsrc->remise', '$facsrc->remise_percent', '".addslashes($this->note)."','$user->id',";
             $sql.= " ".($facsrc->projetid?"'".$facsrc->projetid."'":"null").", ";
             $sql.= " '".$facsrc->cond_reglement_id."')";
             if ( $this->db->query($sql) )
@@ -175,7 +175,7 @@ class FactureRec extends Facture
                 $this->total_ttc          = $obj->total_ttc;
                 $this->paye               = $obj->paye;
                 $this->remise_percent     = $obj->remise_percent;
-                $this->socidp             = $obj->fk_soc;
+                $this->socid             = $obj->fk_soc;
                 $this->statut             = $obj->fk_statut;
                 $this->date_lim_reglement     = $obj->dlr;
                 $this->cond_reglement_id      = $obj->crid;

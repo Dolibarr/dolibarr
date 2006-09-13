@@ -48,11 +48,11 @@ $langs->load("companies");
 llxHeader();
 
 // Sécurité accés client
-$socidp='';
+$socid='';
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 if ($page == -1) { $page = 0 ; }
@@ -69,12 +69,12 @@ if (! $sortfield) $sortfield="nom";
 
 $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp) $sql .= " AND s.idp=$socidp";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql .= " AND s.idp=".$socid;
 if ($socname) {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
   $sortfield = "lower(s.nom)";

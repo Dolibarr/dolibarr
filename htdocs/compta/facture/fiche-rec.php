@@ -58,7 +58,7 @@ $sortfield="f.datef";
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -283,8 +283,8 @@ else
 
 		if ( $fac->fetch($facid, $user->societe_id) > 0)
 		{
-			$soc = new Societe($db, $fac->socidp);
-			$soc->fetch($fac->socidp);
+			$soc = new Societe($db, $fac->socid);
+			$soc->fetch($fac->socid);
 			$author = new User($db);
 			$author->id = $fac->user_author;
 			$author->fetch();
@@ -402,8 +402,8 @@ else
 				$sql = "SELECT s.nom,s.idp,f.titre,f.total,f.rowid as facid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f WHERE f.fk_soc = s.idp";
 
-				if ($socidp)
-				$sql .= " AND s.idp = $socidp";
+				if ($socid)
+				$sql .= " AND s.idp = $socid";
 
 				//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
 				//	$sql .= $db->plimit($limit + 1,$offset);
@@ -413,13 +413,13 @@ else
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				print_barre_liste($langs->trans("RepeatableInvoice"),$page,"fiche-rec.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+				print_barre_liste($langs->trans("RepeatableInvoice"),$page,"fiche-rec.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 
 				$i = 0;
 				print "<table class=\"noborder\" width=\"100%\">";
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Ref").'</td>';
-				print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socidp=$socidp");
+				print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socid=$socid");
 				print '</td><td align="right">'.$langs->trans("Amount").'</td>';
 				print '<td>&nbsp;</td>';
 				print "</td>\n";

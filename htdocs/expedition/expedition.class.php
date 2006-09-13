@@ -710,7 +710,7 @@ class Expedition extends CommonObject
         $this->date                 = time();
         $this->entrepot_id          = 0;
         $this->adresse_livraison_id = 0;
-		$this->socidp = $socids[$socid];
+		$this->socid = $socids[$socid];
 
 		$nbp = 5;
 		$xnbp = 0;

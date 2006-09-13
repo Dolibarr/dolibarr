@@ -34,14 +34,13 @@ if (!$user->rights->fournisseur->facture->lire)
 
 $langs->load("companies");
 
-//on devrait uniformiser soit sur socid, soit sur socidp
-$socidp = $_GET["socidp"];
+$socid = $_GET["socid"];
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $_GET["action"] = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $page=$_GET["page"];
@@ -74,7 +73,7 @@ if ($_POST["mode"] == 'search')
       if ( $db->num_rows() == 1)
 	{
 	  $obj = $db->fetch_object();
-	  $socidp = $obj->idp;
+	  $socid = $obj->idp;
 	}
       $db->free();
     }
@@ -92,14 +91,14 @@ llxHeader();
 
 $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("fac.date_lim_reglement")." as date_echeance, fac.total_ht";
 $sql .= ", fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, fac.rowid as facid, fac.facnumber";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE fac.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp)
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)
 {
-  $sql .= " AND s.idp = $socidp";
+  $sql .= " AND s.idp = ".$socid;
 }
 if ($_GET["filtre"])
   {
@@ -145,22 +144,22 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    if ($socidp) {
+    if ($socid) {
         $soc = new Societe($db);
-        $soc->fetch($socidp);
+        $soc->fetch($socid);
     }
 
-    print_barre_liste($langs->trans("BillsSuppliers").($socidp?" $soc->nom":""),$page,"index.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
 
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socidp=$socidp","","",$sortfield);
-    print_liste_field_titre($langs->trans("DateEcheance"),"index.php","fac.datef","&amp;socidp=$socidp","","",$sortfield);
-    print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socidp=$socidp","","",$sortfield);
-    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socidp=$socidp","","",$sortfield);
-    print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socidp=$socidp","",'align="right"',$sortfield);
-    print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","&amp;socidp=$socidp","",'align="right"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","&amp;socidp=$socidp","",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("DateEcheance"),"index.php","fac.datef","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socid=$socid","",'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","&amp;socid=$socid","",'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","&amp;socid=$socid","",'align="center"',$sortfield);
     print "</tr>\n";
 
     // Lignes des champs de filtre

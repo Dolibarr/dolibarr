@@ -50,7 +50,7 @@ $langs->load('compta');
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
@@ -71,8 +71,8 @@ if ($_GET["propalid"] > 0)
 
 	if ( $propal->fetch($_GET["propalid"], $user->societe_id) > 0)
 	{
-		$soc = new Societe($db, $propal->socidp);
-		$soc->fetch($propal->socidp);
+		$soc = new Societe($db, $propal->socid);
+		$soc->fetch($propal->socid);
 
 		$head = propal_prepare_head($propal);
 		dolibarr_fiche_head($head, 'preview', $langs->trans('Proposal'));
@@ -85,7 +85,7 @@ if ($_GET["propalid"] > 0)
 		$sql.= ' p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
 		$sql.= ' WHERE p.fk_soc = s.idp AND p.rowid = '.$propal->id;
-		if ($socidp) $sql .= ' AND s.idp = '.$socidp;
+		if ($socid) $sql .= ' AND s.idp = '.$socid;
 
 		$result = $db->query($sql);
 

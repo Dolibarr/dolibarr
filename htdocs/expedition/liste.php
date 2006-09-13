@@ -35,7 +35,7 @@ if (!$user->rights->expedition->lire) accessforbidden();
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:"";
@@ -58,17 +58,17 @@ $offset = $limit * $_GET["page"] ;
 llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut, s.nom as socname, s.idp, c.ref as comref, c.rowid as comid";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
-if ($socidp) $sql.=", ".MAIN_DB_PREFIX."commande as c";
-if ($user->rights->commercial->client->voir && !$socidp) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON c.rowid = e.fk_commande";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
+if ($socid) $sql.=", ".MAIN_DB_PREFIX."commande as c";
+if ($user->rights->commercial->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON c.rowid = e.fk_commande";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = c.fk_soc";
 
 $sql_add = " WHERE ";
-if ($socidp)
+if ($socid)
 { 
-  $sql.= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = ".$socidp; 
+  $sql.= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = ".$socid; 
   $sql_add = " AND ";
 }
 if ($_POST["sf_ref"])
@@ -76,7 +76,7 @@ if ($_POST["sf_ref"])
   $sql.= $sql_add . " e.ref like '%".addslashes($_POST["sf_ref"])."%'";
   $sql_add = " AND ";
 }
-if (!$user->rights->commercial->client->voir && !$socidp) //restriction
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
 	$sql .= $sql_add . " e.fk_commande = c.rowid AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
@@ -91,17 +91,17 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   
-  print_barre_liste($langs->trans('ListOfSendings'), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans('ListOfSendings'), $_GET["page"], "liste.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
   
   $i = 0;
   print '<table class="noborder" width="100%">';
   
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", "&amp;socidp=$socidp",'width="25%" align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("Order"),"liste.php","c.ref", "", "&amp;socidp=$socidp",'width="25%" align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","e.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", "&amp;socid=$socid",'width="25%" align="left"',$sortfield);
+  print_liste_field_titre($langs->trans("Order"),"liste.php","c.ref", "", "&amp;socid=$socid",'width="25%" align="left"',$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"liste.php","e.date_expedition","","&amp;socid=$socid", 'width="25%" align="right" colspan="2"',$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socid=$socid",'width="10%" align="center"',$sortfield);
   print "</tr>\n";
   $var=True;
   

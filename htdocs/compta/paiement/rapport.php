@@ -37,11 +37,11 @@ if (! $user->rights->facture->lire)
 
 $dir = $conf->compta->dir_output;
 
-$socidp=0;
+$socid=0;
 if ($user->societe_id > 0) 
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 	$dir = DOL_DATA_ROOT.'/private/'.$user->id.'/compta';
 }
 

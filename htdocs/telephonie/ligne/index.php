@@ -35,7 +35,7 @@ llxHeader('','Telephonie - Lignes');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 /*
@@ -152,7 +152,7 @@ if ($user->rights->telephonie->fournisseur->lire)
 
 print '</td><td valign="top" width="70%">';
 
-$sql = "SELECT s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
+$sql = "SELECT s.idp as socid, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
@@ -212,7 +212,7 @@ if ($resql)
 	  $nom = substr(stripslashes($obj->nom),0,20)."...";
 	}
 
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.$nom.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$nom.'</a></td>';
 
       print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 

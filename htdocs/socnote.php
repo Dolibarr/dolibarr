@@ -38,18 +38,18 @@ $langs->load("companies");
 $user->getrights('commercial');
 
 // Protection quand utilisateur externe
-$socidp = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
+$socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
 if ($user->societe_id > 0)
 {
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 // Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socidp && !$user->societe_id > 0)
+if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
 {
         $sql = "SELECT sc.fk_soc, s.client";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socidp." AND sc.fk_user = ".$user->id." AND s.client = 1";
+        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id." AND s.client = 1";
 
         if ( $db->query($sql) )
         {
@@ -64,7 +64,7 @@ if ($_POST["action"] == 'add')
   $result = $db->query($sql);
 
   $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
-  $socidp = $_GET["socid"];
+  $socid = $_GET["socid"];
 }
 
 
@@ -74,10 +74,10 @@ if ($_POST["action"] == 'add')
 
 llxHeader();
 
-if ($socidp > 0)
+if ($socid > 0)
 {
-    $societe = new Societe($db, $socidp);
-    $societe->fetch($socidp);
+    $societe = new Societe($db, $socid);
+    $societe->fetch($socid);
     
 	/*
 	 * Affichage onglets

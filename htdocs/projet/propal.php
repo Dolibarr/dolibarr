@@ -48,7 +48,7 @@ if ($projetid == '') accessforbidden();
 
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 // Protection restriction commercial
@@ -59,7 +59,7 @@ if ($projetid)
 	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ";
 	$sql.= " WHERE p.rowid = ".$projetid;
 	if (!$user->rights->commercial->client->voir) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socidp) $sql .= " AND p.fk_soc = ".$socidp;
+	if ($socid) $sql .= " AND p.fk_soc = ".$socid;
 	
 	if ( $db->query($sql) )
 	{
@@ -128,7 +128,7 @@ print '</div>';
  if ($conf->propal->enabled && $user->rights->propale->creer)
  {
      $langs->load("propal");
-     print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddProp").'</a>';
+     print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddProp").'</a>';
  }
  print '</div>';
 

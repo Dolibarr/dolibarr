@@ -33,411 +33,407 @@
 
 class Cotisation
 {
-  var $id;
-  var $db;
-  var $date;
-  var $amount;
-  var $prenom;
-  var $nom;
-  var $societe;
-  var $adresse;
-  var $cp;
-  var $ville;
-  var $pays;
-  var $email;
-  var $public;
-  var $projetid;
-  var $modepaiement;
-  var $modepaiementid;
-  var $commentaire;
-  var $statut;
+	var $id;
+	var $db;
+	var $date;
+	var $amount;
+	var $prenom;
+	var $nom;
+	var $societe;
+	var $adresse;
+	var $cp;
+	var $ville;
+	var $pays;
+	var $email;
+	var $public;
+	var $projetid;
+	var $modepaiement;
+	var $modepaiementid;
+	var $commentaire;
+	var $statut;
 
-  var $projet;
-  var $errorstr;
+	var $projet;
+	var $errorstr;
 
-    /*!
-    		\brief Cotisation
-    		\param DB				base de données
-    		\param socidp
-    */
-
-	function Cotisation($DB, $socidp="")
-    {
-      $this->db = $DB ;
-      $this->modepaiementid = 0;
-    }
-
-
-  /*
-   *
-   *
-   */
-
-  function print_error_list()
-  {
-    $num = sizeof($this->errorstr);
-    for ($i = 0 ; $i < $num ; $i++)
-      {
-	print "<li>" . $this->errorstr[$i];
-      }
-  }
+	/**
+			\brief Cotisation
+			\param DB				Handler base de données
+			\param socid			ID societe
+	*/
+	function Cotisation($DB, $socid="")
+	{
+		$this->db = $DB ;
+		$this->modepaiementid = 0;
+	}
+	
 
 	/*
-   *
-   *
-   */
-
-	function check($minimum=0)
-    {
-      $err = 0;
-
-      if (strlen(trim($this->societe)) == 0)
+	*
+	*
+	*/
+	function print_error_list()
 	{
-	  if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
-	    {
-	      $error_string[$err] = "Vous devez saisir vos nom et prénom ou le nom de votre société.";
-	      $err++;
-	    }
-	}
-
-      if (strlen(trim($this->adresse)) == 0)
-	{
-	  $error_string[$err] = "L'adresse saisie est invalide";
-	  $err++;
-	}
-
-      if (strlen(trim($this->cp)) == 0)
-	{
-	  $error_string[$err] = "Le code postal saisi est invalide";
-	  $err++;
-	}
-
-      if (strlen(trim($this->ville)) == 0)
-	{
-	  $error_string[$err] = "La ville saisie est invalide";
-	  $err++;
-	}
-
-      if (strlen(trim($this->email)) == 0)
-	{
-	  $error_string[$err] = "L'email saisi est invalide";
-	  $err++;
-	}
-
-      $this->amount = trim($this->amount);
-
-      $map = range(0,9);
-      for ($i = 0; $i < strlen($this->amount) ; $i++)
-	{
-	  if (!isset($map[substr($this->amount, $i, 1)] ))
-	    {
-	      $error_string[$err] = "Le montant du don contient un/des caractère(s) invalide(s)";
-	      $err++;
-	      $amount_invalid = 1;
-	      break;
-	    } 	      
-	}
-
-      if (! $amount_invalid)
-	{
-	  if ($this->amount == 0)
-	    {
-	      $error_string[$err] = "Le montant du don est null";
-	      $err++;
-	    }
-	  else
-	    {
-	      if ($this->amount < $minimum && $minimum > 0)
+		$num = sizeof($this->errorstr);
+		for ($i = 0 ; $i < $num ; $i++)
 		{
-		  $error_string[$err] = "Le montant minimum du don est de $minimum";
-		  $err++;
+			print "<li>" . $this->errorstr[$i];
 		}
-	    }
 	}
-      
-      /*
-       * Return errors
-       *
-       */
 
-      if ($err)
+	/*
+	*
+	*
+	*/
+	function check($minimum=0)
 	{
-	  $this->errorstr = $error_string;
-	  return 0;
-	}
-      else
-	{
-	  return 1;
+		$err = 0;
+
+		if (strlen(trim($this->societe)) == 0)
+		{
+			if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
+			{
+				$error_string[$err] = "Vous devez saisir vos nom et prénom ou le nom de votre société.";
+				$err++;
+			}
+		}
+
+		if (strlen(trim($this->adresse)) == 0)
+		{
+			$error_string[$err] = "L'adresse saisie est invalide";
+			$err++;
+		}
+
+		if (strlen(trim($this->cp)) == 0)
+		{
+			$error_string[$err] = "Le code postal saisi est invalide";
+			$err++;
+		}
+
+		if (strlen(trim($this->ville)) == 0)
+		{
+			$error_string[$err] = "La ville saisie est invalide";
+			$err++;
+		}
+
+		if (strlen(trim($this->email)) == 0)
+		{
+			$error_string[$err] = "L'email saisi est invalide";
+			$err++;
+		}
+
+		$this->amount = trim($this->amount);
+
+		$map = range(0,9);
+		for ($i = 0; $i < strlen($this->amount) ; $i++)
+		{
+			if (!isset($map[substr($this->amount, $i, 1)] ))
+			{
+				$error_string[$err] = "Le montant du don contient un/des caractère(s) invalide(s)";
+				$err++;
+				$amount_invalid = 1;
+				break;
+			}
+		}
+
+		if (! $amount_invalid)
+		{
+			if ($this->amount == 0)
+			{
+				$error_string[$err] = "Le montant du don est null";
+				$err++;
+			}
+			else
+			{
+				if ($this->amount < $minimum && $minimum > 0)
+				{
+					$error_string[$err] = "Le montant minimum du don est de $minimum";
+					$err++;
+				}
+			}
+		}
+
+		/*
+		* Return errors
+		*
+		*/
+
+		if ($err)
+		{
+			$this->errorstr = $error_string;
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+
 	}
 
-    }
-
-/*!
+	/**
 		\brief fonction qui permet de créer le don
 		\param userid			userid de l'adhérent
-*/
-
+	*/
 	function create($userid)
-    {
-      /*
-       *  Insertion dans la base
-       */
-
-      $this->date = $this->db->idate($this->date);
-
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon, email)";
-      $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date','$this->email')";
-      
-      $result = $this->db->query($sql);
-      
-      if ($result) 
 	{
-	  return $this->db->last_insert_id(MAIN_DB_PREFIX."don");
+		/*
+		*  Insertion dans la base
+		*/
+
+		$this->date = $this->db->idate($this->date);
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon, email)";
+		$sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date','$this->email')";
+
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			return $this->db->last_insert_id(MAIN_DB_PREFIX."don");
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
 	}
-      else
+
+	/*!
+	\brief fonction qui permet de mettre à jour le don
+	\param userid			userid de l'adhérent
+	*/
+
+	function update($userid)
 	{
-	    dolibarr_print_error($this->db);
-	    return 0;
-	}  
-    }
 
-/*!
-		\brief fonction qui permet de mettre à jour le don
-		\param userid			userid de l'adhérent
-*/
+		$this->date = $this->db->idate($this->date);
 
-  function update($userid)
-    {
-      
-      $this->date = $this->db->idate($this->date);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
+		$sql .= "amount = " . $this->amount;
+		$sql .= ",fk_paiement = ".$this->modepaiementid;
+		$sql .= ",prenom = '".$this->prenom ."'";
+		$sql .= ",nom='".$this->nom."'";
+		$sql .= ",societe='".$this->societe."'";
+		$sql .= ",adresse='".$this->adresse."'";
+		$sql .= ",cp='".$this->cp."'";
+		$sql .= ",ville='".$this->ville."'";
+		$sql .= ",pays='".$this->pays."'";
+		$sql .= ",public=".$this->public;
+		$sql .= ",fk_don_projet=".$this->projetid;
+		$sql .= ",note='".$this->commentaire."'";
+		$sql .= ",datedon='".$this->date."'";
+		$sql .= ",email='".$this->email."'";
+		$sql .= ",fk_statut=".$this->statut;
 
-      $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
-      $sql .= "amount = " . $this->amount;
-      $sql .= ",fk_paiement = ".$this->modepaiementid;
-      $sql .= ",prenom = '".$this->prenom ."'";
-      $sql .= ",nom='".$this->nom."'";
-      $sql .= ",societe='".$this->societe."'";
-      $sql .= ",adresse='".$this->adresse."'";
-      $sql .= ",cp='".$this->cp."'";
-      $sql .= ",ville='".$this->ville."'";
-      $sql .= ",pays='".$this->pays."'";
-      $sql .= ",public=".$this->public;
-      $sql .= ",fk_don_projet=".$this->projetid;
-      $sql .= ",note='".$this->commentaire."'";
-      $sql .= ",datedon='".$this->date."'";
-      $sql .= ",email='".$this->email."'";
-      $sql .= ",fk_statut=".$this->statut;
+		$sql .= " WHERE rowid = $this->id";
 
-      $sql .= " WHERE rowid = $this->id";
-      
-      $result = $this->db->query($sql);
-      
-      if ($result) 
-	{
-	  return 1;
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
 	}
-      else
+
+	/*!
+	\brief fonction qui permet de supprimer le don
+	\param rowid
+	*/
+
+	function delete($rowid)
+
 	{
-	    dolibarr_print_error($this->db);
-	    return 0;
-	}  
-    }
 
-    /*!
-    		\brief fonction qui permet de supprimer le don
-    		\param rowid
-    */
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 
-  function delete($rowid)
+		if ( $this->db->query( $sql) )
+		{
+			if ( $this->db->affected_rows() )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
+	}
 
-  {
+	/*!
+	\brief fonction qui permet de récupèrer le don
+	\param rowid
+	*/
 
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
+	function fetch($rowid)
+	{
+		$sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
+		$sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."don_projet as p, ".MAIN_DB_PREFIX."c_paiement as cp";
 
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-	    dolibarr_print_error($this->db);
-	    return 0;
-      }
-  }
+		$sql .= " WHERE p.rowid = d.fk_don_projet AND cp.id = d.fk_paiement AND d.rowid = $rowid";
 
-    /*!
-    		\brief fonction qui permet de récupèrer le don
-    		\param rowid
-    */
+		if ( $this->db->query( $sql) )
+		{
+			if ($this->db->num_rows())
+			{
 
-  function fetch($rowid)
-  {
-    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."don_projet as p, ".MAIN_DB_PREFIX."c_paiement as cp";
+				$obj = $this->db->fetch_object();
 
-    $sql .= " WHERE p.rowid = d.fk_don_projet AND cp.id = d.fk_paiement AND d.rowid = $rowid";
+				$this->id             = $obj->rowid;
+				$this->date           = $obj->datedon;
+				$this->prenom         = stripslashes($obj->prenom);
+				$this->nom            = stripslashes($obj->nom);
+				$this->societe        = stripslashes($obj->societe);
+				$this->statut         = $obj->fk_statut;
+				$this->adresse        = stripslashes($obj->adresse);
+				$this->cp             = stripslashes($obj->cp);
+				$this->ville          = stripslashes($obj->ville);
+				$this->email          = stripslashes($obj->email);
+				$this->pays           = stripslashes($obj->pays);
+				$this->projet         = $obj->projet;
+				$this->projetid       = $obj->fk_don_projet;
+				$this->public         = $obj->public;
+				$this->modepaiementid = $obj->fk_paiement;
+				$this->modepaiement   = $obj->libelle;
+				$this->amount         = $obj->amount;
+				$this->commentaire    = stripslashes($obj->note);
+			}
+		}
+		else
+		{
+			print $this->db->error();
+		}
 
-    if ( $this->db->query( $sql) )
-      {
-	if ($this->db->num_rows())
-	  {
+	}
 
-	    $obj = $this->db->fetch_object();
+	/*!
+	\brief fonction qui permet de valider la promesse de don
+	\param	rowid
+	\param 	userid			userid de l'adhérent
+	*/
 
-	    $this->id             = $obj->rowid;
-	    $this->date           = $obj->datedon;
-	    $this->prenom         = stripslashes($obj->prenom);
-	    $this->nom            = stripslashes($obj->nom);
-	    $this->societe        = stripslashes($obj->societe);
-	    $this->statut         = $obj->fk_statut;
-	    $this->adresse        = stripslashes($obj->adresse);
-	    $this->cp             = stripslashes($obj->cp);
-	    $this->ville          = stripslashes($obj->ville);
-	    $this->email          = stripslashes($obj->email);
-	    $this->pays           = stripslashes($obj->pays);
-	    $this->projet         = $obj->projet;
-	    $this->projetid       = $obj->fk_don_projet;
-	    $this->public         = $obj->public;
-	    $this->modepaiementid = $obj->fk_paiement;
-	    $this->modepaiement   = $obj->libelle;
-	    $this->amount         = $obj->amount;
-	    $this->commentaire    = stripslashes($obj->note);
-	  }
-      }
-    else
-      {
-	print $this->db->error();
-      }
+	function valid_promesse($rowid, $userid)
+	{
 
-  }
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0;";
 
-    /*!
-    		\brief fonction qui permet de valider la promesse de don
-    		\param	rowid
-    		\param 	userid			userid de l'adhérent
-    */
+		if ( $this->db->query( $sql) )
+		{
+			if ( $this->db->affected_rows() )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
+	}
 
-  function valid_promesse($rowid, $userid)
-  {
-
-    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0;";
-
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-	    dolibarr_print_error($this->db);
-	    return 0;
-      }
-  }
-
-    /*!
-    		\brief  fonction qui permet de définir la cotisation comme payée
-    		\param	rowid           rowid de la cotisation
-    		\param	modepaiement    mode de paiement
-    */
+	/*!
+	\brief  fonction qui permet de définir la cotisation comme payée
+	\param	rowid           rowid de la cotisation
+	\param	modepaiement    mode de paiement
+	*/
 
 	function set_paye($rowid, $modepaiement='')
-  {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
 
-    if ($modepaiement)
-      {
-	$sql .= ", fk_paiement=$modepaiement";
-      }
-    $sql .=  " WHERE rowid = $rowid AND fk_statut = 1;";
+		if ($modepaiement)
+		{
+			$sql .= ", fk_paiement=$modepaiement";
+		}
+		$sql .=  " WHERE rowid = $rowid AND fk_statut = 1;";
 
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-	    dolibarr_print_error($this->db);
-	    return 0;
-      }
-  }
+		if ( $this->db->query( $sql) )
+		{
+			if ( $this->db->affected_rows() )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
+	}
 
-    /*!
-    		\brief fonction qui permet de mettre un commentaire sur le don
-    		\param	rowid
-    		\param	commentaire
-    */
+	/*!
+	\brief fonction qui permet de mettre un commentaire sur le don
+	\param	rowid
+	\param	commentaire
+	*/
 
-  function set_commentaire($rowid, $commentaire='')
-  {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET note = '$commentaire'";
+	function set_commentaire($rowid, $commentaire='')
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET note = '$commentaire'";
 
-    $sql .=  " WHERE rowid = $rowid ;";
+		$sql .=  " WHERE rowid = $rowid ;";
 
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-	    dolibarr_print_error($this->db);
-	    return 0;
-      }
-  }
+		if ( $this->db->query( $sql) )
+		{
+			if ( $this->db->affected_rows() )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
+	}
 
-    /*!
-    		\brief fonction qui permet de mettre le don comme encaissé
-    		\param	rowid
-    */
+	/*!
+	\brief fonction qui permet de mettre le don comme encaiss
+	\param	rowid
+	*/
 
 	function set_encaisse($rowid)
-  {
+	{
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
 
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-	    dolibarr_print_error($this->db);
-	    return 0;
-      }
-  }
+		if ( $this->db->query( $sql) )
+		{
+			if ( $this->db->affected_rows() )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
+	}
 
 
 }

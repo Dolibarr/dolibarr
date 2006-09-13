@@ -46,21 +46,21 @@ if ($conf->fichinter->enabled) $langs->load("interventions");
 $user->getrights("commercial");
 if (!$user->rights->societe->lire) accessforbidden();
 
-$socidp = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($socidp == '') accessforbidden();
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($socid == '') accessforbidden();
 
 // Protection quand utilisateur externe
 if ($user->societe_id > 0)
 {
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 // Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socidp && !$user->societe_id > 0)
+if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
 {
 	$sql = "SELECT sc.fk_soc, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE sc.fk_soc = ".$socidp." AND sc.fk_user = ".$user->id." AND s.client = 1";
+	$sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id." AND s.client = 1";
 	
 	if ( $db->query($sql) )
 	{
@@ -106,7 +106,7 @@ if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 {
 	$societe = new Societe($db, $_GET["socid"]);
     $societe->tva_assuj=$_POST['assujtva_value'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socidp."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socid."'";
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
@@ -116,12 +116,12 @@ if ($action == 'stcomm')
     if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
     {
         $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
-        $sql .= " VALUES ('$dateaction',$socidp,$stcommid,'" . $user->login . "')";
+        $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
         $result = @$db->query($sql);
 
         if ($result)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=".$socidp;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=".$socid;
             $result = $db->query($sql);
         }
         else
@@ -132,7 +132,7 @@ if ($action == 'stcomm')
 
     if ($actioncommid)
     {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socidp,'" . $user->id . "')";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
         $result = @$db->query($sql);
 
         if (!$result)
@@ -149,17 +149,17 @@ if ($action == 'stcomm')
 if ($mode == 'search') {
     if ($mode-search == 'soc') {
         $sql = "SELECT s.idp";
-        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-        if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
     }
 
     if ( $db->query($sql) ) {
         if ( $db->num_rows() == 1) {
             $obj = $db->fetch_object();
-            $socidp = $obj->idp;
+            $socid = $obj->idp;
         }
         $db->free();
     }
@@ -175,12 +175,12 @@ llxHeader('',$langs->trans('CustomerCard'));
  * Mode fiche
  *
  *********************************************************************************/
-if ($socidp > 0)
+if ($socid > 0)
 {
     // On recupere les donnees societes par l'objet
     $objsoc = new Societe($db);
-    $objsoc->id=$socidp;
-    $objsoc->fetch($socidp,$to);
+    $objsoc->id=$socid;
+    $objsoc->fetch($socid,$to);
 
     $dac = strftime("%Y-%m-%d %H:%M", time());
     if ($errmesg)
@@ -406,7 +406,7 @@ if ($socidp > 0)
             if ($num > 0)
             {
                 print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socidp='.$objsoc->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$objsoc->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
                 print '</tr>';
                 $var=!$var;
             }
@@ -459,7 +459,7 @@ if ($socidp > 0)
             if ($num >0 )
             {
                 print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td></tr></table></td>';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td></tr></table></td>';
                 print '</tr>';
             }
             $i = 0;
@@ -552,7 +552,7 @@ if ($socidp > 0)
             if ($num >0 )
             {
                 print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/index.php?socidp='.$objsoc->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/index.php?socid='.$objsoc->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
                 $var=!$var;
             }
@@ -628,13 +628,13 @@ if ($socidp > 0)
     if ($conf->propal->enabled && $user->rights->propale->creer)
     {
         $langs->load("propal");
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
     }
 
     if ($conf->commande->enabled && $user->rights->commande->creer)
     {
         $langs->load("orders");
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
     }
 
     if ($user->rights->contrat->creer)
@@ -646,7 +646,7 @@ if ($socidp > 0)
     if ($conf->fichinter->enabled && $user->rights->ficheinter->creer)
     {
         $langs->load("fichinter");
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
     }
 
     print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';

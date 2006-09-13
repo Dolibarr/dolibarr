@@ -109,7 +109,7 @@ if ($propalid > 0)
 		$upload_dir = $conf->propal->dir_output.'/'.$propref;
 
         $societe = new Societe($db);
-        $societe->fetch($propal->socidp);
+        $societe->fetch($propal->socid);
 
 		$head = propal_prepare_head($propal);
 		dolibarr_fiche_head($head, 'document', $langs->trans('Proposal'));

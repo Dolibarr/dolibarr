@@ -41,7 +41,7 @@ llxHeader();
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 $page=$_GET["page"];
@@ -61,11 +61,11 @@ $offset = $limit * $page ;
  */
 
 $sql = "SELECT s.idp, s.nom, st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user ";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1 AND s.idp = p.fk_soc";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
@@ -81,8 +81,8 @@ if ($contactname) {
   $sortorder = "ASC";
 }
 
-if ($socidp) {
-  $sql .= " AND s.idp = $socidp";
+if ($socid) {
+  $sql .= " AND s.idp = $socid";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
@@ -113,7 +113,7 @@ if ($result) {
 
       print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->name.'</a></td>';
       print '<td>'.$obj->firstname.'</td>';
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
       print '<td>'.$obj->email.'</td>';
       print '<td>'.$obj->phone.'</td>';
       

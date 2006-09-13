@@ -71,7 +71,7 @@ class ProcessGraphClients
      * Lecture des clients
      *
      */
-    $sql = "SELECT s.idp as socidp, s.nom, count(l.ligne) as ligne";
+    $sql = "SELECT s.idp as socid, s.nom, count(l.ligne) as ligne";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sql .= " WHERE l.fk_client_comm = s.idp ";
@@ -100,7 +100,7 @@ class ProcessGraphClients
 	while ($i < $num)
 	  {
 	    $obj = $this->db->fetch_object($resql);	   
-	    $clients[$i] = $obj->socidp;	    
+	    $clients[$i] = $obj->socid;	    
 	    $i++;
 	  }
 	$this->db->free($resql);

@@ -48,7 +48,7 @@ $contratid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id > 0)
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 // Protection restriction commercial
@@ -61,7 +61,7 @@ if ($contratid && (!$user->rights->commercial->client->voir || $user->societe_id
         {
         	$sql .= " AND sc.fk_soc = c.fk_soc AND sc.fk_user = ".$user->id;
         }
-        if ($user->societe_id > 0) $sql .= " AND c.fk_soc = ".$socidp;
+        if ($user->societe_id > 0) $sql .= " AND c.fk_soc = ".$socid;
 
         if ( $db->query($sql) )
         {
@@ -240,7 +240,7 @@ if ($id > 0)
 		if ($mesg) print $mesg;
 
 		$soc = new Societe($db);
-		$soc->fetch($contrat->socidp);
+		$soc->fetch($contrat->socid);
 
 	    $head = contract_prepare_head($contrat);
 		

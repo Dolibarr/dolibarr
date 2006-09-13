@@ -36,7 +36,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 llxHeader("",$langs->trans("Projects"),"Projet");
@@ -58,16 +58,16 @@ print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 $sql.= " , ".MAIN_DB_PREFIX."projet_task as t"; // pourquoi est-ce que c'était en commentaire ?
 $sql.= " WHERE t.fk_projet = p.rowid";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp)
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)
 { 
-  $sql .= " AND p.fk_soc = ".$socidp; 
+  $sql .= " AND p.fk_soc = ".$socid; 
 }
 $sql.= " GROUP BY p.rowid";
 
@@ -112,14 +112,14 @@ print '<td align="right">'.$langs->trans("Nb").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT s.nom, s.idp, count(p.rowid)";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE p.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp)
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)
 { 
-  $sql .= " AND s.idp = $socidp"; 
+  $sql .= " AND s.idp = $socid"; 
 }
 $sql .= " GROUP BY s.nom";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);

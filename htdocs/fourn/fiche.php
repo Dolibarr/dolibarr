@@ -46,7 +46,7 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
-if ($socid == '') accessforbidden();
+if (! $socid) accessforbidden();
 
 
 

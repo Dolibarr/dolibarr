@@ -44,7 +44,7 @@ $langs->load("withdrawals");
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 
@@ -102,8 +102,8 @@ if ($_GET["facid"] > 0)
     {
         if ($mesg) print $mesg.'<br>';
 
-        $soc = new Societe($db, $fac->socidp);
-        $soc->fetch($fac->socidp);
+        $soc = new Societe($db, $fac->socid);
+        $soc->fetch($fac->socid);
 
         $author = new User($db);
         if ($fac->user_author)

@@ -907,7 +907,7 @@ else
         if ($conf->projet->enabled && $user->rights->projet->creer)
         {
             $langs->load("projects");
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
         }
 
         if ($user->rights->societe->contact->creer)

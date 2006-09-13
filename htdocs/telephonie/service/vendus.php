@@ -35,7 +35,7 @@ llxHeader('','Telephonie - Services - Liste');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 if ($sortorder == "") {
@@ -64,7 +64,7 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT s.rowid, idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
+$sql = "SELECT s.rowid, idp as socid, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
@@ -158,7 +158,7 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($obj->nom).'</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->nom_facture).'</a></td>';
 
       print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";

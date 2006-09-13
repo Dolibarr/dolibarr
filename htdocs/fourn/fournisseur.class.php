@@ -114,7 +114,7 @@ class Fournisseur extends Societe
     {
         dolibarr_syslog("Fournisseur::Create_Commande");
         $comm = new CommandeFournisseur($this->db);
-        $comm->socidp = $this->id;
+        $comm->socid = $this->id;
     
         if ($comm->create($user) > 0)
         {

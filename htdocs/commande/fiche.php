@@ -54,11 +54,11 @@ if (!$user->rights->commande->lire) accessforbidden();
 
 
 // Sécurité accés client
-$socidp=0;
+$socid=0;
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 // Récupération de l'id de projet
@@ -88,7 +88,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$datelivraison = @mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 
 	$commande = new Commande($db);
-	$commande->socidp=$_POST['socidp'];
+	$commande->socid=$_POST['socid'];
 	$commande->fetch_client();
 
 	$db->begin();
@@ -149,7 +149,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	{
 		$db->rollback();
 		$_GET["action"]='create';
-		$_GET['socidp']=$_POST['socidp'];
+		$_GET['socid']=$_POST['socid'];
 		if (! $mesg) $mesg='<div class="error">'.$commande->error.'</div>';
 	}
 
@@ -248,8 +248,8 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 	{
 		$commande = new Commande($db);
 		$ret=$commande->fetch($_POST['id']);
-		$soc = new Societe($db, $commande->socidp);
-		$soc->fetch($commande->socidp);
+		$soc = new Societe($db, $commande->socid);
+		$soc->fetch($commande->socid);
 
 		if ($ret < 0)
 		{
@@ -375,7 +375,7 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$soc = new Societe($db);
-	$soc->fetch($commande->socidp);
+	$soc->fetch($commande->socid);
 	$result = $commande->valid($user);
 }
 
@@ -524,7 +524,7 @@ if ($_POST['action'] == 'send')
         $file = $conf->commande->dir_output . '/' . $orderref . '/' . $orderref . '.pdf';
         if (is_readable($file))
         {
-            $soc = new Societe($db, $commande->socidp);
+            $soc = new Societe($db, $commande->socid);
             if ($_POST['sendto'])
             {
                 // Le destinataire a été fourni via le champ libre
@@ -590,7 +590,7 @@ if ($_POST['action'] == 'send')
                     $actioncomm->date        = time();  // L'action est faite maintenant
                     $actioncomm->percent     = 100;
                     $actioncomm->contact     = new Contact($db,$sendtoid);
-                    $actioncomm->societe     = new Societe($db,$commande->socidp);
+                    $actioncomm->societe     = new Societe($db,$commande->socid);
                     $actioncomm->user        = $user;   // User qui a fait l'action
                     $actioncomm->orderrowid  = $commande->id;
                     $ret=$actioncomm->add($user);       // User qui saisi l'action
@@ -657,7 +657,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 	{
 		$sql = 'SELECT s.nom, s.prefix_comm, s.idp, s.mode_reglement, s.cond_reglement ';
 		$sql .= 'FROM '.MAIN_DB_PREFIX.'societe as s ';
-		$sql .= 'WHERE s.idp = '.$_GET['socidp'];
+		$sql .= 'WHERE s.idp = '.$_GET['socid'];
 	}
 	$resql = $db->query($sql);
 	if ( $resql )
@@ -674,7 +674,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			print '<form name="crea_commande" action="fiche.php" method="post">';
 			print '<input type="hidden" name="action" value="add">';
-			print '<input type="hidden" name="socidp" value="'.$soc->id.'">' ."\n";
+			print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 			print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
 			print '<input name="facnumber" type="hidden" value="provisoire">';
 
@@ -734,7 +734,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			// Adresse de livraison
 			print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
-			$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socidp'],'adresse_livraison_id',1);
+			$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
 
 			if ($numaddress==0)
 			{
@@ -798,7 +798,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				$numprojet=$html->select_projects($soc->id,$projetid,'projetid');
 				if ($numprojet==0)
 				{
-					print ' &nbsp; <a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
+					print ' &nbsp; <a href=../projet/fiche.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
 				}
 				print '</td></tr>';
 			}
@@ -955,7 +955,7 @@ else
 		if ( $commande->fetch($_GET['id']) > 0)
 		{
 			$soc = new Societe($db);
-			$soc->fetch($commande->socidp);
+			$soc->fetch($commande->socid);
 
 			$author = new User($db);
 			$author->id = $commande->user_author_id;
@@ -1124,7 +1124,7 @@ else
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
 
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socidp.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 
@@ -1187,11 +1187,11 @@ else
 				print '</td><td colspan="2">';
 				if ($_GET['action'] == 'classer')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'projetid');
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'projetid');
 				}
 				else
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socidp, $commande->projet_id, 'none');
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'none');
 				}
 				print '</td></tr>';
 			}
@@ -1283,7 +1283,7 @@ else
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							if (($objp->info_bits & 2) == 2)
 							{
-								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socidp.'">';
+								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socid.'">';
 								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 								print '</a>';
 								if ($objp->description) print ' - '.nl2br($objp->description);
@@ -1758,7 +1758,7 @@ else
 			$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 			$sql .= ' WHERE a.fk_commande = '.$commande->id ;
-			if ($socidp) $sql .= ' AND a.fk_soc = '.$socidp;
+			if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -1828,7 +1828,7 @@ else
 				print_titre($langs->trans('SendOrderByMail'));
 
 				$soc = new Societe($db);
-				$soc->fetch($commande->socidp);
+				$soc->fetch($commande->socid);
 
 				$liste[0]="&nbsp;";
 				foreach ($soc->contact_email_array() as $key=>$value)

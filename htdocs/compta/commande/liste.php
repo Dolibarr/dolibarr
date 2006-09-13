@@ -42,11 +42,11 @@ $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
 
 // Sécurité accés client
-$socidp = $_GET["socidp"];
+$socid = $_GET["socid"];
 if ($user->societe_id > 0)
 {
     $action = '';
-    $socidp = $user->societe_id;
+    $socid = $user->societe_id;
 }
 
 $langs->load('companies');
@@ -58,14 +58,14 @@ llxHeader();
 $sql = "SELECT s.nom, s.idp,";
 $sql.= " c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande,";
 $sql.= " c.fk_statut, c.facture";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE c.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socidp) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socidp)
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)
 {
-    $sql .= " AND s.idp = $socidp";
+    $sql .= " AND s.idp = $socid";
 }
 if ($_GET["month"] > 0)
 {
@@ -93,10 +93,10 @@ $resql = $db->query($sql);
 
 if ($resql)
 {
-    if ($socidp)
+    if ($socid)
     {
         $soc = new Societe($db);
-        $soc->fetch($socidp);
+        $soc->fetch($socid);
         $title = $langs->trans("ListOfOrders") . " - ".$soc->nom;
     }
     else
@@ -106,7 +106,7 @@ if ($resql)
     // Si page des commandes à facturer
     $link=DOL_URL_ROOT."/compta/commande/fiche.php";
     $title.=" - ".$langs->trans("StatusOrderToBill");
-    $param="&amp;socidp=".$socidp."&amp;year=".$_GET["year"]."&amp;month=".$_GET["month"];
+    $param="&amp;socid=".$socid."&amp;year=".$_GET["year"]."&amp;month=".$_GET["month"];
 
     $num = $db->num_rows($resql);
     print_barre_liste($title, $_GET["page"], "liste.php",$param,$sortfield,$sortorder,'',$num);

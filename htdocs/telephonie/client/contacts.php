@@ -33,7 +33,7 @@ llxHeader('','Telephonie - Clients - Contacts');
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socidp = $user->societe_id;
+  $socid = $user->societe_id;
 }
 
 if ($sortorder == "") {
@@ -58,7 +58,7 @@ $pagenext = $page + 1;
  * Mode Liste
  *
  */
-$sql = "SELECT distinct cont.email, cont.idp, cont.name, cont.firstname, s.nom, s.idp as socidp";
+$sql = "SELECT distinct cont.email, cont.idp, cont.name, cont.firstname, s.nom, s.idp as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
@@ -126,10 +126,10 @@ if ($result)
 
       print "<tr $bc[$var]><td>";
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
       print img_file();      
       print '</a>&nbsp;';
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.$obj->nom.'</a></td>';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom.'</a></td>';
       print '<td>'.$obj->firstname.' '.$obj->name."</td>\n";
 
       print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';

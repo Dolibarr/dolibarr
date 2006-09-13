@@ -45,7 +45,7 @@ $langs->load('companies');
 if ($user->societe_id > 0)
 {
 	$action = '';
-	$socidp = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
@@ -149,7 +149,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 		$facfou = new FactureFournisseur($db);
 
 		$facfou->ref           = $_POST['facnumber'];
-		$facfou->socidp        = $_POST['socidp'];
+		$facfou->socid        = $_POST['socid'];
 		$facfou->libelle       = $_POST['libelle'];
 		$facfou->date          = $datefacture;
 		$facfou->date_echeance = mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
@@ -316,11 +316,11 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 	if ($_GET['socid'])
 	{
 		print $societe->getNomUrl(1);
-		print '<input type="hidden" name="socidp" value="'.$_GET['socid'].'">';
+		print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';
 	}
 	else
 	{
-		$html->select_societes(empty($_GET['socid'])?'':$_GET['socid'],'socidp','s.fournisseur = 1');
+		$html->select_societes(empty($_GET['socid'])?'':$_GET['socid'],'socid','s.fournisseur = 1');
 	}
 	print '</td>';
 	print '<td width="50%">'.$langs->trans('NotePublic').'</td></tr>';
@@ -402,9 +402,9 @@ else
 		$fac->fetch($_GET['facid']);
 
 		$societe = new Fournisseur($db);
-		if ($societe->fetch($fac->socidp))
+		if ($societe->fetch($fac->socid))
 		{
-			$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$fac->socidp;
+			$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$fac->socid;
 			$addons[0][1] = $societe->nom;
 		}
 
@@ -557,11 +557,11 @@ else
             if ($conf->produit->enabled)
             {
                 print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
-                print '<input type="hidden" name="fourn_id" value="'. $fac->socidp .'">';
+                print '<input type="hidden" name="fourn_id" value="'. $fac->socid .'">';
                 $var=! $var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="3">';
-                $html->select_produits_fournisseurs($fac->socidp,'','idprod',$filtre);
+                $html->select_produits_fournisseurs($fac->socid,'','idprod',$filtre);
                 print '</td>';
                 print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';
@@ -618,7 +618,7 @@ else
 
             // Societe
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$societe->getNomUrl(1).'</a></td>';
-			print '<td align="right"><a href="index.php?socid='.$fac->socidp.'">'.$langs->trans('OtherBills').'</a></td>';
+			print '<td align="right"><a href="index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a></td>';
 			print '</tr>';
 
 			print '<tr><td>'.$langs->trans('Label').'</td><td colspan="3">';
@@ -801,7 +801,7 @@ else
 		else
 			if ($user->rights->fournisseur->facture->creer)
 			{
-				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=copy&amp;socid='.$fac->socidp.'">'.$langs->trans('Copy').'</a>';
+				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=copy&amp;socid='.$fac->socid.'">'.$langs->trans('Copy').'</a>';
 			}
 
 		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->supprimer)
