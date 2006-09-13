@@ -50,9 +50,6 @@ else if ($_POST["action"] == 'multiprix_num')
 }
 if ($_POST["action"] == 'multiprix')
 {
-	$res=$db -> desc_table(MAIN_DB_PREFIX."product_price","price_level");
-	if(! $db -> fetch_row())
-	{
 		// on ajoute le champ price_level dans la table societe
 		if(! $db -> add_field(MAIN_DB_PREFIX."societe","price_level",$field_desc))
 		{
@@ -81,7 +78,6 @@ if ($_POST["action"] == 'multiprix')
 				Header("Location: produit.php");
 			}
 		}
-	}
 	else
 	{
 			dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
