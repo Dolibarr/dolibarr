@@ -34,7 +34,8 @@ if (!$user->rights->fournisseur->facture->lire)
 
 $langs->load("companies");
 
-$socidp = $_GET["socid"];
+//on devrait uniformiser soit sur socid, soit sur socidp
+$socidp = $_GET["socidp"];
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
