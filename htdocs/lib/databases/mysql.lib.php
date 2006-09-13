@@ -381,7 +381,7 @@ class DoliDb
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_fetch_row($resultset);
+        return @mysql_fetch_row($resultset);
     }
 
     /**
