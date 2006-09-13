@@ -206,7 +206,7 @@ class FactureFournisseur extends Facture
 				/*
 				* Lignes
 				*/
-				$sql = 'SELECT rowid,description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc';
+				$sql = 'SELECT rowid, description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det';
 				$sql .= ' WHERE fk_facture_fourn='.$this->id;
 				$resql_rows = $this->db->query($sql);
@@ -218,15 +218,16 @@ class FactureFournisseur extends Facture
 					{
 						while ($i < $num_rows)
 						{
-							$obj = $this->db->fetch_object();
-							$this->lignes[$i][0] = stripslashes($obj->description);
+							$obj = $this->db->fetch_object($resql_rows);
+							$this->lignes[$i][0] = $obj->description;
 							$this->lignes[$i][1] = $obj->pu_ht;
-							$this->lignes[$i][2] = $obj->tva_tx;
+							$this->lignes[$i][2] = $obj->tva_taux;
 							$this->lignes[$i][3] = $obj->qty;
 							$this->lignes[$i][4] = $obj->total_ht;
 							$this->lignes[$i][5] = $obj->tva;
 							$this->lignes[$i][6] = $obj->total_ttc;
 							$this->lignes[$i][7] = $obj->rowid;
+							$this->lignes[$i][8] = $obj->total_ht;
 							$i++;
 						}
 					}
@@ -371,14 +372,15 @@ class FactureFournisseur extends Facture
 
 	/**
 	 * \brief     Mets à jour une ligne de facture
-	 * \param     id              id de la ligne de facture
-	 * \param     label           description de la ligne
-	 * \param     puht            prix unitaire
-	 * \param     tauxtva         taux tva
-	 * \param     qty             quantité
-	 * \return    int             <0 si ko, >0 si ok
+	 * \param     id            Id de la ligne de facture
+	 * \param     label         Description de la ligne
+	 * \param     puht          Prix unitaire
+	 * \param     tauxtva       Taux tva
+	 * \param     qty           Quantité
+	 * \param     idproduct		Id produit
+	 * \return    int           <0 si ko, >0 si ok
 	 */
-	function updateline($id, $label, $puht, $tauxtva, $qty=1, $idproduct)
+	function updateline($id, $label, $puht, $tauxtva, $qty=1, $idproduct=0)
 	{
 		$puht = price2num($puht);
 		$qty  = price2num($qty);
