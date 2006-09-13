@@ -48,7 +48,7 @@ else if ($_POST["action"] == 'multiprix_num')
     Header("Location: produit.php");
     exit;
 }
-if ($_POST["action"] == 'multiprix')
+if ($_POST["action"] == 'multiprix' && $_POST["activate_multiprix"] == 1)
 {
 	$res=$db -> desc_table(MAIN_DB_PREFIX."product_price","price_level");
 	if(! $db -> fetch_row())
@@ -90,7 +90,7 @@ if ($_POST["action"] == 'multiprix')
 	}
     exit;
 }
-else if ($_POST["action"] == 'sousproduits')
+else if ($_POST["action"] == 'sousproduits' && $_POST["activate_sousproduits"] == 1)
 {
   $res=$db -> desc_table(MAIN_DB_PREFIX."product_association");
 	if(! $db -> fetch_row())
