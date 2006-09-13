@@ -76,12 +76,12 @@ if ($_POST["action"] == 'multiprix')
 				  dolibarr_print_error($db);
 				  print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
 			  }
-			}
-			else
-			{
-				dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-				dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-				Header("Location: produit.php");
+			  else
+			  {
+				  dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
+				  dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+				  Header("Location: produit.php");
+			  }
 			}
 		}
 	}
