@@ -1880,7 +1880,7 @@ class Propal extends CommonObject
 					$resql = $this->addline(
 						$this->id,
 						$ligne->desc,
-						$ligne->price,
+						$ligne->subprice, //récupérer le prix non remisé
 						$ligne->qty,
 						$ligne->tva_tx,
 						$ligne->fk_product,
