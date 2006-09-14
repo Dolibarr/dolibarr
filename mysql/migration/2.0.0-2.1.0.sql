@@ -436,3 +436,7 @@ create table llx_accountingdebcred
 	amount          real		NOT NULL,
 	direction       varchar(1)	NOT NULL
 )type=innodb;
+
+alter table llx_facturedet_rec add column total_ht real;
+alter table llx_facturedet_rec add column total_tva real;
+alter table llx_facturedet_rec add column total_ttc real;
