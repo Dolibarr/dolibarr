@@ -279,6 +279,8 @@ class FactureRec extends Facture
 	 */
 	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
 	{
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		
 		if ($this->brouillon)
 		{
 			if (strlen(trim($qty))==0)
@@ -288,13 +290,23 @@ class FactureRec extends Facture
 			$remise = 0;
 			$price = round(price2num($pu), 2);
 			$subprice = $price;
+			
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+			
 			if (trim(strlen($remise_percent)) > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
 	
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, total_ht, total_tva, total_ttc)";
 			$sql .= " VALUES ('$facid', '$desc'";
 			$sql .= ",".price2num($price);
 			$sql .= ",".price2num($qty);
@@ -302,7 +314,10 @@ class FactureRec extends Facture
 			$sql .= ",'".$fk_product."'";
 			$sql .= ",'".price2num($remise_percent)."'";
 			$sql .= ",'".price2num($subprice)."'";
-			$sql .= ",'".price2num($remise)."') ;";
+			$sql .= ",'".price2num($remise)."'";
+			$sql .= ",'".price2num($total_ht)."'";
+			$sql .= ",'".price2num($total_tva)."'";
+			$sql .= ",'".price2num($total_ttc)."') ;";
 	
 			if ( $this->db->query( $sql) )
 			{
@@ -314,6 +329,64 @@ class FactureRec extends Facture
 				print "$sql";
 				return -1;
 			}
+		}
+	}
+	
+		/**
+	 *		\brief     	Mise à jour des sommes de la facture et calculs denormalises
+	 * 		\param     	facid      	id de la facture a modifier
+	 *		\return		int			<0 si ko, >0 si ok
+	 */
+	function update_price($facid)
+	{
+		$tvas=array();
+		$err=0;
+
+        // Liste des lignes factures a sommer (Ne plus utiliser price)
+		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price,';
+		$sql.= ' total_ht, total_tva, total_ttc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec';
+		$sql.= ' WHERE fk_facture = '.$facid;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->total_ht  = 0;
+			$this->total_tva = 0;
+			$this->total_ttc = 0;
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$this->total_ht       += $obj->total_ht;
+				$this->total_tva      += ($obj->total_ttc - $obj->total_ht);
+				$this->total_ttc      += $obj->total_ttc;
+
+				// Ne plus utiliser amount, ni remise
+				$this->amount_ht      += ($obj->price * $obj->qty);
+				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
+				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
+				$i++;
+			}
+
+			$this->db->free($resql);
+
+			// Met a jour indicateurs sur facture
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_rec ';
+			$sql .= "SET amount ='".price2num($this->amount_ht)."'";
+			$sql .= ", remise='".   price2num($this->total_remise)."'";
+			$sql .= ", total='".    price2num($this->total_ht)."'";
+			$sql .= ", tva='".      price2num($this->total_tva)."'";
+			$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
+			$sql .= ' WHERE rowid = '.$facid;
+			$resql=$this->db->query($sql);
+
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
 		}
 	}
 	
