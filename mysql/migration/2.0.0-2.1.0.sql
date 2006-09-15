@@ -84,7 +84,7 @@ alter table llx_categorie add visible tinyint DEFAULT 1 NOT NULL;
 
 alter table llx_c_actioncomm  add module varchar(16) DEFAULT NULL after libelle;
 
-delete from llx_c_actioncomm;
+delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,50);
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 1, 'AC_TEL',  'system', 'Appel Téléphonique' ,NULL);
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 2, 'AC_FAX',  'system', 'Envoi Fax'          ,NULL);
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 3, 'AC_PROP', 'system', 'Envoi Proposition'  ,'propal');
