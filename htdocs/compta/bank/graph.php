@@ -55,7 +55,7 @@ if ($account > 0)
 	
 
 	// Definition de $width et $height
-	$width = 700;
+	$width = 800;
 	$height = 200;
 
 	// Calcul de $min et $max
@@ -121,6 +121,7 @@ if ($account > 0)
 	// Chargement de labels et datas pour tableau 1
 	$labels = array();
 	$datas = array();
+	$datamin = array();
 
 	$subtotal = 0;
 	$day = mktime(1,1,1,$month,1,$year);
@@ -138,6 +139,7 @@ if ($account > 0)
 		{
 			$datas[$i] = $solde + $subtotal;
 		}
+		$datamin[$i] = $acct->min_desired;
 		//$labels[$i] = strftime("%d",$day);
 		$labels[$i] = strftime("%d",$day);
 		$day += 86400;
@@ -151,11 +153,13 @@ if ($account > 0)
 	$graph_datas=array();
 	foreach($datas as $i => $val)
 	{
-          $graph_datas[$i]=array($labels[$i],$datas[$i]);
+		if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
+		else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Balance")));
+    if ($acct->min_desired) $px->SetLegend(array($langs->trans("Balance"),$langs->trans("BalanceMinimalDesired")));
+    else $px->SetLegend(array($langs->trans("Balance")));
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -213,6 +217,7 @@ if ($account > 0)
 	// Chargement de labels et datas pour tableau 2
 	$labels = array();
 	$datas = array();
+	$datamin = array();
 
 	$subtotal = 0;
 	$day = mktime(1,1,1,1,1,$year);
@@ -230,6 +235,7 @@ if ($account > 0)
 		{
 			$datas[$i] = $solde + $subtotal;
 		}
+		$datamin[$i] = $acct->min_desired;
 		if (strftime("%d",$day) == 15)
 		{
 			$labels[$i] = dolibarr_print_date($day,"%b");
@@ -245,11 +251,13 @@ if ($account > 0)
 	$graph_datas=array();
 	foreach($datas as $i => $val)
 	{
-        $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+		if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
+		else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Balance")));
+    if ($acct->min_desired) $px->SetLegend(array($langs->trans("Balance"),$langs->trans("BalanceMinimalDesired")));
+    else $px->SetLegend(array($langs->trans("Balance")));
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -293,6 +301,8 @@ if ($account > 0)
 	// Chargement de labels et datas pour tableau 3
 	$labels = array();
 	$datas = array();
+	$datamin = array();
+
 	$subtotal = 0;
 	$day = $min;
 	$i = 0;
@@ -308,6 +318,7 @@ if ($account > 0)
 		{
 			$datas[$i] = $solde + $subtotal;
 		}
+		$datamin[$i] = $acct->min_desired;
 		if (strftime("%d",$day) == 1)
 		{
 			$labels[$i] = strftime("%m",$day);
@@ -322,11 +333,13 @@ if ($account > 0)
 	$graph_datas=array();
 	foreach($datas as $i => $val)
 	{
-        $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+		if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
+		else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Balance")));
+    if ($acct->min_desired) $px->SetLegend(array($langs->trans("Balance"),$langs->trans("BalanceMinimalDesired")));
+    else $px->SetLegend(array($langs->trans("Balance")));
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -382,7 +395,7 @@ if ($account > 0)
 		dolibarr_print_error($db);
 	}
 
-	// Chargement de labels et data_xxx pour tableau 4
+	// Chargement de labels et data_xxx pour tableau 4 Mouvements
 	$labels = array();
 	$data_credit = array();
 	$data_debit = array();
@@ -391,6 +404,7 @@ if ($account > 0)
 		$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 		$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
 		$labels[$i] = strftime("%b",mktime(1,1,1,$i+1,1,2000));
+		$datamin[$i] = $acct->min_desired;
 	}
 
 	// Fabrication tableau 4
@@ -403,7 +417,7 @@ if ($account > 0)
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Debit"),$langs->trans("Credit")));
+    $px->SetLegend(array($langs->trans("Credit"),$langs->trans("Debit")));
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
