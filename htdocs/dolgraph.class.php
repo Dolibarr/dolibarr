@@ -199,8 +199,15 @@ class DolGraph
 		if ($phplotversion >= 5) $top_space=25;
 		$left_space=80;								// For y labels
 		$right_space=10;							// If no legend
-		if (isset($this->Legend)) $right_space=70;	// For legend
-
+		if (isset($this->Legend))
+		{
+			foreach($this->Legend as $key => $val)
+			{	
+				$maxlen=max($maxlen,$val);
+			}
+			$right_space=50+strlen($maxlen)*6;	// For legend
+		}
+		
 		$this->graph->SetNewPlotAreaPixels($left_space, $top_space, $this->width-$right_space, $this->height-40);
 		if (isset($this->MaxValue))
 		{
