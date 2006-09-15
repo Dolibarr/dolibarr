@@ -30,6 +30,8 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
+$langs->load("banks");
+
 $user->getrights('banque');
 
 if (!$user->rights->banque->modifier)
@@ -46,7 +48,17 @@ if ($_POST["action"] == 'add')
 	$label = $_POST["label"];
 	$amount= $_POST["amount"];
 
-	if ($label && $amount)
+	if (! $label)
+	{
+		$error=1;	
+		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->trans("Label"))."</div>";
+	}
+	if (! $amount)
+	{
+		$error=1;	
+		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->trans("Amount"))."</div>";
+	}
+	if (! $error)
 	{
 		$db->begin();
 		
@@ -80,10 +92,6 @@ if ($_POST["action"] == 'add')
 			$db->rollback();
 		}
 	}
-	else
-	{
-		$mesg.="<div class=\"error\"><b>Un libellé de virement et un montant non nul sont obligatoires.</b></div>";
-	}
 }
 
 
@@ -97,14 +105,15 @@ llxHeader();
 $html=new Form($db);
 
 
-print_titre("Virement inter-compte");
+print_titre($langs->trans("BankTransfer"));
 print '<br>';
 
 if ($mesg) {
     print "$mesg<br>";
 }
 
-print "En saisissant un virement d'un de vos comptes bancaire vers un autre, Dolibarr crée deux écritures comptables (une de débit dans un compte et l'autre de crédit, du même montant, dans l'autre compte. Le même libellé de transaction, et la même date, sont utilisés pour les 2 écritures)<br><br>";
+print $langs->trans("TransferDesc");
+print "<br><br>";
 
 print "<form name='add' method=\"post\" action=\"virement.php\">";
 
@@ -112,7 +121,7 @@ print '<input type="hidden" name="action" value="add">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("From").'</td><td>'.$langs->trans("To").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
+print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
 print '</tr>';
 
 $var=false;

@@ -88,3 +88,7 @@ BankLineConciliated=Transaction conciliated
 CustomerInvoicePayment=Customer payment
 SupplierInvoicePayment=Supplier payment
 FinancialAccountJournal=Financial account journal
+BankTransfer=Bank transfer
+TransferDesc=Transfer from one account to another one, Dolibarr will write two records (one for debit in source account and a credit in target account, of same amount. Same label and date will be used for this transaction)
+TransferFrom=From
+TransferTo=To
