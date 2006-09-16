@@ -195,6 +195,18 @@ alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 
 update llx_bank_url set type = 'payment_supplier' where label = '(paiement)' and type='payment' and url like '%/fourn/%';
 
+alter table llx_bank_url drop index fk_bank;
+alter table llx_bank_url drop index fk_bank_2;
+alter table llx_bank_url drop index fk_bank_3;
+alter table llx_bank_url drop index fk_bank_4;
+alter table llx_bank_url drop index fk_bank_5;
+alter table llx_bank_url drop index fk_bank_6;
+alter table llx_bank_url drop index fk_bank_7;
+alter table llx_bank_url drop index fk_bank_8;
+alter table llx_bank_url drop index fk_bank_9;
+
+ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
+ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank,url_id,type);
 
 create table llx_societe_adresse_livraison
 (

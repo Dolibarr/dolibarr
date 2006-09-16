@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2006 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,4 +21,6 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_bank_url ADD UNIQUE uk_bank_url (fk_bank,url_id);
+ALTER TABLE llx_bank_url ADD UNIQUE uk_bank_url (fk_bank,url_id,type);
+
+--ALTER TABLE llx_bank_url ADD INDEX idx_bank_url_fk_bank (fk_bank);
