@@ -116,7 +116,7 @@ if ($resql)
 	
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
 			$relativepath= $name;
-			$file = $conf->action->dir_temp."/".$name;
+			$file = $conf->actions->dir_temp."/".$name;
 	
 			if (file_exists($file))
 			{

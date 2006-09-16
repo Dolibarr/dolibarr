@@ -222,7 +222,7 @@ if ($modulepart)
         //{
         $accessallowed=1;
         //}
-		$original_file = $conf->action->dir_temp."/".$original_file;
+		$original_file = $conf->actions->dir_temp."/".$original_file;
 	}
 
     // Wrapping pour les produits et services

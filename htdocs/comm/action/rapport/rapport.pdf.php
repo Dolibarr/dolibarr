@@ -68,7 +68,7 @@ class CommActionRapport
     {
         global $user,$conf,$langs;
 
-        $dir = $conf->action->dir_temp."/";
+        $dir = $conf->actions->dir_temp."/";
         $file = $dir . "actions-".$this->month."-".$this->year.".pdf";
 
         if (! file_exists($dir))
