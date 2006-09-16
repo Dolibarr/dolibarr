@@ -529,7 +529,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
  */
 if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') && $user->rights->facture->creer)
 {
-	if ($_POST['qty'] && (($_POST['pu']!=0 && $_POST['desc']) || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['pu']!='' && $_POST['desc']) || $_POST['idprod']))
 	{
 		$fac = new Facture($db);
 		$ret=$fac->fetch($_POST['facid']);
