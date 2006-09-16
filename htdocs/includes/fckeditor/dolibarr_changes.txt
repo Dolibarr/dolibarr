@@ -14,6 +14,11 @@ FCKConfig.FlashUpload = false ;
 
 //require_once("../../../../../../../../master.inc.php");
 require_once("../../../../../../../../conf/conf.php"); // ajouté car include master.inc.php ne marche pas
+$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
+$pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
+if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
+define('DOL_URL_ROOT', $pos);
+
 /*
 $conf->syslog->enabled=1;
 define('SYSLOG_FILE','c:/log/dolibarr/dolibarr.log');

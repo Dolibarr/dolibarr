@@ -22,6 +22,11 @@ global $Config ;
 
 //require_once("../../../../../../../../master.inc.php");
 require_once("../../../../../../../../conf/conf.php"); // ajouté car include master.inc.php ne marche pas
+$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
+$pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
+if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
+define('DOL_URL_ROOT', $pos);
+
 /*
 $conf->syslog->enabled=1;
 define('SYSLOG_FILE','c:/log/dolibarr/dolibarr.log');
@@ -33,7 +38,7 @@ dolibarr_syslog("eee".$conf->fckeditor->dir_output);
 $Config['Enabled'] = true ;
 
 // Path to user files relative to the document root.
-$Config['UserFilesPath'] = '/viewimage.php?modulepart=fckeditor&file=' ;
+$Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=fckeditor&file=' ;
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Usefull if you are using a virtual directory, symbolic
