@@ -480,8 +480,8 @@ DlgTemplatesNoTpl	: "(Não foram definidos modelos de layout)",
 // About Dialog
 DlgAboutAboutTab	: "Sobre",
 DlgAboutBrowserInfoTab	: "Informações do Navegador",
-DlgAboutLicenseTab	: "License",	//MISSING
+DlgAboutLicenseTab	: "Licença",
 DlgAboutVersion		: "versão",
-DlgAboutLicense		: "Licenciado sobre os termos da GNU Lesser General Public License",
+DlgAboutLicense		: "Licenciado sob os termos da GNU Lesser General Public License",
 DlgAboutInfo		: "Para maiores informações visite"
 }

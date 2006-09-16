@@ -16,19 +16,72 @@
 	<title>FCKeditor - What's New?</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<style type="text/css">
-			body { font-family: arial, verdana, sans-serif }
-			p { margin-left: 20px }
+		body { font-family: arial, verdana, sans-serif }
+		p { margin-left: 20px }
 	</style>
 </head>
 <body>
+	<h3>
+		Version 2.3.1</h3>
+	<p>
+		Fixed Bugs:</p>
+	<ul>
+		<li>[<a target="_blank" href="https://sourceforge.net/support/tracker.php?aid=1506126">SF
+			BUG-1506126</a>] Fixed the Catalan language file, which had been published with
+			problems in accented letters. </li>
+		<li>More performance improvements in the default File Browser.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1506701&group_id=75348&atid=543653">SF
+			BUG-1506701</a>] Fixed compatibility issues with IE 5.5.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1509073&group_id=75348&atid=543653">SF
+			BUG-1509073</a>] Fixed the "Image Properties" dialog window, which was making invalid
+			calls to the "editor/dialog/" directory, generating error 400 entries in the web
+			server log.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1507294&group_id=75348&atid=543653">SF
+			BUG-1507294</a>] [<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1507953&group_id=75348&atid=543653">SF
+				BUG-1507953</a>] The editing area was getting a fixed size when using the "SetHTML"
+			API command or even when switching back from the source view. Fixed.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1507755&group_id=75348">SF
+			BUG-1507755</a>] Fixed a conflict between the "DisableObjectResizing" and "ShowBorders"
+			configuration options over IE.</li>
+		<li>Opera 9 tries to "mimic" Gecko in the browser detection system of FCKeditor. As
+			this browser is not "yet" supported, the editor was broken on it. It has been fixed,
+			and now a textarea is displayed, as in any other unsupported browser. Support for
+			Opera is still experimental and can be activated by setting the property "EnableOpera"
+			to true when creating an instance of the editor with the JavaScript integration
+			files.</li>
+		<li>With Opera 9, the toolbar was jumping on buttons rollover. </li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1509479&group_id=75348&atid=543656">SF
+			BUG-1509479</a>] The iframes used in Firefox for all editor panels (dropdown combos,
+			context menu, etc...) are now being placed right before the main iframe that holds
+			the editor. In this way, if the editor container element is removed from the DOM
+			(by DHTML) they are removed together with it.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1271070&group_id=75348&atid=543653">SF
+			BUG-1271070</a>] [<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1411430&group_id=75348&atid=543653">SF
+				BUG-1411430</a>] The editor API now works well on DHTML pages that create and
+			remove instances of FCKeditor dynamically. </li>
+		<li>A second call to a page with the editor was not working correctly with Firefox 1.0.x.
+			Fixed.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1511460&group_id=75348&atid=543653">SF
+			BUG-1511460</a>] Small correction to the &lt;script&gt; protected source regex.
+			Thanks to Randall Severy.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1521754&group_id=75348">SF
+			BUG-1521754</a>] Small fix to the paths of the internal CSS files used by FCKeditor.
+			Thanks to johnw_ceb.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1511442&group_id=75348&atid=543653">SF
+			BUG-1511442</a>] The &lt;base&gt; tag is now correctly handled in IE, no matter
+			its position in the source code.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1507773&group_id=75348&atid=543653">SF
+			BUG-1507773</a>] The "Lock" and "Reset" buttons in the Image Properties dialog window
+			are not anymore jumping with Firefox 1.5.</li>
+	</ul>
 	<h3>
 		Version 2.3</h3>
 	<p>
 		New Features and Improvements:</p>
 	<ul>
 		<li>The <strong>Toolbar Sharing</strong> system has been completed. See sample10.html
-			and sample11.html.*</li><li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1407500&group_id=75348&atid=543655">SF Patch-1407500</a>] Small enhancement to the Find and Replace
-			dialog windows.</li>
+			and sample11.html.*</li><li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1407500&group_id=75348&atid=543655">SF
+				Patch-1407500</a>] Small enhancement to the Find and Replace dialog windows.</li>
 	</ul>
 	<p>
 		Fixed Bugs:</p>
@@ -38,7 +91,8 @@
 		</li>
 		<li>An error in the image preloader system was making the toolbar strip being downloaded
 			once for each button on slow connections. Some enhancements have also been made
-			so now the smaple05.html is loading fast for all skins.</li><li>Fixed many memory leak issues with IE.</li>
+			so now the smaple05.html is loading fast for all skins.</li><li>Fixed many memory leak
+				issues with IE.</li>
 		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1489768&group_id=75348&atid=543653">SF
 			BUG-1489768</a>] The panels (context menus, toolbar combos and color selectors),
 			where being displayed in the wrong position if the contents of the editor, or its
@@ -50,50 +104,58 @@
 			BUG-1491784</a>] Language files have been updated to not include html entities.</li>
 		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1490259&group_id=75348&atid=543653">SF
 			BUG-1490259</a>] No more security warning on IE over HTTPS.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1493173&group_id=75348&atid=543653">SF BUG-1493173</a>] [<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1499708&group_id=75348">SF BUG-1499708</a>] We now assume that, if a user is in source editing,
-			he/she wants to control the HTML, so the editor doesn't make changes to it when
-			posting the form being in source view or when calling the GetXHTML function
-			in the API. </li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1490610&group_id=75348&atid=543653">SF BUG-1490610</a>] The FitWindow is now working on elements set
-			with relative position.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1493438&group_id=75348&atid=543653">SF BUG-1493438</a>]
-			The "Word Wrap" combo in the cell properties dialog now accepts only Yes/No (no
-			more &lt;Not Set&gt; value).</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1493173&group_id=75348&atid=543653">SF
+			BUG-1493173</a>] [<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1499708&group_id=75348">SF
+				BUG-1499708</a>] We now assume that, if a user is in source editing, he/she
+			wants to control the HTML, so the editor doesn't make changes to it when posting
+			the form being in source view or when calling the GetXHTML function in the API.
+		</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1490610&group_id=75348&atid=543653">SF
+			BUG-1490610</a>] The FitWindow is now working on elements set with relative position.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1493438&group_id=75348&atid=543653">SF
+			BUG-1493438</a>] The "Word Wrap" combo in the cell properties dialog now accepts
+			only Yes/No (no more &lt;Not Set&gt; value).</li>
 		<li>The context menu is now being hidden when a nested menu option is selected.</li>
 		<li>Table cell context menu operations are now working correctly.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1494549&group_id=75348&atid=543653">SF BUG-1494549</a>] The code formatter was having problems with
-			dollar signs inside &lt;pre&gt; tags.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1459740&group_id=75348&atid=543655">SF Patch-1459740</a>] The "src" element of images can now be set
-			by styles definitions. Thanks to joelwreed.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1437052&group_id=75348&atid=543655">SF Patch-1437052</a>] [<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1436166&group_id=75348&atid=543655">SF Patch-1436166</a>] [<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1352385&group_id=75348&atid=543655">SF Patch-1352385</a>] Small fix to the FCK.InsertHtml, FCKTools.AppendStyleSheet
-			and FCKSelection.SelectNode
-			functions over
-			IE. Thanks to Alfonso Martinez.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1349765&group_id=75348&atid=543655">SF Patch-1349765</a>] Small fix to the FCKSelection.GetType over
-			Firefox. Thanks to Alfonso Martinez.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543655&aid=1495422&group_id=75348">SF Patch-1495422</a>] The editor now creates link based on the URL
-			when no selection is available. Thanks to Dominik Pesch.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543655&aid=1478859&group_id=75348">SF Patch-1478859</a>] On some circumstances, the Yahoo popup blocker
-			was blocking the File Browser window, giving no feedback to the user. Now an alert
-			message is displayed.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1494549&group_id=75348&atid=543653">SF
+			BUG-1494549</a>] The code formatter was having problems with dollar signs inside
+			&lt;pre&gt; tags.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1459740&group_id=75348&atid=543655">SF
+			Patch-1459740</a>] The "src" element of images can now be set by styles definitions.
+			Thanks to joelwreed.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1437052&group_id=75348&atid=543655">SF
+			Patch-1437052</a>] [<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1436166&group_id=75348&atid=543655">SF
+				Patch-1436166</a>] [<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1352385&group_id=75348&atid=543655">SF
+					Patch-1352385</a>] Small fix to the FCK.InsertHtml, FCKTools.AppendStyleSheet
+			and FCKSelection.SelectNode functions over IE. Thanks to Alfonso Martinez.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1349765&group_id=75348&atid=543655">SF
+			Patch-1349765</a>] Small fix to the FCKSelection.GetType over Firefox. Thanks to
+			Alfonso Martinez.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543655&aid=1495422&group_id=75348">SF
+			Patch-1495422</a>] The editor now creates link based on the URL when no selection
+			is available. Thanks to Dominik Pesch.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543655&aid=1478859&group_id=75348">SF
+			Patch-1478859</a>] On some circumstances, the Yahoo popup blocker was blocking the
+			File Browser window, giving no feedback to the user. Now an alert message is displayed.</li>
 		<li>When using the editor in a RTL localized interface, like Arabic, the toolbar combos
 			were not showing completely in the first click. Fixed.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1500212&group_id=75348">SF BUG-1500212</a>] All "_samples/html" samples are now working
-			when loading directly from the Windows Explorer. Thanks to Alfonso Martinez.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1500212&group_id=75348">SF
+			BUG-1500212</a>] All "_samples/html" samples are now working when loading directly
+			from the Windows Explorer. Thanks to Alfonso Martinez.</li>
 		<li>The "FitWindow" feature was breaking the editor under Firefox 1.0.x.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1500032&group_id=75348&atid=543655">SF Patch-1500032</a>] In Firefox, the caret position now follows
-			the user clicks when clicking in the white area bellow the editor contents. Thanks
-			to Alfonso Martinez.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1499522&group_id=75348">SF BUG-1499522</a>] In Firefox, the link dialog window was loosing
-			the focus (and quickly reacquiring
-			it) when opening. This behavior was blocking the
-			dialog in some Linux installations.
-		</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/index.php?func=detail&aid=1500032&group_id=75348&atid=543655">SF
+			Patch-1500032</a>] In Firefox, the caret position now follows the user clicks when
+			clicking in the white area bellow the editor contents. Thanks to Alfonso Martinez.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1499522&group_id=75348">SF
+			BUG-1499522</a>] In Firefox, the link dialog window was loosing the focus (and quickly
+			reacquiring it) when opening. This behavior was blocking the dialog in some Linux
+			installations. </li>
 		<li>Drastically improved the loading performance of the file list in the default File
 			Browser.</li>
-		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1503059&group_id=75348">SF BUG-1503059</a>] The default "BasePath" for FCKeditor in all
-			integration files has been now unified to "/fckeditor/" (lower-case). This is the
-			usual casing system in case sensitive OSs like Linux.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&atid=543653&aid=1503059&group_id=75348">SF
+			BUG-1503059</a>] The default "BasePath" for FCKeditor in all integration files has
+			been now unified to "/fckeditor/" (lower-case). This is the usual casing system
+			in case sensitive OSs like Linux.</li>
 		<li>The "DisableFFTableHandles" setting is now honored when switching the full screen
 			mode with FitWindow.</li>
 		<li>Some fixes has been applied to the cell merging in Firefox.</li>

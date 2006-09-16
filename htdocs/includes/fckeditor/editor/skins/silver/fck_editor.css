@@ -65,7 +65,7 @@ body
 
 .TB_Toolbar
 {
-    display: inline;
+    display: inline-table;
 }
 
 .TB_Separator

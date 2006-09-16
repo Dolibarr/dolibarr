@@ -66,7 +66,7 @@ body
    	background-color: #d6dff7;
 	background-image: url(images/toolbar.bg.gif);
 	background-repeat: repeat-x;
-    display: inline;
+    display: inline-table;
 }
 
 .TB_Separator

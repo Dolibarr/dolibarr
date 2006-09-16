@@ -166,6 +166,9 @@ if ( FCKBrowserInfo.IsGecko )
 {
 	function Window_OnResize()
 	{
+		if ( FCKBrowserInfo.IsOpera )
+			return ;
+
 		var oCell = document.getElementById( 'xEditingArea' ) ;
 
 		var eInnerElement ;

@@ -98,13 +98,13 @@ Button			: "Bouton",
 SelectionField	: "Liste/menu",
 ImageButton		: "Bouton image",
 
-FitWindow		: "Plein écran",
+FitWindow		: "Edition pleine page",
 
 // Context Menu
 EditLink			: "Modifier le lien",
-CellCM				: "Cell",	//MISSING
-RowCM				: "Row",	//MISSING
-ColumnCM			: "Column",	//MISSING
+CellCM				: "Cellule",
+RowCM				: "Ligne",
+ColumnCM			: "Colonne",
 InsertRow			: "Insérer une ligne",
 DeleteRows			: "Supprimer des lignes",
 InsertColumn		: "Insérer une colonne",
@@ -479,7 +479,7 @@ DlgTemplatesNoTpl	: "(Aucun modèle disponible)",
 // About Dialog
 DlgAboutAboutTab	: "A propos de",
 DlgAboutBrowserInfoTab	: "Navigateur",
-DlgAboutLicenseTab	: "License",	//MISSING
+DlgAboutLicenseTab	: "License",
 DlgAboutVersion		: "version",
 DlgAboutLicense		: "License selon les termes de GNU Lesser General Public License",
 DlgAboutInfo		: "Pour plus d'informations, aller à"

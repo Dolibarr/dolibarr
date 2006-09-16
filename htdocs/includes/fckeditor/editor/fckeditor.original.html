@@ -60,11 +60,11 @@ LoadScript( '_source/internals/fckbrowserinfo.js' ) ;
 LoadScript( '_source/internals/fckurlparams.js' ) ;
 LoadScript( '_source/internals/fck.js' ) ;
 LoadScript( '_source/internals/fckconfig.js' ) ;
-LoadScript( '_source/fckeditorapi.js' ) ;
 
 LoadScript( '_source/internals/fckdebug.js' ) ;
 LoadScript( '_source/internals/fcktools.js' ) ;
 LoadScript( '_source/internals/fcktools_' + sSuffix + '.js' ) ;
+LoadScript( '_source/fckeditorapi.js' ) ;
 LoadScript( '_source/internals/fckregexlib.js' ) ;
 LoadScript( '_source/internals/fcklanguagemanager.js' ) ;
 LoadScript( '_source/classes/fckevents.js' ) ;
@@ -248,6 +248,9 @@ if ( FCKBrowserInfo.IsGecko )
 {
 	function Window_OnResize()
 	{
+		if ( FCKBrowserInfo.IsOpera )
+			return ;
+
 		var oCell = document.getElementById( 'xEditingArea' ) ;
 
 		var eInnerElement ;

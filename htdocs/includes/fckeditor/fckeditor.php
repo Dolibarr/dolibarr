@@ -35,10 +35,10 @@ class FCKeditor
 	function __construct( $instanceName )
  	{
 		$this->InstanceName	= $instanceName ;
-		$this->BasePath		= DOL_URL_ROOT.'/includes/fckeditor/' ;
+		$this->BasePath		= '/fckeditor/' ;
 		$this->Width		= '100%' ;
 		$this->Height		= '200' ;
-		$this->ToolbarSet	= 'Dolibarr' ;
+		$this->ToolbarSet	= 'Default' ;
 		$this->Value		= '' ;
 
 		$this->Config		= array() ;
@@ -74,13 +74,13 @@ class FCKeditor
 				$Link .= "&amp;Toolbar={$this->ToolbarSet}" ;
 
 			// Render the linked hidden field.
-			$Html .= "<input type=\"hidden\" id=\"{$this->InstanceName}\" name=\"{$this->InstanceName}\" value=\"{$HtmlValue}\" style=\"display:none\" />\n" ;
+			$Html .= "<input type=\"hidden\" id=\"{$this->InstanceName}\" name=\"{$this->InstanceName}\" value=\"{$HtmlValue}\" style=\"display:none\" />" ;
 
 			// Render the configurations hidden field.
-			$Html .= "<input type=\"hidden\" id=\"{$this->InstanceName}___Config\" value=\"" . $this->GetConfigFieldString() . "\" style=\"display:none\" />\n" ;
+			$Html .= "<input type=\"hidden\" id=\"{$this->InstanceName}___Config\" value=\"" . $this->GetConfigFieldString() . "\" style=\"display:none\" />" ;
 
 			// Render the editor IFRAME.
-			$Html .= "<iframe id=\"{$this->InstanceName}___Frame\" src=\"{$Link}\" width=\"{$this->Width}\" height=\"{$this->Height}\" frameborder=\"0\" scrolling=\"no\"></iframe>\n" ;
+			$Html .= "<iframe id=\"{$this->InstanceName}___Frame\" src=\"{$Link}\" width=\"{$this->Width}\" height=\"{$this->Height}\" frameborder=\"0\" scrolling=\"no\"></iframe>" ;
 		}
 		else
 		{

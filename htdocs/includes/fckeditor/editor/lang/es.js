@@ -98,13 +98,13 @@ Button			: "Botón",
 SelectionField	: "Campo de Selección",
 ImageButton		: "Botón Imagen",
 
-FitWindow		: "Maximize the editor size",	//MISSING
+FitWindow		: "Maximizar el tamaño del editor",
 
 // Context Menu
 EditLink			: "Editar Vínculo",
-CellCM				: "Cell",	//MISSING
-RowCM				: "Row",	//MISSING
-ColumnCM			: "Column",	//MISSING
+CellCM				: "Celda",
+RowCM				: "Fila",
+ColumnCM			: "Columna",
 InsertRow			: "Insertar Fila",
 DeleteRows			: "Eliminar Filas",
 InsertColumn		: "Insertar Columna",
@@ -342,7 +342,7 @@ PasteFromWord	: "Pegar desde Word",
 DlgPasteMsg2	: "Por favor pegue dentro del cuadro utilizando el teclado (<STRONG>Ctrl+V</STRONG>); luego presione <STRONG>OK</STRONG>.",
 DlgPasteIgnoreFont		: "Ignorar definiciones de fuentes",
 DlgPasteRemoveStyles	: "Remover definiciones de estilo",
-DlgPasteCleanBox		: "Clean Up Box",	//MISSING
+DlgPasteCleanBox		: "Borrar el contenido del cuadro",
 
 // Color Picker
 ColorAutomatic	: "Automático",
@@ -479,7 +479,7 @@ DlgTemplatesNoTpl	: "(No hay plantillas definidas)",
 // About Dialog
 DlgAboutAboutTab	: "Acerca de",
 DlgAboutBrowserInfoTab	: "Información de Navegador",
-DlgAboutLicenseTab	: "License",	//MISSING
+DlgAboutLicenseTab	: "Licencia",
 DlgAboutVersion		: "versión",
 DlgAboutLicense		: "Licenciado bajo los términos de GNU Lesser General Public License",
 DlgAboutInfo		: "Para mayor información por favor dirigirse a"
