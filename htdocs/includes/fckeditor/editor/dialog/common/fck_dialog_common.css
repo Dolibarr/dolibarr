@@ -57,7 +57,7 @@
 	width: 16px;
 	height: 16px;
 	background-repeat: no-repeat;
-	border: 1px none;
+	border: none 1px;
 	font-size: 1px ;
 }
 
@@ -68,7 +68,7 @@
 
 .BtnOver
 {
-	border: 1px outset;
+	border: outset 1px;
 	cursor: pointer;
 	cursor: hand;
 }

@@ -18,15 +18,22 @@
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
  */
 
-require_once("../../../../../../../../conf/conf.php"); // ajouté car $conf et DOL_DATA_ROOT ne fonctionne pas
-
 global $Config ;
+
+//require_once("../../../../../../../../master.inc.php");
+require_once("../../../../../../../../conf/conf.php"); // ajouté car include master.inc.php ne marche pas
+/*
+$conf->syslog->enabled=1;
+define('SYSLOG_FILE','c:/log/dolibarr/dolibarr.log');
+require_once("../../../../../../../../lib/functions.inc.php");
+dolibarr_syslog("eee".$conf->fckeditor->dir_output);
+*/
 
 // SECURITY: You must explicitelly enable this "connector". (Set it to "true").
 $Config['Enabled'] = true ;
 
 // Path to user files relative to the document root.
-//$Config['UserFilesPath'] = '/UserFiles/' ;
+$Config['UserFilesPath'] = '/viewimage.php?modulepart=fckeditor&file=' ;
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Usefull if you are using a virtual directory, symbolic
@@ -34,7 +41,6 @@ $Config['Enabled'] = true ;
 // Attention: The above 'UserFilesPath' must point to the same directory.
 
 //$Config['UserFilesAbsolutePath'] = $conf->fckeditor->dir_output; // ne fonctionne pas
-//$Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/fckeditor/'; // ne fonctionne pas
 $Config['UserFilesAbsolutePath'] = $dolibarr_main_data_root.'/fckeditor/';
 
 // Due to security issues with Apache modules, it is reccomended to leave the

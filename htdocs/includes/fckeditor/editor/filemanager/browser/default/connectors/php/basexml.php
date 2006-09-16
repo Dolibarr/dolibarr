@@ -12,7 +12,8 @@
  * "Support Open Source software. What about a donation today?"
  * 
  * File Name: basexml.php
- * 	This is the File Manager Connector for ASP.
+ * 	These functions define the base of the XML response sent by the PHP
+ * 	connector.
  * 
  * File Authors:
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
@@ -20,6 +21,8 @@
 
 function SetXmlHeaders()
 {
+	ob_end_clean() ;
+
 	// Prevent the browser from caching the result.
 	// Date in the past
 	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT') ;

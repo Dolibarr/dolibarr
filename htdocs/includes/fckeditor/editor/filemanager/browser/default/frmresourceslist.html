@@ -99,38 +99,39 @@ function GetFoldersAndFilesCallBack( fckXml )
 	if ( oConnector.CheckError( fckXml ) != 0 )
 		return ;
 
-//	var dTimer = new Date() ;
-
 	// Get the current folder path.
 	var oNode = fckXml.SelectSingleNode( 'Connector/CurrentFolder' ) ;
 	var sCurrentFolderPath	= oNode.attributes.getNamedItem('path').value ;
 	var sCurrentFolderUrl	= oNode.attributes.getNamedItem('url').value ;
-	
-	var sHTML = '<table id="tableFiles" cellspacing="1" cellpadding="0" width="100%" border="0">' ;
 
+//	var dTimer = new Date() ;
+
+	var oHtml = new StringBuilder( '<table id="tableFiles" cellspacing="1" cellpadding="0" width="100%" border="0">' ) ;
 
 	// Add the Folders.	
 	var oNodes = fckXml.SelectNodes( 'Connector/Folders/Folder' ) ;
 	for ( var i = 0 ; i < oNodes.length ; i++ )
 	{
 		var sFolderName = oNodes[i].attributes.getNamedItem('name').value ;
-		sHTML += oListManager.GetFolderRowHtml( sFolderName, sCurrentFolderPath + sFolderName + "/" ) ;
+		oHtml.Append( oListManager.GetFolderRowHtml( sFolderName, sCurrentFolderPath + sFolderName + "/" ) ) ;
 	}
 
 	// Add the Files.	
 	var oNodes = fckXml.SelectNodes( 'Connector/Files/File' ) ;
 	for ( var i = 0 ; i < oNodes.length ; i++ )
 	{
-		var sFileName = oNodes[i].attributes.getNamedItem('name').value ;
-		var sFileSize = oNodes[i].attributes.getNamedItem('size').value ;
-		sHTML += oListManager.GetFileRowHtml( sFileName, sCurrentFolderUrl + sFileName, sFileSize ) ;
+		var oNode = oNodes[i] ;
+		var sFileName = oNode.attributes.getNamedItem('name').value ;
+		var sFileSize = oNode.attributes.getNamedItem('size').value ;
+		oHtml.Append( oListManager.GetFileRowHtml( sFileName, sCurrentFolderUrl + sFileName, sFileSize ) ) ;
 	}
 
-	sHTML += '</table>' ;
-
-	document.body.innerHTML = sHTML ;
+	oHtml.Append( '</table>' ) ;
+	
+	document.body.innerHTML = oHtml.ToString() ;
 
 //	window.top.document.title = 'Finished processing in ' + ( ( ( new Date() ) - dTimer ) / 1000 ) + ' seconds' ;
+
 }
 
 window.onload = function()

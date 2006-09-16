@@ -199,6 +199,13 @@ if ($modulepart)
       $accessallowed=1;
       $original_file=$conf->banque->dir_temp.'/'.$original_file;
     }
+
+    // Wrapping pour les graph bank
+    if ($modulepart == 'fckeditor')
+    {
+      $accessallowed=1;
+      $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
+    }
 }
 
 // Limite accès si droits non corrects

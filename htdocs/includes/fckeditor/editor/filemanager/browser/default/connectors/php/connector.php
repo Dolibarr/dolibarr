@@ -18,6 +18,8 @@
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
  */
 
+ob_start() ;
+
 include('config.php') ;
 include('util.php') ;
 include('io.php') ;
@@ -35,7 +37,7 @@ if ( isset( $Config['UserFilesPath'] ) )
 else if ( isset( $_GET['ServerPath'] ) )
 	$GLOBALS["UserFilesPath"] = $_GET['ServerPath'] ;
 else
-	$GLOBALS["UserFilesPath"] = $dolibarr_main_url_root.'/document.php?modulepart=editor&file=';// il faut l'url en entier
+	$GLOBALS["UserFilesPath"] = '/UserFiles/' ;
 
 if ( ! ereg( '/$', $GLOBALS["UserFilesPath"] ) )
 	$GLOBALS["UserFilesPath"] .= '/' ;

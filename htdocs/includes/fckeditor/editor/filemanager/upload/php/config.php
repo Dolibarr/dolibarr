@@ -18,24 +18,19 @@
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
  */
 
-require_once("../../../../../../conf/conf.php"); // ajouté car $conf et DOL_DATA_ROOT ne fonctionne pas
-
 global $Config ;
 
 // SECURITY: You must explicitelly enable this "uploader". 
-$Config['Enabled'] = true ;
+$Config['Enabled'] = false ;
 
 // Path to uploaded files relative to the document root.
-//$Config['UserFilesPath'] = '/UserFiles/' ;
+$Config['UserFilesPath'] = '/UserFiles/' ;
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Usefull if you are using a virtual directory, symbolic
 // link or alias. Examples: 'C:\\MySite\\UserFiles\\' or '/root/mysite/UserFiles/'.
 // Attention: The above 'UserFilesPath' must point to the same directory.
-
-//$Config['UserFilesAbsolutePath'] = $conf->fckeditor->dir_output; // ne fonctionne pas
-//$Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/fckeditor/'; // ne fonctionne pas
-$Config['UserFilesAbsolutePath'] = $dolibarr_main_data_root.'/fckeditor/';
+$Config['UserFilesAbsolutePath'] = '' ;
 
 // Due to security issues with Apache modules, it is reccomended to leave the
 // following setting enabled.

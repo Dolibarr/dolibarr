@@ -63,6 +63,12 @@ function UpdateOriginal( resetSize )
 {
 	if ( !eImgPreview )
 		return ;
+	
+	if ( GetE('txtUrl').value.length == 0 )
+	{
+		oImageOriginal = null ;
+		return ;
+	}
 		
 	oImageOriginal = document.createElement( 'IMG' ) ;	// new Image() ;
 
