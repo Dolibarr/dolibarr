@@ -32,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 $langs->load('companies');
 $langs->load('projects');
@@ -154,12 +155,14 @@ if ($socid > 0)
     $tableaushown=0;
 
 
+    $propal_static=new Propal($db);
+
     /*
-     * Liste de propales
+     * Dernieres propales
      *
      */
     print '<table class="noborder" width="100%">';
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise,";
+    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
     $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite,";
     $sql.= " c.label as statut, c.id as statutid";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
@@ -189,10 +192,13 @@ if ($socid > 0)
             print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
             print img_object($langs->trans("ShowPropal"),"propal");
             print " $objp->ref</a>\n";
-			if ($objp->datelimite < (time() - $conf->propale->warning_delay)) print img_warning($langs->trans("Late"));
+            if ( ($objp->dp < time() - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
+            {
+                print " ".img_warning();
+            }
             print "</td><td align=\"right\">".dolibarr_print_date($objp->dp,"%d %B %Y")."</td>\n";
             print "<td align=\"right\">".price($objp->price)."</td>\n";
-            print "<td align=\"center\">".$objp->statut."</td></tr>\n";
+            print "<td align=\"right\">".$propal_static->LibStatut($objp->fk_statut,5)."</td></tr>\n";
             $i++;
         }
         $db->free();

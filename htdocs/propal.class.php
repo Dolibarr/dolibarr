@@ -58,7 +58,7 @@ class Propal extends CommonObject
     var $author;
     var $ref;
     var $ref_client;
-    var $status;
+    var $statut;					// 0, 1, 2, 3, 4
     var $datep;
     var $fin_validite;
     var $price;						// Total HT
