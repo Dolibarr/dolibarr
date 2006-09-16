@@ -117,30 +117,30 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
     $html->selectyesnonum('bugtrack',$conf->global->MAIN_SHOW_BUGTRACK_LINK);
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
     $html->selectyesnonum('workboard',$conf->global->MAIN_SHOW_WORKBOARD);
     print '</td></tr>';
 
     // Désactiver javascript
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     $html->selectyesnonum('disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0);
     print '</td></tr>';
     
     // Désactiver ajax
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
     $html->selectyesnonum('disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1);
     print '</td></tr>';
     
     // Désactiver le calendrier popup
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
     $liste_popup_calendar=array('0'=>$langs->trans("No"),'eldy'=>$langs->trans("Yes").' (style eldy)','andre'=>$langs->trans("Yes").' (style andre)');
     $html->select_array('popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
@@ -195,7 +195,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     foreach ($searchform as $key => $value)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>';
+        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>';
         $html->selectyesnonum($searchform[$key],$searchformconst[$key]);
         print '</td></tr>';
     }
@@ -239,22 +239,22 @@ else
     print yn($conf->global->MAIN_SHOW_BUGTRACK_LINK)."</td></tr>";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';   
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';   
     print yn($conf->global->MAIN_SHOW_WORKBOARD)."</td></tr>";
 
     // Disable javascript
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td></tr>";
     
     // Disable ajax
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';   
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';   
     print yn(isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1)."</td></tr>";
     
     // Calendrier en popup
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';   
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';   
     if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
     else print ($conf->global->MAIN_POPUP_CALENDAR?$langs->trans("Yes").' (style '.$conf->global->MAIN_POPUP_CALENDAR.')':$langs->trans("No"));
     print "</td></tr>";
