@@ -135,7 +135,7 @@ class InterfaceWebCal
                 $libellecal.=($object->note?$object->note:"");
             }
 
-            $this->date=$object->date;
+            $this->date=$object->date ? $object->date : $object->datep;
             $this->duree=$object->duree;
             $this->texte=$object->societe->nom;
             $this->desc=$libellecal;
