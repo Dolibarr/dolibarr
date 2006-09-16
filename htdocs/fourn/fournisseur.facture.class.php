@@ -227,7 +227,7 @@ class FactureFournisseur extends Facture
 							$this->lignes[$i][5] = $obj->tva;
 							$this->lignes[$i][6] = $obj->total_ttc;
 							$this->lignes[$i][7] = $obj->rowid;
-							$this->lignes[$i][8] = $obj->total_ht;
+							$this->lignes[$i][8] = $obj->total_tva;
 							$i++;
 						}
 					}
