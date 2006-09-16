@@ -101,7 +101,9 @@ alter table llx_actioncomm add column tms timestamp after datea;
 alter table llx_actioncomm add column fk_commande integer after propalrowid;
 
 update llx_actioncomm set datec = datea where datec is null;
-update llx_actioncomm set datep = datea where datep is null;
+update llx_actioncomm set datep = datea where datep is null AND percent < 100;
+update llx_actioncomm set datep = datec where datea is null AND datep is null AND percent < 100;
+update llx_actioncomm set datea = datec where datea is null AND datep is null AND percent = 100;
 update llx_actioncomm set fk_action = '8' where fk_action =  '3' and label = 'Envoi commande par mail';
 
 

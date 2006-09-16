@@ -729,7 +729,7 @@ if ($_GET["id"])
 
         // Note
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-        print nl2br($act->note);
+        print nl2br(htmlentities($act->note));
         print '</td></tr>';
 
         print '</table>';
