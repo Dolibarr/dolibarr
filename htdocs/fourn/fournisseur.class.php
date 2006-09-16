@@ -129,43 +129,43 @@ class Fournisseur extends Societe
             return -1;
         }
     }
-
-
-  function ProductCommande($user, $fk_product)
-  {
-    include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
-    include_once(DOL_DOCUMENT_ROOT."/product.class.php");
-
-    $commf = new CommandeFournisseur($this->db);
-    
-    $nbc = $this->nb_open_commande();
-    
-    dolibarr_syslog("Fournisseur::ProductCommande : nbc = ".$nbc);
-    
-    if ($nbc == 0)
-      {
-	if ( $this->create_commande($user) == 0 )
-	  {
-	    $idc = $this->single_open_commande;
-	  }
-      }
-    elseif ($nbc == 1)
-      {
 	
-	$idc = $this->single_open_commande;
-      }
-    
-    if ($idc > 0)
-      {
-	$prod = new Product($this->db);
-	$prod->fetch($fk_product);
-	$prod->fetch_fourn_data($this->id);
+	
+	function ProductCommande($user, $fk_product)
+	{
+		include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/product.class.php");
+	
+		$commf = new CommandeFournisseur($this->db);
+	
+		$nbc = $this->nb_open_commande();
+	
+		dolibarr_syslog("Fournisseur::ProductCommande : nbc = ".$nbc);
+	
+		if ($nbc == 0)
+		{
+			if ( $this->create_commande($user) == 0 )
+			{
+				$idc = $this->single_open_commande;
+			}
+		}
+		elseif ($nbc == 1)
+		{
+	
+			$idc = $this->single_open_commande;
+		}
+	
+		if ($idc > 0)
+		{
+			$prod = new Product($this->db);
+			$prod->fetch($fk_product);
+			$prod->fetch_fourn_data($this->id);
+	
+			$commf->fetch($idc);
+			$commf->addline("Toto",120,1,$prod->tva, $prod->id, 0, $prod->ref_fourn);
+		}
+	}
 
-	$commf->fetch($idc);
-	$commf->addline("Toto",120,1,$prod->tva, $prod->id, 0, $prod->ref_fourn);
-      }
-  }
-  
     /**
      *      \brief      Charge indicateurs this->nb de tableau de bord
      *      \return     int         <0 si ko, >0 si ok

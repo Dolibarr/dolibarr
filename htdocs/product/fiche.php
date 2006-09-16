@@ -303,7 +303,6 @@ if ($_POST["action"] == 'addincommande')
     $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
 
     $result =  $commande->addline($commande->id,
-                                  $product->libelle,
                                   $product->description,
                                   $pu,
                                   $_POST["qty"],

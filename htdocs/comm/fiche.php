@@ -393,7 +393,7 @@ if ($socid > 0)
         print '<table class="noborder" width="100%">';
 
 	    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
-	    $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite,";
+	    $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
         $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
         $sql .= " AND s.idp = ".$objsoc->id;

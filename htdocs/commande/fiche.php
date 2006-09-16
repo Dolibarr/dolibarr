@@ -297,7 +297,6 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 
         $commande->addline(
 			$_POST['id'],
-			$libelle,
 			$desc,
 			$pu,
 			$_POST['qty'],

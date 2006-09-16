@@ -355,6 +355,13 @@ ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_source_fk_facture FOREIGN KEY 
 alter table llx_facture add column type smallint DEFAULT 0 NOT NULL after facnumber;
 
 
+-- Supprimme orphelins pour permettre montée de la clé
+-- V4 DELETE llx_commandedet FROM llx_commandedet LEFT JOIN llx_commande ON llx_commandedet.fk_commande = llx_commande.rowid WHERE llx_commande.rowid IS NULL;
+
+ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_commande (fk_commande);
+ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commande FOREIGN KEY (fk_commande) REFERENCES llx_commande (rowid);
+
+
 -- drop table llx_societe_remise_except;
 create table llx_societe_remise_except
 (
@@ -406,6 +413,8 @@ alter table llx_commande_fournisseur drop column fk_soc_contact;
 alter table llx_commande drop column fk_soc_contact;
 alter table llx_livraison drop column fk_soc_contact;
 alter table llx_propal drop column fk_soc_contact;
+
+alter table llx_commandedet drop column label;
 
 alter table llx_c_pays modify libelle varchar(50) NOT NULL;
 

@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,7 +25,6 @@ create table llx_commandedet
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_commande    integer,
   fk_product     integer,
-  label          varchar(255),
   description    text,
   tva_tx         real, 				-- taux tva
   qty            real,              -- quantité

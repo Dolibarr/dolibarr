@@ -413,7 +413,6 @@ class Commande extends CommonObject
 				{
 					$resql = $this->addline(
 						$this->id,
-						$this->lines[$i]->libelle,		// \TODO A virer
 						$this->lines[$i]->desc,
 						$this->lines[$i]->subprice,
 						$this->lines[$i]->qty,
@@ -502,7 +501,7 @@ class Commande extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($commandeid, $libelle, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+    function addline($commandeid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
     	dolibarr_syslog("Commande.class.php::addline this->id=$this->id, $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -539,7 +538,6 @@ class Commande extends CommonObject
 			$ligne=new CommandeLigne($this->db);
 
 			$ligne->fk_commande=$commandeid;
-			$ligne->libelle=$libelle;
 			$ligne->desc=$desc;
 			$ligne->qty=$qty;
 			$ligne->tva_tx=$txtva;
@@ -974,7 +972,7 @@ class Commande extends CommonObject
 	{
 		$this->lignes = array();
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
-		$sql.= ' l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits, l.label,';
+		$sql.= ' l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits, ';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -1008,7 +1006,6 @@ class Commande extends CommonObject
 				$ligne->info_bits      = $objp->info_bits;
 
 				$ligne->ref            = $objp->product_ref;	
-				$ligne->libelle        = $objp->label;        		// Label produit
 				$ligne->product_desc   = $objp->product_desc; 		// Description produit
 				$ligne->fk_product_type= $objp->fk_product_type;	// Produit ou service
 
@@ -2078,7 +2075,7 @@ class CommandeLigne
 	
 	// From llx_product
 	var $ref;				// Reference produit
-	var $libelle;       	// Label produit
+	var $product_libelle; 	// Label produit
 	var $product_desc;  	// Description produit
 
 
@@ -2098,7 +2095,6 @@ class CommandeLigne
 	function fetch($rowid)
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx,';
-		$sql.= ' cd.label,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
 		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.coef, cd.rang,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
@@ -2111,7 +2107,6 @@ class CommandeLigne
 			$objp = $this->db->fetch_object($result);
 			$this->rowid          = $objp->rowid;
 			$this->fk_propal      = $objp->fk_propal;
-			$this->label          = $objp->label;
 			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
 			$this->price          = $objp->price;
@@ -2129,7 +2124,7 @@ class CommandeLigne
 			$this->rang           = $objp->rang;
 
 			$this->ref			  = $objp->product_ref;
-			$this->libelle		  = $objp->product_libelle;
+			$this->product_libelle= $objp->product_libelle;
 			$this->product_desc	  = $objp->product_desc;
 
 			$this->db->free($result);
@@ -2171,12 +2166,11 @@ class CommandeLigne
 		
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
-		$sql.= ' (fk_commande, label, description, price, qty, tva_tx,';
+		$sql.= ' (fk_commande, description, price, qty, tva_tx,';
 		$sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except, ';
 		$sql.= ' rang, coef,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
 		$sql.= " VALUES (".$this->fk_commande.",";
-		$sql.= " '".addslashes($this->libelle)."',";
 		$sql.= " '".addslashes($this->desc)."',";
 		$sql.= " '".price2num($this->price)."',";
 		$sql.= " '".price2num($this->qty)."',";

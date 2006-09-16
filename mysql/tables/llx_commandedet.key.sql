@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 
 -- Supprimme orhpelins pour permettre montée de la clé
--- V4 DELETE llx_facturedet FROM llx_facturedet LEFT JOIN llx_facture ON llx_facturedet.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
+-- V4 DELETE llx_commandedet FROM llx_commandedet LEFT JOIN llx_commande ON llx_commandedet.fk_commande = llx_commande.rowid WHERE llx_commande.rowid IS NULL;
 
-ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_facture (fk_facture);
-ALTER TABLE llx_facturedet ADD CONSTRAINT fk_facturedet_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
+ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_commande (fk_commande);
+ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commande FOREIGN KEY (fk_commande) REFERENCES llx_commande (rowid);
