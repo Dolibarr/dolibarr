@@ -749,7 +749,10 @@ if ($socid > 0)
     print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
     print '</tr>';
 
-    $sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp,  a.percent,";
+    $sql = "SELECT a.id, a.label,";
+    $sql.= " ".$db->pdate("a.datep")." as dp,";
+    $sql.= " ".$db->pdate("a.datea")." as da,";
+    $sql.= " a.percent,";
     $sql.= " c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
     $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
     $sql.= " WHERE a.fk_soc = ".$objsoc->id;
@@ -865,7 +868,10 @@ if ($socid > 0)
     print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
     print '</tr>';
 
-    $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
+    $sql = "SELECT a.id, a.label,";
+    $sql.= " ".$db->pdate("a.datep")." as dp,";
+    $sql.= " ".$db->pdate("a.datea")." as da,";
+    $sql.= " a.percent,";
     $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
     $sql.= " c.code as acode, c.libelle,";
     $sql.= " u.code, u.rowid";

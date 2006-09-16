@@ -186,7 +186,7 @@ if ($resql)
         {
             $cont = new Contact($db);
             $cont->fetch($obj->fk_contact);
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$cont->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.dolibarr_trunc($cont->fullname,24).'</a>';
+            print $cont->getNomUrl(1);
         }
         else
         {

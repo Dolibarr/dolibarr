@@ -20,14 +20,14 @@
  * $Id$
  * $Source$
  */
- 
+
 /**
         \file       htdocs/comm/action/fiche.php
         \ingroup    commercial
         \brief      Page de la fiche action commercial
         \version    $Revision$
 */
- 
+
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
@@ -40,7 +40,7 @@ $langs->load("bills");
 $langs->load("orders");
 
 // Sécurité accés client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -54,6 +54,24 @@ if (isset($_GET["error"])) $error=$_GET["error"];
  */
 if ($_POST["action"] == 'add_action')
 {
+	// Nettoyage parametres
+	if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
+	if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
+	if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
+	if ($_POST["admin"] == -1) $_POST["admin"]='0';
+	$datep=@mktime($_POST["aphour"],
+                   $_POST["apmin"],
+                   0,
+                   $_POST["apmonth"],
+                   $_POST["apday"],
+                   $_POST["apyear"]);
+	$datea=@mktime($_POST["adhour"],
+                   $_POST["admin"],
+                   0,
+                   $_POST["admonth"],
+                   $_POST["adday"],
+                   $_POST["adyear"]);
+
     if ($_POST["contactid"])
     {
         $contact = new Contact($db);
@@ -66,21 +84,28 @@ if ($_POST["action"] == 'add_action')
 		$_GET["action"] = 'create';
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
     }
- 
+
+	if ($datea && $_POST["percentage"] == 0)
+	{
+		$error=1;	
+		$_GET["action"] = 'create';
+        $mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
+	}
+	
  	if (! $_POST["apyear"] && ! $_POST["adyear"])
  	{
     	$error=1;
 		$_GET["action"] = 'create';
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
  	}
-    
+
     if (! $error)
     {
         $db->begin();
 
         $cactioncomm = new CActionComm($db);
         $cactioncomm->fetch($_POST["actionid"]);
-        
+
         // Initialisation objet actioncomm
         $actioncomm = new ActionComm($db);
 
@@ -102,22 +127,14 @@ if ($_POST["action"] == 'add_action')
                 }
             }
         }
-    	$actioncomm->date_p = @mktime($_POST["aphour"],
-                                   $_POST["apmin"],
-                                   0,
-                                   $_POST["apmonth"],
-                                   $_POST["apday"],
-                                   $_POST["apyear"]);
-    	$actioncomm->date_a = @mktime($_POST["adhour"],
-                                   $_POST["admin"],
-                                   0,
-                                   $_POST["admonth"],
-                                   $_POST["adday"],
-                                   $_POST["adyear"]);
+//        print $_POST["aphour"]." ".$_POST["apmin"]." ".$_POST["apday"];
+    	$actioncomm->datep = $datep;
+    	$actioncomm->date = $datea;
+	    if ($_POST["percentage"] < 100 && ! $actioncomm->datep) $actioncomm->datep=$actioncomm->date;
 		if ($actioncomm->type_id == 5)
 		{
 			// RDV
-			if ($actioncomm->date_a)
+			if ($actioncomm->date)
 			{
 				$actioncomm->percent = 100;
 			}
@@ -150,7 +167,7 @@ if ($_POST["action"] == 'add_action')
             if (! $actioncomm->error)
             {
                 $db->commit();
-                if ($_POST["from"]) 
+                if ($_POST["from"])
                 {
 					dolibarr_syslog("Back to ".$_POST["from"]);
                 	Header("Location: ".$_POST["from"]);
@@ -179,7 +196,7 @@ if ($_POST["action"] == 'add_action')
             $error='<div class="error">'.$actioncomm->error.'</div>';
         }
     }
-    
+
 //    print $_REQUEST["from"]."rr";
 }
 
@@ -191,7 +208,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
     $actioncomm = new ActionComm($db);
     $actioncomm->delete($_GET["id"]);
-    
+
     Header("Location: index.php");
     exit;
 }
@@ -204,22 +221,21 @@ if ($_POST["action"] == 'update')
 {
     if (! $_POST["cancel"])
     {
-    	if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
-    	if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
-    	if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
-    	if ($_POST["admin"] == -1) $_POST["admin"]='0';
-    	
+		if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
+		if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
+		if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
+		if ($_POST["admin"] == -1) $_POST["admin"]='0';
+
         $action = new Actioncomm($db);
         $action->fetch($_POST["id"]);
 
-                                   
-    	$action->date_p = @mktime($_POST["aphour"],
+    	$action->datep = @mktime($_POST["aphour"],
                                    $_POST["apmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
-    	$action->date_a = @mktime($_POST["adhour"],
+    	$action->date = @mktime($_POST["adhour"],
                                    $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
@@ -231,13 +247,13 @@ if ($_POST["action"] == 'update')
         $action->percent     = $_POST["percent"];
         $action->contact->id = $_POST["contactid"];
         $action->note        = $_POST["note"];
-		if ($action->type_code == 'AC_RDV' && $action->percent == 100 && ! $action->date_a)
+		if ($action->type_code == 'AC_RDV' && $action->percent == 100 && ! $action->date)
 		{
-			$action->date_a = $action->date_p;
+			$action->date = $action->datep;
 		}
         $result=$action->update();
     }
-        
+
     if ($result < 0)
     {
     	$mesg='<div class="error">'.$action->error.'</div>';
@@ -350,7 +366,7 @@ if ($_GET["action"] == 'create')
 			$html->select_date(-1,'ad',1,1,1,"action");
 		}
 		print '</td></tr>';
-		
+
 		// Duration
 		print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 		$html->select_duree("duree");
@@ -522,7 +538,7 @@ if ($_GET["action"] == 'create')
 			print '<textarea name="note" cols="90" rows="'.ROWS_8.'"></textarea>';
 	    }
 		print '</td></tr>';
-		
+
 		print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 
 		print '</table>';
@@ -571,7 +587,7 @@ if ($_GET["id"])
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans('Info');
 	$h++;
-	
+
     dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
 
 
@@ -620,8 +636,8 @@ if ($_GET["id"])
 		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">';
 		$html->select_date(($act->date?$act->date:-1),'ad',1,1,1,"action");
 		print '</td></tr>';
-		
-		
+
+
 		// Etat
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
 
@@ -645,7 +661,7 @@ if ($_GET["id"])
 	    {
 			print '<textarea name="note" cols="90" rows="'.ROWS_8.'">'.$act->note.'</textarea>';
 	    }
-        
+
         print '</td></tr>';
 
         print '<tr><td align="center" colspan="4"><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
@@ -680,7 +696,7 @@ if ($_GET["id"])
         {
         	print $langs->trans("None");
         }
-        
+
         print '</td></tr>';
 
 		// Affecte a
@@ -695,7 +711,7 @@ if ($_GET["id"])
 
         // Date debut
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">'.dolibarr_print_date($act->datep,'%d %B %Y %H:%M').'</td></tr>';
-        
+
         // Date fin real
         print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
 
@@ -752,7 +768,7 @@ function add_row_for_webcal_link()
 {
     global $conf,$langs,$user;
     $nbtr=0;
-    
+
     // Lien avec calendrier si module activé
     if ($conf->webcal->enabled)
     {

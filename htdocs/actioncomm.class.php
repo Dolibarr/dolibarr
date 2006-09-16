@@ -41,11 +41,11 @@ class ActionComm
     var $type_code;
     var $type;
     var $label;
-    var $datec;			// Date creation enregistrement
-    var $datep;			// Date action planifie debut
+    var $datec;			// Date creation enregistrement (datec)
+    var $datem;			// Date modif enregistrement (tms)
+    var $datep;			// Date action planifie debut (datep)
     var $datef;			// Date action planifie fin
     var $date;			// Date action realise completement (datea)
-    var $datem;			// Date modif (tms)
     var $priority;
     var $user;
     var $author;
@@ -79,20 +79,20 @@ class ActionComm
     {
         global $langs,$conf;
     
-        dolibarr_syslog("ActionComm::add");
+        dolibarr_syslog("ActionComm.class::add datep=".strftime("%x %X",$this->datep)." datea=".$this->datea);
 
         if (! $this->percent)  $this->percent = 0;
         if (! $this->priority) $this->priority = 0;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
-        if ($this->date_p) $sql.= "datep,";
-        if ($this->date_a) $sql.= "datea,";
+        if ($this->datep) $sql.= "datep,";
+        if ($this->date) $sql.= "datea,";
         $sql.= "fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
         $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (now(),";
-        if ($this->date_p) $sql.= "'".$this->db->idate($this->date_p)."',";
-        if ($this->date_a) $sql.= "'".$this->db->idate($this->date_a)."',";
+        if ($this->datep) $sql.= "'".$this->db->idate($this->datep)."',";
+        if ($this->date) $sql.= "'".$this->db->idate($this->date)."',";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
         $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percent."','".$this->priority."',";
@@ -217,8 +217,8 @@ class ActionComm
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
         $sql.= " SET percent='".$this->percent."'";
         if ($this->label) 		$sql.= ", label = '".addslashes($this->label)."'";
-        $sql.= ", datep = ".($this->date_p ? "'".$this->db->idate($this->date_p)."'" : 'null');
-        $sql.= ", datea = ".($this->date_a ? "'".$this->db->idate($this->date_a)."'" : 'null');
+        $sql.= ", datep = ".($this->datep ? "'".$this->db->idate($this->datep)."'" : 'null');
+        $sql.= ", datea = ".($this->date ? "'".$this->db->idate($this->date)."'" : 'null');
         if ($this->note) 		$sql.= ", note = '".addslashes($this->note)."'";
         if ($this->contact->id) $sql.= ", fk_contact =". $this->contact->id;
         $sql.= " WHERE id=".$this->id;
