@@ -1748,10 +1748,6 @@ else
 			}
 			print '</td><td valign="top" width="50%">';
 
-			// Rien a droite
-
-			print '</td></tr></table>';
-
 			/*
 			* Liste des actions propres à la commande
 			*/
@@ -1765,7 +1761,7 @@ else
 				$num = $db->num_rows($resql);
 				if ($num)
 				{
-					print '<br>';
+					//print '<br>';
 					print_titre($langs->trans('ActionsOnOrder'));
 					$i = 0;
 					$total = 0;
@@ -1797,6 +1793,9 @@ else
 			{
 				dolibarr_print_error($db);
 			}
+
+			print '</td></tr></table>';
+
 
 
 			/*
