@@ -31,6 +31,9 @@ require("./pre.inc.php");
 require_once("./ComptaJournalPaiement.class.php");
 require_once("./ComptaJournalVente.class.php");
 
+$langs->load("compta");
+
+
 /*
  * Actions
  */
@@ -70,11 +73,11 @@ if ($_GET["action"] == 'export')
  
 llxHeader('','Compta - Export');
 
-print_titre("Export Comptable");
+print_fiche_titre($langs->trans("AccountancyExport"));
 
-if ($exc->error_message);
+if ($exc->error_message)
 {
-   print $exc->error_message;
+   print '<div class="error">'.$exc->error_message.'</div>';
 }
 
 
@@ -105,9 +108,11 @@ if ($resql)
 }
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>Type</td><td align="center">Nb</td></tr>';
-print '<tr><td>Factures à exporter</td><td align="center">'.$nbfac.'</td></tr>';
-print '<tr><td>Paiements à exporter</td><td align="center">'.$nbp.'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Nb").'</td><td align="right">'.$langs->trans("Nb").'</td></tr>';
+$var=false;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("Invoices").'</td><td align="right">'.$nbfac.'</td></tr>';
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("Payments").'</td><td align="right">'.$nbp.'</td></tr>';
 print "</table>\n";
 
 print '</td><td valign="top" width="70%">';
@@ -116,7 +121,7 @@ $dir = DOL_DATA_ROOT."/compta/export/";
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("File").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
 
@@ -137,5 +142,5 @@ print "</table>";
 print '</td></tr></table>';
 
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

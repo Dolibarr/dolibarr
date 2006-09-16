@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +20,8 @@
  * $Source$
  */
 
-require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_workbook.inc.php";
-require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksheet.inc.php";
-
+require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
+require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 
 
 class ComptaExportPoivre extends ComptaExport
@@ -170,16 +170,16 @@ class ComptaExportPoivre extends ComptaExport
 
             // Pour les factures
 
-            //A 0 Date Opération 040604 pour 4 juin 2004
-            //B 1 VE -> ventilation
-            //C 2 code Compte général
-            //D 3 code client
-            //E 4 Intitul
-            //F 5 Numéro de pièce
-            //G 6 Date d'échéance, = à la date d'opération si pas d'échéance
-            //H 7 Montant
-            //I 8 Type opération D pour Débit ou C pour Crédit
-            //J 9 EUR pour Monnaie en Euros
+            // A 0 Date Opération 040604 pour 4 juin 2004
+            // B 1 VE -> ventilation
+            // C 2 code Compte général
+            // D 3 code client
+            // E 4 Intitul
+            // F 5 Numéro de pièce
+            // G 7 Montant
+            // H 8 Type opération D pour Débit ou C pour Crédit
+            // I Date d'échéance, = à la date d'opération si pas d'échéance
+            // J EUR pour Monnaie en Euros
 
             // Pour les paiements
 
@@ -250,16 +250,16 @@ class ComptaExportPoivre extends ComptaExport
 
             // Pour les paiements
 
-            // Date Opération 040604 pour 4 juin 2004
-            // CE -> caisse d'epargne
-            // code Compte général
-            // code client
-            // Intitul
-            // Numéro de pièce
-            // Montant
-            // Type opération D pour Débit ou C pour Crédit
-            // Date d'échéance, = à la date d'opération si pas d'échéance
-            // EUR pour Monnaie en Euros
+            // A Date Opération 040604 pour 4 juin 2004
+            // B CE -> caisse d'epargne
+            // C code Compte général
+            // D code client
+            // E Intitul
+            // F Numéro de pièce
+            // G Montant
+            // H Type opération D pour Débit ou C pour Crédit
+            // I Date d'échéance, = à la date d'opération si pas d'échéance
+            // J EUR pour Monnaie en Euros
 
             $i = 0;
             //$j = 0;

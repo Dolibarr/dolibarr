@@ -29,6 +29,8 @@
 
 require("./pre.inc.php");
 
+$langs->load("compta");
+
 
 llxHeader('','Compta - Ventilation');
 
@@ -66,18 +68,18 @@ if ($result)
 $var=true;
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">Lignes a ventiler</tr>';
-print '<tr class="liste_titre"><td>Type</td><td align="center">Nb</td></tr>';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Lines").'</tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Type").'</td><td align="right">'.$langs->trans("Nb").'</td></tr>';
 $var=!$var;
-print "<tr $bc[$var]>".'<td>Factures</td><td align="center">'.$nbfac.'</td></tr>';
+print "<tr $bc[$var]>".'<td>'.$langs->trans("Invoices").'</td><td align="right">'.$nbfac.'</td></tr>';
 $var=!$var;
-print "<tr $bc[$var]>".'<td>Paiements</td><td align="center">'.$nbp.'</td></tr>';
+print "<tr $bc[$var]>".'<td>'.$langs->trans("Payments").'</td><td align="right">'.$nbp.'</td></tr>';
 print "</table>\n";
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>Type</td><td align="center">Nb de lignes</td><td align="center">Numero</td><td align="center">ID</td></tr>';
+print '<tr class="liste_titre"><td>Type</td><td align="center">'.$langs->trans("NbOfLines").'</td><td align="center">'.$langs->trans("AccountNumber").'</td><td align="center">'.$langs->trans("TransID").'</td></tr>';
 
 $sql = "SELECT count(*), ccg.intitule, ccg.rowid,ccg.numero FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql.= " ,".MAIN_DB_PREFIX."compta_compte_generaux as ccg";

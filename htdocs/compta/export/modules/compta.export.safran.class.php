@@ -19,8 +19,8 @@
  * $Source$
  */
 
-require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_workbook.inc.php";
-require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksheet.inc.php";
+require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
+require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 
 
 class ComptaExportTableur extends ComptaExport

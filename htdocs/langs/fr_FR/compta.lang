@@ -53,3 +53,5 @@ AccountNumberShort=N° du compte
 AccountNumber=Numéro du compte
 NewAccount=Nouveau compte
 SalesTurnover=Chiffre d'affaire
+AccountancyExport=Export comptable
+ErrorWrongAccountancyCodeForCompany=Code compta client incorrect pour %s

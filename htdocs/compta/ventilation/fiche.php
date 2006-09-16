@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,18 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("bills");
-
 
 $mesg = '';
 
 if (!$user->rights->compta->ventilation->creer) accessforbidden();
+
+
+/*
+ * Actions
+ */
 
 if ($_POST["action"] == 'ventil' && $user->rights->compta->ventilation->creer)
 {
@@ -79,6 +84,7 @@ if ($result)
  *
  */
 $form = new Form($db);
+$facture_static=new Facture($db);
 
 if($_GET["id"])
 {
@@ -110,14 +116,19 @@ if($_GET["id"])
             }
 
 
-            print_titre("Ventilation");
+            print_fiche_titre("Ventilation");
 
             print '<table class="border" width="100%">';
-            print '<tr><td>'.$langs->trans("Bill").'</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td></tr>';
+
+			// Ref facture
+            print '<tr><td>'.$langs->trans("Invoice").'</td>';
+			$facture_static->ref=$objp->facnumber;
+			$facture_static->id=$objp->facid;
+			print '<td>'.$facture_static->getNomUrl(1).'</td>';
+            print '</tr>';
 
             print '<tr><td width="20%">Ligne</td>';
-            print '<td>'.stripslashes(nl2br($objp->description)).'</td></tr>';
+            print '<td>'.nl2br($objp->description).'</td></tr>';
             print '<tr><td width="20%">Ventiler dans le compte :</td><td>';
 
             if($objp->fk_code_ventilation == 0)

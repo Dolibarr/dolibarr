@@ -1758,6 +1758,29 @@ function get_each_prod()
 	}
 
 	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Sur quoi pointe le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		if ($withpicto) {
+			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct"),'product').$lienfin.' ');
+			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService"),'service').$lienfin.' ');
+		}
+		$result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+	
+	/**
 	 *    	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
 	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
 	 *    	\return     string		Libelle

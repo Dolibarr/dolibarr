@@ -53,3 +53,5 @@ AccountNumberShort=Account number
 AccountNumber=Account number
 NewAccount=New account
 SalesTurnover=Sales turnover
+AccountancyExport=Accountancy export
+ErrorWrongAccountancyCodeForCompany=Bad customer accountancy code for %s

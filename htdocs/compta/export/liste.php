@@ -17,20 +17,22 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
 require("./pre.inc.php");
 
-llxHeader('','Compta - Export');
-/*
- * Sécurité accés client
- */
+$langs->load("compta");
+
+
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socid = $user->societe_id;
 }
 
+
+llxHeader('','Compta - Export');
 
 /*
  *
@@ -47,8 +49,6 @@ if ($sortfield == "") $sortfield="ec.date_export";
 
 /*
  * Mode Liste
- *
- *
  *
  */
 
@@ -85,7 +85,7 @@ if ($result)
 
       print "<tr $bc[$var]>";
 
-      print '<td>'.stripslashes($obj->ref).'</td>';
+      print '<td>'.$obj->ref.'</td>';
       print '<td>'.strftime("%a %e %b %Y %H:%M:%S",$obj->date_export).'</td>';
       print '<td><a href="index.php?action=export&amp;id='.$obj->rowid.'">Regénérer</a></td>';
       print "</tr>\n";
@@ -101,5 +101,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

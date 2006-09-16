@@ -29,8 +29,8 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/export/modules_export.php");
-require_once(PHP_WRITEEXCEL_PATH."class.writeexcel_workbookbig.inc.php");
-require_once(PHP_WRITEEXCEL_PATH."class.writeexcel_worksheet.inc.php");
+require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbookbig.inc.php");
+require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 
 
 /**
