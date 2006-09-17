@@ -630,6 +630,7 @@ if ($_GET["id"])
 		// Date planification
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">';
 		$html->select_date(($act->datep?$act->datep:-1),'ap',1,1,1,"action");
+		if ($act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
 		// Date done
@@ -709,8 +710,11 @@ if ($_GET["id"])
 		print $langs->trans("FeatureNotYetSupported");
 		print '</td></tr>';
 
-        // Date debut
-		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">'.dolibarr_print_date($act->datep,'%d %B %Y %H:%M').'</td></tr>';
+        // Date planification
+		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">';
+		print dolibarr_print_date($act->datep,'%d %B %Y %H:%M');
+		if ($act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
+		print '</td></tr>';
 
         // Date fin real
         print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';

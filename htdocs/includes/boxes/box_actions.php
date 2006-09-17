@@ -98,6 +98,7 @@ class box_actions extends ModeleBoxes {
 	
 	
 					$this->info_box_contents[$i][0] = array('align' => 'left',
+					'nowrap' => 1,
 					'logo' => ("task"),
 					'text' => $objp->label,
 					'text2'=> $late,

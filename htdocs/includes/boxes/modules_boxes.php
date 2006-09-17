@@ -98,6 +98,7 @@ class ModeleBoxes
                 {
                     $tdparam="";
                     if (isset($contents[$i][$j]['align'])) $tdparam.=' align="'. $contents[$i][$j]['align'].'"';
+                    if (isset($contents[$i][$j]['nowrap'])) $tdparam.=' nowrap="'. $contents[$i][$j]['align'].'"';
                     if (isset($contents[$i][$j]['width'])) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
                     if (isset($contents[$i][$j]['colspan'])) $tdparam.=' colspan="'. $contents[$i][$j]['colspan'].'"';
                     if (isset($contents[$i][$j]['class'])) $tdparam.=' class="'. $contents[$i][$j]['class'].'"';
