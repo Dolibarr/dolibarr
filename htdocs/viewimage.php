@@ -56,7 +56,7 @@ if ($modulepart)
         $original_file=$conf->societe->dir_logos.'/'.$original_file;
     }
 
-    // Wrapping pour les photo utilisateurs
+    // Wrapping pour les photos utilisateurs
     if ($modulepart == 'userphoto')
     {
         //$user->getrights('facture');
@@ -122,7 +122,7 @@ if ($modulepart)
         $original_file=$conf->commande->dir_temp.'/'.$original_file;
     }
 
-    // Wrapping pour les images des stats commandes
+    // Wrapping pour les images des stats factures
     if ($modulepart == 'billstats')
     {
         $user->getrights('facture');
@@ -166,7 +166,7 @@ if ($modulepart)
         $original_file=$conf->produit->dir_output.'/'.$original_file;
     }
 
-    // Wrapping pour les prelevement
+    // Wrapping pour les prelevements
     if ($modulepart == 'prelevement')
     {
         $user->getrights('prelevement');
@@ -200,7 +200,7 @@ if ($modulepart)
       $original_file=$conf->banque->dir_temp.'/'.$original_file;
     }
 
-    // Wrapping pour les graph bank
+    // Wrapping pour les images wysiwyg
     if ($modulepart == 'fckeditor')
     {
       $accessallowed=1;
