@@ -495,19 +495,21 @@ if (sizeof($boxarray))
 }
 for ($ii=0, $ni=sizeof($boxarray); $ii<$ni; $ii++)
 {
-	$boxjavascriptids[$ii]='"box'.$ii.'"';
+	$boxjavascriptids[$ii]='"box_'.$ii.'"';
 
 	if ($ii % $NBCOLS == 0) print "<tr>\n";
 	print '<td valign="top" width="50%">';
+	print '<div id="boxto_'.$ii.'">';
 	
 	if ($conf->use_ajax && $conf->browser->firefox)
 	{
-		print '<ul class="nocellnopadd" height="100px" id="box'.$ii.'">';
+		print '<ul class="nocellnopadd" height="100px" id="box_'.$ii.'">';
 		print '<li class="nocellnopadd" height="100px">';
 	}
 	// Affichage boite ii
 	$box=$boxarray[$ii];
 	$box->loadBox();
+	$box->boxid="$ii";
 	$box->showBox();
 	if ($conf->use_ajax && $conf->browser->firefox)
 	{
@@ -515,6 +517,7 @@ for ($ii=0, $ni=sizeof($boxarray); $ii<$ni; $ii++)
 		print '</ul>';
 	}
 	
+	print '</div>';
 	print "</td>";
 	if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
 }
@@ -524,14 +527,24 @@ if (sizeof($boxarray))
     print "</table>";
 }
 
-if ($conf->use_ajax && $conf->browser->firefox)
+if ($conf->use_ajax && $conf->browser->firefox && 1==2)
 {
 	print '<script type="text/javascript" language="javascript">'."\n";
-	for ($ii=0, $ni=sizeof($boxarray); $ii<$ni; $ii++)
+	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
 	{
-		print 'Sortable.create(\'box'.$ii.'\',{hoverclass:\'grey\',ghosting:true,dropOnEmpty:true,containment:[';
-		print join(',',$boxjavascriptids);
-		print '],constraint:false});'."\n";
+		/*
+		print 'Sortable.create(';
+		print '\'box_'.$ii.'\', ';
+		print '{hoverclass:\'grey\', ';
+		print 'onUpdate:function(element, dropon, event){ alert( "X "+element+" Z " ); }, ';
+		print 'ghosting:true, dropOnEmpty:true, ';
+		print 'containment:['.join(',',$boxjavascriptids).'], ';
+		print 'constraint:false}';
+		print ");\n";
+		*/
+		print 'new Draggable(\'boxobject_'.$ii.'\', {revert:false});'."\n";
+		print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){alert(\'From:\' + encodeURIComponent(element.id) + \' To: \' + encodeURIComponent(dropon.id))}});'."\n";
+		//print 'Droppables.add(\'box_'.$ii.'\', {onDrop:function(element,dropon){alert(\'w/o hoverclass, should be:\' + encodeURIComponent(element.id) )}});'."\n";
 	}
 	print '</script>'."\n";
 }

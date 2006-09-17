@@ -97,6 +97,12 @@ if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_m
 $conf->db->prefix = $dolibarr_main_db_prefix;
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 
+// Detection browser
+if (isset($_SERVER["HTTP_USER_AGENT"]))
+{
+	if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
+}
+
 // Chargement des includes principaux
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
