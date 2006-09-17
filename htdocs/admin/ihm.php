@@ -208,7 +208,19 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="60" rows="3" name="main_motd" size="20">' . stripslashes($conf->global->MAIN_MOTD) . '</textarea></td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
+	if ($conf->fckeditor->enabled)
+	{
+		// Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,158,'dolibarr_notes','In',true);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea name="main_motd" cols="90" rows="'.ROWS_5.'">'.$conf->global->MAIN_MOTD.'</textarea>';
+	}
+	print '</td></tr>';
     print '</table>';
 
     print '<br><center>';
@@ -315,11 +327,14 @@ else
     print '</table>';
     print '<br>';
 
+	// Message of the day
     $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>' . stripslashes(nl2br($conf->global->MAIN_MOTD)) . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
+    print nl2br($conf->global->MAIN_MOTD);
+    print '</td></tr>';
     print '</table>';
 
     print '<div class="tabsAction">';
