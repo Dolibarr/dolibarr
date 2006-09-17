@@ -375,7 +375,7 @@ else
 
             print '<table class="border" width="100%">';
             print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-            print '<td width="75%" class="valeur"><input size="12" maxlength="8" type="text" name="group" value="'.$group->nom.'"></td>';
+            print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$group->nom.'"></td>';
             print "</tr>\n";
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td class="valeur"><textarea name="note" rows="12" cols="80">'.nl2br($group->note).'</textarea></td>';
