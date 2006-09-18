@@ -112,7 +112,7 @@ function product_prepare_head($product)
 	
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
 	$head[$h][1] = $langs->trans('Documents');
-	$head[$h][2] = 'document';
+	$head[$h][2] = 'documents';
 	$h++;
 
 	if($product->type == 0)	// Si produit stockable
