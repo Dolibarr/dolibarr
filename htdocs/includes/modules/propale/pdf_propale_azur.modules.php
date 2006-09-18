@@ -383,7 +383,7 @@ class pdf_propale_azur extends ModelePDFPropales
      *   \param      pdf     	objet PDF
      *   \param      propale	objet propale
      */
-    function _tableau_versements(&$pdf, $propale, $posy, $outputlangs)
+    function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 
 	}
@@ -392,12 +392,12 @@ class pdf_propale_azur extends ModelePDFPropales
 	/*
      *	\brief      Affiche infos divers
      *	\param      pdf             Objet PDF
-     *	\param      propale         Objet propale
+     *	\param      object         	Objet propale
      *	\param		posy			Position depart
      *	\param		outputlangs		Objet langs
      *	\return     y               Position pour suite
      */
-    function _tableau_info(&$pdf, $propale, $posy, $outputlangs)
+    function _tableau_info(&$pdf, $object, $posy, $outputlangs)
     {
         global $conf;
 
@@ -418,7 +418,7 @@ class pdf_propale_azur extends ModelePDFPropales
         /*
         *	Conditions de règlements
         */
-        if ($propal->cond_reglement_code || $propal->cond_reglement)
+        if ($object->cond_reglement_code || $object->cond_reglement)
         {
             $pdf->SetFont('Arial','B',8);
             $pdf->SetXY($this->marge_gauche, $posy);
@@ -427,14 +427,14 @@ class pdf_propale_azur extends ModelePDFPropales
 
             $pdf->SetFont('Arial','',8);
             $pdf->SetXY(50, $posy);
-            $lib_condition_paiement=$outputlangs->trans("PaymentCondition".$propal->cond_reglement_code)!=('PaymentCondition'.$propal->cond_reglement_code)?$outputlangs->trans("PaymentCondition".$propal->cond_reglement_code):$propal->cond_reglement;
+            $lib_condition_paiement=$outputlangs->trans("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->trans("PaymentCondition".$object->cond_reglement_code):$object->cond_reglement;
             $pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
 
             $posy=$pdf->GetY()+3;
 		}
 
         /*
-        *	Mode de règlement
+        *	Check si absence mode de règlement
         */
         if (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER)
 		{
@@ -450,92 +450,100 @@ class pdf_propale_azur extends ModelePDFPropales
         /*
          * Propose mode règlement par CHQ
          */
-        if ($conf->global->FACTURE_CHQ_NUMBER)
+        if (! $object->mode_reglement_code || $object->mode_reglement_code == 'CHQ')
         {
-            if ($conf->global->FACTURE_CHQ_NUMBER > 0)
-            {
-                $account = new Account($this->db);
-                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
-
-                $pdf->SetXY($this->marge_gauche, $posy);
-                $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
-	            $posy=$pdf->GetY()+1;
-
-                $pdf->SetXY($this->marge_gauche, $posy);
-                $pdf->SetFont('Arial','',8);
-                $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
-
-	            $posy=$pdf->GetY()+2;
-            }
-            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
-            {
-                $pdf->SetXY($this->marge_gauche, $posy);
-                $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedToShort').' '.$this->emetteur->nom.' '.$outputlangs->trans('SendTo').':',0,'L',0);
-	            $posy=$pdf->GetY()+1;
-
-                $pdf->SetXY($this->marge_gauche, $posy);
-                $pdf->SetFont('Arial','',8);
-                $pdf->MultiCell(80, 6, $this->emetteur->adresse_full, 0, 'L', 0);
-
-	            $posy=$pdf->GetY()+2;
-            }
-        }
-
+	       	// Si mode reglement non force ou si force a CHQ
+	        if ($conf->global->FACTURE_CHQ_NUMBER)
+	        {
+	            if ($conf->global->FACTURE_CHQ_NUMBER > 0)
+	            {
+	                $account = new Account($this->db);
+	                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+	
+	                $pdf->SetXY($this->marge_gauche, $posy);
+	                $pdf->SetFont('Arial','B',8);
+	                $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+		            $posy=$pdf->GetY()+1;
+	
+	                $pdf->SetXY($this->marge_gauche, $posy);
+	                $pdf->SetFont('Arial','',8);
+	                $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
+	
+		            $posy=$pdf->GetY()+2;
+	            }
+	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
+	            {
+	                $pdf->SetXY($this->marge_gauche, $posy);
+	                $pdf->SetFont('Arial','B',8);
+	                $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByChequeOrderedToShort').' '.$this->emetteur->nom.' '.$outputlangs->trans('SendTo').':',0,'L',0);
+		            $posy=$pdf->GetY()+1;
+	
+	                $pdf->SetXY($this->marge_gauche, $posy);
+	                $pdf->SetFont('Arial','',8);
+	                $pdf->MultiCell(80, 6, $this->emetteur->adresse_full, 0, 'L', 0);
+	
+		            $posy=$pdf->GetY()+2;
+	            }
+	        }
+		}
+		
         /*
          * Propose mode règlement par RIB
          */
-        if ($conf->global->FACTURE_RIB_NUMBER)
+        if (! $object->mode_reglement_code || $object->mode_reglement_code == 'VIR')
         {
-            if ($conf->global->FACTURE_RIB_NUMBER)
-            {
-                $account = new Account($this->db);
-                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
-
-                $this->marges['g']=$this->marge_gauche;
-
-                $cury=$posy;
-                $pdf->SetXY ($this->marges['g'], $cury);
-                $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
-                $cury+=4;
-                $pdf->SetFont('Arial','B',6);
-                $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
-                $pdf->SetXY ($this->marges['g'], $cury);
-                $pdf->MultiCell(18, 3, $outputlangs->trans("BankCode"), 0, 'C', 0);
-                $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
-                $pdf->SetXY ($this->marges['g']+18, $cury);
-                $pdf->MultiCell(18, 3, $outputlangs->trans("DeskCode"), 0, 'C', 0);
-                $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
-                $pdf->SetXY ($this->marges['g']+36, $cury);
-                $pdf->MultiCell(24, 3, $outputlangs->trans("BankAccountNumber"), 0, 'C', 0);
-                $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
-                $pdf->SetXY ($this->marges['g']+60, $cury);
-                $pdf->MultiCell(13, 3, $outputlangs->trans("BankAccountNumberKey"), 0, 'C', 0);
-                $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
-
-                $pdf->SetFont('Arial','',8);
-                $pdf->SetXY ($this->marges['g'], $cury+5);
-                $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
-                $pdf->SetXY ($this->marges['g']+18, $cury+5);
-                $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
-                $pdf->SetXY ($this->marges['g']+36, $cury+5);
-                $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
-                $pdf->SetXY ($this->marges['g']+60, $cury+5);
-                $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-
-                $pdf->SetXY ($this->marges['g'], $cury+12);
-                $pdf->MultiCell(90, 3, $outputlangs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
-                $pdf->SetXY ($this->marges['g'], $cury+22);
-                $pdf->MultiCell(90, 3, $outputlangs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
-                $pdf->SetXY ($this->marges['g'], $cury+25);
-                $pdf->MultiCell(90, 3, $outputlangs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
-
-	            $posy=$pdf->GetY()+2;
-            }
-        }
-
+        	// Si mode reglement non force ou si force a VIR
+	        if ($conf->global->FACTURE_RIB_NUMBER)
+	        {
+	            if ($conf->global->FACTURE_RIB_NUMBER)
+	            {
+	                $account = new Account($this->db);
+	                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
+	
+	                $this->marges['g']=$this->marge_gauche;
+	
+	                $cury=$posy;
+	                $pdf->SetXY ($this->marges['g'], $cury);
+	                $pdf->SetFont('Arial','B',8);
+	                $pdf->MultiCell(90, 3, $outputlangs->trans('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+	                $cury+=4;
+	                $pdf->SetFont('Arial','B',6);
+	                $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
+	                $pdf->SetXY ($this->marges['g'], $cury);
+	                $pdf->MultiCell(18, 3, $outputlangs->trans("BankCode"), 0, 'C', 0);
+	                $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
+	                $pdf->SetXY ($this->marges['g']+18, $cury);
+	                $pdf->MultiCell(18, 3, $outputlangs->trans("DeskCode"), 0, 'C', 0);
+	                $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
+	                $pdf->SetXY ($this->marges['g']+36, $cury);
+	                $pdf->MultiCell(24, 3, $outputlangs->trans("BankAccountNumber"), 0, 'C', 0);
+	                $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
+	                $pdf->SetXY ($this->marges['g']+60, $cury);
+	                $pdf->MultiCell(13, 3, $outputlangs->trans("BankAccountNumberKey"), 0, 'C', 0);
+	                $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
+	
+	                $pdf->SetFont('Arial','',8);
+	                $pdf->SetXY ($this->marges['g'], $cury+5);
+	                $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
+	                $pdf->SetXY ($this->marges['g']+18, $cury+5);
+	                $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
+	                $pdf->SetXY ($this->marges['g']+36, $cury+5);
+	                $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
+	                $pdf->SetXY ($this->marges['g']+60, $cury+5);
+	                $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
+	
+	                $pdf->SetXY ($this->marges['g'], $cury+12);
+	                $pdf->MultiCell(90, 3, $outputlangs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+	                $pdf->SetXY ($this->marges['g'], $cury+22);
+	                $pdf->MultiCell(90, 3, $outputlangs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+	                $pdf->SetXY ($this->marges['g'], $cury+25);
+	                $pdf->MultiCell(90, 3, $outputlangs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
+	
+		            $posy=$pdf->GetY()+2;
+	            }
+	        }
+		}
+		
         return $posy;
     }
 
@@ -549,7 +557,7 @@ class pdf_propale_azur extends ModelePDFPropales
      *	\param		outputlangs		Objet langs
      *	\return     y              Position pour suite
     */
-    function _tableau_tot(&$pdf, $propale, $deja_regle, $posy, $outputlangs)
+    function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
     {
         $tab2_top = $posy;
         $tab2_hl = 5;
@@ -565,22 +573,22 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("TotalHT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
-        $pdf->MultiCell($largcol2, $tab2_hl, price($propale->total_ht + $propale->remise), 0, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
         // Remise globale
-        if ($propale->remise > 0)
+        if ($object->remise > 0)
         {
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("GlobalDiscount"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell($largcol2, $tab2_hl, "-".$propale->remise_percent."%", 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, "-".$object->remise_percent."%", 0, 'R', 1);
 
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("WithDiscountTotalHT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($largcol2, $tab2_hl, price($propale->total_ht), 0, 'R', 0);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht), 0, 'R', 0);
 
             $index = 2;
         }
@@ -613,7 +621,7 @@ class pdf_propale_azur extends ModelePDFPropales
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("TotalVAT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($largcol2, $tab2_hl, price($propale->total_tva), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
         }
 
         $useborder=0;
@@ -625,7 +633,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("TotalTTC"), $useborder, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell($largcol2, $tab2_hl, price($propale->total_ttc), $useborder, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
         $pdf->SetTextColor(0,0,0);
 
         if ($deja_regle > 0)
@@ -638,10 +646,10 @@ class pdf_propale_azur extends ModelePDFPropales
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
-			$resteapayer = $propal->total_ttc - $deja_regle;
-			if ($propal->paye) $resteapayer=0;
+			$resteapayer = $object->total_ttc - $deja_regle;
+			if ($object->paye) $resteapayer=0;
 
-			if ($propal->close_code == 'escompte')
+			if ($object->close_code == 'escompte')
 			{
 	            $index++;
         		$pdf->SetFillColor(256,256,256);
@@ -650,7 +658,7 @@ class pdf_propale_azur extends ModelePDFPropales
 	            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("EscompteOffered"), $useborder, 'L', 1);
 
 	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-	            $pdf->MultiCell($largcol2, $tab2_hl, price($propal->total_ttc - $deja_regle), $useborder, 'R', 1);
+	            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
 			}
 
             $index++;
@@ -660,7 +668,7 @@ class pdf_propale_azur extends ModelePDFPropales
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->trans("RemainderToPay"), $useborder, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($largcol2, $tab2_hl, price($propale->total_ttc - $deja_regle), $useborder, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
 
 			// Fin
             $pdf->SetFont('Arial','', 9);
@@ -731,7 +739,7 @@ class pdf_propale_azur extends ModelePDFPropales
      *   	\param      fac     objet propale
      *      \param      showadress      0=non, 1=oui
      */
-    function _pagehead(&$pdf, $propale, $showadress=1, $outputlangs)
+    function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
     {
         global $conf;
 
@@ -778,19 +786,19 @@ class pdf_propale_azur extends ModelePDFPropales
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $outputlangs->trans("Ref")." : " . $propale->ref, '', 'R');
+        $pdf->MultiCell(100, 4, $outputlangs->trans("Ref")." : " . $object->ref, '', 'R');
 
         $pdf->SetFont('Arial','',10);
 
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 3, $outputlangs->trans("Date")." : " . dolibarr_print_date($propale->date,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 3, $outputlangs->trans("Date")." : " . dolibarr_print_date($object->date,"%d %b %Y"), '', 'R');
 
         $posy+=5;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 3, $outputlangs->trans("DateEndPropal")." : " . dolibarr_print_date($propale->fin_validite,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 3, $outputlangs->trans("DateEndPropal")." : " . dolibarr_print_date($object->fin_validite,"%d %b %Y"), '', 'R');
 
         if ($showadress)
         {
@@ -847,7 +855,7 @@ class pdf_propale_azur extends ModelePDFPropales
 	        $pdf->SetFont('Arial','',8);
 	        $pdf->SetXY(102,$posy-5);
 	        $pdf->MultiCell(80,5, $outputlangs->trans("BillTo").":");
-			$propale->fetch_client();
+			$object->fetch_client();
 
 	        // Cadre client destinataire
 	        $pdf->rect(100, $posy, 100, $hautcadre);
@@ -855,12 +863,12 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Nom client
 	        $pdf->SetXY(102,$posy+3);
 	        $pdf->SetFont('Arial','B',11);
-	        $pdf->MultiCell(106,4, $propale->client->nom, 0, 'L');
+	        $pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
 
 			// Caractéristiques client
-	        $carac_client=$propale->client->adresse;
-	        $carac_client.="\n".$propale->client->cp . " " . $propale->client->ville."\n";
-			if ($propale->client->tva_intra) $carac_client.="\n".$outputlangs->trans("VATIntraShort").': '.$propale->client->tva_intra;
+	        $carac_client=$object->client->adresse;
+	        $carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->trans("VATIntraShort").': '.$object->client->tva_intra;
 	        $pdf->SetFont('Arial','',9);
 	        $pdf->SetXY(102,$posy+8);
 	        $pdf->MultiCell(86,4, $carac_client);

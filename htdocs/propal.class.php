@@ -768,19 +768,22 @@ class Propal extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT rowid,ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc";
+        $sql = "SELECT p.rowid,ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc";
         $sql.= ", ".$this->db->pdate("datep")." as dp";
         $sql.= ", ".$this->db->pdate("fin_validite")." as dfv";
         $sql.= ", ".$this->db->pdate("date_livraison")." as date_livraison";
         $sql.= ", model_pdf, ref_client";
         $sql.= ", note, note_public";
         $sql.= ", fk_projet, fk_statut, fk_user_author";
-        $sql.= ", fk_cond_reglement, fk_mode_reglement, fk_adresse_livraison";
+        $sql.= ", fk_adresse_livraison";
+        $sql.= ", p.fk_cond_reglement, cr.code as cond_reglement_code";
+        $sql.= ", p.fk_mode_reglement, cp.code as mode_reglement_code";
         $sql.= ", c.label as statut_label";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal,";
-        $sql.= " ".MAIN_DB_PREFIX."c_propalst as c";
-        $sql.= " WHERE fk_statut = c.id";
-        $sql.= " AND rowid='".$rowid."'";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON p.fk_cond_reglement = cr.rowid';
+        $sql.= " WHERE p.fk_statut = c.id";
+        $sql.= " AND p.rowid='".$rowid."'";
 
 		dolibarr_syslog("Propal.class::fecth rowid=".$rowid);
 		
@@ -806,15 +809,17 @@ class Propal extends CommonObject
                 $this->total_ht             = $obj->price;
                 $this->total_tva            = $obj->tva;
                 $this->total_ttc            = $obj->total;
-                $this->socid               = $obj->fk_soc;
+                $this->socid                = $obj->fk_soc;
                 $this->projetidp            = $obj->fk_projet;
                 $this->modelpdf             = $obj->model_pdf;
                 $this->note                 = $obj->note;
                 $this->note_public          = $obj->note_public;
                 $this->statut               = $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
-                $this->cond_reglement_id    = $obj->fk_cond_reglement;
-                $this->mode_reglement_id    = $obj->fk_mode_reglement;
+				$this->mode_reglement_id    = $obj->fk_mode_reglement;
+				$this->mode_reglement_code  = $obj->mode_reglement_code;
+				$this->cond_reglement_id    = $obj->fk_cond_reglement;
+				$this->cond_reglement_code  = $obj->cond_reglement_code;
 		        $this->date_livraison       = $obj->date_livraison;
 		        $this->adresse_livraison_id = $obj->fk_adresse_livraison;
 
@@ -911,7 +916,8 @@ class Propal extends CommonObject
         }
         else
         {
-            dolibarr_syslog("Propal.class::Fetch Erreur lecture de la propale $rowid");
+            $this->error=$this->db->error();
+            dolibarr_syslog("Propal.class::Fetch Error sql=$sql ".$this->error);
             return -1;
         }
     }
