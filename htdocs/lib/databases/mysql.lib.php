@@ -230,6 +230,7 @@ class DoliDb
     */
     function create_db($database)
     {
+        // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
         $sql = 'CREATE DATABASE '.$database;
         $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
         $ret=$this->query($sql);
