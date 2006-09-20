@@ -61,9 +61,9 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
-$result = $db->query($sql) ;
+$resql = $db->query($sql) ;
 
-if ($result)
+if ($resql)
 {
 	$num = $db->num_rows($result);
 
@@ -133,7 +133,7 @@ if ($result)
 	$var=True;
 	while ($i < min($num,$limit))
 	{
-		$objp = $db->fetch_object($result);
+		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
 		print '<td>'.dolibarr_print_date($objp->datem).'</td>';
