@@ -33,6 +33,7 @@ function propal_prepare_head($propal)
 {
 	global $langs, $conf, $user;
 	$langs->load("propal");
+	$langs->load("compta");
 
 	$h = 0;
 	$head = array();
