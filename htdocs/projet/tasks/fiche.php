@@ -193,12 +193,12 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 
 
 
-llxHeader("",$langs->trans("Project"),"Projet");
+llxHeader("",$langs->trans("Tasks"),"Tasks");
 
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
-  print_titre($langs->trans("NewProject"));
+  	print_titre($langs->trans("NewTask"));
 
   if ($mesg) print $mesg;
   

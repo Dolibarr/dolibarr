@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
@@ -49,40 +50,12 @@ if ($_GET["id"] > 0)
       $projet->societe->fetch($projet->societe->id);
       
       $h=0;
-      $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
-      $head[$h][1] = $langs->trans("Project");
-      $h++;
-      
-      $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$projet->id;
+      $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$task->id;
       $head[$h][1] = $langs->trans("Tasks");
-      $hselected=$h;
+      $head[$h][2] = 'tasks';
       $h++;
       
-      if ($conf->propal->enabled)
-	{
-	  $langs->load("propal");
-	  $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
-	  $head[$h][1] = $langs->trans("Proposals");
-	  $h++;
-	}  
-      
-      if ($conf->commande->enabled)
-	{
-	  $langs->load("orders");
-	  $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
-	  $head[$h][1] = $langs->trans("Orders");
-	  $h++;
-	}
-      
-      if ($conf->facture->enabled)
-	{
-	  $langs->load("bills");
-	  $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
-	  $head[$h][1] = $langs->trans("Bills");
-	  $h++;
-	}
-      
-      dolibarr_fiche_head($head,  $hselected, $langs->trans("Project").": ".$projet->ref);
+      dolibarr_fiche_head($head, 'tasks', $langs->trans("Tasks"));
       
       print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
       print '<input type="hidden" name="action" value="createtask">';
