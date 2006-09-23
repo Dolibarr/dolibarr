@@ -21,8 +21,8 @@ includes/jpgraph2
 includes/fckeditor/_samples
 includes/fckeditor/_testcases
 includes/nusoap/samples
-includes/phpplot5/doc
-includes/phpplot5/examples
+includes/phplot5/doc
+includes/phplot5/examples
 includes/scriptaculous/test
 includes/treemenu/docs
 includes/treemenu/imagesAlt
