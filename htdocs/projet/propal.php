@@ -31,6 +31,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("projects");
 $langs->load("companies");
@@ -72,44 +73,14 @@ llxHeader("","../");
 
 $projet = new Project($db);
 $projet->fetch($_GET["id"]);
+$projet->societe->fetch($projet->societe->id);
 
-$h=0;
-$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
-$head[$h][1] = $langs->trans("Project");
-$h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$projet->id;
-$head[$h][1] = $langs->trans("Tasks");
-$h++;
-
-if ($conf->propal->enabled) {
-  $langs->load("propal");
-  $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
-  $head[$h][1] = $langs->trans("Proposals");
-  $hselected=$h;
-  $h++;
-}  
-
-if ($conf->commande->enabled) {
-  $langs->load("orders");
-  $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
-  $head[$h][1] = $langs->trans("Orders");
-  $h++;
-}
-
-if ($conf->facture->enabled) {
-  $langs->load("bills");
-  $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
-  $head[$h][1] = $langs->trans("Bills");
-  $h++;
-}
- 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Project").": ".$projet->ref);
+$head=project_prepare_head($projet);
+dolibarr_fiche_head($head, 'propal', $langs->trans("Project"));
 
 
 $propales = array();
-
-$projet->societe->fetch($projet->societe->id);
 
 print '<table class="border" width="100%">';
 print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';

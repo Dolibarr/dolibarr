@@ -31,6 +31,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
@@ -44,7 +45,7 @@ if ($projetid == '' && ($_GET['action'] != "create" && $_POST['action'] != "add"
 
 if ($user->societe_id > 0) 
 {
-  $socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 // Protection restriction commercial
@@ -56,7 +57,7 @@ if ($projetid && !$user->rights->commercial->client->voir)
 	$sql.= " WHERE p.rowid = ".$projetid;
 	if (!$user->rights->commercial->client->voir) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND p.fk_soc = ".$socid;
-	
+
 	if ( $db->query($sql) )
 	{
 		if ( $db->num_rows() == 0) accessforbidden();
@@ -66,61 +67,63 @@ if ($projetid && !$user->rights->commercial->client->voir)
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
-  $pro = new Project($db);
-  $pro->socid = $_GET["socid"];
-  $pro->ref = $_POST["ref"];
-  $pro->title = $_POST["title"];
-  $result = $pro->create($user);
-  
-  if ($result > 0)
-    {
-      Header("Location:fiche.php?id=".$pro->id);
-      exit;
-    }
-  else
-    {
-      $mesg='<div class="error">'.$pro->error.'</div>';
-      $_GET["action"] = 'create';
-    }
+	$pro = new Project($db);
+	$pro->socid = $_GET["socid"];
+	$pro->ref = $_POST["ref"];
+	$pro->title = $_POST["title"];
+	$result = $pro->create($user);
+
+	if ($result > 0)
+	{
+		Header("Location:fiche.php?id=".$pro->id);
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$pro->error.'</div>';
+		$_GET["action"] = 'create';
+	}
 }
 
 if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 {
-  if (! $_POST["cancel"])
-    {
-      if (!(empty($_POST["id"]) || empty($_POST["ref"]) || empty($_POST["title"])))
+	if (! $_POST["cancel"])
 	{
-	  $projet = new Project($db);
-	  $projet->id = $_POST["id"];
-	  $projet->ref = $_POST["ref"];
-	  $projet->title = $_POST["title"];
-	  $projet->update($user);
-	  
-	  $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
+		if (!(empty($_POST["id"]) || empty($_POST["ref"]) || empty($_POST["title"])))
+		{
+			$projet = new Project($db);
+			$projet->id = $_POST["id"];
+			$projet->ref = $_POST["ref"];
+			$projet->title = $_POST["title"];
+			$projet->update($user);
+
+			$_GET["id"]=$projet->id;  // On retourne sur la fiche projet
+		}
+		else
+		{
+			$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+		}
 	}
-      else
+	else
 	{
-	  $_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+		$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
 	}
-    }
-  else
-    {
-      $_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-    }
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->supprimer)
 {
-  $projet = new Project($db);
-  $projet->id = $_GET["id"];
-  if ($projet->delete($user) == 0)
-    {
-      Header("Location: index.php");
-    }
-  else
-    {
-      Header("Location: fiche.php?id=".$projet->id);
-    }
+	$projet = new Project($db);
+	$projet->id = $_GET["id"];
+	if ($projet->delete($user) == 0)
+	{
+		Header("Location: index.php");
+		exit;
+	}
+	else
+	{
+		Header("Location: fiche.php?id=".$projet->id);
+		exit;
+	}
 }
 
 
@@ -158,109 +161,76 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 } else {
 
-  /*
-   * Fiche projet en mode visu
-   *
-   */
+	/*
+	* Fiche projet en mode visu
+	*
+	*/
 
-  $projet = new Project($db);
-  $projet->fetch($_GET["id"]);
-  $projet->societe->fetch($projet->societe->id);
-  
-  $h=0;
-  $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
-  $head[$h][1] = $langs->trans("Project");
-  $hselected=$h;
-  $h++;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$projet->id;
-  $head[$h][1] = $langs->trans("Tasks");
-  $h++;
+	$projet = new Project($db);
+	$projet->fetch($_GET["id"]);
+	$projet->societe->fetch($projet->societe->id);
 
-  if ($conf->propal->enabled)
-    {
-      $langs->load("propal");
-      $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
-      $head[$h][1] = $langs->trans("Proposals");
-      $h++;
-    }  
-  
-  if ($conf->commande->enabled)
-    {
-      $langs->load("orders");
-      $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
-      $head[$h][1] = $langs->trans("Orders");
-      $h++;
-    }
-  
-  if ($conf->facture->enabled)
-    {
-      $langs->load("bills");
-      $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
-      $head[$h][1] = $langs->trans("Bills");
-      $h++;
-    }
- 
-  dolibarr_fiche_head($head,  $hselected, $langs->trans("Project").": ".$projet->ref);
+	$head=project_prepare_head($projet);
+	dolibarr_fiche_head($head, 'project', $langs->trans("Project"));
 
 
-    if ($_GET["action"] == 'delete')
-    {
-      $htmls = new Form($db);
-      $htmls->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete");
-      print "<br>";
-    }
+	if ($_GET["action"] == 'delete')
+	{
+		$htmls = new Form($db);
+		$htmls->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete");
+		print "<br>";
+	}
 
-  if ($_GET["action"] == 'edit')
-    {  
-      print '<form method="post" action="fiche.php">';
-      print '<input type="hidden" name="action" value="update">';
-      print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+	if ($_GET["action"] == 'edit')
+	{
+		print '<form method="post" action="fiche.php">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
-      print '<table class="border" width="100%">';
+		print '<table class="border" width="100%">';
 
-	// Ref
-      print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$projet->ref.'"></td></tr>';
+		// Ref
+		print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$projet->ref.'"></td></tr>';
 
-	// Label
-      print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$projet->title.'"></td></tr>';      
+		// Label
+		print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$projet->title.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
-      print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
-      print '</table>';
-      print '</form>';
-    }
-  else
-    {
-      print '<table class="border" width="100%">';
+		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
+		print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
+		print '</table>';
+		print '</form>';
+	}
+	else
+	{
+		print '<table class="border" width="100%">';
 
-      print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
+		print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
 
-      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
-      print '</table>';
-    }
+		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
+		print '</table>';
+	}
 
-  print '</div>';
+	print '</div>';
 
-  /*
-   * Boutons actions
-   */
-  print '<div class="tabsAction">';
-  
-  if ($_GET["action"] != "edit")
+	/*
+	* Boutons actions
+	*/
+	print '<div class="tabsAction">';
+
+	if ($_GET["action"] != "edit")
 	{
 		if ($user->rights->projet->creer)
-    {
-    	print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-    }
-    if ($user->rights->projet->supprimer)
-    {
-    	print '<a class="butActionDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-    }
-  }
+		{
+			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+		}
+		if ($user->rights->projet->supprimer)
+		{
+			print '<a class="butActionDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+		}
+	}
 
-  print "</div>";
+	print "</div>";
 
 }
 
