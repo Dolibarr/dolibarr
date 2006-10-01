@@ -117,7 +117,7 @@ class User
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
         if ($login)
         {
-            $sql .= " WHERE u.login = '$login'";
+            $sql .= " WHERE u.login = '".$login."'";
         }
         else
         {
@@ -132,8 +132,8 @@ class User
             {
                 $this->id = $obj->rowid;
                 $this->ldap_sid = $obj->ldap_sid;
-                $this->nom = stripslashes($obj->name);
-                $this->prenom = stripslashes($obj->firstname);
+                $this->nom = $obj->name;
+                $this->prenom = $obj->firstname;
         
                 $this->fullname = $this->prenom . ' ' . $this->nom;
                 $this->code = $obj->code;
@@ -145,7 +145,7 @@ class User
                 $this->email = $obj->email;
                 $this->admin = $obj->admin;
                 $this->contact_id = $obj->fk_socpeople;
-                $this->note = stripslashes($obj->note);
+                $this->note = $obj->note;
                 $this->statut = $obj->statut;
                 $this->lang = $obj->lang;
 				
@@ -165,6 +165,7 @@ class User
         else
         {
             $this->error=$this->db->error();
+            dolibarr_syslog("User.class::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql);
             return -1;
         }
         
@@ -190,7 +191,8 @@ class User
         else
         {
             $this->error=$this->db->error();
-            return -1;
+            dolibarr_syslog("User.class::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql);
+            return -2;
         }
 
         // Recupere parametrage propre à la page et à l'utilisateur
