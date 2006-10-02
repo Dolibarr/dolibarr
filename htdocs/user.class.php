@@ -183,7 +183,7 @@ class User
             {
                 $obj = $this->db->fetch_object($result);
                 $p=$obj->param;
-                $this->conf->$p = $obj->value;
+                if ($p) $this->conf->$p = $obj->value;
                 $i++;
             }
             $this->db->free($result);

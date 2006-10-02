@@ -34,7 +34,7 @@
 if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=microtime(true);
 
 
-// Forcage du parametrage PHP magic_quots_gpc et nettoyage des parametres
+// Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
 // (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
 // En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
@@ -203,7 +203,7 @@ else
 $result=$user->fetch($login);
 if ($result <= 0)
 {
-	dolibarr_print_error($langs->trans("ErrorCantLoadUserFromDolibarrDatabase"));
+	dolibarr_print_error($db,$langs->trans("ErrorCantLoadUserFromDolibarrDatabase"));
 	exit;
 }
 
