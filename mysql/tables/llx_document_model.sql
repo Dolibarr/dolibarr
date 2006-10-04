@@ -27,7 +27,7 @@ create table llx_document_model
 (
   	rowid         integer AUTO_INCREMENT PRIMARY KEY,
   	nom         	varchar(50),
-  	type			    varchar(12) NOT NULL,
+  	type			    varchar(20) NOT NULL,
   	libelle		    varchar(255),
   	description 	text
 )type=innodb;
