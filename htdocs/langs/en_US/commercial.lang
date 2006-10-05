@@ -57,6 +57,7 @@ DateActionPlanned=Date planned
 DateActionDone=Date done
 ActionAffectedTo=Action affected to
 ActionDoneBy=Action done by
+ErrorStatusCantBeZeroIfStarted=If field '<b>Date done</b>' is filled, action is started (or finished), so field '<b>Status</b>' can't be 0%%.
 ActionAC_TEL=Phone call
 ActionAC_FAX=Send fax
 ActionAC_PROP=Send proposal

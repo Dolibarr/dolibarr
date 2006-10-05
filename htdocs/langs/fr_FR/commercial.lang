@@ -57,6 +57,7 @@ DateActionPlanned=Date planification
 DateActionDone=Date réalisation
 ActionAffectedTo=Action affectée à
 ActionDoneBy=Action faite par
+ErrorStatusCantBeZeroIfStarted=Si le champ '<b>Date de réalisation</b>' est renseigné alors l'action est commencée voire finie, aussi le champ 'Etat' ne peut etre 0%%.
 ActionAC_TEL=Appel téléphonique
 ActionAC_FAX=Envoi fax
 ActionAC_PROP=Envoi proposition par mail
