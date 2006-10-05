@@ -900,6 +900,44 @@ class CommandeFournisseur extends Commande
       return $result ;
     }
 
+	    /**     \brief      Créé la commande depuis une propale existante
+            \param      user            Utilisateur qui crée
+            \param      propale_id      id de la propale qui sert de modèle
+    */
+	function updateFromCommandeClient($user, $idc, $comclientid)
+	{
+		$comclient = new Commande($this->db);
+		$comclient->fetch($comclientid);
+		
+		$this->id = $idc;
+
+		$this->lines = array();
+
+		for ($i = 0 ; $i < sizeof($comclient->lignes) ; $i++)
+		{
+			$prod = new Product($this->db, $comclient->lignes[$i]->fk_product);
+      if ($prod->fetch($comclient->lignes[$i]->fk_product) > 0)
+      {
+         $libelle  = $prod->libelle;
+         $ref      = $prod->ref;
+      }
+			
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
+			$sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
+      $sql .= " VALUES (".$idc.", '" . addslashes($libelle) . "','" . addslashes($comclient->lignes[$i]->desc) . "'";
+      $sql .= ",".$comclient->lignes[$i]->fk_product.",'".price2num($comclient->lignes[$i]->price)."'";
+      $sql .= ", '".$comclient->lignes[$i]->qty."', ".$comclient->lignes[$i]->tva_tx.", ".$comclient->lignes[$i]->remise_percent;
+      $sql .= ", '".price2num($comclient->lignes[$i]->subprice)."','0','".$ref."') ;";
+      if ( $this->db->query( $sql) )
+      {
+          $this->update_price();
+      }
+		}
+
+		return 1;
+	}
+	
+	
 	/**
 	 *		\brief		Met a jour les notes
 	 *		\return		int			<0 si ko, >=0 si ok

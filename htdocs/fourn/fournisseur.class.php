@@ -104,6 +104,18 @@ class Fournisseur extends Societe
 
   }
 
+    /**
+     *      \brief      Créé la commande au statut brouillon
+     *      \param      user        Utilisateur qui crée
+     *      \return     int         <0 si ko, id de la commande créée si ok
+     */
+    function updateFromCommandeClient($user, $idc, $comclientid)
+    {
+        $comm = new CommandeFournisseur($this->db);
+        $comm->socid = $this->id;
+    
+        $comm->updateFromCommandeClient($user, $idc, $comclientid);
+    }
 
     /**
      *      \brief      Créé la commande au statut brouillon
