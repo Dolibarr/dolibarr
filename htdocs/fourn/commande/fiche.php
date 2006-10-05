@@ -106,21 +106,19 @@ if ($_POST["action"] == 'addligne' && $user->rights->fournisseur->commande->cree
     }
 }
 
-if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer) 
+if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save')) 
 {
-  $commande = new CommandeFournisseur($db,"",$_GET["id"]);
-  if ($commande->fetch($_GET["id"]) )
-    {
+  $commande = new CommandeFournisseur($db,"",$_POST["id"]);
+  $commande->fetch($_POST["id"]);
+
       $result = $commande->updateline($_POST["elrowid"],
 				       $_POST["eldesc"],
 				       $_POST["elprice"],
 				       $_POST["elqty"],
-				       $_POST["elremise_percent"]);
-    }
-  else
-    {
-      print "Erreur";
-    }
+				       $_POST["elremise_percent"],
+				       $_POST["tva_tx"]
+				       );
+
 }
 
 if ($_GET["action"] == 'deleteline' && $user->rights->fournisseur->commande->creer) 
@@ -490,9 +488,13 @@ if ($_GET["id"] > 0)
 					print '<td>&nbsp;</td>';
 				}
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
-				if ($commande->statut == 0  && $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'valid')
+				if ($commande->statut == 0  && $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'valid' && $_GET["action"] != 'editline')
 				{
-					print '<td>&nbsp;</td><td align="right"><a href="fiche.php?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+					print img_edit();
+					print '</a></td>';
+					
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 					print img_delete();
 					print '</a></td>';
 				}
@@ -507,12 +509,15 @@ if ($_GET["id"] > 0)
 					print "<form action=\"fiche.php?id=$commande->id\" method=\"post\">";
 					print '<input type="hidden" name="action" value="updateligne">';
 					print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
+					print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 					print "<tr $bc[$var]>";
 					print '<td colspan="3"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
+					print '<td>&nbsp;</td>';
 					print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 					print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
 					print '<td align="right"><input size="8" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-					print '<td align="right" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+					print '<td align="right" colspan="2"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+					print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 					print '</tr>' . "\n";
 					print "</form>\n";
 				}
@@ -536,7 +541,7 @@ if ($_GET["id"] > 0)
 
 			print '<tr class="liste_titre">';
 			print '<td colspan="2">'.$langs->trans("Description").'</td>';
-			print '<td>&nbsp;</td>';
+			if ($num_lignes) print '<td>&nbsp;</td>';
 			print '<td align="center">'.$langs->trans("VAT").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td>';
 			print '<td align="right">'.$langs->trans("ReductionShort").'</td>';

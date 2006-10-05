@@ -103,8 +103,7 @@ class CommandeFournisseur extends Commande
     
             $this->db->free();
     
-            if ($this->statut == 0)
-                $this->brouillon = 1;
+            if ($this->statut == 0) $this->brouillon = 1;
     
 // export pdf -----------
 			
@@ -1056,6 +1055,96 @@ class CommandeFournisseur extends Commande
 	print $this->db->error();
       }
   }
+
+
+	/**
+	 *      \brief     Mets à jour une ligne de commande
+	 *      \param     rowid            Id de la ligne de facture
+	 *      \param     desc             Description de la ligne
+	 *      \param     pu               Prix unitaire
+	 *      \param     qty              Quantité
+	 *      \param     remise_percent   Pourcentage de remise de la ligne
+	 *      \param     tva_tx           Taux TVA
+	 *      \return    int              < 0 si erreur, > 0 si ok
+	 */
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva)
+	{
+		dolibarr_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva");
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
+		if ($this->brouillon)
+		{
+			$this->db->begin();
+			
+			// Nettoyage paramètres
+            $remise_percent=price2num($remise_percent);
+            $qty=price2num($qty);
+			if (! $qty) $qty=1;
+			$pu = price2num($pu);
+			$txtva=price2num($txtva);
+
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+
+			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
+			$price = $pu;
+			$subprice = $pu;
+			$remise = 0;
+			if ($remise_percent > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100),2);
+				$price = ($pu - $remise);
+			}
+			$price    = price2num($price);
+			$subprice  = price2num($subprice);
+
+			// Mise a jour ligne en base
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseurdet SET";
+			$sql.= " description='".addslashes($desc)."'";
+			$sql.= ",price='".price2num($price)."'";
+			$sql.= ",subprice='".price2num($subprice)."'";
+			$sql.= ",remise='".price2num($remise)."'";
+			$sql.= ",remise_percent='".price2num($remise_percent)."'";
+			$sql.= ",tva_tx='".price2num($txtva)."'";
+			$sql.= ",qty='".price2num($qty)."'";
+			//if ($date_end) { $sql.= ",date_start='$date_end'"; }
+			//else { $sql.=',date_start=null'; }
+			//if ($date_end) { $sql.= ",date_end='$date_end'"; }
+			//else { $sql.=',date_end=null'; }
+			//$sql.= " info_bits=".$info_bits.",";
+			//$sql.= ",total_ht='".price2num($total_ht)."'";
+			//$sql.= ",total_tva='".price2num($total_tva)."'";
+			//$sql.= ",total_ttc='".price2num($total_ttc)."'";
+			$sql.= " WHERE rowid = ".$rowid;
+
+			$result = $this->db->query( $sql);
+			if ($result > 0)
+			{
+				// Mise a jour info denormalisees au niveau facture
+				$this->update_price($this->id);
+				$this->db->commit();
+				return $result;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error="Commande::updateline Order status makes operation forbidden";
+			return -2;
+		}
+	}
+
 }
 
 class CommandeFournisseurLigne extends CommandeLigne
