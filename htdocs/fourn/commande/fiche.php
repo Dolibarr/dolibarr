@@ -37,6 +37,7 @@ $user->getrights("fournisseur");
 
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
+$comclientid = isset($_GET["comid"])?$_GET["comid"]:'';
 
 // Sécurité accés client
 $socid=0;
@@ -239,6 +240,12 @@ if ($_GET["action"] == 'create')
     if ($fourn->create_commande($user) > 0)
     {
         $idc = $fourn->single_open_commande;
+        
+        if ($comclientid != '')
+        {
+        	$fourn->updateFromCommandeClient($user,$idc,$comclientid);     	
+        }
+
         Header("Location:fiche.php?id=".$idc);
         exit;
     }
@@ -437,8 +444,11 @@ if ($_GET["id"] > 0)
 		*/
 		print '<table class="noborder" width="100%">';
 
-		$sql = "SELECT l.ref, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
+		$sql = "SELECT l.ref, l.fk_product, l.description, l.price, l.qty";
+		$sql.= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
+		$sql.= ", p.label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 		$sql.= " WHERE l.fk_commande = $commande->id";
 		$sql.= " ORDER BY l.rowid";
 
@@ -452,6 +462,7 @@ if ($_GET["id"] > 0)
 			{
 				print '<tr class="liste_titre">';
 				print '<td align="left">'.$langs->trans("Ref").'</td>';
+				print '<td>'.$langs->trans("Label").'</td>';
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td align="center">'.$langs->trans("VAT").'</td>';
 				print '<td align="center">'.$langs->trans("Qty").'</td>';
@@ -466,6 +477,7 @@ if ($_GET["id"] > 0)
 				$objp = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 				print '<td><a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a></td>';
+				print "<td>".$objp->label."</td>";
 				print "<td>".nl2br($objp->description)."</td>";
 				print '<td align="center">'.$objp->tva_tx.'%</td>';
 				print '<td align="center">'.$objp->qty.'</td>';
