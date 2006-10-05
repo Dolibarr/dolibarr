@@ -409,9 +409,10 @@ class Livraison extends CommonObject
 		$expedition = new Expedition($this->db);
 		$result=$expedition->fetch($sending_id);
 
-		$this->lines = array();
+		$this->lignes = array();
 		$this->date_livraison = time();
 		$this->expedition_id = $sending_id;
+		
 		for ($i = 0 ; $i < sizeof($expedition->lignes) ; $i++)
 		{
 			$LivraisonLigne = new LivraisonLigne($this->db);
@@ -555,7 +556,7 @@ class Livraison extends CommonObject
   {
     $this->lignes = array();
 
-    $sql = "SELECT c.label, c.description, c.qty as qtycom, l.qty as qtyliv";
+    $sql = "SELECT p.label, c.description, c.qty as qtycom, l.qty as qtyliv";
     $sql .= ", c.fk_product, c.price, p.ref";
     $sql .= " FROM ".MAIN_DB_PREFIX."livraisondet as l";
     $sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
@@ -599,6 +600,20 @@ class Livraison extends CommonObject
 
 class LivraisonLigne
 {
+	var $db;
+	
+	// From llx_expeditiondet
+	var $qty;
+	var $fk_product;
+	var $commande_ligne_id;
+	var $libelle;       // Label produit
+	var $description;  // Description produit
+	var $ref;
+		
+	function LivraisonLigne($DB)
+	{
+		$this->db=$DB;	
+	}
 
 }
 

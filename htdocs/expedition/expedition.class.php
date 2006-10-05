@@ -230,7 +230,7 @@ class Expedition extends CommonObject
 			$this->lignes = array();
             // TODO Supprimer cette partie. L'appelant qui fetch doit
             // en fait appeler fetch_lignes pour charges ceci.
-			$sql = "SELECT c.description, c.qty as qtycom, c.fk_product, c.label, ";
+			$sql = "SELECT c.description, c.qty as qtycom, c.fk_product, p.label, ";
 			$sql.= " e.qty as qtyexp, e.fk_commande_ligne,";
 			$sql.= " p.ref";
 			$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
@@ -239,7 +239,7 @@ class Expedition extends CommonObject
 			$sql.= " WHERE e.fk_expedition = ".$this->id;
 			$sql.= " AND e.fk_commande_ligne = c.rowid";
 			$sql.= " AND c.fk_product = p.rowid";
-	      
+
 	      	$resultp = $this->db->query($sql);
             
             if ($resultp)
@@ -281,7 +281,7 @@ class Expedition extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            return -1;
+            return -2;
         }
     }
 
