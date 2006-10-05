@@ -536,6 +536,7 @@ if ($_GET["id"] > 0)
 
 			print '<tr class="liste_titre">';
 			print '<td colspan="2">'.$langs->trans("Description").'</td>';
+			print '<td>&nbsp;</td>';
 			print '<td align="center">'.$langs->trans("VAT").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td>';
 			print '<td align="right">'.$langs->trans("ReductionShort").'</td>';
