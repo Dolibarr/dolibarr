@@ -1619,18 +1619,6 @@ else
 					}
 				}
 
-				// Créer commande fournisseur
-				if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->fournisseur->commande->creer)
-				{
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?comid='.$commande->id.'&amp;action=create&amp;socid=46">'.$langs->trans('Commande PCB').'</a>';
-				}
-				
-				// Créer commande fournisseur
-				if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->fournisseur->commande->creer)
-				{
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?comid='.$commande->id.'&amp;action=create&amp;socid=45">'.$langs->trans('Commande ACD').'</a>';
-				}
-				
 				// Edit
 				if ($commande->statut == 1)
 				{
