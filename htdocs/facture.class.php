@@ -1091,6 +1091,8 @@ class Facture extends CommonObject
 			/*
 			 *	Tope les lignes de remises fixes avec id des lignes de facture de remise
 			 */
+// Plus necessaire car deja topé des état brouillon
+/*
 			foreach($this->lignes as $i => $line)
 			{
 			 	if (($this->lignes[$i]->info_bits & 2) == 2 && $this->lignes[$i]->fk_remise_except)
@@ -1145,6 +1147,7 @@ class Facture extends CommonObject
 					}
 				}
 			}
+*/						
 
       		// On vérifie si la facture était une provisoire
 			if (! $error && $facref == 'PROV')
