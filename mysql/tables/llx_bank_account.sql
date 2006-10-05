@@ -37,7 +37,7 @@ create table llx_bank_account
   code_guichet   varchar(6),
   number         varchar(255),
   cle_rib        varchar(5),
-  bic            varchar(10),
+  bic            varchar(11),
   iban_prefix    varchar(5),
   domiciliation  varchar(255),
   proprio        varchar(60),
