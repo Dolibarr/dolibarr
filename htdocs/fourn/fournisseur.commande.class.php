@@ -626,7 +626,8 @@ class CommandeFournisseur extends Commande
                     $result=$prod->get_buyprice($this->fourn_id,$qty);
                     if ($result)
                     {
-                        $desc  = $prod->libelle;
+                        $label = $prod->libelle;
+                        $desc  = $prod->description;
                         $txtva = $prod->tva_tx;
                         $pu    = $prod->fourn_pu;
                         $ref   = $prod->ref;
@@ -651,7 +652,7 @@ class CommandeFournisseur extends Commande
             }
     
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
-            $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',".$fk_product.",".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num($remise)."','".$ref."') ;";
+            $sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',".$fk_product.",".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num($remise)."','".$ref."') ;";
             if ( $this->db->query( $sql) )
             {
                 $this->update_price();
