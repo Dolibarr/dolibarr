@@ -864,6 +864,10 @@ class pdf_einstein extends ModelePDFCommandes
 			// Caractéristiques client
 	        $carac_client=$object->client->adresse;
 	        $carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+            if ($this->emetteur->pays_code != $object->client->pays_code)
+            {
+            	$carac_client.=$object->client->pays."\n";	
+            }
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->trans("VATIntraShort").': '.$object->client->tva_intra;
 	        $pdf->SetFont('Arial','',9);
 	        $pdf->SetXY(102,$posy+8);
