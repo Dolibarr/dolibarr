@@ -973,7 +973,7 @@ class Commande extends CommonObject
 		$this->lignes = array();
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
 		$sql.= ' l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits, ';
-		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type';
+		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -1005,7 +1005,8 @@ class Commande extends CommonObject
 				$ligne->rang           = $objp->rang;
 				$ligne->info_bits      = $objp->info_bits;
 
-				$ligne->ref            = $objp->product_ref;	
+				$ligne->ref            = $objp->product_ref;
+				$ligne->libelle        = $objp->label;	
 				$ligne->product_desc   = $objp->product_desc; 		// Description produit
 				$ligne->fk_product_type= $objp->fk_product_type;	// Produit ou service
 
