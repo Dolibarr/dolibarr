@@ -2248,7 +2248,9 @@ class Facture extends CommonObject
 		$sql = "SELECT f.rowid as rowid, f.facnumber";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source AND ff.type=1";
 		$sql.= " WHERE f.fk_statut >= 1 AND f.paye = 0";
+		$sql.= " AND ff.type IS NULL";		// Renvoi vrai si pas facture de remplacement
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 
