@@ -107,6 +107,11 @@ class mod_facture_terre extends ModeleNumRefFactures
             $row = $db->fetch_row($resql);
             if ($row) $fayymm = substr($row[0],0,6);
         }
+        else
+        {
+        	dolibarr_syslog("mod_facture_terre::getNextValue sql=".$sql);
+        	return -1;
+        }
 
         // Si champ respectant le modèle a été trouvée
         if (eregi('^'.$this->prefix.'[0-9][0-9][0-9][0-9]',$fayymm))
@@ -130,6 +135,7 @@ class mod_facture_terre extends ModeleNumRefFactures
         $yymm = strftime("%y%m",time());
         $num = sprintf("%04s",$max+1);
         
+        dolibarr_syslog("mod_facture_terre::getNextValue return ".$this->prefix."$yymm-$num");
         return $this->prefix."$yymm-$num";
     }
     

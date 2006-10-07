@@ -37,6 +37,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 
 class mod_propale_marbre extends ModeleNumRefPropales
 {
+	var $prefix='PR';
     var $error='';
     
     /**   \brief      Constructeur
@@ -109,9 +110,14 @@ class mod_propale_marbre extends ModeleNumRefPropales
             $row = $db->fetch_row($resql);
             if ($row) $pryymm = substr($row[0],0,6);
         }
-    
-        // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('PR[0-9][0-9][0-9][0-9]',$pryymm))
+        else
+        {
+        	dolibarr_syslog("mod_propale_marbre::getNextValue sql=".$sql);
+        	return -1;
+        }
+
+        // Si champ respectant le modèle a été trouvée
+        if (eregi('^'.$this->prefix.'[0-9][0-9][0-9][0-9]',$pryymm))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
@@ -132,7 +138,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
         $yymm = strftime("%y%m",time());
         $num = sprintf("%04s",$max+1);
         
-        return  "PR$yymm-$num";
+        dolibarr_syslog("mod_propale_marbre::getNextValue return ".$this->prefix."$yymm-$num");
+        return $this->prefix."$yymm-$num";
     }
 
     /**     \brief      Renvoie la référence de propale suivante non utilisée

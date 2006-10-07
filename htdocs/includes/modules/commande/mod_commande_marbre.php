@@ -110,9 +110,14 @@ class mod_commande_marbre extends ModeleNumRefCommandes
             $row = $db->fetch_row($resql);
             if ($row) $coyymm = substr($row[0],0,6);
         }
+        else
+        {
+        	dolibarr_syslog("mod_commande_marbre::getNextValue sql=".$sql);
+        	return -1;
+        }
     
         // Si champ respectant le modèle a été trouvée
-        if (eregi('^'+$this->prefix+'[0-9][0-9][0-9][0-9]',$coyymm))
+        if (eregi('^'.$this->prefix.'[0-9][0-9][0-9][0-9]',$coyymm))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
@@ -133,6 +138,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         $yymm = strftime("%y%m",time());
         $num = sprintf("%04s",$max+1);
         
+        dolibarr_syslog("mod_commande_marbre::getNextValue return ".$this->prefix."$yymm-$num");
         return $this->prefix."$yymm-$num";
     }
 
