@@ -50,13 +50,14 @@ class Facture extends CommonObject
 	var $id;
 
 	var $socid;		// Id client
-	var $client;		// Objet societe client (à charger par fetch_client)
+	var $client;	// Objet societe client (à charger par fetch_client)
 
 	var $number;
 	var $author;
 	var $date;
 	var $ref;
 	var $ref_client;
+	var $type;					// 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
 	var $amount;
 	var $remise;
 	var $tva;
@@ -2230,6 +2231,46 @@ class Facture extends CommonObject
 			return -1;
 		}
 	}
+
+
+	/**
+	 *  	\brief     	Renvoi liste des factures qualifiables pour avoir
+	 *					Statut validee + pas deja remplacées
+	 *		\param		socid		Id societe
+	 *   	\return    	array		Tableau des factures ($id => $ref)
+	 */
+	function list_avoir_invoices($socid=0)
+	{
+		global $conf;
+
+		$return = array();
+
+		$sql = "SELECT f.rowid as rowid, f.facnumber";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
+		$sql.= " WHERE f.fk_statut >= 1 AND f.paye = 0";
+		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
+		$sql.= " ORDER BY f.facnumber";
+
+		dolibarr_syslog("Facture.class::list_avoir_invoices sql=$sql");
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$return[$obj->rowid]=$obj->facnumber;
+			}
+
+			return $return;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Facture.class::list_avoir_invoices ".$this->error);
+			return -1;
+		}
+	}
+
 
 	/**
 	*   \brief      Créé une demande de prélèvement

@@ -79,6 +79,33 @@ $NBLINES=4;
  *  Actions
  */
 
+// Validation 
+if ($_GET['action'] == 'valid')
+{
+	$facture = new Facture($db);
+	$facture->fetch($_GET['facid']);
+
+	// On verifie signe facture
+	if ($facture->type == 2)
+	{
+		// Si avoir, le signe doit etre négatif
+		if ($facture->total_ht >= 0)
+		{
+			$mesg='<div class="error">'.$langs->trans("ErrorInvoiceAvoirMustBeNegative").'</div>';
+			$_GET['action']='';			
+		}
+	}
+	else
+	{
+		// Si non avoir, le signe doit etre positif
+		if ($facture->total_ht < 0)
+		{
+			$mesg='<div class="error">'.$langs->trans("ErrorInvoiceOfThisTypeMustBePositive").'</div>';		
+			$_GET['action']='';			
+		}
+	}
+}
+			
 if ($_POST['action'] == 'classin')
 {
 	$facture = new Facture($db);
@@ -275,6 +302,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 	$db->begin();
 
+	// Facture remplacement
 	if ($_POST['type'] == 1)
 	{
 		if ($_POST['fac_replacement'] > 0)
@@ -308,6 +336,42 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
+	// Facture avoir
+	if ($_POST['type'] == 2)
+	{
+		if ($_POST['fac_avoir'] > 0)
+		{
+			// Si facture avoir
+			$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+
+			//$result=$facture->fetch($_POST['fac_avoir']);
+
+			$facture->socid 		 = $_POST['socid'];
+			$facture->number         = $_POST['facnumber'];
+			$facture->date           = $datefacture;
+			$facture->note_public    = trim($_POST['note_public']);
+			$facture->note           = trim($_POST['note']);
+			$facture->ref_client     = $_POST['ref_client'];
+			$facture->modelpdf       = $_POST['model'];
+			$facture->projetid          = $_POST['projetid'];
+			$facture->cond_reglement_id = 0;
+			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
+			$facture->remise_absolue    = $_POST['remise_absolue'];
+			$facture->remise_percent    = $_POST['remise_percent'];
+
+			// Propriétés particulieres a facture avoir
+			$facture->fk_facture_source = $_POST['fac_avoir'];
+			$facture->type              = 2;
+
+			$facid = $facture->create($user);
+		}
+		else
+		{
+			$error=1;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("CorrectInvoice")).'</div>';
+		}
+	}
+	
 	if ($_POST['type'] == 0 && $_POST['fac_rec'] > 0)
 	{
 		// Si facture récurrente
@@ -322,7 +386,10 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		$facture->ref_client     = $_POST['ref_client'];
 		$facture->modelpdf       = $_POST['model'];
 
+		// Propriétés particulieres a facture recurrente
 		$facture->fac_rec = $_POST['fac_rec'];
+		$facture->type              = 3;
+
 		$facid = $facture->create($user);
 	}
 
@@ -1029,7 +1096,7 @@ if ($_GET['action'] == 'create')
 	 /*
       \todo
       L'info "Reference commande client" est une carac de la commande et non de la facture.
-      Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
+      Elle devrait donc etre stockée sur l'objet commande liée à la facture et non sur la facture.
       Pour ceux qui veulent l'utiliser au niveau de la facture, positionner la
       constante FAC_USE_CUSTOMER_ORDER_REF à 1.
     */
@@ -1039,7 +1106,7 @@ if ($_GET['action'] == 'create')
     	print '<input type="text" name="ref_client" value="'.$ref_client.'">';
     	print '</td></tr>';
     }
-	
+
 	// Societe
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
 	print $soc->getNomUrl(1);
@@ -1054,6 +1121,13 @@ if ($_GET['action'] == 'create')
 	{
 		$options.='<option value="'.$key.'">'.$value.'</option>';
 	}
+	$facids=$facturestatic->list_avoir_invoices($soc->id);
+	$optionsav="";
+	foreach ($facids as $key => $value)
+	{
+		$optionsav.='<option value="'.$key.'">'.$value.'</option>';
+	}
+
 	print '<tr><td valign="top">'.$langs->trans('Type').'</td><td colspan="2">';
 	print '<table class="nobordernopadding"><tr>';
 	print '<td width="16px">';
@@ -1062,13 +1136,16 @@ if ($_GET['action'] == 'create')
 	$desc=$html->textwithhelp($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
 	print '</td></tr>';
+
 	print '<tr><td>';
 	print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked=true':'');
 	if (! $options) print ' disabled="true"';
 	print '>';
 	print '</td><td>';
 	$text=$langs->trans("InvoiceReplacementAsk").' ';
-	$text.='<select name="fac_replacement">';
+	$text.='<select class="flat" name="fac_replacement"';
+	if (! $options) $text.=' disabled="true"';
+	$text.='>';
 	if ($options)
 	{
 		$text.='<option value="-1">&nbsp;</option>';
@@ -1082,10 +1159,29 @@ if ($_GET['action'] == 'create')
 	$desc=$html->textwithhelp($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
 	print $desc;	
 	print '</td></tr>';
+
 	print '<tr><td>';
-	print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'').' disabled>';
+	print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'');
+	if (! $optionsav) print ' disabled="true"';
+	print '>';
 	print '</td><td>';
-	$desc=$html->textwithhelp($langs->trans("InvoiceAvoirAsk").' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
+	$text=$langs->transnoentities("InvoiceAvoirAsk").' ';
+//	$text.='<input type="text" value="">';
+	$text.='<select class="flat" name="fac_avoir"';
+	if (! $options) $text.=' disabled="true"';
+	$text.='>';
+	if ($options)
+	{
+		$text.='<option value="-1">&nbsp;</option>';
+		$text.=$optionsav;
+	}
+	else
+	{
+		$text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
+	}
+	$text.='</select>';
+	$desc=$html->textwithhelp($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
+	//.' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
 	print $desc;	
 	print '</td></tr>';
 	print '</table>';
@@ -1641,6 +1737,12 @@ else
 				$facreplaced=new Facture($db);
 				$facreplaced->fetch($fac->fk_facture_source);
 				print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+			}
+			if ($fac->type == 2)
+			{
+				$facreplaced=new Facture($db);
+				$facreplaced->fetch($fac->fk_facture_source);
+				print ' ('.$langs->transnoentities("CorrectInvoice",$facreplaced->getNomUrl(1)).')';
 			}
 			$facidnext=$fac->getIdReplacingInvoice();
 			if ($facidnext > 0)
