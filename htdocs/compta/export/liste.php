@@ -19,9 +19,18 @@
  * $Source$
  */
  
+/**
+		\file       htdocs/compta/export/liste.php
+		\ingroup    compta
+		\brief      Page export ventilations
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("compta");
+
+$dir = $conf->compta->dir_output."/export/";
 
 
 // Sécurité accés client
@@ -31,14 +40,6 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-
-llxHeader('','Compta - Export');
-
-/*
- *
- *
- */
-
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
@@ -47,10 +48,14 @@ $offset = $conf->liste_limit * $page ;
 if ($sortorder == "") $sortorder="DESC";
 if ($sortfield == "") $sortfield="ec.date_export";
 
+
 /*
  * Mode Liste
  *
  */
+
+llxHeader('','Compta - Export');
+
 
 $sql = "SELECT ec.rowid,".$db->pdate("ec.date_export")." as date_export, ec.ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."export_compta as ec";
@@ -60,43 +65,41 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
-  
-  print_barre_liste($langs->trans("Exports"), $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
+	$num = $db->num_rows($result);
+	$i = 0;
 
-  print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
+	print_barre_liste($langs->trans("Exports"), $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
 
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","ec.ref");
-  print_liste_field_titre($langs->trans("Date"),"liste.php","ec.date_export");
+	print"\n<!-- debut table -->\n";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
 
-  print "<td>-</td></tr>\n";
+	print_liste_field_titre($langs->trans("Ref"),"liste.php","ec.ref");
+	print_liste_field_titre($langs->trans("Date"),"liste.php","ec.date_export");
 
-  $var=True;
+	print "<td>-</td></tr>\n";
 
-  $dir = DOL_DATA_ROOT."/compta/export/";
+	$var=True;
 
-  while ($i < min($num,$conf->liste_limit))
-    {
-      $obj = $db->fetch_object($result);	
-      $var=!$var;
+	while ($i < min($num,$conf->liste_limit))
+	{
+		$obj = $db->fetch_object($result);
+		$var=!$var;
 
-      print "<tr $bc[$var]>";
+		print "<tr $bc[$var]>";
 
-      print '<td>'.$obj->ref.'</td>';
-      print '<td>'.strftime("%a %e %b %Y %H:%M:%S",$obj->date_export).'</td>';
-      print '<td><a href="index.php?action=export&amp;id='.$obj->rowid.'">Regénérer</a></td>';
-      print "</tr>\n";
-      $i++;
-    }
-  print "</table>";
-  $db->free($result);
+		print '<td>'.$obj->ref.'</td>';
+		print '<td>'.dolibarr_print_date($obj->date_export,"%a %e %b %Y %H:%M:%S").'</td>';
+		print '<td><a href="index.php?action=export&amp;id='.$obj->rowid.'">'.$langs->trans("ReBuild").'</a></td>';
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>";
+	$db->free($result);
 }
-else 
+else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 $db->close();

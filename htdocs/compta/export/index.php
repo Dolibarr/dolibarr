@@ -33,6 +33,8 @@ require_once("./ComptaJournalVente.class.php");
 
 $langs->load("compta");
 
+$dir = $conf->compta->dir_output."/export/";
+
 
 /*
  * Actions
@@ -43,6 +45,8 @@ if ($_GET["action"] == 'export')
 	$modulename='Poivre';
 	
 	include_once DOL_DOCUMENT_ROOT.'/compta/export/modules/compta.export.class.php';
+
+	create_exdir($dir);
 	
 	$exc = new ComptaExport($db, $user, $modulename);
 	
@@ -117,7 +121,6 @@ print "</table>\n";
 
 print '</td><td valign="top" width="70%">';
 
-$dir = DOL_DATA_ROOT."/compta/export/";
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -125,16 +128,18 @@ print '<td>'.$langs->trans("File").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
 
-$handle=opendir($dir);
-
-while (($file = readdir($handle))!==false)
+$handle=@opendir($dir);
+if ($handle)
 {
-  if (is_readable($dir.$file) && is_file($dir.$file))
-    {
-      print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=export_compta&file=export/'.$file.'&amp;type=text/plain">'.$file.'</a><td>';
-
-      print '</tr>';
-    }
+	while (($file = readdir($handle))!==false)
+	{
+		if (is_readable($dir.$file) && is_file($dir.$file))
+		{
+			print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=export_compta&file=export/'.$file.'&amp;type=text/plain">'.$file.'</a><td>';
+	
+			print '</tr>';
+		}
+	}
 }
 
 print "</table>";
