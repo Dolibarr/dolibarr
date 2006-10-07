@@ -543,7 +543,7 @@ if ($conf->use_ajax && $conf->browser->firefox && 1==2)
 		print ");\n";
 		*/
 		print 'new Draggable(\'boxobject_'.$ii.'\', {revert:false});'."\n";
-		print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){alert(\'From:\' + encodeURIComponent(element.id) + \' To: \' + encodeURIComponent(dropon.id))}});'."\n";
+		print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){alert(\'From: \' + encodeURIComponent(element.id) + \' - To: \' + encodeURIComponent(dropon.id))}});'."\n";
 		//print 'Droppables.add(\'box_'.$ii.'\', {onDrop:function(element,dropon){alert(\'w/o hoverclass, should be:\' + encodeURIComponent(element.id) )}});'."\n";
 	}
 	print '</script>'."\n";
