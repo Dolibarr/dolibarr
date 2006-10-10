@@ -103,7 +103,7 @@ class modAdherent extends DolibarrModules
         $this->const[21] = array("ADHERENT_MAIL_FROM","chaine","","From des mails");
         $this->const[22] = array("ADHERENT_MAIL_COTIS","texte","Bonjour %PRENOM%,^M\n^M\nCet email confirme que votre cotisation a ete recue\r\net enregistree","Mail de validation de cotisation");
         $this->const[23] = array("ADHERENT_MAIL_COTIS_SUBJECT","chaine"," Recu de votre cotisation","sujet du mail de validation de cotisation");
-        $this->const[24] = array("ADHERENT_TEXT_NEW_ADH","texte","","Texte d'entete du formaulaire d'adhesion en ligne");
+        $this->const[24] = array("ADHERENT_TEXT_NEW_ADH","texte","","Texte d'entete du formulaire d'adhesion en ligne");
         $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%ANNEE%","Texte imprime sur le haut de la carte adherent");
         $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association %SERVER%","Texte imprime sur le bas de la carte adherent");
         $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%PRENOM% %NOM%\r\nMembre n° %ID%\r\n%EMAIL%\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%","Texte imprime sur la carte adherent");
