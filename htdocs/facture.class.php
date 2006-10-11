@@ -382,14 +382,16 @@ class Facture extends CommonObject
 		$sql.= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
 		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
 		$sql.= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.model_pdf';
-		$sql.= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql.= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
 		$sql.= ', f.fk_facture_source';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
+		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
 		$sql.= ', cf.fk_commande';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c, '.MAIN_DB_PREFIX.'facture as f';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_fa as cf ON cf.fk_facture = f.rowid';
-		$sql.= ' WHERE f.rowid='.$rowid.' AND c.rowid = f.fk_cond_reglement';
+		$sql.= ' WHERE f.rowid='.$rowid;
 		if ($societe_id > 0)
 		{
 			$sql.= ' AND f.fk_soc = '.$societe_id;

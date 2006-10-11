@@ -884,17 +884,30 @@ class pdf_crabe extends ModelePDFFactures
 	        $pdf->SetTextColor(0,0,60);
 	        $pdf->MultiCell(100, 3, $outputlangs->trans("ReplaceInvoice", $objectreplaced->ref), '', 'R');
 		}
+        if ($object->type == 2)
+	    {
+			$objectreplaced=new Facture($this->db);
+			$objectreplaced->fetch($object->fk_facture_source);
+
+	        $posy+=5;
+	        $pdf->SetXY(100,$posy);
+	        $pdf->SetTextColor(0,0,60);
+	        $pdf->MultiCell(100, 3, $outputlangs->trans("CorrectInvoice", $objectreplaced->ref), '', 'R');
+		}
 		
         $posy+=5;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell(100, 3, $outputlangs->trans("DateInvoice")." : " . dolibarr_print_date($object->date,"%d %b %Y"), '', 'R');
 
-        $posy+=5;
-        $pdf->SetXY(100,$posy);
-        $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 3, $outputlangs->trans("DateEcheance")." : " . dolibarr_print_date($object->date_lim_reglement,"%d %b %Y"), '', 'R');
-
+        if ($object->type != 2)
+        {
+	        $posy+=5;
+	        $pdf->SetXY(100,$posy);
+	        $pdf->SetTextColor(0,0,60);
+	        $pdf->MultiCell(100, 3, $outputlangs->trans("DateEcheance")." : " . dolibarr_print_date($object->date_lim_reglement,"%d %b %Y"), '', 'R');
+		}
+		
         if ($showadress)
         {
 	        // Emetteur

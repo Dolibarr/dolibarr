@@ -1168,9 +1168,9 @@ if ($_GET['action'] == 'create')
 	$text=$langs->transnoentities("InvoiceAvoirAsk").' ';
 //	$text.='<input type="text" value="">';
 	$text.='<select class="flat" name="fac_avoir"';
-	if (! $options) $text.=' disabled="true"';
+	if (! $optionsav) $text.=' disabled="true"';
 	$text.='>';
-	if ($options)
+	if ($optionsav)
 	{
 		$text.='<option value="-1">&nbsp;</option>';
 		$text.=$optionsav;
@@ -1760,7 +1760,7 @@ else
 			print '. ';
 			if ($absolute_discount)
 			{
-				if ($fac->statut > 0)
+				if ($fac->statut > 0 || $fac->type == 2)
 				{
 					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
 				}
@@ -1793,40 +1793,50 @@ else
 			$sql.= ' ORDER BY dp DESC';
 
 			$result = $db->query($sql);
-
 			if ($result)
 			{
 				$num = $db->num_rows($result);
 				$i = 0;
 				print '<table class="noborder" width="100%">';
-				print '<tr class="liste_titre"><td>'.$langs->trans('Payments').'</td><td>'.$langs->trans('Type').'</td>';
-				print '<td align="right">'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
-
-				$var=True;
-				while ($i < $num)
+				
+				if ($fac->type != 2)
 				{
-					$objp = $db->fetch_object($result);
-					$var=!$var;
-					print '<tr '.$bc[$var].'><td>';
-					print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-					print dolibarr_print_date($objp->dp).'</a></td>';
-					print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-					print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
-					print '</tr>';
-					$i++;
-				}
+					// Liste des paiements
+					print '<tr class="liste_titre"><td>'.$langs->trans('Payments').'</td><td>'.$langs->trans('Type').'</td>';
+					print '<td align="right">'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
+	
+					$var=True;
+					while ($i < $num)
+					{
+						$objp = $db->fetch_object($result);
+						$var=!$var;
+						print '<tr '.$bc[$var].'><td>';
+						print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
+						print dolibarr_print_date($objp->dp).'</a></td>';
+						print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+						print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
+						print '</tr>';
+						$i++;
+					}
 
-				print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-				print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-				if ($fac->close_code == 'escompte')
+					// Solde facture
+					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					if ($fac->close_code == 'escompte')
+					{
+						print '<tr><td colspan="2" align="right" nowrap="1">';
+						print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
+						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					}
+					print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
+					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+				}
+				else
 				{
-					print '<tr><td colspan="2" align="right" nowrap="1">';
-					print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
-					print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-				}
-				print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
-				print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-
+					// Solde avoir	
+					print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTCToYourCredit').' :</td>';
+					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($fac->total_ttc)).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+				}				
 				print '</table>';
 				$db->free($result);
 			}
@@ -1840,8 +1850,16 @@ else
 			// Date limite reglement
 			print '<tr>';
 			print '<td>'.$langs->trans('DateMaxPayment').'</td>';
-			print '<td colspan="3">' . dolibarr_print_date($fac->date_lim_reglement,'%A %d %B %Y');
-			if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
+			print '<td colspan="3">';
+			if ($fac->type != 2) 
+			{
+				print dolibarr_print_date($fac->date_lim_reglement,'%A %d %B %Y');
+				if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
+			}
+			else
+			{
+				print '&nbsp;';
+			}
 			print '</td></tr>';
 
 			// Conditions de réglement
@@ -1849,16 +1867,23 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
 			print '</td>';
-			if ($_GET['action'] != 'editconditions' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			if ($fac->type != 2 && $_GET['action'] != 'editconditions' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-			if ($_GET['action'] == 'editconditions')
+			if ($fac->type != 2)
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'cond_reglement_id');
+				if ($_GET['action'] == 'editconditions')
+				{
+					$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'cond_reglement_id');
+				}
+				else
+				{
+					$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
+				}
 			}
 			else
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
+				print '&nbsp;';	
 			}
 			print '</td></tr>';
 			

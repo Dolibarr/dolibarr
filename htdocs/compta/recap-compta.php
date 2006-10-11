@@ -111,7 +111,7 @@ if ($socid > 0)
             print '<tr class="liste_titre">';
             print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
             print '<td>&nbsp;</td>';
-            print '<td>&nbsp;</td>';
+            print '<td>'.$langs->trans("Status").'</td>';
             print '<td align="right">'.$langs->trans("Debit").'</td>';
             print '<td align="right">'.$langs->trans("Credit").'</td>';
             print '<td align="right">'.$langs->trans("Balance").'</td>';
@@ -137,6 +137,7 @@ if ($socid > 0)
                     print $fac->error."<br>";
                     continue;
                 }
+				$totalpaye = $fac->getSommePaiement();
 
                 $var=!$var;
                 print "<tr $bc[$var]>";
@@ -144,7 +145,7 @@ if ($socid > 0)
                 print "<td align=\"center\">".dolibarr_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
     
-    			print '<td aling="left">'.$fac->getLibStatut(2).'</td>';
+    			print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
                 print '<td align="right">'.price($fac->total_ttc)."</td>\n";
                 $solde = $solde + $fac->total_ttc;
     
@@ -207,6 +208,7 @@ if ($socid > 0)
             dolibarr_print_error($db);
         }
         print "</table>";
+        print "<br>";
     }      
 }
 else
