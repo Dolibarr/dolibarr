@@ -475,7 +475,8 @@ function dolibarr_print_date($time,$format='')
 function dolibarr_print_object_info($object)
 {
     global $langs;
-
+	$langs->load("other");
+	
     if (isset($object->user_creation) && $object->user_creation->fullname)
         print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
 
