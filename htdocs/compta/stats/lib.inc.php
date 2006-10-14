@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,53 +18,54 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 function get_ca_propal ($db, $year, $socid)
 {
 
-  $sql = "SELECT sum(f.price - f.remise) as sum FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep, '%Y') = $year ";
-  if ($socid)
-    {
-      $sql .= " AND f.fk_soc = $socid";
-    }
-  
-  $result = $db->query($sql);
+	$sql = "SELECT sum(f.price - f.remise) as sum FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep, '%Y') = $year ";
+	if ($socid)
+	{
+		$sql .= " AND f.fk_soc = $socid";
+	}
 
-  if ($result)
-    {
-      return  $db->result (0, 0);
-    }
-  else
-    {
-      return 0;
-    } 
+	$result = $db->query($sql);
+
+	if ($result)
+	{
+		$res = $db->fetch_object($result);
+		return  $res->sum;
+	}
+	else
+	{
+		return 0;
+	}
 
 }
 
 function get_ca ($db, $year, $socid)
 {
-  
-  $sql = "SELECT sum(f.amount) as sum FROM ".MAIN_DB_PREFIX."facture as f";
-  $sql .= " WHERE f.fk_statut = 1";
-  if ($conf->compta->mode != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
-  }
-  $sql .= " AND date_format(f.datef , '%Y') = $year ";
-  if ($socid)
-    {
-      $sql .= " AND f.fk_soc = $socid";
-    }
-  
-  $result = $db->query($sql);
 
-  if ($result)
-    {
-      return  $db->result ( 0, 0);
-    }
-  else
-    {
-      return 0;
-    }   
+	$sql = "SELECT sum(f.amount) as sum FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " WHERE f.fk_statut = 1";
+	if ($conf->compta->mode != 'CREANCES-DETTES') {
+		$sql .= " AND f.paye = 1";
+	}
+	$sql .= " AND date_format(f.datef , '%Y') = $year ";
+	if ($socid)
+	{
+		$sql .= " AND f.fk_soc = $socid";
+	}
+
+	$result = $db->query($sql);
+
+	if ($result)
+	{
+		$res = $db->fetch_object($result);
+		return  $res->sum;
+	}
+	else
+	{
+		return 0;
+	}
 }
