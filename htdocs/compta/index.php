@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
  *
  */
 
+$facturestatic=new Facture($db);
+
 llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
 print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
@@ -147,7 +149,11 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
             {
 	      $obj = $db->fetch_object($resql);
 	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+	      print '<tr '.$bc[$var].'><td nowrap>';
+	      $facturestatic->ref=$obj->facnumber;
+	      $facturestatic->id=$obj->idp;
+	      print $facturestatic->getNomUrl(1,'');
+	      print '</td>';
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,16).'</a></td>';
 	      print '<td align="right">'.price($obj->total_ttc).'</td>';
 	      print '</tr>';
@@ -391,7 +397,10 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				{
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
-					print '<td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a>';
+					print '<td nowrap>';
+					$facturestatic->ref=$obj->facnumber;
+					$facturestatic->id=$obj->rowid;
+					print $facturestatic->getNomUrl(1,'');
 					if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 					print '</td>';
 					print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
@@ -465,7 +474,11 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				{
 					$obj = $db->fetch_object($resql);
 					$var = !$var;
-					print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+					print '<tr '.$bc[$var].'><td>';
+					$facstatic->ref=$obj->facnumber;
+					$facstatic->id=$obj->rowid;
+					print $facstatic->getNomUrl(1,'');
+					print '</td>';
 					print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
 					if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 					print '<td align="right">'.price($obj->total_ttc).'</td>';

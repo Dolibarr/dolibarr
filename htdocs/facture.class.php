@@ -1753,6 +1753,35 @@ class Facture extends CommonObject
 	}
 
 	/**
+	* 	\brief     	Renvoie tableau des ids de facture avoir issus de la facture
+	*	\return		array		Tableau d'id de factures avoirs
+	*/
+	function getIdAvoirInvoice()
+	{
+		$idarray=array();
+
+		$sql = 'SELECT rowid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' WHERE fk_facture_source = '.$this->id;
+		$sql.= ' AND type = 2';
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) 
+			{
+				// Si il y en a
+				$idarray[]=$obj->rowid;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);	
+		}
+		return $idarray;
+	}
+	
+	/**
 	* 	\brief     	Renvoie l'id de la facture qui la remplace
 	*	\return		int		<0 si ko, 0 si aucune facture ne remplace, id facture sinon
 	*/
@@ -1761,7 +1790,7 @@ class Facture extends CommonObject
 		$sql = 'SELECT rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' WHERE fk_facture_source = '.$this->id;
-		$sql.= ' AND fk_statut > 0';
+		$sql.= ' AND type < 2';
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

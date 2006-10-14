@@ -1744,6 +1744,21 @@ else
 				$facreplaced->fetch($fac->fk_facture_source);
 				print ' ('.$langs->transnoentities("CorrectInvoice",$facreplaced->getNomUrl(1)).')';
 			}
+			$facidavoir=$fac->getIdAvoirInvoice();
+			if (sizeof($facidavoir) > 0)
+			{
+				print ' ('.$langs->transnoentities("InvoiceHasAvoir");
+				$i=0;
+				foreach($facidavoir as $id)
+				{
+					if ($i==0) print ' ';
+					else print ',';
+					$facavoir=new Facture($db);
+					$facavoir->fetch($id);
+					print $facavoir->getNomUrl(1);
+				}
+				print ')';
+			}
 			$facidnext=$fac->getIdReplacingInvoice();
 			if ($facidnext > 0)
 			{

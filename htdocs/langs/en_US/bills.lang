@@ -22,6 +22,7 @@ ReplacedByInvoice=Replaced by invoice %s
 CorrectInvoice=Correct invoice %s
 NoReplacableInvoice=No replacable invoices
 NoInvoiceToCorrect=No invoice to correct
+InvoiceHasAvoir=Corrected by one or several invoices
 CardBill=Invoice card
 Invoice=Invoice
 Invoices=Invoices
