@@ -401,6 +401,7 @@ UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Proposer un mot de passe généré
 RuleForGeneratedPasswords=Règle pour la génération des mots de passe proposés
 DoNotSuggest=Ne pas proposer
+EncryptedPasswordInDatabase=Permettre l'encryption des mots de passe dans la base de données
 ##### Company setup #####
 CompanySetup=Configuration du module Sociétés
 CompanyCodeChecker=Module de contrôle des codes tiers (clients/fournisseurs)
