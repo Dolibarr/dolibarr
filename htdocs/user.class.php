@@ -62,6 +62,7 @@ class User
 	var $admin;
 	var $login;
 	var $pass;
+	var $oldpass;
 	var $datec;
 	var $datem;
 	var $societe_id;
@@ -776,11 +777,24 @@ class User
     {
         global $langs;
         
+        
+        
         // Nettoyage parametres
         $this->nom=trim($this->nom);
         $this->prenom=trim($this->prenom);
         $this->login=trim($this->login);
-        $this->pass=trim($this->pass);
+        if ($conf->global->DATABASE_PWD_ENCRYPTED)
+		    {
+		    	$this->pass=trim($this->pass);
+		    	if ($this->oldpass != $this->pass)
+		    	{
+		    		$this->pass = md5($this->pass);
+		    	}
+		    }
+		    else
+		    {
+		    	$this->pass=trim($this->pass);
+		    }
         $this->email=trim($this->email);
         $this->note=trim($this->note);
         $this->admin=$this->admin?$this->admin:0;

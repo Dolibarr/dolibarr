@@ -50,6 +50,18 @@ if ($_GET["action"] == 'setgeneraterule')
 	}
 }
 
+if ($_GET["action"] == 'activate_encrypt')
+{
+    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1");
+    Header("Location: security.php");
+    exit;
+}
+else if ($_GET["action"] == 'disable_encrypt')
+{
+	dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED");
+    Header("Location: security.php");
+    exit;
+}
 
 /*
  * Affichage onglet
@@ -138,14 +150,49 @@ foreach ($arrayhandler as $key => $module)
         }
         print "</td></tr>\n";
 }
-
 print '</table>';
+print '</form>';
+print '<br>';
+
+// Bon de livraison activation/desactivation
+$var=!$var;
+print "<form method=\"post\" action=\"security.php\">";
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans("Encryption").'</td>';
+print '<td>&nbsp;</td>';
+print '<td align="center">'.$langs->trans("Activated").'</td>';
+print '</tr>';
+print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("EncryptedPasswordInDatabase").'</td>';
+print '<td>&nbsp;</td>';
+print '<td align="center" width="20">';
+
+if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
+{
+	print img_tick();
+}
+
+print '</td>';
+print '<td align="center" width="100">';
+
+if($conf->global->DATABASE_PWD_ENCRYPTED == 0)
+{
+	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
+}
+else if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
+{
+	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+}
+
+print "</td>";
+print '</tr>';
+print '</table>';
+print '</form>';
 
 
 //print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-
-print '</form>';
-
 
 print '</div>';
 
