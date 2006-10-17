@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -783,18 +783,16 @@ class User
         $this->nom=trim($this->nom);
         $this->prenom=trim($this->prenom);
         $this->login=trim($this->login);
-        if ($conf->global->DATABASE_PWD_ENCRYPTED)
+        
+        if ($conf->global->DATABASE_PWD_ENCRYPTED && $this->oldpass != $this->pass)
 		    {
-		    	$this->pass=trim($this->pass);
-		    	if ($this->oldpass != $this->pass)
-		    	{
-		    		$this->pass = md5($this->pass);
-		    	}
+		    	$this->pass = md5($this->pass);
 		    }
 		    else
 		    {
 		    	$this->pass=trim($this->pass);
 		    }
+		    
         $this->email=trim($this->email);
         $this->note=trim($this->note);
         $this->admin=$this->admin?$this->admin:0;
