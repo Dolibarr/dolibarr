@@ -244,6 +244,8 @@ if ($_POST["action"] == 'update' && $caneditfield)
 
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
+    
+    $edituser->oldpass       = $edituser->pass;
 
     $edituser->nom           = trim($_POST["nom"]);
     $edituser->prenom        = trim($_POST["prenom"]);
@@ -251,8 +253,8 @@ if ($_POST["action"] == 'update' && $caneditfield)
     $edituser->pass          = trim($_POST["pass"]);
     $edituser->admin         = trim($_POST["admin"]);
     $edituser->office_phone  = trim($_POST["office_phone"]);
-	$edituser->office_fax    = trim($_POST["office_fax"]);
- 	$edituser->user_mobile   = trim($_POST["user_mobile"]);
+	  $edituser->office_fax    = trim($_POST["office_fax"]);
+ 	  $edituser->user_mobile   = trim($_POST["user_mobile"]);
     $edituser->email         = trim($_POST["email"]);
     $edituser->note          = trim($_POST["note"]);
     $edituser->webcal_login  = trim($_POST["webcal_login"]);
