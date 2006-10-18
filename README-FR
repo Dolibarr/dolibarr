@@ -7,7 +7,7 @@ Documentation démarrage
 2) Mettre à jour Dolibarr depuis une ancienne version
 3) Ce qui est nouveau dans cette version
 4) Ce que peux faire Dolibarr
-5) Ce que ne peux pas Dolibarr (pas encore)
+5) Ce que ne peux pas faire Dolibarr (pas encore)
 
 
 I - INSTALLER DOLIBARR
@@ -120,8 +120,8 @@ Miscellanous:
 
 V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
 ------------------------------------------
-Voici un liste de fonctionnalité pas encore gérées par Dolibarr:
+Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
 - "TVA NPR" (TVA "Non Perçue Récupérable").
-- Pas de compta.
+- Pas de compta (uniquement gestion de trésorerie).
 - Dolibarr ne gère qu'une seule monnaie.
 - Dolibarr ne fait pas le café (pas encore).
