@@ -108,8 +108,8 @@ class DoliDb
         {
         	$this->connected = 0;
         	$this->ok = 0;
-            $this->error="Mysql PHP functions are not available in this version of PHP";
-        	dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions are not available in this version of PHP");
+            $this->error="Mysqli PHP functions are not available in this version of PHP. Try to use another driver.";
+        	dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions are not available in this version of PHP. Try to use another driver.");
             return $this->ok;
         }
 

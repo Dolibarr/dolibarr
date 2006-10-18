@@ -536,7 +536,7 @@ if ($_POST["action"] == "set")
                 print $langs->trans("ServerConnection")." : ";
                 print $dolibarr_main_db_host;
                 print '</td><td>';
-                print $langs->trans("Error");
+                print '<font class="error">'.$db->error.'</div>';
                 print "</td></tr>";
 
                 // Affiche aide diagnostique
