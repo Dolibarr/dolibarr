@@ -88,7 +88,7 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     $conf->db->name = $dolibarr_main_db_name;
     $conf->db->user = $dolibarr_main_db_user;
     $conf->db->pass = $dolibarr_main_db_pass;
-
+	
     $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
     $ok = 0;
 
@@ -104,46 +104,74 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     {
         if ($db->connected == 1)
         {
+			$conf->setValues($db);
+
+			$code=0;
+			
+			// Recherche du code AD99 le plus élevé.
+			$sql.= "select code from llx_user where code like 'AD%'";
+	        $resql=$db->query($sql);
+	        if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+					$codefound=substr($obj->code,2);
+					if (is_numeric($codefound) && $codefound > $code) $code=$codefound;
+					//print "Found code=$code";
+					$i++;
+				}				
+			}			
+
+			$code++;
+			$code=sprintf("%02d",$code);
+			
             $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
-            $sql .= ",'".$_POST["login"]."'";
-            $sql .= ",'".$_POST["pass"]."'";
-            $sql .= ",1,'Administrateur','ADM')";
-        }
-    
-        $resql=$db->query($sql);
-    
-        if ($resql)
-        {
-            print $langs->trans("AdminLoginCreatedSuccessfuly")."<br>";
-            $success = 1;
-        }
-        else
-        {
-            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-            {
-                print $langs->trans("AdminLoginAlreadyExists",$_POST["login"])."<br>";
-                $success = 1;
-            }
-            else {
-                print $langs->trans("FailedToCreateAdminLogin")."<br>";
-            }
-        }
-    
-        if ($success)
-        {
-            $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
-        
-            // Si install non Français, on configure pour fonctionner en mode internationnal
-            if ($langs->defaultlang != "fr_FR")
-            {
-                $db->query("UPDATE llx_const set value='eldy_backoffice.php' WHERE name='MAIN_MENU_BARRETOP';");
-                $db->query("UPDATE llx_const set value='eldy_backoffice.php' WHERE name='MAIN_MENU_BARRELEFT';");
-
-                $db->query("UPDATE llx_const set value='eldy_frontoffice.php' WHERE name='MAIN_MENUFRONT_BARRETOP';");
-                $db->query("UPDATE llx_const set value='eldy_frontoffice.php' WHERE name='MAIN_MENUFRONT_BARRELEFT';");
-            }
-
-        }
+            $sql.= ",'".$_POST["login"]."'";
+            $sql.= ",'".($conf->global->DATABASE_PWD_ENCRYPTED?md5($_POST["pass"]):$_POST["pass"])."'";
+            $sql.= ",1,'Administrateur','AD".$code."')";
+	    	//print "sql=".$sql." ".mysql_errno($db->db);
+	        $resql=$db->query($sql);
+	        if ($resql)
+	        {
+	            print $langs->trans("AdminLoginCreatedSuccessfuly",$_POST["login"])."<br>";
+	            $success = 1;
+	        }
+	        else
+	        {
+	            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+	            {
+	                print $langs->trans("AdminLoginAlreadyExists",$_POST["login"])."<br>";
+	                $success = 1;
+	            }
+	            else
+	            {
+	                print $langs->trans("FailedToCreateAdminLogin")."<br>";
+	            }
+	        }
+	    
+	        if ($success)
+	        {
+	            $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
+	        
+	            // Si install non Français, on configure pour fonctionner en mode internationnal
+	            if ($langs->defaultlang != "fr_FR")
+	            {
+	                $db->query("UPDATE llx_const set value='eldy_backoffice.php' WHERE name='MAIN_MENU_BARRETOP';");
+	                $db->query("UPDATE llx_const set value='eldy_backoffice.php' WHERE name='MAIN_MENU_BARRELEFT';");
+	
+	                $db->query("UPDATE llx_const set value='eldy_frontoffice.php' WHERE name='MAIN_MENUFRONT_BARRETOP';");
+	                $db->query("UPDATE llx_const set value='eldy_frontoffice.php' WHERE name='MAIN_MENUFRONT_BARRELEFT';");
+	            }
+	
+	        }
+    	}
+    	else
+    	{
+            print $langs->trans("Error")."<br>";
+    	}
     }
 
     $db->query("UPDATE llx_const set value='".$setuplang."' WHERE name='MAIN_LANG_DEFAULT';");
