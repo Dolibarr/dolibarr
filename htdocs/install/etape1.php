@@ -134,7 +134,7 @@ if ($_POST["action"] == "set")
     
             if (file_exists("$conffile"))
             {
-                include ("$conffile");
+                include_once("$conffile");
                 print "<tr><td>".$langs->trans("ConfigurationSaving")."</td><td>".$langs->trans("OK")."</td>";
             }
             else
@@ -153,7 +153,7 @@ if ($_POST["action"] == "set")
         }
 
         // Chargement driver acces bases
-        include_once("../lib/databases/".$dolibarr_main_db_type.".lib.php");
+        require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 
     }
 

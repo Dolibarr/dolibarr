@@ -29,9 +29,17 @@
 require_once('../translate.class.php');
 require_once('../lib/functions.inc.php');
 
-
-$docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 $conffile = "../conf/conf.php";
+if (file_exists($conffile))
+{
+	include_once($conffile);
+	require_once($dolibarr_main_document_root . "/conf/conf.class.php");
+	require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+	$conf=new Conf();
+}
+if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+
 
 define('DOL_DOCUMENT_ROOT','../');
 
