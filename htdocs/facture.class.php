@@ -361,8 +361,16 @@ class Facture extends CommonObject
 		
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id.'">';
 		$lienfin='</a>';
+		
+		$picto='bill';
+		if ($this->type == 1) $picto.='r';
+		if ($this->type == 2) $picto.='a';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowInvoice"),'bill').$lienfin.' ');
+		$label=$langs->trans("ShowInvoice");
+		if ($this->type == 1) $label=$langs->trans("ShowInvoiceReplace");
+		if ($this->type == 2) $label=$langs->trans("ShowInvoiceAvoir");
+		
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin.' ');
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;
 	}

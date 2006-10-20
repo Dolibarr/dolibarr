@@ -120,7 +120,7 @@ if ($conf->facture->enabled)
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
-  $sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom, s.idp";
+  $sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type, s.nom, s.idp";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -151,7 +151,8 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'><td nowrap>';
 	      $facturestatic->ref=$obj->facnumber;
-	      $facturestatic->id=$obj->idp;
+	      $facturestatic->id=$obj->rowid;
+	      $facturestatic->type=$obj->type;
 	      print $facturestatic->getNomUrl(1,'');
 	      print '</td>';
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,16).'</a></td>';
@@ -359,7 +360,8 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.total, f.total_ttc, ".$db->pdate("f.date_lim_reglement")." as datelimite,";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, ";
+	$sql.= $db->pdate("f.date_lim_reglement")." as datelimite,";
 	$sql.= " sum(pf.amount) as am,";
 	$sql.= " s.nom, s.idp";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -400,6 +402,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 					print '<td nowrap>';
 					$facturestatic->ref=$obj->facnumber;
 					$facturestatic->id=$obj->rowid;
+					$facturestatic->type=$obj->type;
 					print $facturestatic->getNomUrl(1,'');
 					if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 					print '</td>';
