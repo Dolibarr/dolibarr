@@ -134,7 +134,7 @@ if ($_POST["action"] == "set")
     
             if (file_exists("$conffile"))
             {
-                include_once("$conffile");
+                include("$conffile");	// On force rechargement. Ne pas mettre include_once !
                 print "<tr><td>".$langs->trans("ConfigurationSaving")."</td><td>".$langs->trans("OK")."</td>";
             }
             else
