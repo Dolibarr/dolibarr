@@ -12,8 +12,8 @@ ErrorPHPDoesNotSupportSessions=Your PHP installation does not support sessions. 
 ErrorDirDoesNotExists=Directory %s does not exists.
 ErrorGoBackAndCorrectParameters=Go backward and correct wrong parameters.
 ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
-ErrorFaileToCreateDatabase=Failed to create database '%'.
-ErrorFaileToConnectToDatabase=Failed to connect to database '%'.
+ErrorFailedToCreateDatabase=Failed to create database '%'.
+ErrorFailedToConnectToDatabase=Failed to connect to database '%'.
 ErrorPHPVersionTooLow=PHP version too old. Version %s is required.
 PHPVersion=PHP Version
 YouCanContinue=You can continue...
@@ -90,11 +90,7 @@ YouMustCreateWithPermission=You must create file %s and set write permissions on
 CorrectProblemAndReloadPage=Correct problem and <a href="index.php">reload page</a> (Press F5 key).
 AlreadyDone=Already migrated
 DatabaseVersion=Database version
-
-
-
-
-
+ServerVersion=Database server version
 
 #########
 # upgrade

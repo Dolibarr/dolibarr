@@ -94,10 +94,13 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
     {
         if($db->database_selected == 1)
         {
+	        print "<tr><td nowrap>";
+	        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
             dolibarr_install_syslog("Database connection successfull : $dolibarr_main_db_name");
         }
         else
         {
+	        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
             $ok = 0 ;
         }
     }
@@ -107,9 +110,9 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
     {
         $version=$db->getVersion();
         $versionarray=$db->getVersionArray();
-        print '<tr><td>'.$langs->trans("DatabaseVersion").'</td>';
+        print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
         print '<td align="right">'.$version.'</td></tr>';
-		dolibarr_install_syslog($langs->trans("DatabaseVersion")." : $version");
+		dolibarr_install_syslog($langs->trans("ServerVersion")." : $version");
         //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
     }
 
