@@ -177,13 +177,13 @@ class pdf_paiement
 			if ($result < 0)
 			{
 				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-				return;	
+				return -1;	
 			}
 		}
 	
-		$month = substr("0".$month, strlen("0".$month)-2,2);
-		$_file = $dir . "/paiements-$month-$year" . ".pdf";
-		
+		$month = sprintf("%02d",$month);
+		$year = sprintf("%04d",$year);
+		$_file = $dir . "/payments-".$month."-".$year.".pdf";
 		
 		$pdf = new FPDF('P','mm','A4');
 		$pdf->Open();
