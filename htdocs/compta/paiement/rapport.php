@@ -103,11 +103,11 @@ for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
 {
   if ($formyear == $syear)
     {
-      print "<option value=\"$formyear\" selected=\"true\">$formyear";
+      print "<option value=\"$formyear\" selected=\"true\">".$formyear."</option>";
     }
   else
     {
-      print "<option value=\"$formyear\">$formyear";
+      print "<option value=\"$formyear\">".$formyear."</option>";
     }
 }
 print "</select>\n";
@@ -152,14 +152,14 @@ if ($year)
 		$var=true;
 		while (($file = readdir($handle))!==false)
 		{
-			if (substr($file, 0, 8) == 'paiement')
+			if (eregi('^payment',$file))
 			{
 				$var=!$var;
 				$tfile = $dir . '/'.$year.'/'.$file;
 				$relativepath = $year.'/'.$file;
 				print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
-				print '<td align="right">'.filesize($tfile). ' bytes</td>';
-				print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($tfile)).'</td></tr>';
+				print '<td align="right">'.filesize($tfile). ' '.$langs->trans("Bytes").'</td>';
+				print '<td align="right">'.dolibarr_print_date(filemtime($tfile),"%d %b %Y %H:%M:%S").'</td></tr>';
 			}
 		}
 		print '</table>';
