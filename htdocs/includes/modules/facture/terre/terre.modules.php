@@ -91,9 +91,10 @@ class mod_facture_terre extends ModeleNumRefFactures
     }
 
     /**     \brief      Renvoi prochaine valeur attribuée
+     *      \param      facture		Objet facture
      *      \return     string      Valeur
      */
-    function getNextValue()
+    function getNextValue($facture)
     {
         global $db;
 
@@ -141,11 +142,12 @@ class mod_facture_terre extends ModeleNumRefFactures
     
     /**     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
+     *      \param      facture		Objet facture
      *      \return     string      Texte descripif
      */
-    function getNumRef($objsoc=0)
+    function getNumRef($objsoc=0,$facture)
     { 
-        return $this->getNextValue();
+        return $this->getNextValue($facture);
     }
     
 }

@@ -79,9 +79,10 @@ class mod_facture_neptune extends ModeleNumRefFactures
 
     /**     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
+     *      \param      facture		Objet facture
      *      \return     string      Texte descripif
      */
-	function getNextValue($objsoc=0)
+	function getNextValue($objsoc=0,$facture)
 	{
 		global $db,$conf;
 	
@@ -139,11 +140,12 @@ class mod_facture_neptune extends ModeleNumRefFactures
 
     /**     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
+     *      \param      facture		Objet facture
      *      \return     string      Texte descripif
      */
-    function getNumRef($objsoc=0)
+    function getNumRef($objsoc=0,$facture)
     { 
-        return $this->getNextValue($objsoc);
+        return $this->getNextValue($objsoc,$facture);
     }
     
 }    
