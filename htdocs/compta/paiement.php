@@ -243,9 +243,12 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 			print "</td>\n";
 
 			print '<td rowspan="3" valign="top">';
-			print '<textarea name="comment" wrap="soft" cols="80" rows="'.ROWS_5.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+			print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
 
-			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"><br><em>Numéro du chèque / virement</em></td></tr>';
+			print '<tr><td>'.$langs->trans('Numero');
+			print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
+			print '</td>';
+			print '<td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
 
 			print '<tr>';
 			if ($conf->banque->enabled)
