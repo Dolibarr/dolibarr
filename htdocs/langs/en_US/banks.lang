@@ -73,6 +73,7 @@ ConciliationForAccount=Conciliate this account
 IncludeClosedAccount=Include closed accounts
 OnlyOpenedAccount=Only opened accounts
 AccountToCredit=Account to credit
+AccountToDebit=Account to debit
 DisableConciliation=Disable conciliation feature for this account
 ConciliationDisabled=Conciliation feature disabled
 StatusAccountOpened=Opened

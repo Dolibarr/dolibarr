@@ -73,6 +73,7 @@ ConciliationForAccount=Rapprochements sur ce compte
 IncludeClosedAccount=Inclure comptes fermés
 OnlyOpenedAccount=Uniquement comptes ouverts
 AccountToCredit=Compte à créditer
+AccountToDebit=Compte à débiter
 DisableConciliation=Désactiver la fonction de rapprochement pour ce compte
 ConciliationDisabled=Fonction rapprochement désactivée
 StatusAccountOpened=Ouvert

@@ -196,6 +196,7 @@ if ($user->societe_id > 0)
 llxHeader();
 
 $html=new Form($db);
+$facturestatic=new Facture($db);
 
 if ($fiche_erreur_message)
 {
@@ -205,33 +206,28 @@ if ($fiche_erreur_message)
 if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 {
 	$facture = new Facture($db);
-	$facture->fetch($facid);
-
-	$sql = 'SELECT s.nom,s.idp, f.amount, f.total_ttc as total, f.facnumber';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture as f WHERE f.fk_soc = s.idp';
-	$sql .= ' AND f.rowid = '.$facid;
-	$resql = $db->query($sql);
-	if ($resql)
+	$result=$facture->fetch($facid);
+	
+	if ($result >= 0)
 	{
-		$num = $db->num_rows($resql);
-		if ($num)
-		{
-			$obj = $db->fetch_object($resql);
+			$facture->fetch_client();
+		
+			$total = $facture->total_ttc;
 
-			$total = $obj->total;
-
-			print_titre($langs->trans('DoPayment'));
+			$title='';
+			if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
+			if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
+			print_fiche_titre($title);
 
 			print '<form name="add_paiement" action="paiement.php" method="post">';
 			print '<input type="hidden" name="action" value="add_paiement">';
-			print '<input type="hidden" name="facid" value="'.$facid.'">';
-			print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';
-			print '<input type="hidden" name="socid" value="'.$obj->idp.'">';
-			print '<input type="hidden" name="societe" value="'.$obj->nom.'">';
+			print '<input type="hidden" name="facid" value="'.$facture->id.'">';
+			print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
+			print '<input type="hidden" name="type" value="'.$facture->type.'">';
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2"><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom."</a></td></tr>\n";
+			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
 
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
 			if (!empty($_POST['remonth']) && !empty($_POST['reday']) && !empty($_POST['reyear']))
@@ -247,31 +243,44 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 			print "</td>\n";
 
 			print '<td rowspan="3" valign="top">';
-			print '<textarea name="comment" wrap="soft" cols="40" rows="4">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+			print '<textarea name="comment" wrap="soft" cols="80" rows="'.ROWS_5.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
 
 			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"><br><em>Numéro du chèque / virement</em></td></tr>';
 
+			print '<tr>';
 			if ($conf->banque->enabled)
 			{
-				print '<tr><td>'.$langs->trans('AccountToCredit').'</td><td>';
+				if ($facture->type != 2) print '<td>'.$langs->trans('AccountToCredit').'</td>';
+				if ($facture->type == 2) print '<td>'.$langs->trans('AccountToDebit').'</td>';
+				print '<td>';
 				$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
-				print "</td></tr>\n";
+				print '</td>';
 			}
 			else
 			{
-				print '<tr><td colspan="2">&nbsp;</td></tr>';
+				print '<td colspan="2">&nbsp;</td>';
 			}
+			print "</tr>\n";
 
 			/*
 			 * Autres factures impayées
 			 */
-			$sql = 'SELECT f.rowid as facid,f.facnumber,f.total_ttc,'.$db->pdate('f.datef').' as df';
-			$sql .= ', sum(pf.amount) as am';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
-			$sql .= ' WHERE f.fk_soc = '.$facture->socid;
-			$sql .= ' AND f.paye = 0';
-			$sql .= ' AND f.fk_statut = 1';  // Statut=0 => non validée, Statut=2 => annulée
+			$sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
+			$sql.= $db->pdate('f.datef').' as df, ';
+			$sql.= ' sum(pf.amount) as am';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
+			$sql.= ' WHERE f.fk_soc = '.$facture->socid;
+			$sql.= ' AND f.paye = 0';
+			$sql.= ' AND f.fk_statut = 1'; // Statut=0 => non validée, Statut=2 => annulée
+			if ($facture->type != 2)
+			{
+				$sql .= ' AND type in (0,1)';	// Facture standard ou de remplacement
+			}
+			else
+			{
+				$sql .= ' AND type = 2';	
+			}
 			$sql .= ' GROUP BY f.facnumber';
 			$resql = $db->query($sql);
 			if ($resql)
@@ -283,7 +292,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 					print '<tr><td colspan="3">';
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre">';
-					print '<td>'.$langs->trans('Bill').'</td><td align="center">'.$langs->trans('Date').'</td>';
+					print '<td>'.$langs->trans('Invoice').'</td>';
+					print '<td align="center">'.$langs->trans('Date').'</td>';
 					print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 					print '<td align="right">'.$langs->trans('Received').'</td>';
 					print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
@@ -301,7 +311,11 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 
 						print '<tr '.$bc[$var].'>';
 
-						print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->facnumber;
+						print '<td><a href="facture.php?facid='.$objp->facid.'">';
+					      $facturestatic->ref=$objp->facnumber;
+					      $facturestatic->id=$objp->rowid;
+					      $facturestatic->type=$objp->type;
+					      print $facturestatic->getNomUrl(1,'');
 						print "</a></td>\n";
 
 						if ($objp->df > 0 )
@@ -354,7 +368,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'add_paiement')
 			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
 			print '</table>';
 			print "</form>\n";
-		}
+		
 	}
 }
 
@@ -419,5 +433,5 @@ if (! $_GET['action'] && ! $_POST['action'])
 
 $db->close();
 
-llxFooter('<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>');
+llxFooter('$Date$ - $Revision$');
 ?>
