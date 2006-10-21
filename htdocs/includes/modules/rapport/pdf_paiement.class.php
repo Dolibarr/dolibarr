@@ -44,129 +44,116 @@ class pdf_paiement
   	function pdf_paiement($db=0)
     { 
     	global $langs;
+		$langs->load("bills");
 
 		$this->db = $db;
-		$this->description = "Liste des paiements";
-		
-		$this->url = DOL_URL_ROOT."/document/rapport/" . "paiements" . ".pdf";
+		$this->description = $langs->trans("ListOfCustomerPayments");
 		
 		$this->tab_top = 30;
 		
 		$this->line_height = 5;
 		$this->line_per_page = 25;
 		$this->tab_height = 230;	//$this->line_height * $this->line_per_page;
+
 	}
-	
-	
-  	function print_link()
-    {
-      if (file_exists($this->file))
+
+
+	function Header(&$pdf, $page, $pages)
 	{
-	  print '<a href="'.$this->url.'">paiements.pdf</a>';
-	  print '<table><tr>';
-	  print '<td align="right">'.filesize($this->file). ' bytes</td>';
-	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($this->file)).'</td>';
-	  print '</tr></table>';
+		global $langs;
+
+		$title=$this->description.' - '.dolibarr_print_date(mktime(0,0,0,$this->month),"%B");
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Text(76, 10, $title);
+	
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Text(11, 16, $langs->trans("Date")." : ".dolibarr_print_date(time(),"%d %b %Y"));
+	
+		$pdf->SetFont('Arial','',12);
+		$pdf->Text(11, 22, $langs->trans("Page")." : ".$page);
+		//      $pdf->Text(11, 22, "Page " . $page . " sur " . $pages);
+	
+		$pdf->SetFont('Arial','',12);
+	
+		$pdf->Text(11,$this->tab_top + 6,'Date');
+	
+		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
+		$pdf->Text(42, $this->tab_top + 6, $langs->trans("PaymentType"));
+	
+		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
+		$pdf->Text(82, $this->tab_top + 6, $langs->trans("Invoice"));
+	
+		$pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
+		$pdf->Text(122, $this->tab_top + 6, $langs->trans("AmountInvoice"));
+	
+		$pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
+	
+		$pdf->SetXY (160, $this->tab_top);
+		$pdf->MultiCell(40, 10, $langs->trans("AmountPayment"), 0, 'R');
+	
+		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );
+
+		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
 	}
-    }
 
 
-  	function Header(&$pdf, $page, $pages)
-    {
-    	global $langs;
-    	
-      $pdf->SetFont('Arial','B',12);
-      $pdf->Text(90, 10, $langs->trans("PaimentsList"));
-
-      $pdf->SetFont('Arial','B',12);
-      $pdf->Text(11, 16, "Date : " . strftime("%d %b %Y", time()));
-      
-      $pdf->SetFont('Arial','B',12);
-      $pdf->Text(11, 22, "Page " . $page);
-      //      $pdf->Text(11, 22, "Page " . $page . " sur " . $pages);
-
-      $pdf->SetFont('Arial','',12);
-            
-      $pdf->Text(11,$this->tab_top + 6,'Date');
-      
-      $pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-      $pdf->Text(42, $this->tab_top + 6,'Type paiement');
-
-      $pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
-      $pdf->Text(82, $this->tab_top + 6,'Facture');      
-
-      $pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
-      $pdf->Text(122, $this->tab_top + 6,'Montant Fac');
-      
-      $pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
-
-      $pdf->SetXY (160, $this->tab_top);
-      $pdf->MultiCell(40, 10, "Montant", 0, 'R');
-      
-      $pdf->Rect(10, $this->tab_top, 190, $this->tab_height + 10);
-      $pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );
-
-    }
-
-  function Body(&$pdf, $page, $lines)
-    {
-      $pdf->SetFont('Arial','', 9);
-      $oldprowid = 0;
-      $pdf->SetFillColor(220,220,220);
-      $yp = 0;	  
-      for ($j = 0 ; $j < sizeof($lines) ; $j++)
+	function Body(&$pdf, $page, $lines)
 	{
-	  $i = $j;
-	  if ($oldprowid <> $lines[$j][7])
-	    {	     
-	      if ($yp > 200)
+		$pdf->SetFont('Arial','', 9);
+		$oldprowid = 0;
+		$pdf->SetFillColor(220,220,220);
+		$yp = 0;
+		for ($j = 0 ; $j < sizeof($lines) ; $j++)
 		{
-		  $page++;
-		  $pdf->AddPage();
-		  $this->Header($pdf, $page, $pages);
-		  $pdf->SetFont('Arial','', 9);
-		  $yp = 0;
+			$i = $j;
+			if ($oldprowid <> $lines[$j][7])
+			{
+				if ($yp > 200)
+				{
+					$page++;
+					$pdf->AddPage();
+					$this->Header($pdf, $page, $pages);
+					$pdf->SetFont('Arial','', 9);
+					$yp = 0;
+				}
+	
+	
+				$pdf->SetXY (10, $this->tab_top + 10 + $yp);
+				$pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'J', 1);
+	
+				$pdf->SetXY (40, $this->tab_top + 10 + $yp);
+				$pdf->MultiCell(80, $this->line_height, $lines[$j][2].' '.$lines[$j][3], 0, 'J', 1);
+	
+				$pdf->SetXY (120, $this->tab_top + 10 + $yp);
+				$pdf->MultiCell(40, $this->line_height, '', 0, 'J', 1);
+	
+				$pdf->SetXY (160, $this->tab_top + 10 + $yp);
+				$pdf->MultiCell(40, $this->line_height, $lines[$j][4], 0, 'R', 1);
+				$yp = $yp + 5;
+			}
+	
+			$pdf->SetXY (80, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'J', 0);
+	
+			$pdf->SetXY (120, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(40, $this->line_height, $lines[$j][5], 0, 'J', 0);
+	
+			$pdf->SetXY (160, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(40, $this->line_height, $lines[$j][6], 0, 'R', 0);
+			$yp = $yp + 5;
+	
+			if ($oldprowid <> $lines[$j][7])
+			{
+				$oldprowid = $lines[$j][7];
+			}
+	
+			//	  if ($i < $this->line_per_page - 1)
+			//	    {
+			//	      $pdf->line(10, $this->tab_top + 10 + (($i+1) * $this->line_height), 200, $this->tab_top + 10 + (($i+1) * $this->line_height));
+			//	    }
+
 		}
-
-
-	      $pdf->SetXY (10, $this->tab_top + 10 + $yp);
-	      $pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'J', 1);
-
-	      $pdf->SetXY (40, $this->tab_top + 10 + $yp);
-	      $pdf->MultiCell(40, $this->line_height, $lines[$j][2], 0, 'J', 1);
-	      	      
-	      $pdf->SetXY (80, $this->tab_top + 10 + $yp);
-	      $pdf->MultiCell(40, $this->line_height, '', 0, 'J', 1);
-
-	      $pdf->SetXY (120, $this->tab_top + 10 + $yp);
-	      $pdf->MultiCell(40, $this->line_height, $lines[$j][3], 0, 'J', 1);
-	      
-	      $pdf->SetXY (160, $this->tab_top + 10 + $yp);
-	      $pdf->MultiCell(40, $this->line_height, $lines[$j][4], 0, 'R', 1);
-	      $yp = $yp + 5;
-	    }
-       
-	  $pdf->SetXY (80, $this->tab_top + 10 + $yp);
-	  $pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'J', 0);
-
-	  $pdf->SetXY (120, $this->tab_top + 10 + $yp);
-	  $pdf->MultiCell(40, $this->line_height, $lines[$j][5], 0, 'J', 0);
-
-	  $pdf->SetXY (160, $this->tab_top + 10 + $yp);
-	  $pdf->MultiCell(40, $this->line_height, $lines[$j][6], 0, 'R', 0);
-	  $yp = $yp + 5;
-
-	  if ($oldprowid <> $lines[$j][7])
-	    {
-	      $oldprowid = $lines[$j][7];
-	    }
-
-	  //	  if ($i < $this->line_per_page - 1)
-	  //	    {
-	  //	      $pdf->line(10, $this->tab_top + 10 + (($i+1) * $this->line_height), 200, $this->tab_top + 10 + (($i+1) * $this->line_height));
-	  //	    }
 	}
-    }
 
 
     /**
@@ -178,6 +165,9 @@ class pdf_paiement
   	function write_pdf_file($_dir, $month, $year)
     {
     	global $langs;
+    	
+    	$this->month=$month;
+    	$this->year=$year;
     	
     	$dir=$_dir.'/'.$year;
     	
@@ -208,9 +198,8 @@ class pdf_paiement
 		
 		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
 		
-		$sql .= " AND date_format(p.datep, '%Y') = " . $year;
 		$sql .= " AND p.fk_paiement = c.id ";
-		//      $sql .= " AND date_format(p.datep, '%m%Y') = " . $month.$year;
+		$sql .= " AND date_format(p.datep, '%Y%m') = " . sprintf("%04d%02d",$year,$month);
 		$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 		$result = $this->db->query($sql);
 		//      print $sql ;
@@ -227,7 +216,7 @@ class pdf_paiement
 				$var=!$var;
 		
 				$lines[$i][0] = $objp->facnumber;
-				$lines[$i][1] = strftime("%d %B %Y",$objp->dp);
+				$lines[$i][1] = dolibarr_print_date($objp->dp,"%d %B %Y");
 				$lines[$i][2] = $objp->paiement_type ;
 				$lines[$i][3] = $objp->num_paiement;
 				$lines[$i][4] = price($objp->paiement_amount);
@@ -260,12 +249,10 @@ class pdf_paiement
 		*/
 		
 		$pdf->AddPage();
+
 		$this->Header($pdf, 1, $pages);
+
 		$this->Body($pdf, 1, $lines);
-		
-		/*
-		*
-		*/
 		
 		$pdf->Output($_file);
 	}
