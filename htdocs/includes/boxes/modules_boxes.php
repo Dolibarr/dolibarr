@@ -56,7 +56,7 @@ class ModeleBoxes
     */
     function showBox($head, $contents)
     {
-        global $langs;
+        global $langs,$conf;
 
         $bcx[0] = 'class="box_pair"';
         $bcx[1] = 'class="box_impair"';
@@ -71,7 +71,10 @@ class ModeleBoxes
         print '>';
     
         // Affiche titre de la boite
-        print '<tr class="box_titre"><td';
+        print '<tr class="box_titre"';
+        if ($conf->use_ajax) print ' style="cursor:move;"';
+        print '>';
+        print '<td';
         if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
         print '>';
         print dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
