@@ -632,14 +632,12 @@ margin: 0px 0px;
    
 table.border {
 border: 1px solid #9CACBB;
-border-width: 1px;
 border-collapse: collapse;
 }
 
 table.border td {
 padding: 1px 2px;
 border: 1px solid #9CACBB;
-border-width: 1px;
 border-collapse: collapse;
 }
 

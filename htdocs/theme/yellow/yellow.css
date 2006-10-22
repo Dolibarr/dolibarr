@@ -60,7 +60,8 @@ textarea  {
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-textarea.flat  {
+textarea.flat
+{
     font: 12px helvetica, verdana, arial, sans-serif;
     border: 1px solid #cccccc;
     padding: 0px 0px 0px 0px;
@@ -84,17 +85,6 @@ select.flat
 }
 
 
-div.body
-{
-    margin-top: 1px;
-    margin-bottom: 0;
-    margin-right: 3px;
-    margin-left: 3px;
-    display:block;
-    padding:0px;
-    font-family:arial,tahoma,verdana,helvetica;
-    font-size:12px;
-}
 
 div.vmenuplusfiche
 {
@@ -148,14 +138,6 @@ table.tmenu
 {
     padding: 0px 0px 10px 0px;
     margin: 0px 0px 0px 10px;
-}
-
-.menu
-{ 
-    background: #b3c5cc; 
-    font-size: 12px; 
-    color: #000000; 
-    text-decoration: none;
 }
 
 
@@ -474,13 +456,13 @@ margin: 0px 0px;
 }
 
 table.border {
-font: helvetica, verdana, arial, sans-serif; 
 border-collapse: collapse;
-border: 1px white ridge;
+border: 1px white;
 }
 table.border td {
 border: 1px solid #6C7C8B;
 padding: 1px 2px;
+border-collapse: collapse;
 }
 
 table.noborder {
@@ -495,7 +477,6 @@ padding: 1px 2px;
 table.nobordernopadding {
 border-collapse: collapse;
 border: 0px;
-padding: 0px 0px;
 }
 table.nobordernopadding td {
 border: 0px;
@@ -509,10 +490,6 @@ width: 100%;
 background: #ddddcc;
 }
 
-
-/*
- *  Tableaux
- */ 
 
 td.border { 
             border-top: 1px solid #000000;
