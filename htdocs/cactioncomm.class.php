@@ -59,15 +59,16 @@ class CActioncomm {
 
   /**
    *    \brief      Charge l'objet type d'action depuis la base
-   *    \param      id          id du type d'action à récupérer
+   *    \param      id          id ou code du type d'action à récupérer
    *    \return     int         1=ok, 0=aucune action, -1=erreur
    */
   function fetch($id)
     {
         
-        $sql = "SELECT code, type, libelle, active";
+        $sql = "SELECT id, code, type, libelle, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-        $sql.= " WHERE id=$id";
+		if (is_numeric($id)) $sql.= " WHERE id=".$id;
+		else $sql.= " WHERE code='".$id."'";
         
         $resql=$this->db->query($sql);
         if ($resql)
@@ -76,7 +77,7 @@ class CActioncomm {
             {
                 $obj = $this->db->fetch_object($resql);
         
-                $this->id = $id;
+                $this->id      = $obj->id;
                 $this->code    = $obj->code;
                 $this->type    = $obj->type;
                 $this->libelle = $obj->libelle;
@@ -101,15 +102,18 @@ class CActioncomm {
 	/*
 	*    \brief      Renvoi la liste des types d'actions existant
 	*    \param      active      1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut = pas de filtre)
-	*    \return     array       tableau des types d'actions actifs si ok, <0 si erreur
+	*    \return     array       Tableau des types d'actions actifs si ok, <0 si erreur
 	*/
-	function liste_array($active='')
+	function liste_array($active='',$idorcode='id')
 	{
 		global $langs,$conf;
 		$langs->load("commercial");
 	
-		$ga = array();
-	
+		$repid = array();
+		$repcode = array();
+		
+		dolibarr_syslog("CActionComm.class::liste_array active=$active idorcode=$idorcode");
+		
 		$sql = "SELECT id, code, libelle, module";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
 		if ($active != '')
@@ -137,13 +141,15 @@ class CActioncomm {
 					if ($qualified)
 					{
 						$transcode=$langs->trans("Action".$obj->code);
-						$ga[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+						$repid[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+						$repcode[$obj->code] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
 					}
 					$i++;
 				}
 			}
-			$this->liste_array=$ga;
-			return $ga;
+			if ($idorcode == 'id') $this->liste_array=$repid;
+			if ($idorcode == 'code') $this->liste_array=$repcode;
+			return $this->liste_array;
 		}
 		else
 		{
@@ -152,47 +158,62 @@ class CActioncomm {
 	}
 
   
-  /*
-   *    \brief      Renvoie le nom sous forme d'un libellé traduit d'un type d'action
-   *    \param      id          id du type d'action
-   *    \return     string      libelle du type d'action
-   */
-  function get_nom($id)
-    {
-      global $langs;
-      
-      if (! isset($this->type_actions[$id]))
-      {
-        // Si valeur non disponible en cache
-        $sql = 'SELECT code, libelle';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm';
-        $sql.= " WHERE id='".$id."'";
-        
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
-                $obj = $this->db->fetch_object($result);
+	/*
+	*    \brief      Renvoie le nom sous forme d'un libellé traduit d'un type d'action
+	*    \param      id          id ou code du type d'action
+	*    \return     string      libelle du type d'action
+	*/
+	function get_nom($id)
+	{
+		global $langs;
+	
+		if (! isset($this->type_actions[$id]))
+		{
+			// Si valeur non disponible en cache
+			$sql = 'SELECT id, code, libelle';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm';
+			if (is_numeric($id)) $sql.= " WHERE id=".$id;
+			else $sql.= " WHERE code='".$id."'";
+	
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				if ($this->db->num_rows($result))
+				{
+					$obj = $this->db->fetch_object($result);
+	
+					$transcode=$langs->trans("Action".$obj->code);
+					$libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+	
+					$this->type_actions[$obj->id]=$libelle; // Met en cache
+					return $libelle;
+				}
+				$this->db->free($result);
+			}
+			else {
+				dolibarr_print_error($db);
+			}
+	
+		}
+		else {
+			// Si valeur disponible en cache
+			return $this->type_actions[$id];
+		}
+	}
 
-                $transcode=$langs->trans("Action".$obj->code);
-                $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-                
-                $this->type_actions[$id]=$libelle; // Met en cache
-                return $libelle;
-            }
-            $this->db->free($result);
-        }
-        else {
-            dolibarr_print_error($db);   
-        }    
-        
-      }
-      else {
-        // Si valeur disponible en cache
-        return $this->type_actions[$id]; 
-      }
-   }
+
+	/*
+	*    \brief      Renvoie le nom sous forme d'un libellé traduit d'un type d'action
+	*    \return     string      Libelle du type d'action
+	*/
+	function getNom()
+	{
+		global $langs;
+	
+		$transcode=$langs->trans("Action".$this->code);
+		$libelle=($transcode!="Action".$this->code ? $transcode : $this->get_nom($this->code));
+		return $libelle;
+	}
   
 }    
 ?>

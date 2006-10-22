@@ -176,9 +176,9 @@ if ($result)
       print '<td><a href="contact.php?type='.$type.'&socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
       print "<a href=\"".$urlfiche."?socid=$obj->idp\">$obj->nom</a></td>\n";
       
-      print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
       
-      print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
       
       print "</tr>\n";
       $i++;

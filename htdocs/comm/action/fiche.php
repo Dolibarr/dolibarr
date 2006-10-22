@@ -24,7 +24,7 @@
 /**
         \file       htdocs/comm/action/fiche.php
         \ingroup    commercial
-        \brief      Page de la fiche action commercial
+        \brief      Page de la fiche action
         \version    $Revision$
 */
 
@@ -78,7 +78,7 @@ if ($_POST["action"] == 'add_action')
         $contact->fetch($_POST["contactid"]);
     }
 
-    if (! $_POST["actionid"])
+    if (! $_POST["actioncode"])
     {
     	$error=1;
 		$_GET["action"] = 'create';
@@ -104,18 +104,18 @@ if ($_POST["action"] == 'add_action')
         $db->begin();
 
         $cactioncomm = new CActionComm($db);
-        $cactioncomm->fetch($_POST["actionid"]);
+        $cactioncomm->fetch($_POST["actioncode"]);
 
         // Initialisation objet actioncomm
         $actioncomm = new ActionComm($db);
 
-        $actioncomm->type_id = $_POST["actionid"];
+        $actioncomm->type_id = $cactioncomm->id;
         $actioncomm->type_code = $cactioncomm->code;
         $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
         $actioncomm->label = trim($_POST["label"]);
         if (! $_POST["label"])
         {
-            if ($_POST["actionid"] == 5 && $contact->fullname)
+            if ($_POST["actioncode"] == 'AC_RDV' && $contact->fullname)
             {
                 $actioncomm->label = $langs->trans("TaskRDVWith",$contact->fullname);
             }
@@ -131,7 +131,7 @@ if ($_POST["action"] == 'add_action')
     	$actioncomm->datep = $datep;
     	$actioncomm->date = $datea;
 	    if ($_POST["percentage"] < 100 && ! $actioncomm->datep) $actioncomm->datep=$actioncomm->date;
-		if ($actioncomm->type_id == 5)
+		if ($actioncomm->type_code == 'AC_RDV')
 		{
 			// RDV
 			if ($actioncomm->date)
@@ -207,10 +207,18 @@ if ($_POST["action"] == 'add_action')
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
     $actioncomm = new ActionComm($db);
-    $actioncomm->delete($_GET["id"]);
+    $actioncomm->fetch($_GET["id"]);
+    $result=$actioncomm->delete();
 
-    Header("Location: index.php");
-    exit;
+	if ($result >= 0)
+	{
+    	Header("Location: index.php");
+    	exit;
+    }
+    else
+    {
+    	$mesg=$actioncomm->error;
+    }
 }
 
 /*
@@ -296,7 +304,7 @@ if ($_GET["action"] == 'create')
 	* Si action de type Rendez-vous
 	*
 	*/
-	if ($_GET["actionid"] == 5)
+	if ($_GET["actioncode"] == 'AC_RDV')
 	{
 		print_titre ($langs->trans("AddActionRendezVous"));
 		print "<br>";
@@ -308,7 +316,7 @@ if ($_GET["action"] == 'create')
 		print '<table class="border" width="100%">';
 
 		// Type d'action
-		print '<input type="hidden" name="actionid" value="5">';
+		print '<input type="hidden" name="actioncode" value="AC_RDV">';
 
 		// Societe, contact
 		print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
@@ -419,10 +427,6 @@ if ($_GET["action"] == 'create')
 			}
 		}
 
-		/*
-		*
-		*
-		*/
 
 		print_titre ($langs->trans("AddAnAction"));
 		print "<br>";
@@ -433,17 +437,17 @@ if ($_GET["action"] == 'create')
 
 		// Type d'action actifs
 		print '<tr><td>'.$langs->trans("Type").'</td><td>';
-		if ($_GET["actionid"])
+		if ($_GET["actioncode"])
 		{
-			print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";
-			print $caction->get_nom($_GET["actionid"]);
+			print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
+			print $caction->get_nom($_GET["actioncode"]);
 		}
 		else
 		{
-			$arraylist=$caction->liste_array(1);
+			$arraylist=$caction->liste_array(1,'code');
 			$arraylist[0]='&nbsp;';
-			sort($arraylist);
-			$html->select_array("actionid", $arraylist, 0);
+			asort($arraylist);
+			$html->select_array("actioncode", $arraylist, 0);
 		}
 		print '</td></tr>';
 

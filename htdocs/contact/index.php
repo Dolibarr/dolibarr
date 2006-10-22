@@ -251,7 +251,7 @@ if ($result)
             print '&nbsp;';
         }
         print '</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
 
         if ($_GET["view"] == 'phone')
         {

@@ -62,7 +62,8 @@ if ($_GET["action"] == 'builddoc')
 if ($action=='delete_action')
 {
 	$actioncomm = new ActionComm($db);
-	$result=$actioncomm->delete($actionid);
+	$actioncomm->fetch($actionid);
+	$result=$actioncomm->delete();
 }
 
 

@@ -79,7 +79,7 @@ class ActionComm
     {
         global $langs,$conf;
     
-        dolibarr_syslog("ActionComm.class::add datep=".strftime("%x %X",$this->datep)." datea=".$this->datea);
+        dolibarr_syslog("ActionComm.class::add type_id=".$this->type_id." datep=".strftime("%x %X",$this->datep)." datea=".$this->datea);
 
         if (! $this->percent)  $this->percent = 0;
         if (! $this->priority) $this->priority = 0;
@@ -121,85 +121,95 @@ class ActionComm
     
     }
 
-  /**
-   *    \brief      Charge l'objet action depuis la base
-   *    \param      id      id de l'action a récupérer
-   */
-  function fetch($id)
-  {
-    global $langs;
-    
-    $sql = "SELECT ".$this->db->pdate("a.datea")." as datea,";
-	$sql.= " ".$this->db->pdate("a.datep")." as datep,";
-	$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
-    $sql.= " a.note, a.label, a.fk_action as type_id,";
-    $sql.= " c.code, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent, a.fk_commande";
-    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
-    $sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
-    
-    $resql=$this->db->query($sql);
-    if ($resql)
-    {
-        if ($this->db->num_rows($resql))
-        {
-            $obj = $this->db->fetch_object($resql);
-    
-            $this->id = $id;
-            $this->type_id   = $obj->type_id;
-            $this->type_code = $obj->code;
-            $transcode=$langs->trans("Action".$obj->code);
-            $type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-            $this->type = $type_libelle;
-            $this->label = $obj->label;
-            $this->date  = $obj->datea;
-            $this->datep = $obj->datep;
-            $this->datec = $obj->datec;
-            $this->datem = $obj->datem;
-            $this->note =$obj->note;
-            $this->percent =$obj->percent;
-            $this->societe->id = $obj->fk_soc;
-            $this->author->id = $obj->fk_user_author;
-            $this->contact->id = $obj->fk_contact;
-            $this->fk_facture = $obj->fk_facture;
-            if ($this->fk_facture)
-            {
-                $this->objet_url = img_object($langs->trans("ShowBill"),'bill').' '.'<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
-                $this->objet_url_type = 'facture';
-            }
-            $this->fk_propal = $obj->propalrowid;
-            if ($this->fk_propal)
-            {
-                $this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/propal/fiche.php?rowid='.$this->fk_propal.'">'.$langs->trans("Propal").'</a>';
-                $this->objet_url_type = 'propal';
-            }
-            $this->fk_commande = $obj->fk_commande;
-            if ($this->fk_commande)
-            {
-                $this->objet_url = img_object($langs->trans("ShowOrder"),'order').' '.'<a href="'. DOL_URL_ROOT . '/commande/fiche.php?id='.$this->fk_commande.'">'.$langs->trans("Order").'</a>';
-                $this->objet_url_type = 'order';
-            }
-    
-        }
-        $this->db->free($resql);
-    }
-    else
-    {
-        dolibarr_print_error($this->db);
-    }   
-  }
+	/**
+	*    \brief      Charge l'objet action depuis la base
+	*    \param      id      id de l'action a récupérer
+	*/
+	function fetch($id)
+	{
+		global $langs;
+	
+		$sql = "SELECT a.id, ".$this->db->pdate("a.datea")." as datea,";
+		$sql.= " ".$this->db->pdate("a.datep")." as datep,";
+		$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
+		$sql.= " a.note, a.label, a.fk_action as type_id,";
+		$sql.= " fk_soc, fk_user_author, fk_contact, fk_facture, a.percent, a.fk_commande,";
+		$sql.= " c.id as type_id, c.code, c.libelle";
+		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
+		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
+	
+		dolibarr_syslog("ActionComm.class::fetch sql=".$sql);
+	
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
+	
+				$this->id        = $obj->id;
+				$this->type_id   = $obj->type_id;
+				$this->type_code = $obj->code;
+				$transcode=$langs->trans("Action".$obj->code);
+				$type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+				$this->type = $type_libelle;
+				$this->label = $obj->label;
+				$this->date  = $obj->datea;
+				$this->datep = $obj->datep;
+				$this->datec = $obj->datec;
+				$this->datem = $obj->datem;
+				$this->note =$obj->note;
+				$this->percent =$obj->percent;
+				$this->societe->id = $obj->fk_soc;
+				$this->author->id = $obj->fk_user_author;
+				$this->contact->id = $obj->fk_contact;
+				$this->fk_facture = $obj->fk_facture;
+				if ($this->fk_facture)
+				{
+					$this->objet_url = img_object($langs->trans("ShowBill"),'bill').' '.'<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
+					$this->objet_url_type = 'facture';
+				}
+				$this->fk_propal = $obj->propalrowid;
+				if ($this->fk_propal)
+				{
+					$this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/propal/fiche.php?rowid='.$this->fk_propal.'">'.$langs->trans("Propal").'</a>';
+					$this->objet_url_type = 'propal';
+				}
+				$this->fk_commande = $obj->fk_commande;
+				if ($this->fk_commande)
+				{
+					$this->objet_url = img_object($langs->trans("ShowOrder"),'order').' '.'<a href="'. DOL_URL_ROOT . '/commande/fiche.php?id='.$this->fk_commande.'">'.$langs->trans("Order").'</a>';
+					$this->objet_url_type = 'order';
+				}
+	
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 
-  /**
-   *    \brief      Supprime l'action de la base
-   *    \param      id      id de l'action a effacer
-   *    \return     int     1 en cas de succès
-   */
-  function delete($id)
+	/**
+	*    \brief      Supprime l'action de la base
+	*    \return     int     <0 si ko, >0 si ok
+	*/
+	function delete()
     {      
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm WHERE id=$id;";
-        
-        if ($this->db->query($sql) )
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
+        $sql.= " WHERE id=".$this->id;
+
+        if ($this->db->query($sql))
         {
             return 1;
+        }
+        else
+        {
+        	$this->error=$this->db->error()." sql=".$sql;
+        	return -1;
         }
     }
 

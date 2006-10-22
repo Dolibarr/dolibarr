@@ -285,17 +285,17 @@ if ($socid > 0)
             }
             print '</td>';
             print '<td>'.$obj->poste.'&nbsp;</td>';
-            print '<td><a href="../comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone;
+            print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone;
 
 	        if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
 	        {
-	            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
+	            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
 	            print img_phone_out("Appel émis") ;
 	        }
 			print '</a></td>';
 
-            print '<td><a href="../comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-            print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+            print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+            print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 
         	print '<td align="center">';
         	
@@ -309,7 +309,7 @@ if ($socid > 0)
         		
         	print '</td>';
 
-            print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+            print '<td align="center"><a href="../comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->idp.'&socid='.$societe->id.'">';
             print img_object($langs->trans("Rendez-Vous"),"action");
             print '</a></td>';
 
