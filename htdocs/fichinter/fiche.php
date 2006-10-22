@@ -63,41 +63,42 @@ if ($user->societe_id > 0)
 
 if ($_GET["action"] == 'valid')
 {
-  $fichinter = new Fichinter($db);
-  $fichinter->id = $_GET["id"];
-  $fichinter->valid($user->id, $conf->fichinter->outputdir);
+	$fichinter = new Fichinter($db);
+	$fichinter->id = $_GET["id"];
+	$result=$fichinter->valid($user, $conf->fichinter->outputdir);
+	if ($result < 0) $mesg='<div class="error">'.$fichinter->error.'</div>';
 }
 
 if ($_POST["action"] == 'add')
 {
-  $fichinter = new Fichinter($db);
-
-  $fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]));
-  $fichinter->socid = $_POST["socid"];
-  $fichinter->duree = $_POST["duree"];
-  $fichinter->projet_id = $_POST["projetidp"];
-  $fichinter->author = $user->id;
-  $fichinter->note = $_POST["note"];
-  $fichinter->ref = $_POST["ref"];
-
-  $id = $fichinter->create();
-  $_GET["id"]=$id;      // Force raffraichissement sur fiche venant d'etre créée
+	$fichinter = new Fichinter($db);
+	
+	$fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]));
+	$fichinter->socid = $_POST["socid"];
+	$fichinter->duree = $_POST["duree"];
+	$fichinter->projet_id = $_POST["projetidp"];
+	$fichinter->author = $user->id;
+	$fichinter->note = $_POST["note"];
+	$fichinter->ref = $_POST["ref"];
+	
+	$id = $fichinter->create();
+	$_GET["id"]=$id;      // Force raffraichissement sur fiche venant d'etre créée
 }
 
 if ($_POST["action"] == 'update')
 {
-  $fichinter = new Fichinter($db);
-
-  $fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]));
-  $fichinter->socid = $_POST["socid"];
-  $fichinter->duree = $_POST["duree"];
-  $fichinter->projet_id = $_POST["projetidp"];
-  $fichinter->author = $user->id;
-  $fichinter->note = $_POST["note"];
-  $fichinter->ref = $_POST["ref"];
-
-  $fichinter->update($_POST["id"]);
-  $_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre créée
+	$fichinter = new Fichinter($db);
+	
+	$fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]));
+	$fichinter->socid = $_POST["socid"];
+	$fichinter->duree = $_POST["duree"];
+	$fichinter->projet_id = $_POST["projetidp"];
+	$fichinter->author = $user->id;
+	$fichinter->note = $_POST["note"];
+	$fichinter->ref = $_POST["ref"];
+	
+	$fichinter->update($_POST["id"]);
+	$_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre créée
 }
 
 /*
@@ -213,7 +214,20 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 	
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
-	print "<td><textarea name=\"note\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea>";
+	print "<td>";
+
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
+    {
+	    // Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
+		$doleditor->Create();
+    }
+    else
+    {
+		print '<textarea name="note" wrap="soft" cols="70" rows="15"></textarea>';
+    }
+
 	print '</td></tr>';
 
 	print '<tr><td colspan="2" align="center">';
@@ -270,9 +284,20 @@ if ($_GET["action"] == 'edit')
 
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
-    print '<td><textarea name="note" wrap="soft" cols="60" rows="12">';
-    print $fichinter->note;
-    print '</textarea>';
+    print '<td>';
+
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
+    {
+	    // Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note',$fichinter->note,280,'dolibarr_notes','In',true);
+		$doleditor->Create();
+    }
+    else
+    {
+		print '<textarea name="note" wrap="soft" cols="70" rows="12">'.$fichinter->note.'</textarea>';
+    }
+
     print '</td></tr>';
 
     print '<tr><td colspan="2" align="center">';
