@@ -131,7 +131,10 @@ if ($facid > 0)
             $i=0;
             while (($file = readdir($handle))!==false)
             {
-                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+                if (! is_dir($dir.$file)
+                	 && ! eregi('^\.',$file)
+                	 && ! eregi('^CVS',$file)
+                	 && ! eregi('\.meta$',$file))
                 {
                     $filearray[$i]=$file;
                     $totalsize+=filesize($upload_dir."/".$file);
@@ -161,7 +164,7 @@ if ($facid > 0)
 
         print '</div>';
 
-        if ($mesg) { print "$mesg<br>"; }
+        if ($mesg) { print $mesg."<br>"; }
 
         // Affiche formulaire upload
         if ($conf->global->MAIN_UPLOAD_DOC)
@@ -205,15 +208,17 @@ if ($facid > 0)
     			$var=true;
     			while (($file = readdir($handle))!==false)
     			{
-    				if (! is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'
-    						&& ! eregi('\.meta$',$file))
+	                if (! is_dir($dir.$file)
+	                	 && ! eregi('^\.',$file)
+	                	 && ! eregi('^CVS',$file)
+	                	 && ! eregi('\.meta$',$file))
     				{
     					$var=!$var;
     					print '<tr '.$bc[$var].'>';
     					print '<td>';
     					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=facture&file='.$facref.'/'.urlencode($file).'">'.$file.'</a>';
     					print "</td>\n";
-    					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
+    					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' '.$langs->trans("bytes").'</td>';
     					print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
     					print '<td align="center">';
     					if ($file == $facref . '.pdf')
