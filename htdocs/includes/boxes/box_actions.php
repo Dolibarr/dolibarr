@@ -70,17 +70,19 @@ class box_actions extends ModeleBoxes {
 		
 		if ($user->rights->commercial->main->lire)
 		{
-			$sql = "SELECT a.label, a.id, ".$db->pdate("a.datep")." as dp , a.percent,";
+			$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp , a.percent,";
+			$sql.= " ta.code,";
 			$sql.= " s.nom, s.idp";
 			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-			$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm AS a ";
-			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.idp";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
+			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ";
+			$sql.= MAIN_DB_PREFIX."actioncomm AS a";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON a.fk_soc = s.idp";
 			$sql.= " WHERE percent <> 100 ";
 			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)
 			{
-				$sql .= " AND s.idp = $user->societe_id";
+				$sql .= " AND s.idp = ".$user->societe_id;
 			}
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
@@ -96,16 +98,17 @@ class box_actions extends ModeleBoxes {
 	
 					if (date("U",$objp->dp)  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
 	
-	
+					$label=($langs->trans("Action".$objp->code)!=("Action".$objp->code) ? $langs->trans("Action".$objp->code) : $objp->label);
+					
 					$this->info_box_contents[$i][0] = array('align' => 'left',
 					'nowrap' => 1,
 					'logo' => ("task"),
-					'text' => $objp->label,
+					'text' => $label,
 					'text2'=> $late,
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 	
 					$this->info_box_contents[$i][1] = array('align' => 'left',
-					'text' => $objp->nom,
+					'text' => dolibarr_trunc($objp->nom,24),
 					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 	
 					$this->info_box_contents[$i][2] = array('align' => 'right',
