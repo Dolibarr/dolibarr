@@ -75,6 +75,9 @@ class Conf
 	{
 	    dolibarr_syslog("functions.inc.php::setValues");
 
+		// Par defaut, à oui
+		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
+
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
 		 * - En constante php (\todo a virer)

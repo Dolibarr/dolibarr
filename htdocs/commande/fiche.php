@@ -1270,7 +1270,7 @@ else
 							print ' '.$objp->ref.'</a> - '.nl2br($objp->product);
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.nl2br($objp->description):'';
 				            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
-							if ($conf->global->FORM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+							if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
 							{
 								print '<br>'.nl2br($objp->product_desc);
 							}

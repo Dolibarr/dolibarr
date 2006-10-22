@@ -239,7 +239,7 @@ class pdf_propale_azur extends ModelePDFPropales
 						}
 
 						// Ajoute description complète du produit
-						if ($conf->global->FORM_ADD_PROD_DESC && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+						if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
 						{
 							if ($propale->lignes[$i]->product_desc && $propale->lignes[$i]->product_desc!=$propale->lignes[$i]->libelle && $propale->lignes[$i]->product_desc!=$propale->lignes[$i]->desc)
 							{

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur       <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani          <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,12 +50,12 @@ else if ($_POST["action"] == 'multiprix_num')
 }
 if ($_POST["action"] == 'multiprix')
 {
-	$res=$db -> desc_table(MAIN_DB_PREFIX."societe","price_level");
-  if(! $db -> fetch_row())
-  {
+	$res=$db->desc_table(MAIN_DB_PREFIX."societe","price_level");
+	if(! $db->fetch_row())
+	{
 		$field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
 		// on ajoute le champ price_level dans la table societe
-		if(! $db -> add_field(MAIN_DB_PREFIX."societe","price_level",$field_desc))
+		if(! $db->add_field(MAIN_DB_PREFIX."societe","price_level",$field_desc))
 		{
 			dolibarr_print_error($db);
 			print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
@@ -70,7 +70,7 @@ if ($_POST["action"] == 'multiprix')
 			$fields['datec'] = array('type'=>'datetime','default'=> 'null');
 			$fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
 			$fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
-			if(! $db -> create_table($table,$fields,"rowid","InnoDB"))
+			if(! $db->create_table($table,$fields,"rowid","InnoDB"))
 			{
 				dolibarr_print_error($db);
 				print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
@@ -89,7 +89,7 @@ if ($_POST["action"] == 'multiprix')
 		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
 		Header("Location: produit.php");
 	}
-  exit;
+	exit;
 }
 else if ($_POST["action"] == 'sousproduits')
 {
@@ -119,22 +119,22 @@ else if ($_POST["action"] == 'sousproduits')
 		Header("Location: produit.php");
 	}
 }
-else if ($_POST["action"] == 'confirmdeleteline')
-{
-    dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", $_POST["activate_confirmdeleteline"]);
-    Header("Location: produit.php");
-    exit;
-}
 else if ($_POST["action"] == 'changeproductdesc')
 {
     dolibarr_set_const($db, "PRODUIT_CHANGE_PROD_DESC", $_POST["activate_changeproductdesc"]);
-    dolibarr_set_const($db, "FORM_ADD_PROD_DESC", 0);
+    dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", 0);
     Header("Location: produit.php");
     exit;
 }
 else if ($_POST["action"] == 'viewProdDescInForm')
 {
-    dolibarr_set_const($db, "FORM_ADD_PROD_DESC", $_POST["activate_viewProdDescInForm"]);
+    dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"]);
+    Header("Location: produit.php");
+    exit;
+}
+else if ($_POST["action"] == 'usesearchtoselectproduct')
+{
+    dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"]);
     Header("Location: produit.php");
     exit;
 }
@@ -215,19 +215,29 @@ print "</td>";
 print '</tr>';
 print '</form>';
 
-// confirmation de suppression ligne produit activation/desactivation
+// utilisation formulaire Ajax sur choix produit
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"confirmdeleteline\">";
+print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectproduct\">";
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
-print '<td width="60" align="right">';
-print $html->selectyesno("activate_confirmdeleteline",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
+print '<td width="80%">'.$langs->trans("UseSearchToSelectProduct").'</td>';
+if (! $conf->use_ajax)
+{
+	print '<td width="60" align="right" colspan="2">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");	
+	print "</td>";
+}
+else
+{
+	print '<td width="60" align="right">';
+	print $html->selectyesno("activate_usesearchtoselectproduct",$conf->global->PRODUIT_USE_SEARCH_TO_SELECT,1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+}
 print '</tr>';
 print '</form>';
+
 
 // Modification description produit activation/desactivation
 $var=!$var;
@@ -252,7 +262,7 @@ if ($conf->global->PRODUIT_CHANGE_PROD_DESC == 0)
   print "<tr ".$bc[$var].">";
   print '<td width="80%">'.$langs->trans("ViewProductDescInFormAbility").'</td>';
   print '<td width="60" align="right">';
-  print $html->selectyesno("activate_viewProdDescInForm",$conf->global->FORM_ADD_PROD_DESC,1);
+  print $html->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
   print '</td><td align="right">';
   print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
   print "</td>";
