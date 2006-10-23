@@ -106,6 +106,10 @@ class Conf
 		$db->free($result);
 
 
+		// On reprend parametres du conf.php
+		//... Mettre les param
+		$this->password_encrypted=$this->global->DATABASE_PWD_ENCRYPTED;
+
 
 		/*
 		 * Nettoyage variables des gestionnaires de menu
