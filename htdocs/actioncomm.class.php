@@ -358,9 +358,9 @@ class ActionComm
         }
         if ($mode == 3)
         {
-        	if ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1');
-        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess').' ('.$percent.'%)','statut3');
-        	if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
+        	if ($percent==0) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionToDo'),'statut1');
+        	if ($percent > 0 && $percent < 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)','statut3');
+        	if ($percent >= 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionDone'),'statut6');
         }
         if ($mode == 4)
         {
@@ -375,6 +375,32 @@ class ActionComm
         	if ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'),'statut6');
         }
 	}
+
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Nombre de caractères max dans libellé
+	 *		\return		string			Chaine avec URL
+	 *		\remarks	Utilise $this->id, $this->code et $this->libelle
+	 */
+	function getNomUrl($withpicto=0,$option)
+	{
+		global $langs;
 		
-}    
+		$result='';
+		$lien = '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+        $transcode=$langs->trans("Action".$this->code);
+        $libelle=($transcode!="Action".$this->code ? $transcode : $this->libelle);
+		$libelleshort=$libelle;
+		if ($option) $libelleshort=dolibarr_trunc($libelle,$option);
+		
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTask").': '.$libelle,'task').$lienfin.' ');
+		$result.=$lien.$libelleshort.$lienfin;
+		return $result;
+	}
+
+}
+
 ?>

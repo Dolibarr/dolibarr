@@ -28,6 +28,7 @@
 */
  
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/client.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -278,11 +279,13 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  *
  */
 
-$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, a.fk_user_author,";
+$sql.= " c.code, c.libelle,";
+$sql.= " s.nom as sname, s.idp, s.client";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
+$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
+$sql.= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 {
@@ -302,6 +305,7 @@ if ($resql)
         $i = 0;
 
 	    $staticaction=new ActionComm($db);
+        $customerstatic=new Client($db);
 
         while ($i < $num)
         {
@@ -309,14 +313,18 @@ if ($resql)
             $var=!$var;
 
             print "<tr $bc[$var]>";
-            print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
-            $transcode=$langs->trans("Action".$obj->code);
-            $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-            print $libelle;
-            print '</a></td>';
-            print "<td>$obj->label</td>";
 
-            print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
+            $staticaction->code=$obj->code;
+            $staticaction->libelle=$obj->libelle;
+            $staticaction->id=$obj->id;
+            print '<td>'.$staticaction->getNomUrl(1,12).'</td>';
+
+            print '<td>'.dolibarr_trunc($obj->label,24).'</td>';
+
+            $customerstatic->id=$obj->idp;
+            $customerstatic->nom=$obj->sname;
+            $customerstatic->client=$obj->client;
+            print '<td>'.$customerstatic->getNomUrl(1,'').'</td>';
 
 			// Date
 			print '<td width="100">'.dolibarr_print_date($obj->dp).'&nbsp;';
