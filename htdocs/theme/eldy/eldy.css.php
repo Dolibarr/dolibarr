@@ -858,9 +858,6 @@ table.valid {
 	font-weight: bold;
 }
 
-.valid {
-}
-
 
 td.small {
            font-size: 10px;

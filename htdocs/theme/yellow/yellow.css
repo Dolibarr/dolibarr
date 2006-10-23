@@ -689,11 +689,6 @@ td.delete {
             font-weight: bold;
             }
 
-td.valid { 
-           background: pink;
-           font-weight: bold;
-           }
-
 td.small { 
            font-size: 10px;
            }
@@ -701,6 +696,29 @@ td.small {
 tr.nonpayed { 
            font-weight: bold;
            }
+
+
+/* ============================================================================== */
+/* Formulaire confirmation                                                        */
+/* ============================================================================== */
+
+table.valid {
+    border-top: solid 1px #E6E6E6;
+    border-left: solid 1px #E6E6E6;
+    border-right: solid 1px #444444;
+    border-bottom: solid 1px #555555;
+	padding-top: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	margin: 0px 0px;
+    background: pink;
+}
+
+.validtitre {
+    background: #D5BAA8;
+	font-weight: bold;
+}
 
 
 /* ============================================================================== */
