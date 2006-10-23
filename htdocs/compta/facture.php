@@ -1112,7 +1112,7 @@ if ($_GET['action'] == 'create')
 	print $soc->getNomUrl(1);
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
-	print '</tr>';
+	print '</tr>'."\n";
 
     // Type de facture
 	$facids=$facturestatic->list_replacable_invoices($soc->id);
@@ -1129,19 +1129,20 @@ if ($_GET['action'] == 'create')
 	}
 
 	print '<tr><td valign="top">'.$langs->trans('Type').'</td><td colspan="2">';
-	print '<table class="nobordernopadding"><tr>';
-	print '<td width="16px">';
-	print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked=true':'').'>';
-	print '</td><td>';
+	print '<table class="nobordernopadding">'."\n";
+	
+	print '<tr><td width="16px" valign="middle">';
+	print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="true"':'').'>';
+	print '</td><td valign="middle">';
 	$desc=$html->textwithhelp($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
-	print '</td></tr>';
+	print '</td></tr>'."\n";
 
-	print '<tr><td>';
+	print '<tr><td valign="middle">';
 	print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked=true':'');
 	if (! $options) print ' disabled="true"';
 	print '>';
-	print '</td><td>';
+	print '</td><td valign="middle">';
 	$text=$langs->trans("InvoiceReplacementAsk").' ';
 	$text.='<select class="flat" name="fac_replacement"';
 	if (! $options) $text.=' disabled="true"';
@@ -1158,13 +1159,13 @@ if ($_GET['action'] == 'create')
 	$text.='</select>';
 	$desc=$html->textwithhelp($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
 	print $desc;	
-	print '</td></tr>';
+	print '</td></tr>'."\n";
 
-	print '<tr><td>';
+	print '<tr><td valign="middle">';
 	print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'');
 	if (! $optionsav) print ' disabled="true"';
 	print '>';
-	print '</td><td>';
+	print '</td><td valign="middle">';
 	$text=$langs->transnoentities("InvoiceAvoirAsk").' ';
 //	$text.='<input type="text" value="">';
 	$text.='<select class="flat" name="fac_avoir"';
@@ -1183,7 +1184,8 @@ if ($_GET['action'] == 'create')
 	$desc=$html->textwithhelp($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
 	//.' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
 	print $desc;	
-	print '</td></tr>';
+	print '</td></tr>'."\n";
+
 	print '</table>';
 	print '</td></tr>';
     
