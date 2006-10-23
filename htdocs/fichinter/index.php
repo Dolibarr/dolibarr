@@ -34,17 +34,16 @@ require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 $langs->load("companies");
 $langs->load("interventions");
 
+// Securité
 if ($user->societe_id > 0)
 {
   $socid = $user->societe_id ;
 }
 
-
-llxHeader();
-
 $sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
+$page=$_GET["page"]?$_GET["page"]:$_POST["page"];
 
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datei";
@@ -56,43 +55,45 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
+llxHeader();
+
 
 $sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.note, f.duree";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE f.fk_soc = s.idp ";
+$sql.= " WHERE f.fk_soc = s.idp ";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-
-
 if ($socid > 0)
 {
 	$sql .= " AND s.idp = " . $socid;
 }
-
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit( $limit + 1 ,$offset);
 
 $result=$db->query($sql);
 if ($result)
 {
-    $fichinter_static=new Fichinter($db);
-
     $num = $db->num_rows($result);
-    print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
+
+    $fichinter_static=new Fichinter($db);
+	
+	$urlparam="&amp;socid=$socid";
+    print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php",$urlparam,$sortfield,$sortorder,'',$num);
 
     $i = 0;
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
-    print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
-    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
+    print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","",$urlparam,'width="15%"',$sortfield);
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","",$urlparam,'',$sortfield);
     print '<td>'.$langs->trans("Description").'</td>';
-    print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","",$urlparam,'align="center"',$sortfield);
     print '<td align="right">'.$langs->trans("Duration").'</td>';
     print '<td align="right">'.$langs->trans("Status").'</td>';
     print "</tr>\n";
     $var=True;
     $total = 0;
-    while ($i < $num)
+    while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($result);
         $var=!$var;
