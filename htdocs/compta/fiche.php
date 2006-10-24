@@ -95,11 +95,17 @@ if ($mode == 'search')
 }
 
 
-llxHeader();
 
 /*
  * Mode fiche
  */
+
+llxHeader();
+
+$actionstatic=new ActionComm($db);
+$facturestatic=new Facture($db);
+$contactstatic = new Contact($db);
+
 if ($socid > 0)
 {
     $societe = new Societe($db);
@@ -433,8 +439,6 @@ if ($socid > 0)
     print "<br>";
 
 
-	$actionstatic=new ActionComm($db);
-
     /*
      *      Listes des actions a faire
      *
@@ -509,21 +513,23 @@ if ($socid > 0)
             }
             else
             {
-                print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
-                  $transcode=$langs->trans("Action".$obj->acode);
-                  $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                  print $libelle;
-                print '</a></td>';
+		            $actionstatic->code=$obj->acode;
+		            $actionstatic->libelle=$obj->libelle;
+		            $actionstatic->id=$obj->id;
+		            print '<td>'.$actionstatic->getNomUrl(1,16).'</td>';
             }
 
             print '<td colspan="2">'.$obj->label.'</td>';
 
             // Contact pour cette action
-            if ($obj->fk_contact) {
-                $contact = new Contact($db);
-                $contact->fetch($obj->fk_contact);
-                print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->fk_contact.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
-            } else {
+            if ($obj->fk_contact > 0)
+            {
+				$contact = new Contact($db);
+				$contact->fetch($obj->fk_contact);
+				print '<td>'.$contact->getNomUrl(1).'</td>';
+            }
+            else
+            {
                 print '<td>&nbsp;</td>';
             }
 
@@ -602,11 +608,10 @@ if ($socid > 0)
 
 			// Action
     		print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
-			$transcode=$langs->trans("Action".$obj->acode);
-			$libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-			print $libelle;
-			print '</a>';
+            $actionstatic->code=$obj->acode;
+            $actionstatic->libelle=$obj->libelle;
+            $actionstatic->id=$obj->id;
+            print $actionstatic->getNomUrl(1,16);
 			print '</td>';
 
     		// Objet lié
@@ -619,9 +624,10 @@ if ($socid > 0)
 			}
 			if ($obj->fk_facture)
 			{
-				print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),"bill");
-				print $langs->trans("Invoice");
-				print '</a>';
+				$facturestatic->ref=$langs->trans("Invoice");
+				$facturestatic->id=$obj->rowid;
+				$facturestatic->type=$obj->type;
+				print $facturestatic->getNomUrl(1,'compta');
 			}
 			else print '&nbsp;';
     		print '</td>';
@@ -630,11 +636,11 @@ if ($socid > 0)
             print "<td>$obj->label</td>";
 
             // Contact pour cette action
-            if ($obj->fk_contact)
+            if ($obj->fk_contact > 0)
             {
                 $contact = new Contact($db);
                 $contact->fetch($obj->fk_contact);
-                print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
+                print '<td>'.$contact->getNomUrl(1).'</td>';
             }
             else
             {
@@ -656,7 +662,7 @@ if ($socid > 0)
     {
         dolibarr_print_error($db);
     }
-    print "</table>";
+    print "</table><br>";
 }
 else
 {
