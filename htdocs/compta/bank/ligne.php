@@ -156,7 +156,9 @@ if ($_POST["action"] == 'num_releve')
 llxHeader();
 
 // On initialise la liste des categories
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
+$sql = "SELECT rowid, label";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql.= " ORDER BY label";
 $result = $db->query($sql);
 if ($result)
 {
@@ -455,8 +457,7 @@ print "<form method=\"post\" action=\"ligne.php?rowid=$rowid&amp;account=$accoun
 print "<input type=\"hidden\" name=\"action\" value=\"class\">";
 print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
 print "<tr class=\"liste_titre\"><td>".$langs->trans("Categories")."</td><td colspan=\"2\">";
-print "<select class=\"flat\" name=\"cat1\">$options";
-print "</select>&nbsp;";
+print "<select class=\"flat\" name=\"cat1\">".$options."</select>&nbsp;";
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 print "</tr>";
 print "</form>";
