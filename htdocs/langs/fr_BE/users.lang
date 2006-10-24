@@ -15,4 +15,3 @@ ListOfUsers=Liste des utilisateurs
 Administrator=Administrateur
 DefaultRights=Permissions par défaut
 DefaultRightsDesc=Définissez ici les permissions par défaut, c'est-à-dire les permissions qui seront attribuées automatiquement à un nouvel utilisateur lors de sa création.
-
