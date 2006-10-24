@@ -13,37 +13,39 @@ Documentation démarrage
 I - INSTALLER DOLIBARR
 ----------------------
 
-To install Dolibarr:
-- Copy directory 'dolibarr' and all its files inside your web server root,
-  or set up your web server to use dolibarr/htdocs as root for a new web
-  server virtual host (second choice need to be web server administrator).
-- Create an empty mysql database (postgresql support is experimental).
-- Set write permissions on directory 'dolibarr/htdocs/conf' for your web
-  server user (write permissions will be removed once install is finished).
-- From your browser, call the dolibarr install page. Url depends on choice
-  made on first step:
+Pour installer Dolibarr:
+- Copier le répertoire 'dolibarr' et tous ses fichiers dans la racine de
+  votre serveur web or configurer votre serveur pour utiliser 
+  dolibarr/htdocs comme racine d'un nouveau virtual host (ce second choix
+  requiert des compétences et habilitations en administration du serveur web).
+- Creée une base vide mysql (support postgresql experimentale).
+- Définissez les permissions sur le répertoire 'dolibarr/htdocs/conf' pour votre
+  user du serveur web (les permissions en écriture seront supprimés une fois
+  l'installation terminée).
+- Depuis votre navigateur, appeler la page install de dolibarr. L'url depend du
+  choix fait à la première étape:
    http://localhost/dolibarr/htdocs/install/index.php
-  or
-   http://yourdolibarrhost/install/index.php
-- Follow instructions provided by installer...
+  ou
+   http://yourdolibarrvirtualhost/install/index.php
+- Suivez les instructions fournis par l'installeur...
 
 
 II - DOLIBARR UPGRADE
 ---------------------
 
-To upgrade Dolibarr from an old version to this one:
-- Overwrite all old files inside old 'dolibarr' directory by files
-  provided into new version package.
-- From your browser, call the dolibarr install page:
+Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
+- Ecraser les vieux fichiers dans le vieux répertoire 'dolibarr' par les fichiers
+  fournis dans ce nouveau package.
+- Depuis votre navigateur, appeler la page install Dolibarr:
    http://localhost/dolibarr/htdocs/install/index.php
-  or
+  ou
    http://yourdolibarrhost/install/index.php
-  and choose the "migrate" option.
-  Note: Migrate process can ben runned safely several times.
+  et choisir l'option "mettre à jour".
+  Note: Le processus de migration peut etre lancé plusieurs fois sans risque.
   
 
-III - WHAT'S NEW
-----------------
+III - CE QUI EST NOUVEAU
+------------------------
 
 - Added an installer.
 - Support user and groups permissions.
@@ -78,8 +80,8 @@ III - WHAT'S NEW
 - Support for PHP5
 
 
-IV - WHAT DOLIBARR CAN DO
--------------------------
+IV - CE QUE DOLIBARR PEUT FAIRE
+-------------------------------
 
 Main modules:
 - Products and services catalog
@@ -118,8 +120,8 @@ Miscellanous:
 - Works with PHP 4.1 or higher.
 
 
-V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
-------------------------------------------
+V - CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
+------------------------------------------------------
 Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
 - "TVA NPR" (TVA "Non Perçue Récupérable").
 - Pas de compta (uniquement gestion de trésorerie).
