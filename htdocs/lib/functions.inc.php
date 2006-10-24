@@ -1822,23 +1822,29 @@ function creer_pass_aleatoire($longueur = 8, $sel = "") {
 /**
 		\brief      Fonction pour initialiser un salt pour la fonction crypt
 		\param		$type		2=>renvoi un salt pour cryptage DES
-		                        8=>renvoi un salt pour cryptage MD5
-		                        0=>renvoi un salt pour cryptage par defaut
+		                        12=>renvoi un salt pour cryptage MD5
+		                        non defini=>renvoi un salt pour cryptage par defaut
 		\return		string		Chaine salt
 */
 function makesalt($type=CRYPT_SALT_LENGTH)
 {
+	dolibarr_syslog("functions.inc::makesalt type=".$type);
 	switch($type)
 	{
-		case 8:
+		case 12:	// 8 + 4
 			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
-		case 2:
+		case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilisé)
+			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
+		case 2:		// 2
 		default: 	// by default, fall back on Standard DES (should work everywhere)
 			$saltlen=2; $saltprefix=''; $saltsuffix=''; break;
 	}
 	$salt='';
 	while(strlen($salt) < $saltlen) $salt.=chr(rand(64,126));
-	return $saltprefix.$salt.$saltsuffix;
+
+	$result=$saltprefix.$salt.$saltsuffix;
+	dolibarr_syslog("functions.inc::makesalt return=".$result);
+	return $result;
 }
 
 /**

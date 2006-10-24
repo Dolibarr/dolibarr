@@ -887,6 +887,8 @@ class User
         global $langs;
         $longueurmotdepasse=8;
         
+        dolibarr_syslog("User.class::password user=".$user." password=--hidden-- isencrypted=".$isencrypted);
+        
         if (! $password)
         {
             $password =  strtolower(substr(md5(uniqid(rand())),0,$longueurmotdepasse));
@@ -894,7 +896,9 @@ class User
     
         if ($isencrypted)
         {
-            $sqlpass = crypt($password, "CRYPT_STD_DES");
+        	// Crypte avec systeme encodage par defaut du PHP
+            //$sqlpass = crypt($password, makesalt());
+            $sqlpass = md5($password);
         }
         else
         {
