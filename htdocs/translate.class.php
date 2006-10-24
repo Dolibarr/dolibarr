@@ -172,7 +172,7 @@ class Translate {
                     if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
                     {
                         $tab=split('=',$ligne,2);
-                        $key=$tab[0]; $value='';
+                        $key=trim($tab[0]); $value='';
                         //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
                         if (! $this->getTransFromTab($key))
                         {
