@@ -756,6 +756,7 @@ class Contact
 	 *		\param		withpicto		Inclut le picto dans le lien
 	 *		\param		option			Sur quoi pointe le lien
 	 *		\return		string			Chaine avec URL
+	 *		\remarks	Utilise $this->id, $this->name et $this->firstname
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
