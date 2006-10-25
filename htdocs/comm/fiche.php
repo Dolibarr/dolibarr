@@ -993,7 +993,7 @@ if ($socid > 0)
         dolibarr_print_error($db);
     }
  
-    print "</table>";
+    print "</table><br>";
 }
 else
 {
