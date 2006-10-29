@@ -1249,9 +1249,12 @@ function doliMoveFileUpload($src_file, $dest_file)
 {
 	$file_name = $dest_file;
 	
-	if (substr($file_name, strlen($file_name) -3 , 3) == 'php')
+	// On renomme les fichiers avec extentio executable car si on a mis le rep
+	// documents dans un rep de la racine web (pas bien), cela permet d'executer
+	// du code a la demande.
+	if (eregi('\.php|\.pl|\.cgi$',$file_name))
 	{
-		$file_name = $dest_file . ".txt";
+		$file_name.= '.txt';
 	}
 	
 	return move_uploaded_file($src_file, $file_name);
