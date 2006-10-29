@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@uers.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,16 +44,16 @@ $mesg = '';
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-
 if ($page == -1) { $page = 0 ; }
-
 $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
-
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
+$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
+$search_prenom=isset($_GET["search_prenom"])?$_GET["search_prenom"]:$_POST["search_prenom"];
+$search_email=isset($_GET["search_email"])?$_GET["search_email"]:$_POST["search_email"];
 
 
 /*
@@ -87,7 +87,7 @@ if ($_GET["action"] == 'add')
     {
         $mesg='<div class="error">'.$obj->error.'</div>';
     }   
-    $_GET["id"]=$_GET["rowid"];
+    $_REQUEST["id"]=$_GET["rowid"];
 }
 
 if ($_GET["action"] == 'clear')
@@ -101,6 +101,7 @@ if ($_GET["action"] == 'clear')
     $obj->clear_target($_GET["rowid"]);
    
     Header("Location: cibles.php?id=".$_GET["rowid"]);
+    exit;
 }
 
 if ($_GET["action"] == 'delete')
@@ -115,7 +116,7 @@ if ($_GET["action"] == 'delete')
         require_once($file);
         
         $obj = new $classname($db);
-        $obj->update_nb($_GET["id"]);
+        $obj->update_nb($_REQUEST["id"]);
     }
     else
     {
@@ -133,7 +134,7 @@ llxHeader("","",$langs->trans("MailCard"));
 $mil = new Mailing($db);
 
 $html = new Form($db);
-if ($mil->fetch($_GET["id"]) == 0)
+if ($mil->fetch($_REQUEST["id"]) == 0)
 {
     
     $h=0;
@@ -172,10 +173,6 @@ if ($mil->fetch($_GET["id"]) == 0)
     // Affiche les listes de sélection
     if ($mil->statut == 0)
     {
-        print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
-        print_titre($langs->trans("ToClearAllRecipientsClickHere").' &nbsp; <input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></form>');
-        print '<br>';
-                
         print_titre($langs->trans("ToAddRecipientsChooseHere"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
@@ -269,13 +266,28 @@ if ($mil->fetch($_GET["id"]) == 0)
         	print info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"));
         }
 		print '<br>';
+		
+        print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
+        print_titre($langs->trans("ToClearAllRecipientsClickHere").': <input type="submit" class="button" value="'.$langs->trans("TargetsReset").'">');
+        print '</form>';
+        print '<br>';
     }
     
 
+
     // Liste des destinataires sélectionnés
+	print "\n<!-- Liste destinataires selectionnes -->\n";
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="id" value="'.$mil->id.'">';
+
     $sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.statut, mc.date_envoi, mc.url";
     $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
     $sql .= " WHERE mc.fk_mailing=".$mil->id;
+    if ($search_nom)    $sql.= " AND mc.nom    like '%".addslashes($search_nom)."%'";
+    if ($search_prenom) $sql.= " AND mc.prenom like '%".addslashes($search_prenom)."%'";
+    if ($search_email)  $sql.= " AND mc.email  like '%".addslashes($search_email)."%'";
     if ($sortfield) { $sql .= " ORDER BY $sortfield $sortorder"; }
     $sql .= $db->plimit($conf->liste_limit+1, $offset);
     
@@ -284,56 +296,86 @@ if ($mil->fetch($_GET["id"]) == 0)
     {
         $num = $db->num_rows($resql);
     
-        $addu = "&amp;id=".$mil->id."&amp;page=$page";;
-        print_barre_liste($langs->trans("MailSelectedRecipients"), $page, "cibles.php","&amp;id=".$mil->id,$sortfield,$sortorder,"",$num);
+        $addu = "&amp;id=".$mil->id;
+        if ($search_nom)    $addu.= "&amp;search_nom=".urlencode($search_nom);
+        if ($search_prenom) $addu.= "&amp;search_prenom=".urlencode($search_prenom);
+        if ($search_email)  $addu.= "&amp;search_email=".urlencode($search_email);
+        print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$addu,$sortfield,$sortorder,"",$num);
 
+        if ($page)			$addu.= "&amp;page=".$page;
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("Lastname"),"cibles.php","mc.nom",$addu,"","",$sortfield);
-        print_liste_field_titre($langs->trans("Firstname"),"cibles.php","mc.prenom",$addu,"","",$sortfield);
-        print_liste_field_titre($langs->trans("EMail"),"cibles.php","mc.email",$addu,"","",$sortfield);
+        print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.nom",$addu,"","",$sortfield);
+        print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.prenom",$addu,"","",$sortfield);
+        print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$addu,"","",$sortfield);
         print '<td align="center">&nbsp;</td>';
-        print '<td align="center">'.$langs->trans("Status").'</td>';
+        print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$addu,'','align="center"',$sortfield);
         if ($mil->statut == 0)
         {
             print '<td>&nbsp;</td>';
         }
-        if ($mil->statut != 0)
+        else
         {
             print '<td align="center">'.$langs->trans("Date").'</td>';
         }        
         print '</tr>';
+
+	    // Ligne des champs de filtres
+	    print '<tr class="liste_titre">';
+	    print '<td class="liste_titre">';
+	    print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
+	    print '</td>';
+	    print '<td class="liste_titre">';
+	    print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
+	    print '</td>';
+	    print '<td class="liste_titre">';
+	    print '<input class="flat" type="text" name="search_email" size="14" value="'.$search_email.'">';
+	    print '</td>';
+	    print '<td class="liste_titre" align="right" colspan="3">';
+	    print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+	    print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
+	    print '</td>';
+		print '</tr>';
+		        
         $var = true;
         $i = 0;
     
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
-            $var=!$var;
-    
-            print "<tr $bc[$var]>";
-            print '<td>'.stripslashes($obj->nom).'</td>';
-            print '<td>'.stripslashes($obj->prenom).'</td>';
-            print '<td>'.$obj->email.'</td>';
-            print '<td>'.$obj->url.'</td>';
-            if ($mil->statut == 0)
-            {
-                print '<td align="center">'.$langs->trans("MailingStatusNotSent").'</td>';
-                print '<td><a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
-            }
-            if ($mil->statut != 0)
-            {
-                print '<td align="center">';
-                if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
-                if ($obj->statut==1) print $langs->trans("MailingStatusSent");
-                print '</td>';
-                print '<td align="center">'.$obj->date_envoi.'</td>';
-            }        
-            print '</tr>';
-
-            $i++;
-        }
-    
+    	if ($num)
+    	{
+	        while ($i < $num)
+	        {
+	            $obj = $db->fetch_object($resql);
+	            $var=!$var;
+	    
+	            print "<tr $bc[$var]>";
+	            print '<td>'.$obj->nom.'</td>';
+	            print '<td>'.$obj->prenom.'</td>';
+	            print '<td>'.$obj->email.'</td>';
+	            print '<td>'.$obj->url.'</td>';
+	            
+	            // Statut
+	            if ($mil->statut == 0)
+	            {
+	                print '<td align="center">'.$langs->trans("MailingStatusNotSent").'</td>';
+	                print '<td><a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
+	            }
+	            else
+	            {
+	                print '<td align="center">';
+	                if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
+	                if ($obj->statut==1) print $langs->trans("MailingStatusSent");
+	                print '</td>';
+	                print '<td align="center">'.$obj->date_envoi.'</td>';
+	            }        
+	            print '</tr>';
+	
+	            $i++;
+	        }
+    	}
+    	else
+    	{
+    		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoTargetYet").'</td></tr>';	
+    	}
         print "</table><br>";
     
         $db->free($resql);
@@ -342,6 +384,10 @@ if ($mil->fetch($_GET["id"]) == 0)
     {
         dolibarr_print_error($db);
     }
+    
+    print '</form>';
+	print "\n<!-- Fin liste destinataires selectionnes -->\n";
+    
 }
   
 
