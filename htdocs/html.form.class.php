@@ -2093,21 +2093,24 @@ class Form
          */
         if (! $conf->use_javascript || ! $conf->use_popup_calendar)
         {
-
-            // Jour
-            print '<select class="flat" name="'.$prefix.'day">';
-        
-            if ($empty || $set_time == -1)
+/*          
+			if ($set_time == -1)
             {
                 $sday = 0;
                 $smonth = 0;
                 $syear = 0;
                 $shour = 0;
                 $smin = 0;
+			}
+*/
+            // Jour
+            print '<select class="flat" name="'.$prefix.'day">';
         
+            if ($empty || $set_time == -1)
+            {
                 print '<option value="0" selected="true">&nbsp;</option>';
             }
-        
+
             for ($day = 1 ; $day <= 31; $day++)
             {
                 if ($day == $sday)
@@ -2141,7 +2144,7 @@ class Form
             // Année
             if ($empty || $set_time == -1)
             {
-                print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year">';
+                print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
             }
             else
             {

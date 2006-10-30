@@ -621,6 +621,11 @@ if ($_GET["id"])
         $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
         print '</td></tr>';
 
+		// Priorite
+		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
+
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		print $langs->trans("FeatureNotYetSupported");
@@ -703,6 +708,11 @@ if ($_GET["id"])
         }
 
         print '</td></tr>';
+
+		// Priorite
+		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+		print $langs->trans("FeatureNotYetSupported");
+		print '</td></tr>';
 
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
