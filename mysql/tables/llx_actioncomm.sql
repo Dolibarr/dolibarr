@@ -43,6 +43,7 @@ create table llx_actioncomm
   fk_user_action integer,              -- id de la personne qui doit effectuer l'action
   fk_user_author integer,              -- id de la personne qui a effectuer l'action
   priority       smallint,
+  punctual       smallint NOT NULL default 1,
   percent        smallint NOT NULL default 0,
   durationp      real,                 -- duree planifiee
   durationa      real,                 -- duree reellement passee

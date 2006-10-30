@@ -101,10 +101,11 @@ alter table llx_actioncomm add column datep2 datetime after datep;
 alter table llx_actioncomm add column datea2 datetime after datea;
 alter table llx_actioncomm add column tms timestamp after datea2;
 alter table llx_actioncomm add column fk_commande integer after propalrowid;
-alter table llx_actioncomm add column fk_parent      integer NOT NULL default 0 after fk_contact;
-alter table llx_actioncomm add column durationp      real after percent;
-alter table llx_actioncomm add column durationa      real after durationp;
-alter table llx_actioncomm add column fk_projet      integer after label;
+alter table llx_actioncomm add column fk_parent integer NOT NULL default 0 after fk_contact;
+alter table llx_actioncomm add column durationp real after percent;
+alter table llx_actioncomm add column durationa real after durationp;
+alter table llx_actioncomm add column fk_projet integer after label;
+alter table llx_actioncomm add column punctual smallint NOT NULL default 1 after priority;
 
 
 update llx_actioncomm set datec = datea where datec is null;
