@@ -97,8 +97,15 @@ insert into llx_c_actioncomm (id, code, type, libelle, module) values (50, 'AC_O
 alter table llx_actioncomm modify datea datetime;
 alter table llx_actioncomm add column datec datetime after id;
 alter table llx_actioncomm add column datep datetime after datec;
-alter table llx_actioncomm add column tms timestamp after datea;
+alter table llx_actioncomm add column datep2 datetime after datep;
+alter table llx_actioncomm add column datea2 datetime after datea;
+alter table llx_actioncomm add column tms timestamp after datea2;
 alter table llx_actioncomm add column fk_commande integer after propalrowid;
+alter table llx_actioncomm add column fk_parent      integer NOT NULL default 0 after fk_contact;
+alter table llx_actioncomm add column durationp      real after percent;
+alter table llx_actioncomm add column durationa      real after durationp;
+alter table llx_actioncomm add column fk_projet      integer after label;
+
 
 update llx_actioncomm set datec = datea where datec is null;
 update llx_actioncomm set datep = datea where datep is null AND percent < 100;
