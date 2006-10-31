@@ -73,31 +73,30 @@ class AdherentType
   }
 
 
-/**
-		\brief      Fonction qui permet de créer le status de l'adhérent
-		\param      userid			userid de l'adhérent
-		\return     > 0 si ok, < 0 si ko
-*/
-
+	/**
+			\brief      Fonction qui permet de créer le status de l'adhérent
+			\param      userid			userid de l'adhérent
+			\return     > 0 si ok, < 0 si ko
+	*/
 	function create($userid)
-    {
-      $this->statut=trim($this->statut);
-
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (statut)";
-      $sql .= " VALUES ($this->statut)";
-
-      $result = $this->db->query($sql);
-
-      if ($result)
 	{
-	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
-	  return $this->update();
+		$this->statut=trim($this->statut);
+	
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (statut)";
+		$sql.= " VALUES ($this->statut)";
+
+		dolibarr_syslog("Adherent_type::create sql=".$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
+			return $this->update();
+		}
+		else
+		{
+			return -1;
+		}
 	}
-      else
-	{
-	  return -1;
-	}
-    }
 
 
 /**

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,16 @@ require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 $langs->load("members");
+$user->getrights('adherent');
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
 
 
-if ($_POST["action"] == 'add' && $user->rights->adherent->configurer) 
+if ($_POST["action"] == 'add') 
 {
+	if (! $user->rights->adherent->configurer) accessforbidden();
+
     if ($_POST["button"] != $langs->trans("Cancel"))
     {
         $adht = new AdherentType($db);
@@ -56,14 +59,20 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->configurer)
             if ($id > 0)
             {
                 Header("Location: type.php");
-                exit
+                exit;
             }
+        }
+        else
+        {
+        	$mesg=$this->langs("ErrorFieldRequired",$langs->trans("Label"));
         }
     }
 }
 
-if ($_POST["action"] == 'update' && $user->rights->adherent->creer) 
+if ($_POST["action"] == 'update') 
 {
+	if (! $user->rights->adherent->creer) accessforbidden();
+
     if ($_POST["button"] != $langs->trans("Cancel"))
     {
         $adht = new AdherentType($db);
