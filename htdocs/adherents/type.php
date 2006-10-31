@@ -38,9 +38,10 @@ $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
 
 
-if ($_POST["action"] == 'add' && $user->admin) 
+if ($_POST["action"] == 'add' && $user->rights->adherent->configurer) 
 {
-    if ($_POST["button"] != $langs->trans("Cancel")) {
+    if ($_POST["button"] != $langs->trans("Cancel"))
+    {
         $adht = new AdherentType($db);
           
         $adht->libelle     = trim($_POST["libelle"]);
@@ -55,14 +56,16 @@ if ($_POST["action"] == 'add' && $user->admin)
             if ($id > 0)
             {
                 Header("Location: type.php");
+                exit
             }
         }
     }
 }
 
-if ($_POST["action"] == 'update' && $user->admin) 
+if ($_POST["action"] == 'update' && $user->rights->adherent->creer) 
 {
-    if ($_POST["button"] != $langs->trans("Cancel")) {
+    if ($_POST["button"] != $langs->trans("Cancel"))
+    {
         $adht = new AdherentType($db);
         $adht->id          = $_POST["rowid"];
         $adht->libelle     = trim($_POST["libelle"]);
@@ -80,15 +83,16 @@ if ($_POST["action"] == 'update' && $user->admin)
 
 if ($_GET["action"] == 'delete')
 {
-  $adh = new Adherent($db);
-  $adh->delete($rowid);
-  Header("Location: liste.php");
+	$adh = new Adherent($db);
+	$adh->delete($rowid);
+	Header("Location: liste.php");
+	exit;
 }
 if ($_GET["action"] == 'commentaire')
 {
-  $don = new Don($db);
-  $don->set_commentaire($rowid,$_POST["commentaire"]);
-  $action = "edit";
+	$don = new Don($db);
+	$don->set_commentaire($rowid,$_POST["commentaire"]);
+	$action = "edit";
 }
 
 
@@ -103,7 +107,8 @@ llxHeader();
 /*                                                                            */
 /* ************************************************************************** */
 
-if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit') {
+if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
+{
 
     print_titre($langs->trans("MembersTypeSetup"));
     print '<br>';
@@ -168,7 +173,8 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit') {
 /* ************************************************************************** */
 
 
-if ($_GET["action"] == 'create') {
+if ($_GET["action"] == 'create')
+{
   $htmls = new Form($db);
 
   print_titre($langs->trans("NewMemberType"));
