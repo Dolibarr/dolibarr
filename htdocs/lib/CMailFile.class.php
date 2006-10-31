@@ -51,11 +51,7 @@ class CMailFile
     var $addr_to;
     var $addr_cc;
     var $addr_bcc;
-    var $text_body;
-    var $text_encoded;
-    var $mime_headers;
     var $mime_boundary;
-    var $smtp_headers;
     var $deliveryreceipt;
     
     var $eol;
@@ -90,39 +86,50 @@ class CMailFile
         		dolibarr_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]);
 			}
 		}
-        $this->mime_boundary = md5( uniqid("dolibarr") );
+
+		// On defini mime_boundary
+        $this->mime_boundary = md5(uniqid("dolibarr"));
 
 		// On definit fin de ligne
 		$this->eol="\n";
 		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
 		if (eregi('^mac',PHP_OS)) $this->eol="\r";
 
+		// On defini si message HTML
 		$this->msgishtml = $msgishtml;
 
-        // Genere en-tete dans $this->smtp_headers
+		$smtp_headers = "";
+		$mime_headers = "";
+		$text_body = "";
+		$text_encoded = "";
+		
+        // En-tete dans $smtp_headers
         $this->subject = $subject;
         $this->addr_from = $from;
         $this->addr_to = $to;
         $this->addr_cc = $addr_cc;
         $this->addr_bcc = $addr_bcc;
         $this->deliveryreceipt = $deliveryreceipt;
-        $this->smtp_headers = $this->write_smtpheaders();
+        $smtp_headers = $this->write_smtpheaders();
 
-		// Genere en-tete suite dans $this->mime_headers
+		// En-tete suite dans $mime_headers
         if ($this->atleastonefile)
         {
-            $this->mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
+            $mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
 		}
 
-		// Genere corps message dans $this->text_body
-        $this->text_body = $this->write_body($msg, $filename_list);
+		// Corps message dans $text_body
+        $text_body = $this->write_body($msg, $filename_list);
         
-        // Genere corps message suite (fichiers attachés) dans $this->text_encoded
+        // Corps message suite (fichiers attachés) dans $text_encoded
         if ($this->atleastonefile)
         {
-            $this->text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
+            $text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
         }
-        
+
+		// On defini $this->headers et $this->message
+        $this->headers = $smtp_headers . $mime_headers . $this->eol;
+        $this->message = $text_body . $text_encoded . $this->eol;
     }
 
 
@@ -158,11 +165,8 @@ class CMailFile
     {
         global $conf,$langs;
         
-        $headers = $this->smtp_headers . $this->mime_headers;
-        $message = $this->text_body . $this->text_encoded;
-
         dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
-        dolibarr_syslog("CMailFile::sendfile header=\n".$headers);
+        dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers);
         //dolibarr_syslog("CMailFile::sendfile message=\n".$message);
         //$this->send_to_file();
 
@@ -177,12 +181,12 @@ class CMailFile
 	        if ($this->errors_to)
 	        {
 	            dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", with errorsto : ".getValidAddress($this->errors_to,1));
-	            $res = mail(getValidAddress($this->addr_to,2),$this->subject,stripslashes($message),$headers,"-f".getValidAddress($this->errors_to,2));
+	            $res = mail(getValidAddress($this->addr_to,2),$this->subject,stripslashes($this->message),$this->headers,"-f".getValidAddress($this->errors_to,2));
 	        }
 	        else
 	        {
 	            dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
-	            $res = mail(getValidAddress($this->addr_to,2),$this->subject,stripslashes($message),$headers);
+	            $res = mail(getValidAddress($this->addr_to,2),$this->subject,stripslashes($this->message),$this->headers);
 	        }
 	        if (! $res) 
 	        {
@@ -214,12 +218,9 @@ class CMailFile
      */
     function send_to_file()
     {
-        $headers = $this->smtp_headers . $this->mime_headers;
-        $message = $this->text_body . $this->text_encoded;
-
         $fp = fopen("/tmp/dolibarr_mail","w");
-        fputs($fp, $headers);
-        fputs($fp, $message);
+        fputs($fp, $this->headers);
+        fputs($fp, $this->message);
         fclose($fp);
     }
 
@@ -247,11 +248,12 @@ class CMailFile
         if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,1).$this->eol;
 
         $out .= "X-Mailer: Dolibarr version " . DOL_VERSION .$this->eol;
+        $out .= "MIME-Version: 1.0".$this->eol;
         //$out .= "X-Priority: 3\n";
        
         if ($this->msgishtml)
         {
-        	$out.= "Content-Type: text/html; charset=\"iso-8859-1\"".$this->eol;
+        	$out.= "Content-Type: text/html; charset=iso-8859-1".$this->eol;
         	$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
         }
         else
@@ -273,14 +275,13 @@ class CMailFile
     function write_mimeheaders($filename_list, $mimefilename_list)
     {
 		$mimedone=0;
+        $out = "";
         for ($i = 0; $i < count($filename_list); $i++)
         {
         	if ($filename_list[$i])
         	{
 				if (! $mimedone)
 				{
-			        $out = "";
-			        $out.= "MIME-Version: 1.0".$this->eol;
 					$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
 					$mimedone=1;
 				}
@@ -301,12 +302,13 @@ class CMailFile
     function write_body($msgtext, $filename_list)
     {
         $out='';
+        
         if ($this->atleastonefile)
         {
             $out.= "--" . $this->mime_boundary . $this->eol;
 	        if ($this->msgishtml)
 	        {
-	        	$out.= "Content-Type: text/html; charset=\"iso-8859-1\"".$this->eol;
+	        	$out.= "Content-Type: text/html; charset=iso-8859-1".$this->eol;
 	        }
             $out.= $this->eol;
         }
@@ -325,6 +327,7 @@ class CMailFile
         	$out.= $msgtext;
         }
        	$out.= $this->eol;
+//      $out.= $this->eol;
         return $out;
     }
 
@@ -338,7 +341,7 @@ class CMailFile
     */
     function write_files($filename_list,$mimetype_list,$mimefilename_list)
     {
-        $out = "";
+        $out = '';
         
         for ($i = 0; $i < count($filename_list); $i++)
         {
@@ -358,6 +361,7 @@ class CMailFile
 	                $out.= $this->eol;
 	                $out.= $encoded;
 	                $out.= $this->eol;
+//	                $out.= $this->eol;
 	            }
 	            else
 	            {
@@ -368,6 +372,7 @@ class CMailFile
 
 		// Fin de tous les attachements
         $out = $out . "--" . $this->mime_boundary . "--" . $this->eol;
+//        $out.= $this->eol;
         return $out;
     }
     
