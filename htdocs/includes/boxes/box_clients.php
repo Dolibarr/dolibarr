@@ -66,7 +66,7 @@ class box_clients extends ModeleBoxes {
 
         if ($user->rights->societe->lire)
         {
-            $sql = "SELECT s.nom,s.idp";
+            $sql = "SELECT s.nom, s.idp, ".$db->pdate("s.datec")." as dc";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -86,7 +86,7 @@ class box_clients extends ModeleBoxes {
                 $num = $db->num_rows($result);
     
                 $i = 0;
-    
+    			//$customerstatic=new Client($db);
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
@@ -96,8 +96,28 @@ class box_clients extends ModeleBoxes {
                     'text' => stripslashes($objp->nom),
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 
+					$this->info_box_contents[$i][1] = array('align' => 'right',
+					'text' => dolibarr_print_date($objp->dc, "day"));
+
                     $i++;
                 }
+
+                $i=$num;
+                while ($i < $max)
+                {
+                    if ($num==0 && $i==$num)
+                    {
+                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedCustomers"));
+                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                    } else {
+                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                    }
+                    $i++;
+                }
+
             }
             else {
                 dolibarr_print_error($db);

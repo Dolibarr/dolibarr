@@ -69,7 +69,7 @@ class box_prospect extends ModeleBoxes {
 
         if ($user->rights->societe->lire) 
         {
-            $sql = "SELECT s.nom, s.idp, s.fk_stcomm";
+            $sql = "SELECT s.nom, s.idp, s.fk_stcomm, ".$db->pdate("s.datec")." as dc";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -99,9 +99,12 @@ class box_prospect extends ModeleBoxes {
                     'text' => stripslashes($objp->nom),
                     'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$objp->idp);
 
-                    $this->info_box_contents[$i][1] = array('align' => 'right',
+					$this->info_box_contents[$i][1] = array('align' => 'ce,ter',
+					'text' => dolibarr_print_date($objp->dc, "day"));
+
+                    $this->info_box_contents[$i][2] = array('align' => 'right',
                     'text' => $prospectstatic->LibStatut($objp->fk_stcomm,3));
-    
+
                     $i++;
                 }
  
@@ -113,10 +116,12 @@ class box_prospect extends ModeleBoxes {
                         $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedProspects"));
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
                     } else {
                         $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
                     }
                     $i++;
                 }
