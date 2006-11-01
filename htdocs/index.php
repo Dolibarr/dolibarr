@@ -27,13 +27,21 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
 $user->getrights('');
-
 
 // Simule le menu par défaut sur Home
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
+$infobox=new InfoBox($db);
+
+
+
+
+/*
+* Affichage page
+*/
 
 llxHeader();
 
@@ -480,10 +488,16 @@ print '</td></tr></table>';
  * Affichage des boites
  *
  */
-include_once("./boxes.php");
-$infobox=new InfoBox($db);
-$boxarray=$infobox->listboxes("0");       // 0 = valeur pour la page accueil
+$boxarray=$infobox->listboxes("0",$user);       // 0=valeur pour la page accueil
 $boxjavascriptids=array();
+
+if (eregi('boxobject_([0-9]+)',$_GET["switchfrom"],$regfrom)
+	&& eregi('boxto_([0-9]+)',$_GET["switchto"],$regto))
+{
+	//print "Modif ordre box: ".$regfrom[1]." <-> ".$regto[1];
+//	print_r($boxarray);
+}
+
 
 $NBCOLS=2;      // Nombre de colonnes pour les boites
 
@@ -492,42 +506,40 @@ if (sizeof($boxarray))
 	print '<br>';
 	print_fiche_titre($langs->trans("OtherInformationsBoxes"));
 	print '<table width="100%" class="notopnoleftnoright">';
-}
-for ($ii=0, $ni=sizeof($boxarray); $ii<$ni; $ii++)
-{
-	$boxjavascriptids[$ii]='"box_'.$ii.'"';
+	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
+	{
+		$boxjavascriptids[$ii]='"box_'.$ii.'"';
+	
+		if ($ii % $NBCOLS == 0) print "<tr>\n";
+		print '<td valign="top" width="50%">';
+		print '<div id="boxto_'.$ii.'">';
+		
+		if ($conf->use_ajax && $conf->browser->firefox)
+		{
+			print '<ul class="nocellnopadd" height="100px" id="box_'.$ii.'">';
+			print '<li class="nocellnopadd" height="100px">';
+		}
+		// Affichage boite ii
+		$box=$boxarray[$ii];
+		$box->loadBox();
+		$box->boxid="$ii";
+		$box->showBox();
+		if ($conf->use_ajax && $conf->browser->firefox)
+		{
+			print '</li>';
+			print '</ul>';
+		}
+		
+		print '</div>';
+		print "</td>";
+		if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
+	}
 
-	if ($ii % $NBCOLS == 0) print "<tr>\n";
-	print '<td valign="top" width="50%">';
-	print '<div id="boxto_'.$ii.'">';
-	
-	if ($conf->use_ajax && $conf->browser->firefox)
-	{
-		print '<ul class="nocellnopadd" height="100px" id="box_'.$ii.'">';
-		print '<li class="nocellnopadd" height="100px">';
-	}
-	// Affichage boite ii
-	$box=$boxarray[$ii];
-	$box->loadBox();
-	$box->boxid="$ii";
-	$box->showBox();
-	if ($conf->use_ajax && $conf->browser->firefox)
-	{
-		print '</li>';
-		print '</ul>';
-	}
-	
-	print '</div>';
-	print "</td>";
-	if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
-}
-if (sizeof($boxarray))
-{
     if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
     print "</table>";
 }
 
-if ($conf->use_ajax && $conf->browser->firefox && 1==2)
+if ($conf->use_ajax && $conf->browser->firefox && $conf->global->MAIN_SHOW_DEVELOPMENT_MODULES)
 {
 	print '<script type="text/javascript" language="javascript">'."\n";
 	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
@@ -543,7 +555,8 @@ if ($conf->use_ajax && $conf->browser->firefox && 1==2)
 		print ");\n";
 		*/
 		print 'new Draggable(\'boxobject_'.$ii.'\', {revert:false});'."\n";
-		print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){alert(\'From: \' + encodeURIComponent(element.id) + \' - To: \' + encodeURIComponent(dropon.id))}});'."\n";
+		//print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){alert(\'From: \' + encodeURIComponent(element.id) + \' - To: \' + encodeURIComponent(dropon.id))}});'."\n";
+		print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){ window.location.href=\''.$_SERVER["PHP_SELF"].'?switchfrom=\'+encodeURIComponent(element.id)+\'&switchto=\'+encodeURIComponent(dropon.id); }});'."\n";
 		//print 'Droppables.add(\'box_'.$ii.'\', {onDrop:function(element,dropon){alert(\'w/o hoverclass, should be:\' + encodeURIComponent(element.id) )}});'."\n";
 	}
 	print '</script>'."\n";

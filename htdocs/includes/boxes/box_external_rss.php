@@ -74,7 +74,14 @@ class box_external_rss extends ModeleBoxes {
 		$site=$reg[1];
 
 		// Recupere flux RSS definie dans EXTERNAL_RSS_URLRSS_$site
-        $rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_".$site) );
+        $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
+        $rss=fetch_rss($url);
+        if (! is_object($rss))
+        {
+        	dolibarr_syslog("FETCH_RSS site=".$site);
+        	dolibarr_syslog("FETCH_RSS url=".$url);
+        	return -1;
+        }
         
 		// INFO sur le channel
 		$description=$rss->channel['tagline'];
@@ -135,7 +142,6 @@ class box_external_rss extends ModeleBoxes {
             $this->info_box_contents[$i][1] = array('align' => 'right',
             'text' => $date,
             'td' => 'nowrap="1"');
-
         }
     }
     

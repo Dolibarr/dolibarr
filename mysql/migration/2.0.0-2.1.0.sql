@@ -478,6 +478,9 @@ alter table llx_facturedet_rec add column total_tva real;
 alter table llx_facturedet_rec add column total_ttc real;
 
 
+update llx_boxes set fk_user = 0 where fk_user IS NULL;
+ALTER TABLE llx_boxes modify fk_user integer default 0 NOT NULL;
+
 -- Supprimme orphelins pour permettre montée de la clé
 -- V4 DELETE llx_boxes FROM llx_boxes LEFT JOIN llx_boxes_def ON llx_boxes.box_id = llx_boxes_def.rowid WHERE llx_boxes_def.rowid IS NULL;
 
@@ -485,3 +488,4 @@ ALTER TABLE llx_boxes ADD INDEX idx_boxes_boxid (box_id);
 -- V4 ALTER TABLE llx_boxes ADD CONSTRAINT fk_boxes_box_id FOREIGN KEY (box_id) REFERENCES llx_boxes_def (rowid);
 
 ALTER TABLE llx_boxes ADD INDEX idx_boxes_fk_user (fk_user);
+

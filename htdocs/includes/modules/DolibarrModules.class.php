@@ -420,10 +420,18 @@ class DolibarrModules
 	            //$titre = $this->boxes[$key][0];
 	            $file  = $this->boxes[$key][1];
 	            //$note  = $this->boxes[$key][2];
-	
-	            $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def ";
-	            $sql.= "WHERE file = '".$file."'";
-	            if (! $this->db->query($sql) )
+	            
+	            $sql = "DELETE ".MAIN_DB_PREFIX."boxes";
+	            $sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
+	            $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
+	            $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$file."'";
+				dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
+				$this->db->query($sql);
+								
+	            $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
+	            $sql.= " WHERE file = '".$file."'";
+				dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
+	            if (! $this->db->query($sql))
 	            {
 	                $err++;
 	            }

@@ -51,45 +51,87 @@ class InfoBox
     
 
     /**
-     *      \brief      Retourne tableau des boites elligibles pour la zone
+     *      \brief      Retourne tableau des boites elligibles pour la zone et le user
      *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
+     *      \param      $user		Objet user
      *      \return     array       Tableau d'objet box
      */
-    function listBoxes($zone)
-    {
-        $boxes=array();
-        
-        $sql = "SELECT b.rowid, b.box_id,";
-        $sql.= " d.file, d.note";
-        $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
-        $sql.= " WHERE b.box_id = d.rowid";
-        $sql.= " AND position = ".$zone;
-        $sql.= " ORDER BY box_order";
-        
-        dolibarr_syslog("InfoBox::listBoxes sql=$sql");
-        
-        $result = $this->db->query($sql);
-        if ($result) 
-        {
-          $num = $this->db->num_rows($result);
-          $j = 0;
-          while ($j < $num)
-            {
-              $obj = $this->db->fetch_object($result);
-              $boxname=eregi_replace('.php$','',$obj->file);
+	function listBoxes($zone,$user)
+	{
+		global $conf;
+		
+		$boxes=array();
 
-			  include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
-			  $box=new $boxname($this->db,$obj->note);
-              $boxes[$j]=$box;
+		$confuserzone='MAIN_BOXES_'.$zone;
+		if ($user->id && $user->conf->$confuserzone)
+		{
+			// Recupere liste des boites d'un user si ce dernier a sa propre liste
+			$sql = "SELECT b.rowid, b.box_id,";
+			$sql.= " d.file, d.note";
+			$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
+			$sql.= " WHERE b.box_id = d.rowid";
+			$sql.= " AND b.position = ".$zone;
+			$sql.= " AND b.fk_user = ".$user->id;
+			$sql.= " ORDER BY b.box_order";
+		
+			dolibarr_syslog("InfoBox::listBoxes sql=$sql");
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$num = $this->db->num_rows($result);
+				$j = 0;
+				while ($j < $num)
+				{
+					$obj = $this->db->fetch_object($result);
+					$boxname=eregi_replace('\.php$','',$obj->file);
+					include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
+					$box=new $boxname($this->db,$obj->note);
+					$boxes[$j]=$box;
+					$j++;
+				}
+			}
+			else {
+				$this->error=$this->db->error();
+				dolibarr_syslog("InfoBox::listBoxes Error ".$this->error);
+				return array();
+			}
+		}
+		else
+		{
+			// Recupere liste des boites active par defaut pour tous
+			$sql = "SELECT b.rowid, b.box_id,";
+			$sql.= " d.file, d.note";
+			$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
+			$sql.= " WHERE b.box_id = d.rowid";
+			$sql.= " AND b.position = ".$zone;
+			$sql.= " AND b.fk_user = 0";
+			$sql.= " ORDER BY b.box_order";
 
-              $j++;
-            }
-        }
-        else {
-            return array();
-        }
-        return $boxes;
-    }
+			dolibarr_syslog("InfoBox::listBoxes sql=$sql");
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$num = $this->db->num_rows($result);
+				$j = 0;
+				while ($j < $num)
+				{
+					$obj = $this->db->fetch_object($result);
+					$boxname=eregi_replace('\.php$','',$obj->file);
+					include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
+					$box=new $boxname($this->db,$obj->note);
+					$boxes[$j]=$box;
+					$j++;
+				}
+			}
+			else {
+				$this->error=$this->db->error();
+				dolibarr_syslog("InfoBox::listBoxes Error ".$this->error);
+				return array();
+			}
+		}
+		
+		return $boxes;
+	}
   
 }
 ?>
