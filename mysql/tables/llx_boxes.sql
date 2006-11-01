@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 --
 -- ===========================================================================
 --
--- position  : 0-index.php, 1-left, 2-right
+-- position  : 0=index.php
 -- box_order : Box sort order
 --
 
@@ -30,5 +31,5 @@ create table llx_boxes
   box_id      integer NOT NULL,
   position    smallint NOT NULL,
   box_order   smallint default 0 NOT NULL,
-  fk_user	  integer default 0
+  fk_user	  integer default 0 NOT NULL
 )type=innodb;
