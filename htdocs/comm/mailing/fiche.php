@@ -63,6 +63,18 @@ if ($_POST["action"] == 'send')
     $mil->sujet        = $_POST["subject"];
     $mil->body         = $_POST["message"];
 
+	if (! $mil->sendto)
+	{
+		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
+	}
+	if (! $mil->sujet)
+	{
+		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic")).'</div>';
+	}
+	if (! $mil->body)
+	{
+		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailMessage")).'</div>';
+	}
     if ($mil->sendto && $mil->sujet && $mil->body)
     {
         require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
@@ -96,11 +108,6 @@ if ($_POST["action"] == 'send')
         $_GET["action"]='';
         $_GET["id"]=$mil->id;
     }
-    else
-    {
-        $message='<div class="error">'.$langs->trans("ErrorUnknown").'</div>';
-    }
-
 }
 
 // Action ajout mailing

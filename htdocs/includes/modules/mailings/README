@@ -43,5 +43,5 @@ $target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n')
 ***** STEP 3 *****
 
 Once this file has been edited, you can go to the Dolibarr emailing feature,
-you will see a new line selector in the "target" editor of emailings.
+you will see a new line selector in the "targets" editor of emailing tool.
 
