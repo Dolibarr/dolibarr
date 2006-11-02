@@ -311,7 +311,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         print '<td align="center">&nbsp;</td>';
 
 		// Date
-        if ($mil->statut == 0)
+        if ($mil->statut < 2)
         {
             print '<td>&nbsp;</td>';
         }
@@ -359,7 +359,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	            print '<td>'.$obj->url.'</td>';
 	            
 	            // Statut pour l'email destinataire (Attentioon != statut du mailing)
-	            if ($mil->statut == 0)
+	            if ($obj->statut == 0)
 	            {
 	                print '<td align="center">&nbsp;</td>';
 	                print '<td align="right">'.$langs->trans("MailingStatusNotSent").' <a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
