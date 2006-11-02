@@ -54,33 +54,17 @@ if ($_GET["action"] == 'sendall')
 if ($_POST["action"] == 'send')
 {
     $mil = new Mailing($db);
-
-    $mil->id           = $_POST["mailid"];
-    $mil->fromname     = $_POST["fromname"];
-    $mil->frommail     = $_POST["frommail"];
+    $result=$mil->fetch($_POST["mailid"]);
+    
     $mil->sendto       = $_POST["sendto"];
-    $mil->titre        = $_POST["titre"];
-    $mil->sujet        = $_POST["subject"];
-    $mil->body         = $_POST["message"];
-
 	if (! $mil->sendto)
 	{
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
 	}
-	if (! $mil->sujet)
-	{
-		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic")).'</div>';
-	}
-	if (! $mil->body)
-	{
-		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailMessage")).'</div>';
-	}
-    if ($mil->sendto && $mil->sujet && $mil->body)
+    if ($mil->sendto)
     {
         require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
-        $sendto = $mil->sendto;
-        $from = $mil->fromname." <".$mil->frommail.">";
         $arr_file = array();
         $arr_mime = array();
         $arr_name = array();
@@ -90,15 +74,14 @@ if ($_POST["action"] == 'send')
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
 		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
 
-        $mailfile = new CMailFile($mil->sujet,$sendto,$from,$mil->body,
+        $mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
         							$arr_file,$arr_mime,$arr_name,
         							'', '', 0, $msgishtml);
 
         $result=$mailfile->sendfile();
-
         if ($result)
         {
-            $message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'</div>';
+            $message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$mil->email_from,$mil->sendto).'</div>';
         }
         else
         {
@@ -159,50 +142,53 @@ if ($_POST["action"] == 'update')
 // Action confirmation validation
 if ($_POST["action"] == 'confirm_valide')
 {
-  
-  if ($_POST["confirm"] == 'yes')
-    {
-      $mil = new Mailing($db);
 
-      if ($mil->fetch($_GET["id"]) == 0)
+	if ($_POST["confirm"] == 'yes')
 	{
-	  $mil->valid($user);
-	  
-	  Header("Location: fiche.php?id=".$mil->id);
+		$mil = new Mailing($db);
+
+		if ($mil->fetch($_GET["id"]) >= 0)
+		{
+			$mil->valid($user);
+
+			Header("Location: fiche.php?id=".$mil->id);
+			exit;
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
 	}
-      else
+	else
 	{
-	  dolibarr_print_error($db);
+		Header("Location: fiche.php?id=".$_GET["id"]);
+		exit;
 	}
-    }
-  else
-    {
-      Header("Location: fiche.php?id=".$_GET["id"]);
-    }
 }
 
 if ($_POST["action"] == 'confirm_approve')
 {
-  
-  if ($_POST["confirm"] == 'yes')
-    {
-      $mil = new Mailing($db);
-
-      if ($mil->fetch($_GET["id"]) == 0)
+	if ($_POST["confirm"] == 'yes')
 	{
-	  $mil->approve($user);
-	  
-	  Header("Location: fiche.php?id=".$mil->id);
+		$mil = new Mailing($db);
+	
+		if ($mil->fetch($_GET["id"]) >= 0)
+		{
+			$mil->approve($user);
+	
+			Header("Location: fiche.php?id=".$mil->id);
+			exit;
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
 	}
-      else
+	else
 	{
-	  dolibarr_print_error($db);
+		Header("Location: fiche.php?id=".$_GET["id"]);
+		exit;
 	}
-    }
-  else
-    {
-      Header("Location: fiche.php?id=".$_GET["id"]);
-    }
 }
 
 // Action confirmation suppression
@@ -279,7 +265,7 @@ else
 {
     $html = new Form($db);
     
-    if ($mil->fetch($_GET["id"]) == 0)
+    if ($mil->fetch($_GET["id"]) >= 0)
     {
 
         $h=0;
@@ -293,7 +279,7 @@ else
         $h++;
 
 /*
-        $head[$h][0] = DOL_URL_ROOT."/comm/mailing/history.php?id=".$mil->id;
+        $head[$h][0] = DOL_URL_ROOT."/comm/mailing/info.php?id=".$mil->id;
         $head[$h][1] = $langs->trans("MailHistory");
         $h++;
 */
@@ -338,32 +324,35 @@ else
 
             $uc = new User($db, $mil->user_creat);
             $uc->fetch();
-            print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>'.$uc->fullname.'</td>';
+            print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>'.$uc->getNomUrl(1).'</td>';
             print '<td>'.$langs->trans("Date").'</td>';
-            print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_creat).'</td></tr>';
+            print '<td>'.dolibarr_print_date($mil->date_creat,"%d %b %Y %H:%M").'</td></tr>';
 
             if ($mil->statut > 0)
             {
                 $uv = new User($db, $mil->user_valid);
                 $uv->fetch();
-                print '<tr><td>'.$langs->trans("ValidatedBy").'</td><td>'.$uv->fullname.'</td>';
+                print '<tr><td>'.$langs->trans("ValidatedBy").'</td><td>'.$uv->getNomUrl(1).'</td>';
                 print '<td>'.$langs->trans("Date").'</td>';
-                print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_valid).'</td></tr>';
+                print '<td>'.dolibarr_print_date($mil->date_valid,"%d %b %Y %H:%M").'</td></tr>';
             }
 
             if ($mil->statut > 1)
             {
                 print '<tr><td>'.$langs->trans("SentBy").'</td><td>'.$langs->trans("Unknown").'</td>';
                 print '<td>'.$langs->trans("Date").'</td>';
-                print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_envoi).'</td></tr>';
+                print '<td>'.dolibarr_print_date($mil->date_envoi,"%d %b %Y %H:%M").'</td></tr>';
             }
 
-            // Contenu du mail
+            // Sujet
             print '<tr><td>'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
-            print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
 
+			// Message
+            print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
             print '<td colspan="3">';
-            print nl2br($mil->body).'</td></tr>';
+            print nl2br($mil->body);
+            print '</td>';
+            print '</tr>';
 
             print '</table>';
 
@@ -415,13 +404,13 @@ else
             	      $formmail = new FormMail($db);	    
             	      $formmail->fromname = $mil->email_from;
             	      $formmail->frommail = $mil->email_from;
-                      $formmail->withfrom=1;
+                      $formmail->withfrom=0;
                       $formmail->withto=$user->email?$user->email:1;
                       $formmail->withcc=0;
-                      $formmail->withtopic=$mil->sujet;
+                      $formmail->withtopic=0;
                       $formmail->withtopicreadonly=1;
                       $formmail->withfile=0;
-            	      $formmail->withbody=$mil->body;
+            	      $formmail->withbody=0;
             	      $formmail->withbodyreadonly=1;
                       // Tableau des substitutions
                       $formmail->substit["__FACREF__"]=$fac->ref;

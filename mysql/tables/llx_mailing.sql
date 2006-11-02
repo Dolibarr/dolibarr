@@ -31,7 +31,6 @@ create table llx_mailing
 
   statut             smallint       DEFAULT 0,            --
 
-  date_envoi         datetime,                            -- date d'envoi
   titre              varchar(60),                         -- company name
   sujet              varchar(60),                         -- company name
   body               text,
@@ -44,8 +43,9 @@ create table llx_mailing
   email_errorsto     varchar(160),                        -- company name
 
   date_creat         datetime,                            -- creation date
-  date_valid         datetime,                            -- creation date
-  date_appro         datetime,                            -- creation date
+  date_valid         datetime,                            -- 
+  date_appro         datetime,                            -- 
+  date_envoi         datetime,                            -- date d'envoi
 
   fk_user_creat      integer,                             -- utilisateur qui a créé l'info
   fk_user_valid      integer,                             -- utilisateur qui a créé l'info

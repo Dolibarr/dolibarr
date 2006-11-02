@@ -134,7 +134,7 @@ llxHeader("","",$langs->trans("MailCard"));
 $mil = new Mailing($db);
 
 $html = new Form($db);
-if ($mil->fetch($_REQUEST["id"]) == 0)
+if ($mil->fetch($_REQUEST["id"]) >= 0)
 {
     
     $h=0;
@@ -148,7 +148,7 @@ if ($mil->fetch($_REQUEST["id"]) == 0)
     $h++;
 
     /*
-    $head[$h][0] = DOL_URL_ROOT."/comm/mailing/history.php?id=".$mil->id;
+    $head[$h][0] = DOL_URL_ROOT."/comm/mailing/info.php?id=".$mil->id;
     $head[$h][1] = $langs->trans("MailHistory");
     $h++;
     */
@@ -309,7 +309,8 @@ if ($mil->fetch($_REQUEST["id"]) == 0)
         print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.prenom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$addu,"","",$sortfield);
         print '<td align="center">&nbsp;</td>';
-        print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$addu,'','align="center"',$sortfield);
+
+		// Date
         if ($mil->statut == 0)
         {
             print '<td>&nbsp;</td>';
@@ -318,6 +319,10 @@ if ($mil->fetch($_REQUEST["id"]) == 0)
         {
             print '<td align="center">'.$langs->trans("Date").'</td>';
         }        
+
+		// Statut
+        print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$addu,'','align="right"',$sortfield);
+
         print '</tr>';
 
 	    // Ligne des champs de filtres
@@ -353,19 +358,19 @@ if ($mil->fetch($_REQUEST["id"]) == 0)
 	            print '<td>'.$obj->email.'</td>';
 	            print '<td>'.$obj->url.'</td>';
 	            
-	            // Statut
+	            // Statut pour l'email destinataire (Attentioon != statut du mailing)
 	            if ($mil->statut == 0)
 	            {
-	                print '<td align="center">'.$langs->trans("MailingStatusNotSent").'</td>';
-	                print '<td><a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
+	                print '<td align="center">&nbsp;</td>';
+	                print '<td align="right">'.$langs->trans("MailingStatusNotSent").' <a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
 	            }
 	            else
 	            {
-	                print '<td align="center">';
-	                if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
-	                if ($obj->statut==1) print $langs->trans("MailingStatusSent");
-	                print '</td>';
 	                print '<td align="center">'.$obj->date_envoi.'</td>';
+	                print '<td align="right">';
+	                if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
+	                if ($obj->statut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
+	                print '</td>';
 	            }        
 	            print '</tr>';
 	

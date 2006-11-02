@@ -69,10 +69,10 @@ class Mailing
         $this->db = $DB ;
         $this->db_table = MAIN_DB_PREFIX."mailing";
         
-        $this->statuts[0] = $langs->trans("MailingStatusDraft");
-        $this->statuts[1] = $langs->trans("MailingStatusValidated");
-        $this->statuts[2] = $langs->trans("MailingStatusSentPartialy");
-        $this->statuts[3] = $langs->trans("MailingStatusSentCompletely");
+        $this->statuts[0]  = $langs->trans("MailingStatusDraft");
+        $this->statuts[1]  = $langs->trans("MailingStatusValidated");
+        $this->statuts[2]  = $langs->trans("MailingStatusSentPartialy");
+        $this->statuts[3]  = $langs->trans("MailingStatusSentCompletely");
   }
   
   /**
@@ -163,62 +163,65 @@ class Mailing
 	}
     }
     
-  /**
-   *    \brief      Recupére l'objet mailing
-   *    \param      rowid       id du mailing
-   */
-  function fetch($rowid)
-    {
-      $sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
-      $sql .= " , m.email_from, m.email_replyto, m.email_errorsto";
-      $sql .= " , m.statut, m.nbemail";
-      $sql .= ", m.fk_user_creat, m.fk_user_valid, m.fk_user_appro";
-      $sql .= ", ".$this->db->pdate("m.date_creat") . " as date_creat";
-      $sql .= ", ".$this->db->pdate("m.date_valid") . " as date_valid";
-      $sql .= ", ".$this->db->pdate("m.date_envoi") . " as date_envoi";
-      $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-      $sql .= " WHERE m.rowid = ".$rowid;
-
-      if ($this->db->query($sql) )
+	/**
+	*		\brief      Recupére l'objet mailing
+	*		\param      rowid       id du mailing
+	*		\return		int
+	*/
+	function fetch($rowid)
 	{
-	  if ($this->db->num_rows())
-	    {
-	      $obj = $this->db->fetch_object();
-	      
-	      $this->id                 = $obj->rowid;
-	      $this->statut             = $obj->statut;
-	      $this->nbemail            = $obj->nbemail;
-	      $this->titre              = stripslashes($obj->titre);
-	      $this->sujet              = stripslashes($obj->sujet);
-	      $this->body               = stripslashes($obj->body);
-
-	      $this->email_from         = $obj->email_from;
-	      $this->email_replyto      = $obj->email_replyto;
-	      $this->email_errorsto     = $obj->email_errorsto;
-
-	      $this->user_creat         = $obj->fk_user_creat;
-	      $this->user_valid         = $obj->fk_user_valid;
-	      $this->user_appro         = $obj->fk_user_appro;
-
-	      $this->date_creat         = $obj->date_creat;
-	      $this->date_valid         = $obj->date_valid;
-	      $this->date_appro         = $obj->date_appro;
-	      $this->date_envoi         = $obj->date_envoi;
-
-	      return 0;
-	    }
-	  else
-	    {
-	      dolibarr_syslog("Mailing::Fetch Erreur -1");
-	      return -1;
-	    }
+		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
+		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
+		$sql .= ", m.statut, m.nbemail";
+		$sql .= ", m.fk_user_creat, m.fk_user_valid, m.fk_user_appro";
+		$sql .= ", ".$this->db->pdate("m.date_creat") . " as date_creat";
+		$sql .= ", ".$this->db->pdate("m.date_valid") . " as date_valid";
+		$sql .= ", ".$this->db->pdate("m.date_envoi") . " as date_envoi";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
+		$sql .= " WHERE m.rowid = ".$rowid;
+		
+		dolibarr_syslog("Mailing.class::fetch sql=".$sql);
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+	
+				$this->id                 = $obj->rowid;
+				$this->statut             = $obj->statut;
+				$this->nbemail            = $obj->nbemail;
+				$this->titre              = $obj->titre;
+				$this->sujet              = $obj->sujet;
+				$this->body               = $obj->body;
+	
+				$this->email_from         = $obj->email_from;
+				$this->email_replyto      = $obj->email_replyto;
+				$this->email_errorsto     = $obj->email_errorsto;
+	
+				$this->user_creat         = $obj->fk_user_creat;
+				$this->user_valid         = $obj->fk_user_valid;
+				$this->user_appro         = $obj->fk_user_appro;
+	
+				$this->date_creat         = $obj->date_creat;
+				$this->date_valid         = $obj->date_valid;
+				$this->date_appro         = $obj->date_appro;
+				$this->date_envoi         = $obj->date_envoi;
+	
+				return 1;
+			}
+			else
+			{
+				dolibarr_syslog("Mailing::Fetch Erreur -1");
+				return -1;
+			}
+		}
+		else
+		{
+			dolibarr_syslog("Mailing::Fetch Erreur -2");
+			return -2;
+		}
 	}
-      else
-	{
-	  dolibarr_syslog("Mailing::Fetch Erreur -2");
-	  return -2;
-	}    
-    }
 
 
   /**
@@ -335,10 +338,10 @@ class Mailing
 		}
 		if ($mode == 5)
 		{
-			if ($statut == 0) return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut == 1) return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut == 2) return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-			if ($statut == 3) return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			if ($statut == 0)  return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut == 1)  return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
+			if ($statut == 2)  return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut == 3)  return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
 
 	}
