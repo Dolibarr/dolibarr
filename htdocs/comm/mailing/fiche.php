@@ -421,6 +421,8 @@ else
                       $formmail->param["returnurl"]=DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
             
                       $formmail->show_form();
+                      
+                      print '<br>';
             }
 
         }

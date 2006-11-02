@@ -317,7 +317,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         }
         else
         {
-            print '<td align="center">'.$langs->trans("Date").'</td>';
+	        print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"mc.date_envoi",$addu,'','align="center"',$sortfield);
         }        
 
 		// Statut
