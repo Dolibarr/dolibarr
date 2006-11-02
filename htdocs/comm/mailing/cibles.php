@@ -347,7 +347,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     
     	if ($num)
     	{
-	        while ($i < $num)
+	        while ($i < min($num,$conf->liste_limit))
 	        {
 	            $obj = $db->fetch_object($resql);
 	            $var=!$var;
