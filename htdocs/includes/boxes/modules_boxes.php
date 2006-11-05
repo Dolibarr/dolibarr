@@ -36,11 +36,11 @@
 class ModeleBoxes
 {
     var $MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-  
+
     var $error='';
 
 
-   /** 
+   /**
         \brief      Renvoi le dernier message d'erreur de création de facture
     */
     function error()
@@ -49,7 +49,7 @@ class ModeleBoxes
     }
 
 
-   /** 
+   /**
         \brief      Methode standard d'affichage des boites
         \param      $head       tableau des caractéristiques du titre
         \param      $contents   tableau des lignes de contenu
@@ -60,30 +60,41 @@ class ModeleBoxes
 
         $bcx[0] = 'class="box_pair"';
         $bcx[1] = 'class="box_impair"';
-    
+
         $var = true;
         $nbcol=sizeof($contents[0])+1;
         $nblines=sizeof($contents);
-        
+
         print "\n\n<!-- Box start -->\n";
         print '<table width="100%" class="noborder"';
         if (isset($this->boxid)) print ' id="boxobject_'.$this->boxid.'"';
         print '>';
-    
+
         // Affiche titre de la boite
-        print '<tr class="box_titre"';
-        if ($conf->use_ajax) print ' style="cursor:move;"';
-        print '>';
+        print '<tr class="box_titre">';
         print '<td';
         if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
         print '>';
+
+        if ($conf->use_ajax)
+		{
+			print '<table class="nobordernopadding" width="100%"><tr><td align="left">';
+		}
         print dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
         if ($head['sublink'])
         {
             print ' <a href="'.$head['sublink'].'" target="_new">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
         }
-        print '</td></tr>';
-    
+        if ($conf->use_ajax)
+        {
+      		print '</td><td class="nocellnopadd" width="14">';
+      		print img_picto($langs->trans("Move"),'uparrow','style="cursor:move;"');
+			print '</td></tr></table>';
+		}
+		
+        print '</td>';
+        print '</tr>';
+
         // Affiche chaque ligne de la boite
         for ($i=0, $n=$nblines; $i < $n; $i++)
         {
@@ -95,7 +106,7 @@ class ModeleBoxes
                     if (isset($contents[$i][-1]['class'])) print '<tr valign="top" class="'.$contents[$i][-1]['class'].'">';
                     else print '<tr valign="top" '.$bcx[$var].'>';
                 }
-                
+
                 // Affiche chaque cellule
                 for ($j=0, $m=isset($contents[$i][-1])?sizeof($contents[$i])-1:sizeof($contents[$i]); $j < $m; $j++)
                 {
@@ -106,7 +117,7 @@ class ModeleBoxes
                     if (isset($contents[$i][$j]['colspan'])) $tdparam.=' colspan="'. $contents[$i][$j]['colspan'].'"';
                     if (isset($contents[$i][$j]['class'])) $tdparam.=' class="'. $contents[$i][$j]['class'].'"';
                     if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
-        
+
                     if (!$contents[$i][$j]['text']) $contents[$i][$j]['text']="";
                     $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
                     $textewithnotags=eregi_replace('<[^>]+>','',$texte);
@@ -116,7 +127,7 @@ class ModeleBoxes
 
                     if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
                     else print '<td '.$tdparam.'>';
-    
+
 					// Picto
                     if (isset($contents[$i][$j]['url'])) {
                     	print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
@@ -124,7 +135,7 @@ class ModeleBoxes
 	                   	print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
                         print '>';
                     }
-                    
+
                     // Texte
                     if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo'])
                     {
@@ -142,7 +153,7 @@ class ModeleBoxes
                     }
                     $maxlength=$this->MAXLENGTHBOX;
                     if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
-                                        
+
                     if ($maxlength && strlen($textewithnotags) > $maxlength)
                     {
                         $texte=substr($texte,0,$maxlength)."...";
@@ -156,17 +167,17 @@ class ModeleBoxes
                     print $texte2;
                     print "</td>";
                 }
-    
+
                 if (sizeof($contents[$i])) print '</tr>';
             }
         }
-    
+
         print "</table>";
-        
+
         print "\n<!-- Box end -->\n\n";
-        
+
     }
-    
+
 }
 
 

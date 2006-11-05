@@ -66,15 +66,19 @@ class box_external_rss extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs;
+        global $user, $langs, $conf;
         $langs->load("boxes");
 
 		// On recupere numero de param de la boite
 		ereg('^([0-9]+) ',$this->param,$reg);
 		$site=$reg[1];
 
+		// Creation rep (pas besoin, on le cree apres recup flux)
+		//$result=create_exdir($conf->externalrss->dir_temp);
+		
 		// Recupere flux RSS definie dans EXTERNAL_RSS_URLRSS_$site
         $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
+        //define('MAGPIE_DEBUG',1);
         $rss=fetch_rss($url);
         if (! is_object($rss))
         {
@@ -101,7 +105,7 @@ class box_external_rss extends ModeleBoxes {
 		}
 		
 		// INFO sur le élements
-        for($i = 0; $i < $max ; $i++)
+        for($i = 0; $i < $max && $i < sizeof($rss->items); $i++)
         {
             $item = $rss->items[$i];
 
@@ -109,7 +113,7 @@ class box_external_rss extends ModeleBoxes {
             $href  = $item['link'];
         	$title = urldecode($item['title']);
 			$date  = $item['date_timestamp'];	// date will be empty if conversion into timestamp failed
-			if ($rss->is_rss())	// If RSS
+			if ($rss->is_rss())		// If RSS
 			{
 				if (! $date && isset($item['pubdate']))    $date=$item['pubdate'];
 				if (! $date && isset($item['dc']['date'])) $date=$item['dc']['date'];
