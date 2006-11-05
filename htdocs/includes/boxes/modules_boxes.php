@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,19 @@ class ModeleBoxes
 {
     var $MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
 
+    var $db;
     var $error='';
+	
 
-
+	/*
+	*	\brief		Constructeur
+	*/
+	function ModeleBoxes($DB)
+	{
+		$this->db=$DB;
+	}
+	
+	
    /**
         \brief      Renvoi le dernier message d'erreur de création de facture
     */
@@ -47,6 +57,42 @@ class ModeleBoxes
     {
         return $this->error;
     }
+
+
+   /**
+        \brief      Charge une ligne boxe depuis son rowid
+    */
+    function fetch($rowid)
+    {
+		// Recupere liste des boites d'un user si ce dernier a sa propre liste
+		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b";
+		$sql.= " WHERE b.rowid = ".$rowid;
+		dolibarr_syslog("ModeleBoxes::fetch rowid=".$rowid);
+
+	    $resql = $this->db->query($sql);
+	    if ($resql)
+	    {
+	        $obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$this->rowid=$obj->rowid;
+				$this->box_id=$obj->box_id;
+				$this->position=$obj->position;
+				$this->box_order=$obj->box_order;
+				$this->fk_user=$obj->fk_user;
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
 
    /**
@@ -91,7 +137,7 @@ class ModeleBoxes
       		print img_picto($langs->trans("Move"),'uparrow','style="cursor:move;"');
 			print '</td></tr></table>';
 		}
-		
+
         print '</td>';
         print '</tr>';
 

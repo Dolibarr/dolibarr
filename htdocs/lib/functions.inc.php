@@ -369,6 +369,57 @@ function dolibarr_del_const($db, $name)
     }
 }
 
+
+/**
+		\brief      Sauvegarde parametrage personnel
+		\param	    db          Handler d'accès base
+		\param	    user        Objet utilisateur
+		\param	    url         Si defini, on sauve parametre du tableau tab dont clé = sortfield, sortorder, begin et page
+		                        Si non defini on sauve tous parametres du tableau tab
+		\param	    tab         Tableau (clé=>valeur) des paramètres à sauvegarder
+		\return     int         <0 si ko, >0 si ok
+*/
+function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
+{
+    $db->begin();
+    
+    // On efface paramètres anciens
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
+    $sql.= " WHERE fk_user = ".$user->id;
+    if ($url) $sql.=" AND page='".$url."'";
+    else $sql.=" AND page=''";
+    dolibarr_syslog("functions.inc.php::dolibarr_set_user_page_param $sql");
+
+    $resql=$db->query($sql);
+    if (! $resql)
+    {
+        dolibarr_print_error($db);
+    	exit;
+    }
+
+    foreach ($tab as $key=>$value)
+    {
+        // On positionne nouveaux paramètres
+        if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value)";
+            $sql.= " VALUES (".$user->id.",";
+            if ($url) $sql.= " '".urlencode($url)."',";
+            else $sql.= " '',";
+            $sql.= " '".$key."','".addslashes($value)."');";
+            dolibarr_syslog("functions.inc.php::dolibarr_set_user_page_param $sql");
+
+            $db->query($sql);
+
+            $user->page_param[$key] = $value;
+        }
+    }
+
+    $db->commit();
+    return 1;
+}
+
+
 /**
 		\brief  Formattage des nombres
 		\param	ca			valeur a formater
@@ -603,10 +654,10 @@ function img_object($alt, $object)
         \param      picto       Nom de l'image a afficher
         \return     string      Retourne tag img
 */
-function img_picto($alt, $picto)
+function img_picto($alt, $picto, $options='')
 {
   global $conf,$langs;
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'.png" border="0" alt="'.$alt.'" title="'.$alt.'"'.($options?' '.$options:'').'>';
 }
 
 /**
@@ -1260,51 +1311,6 @@ function doliMoveFileUpload($src_file, $dest_file)
 	return move_uploaded_file($src_file, $file_name);
 }
 
-
-/**
-		\brief      Sauvegarde parametrage personnel
-		\param	    db          Handler d'accès base
-		\param	    user        Objet utilisateur
-		\param	    url         Si defini, on sauve parametre du tableau tab dont clé = sortfield, sortorder, begin et page
-		                        Si non defini on sauve tous parametres du tableau tab
-		\param	    tab         Tableau (clé=>valeur) des paramètres à sauvegarder
-*/
-function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
-{
-    $db->begin();
-    
-    // On efface paramètres anciens
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-    $sql.= " WHERE fk_user = ".$user->id;
-    if ($url) $sql.=" AND page='".$url."'";
-    else $sql.=" AND page=''";
-    $sql.=";";
-    $resql=$db->query($sql);
-    if (! $resql)
-    {
-        dolibarr_print_error($db);
-    }
-    dolibarr_syslog("functions.inc.php::dolibarr_set_user_page_param $sql");
-
-    foreach ($tab as $key=>$value)
-    {
-        // On positionne nouveaux paramètres
-        if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
-        {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value)";
-            $sql.= " VALUES (".$user->id.",";
-            if ($url) $sql.= " '".urlencode($url)."',";
-            else $sql.= " '',";
-            $sql.= " '".$key."','".addslashes($value)."');";
-            dolibarr_syslog("functions.inc.php::dolibarr_set_user_page_param $sql");
-            $db->query($sql);
-
-            $user->page_param[$key] = $value;
-        }
-    }
-
-    $db->commit();
-}
 
 /**
 		\brief  Transcodage de francs en euros

@@ -491,11 +491,42 @@ print '</td></tr></table>';
 $boxarray=$infobox->listboxes("0",$user);       // 0=valeur pour la page accueil
 $boxjavascriptids=array();
 
+// Gestion deplacement des boxes
 if (eregi('boxobject_([0-9]+)',$_GET["switchfrom"],$regfrom)
 	&& eregi('boxto_([0-9]+)',$_GET["switchto"],$regto))
 {
-	//print "Modif ordre box: ".$regfrom[1]." <-> ".$regto[1];
-//	print_r($boxarray);
+	/*
+	print "Modif ordre box: ";
+	print $boxarray[$regfrom[1]]->box_id."(".$boxarray[$regfrom[1]]->box_order.")";
+	print " <-> ";
+	print $boxarray[$regto[1]]->box_id."(".$boxarray[$regto[1]]->box_order.")";
+	print "<br>\n";
+	*/
+	
+	// Permutation boites
+	$switchii=$boxarray[$regto[1]];
+	$boxarray[$regto[1]]=$boxarray[$regfrom[1]];
+	$boxarray[$regfrom[1]]=$switchii;
+
+	// Permutation box_order
+	$switchbox_order=$boxarray[$regto[1]]->box_order;
+	$boxarray[$regto[1]]->box_order=$boxarray[$regfrom[1]]->box_order;
+	$boxarray[$regfrom[1]]->box_order=$switchbox_order;
+
+	/*
+	print "Modif ordre box: ";
+	print $boxarray[$regfrom[1]]->box_id."(".$boxarray[$regfrom[1]]->box_order.")";
+	print " <-> ";
+	print $boxarray[$regto[1]]->box_id."(".$boxarray[$regto[1]]->box_order.")";
+	print "<br>\n";
+	*/
+	
+	// Sauvegarde nouvel ordre pour l'utilisateur
+	$result=$infobox->saveboxorder("0",$boxarray,$user);
+	if ($result < 0)
+	{
+		dolibarr_print_error($db,$infobox->error);	
+	}
 }
 
 
@@ -563,9 +594,10 @@ if ($conf->use_ajax && $conf->browser->firefox && $conf->global->MAIN_SHOW_DEVEL
 }
 
 // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
-print '<div class="tabsAction">';
-print '&nbsp;';
-print '</div>';
+if (! $conf->browser->firefox)
+{
+	print '<div class="tabsAction">&nbsp;</div>';
+}
 
 
 $db->close();

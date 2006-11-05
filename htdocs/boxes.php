@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class InfoBox
 		if ($user->id && $user->conf->$confuserzone)
 		{
 			// Recupere liste des boites d'un user si ce dernier a sa propre liste
-			$sql = "SELECT b.rowid, b.box_id,";
+			$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user,";
 			$sql.= " d.file, d.note";
 			$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql.= " WHERE b.box_id = d.rowid";
@@ -86,6 +86,11 @@ class InfoBox
 					$boxname=eregi_replace('\.php$','',$obj->file);
 					include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
 					$box=new $boxname($this->db,$obj->note);
+					$box->rowid=$obj->rowid;
+					$box->box_id=$obj->box_id;
+					$box->position=$obj->position;
+					$box->box_order=$obj->box_order;
+					$box->fk_user=$obj->fk_user;
 					$boxes[$j]=$box;
 					$j++;
 				}
@@ -99,7 +104,7 @@ class InfoBox
 		else
 		{
 			// Recupere liste des boites active par defaut pour tous
-			$sql = "SELECT b.rowid, b.box_id,";
+			$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user,";
 			$sql.= " d.file, d.note";
 			$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql.= " WHERE b.box_id = d.rowid";
@@ -119,6 +124,11 @@ class InfoBox
 					$boxname=eregi_replace('\.php$','',$obj->file);
 					include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
 					$box=new $boxname($this->db,$obj->note);
+					$box->rowid=$obj->rowid;
+					$box->box_id=$obj->box_id;
+					$box->position=$obj->position;
+					$box->box_order=$obj->box_order;
+					$box->fk_user=$obj->fk_user;
 					$boxes[$j]=$box;
 					$j++;
 				}
@@ -132,6 +142,78 @@ class InfoBox
 		
 		return $boxes;
 	}
-  
+
+
+    /**
+     *      \brief      Sauvegarde sequencement des boites pour la zone et le user
+     *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
+     *      \param      $boxarray	Tableau des boites dans le bon ordre
+     *      \param      $user		Objet user
+     *      \return     int			<0 si ko, >= 0 si ok
+     */
+	function saveboxorder($zone,$boxarray,$user)
+	{
+		dolibarr_syslog("InfoBoxes::saveboxorder zone=$zone user=$user");
+
+		if (! is_object($user) || ! $user->id) return 0;
+
+		$this->db->begin();
+		
+		// Sauve parametre indiquant que le user a une 
+		$confuserzone='MAIN_BOXES_'.$zone;
+		$tab[$confuserzone]=1;
+ 		if (! dolibarr_set_user_page_param($this->db, $user, '', $tab))
+ 		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -3;
+ 		}
+		
+		$sql ="DELETE FROM ".MAIN_DB_PREFIX."boxes";
+		$sql.=" WHERE fk_user = ".$user->id;
+		$sql.=" AND position = ".$zone;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
+			{
+				//print "box_id".$boxarray[$ii]->box_id.'<br>';
+				//print "box_order".$boxarray[$ii]->box_order.'<br>';
+		        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
+		        $sql.= "(box_id, position, box_order, fk_user)";
+		        $sql.= " values (";
+		        $sql.= " ".$boxarray[$ii]->box_id.",";
+		        $sql.= " ".$zone.",";
+		        $sql.= " ".$boxarray[$ii]->box_order.",";
+		        $sql.= " ".$user->id;
+		        $sql.= ")";
+		        $result = $this->db->query($sql);
+				if ($result < 0)
+				{
+					$error++;
+					break;
+				}			
+			}
+	
+			if ($error)
+			{
+				$this->error=$this->db->error();
+				$this->db->rollback();
+				return -2;
+			}
+			else
+			{
+				$this->db->commit();
+				return 1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+		
+	}  
 }
 ?>

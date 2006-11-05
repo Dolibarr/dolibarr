@@ -27,6 +27,8 @@
 */
 
 require("./pre.inc.php");
+include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
+
 $langs->load("admin");
 
 if (!$user->admin)
@@ -43,25 +45,42 @@ $boxes = array();
 
 if ($_POST["action"] == 'add')
 {
-    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes WHERE box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
-    $result = $db->query($sql);
-    
-    $num = $db->num_rows($result);
-    if ($num == 0)
+    $sql = "SELECT rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."boxes";
+    $sql.= " WHERE fk_user=0 AND box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
+    $resql = $db->query($sql);
+    if ($resql)
     {
-        // Si la boite n'est pas deja active
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["boxid"].",".$_POST["pos"].");";
-        $result = $db->query($sql);
-    }
-    
-    Header("Location: boxes.php");
-    exit;
+	    $num = $db->num_rows($result);
+	    if ($num == 0)
+	    {
+	        // Si la boite n'est pas deja active
+	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", 0)";
+	        $result = $db->query($sql);
+	    }
+	    
+	    Header("Location: boxes.php");
+	    exit;
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
 }
 
 if ($_GET["action"] == 'delete')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["rowid"];
-    $result = $db->query($sql);
+	$db->begin();
+	
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
+    $sql.= " WHERE rowid=".$_GET["rowid"];
+    $resql = $db->query($sql);
+
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
+    $sql.= " WHERE param like 'MAIN_BOXES_%'";
+    $resql = $db->query($sql);
+
+	$db->commit();
 }
 
 if ($_GET["action"] == 'switch')
@@ -69,34 +88,20 @@ if ($_GET["action"] == 'switch')
     // On permute les valeur du champ box_order des 2 lignes de la table boxes
     $db->begin();
 
-    $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchfrom"];
-    $resultfrom = $db->query($sql);
-    if ($resultfrom)
-    {
-        $objfrom = $db->fetch_object($resultfrom);
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
+    $objfrom=new ModeleBoxes($db);
+    $objfrom->fetch($_GET["switchfrom"]);
 
-    $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchto"];
-    $resultto = $db->query($sql);
-
-    if ($resultto)
+    $objto=new ModeleBoxes($db);
+    $objto->fetch($_GET["switchto"]);
+    
+    if (is_object($objfrom) && is_object($objto))
     {
-        $objto = $db->fetch_object($resultto);
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
-
-    if ($objfrom && $objto) {
-        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objto->box_order." WHERE rowid=".$_GET["switchfrom"];
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objto->box_order." WHERE rowid=".$objfrom->rowid;
+		//print "xx".$sql;
         $resultupdatefrom = $db->query($sql);
         if (! $resultupdatefrom) { dolibarr_print_error($db); }
-        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objfrom->box_order." WHERE rowid=".$_GET["switchto"];
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objfrom->box_order." WHERE rowid=".$objto->rowid;
+		//print "xx".$sql;
         $resultupdateto = $db->query($sql);
         if (! $resultupdateto) { dolibarr_print_error($db); }
     }
@@ -126,7 +131,7 @@ print $langs->trans("BoxesDesc")."<br>\n";
 
 $sql  = "SELECT b.rowid, b.box_id, b.position, b.box_order, d.name, d.rowid as boxid";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
-$sql .= " where b.box_id = d.rowid";
+$sql .= " WHERE b.box_id = d.rowid AND fk_user=0";
 $sql .= " ORDER by position, box_order";
 
 $resql = $db->query($sql);
@@ -174,7 +179,8 @@ print '<td>'.$langs->trans("SourceFile").'</td>';
 print '<td align="center" width="160">'.$langs->trans("ActivateOn").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, name, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
+$sql = "SELECT rowid, name, file, note";
+$sql.= " FROM ".MAIN_DB_PREFIX."boxes_def";
 $resql = $db->query($sql);
 $var=True;
 
@@ -243,14 +249,16 @@ print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td align="center" width="160">'.$langs->trans("ActiveOn").'</td>';
-print '<td align="center" width="60" colspan="2">'.$langs->trans("Position").'</td>';
+print '<td align="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
 print "</tr>\n";
 
-$sql  = "SELECT b.rowid, b.box_id, b.position, d.name, d.file, d.note";
-$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
-$sql .= " where b.box_id = d.rowid";
-$sql .= " ORDER by position, box_order";
+$sql = "SELECT b.rowid, b.box_id, b.position,";
+$sql.= " d.name, d.file, d.note";
+$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
+$sql.= " WHERE b.box_id = d.rowid";
+$sql.= " AND b.fk_user=0";
+$sql.= " ORDER by position, box_order";
 
 $resql = $db->query($sql);
 
