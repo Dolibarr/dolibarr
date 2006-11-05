@@ -570,7 +570,7 @@ if (sizeof($boxarray))
     print "</table>";
 }
 
-if ($conf->use_ajax && $conf->browser->firefox && $conf->global->MAIN_SHOW_DEVELOPMENT_MODULES)
+if ($conf->use_ajax && $conf->browser->firefox)
 {
 	print '<script type="text/javascript" language="javascript">'."\n";
 	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
