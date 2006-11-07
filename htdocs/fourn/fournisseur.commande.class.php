@@ -368,27 +368,14 @@ class CommandeFournisseur extends Commande
 		$modelisok=0;
 	    $liste=array();
 	
-		// Positionne modele sur le nom du modele de commande à utiliser
-		$file = "pdf_".$modele.".modules.php";
-		if ($modele && file_exists($dir.$file))   $modelisok=1;
-	
-	    // Si model pas encore bon 
-		if (! $modelisok)
-		{
-			if ($conf->global->COMMANDE_ADDON_PDF) $modele = $conf->global->COMMANDE_ADDON_PDF;
-	      	$file = "pdf_".$modele.".modules.php";
-	    	if (file_exists($dir.$file))   $modelisok=1;
-	    }
-	
-
-		if (defined('COMMANDE_SUPPLIER_ADDON'))
+		if (defined('COMMANDE_SUPPLIER_ADDON') && COMMANDE_SUPPLIER_ADDON)
 		{
 			$file = COMMANDE_SUPPLIER_ADDON.'.php';
 			
 			if (is_readable($dir.'/'.$file))
 			{
 				// Definition du nom de module de numerotation de commande fournisseur
-				$modName=COMMANDE_SUPPLIER_ADDON;
+				$modName=$conf->global->COMMANDE_SUPPLIER_ADDON;
 				require_once($dir.'/'.$file);
 	
 				// Recuperation de la nouvelle reference
@@ -409,7 +396,7 @@ class CommandeFournisseur extends Commande
 			}
 			else
 			{
-    	        print $langs->trans("Error")." ".$langs->trans("FailedToLoadCOMMANDE_SUPPLIER_ADDONFile");
+    	        print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File",$conf->global->COMMANDE_SUPPLIER_ADDON);
 	        	return -2;
 			}
         }
