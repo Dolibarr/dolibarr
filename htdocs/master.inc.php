@@ -33,6 +33,7 @@
 */
 
 define('DOL_VERSION','2.1-alpha');
+define('EURO',chr(128)); 
 
 // La fonction clearstatcache ne doit pas etre appelé de manière globale car ralenti.
 // Elle doit etre appelée uniquement par les pages qui ont besoin d'un cache fichier vidé
