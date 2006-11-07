@@ -22,19 +22,20 @@
  */
 
 /**
-     	\file       htdocs/includes/modules/commande/mod_commande_muguet.php
+     	\file       htdocs/four/commande/modules/mod_commande_fournisseur_muguet.php
 		\ingroup    commande
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande Muguet
 		\version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
+require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/mod_commande_fournisseur_muguet.php");
 
-/**	    \class      mod_commande_marbre
+
+/**	    \class      mod_commande_fournisseur_muguet
 		\brief      Classe du modèle de numérotation de référence de commande Marbre
 */
 
-class mod_commande_fournisseur_muguet extends ModeleNumRefCommandes
+class mod_commande_fournisseur_muguet extends ModeleNumRefCommandesSuppliers
 {
 	var $prefix='CF';
     var $error='';

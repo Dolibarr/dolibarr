@@ -266,15 +266,6 @@ insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON', '
 
 alter table llx_propal_model_pdf rename to llx_document_model;
 
-create table llx_document_model
-(
-  	rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  	nom         	varchar(50),
-  	type			    varchar(20) NOT NULL,
-  	libelle		    varchar(255),
-  	description 	text
-)type=innodb;
-
 alter table llx_document_model DROP PRIMARY KEY;
 alter table llx_document_model add column rowid integer AUTO_INCREMENT PRIMARY KEY FIRST;
 alter table llx_document_model add column type varchar(20) NOT NULL after nom;

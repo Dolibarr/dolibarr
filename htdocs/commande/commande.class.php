@@ -144,6 +144,50 @@ class Commande extends CommonObject
 		return $this->create($user);
 	}
 
+
+    /**
+     *      \brief      Renvoie la référence de commande suivante non utilisée en fonction du module
+     *                  de numérotation actif défini dans COMMANDE_ADDON
+     *      \param	    soc  		            objet societe
+     *      \return     string                  reference libre pour la commande
+     */
+    function getNextNumRef($soc)
+    {
+        global $db, $langs, $conf;
+        $langs->load("order");
+
+        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande/";
+
+        if (defined("COMMANDE_ADDON") && COMMANDE_ADDON)
+        {
+            $file = COMMANDE_ADDON.".php";
+
+            // Chargement de la classe de numérotation
+            $classname = $conf->global->COMMANDE_ADDON;
+            require_once($dir.$file);
+
+            $obj = new $classname();
+            $numref = "";
+            $numref = $obj->getNextValue($soc,$this);
+
+            if ( $numref != "")
+            {
+                return $numref;
+            }
+            else
+            {
+                dolibarr_print_error($db,"Commande::getNextNumRef ".$obj->error);
+                return "";
+            }
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_NotDefined");
+            return "";
+        }
+    }
+    
+    
 	/**   	\brief      Valide la commande
 	 *    	\param      user        Utilisateur qui valide
 	 *		\return		int			<=0 si ko, >0 si ok
@@ -154,100 +198,74 @@ class Commande extends CommonObject
 
 		if ($user->rights->commande->valider)
 		{
-			if (defined('COMMANDE_ADDON'))
-			{
-				if (is_readable(DOL_DOCUMENT_ROOT .'/includes/modules/commande/'.COMMANDE_ADDON.'.php'))
-				{
-					require_once DOL_DOCUMENT_ROOT .'/includes/modules/commande/'.COMMANDE_ADDON.'.php';
-		
-					$this->db->begin();
-					
-					// Definition du nom de module de numerotation de commande
-		
-					// \todo  Normer le nom des classes des modules de numérotation de ref de commande avec un nom du type NumRefCommandesXxxx
-					//
-					//$list=split('_',COMMANDE_ADDON);
-					//$numrefname=$list[2];
-					//$modName = 'NumRefCommandes'.ucfirst($numrefname);
-					$modName=$conf->global->COMMANDE_ADDON;
-		
-					// Recuperation de la nouvelle reference
-					$objMod = new $modName($this->db);
-					$soc = new Societe($this->db);
-					$soc->fetch($this->socid);
-					
-					// Classe la société rattachée comme client
-          $result=$soc->set_as_client();
-		
-					// on vérifie si la commande est en numérotation provisoire
-					$comref = substr($this->ref, 1, 4);
-					if ($comref == PROV)
-					{
-						$num = $objMod->commande_get_num($soc);
-					}
-					else
-					{
-						$num = $this->ref;
-					}
-		
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-					$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-		
-					if ($this->db->query($sql) )
-					{
-						// On efface le répertoire de pdf provisoire
-						$comref = sanitize_string($this->ref);
-						if ($conf->commande->dir_output)
-						{
-							$dir = $conf->commande->dir_output . "/" . $comref ;
-							$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-							if (file_exists($file))
-							{
-								commande_delete_preview($this->db, $this->id, $this->ref);
-		
-								if (!dol_delete_file($file))
-								{
-									$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-					                $this->db->rollback();
-									return 0;
-								}
-							}
-							if (file_exists($dir))
-							{
-								if (!dol_delete_dir($dir))
-								{
-									$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-					                $this->db->rollback();
-									return 0;
-								}
-							}
-						}
-		
-						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-						$interface=new Interfaces($this->db);
-						$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
-						// Fin appel triggers
+			$this->db->begin();
+			
+			// Definition du nom de module de numerotation de commande
+			$soc = new Societe($this->db);
+			$soc->fetch($this->socid);
+			$num=$this->getNextNumRef($soc);
 
-		                $this->db->commit();
-		                return $this->id;
-					}
-					else
-					{
-		                $this->db->rollback();
-						$this->error=$this->db->error();
-						return -1;
-					}
-				}
-				else
-				{
-					$this->error='Impossible de lire le module de numérotation';
-					return -1;
-				}
+			// Classe la société rattachée comme client
+  			$result=$soc->set_as_client();
+
+			// on vérifie si la commande est en numérotation provisoire
+			$comref = substr($this->ref, 1, 4);
+			if ($comref == 'PROV')
+			{
+				$num = $this->getNextNumRef($soc);
 			}
 			else
 			{
-				$this->error='Le module de numérotation n\'est pas défini';
+				$num = $this->ref;
+			}
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+			$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
+
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				// On efface le répertoire de pdf provisoire
+				$comref = sanitize_string($this->ref);
+				if ($conf->commande->dir_output)
+				{
+					$dir = $conf->commande->dir_output . "/" . $comref ;
+					$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+					if (file_exists($file))
+					{
+						commande_delete_preview($this->db, $this->id, $this->ref);
+
+						if (!dol_delete_file($file))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+			                $this->db->rollback();
+							return 0;
+						}
+					}
+					if (file_exists($dir))
+					{
+						if (!dol_delete_dir($dir))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+			                $this->db->rollback();
+							return 0;
+						}
+					}
+				}
+
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
+				// Fin appel triggers
+
+                $this->db->commit();
+                return $this->id;
+			}
+			else
+			{
+                $this->db->rollback();
+				$this->error=$this->db->error();
 				return -1;
 			}
 		}

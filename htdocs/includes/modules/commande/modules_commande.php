@@ -25,11 +25,11 @@
  */
 
 /**
-            \file       htdocs/includes/modules/commande/modules_commande.php
-                \ingroup    commande
-                \brief      Fichier contenant la classe mère de generation des commandes en PDF
-                            et la classe mère de numérotation des commandes
-                \version    $Revision$
+		\file       htdocs/includes/modules/commande/modules_commande.php
+		\ingroup    commande
+		\brief      Fichier contenant la classe mère de generation des commandes en PDF
+		            et la classe mère de numérotation des commandes
+		\version    $Revision$
 */
 
 require_once(FPDF_PATH.'fpdf.php');

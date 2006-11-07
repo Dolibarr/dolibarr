@@ -135,6 +135,8 @@ class ModeleNumRefCommandesSuppliers
     }
     
 }
+
+
 function commande_supplier_pdf_create($db, $comid, $modele='',$outputlangs='')
 {
   global $langs;

@@ -189,10 +189,24 @@ class CommandeFournisseur extends Commande
 		{
 			$this->db->begin();
 			
+			// Definition du nom de module de numerotation de commande
+			$soc = new Societe($this->db);
+			$soc->fetch($this->fourn_id);
 			$num=$this->getNextNumRef($soc);
 
+			// on vérifie si la commande est en numérotation provisoire
+			$comref = substr($this->ref, 1, 4);
+			if ($comref == 'PROV')
+			{
+				$num = $this->getNextNumRef($soc);
+			}
+			else
+			{
+				$num = $this->ref;
+			}
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-			$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+			$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -347,10 +361,25 @@ class CommandeFournisseur extends Commande
      */
     function getNextNumRef($soc)
     {
-        global $db, $langs;
+        global $db, $langs, $conf;
         $langs->load("orders");
 
         $dir = DOL_DOCUMENT_ROOT .'/fourn/commande/modules';
+		$modelisok=0;
+	    $liste=array();
+	
+		// Positionne modele sur le nom du modele de commande à utiliser
+		$file = "pdf_".$modele.".modules.php";
+		if ($modele && file_exists($dir.$file))   $modelisok=1;
+	
+	    // Si model pas encore bon 
+		if (! $modelisok)
+		{
+			if ($conf->global->COMMANDE_ADDON_PDF) $modele = $conf->global->COMMANDE_ADDON_PDF;
+	      	$file = "pdf_".$modele.".modules.php";
+	    	if (file_exists($dir.$file))   $modelisok=1;
+	    }
+	
 
 		if (defined('COMMANDE_SUPPLIER_ADDON'))
 		{
