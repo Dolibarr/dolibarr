@@ -103,7 +103,7 @@ class box_factures_fourn extends ModeleBoxes {
 
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+                    'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->idp);
 
                     $this->info_box_contents[$i][2] = array(
                     'align' => 'right',
