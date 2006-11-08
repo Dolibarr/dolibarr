@@ -156,7 +156,7 @@ class Commande extends CommonObject
         global $db, $langs, $conf;
         $langs->load("order");
 
-        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande/";
+        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande";
 
         if (defined("COMMANDE_ADDON") && COMMANDE_ADDON)
         {
@@ -164,7 +164,7 @@ class Commande extends CommonObject
 
             // Chargement de la classe de numérotation
             $classname = $conf->global->COMMANDE_ADDON;
-            require_once($dir.$file);
+            require_once($dir.'/'.$file);
 
             $obj = new $classname();
             $numref = "";

@@ -977,8 +977,19 @@ else
 			*/
 			if ($_GET['action'] == 'valid')
 			{
-				//$numfa = commande_get_num($soc);
-				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $langs->trans('ConfirmValidateOrder'), 'confirm_valid');
+				// on vérifie si la facture est en numérotation provisoire
+				$ref = substr($commande->ref, 1, 4);
+				if ($ref == 'PROV')
+				{
+					$num = $commande->getNextNumRef($soc);
+				}
+				else
+				{
+					$num = $commande->ref;
+				}
+
+				$text=$langs->trans('ConfirmValidateOrder',$num);
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_valid');
 				print '<br />';
 			}
 
