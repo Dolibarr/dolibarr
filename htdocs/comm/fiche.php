@@ -707,8 +707,8 @@ if ($socid > 0)
         $contactstatic->id=$obj->idp;
         $contactstatic->name=$obj->name;
         $contactstatic->firstname=$obj->firstname;
-        print '<td>'.$contactstatic->getNomUrl(1).'</td>';
-
+        print '<td>';
+        print $contactstatic->getNomUrl(1);
         if (trim($obj->note))
         {
             print '<br>'.nl2br(trim($obj->note));
