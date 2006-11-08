@@ -147,7 +147,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '<tr><td>'.$langs->trans("TotalStock").'</td>';
         if ($product->no_stock)
         {
-            print "<td>Pas de définition de stock pour ce produit";
+            print "<td>".$langs->trans("NoStockForThisProduct");
         }
         else
         {
@@ -168,7 +168,7 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 			$result=$product->load_stats_commande(0,'1');
 	        if ($result < 0) dolibarr_print_error($db,$product->error);
-	        print '<tr><td>'.$langs->trans("CustomersOrders").'</td>';
+	        print '<tr><td>'.$langs->trans("CustomersOrdersRunning").'</td>';
 			print '<td>';
 			print $product->stats_commande['qty'];
 			$result=$product->load_stats_commande(0,'0');
@@ -180,12 +180,12 @@ if ($_GET["id"] || $_GET["ref"])
         // Nbre de commande fournisseurs en cours
 		if ($conf->fournisseur->enabled)
 		{
-			$result=$product->load_stats_commande_fournisseur(0,'2');
+			$result=$product->load_stats_commande_fournisseur(0,'3');
 	        if ($result < 0) dolibarr_print_error($db,$product->error);
-	        print '<tr><td>'.$langs->trans("SuppliersOrders").'</td>';
+	        print '<tr><td>'.$langs->trans("SuppliersOrdersRunning").'</td>';
 			print '<td>';
 			print $product->stats_commande_fournisseur['qty'];
-			$result=$product->load_stats_commande_fournisseur(0,'0,1');
+			$result=$product->load_stats_commande_fournisseur(0,'0,1,2');
 	        if ($result < 0) dolibarr_print_error($db,$product->error);
 			print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
 	        print '</td></tr>';

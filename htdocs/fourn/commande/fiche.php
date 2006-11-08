@@ -33,6 +33,8 @@ require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
 
+$langs->load("orders");
+
 $user->getrights("fournisseur");
 
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
@@ -371,7 +373,7 @@ if ($_GET["id"] > 0)
 		{
 			$date_com = mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 			$html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"],
-			"Envoi de la commande","Etes-vous sûr de vouloir confirmer cette commande en date du ".strftime("%d/%m/%Y",$date_com)." ?","confirm_commande");
+			$langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dolibarr_print_date($date_com,'day')),"confirm_commande");
 			print '<br />';
 		}
 
