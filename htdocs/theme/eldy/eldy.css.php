@@ -555,20 +555,15 @@ a.butAction:hover   { font: 12px helvetica, verdana, arial, sans-serif;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butActionRefuse    { font: 12px helvetica, verdana, arial, sans-serif;
+.butActionRefused    { font: 12px helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
-                      border: 1px solid red;
-                      color: #436976;
+                      border: 1px solid #AAAAAA;
+                      color: #AAAAAA;
                       padding: 0em 0.7em;
                       margin: 0em 0.5em;
                       text-decoration: none;
                       white-space: nowrap; }
-
-a.butActionRefuse:hover { font: 12px helvetica, verdana, arial, sans-serif;
-                          font-weight: bold;
-                          background: #dee7ec; }
-
 
 a.butActionDelete    { font: 12px helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
