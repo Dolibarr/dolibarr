@@ -73,12 +73,12 @@ class Paiement
     function fetch($id)
 	{
 		$sql = 'SELECT p.rowid,'.$this->db->pdate('p.datep').' as dp, p.amount, p.statut, p.fk_bank';
-		$sql .=', c.libelle as paiement_type';
-		$sql .= ', p.num_paiement, p.note, b.fk_account';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
-		$sql .= ' WHERE p.fk_paiement = c.id';
-		$sql .= ' AND p.rowid = '.$id;
+		$sql.= ', c.code as type_code, c.libelle as type_libelle';
+		$sql.= ', p.num_paiement, p.note, b.fk_account';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
+		$sql.= ' WHERE p.fk_paiement = c.id';
+		$sql.= ' AND p.rowid = '.$id;
 
 		if ($this->db->query($sql))
 		{
@@ -93,7 +93,8 @@ class Paiement
 				$this->bank_line      = $obj->fk_bank;
 				$this->montant        = $obj->amount;
 				$this->note           = $obj->note;
-				$this->type_libelle   = $obj->paiement_type;
+				$this->type_libelle   = $obj->type_libelle;
+				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
 				return 1;
 			}

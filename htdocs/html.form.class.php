@@ -1174,7 +1174,7 @@ class Form
             print '<select class="flat" name="'.$htmlname.'">';
             if ($useempty) 
             {
-                print '<option value="'.$obj->rowid.'">&nbsp</option>';
+                print '<option value="'.$obj->rowid.'">&nbsp;</option>';
             }
 
             $num = $this->db->num_rows($result);
@@ -1501,7 +1501,7 @@ class Form
    *    \param  title       	title
    *    \param  question    	question
    *    \param  action      	action
-   *	\param	formquestion	an array with forms compementary inputs
+   *	\param	formquestion	an array with forms complementary inputs
    */
 	 
   function form_confirm($page, $title, $question, $action, $formquestion='')
@@ -1524,7 +1524,14 @@ class Form
 	    print '<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>';
 		foreach ($formquestion as $key => $input)
 		{	    
-	    	if ($input['type'] == 'text') print '<tr><td valign="top">'.$input['label'].'</td><td colspan="2"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
+	    	if ($input['type'] == 'text')
+	    	{
+	    		print '<tr><td valign="top">'.$input['label'].'</td><td colspan="2"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
+	    	}
+	    	if ($input['type'] == 'select') 
+	    	{
+	    		// TODO	
+	    	}
 	    	if ($input['type'] == 'radio') 
 	    	{
 	    		$i=0;
@@ -1541,19 +1548,26 @@ class Form
 	 	   		}
 	 	   	}
 		}
-	    print '</tr></table>';
-	    print '</td>';
+	    print '</table>';
+	    print '</td></tr>';
     }
 
     // Ligne message
-    print '<tr class="valid"><td class="valid">'.$question.'</td>';
+    print '<tr class="valid">';
+    print '<td class="valid">'.$question.'</td>';
     print '<td class="valid">';
     $this->selectyesno("confirm","no");
     print '</td>';
-    print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Confirm").'"></td></tr>';
+    print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
+    print '</tr>';
 
     print '</table>';
-    
+
+	foreach ($formquestion as $key => $input)
+	{	    
+    	if ($input['type'] == 'hidden') print '<input type="hidden" name="'.$input['name'].'" value="'.$input['value'].'">';
+	}
+	    
     print "</form>\n";  
   }
 

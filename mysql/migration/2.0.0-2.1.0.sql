@@ -479,6 +479,9 @@ alter table llx_facturedet_rec add column total_tva real;
 alter table llx_facturedet_rec add column total_ttc real;
 
 
+update llx_facture set fk_facture_source=null where fk_facture_source is not null and type = 0;
+
+
 update llx_boxes set fk_user = 0 where fk_user IS NULL;
 ALTER TABLE llx_boxes modify fk_user integer default 0 NOT NULL;
 

@@ -129,7 +129,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$paiement->
  */
 if ($_GET['action'] == 'delete')
 {
-	$html->form_confirm('fiche.php?id='.$paiement->id, 'Supprimer le paiement', 'Etes-vous sûr de vouloir supprimer ce paiement ?', 'confirm_delete');
+	$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), 'Etes-vous sûr de vouloir supprimer ce paiement ?', 'confirm_delete');
 	print '<br>';
 }
 
@@ -139,7 +139,7 @@ if ($_GET['action'] == 'delete')
 if ($_GET['action'] == 'valide')
 {
 	$facid = $_GET['facid'];
-	$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, 'Valider le paiement', 'Etes-vous sûr de vouloir valider ce paiment, auncune modification n\'est possible une fois le paiement validé ?', 'confirm_valide');
+	$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), 'Etes-vous sûr de vouloir valider ce paiment, auncune modification n\'est possible une fois le paiement validé ?', 'confirm_valide');
 	print '<br>';
 }
 
@@ -168,14 +168,26 @@ if ($conf->banque->enabled)
     	print '</tr>';
     }
 }
+
+// Date
 print '<tr><td valign="top" width="140">'.$langs->trans('Date').'</td><td colspan="3">'.dolibarr_print_date($paiement->date).'</td></tr>';
-print '<tr><td valign="top">'.$langs->trans('Type').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
-if ($paiement->numero)
-{
+
+// Mode
+print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';
+
+// Numero
+//if ($paiement->montant)
+//{
 	print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->numero.'</td></tr>';
-}
+//}
+
+// Montant
 print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+
+
+// Note
 print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
+
 print '</table>';
 
 
