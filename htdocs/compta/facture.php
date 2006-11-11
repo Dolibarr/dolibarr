@@ -1116,10 +1116,15 @@ if ($_GET['action'] == 'create')
 
     // Type de facture
 	$facids=$facturestatic->list_replacable_invoices($soc->id);
-	$options="";
-	foreach ($facids as $key => $value)
+	if ($facids < 0)
 	{
-		$options.='<option value="'.$key.'">'.$value.'</option>';
+		dolibarr_print_error($db,$facturestatic);
+		exit;
+	}
+	$options="";
+	foreach ($facids as $facparam)
+	{
+		$options.='<option value="'.$facparam['id'].'">'.$facparam['ref'].'</option>';
 	}
 	$facids=$facturestatic->list_qualified_avoir_invoices($soc->id);
 	$optionsav="";
@@ -1676,15 +1681,14 @@ else
 			 */
 			if ($_GET['action'] == 'canceled')
 			{
-				// Si il y a une facture de remplacement pas encore validée (etat brouillon), 
-				// on ne permet pas de classer abandonner la facture
+				// S'il y a une facture de remplacement pas encore validée (etat brouillon), 
+				// on ne permet pas de classer abandonner la facture.
 				if ($facidnext)
 				{
 					$facturereplacement=new Facture($db);
 					$facturereplacement->fetch($facidnext);
 					$statusreplacement=$facturereplacement->statut;
 				}
-				print "x".$statusreplacement;
 				if ($facidnext && $statusreplacement == 0)
 				{
 					print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';

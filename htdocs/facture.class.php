@@ -1801,10 +1801,13 @@ class Facture extends CommonObject
 		$sql.= ' WHERE fk_facture_source = '.$this->id;
 		$sql.= ' AND type < 2';
 		if ($option == 'validated') $sql.= ' AND fk_statut = 1';
-		$sql.= ' ORDER BY fk_statut DESC';	// Au cas ou base corrompu et qu'il y a une
-											// facture de remplacement validee et une autre non
-											// on donne priorité à la validée. Ne devrait pas arriver
-		
+		// PROTECTION BAD DATA
+		// Au cas ou base corrompue et qu'il y a une facture de remplacement validée
+		// et une autre non, on donne priorité à la validée.
+		// Ne devrait pas arriver (sauf si accès concurrentiel et que 2 personnes
+		// ont créé en meme temps une facture de remplacement pour la meme facture)
+		$sql.= ' ORDER BY fk_statut DESC';	
+	
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2240,7 +2243,7 @@ class Facture extends CommonObject
 	 *  	\brief     	Renvoi liste des factures remplacables
 	 *					Statut validee + aucun paiement + non paye + pas deja remplacées
 	 *		\param		socid		Id societe
-	 *   	\return    	array		Tableau des factures ($id => $ref)
+	 *   	\return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'statut'=>status)
 	 */
 	function list_replacable_invoices($socid=0)
 	{
@@ -2248,13 +2251,14 @@ class Facture extends CommonObject
 
 		$return = array();
 
-		$sql = "SELECT f.rowid as rowid, f.facnumber,";
+		$sql = "SELECT f.rowid as rowid, f.facnumber, f.fk_statut,";
 		$sql.= " ff.rowid as rowidnext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
 		$sql.= " WHERE f.fk_statut = 1 AND f.paye = 0 AND pf.fk_paiement IS NULL";
-		$sql.= " AND IFNULL(ff.fk_statut,0) = 0";	// Doit renvoyé vrai si pas de jointure trouvé ou si jointure vers statut à 0
+		$sql.= " AND ff.fk_statut IS NULL";			// Renvoie vrai si pas de jointure
+		//$sql.= " AND IFNULL(ff.fk_statut,0) = 0";	// Renvoie vrai si pas de jointure ou si jointure vers statut à 0
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 
@@ -2264,9 +2268,11 @@ class Facture extends CommonObject
 		{
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$return[$obj->rowid]=$obj->facnumber;
+				$return[$obj->rowid]=array(	'id' => $obj->rowid, 
+											'ref' => $obj->facnumber,
+											'status' => $obj->fk_status);
 			}
-
+			//print_r($return);
 			return $return;
 		}
 		else
