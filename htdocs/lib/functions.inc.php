@@ -70,7 +70,7 @@ function versioncompare($versionarray1,$versionarray2)
         if ($operande1 < $operande2) { $ret = -1; break; }
         if ($operande1 > $operande2) { $ret =  1; break; }
         $i++;
-    }    
+    }
     return $ret;
 }
 
@@ -143,8 +143,8 @@ function unaccent($str)
 */
 function sanitize_string($str)
 {
-    $forbidden_chars_to_underscore=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
-    //$forbidden_chars_to_remove=array("(",")"); 
+    $forbidden_chars_to_underscore=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+    //$forbidden_chars_to_remove=array("(",")");
     $forbidden_chars_to_remove=array();
     return str_replace($forbidden_chars_to_underscore,"_",str_replace($forbidden_chars_to_remove,"",$str));
 }
@@ -166,14 +166,14 @@ function sanitize_string($str)
 function dolibarr_syslog($message, $level=LOG_INFO)
 {
     global $conf,$user,$langs;
-    
+
     if ($conf->syslog->enabled)
     {
 		// Change this to LOg_DEBUG to see all messages on *nix
 	    $level_maximum = LOG_INFO;
 
 		if ($level > $level_maximum) return;
-		
+
         // Ajout user a la log
         $login='???';
         if (is_object($user) && $user->id) $login=$user->login;
@@ -197,7 +197,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
         else
         {
 			//define_syslog_variables(); déjà définit dans master.inc.php
-        
+
             if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
             {
                 $facility = MAIN_SYSLOG_FACILITY;
@@ -211,9 +211,9 @@ function dolibarr_syslog($message, $level=LOG_INFO)
             {
                 $facility = LOG_USER;
             }
-        
+
             openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
-        
+
             if (! $level)
             {
                 syslog(LOG_ERR, $message);
@@ -222,7 +222,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
             {
                 syslog($level, $message);
             }
-        
+
             closelog();
         }
     }
@@ -245,7 +245,7 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
     {
         $limittitle=30;
         print '<a class="tabTitle">';
-        print 
+        print
 			((!defined('MAIN_USE_SHORT_TITLE')) || (defined('MAIN_USE_SHORT_TITLE') &&  MAIN_USE_SHORT_TITLE))
 			? dolibarr_trunc($title,$limittitle)
 			: $title;
@@ -275,7 +275,7 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
     }
 
     print "</div>\n";
-    
+
     if (! $notab) print '<div class="tabBar">'."\n\n";
 }
 
@@ -289,11 +289,11 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
 function dolibarr_get_const($db, $name)
 {
     $value='';
-    
+
     $sql ="SELECT value";
     $sql.=" FROM llx_const";
-    $sql.=" WHERE name = '$name';"; 		
-    $resql=$db->query($sql);	
+    $sql.=" WHERE name = '$name';";
+    $resql=$db->query($sql);
     if ($resql)
     {
         $obj=$db->fetch_object($resql);
@@ -317,22 +317,22 @@ function dolibarr_get_const($db, $name)
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
     global $conf;
-    
+
     $db->begin();
-    
-    if (! $name) 
+
+    if (! $name)
     {
     	dolibarr_print_error("Error: Call to function dolibarr_set_const with wrong parameters");
     	exit;
     }
-    
+
     //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
-    $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
-    $resql=$db->query($sql);	
-    
+    $sql = "DELETE FROM llx_const WHERE name = '$name';";
+    $resql=$db->query($sql);
+
     $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
     $sql.= " VALUES ('$name','".addslashes($value)."','$type',$visible,'".addslashes($note)."');";
-    $resql=$db->query($sql);	
+    $resql=$db->query($sql);
 
     if ($resql)
     {
@@ -382,7 +382,7 @@ function dolibarr_del_const($db, $name)
 function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 {
     $db->begin();
-    
+
     // On efface paramètres anciens
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
     $sql.= " WHERE fk_user = ".$user->id;
@@ -428,7 +428,7 @@ function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 function dolibarr_print_ca($ca)
 {
     global $langs,$conf;
-    
+
     if ($ca > 1000)
     {
       $cat = round(($ca / 1000),2);
@@ -479,7 +479,7 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 function dolibarr_print_date($time,$format='')
 {
     global $conf;
-    
+
     // Si format non défini, on prend $conf->format_date_text_short
     if (! $format) $format=$conf->format_date_text_short;
 
@@ -527,22 +527,22 @@ function dolibarr_print_object_info($object)
 {
     global $langs;
 	$langs->load("other");
-	
+
     if (isset($object->user_creation) && $object->user_creation->fullname)
         print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
 
     if (isset($object->date_creation))
         print $langs->trans("DateCreation")." : " . dolibarr_print_date($object->date_creation,"%A %d %B %Y %H:%M:%S") . '<br>';
-    
+
     if (isset($object->user_modification) && $object->user_modification->fullname)
         print $langs->trans("ModifiedBy")." : " . $object->user_modification->fullname . '<br>';
-        
+
     if (isset($object->date_modification))
         print $langs->trans("DateLastModification")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
-    
+
     if (isset($object->user_validation) && $object->user_validation->fullname)
         print $langs->trans("ValidatedBy")." : " . $object->user_validation->fullname . '<br>';
-    
+
     if (isset($object->date_validation))
         print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_validation,"%A %d %B %Y %H:%M:%S") . '<br>';
 
@@ -694,7 +694,7 @@ function img_statut($num,$alt = "default")
         if ($num == 1) $alt=$langs->trans("Late");
         if ($num == 4) $alt=$langs->trans("Running");
         if ($num == 5) $alt=$langs->trans("Closed");
-    } 
+    }
     return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/statut'.$num.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
@@ -860,7 +860,7 @@ function img_warning($alt = "default",$float=0)
     $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'"';
     if ($float) $img.=' style="float: right"';
     $img.='>';
-    
+
     return $img;
 }
 
@@ -1052,22 +1052,22 @@ function dol_loginfunction($notused,$pearstatus)
     global $langs,$conf;
     $langs->load("main");
     $langs->load("other");
-    
+
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
     // Si feuille de style en php existe
     if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
-    
+
     // Ce DTD est KO car inhibe document.body.scrollTop
     //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
     // Ce DTD est OK
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">';
 
     print "\n<html><head><title>Dolibarr Authentification</title>\n";
-    
+
     print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
-    
-    
-    
+
+
+
     print '<style type="text/css">'."\n";
     print '<!--'."\n";
     print '#login {';
@@ -1096,17 +1096,17 @@ function dol_loginfunction($notused,$pearstatus)
     print "}\n";
     print '</script>'."\n";
     print '</head>'."\n";
-    
+
     print '<body class="body" onload="donnefocus();">';
 
     print '<form id="login" name="login" method="post" action="';
     print $_SERVER['PHP_SELF'];
     print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
     print '">';
-    
+
     print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">';
-    
-    
+
+
     if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
     {
       print '<tr><td colspan="3" style="text-align:center;">';
@@ -1116,7 +1116,7 @@ function dol_loginfunction($notused,$pearstatus)
     {
       print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
     }
-    
+
     print'</table>
 
 <br>
@@ -1134,7 +1134,7 @@ function dol_loginfunction($notused,$pearstatus)
     {
         print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
     }
-    else 
+    else
     {
         print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
     }
@@ -1185,7 +1185,7 @@ function accessforbidden($message='')
 {
   global $user, $langs;
   $langs->load("other");
-  
+
   llxHeader();
   print '<div class="error">';
   if (! $message) print $langs->trans("ErrorForbidden");
@@ -1223,7 +1223,7 @@ function dolibarr_print_error($db='',$msg='')
 {
     global $langs;
     $syslog = '';
-    
+
     // Si erreur intervenue avant chargement langue
     if (! $langs)
     {
@@ -1231,12 +1231,12 @@ function dolibarr_print_error($db='',$msg='')
         $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", "en_US");
     }
     $langs->load("main");
-    
+
     if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
     {
         print $langs->trans("DolibarrHasDetectedError").".<br>\n";
         print $langs->trans("InformationToHelpDiagnose").":<br><br>\n";
-    
+
         print "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
         print "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
         print "<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
@@ -1247,11 +1247,11 @@ function dolibarr_print_error($db='',$msg='')
     }
     else                              // Mode CLI
     {
-    
+
         print $langs->trans("ErrorInternalErrorDetected")."\n";
         $syslog.="pid=".getmypid();
     }
-    
+
     if (is_object($db))
     {
         if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
@@ -1268,12 +1268,12 @@ function dolibarr_print_error($db='',$msg='')
             print $langs->trans("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
             print $langs->trans("ReturnCodeLastAccess").":\n".$db->errno()."\n";
             print $langs->trans("InformationLastAccess").":\n".$db->error()."\n";
-    
+
         }
         $syslog.=", sql=".$db->lastquery();
         $syslog.=", db_error=".$db->error();
     }
-    
+
     if ($msg) {
         if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
         {
@@ -1285,7 +1285,7 @@ function dolibarr_print_error($db='',$msg='')
         }
         $syslog.=", msg=".$msg;
     }
-    
+
     dolibarr_syslog("Error $syslog");
 }
 
@@ -1299,7 +1299,7 @@ function dolibarr_print_error($db='',$msg='')
 function doliMoveFileUpload($src_file, $dest_file)
 {
 	$file_name = $dest_file;
-	
+
 	// On renomme les fichiers avec extentio executable car si on a mis le rep
 	// documents dans un rep de la racine web (pas bien), cela permet d'executer
 	// du code a la demande.
@@ -1307,7 +1307,7 @@ function doliMoveFileUpload($src_file, $dest_file)
 	{
 		$file_name.= '.txt';
 	}
-	
+
 	return move_uploaded_file($src_file, $file_name);
 }
 
@@ -1387,7 +1387,7 @@ function transcoS2L($zonein,$devise)
     $i++;
   } // fin initialise la  table (fin)
   // echo "Pour une valeur en entrée = $zonein<br>"; //pour ceux qui ne croient que ce qu'ils voient !
-  // quelques petits controles s'imposent !! 
+  // quelques petits controles s'imposent !!
   $valid = "[a-zA-Z\&\é\"\'\(\-\è\_\ç\à\)\=\;\:\!\*\$\^\<\>]";
   if (ereg($valid,$zonein))
     {
@@ -1622,14 +1622,12 @@ function dol_delete_dir($dir)
 }
 
 /**
-		\brief  	Effacement d'un répertoire et son arborescence
+		\brief  	Effacement d'un répertoire $dir et de son arborescence
 		\param		file			Répertoire a effacer
 		\return		int				Nombre de fichier+repértoires supprimés
 */
-function dol_delete_dir_recursive($dir)
+function dol_delete_dir_recursive($dir,$count=0)
 {
-	$count=0;
-	
 	if ($handle = opendir("$dir"))
 	{
 		while (false !== ($item = readdir($handle)))
@@ -1638,13 +1636,13 @@ function dol_delete_dir_recursive($dir)
 			{
 				if (is_dir("$dir/$item"))
 				{
-					dol_delete_dir_recursive("$dir/$item");
+					$count=dol_delete_dir_recursive("$dir/$item",$count);
 				}
 				else
 				{
-						unlink("$dir/$item");
-						$count++;
-						//echo " removing $dir/$item<br>\n";
+					unlink("$dir/$item");
+					$count++;
+					//echo " removing $dir/$item<br>\n";
 				}
 			}
 		}
@@ -1653,7 +1651,7 @@ function dol_delete_dir_recursive($dir)
 		$count++;
 		//echo "removing $dir<br>\n";
 	}
-	
+
 	//echo "return=".$count;
 	return $count;
 }
@@ -1744,13 +1742,13 @@ function print_fleche_navigation($page,$file,$options='',$nextpage)
 function price($amount, $html=0, $outlangs='')
 {
 	global $langs;
-	
+
 	// Separateurs par defaut
 	$dec='.'; $thousand=' ';
 
 	// Si $outlangs non force, on prend langue utilisateur
 	if (! is_object($outlangs)) $outlangs=$langs;
-	
+
 	if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
 	if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
 	//print "x".$langs->trans("SeparatorThousand")."x";
@@ -1797,20 +1795,20 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	dolibarr_syslog("get_default_tva vendeur_assujeti=$societe_vendeuse->tva_assuj pays_vendeur=$societe_vendeuse->pays_id, pays_acheteur=$societe_acheteuse->pays_id, taux_produit=$taux_produit");
 
 	if (!is_object($societe_vendeuse)) return 0;
-	
+
 	// Si vendeur non assujeti à TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
 	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
-	
-	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.	
+
+	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
 	if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && $societe_acheteuse->tva_assuj == 1)
 	{
 	    return $taux_produit;
 	}
-	
+
 	// Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
 	// Non géré
-	
+
  	// Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
 	if (is_object($societe_acheteuse) && ($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_assuj == 1)
 	{
@@ -1831,7 +1829,7 @@ function yn($yesno, $case=1) {
     global $langs;
     if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') 	// A mettre avant test sur no a cause du == 0
         return $case?$langs->trans("Yes"):$langs->trans("yes");
-    if ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false') 
+    if ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false')
         return $case?$langs->trans("No"):$langs->trans("no");
     return "unknown";
 }
@@ -1951,7 +1949,7 @@ function create_exdir($dir)
     dolibarr_syslog("functions.inc.php::create_exdir: dir=$dir");
 
   	if (@is_dir($dir)) return 0;
-	
+
     $nberr=0;
     $nbcreated=0;
 
@@ -2009,20 +2007,20 @@ function create_exdir($dir)
 function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="", $sortorder=SORT_ASC)
 {
 	dolibarr_syslog("functions.inc.php::dolibarr_dir_list $path");
-	
+
 	if (! is_dir($path)) return array();
-	
+
 	if ($dir = opendir($path))
 	{
 		$file_list = array();
 		while (false !== ($file = readdir($dir)))
 		{
 			$qualified=1;
-	
+
 			// Check if file is qualified
 			if (eregi('^\.',$file)) $qualified=0;
 			if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
-	
+
 //			print "path=$path file=$file<br>\n";
 
 			if ($qualified)
@@ -2033,7 +2031,7 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 					// Add entry into file_list array
 					if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
 					if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
-										
+
 					if (! $filter || eregi($filter,$path.'/'.$file))
 					{
 						$file_list[] = array(
@@ -2043,7 +2041,7 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 	                                       "size" => $filesize
 	                                 	);
 					}
-					
+
 					// if we're in a directory and we want recursive behavior, call this function again
 					if ($recursive)
 					{
@@ -2068,7 +2066,7 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 			}
 		}
 		closedir($dir);
-		
+
 		// Obtain a list of columns
 		$myarray=array();
 		foreach ($file_list as $key => $row)
@@ -2076,10 +2074,10 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 			$myarray[$key]  = $row[$sortcriteria];
 		   	//$myarray2[$key]  = $row['size'];
 		}
-		
+
 		// Sort the data
 		array_multisort($myarray, $sortorder, $file_list);
-		
+
 		return $file_list;
 	}
 	else
@@ -2096,7 +2094,7 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 function numero_semaine($time)
 {
     $stime = strftime( '%Y-%m-%d',$time);
-    
+
     if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$stime,$reg))
     {
         // Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
@@ -2104,14 +2102,14 @@ function numero_semaine($time)
         $mois = $reg[2];
         $jour = $reg[3];
     }
-    
+
     /*
      * Norme ISO-8601:
      * - La semaine 1 de toute année est celle qui contient le 4 janvier ou que la semaine 1 de toute année est celle qui contient le 1er jeudi de janvier.
      * - La majorité des années ont 52 semaines mais les années qui commence un jeudi et les années bissextiles commençant un mercredi en possède 53.
      * - Le 1er jour de la semaine est le Lundi
-     */ 
-    
+     */
+
     // Définition du Jeudi de la semaine
     if (date("w",mktime(12,0,0,$mois,$jour,$annee))==0) // Dimanche
         $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-3*24*60*60;
@@ -2121,7 +2119,7 @@ function numero_semaine($time)
         $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-(date("w",mktime(12,0,0,$mois,$jour,$annee))-4)*24*60*60;
     else // Jeudi
         $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee);
-    
+
     // Définition du premier Jeudi de l'année
     if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==0) // Dimanche
     {
@@ -2139,16 +2137,16 @@ function numero_semaine($time)
     {
         $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine));
     }
-        
+
     // Définition du numéro de semaine: nb de jours entre "premier Jeudi de l'année" et "Jeudi de la semaine";
-    $numeroSemaine =     ( 
-                    ( 
-                        date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine))) 
+    $numeroSemaine =     (
+                    (
+                        date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine)))
                         -
-                        date("z",mktime(12,0,0,date("m",$premierJeudiAnnee),date("d",$premierJeudiAnnee),date("Y",$premierJeudiAnnee))) 
-                    ) / 7 
+                        date("z",mktime(12,0,0,date("m",$premierJeudiAnnee),date("d",$premierJeudiAnnee),date("Y",$premierJeudiAnnee)))
+                    ) / 7
                 ) + 1;
-    
+
     // Cas particulier de la semaine 53
     if ($numeroSemaine==53)
     {
@@ -2162,9 +2160,9 @@ function numero_semaine($time)
             $numeroSemaine = 1;
         }
     }
-        
+
     //echo $jour."-".$mois."-".$annee." (".date("d-m-Y",$premierJeudiAnnee)." - ".date("d-m-Y",$jeudiSemaine).") -> ".$numeroSemaine."<BR>";
-            
+
     return sprintf("%02d",$numeroSemaine);
 }
 

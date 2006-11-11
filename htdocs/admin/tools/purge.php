@@ -68,7 +68,7 @@ if ($_POST["action"]=='purge')
 		foreach($filesarray as $key => $value)
 		{
 			//print "x ".$filesarray[$key]['fullname']."<br>\n";
-			$count=dol_delete_dir_recursive($filesarray[$key]['fullname']);
+			$count+=dol_delete_dir_recursive($filesarray[$key]['fullname']);
 		}		
 
 	}
