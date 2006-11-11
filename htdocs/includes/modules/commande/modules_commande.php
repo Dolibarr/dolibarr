@@ -33,26 +33,26 @@
 */
 
 require_once(FPDF_PATH.'fpdf.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");	// requis car utilise par les classes qui heritent
 
 
 /**
-            \class      ModelePDFCommandes
-                \brief      Classe mère des modèles de commandes
+		\class      ModelePDFCommandes
+		\brief      Classe mère des modèles de commandes
 */
-
 class ModelePDFCommandes extends FPDF
 {
     var $error='';
 
-   /** 
-        \brief Renvoi le dernier message d'erreur de création de PDF de commande
+   /**
+	*	\brief 	Renvoi le dernier message d'erreur de création de PDF de commande
     */
     function pdferror()
     {
         return $this->error;
     }
 
-    /** 
+    /**
      *      \brief      Renvoi la liste des modèles actifs
      *      \return    array        Tableau des modeles (cle=id, valeur=libelle)
      */
@@ -63,7 +63,7 @@ class ModelePDFCommandes extends FPDF
         $sql ="SELECT nom as id, nom as lib";
         $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
         $sql.=" WHERE type = '".$type."'";
-        
+
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -134,7 +134,7 @@ class ModeleNumRefCommandes
         global $langs;
         return $langs->trans("NotAvailable");
     }
-    
+
 }
 
 
@@ -149,7 +149,7 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
 {
 	global $conf,$langs;
 	$langs->load("orders");
-	
+
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/commande/";
 	$modelisok=0;
     $liste=array();
@@ -158,7 +158,7 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
 	$file = "pdf_".$modele.".modules.php";
 	if ($modele && file_exists($dir.$file))   $modelisok=1;
 
-    // Si model pas encore bon 
+    // Si model pas encore bon
 	if (! $modelisok)
 	{
 		if ($conf->global->COMMANDE_ADDON_PDF) $modele = $conf->global->COMMANDE_ADDON_PDF;
@@ -166,7 +166,7 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
     	if (file_exists($dir.$file))   $modelisok=1;
     }
 
-    // Si model pas encore bon 
+    // Si model pas encore bon
 	if (! $modelisok)
 	{
 		$model=new ModelePDFCommandes();
@@ -175,15 +175,15 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
       	$file = "pdf_".$modele.".modules.php";
     	if (file_exists($dir.$file))   $modelisok=1;
 	}
-	
+
 	// Charge le modele
     if ($modelisok)
 	{
 		$classname = "pdf_".$modele;
 		require_once($dir.$file);
-	
+
 		$obj = new $classname($db);
-	
+
 		if ($obj->write_pdf_file($id, $outputlangs) > 0)
 		{
 			// on supprime l'image correspondant au preview
@@ -227,14 +227,14 @@ function commande_delete_preview($db, $commandeid, $commanderef='')
         	$com->fetch($commandeid);
         	$commanderef = $com->ref;
         }
-        
+
         if ($conf->commande->dir_output)
         {
         	$comref = sanitize_string($commanderef);
         	$dir = $conf->commande->dir_output . "/" . $comref ;
         	$file = $dir . "/" . $comref . ".pdf.png";
         	$multiple = $file . ".";
-        	
+
         	if ( file_exists( $file ) && is_writable( $file ) )
         	{
         		if ( ! unlink($file) )
@@ -248,7 +248,7 @@ function commande_delete_preview($db, $commandeid, $commanderef='')
         		for ($i = 0; $i < 20; $i++)
         		{
         			$preview = $multiple.$i;
-        		
+
         		if ( file_exists( $preview ) && is_writable( $preview ) )
         		{
         			if ( ! unlink($preview) )

@@ -629,7 +629,7 @@ class pdf_crabe extends ModelePDFFactures
     /*
      *	\brief      Affiche le total à payer
      *	\param      pdf             Objet PDF
-     *	\param      fac             Objet facture
+     *	\param      object          Objet facture
      *	\param      deja_regle      Montant deja regle
      *	\param		posy			Position depart
      *	\param		outputlangs		Objet langs

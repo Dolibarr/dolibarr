@@ -26,7 +26,6 @@
 		\brief      Fichier de la classe permettant de générer les commandes au modèle Einstein
 		\author	    Laurent Destailleur
 		\version    $Revision$
-		\version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
@@ -557,11 +556,13 @@ class pdf_einstein extends ModelePDFCommandes
 
 
     /*
-     *   \brief      Affiche le total à payer
-     *   \param      pdf         	Objet PDF
-     *   \param      prop         	Objet propale
-     *   \param      deja_regle  	Montant deja regle
-     *   \return     y              Position pour suite
+     *	\brief      Affiche le total à payer
+     *	\param      pdf             Objet PDF
+     *	\param      object          Objet commande
+     *	\param      deja_regle      Montant deja regle
+     *	\param		posy			Position depart
+     *	\param		outputlangs		Objet langs
+     *	\return     y				Position pour suite
     */
     function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
     {
