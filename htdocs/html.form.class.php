@@ -769,6 +769,7 @@ class Form
         $sql.= " ORDER BY p.nbvente DESC";
         if ($limit) $sql.= " LIMIT $limit";
 
+        dolibarr_syslog("Html.for.class::select_produits_do sql=$sql");
 		$result=$this->db->query($sql);
 		if (! $result) dolibarr_print_error($this->db);
 		
