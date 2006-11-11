@@ -47,14 +47,17 @@ Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
 III - CE QUI EST NOUVEAU
 ------------------------
 
-- Ajout d'un installeur.
+- Meilleur outil installeur.
 - Supporte la notion de permissions utilisateurs et groupes.
 - Traduction en anglais et support pour d'autres langues.
 - Support experimental de Postgresql.
 - Nouveaux look amélioré et plusieurs nouveaux themes.
 - Petites boites de recherche pour chaque entités Dolibarr (factures, contrats,
   commandes, propals...)
-- Peut attacher des documents sur les actions et factures.
+- Les boites de modules sur page accueil peuvent se déplacer par drag an drop
+  et l'ordre est propre à l'utilisateur (firefow seulement).
+- Peut attacher des documents sur les Actions, Commandes, Factures, Propals.
+- Peut attaches des contacts sur les Contrats, Commandes, Factures, Propals.
 - Amélioration de certains modules et paramètres:
   * Module société: Ajout de plusieurs nouvelles propriétés (maison mère,
     rib, remise, type, capital, tva intra ...).
@@ -73,6 +76,7 @@ III - CE QUI EST NOUVEAU
   * Module standing orders: Pour gérer les virements français
   * Module bookmark:  Pour gérer des marques pages
   * Module syslog:    Pour ajouter des logs dans un fichier ou dans syslog
+  * Module oscommerce2: Nouveau module OSCommerce fonctionnant via web services
 - Les triggers Dolibarr triggers permettent d'ajouter du code personalisé PHP
   dans le workflow, sans risque de casser Dolibarr.
 - Correction de bugs et suppression de redeondance de code.

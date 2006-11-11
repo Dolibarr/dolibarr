@@ -45,44 +45,8 @@ To upgrade Dolibarr from an old version to this one:
 III - WHAT'S NEW
 ----------------
 
-- Added an installer.
-- Support user and groups permissions.
-- Translation in english and support for several languages.
-- Experimental support for Postgresql.
-- New enhanced look and several new themes.
-- Small search boxes for each Dolibarr elements (invoices, contracts,
-  orders, proposals...)
-- Modules boxes on main page can be dragged and dropped (with firefox only).
-- Can attach documents on actions and invoices.
-- Enhanced use of modules and their parameters:
-  * Module companies: Added more properties supported on companies (parent
-    company, rib, discounts, company type, capital, vat intra ...).
-  * Module bank: Support cash accounts
-  * Module LDAP: Can disable contact syncronizing
-  * Module products: Support attachments of pictures, add prices and logs
-  * Module external_rss: Support https links
-  * Module webcalendar: Better integration with webcalendar
-  * Module invoice: Add discount management and correting invoices
-- Added new modules:
-  * Module emailing:  To send emailings
-  * Module members:   To manage members of a fundation
-  * Module suppliers: Provide orders to suppliers
-  * Module contracts: Manage contracts and their contacts
-  * Module stock:     To manage warehouses and stocks
-  * Module standing orders: To manage french standing orders
-  * Module bookmark:  To manage your own bookmarks and add them on man page
-  * Module syslog:    To add debug informations in syslog or log files
-- Dolibarr triggers allow to add personalized PHP code inside
-  workflow, with no risk to break Dolibarr.
-- Bug fixes and a lot of duplicate code removed.
-- Add a WISIWYG editor (FCKEditor) to edit note and comment areas.
-- A lot of other changes to enhance interface.
-- Support for PHP5.
-- Removed obsolete files and documentation.
-- Added admin tools (backup and files purge).
-- Added a tool to build a lang package.
-- Added a tool to build a module package.
-- Added a tool to build a theme package.
+See Changelog File.
+
 
 
 IV - WHAT DOLIBARR CAN DO

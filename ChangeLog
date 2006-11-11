@@ -3,9 +3,16 @@ English Dolibarr changelog
 
 ***** Changelog for 2.1 compared to 2.0.1 *****
 
+- Added a better installer.
+- Support user and groups permissions.
+- Translation in english and support for several languages.
+- Experimental support for Postgresql.
+- New enhanced look and several new themes.
+- Small search boxes for each Dolibarr elements (invoices, contracts,
+  orders, proposals...)
+- Modules boxes on main page can be dragged and dropped (with firefox only).
 - Support credit note and discounts (relative and absolute) on
   commercial proposal, orders and invoices.
-- WYSIWYG editor for some fields (use embedded version of fckeditor)
 - Added an export assistant module to export main dolibarr data.
 - Added backup tool to backup database via mysqldump.
 - Added product categories management with a categorie tree.
@@ -15,6 +22,7 @@ English Dolibarr changelog
 - Added more permissions (ie: can restrict access for a commercial user
   to elements of its companies only).
 - Little enhancements to OSCommerce module.
+- Added a second OSCommerce module working through web services.
 - Building a PDF document for invoices works like other modules. You
   can change model just before generating the PDF.
 - Can generate documents (PDF) for customer orders. Can send them by mail.
@@ -37,8 +45,17 @@ English Dolibarr changelog
 - Works even on "UTF8 by default" systems (Mysql, Linux...)
 - Better compatibility with different PHP version or setup.
 - Lot of fixes after 2.0 release not fixed in 2.0.1.
-- Adde mysqli driver.
+- Added mysqli driver.
 - Traduction more complete.
+- Add a WISIWYG editor (FCKEditor) to edit note and comment areas.
+- Support for PHP5.
+- Removed obsolete files and documentation.
+- Added admin tools (backup and files purge).
+- Added a tool to build a lang package.
+- Added a tool to build a module package.
+- Added a tool to build a theme package.
+- Modules boxes on main page can be dragged and dropped (with firefox only).
+
 
 
 ***** Changelog for 2.0.1 compared to 2.0 *****
