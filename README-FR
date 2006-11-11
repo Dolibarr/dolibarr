@@ -80,6 +80,7 @@ III - CE QUI EST NOUVEAU
 - De nombreuses autres changement mineurs dans l'interface.
 - Support de PHP5.
 - Suppression de fichiers obsoletes et documentation.
+- Ajout d'outils d'administration (sauvegarde et purge fichiers).
 - Ajout d'un outil pour fabriquer un package de lang.
 - Ajout d'un outil pour fabriquer un package de module.
 - Ajout d'un outil pour fabriquer un package de theme.

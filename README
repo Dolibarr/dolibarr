@@ -79,6 +79,7 @@ III - WHAT'S NEW
 - A lot of other changes to enhance interface.
 - Support for PHP5.
 - Removed obsolete files and documentation.
+- Added admin tools (backup and files purge).
 - Added a tool to build a lang package.
 - Added a tool to build a module package.
 - Added a tool to build a theme package.
