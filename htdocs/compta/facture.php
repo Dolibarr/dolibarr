@@ -2864,10 +2864,11 @@ else
 
 		if ($page == -1) $page = 0 ;
 
-		$sql = 'SELECT s.nom, s.idp,';
-		$sql.= ' f.rowid as facid, f.facnumber, f.increment, f.total, f.total_ttc,';
-		$sql.= $db->pdate('f.datef').' as df, '.$db->pdate('f.date_lim_reglement').' as datelimite, ';
-		$sql.= ' f.paye as paye, f.fk_statut';
+		$sql = 'SELECT ';
+		$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
+		$sql.= ' '.$db->pdate('f.datef').' as df, '.$db->pdate('f.date_lim_reglement').' as datelimite,';
+		$sql.= ' f.paye as paye, f.fk_statut,';
+		$sql.= ' s.nom, s.idp';
 		if (! $sall) $sql.= ' ,sum(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ','.MAIN_DB_PREFIX.'facture as f';
@@ -2979,8 +2980,12 @@ else
 					$var=!$var;
 
 					print '<tr '.$bc[$var].'>';
-					print '<td nowrap="nowrap"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').'</a> ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
+					print '<td nowrap="nowrap">';
+					$facturestatic->id=$objp->facid;
+					$facturestatic->ref=$objp->facnumber;
+					$facturestatic->type=$objp->type;
+					print $facturestatic->getNomUrl(1);
+					print $objp->increment;
 					if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans('Late'));
 					print '</td>';
 
