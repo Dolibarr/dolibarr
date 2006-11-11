@@ -1595,6 +1595,9 @@ else
 			    $author->fetch();
 			}
 
+			$facidnext=$fac->getIdReplacingInvoice();
+			
+
 			$head = facture_prepare_head($fac);
 
 			dolibarr_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
@@ -1673,8 +1676,24 @@ else
 			 */
 			if ($_GET['action'] == 'canceled')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled');
-				print '<br />';
+				// Si il y a une facture de remplacement pas encore validée (etat brouillon), 
+				// on ne permet pas de classer abandonner la facture
+				if ($facidnext)
+				{
+					$facturereplacement=new Facture($db);
+					$facturereplacement->fetch($facidnext);
+					$statusreplacement=$facturereplacement->statut;
+				}
+				print "x".$statusreplacement;
+				if ($facidnext && $statusreplacement == 0)
+				{
+					print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';
+				}
+				else
+				{				
+					$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled');
+					print '<br />';
+				}
 			}
 
 			/*
@@ -1761,7 +1780,6 @@ else
 				}
 				print ')';
 			}
-			$facidnext=$fac->getIdReplacingInvoice();
 			if ($facidnext > 0)
 			{
 				$facthatreplace=new Facture($db);

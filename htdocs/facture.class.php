@@ -1013,7 +1013,7 @@ class Facture extends CommonObject
 				
 				// Controle que facture source non deja remplacee par une autre
 				$idreplacement=$facreplaced->getIdReplacingInvoice();
-				if ($idreplacement != $rowid)
+				if ($idreplacement && $idreplacement != $rowid)
 				{
 					$facreplacement=new Facture($this->db);
 					$facreplacement->fetch($idreplacement);
