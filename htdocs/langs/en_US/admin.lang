@@ -399,6 +399,7 @@ SetupDescription3=<b>Company/fundation</b> setup is required because input infor
 SetupDescription4=<b>Modules</b> setup is required because Dolibarr is not a simple ERP/CRM but a sum of several modules, all more or less independant. It's only after activating modules you're interesting in that you will see features appeared in Dolibarr menu.
 AreaForAdminOnly=Those features can be used by <b>administrator users</b> only. Administrator features and help are identified in Dolibarr by the following picto:
 SystemInfoDesc=System informations are miscellanous technical informations you get in read only mode and visible for administrators only.
+SystemAreaForAdminOnly=This area is available for administrator users only. None of the Dolibarr permissions can reduce this limit.
 CompanyFundationDesc=Edit on this page all known informations of company or fundation you need to manage
 DisplayDesc=You can choose here all parameters related to dolibarr look and feel
 TriggersAvailable=Triggers available

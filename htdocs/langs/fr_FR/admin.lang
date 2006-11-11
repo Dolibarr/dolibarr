@@ -399,6 +399,7 @@ SetupDescription3=La configuration <b>Société/institution</b> à gérer est requis
 SetupDescription4=La configuration <b>Modules</b> est indispensable car Dolibarr n'est pas un ERP/CRM monolithique mais un ensemble de modules tous plus ou moins indépendant. C'est après avoir activé les modules qui vous intéressent que vous verez apparaitre les fonctionnalités dans les menus de Dolibarr.
 AreaForAdminOnly=Ces fonctions ne sont accessibles qu'à un utilisateur administrateur. La fonction d'administrateur et les aides pour les administrateurs sont identifiées dans Dolibarr par le picto suivant:
 SystemInfoDesc=Les informations systèmes sont des informations techniques diverses accessibles en lecture seule aux administrateurs uniquement.
+SystemAreaForAdminOnly=Cet espace n'est accessible qu'aux utilisateurs de type administrateurs. Aucune permission Dolibarr ne permet d'étendre le cercle des utilisateurs autorisés à cet espace.
 CompanyFundationDesc=Éditer sur cette page toutes les informations connues sur la société ou association que vous devez gérer
 DisplayDesc=Vous pouvez choisir ici tous les paramètres liés à l'apparence de Dolibarr
 TriggersAvailable=Triggers disponibles
