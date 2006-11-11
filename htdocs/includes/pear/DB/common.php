@@ -26,6 +26,7 @@
  * inherited by all such.
  */
 
+//require_once "PEAR.php";
 require_once DOL_DOCUMENT_ROOT."/includes/pear/PEAR.php";
 
 class DB_common extends DOLIPEAR

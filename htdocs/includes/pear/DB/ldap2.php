@@ -25,6 +25,7 @@
 // $Id$
 //
 
+// require_once 'DB/common.php';
 require_once DOL_DOCUMENT_ROOT."/includes/pear/DB/common.php";
 
 /**

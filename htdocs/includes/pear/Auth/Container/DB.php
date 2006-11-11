@@ -74,7 +74,7 @@ class Auth_Container_DB extends Auth_Container
             $this->_parseOptions($dsn);
 
             if (empty($this->options['dsn'])) {
-                PEAR::raiseError('No connection parameters specified!');
+                DOLIPEAR::raiseError('No connection parameters specified!');
             }
         } else {
             $this->options['dsn'] = $dsn;
@@ -98,9 +98,9 @@ class Auth_Container_DB extends Auth_Container
         } elseif (get_parent_class($dsn) == "db_common") {
             $this->db = $dsn;
         } elseif (DB::isError($dsn)) {
-            return PEAR::raiseError($dsn->getMessage(), $dsn->getCode());
+            return DOLIPEAR::raiseError($dsn->getMessage(), $dsn->getCode());
         } else {
-            return PEAR::raiseError('The given dsn was not valid in file ' . __FILE__ . ' at line ' . __LINE__,
+            return DOLIPEAR::raiseError('The given dsn was not valid in file ' . __FILE__ . ' at line ' . __LINE__,
                                     41,
                                     PEAR_ERROR_RETURN,
                                     null,
@@ -228,7 +228,7 @@ class Auth_Container_DB extends Auth_Container
         // Prepare for a database query
         $err = $this->_prepare();
         if ($err !== true) {
-            return PEAR::raiseError($err->getMessage(), $err->getCode());
+            return DOLIPEAR::raiseError($err->getMessage(), $err->getCode());
         }
 
         // Find if db_fileds contains a *, i so assume all col are selected
@@ -249,7 +249,7 @@ class Auth_Container_DB extends Auth_Container
         $res = $this->db->getRow($query, $query_params, DB_FETCHMODE_ASSOC);
 
         if (DB::isError($res)) {
-            return PEAR::raiseError($res->getMessage(), $res->getCode());
+            return DOLIPEAR::raiseError($res->getMessage(), $res->getCode());
         }
         if (!is_array($res)) {
             $this->activeUser = '';
@@ -281,7 +281,7 @@ class Auth_Container_DB extends Auth_Container
     {
         $err = $this->_prepare();
         if ($err !== true) {
-            return PEAR::raiseError($err->getMessage(), $err->getCode());
+            return DOLIPEAR::raiseError($err->getMessage(), $err->getCode());
         }
 
         $retVal = array();
@@ -301,7 +301,7 @@ class Auth_Container_DB extends Auth_Container
         $res = $this->db->getAll($query, null, DB_FETCHMODE_ASSOC);
 
         if (DB::isError($res)) {
-            return PEAR::raiseError($res->getMessage(), $res->getCode());
+            return DOLIPEAR::raiseError($res->getMessage(), $res->getCode());
         } else {
             foreach ($res as $user) {
                 $user['username'] = $user[$this->options['usernamecol']];
@@ -355,7 +355,7 @@ class Auth_Container_DB extends Auth_Container
         $res = $this->query($query);
 
         if (DB::isError($res)) {
-           return PEAR::raiseError($res->getMessage(), $res->getCode());
+           return DOLIPEAR::raiseError($res->getMessage(), $res->getCode());
         } else {
           return true;
         }
@@ -383,7 +383,7 @@ class Auth_Container_DB extends Auth_Container
         $res = $this->query($query);
 
         if (DB::isError($res)) {
-           return PEAR::raiseError($res->getMessage(), $res->getCode());
+           return DOLIPEAR::raiseError($res->getMessage(), $res->getCode());
         } else {
           return true;
         }

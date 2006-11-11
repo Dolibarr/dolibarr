@@ -19,8 +19,10 @@
 // $Id$
 //
 
-require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Container.php";
+// require_once 'PEAR.php';
+// require_once 'Auth/Container.php';
 require_once DOL_DOCUMENT_ROOT."/includes/pear/PEAR.php";
+require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Container.php";
 
 /**
  * Storage driver for fetching login data from LDAP
@@ -176,7 +178,7 @@ class Auth_Container_LDAP extends Auth_Container
     function Auth_Container_LDAP($params)
     {
         if (false === extension_loaded('ldap')) {
-            return PEAR::raiseError('Auth_Container_LDAP: LDAP Extension not loaded',  41,  PEAR_ERROR_DIE);
+            return DOLIPEAR::raiseError('Auth_Container_LDAP: LDAP Extension not loaded',  41,  PEAR_ERROR_DIE);
         }
         
         $this->_setDefaults();
@@ -207,7 +209,7 @@ class Auth_Container_LDAP extends Auth_Container
         }
 
         if (($this->conn_id = @call_user_func_array('ldap_connect',  $conn_params)) === false) {
-            return PEAR::raiseError('Auth_Container_LDAP: Could not connect to server.',  41,  PEAR_ERROR_DIE);
+            return DOLIPEAR::raiseError('Auth_Container_LDAP: Could not connect to server.',  41,  PEAR_ERROR_DIE);
         }
         $this->_debug('Successfully connected to server',  __LINE__);
 
@@ -229,7 +231,7 @@ class Auth_Container_LDAP extends Auth_Container
         if ((@call_user_func_array('ldap_bind',  $bind_params)) == false) {
             $this->_debug();
             $this->_disconnect();
-            return PEAR::raiseError("Auth_Container_LDAP: Could not bind to LDAP server.",  41,  PEAR_ERROR_DIE);
+            return DOLIPEAR::raiseError("Auth_Container_LDAP: Could not bind to LDAP server.",  41,  PEAR_ERROR_DIE);
         }
         $this->_debug('Binding was successful',  __LINE__);
     }
@@ -277,7 +279,7 @@ class Auth_Container_LDAP extends Auth_Container
 
         // if base ist still not set,  raise error
         if ($this->options['basedn'] == "") {
-            return PEAR::raiseError("Auth_Container_LDAP: LDAP search base not specified!",  41,  PEAR_ERROR_DIE);
+            return DOLIPEAR::raiseError("Auth_Container_LDAP: LDAP search base not specified!",  41,  PEAR_ERROR_DIE);
         }        
         return true;
     }

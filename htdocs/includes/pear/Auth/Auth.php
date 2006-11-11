@@ -18,8 +18,10 @@
 //
 // $Id$
 //
-require_once DOL_DOCUMENT_ROOT."/includes/pear/PEAR.php";
+
 //require_once "PEAR.php";
+require_once DOL_DOCUMENT_ROOT."/includes/pear/PEAR.php";
+
 
 define("AUTH_IDLED",       -1);
 define("AUTH_EXPIRED",     -2);
