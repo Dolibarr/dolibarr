@@ -52,7 +52,8 @@ III - WHAT'S NEW
 - New enhanced look and several new themes.
 - Small search boxes for each Dolibarr elements (invoices, contracts,
   orders, proposals...)
-- Can attach documents on actions
+- Modules boxes on main page can be dragged and dropped (with firefox only).
+- Can attach documents on actions and invoices.
 - Enhanced use of modules and their parameters:
   * Module companies: Added more properties supported on companies (parent
     company, rib, discounts, company type, capital, vat intra ...).
@@ -61,8 +62,8 @@ III - WHAT'S NEW
   * Module products: Support attachments of pictures, add prices and logs
   * Module external_rss: Support https links
   * Module webcalendar: Better integration with webcalendar
+  * Module invoice: Add discount management and correting invoices
 - Added new modules:
-  * Module syslog:    To add Dolibarr logs inside a file or syslog
   * Module emailing:  To send emailings
   * Module members:   To manage members of a fundation
   * Module suppliers: Provide orders to suppliers
@@ -74,8 +75,13 @@ III - WHAT'S NEW
 - Dolibarr triggers allow to add personalized PHP code inside
   workflow, with no risk to break Dolibarr.
 - Bug fixes and a lot of duplicate code removed.
+- Add a WISIWYG editor (FCKEditor) to edit note and comment areas.
 - A lot of other changes to enhance interface.
-- Support for PHP5
+- Support for PHP5.
+- Removed obsolete files and documentation.
+- Added a tool to build a lang package.
+- Added a tool to build a module package.
+- Added a tool to build a theme package.
 
 
 IV - WHAT DOLIBARR CAN DO
