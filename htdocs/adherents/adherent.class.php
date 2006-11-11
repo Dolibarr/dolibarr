@@ -167,10 +167,9 @@ class Adherent
         $from=$conf->email_from;
         if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
         
-        $mailfile = new CMailFile($subject,$this->email,$from,$mesg,
-        							array(),array(),array(),
-        							'', '', 0, $msgishtml);
-
+		$mailfile = new CMailFile($subjectosend,$this->email,$from,$texttosend,
+									array(),array(),array(),
+									'', '', 0, $msgishtml);
         if ($mailfile->sendfile())
         {
             return 1;
