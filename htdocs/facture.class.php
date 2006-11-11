@@ -64,7 +64,7 @@ class Facture extends CommonObject
 	var $total;
 	var $note;
 	var $note_public;
-	var $statut;
+	var $statut;				// 0=brouillon, 1=validé
 	var $paye;					// 1 si facture payée COMPLETEMENT, 0 sinon
 	var $fk_facture_source;		// id facture source si facture de remplacement ou avoir
 	var $close_code;			// abandon, replaced, avoir, discount_vat
@@ -991,7 +991,7 @@ class Facture extends CommonObject
             $this->db->begin();
 
 			// Verification paramètres
-			if ($this->type == 1)		// si remplacement
+			if ($this->type == 1)		// si facture de remplacement
 			{
 				// Controle que facture source connue
 				if ($this->fk_facture_source <= 0)
@@ -1011,9 +1011,9 @@ class Facture extends CommonObject
 					return -11;
 				}
 				
-				// Controle que facture source non deja remplacee
+				// Controle que facture source non deja remplacee par une autre
 				$idreplacement=$facreplaced->getIdReplacingInvoice();
-				if ($idreplacement != 0)
+				if ($idreplacement != $rowid)
 				{
 					$facreplacement=new Facture($this->db);
 					$facreplacement->fetch($idreplacement);
