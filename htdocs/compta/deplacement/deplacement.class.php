@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,114 +20,145 @@
  * $Source$
  */
 
+/**
+        \file       htdocs/compta/deplacement/deplacement.class.php
+        \ingroup    deplacement
+        \brief      Fichier de la classe des deplacements
+        \version    $Revision$
+*/
+
 class Deplacement
 {
-  var $db;
-  var $id;
-  var $user;
-  var $km;
-  var $note;
+	var $db;
+	var $id;
+	var $user;
+	var $km;
+	var $note;
 
-  /*
-   * Initialistation automatique de la classe
-   */
-  function Deplacement($DB)
-    {
-      $this->db = $DB;
-    
-      return 1;
-  }
-  /*
-   *
-   */
-  function create($user)
-    {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (datec, fk_user_author) VALUES (now(), $user->id)";
-
-      $result = $this->db->query($sql);
-      if ($result)
+	/*
+	* Initialistation automatique de la classe
+	*/
+	function Deplacement($DB)
 	{
-	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."deplacement");
-	  if ( $this->update($user) ) 
-	    {
-	      return $this->id;
-	    }
+		$this->db = $DB;
+
+		return 1;
 	}
-    }
-  /*
-   *
-   */
-  function update($user)
-    {
-      if (strlen($this->km)==0)
-	$this->km = 0;
 
-      $sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
-      $sql .= " SET km = $this->km";
-      $sql .= " , dated = '".$this->db->idate($this->date)."'";
-      $sql .= " , fk_user = $this->userid";
-      $sql .= " , fk_soc = $this->socid";
-      $sql .= " WHERE rowid = ".$this->id;
-
-      $result = $this->db->query($sql);
-      if ($result)
+	/*
+	*
+	*/
+	function create($user)
 	{
-	  return 1;
+		$this->db->begin();
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (datec, fk_user_author) VALUES (now(), $user->id)";
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."deplacement");
+			$result=$this->update($user);
+			if ($result > 0)
+			{
+				$this->db->commit();
+				return $this->id;
+			}
+			else
+			{
+				$this->db->rollback();
+				return $result;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error()." sql=".$sql;
+			$this->db->rollback();
+			return -1;	
+		}
+		
 	}
-      else
+
+	/*
+	*
+	*/
+	function update($user)
 	{
-	  print $this->db->error();
-	  print "<br>".$sql;
-	  return 0;
+		global $langs;
+		
+		if (! is_numeric($this->km)) $this->km = 0;
+		if (! $this->socid)
+		{
+			$this->error=$langs->trans("ErrorSocidNotDefined");
+			return -1;	
+		}
+		
+		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
+		$sql .= " SET km = ".$this->km;
+		$sql .= " , dated = '".$this->db->idate($this->date)."'";
+		$sql .= " , fk_user = ".$this->userid;
+		$sql .= " , fk_soc = ".$this->socid;
+		$sql .= " WHERE rowid = ".$this->id;
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
 	}
-    }
-  /*
-   *
-   */
-  function fetch ($id)
-    {    
-      $sql = "SELECT fk_user, km, fk_soc,".$this->db->pdate("dated")." as dated";
-      $sql .= " FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
 
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
+	/*
+	*
+	*/
+	function fetch ($id)
 	{
-	  $result = $this->db->fetch_array();
+		$sql = "SELECT fk_user, km, fk_soc,".$this->db->pdate("dated")." as dated";
+		$sql .= " FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
 
-	  $this->id       = $id;
+		$result = $this->db->query($sql) ;
 
-	  $this->date     = $result["dated"];
-	  $this->userid   = $result["fk_user"];
-	  $this->socid    = $result["fk_soc"];
-	  $this->km       = $result["km"];
-	  return 1;
+		if ( $result )
+		{
+			$result = $this->db->fetch_array();
+
+			$this->id       = $id;
+
+			$this->date     = $result["dated"];
+			$this->userid   = $result["fk_user"];
+			$this->socid    = $result["fk_soc"];
+			$this->km       = $result["km"];
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
 	}
-    else {
-	  print $this->db->error();
-	  print "<br>".$sql;
-    }
-    }
-  /*
-   *
-   */
-  function delete($id)
-    {
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
 
-      $result = $this->db->query($sql);
-      if ($result)
+	/*
+	*
+	*/
+	function delete($id)
 	{
-	  return 1;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".$id;
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
 	}
-      else
-	{
-	  return 0;
-	}
-    }
-  /*
-   *
-   */
 
 }
 

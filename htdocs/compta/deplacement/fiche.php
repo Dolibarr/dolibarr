@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,59 +40,60 @@ $mesg = '';
  */
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
-  $deplacement = new Deplacement($db);
-  $deplacement->delete($_GET["id"]);
-  Header("Location: index.php");
+	$deplacement = new Deplacement($db);
+	$deplacement->delete($_GET["id"]);
+	Header("Location: index.php");
+	exit;
 }
 
 if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-  $deplacement = new Deplacement($db);
+	$deplacement = new Deplacement($db);
 
-  $deplacement->date = mktime(12, 1 , 1, 
-			      $_POST["remonth"], 
-			      $_POST["reday"], 
-			      $_POST["reyear"]);
-  
-  $deplacement->km = $_POST["km"];
-  $deplacement->socid = $_POST["socid"];
-  $deplacement->userid = $user->id; //$_POST["km"];
-  $id = $deplacement->create($user);
+	$deplacement->date = mktime(12, 1 , 1,
+					$_POST["remonth"],
+					$_POST["reday"],
+					$_POST["reyear"]);
 
-  if ($id)
-    {
-      Header ( "Location: fiche.php?id=".$id);
-      exit;
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
+	$deplacement->km = $_POST["km"];
+	$deplacement->socid = $_POST["socid"];
+	$deplacement->userid = $user->id; //$_POST["km"];
+	$id = $deplacement->create($user);
+
+	if ($id > 0)
+	{
+		Header ( "Location: fiche.php?id=".$id);
+		exit;
+	}
+	else
+	{
+		dolibarr_print_error($db,$deplacement->error);
+	}
 }
 
 if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-  $deplacement = new Deplacement($db);
-  $result = $deplacement->fetch($_POST["id"]);
-
-  $deplacement->date = mktime(12, 1 , 1, 
-			      $_POST["remonth"], 
-			      $_POST["reday"], 
-			      $_POST["reyear"]);
-  
-  $deplacement->km     = $_POST["km"];
-
-  $result = $deplacement->update($user);
-
-  if ($result > 0)
-    {
-      Header ( "Location: fiche.php?id=".$_POST["id"]);
-      exit;
-    }
-  else
-    {
-      print $mesg=$langs->trans("ErrorUnknown");
-    }
+	$deplacement = new Deplacement($db);
+	$result = $deplacement->fetch($_POST["id"]);
+	
+	$deplacement->date = mktime(12, 1 , 1,
+				$_POST["remonth"],
+				$_POST["reday"],
+				$_POST["reyear"]);
+	
+	$deplacement->km     = $_POST["km"];
+	
+	$result = $deplacement->update($user);
+	
+	if ($result > 0)
+	{
+		Header ( "Location: fiche.php?id=".$_POST["id"]);
+		exit;
+	}
+	else
+	{
+		print $mesg=$langs->trans("ErrorUnknown");
+	}
 }
 
 
@@ -110,9 +111,9 @@ if ($_GET["action"] == 'create')
   print '<input type="hidden" name="action" value="add">';
 
   print_fiche_titre($langs->trans("NewTrip"));
-      
+
   print '<table class="border" width="100%">';
-  print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>'.$user->fullname.'</td></tr>';    
+  print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>'.$user->fullname.'</td></tr>';
 
   print "<tr>";
   print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
@@ -125,10 +126,10 @@ if ($_GET["action"] == 'create')
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans("Kilometers").'</td><td><input name="km" size="10" value=""></td></tr>';
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+  print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
-  print '</form>';      
+  print '</form>';
 }
 else
 {
@@ -137,35 +138,35 @@ else
       $deplacement = new Deplacement($db);
       $result = $deplacement->fetch($id);
       if ($result)
-	{ 
-    
+	{
+
       if ($mesg) print "$mesg<br>";
 
 	  if ($_GET["action"] == 'edit')
 	    {
           $h=0;
-            
+
           $head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
           $head[$h][1] = $langs->trans("TripCard");
-            
+
           dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").' '.$deplacement->id);
 
 	      print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update">';
 	      print '<input type="hidden" name="id" value="'.$id.'">';
-	            
+
 	      print '<table class="border" width="100%">';
 
 	      $soc = new Societe($db);
 	      $soc->fetch($deplacement->socid);
 
-	      print '<tr><td width="20%">'.$langs->trans("Personn").'</td><td>'.$user->fullname.'</td></tr>';    
+	      print '<tr><td width="20%">'.$langs->trans("Personn").'</td><td>'.$user->fullname.'</td></tr>';
 
           print "<tr>";
           print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
           print $html->select_societes($soc->id);
           print '</td></tr>';
-        
+
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print $html->select_date($deplacement->date,'','','','','update');
 	      print '</td></tr>';
@@ -175,27 +176,27 @@ else
 	      print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
-	      
+
 	      print '</div>';
-	    } 
+	    }
 	  else
 	    {
           $h=0;
-            
+
           $head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
           $head[$h][1] = $langs->trans("TripCard");
-            
+
           dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").' '.$deplacement->id);
-      
+
     	  /*
     	   * Confirmation de la suppression du déplacement
     	   */
           if ($_GET["action"] == 'delete')
     	    {
-    	      
+
                 $html = new Form($db);
                 $html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
-    
+
                 print '<br>';
     	    }
 
@@ -208,12 +209,12 @@ else
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print dolibarr_print_date($deplacement->date);
 	      print '</td></tr>';
-	      print '<tr><td>'.$langs->trans("Kilometers").'</td><td>'.$deplacement->km.'</td></tr>';    
+	      print '<tr><td>'.$langs->trans("Kilometers").'</td><td>'.$deplacement->km.'</td></tr>';
 	      print "</table>";
-	      
+
 	      print '</div>';
 	    }
-	  
+
 	}
       else
 	{
