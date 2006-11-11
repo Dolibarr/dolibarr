@@ -1613,12 +1613,49 @@ function dol_delete_file($file)
 }
 
 /**
-		\brief  Effacement d'un répertoire
-		\param	file			Répertoire a effacer
+		\brief  	Effacement d'un répertoire
+		\param		file			Répertoire a effacer
 */
 function dol_delete_dir($dir)
 {
-  return rmdir($dir);
+	return rmdir($dir);
+}
+
+/**
+		\brief  	Effacement d'un répertoire et son arborescence
+		\param		file			Répertoire a effacer
+		\return		int				Nombre de fichier+repértoires supprimés
+*/
+function dol_delete_dir_recursive($dir)
+{
+	$count=0;
+	
+	if ($handle = opendir("$dir"))
+	{
+		while (false !== ($item = readdir($handle)))
+		{
+			if ($item != "." && $item != "..")
+			{
+				if (is_dir("$dir/$item"))
+				{
+					dol_delete_dir_recursive("$dir/$item");
+				}
+				else
+				{
+						unlink("$dir/$item");
+						$count++;
+						//echo " removing $dir/$item<br>\n";
+				}
+			}
+		}
+		closedir($handle);
+		rmdir($dir);
+		$count++;
+		//echo "removing $dir<br>\n";
+	}
+	
+	//echo "return=".$count;
+	return $count;
 }
 
 
@@ -1984,22 +2021,29 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 	
 			// Check if file is qualified
 			if (eregi('^\.',$file)) $qualified=0;
-			if ($filter && ! eregi($filter,$file)) $qualified=0;
 			if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
 	
+//			print "path=$path file=$file<br>\n";
+
 			if ($qualified)
 			{
 				// Check whether this is a file or directory and whether we're interested in that type
 				if ((is_dir($path."/".$file)) && (($types=="directories") || ($types=="all")))
 				{
-					// Add file into file_list array
+					// Add entry into file_list array
 					if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
 					if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
-					$file_list[] = array(
-                                       "name" => $file,
-                                       "date" => $filedate,
-                                       "size" => $filesize
-                                 	);
+										
+					if (! $filter || eregi($filter,$path.'/'.$file))
+					{
+						$file_list[] = array(
+	                                       "name" => $file,
+	                                       "fullname" => $path.'/'.$file,
+	                                       "date" => $filedate,
+	                                       "size" => $filesize
+	                                 	);
+					}
+					
 					// if we're in a directory and we want recursive behavior, call this function again
 					if ($recursive)
 					{
@@ -2011,11 +2055,15 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 					// Add file into file_list array
 					if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
 					if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
-					$file_list[] = array(
-                                       "name" => $file,
-                                       "date" => $filedate,
-                                       "size" => $filesize
-                                 	);
+					if (! $filter || eregi($filter,$path.'/'.$file))
+					{
+						$file_list[] = array(
+	                                       "name" => $file,
+	                                       "fullname" => $path.'/'.$file,
+	                                       "date" => $filedate,
+	                                       "size" => $filesize
+	                                 	);
+					}
 				}
 			}
 		}

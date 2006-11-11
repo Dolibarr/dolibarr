@@ -1563,11 +1563,14 @@ class Form
 
     print '</table>';
 
-	foreach ($formquestion as $key => $input)
-	{	    
-    	if ($input['type'] == 'hidden') print '<input type="hidden" name="'.$input['name'].'" value="'.$input['value'].'">';
+	if (is_array($formquestion))
+	{
+		foreach ($formquestion as $key => $input)
+		{	    
+	    	if ($input['type'] == 'hidden') print '<input type="hidden" name="'.$input['name'].'" value="'.$input['value'].'">';
+		}
 	}
-	    
+		    
     print "</form>\n";  
   }
 

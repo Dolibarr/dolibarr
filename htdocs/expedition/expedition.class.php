@@ -50,20 +50,16 @@ class Expedition extends CommonObject
 	*/
 	function Expedition($DB)
     {
-      $this->db = $DB;
-      $this->lignes = array();
+    	global $langs;
 
-      $this->sources[0] = "Proposition commerciale";
-      $this->sources[1] = "Internet";
-      $this->sources[2] = "Courrier";
-      $this->sources[3] = "Téléphone";
-      $this->sources[4] = "Fax";
-
-      $this->statuts[-1] = "Annulée";
-      $this->statuts[0] = "Brouillon";
-      $this->statuts[1] = "Validée";
-
-      $this->products = array();
+		$this->db = $DB;
+		$this->lignes = array();
+		
+		$this->statuts[-1] = $langs->trans("Canceled");
+		$this->statuts[0]  = $langs->trans("Draft");
+		$this->statuts[1]  = $langs->trans("Validated");
+		
+		$this->products = array();
     }
 
   /**
@@ -729,6 +725,10 @@ class Expedition extends CommonObject
 }
 
 
+/**
+        \class      ExpeditionLigne
+		\brief      Classe de gestion des lignes de bons d'expedition
+*/
 class ExpeditionLigne
 {
 	var $db;
@@ -743,7 +743,8 @@ class ExpeditionLigne
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
 	var $ref;
-		
+
+	
 	function ExpeditionLigne($DB)
 	{
 		$this->db=$DB;	

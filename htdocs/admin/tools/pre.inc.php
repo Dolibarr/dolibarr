@@ -41,6 +41,7 @@ function llxHeader($head = "", $urlp = "")
     $menu->add(DOL_URL_ROOT."/admin/tools/index.php", "SystemTools");
     $menu->add_submenu(DOL_URL_ROOT."/admin/tools/dolibarr_export.php", $langs->trans("Backup"));
     $menu->add_submenu(DOL_URL_ROOT."/admin/tools/dolibarr_import.php", $langs->trans("Restore"));
+    $menu->add_submenu(DOL_URL_ROOT."/admin/tools/purge.php", $langs->trans("Purge"));
     
     left_menu($menu->liste);
 }

@@ -30,8 +30,9 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
+require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 $langs->load("sendings");
@@ -347,7 +348,7 @@ else
 {  
     if ($_GET["id"] > 0)
     {
-        $livraison = New Livraison($db);
+        $livraison = new Livraison($db);
         $result = $livraison->fetch($_GET["id"]);
     
         if ( $livraison->id > 0)
@@ -435,6 +436,11 @@ else
             print '<td colspan="3">'.dolibarr_print_date($livraison->date_creation,'%A %d %B %Y')."</td>\n";
     		print '</tr>';
     		
+            // Statut
+            print '<tr><td>'.$langs->trans("Status").'</td>';
+            print '<td colspan="3">'.$livraison->getLibStatut(4)."</td>\n";
+   			print '</tr>';
+
             if (!$conf->expedition->enabled && $conf->stock->enabled)
             {
             	// Entrepot
@@ -519,25 +525,28 @@ else
             {
                 print '<div class="tabsAction">';
     
-                if ($livraison->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
+                if (! eregi('^(valid|delete)',$_REQUEST["action"]))
                 {
-                    print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
-                }
-    
-                print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
-    
-                if ($livraison->brouillon && $user->rights->expedition->livraison->supprimer)
-                {
-                    if ($conf->expedition->enabled)
-                    {
-                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;expid='.$livraison->expedition_id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-                    }
-                    else
-                    {
-                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-                    }
-                }
-    
+	                if ($livraison->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
+	                {
+	                    print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+	                }
+	    
+	                print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
+	    
+	                if ($livraison->brouillon && $user->rights->expedition->livraison->supprimer)
+	                {
+	                    if ($conf->expedition->enabled)
+	                    {
+	                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;expid='.$livraison->expedition_id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	                    }
+	                    else
+	                    {
+	                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	                    }
+	                }
+				}
+				    
                 print '</div>';
             }
 			print "\n";    

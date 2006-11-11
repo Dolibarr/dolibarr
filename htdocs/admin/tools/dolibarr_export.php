@@ -570,6 +570,6 @@ if (window.parent.frames[1]) {
 
 <?php
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 
 ?>

@@ -52,6 +52,7 @@ print "<br>";
 if ($message) print $message.'<br>';
 
 
+print $langs->trans("SystemToolsAreaDesc").'<br>';
 
 
 

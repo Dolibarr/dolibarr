@@ -46,6 +46,6 @@ print '<br>';
 print $langs->trans("FeatureNotYetAvailable");
 
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 
 ?>

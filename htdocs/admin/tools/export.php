@@ -196,5 +196,5 @@ print '<br>';
 
 $time_end = time();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>
