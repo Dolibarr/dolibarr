@@ -242,9 +242,10 @@ if ($socid > 0)
 
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, f.rowid as facid, f.facnumber, f.amount, f.total, f.total_ttc,";
-        $sql.= " ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut";
-		$sql.= ' ,sum(pf.amount) as am';
+        $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
+        $sql.= ' '.$db->pdate("f.datef").' as df, f.paye as paye, f.fk_statut as statut,';
+		$sql.= ' s.nom, s.idp,';
+		$sql.= ' sum(pf.amount) as am';
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
         $sql.= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
@@ -270,7 +271,12 @@ if ($socid > 0)
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$objp->facnumber."</a></td>\n";
+                print '<td>';
+                $facturestatic->id=$objp->facid;
+                $facturestatic->ref=$objp->facnumber;
+                $facturestatic->type=$objp->type;
+                print $facturestatic->getNomUrl(1);
+                print '</td>';
                 if ($objp->df > 0)
                 {
                     print "<td align=\"right\">".dolibarr_print_date($objp->df)."</td>\n";

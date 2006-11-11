@@ -1012,7 +1012,7 @@ class Facture extends CommonObject
 				}
 				
 				// Controle que facture source non deja remplacee par une autre
-				$idreplacement=$facreplaced->getIdReplacingInvoice();
+				$idreplacement=$facreplaced->getIdReplacingInvoice('validated');
 				if ($idreplacement && $idreplacement != $rowid)
 				{
 					$facreplacement=new Facture($this->db);
@@ -1791,14 +1791,20 @@ class Facture extends CommonObject
 	
 	/**
 	* 	\brief     	Renvoie l'id de la facture qui la remplace
-	*	\return		int		<0 si ko, 0 si aucune facture ne remplace, id facture sinon
+	*	\param		option		filtre sur statut ('', 'validated', ...)
+	*	\return		int			<0 si ko, 0 si aucune facture ne remplace, id facture sinon
 	*/
-	function getIdReplacingInvoice()
+	function getIdReplacingInvoice($option='')
 	{
 		$sql = 'SELECT rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' WHERE fk_facture_source = '.$this->id;
 		$sql.= ' AND type < 2';
+		if ($option == 'validated') $sql.= ' AND fk_statut = 1';
+		$sql.= ' ORDER BY fk_statut DESC';	// Au cas ou base corrompu et qu'il y a une
+											// facture de remplacement validee et une autre non
+											// on donne priorité à la validée. Ne devrait pas arriver
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
