@@ -333,13 +333,13 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
-    if (isset($adht->mail_valid) && $adht->mail_valid != '')
+    if (isset($adht->mail_valid) && $adht->mail_valid)
     {
-        $result=$adh->send_an_email($adh->email,$adht->mail_valid,$conf->adherent->email_valid_subject);
+		$result=$adh->send_an_email($adh->email,$adht->mail_valid,$conf->adherent->email_valid_subject);
     }
     else
     {
-        $result=$adh->send_an_email($adh->email,$conf->adherent->email_valid,$conf->adherent->email_valid_subject);
+		$result=$adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_VALID,$conf->global->ADHERENT_MAIL_VALID_SUBJECT);
     }
 
     // rajoute l'utilisateur dans les divers abonnements ..
