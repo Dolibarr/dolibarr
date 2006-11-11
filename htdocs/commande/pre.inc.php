@@ -45,7 +45,6 @@ function llxHeader($head = "", $title="", $help_url='')
 	$menu = new Menu();
 	
 	$menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
-	$menu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
 	$menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
 	$menu->add_submenu(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
 	
