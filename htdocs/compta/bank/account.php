@@ -43,6 +43,11 @@ $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
 
+
+/*
+* Action
+*/
+
 if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]))
 {
     if ($_POST["credit"] > 0)
@@ -63,16 +68,15 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]))
 
     $acct=new Account($db,$account);
 
-    $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1);
-
-    if ($insertid)
+    $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
+    if ($insertid > 0)
     {
         Header("Location: account.php?account=" . $account);
         exit;
     }
     else
     {
-        dolibarr_print_error($db);
+        dolibarr_print_error($db,$acct->error);
     }
 }
 if ($_GET["action"] == 'del' && $account && $user->rights->banque->modifier)
@@ -82,6 +86,9 @@ if ($_GET["action"] == 'del' && $account && $user->rights->banque->modifier)
 }
 
 
+/*
+* Affichage page
+*/
 
 llxHeader();
 
