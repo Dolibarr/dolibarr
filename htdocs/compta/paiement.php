@@ -78,7 +78,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 			{
 				$addwarning=1;
 				$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' Attention, le montant de paiement pour une ou plusieurs facture est supérieur au reste à payer.';
-				$formquestion['text'].='<br>Corriger votre saisie, sinon confirmer. Dolibarr pourra créer un avoir du trop perçu lors de la fermeture de chacune de facture.';
+				$formquestion['text'].='<br>Corriger votre saisie, sinon, confirmer et penser à créer un avoir du trop perçu lors de la fermeture de chacune des factures surpayés.';
 			}
 
 			$formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);

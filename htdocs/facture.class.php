@@ -349,7 +349,7 @@ class Facture extends CommonObject
 			
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		\param		option			Sur quoi pointe le lien
 	 *		\return		string			Chaine avec URL
 	 */
@@ -370,7 +370,8 @@ class Facture extends CommonObject
 		if ($this->type == 1) $label=$langs->trans("ShowInvoiceReplace");
 		if ($this->type == 2) $label=$langs->trans("ShowInvoiceAvoir");
 		
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin.' ');
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;
 	}
