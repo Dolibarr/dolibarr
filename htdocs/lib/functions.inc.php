@@ -374,30 +374,43 @@ function dolibarr_del_const($db, $name)
 		\brief      Sauvegarde parametrage personnel
 		\param	    db          Handler d'accès base
 		\param	    user        Objet utilisateur
-		\param	    url         Si defini, on sauve parametre du tableau tab dont clé = sortfield, sortorder, begin et page
+		\param	    url         Si defini, on sauve parametre du tableau tab dont clé = (url avec sortfield, sortorder, begin et page)
 		                        Si non defini on sauve tous parametres du tableau tab
 		\param	    tab         Tableau (clé=>valeur) des paramètres à sauvegarder
 		\return     int         <0 si ko, >0 si ok
 */
 function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 {
+    // Verification parametres
+    if (sizeof($tab) < 1) return -1;
+    
     $db->begin();
 
-    // On efface paramètres anciens
+    // On efface anciens paramètres pour toutes les clé dans $tab
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
     $sql.= " WHERE fk_user = ".$user->id;
     if ($url) $sql.=" AND page='".$url."'";
-    else $sql.=" AND page=''";
+    else $sql.=" AND page=''";	// Page ne peut etre null
+    $sql.= " AND param in (";
+    $i=0;
+    foreach ($tab as $key => $value)
+    {
+		if ($i > 0) $sql.=',';
+		$sql.="'".$key."'";
+		$i++;
+	}
+	$sql.= ")";
     dolibarr_syslog("functions.inc.php::dolibarr_set_user_page_param $sql");
 
     $resql=$db->query($sql);
     if (! $resql)
     {
         dolibarr_print_error($db);
+        $db->rollback();
     	exit;
     }
 
-    foreach ($tab as $key=>$value)
+    foreach ($tab as $key => $value)
     {
         // On positionne nouveaux paramètres
         if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
@@ -409,7 +422,13 @@ function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
             $sql.= " '".$key."','".addslashes($value)."');";
             dolibarr_syslog("functions.inc.php::dolibarr_set_user_page_param $sql");
 
-            $db->query($sql);
+            $result=$db->query($sql);
+            if (! $result)
+            {
+		        dolibarr_print_error($db);
+            	$db->rollback();
+            	exit;
+            }
 
             $user->page_param[$key] = $value;
         }
