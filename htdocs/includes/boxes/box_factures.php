@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -68,8 +67,9 @@ class box_factures extends ModeleBoxes {
         
         if ($user->rights->facture->lire)
         {
-            $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,";
-            $sql.= " f.paye, f.fk_statut, f.rowid as facid";
+            $sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, ".$db->pdate("f.datef")." as df,";
+            $sql.= " f.paye, f.fk_statut,";
+            $sql.= " s.nom, s.idp";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -94,8 +94,12 @@ class box_factures extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($result);
         
+					$picto='bill';
+					if ($objp->type == 1) $picto.='r';
+					if ($objp->type == 2) $picto.='a';
+                    
                     $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => $this->boximg,
+                    'logo' => $picto,
                     'text' => $objp->facnumber,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
         
@@ -110,6 +114,12 @@ class box_factures extends ModeleBoxes {
 
                     $i++;
                 }
+            }
+            else
+            {
+    	        $this->info_box_contents[0][0] = array(	'align' => 'left',
+    	        										'maxlength'=>500,
+	            										'text' => ($db->error().' sql='.$sql));
             }
         
         }
