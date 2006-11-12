@@ -37,6 +37,7 @@ if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.cl
 $langs->load("contracts");
 $langs->load("orders");
 $langs->load("companies");
+$langs->load("bills");
 
 $user->getrights('contrat');
 
