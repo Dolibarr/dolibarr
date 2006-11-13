@@ -210,7 +210,7 @@ if ($resql)
 		{
 			$var = ! $var;
 	
-			print '<form action="boxes.php" method="POST">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 			$logo=eregi_replace("^object_","",$box->boximg);
 			print '<tr '.$bc[$var].'>';
 			print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';

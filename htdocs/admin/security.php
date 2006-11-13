@@ -86,6 +86,10 @@ $head[$h][1] = $langs->trans("Passwords");
 $hselected=$h;
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
+$head[$h][1] = $langs->trans("Miscellanous");
+$h++;
+
 dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
 
 
