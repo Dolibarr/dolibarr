@@ -152,7 +152,7 @@ if ($_GET["id"] || $_GET["ref"])
             if ($num > 0)
             {
                 $var=True;
-                while ($i < $num && $conf->liste_limit)
+                while ($i < $num && $i < $conf->liste_limit)
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
