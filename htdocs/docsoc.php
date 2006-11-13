@@ -69,7 +69,7 @@ $upload_dir = $conf->societe->dir_output . "/" . $socid ;
 
 
 // Envoie fichier
-if ( $_POST["sendit"] && $conf->upload)
+if ( $_POST["sendit"] && $conf->upload != 0)
 {
     if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
@@ -166,26 +166,9 @@ if ($socid > 0)
 
         if ($mesg) { print "$mesg<br>"; }
 
-        // Affiche formulaire upload
-        if ($conf->global->MAIN_UPLOAD_DOC)
-        {
-            print_titre($langs->trans("AttachANewFile"));
-            echo '<form name="userfile" action="docsoc.php?socid='.$socid.'" enctype="multipart/form-data" METHOD="POST">';
-
-            print '<table class="noborder" width="100%">';
-            print '<tr><td width="50%" valign="top">';
-
-            print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-            print '<input class="flat" type="file" name="userfile" size="80">';
-            print ' &nbsp; ';
-            print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="sendit">';
-
-            print "</td></tr>";
-            print "</table>";
-
-            print '</form>';
-            print '<br>';
-        }
+	    // Affiche formulaire upload
+		$html=new Form($db);
+		$html->form_attach_new_file('docsoc.php?socid='.$socid,$langs->trans("AddPhoto"),1);
 
         // Affiche liste des documents existant
         print_titre($langs->trans("AttachedFiles"));

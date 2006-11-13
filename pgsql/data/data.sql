@@ -48,7 +48,7 @@ insert into llx_action_def (rowid,code,titre,description,objet_type) values (2,'
 --
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','euros','chaine','Monnaie',0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Autorise l\'upload de document',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation',1);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',0);

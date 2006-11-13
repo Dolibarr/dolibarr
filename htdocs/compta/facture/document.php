@@ -167,28 +167,9 @@ if ($facid > 0)
         if ($mesg) { print $mesg."<br>"; }
 
         // Affiche formulaire upload
-        if ($conf->global->MAIN_UPLOAD_DOC)
-        {
-            print_titre($langs->trans("AttachANewFile"));
-
-    		print '<form name="userfile" action="document.php?facid='.$facture->id.'" enctype="multipart/form-data" method="POST">';
-    
-    		print '<table width="100%" class="noborder">';
-            print '<tr><td width="50%" valign="top">';
-    
-            print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-            print '<input class="flat" type="file" name="userfile" size="80">';
-            print ' &nbsp; ';
-            print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="sendit">';
-
-            print "</td></tr>";
-            print "</table>";
-
-    		print '</form>';
-    		print '<br>';
-        }
-        
-
+		$html=new Form($db);
+		$html->form_attach_new_file('document.php?facid='.$facture->id);
+		
         // Affiche liste des documents existant
         print_titre($langs->trans("AttachedFiles"));
 

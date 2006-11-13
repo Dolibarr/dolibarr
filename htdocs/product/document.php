@@ -165,28 +165,11 @@ if ($product->id)
     print '</div>';
 
 
-    // Affiche forumlaire upload
-    if ($conf->upload && $user->rights->produit->creer)
-    {
-		print_titre($langs->trans('AttachANewFile'));
+    // Affiche formulaire upload
+	$html=new Form($db);
+	$html->form_attach_new_file('document.php?id='.$product->id);
 
-		print '<form name="userfile" action="document.php?id='.$product->id.'" enctype="multipart/form-data" method="POST">';
-
-        print '<table class="noborder" width="100%">';
-        print '<tr><td width="50%" valign="top">';
-
-        print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-        print '<input class="flat" type="file" name="userfile" size="80">';
-        print ' &nbsp; ';
-        print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="sendit">';
-
-        print "</td></tr>";
-        print "</table>";
-
-        print '</form>';
-        print '<br>';
-    }
-    
+   
     $errorlevel=error_reporting();
 	error_reporting(0);
 	$handle=opendir($upload_dir);

@@ -53,7 +53,7 @@ $types[1] = $langs->trans("Service");
  * Actions
  */
 
-if ($_POST["sendit"] && $conf->global->MAIN_UPLOAD_DOC)
+if ($_POST["sendit"] && $conf->upload != 0)
 {
     if ($_GET["id"])
     {
@@ -64,7 +64,7 @@ if ($_POST["sendit"] && $conf->global->MAIN_UPLOAD_DOC)
 
         //      var_dump($_FILES);
 
-        $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
+        $product->add_photo($conf->produit->dir_output, $_FILES['userfile']);
     }
 }
 
@@ -153,23 +153,9 @@ if ($_GET["id"] || $_GET["ref"])
          */
         if ($_GET["action"] == 'ajout_photo' && $conf->upload && $user->rights->produit->creer)
         {
-            print_titre($langs->trans("AddPhoto"));
-
-            print '<form name="userfile" action="'.DOL_URL_ROOT.'/product/photos.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';
-            print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-            print '<input type="hidden" name="id" value="'.$product->id.'">';
-
-            print '<table class="border" width="100%"><tr>';
-            print '<td>'.$langs->trans("File").' ('.$langs->trans("Size").' <= '.$conf->maxfilesize.')</td>';
-            print '<td><input type="file" class="flat" name="photofile" size="80"></td></tr>';
-
-            print '<tr><td colspan="2" align="center">';
-            print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"> &nbsp; ';
-
-            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-            print '</table>';
-            
-            print '</form>';
+		    // Affiche formulaire upload
+			$html=new Form($db);
+			$html->form_attach_new_file(DOL_URL_ROOT.'/product/photos.php?id='.$product->id,$langs->trans("AddPhoto"),1);
         }
 
         // Affiche photos

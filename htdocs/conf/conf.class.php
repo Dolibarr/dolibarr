@@ -40,7 +40,6 @@ class Conf
     /** \public */
     var $db;            // Objet des caractéristiques de connexions
                         // base db->host, db->name, db->user, db->pass, db->type
-    var $maxfilesize = 2000000;     // Taille max des fichiers uploadés
 
     var $externalrss;
     var $commande;
@@ -134,8 +133,7 @@ class Conf
 		 * Autorisation globale d'uploader (necessaire pour desactiver dans la demo)
 		 * conf->upload peut etre écrasée dans main.inc.php (selon user)
 		 */
-		if ($this->global->MAIN_UPLOAD_DOC) $this->upload = 1;
-		else $this->upload = 0;
+		$this->upload = $this->global->MAIN_UPLOAD_DOC;
 
 		/*
 		 * Definition des parametres d'activation de module et dependants des modules

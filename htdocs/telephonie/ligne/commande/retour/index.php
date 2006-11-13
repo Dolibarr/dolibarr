@@ -34,7 +34,7 @@ if (! is_dir($upload_dir))
     }
 }
 
-if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+if ( $_POST["sendit"] && $conf->upload != 0)
 {
   if (is_dir($upload_dir))
     {

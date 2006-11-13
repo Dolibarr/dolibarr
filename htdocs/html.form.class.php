@@ -1743,6 +1743,56 @@ class Form
     
         
     /**
+     *    	\brief      Affiche formulaire ajout fichier
+     *    	\param      url				Url
+     *    	\param      titre			Titre zone
+     *    	\param      addcancel		1=Ajoute un bouton 'Annuler'
+     *		\return		int				<0 si ko, >0 si ok
+     */
+    function form_attach_new_file($url,$titre='',$addcancel=0)
+    {
+    	global $conf,$langs;
+    	
+        if ($conf->upload != 0)
+        {
+			print "\n\n<!-- Start form attach new file -->\n";
+
+            if (! $titre) $titre=$langs->trans("AttachANewFile");
+            print_titre($titre);
+
+    		print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+    
+    		print '<table width="100%" class="noborder">';
+            print '<tr><td width="50%" valign="top">';
+    
+            if ($conf->upload > 0)
+            {
+            	print '<input type="hidden" name="max_file_size" value="'.($conf->upload*1024).'">';
+            }
+            print '<input class="flat" type="file" name="userfile" size="70">';
+            print ' &nbsp; ';
+            print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'">';
+
+            if ($addcancel)
+            {
+            	print ' &nbsp; ';
+            	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			}
+			
+			print ' ('.$langs->trans("MaxSize").': '.$conf->upload.' '.$langs->trans("Kb").')';
+            print "</td></tr>";
+            print "</table>";
+
+    		print '</form>';
+    		print '<br>';
+
+			print "\n<!-- End form attach new file -->\n\n";
+        }
+    
+    	return 1;
+    }
+
+    /**
      *    \brief      Affiche formulaire de selection de la remise fixe
      *    \param      page        Page
      *    \param      selected    Valeur à appliquer

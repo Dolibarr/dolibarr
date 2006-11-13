@@ -19,6 +19,7 @@ Notify_NOTIFY_VAL_FICHINTER=Valider intervention
 Notify_NOTIFY_VAL_FAC=Valider facture
 NbOfAttachedFiles=Nombre de fichiers/documents attachés
 TotalSizeOfAttachedFiles=Taille totale des fichiers/documents attachés
+MaxSize=Taille maximum
 AttachANewFile=Attacher un nouveau fichier/document
 LinkedObject=Objets liés
 NbOfActiveNotifications=Nombre d'alertes
