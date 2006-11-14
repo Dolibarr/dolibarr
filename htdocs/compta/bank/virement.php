@@ -63,8 +63,9 @@ if ($_POST["action"] == 'add')
 		$db->begin();
 		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', (0 - $amount),$user->id, ".$_POST["account_from"].", 'VIR')";
+		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', '".price2num(-$amount)."', $user->id, ".$_POST["account_from"].", 'VIR')";
 
+		dolibarr_syslog("Virement insert bank sql=".$sql);
 		$result = $db->query($sql);
 		if (!$result)
 		{
@@ -73,8 +74,9 @@ if ($_POST["action"] == 'add')
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', $amount,$user->id, ".$_POST["account_to"].", 'VIR')";
+		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', '".price2num($amount)."',$user->id, ".$_POST["account_to"].", 'VIR')";
 
+		dolibarr_syslog("Virement insert bank sql=".$sql);
 		$result = $db->query($sql);
 		if ($result)
 		{
