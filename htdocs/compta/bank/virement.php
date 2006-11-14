@@ -63,7 +63,7 @@ if ($_POST["action"] == 'add')
 		$db->begin();
 		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', '".price2num(-$amount)."', $user->id, ".$_POST["account_from"].", 'VIR')";
+		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', '".price2num(-1*price2num($amount))."', $user->id, ".$_POST["account_from"].", 'VIR')";
 
 		dolibarr_syslog("Virement insert bank sql=".$sql);
 		$result = $db->query($sql);
