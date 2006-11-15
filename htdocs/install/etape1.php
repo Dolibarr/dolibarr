@@ -424,7 +424,7 @@ if ($_POST["action"] == "set")
 
             if ($db->connected)
             {
-                if ($db->create_db($dolibarr_main_db_name))
+                if ($db->DDLCreateDb($dolibarr_main_db_name))
                 {
                     print '<tr><td>';
                     print $langs->trans("DatabaseCreation").' : ';

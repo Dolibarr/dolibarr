@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
@@ -36,15 +36,15 @@
 
 
 /**
-     	\class      DoliDb
-		\brief      Classe permettant de gérér la database de dolibarr
+        \class      DoliDb
+        \brief      Classe permettant de gérér la database de dolibarr
 */
 
 class DoliDb
 {
     var $db;                      // Handler de base
     var $type='pgsql';            // Nom du gestionnaire
-	var $versionmin=array(8,1,0);
+	var $versionmin=array(8,1,0);	// Version min database
 
     var $results;                 // Resultset de la dernière requete
 
@@ -121,6 +121,7 @@ class DoliDb
             else
             {
                 $this->database_selected = 0;
+                $this->database_name = '';
                 $this->ok = 0;
                 $this->error=$this->error();
                 dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
@@ -270,7 +271,12 @@ class DoliDb
         if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
         {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
-			if (! $ret) $this->lastqueryerror = $query;
+			if (! $ret)
+			{
+				$this->lastqueryerror = $query;
+            	$this->lasterror = $this->error();
+            	$this->lasterrno = $this->errno();
+            }
             $this->lastquery=$query;
             $this->results = $ret;
         }
@@ -281,73 +287,13 @@ class DoliDb
     /**
         \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
         \param      resultset   Curseur de la requete voulue
-        \return		resource
+        \return	    resource
     */
     function fetch_object($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_object($resultset);
-    }
-
-
-
-
-	// Next function are not required. Only minor features use them.
-
-
-
-    /**
-            \brief          Renvoie l'id de la connection
-            \return	        string      Id connection
-    */
-    function getConnectId()
-    {
-        return '?';
-    }
-
-
-    /**
-            \brief          Renvoie la commande sql qui donne les droits à user sur les tables
-            \param          databaseuse     User à autoriser
-            \return	        string          Requete sql
-    */
-    function getGrantForUserQuery($databaseuser)
-    {
-        // Scan tables pour générer le grant
-        $dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
-
-        $handle=opendir($dir);
-        $table_list="";
-        while (($file = readdir($handle))!==false)
-        {
-            if (! ereg("\.key\.sql",$file) && ereg("^(.*)\.sql",$file,$reg))
-            {
-                if ($table_list) {
-                    $table_list.=", ".$reg[0];
-                }
-                else {
-                    $table_list.=$reg[0];
-                }
-            }
-        }
-
-        // Genere le grant_query
-        $grant_query = 'GRANT ALL ON '.$table_list.' TO "'.$databaseuser.'";';
-        return $grant_query;
-    }
-
-
-    /**
-            \brief          Création d'une nouvelle base de donnée
-            \param	        database		nom de la database à créer
-            \return	        resource		resource définie si ok, null si ko
-            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
-    */
-    function create_db($database)
-    {
-        $ret=$this->query('CREATE DATABASE '.$database.';');
-        return $ret;
     }
 
     /**
@@ -435,8 +381,8 @@ class DoliDb
         \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date tms unix.
                     Fonction à utiliser pour générer les SELECT.
-        \param	    param
-        \return	    date        date au format tms.
+        \param	    param       Date au format text à convertir
+        \return	    date        Date au format tms.
     */
     function pdate($param)
     {
@@ -469,7 +415,7 @@ class DoliDb
 
 
     /**
-        \brief 		Renvoie la derniere requete soumise par la methode query()
+        \brief      Renvoie la derniere requete soumise par la methode query()
         \return	    lastquery
     */
     function lastquery()
@@ -478,12 +424,30 @@ class DoliDb
     }
 
     /**
-        \brief      Renvoie la derniere requete en erreur()
-        \return	    lastqueryerror
+        \brief      Renvoie la derniere requete en erreur
+        \return	    string	lastqueryerror
     */
 	function lastqueryerror()
 	{
 		return $this->lastqueryerror;
+	}
+
+    /**
+        \brief      Renvoie le libelle derniere erreur
+        \return	    string	lasterror
+    */
+	function lasterror()
+	{
+		return $this->lasterror;
+	}
+
+    /**
+        \brief      Renvoie le code derniere erreur
+        \return	    string	lasterrno
+    */
+	function lasterrno()
+	{
+		return $this->lasterrno;
 	}
 
     /**
@@ -534,23 +498,82 @@ class DoliDb
         $nbre = pg_num_rows($result);
         $row = pg_fetch_result($result,0,0);
         return $row;
+
+
+	// Next function are not required. Only minor features use them.
+	//--------------------------------------------------------------
+
+
+
+    /**
+            \brief          Renvoie l'id de la connection
+            \return	        string      Id connection
+    */
+    function getConnectId()
+    {
+        return '?';
+    }
+
+
+    /**
+            \brief          Renvoie la commande sql qui donne les droits à user sur toutes les tables
+            \param          databaseuser    User à autoriser
+            \return	        string          Requete sql
+    */
+    function getGrantForUserQuery($databaseuser)
+    {
+        // Scan tables pour générer le grant
+        $dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
+
+        $handle=opendir($dir);
+        $table_list="";
+        while (($file = readdir($handle))!==false)
+        {
+            if (! ereg("\.key\.sql",$file) && ereg("^(.*)\.sql",$file,$reg))
+            {
+                if ($table_list) {
+                    $table_list.=", ".$reg[0];
+                }
+                else {
+                    $table_list.=$reg[0];
+                }
+            }
+        }
+
+        // Genere le grant_query
+        $grant_query = 'GRANT ALL ON '.$table_list.' TO "'.$databaseuser.'";';
+        return $grant_query;
     }
 
     /**
         \brief      Retourne le dsn pear
         \return     dsn
     */
-    function getdsn($db_type,$db_user,$db_pass,$db_host,$db_name)
+    function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
     {
         return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
+    }
+
+
+    /**
+            \brief          Création d'une nouvelle base de donnée
+            \param	        database		nom de la database à créer
+            \return	        resource		resource définie si ok, null si ko
+            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+    */
+    function DDLCreateDb($database)
+    {
+        $ret=$this->query('CREATE DATABASE '.$database.';');
+        return $ret;
+    }
     }
 
     /**
         \brief      Liste des tables dans une database.
         \param	    database	Nom de la database
-        \return		resource
+        \return	    resource
     */
-    function list_tables($database)
+    function DDLListTables($database)
     {
         $this->results = pg_query($this->db, "SHOW TABLES;");
         return  $this->results;

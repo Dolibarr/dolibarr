@@ -43,7 +43,7 @@ class DoliDb
     var $type='mysql';          // Nom du gestionnaire
     var $forcecharset='latin1';
 	var $forcecollate='latin1_swedish_ci';
-	var $versionmin=array(4,1,0);
+	var $versionmin=array(3,1,0);	// Version min database
 	
     var $results;               // Resultset de la dernière requete
 
@@ -190,6 +190,7 @@ class DoliDb
             \param	    passwd		mot de passe
             \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
             \return		resource	handler d'accès à la base
+	        \seealso	close
     */
     function connect($host, $login, $passwd, $name)
     {
@@ -222,33 +223,11 @@ class DoliDb
     }
 
 
-    /**
-            \brief          Création d'une nouvelle base de donnée
-            \param	        database		nom de la database à créer
-            \return	        resource		resource définie si ok, null si ko
-            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
-    */
-    function create_db($database)
-    {
-        // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-        $sql = 'CREATE DATABASE '.$database;
-        $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
-        $ret=$this->query($sql);
-        if (! $ret)
-        {
-        	// On réessaie pour compatibilité avec Mysql < 5.0
-	        $sql = 'CREATE DATABASE '.$database;
-	        $ret=$this->query($sql);
-        }
-
-        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysql_error($this->db);
-        return $ret;
-    }
-
 
     /**
         \brief      Fermeture d'une connection vers une database.
         \return	    resource
+        \seealso	connect
     */
     function close()
     {
@@ -578,12 +557,57 @@ class DoliDb
     }
 
     /**
-            \brief          Renvoie la commande sql qui donne les droits sur les tables
-            \return	        string      Requete sql
+            \brief          Renvoie la commande sql qui donne les droits à user sur toutes les tables
+            \param          databaseuser    User à autoriser
+            \return	        string          Requete sql
     */
     function getGrantForUserQuery($databaseuser)
     {
         return '';
+    }
+
+
+    /**
+        \brief      Retourne le dsn pear
+        \return     dsn
+    */
+    function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
+    {
+        return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
+    }
+
+    /**
+            \brief          Création d'une nouvelle base de donnée
+            \param	        database		nom de la database à créer
+            \return	        resource		resource définie si ok, null si ko
+            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+    */
+    function DDLCreateDb($database)
+    {
+        // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
+        $sql = 'CREATE DATABASE '.$database;
+        $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+        $ret=$this->query($sql);
+        if (! $ret)
+        {
+        	// On réessaie pour compatibilité avec Mysql < 5.0
+	        $sql = 'CREATE DATABASE '.$database;
+	        $ret=$this->query($sql);
+        }
+
+        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysql_error($this->db);
+        return $ret;
+    }
+    
+    /**
+        \brief      Liste des tables dans une database.
+        \param	    database	Nom de la database
+        \return	    resource
+    */
+    function DDLListTables($database)
+    {
+        $this->results = mysql_list_tables($database, $this->db);
+        return $this->results;
     }
 
 	/**
@@ -597,7 +621,7 @@ class DoliDb
 		\param	    type type de la table
 		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
     */
-	function create_table($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
+	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
 		// clés recherchées dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
@@ -662,6 +686,19 @@ class DoliDb
 	}
 
 	/**
+        \brief      décrit une table dans une database.
+		\param	    table	Nom de la table
+		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
+        \return	    resource
+    */
+	function DDLDescTable($table,$field="")
+    {
+		// $this->results = $this->query("DESC ".$table." ".$field);
+		$this->results = $this->query("DESC ".$table." ".$field);
+		return $this->results;
+    }
+
+	/**
 		\brief      Insère un nouveau champ dans une table
 		\param		table 			Nom de la table
 		\param		field_name 		Nom du champ à insérer
@@ -669,7 +706,7 @@ class DoliDb
 		\param	    field_position 	Optionnel ex.: "after champtruc"
 		\return	    true/false    	Selon si requête a provoqué un erreur mysql ou pas
     */
-	function add_field($table,$field_name,$field_desc,$field_position="")
+	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
 		// clés recherchées dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
@@ -695,40 +732,6 @@ class DoliDb
 		else
 			return true;
 	}
-
-    /**
-        \brief      Retourne le dsn pear
-        \return     dsn
-    */
-    function getdsn($db_type,$db_user,$db_pass,$db_host,$db_name)
-    {
-        return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
-    }
-
-    /**
-        \brief      Liste des tables dans une database.
-        \param	    database	Nom de la database
-        \return	    resource
-    */
-    function list_tables($database)
-    {
-        $this->results = mysql_list_tables($database, $this->db);
-        return $this->results;
-    }
-
-	/**
-        \brief      décrit une table dans une database.
-		\param	    table	Nom de la table
-		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-        \return	    resource
-    */
-	function desc_table($table,$field="")
-    {
-		// $this->results = $this->query("DESC ".$table." ".$field);
-		$this->results = $this->query("DESC ".$table." ".$field);
-		return $this->results;
-    }
-
 }
 
 ?>

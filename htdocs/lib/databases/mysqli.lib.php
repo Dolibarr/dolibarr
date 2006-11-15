@@ -43,6 +43,7 @@ class DoliDb
     var $type='mysqli';          // Nom du gestionnaire
     var $forcecharset='latin1';
 	var $forcecollate='latin1_swedish_ci';
+	var $versionmin=array(4,1,0);	// Version min database
 
     var $results;               // Resultset de la dernière requete
 
@@ -189,6 +190,7 @@ class DoliDb
             \param	    passwd		mot de passe
             \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
             \return		resource	handler d'accès à la base
+	        \seealso	close
     */
     function connect($host, $login, $passwd, $name)
     {
@@ -222,31 +224,9 @@ class DoliDb
 
 
     /**
-            \brief          Création d'une nouvelle base de donnée
-            \param	        database		nom de la database à créer
-            \return	        resource		resource définie si ok, null si ko
-            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
-    */
-    function create_db($database)
-    {
-        $sql = 'CREATE DATABASE '.$database;
-        $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
-        $ret=$this->query($sql);
-        if (! $ret)
-        {
-        	// On réessaie pour compatibilité avec Mysql < 5.0
-	        $sql = 'CREATE DATABASE '.$database;
-	        $ret=$this->query($sql);
-        }
-
-        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysqli_error($this->db);
-        return $ret;
-    }
-
-
-    /**
         \brief      Fermeture d'une connection vers une database.
         \return	    resource
+        \seealso	connect
     */
     function close()
     {
@@ -357,142 +337,6 @@ class DoliDb
         if (! is_object($resultset)) { $resultset=$this->results; }
         return mysqli_fetch_object($resultset);
     }
-
-
-
-	// Next function are not required. Only minor features use them.
-
-
-
-    /**
-            \brief          Renvoie l'id de la connection
-            \return	        string      Id connection
-    */
-    function getConnectId()
-    {
-        $resql=$this->query('SELECT CONNECTION_ID()');
-        $row=$this->fetch_row($resql);
-        return $row[0];
-    }
-
-    /**
-            \brief          Renvoie la commande sql qui donne les droits sur les tables
-            \return	        string      Requete sql
-    */
-    function getGrantForUserQuery($databaseuser)
-    {
-        return '';
-    }
-
-	/**
-		\brief      Crée une table
-		\param	    table Nom de la table
-		\param	    fields tableau associatif [nom champ][tableau des descriptions]
-		\param	    primary_key Nom du champ qui sera la clef primaire
-		\param	    unique_keys tableau associatifs Nom de champs qui seront clef unique => valeur
-		\param	    fulltext tableau des Nom de champs qui seront indexés en fulltext
-		\param	    key tableau des champs clés noms => valeur
-		\param	    type type de la table
-		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
-    */
-	function create_table($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
-	{
-		// clés recherchées dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
-		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "create table ".$table."(";
-		$i=0;
-		foreach($fields as $field_name => $field_desc)
-		{
-			$sqlfields[$i] = $field_name." ";
-			$sqlfields[$i]  .= $field_desc['type'];
-			if( eregi("^[^ ]",$field_desc['value']))
-				$sqlfields[$i]  .= "(".$field_desc['value'].")";
-			else if( eregi("^[^ ]",$field_desc['attribute']))
-				$sqlfields[$i]  .= " ".$field_desc['attribute'];
-			else if( eregi("^[^ ]",$field_desc['default']))
-			{
-				if(eregi("null",$field_desc['default']))
-					$sqlfields[$i]  .= " default ".$field_desc['default'];
-				else
-					$sqlfields[$i]  .= " default '".$field_desc['default']."'";
-			}
-			else if( eregi("^[^ ]",$field_desc['null']))
-				$sqlfields[$i]  .= " ".$field_desc['null'];
-
-			else if( eregi("^[^ ]",$field_desc['extra']))
-				$sqlfields[$i]  .= " ".$field_desc['extra'];
-			$i++;
-		}
-		if($primary_key != "")
-			$pk = "primary key(".$primary_key.")";
-
-		if($unique_keys != "")
-		{
-			$i = 0;
-			foreach($unique_keys as $key => $value)
-			{
-				$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$value."')";
-				$i++;
-			}
-		}
-		if($keys != "")
-		{
-			$i = 0;
-			foreach($keys as $key => $value)
-			{
-				$sqlk[$i] = "KEY ".$key." (".$value.")";
-				$i++;
-			}
-		}
-		$sql .= implode(',',$sqlfields);
-		if($primary_key != "")
-			$sql .= ",".$pk;
-		if($unique_keys != "")
-			$sql .= ",".implode(',',$sqluq);
-		if($keys != "")
-			$sql .= ",".implode(',',$sqlk);
-		$sql .=") type=".$type;
-		// dolibarr_syslog($sql);
-		if(! $this -> query($sql))
-			return false;
-		else
-			return true;
-	}
-
-	/**
-		\brief      Insère un nouveau champ dans une table
-		\param	    table Nom de la table
-		\param			field_name Nom du champ à insérer
-		\param	    field_desc tableau associatif de description duchamp à insérer[nom du paramètre][valeur du paramètre]
-		\param	    field_position Optionnel ex.: "after champtruc"
-		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
-    */
-	function add_field($table,$field_name,$field_desc,$field_position="")
-	{
-		// clés recherchées dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
-		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
-		$sql .= $field_desc['type'];
-		if( eregi("^[^ ]",$field_desc['value']))
-			$sql  .= "(".$field_desc['value'].")";
-		if( eregi("^[^ ]",$field_desc['attribute']))
-			$sql  .= " ".$field_desc['attribute'];
-		if( eregi("^[^ ]",$field_desc['null']))
-			$sql  .= " ".$field_desc['null'];
-		if( eregi("^[^ ]",$field_desc['default']))
-			if(eregi("null",$field_desc['default']))
-				$sql  .= " default ".$field_desc['default'];
-			else
-				$sql  .= " default '".$field_desc['default']."'";
-		if( eregi("^[^ ]",$field_desc['extra']))
-			$sql  .= " ".$field_desc['extra'];
-		$sql .= " ".$field_position;
-
-		if(! $this -> query($sql))
-			return false;
-		else
-			return true;
-	}
 
 
     /**
@@ -696,37 +540,199 @@ class DoliDb
         return mysqli_insert_id($this->db);
     }
 
+
+
+	// Next function are not required. Only minor features use them.
+	//--------------------------------------------------------------
+
+
+
+    /**
+            \brief          Renvoie l'id de la connection
+            \return	        string      Id connection
+    */
+    function getConnectId()
+    {
+        $resql=$this->query('SELECT CONNECTION_ID()');
+        $row=$this->fetch_row($resql);
+        return $row[0];
+    }
+
+    /**
+            \brief          Renvoie la commande sql qui donne les droits sur les tables
+            \return	        string      Requete sql
+    */
+    function getGrantForUserQuery($databaseuser)
+    {
+        return '';
+    }
+
+
     /**
         \brief      Retourne le dsn pear
         \return     dsn
     */
-    function getdsn($db_type,$db_user,$db_pass,$db_host,$db_name)
+    function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
     {
         return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
     }
+
+    /**
+            \brief          Création d'une nouvelle base de donnée
+            \param	        database		nom de la database à créer
+            \return	        resource		resource définie si ok, null si ko
+            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+    */
+    function DDLCreateDb($database)
+    {
+        $sql = 'CREATE DATABASE '.$database;
+        $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+        $ret=$this->query($sql);
+        if (! $ret)
+        {
+        	// On réessaie pour compatibilité avec Mysql < 5.0
+	        $sql = 'CREATE DATABASE '.$database;
+	        $ret=$this->query($sql);
+        }
+
+        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysqli_error($this->db);
+        return $ret;
+    }
+
 
     /**
         \brief      Liste des tables dans une database.
         \param	    database	Nom de la database
         \return	    resource
     */
-    function list_tables($database)
+    function DDLListTables($database)
     {
         $this->results = mysqli_list_tables($database, $this->db);
         return $this->results;
     }
-	 /**
-        \brief      décrit une table dans une database.
-				\param	    table	Nom de la table
-				\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-        \return	    resource
+
+	/**
+		\brief      Crée une table
+		\param	    table Nom de la table
+		\param	    fields tableau associatif [nom champ][tableau des descriptions]
+		\param	    primary_key Nom du champ qui sera la clef primaire
+		\param	    unique_keys tableau associatifs Nom de champs qui seront clef unique => valeur
+		\param	    fulltext tableau des Nom de champs qui seront indexés en fulltext
+		\param	    key tableau des champs clés noms => valeur
+		\param	    type type de la table
+		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
     */
-	function desc_table($table,$field="")
+	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
+	{
+		// clés recherchées dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
+		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+		$sql = "create table ".$table."(";
+		$i=0;
+		foreach($fields as $field_name => $field_desc)
+		{
+			$sqlfields[$i] = $field_name." ";
+			$sqlfields[$i]  .= $field_desc['type'];
+			if( eregi("^[^ ]",$field_desc['value']))
+				$sqlfields[$i]  .= "(".$field_desc['value'].")";
+			else if( eregi("^[^ ]",$field_desc['attribute']))
+				$sqlfields[$i]  .= " ".$field_desc['attribute'];
+			else if( eregi("^[^ ]",$field_desc['default']))
+			{
+				if(eregi("null",$field_desc['default']))
+					$sqlfields[$i]  .= " default ".$field_desc['default'];
+				else
+					$sqlfields[$i]  .= " default '".$field_desc['default']."'";
+			}
+			else if( eregi("^[^ ]",$field_desc['null']))
+				$sqlfields[$i]  .= " ".$field_desc['null'];
+
+			else if( eregi("^[^ ]",$field_desc['extra']))
+				$sqlfields[$i]  .= " ".$field_desc['extra'];
+			$i++;
+		}
+		if($primary_key != "")
+			$pk = "primary key(".$primary_key.")";
+
+		if($unique_keys != "")
+		{
+			$i = 0;
+			foreach($unique_keys as $key => $value)
+			{
+				$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$value."')";
+				$i++;
+			}
+		}
+		if($keys != "")
+		{
+			$i = 0;
+			foreach($keys as $key => $value)
+			{
+				$sqlk[$i] = "KEY ".$key." (".$value.")";
+				$i++;
+			}
+		}
+		$sql .= implode(',',$sqlfields);
+		if($primary_key != "")
+			$sql .= ",".$pk;
+		if($unique_keys != "")
+			$sql .= ",".implode(',',$sqluq);
+		if($keys != "")
+			$sql .= ",".implode(',',$sqlk);
+		$sql .=") type=".$type;
+		// dolibarr_syslog($sql);
+		if(! $this -> query($sql))
+			return false;
+		else
+			return true;
+	}
+
+	/**
+		\brief      décrit une table dans une database.
+		\param	    table	Nom de la table
+		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
+		\return	    resource
+	*/
+	function DDLDescTable($table,$field="")
     {
 		// $this->results = $this->query("DESC ".$table." ".$field);
 		$this->results = $this->query("DESC ".$table." ".$field);
 		return $this->results;
     }
+
+	/**
+		\brief      Insère un nouveau champ dans une table
+		\param	    table Nom de la table
+		\param			field_name Nom du champ à insérer
+		\param	    field_desc tableau associatif de description duchamp à insérer[nom du paramètre][valeur du paramètre]
+		\param	    field_position Optionnel ex.: "after champtruc"
+		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
+    */
+	function DDLAddField($table,$field_name,$field_desc,$field_position="")
+	{
+		// clés recherchées dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
+		$sql .= $field_desc['type'];
+		if( eregi("^[^ ]",$field_desc['value']))
+			$sql  .= "(".$field_desc['value'].")";
+		if( eregi("^[^ ]",$field_desc['attribute']))
+			$sql  .= " ".$field_desc['attribute'];
+		if( eregi("^[^ ]",$field_desc['null']))
+			$sql  .= " ".$field_desc['null'];
+		if( eregi("^[^ ]",$field_desc['default']))
+			if(eregi("null",$field_desc['default']))
+				$sql  .= " default ".$field_desc['default'];
+			else
+				$sql  .= " default '".$field_desc['default']."'";
+		if( eregi("^[^ ]",$field_desc['extra']))
+			$sql  .= " ".$field_desc['extra'];
+		$sql .= " ".$field_position;
+
+		if(! $this -> query($sql))
+			return false;
+		else
+			return true;
+	}
 
 }
 

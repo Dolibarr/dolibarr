@@ -50,15 +50,15 @@ else if ($_POST["action"] == 'multiprix_num')
 }
 if ($_POST["action"] == 'multiprix')
 {
-	$res=$db->desc_table(MAIN_DB_PREFIX."societe","price_level");
+	$res=$db->DDLDescTable(MAIN_DB_PREFIX."societe","price_level");
 	if(! $db->fetch_row())
 	{
 		$field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
 		// on ajoute le champ price_level dans la table societe
-		if(! $db->add_field(MAIN_DB_PREFIX."societe","price_level",$field_desc))
+		if(! $db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc))
 		{
 			dolibarr_print_error($db);
-			print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
+			exit;
 		}
 		// on crée la table societe_prices
 		else
@@ -70,7 +70,7 @@ if ($_POST["action"] == 'multiprix')
 			$fields['datec'] = array('type'=>'datetime','default'=> 'null');
 			$fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
 			$fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
-			if(! $db->create_table($table,$fields,"rowid","InnoDB"))
+			if(! $db->DDLCreateTable($table,$fields,"rowid","InnoDB") > 0)
 			{
 				dolibarr_print_error($db);
 				print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
@@ -93,8 +93,8 @@ if ($_POST["action"] == 'multiprix')
 }
 else if ($_POST["action"] == 'sousproduits')
 {
-  $res=$db -> desc_table(MAIN_DB_PREFIX."product_association");
-	if(! $db -> fetch_row())
+  	$res=$db->DDLDescTable(MAIN_DB_PREFIX."product_association");
+	if(! $db->fetch_row())
 	{
 		$table = MAIN_DB_PREFIX."product_association";
 		$fields['fk_product_pere'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
@@ -102,7 +102,7 @@ else if ($_POST["action"] == 'sousproduits')
 		$fields['qty'] = array('type'=>'double','default'=> 'null');
 		$keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
 		$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
-		if(! $db -> create_table($table,$fields,"","InnoDB","","",$keys))
+		if (! $db->DDLCreateTable($table,$fields,"","InnoDB","","",$keys) > 0)
 		{
 			dolibarr_print_error($db);
 			print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
