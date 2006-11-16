@@ -1,6 +1,7 @@
 Accueil
 Actualités
 ApercuDesModeles
+Authentification
 Benoit Mortier
 Charte de nommage
 Commande
@@ -117,6 +118,7 @@ Système des boites
 Table llx action def
 Table llx commande
 Table llx commandedet
+Table llx const
 Table llx contrat
 Table llx dolibarr modules
 Table llx export compta
@@ -130,6 +132,7 @@ Table llx prelevement facture demande
 Table llx prelevement lignes
 Table llx prelevement rejet
 Table llx rights def
+Table llx user param
 Table llx usergroup
 Table llx usergroup rights
 Table llx usergroup user
