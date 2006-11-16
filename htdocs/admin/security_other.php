@@ -96,8 +96,12 @@ print "</tr>\n";
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=set_main_upload_doc" method="POST">';
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("MaxSizeForUploadedFiles").'</td>';
-print '<td>';
+print '<td>'.$langs->trans("MaxSizeForUploadedFiles").'.';
+$max=@ini_get('upload_max_filesize');
+if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
+else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
+print '</td>';
+print '<td nowrap="1">';
 print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.$conf->global->MAIN_UPLOAD_DOC.'"> '.$langs->trans("Kb");
 print '</td>';
 print '<td align="center">';

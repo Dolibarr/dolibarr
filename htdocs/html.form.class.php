@@ -1765,9 +1765,13 @@ class Form
     		print '<table width="100%" class="noborder">';
             print '<tr><td width="50%" valign="top">';
     
+    		$max=$conf->upload;							// En Kb
+    		$maxphp=@ini_get('upload_max_filesize');	// En Mb
+    		if ($maxphp > 0) $max=min($max,$maxphp*1024);
+
             if ($conf->upload > 0)
             {
-            	print '<input type="hidden" name="max_file_size" value="'.($conf->upload*1024).'">';
+            	print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
             }
             print '<input class="flat" type="file" name="userfile" size="70">';
             print ' &nbsp; ';
@@ -1779,7 +1783,7 @@ class Form
             	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 			
-			print ' ('.$langs->trans("MaxSize").': '.$conf->upload.' '.$langs->trans("Kb").')';
+			print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb").')';
             print "</td></tr>";
             print "</table>";
 
