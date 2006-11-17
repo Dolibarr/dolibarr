@@ -80,6 +80,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$is_dispo = $this->verif($DB, $codetouse, $societe, $type);
 		if (! $is_dispo)
 		{	
+/*
 			// On tente ajout suffix
 			while ($is_dispo == 0 && $i < 37)
 			{
@@ -90,9 +91,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		
 				$i++;
 			}
-
+*/
 			// Pour retour
-			$this->code=$altcodetouse;
+//			$this->code=$altcodetouse;
+			$this->code=$codetouse;
 		}
 		else
 		{

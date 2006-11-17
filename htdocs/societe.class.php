@@ -217,10 +217,10 @@ class Societe
         }
     }
 
-  /**
-   *    \brief      Verification lors de la modification
-   *    \return     0 si ok, < 0 en cas d'erreur
-   */
+	/**
+	*    \brief      Verification lors de la modification
+	*    \return     0 si ok, < 0 en cas d'erreur
+	*/
 	function verify()
 	{
 		$this->nom=trim($this->nom);
@@ -376,8 +376,8 @@ class Societe
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
             $sql .= " WHERE idp = '" . $id ."'";
 
-        	// Verifie que code compta défini
-        
+        	
+        	dolibarr_syslog("Societe.class::update sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1448,6 +1448,7 @@ class Societe
 	 *            		Peut être identique à celui saisit ou généré automatiquement.
 	 *            		A ce jour seule la génération automatique est implémentée
 	 *    	\param      type			Type de tiers ('customer' ou 'supplier')
+	 *		\return		string			Code compta si ok, 0 si aucun, <0 si ko
 	 */
 	function get_codecompta($type)
 	{
@@ -1461,8 +1462,9 @@ class Societe
 	
 			$mod = new $var;
 	
+			// Defini code compta dans $mod->code
 			$result = $mod->get_code($this->db, $this, $type);
-	
+			
 			if ($type == 'customer') $this->code_compta = $mod->code;
 			if ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
 	
