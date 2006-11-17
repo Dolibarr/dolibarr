@@ -61,30 +61,45 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function get_code($DB, $societe, $type)
 	{
+		$prefixcodecomptacustomer='411';
+		$prefixcodecomptasupplier='401';
+		
 		$i = 0;
 		$this->db = $DB;
+
+		dolibarr_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".$societe);
 	
 		// Regle gestion compte compta
-		if ($type == 'customer') $codetouse=$societe->code_client;
-		if ($type == 'supplier') $codetouse=$societe->code_fournisseur;
+		$codetouse='';
+		if ($type == 'customer') $codetouse = $prefixcodecomptacustomer;
+		if ($type == 'supplier') $codetouse = $prefixcodecomptasupplier;
+		if ($type == 'customer') $codetouse.=$societe->code_client;
+		if ($type == 'supplier') $codetouse.=$societe->code_fournisseur;
 		$codetouse=eregi_replace('[^0-9]','',$codetouse);
+	
+		$is_dispo = $this->verif($DB, $codetouse, $societe, $type);
+		if (! $is_dispo)
+		{	
+			// On tente ajout suffix
+			while ($is_dispo == 0 && $i < 37)
+			{
+				$arr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+				$altcodetouse = $codetouse . substr($arr, $i, 1);
 		
-		if ($type == 'customer') $this->code = "411".$codetouse;
-		if ($type == 'supplier') $this->code = "401".$codetouse;
-	
-		$is_dispo = $this->verif($DB, $this->code, $societe);
-		while ($is_dispo == 0 && $i < 37)		// 40 char max
-		{
-			$arr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	
-			$this->code = $societe->prefix_comm . $codetouse . substr($arr, $i, 1);
-	
-			$is_dispo = $this->verif($DB, $this->code, $societe);
-	
-			$i++;
-		}
+				$is_dispo = $this->verif($DB, $altcodetouse, $societe, $type);
+		
+				$i++;
+			}
 
-		dolibarr_syslog("mod_codecompta_aquarium::get_code type=".$type." code=".$this->code);
+			// Pour retour
+			$this->code=$altcodetouse;
+		}
+		else
+		{
+			// Pour retour
+			$this->code=$codetouse;
+		}
+		dolibarr_syslog("mod_codecompta_aquarium::get_code found code=".$this->code);
 		return $is_dispo;
 	}
 
@@ -93,25 +108,36 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *		\brief		Renvoi si un code compta est dispo
 	 *		\return		int			0 non dispo, >0 dispo, <0 erreur
 	 */
-	function verif($db, $code, $societe)
+	function verif($db, $code, $societe, $type)
 	{
-		$sql = "SELECT code_compta FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE code_compta = '".$code."'";
+		$sql = "SELECT ";
+		if ($type == 'customer') $sql.= "code_compta";
+		if ($type == 'supplier') $sql.= "code_compta_fournisseur";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE ";
+		if ($type == 'customer') $sql.= "code_compta";
+		if ($type == 'supplier') $sql.= "code_compta_fournisseur";
+		$sql.= " = '".$code."'";
 		$sql.= " AND idp != ".$societe->id;
 	
-		if ($db->query($sql))
+		$resql=$db->query($sql);
+		if ($resql)
 		{
-			if ($db->num_rows() == 0)
+			if ($db->num_rows($resql) == 0)
 			{
+				dolibarr_syslog("mod_codecompta_aquarium::verif code '$code' available");
 				return 1;	// Dispo
 			}
 			else
 			{
+				dolibarr_syslog("mod_codecompta_aquarium::verif code '$code' not available");
 				return 0;	// Non dispo
 			}
 		}
 		else
 		{
+			$this->error=$db->error()." sql=".$sql;
+			dolibarr_syslog("mod_codecompta_aquarium::verif error".$this->error);
 			return -1;		// Erreur
 		}
 	}
