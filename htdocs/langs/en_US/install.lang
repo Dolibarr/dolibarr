@@ -3,10 +3,11 @@ InstallEasy=We tried to make Dolibarr setup as easy as possible. Just follow ins
 MiscellanousChecks=Prerequisites checks
 DolibarrWelcome=Welcome on Dolibarr
 ConfFileExists=Configuration file <b>%s</b> exists.
+ConfFileDoesNotExists=Configuration file <b>%s</b> does not exist !
+ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not exist and could not be created !
 ConfFileCouldBeCreated=Configuration file <b>%s</b> could be created.
 ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be granted to be able to write into this file during configuration process ("chmod 666" for example on Unix like OS).
 ConfFileIsWritable=Configuration file <b>%s</b> is writable.
-ConfFileDoesNotExists=Configuration file <b>%s</b> does not exist !
 PHPSupportSessions=This PHP supports sessions.
 ErrorPHPDoesNotSupportSessions=Your PHP installation does not support sessions. This feature is required to make Dolibarr working. Check your PHP setup.
 ErrorDirDoesNotExists=Directory %s does not exists.
@@ -87,7 +88,7 @@ Start=Start
 InstallNotAllowed=Setup not allowed by <b>conf.php</b> permissions
 NotAvailable=Not available
 YouMustCreateWithPermission=You must create file %s and set write permissions on it for web server during install process.
-CorrectProblemAndReloadPage=Correct problem and <a href="index.php">reload page</a> (Press F5 key).
+CorrectProblemAndReloadPage=Correct problem and <a href="%s">reload page</a> (Press F5 key).
 AlreadyDone=Already migrated
 DatabaseVersion=Database version
 ServerVersion=Database server version

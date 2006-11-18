@@ -81,6 +81,7 @@ else
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {
+	dolibarr_install_syslog("conf file '$conffile' already exists");
     $confexists=1;
     include_once($conffile);
     
@@ -91,9 +92,10 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 else
 {
     // Si non on le crée        
+	dolibarr_install_syslog("we try to creat conf file '$conffile'");
     $confexists=0;
     $fp = @fopen($conffile, "w");
-    if($fp)
+    if ($fp)
     {
         @fwrite($fp, '<?php');
         @fputs($fp,"\n");
@@ -108,12 +110,13 @@ else
 // Si fichier absent et n'a pu etre créé
 if (! file_exists($conffile))
 {
-    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExists",'conf.php');
-    print "<br />";
+    //print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffile);
+    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",'conf.php');
+    print "<br /><br />";
     print $langs->trans("YouMustCreateWithPermission",'htdocs/conf/conf.php');
     print "<br /><br />";
     
-    print $langs->trans("CorrectProblemAndReloadPage");
+    print $langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF']);
     $err++;
 }
 else

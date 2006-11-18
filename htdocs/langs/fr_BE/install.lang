@@ -3,10 +3,11 @@ InstallEasy=Nous avons tenté de rendre la configration de Dolibarr aussi simple 
 MiscellanousChecks=Vérification des pré-requis
 DolibarrWelcome=Bienvenue dans Dolibarr
 ConfFileExists=Le fichier de configuration <b>%s</b> existe.
+ConfFileDoesNotExists=Le fichier de configuration <b>%s</b> n'existe pas !
+ConfFileDoesNotExistsAndCouldNotBeCreated=Le fichier de configuration <b>%s</b> n'existe pas et n'a pu être créé !
 ConfFileCouldBeCreated=Le fichier de configuration <b>%s</b> a pu être créé.
 ConfFileIsNotWritable=Le fichier de configuration <b>%s</b> n'est pas inscriptible. Vérifiez les permissions. Pour une première installation, votre serveur web doit avoir le droit d'écrire dans ce fichier lors du processus d'installation ("chmod 666 %s" par exemple sur des systèmes d'exploitaion Unix).
 ConfFileIsWritable=Le fichier de configuration <b>%s</b> est inscriptible.
-ConfFileDoesNotExists=Le fichier de configuration <b>%s</b> n'existe pas!
 PHPSupportSessions=Cette installation de PHP supporte les sessions.
 ErrorPHPDoesNotSupportSessions=Cette installation de PHP ne supporte pas les sessions. Cette fonctionnalité est requise pour que Dolibarr puisse fonctionner. Veuillez vérifier votre configuration PHP.
 ErrorDirDoesNotExists=Le répertoire %s n'existe pas.
@@ -87,7 +88,7 @@ Start=Démarrer
 InstallNotAllowed=Configuration non autorisée par les permissions de <b>conf.php</b>
 NotAvailable=Non disponible
 YouMustCreateWithPermission=Vous devez créer le fichier %s et donner les permissions d'écrire dans ce fichier à votre serveur web pendant le processus d'installation.
-CorrectProblemAndReloadPage=Corrigez le problème et <a href="index.php">rechargez la page</a> (Pressez la touche F5).
+CorrectProblemAndReloadPage=Corrigez le problème et <a href="%s">rechargez la page</a> (Pressez la touche F5).
 AlreadyDone=Déjà migré
 DatabaseVersion=Version de la base de données
 ServerVersion=Version du serveur de bases de données
