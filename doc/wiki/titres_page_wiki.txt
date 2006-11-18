@@ -36,6 +36,7 @@ FactureFournisseur
 FactureModele
 Fichier de configuration
 Glossaire
+Imports de masse
 Installation
 Installation / Mise a jour
 Interfaces Dolibarr vers exterieur
@@ -48,9 +49,6 @@ Laurent Destailleur - Profession de foi
 Librairies externes
 Librairies externes et dépendances
 Liste des tables
-Llx adherent
-Llx contrat
-Llx prelevement
 Mailing
 Main Page
 Mise à jour du format de la base
@@ -69,7 +67,6 @@ Module Propositions commerciales
 Module Prélèvements bancaires
 Module Société
 Module Stock
-Procédure Facturation
 Module Utilisateurs
 Module comptabilité
 Modules
@@ -115,6 +112,7 @@ Sociétés
 Suggestions utilisateurs
 Système de menus
 Système des boites
+Table llx adherent
 Table llx action def
 Table llx commande
 Table llx commandedet
