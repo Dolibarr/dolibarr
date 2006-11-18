@@ -82,9 +82,14 @@ if ($mode == 'search')
 
     $sql = "SELECT s.idp";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql .= " WHERE s.nom like '%".$socname."%'";
+    $sql.= " WHERE (";
+    $sql.= "s.nom like '%".$socname."%'";
+	$sql.= " OR s.code_client LIKE '%".$socname."%'";
+	$sql.= " OR s.email like '%".$socname."%'";
+	$sql.= " OR s.url like '%".$socname."%'";
+    $sql.= ")";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
     $result=$db->query($sql);
@@ -94,7 +99,7 @@ if ($mode == 'search')
         {
             $obj = $db->fetch_object($result);
             $socid = $obj->idp;
-            header("location: soc.php?socid=$socid");
+            header("Location: soc.php?socid=$socid");
             exit;
         }
         $db->free($result);
@@ -135,7 +140,7 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql.= " WHERE s.fk_stcomm = st.id";
 if ($socid)
 {
-  $sql .= " AND s.idp = $socid";
+  $sql .= " AND s.idp = ".$socid;
 }
 
 if ($socname)
@@ -152,8 +157,14 @@ if (!$user->rights->commercial->client->voir && !$socid) //restriction
 	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 
-if ($search_nom) {
-  $sql .= " AND (s.nom LIKE '%".$search_nom."%' OR s.code_client LIKE '%".$search_nom."%')";
+if ($search_nom)
+{
+	$sql.= " AND (";
+	$sql.= "s.nom LIKE '%".$search_nom."%'";
+	$sql.= " OR s.code_client LIKE '%".$search_nom."%'";
+	$sql.= " OR s.email like '%".$search_nom."%'";
+	$sql.= " OR s.url like '%".$search_nom."%'";
+	$sql.= ")";
 }
 
 if ($search_ville) {
