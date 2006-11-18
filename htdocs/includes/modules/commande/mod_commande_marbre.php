@@ -96,7 +96,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
     /**     \brief      Renvoi prochaine valeur attribuée
      *      \return     string      Valeur
      */
-    function getNextValue($soc)
+    function getNextValue()
     {
         global $db;
 
