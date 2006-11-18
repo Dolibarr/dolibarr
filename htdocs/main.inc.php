@@ -172,9 +172,11 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 		    'basedn' => $conf->global->LDAP_SERVER_DN,
 		    'binddn' => $conf->global->LDAP_ADMIN_DN,
 		    'bindpw' => $conf->global->LDAP_ADMIN_PASS,
-		    //'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA,
-		    'userattr' => 'samAccountName',
-		    'userfilter' => '(objectClass=user)',
+
+		    'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA,
+		    'userfilter' => $conf->global->$conf->global->LDAP_FILTER_CONNECTION
+		    //'userattr' => 'samAccountName',
+		    //'userfilter' => '(objectClass=user)',
 	    );
 
 	    $aDol = new DOLIAuth("LDAP", $params, "dol_loginfunction");

@@ -54,49 +54,23 @@ if (!$user->admin)
  
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_TYPE',$_POST["type"]))
+	$error=0;
+	
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_TYPE',$_POST["type"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION',$_POST["version"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST',$_POST["host"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE',$_POST["slave"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_PORT',$_POST["port"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_DN',$_POST["dn"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_ADMIN_DN',$_POST["admin"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_ADMIN_PASS',$_POST["pass"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS',$_POST["usetls"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE',$_POST["activecontact"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',$_POST["activesynchro"])) $error++;
+
+	if ($error)
 	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION',$_POST["version"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST',$_POST["host"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE',$_POST["slave"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_PORT',$_POST["port"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_DN',$_POST["dn"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_ADMIN_DN',$_POST["admin"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_ADMIN_PASS',$_POST["pass"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS',$_POST["usetls"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE',$_POST["activecontact"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',$_POST["activesynchro"]))
-	{
-		print $db->error();
+		dolibarr_print_error($db->error());
 	}
 }
 

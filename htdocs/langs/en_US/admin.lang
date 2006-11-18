@@ -538,27 +538,30 @@ LDAPConnectToDNFailed=Connection au DN (%s) échouée
 LDAPSetupForVersion3=LDAP server configured for version 3
 LDAPSetupForVersion2=LDAP server configured for version 2
 LDAPFieldLoginUnix=Login (unix)
-LDAPFieldLoginExample=Default attribute : uid
+LDAPFieldLoginExample=Suggested value : uid
 LDAPFilterConnection=Search filter
-LDAPFilterConnectionExample=Default filter : &(objectClass=user)(objectCategory=person)
+LDAPFilterConnectionExample=Suggested value : &(objectClass=user)(objectCategory=person)
 LDAPAttributes=LDAP attributes
 LDAPFieldLoginSamba=Login (samba, activedirectory)
-LDAPFieldLoginSambaExample=Default attribute : samaccountname (Samba and ActiveDirectory)
+LDAPFieldLoginSambaExample=Suggested value : samaccountname (Samba and ActiveDirectory)
 LDAPFieldName=Name
-LDAPFieldNameExample=Default attribute : sn
+LDAPFieldNameExample=Suggested value : sn
 LDAPFieldFirstName=Firstname
-LDAPFieldFirstNameExample=Default attribute : givenname
+LDAPFieldFirstNameExample=Suggested value : givenname
 LDAPFieldMail=E-Mail address
-LDAPFieldMailExample=Default attribute : mail
+LDAPFieldMailExample=Suggested value : mail
 LDAPFieldPhone=Phone number
-LDAPFieldPhoneExample=Default attribute : telephonenumber
+LDAPFieldPhoneExample=Suggested value : telephonenumber
 LDAPFieldFax=Fax number
-LDAPFieldFaxExample=Default attribute : facsimiletelephonenumber
+LDAPFieldFaxExample=Suggested value : facsimiletelephonenumber
 LDAPFieldMobile=Cellular phone
-LDAPFieldMobileExample=Default attribute : mobile
+LDAPFieldMobileExample=Suggested value : mobile
 LDAPParametersAreStillHardCoded=LDAP parametres are still hardcoded (in contact class)
 LDAPSetupNotComplete=LDAP setup not complete (go on others tabs)
 LDAPNoUserOrPasswordProvidedAccessIsReadOnly=No administrator or password provided. LDAP access will be anonymous and in read only mode.
+LDAPDescContact=This page allows you to define LDAP attributes name in LDAP tree for each data found on Dolibarr contacts.
+LDAPDescUsers=This page allows you to define LDAP attributes name in LDAP tree for each data found on Dolibarr users.
+LDAPDescValues=Suggested values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use thoose values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all thoose schemas loaded.
 ##### Products #####
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)

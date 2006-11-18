@@ -23,16 +23,15 @@
  * $Source$
  */
 
+
 /**
 		\file 		htdocs/lib/authldap.lib.php
-		\brief 		Librairie contenant les fonctions pour accèder au serveur ldap.
-		\author 	Rodolphe Quiedeville.
-		\author		Benoit Mortier.
-		\author		Regis Houssin.
-		\author		Laurent Destailleur.
+		\brief 		Librairie contenant les fonctions pour accèder au serveur LDAP
+		\author 	Rodolphe Quiedeville
+		\author		Benoit Mortier
+		\author		Regis Houssin
+		\author		Laurent Destailleur
 		\version 	$Revision$
-
-		Ensemble des fonctions permettant d'accèder à un serveur LDAP.
 */
 
 class AuthLdap {
@@ -422,6 +421,40 @@ class AuthLdap {
             }
         }
     }
+
+
+	/*
+	* 	\brief		Add a LDAP entry
+	*	\param		dn			DN entry key
+	*	\param		info		Attributes array
+	*	\return		boolean		<0 si KO, >0 si OK
+	*/
+	function add($dn, $info)
+	{
+		dolibarr_syslog("authldap::add Add LDAP entry dn=".$dn);
+		
+		//print_r($info);
+		$result=@ldap_add($this->connection, $dn, $info);
+
+		if ($result) return 1;
+		return -1;
+	}
+
+	/*
+	* 	\brief		Delete a LDAP entry
+	*	\param		dn			DN entry key
+	*	\return		boolean		<0 si KO, >0 si OK
+	*/
+	function delete($dn)
+	{
+		dolibarr_syslog("authldap::delete Delete LDAP entry dn=".$dn);
+
+		$result=@ldap_delete($this->connection, $dn);
+
+		if ($result) return 1;
+		return -1;
+	}
+
 
     // 2.4 Attribute methods -----------------------------------------------------
     /**

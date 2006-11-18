@@ -54,21 +54,21 @@ if (!$user->admin)
  
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
-	if (! dolibarr_set_const($db, 'LDAP_USER_DN',$_POST["user"]))
+	$error=0;
+	if (! dolibarr_set_const($db, 'LDAP_USER_DN',$_POST["user"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',$_POST["group"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
+
+	if ($error)
 	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',$_POST["group"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"]))
-	{
-		print $db->error();
-	}
-	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',$_POST["filterconnection"]))
-	{
-		print $db->error();
+		dolibarr_print_error($db->error());
 	}
 }
 
@@ -123,6 +123,9 @@ if ($conf->global->LDAP_MEMBERS_ACTIVE)
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("LDAP"));
 
+print $langs->trans("LDAPDescUsers").'<br>';
+print '<br>';
+
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 
@@ -151,120 +154,56 @@ print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td></tr>';
 // Filtre de connexion
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
-if ($conf->global->LDAP_FILTER_CONNECTION)
-{
-  print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
-}
-else
-{
-  print '<input size="38" type="text" name="filterconnection" value="&(objectClass=user)(objectCategory=person)">';
-}
+print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td></tr>';
 
 // Login unix
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
-if ($conf->global->LDAP_FIELD_LOGIN)
-{
-	print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_FIELD_LOGIN.'">';
-}
-else
-{
-  print '<input size="25" type="text" name="fieldlogin" value="uid">';
-}
+print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_FIELD_LOGIN.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginExample").'</td></tr>';
 
 // Login samba
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
-if ($conf->global->LDAP_FIELD_LOGIN_SAMBA)
-{
-	print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
-}
-else
-{
-	print '<input size="25" type="text" name="fieldloginsamba" value="samaccountname">';
-}
+print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td></tr>';
 
 // Name
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
-if ($conf->global->LDAP_FIELD_NAME)
-{
-  print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_FIELD_NAME.'">';
-}
-else
-{
-  print '<input size="25" type="text" name="fieldname" value="sn">';
-}
+print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td></tr>';
 
 // Firstname
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
-if ($conf->global->LDAP_FIELD_FIRSTNAME)
-{
-  print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
-}
-else
-{
-  print '<input size="25" type="text" name="fieldfirstname" value="givenname">';
-}
+print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td></tr>';
 
 // Mail
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
-if ($conf->global->LDAP_FIELD_MAIL)
-{
-  print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_FIELD_MAIL.'">';
-}
-else
-{
-  print '<input size="25" type="text" name="fieldmail" value="mail">';
-}
+print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_FIELD_MAIL.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td></tr>';
 
 // Phone
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
-if ($conf->global->LDAP_FIELD_PHONE)
-{
-  print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
-}
-else
-{
-  print '<input size="25" type="text" name="fieldphone" value="telephonenumber">';
-}
+print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td></tr>';
 
 // Fax
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
-if ($conf->global->LDAP_FIELD_FAX)
-{
-  print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
-}
-else
-{
-  print '<input size="25" type="text" name="fieldfax" value="facsimiletelephonenumber">';
-}
+print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td></tr>';
 
 // Mobile
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
-if ($conf->global->LDAP_FIELD_MOBILE)
-{
-  print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
-}
-else
-{
-  print '<input size="25" type="text" name="fieldmobile" value="mobile">';
-}
+print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td></tr>';
-
 
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
@@ -274,6 +213,7 @@ print '</form>';
 
 print '</div>';
 
+print info_admin($langs->trans("LDAPDescValues"));
 
 
 $db->close();

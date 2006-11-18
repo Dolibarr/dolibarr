@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Regis Houssin        <regis.houssin@cap-networks.com>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,43 +39,99 @@ include_once "DolibarrModules.class.php";
 
 class modLdap extends DolibarrModules
 {
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
-    */
-  function modLdap($DB)
-  {
-    $this->db = $DB ;
-    $this->id = 'ldap';   // Same value xxx than in file modXxx.class.php file
-    $this->numero = 200 ;
+	/**
+	*   \brief      Constructeur. Definit les noms, constantes et boites
+	*   \param      DB      handler d'accès base
+	*/
+	function modLdap($DB)
+	{
+		$this->db = $DB ;
+		$this->id = 'ldap';   // Same value xxx than in file modXxx.class.php file
+		$this->numero = 200 ;
+	
+		$this->name = "Ldap";
+		$this->family = "technic";
+		$this->description = "Synchronisation Ldap";
+		$this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
+		$this->const_name = 'MAIN_MODULE_LDAP';
+		$this->special = 1;
+	
+		// Dir
+		$this->dirs = array();
+	
+		// Config pages
+		$this->config_page_url = "ldap.php";
+	
+		// Dépendances
+		$this->depends = array();
+		$this->requiredby = array();
+	
+		// Constantes
+		$this->const = array();
+		$r=0;
+	
+		$this->const[$r][0] = "LDAP_USER_DN";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "ou=users,dc=my-domain,dc=com";
+		$r++;
 
-    $this->name = "Ldap";
-    $this->family = "technic";
-    $this->description = "Synchronisation Ldap";
-    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_LDAP';
-    $this->special = 1;
+		$this->const[$r][0] = "LDAP_GROUP_DN";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "ou=groups,dc=my-domain,dc=com";
+		$r++;
 
-    // Dir
-    $this->dirs = array();
+		$this->const[$r][0] = "LDAP_FILTER_CONNECTION";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "&(objectClass=user)(objectCategory=person)";
+		$r++;
 
-    // Config pages
-    $this->config_page_url = "ldap.php";
+		$this->const[$r][0] = "LDAP_FIELD_LOGIN";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "uid";
+		$r++;
 
-    // Dépendances
-    $this->depends = array();
-    $this->requiredby = array();
+		$this->const[$r][0] = "LDAP_FIELD_LOGIN_SAMBA";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "samaccountname";
+		$r++;
 
-    // Constantes
-    $this->const = array();
-    
-    // Boites
-    $this->boxes = array();
+		$this->const[$r][0] = "LDAP_FIELD_NAME";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "sn";
+		$r++;
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'ldap';
-  }
+		$this->const[$r][0] = "LDAP_FIELD_FIRSTNAME";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "givenname";
+		$r++;
+
+		$this->const[$r][0] = "LDAP_FIELD_MAIL";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mail";
+		$r++;
+
+		$this->const[$r][0] = "LDAP_FIELD_PHONE";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "telephonenumber";
+		$r++;
+
+		$this->const[$r][0] = "LDAP_FIELD_FAX";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "facsimiletelephonenumber";
+		$r++;
+
+		$this->const[$r][0] = "LDAP_FIELD_MOBILE";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mobile";
+		$r++;
+			
+		// Boites
+		$this->boxes = array();
+	
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'ldap';
+	}
 
    /**
     *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.

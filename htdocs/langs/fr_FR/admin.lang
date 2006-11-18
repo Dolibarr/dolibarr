@@ -510,14 +510,14 @@ LDAPServerUseTLS=Utiliser TLS
 LDAPServerUseTLSExample=Votre serveur utilise le TLS
 LDAPServerDn=DN du serveur
 LDAPAdminDn=DN de l'administrateur
-LDAPAdminDnExample=DN complet (ex: cn=adminldap,dc=societe,dc=com)
+LDAPAdminDnExample=DN complet (ex: cn=adminldap,dc=my-domain,dc=com)
 LDAPPassword=Mot de passe de l'administrateur
 LDAPUserDn=DN des utilisateurs
-LDAPUserDnExample=DN complet (ex: ou=users,dc=societe,dc=com)
+LDAPUserDnExample=DN complet (ex: ou=users,dc=my-domain,dc=com)
 LDAPGroupDn=DN des groupes
-LDAPGroupDnExample=DN complet (ex: ou=groups,dc=societe,dc=com)
+LDAPGroupDnExample=DN complet (ex: ou=groups,dc=my-domain,dc=com)
 LDAPServerExample=Adresse du serveur (ex: localhost, 192.168.0.2, ldaps://ldap.example.com/)
-LDAPServerDnExample=DN complet (ex: dc=societe,dc=com)
+LDAPServerDnExample=DN complet (ex: dc=my-domain,dc=com)
 LDAPPasswordExample=Mot de passe de l'administrateur
 LDAPDnSynchroActive=Synchronisation des utilisateurs et groupes
 LDAPDnSynchroActiveExample=Synchronisation de LDAP vers Dolibarr ou Dolibarr vers LDAP
@@ -525,7 +525,7 @@ LDAPDnContactActive=Synchronisation des contacts
 LDAPDnContactActiveYes=Synchronisation activée
 LDAPDnContactActiveExample=Synchronisation activée/désactivée
 LDAPContactDn=DN des contacts Dolibarr
-LDAPContactDnExample=DN complet (ex: ou=contacts,dc=societe,dc=com)
+LDAPContactDnExample=DN complet (ex: ou=contacts,dc=my-domain,dc=com)
 LDAPTestConnect=Tester la connexion LDAP
 LDAPTCPConnectOK=Connexion TCP au serveur LDAP réussie (Serveur=%s, Port=%s)
 LDAPTCPConnectKO=Connexion TCP au serveur LDAP échouée (Serveur=%s, Port=%s)
@@ -538,27 +538,30 @@ LDAPConnectToDNFailed=Connection au DN (%s) échouée
 LDAPSetupForVersion3=Serveur LDAP configuré en version 3
 LDAPSetupForVersion2=Serveur LDAP configuré en version 2
 LDAPFieldLoginUnix=Login (unix)
-LDAPFieldLoginExample=Attribut par défaut : uid
+LDAPFieldLoginExample=Valeur recommandée : uid
 LDAPFilterConnection=Filtre de recherche
-LDAPFilterConnectionExample=Filtre par défaut : &(objectClass=user)(objectCategory=person)
+LDAPFilterConnectionExample=Valeur recommandée : &(objectClass=user)(objectCategory=person)
 LDAPAttributes=Attributs LDAP
 LDAPFieldLoginSamba=Login (samba, activedirectory)
-LDAPFieldLoginSambaExample=Attribut par défaut : samaccountname (Samba et ActiveDirectory)
+LDAPFieldLoginSambaExample=Valeur recommandée : samaccountname (Samba et ActiveDirectory)
 LDAPFieldName=Nom
-LDAPFieldNameExample=Attribut par défaut : sn
+LDAPFieldNameExample=Valeur recommandée : sn
 LDAPFieldFirstName=Prénom
-LDAPFieldFirstNameExample=Attribut par défaut : givenname
+LDAPFieldFirstNameExample=Valeur recommandée : givenname
 LDAPFieldMail=Adresse E-Mail
-LDAPFieldMailExample=Attribut par défaut : mail
+LDAPFieldMailExample=Valeur recommandée : mail
 LDAPFieldPhone=Numéro de téléphone
-LDAPFieldPhoneExample=Attribut par défaut : telephonenumber
+LDAPFieldPhoneExample=Valeur recommandée : telephonenumber
 LDAPFieldFax=Numéro de fax
-LDAPFieldFaxExample=Attribut par défaut : facsimiletelephonenumber
+LDAPFieldFaxExample=Valeur recommandée : facsimiletelephonenumber
 LDAPFieldMobile=Téléphone portable
-LDAPFieldMobileExample=Attribut par défaut : mobile
+LDAPFieldMobileExample=Valeur recommandée : mobile
 LDAPParametersAreStillHardCoded=Les parametres LDAP sont codés en dur (dans classe contact)
 LDAPSetupNotComplete=Configuration LDAP incomplète (à compléter sur les autres onglets)
 LDAPNoUserOrPasswordProvidedAccessIsReadOnly=Administrateur ou mot de passe non renseigné. Les accès LDAP seront donc anonymes et en lecture seule.
+LDAPDescContact=Cette page permet de définir le nom des attributs de l'arbre LDAP pour chaque informations des contacts Dolibarr.
+LDAPDescUsers=Cette page permet de définir le nom des attributs de l'arbre LDAP pour chaque informations des utilisateurs Dolibarr.
+LDAPDescValues=Les valeurs recommandées sont adaptées à <b>OpenLDAP</b> avec les schemas suivant chargés: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si vous utiliser les valeurs suggérés et OpenLDAP, modifier votre fichier de configuration LDAP <b>slapd.conf</b> pour avoir tous ces schémas actifs.
 ##### Products #####
 ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)

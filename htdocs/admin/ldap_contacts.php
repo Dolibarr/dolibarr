@@ -54,9 +54,18 @@ if (!$user->admin)
  
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
-	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',$_POST["contactdn"]))
+	$error=0;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',$_POST["contactdn"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
+	
+	if ($error)
 	{
-		print $db->error();
+		dolibarr_print_error($db->error());
 	}
 }
 
@@ -111,6 +120,8 @@ if ($conf->global->LDAP_MEMBERS_ACTIVE)
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("LDAP"));
 
+print $langs->trans("LDAPDescContact").'<br>';
+print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 
@@ -130,6 +141,43 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPContactDn").'</td><td>';
 print '<input size="38" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
 print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td></tr>';
 
+// Name
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
+print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_FIELD_NAME.'">';
+print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td></tr>';
+
+// Firstname
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
+print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
+print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td></tr>';
+
+
+// Mail
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
+print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_FIELD_MAIL.'">';
+print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td></tr>';
+
+// Phone
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
+print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td></tr>';
+
+// Fax
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
+print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
+print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td></tr>';
+
+// Mobile
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
+print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td></tr>';
+
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
@@ -138,6 +186,7 @@ print '</form>';
 
 print '</div>';
 
+print info_admin($langs->trans("LDAPDescValues"));
 
 $db->close();
 

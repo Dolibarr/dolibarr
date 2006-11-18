@@ -1,0 +1,9 @@
+# ldapdelete_sample1.txt
+#
+# Use this sample to delete a dc "my-domain"
+# This delete the first level of LDAP tree.
+#
+# ldapmodify -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapdelete_sample1.txt
+
+dn: dc=my-domain,dc=com
+changetype: delete
