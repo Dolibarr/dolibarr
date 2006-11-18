@@ -53,7 +53,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="fac.datef";
+if (! $sortfield) $sortfield="fac.date_lim_reglement";
 
 
 /*
@@ -154,7 +154,7 @@ if ($resql)
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
-    print_liste_field_titre($langs->trans("DateEcheance"),"index.php","fac.datef","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("DateEcheance"),"index.php","fac.date_lim_reglement","&amp;socid=$socid","","",$sortfield);
     print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield);
     print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socid=$socid","",'align="right"',$sortfield);
