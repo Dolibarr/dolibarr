@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
 
 /**
-    	\file       htdocs/compta/recap-compta.php
-		\ingroup    compta
-		\brief      Page de fiche recap compta
-		\version    $Revision$
+   \file       htdocs/compta/recap-compta.php
+   \ingroup    compta
+   \brief      Page de fiche recap compta
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -43,8 +43,6 @@ if ($user->societe_id > 0)
 }
 
 $user->getrights('facture');
-
-
 
 /*
  *
@@ -65,7 +63,6 @@ if ($socid > 0)
 	$head = societe_prepare_head($societe);
 	
     dolibarr_fiche_head($head, 'compta', $societe->nom);
-
 
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">'; 
@@ -96,7 +93,7 @@ if ($socid > 0)
     
         $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df,";
         $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
-        $sql.= " u.code";
+        $sql.= " u.code, u.rowid as userid";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
         $sql.= " AND f.fk_user_valid = u.rowid";
@@ -127,18 +124,18 @@ if ($socid > 0)
     
             // Boucle sur chaque facture
             for ($i = 0 ; $i < $num ; $i++)
-            {
-                $objf = $db->fetch_object($resql);
-
-                $fac = new Facture($db);
-                $ret=$fac->fetch($objf->facid);
+	      {
+		$objf = $db->fetch_object($resql);
+		
+		$fac = new Facture($db);
+		$ret=$fac->fetch($objf->facid);
                 if ($ret < 0) 
-                {
-                    print $fac->error."<br>";
-                    continue;
-                }
-				$totalpaye = $fac->getSommePaiement();
-
+		  {
+		    print $fac->error."<br>";
+		    continue;
+		  }
+		$totalpaye = $fac->getSommePaiement();
+		
                 $var=!$var;
                 print "<tr $bc[$var]>";
     
@@ -152,14 +149,14 @@ if ($socid > 0)
                 print '<td align="right">&nbsp;</td>';
                 print '<td align="right">'.price($solde)."</td>\n";
 
-				// Auteur
-                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->code.'</a></td>';
-
+		// Auteur
+                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->code.'</a></td>';
+		
                 print "</tr>\n";
-    
+		
                 // Paiements
                 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut,";
-    			$sql.= " p.fk_user_creat, u.code";
+		$sql.= " p.fk_user_creat, u.code, u.rowid as userid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf,";
                 $sql.= " ".MAIN_DB_PREFIX."paiement as p";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
@@ -188,7 +185,7 @@ if ($socid > 0)
                         print '<td align="right">'.price($solde)."</td>\n";
 
 						// Auteur
-		                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->code.'</a></td>';
+		                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->code.'</a></td>';
 
                         print '</tr>';
     
