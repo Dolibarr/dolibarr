@@ -491,11 +491,15 @@ AddSubscriptionIntoAccount=Enregistrer cotisations dans compte bancaire ou caiss
 AdherentMailRequired=EMail obligatoire pour créer un nouvel adhérent
 ##### LDAP setup #####
 LDAPSetup=Configuration du module LDAP
+LDAPGlobalParameters=Paramètres globals
+LDAPUsersAndGroupsSynchro=Synchro utilisateurs/groupes
+LDAPContactsSynchro=Synchro contacts
+LDAPSynchronization=Synchronisation LDAP
 LDAPFunctionsNotAvailableOnPHP=Les fonctions LDAP ne sont pas disponibles sur votre PHP
-LDAPSynchronizeUsersAndGroup=Synchronisation des utilisateurs et groupes Dolibarr ou LDAP
+LDAPSynchronizeUsersAndGroup=Synchronisation des utilisateurs et groupes Dolibarr avec LDAP
 LDAPToDolibarr=LDAP -> Dolibarr
 DolibarrToLDAP=Dolibarr -> LDAP
-LDAPSynchronizeContacts=Synchronisation des contacts Dolibarr vers LDAP
+LDAPSynchronizeContacts=Synchronisation des contacts Dolibarr avec LDAP
 LDAPTypeExample=OpenLdap, Egroupware ou Active Directory
 LDAPPrimaryServer=Serveur primaire
 LDAPSecondaryServer=Serveur secondaire
@@ -523,16 +527,20 @@ LDAPDnContactActiveExample=Synchronisation activée/désactivée
 LDAPContactDn=DN des contacts Dolibarr
 LDAPContactDnExample=DN complet (ex: ou=contacts,dc=societe,dc=com)
 LDAPTestConnect=Tester la connexion LDAP
-LDAPTestOK=Connexion au serveur LDAP réussie
-LDAPTestKO=Connexion au serveur LDAP echouée
+LDAPTCPConnectOK=Connexion TCP au serveur LDAP réussie (Server=%s, Port=%s)
+LDAPTCPConnectKO=Connexion TCP au serveur LDAP échouée (Server=%s, Port=%s)
+LDAPUnbindSuccessfull=Déconnection réussie
+LDAPUnbindFailed=Déconnection échouée
+LDAPConnectToDNSuccessfull=Connection au DN (%s) réussie
+LDAPConnectToDNFailed=Connection au DN (%s) échouée
 LDAPSetupForVersion3=Serveur LDAP configuré en version 3
 LDAPSetupForVersion2=Serveur LDAP configuré en version 2
-LDAPFieldLogin=Attribut du Login
+LDAPFieldLoginUnix=Login (unix)
 LDAPFieldLoginExample=Attribut par défaut : uid
 LDAPFilterConnection=Filtre de recherche
 LDAPFilterConnectionExample=Filtre par défaut : &(objectClass=user)(objectCategory=person)
 LDAPAttributes=Attributs LDAP
-LDAPFieldLoginSamba=Login
+LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Attribut par défaut : samaccountname (Samba et ActiveDirectory)
 LDAPFieldName=Nom
 LDAPFieldNameExample=Attribut par défaut : sn
@@ -546,6 +554,8 @@ LDAPFieldFax=Numéro de fax
 LDAPFieldFaxExample=Attribut par défaut : facsimiletelephonenumber
 LDAPFieldMobile=Téléphone portable
 LDAPFieldMobileExample=Attribut par défaut : mobile
+LDAPParametersAreStillHardCoded=Les parametres LDAP sont codés en dur (dans classe contact)
+LDAPSetupNotComplete=Configuration LDAP incomplète (à compléter sur les autres onglets)
 ##### Products #####
 ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)

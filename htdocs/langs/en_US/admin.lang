@@ -491,11 +491,15 @@ AddSubscriptionIntoAccount=Add subscriptions into bank or cash account, of bank 
 AdherentMailRequired=EMail required to create a new member
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
+LDAPGlobalParameters=Global parameters
+LDAPUsersAndGroupsSynchro=Users/groups synchro
+LDAPContactsSynchro=Contacts synchro
+LDAPSynchronization=LDAP synchronisation
 LDAPFunctionsNotAvailableOnPHP=LDAP functions are not availbale on your PHP
-LDAPSynchronizeUsersAndGroup=Synchronize Dolibarr or LDAP users and groups
+LDAPSynchronizeUsersAndGroup=Synchronize Dolibarr users and groups with LDAP
 LDAPToDolibarr=LDAP -> Dolibarr
 DolibarrToLDAP=Dolibarr -> LDAP
-LDAPSynchronizeContacts=Synchronize Dolibarr contacts to LDAP
+LDAPSynchronizeContacts=Synchronize Dolibarr contacts with LDAP
 LDAPTypeExample=OpenLdap, Egroupware or Active Directory
 LDAPPrimaryServer=LDAP primary server
 LDAPSecondaryServer=LDAP secondary server
@@ -523,16 +527,20 @@ LDAPDnContactActiveExample=Activated/Unactivated synchronization
 LDAPContactDn=Dolibarr contacts' DN
 LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
 LDAPTestConnect=Test LDAP connection
-LDAPTestOK=Connect to LDAP server successful
-LDAPTestKO=Connect to LDAP server failed
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=%s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=%s)
+LDAPUnbindSuccessfull=Disconnect successfull
+LDAPUnbindFailed=Disconnect failed
+LDAPConnectToDNSuccessfull=Connection au DN (%s) réussie
+LDAPConnectToDNFailed=Connection au DN (%s) échouée
 LDAPSetupForVersion3=LDAP server configured for version 3
 LDAPSetupForVersion2=LDAP server configured for version 2
-LDAPFieldLogin=Login attribute
+LDAPFieldLoginUnix=Login (unix)
 LDAPFieldLoginExample=Default attribute : uid
 LDAPFilterConnection=Search filter
 LDAPFilterConnectionExample=Default filter : &(objectClass=user)(objectCategory=person)
 LDAPAttributes=LDAP attributes
-LDAPFieldLoginSamba=Login
+LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Default attribute : samaccountname (Samba and ActiveDirectory)
 LDAPFieldName=Name
 LDAPFieldNameExample=Default attribute : sn
@@ -546,6 +554,8 @@ LDAPFieldFax=Fax number
 LDAPFieldFaxExample=Default attribute : facsimiletelephonenumber
 LDAPFieldMobile=Cellular phone
 LDAPFieldMobileExample=Default attribute : mobile
+LDAPParametersAreStillHardCoded=LDAP parametres are still hardcoded (in contact class)
+LDAPSetupNotComplete=LDAP setup not complete (go on others tabs)
 ##### Products #####
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
