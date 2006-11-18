@@ -292,7 +292,7 @@ print '</div>';
  */
 if (function_exists("ldap_connect"))
 {
-	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+	if ($conf->global->LDAP_SERVER_HOST)
 	{
 		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
@@ -301,8 +301,8 @@ if (function_exists("ldap_connect"))
 	{
 		$ldap = new AuthLdap();	// Les parametres sont passés et récupérés via $conf
 
-		$ds = $ldap->connect();
-		if ($ds)
+		$result = $ldap->connect();	// Avec OpenLDAP 2.x.x, $reslt sera toujours vrai car connection a lieu dans premeiere fonction ldap_*
+		if ($result)
 		{
 			// Test ldap_bind
 			$bind = $ldap->bind();
@@ -310,6 +310,28 @@ if (function_exists("ldap_connect"))
 			{
 				print img_picto('','info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPTCPConnectOK",$conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT).'</font><br>';
+
+				if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+				{
+					$authbind = $ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+					if ($authbind)
+					{
+						print img_picto('','info').' ';
+						print '<font class="ok">'.$langs->trans("LDAPBindOK",$conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT,$conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS).'</font><br>';
+					}
+					else
+					{
+						print img_picto('','error').' ';
+						print '<font class="error">'.$langs->trans("LDAPBindKO",$conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT,$conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS).' : ';
+						print $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
+						print "</font><br>";
+					}
+				}
+				else
+				{
+					print img_picto('','warning').' ';
+					print '<font class="warning">'.$langs->trans("LDAPNoUserOrPasswordProvidedAccessIsReadOnly").'</font><br>';
+				}
 			}
 			else
 			{
@@ -318,6 +340,7 @@ if (function_exists("ldap_connect"))
 				print $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
 				print "<br>";
 			}
+
 
 			// Test ldap_getversion
 			if (($ldap->getVersion() == 3))

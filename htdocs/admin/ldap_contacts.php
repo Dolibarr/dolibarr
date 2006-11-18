@@ -54,7 +54,10 @@ if (!$user->admin)
  
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
-
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',$_POST["contactdn"]))
+	{
+		print $db->error();
+	}
 }
 
 
@@ -121,8 +124,11 @@ $var=true;
 $html=new Form($db);
 
 
-// Not available
-print '<tr '.$bc[!$var].'><td colspan="3">'.$langs->trans("LDAPParametersAreStillHardCoded").'</td></tr>';
+// DN Pour les contacts
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPContactDn").'</td><td>';
+print '<input size="38" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
+print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td></tr>';
 
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';

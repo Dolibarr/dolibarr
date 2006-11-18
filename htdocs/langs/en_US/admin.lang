@@ -529,6 +529,8 @@ LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
 LDAPTestConnect=Test LDAP connection
 LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=%s)
 LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=%s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s)
 LDAPUnbindSuccessfull=Disconnect successfull
 LDAPUnbindFailed=Disconnect failed
 LDAPConnectToDNSuccessfull=Connection au DN (%s) réussie
@@ -556,6 +558,7 @@ LDAPFieldMobile=Cellular phone
 LDAPFieldMobileExample=Default attribute : mobile
 LDAPParametersAreStillHardCoded=LDAP parametres are still hardcoded (in contact class)
 LDAPSetupNotComplete=LDAP setup not complete (go on others tabs)
+LDAPNoUserOrPasswordProvidedAccessIsReadOnly=No administrator or password provided. LDAP access will be anonymous and in read only mode.
 ##### Products #####
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)

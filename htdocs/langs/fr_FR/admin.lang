@@ -527,8 +527,10 @@ LDAPDnContactActiveExample=Synchronisation activée/désactivée
 LDAPContactDn=DN des contacts Dolibarr
 LDAPContactDnExample=DN complet (ex: ou=contacts,dc=societe,dc=com)
 LDAPTestConnect=Tester la connexion LDAP
-LDAPTCPConnectOK=Connexion TCP au serveur LDAP réussie (Server=%s, Port=%s)
-LDAPTCPConnectKO=Connexion TCP au serveur LDAP échouée (Server=%s, Port=%s)
+LDAPTCPConnectOK=Connexion TCP au serveur LDAP réussie (Serveur=%s, Port=%s)
+LDAPTCPConnectKO=Connexion TCP au serveur LDAP échouée (Serveur=%s, Port=%s)
+LDAPBindOK=Connection/Authentification au serveur LDAP réussie (Serveur=%s, Port=%s, Admin=%s)
+LDAPBindKO=Connection/Authentification au serveur LDAP échouée (Serveur=%s, Port=%s, Admin=%s)
 LDAPUnbindSuccessfull=Déconnection réussie
 LDAPUnbindFailed=Déconnection échouée
 LDAPConnectToDNSuccessfull=Connection au DN (%s) réussie
@@ -556,6 +558,7 @@ LDAPFieldMobile=Téléphone portable
 LDAPFieldMobileExample=Attribut par défaut : mobile
 LDAPParametersAreStillHardCoded=Les parametres LDAP sont codés en dur (dans classe contact)
 LDAPSetupNotComplete=Configuration LDAP incomplète (à compléter sur les autres onglets)
+LDAPNoUserOrPasswordProvidedAccessIsReadOnly=Administrateur ou mot de passe non renseigné. Les accès LDAP seront donc anonymes et en lecture seule.
 ##### Products #####
 ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)
