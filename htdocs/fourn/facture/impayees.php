@@ -22,14 +22,14 @@
  */
 
 /**
-		\file       htdocs/compta/facture/impayees.php
+		\file       htdocs/fourn/facture/impayees.php
 		\ingroup    facture
-		\brief      Page de liste des factures clients impayées
+		\brief      Page de liste des factures fournisseurs impayées
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
 $user->getrights('facture');
@@ -39,6 +39,7 @@ if (!$user->rights->facture->lire)
 accessforbidden();
 
 $langs->load("main"); // BUG De chargement de traduction ne pas modifier cette ligne
+$langs->load("companies");
 $langs->load("bills");
 
 
@@ -53,7 +54,7 @@ if ($user->societe_id > 0)
 }
 
 
-llxHeader('',$langs->trans("BillsCustomersUnpayed"));
+llxHeader('',$langs->trans("BillsSuppliersUnpayed"));
 
 
 /***************************************************************************
@@ -67,21 +68,21 @@ $sortorder=$_GET["sortorder"];
 if (! $sortfield) $sortfield="f.date_lim_reglement";
 if (! $sortorder) $sortorder="ASC";
 
-if ($user->rights->facture->lire)
+if ($user->rights->fournisseur->facture->lire)
 {
 	$limit = $conf->liste_limit;
 	$offset = $limit * $page ;
 
 	$sql = "SELECT s.nom, s.idp,";
-	$sql.= " f.facnumber,f.increment,f.total as total_ht,f.total_ttc,";
+	$sql.= " f.facnumber,f.total_ht,f.total_ttc,";
 	$sql.= $db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
 	$sql.= " ,sum(pf.amount) as am";
 	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ",".MAIN_DB_PREFIX."facture as f";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
+	$sql.= ",".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn ";
 	$sql.= " WHERE f.fk_soc = s.idp";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
 	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -109,7 +110,7 @@ if ($user->rights->facture->lire)
 
 	if ($_GET["search_montant_ht"])
 	{
-		$sql .= " AND f.total = '".$_GET["search_montant_ht"]."'";
+		$sql .= " AND f.total_ht = '".$_GET["search_montant_ht"]."'";
 	}
 
 	if ($_GET["search_montant_ttc"])
@@ -142,7 +143,7 @@ if ($user->rights->facture->lire)
 			$soc->fetch($socid);
 		}
 
-		$titre=($socid?$langs->trans("BillsCustomersUnpayedForCompany",$soc->nom):$langs->trans("BillsCustomersUnpayed"));
+		$titre=($socid?$langs->trans("BillsSuppliersUnpayedForCompany",$soc->nom):$langs->trans("BillsSuppliersUnpayed"));
 		print_barre_liste($titre,$page,"impayees.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
 		$i = 0;
 		print '<table class="liste" width="100%">';
@@ -152,9 +153,9 @@ if ($user->rights->facture->lire)
 		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=$socid",'align="center"',$sortfield);
 		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","","&amp;socid=$socid",'align="center"',$sortfield);
 		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=$socid","",$sortfield);
-		print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socid=$socid",'align="right"',$sortfield);
+		print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;socid=$socid",'align="right"',$sortfield);
 		print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socid=$socid",'align="right"',$sortfield);
-		print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","","&amp;socid=$socid",'align="right"',$sortfield);
+		print_liste_field_titre($langs->trans("AlreadyPayed"),$_SERVER["PHP_SELF"],"am","","&amp;socid=$socid",'align="right"',$sortfield);
 		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","","&amp;socid=$socid",'align="right"',$sortfield);
 		print "</tr>\n";
 
@@ -178,7 +179,7 @@ if ($user->rights->facture->lire)
 		print '</form>';
 
 
-		$facturestatic=new Facture($db);
+		$facturestatic=new FactureFournisseur($db);
 
 
 		if ($num > 0)
@@ -197,15 +198,15 @@ if ($user->rights->facture->lire)
 				print "<tr $bc[$var]>";
 				$class = "impayee";
 
-				print '<td nowrap><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
-				print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
-				if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>';
+				if ($objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 				print "</td>\n";
 
 				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
 				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->datelimite)."</td>\n";
 
-				print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,32).'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,32).'</a></td>';
 
 				print "<td align=\"right\">".price($objp->total_ht)."</td>";
 				print "<td align=\"right\">".price($objp->total_ttc)."</td>";
@@ -242,6 +243,7 @@ if ($user->rights->facture->lire)
 	}
 
 }
+
 
 
 

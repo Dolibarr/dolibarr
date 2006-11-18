@@ -53,7 +53,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="fac.date_lim_reglement";
+if (! $sortfield) $sortfield="fac.datef";
 
 
 /*
@@ -89,12 +89,13 @@ if ($_POST["mode"] == 'search')
  
 llxHeader();
 
-$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("fac.date_lim_reglement")." as date_echeance, fac.total_ht";
-$sql .= ", fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, fac.rowid as facid, fac.facnumber";
+$sql = "SELECT s.idp as socid, s.nom, ";
+$sql.= " ".$db->pdate("fac.datef")." as datef, ".$db->pdate("fac.date_lim_reglement")." as date_echeance,";
+$sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, fac.rowid as facid, fac.facnumber";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE fac.fk_soc = s.idp";
+$sql.= " WHERE fac.fk_soc = s.idp";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 {
@@ -154,7 +155,7 @@ if ($resql)
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
-    print_liste_field_titre($langs->trans("DateEcheance"),"index.php","fac.date_lim_reglement","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","",'align="center"',$sortfield);
     print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield);
     print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socid=$socid","",'align="right"',$sortfield);
@@ -194,10 +195,10 @@ if ($resql)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->facnumber.'">'.img_object($langs->trans("ShowBill"),"bill").' '.dolibarr_trunc($obj->facnumber,12)."</a></td>\n";
-        print '<td align="center" nowrap>'.dolibarr_print_date($obj->date_echeance);
+        print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->facnumber.'">'.img_object($langs->trans("ShowBill"),"bill").' '.dolibarr_trunc($obj->facnumber,12)."</a>";
         if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
-        print '</td>';
+        print "</td>\n";
+        print '<td align="center" nowrap="1">'.dolibarr_print_date($obj->datef).'</td>';
         print '<td>'.dolibarr_trunc($obj->libelle,36).'</td>';
         print '<td>';
         print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
