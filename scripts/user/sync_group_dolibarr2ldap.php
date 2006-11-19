@@ -21,9 +21,9 @@
  */
 
 /**
-        \file       scripts/user/sync_user_dolibarr2ldap.php
+        \file       scripts/user/sync_group_dolibarr2ldap.php
         \ingroup    ldap company
-        \brief      Script de mise a jour des users dans LDAP depuis base Dolibarr
+        \brief      Script de mise a jour des groupes dans LDAP depuis base Dolibarr
 */
 
 // Test si mode batch
@@ -48,7 +48,7 @@ $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
 
 $error=0;
 
@@ -64,7 +64,7 @@ if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
 */
 
 $sql = "SELECT rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."user";
+$sql .= " FROM ".MAIN_DB_PREFIX."usergroup";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -76,13 +76,13 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$fuser = new User($db);
-		$fuser->id = $obj->rowid;
-		$fuser->fetch();
+		$fgroup = new UserGroup($db);
+		$fgroup->id = $obj->rowid;
+		$fgroup->fetch($fgroup->id);
 		
-		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->fullname;
+		print $langs->trans("UpdateGroup")." rowid=".$fgroup->id." ".$fgroup->nom;
 
-		$result=$fuser->update_ldap($user);
+		$result=$fgroup->update_ldap($user);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");
@@ -90,7 +90,7 @@ if ($resql)
 		else
 		{
 			$error++;
-			print " - ".$langs->trans("KO").' - '.$fuser->error;
+			print " - ".$langs->trans("KO").' - '.$fgroup->error;
 		}
 		print "\n";
 
