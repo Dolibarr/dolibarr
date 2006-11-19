@@ -1545,5 +1545,39 @@ class Adherent
         }
     }
 
+	/**
+	 *		\brief		Initialise le membre avec valeurs fictives aléatoire
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		// Initialise paramètres
+		$this->id=0;
+		$this->specimen=1;
+		$this->fullname = 'DOLIBARR SPECIMEN';
+		$this->nom = 'DOLIBARR';
+		$this->prenom = 'SPECIMEN';
+		$this->societe = 'Societe ABC';
+		$this->adresse = '61 jump street';
+		$this->cp = '75000';
+		$this->ville = 'Paris';
+		$this->pays_id = 1;
+		$this->pays_code = 'FR';
+		$this->pays = 'France';
+		$this->moraphy = 1;
+		$this->email = 'specimen@specimen.com';
+		$this->public=1;
+		$this->commentaire='No comment';
+		$this->statut=1;
+		$this->login='dolibspec';
+		$this->pass='dolibspec';
+		$this->naiss=time();
+		$this->photo='';
+	
+		$this->typeid=1;				// Id type adherent
+		$this->type='Type adherent';	// Libellé type adherent
+		$this->need_subscription=0;
+	}
 }
 ?>
