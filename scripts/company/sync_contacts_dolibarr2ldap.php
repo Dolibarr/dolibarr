@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,12 +64,12 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		print $langs->trans("UpdateContact")." rowid=".$obj->rowid;
-
 		$contact = new Contact($db);
 		$contact->id = $obj->rowid;
 		$contact->fetch($contact->id);
 		
+		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->fullname;
+
 		$result=$contact->update_ldap($user);
 		if ($result > 0)
 		{
