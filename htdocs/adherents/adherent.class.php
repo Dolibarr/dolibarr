@@ -36,7 +36,7 @@
 */
 
 
-/** 
+/**
         \class      Adherent
 		\brief      Classe permettant la gestion d'un adhérent
 */
@@ -47,6 +47,7 @@ class Adherent
 	var $db;
 	var $prenom;
 	var $nom;
+	var $fullname;
 	var $societe;
 	var $adresse;
 	var $cp;
@@ -63,15 +64,15 @@ class Adherent
 	var $pass;
 	var $naiss;
 	var $photo;
-	
+
 	var $typeid;			// Id type adherent
 	var $type;			// Libellé type adherent
 	var $need_subscription;
-	
+
 	//  var $public;
 	var $array_options;
-	
-	var $errorstr;
+
+	var $error;
 
 /**
 		\brief Adherent
@@ -108,7 +109,7 @@ class Adherent
 	function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
 	{
 		global $conf,$langs;
-		
+
 	    $patterns = array (
 		       '/%PRENOM%/',
 		       '/%NOM%/',
@@ -160,13 +161,13 @@ class Adherent
 		$texttosend = preg_replace ($patterns, $replace, $text);
 		$subjectosend = preg_replace ($patterns, $replace, $subject);
 		$msgishtml=0;
-		
+
 		// Envoi mail confirmation
         include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
         $from=$conf->email_from;
         if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
-        
+
 		$mailfile = new CMailFile($subjectosend,$this->email,$from,$texttosend,
 									array(),array(),array(),
 									'', '', 0, $msgishtml);
@@ -189,10 +190,10 @@ class Adherent
 
   function print_error_list()
   {
-    $num = sizeof($this->errorstr);
+    $num = sizeof($this->error);
     for ($i = 0 ; $i < $num ; $i++)
       {
-	print "<li>" . $this->errorstr[$i];
+	print "<li>" . $this->error[$i];
       }
   }
 
@@ -275,7 +276,7 @@ class Adherent
 	      $err++;
 	      $amount_invalid = 1;
 	      break;
-	    } 	      
+	    }
 	}
 
       if (! $amount_invalid)
@@ -294,14 +295,14 @@ class Adherent
 		}
 	    }
 	}
-      
+
       /*
        * Return errors
        */
 
       if ($err)
 	{
-	  $this->errorstr = $error_string;
+	  $this->error = $error_string;
 	  return 0;
 	}
       else
@@ -318,25 +319,25 @@ class Adherent
 	function create()
 	{
 		global $conf,$langs,$user;
-	
+
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email)) {
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
-	
+
 		$this->date = $this->db->idate($this->date);
-	
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec)";
 		$sql .= " VALUES (now())";
-	
+
 		$result = $this->db->query($sql);
-	
+
 		if ($result)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
 			$result=$this->update(1);
-			
+
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
@@ -351,7 +352,7 @@ class Adherent
 			return -1;
 		}
 	}
-	
+
 
 	/**
 			\brief fonction qui met à jour l'adhérent
@@ -361,18 +362,18 @@ class Adherent
 	function update($disable_trigger=0)
 	{
 		global $conf,$langs,$user;
-	
+
 		dolibarr_syslog("Adherent.class.php::update $disable_trigger");
-		
+
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
 		{
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
-	
+
 		$this->db->begin();
-	
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " prenom = '".$this->prenom ."'";
 		$sql .= ",nom='"    .$this->nom."'";
@@ -392,7 +393,7 @@ class Adherent
 		$sql .= ",fk_adherent_type=".$this->typeid;
 		$sql .= ",morphy='".$this->morphy."'";
 		$sql .= " WHERE rowid = ".$this->id;
-	
+
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
@@ -400,12 +401,12 @@ class Adherent
 			$this->db->rollback();
 			return -1;
 		}
-	
+
 		if (sizeof($this->array_options) > 0)
 		{
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$this->id;
 			$this->db->query($sql_del);
-	
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
 			foreach($this->array_options as $key => $value)
 			{
@@ -419,7 +420,7 @@ class Adherent
 				$sql.=",'".$this->array_options[$key]."'";
 			}
 			$sql.=");";
-	
+
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
@@ -439,7 +440,7 @@ class Adherent
 		}
 
 		$this->db->commit();
-	
+
 		return 1;
 	}
 
@@ -520,7 +521,7 @@ class Adherent
     function fetch($rowid)
     {
         global $langs;
-        
+
         $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy,";
         $sql.= " ".$this->db->pdate("d.datefin")." as datefin,";
         $sql.= " d.pays, p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
@@ -528,37 +529,37 @@ class Adherent
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.fk_adherent_type = t.rowid";
-    
+
         $result=$this->db->query( $sql);
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-    
+
                 $this->id             = $obj->rowid;
                 $this->statut         = $obj->statut;
                 $this->public         = $obj->public;
                 $this->date           = $obj->datedon;
-                $this->prenom         = stripslashes($obj->prenom);
-                $this->nom            = stripslashes($obj->nom);
-                $this->fullname       = $obj->nom.($obj->nom&&$obj->prenom?' ':'').$obj->prenom;
-                $this->societe        = stripslashes($obj->societe);
-                $this->adresse        = stripslashes($obj->adresse);
-                $this->cp             = stripslashes($obj->cp);
-                $this->ville          = stripslashes($obj->ville);
+                $this->prenom         = $obj->prenom;
+                $this->nom            = $obj->nom;
+                $this->fullname       = trim($obj->nom.' '.$obj->prenom);
+                $this->societe        = $obj->societe;
+                $this->adresse        = $obj->adresse;
+                $this->cp             = $obj->cp;
+                $this->ville          = $obj->ville;
                 $this->pays_id        = $obj->pays_id;
                 $this->pays_code      = $obj->pays_code;
                 if ($langs->trans("Country".$obj->pays_code) != "Country".$obj->pays_code) $this->pays = $langs->trans("Country".$obj->pays_code);
                 elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
                 else $this->pays=$obj->pays;
-                $this->email          = stripslashes($obj->email);
-                $this->login          = stripslashes($obj->login);
-                $this->pass           = stripslashes($obj->pass);
-                $this->naiss          = stripslashes($obj->naiss);
-                $this->photo          = stripslashes($obj->photo);
+                $this->email          = $obj->email;
+                $this->login          = $obj->login;
+                $this->pass           = $obj->pass;
+                $this->naiss          = $obj->naiss;
+                $this->photo          = $obj->photo;
                 $this->datefin        = $obj->datefin;
-                $this->commentaire    = stripslashes($obj->note);
+                $this->commentaire    = $obj->note;
                 $this->morphy         = $obj->morphy;
 
                 $this->typeid         = $obj->fk_adherent_type;
@@ -570,10 +571,10 @@ class Adherent
         {
             dolibarr_print_error($this->db);
         }
-    
+
     }
 
-  
+
 /**
 		\brief      Fonction qui récupére les données optionelles de l'adhérent
 		\param	    rowid
@@ -585,7 +586,7 @@ class Adherent
     $sql = "SELECT *";
     $sql .= " FROM ".MAIN_DB_PREFIX."adherent_options";
     $sql .= " WHERE adhid=$rowid";
-    
+
     $result=$this->db->query( $sql);
 
     if ($result)
@@ -593,7 +594,7 @@ class Adherent
     	if ($this->db->num_rows())
     	{
     	  $tab = $this->db->fetch_array($result);
-    	  
+
     	  foreach ($tab as $key => $value)
     	  {
     	    if ($key != 'optid' && $key != 'tms' && $key != 'adhid')
@@ -608,7 +609,7 @@ class Adherent
     {
       dolibarr_print_error($this->db);
     }
-    
+
   }
 
   /*
@@ -618,7 +619,7 @@ class Adherent
   {
     $array_name_options=array();
     $sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
-    
+
     $result=$this->db->query( $sql);
 
     if ($result)
@@ -646,9 +647,9 @@ class Adherent
         dolibarr_print_error($this->db);
         return array() ;
     }
-    
+
   }
-  
+
     /**
     		\brief      Fonction qui insère la cotisation dans la base de données
     					et eventuellement liens dans banques, mailman, etc...
@@ -659,13 +660,13 @@ class Adherent
     function cotisation($date, $montant, $accountid, $operation, $label, $num_chq)
     {
         global $conf,$langs,$user;
-        
+
         dolibarr_syslog("Adherent.class.php::cotisation $date, $montant, $accountid, $operation, $label, $num_chq");
         $this->db->begin();
-            
+
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation)";
         $sql .= " VALUES ($this->id, now(), ".$this->db->idate($date).", $montant)";
-    
+
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -683,17 +684,17 @@ class Adherent
 		        // Rajout du nouveau cotisant dans les listes qui vont bien
 		        if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && ! $adh->datefin)
 		        {
-		            $adh->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
+		            $result=$adh->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
 		        }
-	
+
 	            // Insertion dans la gestion bancaire si configuré pour
 	            if ($conf->global->ADHERENT_BANK_USE && $accountid)
 	            {
 	                $acct=new Account($this->db,$accountid);
-	    
+
 	                $dateop=strftime("%Y%m%d",time());
 	                $amount=$cotisation;
-	    
+
 	                $insertid=$acct->addline($dateop, $operation, $label, $amount, $num_chq, '', $user);
 	                if ($insertid > 0)
 	                {
@@ -734,12 +735,12 @@ class Adherent
                	$this->db->commit();
                	return $rowid;
             }
-            else 
+            else
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
                 return -2;
-            }            
+            }
         }
         else
         {
@@ -757,12 +758,12 @@ class Adherent
 	function validate($userid)
 	{
 		global $user,$langs,$conf;
-			
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql.= " statut=1, datevalid = now(),";
 		$sql.= " fk_user_valid=".$userid;
 		$sql.= " WHERE rowid = $this->id";
-	
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -771,7 +772,7 @@ class Adherent
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
 			// Fin appel triggers
-	
+
 			$this->db->commit();
 			return 1;
 		}
@@ -792,14 +793,14 @@ class Adherent
 	function resiliate($userid)
 	{
 		global $user,$langs,$conf;
-		
+
 		$this->db->begin();
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
 		$sql .= "statut=0";
 		$sql .= ",fk_user_valid=".$userid;
 		$sql .= " WHERE rowid = ".$this->id;
-	
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -821,97 +822,101 @@ class Adherent
 	}
 
 
-/**
-		\brief fonction qui ajoute l'adhérent au abonnements automatiques
-		\param	adht
-		\remarks	mailing-list, spip, glasnost, etc...
-*/
-
+	/**
+			\brief fonction qui ajoute l'adhérent au abonnements automatiques
+			\param	adht
+			\remarks	mailing-list, spip, glasnost, etc...
+	*/
 	function add_to_abo($adht)
-    {
-      $err=0;
-      // mailman
-      if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 	{
-	  if(!$this->add_to_mailman())
-	    {
-	      $err+=1;
-	    }
+		$err=0;
+		// mailman
+		if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
+		{
+			$result=$this->add_to_mailman();
+			if ($result < 0)
+			{
+				$err+=1;
+			}
+		}
+	
+		if ($adht->vote == 'yes' &&
+		defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
+		defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
+		)
+		{
+			if(!$this->add_to_glasnost())
+			{
+				$err+=1;
+			}
+		}
+		if (
+		defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
+		defined("ADHERENT_USE_SPIP_AUTO") && ADHERENT_USE_SPIP_AUTO ==1
+		)
+		{
+			if(!$this->add_to_spip())
+			{
+				$err+=1;
+			}
+		}
+		if ($err>0)
+		{
+			// error
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
 	}
 
-      if ($adht->vote == 'yes' &&
-	  defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
-	  defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
-	  )
+
+	/**
+			\brief      fonction qui supprime l'adhérent des abonnements automatiques
+			\param	    adht
+			\remarks	mailing-list, spip, glasnost, etc...
+	*/
+	function del_to_abo($adht)
 	{
-	  if(!$this->add_to_glasnost()){
-	    $err+=1;
-	  }
-	}
-      if (
-	  defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-	  defined("ADHERENT_USE_SPIP_AUTO") && ADHERENT_USE_SPIP_AUTO ==1
-	  )
-	{
-	  if(!$this->add_to_spip()){
-	    $err+=1;
-	  }
-	}
-      if ($err>0){
-	// error
-	return 0;
-      }else{
-	return 1;
-      }
-    }
+		$err=0;
+		// mailman
+		if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
+		{
+			if(!$this->del_to_mailman()){
+				$err+=1;
+			}
+		}
+		if ($adht->vote == 'yes' &&
+		defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
+		defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
+		)
+		{
+			if(!$this->del_to_glasnost()){
+				$err+=1;
+			}
+		}
+		if (
+		defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
+		defined("ADHERENT_USE_SPIP_AUTO") && ADHERENT_USE_SPIP_AUTO ==1
+		)
+		{
+			if(!$this->del_to_spip()){
+				$err+=1;
+			}
+		}
+		if ($err>0){
+			// error
+			return 0;
+			}else{
+				return 1;
+			}
+		}
 
 
-/**
-		\brief      fonction qui supprime l'adhérent des abonnements automatiques
-		\param	    adht
-		\remarks	mailing-list, spip, glasnost, etc...
-*/
-
-  function del_to_abo($adht)
-    {
-      $err=0;
-      // mailman
-      if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
-	{
-	  if(!$this->del_to_mailman()){
-	    $err+=1;
-	  }
-	}
-      if ($adht->vote == 'yes' &&
-	  defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
-	  defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
-	  )
-	{
-	  if(!$this->del_to_glasnost()){
-	    $err+=1;
-	  }
-	}
-      if (
-	  defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-	  defined("ADHERENT_USE_SPIP_AUTO") && ADHERENT_USE_SPIP_AUTO ==1
-	  )
-	{
-	  if(!$this->del_to_spip()){
-	    $err+=1;
-	  }
-	}
-      if ($err>0){
-	// error
-	return 0;
-      }else{
-	return 1;
-      }
-    }
-
-/**
-		\brief fonction qui donne les droits rédacteurs dans spip
-*/
-
+	/**
+			\brief fonction qui donne les droits rédacteurs dans spip
+	*/
 	function add_to_spip()
     {
       if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
@@ -934,7 +939,7 @@ class Adherent
 	}
       else
 	{
-	  $this->errorstr=$mydb->error();
+	  $this->error=$mydb->error();
 	  return 0;
 	}
       }
@@ -963,7 +968,7 @@ class Adherent
 	  }
 	else
 	  {
-	    $this->errorstr=$mydb->error();
+	    $this->error=$mydb->error();
 	    return 0;
 	  }
       }
@@ -982,14 +987,14 @@ class Adherent
             defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
             defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != '')
         {
-        
+
             $query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
             $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
-        
+
             if ($mydb->ok) {
-        
+
                 $result = $mydb->query($query);
-        
+
                 if ($result)
                 {
                     if ($mydb->num_rows())
@@ -1008,11 +1013,11 @@ class Adherent
                 else
                 {
                     # error
-                    $this->errorstr=$mydb->error();
+                    $this->error=$mydb->error();
                     return -1;
                 }
             } else {
-                $this->errorstr="Echec de connexion avec les identifiants ".ADHERENT_SPIP_SERVEUR." ".ADHERENT_SPIP_USER." ".ADHERENT_SPIP_PASS." ".ADHERENT_SPIP_DB;
+                $this->error="Echec de connexion avec les identifiants ".ADHERENT_SPIP_SERVEUR." ".ADHERENT_SPIP_USER." ".ADHERENT_SPIP_PASS." ".ADHERENT_SPIP_DB;
                 return -1;
             }
         }
@@ -1045,7 +1050,7 @@ class Adherent
 	  $userid=$response[0];
 	  $usertoken=$response[1];
 	}else{
-	  $this->errorstr=$response['faultString'];
+	  $this->error=$response['faultString'];
 	  return 0;
 	}
 
@@ -1074,12 +1079,12 @@ class Adherent
 	if ($success){
 	  $personid=$response[0];
 	}else{
-	  $this->errorstr=$response['faultString'];
+	  $this->error=$response['faultString'];
 	  return 0;
 	}
 	return 1;
       }else{
-	$this->errorstr="Constantes de connection non definies";
+	$this->error="Constantes de connection non definies";
 	return 0;
       }
     }
@@ -1131,7 +1136,7 @@ class Adherent
 	if ($success){
 	  $personid=$response['id'];
 	}else{
-	  $this->errorstr=$response['faultString'];
+	  $this->error=$response['faultString'];
 	  return 0;
 	}
 	if (defined('ADHERENT_GLASNOST_DEFAULT_GROUPID') && ADHERENT_GLASNOST_DEFAULT_GROUPID != ''){
@@ -1154,7 +1159,7 @@ class Adherent
 	  if ($success){
 	    $groupids=$response['membersSet'];
 	  }else{
-	    $this->errorstr=$response['faultString'];
+	    $this->error=$response['faultString'];
 	    return 0;
 	  }
 	  // TODO faire la verification que le user n'est pas dans ce
@@ -1180,11 +1185,11 @@ class Adherent
 	if ($success){
 	  return 1;
 	}else{
-	  $this->errorstr=$response['faultString'];
+	  $this->error=$response['faultString'];
 	  return 0;
 	}
       }else{
-	$this->errorstr="Constantes de connection non definies";
+	$this->error="Constantes de connection non definies";
 	return 0;
       }
     }
@@ -1237,87 +1242,98 @@ class Adherent
 	  $personid=$response['id'];
 	  return 1;
 	}else{
-	  $this->errorstr=$response['faultString'];
+	  $this->error=$response['faultString'];
 	  return 0;
 	}
       }else{
-	$this->errorstr="Constantes de connection non definies";
+	$this->error="Constantes de connection non definies";
 	return 0;
       }
     }
 
-/**
-		\brief fonction qui rajoute l'utilisateur dans mailman
-*/
 
+	/**
+			\brief 		Fonction qui rajoute l'utilisateur dans mailman
+			\return		int		<0 si KO, >0 si OK
+	*/
 	function add_to_mailman($listes='')
-  {
-    if (defined("ADHERENT_MAILMAN_URL") && ADHERENT_MAILMAN_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
-      {
-	if ($listes ==''){
-	  $lists=explode(',',ADHERENT_MAILMAN_LISTS);
-	}else{
-	  $lists=explode(',',$listes);
+	{
+		global $conf,$langs;
+		
+		if (! function_exists("curl_init"))
+		{
+			$this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+			return -1;	
+		}
+		
+		if (defined("ADHERENT_MAILMAN_URL") && ADHERENT_MAILMAN_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
+		{
+			if ($listes =='')
+			{
+				$lists=explode(',',ADHERENT_MAILMAN_LISTS);
+			}
+			else
+			{
+					$lists=explode(',',$listes);
+			}
+			foreach ($lists as $list)
+			{
+				// on remplace dans l'url le nom de la liste ainsi
+				// que l'email et le mot de passe
+				$patterns = array (
+				'/%LISTE%/',
+				'/%EMAIL%/',
+				'/%PASS%/',
+				'/%ADMINPW%/',
+				'/%SERVER%/'
+				);
+				$replace = array (
+				$list,
+				$this->email,
+				$this->pass,
+				ADHERENT_MAILMAN_ADMINPW,
+				ADHERENT_MAILMAN_SERVER
+				);
+				$curl_url = preg_replace ($patterns, $replace, ADHERENT_MAILMAN_URL);
+
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL,"$curl_url");
+				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+				curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+				curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+				//curl_setopt($ch, CURLOPT_POST, 0);
+				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
+				//--- Start buffering
+				//ob_start();
+				$result=curl_exec ($ch);
+				dolibarr_syslog($result);
+				//--- End buffering and clean output
+				//ob_end_clean();
+				if (curl_error($ch) > 0)
+				{
+					// error
+					return 0;
+				}
+				curl_close ($ch);
+
+			}
+			return 1;
+		}
+		else
+		{
+			$this->error="Constantes de connection non definies";
+			return -1;
+		}
 	}
-	foreach ($lists as $list)
-	  {
-	    // on remplace dans l'url le nom de la liste ainsi
-	    // que l'email et le mot de passe
-	    $patterns = array (
-			       '/%LISTE%/',
-			       '/%EMAIL%/',
-			       '/%PASS%/',
-			       '/%ADMINPW%/',
-			       '/%SERVER%/'
-			       );
-	    $replace = array (
-			      $list,
-			      $this->email,
-			      $this->pass,
-			      ADHERENT_MAILMAN_ADMINPW,
-			      ADHERENT_MAILMAN_SERVER
-			      );
-	    $curl_url = preg_replace ($patterns, $replace, ADHERENT_MAILMAN_URL);
 
-	    $ch = curl_init();
-	    curl_setopt($ch, CURLOPT_URL,"$curl_url");
-	    //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-	    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-	    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-	    //curl_setopt($ch, CURLOPT_POST, 0);
-	    //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
-	    //--- Start buffering
-	    //ob_start();
-	    $result=curl_exec ($ch);
-	    dolibarr_syslog($result);
-	    //--- End buffering and clean output
-	    //ob_end_clean();
-	    if (curl_error($ch) > 0)
-	      {
-		// error
-		return 0;
-	      }
-	    curl_close ($ch);
-
-	  }
-	return 1;
-      }
-    else
-      {
-	$this->errorstr="Constantes de connection non definies";
-	return 0;
-      }
-  }
-
-/**
+	/**
 		\brief fonction qui désinscrit l'utilisateur de toutes les mailing list mailman
 		\ remarks	utilie lors de la résiliation d'adhésion
-*/
-
-  function del_to_mailman($listes='')
-  {
+	*/
+	function del_to_mailman($listes='')
+	{
     if (defined("ADHERENT_MAILMAN_UNSUB_URL") && ADHERENT_MAILMAN_UNSUB_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
       {
 	if ($listes==''){
@@ -1375,7 +1391,7 @@ class Adherent
       }
     else
       {
-	$this->errorstr="Constantes de connection non definies";
+	$this->error="Constantes de connection non definies";
 	return 0;
       }
   }
@@ -1477,7 +1493,7 @@ class Adherent
 	        	else                                     return $langs->trans("MemberStatusPayed").' '.img_picto($langs->trans('MemberStatusPayed'),'statut4');
 	        }
 	        if ($statut == 0)  return $langs->trans("MemberStatusResiliated").' '.img_picto($langs->trans('MemberStatusResiliated'),'statut5');
-		}		
+		}
     }
 
 
@@ -1488,7 +1504,7 @@ class Adherent
     function load_state_board()
     {
         global $conf;
-        
+
         $this->nb=array();
 
         $sql = "SELECT count(a.rowid) as nb";
@@ -1503,7 +1519,7 @@ class Adherent
             }
             return 1;
         }
-        else 
+        else
         {
             dolibarr_print_error($this->db);
             $this->error=$this->db->error();
@@ -1511,7 +1527,7 @@ class Adherent
         }
 
     }
-    
+
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
      *      \param      user        Objet user
@@ -1520,7 +1536,7 @@ class Adherent
     function load_board($user)
     {
         global $conf;
-        
+
         if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
         $this->nbtodo=$this->nbtodolate=0;
@@ -1537,7 +1553,7 @@ class Adherent
             }
             return 1;
         }
-        else 
+        else
         {
             dolibarr_print_error($this->db);
             $this->error=$this->db->error();
@@ -1558,6 +1574,7 @@ class Adherent
 		$this->fullname = 'DOLIBARR SPECIMEN';
 		$this->nom = 'DOLIBARR';
 		$this->prenom = 'SPECIMEN';
+		$this->fullname=trim($this->nom.' '.$this->prenom);
 		$this->societe = 'Societe ABC';
 		$this->adresse = '61 jump street';
 		$this->cp = '75000';
@@ -1574,7 +1591,7 @@ class Adherent
 		$this->pass='dolibspec';
 		$this->naiss=time();
 		$this->photo='';
-	
+
 		$this->typeid=1;				// Id type adherent
 		$this->type='Type adherent';	// Libellé type adherent
 		$this->need_subscription=0;

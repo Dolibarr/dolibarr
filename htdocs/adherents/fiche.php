@@ -346,7 +346,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
     if (!$adh->add_to_abo($adht))
     {
         // error
-        $errmsg.="echec du rajout de l'utilisateur aux abonnements: ".$adh->errostr."<BR>\n";
+        $errmsg.="Echec du rajout de l'utilisateur aux abonnements: ".$adh->error."<BR>\n";
     }
 
 }
@@ -363,10 +363,10 @@ if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
     $adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
 
     // supprime l'utilisateur des divers abonnements ..
-    if (!$adh->del_to_abo($adht))
+    if (! $adh->del_to_abo($adht))
     {
         // error
-        $errmsg.="echec de la suppression de l'utilisateur aux abonnements: ".$adh->errostr."<BR>\n";
+        $errmsg.="echec de la suppression de l'utilisateur aux abonnements: ".$adh->error."<BR>\n";
     }
 }
 
@@ -379,7 +379,7 @@ if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
     if ($adht->vote == 'yes'){
         define("XMLRPC_DEBUG", 1);
         if (!$adh->add_to_glasnost()){
-            $errmsg.="Echec du rajout de l'utilisateur dans glasnost: ".$adh->errostr."<BR>\n";
+            $errmsg.="Echec du rajout de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
         }
         XMLRPC_debug_print();
     }
@@ -394,7 +394,7 @@ if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
     if ($adht->vote == 'yes'){
         define("XMLRPC_DEBUG", 1);
         if(!$adh->del_to_glasnost()){
-            $errmsg.="Echec de la suppression de l'utilisateur dans glasnost: ".$adh->errostr."<BR>\n";
+            $errmsg.="Echec de la suppression de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
         }
         XMLRPC_debug_print();
     }
@@ -405,7 +405,7 @@ if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
     $adh = new Adherent($db, $rowid);
     $adh->fetch($rowid);
     if(!$adh->del_to_spip()){
-        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->errostr."<BR>\n";
+        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->error."<BR>\n";
     }
 }
 
@@ -414,7 +414,7 @@ if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
     $adh = new Adherent($db, $rowid);
     $adh->fetch($rowid);
     if (!$adh->add_to_spip()){
-        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$adh->errostr."<BR>\n";
+        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$adh->error."<BR>\n";
     }
 }
 
@@ -784,7 +784,10 @@ if ($rowid && $action != 'edit')
     }
     
     // Envoi fiche par mail
-    print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+    if ($adh->statut >= 1)
+	{
+    	print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+    }
     
     // Résilier
     if ($adh->statut == 1)
@@ -810,7 +813,7 @@ if ($rowid && $action != 'edit')
             print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>\n";
         }
         if ($isinglasnost == -1) {
-            print '<br><font class="error">Failed to connect to SPIP: '.$adh->errorstr.'</font>';
+            print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';
         }
     }
     
@@ -827,7 +830,7 @@ if ($rowid && $action != 'edit')
             print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
         }
         if ($isinspip == -1) {
-            print '<br><font class="error">Failed to connect to SPIP: '.$adh->errorstr.'</font>';
+            print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';
         }
     }
     

@@ -41,7 +41,7 @@ class AdherentType
   var $libelle;
   var $statut;
   var $cotisation;  /**< Soumis à la cotisation */
-  var $errorstr;
+  var $error;
   var $mail_valid;	/**< mail envoye lors de la validation */
   var $commentaire; /**< commentaire */
   var $vote;		/** droit de vote ? */
@@ -65,10 +65,10 @@ class AdherentType
 
 	function print_error_list()
   {
-    $num = sizeof($this->errorstr);
+    $num = sizeof($this->error);
     for ($i = 0 ; $i < $num ; $i++)
       {
-	print "<li>" . $this->errorstr[$i];
+	print "<li>" . $this->error[$i];
       }
   }
 

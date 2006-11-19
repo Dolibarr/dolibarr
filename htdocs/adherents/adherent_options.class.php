@@ -52,7 +52,7 @@ class AdherentOptions
    */
   var $attribute_label;
 
-  var $errorstr;
+  var $error;
   /*
    * Constructor
    *
@@ -68,7 +68,7 @@ class AdherentOptions
     {
       $this->db = $DB ;
       $this->id = $id;
-      $this->errorstr = array();
+      $this->error = array();
       $this->attribute_name = array();
       $this->attribute_label = array();
     }
@@ -78,10 +78,10 @@ class AdherentOptions
 */
   function print_error_list()
   {
-    $num = sizeof($this->errorstr);
+    $num = sizeof($this->error);
     for ($i = 0 ; $i < $num ; $i++)
       {
-	print "<li>" . $this->errorstr[$i];
+	print "<li>" . $this->error[$i];
       }
   }
 
@@ -115,7 +115,7 @@ class AdherentOptions
 
       if ($err)
 	{
-	  $this->errorstr = $error_string;
+	  $this->error = $error_string;
 	  return 0;
 	}
       else
