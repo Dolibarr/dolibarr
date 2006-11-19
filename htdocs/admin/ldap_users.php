@@ -24,7 +24,7 @@
  */
  
 /**
-    	\file       htdocs/admin/ldap.php
+    	\file       htdocs/admin/ldap_users.php
 		\ingroup    ldap
 		\brief      Page d'administration/configuration du module Ldap
 		\version    $Revision$
@@ -144,23 +144,13 @@ print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPGroupDn").picto_required().
 print '<input size="38" type="text" name="group" value="'.$conf->global->LDAP_GROUP_DN.'">';
 print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td></tr>';
 
-// Filtre de connexion
+// Filtre
+/*
 $var=!$var;
 print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPFilterConnection").picto_required().'</b></td><td>';
 print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td></tr>';
-
-// Login unix
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
-print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_FIELD_LOGIN.'">';
-print '</td><td>'.$langs->trans("LDAPFieldLoginExample").'</td></tr>';
-
-// Login samba
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
-print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
-print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td></tr>';
+*/
 
 // Name
 $var=!$var;
@@ -173,6 +163,18 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td></tr>';
+
+// Login unix
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
+print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_FIELD_LOGIN.'">';
+print '</td><td>'.$langs->trans("LDAPFieldLoginExample").'</td></tr>';
+
+// Login samba
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
+print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
+print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td></tr>';
 
 // Mail
 $var=!$var;

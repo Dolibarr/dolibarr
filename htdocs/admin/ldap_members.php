@@ -24,15 +24,16 @@
  */
  
 /**
-    	\file       htdocs/admin/ldap_contacts.php
-		\ingroup    ldap
-		\brief      Page d'administration/configuration du module Ldap
+    	\file       htdocs/admin/ldap_members.php
+		\ingroup    ldap adherent
+		\brief      Page d'administration/configuration du module Ldap adherent
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
-require_once (DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("admin");
 
@@ -43,21 +44,21 @@ if (!$user->admin)
 /*
  * Actions
  */
-
+ 
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
 	$error=0;
-	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',$_POST["contactdn"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_DN',$_POST["user"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_DN',$_POST["group"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_ADDRESS',$_POST["fieldaddress"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_ZIP',$_POST["fieldzip"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_TOWN',$_POST["fieldtown"])) $error++;
-	
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
+
 	if ($error)
 	{
 		dolibarr_print_error($db->error());
@@ -102,7 +103,6 @@ if ($conf->global->LDAP_CONTACT_ACTIVE)
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
 	$head[$h][1] = $langs->trans("LDAPContactsSynchro");
-	$hselected=$h;
 	$h++;
 }
 
@@ -110,31 +110,50 @@ if ($conf->global->LDAP_MEMBERS_ACTIVE)
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 	$head[$h][1] = $langs->trans("LDAPMembersSynchro");
+	$hselected=$h;
 	$h++;
 }
 
+
 dolibarr_fiche_head($head, $hselected, $langs->trans("LDAP"));
 
-print $langs->trans("LDAPDescContact").'<br>';
+print $langs->trans("LDAPDescMembers").'<br>';
 print '<br>';
+
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 
 print '<table class="noborder" width="100%">';
-
-print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("LDAPSynchronizeContacts").'</td>';
-print "</tr>\n";
    
 $var=true;
 $html=new Form($db);
 
 
-// DN Pour les contacts
+print '<tr class="liste_titre">';
+print '<td colspan="3">'.$langs->trans("LDAPSynchronizeMembers").'</td>';
+print "</tr>\n";
+
+// DN Pour les adherents
 $var=!$var;
-print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPContactDn").picto_required().'</b></td><td>';
-print '<input size="38" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
-print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td></tr>';
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPMemberDn").picto_required().'</b></td><td>';
+print '<input size="38" type="text" name="user" value="'.$conf->global->LDAP_MEMBER_DN.'">';
+print '</td><td>'.$langs->trans("LDAPMemberDnExample").'</td></tr>';
+
+// DN pour les types
+/*
+$var=!$var;
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPMemberTypeDn").picto_required().'</b></td><td>';
+print '<input size="38" type="text" name="group" value="'.$conf->global->LDAP_MEMBER_TYPE_DN.'">';
+print '</td><td>'.$langs->trans("LDAPMemberTypeDnExample").'</td></tr>';
+*/
+
+// Filtre
+/*
+$var=!$var;
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPFilterConnection").picto_required().'</b></td><td>';
+print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
+print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td></tr>';
+*/
 
 // Name
 $var=!$var;
@@ -148,6 +167,17 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td></tr>';
 
+// Login unix
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
+print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_FIELD_LOGIN.'">';
+print '</td><td>'.$langs->trans("LDAPFieldLoginExample").'</td></tr>';
+
+// Login samba
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
+print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
+print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td></tr>';
 
 // Mail
 $var=!$var;
@@ -161,36 +191,17 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td></tr>';
 
-// Mobile
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
-print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
-print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td></tr>';
-
 // Fax
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td></tr>';
 
-// Address
+// Mobile
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldAddress").'</td><td>';
-print '<input size="25" type="text" name="fieldaddress" value="'.$conf->global->LDAP_FIELD_ADDRESS.'">';
-print '</td><td>'.$langs->trans("LDAPFieldAddressExample").'</td></tr>';
-
-// CP
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldZip").'</td><td>';
-print '<input size="25" type="text" name="fieldzip" value="'.$conf->global->LDAP_FIELD_ZIP.'">';
-print '</td><td>'.$langs->trans("LDAPFieldZipExample").'</td></tr>';
-
-// Ville
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldTown").'</td><td>';
-print '<input size="25" type="text" name="fieldtown" value="'.$conf->global->LDAP_FIELD_TOWN.'">';
-print '</td><td>'.$langs->trans("LDAPFieldTownExample").'</td></tr>';
-
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
+print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
@@ -207,23 +218,24 @@ print info_admin($langs->trans("LDAPDescValues"));
  */
 if (function_exists("ldap_connect"))
 {
-	if ($conf->global->LDAP_SERVER_HOST)
+	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_MEMBERS_ACTIVE)
 	{
 		print '<br>';
-		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a>';
+		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=testmember">'.$langs->trans("LDAPTestSynchroMember").'</a>';
+//		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=testtype">'.$langs->trans("LDAPTestSynchroTypeMember").'</a>';
 		print '<br><br>';
 	}
 
-	if ($_GET["action"] == 'test')
+	if ($_GET["action"] == 'testmember')
 	{
-		// Creation contact
-		$contact=new Contact($db);
-		$contact->initAsSpecimen();
+		// Creation adherent
+		$adherent=new Adherent($db);
+		$adherent->initAsSpecimen();
 
 		// Test synchro
-		//$result1=$contact->delete_ldap($user);
-		$result2=$contact->update_ldap($user);
-		$result3=$contact->delete_ldap($user);
+		//$result1=$fuser->delete_ldap($user);
+		$result2=$adherent->update_ldap($user);
+		$result3=$adherent->delete_ldap($user);
 	
 		if ($result2 > 0)
 		{
@@ -234,7 +246,33 @@ if (function_exists("ldap_connect"))
 		{
 			print img_picto('','error').' ';
 			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
-			print ': '.$contact->error;
+			print ': '.$adherent->error;
+			print '</font><br>';
+		}
+
+	}
+
+	if ($_GET["action"] == 'testtype')
+	{
+		// Creation type adherent
+		$typeadherent=new AdherentType($db);
+		$typeadherent->initAsSpecimen();
+
+		// Test synchro
+		//$result1=$fgroup->delete_ldap($user);
+		$result2=$typeadherent->update_ldap($user);
+		$result3=$typeadherent->delete_ldap($user);
+	
+		if ($result2 > 0)
+		{
+			print img_picto('','info').' ';
+			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+		}
+		else
+		{
+			print img_picto('','error').' ';
+			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$typeadherent->error;
 			print '</font><br>';
 		}
 

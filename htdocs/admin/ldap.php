@@ -58,6 +58,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS',$_POST["usetls"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE',$_POST["activecontact"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',$_POST["activesynchro"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBERS_ACTIVE',$_POST["activemembers"])) $error++;
 
 	if ($error)
 	{
@@ -145,14 +146,28 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE && ! $conf->global->LDAP_USER_DN)
 print '</td></tr>';
 
 // Synchro contact active
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
-$arraylist=array();
-$arraylist['0']=$langs->trans("No");
-$arraylist['1']=$langs->trans("DolibarrToLDAP");
-$html->select_array('activecontact',$arraylist,$conf->global->LDAP_CONTACT_ACTIVE);
-print '</td><td>'.$langs->trans("LDAPDnContactActiveExample").'</td></tr>';
+if ($conf->societe->enabled)
+{
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
+	$arraylist=array();
+	$arraylist['0']=$langs->trans("No");
+	$arraylist['1']=$langs->trans("DolibarrToLDAP");
+	$html->select_array('activecontact',$arraylist,$conf->global->LDAP_CONTACT_ACTIVE);
+	print '</td><td>'.$langs->trans("LDAPDnContactActiveExample").'</td></tr>';
+}
 
+// Synchro adherentt active
+if ($conf->adherent->enabled)
+{
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPDnMemberActive").'</td><td>';
+	$arraylist=array();
+	$arraylist['0']=$langs->trans("No");
+	$arraylist['1']=$langs->trans("DolibarrToLDAP");
+	$html->select_array('activemembers',$arraylist,$conf->global->LDAP_MEMBERS_ACTIVE);
+	print '</td><td>'.$langs->trans("LDAPDnMemberActiveExample").'</td></tr>';
+}
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
