@@ -40,6 +40,8 @@ $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
 
+$user->getrights('adherent');
+
 $adho = new AdherentOptions($db);
 $errmsg='';
 
@@ -803,7 +805,8 @@ if ($rowid && $action != 'edit')
     }
     
     // Supprimer
-    if ($user->admin) {
+    if ($user->rights->adherent->supprimer)
+    {
         print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
     }
         
