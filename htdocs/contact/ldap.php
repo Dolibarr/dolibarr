@@ -144,12 +144,12 @@ if ($result)
 	$bind='';
 	if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
 	{
-		dolibarr_syslog("Contact.class::delete_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+		dolibarr_syslog("ldap.php: authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
 		$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
 	}
 	else
 	{
-		dolibarr_syslog("Contact.class::delete_ldap bind",LOG_DEBUG);
+		dolibarr_syslog("ldap.php: bind",LOG_DEBUG);
 		$bind=$ldap->bind();
 	}
 

@@ -29,6 +29,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 
 $user->getrights('commercial');
 
@@ -80,26 +81,12 @@ $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
 
 
-$h=0;
+/*
+ * Affichage onglets
+ */
+$head = contact_prepare_head($contact);
 
-$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("General");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("PersonalInformations");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("ExportImport");
-$hselected=$h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Info");
-$h++;
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
+dolibarr_fiche_head($head, 'exportimport', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 
 
 /*

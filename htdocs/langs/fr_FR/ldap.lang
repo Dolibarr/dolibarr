@@ -4,3 +4,6 @@ UserMustChangePassNextLogon=L'utilisateur doit changer de mot de passe à la proc
 LdapUacf_NORMAL_ACCOUNT=Compte Utilisateur
 LdapUacf_DONT_EXPIRE_PASSWORD=Le mot de passe n'expire jamais
 LdapUacf_ACCOUNTDISABLE=Le compte est désactivé sur le domaine
+LDAPInformationsForThisContact=Informations en base LDAP pour ce contact
+LDAPInformationsForThisUser=Informations en base LDAP pour cet utilisateur
+LDAPAttribute=Attribut

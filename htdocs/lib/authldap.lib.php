@@ -108,7 +108,8 @@ class AuthLdap {
      * Constructor- creates a new instance of the authentication class
      *
      */
-    function AuthLdap () {
+    function AuthLdap ()
+    {
     	global $conf;
 
         //Server
@@ -431,8 +432,21 @@ class AuthLdap {
 	*/
 	function add($dn, $info)
 	{
-		dolibarr_syslog("authldap::add Add LDAP entry dn=".$dn);
-		
+		global $conf;
+
+		// Encode en UTF8
+		if ($conf->global->LDAP_SERVER_TYPE != 'activedirectory')
+		{
+			$dn=utf8_encode($dn);
+			foreach($info as $key => $val)
+			{
+				if (! is_array($val)) $info[$key]=utf8_encode($val);
+			}
+		}
+				
+		dolibarr_syslog("authldap::add dn=".$dn);
+		dolibarr_syslog("authldap::add info=".join(',',$info));
+
 		//print_r($info);
 		$result=@ldap_add($this->connection, $dn, $info);
 
@@ -447,6 +461,14 @@ class AuthLdap {
 	*/
 	function delete($dn)
 	{
+		global $conf;
+		
+		// Encode en UTF8
+		if ($conf->global->LDAP_SERVER_TYPE != 'activedirectory')
+		{
+			$dn=utf8_encode($dn);
+		}
+		
 		dolibarr_syslog("authldap::delete Delete LDAP entry dn=".$dn);
 
 		$result=@ldap_delete($this->connection, $dn);
@@ -454,6 +476,7 @@ class AuthLdap {
 		if ($result) return 1;
 		return -1;
 	}
+
 
 
     // 2.4 Attribute methods -----------------------------------------------------
@@ -625,36 +648,37 @@ class AuthLdap {
      	return $result;
     }
     
-    /**
-     * \brief fonction de recherche avec filtre
-     * \param dn de recherche
-     * \param filtre de recherche (ex: sn=nom_personne)
-     */
-    function search( $checkDn, $filter) {
+	/**
+	* \brief fonction de recherche avec filtre
+	* \param dn de recherche
+	* \param filtre de recherche (ex: sn=nom_personne)
+	*/
+	function search( $checkDn, $filter) {
+	
+		// Perform the search and get the entry handles
+	
+		// if the directory is AD, then bind first with the search user first
+		if ($this->serverType == "activedirectory") {
+			$this->authBind($this->searchUser, $this->searchPassword);
+		}
+	
+		$this->result = @ldap_search( $this->connection, $checkDn, $filter);
+	
+		$result = @ldap_get_entries( $this->connection, $this->result);
 
-        // Perform the search and get the entry handles
-        
-        // if the directory is AD, then bind first with the search user first
-        if ($this->serverType == "activedirectory") {
-            $this->authBind($this->searchUser, $this->searchPassword);
-        }
-        
-        $this->result = @ldap_search( $this->connection, $checkDn, $filter);
-        
-        $result = @ldap_get_entries( $this->connection, $this->result);
+		if (!$result)
+		{
+			$this->ldapErrorCode = ldap_errno( $this->connection);
+			$this->ldapErrorText = ldap_error( $this->connection);
+		}
+		else
+		{
+			ldap_free_result($this->result);
+			return $result;
+		}
+	}
 
-        if (!$result)
-        {
-        	$this->ldapErrorCode = ldap_errno( $this->connection);
-        	$this->ldapErrorText = ldap_error( $this->connection);
-        }
-        else
-        {
-        	ldap_free_result($this->result);
-        	return $result;
-        }
-      }
-      
+
    /**
      * \brief récupère les attributs de l'utilisateur
      * \param $user : utilisateur ldap

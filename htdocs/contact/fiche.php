@@ -32,7 +32,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 
 $langs->load("companies");
 $langs->load("users");
@@ -63,7 +63,7 @@ if ($contactid && !$user->rights->commercial->client->voir)
 		$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($user->societe_id > 0) $sql .= " AND sp.fk_soc = ".$socid;
-	
+
 	if ( $db->query($sql) )
 	{
 		if ( $db->num_rows() == 0) accessforbidden();
@@ -77,7 +77,7 @@ if ($user->rights->societe->contact->creer)
 		// Recuperation contact actuel
 		$contact = new Contact($db);
 		$result = $contact->fetch($_GET["id"]);
-	
+
 		// Creation user
 		$nuser = new User($db);
 		$nuser->nom = $contact->name;
@@ -149,40 +149,45 @@ if ($user->rights->societe->contact->supprimer)
 
 if ($user->rights->societe->contact->creer)
 {
-  if ($_POST["action"] == 'update')
-  {
-    $contact = new Contact($db);
-
-    $contact->old_name      = $_POST["old_name"];
-    $contact->old_firstname = $_POST["old_firstname"];
-
-    $contact->socid         = $_POST["socid"];
-    $contact->name          = $_POST["name"];
-    $contact->firstname     = $_POST["firstname"];
-    $contact->civilite_id   = $_POST["civilite_id"];
-    $contact->poste         = $_POST["poste"];
-
-    $contact->address       = $_POST["address"];
-    $contact->cp            = $_POST["cp"];
-    $contact->ville         = $_POST["ville"];
-    $contact->fk_pays       = $_POST["pays_id"];
-
-    $contact->email         = $_POST["email"];
-    $contact->phone_pro     = $_POST["phone_pro"];
-    $contact->phone_perso   = $_POST["phone_perso"];
-    $contact->phone_mobile  = $_POST["phone_mobile"];
-    $contact->fax           = $_POST["fax"];
-    $contact->jabberid      = $_POST["jabberid"];
-
-    $contact->note          = $_POST["note"];
-
-    $result = $contact->update($_POST["contactid"], $user);
-
-    if ($contact->error)
-    {
-        $error = $contact->error;
-    }
-  }
+	if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+	{
+		$contact = new Contact($db);
+	
+		$contact->old_name      = $_POST["old_name"];
+		$contact->old_firstname = $_POST["old_firstname"];
+	
+		$contact->socid         = $_POST["socid"];
+		$contact->name          = $_POST["name"];
+		$contact->firstname     = $_POST["firstname"];
+		$contact->civilite_id   = $_POST["civilite_id"];
+		$contact->poste         = $_POST["poste"];
+	
+		$contact->address       = $_POST["address"];
+		$contact->cp            = $_POST["cp"];
+		$contact->ville         = $_POST["ville"];
+		$contact->fk_pays       = $_POST["pays_id"];
+	
+		$contact->email         = $_POST["email"];
+		$contact->phone_pro     = $_POST["phone_pro"];
+		$contact->phone_perso   = $_POST["phone_perso"];
+		$contact->phone_mobile  = $_POST["phone_mobile"];
+		$contact->fax           = $_POST["fax"];
+		$contact->jabberid      = $_POST["jabberid"];
+	
+		$contact->note          = $_POST["note"];
+	
+		$result = $contact->update($_POST["contactid"], $user);
+	
+		if ($result > 0)
+		{
+			$contact->old_name='';
+			$contact->old_firstname='';
+		}
+		else
+		{
+			$error = $contact->error;
+		}
+	}
 }
 
 
@@ -215,25 +220,12 @@ if ($_GET["id"] > 0)
 		dolibarr_print_error('',$contact->error);
 	}
 
-	$h=0;
-	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("General");
-	$hselected=$h;
-	$h++;
+	/*
+	 * Affichage onglets
+	 */
+	$head = contact_prepare_head($contact);
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("PersonalInformations");
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("ExportImport");
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("Info");
-	$h++;
-
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
+	dolibarr_fiche_head($head, 'general', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 }
 
 
@@ -456,7 +448,11 @@ if ($user->rights->societe->contact->creer)
 		else print $langs->trans("NoDolibarrAccess");
 		print '</td></tr>';
 
-		print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+		print '<tr><td colspan="4" align="center">';
+		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; ';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</td></tr>';
 		print '</table>';
 
 		print "</form>";
@@ -686,7 +682,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print '<td>'.$langs->trans("Author").'</td>';
 	print '<td align="center">'.$langs->trans("Status").'</td>';
 	print '</tr>';
-	
+
 	foreach ($histo as $key=>$value)
 	{
 		$var=!$var;
@@ -732,7 +728,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 		$actionstatic=new ActionComm($db);
 		print $actionstatic->LibStatut($histo[$key]['percent'],5);
 		print '</td>';
-		
+
 		print "</tr>\n";
 	}
 	print "</table>";

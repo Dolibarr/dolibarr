@@ -29,7 +29,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 
 $user->getrights('commercial');
 
@@ -103,27 +103,13 @@ $form = new Form($db);
 $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
 
+/*
+ * Affichage onglets
+ */
+$head = contact_prepare_head($contact);
 
-$h=0;
+dolibarr_fiche_head($head, 'perso', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 
-$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("General");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("PersonalInformations");
-$hselected=$h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("ExportImport");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Info");
-$h++;
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 
 
 if ($_GET["action"] == 'edit')

@@ -2716,6 +2716,46 @@ class Form
 		return $i;
 	}
 
+
+	function show_ldap_content($result,$level,$count,$var)
+	{
+		global $bc;
+		
+		$count++;
+		if ($count > 1000) return;	// To avoid infinite loop
+	
+		foreach($result as $key => $val)
+		{
+			if ("$key" == "objectclass") continue;
+			if ("$key" == "count") continue;
+			if ("$key" == "dn") continue;
+			
+			if ("$val" == "objectclass") continue;
+			if ("$val" == $lastkey[$level]) continue;
+			
+			$lastkey[$level]=$key;
+			
+			if (is_array($val)) 
+			{
+				if (! is_numeric($key)) 
+				{
+					$var=!$var;
+					print '<tr '.$bc[$var].'><td>';
+					print $key;
+					print '</td><td>';
+				}
+				$this->show_ldap_content($val,$level+1,$count,$var);
+			}
+			else
+			{
+				print utf8_decode("$val");
+				//print "<br>\n";
+				print '</td></tr>';
+			}
+		}
+		return 1;
+	}
+	
 }
 
 ?>
